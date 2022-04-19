@@ -51,6 +51,11 @@ public interface INegoziazioneTokenParser {
     // If omitted, the authorization server SHOULD provide the expiration time via other means or document the default value.
 	public Date getExpired();
 	
+	// The lifetime in seconds of the refresh token.  For example, the value "3600" denotes that the access token will
+	// expire in one hour from the time the response was generated.
+    // If omitted, the authorization server SHOULD provide the expiration time via other means or document the default value.
+	public Date getRefreshExpired();
+	
 	// The type of the token issued
 	public String getTokenType();
 	

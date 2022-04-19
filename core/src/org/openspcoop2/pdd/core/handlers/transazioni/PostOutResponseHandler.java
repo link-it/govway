@@ -54,6 +54,8 @@ import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.controllo_traffico.CostantiControlloTraffico;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
+import org.openspcoop2.pdd.core.token.InformazioniNegoziazioneToken;
+import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
@@ -118,6 +120,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 	private boolean transazioniRegistrazioneTokenInformazioniNormalizzate = false;
 	private boolean transazioniRegistrazioneAttributiInformazioniNormalizzate = false;
 	private boolean transazioniRegistrazioneTempiElaborazione = false;
+	private boolean transazioniRegistrazioneRetrieveToken_saveAsTokenInfo = false;
 	private ISalvataggioTracceManager salvataggioTracceManager = null;
 	private ISalvataggioDiagnosticiManager salvataggioDiagnosticiManager = null;
 	private boolean transazioniRegistrazioneDumpHeadersCompactEnabled = false;
@@ -288,6 +291,8 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				this.transazioniRegistrazioneTokenInformazioniNormalizzate = StatoFunzionalita.ABILITATO.equals(configTransazioni.getToken());
 				this.transazioniRegistrazioneAttributiInformazioniNormalizzate = StatoFunzionalita.ABILITATO.equals(configTransazioni.getToken()) &&
 						this.openspcoopProperties.isGestioneAttributeAuthority_transazioniRegistrazioneAttributiInformazioniNormalizzate(); // per adesso la configurazione avviene via govway.properties
+				this.transazioniRegistrazioneRetrieveToken_saveAsTokenInfo = StatoFunzionalita.ABILITATO.equals(configTransazioni.getToken()) &&
+						this.openspcoopProperties.isGestioneRetrieveToken_saveAsTokenInfo(); // per adesso la configurazione avviene via govway.properties
 				
 				// salvataggio
 				this.salvataggioTracceManager = this.openspcoopProperties.getTransazioniRegistrazioneTracceManager();
@@ -363,11 +368,17 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 			times.idTransazione = idTransazione;
 		}
 		
-		InformazioniAttributi informazioniAttributiNormalizzati = null;
+		InformazioniToken informazioniToken = null;
+		InformazioniAttributi informazioniAttributi = null;
+		InformazioniNegoziazioneToken informazioniNegoziazioneToken = null;
+		if(transaction!=null) {
+			informazioniToken = transaction.getInformazioniToken();
+			informazioniNegoziazioneToken = transaction.getInformazioniNegoziazioneToken();
+		}
 		if(context.getPddContext()!=null) {
 			Object oInformazioniAttributiNormalizzati = context.getPddContext().getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_ATTRIBUTI_INFORMAZIONI_NORMALIZZATE);
 			if(oInformazioniAttributiNormalizzati!=null && oInformazioniAttributiNormalizzati instanceof InformazioniAttributi) {
-				informazioniAttributiNormalizzati = (InformazioniAttributi) oInformazioniAttributiNormalizzati;
+				informazioniAttributi = (InformazioniAttributi) oInformazioniAttributiNormalizzati;
 			}
 		}
 		
@@ -571,7 +582,8 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 						this.transazioniRegistrazioneTracceProtocolPropertiesEnabled,
 						this.transazioniRegistrazioneTokenInformazioniNormalizzate,
 						this.transazioniRegistrazioneAttributiInformazioniNormalizzate,
-						this.transazioniRegistrazioneTempiElaborazione);
+						this.transazioniRegistrazioneTempiElaborazione,
+						this.transazioniRegistrazioneRetrieveToken_saveAsTokenInfo);
 				transazioneDTO = transazioneUtilities.fillTransaction(context, transaction, idDominio,
 						( (times!=null && this.openspcoopProperties.isTransazioniRegistrazioneSlowLogBuildTransactionDetails()) ? times : null)); // NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
 	
@@ -623,7 +635,11 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				if(fileTraceEnabled) {
 					logWithFileTrace(fileTraceConfig, fileTraceConfigGlobal,
 							times,
-							transazioneDTO, transaction, informazioniAttributiNormalizzati, context,
+							transazioneDTO, transaction, 
+							informazioniToken,
+							informazioniAttributi,
+							informazioniNegoziazioneToken,
+							context,
 							idTransazione); // anche qua vi e' un try catch con Throwable
 				}
 				
@@ -1130,7 +1146,11 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 	
 	private void logWithFileTrace(File fileTraceConfig, boolean fileTraceConfigGlobal,
 			TransazioniProcessTimes times,
-			Transazione transazioneDTO, Transaction transaction, InformazioniAttributi informazioniAttributiNormalizzati, PostOutResponseContext context,
+			Transazione transazioneDTO, Transaction transaction, 
+			InformazioniToken informazioniToken,
+			InformazioniAttributi informazioniAttributi,
+			InformazioniNegoziazioneToken informazioniNegoziazioneToken,
+			PostOutResponseContext context,
 			String idTransazione) {
 		FileTraceManager fileTraceManager = null;
 		long timeStart = -1;
@@ -1140,7 +1160,11 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 			}
 			FileTraceConfig config = FileTraceConfig.getConfig(fileTraceConfig, fileTraceConfigGlobal);
 			fileTraceManager = new FileTraceManager(this.log, config);
-			fileTraceManager.buildTransazioneInfo(transazioneDTO, transaction, informazioniAttributiNormalizzati, context.getPddContext());
+			fileTraceManager.buildTransazioneInfo(transazioneDTO, transaction, 
+					informazioniToken,
+					informazioniAttributi,
+					informazioniNegoziazioneToken,
+					context.getPddContext());
 			fileTraceManager.invoke(context.getTipoPorta(), context.getPddContext());
 		}catch (Throwable e) {
 			this.log.error("["+idTransazione+"] File trace fallito: "+e.getMessage(),e);

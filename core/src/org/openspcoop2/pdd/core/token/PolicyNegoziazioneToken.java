@@ -196,6 +196,9 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 	public String getJwtSubject() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SUBJECT);
 	}
+	public String getJwtIdentifier() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_IDENTIFIER);
+	}
 	public String getJwtAudience() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_AUDIENCE);
 	}

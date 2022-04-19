@@ -20,23 +20,23 @@
 package org.openspcoop2.pdd.core.transazioni;
 
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
 import org.openspcoop2.core.transazioni.utils.TempiElaborazione;
 import org.openspcoop2.monitor.engine.config.TransactionResource;
 import org.openspcoop2.monitor.engine.config.TransactionServiceLibrary;
+import org.openspcoop2.pdd.core.token.InformazioniNegoziazioneToken;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
+import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.utils.date.DateUtils;
-import org.openspcoop2.protocol.sdk.dump.Messaggio;
 
 /**     
  * Transaction
@@ -152,6 +152,9 @@ public class Transaction {
 	
 	/** InformazioniAttributi */
 	private InformazioniAttributi informazioniAttributi;
+	
+	/** InformazioniNegoziazioneToken */
+	private InformazioniNegoziazioneToken informazioniNegoziazioneToken;
 	
 	/** CredenzialiMittente */
 	private CredenzialiMittente credenzialiMittente;
@@ -295,6 +298,10 @@ public class Transaction {
 	
 	public InformazioniAttributi getInformazioniAttributi() {
 		return this.informazioniAttributi;
+	}
+	
+	public InformazioniNegoziazioneToken getInformazioniNegoziazioneToken() {
+		return this.informazioniNegoziazioneToken;
 	}
 	
 	public CredenzialiMittente getCredenzialiMittente() {
@@ -768,6 +775,23 @@ public class Transaction {
 		}
 	}
 	
+	public void setInformazioniNegoziazioneToken(InformazioniNegoziazioneToken informazioniNegoziazioneToken) throws TransactionDeletedException {
+		if(this.gestioneStateful){
+			//synchronized (this.semaphore) {
+			this.semaphore.acquireThrowRuntime("setInformazioniNegoziazioneToken");
+			try {
+				if(this.deleted){
+					throw new TransactionDeletedException("Transaction eliminata");
+				}
+				this.informazioniNegoziazioneToken = informazioniNegoziazioneToken;
+			}finally {
+				this.semaphore.release("setInformazioniNegoziazioneToken");
+			}
+		}else{
+			this.informazioniNegoziazioneToken = informazioniNegoziazioneToken;
+		}
+	}
+	
 	public void setCredenzialiMittente(CredenzialiMittente credenzialiMittente) throws TransactionDeletedException {
 		if(this.gestioneStateful){
 			//synchronized (this.semaphore) {
@@ -1010,6 +1034,10 @@ public class Transaction {
 		
 		if(this.informazioniAttributi!=null) {
 			sb.append("\n").append("informazioniAttributi: presente");
+		}
+		
+		if(this.informazioniNegoziazioneToken!=null) {
+			sb.append("\n").append("informazioniNegoziazioneToken: presente");
 		}
 		
 		if(this.credenzialiMittente!=null) {

@@ -248,6 +248,7 @@ public class Costanti {
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_SECRET= "policy.retrieveToken.jwt.clientSecret";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_ISSUER= "policy.retrieveToken.jwt.issuer";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_SUBJECT= "policy.retrieveToken.jwt.subject";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_IDENTIFIER= "policy.retrieveToken.jwt.jti";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_AUDIENCE= "policy.retrieveToken.jwt.audience";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_EXPIRED_TTL_SECONDS= "policy.retrieveToken.jwt.expired";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_EXPIRED_TTL_SECONDS_DEFAULT_VALUE = "300";
@@ -313,6 +314,7 @@ public class Costanti {
 	public final static String ID_RETRIEVE_JWT_AUDIENCE = "jwtAudience";
 	public final static String ID_RETRIEVE_JWT_ISSUER = "jwtIssuer";
 	public final static String ID_RETRIEVE_JWT_SUBJECT = "jwtSubject";
+	public final static String ID_RETRIEVE_JWT_IDENTIFIER = "jwtIdentifier";
 	public final static String ID_RETRIEVE_JWT_CLAIMS = "jwtPayloadClaims";
 	public final static String ID_RETRIEVE_JWT_PURPOSE_ID = "jwtPurposeID";
 	public final static String ID_RETRIEVE_JWT_SESSION_INFO = "jwtSessionInfo";

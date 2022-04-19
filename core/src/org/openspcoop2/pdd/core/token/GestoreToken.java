@@ -88,6 +88,8 @@ import org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser;
 import org.openspcoop2.pdd.core.token.parser.ITokenParser;
 import org.openspcoop2.pdd.core.token.pd.EsitoGestioneTokenPortaDelegata;
 import org.openspcoop2.pdd.core.token.pd.EsitoPresenzaTokenPortaDelegata;
+import org.openspcoop2.pdd.core.transazioni.Transaction;
+import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.engine.RequestInfo;
@@ -2538,6 +2540,17 @@ public class GestoreToken {
 	public static EsitoNegoziazioneToken endpointToken(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken, 
 			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD,
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws Exception {
+		return _endpointToken(debug, log, policyNegoziazioneToken, 
+				busta, requestInfo, tipoPdD,
+				pddContext,  protocolFactory,
+				false, null,
+				null);
+	}
+	private static EsitoNegoziazioneToken _endpointToken(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken, 
+			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD,
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			boolean rinegozia, InformazioniNegoziazioneToken previousToken,
+			InformazioniNegoziazioneToken_DatiRichiesta datiRichiesta) throws Exception {
 		EsitoNegoziazioneToken esitoNegoziazioneToken = null;
 		boolean riavviaNegoziazione = false;
 		
@@ -2564,16 +2577,29 @@ public class GestoreToken {
 			}
 		}
 		
+		String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		if(datiRichiesta==null && op2Properties.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest()) {
+			datiRichiesta = new InformazioniNegoziazioneToken_DatiRichiesta();
+			datiRichiesta.setTransactionId(idTransazione);
+			if(op2Properties.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest_date()) {
+				datiRichiesta.setPrepareRequest(DateManager.getDate());	
+			}
+		}
+		
 		if(GestoreToken.cacheToken==null){
 			esitoNegoziazioneToken = _endpointToken(debug, log, policyNegoziazioneToken, 
 					busta, requestInfo, tipoPdD,
-					pddContext, protocolFactory,
+					pddContext, protocolFactory, idTransazione,
 					state, delegata,
-					idDominio, idServizio);
+					idDominio, idServizio,
+					rinegozia, previousToken,
+					datiRichiesta);
 			
 			if(esitoNegoziazioneToken!=null && esitoNegoziazioneToken.isValido()) {
 				// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone) 
-				_validazioneInformazioniNegoziazioneToken(esitoNegoziazioneToken, policyNegoziazioneToken, 
+				boolean checkPerRinegoziazione = false;
+				_validazioneInformazioniNegoziazioneToken(checkPerRinegoziazione, esitoNegoziazioneToken, policyNegoziazioneToken, 
 						policyNegoziazioneToken.isSaveErrorInCache());
 			}
 			
@@ -2599,7 +2625,6 @@ public class GestoreToken {
 				}
 			}
     		
-			String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 			//synchronized (GestoreToken.semaphoreNegoziazione) {
 			GestoreToken.lockNegoziazione.acquire("endpointToken", idTransazione);
 			try {
@@ -2624,9 +2649,11 @@ public class GestoreToken {
 					GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
 					esitoNegoziazioneToken = _endpointToken(debug, log, policyNegoziazioneToken, 
 							busta, requestInfo, tipoPdD,
-							pddContext, protocolFactory,
+							pddContext, protocolFactory, idTransazione,
 							state, delegata,
-							idDominio, idServizio);
+							idDominio, idServizio,
+							rinegozia, previousToken,
+							datiRichiesta);
 						
 					// Aggiungo la risposta in cache (se esiste una cache)	
 					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -2650,7 +2677,8 @@ public class GestoreToken {
 					
 					if(esitoNegoziazioneToken.isValido()) {
 						// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone) 
-						_validazioneInformazioniNegoziazioneToken(esitoNegoziazioneToken, policyNegoziazioneToken, 
+						boolean checkPerRinegoziazione = false;
+						_validazioneInformazioniNegoziazioneToken(checkPerRinegoziazione, esitoNegoziazioneToken, policyNegoziazioneToken, 
 								policyNegoziazioneToken.isSaveErrorInCache());
 					}
 				}
@@ -2660,12 +2688,14 @@ public class GestoreToken {
 					
 					if(esitoNegoziazioneToken.isValido()) {
 						// controllo la data qua
-						_validazioneInformazioniNegoziazioneToken(esitoNegoziazioneToken, policyNegoziazioneToken, 
+						boolean checkPerRinegoziazione = true;
+						_validazioneInformazioniNegoziazioneToken(checkPerRinegoziazione, esitoNegoziazioneToken, policyNegoziazioneToken, 
 								policyNegoziazioneToken.isSaveErrorInCache());
 						if(!esitoNegoziazioneToken.isValido() && !esitoNegoziazioneToken.isDateValide()) {
 							// DEVO riavviare la negoziazione poichè è scaduto
 							GestoreToken.cacheToken.remove(keyCache);
 							riavviaNegoziazione = true;
+							//System.out.println("Riavvia negoziazione");
 						}
 					}
 					
@@ -2678,18 +2708,152 @@ public class GestoreToken {
     	}
 		
 		if(riavviaNegoziazione) {
-			return endpointToken(debug, log, policyNegoziazioneToken, 
+			return _endpointToken(debug, log, policyNegoziazioneToken, 
 					busta, requestInfo, tipoPdD,
-					pddContext, protocolFactory);
+					pddContext, protocolFactory,
+					riavviaNegoziazione, esitoNegoziazioneToken.getInformazioniNegoziazioneToken(),// refresh
+					datiRichiesta); 
 		}
+		
+		try {
+			if(idTransazione!=null) {
+				Transaction t = TransactionContext.getTransaction(idTransazione);
+				t.setInformazioniNegoziazioneToken(esitoNegoziazioneToken.getInformazioniNegoziazioneToken());
+			}
+		}catch(Throwable t) {}
+		
 		return esitoNegoziazioneToken;
 	}
 	
 	private static EsitoNegoziazioneToken _endpointToken(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken,
 			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD,
-			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory,String idTransazione,
 			IState state, boolean delegata,
-			IDSoggetto idDominio, IDServizio idServizio) {
+			IDSoggetto idDominio, IDServizio idServizio,
+			boolean rinegozia, InformazioniNegoziazioneToken previousToken,
+			InformazioniNegoziazioneToken_DatiRichiesta datiRichiesta) {
+		
+		EsitoNegoziazioneToken esito = null;
+		
+		boolean refreshModeEnabled = false;
+		try {
+			if(policyNegoziazioneToken.isClientCredentialsGrant()) {
+				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveToken_refreshToken_grantType_clientCredentials();	
+				if(datiRichiesta!=null) {
+					datiRichiesta.setGrantType(Costanti.ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL);
+				}
+			}
+			else if(policyNegoziazioneToken.isUsernamePasswordGrant()) {
+				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveToken_refreshToken_grantType_usernamePassword();	
+				if(datiRichiesta!=null) {
+					datiRichiesta.setGrantType(Costanti.ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD);
+				}
+			}
+			else if(policyNegoziazioneToken.isRfc7523_x509_Grant()) {
+				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveToken_refreshToken_grantType_rfc7523_x509();	
+				if(datiRichiesta!=null) {
+					datiRichiesta.setGrantType(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509);
+				}
+			}
+			else if(policyNegoziazioneToken.isRfc7523_clientSecret_Grant()) {
+				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveToken_refreshToken_grantType_rfc7523_clientSecret();
+				if(datiRichiesta!=null) {
+					datiRichiesta.setGrantType(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET);
+				}
+			}
+		}catch(Throwable t) {
+			log.error("Errore durante la comprensione della modalità di refresh: "+t.getMessage(),t);
+		}
+		
+		
+		if(refreshModeEnabled && previousToken!=null && previousToken.getRefreshToken()!=null) {
+			try {
+				// Verico scadenza refresh
+				if(previousToken.getRefreshExpiresIn()!=null) {
+					Date now = DateManager.getDate();
+					int secondsPreExpire = -1;
+					OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
+					if(properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_percent()!=null && properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_percent()>0) {
+						int percent = properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_percent();
+						long secondsExpire = previousToken.getRefreshExpiresIn().getTime() / 1000l;
+						long secondsIat = previousToken.getRetrievedRefreshTokenIn().getTime() / 1000l;
+						long secondsDiff = secondsExpire - secondsIat;
+						if(secondsDiff>0) {
+							float perc1 = Float.valueOf(secondsDiff+"").floatValue() / 100f;
+							float perc2 = perc1 * Float.valueOf(percent+"").floatValue();
+							int s = Math.round(perc2);
+							if(s>0) {
+								secondsPreExpire = s;
+							}
+						}
+					}
+					else if(properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_seconds()!=null && properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_seconds()>0) {
+						secondsPreExpire = properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_seconds();
+					}
+					if(secondsPreExpire>0) {
+						now = new Date(now.getTime() + (secondsPreExpire*1000));
+						//System.out.println("Controllo scadenza per refresh token now+tollerance("+secondsPreExpire+")["+org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(now)+"] exp["+
+						//		org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(previousToken.getRefreshExpiresIn())+"]");
+					}			
+					if(!now.before(previousToken.getRefreshExpiresIn())){
+						// scaduto refresh token
+						log.debug("Refresh token scaduto");
+						refreshModeEnabled = false;
+					}
+				}
+				if(refreshModeEnabled) {
+					esito = _invoke_endpointToken(debug, log, policyNegoziazioneToken,
+							busta, requestInfo, tipoPdD,
+							pddContext, protocolFactory, idTransazione,
+							state, delegata,
+							idDominio, idServizio,
+							refreshModeEnabled, previousToken,
+							datiRichiesta);
+					if(esito!=null && esito.isValido()) {
+						// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone) 
+						boolean checkPerRinegoziazione = false;
+						_validazioneInformazioniNegoziazioneToken(checkPerRinegoziazione, esito, policyNegoziazioneToken, 
+								policyNegoziazioneToken.isSaveErrorInCache());
+						if(datiRichiesta!=null) {
+							datiRichiesta.setRefresh(true);
+						}
+						return esito;
+					}
+					if(esito==null || esito.getEccezioneProcessamento()==null) {
+						throw new Exception("token not refreshed");
+					}
+					else {
+						throw new Exception("token not refreshed: "+esito.getEccezioneProcessamento());
+					}
+				}
+			}catch(Throwable t) {
+				String msgError = "Refresh token failed: "+t.getMessage();
+				log.error(msgError);
+			}
+		}
+		
+		if(datiRichiesta!=null) {
+			datiRichiesta.setRefresh(null);
+		}
+		return _invoke_endpointToken(debug, log, policyNegoziazioneToken,
+				busta, requestInfo, tipoPdD,
+				pddContext, protocolFactory, idTransazione,
+				state, delegata,
+				idDominio, idServizio,
+				false, null,
+				datiRichiesta);
+		
+	}
+	
+	
+	private static EsitoNegoziazioneToken _invoke_endpointToken(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken,
+			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD,
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory,String idTransazione,
+			IState state, boolean delegata,
+			IDSoggetto idDominio, IDServizio idServizio,
+			boolean refreshModeEnabled, InformazioniNegoziazioneToken previousToken,
+			InformazioniNegoziazioneToken_DatiRichiesta datiRichiesta) {
+	
 		EsitoNegoziazioneToken esitoNegoziazioneToken = new EsitoNegoziazioneToken();
 		
 		esitoNegoziazioneToken.setTokenInternalError();
@@ -2707,9 +2871,12 @@ public class GestoreToken {
 			try {
 				httpResponse = http(debug, log, policyNegoziazioneToken,
 						busta, requestInfo, tipoPdD,
-						pddContext, protocolFactory,
+						pddContext, protocolFactory, idTransazione,
 						state, delegata,
-						idDominio, idServizio);
+						idDominio, idServizio,
+						esitoNegoziazioneToken,
+						refreshModeEnabled, (refreshModeEnabled && previousToken!=null) ? previousToken.getRefreshToken() : null,
+						datiRichiesta);
 				risposta = httpResponse.getContent();
 				httpResponseCode = httpResponse.getResultHTTPOperation();
 			}catch(Exception e) {
@@ -2719,7 +2886,10 @@ public class GestoreToken {
 			
 			if(detailsError==null) {
 				try {
-					informazioniToken = new InformazioniNegoziazioneToken(httpResponseCode, new String(risposta),tokenParser);
+					if(datiRichiesta!=null && datiRichiesta.getPrepareRequest()!=null) {
+						datiRichiesta.setParseResponse(DateManager.getDate());
+					}
+					informazioniToken = new InformazioniNegoziazioneToken(datiRichiesta, httpResponseCode, new String(risposta),tokenParser,previousToken);
 				}catch(Exception e) {
 					detailsError = "Risposta del servizio di negoziazione token non valida: "+e.getMessage();
 					eProcess = e;
@@ -2755,6 +2925,9 @@ public class GestoreToken {
 			esitoNegoziazioneToken.setEccezioneProcessamento(e);
     	}
 		
+		if(datiRichiesta!=null && datiRichiesta.getPrepareRequest()!=null) {
+			datiRichiesta.setProcessComplete(DateManager.getDate());
+		}
 		return esitoNegoziazioneToken;
 	}
 	
@@ -2782,12 +2955,40 @@ public class GestoreToken {
     	}
     	return bf.toString();
     }	
-	private static void _validazioneInformazioniNegoziazioneToken(EsitoNegoziazioneToken esitoNegoziazioneToken, PolicyNegoziazioneToken policyNegoziazioneToken, boolean saveErrorInCache) throws Exception {
+	private static void _validazioneInformazioniNegoziazioneToken(boolean checkPerRinegoziazione, EsitoNegoziazioneToken esitoNegoziazioneToken, PolicyNegoziazioneToken policyNegoziazioneToken, boolean saveErrorInCache) throws Exception {
 		
 		Date now = DateManager.getDate();
 		
 		if(esitoNegoziazioneToken.isValido()) {			
-			if(esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getExpiresIn()!=null) {				
+			if(esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getExpiresIn()!=null) {			
+				
+				if(checkPerRinegoziazione) {
+					int secondsPreExpire = -1;
+					OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
+					if(properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_percent()!=null && properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_percent()>0) {
+						int percent = properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_percent();
+						long secondsExpire = esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getExpiresIn().getTime() / 1000l;
+						long secondsIat = esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getRetrievedIn().getTime() / 1000l;
+						long secondsDiff = secondsExpire - secondsIat;
+						if(secondsDiff>0) {
+							float perc1 = Float.valueOf(secondsDiff+"").floatValue() / 100f;
+							float perc2 = perc1 * Float.valueOf(percent+"").floatValue();
+							int s = Math.round(perc2);
+							if(s>0) {
+								secondsPreExpire = s;
+							}
+						}
+					}
+					else if(properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_seconds()!=null && properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_seconds()>0) {
+						secondsPreExpire = properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_seconds();
+					}
+					if(secondsPreExpire>0) {
+						now = new Date(now.getTime() + (secondsPreExpire*1000));
+						//System.out.println("Controllo scadenza per rinegoziazione now+tollerance("+secondsPreExpire+")["+org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(now)+"] exp["+
+						//		org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getExpiresIn())+"]");
+					}
+				}
+				
 				/*
 				 *  The lifetime in seconds of the access token.  For example, the value "3600" denotes that the access token will
 				 * expire in one hour from the time the response was generated.
@@ -2854,9 +3055,12 @@ public class GestoreToken {
 	
 	public static HttpResponse http(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken,
 			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD,
-			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory, String idTransazione,
 			IState state, boolean delegata,
-			IDSoggetto idDominio, IDServizio idServizio) throws Exception {
+			IDSoggetto idDominio, IDServizio idServizio,
+			EsitoNegoziazioneToken esitoNegoziazioneToken,
+			boolean refreshModeEnabled, String refreshToken,
+			InformazioniNegoziazioneToken_DatiRichiesta datiRichiesta) throws Exception {
 		
 		Map<String, Object> dynamicMap = buildDynamicNegoziazioneTokenMap(busta, requestInfo, pddContext, log, policyNegoziazioneToken.getName());
 		
@@ -2868,7 +3072,10 @@ public class GestoreToken {
 		if(endpoint!=null && !"".equals(endpoint)) {
 			endpoint = DynamicUtils.convertDynamicPropertyValue("endpoint.gwt", endpoint, dynamicMap, pddContext, true);	
 		}
-				
+		if(datiRichiesta!=null) {
+			datiRichiesta.setEndpoint(endpoint);
+		}
+		
 		HttpRequestMethod httpMethod = HttpRequestMethod.POST;	
 		
 		// Nell'endpoint config ci finisce i timeout e la configurazione proxy
@@ -2896,12 +3103,18 @@ public class GestoreToken {
 				username = DynamicUtils.convertDynamicPropertyValue("username.gwt", username, dynamicMap, pddContext, true);	
 			}
 			password = policyNegoziazioneToken.getBasicAuthentication_password();
+			if(datiRichiesta!=null) {
+				datiRichiesta.setClientId(username);
+			}
 		}
 		
 		boolean bearer = policyNegoziazioneToken.isBearerAuthentication();
 		String bearerToken = null;
 		if(bearer) {
 			bearerToken = policyNegoziazioneToken.getBeareAuthentication_token();
+			if(datiRichiesta!=null) {
+				datiRichiesta.setClientToken(bearerToken);
+			}
 		}
 		
 		
@@ -2953,7 +3166,14 @@ public class GestoreToken {
 		
 		connettoreMsg.setConnectorProperties(new java.util.HashMap<String,String>());
 		connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_LOCATION, endpoint);
-		if(debug) {
+		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
+		Boolean debugTramiteProperties = properties.getGestioneRetrieveToken_debug();
+		if(debugTramiteProperties!=null) {
+			if(debugTramiteProperties) {
+				connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_DEBUG, true+"");
+			}
+		}
+		else if(debug) { // impostazione del connettore
 			connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_DEBUG, true+"");
 		}
 		connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_HTTP_DATA_TRANSFER_MODE, TransferLengthModes.CONTENT_LENGTH.getNome());
@@ -2979,7 +3199,11 @@ public class GestoreToken {
 		TransportUtils.setHeader(transportRequestContext.getHeaders(),HttpConstants.CONTENT_TYPE, contentType);
 		
 		Map<String, List<String>> pContent = new HashMap<String, List<String>>();
-		if(policyNegoziazioneToken.isClientCredentialsGrant()) {
+		if(refreshModeEnabled) {
+			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE, ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE_REFRESH_TOKEN);
+			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REFRESH_TOKEN, refreshToken);
+		}
+		else if(policyNegoziazioneToken.isClientCredentialsGrant()) {
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE, ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE_CLIENT_CREDENTIALS_GRANT);
 		}
 		else if(policyNegoziazioneToken.isRfc7523_x509_Grant() || policyNegoziazioneToken.isRfc7523_clientSecret_Grant()) {
@@ -3005,6 +3229,9 @@ public class GestoreToken {
 			}
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_USERNAME, usernamePasswordGrant);
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_PASSWORD, policyNegoziazioneToken.getUsernamePasswordGrant_password());
+			if(datiRichiesta!=null) {
+				datiRichiesta.setUsername(usernamePasswordGrant);
+			}
 		}
 		
 		if(policyNegoziazioneToken.isRfc7523_x509_Grant() || policyNegoziazioneToken.isRfc7523_clientSecret_Grant()) {
@@ -3013,6 +3240,10 @@ public class GestoreToken {
 					dynamicMap, pddContext);
 			String signedJwt = signJwt(policyNegoziazioneToken, jwt, contentType, dynamicMap, pddContext);
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_ASSERTION, signedJwt);
+			if(datiRichiesta!=null) {
+				boolean infoNormalizzate = properties.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_transazioniRegistrazioneInformazioniNormalizzate();
+				datiRichiesta.setJwtClientAssertion(new InformazioniJWTClientAssertion(log, signedJwt, infoNormalizzate));
+			}
 		}
 		
 		List<String> scopes = policyNegoziazioneToken.getScopes(dynamicMap, pddContext);
@@ -3090,7 +3321,13 @@ public class GestoreToken {
 			String portProxy = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT);
 			prefixConnettore = prefixConnettore+" [via Proxy: "+hostProxy+":"+portProxy+"] ";
 		}
+		if(datiRichiesta!=null && datiRichiesta.getPrepareRequest()!=null) {
+			datiRichiesta.setSendRequest(DateManager.getDate());
+		}
 		boolean send = connettore.send(responseCachingConfigurazione, connettoreMsg);
+		if(datiRichiesta!=null && datiRichiesta.getPrepareRequest()!=null) {
+			datiRichiesta.setReceiveResponse(DateManager.getDate());
+		}
 		if(send==false) {
 			if(connettore.getEccezioneProcessamento()!=null) {
 				throw new Exception(prefixConnettore+connettore.getErrore(), connettore.getEccezioneProcessamento());
@@ -3231,13 +3468,25 @@ public class GestoreToken {
 		jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED, expired);
 		
 		// The JWT MAY contain a "jti" (JWT ID) claim that provides a unique identifier for the token.
-		String uuid = null;
-		try {
-			uuid = UniqueIdentifierManager.newUniqueIdentifier().toString();
-		}catch(Exception e) {
-			throw new Exception("Invalid JWT-TimeToLive value: "+e.getMessage(),e);
+		String jti = policyNegoziazioneToken.getJwtIdentifier();
+		if(jti!=null && !"".equals(jti) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(jti)) {
+			jti = DynamicUtils.convertDynamicPropertyValue("jti.gwt", jti, dynamicMap, pddContext, true);	
 		}
-		jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID, uuid);
+		if(StringUtils.isNotEmpty(jti)) {
+			if(!Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(jti)) {
+				jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID, jti);
+			}
+		}
+		else {
+			// per default genero un uuid
+			String uuid = null;
+			try {
+				uuid = UniqueIdentifierManager.newUniqueIdentifier().toString();
+			}catch(Exception e) {
+				throw new Exception("Invalid JWT-TimeToLive value: "+e.getMessage(),e);
+			}
+			jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID, uuid);
+		}
 		
 		if(policyNegoziazioneToken.isPDND()) {
 			

@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.pdd.core.token.TipoInformazioni;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.json.JSONUtils;
 
@@ -218,6 +219,8 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 		
 	// NOTA: l'ordine stabilisce come viene serializzato nell'oggetto json
 	
+	private TipoInformazioni type = TipoInformazioni.attribute_authority;
+	
 	// Indicazione se il token e' valido
 	private boolean valid;
 	
@@ -270,6 +273,14 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 	// Multiple Source
 	private List<String> sourceAttributeAuthorities = null;
 	private Map<String,String> sourcesAttributeInfo = null;
+	
+	
+	public TipoInformazioni getType() {
+		return this.type;
+	}
+	public void setType(TipoInformazioni type) {
+		this.type = type;
+	}
 	
 	public boolean isValid() {
 		return this.valid;

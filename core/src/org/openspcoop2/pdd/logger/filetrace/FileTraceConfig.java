@@ -294,10 +294,19 @@ public class FileTraceConfig {
 					topic.setErogazioni(erogazioni);
 					topic.setNome(nome);
 					
-					String propertyNameOnlyRequestSended = propertyName+"."+nome+".requestSended";
-					String tmpOnlyRequestSended = getProperty(reader, propertyNameOnlyRequestSended, false);
-					if(tmpOnlyRequestSended!=null)
-						topic.setOnlyRequestSended(Boolean.valueOf(tmpOnlyRequestSended));
+					String propertyNameOnlyRequestSent = propertyName+"."+nome+".requestSent";
+					String tmpOnlyRequestSent = getProperty(reader, propertyNameOnlyRequestSent, false);
+					if(tmpOnlyRequestSent!=null) {
+						topic.setOnlyRequestSent(Boolean.valueOf(tmpOnlyRequestSent));
+					}
+					else {
+						// backward
+						propertyNameOnlyRequestSent = propertyName+"."+nome+".requestSended";
+						tmpOnlyRequestSent = getProperty(reader, propertyNameOnlyRequestSent, false);
+						if(tmpOnlyRequestSent!=null) {
+							topic.setOnlyRequestSent(Boolean.valueOf(tmpOnlyRequestSent));
+						}
+					}
 					
 					String propertyNameInRequestContentDefined = propertyName+"."+nome+".inRequestContentDefined";
 					String tmpInRequestContentDefined = getProperty(reader, propertyNameInRequestContentDefined, false);

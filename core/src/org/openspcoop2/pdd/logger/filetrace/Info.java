@@ -33,6 +33,8 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.transazioni.constants.TipoAPI;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
+import org.openspcoop2.pdd.core.token.InformazioniNegoziazioneToken;
+import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.logger.LogLevels;
@@ -66,7 +68,9 @@ public class Info {
 	private org.openspcoop2.core.transazioni.Transazione transazione;
 	private EsitiProperties esitiProperties;
 	private CredenzialiMittente credenzialiMittente;
+	private InformazioniToken informazioniToken;
 	private InformazioniAttributi informazioniAttributi;
+	private InformazioniNegoziazioneToken informazioniNegoziazioneToken;
 	
 	private Traccia tracciaRichiesta;
 	private Traccia tracciaRisposta;
@@ -101,7 +105,9 @@ public class Info {
 	public Info(Logger log,
 			org.openspcoop2.core.transazioni.Transazione transazione, 
 			CredenzialiMittente credenzialiMittente,
+			InformazioniToken informazioniToken,
 			InformazioniAttributi informazioniAttributi,
+			InformazioniNegoziazioneToken informazioniNegoziazioneToken,
 			Traccia tracciaRichiesta, Traccia tracciaRisposta,
 			List<MsgDiagnostico> msgDiagnostici,
 			Messaggio richiestaIngresso, Messaggio richiestaUscita,
@@ -113,7 +119,9 @@ public class Info {
 		this.transazione = transazione;
 		this.esitiProperties = EsitiProperties.getInstance(log, transazione.getProtocollo());
 		this.credenzialiMittente = credenzialiMittente;
+		this.informazioniToken = informazioniToken;
 		this.informazioniAttributi = informazioniAttributi;
+		this.informazioniNegoziazioneToken = informazioniNegoziazioneToken;
 		this.tracciaRichiesta = tracciaRichiesta;
 		this.tracciaRisposta = tracciaRisposta;
 		this.msgDiagnostici = msgDiagnostici;
@@ -1285,6 +1293,24 @@ public class Info {
 		return correctValue(this.credenzialiMittente!=null && this.credenzialiMittente.getToken_eMail()!=null ? this.credenzialiMittente.getToken_eMail().getCredenziale() : null, defaultValue);
 	}
 	
+	public java.lang.String getTokenClaim(String tokenClaim) {
+		return getTokenClaim(tokenClaim, null);
+	}
+	public java.lang.String getTokenClaim(String tokenClaim, String defaultValue) {
+		String v = null;
+		if(tokenClaim!=null &&
+				this.informazioniToken!=null && 
+				this.informazioniToken.getClaims()!=null && 
+				this.informazioniToken.getClaims().containsKey(tokenClaim)) {
+			Object valueInfoTokenObject = this.informazioniToken.getClaims().get(tokenClaim);
+			if(valueInfoTokenObject!=null) {
+				List<String> lClaimValues = TokenUtilities.getClaimValues(valueInfoTokenObject);
+				v = TokenUtilities.getClaimValuesAsString(lClaimValues);
+			}
+		}	
+		return correctValue(v, defaultValue);
+	}
+	
 	public java.lang.String getAttribute(String attributeName) {
 		return getAttribute(attributeName, null);
 	}
@@ -1327,6 +1353,113 @@ public class Info {
 					}
 				}
 			}
+		}	
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getRetrievedAccessToken() {
+		return getRetrievedAccessToken(null);
+	}
+	public java.lang.String getRetrievedAccessToken(String defaultValue) {
+		String v = null;
+		if(this.informazioniNegoziazioneToken!=null) {
+			v = this.informazioniNegoziazioneToken.getAccessToken();
+		}	
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getRetrievedTokenClaim(String tokenClaim) {
+		return getRetrievedTokenClaim(tokenClaim, null);
+	}
+	public java.lang.String getRetrievedTokenClaim(String tokenClaim, String defaultValue) {
+		String v = null;
+		if(tokenClaim!=null &&
+				this.informazioniNegoziazioneToken!=null && 
+				this.informazioniNegoziazioneToken.getClaims()!=null && 
+				this.informazioniNegoziazioneToken.getClaims().containsKey(tokenClaim)) {
+			Object valueInfoTokenObject = this.informazioniNegoziazioneToken.getClaims().get(tokenClaim);
+			if(valueInfoTokenObject!=null) {
+				List<String> lClaimValues = TokenUtilities.getClaimValues(valueInfoTokenObject);
+				v = TokenUtilities.getClaimValuesAsString(lClaimValues);
+			}
+		}	
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getRetrievedTokenRequestTransactionId() {
+		return getRetrievedTokenRequestTransactionId(null);
+	}
+	public java.lang.String getRetrievedTokenRequestTransactionId(String defaultValue) {
+		String v = null;
+		if(this.informazioniNegoziazioneToken!=null && this.informazioniNegoziazioneToken.getRequest()!=null) {
+			v = this.informazioniNegoziazioneToken.getRequest().getTransactionId();
+		}	
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getRetrievedTokenRequestGrantType() {
+		return getRetrievedTokenRequestGrantType(null);
+	}
+	public java.lang.String getRetrievedTokenRequestGrantType(String defaultValue) {
+		String v = null;
+		if(this.informazioniNegoziazioneToken!=null && this.informazioniNegoziazioneToken.getRequest()!=null) {
+			v = this.informazioniNegoziazioneToken.getRequest().getGrantType();
+		}	
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getRetrievedTokenRequestJwtClientAssertion() {
+		return getRetrievedTokenRequestJwtClientAssertion(null);
+	}
+	public java.lang.String getRetrievedTokenRequestJwtClientAssertion(String defaultValue) {
+		String v = null;
+		if(this.informazioniNegoziazioneToken!=null && this.informazioniNegoziazioneToken.getRequest()!=null 
+				&& this.informazioniNegoziazioneToken.getRequest().getJwtClientAssertion()!=null) {
+			v = this.informazioniNegoziazioneToken.getRequest().getJwtClientAssertion().getToken();
+		}	
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getRetrievedTokenRequestClientId() {
+		return getRetrievedTokenRequestClientId(null);
+	}
+	public java.lang.String getRetrievedTokenRequestClientId(String defaultValue) {
+		String v = null;
+		if(this.informazioniNegoziazioneToken!=null && this.informazioniNegoziazioneToken.getRequest()!=null) {
+			v = this.informazioniNegoziazioneToken.getRequest().getClientId();
+		}	
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getRetrievedTokenRequestClientToken() {
+		return getRetrievedTokenRequestClientToken(null);
+	}
+	public java.lang.String getRetrievedTokenRequestClientToken(String defaultValue) {
+		String v = null;
+		if(this.informazioniNegoziazioneToken!=null && this.informazioniNegoziazioneToken.getRequest()!=null) {
+			v = this.informazioniNegoziazioneToken.getRequest().getClientToken();
+		}	
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getRetrievedTokenRequestUsername() {
+		return getRetrievedTokenRequestUsername(null);
+	}
+	public java.lang.String getRetrievedTokenRequestUsername(String defaultValue) {
+		String v = null;
+		if(this.informazioniNegoziazioneToken!=null && this.informazioniNegoziazioneToken.getRequest()!=null) {
+			v = this.informazioniNegoziazioneToken.getRequest().getUsername();
+		}	
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getRetrievedTokenRequestUrl() {
+		return getRetrievedTokenRequestUrl(null);
+	}
+	public java.lang.String getRetrievedTokenRequestUrl(String defaultValue) {
+		String v = null;
+		if(this.informazioniNegoziazioneToken!=null && this.informazioniNegoziazioneToken.getRequest()!=null) {
+			v = this.informazioniNegoziazioneToken.getRequest().getEndpoint();
 		}	
 		return correctValue(v, defaultValue);
 	}

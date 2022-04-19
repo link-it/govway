@@ -33,7 +33,7 @@ public class Topic {
 
 	private boolean erogazioni;
 	private String nome;
-	private boolean onlyRequestSended = false;
+	private boolean onlyRequestSent = false;
 	private boolean onlyInRequestContentDefined = false;
 	private boolean onlyOutRequestContentDefined = false;
 	private boolean onlyInResponseContentDefined = false;
@@ -68,11 +68,19 @@ public class Topic {
 	public void setLog(Logger log) {
 		this.log = log;
 	}
+	@Deprecated
 	public boolean isOnlyRequestSended() {
-		return this.onlyRequestSended;
+		return this.onlyRequestSent;
 	}
-	public void setOnlyRequestSended(boolean onlyRequestSended) {
-		this.onlyRequestSended = onlyRequestSended;
+	@Deprecated
+	public void setOnlyRequestSended(boolean onlyRequestSent) {
+		this.onlyRequestSent = onlyRequestSent;
+	}
+	public boolean isOnlyRequestSent() {
+		return this.onlyRequestSent;
+	}
+	public void setOnlyRequestSent(boolean onlyRequestSent) {
+		this.onlyRequestSent = onlyRequestSent;
 	}
 	public boolean isOnlyInRequestContentDefined() {
 		return this.onlyInRequestContentDefined;

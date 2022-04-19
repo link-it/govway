@@ -42,6 +42,7 @@ import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.connettori.ConnettoreBase;
 import org.openspcoop2.pdd.core.credenziali.engine.GestoreCredenzialiEngine;
+import org.openspcoop2.pdd.core.token.TipoInformazioni;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -71,6 +72,8 @@ import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 import org.openspcoop2.web.monitor.transazioni.exporter.CostantiExport;
 import org.openspcoop2.web.monitor.transazioni.exporter.SingleFileExporter;
 import org.slf4j.Logger;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * DettagliBean
@@ -1028,23 +1031,63 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		return toRet;
 	}
 	
-	public boolean isAttributeInfo() {
+	private TipoInformazioni ti = null;
+	private synchronized void initTipoInformazioni() {
+		if(this.ti==null) {
+			if(this.dettaglio.getTokenInfo()!=null && StringUtils.isNotEmpty(this.dettaglio.getTokenInfo())) {
+				try {
+					JsonNode j = JSONUtils.getInstance().getAsNode(this.dettaglio.getTokenInfo().getBytes());
+					String type = j.get("type").textValue();
+					this.ti = TipoInformazioni.valueOf(type);
+				}catch(Throwable t) {}
+			}
+		}
+	}
+	private TipoInformazioni getTipoInformazioni() {
+		if(this.ti==null) {
+			initTipoInformazioni();
+		}
+		return this.ti;
+	}
+	
+	public boolean isValidatedToken() {
 		if(this.dettaglio.getTokenIssuer()!=null && StringUtils.isNotEmpty(this.dettaglio.getTokenIssuer())) {
-			return false;
+			return true;
 		}
 		if(this.dettaglio.getTokenSubject()!=null && StringUtils.isNotEmpty(this.dettaglio.getTokenSubject())) {
-			return false;
+			return true;
 		}
 		if(this.dettaglio.getTokenUsername()!=null && StringUtils.isNotEmpty(this.dettaglio.getTokenUsername())) {
-			return false;
+			return true;
 		}
 		if(this.dettaglio.getTokenClientId()!=null && StringUtils.isNotEmpty(this.dettaglio.getTokenClientId())) {
-			return false;
+			return true;
 		}
 		if(this.dettaglio.getTokenMail()!=null && StringUtils.isNotEmpty(this.dettaglio.getTokenMail())) {
-			return false;
+			return true;
 		}
-		return true;
+		if(getTipoInformazioni()!=null) {
+			try {
+				return TipoInformazioni.validated_token.equals(getTipoInformazioni());
+			}catch(Throwable t) {}
+		}
+		return false;
+	}
+	public boolean isRetrievedToken() {
+		if(getTipoInformazioni()!=null) {
+			try {
+				return TipoInformazioni.retrieved_token.equals(getTipoInformazioni());
+			}catch(Throwable t) {}
+		}
+		return false;
+	}
+	public boolean isAttributeInfo() {
+		if(getTipoInformazioni()!=null) {
+			try {
+				return TipoInformazioni.attribute_authority.equals(getTipoInformazioni());
+			}catch(Throwable t) {}
+		}
+		return false;
 	}
 	
 	public String downloadTokenInfo(){

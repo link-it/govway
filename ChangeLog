@@ -1,3 +1,18 @@
+2022-04-19  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Risolto Bug OP-1350
+	Migliorata gestione dell'access token negoziato verso un Authorization Server:
+	- un token viene adesso rinegoziato prima della scadenza effettiva (indicata in expireIn), 
+	  per evitare che il suo utilizzo prossimo alla scadenza comporti che risulti scaduto una volta ricevuto dall'erogatore;
+	- è adesso possibile configurare il criterio di generazione del claim 'jti' indicato nell'asserzione client JWT generata nel grant type SignedJWT;
+	- aggiunto supporto per attuare il refresh del token (per default la modalità rimane disabilitata);
+	- nella transazione, tra le informazioni sul mittente (Token Info), sono adesso disponibili i criteri di negoziazione e l'access token ottenuto;
+	- le informazioni sull'access token e sui criteri di negoziazione sono adesso registrabili nei topic configurati per la tracciatura su file;
+	- modificato nome della proprietà 'topic.*.requestSended' in 'topic.*.requestSent' nella tracciatura su file.
+	Sono stati aggiunte tra le informazioni tracciabili su file anche i singoli claim di un token validato.
+	Infine è stato aggiunto il timezone nella serializzazione delle date negli header HTTP inoltrati ai backend.
+
 2022-04-06  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

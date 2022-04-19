@@ -29,6 +29,8 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
+import org.openspcoop2.pdd.core.token.InformazioniNegoziazioneToken;
+import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.protocol.sdk.Context;
@@ -60,7 +62,11 @@ public class FileTraceManager {
 		this.log = log;
 	}
 	
-	public void buildTransazioneInfo(Transazione transazioneDTO, Transaction transaction, InformazioniAttributi informazioniAttributi, Context context) throws ProtocolException {
+	public void buildTransazioneInfo(Transazione transazioneDTO, Transaction transaction, 
+			InformazioniToken informazioniToken,
+			InformazioniAttributi informazioniAttributi,
+			InformazioniNegoziazioneToken informazioniNegoziazioneToken,
+			Context context) throws ProtocolException {
 		
 		Messaggio richiestaIngresso = null;
 		Messaggio richiestaUscita = null;
@@ -95,14 +101,20 @@ public class FileTraceManager {
 		
 		boolean base64 = true;
 		
-		this.t = new Info(this.log, transazioneDTO, credenzialiMittente, informazioniAttributi,
+		this.t = new Info(this.log, transazioneDTO, credenzialiMittente, 
+				informazioniToken,
+				informazioniAttributi,
+				informazioniNegoziazioneToken,
 				transaction.getTracciaRichiesta(), transaction.getTracciaRisposta(),
 				transaction.getMsgDiagnostici(),
 				richiestaIngresso, richiestaUscita,
 				rispostaIngresso, rispostaUscita,
 				infoConfigurazione,
 				this.config, !base64);
-		this.tBase64 = new Info(this.log, transazioneDTO, credenzialiMittente, informazioniAttributi,
+		this.tBase64 = new Info(this.log, transazioneDTO, credenzialiMittente, 
+				informazioniToken,
+				informazioniAttributi,
+				informazioniNegoziazioneToken,
 				transaction.getTracciaRichiesta(), transaction.getTracciaRisposta(),
 				transaction.getMsgDiagnostici(),
 				richiestaIngresso, richiestaUscita,
@@ -211,13 +223,13 @@ public class FileTraceManager {
 		}
 		if(topic!=null && !topic.isEmpty()) {
 			
-			boolean requestSended = false;
+			boolean requestSent = false;
 			if(context!=null && context.containsKey(Costanti.RICHIESTA_INOLTRATA_BACKEND)) {
 				Object o = context.getObject(Costanti.RICHIESTA_INOLTRATA_BACKEND);
 				if(o!=null && o instanceof String) {
 					String s = (String) o;
 					if(Costanti.RICHIESTA_INOLTRATA_BACKEND_VALORE.equals(s)) {
-						requestSended = true;
+						requestSent = true;
 					}
 				}
 			}
@@ -226,8 +238,8 @@ public class FileTraceManager {
 			for (String topicName : topic) {
 				Topic topicConfig = topicMap.get(topicName);
 				
-				if(topicConfig.isOnlyRequestSended()) {
-					if(!requestSended) {
+				if(topicConfig.isOnlyRequestSent()) {
+					if(!requestSent) {
 						continue;
 					}
 				}

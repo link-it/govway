@@ -298,6 +298,11 @@ public class NegoziazioneTokenProvider implements IProvider {
 				throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Payload - Subject'");
 			}
 			
+			String jti = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_IDENTIFIER);
+			if(jti!=null && jti.contains(" ")) {
+				throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Payload - Identifier'");
+			}
+			
 			if(pdnd) {
 				
 				String purposeId = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_PURPOSE_ID);
@@ -572,6 +577,13 @@ public class NegoziazioneTokenProvider implements IProvider {
 				) {
 			ProviderInfo pInfo = new ProviderInfo();
 			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_SUBJECT);
+			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO);
+			return pInfo;
+		}
+		else if(Costanti.ID_RETRIEVE_JWT_IDENTIFIER.equals(id)
+				) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_IDENTIFIER);
 			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO);
 			return pInfo;
 		}

@@ -284,6 +284,8 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 
 - tokenMail: eMail presente nel token;
 
+- tokenClaim(nomeClaim): valore del claim indicato come parametro e presente nel token;
+
 - attribute(nomeAttributo): valore dell'attributo indicato come parametro (informazione disponibile solamente se nell'erogazione/fruizione è stata configurata una sola A.A.);
 
 - attributeByAA(nomeAttributeAuthority,nomeAttributo): valore dell'attributo recuperato tramite l'AttributeAuthority indicata come parametro (informazione disponibile solamente se nell'erogazione/fruizione è stata configurata più di una A.A.);
@@ -301,6 +303,26 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 	- tokenClientId: clientId presente nel token
 
 - ipRequester: rappresenta l'indirizzo ip del richiedente e viene valorizzato con il forwardedIP se presente, o altrimenti con il clientIP.
+
+**Negoziazione Token**
+
+- retrievedAccessToken: access token ottenuto dall'authorization server configurato nella Token Policy associata al connettore;
+
+- retrievedTokenClaim(nomeClaim): valore del claim indicato come parametro e presente nella risposta ritornata dall'authorization server;
+
+- retrievedTokenRequestTransactionId: identificativo della transazione che ha originato la richiesta verso l'authorization server;
+
+- retrievedTokenRequestGrantType: tipo di grant type utilizzato nella negoziazione del token (clientCredentials, usernamePassword, rfc7523_x509, rfc7523_clientSecret);
+
+- retrievedTokenRequestJwtClientAssertion: asserzione jwt generata durante una negoziazione con grant type 'rfc7523_x509';
+
+- retrievedTokenRequestClientId: clientId utilizzato durante la negoziazione del token;
+
+- retrievedTokenRequestClientToken: bearer token utilizzato durante la negoziazione del token;
+
+- retrievedTokenRequestUsername: username utilizzato durante una negoziazione del token con grant type 'usernamePassword';
+
+- retrievedTokenRequestUrl: endpoint dell'authorization server.
 	
 **Messaggi**
 

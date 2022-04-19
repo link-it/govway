@@ -64,6 +64,8 @@ import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
+import org.openspcoop2.pdd.core.token.InformazioniNegoziazioneToken;
+import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.core.transazioni.DateUtility;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
@@ -104,6 +106,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 	private boolean transazioniRegistrazioneTokenInformazioniNormalizzate;
 	private boolean transazioniRegistrazioneAttributiInformazioniNormalizzate;
 	private boolean transazioniRegistrazioneTempiElaborazione;
+	private boolean transazioniRegistrazioneRetrieveToken_saveAsTokenInfo;
 	
 	public PostOutResponseHandler_TransazioneUtilities(Logger log, 
 			boolean transazioniRegistrazioneTracceHeaderRawEnabled,
@@ -111,7 +114,8 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			boolean transazioniRegistrazioneTracceProtocolPropertiesEnabled,
 			boolean transazioniRegistrazioneTokenInformazioniNormalizzate,
 			boolean transazioniRegistrazioneAttributiInformazioniNormalizzate,
-			boolean transazioniRegistrazioneTempiElaborazione){
+			boolean transazioniRegistrazioneTempiElaborazione,
+			boolean transazioniRegistrazioneRetrieveToken_saveAsTokenInfo){
 		this.logger = log;
 		this.transazioniRegistrazioneTracceHeaderRawEnabled = transazioniRegistrazioneTracceHeaderRawEnabled;
 		this.transazioniRegistrazioneTracceDigestEnabled = transazioniRegistrazioneTracceDigestEnabled;
@@ -119,6 +123,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 		this.transazioniRegistrazioneTokenInformazioniNormalizzate = transazioniRegistrazioneTokenInformazioniNormalizzate;
 		this.transazioniRegistrazioneTempiElaborazione = transazioniRegistrazioneTempiElaborazione;
 		this.transazioniRegistrazioneAttributiInformazioniNormalizzate = transazioniRegistrazioneAttributiInformazioniNormalizzate;
+		this.transazioniRegistrazioneRetrieveToken_saveAsTokenInfo = transazioniRegistrazioneRetrieveToken_saveAsTokenInfo;
 	}
 	
 	public static boolean isConsegnaMultipla(PostOutResponseContext context) {
@@ -1184,8 +1189,21 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				}
 			}
 			
+			// token negoziazione
+			InformazioniNegoziazioneToken informazioniNegoziazioneToken = null;
+			if(this.transazioniRegistrazioneRetrieveToken_saveAsTokenInfo) {
+				informazioniNegoziazioneToken = transaction.getInformazioniNegoziazioneToken();
+			}
+									
 			// token info
 			if(this.transazioniRegistrazioneTokenInformazioniNormalizzate && transaction.getInformazioniToken()!=null) {
+				
+				// token negoziazione
+				if(informazioniNegoziazioneToken!=null) {
+					transaction.getInformazioniToken().setRetrievedToken(informazioniNegoziazioneToken);
+				}
+				
+				// attributi
 				InformazioniAttributi informazioniAttributi = null;
 				if(!this.transazioniRegistrazioneAttributiInformazioniNormalizzate) {
 					informazioniAttributi = transaction.getInformazioniToken().getAa();
@@ -1199,13 +1217,33 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				if(informazioniAttributi!=null) {
 					transaction.getInformazioniToken().setAa(informazioniAttributi);
 				}
+								
 			}
 			if(transactionDTO.getTokenInfo()==null && this.transazioniRegistrazioneAttributiInformazioniNormalizzate &&
 					transaction.getInformazioniAttributi()!=null) {
+				if(informazioniNegoziazioneToken!=null) {
+					try {
+						InformazioniToken infoToken = new InformazioniToken(); // uso come aggregatore
+						infoToken.setRetrievedToken(informazioniNegoziazioneToken);
+						infoToken.setAa(transaction.getInformazioniAttributi());
+						transactionDTO.setTokenInfo(infoToken.toJson());
+					}catch(Throwable t) {
+						this.logger.error("Serializzazione informazioni attributi (aggregato insieme a client assertion) non riuscita: "+t.getMessage(),t);
+					}
+				}
+				else {
+					try {
+						transactionDTO.setTokenInfo(transaction.getInformazioniAttributi().toJson());
+					}catch(Throwable t) {
+						this.logger.error("Serializzazione informazioni attributi non riuscita: "+t.getMessage(),t);
+					}
+				}
+			}
+			if(transactionDTO.getTokenInfo()==null && informazioniNegoziazioneToken!=null) {
 				try {
-					transactionDTO.setTokenInfo(transaction.getInformazioniAttributi().toJson());
+					transactionDTO.setTokenInfo(informazioniNegoziazioneToken.toJson());
 				}catch(Throwable t) {
-					this.logger.error("Serializzazione informazioni attributi non riuscita: "+t.getMessage(),t);
+					this.logger.error("Serializzazione informazioni client assertion non riuscita: "+t.getMessage(),t);
 				}
 			}
 			

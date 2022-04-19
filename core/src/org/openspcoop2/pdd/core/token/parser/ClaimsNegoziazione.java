@@ -19,6 +19,9 @@
  */
 package org.openspcoop2.pdd.core.token.parser;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**     
  * Claims
  *
@@ -36,9 +39,15 @@ public class ClaimsNegoziazione {
 	public final static String OAUTH2_RFC_6749_EXPIRES_IN = "expires_in";
 	public final static String OAUTH2_RFC_6749_SCOPE = "scope";
 	
+	public final static List<String> REFRESH_EXPIRE_CUSTOM_CLAIMS = new ArrayList<String>();
+	static {
+		REFRESH_EXPIRE_CUSTOM_CLAIMS.add("refresh_expires_in"); //keyclock
+	}
+	
 	public final static String OAUTH2_RFC_6749_REQUEST_GRANT_TYPE = "grant_type";
 	public final static String OAUTH2_RFC_6749_REQUEST_GRANT_TYPE_CLIENT_CREDENTIALS_GRANT = "client_credentials";
 	public final static String OAUTH2_RFC_6749_REQUEST_GRANT_TYPE_RESOURCE_OWNER_PASSWORD_CREDENTIALS_GRANT = "password";
+	public final static String OAUTH2_RFC_6749_REQUEST_GRANT_TYPE_REFRESH_TOKEN = "refresh_token";
 	public final static String OAUTH2_RFC_6749_REQUEST_USERNAME = "username";
 	public final static String OAUTH2_RFC_6749_REQUEST_PASSWORD = "password";
 	public final static String OAUTH2_RFC_6749_REQUEST_CLIENT_ID = "client_id";

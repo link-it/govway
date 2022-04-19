@@ -50,28 +50,28 @@ public class DBVerifier {
 	}
 	
 	public static void verify(String idTransazione, 
-			long esitoExpected, String msgErrore) throws Exception  {
+			long esitoExpected, String msgErrore, String ... tokenInfoCheck) throws Exception  {
 		
 		// La scrittura su database avviene dopo aver risposto al client
 		
 		Utilities.sleep(100); 
 		try {
 			DBVerifier._verify(idTransazione, 
-					esitoExpected, msgErrore);
+					esitoExpected, msgErrore, tokenInfoCheck);
 		}catch(Throwable t) {
 			Utilities.sleep(500);
 			try {
 				DBVerifier._verify(idTransazione, 
-						esitoExpected, msgErrore);
+						esitoExpected, msgErrore, tokenInfoCheck);
 			}catch(Throwable t2) {
 				Utilities.sleep(2000);
 				try {
 					DBVerifier._verify(idTransazione, 
-							esitoExpected, msgErrore);
+							esitoExpected, msgErrore, tokenInfoCheck);
 				}catch(Throwable t3) {
 					Utilities.sleep(5000);
 					DBVerifier._verify(idTransazione, 
-							esitoExpected, msgErrore);
+							esitoExpected, msgErrore, tokenInfoCheck);
 				}
 			}
 		}
@@ -89,7 +89,7 @@ public class DBVerifier {
 
 		
 		
-		query = "select esito from transazioni where id = ?";
+		query = "select esito,token_info from transazioni where id = ?";
 		log().info(query);
 		
 		String msg = "IdTransazione: "+idTransazione;
@@ -115,6 +115,21 @@ public class DBVerifier {
 		}
 		assertEquals(msg,esitoExpected, esito.longValue());
 
+		
+		Object otoken_info = row.get("token_info");
+		assertNotNull(msg,otoken_info);
+		assertTrue(msg+" otoken_info classe '"+otoken_info.getClass().getName()+"'", (otoken_info instanceof String));
+		String tokenInfo = null;
+		if(otoken_info instanceof String) {
+			tokenInfo = (String)otoken_info;
+		}
+		assertNotNull(msg+" (token info string)",tokenInfo);
+		if(tokenInfoCheck!=null && tokenInfoCheck.length>0) {
+			for (String info: tokenInfoCheck) {
+				assertTrue(msg+" tokenInfo contains '"+info+"' (token:"+tokenInfo+")", (tokenInfo.contains(info)));
+			}
+		}
+		
 		
 		// diagnostici
 		

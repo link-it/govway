@@ -144,6 +144,33 @@ public class BasicNegoziazioneTokenParser implements INegoziazioneTokenParser {
 		}
 		return null;
 	}
+	
+	@Override
+	public Date getRefreshExpired() {
+		String tmp = null;
+		switch (this.parser) {
+		case OAUTH2_RFC_6749:
+			for (String claim : ClaimsNegoziazione.REFRESH_EXPIRE_CUSTOM_CLAIMS) {
+				String tmpC =  TokenUtilities.getClaimAsString(this.claims, claim);
+				if(tmpC!=null && StringUtils.isNotEmpty(tmpC)) {
+					tmp = tmpC;
+					break;
+				}
+			}
+			
+			break;
+		case CUSTOM:
+			return null;
+		}
+		if(tmp!=null) {
+			
+			// The lifetime in seconds of the access token.  For example, the value "3600" denotes that the access token will
+			// expire in one hour from the time the response was generated.
+			return TokenUtils.convertLifeTimeInSeconds(this.now, tmp);
+
+		}
+		return null;
+	}
 
 
 

@@ -339,6 +339,9 @@
 			</item>
 			<item type="text" name="jwtSubject" label="Subject" required="false">
 			      	<property name="policy.retrieveToken.jwt.subject" />
+			</item>
+			<item type="text" name="jwtIdentifier" label="Identifier" required="false">
+			      	<property name="policy.retrieveToken.jwt.jti" />
 			</item>			
 			<item type="number" name="jwtExpTtl" label="Time to Live (secondi)" required="true"
 				note="Indica la validità temporale, in secondi, a partire dalla data di creazione dell'asserzione">

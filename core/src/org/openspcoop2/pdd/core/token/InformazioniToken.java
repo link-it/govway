@@ -250,6 +250,8 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 		
 	// NOTA: l'ordine stabilisce come viene serializzato nell'oggetto json
 	
+	private TipoInformazioni type = TipoInformazioni.validated_token;
+	
 	// Indicazione se il token e' valido
 	private boolean valid;
 	
@@ -312,6 +314,17 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	
 	// Attributes Authority (ulteriore informazione valorizzata con la funzionalità specifica)
 	private InformazioniAttributi aa;
+	
+	// InformazioniNegoziazioneToken (ulteriore informazione valorizzata con la funzionalità specifica)
+	private InformazioniNegoziazioneToken retrievedToken;
+	
+	
+	public TipoInformazioni getType() {
+		return this.type;
+	}
+	public void setType(TipoInformazioni type) {
+		this.type = type;
+	}
 	
 	public boolean isValid() {
 		return this.valid;
@@ -444,5 +457,12 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	}
 	public void setAa(InformazioniAttributi aa) {
 		this.aa = aa;
+	}
+	
+	public InformazioniNegoziazioneToken getRetrievedToken() {
+		return this.retrievedToken;
+	}
+	public void setRetrievedToken(InformazioniNegoziazioneToken retrievedToken) {
+		this.retrievedToken = retrievedToken;
 	}
 }

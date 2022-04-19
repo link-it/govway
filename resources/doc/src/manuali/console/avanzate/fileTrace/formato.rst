@@ -15,7 +15,7 @@ La configurazione permette di indicare uno o più topic da generare quando il ga
 
 Per default tutte le comunicazioni gestite dal gateway vengono veicolati nei topic registrati. È possibile escludere il riversamento nel topic di determinate comunicazioni tramite le seguenti proprietà:
 
-- *log.topic.<erogazioni/fruizioni>.<nomeTopic>.requestSended* : se abilita, sul topic indicato verranno riversate solamente informazioni relative a comunicazioni per le quali il gateway è riuscito a spedire la richiesta verso il backend configurato;
+- *log.topic.<erogazioni/fruizioni>.<nomeTopic>.requestSent* : se abilita, sul topic indicato verranno riversate solamente informazioni relative a comunicazioni per le quali il gateway è riuscito a spedire la richiesta verso il backend configurato;
 
 - *log.topic.<erogazioni/fruizioni>.<nomeTopic>.[in/out>][Request/Response]ContentDefined* : se abilitata, verranno riversate informazioni sul topic solo se la richiesta o risposta indicata, in ingresso o uscita dal gateway, possiede un payload http.
 
@@ -27,8 +27,8 @@ Sui topic delle erogazioni viene invece attivato solamente il controllo sul payl
       # Erogazioni (Filtro per Payload HTTP)
       topic.erogazioni.inputRequest.inRequestContentDefined=true
 
-      # Fruizioni (Filtro per RequestSended + Payload HTTP)
-      topic.fruizioni.output.requestSended=true
+      # Fruizioni (Filtro per RequestSent + Payload HTTP)
+      topic.fruizioni.output.requestSent=true
       topic.fruizioni.output.outRequestContentDefined=true
 
 La generazione dei file di log è gestita dalle seguenti proprietà:

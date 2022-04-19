@@ -54,7 +54,13 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
-		_test(logCore, api_negoziazione, "clientid_clientsecret", null);
+		_test(logCore, api_negoziazione, "clientid_clientsecret", null,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"clientCredentials\"",
+				"\"clientId\":\"ClientIDVerificaNegoziazioneConSecret\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/clientid_clientsecret\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":");
 	}
 	
 	@Test
@@ -69,7 +75,13 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-audience", "testNegoziazioneAudience");
 		headers.put("test-p2", "testNegoziazioneP2");
 		
-		_test(logCore, api_negoziazione, "clientid_clientsecret2", headers);
+		_test(logCore, api_negoziazione, "clientid_clientsecret2", headers,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"clientCredentials\"",
+				"\"clientId\":\"ClientIDVerificaNegoziazioneConSecret2\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/clientid_clientsecret2\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":");
 	}
 	
 	@Test
@@ -80,7 +92,13 @@ public class NegoziazioneTest extends ConfigLoader {
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put("test-azione", "clientid_clientsecret3");
 		
-		_test(logCore, api_negoziazione, "clientid_clientsecret3", headers);
+		_test(logCore, api_negoziazione, "clientid_clientsecret3", headers,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"clientCredentials\"",
+				"\"clientToken\":\"TOKEN-XXX\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/clientid_clientsecret3\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":");
 	}
 
 	@Test
@@ -92,7 +110,13 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-azione", "user_password");
 		headers.put("test-username", "ResourceOwnerPasswordUsername");
 		
-		_test(logCore, api_negoziazione, "user_password", headers);
+		_test(logCore, api_negoziazione, "user_password", headers,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"usernamePassword\"",
+				"\"username\":\"ResourceOwnerPasswordUsername\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/user_password\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":");
 	}
 	
 	@Test
@@ -107,7 +131,13 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-suffix", "DYNAMIC");
 		headers.put("test-decode-position", "0");
 		
-		_test(logCore, api_negoziazione, "signedJWT_clientSecret", headers);
+		_test(logCore, api_negoziazione, "signedJWT_clientSecret", headers,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_clientSecret\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT_clientSecret\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":");
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
@@ -118,7 +148,13 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-suffix", "DYNAMIC");
 		headers.put("test-decode-position", "1");
 		
-		_test(logCore, api_negoziazione, "signedJWT_clientSecret", headers);
+		_test(logCore, api_negoziazione, "signedJWT_clientSecret", headers,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_clientSecret\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT_clientSecret\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":");
 	}
 	
 	@Test
@@ -134,7 +170,13 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-decode-position", "0");
 		headers.put("test-p2", "testNegoziazioneP2");
 		
-		_test(logCore, api_negoziazione, "signedJWT_clientSecret2", headers);
+		_test(logCore, api_negoziazione, "signedJWT_clientSecret2", headers,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_clientSecret\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT_clientSecret2\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":");
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
@@ -146,7 +188,13 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-decode-position", "1");
 		headers.put("test-p2", "testNegoziazioneP2");
 		
-		_test(logCore, api_negoziazione, "signedJWT_clientSecret2", headers);
+		_test(logCore, api_negoziazione, "signedJWT_clientSecret2", headers,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_clientSecret\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT_clientSecret2\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":");
 	}
 	
 	@Test
@@ -161,7 +209,13 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-suffix", "DYNAMIC");
 		headers.put("test-decode-position", "0");
 		
-		_test(logCore, api_negoziazione, "signedJWT_clientSecret3", headers);
+		_test(logCore, api_negoziazione, "signedJWT_clientSecret3", headers,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_clientSecret\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT_clientSecret3\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":");
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
@@ -172,7 +226,13 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-suffix", "DYNAMIC");
 		headers.put("test-decode-position", "1");
 		
-		_test(logCore, api_negoziazione, "signedJWT_clientSecret3", headers);
+		_test(logCore, api_negoziazione, "signedJWT_clientSecret3", headers,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_clientSecret\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT_clientSecret3\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":");
 	}
 	
 	@Test
@@ -187,7 +247,13 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-suffix", "DYNAMIC");
 		headers.put("test-decode-position", "0");
 		
-		_test(logCore, api_negoziazione, "signedJWT", headers);
+		_test(logCore, api_negoziazione, "signedJWT", headers,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_x509\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":");
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
@@ -198,7 +264,13 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-suffix", "DYNAMIC");
 		headers.put("test-decode-position", "1");
 		
-		_test(logCore, api_negoziazione, "signedJWT", headers);
+		_test(logCore, api_negoziazione, "signedJWT", headers,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_x509\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":");
 	}
 	
 	@Test
@@ -214,7 +286,13 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-decode-position", "0");
 		headers.put("test-p2", "testNegoziazioneP2");
 		
-		_test(logCore, api_negoziazione, "signedJWT2", headers);
+		_test(logCore, api_negoziazione, "signedJWT2", headers,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_x509\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT2\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":");
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
@@ -226,7 +304,13 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-decode-position", "1");
 		headers.put("test-p2", "testNegoziazioneP2");
 		
-		_test(logCore, api_negoziazione, "signedJWT2", headers);
+		_test(logCore, api_negoziazione, "signedJWT2", headers,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_x509\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT2\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":");
 	}
 	
 	@Test
@@ -241,7 +325,13 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-suffix", "DYNAMIC");
 		headers.put("test-decode-position", "0");
 		
-		_test(logCore, api_negoziazione, "signedJWT3", headers);
+		_test(logCore, api_negoziazione, "signedJWT3", headers,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_x509\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT3\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":");
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
@@ -252,7 +342,13 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-suffix", "DYNAMIC");
 		headers.put("test-decode-position", "1");
 		
-		_test(logCore, api_negoziazione, "signedJWT3", headers);
+		_test(logCore, api_negoziazione, "signedJWT3", headers,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_x509\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT3\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":");
 	}
 	
 	@Test
@@ -268,7 +364,13 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-decode-position", "0");
 		headers.put("test-p2", "testNegoziazioneP2");
 		
-		_test(logCore, api_negoziazione, "signedJWT-PDND", headers);
+		_test(logCore, api_negoziazione, "signedJWT-PDND", headers,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_x509\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT-PDND\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":");
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
@@ -280,12 +382,18 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-decode-position", "1");
 		headers.put("test-p2", "testNegoziazioneP2");
 		
-		_test(logCore, api_negoziazione, "signedJWT-PDND", headers);
+		_test(logCore, api_negoziazione, "signedJWT-PDND", headers,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_x509\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT-PDND\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":");
 	}
 	
 	
 	private static HttpResponse _test(Logger logCore, String api, String operazione,
-			Map<String, String> headers) throws Exception {
+			Map<String, String> headers, String ... tokenInfoCheck) throws Exception {
 		
 		String contentType = HttpConstants.CONTENT_TYPE_JSON;
 		byte[]content = Bodies.getJson(Bodies.SMALL_SIZE).getBytes();
@@ -320,7 +428,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		long esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
 		verifyOk(response, 200, contentType);
 						
-		DBVerifier.verify(idTransazione, esitoExpected, null);
+		DBVerifier.verify(idTransazione, esitoExpected, null, tokenInfoCheck);
 		
 		return response;
 		
