@@ -393,6 +393,10 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 			Tracciamento configTracciamento = this.configPdDManager.getOpenSPCoopAppender_Tracciamento();
 			StringBuilder bf = new StringBuilder();
 			String esitiConfig = configTracciamento!=null ? configTracciamento.getEsiti() : null;
+			fileTraceEnabled = this.openspcoopProperties.isTransazioniFileTraceEnabled();
+			if(fileTraceEnabled) {
+				fileTraceConfig = this.openspcoopProperties.getTransazioniFileTraceConfig();
+			}
 			try {
 				if(transaction!=null && transaction.getRequestInfo()!=null && 
 						transaction.getRequestInfo().getProtocolContext()!=null &&
@@ -412,6 +416,9 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 								fileTraceConfigGlobal = this.openspcoopProperties.isTransazioniFileTraceEnabled() && 
 										this.openspcoopProperties.getTransazioniFileTraceConfig().getAbsolutePath().equals(fileTraceConfig.getAbsolutePath());
 							}
+							else {
+								fileTraceConfig = null;
+							}
 						}catch(Throwable e) {
 							this.log.debug("["+idTransazione+"] Errore avvenuto durante la lettura della configurazione file-trace: "+e.getMessage(),e); 
 							fileTraceEnabled = false;
@@ -430,6 +437,9 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 								fileTraceConfig = this.configPdDManager.getFileTraceConfig(pa);
 								fileTraceConfigGlobal = this.openspcoopProperties.isTransazioniFileTraceEnabled() && 
 										this.openspcoopProperties.getTransazioniFileTraceConfig().getAbsolutePath().equals(fileTraceConfig.getAbsolutePath());
+							}
+							else {
+								fileTraceConfig = null;
 							}
 						}catch(Throwable e) {
 							this.log.debug("["+idTransazione+"] Errore avvenuto durante la lettura della configurazione file-trace: "+e.getMessage(),e); 

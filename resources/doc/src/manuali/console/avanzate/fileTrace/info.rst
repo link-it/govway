@@ -76,6 +76,8 @@ Di seguito vengono indicati tutti gli identificativi delle informazioni disponib
 
 - result: esito della transazione (codifica GovWay);
 
+- resultCode: esito della transazione (codifica numerica di GovWay);
+
 - errorDetail: dettaglio dell'errore avvenuto durante la gestione della transazione;
 
 - transactionType: tipo della transazione (Standard, Sistema ...).

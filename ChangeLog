@@ -1,3 +1,14 @@
+2022-04-20  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Risolto Bug OP-1350
+	Migliorata gestione delle informazioni utilizzabili nella tracciatura su file:
+	- aggiunta la possibilità di registrare il codice numerico di GovWay che rappresenta l'esito della transazione tramite la keyword 'resultCode';
+	- corretto valore ritornato dalla keyword 'inUrl', dove è stato eliminato il prefisso '[in]' o '[out]' che comunque è recuperabile tramite la keyword 'inFunction';
+	- la tracciatura dell'informazione '${logBase64:errorDetail}' provocava un errore inatteso poichè venivano erroneamente serializzate in base64 le informazioni prima di comprendere il dettaglio dell'errore.
+	Infine è stato corretto un problema in cui la configurazione di default della tracciatura su file non veniva letta durante la gestione delle richieste errate (es. API not found) 
+	e di conseguenza queste richieste non venivano tracciate.
+
 2022-04-19  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

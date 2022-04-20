@@ -286,6 +286,9 @@ public class Info {
 	public int getResultAsInt() {
 		return this.transazione.getEsito();
 	}
+	public int getResultCode() {
+		return getResultAsInt();
+	}
 	public String getResult() {
 		return getResult(null);
 	}
@@ -438,18 +441,26 @@ public class Info {
 	
 	private DatiEsitoTransazione _convertToDatiEsitoTransazione() {
 		
-		DatiEsitoTransazione datiEsitoTransazione = new DatiEsitoTransazione();
-		
-		datiEsitoTransazione.setEsito(this.getResultAsInt());
-		datiEsitoTransazione.setProtocollo(this.getProfile());
-		
-		datiEsitoTransazione.setFaultIntegrazione(this._getFaultIntegrazione(null));
-		datiEsitoTransazione.setFormatoFaultIntegrazione(this._getFormatoFaultIntegrazione(null));
-		
-		datiEsitoTransazione.setFaultCooperazione(this._getFaultCooperazione(null));
-		datiEsitoTransazione.setFormatoFaultCooperazione(this._getFormatoFaultCooperazione(null));
-				
-		datiEsitoTransazione.setPddRuolo(this.transazione.getPddRuolo());
+		boolean oldValueBase64 = this.base64;
+		DatiEsitoTransazione datiEsitoTransazione = null;
+		try {
+			this.base64 = false; // senno i dati salvata nell'oggetto sono serializzati in base64
+			
+			datiEsitoTransazione = new DatiEsitoTransazione();
+			
+			datiEsitoTransazione.setEsito(this.getResultAsInt());
+			datiEsitoTransazione.setProtocollo(this.getProfile());
+			
+			datiEsitoTransazione.setFaultIntegrazione(this._getFaultIntegrazione(null));
+			datiEsitoTransazione.setFormatoFaultIntegrazione(this._getFormatoFaultIntegrazione(null));
+			
+			datiEsitoTransazione.setFaultCooperazione(this._getFaultCooperazione(null));
+			datiEsitoTransazione.setFormatoFaultCooperazione(this._getFormatoFaultCooperazione(null));
+					
+			datiEsitoTransazione.setPddRuolo(this.transazione.getPddRuolo());
+		}finally {
+			this.base64 = oldValueBase64;
+		}
 		
 		return datiEsitoTransazione;
 		
@@ -1143,12 +1154,12 @@ public class Info {
 		return getOutURL(null);
 	}
 	public java.lang.String getOutURL(String defaultValue) {
-		String url = correctValue(this.transazione.getLocationConnettore(), defaultValue);
-		if(url.startsWith("[") && url.contains("] ")) {
+		String url = this.transazione.getLocationConnettore();
+		if(url!=null && url.startsWith("[") && url.contains("] ")) {
 			// [HttpType]  es.: [POST]
-			return url.substring(url.indexOf("] ")+2);
+			url = url.substring(url.indexOf("] ")+2);
 		}
-		return url;
+		return correctValue(url, defaultValue);
 	}
 	
 	public java.lang.String getOutConnectorName() {
@@ -1162,12 +1173,12 @@ public class Info {
 		return getInURL(null);
 	}
 	public java.lang.String getInURL(String defaultValue) {
-		String url = correctValue(this.transazione.getUrlInvocazione(), defaultValue);
-		if(url.startsWith("[") && url.contains("] ")) {
+		String url = this.transazione.getUrlInvocazione();
+		if(url!=null && url.startsWith("[") && url.contains("] ")) {
 			// [function]  es.: [in]
-			return url.substring(url.indexOf("] ")+2);
+			url = url.substring(url.indexOf("] ")+2);
 		}
-		return url;
+		return correctValue(url, defaultValue);
 	}
 	
 	public java.lang.String getInFunction() {
