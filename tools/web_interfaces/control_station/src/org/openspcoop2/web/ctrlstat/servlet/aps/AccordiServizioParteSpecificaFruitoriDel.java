@@ -228,7 +228,7 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 			apsCore.performUpdateOperation(superUser, apsHelper.smista(), asps);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.SERVIZI_FRUITORI;
 

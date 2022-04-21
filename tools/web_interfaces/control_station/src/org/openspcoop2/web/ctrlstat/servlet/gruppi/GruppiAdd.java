@@ -141,7 +141,7 @@ public final class GruppiAdd extends Action {
 			gruppiCore.performCreateOperation(userLogin, gruppiHelper.smista(), gruppo);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<Gruppo> lista = null;
 			if(gruppiCore.isVisioneOggettiGlobale(userLogin)){

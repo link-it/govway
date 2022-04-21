@@ -85,7 +85,7 @@ public final class AccordiCooperazioneAllegatiList extends Action {
 			acHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.ACCORDI_COOP_ALLEGATI;
 
@@ -96,7 +96,7 @@ public final class AccordiCooperazioneAllegatiList extends Action {
 			acHelper.prepareAccordiCoopAllegatiList(ac, ricerca, lista);
 
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			

@@ -99,7 +99,7 @@ public final class ConfigurazioneAuditingFiltriDel extends Action {
 			confHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<Filtro> lista = null;
 			lista = confCore.filtriList(ricerca);

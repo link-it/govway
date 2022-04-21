@@ -173,7 +173,7 @@ public final class ConfigurazioneSystemPropertiesAdd extends Action {
 			confCore.performUpdateOperation(userLogin, confHelper.smista(), systemProperties);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.SYSTEM_PROPERTIES;
 

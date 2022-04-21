@@ -124,7 +124,7 @@ public final class Login extends Action {
 			loginHelper.makeMenu();
 	
 			// Inizializzo parametri di ricerca
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			loginHelper.initializeFilter(ricerca);
 			
 			// Boolean verifico configurazione

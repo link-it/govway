@@ -138,7 +138,7 @@ public class Operazioni extends Action{
 			// Eseguo la ricerca
 			int idLista = opCore.getIdLista(formBean);
 			
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			ricerca = opHelper.checkSearchParameters(idLista, ricerca);
 			List<Operation> lista = opCore.operationsList(ricerca,formBean,ServletUtils.getUserLoginFromSession(session));
@@ -146,7 +146,7 @@ public class Operazioni extends Action{
 			opHelper.prepareOperazioniList(ricerca, lista);
 
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 
 			session.setAttribute(OperazioniCostanti.SESSION_ATTRIBUTE_FORM_BEAN, formBean);
 

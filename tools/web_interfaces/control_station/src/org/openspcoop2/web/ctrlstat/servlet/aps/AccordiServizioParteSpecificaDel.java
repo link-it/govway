@@ -176,7 +176,7 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 				pd.setMessage(inUsoMessage.toString());
 			}
 
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
 

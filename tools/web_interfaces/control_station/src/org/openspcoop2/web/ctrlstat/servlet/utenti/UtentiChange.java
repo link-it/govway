@@ -627,7 +627,7 @@ public final class UtentiChange extends Action {
 					// Preparo la lista
 					int idLista = Liste.SU;
 
-					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session,Search.class);
+					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session,Search.class);
 
 					ricerca = utentiHelper.checkSearchParameters(idLista, ricerca);
 

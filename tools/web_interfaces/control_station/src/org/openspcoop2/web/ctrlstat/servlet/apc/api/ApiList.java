@@ -78,7 +78,7 @@ public class ApiList  extends Action {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			
 			// Controllo i criteri di ricerca e recupero eventuali parametri
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.ACCORDI;
 			
@@ -115,7 +115,7 @@ public class ApiList  extends Action {
 			}
 			
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			

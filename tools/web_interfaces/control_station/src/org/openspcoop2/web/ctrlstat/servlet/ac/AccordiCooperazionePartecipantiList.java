@@ -87,7 +87,7 @@ public final class AccordiCooperazionePartecipantiList extends Action {
 			acHelper.makeMenu();
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			
 			int idLista = Liste.ACCORDI_COOP_PARTECIPANTI;
 
@@ -98,7 +98,7 @@ public final class AccordiCooperazionePartecipantiList extends Action {
 			
 			acHelper.prepareAccordiCoopPartecipantiList(ac,lista,ricerca);
 
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			return ServletUtils.getStrutsForward(mapping, AccordiCooperazioneCostanti.OBJECT_NAME_AC_PARTECIPANTI , ForwardParams.LIST());

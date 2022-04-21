@@ -104,7 +104,7 @@ public final class AuditingDel extends Action {
 			auditingHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<Operation> lista = auditingCore.auditOperationList(ricerca,
 					datainizio, datafine, tipooperazione,

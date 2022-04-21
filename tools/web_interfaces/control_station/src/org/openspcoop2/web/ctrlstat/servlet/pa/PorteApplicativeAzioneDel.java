@@ -145,7 +145,7 @@ public final class PorteApplicativeAzioneDel extends Action {
 			List<String> listaAzioni = pa.getAzione().getAzioneDelegataList();
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			int idLista = Liste.PORTE_APPLICATIVE_AZIONI;
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 			

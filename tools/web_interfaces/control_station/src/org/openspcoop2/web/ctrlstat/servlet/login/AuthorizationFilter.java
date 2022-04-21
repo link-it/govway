@@ -228,8 +228,8 @@ public final class AuthorizationFilter implements Filter {
 										ServletUtils.removeRisultatiRicercaFromSession(request, session, i);
 									}
 									
-									boolean existsRicerca = ServletUtils.existsSearchObjectFromSession(session);
-									Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+									boolean existsRicerca = ServletUtils.existsSearchObjectFromSession(request, session);
+									Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 									if(ricerca!=null) {
 										ricerca.reset();
 										for (int i = 0; i < Liste.getTotaleListe(); i++) {
@@ -237,7 +237,7 @@ public final class AuthorizationFilter implements Filter {
 										}
 										if(!existsRicerca) {
 											// salvo in sessione le inizializzazioni
-											ServletUtils.setSearchObjectIntoSession(session, ricerca);
+											ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 										}
 										ControlStationCore.logDebug("Effettuato reset della ricerca");					
 									}
@@ -455,8 +455,8 @@ public final class AuthorizationFilter implements Filter {
 										ServletUtils.removeRisultatiRicercaFromSession(request, session, i);
 									}
 									
-									boolean existsRicerca = ServletUtils.existsSearchObjectFromSession(session);
-									Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+									boolean existsRicerca = ServletUtils.existsSearchObjectFromSession(request, session);
+									Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 									if(ricerca!=null) {
 										ricerca.reset();
 										for (int i = 0; i < Liste.getTotaleListe(); i++) {
@@ -464,7 +464,7 @@ public final class AuthorizationFilter implements Filter {
 										}
 										if(!existsRicerca) {
 											// salvo in sessione le inizializzazioni
-											ServletUtils.setSearchObjectIntoSession(session, ricerca);
+											ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 										}
 										ControlStationCore.logDebug("Effettuato reset della ricerca");					
 									}
@@ -582,7 +582,7 @@ public final class AuthorizationFilter implements Filter {
 				lH.updateTipoInterfaccia();
 				
 				// Inizializzo parametri di ricerca
-				Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+				Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 				lH.initializeFilter(ricerca);
 				
 				// Boolean verifico configurazione

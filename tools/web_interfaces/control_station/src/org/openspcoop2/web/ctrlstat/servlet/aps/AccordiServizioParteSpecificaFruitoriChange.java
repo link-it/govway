@@ -1499,7 +1499,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			apsCore.performUpdateOperation(superUser, apsHelper.smista(), serviziosp);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			if(accessoDaListaAPS) {
 				if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {

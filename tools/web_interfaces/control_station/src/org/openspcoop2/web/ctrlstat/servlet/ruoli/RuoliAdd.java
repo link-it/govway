@@ -157,7 +157,7 @@ public final class RuoliAdd extends Action {
 			ruoliCore.performCreateOperation(userLogin, ruoliHelper.smista(), ruolo);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			if(ruoliCore.isSetSearchAfterAdd()) {
 				ruoliCore.setSearchAfterAdd(Liste.RUOLI, ruolo.getNome(), request, session, ricerca);

@@ -109,7 +109,7 @@ public final class RuoliDel extends Action {
 			ruoliHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<Ruolo> lista = null;
 			if(ruoliCore.isVisioneOggettiGlobale(userLogin)){

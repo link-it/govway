@@ -110,7 +110,7 @@ public final class AccordiServizioParteComuneResourcesDel extends Action {
 
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<Resource> lista = apcCore.accordiResourceList(idInt, ricerca);
 

@@ -209,7 +209,7 @@ public final class SoggettiRuoliAdd extends Action {
 			soggettiCore.performUpdateOperation(userLogin, soggettiHelper.smista(), soggettoRegistry);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<String> lista = soggettiCore.soggettiRuoliList(idSogg, ricerca);
 					

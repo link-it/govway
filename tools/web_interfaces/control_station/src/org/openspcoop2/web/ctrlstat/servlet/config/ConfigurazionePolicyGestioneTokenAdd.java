@@ -262,7 +262,7 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 			confCore.performCreateOperation(userLogin, confHelper.smista(), policy);
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = attributeAuthority ? Liste.CONFIGURAZIONE_GESTIONE_ATTRIBUTE_AUTHORITY : Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
 			
@@ -285,7 +285,7 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 			ServletUtils.removeConfigurazioneBeanFromSession(session, configurazioneBean.getId());
 			
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			// Forward control to the specified success URI

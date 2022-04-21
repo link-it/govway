@@ -172,7 +172,7 @@ public final class ConfigurazioneRegistriAdd extends Action {
 			confCore.performUpdateOperation(userLogin, confHelper.smista(), ar);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<AccessoRegistroRegistro> lista = confCore.registriList(ricerca);
 

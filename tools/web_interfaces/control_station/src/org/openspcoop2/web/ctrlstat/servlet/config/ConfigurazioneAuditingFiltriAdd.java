@@ -212,7 +212,7 @@ public final class ConfigurazioneAuditingFiltriAdd extends Action {
 			confCore.performCreateOperation(userLogin, confHelper.smista(), f);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<Filtro> lista = null;
 			lista = confCore.filtriList(ricerca);

@@ -79,7 +79,7 @@ public final class PorteApplicativeTrasformazioniServizioApplicativoAutorizzatoL
 			porteApplicativeHelper.makeMenu();
 	
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 	
 			int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO;
 	
@@ -90,7 +90,7 @@ public final class PorteApplicativeTrasformazioniServizioApplicativoAutorizzatoL
 	
 			porteApplicativeHelper.preparePorteAppTrasformazioniServizioApplicativoAutorizzatoList(nomePorta, idTrasformazione, ricerca, lista);
 	
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			// Forward control to the specified success URI

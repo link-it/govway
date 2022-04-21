@@ -620,7 +620,7 @@ public final class SoggettiEndPoint extends Action {
 			soggettiCore.performUpdateOperation(userLogin, soggettiHelper.smista(), newCsc);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			
 
 			int idLista = Liste.SOGGETTI;

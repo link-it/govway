@@ -1011,7 +1011,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			boolean incomplete = apcHelper.setMessageWarningStatoConsistenzaAccordo(true, as);
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			if(incomplete || apcCore.isSetSearchAfterAdd()) {
 				apcCore.setSearchAfterAdd(Liste.ACCORDI, as.getNome(), request, session, ricerca);
 			}

@@ -75,7 +75,7 @@ public final class PorteDelegateServizioApplicativoList extends Action {
 			porteDelegateHelper.makeMenu();
 	
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 	
 			int idLista = Liste.PORTE_DELEGATE_SERVIZIO_APPLICATIVO;
 	
@@ -86,7 +86,7 @@ public final class PorteDelegateServizioApplicativoList extends Action {
 	
 			porteDelegateHelper.preparePorteDelegateServizioApplicativoList(nomePorta, ricerca, lista);
 	
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 	
 			// Forward control to the specified success URI

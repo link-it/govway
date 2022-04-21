@@ -96,7 +96,7 @@ public final class AccordiServizioParteComunePortTypeOperationsList extends Acti
 			}
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.ACCORDI_PORTTYPE_AZIONI;
 
@@ -107,7 +107,7 @@ public final class AccordiServizioParteComunePortTypeOperationsList extends Acti
 			apcHelper.prepareAccordiPorttypeOperationsList(ricerca, lista, id, as, tipoAccordo,nomept);
 
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			

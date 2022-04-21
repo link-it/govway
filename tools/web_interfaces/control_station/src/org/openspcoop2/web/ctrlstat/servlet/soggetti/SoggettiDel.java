@@ -133,7 +133,7 @@ public final class SoggettiDel extends Action {
 			}
 
 			// preparo lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			
 			if(soggettiCore.isRegistroServiziLocale()){
 				List<Soggetto> lista = null;

@@ -115,7 +115,7 @@ public final class AccordiCooperazionePartecipantiDel extends Action {
 			acCore.performUpdateOperation(userLogin, acHelper.smista(), ac);
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			
 			List<IDSoggetto> lista = acCore.accordiCoopPartecipantiList(ac.getId(),ricerca);
 

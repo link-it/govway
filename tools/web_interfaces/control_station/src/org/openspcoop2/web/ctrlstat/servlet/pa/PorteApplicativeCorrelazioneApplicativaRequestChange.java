@@ -273,7 +273,7 @@ public final class PorteApplicativeCorrelazioneApplicativaRequestChange extends 
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pde);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<CorrelazioneApplicativaElemento> lista = porteApplicativeCore.porteApplicativeCorrelazioneApplicativaList(idInt, ricerca);
 

@@ -336,7 +336,7 @@ public class SoggettiVerificaCertificati extends Action {
 					
 					String userLogin = ServletUtils.getUserLoginFromSession(session);	
 					
-					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 					
 					int idLista = Liste.SOGGETTI;
 					
@@ -382,7 +382,7 @@ public class SoggettiVerificaCertificati extends Action {
 						soggettiHelper.prepareSoggettiConfigList(listaConfig, ricerca);
 					}
 					
-					ServletUtils.setSearchObjectIntoSession(session, ricerca);
+					ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 					
 					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 					return ServletUtils.getStrutsForwardEditModeFinished(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI_VERIFICA_CERTIFICATI, CostantiControlStation.TIPO_OPERAZIONE_VERIFICA_CERTIFICATI);

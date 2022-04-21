@@ -76,7 +76,7 @@ public final class SoggettiProprietaList extends Action {
 			
 			// Preparo la lista
 			SoggettiCore soggettiCore = new SoggettiCore();
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			Soggetto soggettoRegistry = soggettiCore.getSoggettoRegistro(idSogg);
 			
@@ -88,7 +88,7 @@ public final class SoggettiProprietaList extends Action {
 
 			soggettiHelper.prepareSoggettiProprietaList(soggettoRegistry, id, ricerca, lista);
 	
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			// Forward control to the specified success URI

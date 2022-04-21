@@ -848,7 +848,7 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 			else {
 				
 				// Preparo la lista
-				Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+				Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 				int idLista = Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI;
 

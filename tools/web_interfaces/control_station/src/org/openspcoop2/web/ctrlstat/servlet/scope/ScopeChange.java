@@ -120,7 +120,7 @@ public final class ScopeChange extends Action {
 				if(arrivoDaLista) {
 					
 					// preparo lista
-					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 					int idLista = Liste.SCOPE;
 
@@ -158,7 +158,7 @@ public final class ScopeChange extends Action {
 					scopeHelper.prepareScopeList(ricerca, lista);
 
 					// salvo l'oggetto ricerca nella sessione
-					ServletUtils.setSearchObjectIntoSession(session, ricerca);
+					ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 				
 					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
@@ -269,7 +269,7 @@ public final class ScopeChange extends Action {
 			}
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<Scope> lista = null;
 			if(scopeCore.isVisioneOggettiGlobale(userLogin)){

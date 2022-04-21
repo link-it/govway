@@ -172,7 +172,7 @@ public final class UtentePasswordChange extends Action {
 			utentiHelper.makeMenu();
 	
 			// Inizializzo parametri di ricerca
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			utentiHelper.initializeFilter(ricerca);
 			
 			// Boolean verifico configurazione

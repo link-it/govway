@@ -226,7 +226,7 @@ public final class ConfigurazionePluginsArchiviAdd extends Action {
 			confCore.updatePluginClassLoader();
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.CONFIGURAZIONE_PLUGINS_ARCHIVI;
 

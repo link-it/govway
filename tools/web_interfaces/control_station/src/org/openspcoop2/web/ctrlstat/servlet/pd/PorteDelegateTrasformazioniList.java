@@ -122,7 +122,7 @@ public class PorteDelegateTrasformazioniList extends Action {
 			}
 	
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			
 			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI; 
 			
@@ -133,7 +133,7 @@ public class PorteDelegateTrasformazioniList extends Action {
 			
 			porteDelegateHelper.preparePorteDelegateTrasformazioniRegolaList(nomePorta, ricerca, lista);
 	
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			// Forward control to the specified success URI

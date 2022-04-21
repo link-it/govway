@@ -121,7 +121,7 @@ public final class AccordiServizioParteComuneResourcesRisposteDel extends Action
 				apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			
 			// Devo rileggere l'accordo dal db, perche' altrimenti
 			// manca l'id dei port-type

@@ -86,7 +86,7 @@ public final class SoggettiList extends Action {
 			boolean multiTenant = soggettiCore.isMultitenant();
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.SOGGETTI;
 			
@@ -138,7 +138,7 @@ public final class SoggettiList extends Action {
 				pd.setMessage("Errore durante esportazione: "+msg);
 			}
 
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			return ServletUtils.getStrutsForward(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI, ForwardParams.LIST());

@@ -724,7 +724,7 @@ public final class AccordiServizioParteComunePortTypeOperationsChange extends Ac
 			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), pt);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<Operation> lista = apcCore.accordiPorttypeOperationList(pt.getId().intValue(), ricerca);
 

@@ -93,7 +93,7 @@ public final class ConfigurazioneAllarmiHistoryList extends Action {
 			ConfigurazioneAllarmeBean allarme = confCore.getAllarme(idAllarme);
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.CONFIGURAZIONE_ALLARMI_HISTORY;
 
@@ -104,7 +104,7 @@ public final class ConfigurazioneAllarmiHistoryList extends Action {
 			confHelper.prepareAllarmiHistoryList(ricerca, lista, allarme, ruoloPorta, nomePorta, serviceBinding);
 			
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

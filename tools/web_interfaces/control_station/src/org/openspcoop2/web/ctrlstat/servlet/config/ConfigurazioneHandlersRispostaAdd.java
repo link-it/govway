@@ -364,7 +364,7 @@ public class ConfigurazioneHandlersRispostaAdd extends Action {
 			// Preparo la lista
 			int idLista = Liste.CONFIGURAZIONE_HANDLERS_RISPOSTA;
 			
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 
@@ -377,7 +377,7 @@ public class ConfigurazioneHandlersRispostaAdd extends Action {
 			}
 			
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			// Forward control to the specified success URI

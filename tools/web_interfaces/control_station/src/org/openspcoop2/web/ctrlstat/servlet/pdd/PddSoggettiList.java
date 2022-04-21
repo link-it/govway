@@ -80,7 +80,7 @@ public final class PddSoggettiList extends Action {
 			pddHelper.makeMenu();
 	
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session,Search.class); 
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session,Search.class); 
 	
 			int idLista = Liste.PDD_SOGGETTI;
 	
@@ -90,7 +90,7 @@ public final class PddSoggettiList extends Action {
 	
 			pddHelper.preparePddSoggettiList(pdd.getNome(), Integer.parseInt(id), lista, ricerca);
 	
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 	
 			// Forward control to the specified success URI

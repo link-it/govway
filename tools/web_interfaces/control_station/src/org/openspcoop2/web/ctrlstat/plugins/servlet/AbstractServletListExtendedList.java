@@ -75,7 +75,7 @@ public abstract class AbstractServletListExtendedList extends AbstractServletLis
 			// Preparo il menu
 			consoleHelper.makeMenu();
 
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = this.getIdList();
 
@@ -92,7 +92,7 @@ public abstract class AbstractServletListExtendedList extends AbstractServletLis
 					this.getUrlExtendedFather(consoleHelper));
 
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

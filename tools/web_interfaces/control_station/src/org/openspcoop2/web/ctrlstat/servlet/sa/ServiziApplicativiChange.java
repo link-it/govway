@@ -703,7 +703,7 @@ public final class ServiziApplicativiChange extends Action {
 					ServletUtils.setObjectIntoSession(request, session, parentSA, ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT);
 					
 					// preparo lista
-					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 					
 					int idLista = -1;
 					if(!useIdSogg){
@@ -756,7 +756,7 @@ public final class ServiziApplicativiChange extends Action {
 	
 					saHelper.prepareServizioApplicativoList(ricerca, lista, useIdSogg, false);
 					
-					ServletUtils.setSearchObjectIntoSession(session, ricerca);
+					ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 					
 					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 	
@@ -2001,7 +2001,7 @@ public final class ServiziApplicativiChange extends Action {
 			}
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			
 

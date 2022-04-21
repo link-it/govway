@@ -278,7 +278,7 @@ public final class PorteApplicativeConnettoriMultipliProprietaAdd extends Action
 			idPaSa = paSA.getId();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA;
 

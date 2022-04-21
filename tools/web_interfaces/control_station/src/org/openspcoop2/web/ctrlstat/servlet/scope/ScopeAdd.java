@@ -157,7 +157,7 @@ public final class ScopeAdd extends Action {
 			scopeCore.performCreateOperation(userLogin, scopeHelper.smista(), scope);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			if(scopeCore.isSetSearchAfterAdd()) {
 				scopeCore.setSearchAfterAdd(Liste.SCOPE, scope.getNome(), request, session, ricerca);

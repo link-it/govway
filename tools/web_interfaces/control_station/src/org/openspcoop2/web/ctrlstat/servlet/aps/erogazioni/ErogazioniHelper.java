@@ -3827,7 +3827,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			this.prepareErogazioniList(ricerca, lista);
 			
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(this.session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(this.request, this.session, ricerca);
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(this.session, gd, this.pd);
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, CostantiControlStation.TIPO_OPERAZIONE_RESET_CACHE_ELEMENTO);

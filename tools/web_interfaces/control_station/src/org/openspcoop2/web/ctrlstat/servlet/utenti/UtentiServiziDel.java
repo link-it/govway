@@ -97,7 +97,7 @@ public class UtentiServiziDel extends Action {
 			utentiCore.performUpdateOperation(userLogin, utentiHelper.smista(), user); 
 	
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session,Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session,Search.class);
 	
 			int idLista = Liste.UTENTI_SERVIZI;
 	
@@ -107,7 +107,7 @@ public class UtentiServiziDel extends Action {
 	
 			utentiHelper.prepareUtentiServiziList(ricerca, lista, user);
 	
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			return ServletUtils.getStrutsForward(mapping, UtentiCostanti.OBJECT_NAME_UTENTI_SERVIZI, ForwardParams.DEL());

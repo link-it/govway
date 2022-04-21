@@ -85,7 +85,7 @@ public final class AccordiServizioParteComuneDel extends Action {
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
 			
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
 			

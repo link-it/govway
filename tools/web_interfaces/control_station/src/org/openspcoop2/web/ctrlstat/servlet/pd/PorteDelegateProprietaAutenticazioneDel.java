@@ -117,7 +117,7 @@ public final class PorteDelegateProprietaAutenticazioneDel extends Action {
 			porteDelegateHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.PORTE_DELEGATE_PROPRIETA_AUTENTICAZIONE;
 

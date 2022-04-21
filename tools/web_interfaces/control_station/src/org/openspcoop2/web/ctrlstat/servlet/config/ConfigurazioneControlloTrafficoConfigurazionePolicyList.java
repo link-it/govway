@@ -76,7 +76,7 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyList extends Act
 			confHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY;
 			
@@ -92,7 +92,7 @@ public class ConfigurazioneControlloTrafficoConfigurazionePolicyList extends Act
 			confHelper.prepareConfigurazionePolicyList(ricerca, lista, idLista);
 			
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			// Forward control to the specified success URI

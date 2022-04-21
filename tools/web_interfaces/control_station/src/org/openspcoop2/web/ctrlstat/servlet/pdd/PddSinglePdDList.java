@@ -74,7 +74,7 @@ public final class PddSinglePdDList extends Action {
 			// Preparo il menu
 			pddHelper.makeMenu();
 
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session,Search.class); 
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session,Search.class); 
 
 			int idLista = Liste.PDD;
 
@@ -91,7 +91,7 @@ public final class PddSinglePdDList extends Action {
 			pddHelper.preparePddSinglePddList(lista, ricerca);
 
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 			// Forward control to the specified success URI

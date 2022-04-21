@@ -100,7 +100,7 @@ public final class ServiziApplicativiList extends Action {
 			saHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
 						
@@ -161,7 +161,7 @@ public final class ServiziApplicativiList extends Action {
 				pd.setMessage("Errore durante esportazione: "+msg);
 			}
 			
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 			return ServletUtils.getStrutsForward(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, ForwardParams.LIST());

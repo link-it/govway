@@ -268,7 +268,7 @@ public final class AccordiServizioParteSpecificaAllegatiChange extends Action {
 			apsCore.performUpdateOperation(userLogin, apsHelper.smista(), asps);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			
 			List<Documento> lista = apsCore.serviziAllegatiList(asps.getId().intValue(), ricerca);
 

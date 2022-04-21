@@ -84,7 +84,7 @@ public final class ServiziApplicativiProprietaList extends Action {
 	
 			// Preparo la lista
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			ServizioApplicativo sa = saCore.getServizioApplicativo(idServizioApplicativo);
 			
@@ -96,7 +96,7 @@ public final class ServiziApplicativiProprietaList extends Action {
 
 			saHelper.prepareServiziApplicativiProprietaList(sa, ricerca, lista);
 	
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			// Forward control to the specified success URI

@@ -87,7 +87,7 @@ public final class AccordiServizioParteComuneAllegatiList extends Action {
 			apcHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.ACCORDI_ALLEGATI;
 
@@ -98,7 +98,7 @@ public final class AccordiServizioParteComuneAllegatiList extends Action {
 			apcHelper.prepareAccordiAllegatiList(as, ricerca, lista,tipoAccordo);
 
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			

@@ -669,7 +669,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					String userLogin = ServletUtils.getUserLoginFromSession(session);
 					
 					// preparo lista
-					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 					
 					int idLista = -1;
 					if(!useIdSogg){
@@ -722,7 +722,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 	
 					saHelper.prepareServizioApplicativoList(ricerca, lista, useIdSogg, false);
 					
-					ServletUtils.setSearchObjectIntoSession(session, ricerca);
+					ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 					
 					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 					return ServletUtils.getStrutsForwardEditModeFinished(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI, CostantiControlStation.TIPO_OPERAZIONE_VERIFICA_CERTIFICATI);

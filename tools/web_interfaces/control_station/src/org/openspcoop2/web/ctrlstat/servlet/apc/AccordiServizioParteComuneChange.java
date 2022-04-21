@@ -302,7 +302,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		AccordiCooperazioneCore acCore = new AccordiCooperazioneCore(apcCore);
 		GruppiCore gruppiCore = new GruppiCore(apcCore);
 		ConfigurazioneCore confCore = new ConfigurazioneCore(apcCore);
-		Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+		Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 		FiltroRicercaGruppi filtroRicerca = new FiltroRicercaGruppi();
 		List<String> elencoGruppi = null;
 

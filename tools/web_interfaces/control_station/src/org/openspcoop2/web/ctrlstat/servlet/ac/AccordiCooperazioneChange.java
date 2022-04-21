@@ -601,7 +601,7 @@ public final class AccordiCooperazioneChange extends Action {
 			acCore.performUpdateOperation(userLogin, acHelper.smista(), oggettiDaAggiornare.toArray());
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<AccordoCooperazione> lista2 = null;
 			if(acCore.isVisioneOggettiGlobale(userLogin)){

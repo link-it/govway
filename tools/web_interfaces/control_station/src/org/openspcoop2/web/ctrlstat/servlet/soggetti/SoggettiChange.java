@@ -618,7 +618,7 @@ public final class SoggettiChange extends Action {
 					
 					boolean multiTenant = soggettiCore.isMultitenant();
 					
-					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 					
 					int idLista = Liste.SOGGETTI;
 					
@@ -664,7 +664,7 @@ public final class SoggettiChange extends Action {
 						soggettiHelper.prepareSoggettiConfigList(listaSoggetti, ricerca);
 					}
 						
-					ServletUtils.setSearchObjectIntoSession(session, ricerca);
+					ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 					
 					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
@@ -1348,7 +1348,7 @@ public final class SoggettiChange extends Action {
 			soggettiHelper.deleteBinaryParameters(tipoCredenzialiSSLFileCertificato); 
 			
 			// preparo lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 						
 			if (!oldnomeprov.equals(this.nomeprov) || !oldtipoprov.equals(this.tipoprov)) {
 				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.SOGGETTI);

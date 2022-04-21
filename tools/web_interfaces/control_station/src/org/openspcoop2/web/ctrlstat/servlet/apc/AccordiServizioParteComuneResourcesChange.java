@@ -510,7 +510,7 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<Resource> lista = apcCore.accordiResourceList(idInt, ricerca);
 

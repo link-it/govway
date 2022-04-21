@@ -93,7 +93,7 @@ public final class AccordiServizioParteComuneResourcesRisposteList extends Actio
 			}
 
 			// Controllo i criteri di ricerca e recupero eventuali parametri
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.ACCORDI_API_RESOURCES_RESPONSE;
 
@@ -104,7 +104,7 @@ public final class AccordiServizioParteComuneResourcesRisposteList extends Actio
 			apcHelper.prepareAccordiResourcesResponseList(ricerca, lista, id, as, tipoAccordo, risorsa);
 			
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			

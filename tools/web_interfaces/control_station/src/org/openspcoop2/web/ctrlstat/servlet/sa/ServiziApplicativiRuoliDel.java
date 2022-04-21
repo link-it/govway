@@ -105,7 +105,7 @@ public final class ServiziApplicativiRuoliDel extends Action {
 			saHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<String> lista = saCore.servizioApplicativoRuoliList(idSilInt, ricerca);
 			

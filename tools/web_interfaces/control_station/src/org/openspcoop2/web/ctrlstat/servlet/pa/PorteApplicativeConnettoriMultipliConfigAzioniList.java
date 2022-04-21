@@ -88,7 +88,7 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniList extends Ac
 
 			porteApplicativeHelper.preparePorteApplicativeConnettoriMultipliConfigAzioniList(pa, configurazioneCondizionale, ricerca, lista);
 	
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			// Forward control to the specified success URI

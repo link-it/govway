@@ -2215,7 +2215,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			apsHelper.deleteBinaryParameters(this.wsdlimpler,this.wsdlimplfru);
 			apsHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);
 			
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			
 			if(apsCore.isSetSearchAfterAdd()) {
 				apsCore.setSearchAfterAdd(Liste.SERVIZI, asps.getNome(), request, session, ricerca);

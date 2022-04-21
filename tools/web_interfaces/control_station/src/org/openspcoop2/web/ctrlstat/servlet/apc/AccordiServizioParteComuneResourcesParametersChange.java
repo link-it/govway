@@ -310,7 +310,7 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 			as = apcCore.getAccordoServizioFull(Long.valueOf(idInt));
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			risorsa = null;
 			for (int j = 0; j < as.sizeResourceList(); j++) {

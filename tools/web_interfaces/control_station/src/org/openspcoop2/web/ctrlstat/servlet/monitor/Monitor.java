@@ -566,7 +566,7 @@ public final class Monitor extends Action {
 						filterConsegnaAsincrona = (FiltroStatoConsegnaAsincrona) oldfilter;
 					}
 
-					ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+					ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 				}
 
 				int idLista = Liste.MONITOR_MSG;
@@ -587,7 +587,7 @@ public final class Monitor extends Action {
 				Parameter pSorgente = new Parameter(MonitorCostanti.PARAMETRO_MONITOR_SORGENTE, formBean.getSorgenteDati());
 				
 				// salvo l'oggetto ricerca nella sessione
-				ServletUtils.setSearchObjectIntoSession(session, ricerca);
+				ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 				// conservo il form bean nella session per eventuali richieste
 				// successive (nextPage)
 				session.setAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FORM_BEAN, formBean);
@@ -619,7 +619,7 @@ public final class Monitor extends Action {
 						filter = (FilterSearch) oldfilter;
 					}
 
-					ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+					ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 				}
 
 				int idLista = Liste.MONITOR_MSG;
@@ -643,7 +643,7 @@ public final class Monitor extends Action {
 
 
 				// salvo l'oggetto ricerca nella sessione
-				ServletUtils.setSearchObjectIntoSession(session, ricerca);
+				ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 				// conservo il form bean nella session per eventuali richieste
 				// successive (nextPage)
 				session.setAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FORM_BEAN, formBean);

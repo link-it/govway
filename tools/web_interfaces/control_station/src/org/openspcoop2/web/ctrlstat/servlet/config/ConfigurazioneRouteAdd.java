@@ -216,7 +216,7 @@ public final class ConfigurazioneRouteAdd extends Action {
 			confCore.performUpdateOperation(userLogin, confHelper.smista(), rt);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<RoutingTableDestinazione> lista = confCore.routingList(ricerca);
 

@@ -77,7 +77,7 @@ public final class PorteApplicativeConnettoriMultipliProprietaList extends Actio
 			porteApplicativeHelper.makeMenu();
 	
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 	
 			int idLista = Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA;
 	
@@ -101,7 +101,7 @@ public final class PorteApplicativeConnettoriMultipliProprietaList extends Actio
 
 			porteApplicativeHelper.preparePorteApplicativeConnettoriMultipliPropList(nomePorta, ricerca, lista);
 	
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			// Forward control to the specified success URI

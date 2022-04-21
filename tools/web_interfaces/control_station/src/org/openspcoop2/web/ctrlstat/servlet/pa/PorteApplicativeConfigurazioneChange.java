@@ -182,7 +182,7 @@ public class PorteApplicativeConfigurazioneChange extends Action {
 			porteApplicativeCore.aggiornaDescrizioneMappingErogazionePortaApplicativa(mappingErogazionePortaApplicativa);
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 
 			List<PortaApplicativa> lista = null;

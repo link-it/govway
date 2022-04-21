@@ -147,7 +147,7 @@ public class Costanti {
 	protected final static String SESSION_ATTRIBUTE_USER = "User";
 	protected final static String SESSION_ATTRIBUTE_GENERAL_DATA = "GeneralData";
 	protected final static String SESSION_ATTRIBUTE_PAGE_DATA = "PageData";
-	public final static String SESSION_ATTRIBUTE_RICERCA = "Ricerca";
+	public final static String SESSION_ATTRIBUTE_RICERCA = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "Ricerca";
 	protected final static String SESSION_ATTRIBUTE_RISULTATI_LISTA = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "RisultatiLista";
 	protected final static String SESSION_ATTRIBUTE_CONTA_LISTE = "contaListe";
 	protected final static String SESSION_ATTRIBUTE_LIST_ELEMENT ="ListElement";

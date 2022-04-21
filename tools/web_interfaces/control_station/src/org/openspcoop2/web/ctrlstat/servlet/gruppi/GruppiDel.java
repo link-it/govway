@@ -98,7 +98,7 @@ public final class GruppiDel extends Action {
 			gruppiHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<Gruppo> lista = null;
 			if(gruppiCore.isVisioneOggettiGlobale(userLogin)){

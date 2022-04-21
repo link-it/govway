@@ -126,7 +126,7 @@ public final class AccordiServizioParteComunePortTypeOperationsDel extends Actio
 			}
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 					
 			List<Operation> lista = apcCore.accordiPorttypeOperationList(pt.getId().intValue(), ricerca);
 

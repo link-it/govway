@@ -159,7 +159,7 @@ public abstract class AbstractServletListExtendedAdd extends AbstractServletList
 			consoleCore.performCreateOperation(userLogin, consoleHelper.smista(), wrapper);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			int idLista = this.getIdList();
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);

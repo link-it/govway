@@ -184,7 +184,7 @@ public final class PorteDelegateDel extends Action {
 			porteDelegateHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<PortaDelegata> lista = null;
 			int idLista = -1;

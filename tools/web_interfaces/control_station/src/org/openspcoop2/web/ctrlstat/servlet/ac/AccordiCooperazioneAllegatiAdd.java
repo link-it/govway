@@ -221,7 +221,7 @@ public final class AccordiCooperazioneAllegatiAdd extends Action {
 			acCore.performUpdateOperation(userLogin, acHelper.smista(), ac);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			
 			List<Documento> lista = acCore.accordiCoopAllegatiList(idAccordoInt, ricerca);
 

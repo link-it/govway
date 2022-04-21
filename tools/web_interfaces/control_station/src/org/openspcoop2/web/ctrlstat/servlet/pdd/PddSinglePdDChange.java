@@ -187,7 +187,7 @@ public final class PddSinglePdDChange extends Action {
 			// effettuo le operazioni
 			pddCore.performUpdateOperation(userLogin, pddHelper.smista(), oggettiDaAggiornare.toArray(new Object[1]));
 
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session,Search.class); 
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session,Search.class); 
 
 			List<PdDControlStation> lista = null;
 			if(pddCore.isVisioneOggettiGlobale(userLogin)){

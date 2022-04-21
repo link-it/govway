@@ -79,7 +79,7 @@ public final class AccordiServizioParteSpecificaFruitoriList extends Action {
 			apsHelper.makeMenu();
 	
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 	
 			int idLista = Liste.SERVIZI_FRUITORI;
 	
@@ -90,7 +90,7 @@ public final class AccordiServizioParteSpecificaFruitoriList extends Action {
 	
 			apsHelper.prepareServiziFruitoriList(lista, id, ricerca);
 	
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			// Forward control to the specified success URI

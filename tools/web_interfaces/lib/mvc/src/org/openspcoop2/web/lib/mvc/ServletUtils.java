@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.ISearch;
@@ -366,23 +367,30 @@ public class ServletUtils {
 		return (PageData) session.getAttribute(Costanti.SESSION_ATTRIBUTE_PAGE_DATA);
 	}
 
-	public static boolean existsSearchObjectFromSession(HttpSession session) {
-		ISearch ricerca = (ISearch) session.getAttribute(Costanti.SESSION_ATTRIBUTE_RICERCA);
-		return ricerca!=null;
+	public static boolean existsSearchObjectFromSession(HttpServletRequest request, HttpSession session) {
+		return getObjectFromSession(request, session, ISearch.class, Costanti.SESSION_ATTRIBUTE_RICERCA) != null;
+//		
+//		ISearch ricerca = (ISearch) session.getAttribute(Costanti.SESSION_ATTRIBUTE_RICERCA);
+//		return ricerca!=null;
 	}
 	
-	public static ISearch getSearchObjectFromSession(HttpSession session, Class<?> searchImpl) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
-		ISearch ricerca = (ISearch) session.getAttribute(Costanti.SESSION_ATTRIBUTE_RICERCA);
+	public static ISearch getSearchObjectFromSession(HttpServletRequest request, HttpSession session, Class<?> searchImpl) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
+		ISearch ricerca = getObjectFromSession(request, session, ISearch.class, Costanti.SESSION_ATTRIBUTE_RICERCA);
+		
+//		ISearch ricerca = (ISearch) session.getAttribute(Costanti.SESSION_ATTRIBUTE_RICERCA);
 		if (ricerca == null) {
 			ricerca = (ISearch) ClassLoaderUtilities.newInstance(searchImpl);
 		}
 		return ricerca;
 	}
-	public static void setSearchObjectIntoSession(HttpSession session,ISearch ricerca){
-		session.setAttribute(Costanti.SESSION_ATTRIBUTE_RICERCA, ricerca);
+	public static void setSearchObjectIntoSession(HttpServletRequest request, HttpSession session,ISearch ricerca){
+		setObjectIntoSession(request, session, ricerca, Costanti.SESSION_ATTRIBUTE_RICERCA);
+		
+//		session.setAttribute(Costanti.SESSION_ATTRIBUTE_RICERCA, ricerca);
 	}
-	public static void removeSearchObjectFromSession(HttpSession session){
-		session.removeAttribute(Costanti.SESSION_ATTRIBUTE_RICERCA);
+	public static void removeSearchObjectFromSession(HttpServletRequest request, HttpSession session){
+		removeObjectFromSession(request, session, ISearch.class, Costanti.SESSION_ATTRIBUTE_RICERCA);
+//		session.removeAttribute(Costanti.SESSION_ATTRIBUTE_RICERCA);
 	}
 
 	public static String getSearchFromSession(ISearch ricerca, int idLista){
@@ -581,9 +589,11 @@ public class ServletUtils {
 		Map<String, Object> mapDest = null;
 		if(sessionMap.containsKey(idSessioneTabSrc)) {
 			Map<String, Object> mapSrc = sessionMap.get(idSessioneTabSrc);
-			mapDest = new HashMap<String, Object>();
+//			mapDest = new HashMap<String, Object>();
 			
-			mapDest.putAll(mapSrc);
+			mapDest = (HashMap<String, Object>) SerializationUtils.clone(((HashMap<String, Object>)mapSrc));
+			
+//			mapDest.putAll(((HashMap<String, Object>)mapSrc).clone());
 		} else {
 			mapDest = new HashMap<String, Object>();
 		}

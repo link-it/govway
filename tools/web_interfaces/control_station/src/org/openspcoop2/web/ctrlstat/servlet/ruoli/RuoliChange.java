@@ -123,7 +123,7 @@ public final class RuoliChange extends Action {
 					
 					// preparo lista
 					
-					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 					int idLista = Liste.RUOLI;
 					
@@ -164,7 +164,7 @@ public final class RuoliChange extends Action {
 					ruoliHelper.prepareRuoliList(ricerca, lista);
 					
 					// salvo l'oggetto ricerca nella sessione
-					ServletUtils.setSearchObjectIntoSession(session, ricerca);
+					ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 					
 					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
@@ -275,7 +275,7 @@ public final class RuoliChange extends Action {
 			}
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<Ruolo> lista = null;
 			if(ruoliCore.isVisioneOggettiGlobale(userLogin)){

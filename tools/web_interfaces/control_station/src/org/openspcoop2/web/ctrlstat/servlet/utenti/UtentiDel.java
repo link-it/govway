@@ -437,7 +437,7 @@ public final class UtentiDel extends Action {
 		
 				// Preparo la lista
 				
-				Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session,Search.class);
+				Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session,Search.class);
 		
 				int idLista = Liste.SU;
 		

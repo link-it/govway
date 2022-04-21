@@ -947,7 +947,7 @@ public final class SoggettiAdd extends Action {
 			}
 									
 			// recupero la lista dei soggetti
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			if(soggettiCore.isSetSearchAfterAdd()) {
 				soggettiCore.setSearchAfterAdd(Liste.SOGGETTI, soggettoConfig.getNome(), request, session, ricerca);

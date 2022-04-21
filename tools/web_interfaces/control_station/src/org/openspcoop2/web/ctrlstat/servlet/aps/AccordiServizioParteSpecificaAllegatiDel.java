@@ -103,7 +103,7 @@ public final class AccordiServizioParteSpecificaAllegatiDel extends Action {
 			AccordiServizioParteSpecificaUtilities.deleteAccordoServizioParteSpecificaAllegati(asps, userLogin, apsCore, apsHelper, idAllegati);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			
 			List<Documento> lista = apsCore.serviziAllegatiList(asps.getId().intValue(), ricerca);
 

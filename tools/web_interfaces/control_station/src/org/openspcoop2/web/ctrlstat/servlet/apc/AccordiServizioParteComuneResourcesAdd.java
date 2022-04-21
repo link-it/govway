@@ -410,7 +410,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 			apcHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<Resource> lista = apcCore.accordiResourceList(idInt, ricerca);
 

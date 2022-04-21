@@ -86,7 +86,7 @@ public final class AccordiServizioParteComunePortTypesList extends Action {
 			apcHelper.makeMenu();
 
 			// Controllo i criteri di ricerca e recupero eventuali parametri
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.ACCORDI_PORTTYPE;
 
@@ -97,7 +97,7 @@ public final class AccordiServizioParteComunePortTypesList extends Action {
 			apcHelper.prepareAccordiPorttypeList(id,as, lista, ricerca, tipoAccordo);
 
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			

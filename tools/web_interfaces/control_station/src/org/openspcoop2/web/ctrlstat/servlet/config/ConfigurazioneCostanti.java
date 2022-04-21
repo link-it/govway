@@ -2306,7 +2306,7 @@ public class ConfigurazioneCostanti {
 	
 	
 	
-	public final static String PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE = "infoType";
+	public final static String PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE = Costanti.SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "infoType";
 	public final static String PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_TOKEN = "token";
 	public final static String PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_ATTRIBUTE_AUTHORITY = "aa";
 	public static boolean isConfigurazioneAttributeAuthority(String v) {

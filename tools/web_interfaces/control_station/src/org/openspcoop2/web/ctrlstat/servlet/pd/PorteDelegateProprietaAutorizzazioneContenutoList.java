@@ -82,7 +82,7 @@ public final class PorteDelegateProprietaAutorizzazioneContenutoList extends Act
 			porteDelegateHelper.makeMenu();
 	
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 	
 			int idLista = Liste.PORTE_DELEGATE_PROPRIETA_AUTORIZZAZIONE_CONTENUTO;
 	
@@ -93,7 +93,7 @@ public final class PorteDelegateProprietaAutorizzazioneContenutoList extends Act
 	
 			porteDelegateHelper.preparePorteDelegateAutorizzazioneContenutoCustomPropList(nomePorta, ricerca, lista);
 	
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			// Forward control to the specified success URI

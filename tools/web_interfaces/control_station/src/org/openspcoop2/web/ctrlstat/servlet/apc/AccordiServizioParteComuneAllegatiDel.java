@@ -108,7 +108,7 @@ public final class AccordiServizioParteComuneAllegatiDel extends Action {
 			AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComuneAllegati(as, userLogin, apcCore, apcHelper, idAllegati);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			List<Documento> lista = apcCore.accordiAllegatiList(as.getId().intValue(), ricerca);
 
 			apcHelper.prepareAccordiAllegatiList(as, ricerca, lista,tipoAccordo);

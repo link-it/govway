@@ -285,7 +285,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyAdd extends Action 
 			// Preparo la lista
 			int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
 			
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 
@@ -301,7 +301,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyAdd extends Action 
 					idLista, ruoloPorta, nomePorta, serviceBinding); 
 			
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			// Forward control to the specified success URI

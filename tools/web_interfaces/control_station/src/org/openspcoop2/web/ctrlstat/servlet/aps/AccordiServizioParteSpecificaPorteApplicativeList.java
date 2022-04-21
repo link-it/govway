@@ -110,7 +110,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeList extends Act
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 	
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 	
 			int idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
 	
@@ -122,7 +122,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeList extends Act
 			
 			apsHelper.prepareServiziConfigurazioneList(lista, id, idSoggettoErogatoreDelServizio, ricerca);
 	
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			ForwardParams fwP = apsHelper.isModalitaCompleta() ? ForwardParams.LIST() : AccordiServizioParteSpecificaCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE;

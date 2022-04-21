@@ -75,7 +75,7 @@ public final class SoggettiRuoliList extends Action {
 			soggettiHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.SOGGETTI_RUOLI;
 
@@ -86,7 +86,7 @@ public final class SoggettiRuoliList extends Action {
 			soggettiHelper.prepareRuoliList(ricerca, lista);
 			
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

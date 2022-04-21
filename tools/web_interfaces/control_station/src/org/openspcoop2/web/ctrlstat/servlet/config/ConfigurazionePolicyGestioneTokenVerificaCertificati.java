@@ -510,7 +510,7 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 				// verifica richiesta dal link nella lista, torno alla lista
 				if(arrivoDaLista) {
 					
-					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 					String infoTypeA = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 					String infoTypeSession = ServletUtils.getObjectFromSession(request, session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
@@ -558,7 +558,7 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 					confHelper.prepareGestorePolicyTokenList(ricerca, lista, idLista); 
 					
 					// salvo l'oggetto ricerca nella sessione
-					ServletUtils.setSearchObjectIntoSession(session, ricerca);
+					ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 					
 					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 				

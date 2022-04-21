@@ -301,7 +301,7 @@ public final class PorteDelegateAzioneAdd extends Action {
 			List<String> listaAzioni = portaDelegata.getAzione().getAzioneDelegataList();
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			int idLista = Liste.PORTE_DELEGATE_AZIONI;
 			ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
 			

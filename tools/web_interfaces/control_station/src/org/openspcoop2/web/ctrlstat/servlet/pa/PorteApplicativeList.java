@@ -93,7 +93,7 @@ public final class PorteApplicativeList extends Action {
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<PortaApplicativa> lista = null;
 			int idLista = -1;
@@ -110,7 +110,7 @@ public final class PorteApplicativeList extends Action {
 
 			porteApplicativeHelper.preparePorteAppList(ricerca, lista, idLista);
 
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			// Forward control to the specified success URI

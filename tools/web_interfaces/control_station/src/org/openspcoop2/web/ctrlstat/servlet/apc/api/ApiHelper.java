@@ -542,7 +542,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		// reset delle cache richiesto dal link nella lista, torno alla lista
 		if(resetElementoCache) {
 			// preparo lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(this.session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(this.request, this.session, Search.class);
 			
 			int idLista = Liste.ACCORDI;
 			
@@ -567,7 +567,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			this.prepareApiList(lista, ricerca, tipoAccordo);
 
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(this.session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(this.request, this.session, ricerca);
  
 			ServletUtils.setGeneralAndPageDataIntoSession(this.session, gd, this.pd);
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ApiCostanti.OBJECT_NAME_APC_API, CostantiControlStation.TIPO_OPERAZIONE_RESET_CACHE_ELEMENTO);

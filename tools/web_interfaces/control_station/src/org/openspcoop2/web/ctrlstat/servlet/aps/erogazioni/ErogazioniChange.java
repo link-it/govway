@@ -90,7 +90,7 @@ public final class ErogazioniChange extends Action {
 			
 			// Rimuovo eventuali salvataggi fatti accedendo in precedenza
 			ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI);
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			ricerca.setSearchString(Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI, "");
 			ricerca.clearFilter(Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI, Filtri.FILTRO_CONNETTORE_TIPO);
 			ricerca.clearFilter(Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI, Filtri.FILTRO_CONNETTORE_TIPO_PLUGIN);

@@ -637,7 +637,7 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 			apcHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idPT = pt.getId().intValue();
 			if(updateAccordo) {		

@@ -399,7 +399,7 @@ public final class AccordiServizioParteComunePortTypesAdd extends Action {
 			apcHelper.setMessageWarningStatoConsistenzaAccordo(false, as);
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<PortType> lista = apcCore.accordiPorttypeList(idInt, ricerca);
 

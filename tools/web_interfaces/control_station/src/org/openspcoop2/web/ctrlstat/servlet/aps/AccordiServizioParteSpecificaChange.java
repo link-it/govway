@@ -1793,7 +1793,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				
 				String superUser = ServletUtils.getUserLoginFromSession(session);
 				
-				Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+				Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 				//				PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
 				//				
@@ -2074,7 +2074,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			// eseguo l'aggiornamento
 			apsCore.performUpdateOperation(superUser, apsHelper.smista(), oggettiDaAggiornare.toArray());
 
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			//				PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
 			//				

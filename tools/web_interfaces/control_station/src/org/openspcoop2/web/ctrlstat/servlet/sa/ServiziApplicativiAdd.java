@@ -1290,7 +1290,7 @@ public final class ServiziApplicativiAdd extends Action {
 			}
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<ServizioApplicativo> lista = null;
 

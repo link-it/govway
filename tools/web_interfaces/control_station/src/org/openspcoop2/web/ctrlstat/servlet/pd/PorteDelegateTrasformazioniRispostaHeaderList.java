@@ -78,7 +78,7 @@ public class PorteDelegateTrasformazioniRispostaHeaderList extends Action {
 			porteDelegateHelper.makeMenu();
 	
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			
 			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_HEADER; 
 			
@@ -89,7 +89,7 @@ public class PorteDelegateTrasformazioniRispostaHeaderList extends Action {
 			
 			porteDelegateHelper.preparePorteDelegateTrasformazioniRispostaHeaderList(nomePorta, idTrasformazione, idTrasformazioneRisposta, ricerca, lista); 
 	
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			// Forward control to the specified success URI

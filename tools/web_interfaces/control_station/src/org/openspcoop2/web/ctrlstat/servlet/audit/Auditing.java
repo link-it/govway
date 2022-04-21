@@ -149,7 +149,7 @@ public   class Auditing extends Action {
 			}
 
 			// ritorno pagina a lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.AUDIT_REPORT;
 
@@ -168,7 +168,7 @@ public   class Auditing extends Action {
 					contoggetto);
 
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
