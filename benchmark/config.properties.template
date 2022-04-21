@@ -1,5 +1,5 @@
-BENCHMARK_HOME=/opt/local/GIT_GOV/govway_3.3_jdk11/example/pdd/client/benchmark/
-binJMeter=${BENCHMARK_HOME}/jmeter/apache-jmeter-5.4.3/bin/
+BENCHMARK_HOME=absolute benchmark dir
+binJMeter=apache jmeter home/bin/
 
 # Nodo GovWay Locale
 nodoRunIP=GovWayServer
