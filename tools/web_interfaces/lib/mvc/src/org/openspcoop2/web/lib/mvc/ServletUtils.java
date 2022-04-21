@@ -486,21 +486,22 @@ public class ServletUtils {
 			
 			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 			
-			if(sessionMap != null) {
-				Map<String, Object> mapTabId = null;
-				if(sessionMap.containsKey(tabId)) {
-					mapTabId = sessionMap.get(tabId);
-					
-				} else {
-					// primo accesso copio le informazioni dalla mappa relativa al tab precedente
-					copiaAttributiSessioneTab(session, prevTabId, tabId);
-					mapTabId = sessionMap.get(tabId);
-				}
-				
-				mapTabId.put(objectName, obj);
-			} else {
+			if(sessionMap == null) {
 				sessionMap = new HashMap<String, Map<String,Object>>(); 
 			}
+			
+			Map<String, Object> mapTabId = null;
+			if(sessionMap.containsKey(tabId)) {
+				mapTabId = sessionMap.get(tabId);
+				
+			} else {
+				// primo accesso copio le informazioni dalla mappa relativa al tab precedente
+				copiaAttributiSessioneTab(session, prevTabId, tabId);
+				sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
+				mapTabId = sessionMap.get(tabId);
+			}
+				
+			mapTabId.put(objectName, obj);
 			
 			session.setAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP,sessionMap);
 			return;
@@ -524,22 +525,23 @@ public class ServletUtils {
 			
 			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 			
-			if(sessionMap != null) {
-				Map<String, Object> mapTabId = null;
-				if(sessionMap.containsKey(tabId)) {
-					mapTabId = sessionMap.get(tabId);
-					
-				} else {
-					// primo accesso copio le informazioni dalla mappa relativa al tab precedente
-					copiaAttributiSessioneTab(session, prevTabId, tabId);
-					mapTabId = sessionMap.get(tabId);
-				}
-				
-				if(mapTabId.containsKey(objectName))
-					return objectClass.cast(mapTabId.get(objectName));
-			} else {
+			if(sessionMap == null) {
 				sessionMap = new HashMap<String, Map<String,Object>>(); 
 			}
+			
+			Map<String, Object> mapTabId = null;
+			if(sessionMap.containsKey(tabId)) {
+				mapTabId = sessionMap.get(tabId);
+				
+			} else {
+				// primo accesso copio le informazioni dalla mappa relativa al tab precedente
+				copiaAttributiSessioneTab(session, prevTabId, tabId);
+				sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
+				mapTabId = sessionMap.get(tabId);
+			}
+			
+			if(mapTabId.containsKey(objectName))
+				return objectClass.cast(mapTabId.get(objectName));
 			
 			// leggi dall request
 //			if(request != null) {
