@@ -201,7 +201,7 @@ function RemoveEntries(tipo) {
    	  // aggiungo parametro idTab
    	  if(tabValue != ''){
    	  	addHidden(deleteForm, tabSessionKey , tabValue);
-   	 	addHidden(deleteform, prevTabSessionKey , tabValue);
+   	 	addHidden(deleteForm, prevTabSessionKey , tabValue);
    	  }
    	  // form submit
    	  deleteForm.submit();
@@ -456,7 +456,7 @@ function Esporta(tipo) {
 		   	  // aggiungo parametro idTab
 		   	  if(tabValue != ''){
 		   	  	addHidden(exportForm, tabSessionKey , tabValue);
-		   		addHidden(exportform, prevTabSessionKey , tabValue);
+		   		addHidden(exportForm, prevTabSessionKey , tabValue);
 		   	  }
 	   	 	 // form submit
 	   	 	 exportForm.submit();
