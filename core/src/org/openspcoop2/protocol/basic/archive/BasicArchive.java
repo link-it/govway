@@ -385,11 +385,12 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 	        		 while(descr.contains("\r")) {
 	        			 descr = descr.replace("\r", "");
 	        		 }
-	        		 if(descr.length()<=255) {
+	        		 int OFFSET = 15; // uso 250 per essere sicuro che finisca in oracle con caratteri strani (value too large for column "GOVWAY330"."ACCORDI"."DESCRIZIONE" (actual: 257, maximum: 255))
+	        		 if(descr.length()<=(255-OFFSET)) { 
 	        			 accordoServizioParteComune.setDescrizione(descr);
 	        		 }
 	        		 else {
-	        			 accordoServizioParteComune.setDescrizione(descr.substring(0, 250)+ " ...");
+	        			 accordoServizioParteComune.setDescrizione(descr.substring(0, (245-OFFSET))+ " ...");
 	        		 }
 	        	 }
 	         }

@@ -1,3 +1,10 @@
+2022-04-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Il Caricamento di un'interfaccia OpenAPI con una descrizione superiore a 255 caratteri, 
+	causava un errore inatteso in alcuni casi su database Oracle dove si otteneva l'errore:
+	Caused by: java.sql.SQLException: ORA-12899: value too large for column "GOVWAY334TESTBYSETUP"."ACCORDI"."DESCRIZIONE" (actual: 257, maximum: 255)
+
 2022-04-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]
