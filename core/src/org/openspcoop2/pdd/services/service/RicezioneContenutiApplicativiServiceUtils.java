@@ -135,6 +135,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 		ServiceBindingConfiguration bindingConfig = requestInfo.getBindingConfig();
 		ServiceBinding integrationServiceBinding = requestInfo.getIntegrationServiceBinding();
 		ServiceBinding protocolServiceBinding = requestInfo.getProtocolServiceBinding();
+		IDService idModuloAsService = req.getIdModuloAsIDService();
 				
 		IRegistryReader registryReader = serviceIdentificationReader.getRegistryReader();
 		CachedConfigIntegrationReader configIntegrationReader = (CachedConfigIntegrationReader) serviceIdentificationReader.getConfigIntegrationReader();
@@ -225,7 +226,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 				
 				// Provo ad ottenere il reader soap
 				OpenSPCoop2MessageSoapStreamReader soapStreamReader = null;
-				if(ServiceBinding.SOAP.equals(integrationServiceBinding)) {
+				if(ServiceBinding.SOAP.equals(integrationServiceBinding) && !IDService.PORTA_DELEGATA_XML_TO_SOAP.equals(idModuloAsService)) {
 					try{
 						if(req!=null) {
 							soapStreamReader = req.getSoapReader();
