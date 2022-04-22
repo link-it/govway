@@ -61,17 +61,15 @@ public class PKCS7Signature {
 	private Provider provider;
 	
 	public PKCS7Signature(KeyStore keystore, String alias, String passwordPrivateKey) throws UtilsException{
-		this.keystore = keystore;
-		this.privateKey = this.keystore.getPrivateKey(alias, passwordPrivateKey);
-		this.certificate = this.keystore.getCertificate(alias);
-		
-		this.provider = keystore.getKeystoreProvider();
-	
-		// Prendo il provider dal keystore per PKCS11
-		// Per gli altri keystore, visto che la SUN non supporta l'algoritmo di firma è possibile usare bouncy castle nell'altro costruttore
-		//	this.provider = new BouncyCastleProvider();
-		//	Security.addProvider(this.provider);
-	
+		boolean useKeystoreProvider = false;
+		if(keystore!=null && "pkcs11".equalsIgnoreCase(keystore.getKeystoreType())) {
+			useKeystoreProvider = true;
+			// Prendo il provider dal keystore per PKCS11, il cui provider implementa l'algoritmo di firma specifica per la chiave memorizzata nel dispositivo.
+		}
+		init(keystore, alias, passwordPrivateKey, useKeystoreProvider);
+	}
+	public PKCS7Signature(KeyStore keystore, String alias, String passwordPrivateKey, boolean useKeystoreProvider) throws UtilsException{
+		init(keystore, alias, passwordPrivateKey, useKeystoreProvider);	
 	}
 	public PKCS7Signature(KeyStore keystore, String alias, String passwordPrivateKey, boolean useBouncyCastle, boolean addBouncyCastleProvider) throws UtilsException{
 		this(keystore, alias, passwordPrivateKey);
@@ -86,6 +84,21 @@ public class PKCS7Signature {
 			else {
 				this.provider = Security.getProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
 			}
+		}
+	}
+	private void init(KeyStore keystore, String alias, String passwordPrivateKey, boolean useKeystoreProvider) throws UtilsException {
+		this.keystore = keystore;
+		this.privateKey = this.keystore.getPrivateKey(alias, passwordPrivateKey);
+		this.certificate = this.keystore.getCertificate(alias);
+		
+		if(useKeystoreProvider) {
+			this.provider = keystore.getKeystoreProvider();
+		
+			// Prendere il provider dal keystore serve per PKCS11 il cui provider implementa l'algoritmo di firma specifica per la chiave memorizzata nel dispositivo.
+			// Per gli altri tipi di keystore, nei quali tipicamente il provider è la SUN, non deve essere usata questa opzione altrimenti si ottiene l'errore:
+			//    no such algorithm: SHA256WITHRSA for provider SUN
+			// Per quei tipi di keystore devono essere usati i costruttori in cui viene usato bouncy castle 
+			// o il costruttore senza parametri relativi al provider, il quale utilizza quello il provider più corretto preente nella JVM.
 		}
 	}
 	
@@ -113,11 +126,18 @@ public class PKCS7Signature {
 
 			CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
 			// Initializing the the BC's Signer
-			ContentSigner sha1Signer = new JcaContentSignerBuilder(algorithm).setProvider(this.provider)
-					.build(this.privateKey);
+			JcaContentSignerBuilder cs = new JcaContentSignerBuilder(algorithm);
+			if(this.provider!=null) {
+				cs.setProvider(this.provider);
+			}
+			ContentSigner sha1Signer = cs.build(this.privateKey);
 
+			JcaDigestCalculatorProviderBuilder builder = new JcaDigestCalculatorProviderBuilder();
+			if(this.provider!=null) {
+				builder.setProvider(this.provider);
+			}
 			gen.addSignerInfoGenerator(
-					new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().setProvider(this.provider).build())
+					new JcaSignerInfoGeneratorBuilder(builder.build())
 							.build(sha1Signer, cert));
 			// adding the certificate
 			gen.addCertificates(certs);
