@@ -91,12 +91,7 @@ public class IDUtilities {
 	
 	private static org.openspcoop2.utils.Semaphore semaphore_generateDateTime = new org.openspcoop2.utils.Semaphore("IDUtilities.generateDateTime");
 	public static String generateDateTime(String format, int syncMs) {
-		semaphore_generateDateTime.acquireThrowRuntime("generateDateTime_defaultEngine");
-		try {
-			return IDUtilities.generateDateTime(DateUtils.getDEFAULT_DATA_ENGINE_TYPE(), format, syncMs);
-		}finally {
-			semaphore_generateDateTime.release("generateDateTime_defaultEngine");
-		}
+		return IDUtilities.generateDateTime(DateUtils.getDEFAULT_DATA_ENGINE_TYPE(), format, syncMs);
 	}
 	public static String generateDateTime(DateEngineType type, String format, int syncMs) {
 		semaphore_generateDateTime.acquireThrowRuntime("generateDateTime");
@@ -108,12 +103,7 @@ public class IDUtilities {
 		}
 	}
 	public static String generateDateTime_ISO_8601_TZ(String format, int syncMs) {
-		semaphore_generateDateTime.acquireThrowRuntime("generateDateTime_ISO_8601_TZ_defaultEngine");
-		try {
-			return IDUtilities.generateDateTime_ISO_8601_TZ(DateUtils.getDEFAULT_DATA_ENGINE_TYPE(), format, syncMs);
-		}finally {
-			semaphore_generateDateTime.release("generateDateTime_ISO_8601_TZ_defaultEngine");
-		}
+		return IDUtilities.generateDateTime_ISO_8601_TZ(DateUtils.getDEFAULT_DATA_ENGINE_TYPE(), format, syncMs);
 	}
 	public static String generateDateTime_ISO_8601_TZ(DateEngineType type, String format, int syncMs) {
 		semaphore_generateDateTime.acquireThrowRuntime("generateDateTime_ISO_8601_TZ");
