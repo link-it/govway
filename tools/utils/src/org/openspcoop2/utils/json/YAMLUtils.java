@@ -20,7 +20,10 @@
 
 package org.openspcoop2.utils.json;
 
+import java.util.Map;
 import java.util.TimeZone;
+
+import org.openspcoop2.utils.UtilsException;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -216,4 +219,30 @@ public class YAMLUtils extends AbstractUtils {
 	}
 	
 	
+	// UTILS per ANCHOR
+	
+	public static boolean containsMergeKeyAnchor(String yaml) {
+		return yaml!=null && yaml.contains("<<: *");
+	}
+	
+	public static String resolveMergeKeyAndConvertToJson(String yaml) throws UtilsException {
+		return resolveMergeKeyAndConvertToJson(yaml, JSONUtils.getInstance());
+	}
+	public static String resolveMergeKeyAndConvertToJson(String yaml, JSONUtils jsonUtils) throws UtilsException {
+		// Fix merge key '<<: *'
+		// La funzionalità di merge key è supportata fino allo yaml 1.1 (https://ktomk.github.io/writing/yaml-anchor-alias-and-merge-key.html)
+		// Mentre OpenAPI dice di usare preferibilmente YAML 1.2 (https://swagger.io/specification/):
+		//   "n order to preserve the ability to round-trip between YAML and JSON formats, YAML version 1.2 is RECOMMENDED"
+		// Inoltre le anchor utilizzate nelle merge key non sono supportate correttamente in jackson:
+		//   https://github.com/FasterXML/jackson-dataformats-text/issues/98
+		// Mentre vengono gestite correttamente da snake (https://linuxtut.com/convert-json-and-yaml-in-java-(using-jackson-and-snakeyaml)-0ad0a/)
+		// Come fix quindi nel caso siano presenti viene fatta una serializzazione tramite snake che le risolve.
+		if(containsMergeKeyAnchor(yaml)) {
+			// Risoluzione merge key '<<: *'
+			Map<String, Object> obj = new org.yaml.snakeyaml.Yaml().load(yaml);
+			String jsonRepresentation = jsonUtils.toString(obj);
+			return jsonRepresentation;
+		}
+		return null;
+	}
 }

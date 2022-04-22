@@ -307,7 +307,15 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						}
 						
 						if(apiRawIsYaml) {
-							schemaNodeRoot = yamlUtils.getAsNode(apiRaw);
+							// Fix merge key '<<: *'
+							if(YAMLUtils.containsMergeKeyAnchor(apiRaw)) {
+								// Risoluzione merge key '<<: *'
+								String jsonRepresentation = YAMLUtils.resolveMergeKeyAndConvertToJson(apiRaw);
+								schemaNodeRoot = jsonUtils.getAsNode(jsonRepresentation);
+							}
+							else {
+								schemaNodeRoot = yamlUtils.getAsNode(apiRaw);
+							}
 						}
 						else {
 							schemaNodeRoot = jsonUtils.getAsNode(apiRaw);
@@ -331,7 +339,17 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 								}
 								else {
 									if(yamlUtils.isYaml(schema)) {
-										schemaNodeInternal = yamlUtils.getAsNode(schema);
+										// Vedi fix descritto sopra
+										String sSchema = new String(schema);
+										// Fix merge key '<<: *'
+										if(YAMLUtils.containsMergeKeyAnchor(sSchema)) {
+											// Risoluzione merge key '<<: *'
+											String jsonRepresentation = YAMLUtils.resolveMergeKeyAndConvertToJson(sSchema);
+											schemaNodeInternal = jsonUtils.getAsNode(jsonRepresentation);
+										}
+										else {
+											schemaNodeInternal = yamlUtils.getAsNode(schema);
+										}
 									}
 								}
 								if(schemaNodeInternal==null) {

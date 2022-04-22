@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.json.YAMLUtils;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.rest.ApiFormats;
@@ -143,7 +144,27 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 	public void init(Logger log, String content, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
 		this._init(log, content, config, schema);
 	}
-	private void _init(Logger log, String content, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
+	private void _init(Logger log, String contentParam, ApiReaderConfig config, ApiSchema ... schema) throws ProcessingException {
+		
+		String content = contentParam;
+		try {
+			YAMLUtils yamlUtils = YAMLUtils.getInstance();
+			boolean apiRawIsYaml = yamlUtils.isYaml(content);
+			if(apiRawIsYaml) {
+				// Fix merge key '<<: *'
+				if(YAMLUtils.containsMergeKeyAnchor(content)) {
+					// Risoluzione merge key '<<: *'
+					String jsonRepresentation = YAMLUtils.resolveMergeKeyAndConvertToJson(content);
+					if(jsonRepresentation!=null) {
+						content = jsonRepresentation;
+					}
+				}
+			}
+		}catch(Throwable t) {
+			log.error("Find and resolve merge key failed: "+t.getMessage(),t);
+			content = contentParam;
+		}
+		
 		try {
 			SwaggerParseResult pr = null;
 			if(ApiFormats.SWAGGER_2.equals(this.format)) {

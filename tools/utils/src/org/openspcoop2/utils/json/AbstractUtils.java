@@ -167,10 +167,26 @@ public abstract class AbstractUtils {
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
+	
+	public byte[] toByteArray(Map<String, Object> doc) throws UtilsException {
+		try {
+			return _getObjectWriter(this.prettyPrint).writeValueAsBytes(doc);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
 
 	// TO STRING
 
 	public String toString(JsonNode doc) throws UtilsException {
+		try {
+			return _getObjectWriter(this.prettyPrint).writeValueAsString(doc);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
+	public String toString(Map<String, Object> doc) throws UtilsException {
 		try {
 			return _getObjectWriter(this.prettyPrint).writeValueAsString(doc);
 		}catch(Exception e) {

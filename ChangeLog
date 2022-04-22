@@ -1,5 +1,18 @@
 2022-04-22  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole, Utils]
+	Risolto Bug OP-1357
+	OpenAPI in formato YAML che possedevano anchor "merge key" (es. <<: *) non superavano la validazione dell'interfaccia.
+
+2022-04-22  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Nella classe PKCS7Signature è stato reintrodotto il funzionamento compatibile con l'inizializzazione che era presente prima del commit 'f65402b8678b1315d429c62b876099b9ef2c1862'.
+	Viene adesso utilizzato il provider del keystore solamente se è di tipo PKCS11, oppure se è stato dichiaratamente indicato nel costruttore.
+	Inoltre è stato risolto un deadlock sui semafori presenti nella classe tools/utils/src/org/openspcoop2/utils/id/IDUtilities.java
+
+2022-04-22  Andrea Poli <apoli@link.it>
+
 	* [ProtocolloSDI]
 	Risolto bug OP-1354
 	La funzionalità implementata nella classe 'OpenSPCoop2MessageSoapStreamReader' ed utilizzata per leggere le informazioni SOAP in streaming,

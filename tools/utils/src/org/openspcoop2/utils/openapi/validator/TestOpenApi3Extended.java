@@ -79,8 +79,8 @@ public class TestOpenApi3Extended {
 		if(args!=null && args.length>1) {
 			mergeSpec = Boolean.valueOf(args[1]);
 		}
+
 		
-				
 		// *** TEST per il Parser e validazione dello schema *** //
 		
 		{
@@ -3385,6 +3385,18 @@ public class TestOpenApi3Extended {
 		
 		System.out.println("Test #23 validazione contenuto base64 completato\n\n");
 		
+		
+		
+		
+		// ** Test per validazione con openapi che usano testMergeKey ... **
+		
+		System.out.println("Test #24 openapi che usano testMergeKey ...");
+		
+		testMergeKey(openAPILibrary, mergeSpec);
+		
+		System.out.println("Test #24 openapi che usano testMergeKey completato\n\n");
+		
+		
 	}
 
 	
@@ -3713,4 +3725,119 @@ public class TestOpenApi3Extended {
 		System.out.println("TEST #S-2 per validazione file in base64 completato!");
 	}
 
+	
+	private static void testMergeKey(OpenAPILibrary openAPILibrary, boolean mergeSpec)
+			throws UtilsException, ProcessingException, URISyntaxException, Exception {
+		System.out.println("#### Verifica OpenAPI YAML con mergeKey ####");
+		
+		URL url = TestOpenApi3Extended.class.getResource("/org/openspcoop2/utils/openapi/mergeKey.yaml");
+					
+		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
+		configOpenApi4j.setProcessInclude(false);
+		apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi4j);
+		Api apiOpenApi4j = apiReaderOpenApi4j.read();
+								
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
+		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
+		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
+		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
+		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi4j, configO);
+
+		System.out.println("Test Richiesta...");
+
+		{ 
+			TextHttpRequestEntity requestS1 = new TextHttpRequestEntity();
+			
+			requestS1.setMethod(HttpRequestMethod.GET);
+			requestS1.setUrl("test/"+UUID.randomUUID().toString());	
+					
+			try {				
+				apiValidatorOpenApi4j.validate(requestS1);
+				
+			} catch (ValidatorException e) {
+				System.out.println(e.getMessage());
+				throw new Exception("Errore non atteso");
+			}
+		}
+		System.out.println("Test Richiesta Superato!");
+		
+		System.out.println("Test Risposta...");
+		
+		{
+			TextHttpResponseEntity httpResponseTestS1 = new TextHttpResponseEntity();
+			
+			httpResponseTestS1.setStatus(200);		
+			httpResponseTestS1.setMethod(HttpRequestMethod.GET);
+			httpResponseTestS1.setUrl("test/"+UUID.randomUUID().toString());	
+			Map<String, List<String>> headersS1 = new HashMap<>();
+			TransportUtils.setHeader(headersS1,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			httpResponseTestS1.setHeaders(headersS1);
+			httpResponseTestS1.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			httpResponseTestS1.setContent("{ \"test\": \"01043931007\", \"valida\": false }");
+		
+			try {				
+				apiValidatorOpenApi4j.validate(httpResponseTestS1);
+			} catch (ValidatorException e) {
+				System.out.println(e.getMessage());
+				throw new Exception("Errore non atteso");
+			}
+			
+			
+			httpResponseTestS1.setStatus(400);	
+			headersS1 = new HashMap<>();
+			TransportUtils.setHeader(headersS1,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);
+			httpResponseTestS1.setHeaders(headersS1);
+			httpResponseTestS1.setContentType(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);
+			httpResponseTestS1.setContent("{ \"type\": \"https://example.com/400\", \"title\": \"example\", \"detail\": \"example\" }");
+			
+			try {				
+				apiValidatorOpenApi4j.validate(httpResponseTestS1);
+			} catch (ValidatorException e) {
+				System.out.println(e.getMessage());
+				throw new Exception("Errore non atteso");
+			}
+			
+			
+			httpResponseTestS1.setStatus(400);	
+			headersS1 = new HashMap<>();
+			TransportUtils.setHeader(headersS1,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+			httpResponseTestS1.setHeaders(headersS1);
+			httpResponseTestS1.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+			httpResponseTestS1.setContent("{ \"type\": \"https://example.com/400\", \"title\": \"example\", \"detail\": \"example\" }");
+			
+			String erroreAttesoRisposta = null;
+			switch (openAPILibrary) {
+			case json_schema:
+				erroreAttesoRisposta = "Content-Type 'application/json' (http response status '400') unsupported";
+				break;
+			case openapi4j:
+				erroreAttesoRisposta = "Content type 'application/json' is not allowed for body content. (code: 203)";
+				break;
+			case swagger_request_validator:
+				erroreAttesoRisposta = "[ERROR][RESPONSE][] Response Content-Type header 'application/json' does not match any allowed types. Must be one of: [application/problem+json].";
+				break;
+			}
+			try {				
+				apiValidatorOpenApi4j.validate(httpResponseTestS1);
+				
+				//if (openAPILibrary != OpenAPILibrary.json_schema) {
+					throw new Exception("Errore atteso '"+erroreAttesoRisposta+"' non rilevato");
+			//	}
+				
+			} catch (ValidatorException e) {
+				System.out.println(e.getMessage());
+				if (!e.getMessage().contains(erroreAttesoRisposta)) {
+					throw new Exception("Errore atteso '"+erroreAttesoRisposta+"' non rilevato");
+				}
+			}
+		}
+			
+		System.out.println("Test Risposta Superato!");
+		
+		System.out.println("TEST OpenAPI YAML con mergeKey completato!");
+
+	}
 }
