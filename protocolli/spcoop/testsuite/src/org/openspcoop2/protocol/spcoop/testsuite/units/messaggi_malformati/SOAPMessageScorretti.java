@@ -3138,7 +3138,7 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 						"adminSilX", "123456");
 			IntegrationManagerMessage msg = new IntegrationManagerMessage();
 			msg.setMessage(messaggioXMLRichiesta);
-			im.invocaPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_BASIC, msg);
+			im.invocaPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_STATELESS, msg);
 			
 			throw new Exception("Metodo invocaPortaDelegata non ha causato errori");
 		}catch(IntegrationManagerException e){
