@@ -28,6 +28,7 @@ import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.constants.SignatureAlgorithm;
 import org.openspcoop2.security.message.constants.SignatureC14NAlgorithm;
+import org.openspcoop2.utils.digest.DigestEncoding;
 
 /**
  * Classe dove sono fornite le stringhe costanti, definite dalla specifica del protocollo ModI, 
@@ -221,6 +222,11 @@ public class ModICostanti {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_ES256 = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.ES256.name();
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_ES384 = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.ES384.name();
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_ALG_ES512 = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.ES512.name();
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_DIGEST_ENCODING = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_DIGEST_ENCODING;
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_DIGEST_ENCODING = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_DIGEST_ENCODING;
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DIGEST_ENCODING_BASE64 = DigestEncoding.BASE64.name();
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DIGEST_ENCODING_HEX = DigestEncoding.HEX.name();
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509 = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509;
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509 = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509;

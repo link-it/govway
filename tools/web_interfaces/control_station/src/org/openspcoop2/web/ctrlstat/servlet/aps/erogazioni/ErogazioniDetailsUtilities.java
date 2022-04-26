@@ -2081,6 +2081,15 @@ public class ErogazioniDetailsUtilities {
 				sb.append(v);
 			}
 			
+			// Codifica Digest
+			v = map.get(prefixKey+ModIUtils.API_IMPL_SICUREZZA_MESSAGGIO_DIGEST_ENCODING);
+			if(StringUtils.isNotEmpty(v)) {
+				sb.append(newLine);
+				sb.append(CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_DIGEST_ENCODING_LABEL);
+				sb.append(separator);
+				sb.append(v);
+			}
+			
 			// Header Firmati
 			v = map.get(prefixKey+ModIUtils.API_IMPL_SICUREZZA_MESSAGGIO_HTTP_HEADER_FIRMATI);
 			if(StringUtils.isNotEmpty(v)) {

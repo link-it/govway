@@ -32,7 +32,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.security.Key;
 import java.security.KeyStore;
-import java.security.MessageDigest;
 import java.security.Provider;
 import java.security.cert.CertStore;
 import java.util.ArrayList;
@@ -58,7 +57,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
-import org.openspcoop2.utils.digest.MessageDigestFactory;
+import org.openspcoop2.utils.digest.DigestEncoding;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.random.RandomGenerator;
@@ -1687,19 +1686,15 @@ public class HttpUtilities {
 	}
 	
 	public static String getDigestHeaderValue(byte[] content, String algorithm) throws UtilsException{
-		MessageDigest digest = null;
-		try {
-			digest = MessageDigestFactory.getMessageDigest(algorithm);
-		}catch(Throwable e) {
-			throw new UtilsException("Message digest (algorithm: '"+algorithm+"') initialization failed: "+e.getMessage(),e);
-		}
-		try {
-			byte[]md5Data = digest.digest(content);
-			String digestValue = org.apache.commons.codec.binary.Hex.encodeHexString(md5Data);
-			return algorithm+"="+digestValue;
-		}catch(Exception e) {
-			throw new UtilsException(e.getMessage(),e);
-		}
+		// RFC 5843, il quale estende il precedente RFC 3230, vengono specificati sia gli algoritmi SHA 256 e 512 che la loro codifica, la quale deve essere base64.
+		return getDigestHeaderValue(content, algorithm, DigestEncoding.BASE64);
 	}
-	
+	public static String getDigestHeaderValue(byte[] content, String algorithm, DigestEncoding digestEncoding) throws UtilsException{
+		boolean rfc3230 = true; // aggiunge prefisso algoritmo=
+		return org.openspcoop2.utils.digest.DigestUtils.getDigestValue(content, algorithm, digestEncoding, rfc3230);
+	}
+	public static Map<DigestEncoding, String> getDigestHeaderValues(byte[] content, String algorithm, DigestEncoding ... digestEncoding) throws UtilsException{
+		boolean rfc3230 = true; // aggiunge prefisso algoritmo=
+		return org.openspcoop2.utils.digest.DigestUtils.getDigestValues(content, algorithm, rfc3230, digestEncoding);
+	}
 }

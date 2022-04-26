@@ -53,6 +53,7 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityContext_impl;
 import org.openspcoop2.security.message.jose.MessageSecurityReceiver_jose;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.digest.DigestEncoding;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -963,16 +964,20 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				bout.flush();
 				bout.close();
 				
-				String newDigestValue = null;
+				List<DigestEncoding> digestEncoding = securityConfig.getDigestEncodingAccepted();
+				Map<DigestEncoding, String> newDigestValue = null;
 				boolean formatoSupportato = true;
 				if(digestValueInHeaderHTTP.startsWith(HttpConstants.DIGEST_ALGO_SHA_256+"=")) {
-					newDigestValue = HttpUtilities.getDigestHeaderValue(bout.toByteArray(), HttpConstants.DIGEST_ALGO_SHA_256);
+					newDigestValue = HttpUtilities.getDigestHeaderValues(bout.toByteArray(), HttpConstants.DIGEST_ALGO_SHA_256,
+							digestEncoding.toArray(new DigestEncoding[1]));
 				}
 				else if(digestValueInHeaderHTTP.startsWith(HttpConstants.DIGEST_ALGO_SHA_384+"=")) {
-					newDigestValue = HttpUtilities.getDigestHeaderValue(bout.toByteArray(), HttpConstants.DIGEST_ALGO_SHA_384);
+					newDigestValue = HttpUtilities.getDigestHeaderValues(bout.toByteArray(), HttpConstants.DIGEST_ALGO_SHA_384,
+							digestEncoding.toArray(new DigestEncoding[1]));
 				}
 				else if(digestValueInHeaderHTTP.startsWith(HttpConstants.DIGEST_ALGO_SHA_512+"=")) {
-					newDigestValue = HttpUtilities.getDigestHeaderValue(bout.toByteArray(), HttpConstants.DIGEST_ALGO_SHA_512);
+					newDigestValue = HttpUtilities.getDigestHeaderValues(bout.toByteArray(), HttpConstants.DIGEST_ALGO_SHA_512,
+							digestEncoding.toArray(new DigestEncoding[1]));
 				}
 				else {
 					formatoSupportato = false;
@@ -980,13 +985,34 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 							"Header HTTP '"+digestHeader+"' con un formato non supportato"));
 				}
 				
-				if(formatoSupportato && !newDigestValue.equals(digestValueInHeaderHTTP)) {
-					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA, 
-							"Header HTTP '"+digestHeader+"' possiede un valore non corrispondente al messaggio"));
+				if(formatoSupportato) {
+					if(newDigestValue==null || newDigestValue.isEmpty()) {
+						erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_INTESTAZIONE_NON_VALIDA, 
+								"Calcolo Digest fallito"));
+					}
+					else {
+						boolean valido = false;
+						for (DigestEncoding de : digestEncoding) {
+							String check = newDigestValue.get(de);
+							if(check==null) { // non deve succedere
+								erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_INTESTAZIONE_NON_VALIDA, 
+										"Encoding Digest '"+de+"' fallito"));
+							}
+							else if(check.equals(digestValueInHeaderHTTP)){
+								valido=true;
+								break;
+							}
+						}
+						if(!valido) {
+							erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_VALIDA, 
+									"Header HTTP '"+digestHeader+"' possiede un valore non corrispondente al messaggio"));
+						}
+//						else {
+//							System.out.println("VERIFICATO DIGEST HTTP");
+//						}
+					}
 				}
-//				else {
-//					System.out.println("VERIFICATO DIGEST HTTP");
-//				}
+				
 			}
 			
 			String claimSignedHeader = this.modiProperties.getRestSecurityTokenClaimSignedHeaders();

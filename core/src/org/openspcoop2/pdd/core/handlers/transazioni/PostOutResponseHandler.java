@@ -37,6 +37,7 @@ import org.openspcoop2.core.config.Transazioni;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.utils.OpenSPCoopAppenderUtilities;
 import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -1113,7 +1114,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				}
 								
 			}
-			
+						
 		}finally{
 
 			this._releaseResources(transaction, idTransazione, context);
@@ -1136,14 +1137,15 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 			
 		/* ---- Elimino informazione per filtro duplicati ----- */
 		if(context!=null && context.getProtocollo()!=null){
-			if(context.getProtocollo().getIdRichiesta()!=null){
+			// Aggiunto check Applicativa e Delegata per evitare che comunicazioni dove i due domini sono entrambi gestiti sul solito GovWay si eliminano a vicenda gli id.
+			if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta()) && context.getProtocollo().getIdRichiesta()!=null){
 				try {
 					TransactionContext.removeIdentificativoProtocollo(context.getProtocollo().getIdRichiesta());
 				} catch (Throwable e) {
 					this.log.error("["+idTransazione+"] Errore durante la rimozione della registrazione dell'identificativo di protocollo della richiesta ["+context.getProtocollo().getIdRichiesta()+"]",e);
 				}
 			}
-			if(context.getProtocollo().getIdRisposta()!=null){
+			if(TipoPdD.DELEGATA.equals(context.getTipoPorta()) && context.getProtocollo().getIdRisposta()!=null){
 				try {
 					TransactionContext.removeIdentificativoProtocollo(context.getProtocollo().getIdRisposta());
 				} catch (Throwable e) {

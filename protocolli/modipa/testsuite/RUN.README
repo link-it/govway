@@ -70,7 +70,8 @@ Prerequisiti:
 + Copiare o creare un link simbolico della cartella <protocolli/modipa/example/keys/xca> sotto </etc/govway/keys/xca>
   Qui sono presenti i keystore e truststore per i test sulla sicurezza messaggio
 
-	- Modificare quindi il file </etc/govway/modipa_local.properties> configurando i valori per il keystore e truststore di default
+	- Modificare quindi il file </etc/govway/modipa_local.properties> configurando i valori per il keystore e truststore di default,
+          oltre alle impostazioni relative al tipo di codifica del digest
 
 		# ================================================
 		# -------- TrustStore --------
@@ -90,6 +91,10 @@ Prerequisiti:
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.keyStore.password=123456
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.key.alias=ExampleServer
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.key.password=123456
+
+		# ================================================
+		# --------- Codifica Digest -----
+		org.openspcoop2.protocol.modipa.rest.securityToken.digest.encoding.accepted=base64,hex
 
 + Copiare nella cartella dell'application server che serve il contenuto statico, i ExampleClient1.crt, ExampleClient2.crt ed ExampleServer.crt, utilizzati
 	nei test per verificare il riferimento x509 x5u. Ad esempio per wildfly:

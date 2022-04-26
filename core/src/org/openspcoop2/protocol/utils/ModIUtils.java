@@ -39,6 +39,7 @@ import org.openspcoop2.core.registry.utils.RegistroServiziUtils;
 //import org.openspcoop2.security.message.constants.SignatureC14NAlgorithm;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
+import org.openspcoop2.utils.digest.DigestEncoding;
 
 /**
  * ModIUtils
@@ -76,6 +77,7 @@ public class ModIUtils {
 	
 	public static final String API_IMPL_SICUREZZA_MESSAGGIO_SIGNATURE_ALGORITHM = "signature-algorithm";
 	public static final String API_IMPL_SICUREZZA_MESSAGGIO_CANONICALIZATION_ALGORITHM = "canonicalization-algorithm";
+	public static final String API_IMPL_SICUREZZA_MESSAGGIO_DIGEST_ENCODING = "digest-encoding";
 	public static final String API_IMPL_SICUREZZA_MESSAGGIO_HTTP_HEADER_FIRMATI = "signed-http-headers";
 	public static final String API_IMPL_SICUREZZA_MESSAGGIO_SOAP_HEADER_FIRMATI = "signed-soap-headers";
 	public static final String API_IMPL_SICUREZZA_MESSAGGIO_RIFERIMENTO_X509 = "x509-reference";
@@ -325,6 +327,36 @@ public class ModIUtils {
 			if(idProfiloSicurezzaMessaggioAlgItem!=null) {
 				String v = getStringValue(protocolPropertyList, idProfiloSicurezzaMessaggioAlgItem);
 				map.put(prefixKey+API_IMPL_SICUREZZA_MESSAGGIO_SIGNATURE_ALGORITHM, v);
+			}
+			
+			// Codifica Digest
+			String idProfiloSicurezzaMessaggioDigestEncodingItem = null;
+			if(fruizione && request) {
+				idProfiloSicurezzaMessaggioDigestEncodingItem = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_DIGEST_ENCODING;
+			}
+			else if(!fruizione && !request) {
+				idProfiloSicurezzaMessaggioDigestEncodingItem = CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_DIGEST_ENCODING;
+			}
+			if(idProfiloSicurezzaMessaggioDigestEncodingItem!=null) {
+				String v = getStringValue(protocolPropertyList, idProfiloSicurezzaMessaggioDigestEncodingItem);
+				if(v!=null) {
+					try {
+						DigestEncoding de = DigestEncoding.valueOf(v);
+						switch (de) {
+						case BASE64:
+							map.put(prefixKey+API_IMPL_SICUREZZA_MESSAGGIO_DIGEST_ENCODING, CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_DIGEST_ENCODING_LABEL_BASE64);
+							break;
+						case HEX:
+							map.put(prefixKey+API_IMPL_SICUREZZA_MESSAGGIO_DIGEST_ENCODING, CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_DIGEST_ENCODING_LABEL_HEX);
+							break;
+						}
+					}catch(Throwable t) {
+						map.put(prefixKey+API_IMPL_SICUREZZA_MESSAGGIO_DIGEST_ENCODING, v);
+					}
+				}
+				else {
+					map.put(prefixKey+API_IMPL_SICUREZZA_MESSAGGIO_DIGEST_ENCODING, v);
+				}
 			}
 			
 			if(digest) {

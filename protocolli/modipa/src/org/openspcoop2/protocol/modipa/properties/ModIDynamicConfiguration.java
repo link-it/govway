@@ -98,6 +98,7 @@ import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
+import org.openspcoop2.utils.digest.DigestEncoding;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 
 /**
@@ -997,7 +998,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				StringProperty profiloSicurezzaMessaggioHttpHeadersItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST_ID);
 				if(profiloSicurezzaMessaggioHttpHeadersItemValue.getValue()!=null && !"".equals(profiloSicurezzaMessaggioHttpHeadersItemValue.getValue())) {
 					try {
-						String [] hdrObbligatori = ModIProperties.getInstance().getRestSecurityTokenSignedHeaders();
+						String [] hdrObbligatori = this.modiProperties.getRestSecurityTokenSignedHeaders();
 						if(hdrObbligatori!=null && hdrObbligatori.length>0) {
 							
 							String [] hdrImpostati = profiloSicurezzaMessaggioHttpHeadersItemValue.getValue().split(",");
@@ -3230,6 +3231,32 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			configuration.addConsoleItem(profiloSicurezzaMessaggioAlgItem);
 		}
 		
+		String idProfiloSicurezzaMessaggioDigestEncodingItem = null;
+		if(fruizione && request) {
+			idProfiloSicurezzaMessaggioDigestEncodingItem = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_DIGEST_ENCODING_RICHIESTA_ID;
+		}
+		else if(!fruizione && !request) {
+			idProfiloSicurezzaMessaggioDigestEncodingItem = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_DIGEST_ENCODING_RISPOSTA_ID;
+		}
+		if(idProfiloSicurezzaMessaggioDigestEncodingItem!=null) {
+			StringConsoleItem profiloSicurezzaMessaggioDigestEncodingItem = (StringConsoleItem) 
+					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+					ConsoleItemType.SELECT,
+					idProfiloSicurezzaMessaggioDigestEncodingItem, 
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_DIGEST_ENCODING_LABEL);
+			profiloSicurezzaMessaggioDigestEncodingItem.addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_DIGEST_ENCODING_LABEL_BASE64,
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_DIGEST_ENCODING_VALUE_BASE64);
+			profiloSicurezzaMessaggioDigestEncodingItem.addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_DIGEST_ENCODING_LABEL_HEX,
+					ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_DIGEST_ENCODING_VALUE_HEX);
+			try {
+				profiloSicurezzaMessaggioDigestEncodingItem.setDefaultValue(this.modiProperties.getRestSecurityTokenDigestDefaultEncoding().name());
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+			profiloSicurezzaMessaggioDigestEncodingItem.setType(ConsoleItemType.HIDDEN);
+			configuration.addConsoleItem(profiloSicurezzaMessaggioDigestEncodingItem);
+		}
+		
 		if(digest) {
 			if( (request && fruizione) || (!request && !fruizione) ) {
 
@@ -3241,7 +3268,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				//profiloSicurezzaMessaggioHttpHeadersItem.setNote(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_NOTE);
 				//profiloSicurezzaMessaggioHttpHeadersItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_DEFAULT_VALUE);
 				try {
-					profiloSicurezzaMessaggioHttpHeadersItem.setDefaultValue(ModIProperties.getInstance().getRestSecurityTokenSignedHeadersAsString());
+					profiloSicurezzaMessaggioHttpHeadersItem.setDefaultValue(this.modiProperties.getRestSecurityTokenSignedHeadersAsString());
 				}catch(Exception e) {
 					throw new ProtocolException(e.getMessage(),e);
 				}
@@ -3568,6 +3595,54 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		boolean x5url = false;
 		if(rest) {
 		
+			String idProfiloSicurezzaMessaggioDigestEncodingItem = null;
+			if(fruizione && request) {
+				idProfiloSicurezzaMessaggioDigestEncodingItem = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_DIGEST_ENCODING_RICHIESTA_ID;
+			}
+			else if(!fruizione && !request) {
+				idProfiloSicurezzaMessaggioDigestEncodingItem = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_DIGEST_ENCODING_RISPOSTA_ID;
+			}
+			if(idProfiloSicurezzaMessaggioDigestEncodingItem!=null) {
+				
+				StringProperty profiloSicurezzaMessaggioDigestEncodingItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idProfiloSicurezzaMessaggioDigestEncodingItem);
+				DigestEncoding actualValue = null;
+				if(profiloSicurezzaMessaggioDigestEncodingItemValue!=null && profiloSicurezzaMessaggioDigestEncodingItemValue.getValue()!=null) {
+					try {
+						actualValue = DigestEncoding.valueOf(profiloSicurezzaMessaggioDigestEncodingItemValue.getValue());
+					}catch(Exception e) {
+						throw new ProtocolException(e.getMessage(),e);
+					}
+				}
+				AbstractConsoleItem<?> profiloSicurezzaMessaggioDigestEncodingItem = 	
+						ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), idProfiloSicurezzaMessaggioDigestEncodingItem);
+				
+				boolean show = false;
+				try {
+					show = this.modiProperties.isRestSecurityTokenDigestEncodingChoice();
+					if(show && consoleHelper.isModalitaStandard()) {
+						show = false;
+					}
+					if(!show) {
+						if(actualValue!=null && !actualValue.equals(this.modiProperties.getRestSecurityTokenDigestDefaultEncoding())) {
+							show=true;
+						}
+					}
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
+				if(show) {
+					profiloSicurezzaMessaggioDigestEncodingItem.setType(ConsoleItemType.SELECT);
+				}
+				else {
+					profiloSicurezzaMessaggioDigestEncodingItem.setType(ConsoleItemType.HIDDEN);
+					if(profiloSicurezzaMessaggioDigestEncodingItemValue!=null) {
+						profiloSicurezzaMessaggioDigestEncodingItemValue.setValue(null);
+					}
+				}
+				
+			}
+			
+					
 			boolean x5uRichiesta = false;
 			boolean x5cRichiesta = false;
 			StringProperty profiloSicurezzaMessaggioRequestRifX509ItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509_ID);
@@ -3688,7 +3763,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				StringProperty profiloSicurezzaMessaggioHttpHeadersItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST_ID);
 				if(profiloSicurezzaMessaggioHttpHeadersItemValue.getValue()==null || "".equals(profiloSicurezzaMessaggioHttpHeadersItemValue.getValue())) {
 					try {
-						profiloSicurezzaMessaggioHttpHeadersItemValue.setValue(ModIProperties.getInstance().getRestSecurityTokenSignedHeadersAsString());
+						profiloSicurezzaMessaggioHttpHeadersItemValue.setValue(this.modiProperties.getRestSecurityTokenSignedHeadersAsString());
 					}catch(Exception e) {
 						throw new ProtocolException(e.getMessage(),e);
 					}

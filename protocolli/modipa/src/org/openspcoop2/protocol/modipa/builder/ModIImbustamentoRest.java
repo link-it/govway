@@ -677,7 +677,7 @@ public class ModIImbustamentoRest {
 				bout.flush();
 				bout.close();
 				
-				digestValue = HttpUtilities.getDigestHeaderValue(bout.toByteArray(), securityConfig.getDigestAlgorithm());
+				digestValue = HttpUtilities.getDigestHeaderValue(bout.toByteArray(), securityConfig.getDigestAlgorithm(), securityConfig.getDigestEncoding());
 				msg.forceTransportHeader(HttpConstants.DIGEST, digestValue);
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_DIGEST, digestValue);
 			

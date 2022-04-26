@@ -58,6 +58,7 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.security.message.constants.SignatureDigestAlgorithm;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.digest.DigestEncoding;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
@@ -72,6 +73,8 @@ public class ModISecurityConfig {
 
 	private String algorithm = null;
 	private String digestAlgorithm = null;
+	private DigestEncoding digestEncoding = null;
+	private List<DigestEncoding> digestEncodingAccepted = null;
 	private String c14nAlgorithm = null;
 	private boolean x5c = false;
 	private boolean x5t = false;
@@ -154,7 +157,7 @@ public class ModISecurityConfig {
 			
 			/* Opzioni REST */
 						
-			this.initSharedRest(this._listProtocolProperties,sa,fruizione,request);
+			this.initSharedRest(modiProperties, this._listProtocolProperties,sa,fruizione,request);
 			
 			// HTTP Header da firmare
 			
@@ -594,6 +597,8 @@ public class ModISecurityConfig {
 		
 		// METODO USATO IN VALIDAZIONE
 		
+		ModIProperties modiProperties = ModIProperties.getInstance();
+		
 		this.fruizione = fruizione;
 		
 		this.multipleHeaderAuthorizationConfig = multipleHeaderAuthorizationConfig;
@@ -605,7 +610,7 @@ public class ModISecurityConfig {
 		}
 		
 		if(rest) {
-			this.initSharedRest(this._listProtocolProperties,null, fruizione,request);
+			this.initSharedRest(modiProperties, this._listProtocolProperties,null, fruizione,request);
 		}
 		else {
 			this.initSharedSoap(this._listProtocolProperties,fruizione,request);
@@ -751,7 +756,7 @@ public class ModISecurityConfig {
 		
 	}
 	
-	private void initSharedRest(List<ProtocolProperty> listProtocolProperties, ServizioApplicativo sa, boolean fruizione, boolean request) throws ProtocolException {
+	private void initSharedRest(ModIProperties modiProperties, List<ProtocolProperty> listProtocolProperties, ServizioApplicativo sa, boolean fruizione, boolean request) throws ProtocolException {
 		
 		if(fruizione) {
 			if(request) {
@@ -786,6 +791,39 @@ public class ModISecurityConfig {
 			}
 			else {
 				throw new ProtocolException("Digest algorithm compatible with signature '"+this.algorithm+"' not found");
+			}
+			
+			if(this.digestAlgorithm!=null) {
+				boolean creazioneDigest = (fruizione && request) || (!fruizione && !request);
+				if(creazioneDigest) {
+					try {
+						this.digestEncoding = modiProperties.getRestSecurityTokenDigestDefaultEncoding(); // default
+						
+						// proviamo a vedere se esiste una proprietà
+						
+						String digestEncoding = null;
+						if(request) {
+							digestEncoding = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_DIGEST_ENCODING);
+						}
+						else {
+							digestEncoding = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_DIGEST_ENCODING);
+						}
+						if(digestEncoding!=null) {
+							this.digestEncoding = DigestEncoding.valueOf(digestEncoding.trim().toUpperCase());
+						}
+												
+					}catch(Exception e) {
+						throw new ProtocolException("Digest encoding; configuration error: "+e.getMessage(),e);
+					}
+				}	
+			}
+		}
+		
+		if( (fruizione && !request) || (!fruizione && request) ) {
+			try {
+				this.digestEncodingAccepted = modiProperties.getRestSecurityTokenDigestEncodingAccepted();
+			}catch(Exception e) {
+				throw new ProtocolException("Digest algorithm accepted; configuration error: "+e.getMessage(),e);
 			}
 		}
 		
@@ -944,6 +982,14 @@ public class ModISecurityConfig {
 	
 	public String getDigestAlgorithm() {
 		return this.digestAlgorithm;
+	}
+	
+	public DigestEncoding getDigestEncoding() {
+		return this.digestEncoding;
+	}
+	
+	public List<DigestEncoding> getDigestEncodingAccepted() {
+		return this.digestEncodingAccepted;
 	}
 	
 	public String getC14nAlgorithm() {

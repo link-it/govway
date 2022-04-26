@@ -134,7 +134,7 @@ Scenario: isTest('connettivita-base-idar02-header-agid')
 #                IDAR03                  #
 ##########################################
 
-Scenario: isTest('connettivita-base-idar03') || isTest('manomissione-header-http-firmati-risposta')
+Scenario: isTest('connettivita-base-idar03') || isTest('digest-hex-idar03') || isTest('manomissione-header-http-firmati-risposta')
 
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
     * def responseStatus = 200

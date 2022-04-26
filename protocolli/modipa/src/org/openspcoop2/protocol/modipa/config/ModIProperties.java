@@ -32,6 +32,7 @@ import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
+import org.openspcoop2.utils.digest.DigestEncoding;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
@@ -207,6 +208,9 @@ public class ModIProperties {
 			getRestSecurityTokenClaimRequestDigest();
 			getRestSecurityTokenSignedHeaders();
 			getRestSecurityTokenClaimsIatTimeCheck_milliseconds();
+			getRestSecurityTokenDigestDefaultEncoding();
+			isRestSecurityTokenDigestEncodingChoice();
+			getRestSecurityTokenDigestEncodingAccepted();
 			isRestSecurityTokenRequestDigestClean();
 			isRestSecurityTokenResponseDigestClean();
 			isRestSecurityTokenResponseDigestHEADuseServerHeader();
@@ -1292,6 +1296,111 @@ public class ModIProperties {
 		}
 
 		return ModIProperties.getRestSecurityTokenClaimsIatTimeCheck_milliseconds;
+	}
+
+	private static DigestEncoding getRestSecurityTokenDigestDefaultEncoding= null;
+	public DigestEncoding getRestSecurityTokenDigestDefaultEncoding() throws Exception{
+    	if(ModIProperties.getRestSecurityTokenDigestDefaultEncoding==null){
+	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.digest.encoding";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					ModIProperties.getRestSecurityTokenDigestDefaultEncoding = DigestEncoding.valueOf(value.toUpperCase());
+					if(ModIProperties.getRestSecurityTokenDigestDefaultEncoding==null) {
+						throw new Exception("Invalid value");
+					}
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non impostata, errore (valori ammessi: "+DigestEncoding.BASE64.name().toLowerCase()+","+DigestEncoding.HEX.name().toLowerCase()+"):"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new Exception(msgErrore,e);
+			}
+    	}
+    	
+    	return ModIProperties.getRestSecurityTokenDigestDefaultEncoding;
+	}
+	
+	private static Boolean isRestSecurityTokenDigestEncodingChoice= null;
+	public boolean isRestSecurityTokenDigestEncodingChoice() throws Exception{
+    	if(ModIProperties.isRestSecurityTokenDigestEncodingChoice==null){
+	    	String name = "org.openspcoop2.protocol.modipa.rest.securityToken.digest.encoding.choice";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					ModIProperties.isRestSecurityTokenDigestEncodingChoice = Boolean.valueOf(value);
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non impostata, errore:"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new Exception(msgErrore,e);
+			}
+    	}
+    	
+    	return ModIProperties.isRestSecurityTokenDigestEncodingChoice;
+	}
+	
+	private static List<DigestEncoding> getRestSecurityTokenDigestEncodingAccepted= null;
+	public List<DigestEncoding> getRestSecurityTokenDigestEncodingAccepted() throws Exception{
+    	if(ModIProperties.getRestSecurityTokenDigestEncodingAccepted==null){
+    		String name = "org.openspcoop2.protocol.modipa.rest.securityToken.digest.encoding.accepted";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					
+					ModIProperties.getRestSecurityTokenDigestEncodingAccepted = new ArrayList<DigestEncoding>();
+					if(value.contains(",")) {
+						String [] split = value.split(",");
+						if(split==null || split.length<=0) {
+							throw new Exception("Empty value");
+						}
+						for (String s : split) {
+							if(s==null) {
+								throw new Exception("Null value");
+							}
+							else {
+								s = s.trim();
+							}
+							DigestEncoding tmp = DigestEncoding.valueOf(s.toUpperCase());
+							if(tmp==null) {
+								throw new Exception("Invalid value");
+							}
+							ModIProperties.getRestSecurityTokenDigestEncodingAccepted.add(tmp);
+						}
+					}
+					else {
+						DigestEncoding tmp = DigestEncoding.valueOf(value.toUpperCase());
+						if(tmp==null) {
+							throw new Exception("Invalid value");
+						}
+						ModIProperties.getRestSecurityTokenDigestEncodingAccepted.add(tmp);
+					}
+				}
+				else {
+					throw new Exception("non definita");
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = "Proprietà '"+name+"' non impostata, errore (valori ammessi: "+DigestEncoding.BASE64.name().toLowerCase()+","+DigestEncoding.HEX.name().toLowerCase()+"):"+e.getMessage(); 
+				this.log.error(msgErrore);
+				throw new Exception(msgErrore,e);
+			}
+    	}
+    	
+    	return ModIProperties.getRestSecurityTokenDigestEncodingAccepted;
 	}
 	
 	private static Boolean getRestSecurityTokenRequestDigestClean_read= null;
