@@ -26,6 +26,7 @@ dimensioni="1024 51200 409600"
 iterazioni=1
 riscaldamento=false
 keep=false
+allTests=false
 
 # ServerDelay
 declare -A minMaxSleeps
@@ -38,7 +39,8 @@ function usage() {
 	echo -e ""
 	echo -e "UTILIZZO"
 	echo -e "	NOTA: Tutte le opzioni vanno specificate prima dell'elenco dei test, altrimenti saranno ignorate!\n"
-	echo -e "	./eseguiTest.sh [-r] [-i X] [-k] [-d X] [-s X] [-n X] [-u X] [-t X] test\n"
+	echo -e "	./eseguiTest.sh [-a] [-r] [-i X] [-k] [-d X] [-s X] [-n X] [-u X] [-t X] test\n"
+	echo -e "		-a: Esegui tutti i test                       (All)"
 	echo -e " 		-r: Esegui il riscaldamento                   (Riscaldamento)"
 	echo -e "		-i: Esege tutta la batteria di test X volte   (Iterazioni)"
 	echo -e "		-k: Mantiene i csv intermedi                  (Keep)\n"
@@ -484,8 +486,11 @@ function aggregate_report() {
 # ====================================
 
 
-while getopts 'hri:kd:s:n:u:t:' opt; do
+while getopts 'ahri:kd:s:n:u:t:' opt; do
 	case "$opt" in
+		a)
+			allTests=true
+			;;
 		r)
 			riscaldamento=true
 			;;
@@ -546,7 +551,7 @@ while getopts 'hri:kd:s:n:u:t:' opt; do
 done
 shift "$(($OPTIND -1))"
 
-if [[ "$@" = "" ]]; then
+if $allTests; then
 	testToRun=$elencoTest
 else
 	testToRun=$@
@@ -556,6 +561,11 @@ else
 			exit 1
 		fi
 	done
+fi
+
+if [[ ! "$testToRun" ]]; then
+	usage
+	exit 1
 fi
 
 echo -e "\n==================================="
