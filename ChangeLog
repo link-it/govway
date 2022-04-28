@@ -1,3 +1,15 @@
+2022-04-28  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1361
+	I token ottenuti tramite la negoziazione verso un authorization server, venivano salvati in cache tramite una chiave formata dal solo nome della Token Policy di negoziazione.
+	Se all'interno di una policy erano stati definiti parametri dinamici, risolti a runtime, la chiave della cache non teneva conto della risoluzione di tali parametri.
+	Questo comportava che una policy con parametri dinamici utilizzata ad esempio su più fruizioni poteva provocare che il token negoziato in seguito all'invocazione di una prima fruizione, 
+	venisse erroneamente riutilizzato (trovato in cache) per l'invocazione di una seconda fruizione (ad esempio purposeId utilizzato su PDND configurato come proprietà della fruizione).
+	Durante l'intervento è stato risolto anche un problema di performance per cui l'accesso sincronizzato all'interno della gestione della cache per i token 
+	avveniva erroneamente per ogni richiesta anche se il token era già presente in cache.
+	Infine è stato aggiunto il nome della policy utilizzata per negoziare il token, tra le informazioni salvate nella traccia.
+
 2022-04-26  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA, Utils]	

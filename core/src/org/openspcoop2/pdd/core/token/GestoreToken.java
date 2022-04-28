@@ -71,6 +71,7 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.dynamic.MessageContent;
+import org.openspcoop2.pdd.core.token.attribute_authority.AttributeAuthorityDynamicParameters;
 import org.openspcoop2.pdd.core.token.attribute_authority.AttributeAuthorityProvider;
 import org.openspcoop2.pdd.core.token.attribute_authority.BasicRetrieveAttributeAuthorityResponseParser;
 import org.openspcoop2.pdd.core.token.attribute_authority.EsitoRecuperoAttributi;
@@ -310,6 +311,8 @@ public class GestoreToken {
 			String prefixKeyIntrospection = null;
 			String prefixKeyUserInfo = null;
 			
+			String prefixKeyRetrieveToken = null;
+			
 			String prefixKeyAA = null;
 			
 			boolean checkKeys = false;
@@ -324,11 +327,9 @@ public class GestoreToken {
 			}
 			else if(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE.equals(idGP.getTipologia())) {
 				
-				String keyNegoziazionePD = buildCacheKeyNegoziazione(idGP.getNome(), RETRIEVE_FUNCTION, true);
-				removeObjectCache(keyNegoziazionePD);
+				prefixKeyRetrieveToken = buildPrefixCacheKeyNegoziazione(idGP.getNome(), RETRIEVE_FUNCTION);
 				
-				String keyNegoziazionePA = buildCacheKeyNegoziazione(idGP.getNome(), RETRIEVE_FUNCTION, false);
-				removeObjectCache(keyNegoziazionePA);
+				checkKeys = true;
 				
 			}
 			else if(CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY.equals(idGP.getTipologia())) {
@@ -351,6 +352,9 @@ public class GestoreToken {
 								keyForClean.add(key);
 							}
 							else if(prefixKeyUserInfo!=null && key.startsWith(prefixKeyUserInfo)) {
+								keyForClean.add(key);
+							}
+							else if(prefixKeyRetrieveToken!=null && key.startsWith(prefixKeyRetrieveToken)) {
 								keyForClean.add(key);
 							}
 							else if(prefixKeyAA!=null && key.startsWith(prefixKeyAA)) {
@@ -758,53 +762,55 @@ public class GestoreToken {
 				}
 			}
     		
-			String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
-			//synchronized (GestoreToken.semaphoreJWT) {
-			GestoreToken.lockJWT.acquire("validazioneJWTToken", idTransazione);
-			try {
-				
-				response = 
-					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
-				if(response != null){
-					if(response.getObject()!=null){
-						GestoreToken.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
-						esitoGestioneToken = (EsitoGestioneToken) response.getObject();
-						esitoGestioneToken.setInCache(true);
-					}else if(response.getException()!=null){
-						GestoreToken.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
-						throw (Exception) response.getException();
-					}else{
-						GestoreToken.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
-					}
-				}
-
-				if(esitoGestioneToken==null) {
-					// Effettuo la query
-					GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
-					esitoGestioneToken = _validazioneJWTToken(log, datiInvocazione, token, portaDelegata);
-						
-					// Aggiungo la risposta in cache (se esiste una cache)	
-					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
-					// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
-					// - impostare il noCache a true
-					if(esitoGestioneToken!=null){
-						esitoGestioneToken.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
-						if(!esitoGestioneToken.isNoCache()){
-							GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
-							try{	
-								org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
-								responseCache.setObject(esitoGestioneToken);
-								GestoreToken.cacheToken.put(keyCache,responseCache);
-							}catch(UtilsException e){
-								GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
-							}
+			if(esitoGestioneToken==null) {
+				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
+				//synchronized (GestoreToken.semaphoreJWT) {
+				GestoreToken.lockJWT.acquire("validazioneJWTToken", idTransazione);
+				try {
+					
+					response = 
+						(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+					if(response != null){
+						if(response.getObject()!=null){
+							GestoreToken.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+							esitoGestioneToken = (EsitoGestioneToken) response.getObject();
+							esitoGestioneToken.setInCache(true);
+						}else if(response.getException()!=null){
+							GestoreToken.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+							throw (Exception) response.getException();
+						}else{
+							GestoreToken.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
 						}
-					}else{
-						throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
 					}
+	
+					if(esitoGestioneToken==null) {
+						// Effettuo la query
+						GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
+						esitoGestioneToken = _validazioneJWTToken(log, datiInvocazione, token, portaDelegata);
+							
+						// Aggiungo la risposta in cache (se esiste una cache)	
+						// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
+						// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
+						// - impostare il noCache a true
+						if(esitoGestioneToken!=null){
+							esitoGestioneToken.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
+							if(!esitoGestioneToken.isNoCache()){
+								GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
+								try{	
+									org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+									responseCache.setObject(esitoGestioneToken);
+									GestoreToken.cacheToken.put(keyCache,responseCache);
+								}catch(UtilsException e){
+									GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+								}
+							}
+						}else{
+							throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
+						}
+					}
+				}finally {
+					GestoreToken.lockJWT.release("validazioneJWTToken", idTransazione);
 				}
-			}finally {
-				GestoreToken.lockJWT.release("validazioneJWTToken", idTransazione);
 			}
     	}
 		
@@ -957,56 +963,59 @@ public class GestoreToken {
 				}
 			}
     		
-			String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
-			//synchronized (GestoreToken.semaphoreIntrospection) {
-			GestoreToken.lockIntrospection.acquire("introspectionToken", idTransazione);
-			try {
+			if(esitoGestioneToken==null) {
 				
-				response = 
-					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
-				if(response != null){
-					if(response.getObject()!=null){
-						GestoreToken.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
-						esitoGestioneToken = (EsitoGestioneToken) response.getObject();
-						esitoGestioneToken.setInCache(true);
-					}else if(response.getException()!=null){
-						GestoreToken.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
-						throw (Exception) response.getException();
-					}else{
-						GestoreToken.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
-					}
-				}
-
-				if(esitoGestioneToken==null) {
-					// Effettuo la query
-					GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
-					esitoGestioneToken = _introspectionToken(log, datiInvocazione, 
-							pddContext, protocolFactory,
-							token, portaDelegata,
-							idDominio, idServizio);
-						
-					// Aggiungo la risposta in cache (se esiste una cache)	
-					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
-					// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
-					// - impostare il noCache a true
-					if(esitoGestioneToken!=null){
-						esitoGestioneToken.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
-						if(!esitoGestioneToken.isNoCache()){
-							GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
-							try{	
-								org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
-								responseCache.setObject(esitoGestioneToken);
-								GestoreToken.cacheToken.put(keyCache,responseCache);
-							}catch(UtilsException e){
-								GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
-							}
+				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
+				//synchronized (GestoreToken.semaphoreIntrospection) {
+				GestoreToken.lockIntrospection.acquire("introspectionToken", idTransazione);
+				try {
+					
+					response = 
+						(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+					if(response != null){
+						if(response.getObject()!=null){
+							GestoreToken.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+							esitoGestioneToken = (EsitoGestioneToken) response.getObject();
+							esitoGestioneToken.setInCache(true);
+						}else if(response.getException()!=null){
+							GestoreToken.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+							throw (Exception) response.getException();
+						}else{
+							GestoreToken.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
 						}
-					}else{
-						throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
 					}
+	
+					if(esitoGestioneToken==null) {
+						// Effettuo la query
+						GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
+						esitoGestioneToken = _introspectionToken(log, datiInvocazione, 
+								pddContext, protocolFactory,
+								token, portaDelegata,
+								idDominio, idServizio);
+							
+						// Aggiungo la risposta in cache (se esiste una cache)	
+						// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
+						// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
+						// - impostare il noCache a true
+						if(esitoGestioneToken!=null){
+							esitoGestioneToken.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
+							if(!esitoGestioneToken.isNoCache()){
+								GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
+								try{	
+									org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+									responseCache.setObject(esitoGestioneToken);
+									GestoreToken.cacheToken.put(keyCache,responseCache);
+								}catch(UtilsException e){
+									GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+								}
+							}
+						}else{
+							throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
+						}
+					}
+				}finally {
+					GestoreToken.lockIntrospection.release("introspectionToken", idTransazione);
 				}
-			}finally {
-				GestoreToken.lockIntrospection.release("introspectionToken", idTransazione);
 			}
     	}
 		
@@ -1148,57 +1157,58 @@ public class GestoreToken {
 				}
 			}
     		
-			String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
-			//synchronized (GestoreToken.semaphoreUserInfo) {
-			GestoreToken.lockUserInfo.acquire("userInfoToken", idTransazione);
-			try {
-				
-				response = 
-					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
-				if(response != null){
-					if(response.getObject()!=null){
-						GestoreToken.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
-						esitoGestioneToken = (EsitoGestioneToken) response.getObject();
-						esitoGestioneToken.setInCache(true);
-					}else if(response.getException()!=null){
-						GestoreToken.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
-						throw (Exception) response.getException();
-					}else{
-						GestoreToken.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
-					}
-				}
-
-				if(esitoGestioneToken==null) {
-					// Effettuo la query
-					GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
-					esitoGestioneToken = _userInfoToken(log, datiInvocazione, 
-							pddContext, protocolFactory,
-							token, portaDelegata,
-							idDominio, idServizio);
-						
-					// Aggiungo la risposta in cache (se esiste una cache)	
-					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
-					// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
-					// - impostare il noCache a true
-					if(esitoGestioneToken!=null){
-						esitoGestioneToken.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
-						if(!esitoGestioneToken.isNoCache()){
-							GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
-							try{	
-								org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
-								responseCache.setObject(esitoGestioneToken);
-								GestoreToken.cacheToken.put(keyCache,responseCache);
-							}catch(UtilsException e){
-								GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
-							}
+			if(esitoGestioneToken==null) {
+				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
+				//synchronized (GestoreToken.semaphoreUserInfo) {
+				GestoreToken.lockUserInfo.acquire("userInfoToken", idTransazione);
+				try {
+					
+					response = 
+						(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+					if(response != null){
+						if(response.getObject()!=null){
+							GestoreToken.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+							esitoGestioneToken = (EsitoGestioneToken) response.getObject();
+							esitoGestioneToken.setInCache(true);
+						}else if(response.getException()!=null){
+							GestoreToken.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+							throw (Exception) response.getException();
+						}else{
+							GestoreToken.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
 						}
-					}else{
-						throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
 					}
+	
+					if(esitoGestioneToken==null) {
+						// Effettuo la query
+						GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
+						esitoGestioneToken = _userInfoToken(log, datiInvocazione, 
+								pddContext, protocolFactory,
+								token, portaDelegata,
+								idDominio, idServizio);
+							
+						// Aggiungo la risposta in cache (se esiste una cache)	
+						// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
+						// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
+						// - impostare il noCache a true
+						if(esitoGestioneToken!=null){
+							esitoGestioneToken.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
+							if(!esitoGestioneToken.isNoCache()){
+								GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
+								try{	
+									org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+									responseCache.setObject(esitoGestioneToken);
+									GestoreToken.cacheToken.put(keyCache,responseCache);
+								}catch(UtilsException e){
+									GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+								}
+							}
+						}else{
+							throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
+						}
+					}
+				}finally {
+					GestoreToken.lockUserInfo.release("userInfoToken", idTransazione);
 				}
-			}finally {
-				GestoreToken.lockUserInfo.release("userInfoToken", idTransazione);
-
 			}
     	}
 		
@@ -2581,16 +2591,20 @@ public class GestoreToken {
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		if(datiRichiesta==null && op2Properties.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest()) {
 			datiRichiesta = new InformazioniNegoziazioneToken_DatiRichiesta();
+			datiRichiesta.setPolicy(policyNegoziazioneToken.getName());
 			datiRichiesta.setTransactionId(idTransazione);
 			if(op2Properties.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest_date()) {
 				datiRichiesta.setPrepareRequest(DateManager.getDate());	
 			}
 		}
 		
+		Map<String, Object> dynamicMap = buildDynamicNegoziazioneTokenMap(busta, requestInfo, pddContext, log, policyNegoziazioneToken.getName());
+		NegoziazioneTokenDynamicParameters dynamicParameters = new NegoziazioneTokenDynamicParameters(dynamicMap, pddContext, policyNegoziazioneToken);
+		
 		if(GestoreToken.cacheToken==null){
 			esitoNegoziazioneToken = _endpointToken(debug, log, policyNegoziazioneToken, 
 					busta, requestInfo, tipoPdD,
-					pddContext, protocolFactory, idTransazione,
+					dynamicParameters, protocolFactory, idTransazione,
 					state, delegata,
 					idDominio, idServizio,
 					rinegozia, previousToken,
@@ -2606,7 +2620,7 @@ public class GestoreToken {
 		}
     	else{
     		String funzione = RETRIEVE_FUNCTION;
-    		String keyCache = buildCacheKeyNegoziazione(policyNegoziazioneToken.getName(), funzione, delegata);
+    		String keyCache = buildCacheKeyNegoziazione(policyNegoziazioneToken.getName(), funzione, delegata, dynamicParameters);
 
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
@@ -2625,85 +2639,112 @@ public class GestoreToken {
 				}
 			}
     		
-			//synchronized (GestoreToken.semaphoreNegoziazione) {
-			GestoreToken.lockNegoziazione.acquire("endpointToken", idTransazione);
-			try {
-				
-				response = 
-					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
-				if(response != null){
-					if(response.getObject()!=null){
-						GestoreToken.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
-						esitoNegoziazioneToken = (EsitoNegoziazioneToken) response.getObject();
-						esitoNegoziazioneToken.setInCache(true);
-					}else if(response.getException()!=null){
-						GestoreToken.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
-						throw (Exception) response.getException();
-					}else{
-						GestoreToken.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+			if(esitoNegoziazioneToken==null) {
+				//synchronized (GestoreToken.semaphoreNegoziazione) {
+				GestoreToken.lockNegoziazione.acquire("endpointToken", idTransazione);
+				try {
+					
+					response = 
+						(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+					if(response != null){
+						if(response.getObject()!=null){
+							GestoreToken.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+							esitoNegoziazioneToken = (EsitoNegoziazioneToken) response.getObject();
+							esitoNegoziazioneToken.setInCache(true);
+						}else if(response.getException()!=null){
+							GestoreToken.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+							throw (Exception) response.getException();
+						}else{
+							GestoreToken.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+						}
 					}
-				}
-
-				if(esitoNegoziazioneToken==null) {
-					// Effettuo la query
-					GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
-					esitoNegoziazioneToken = _endpointToken(debug, log, policyNegoziazioneToken, 
-							busta, requestInfo, tipoPdD,
-							pddContext, protocolFactory, idTransazione,
-							state, delegata,
-							idDominio, idServizio,
-							rinegozia, previousToken,
-							datiRichiesta);
+	
+					if(esitoNegoziazioneToken==null) {
+						// Effettuo la query
+						GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
+						esitoNegoziazioneToken = _endpointToken(debug, log, policyNegoziazioneToken, 
+								busta, requestInfo, tipoPdD,
+								dynamicParameters, protocolFactory, idTransazione,
+								state, delegata,
+								idDominio, idServizio,
+								rinegozia, previousToken,
+								datiRichiesta);
+							
+						// Aggiungo la risposta in cache (se esiste una cache)	
+						// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
+						// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
+						// - impostare il noCache a true
+						if(esitoNegoziazioneToken!=null){ // altrimenti lo mettero' in cache al giro dopo.
+							esitoNegoziazioneToken.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
+							if(!esitoNegoziazioneToken.isNoCache()){
+								GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
+								try{	
+									org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+									responseCache.setObject(esitoNegoziazioneToken);
+									GestoreToken.cacheToken.put(keyCache,responseCache);
+								}catch(UtilsException e){
+									GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+								}
+							}
+						}else{
+							throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
+						}
 						
-					// Aggiungo la risposta in cache (se esiste una cache)	
-					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
-					// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
-					// - impostare il noCache a true
-					if(esitoNegoziazioneToken!=null){ // altrimenti lo mettero' in cache al giro dopo.
-						esitoNegoziazioneToken.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
-						if(!esitoNegoziazioneToken.isNoCache()){
-							GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
-							try{	
-								org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
-								responseCache.setObject(esitoNegoziazioneToken);
-								GestoreToken.cacheToken.put(keyCache,responseCache);
-							}catch(UtilsException e){
-								GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+						if(esitoNegoziazioneToken.isValido()) {
+							// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone) 
+							boolean checkPerRinegoziazione = false;
+							_validazioneInformazioniNegoziazioneToken(checkPerRinegoziazione, esitoNegoziazioneToken, policyNegoziazioneToken, 
+									policyNegoziazioneToken.isSaveErrorInCache());
+						}
+					}
+					else {
+					
+						// l'ho preso in cache
+						
+						if(esitoNegoziazioneToken.isValido()) {
+							// controllo la data qua
+							boolean checkPerRinegoziazione = true;
+							_validazioneInformazioniNegoziazioneToken(checkPerRinegoziazione, esitoNegoziazioneToken, policyNegoziazioneToken, 
+									policyNegoziazioneToken.isSaveErrorInCache());
+							if(!esitoNegoziazioneToken.isValido() && !esitoNegoziazioneToken.isDateValide()) {
+								// DEVO riavviare la negoziazione poichè è scaduto
+								GestoreToken.cacheToken.remove(keyCache);
+								riavviaNegoziazione = true;
+								//System.out.println("Riavvia negoziazione");
 							}
 						}
-					}else{
-						throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
+						
 					}
 					
-					if(esitoNegoziazioneToken.isValido()) {
-						// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone) 
-						boolean checkPerRinegoziazione = false;
-						_validazioneInformazioniNegoziazioneToken(checkPerRinegoziazione, esitoNegoziazioneToken, policyNegoziazioneToken, 
-								policyNegoziazioneToken.isSaveErrorInCache());
-					}
+				}finally {
+					// fine synchronized
+					GestoreToken.lockNegoziazione.release("endpointToken", idTransazione);
 				}
-				else {
+			}
+			else {
 				
-					// l'ho preso in cache
-					
-					if(esitoNegoziazioneToken.isValido()) {
-						// controllo la data qua
-						boolean checkPerRinegoziazione = true;
-						_validazioneInformazioniNegoziazioneToken(checkPerRinegoziazione, esitoNegoziazioneToken, policyNegoziazioneToken, 
-								policyNegoziazioneToken.isSaveErrorInCache());
-						if(!esitoNegoziazioneToken.isValido() && !esitoNegoziazioneToken.isDateValide()) {
+				// l'ho preso in cache
+				
+				if(esitoNegoziazioneToken.isValido()) {
+					// controllo la data qua
+					boolean checkPerRinegoziazione = true;
+					_validazioneInformazioniNegoziazioneToken(checkPerRinegoziazione, esitoNegoziazioneToken, policyNegoziazioneToken, 
+							policyNegoziazioneToken.isSaveErrorInCache());
+					if(!esitoNegoziazioneToken.isValido() && !esitoNegoziazioneToken.isDateValide()) {
+						
+						GestoreToken.lockNegoziazione.acquire("removeToken", idTransazione);
+						try {
 							// DEVO riavviare la negoziazione poichè è scaduto
 							GestoreToken.cacheToken.remove(keyCache);
 							riavviaNegoziazione = true;
 							//System.out.println("Riavvia negoziazione");
+						}finally {
+							// fine synchronized
+							GestoreToken.lockNegoziazione.release("removeToken", idTransazione);
 						}
 					}
-					
 				}
 				
-			}finally {
-				// fine synchronized
-				GestoreToken.lockNegoziazione.release("endpointToken", idTransazione);
 			}
     	}
 		
@@ -2727,7 +2768,7 @@ public class GestoreToken {
 	
 	private static EsitoNegoziazioneToken _endpointToken(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken,
 			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD,
-			PdDContext pddContext, IProtocolFactory<?> protocolFactory,String idTransazione,
+			NegoziazioneTokenDynamicParameters dynamicParameters, IProtocolFactory<?> protocolFactory,String idTransazione,
 			IState state, boolean delegata,
 			IDSoggetto idDominio, IDServizio idServizio,
 			boolean rinegozia, InformazioniNegoziazioneToken previousToken,
@@ -2804,7 +2845,7 @@ public class GestoreToken {
 				if(refreshModeEnabled) {
 					esito = _invoke_endpointToken(debug, log, policyNegoziazioneToken,
 							busta, requestInfo, tipoPdD,
-							pddContext, protocolFactory, idTransazione,
+							dynamicParameters, protocolFactory, idTransazione,
 							state, delegata,
 							idDominio, idServizio,
 							refreshModeEnabled, previousToken,
@@ -2837,7 +2878,7 @@ public class GestoreToken {
 		}
 		return _invoke_endpointToken(debug, log, policyNegoziazioneToken,
 				busta, requestInfo, tipoPdD,
-				pddContext, protocolFactory, idTransazione,
+				dynamicParameters, protocolFactory, idTransazione,
 				state, delegata,
 				idDominio, idServizio,
 				false, null,
@@ -2848,7 +2889,7 @@ public class GestoreToken {
 	
 	private static EsitoNegoziazioneToken _invoke_endpointToken(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken,
 			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD,
-			PdDContext pddContext, IProtocolFactory<?> protocolFactory,String idTransazione,
+			NegoziazioneTokenDynamicParameters dynamicParameters, IProtocolFactory<?> protocolFactory,String idTransazione,
 			IState state, boolean delegata,
 			IDSoggetto idDominio, IDServizio idServizio,
 			boolean refreshModeEnabled, InformazioniNegoziazioneToken previousToken,
@@ -2871,7 +2912,7 @@ public class GestoreToken {
 			try {
 				httpResponse = http(debug, log, policyNegoziazioneToken,
 						busta, requestInfo, tipoPdD,
-						pddContext, protocolFactory, idTransazione,
+						dynamicParameters, protocolFactory, idTransazione,
 						state, delegata,
 						idDominio, idServizio,
 						esitoNegoziazioneToken,
@@ -2944,7 +2985,7 @@ public class GestoreToken {
     	bf.append("_");
     	return bf.toString();
 	}
-	private static String buildCacheKeyNegoziazione(String policy, String funzione, boolean portaDelegata) {
+	private static String buildCacheKeyNegoziazione(String policy, String funzione, boolean portaDelegata, NegoziazioneTokenDynamicParameters dynamicParameters) {
     	StringBuilder bf = new StringBuilder();
     	bf.append(buildPrefixCacheKeyNegoziazione(policy, funzione));
     	if(portaDelegata){ // serve per non aver classcast exception nei risultati
@@ -2953,6 +2994,11 @@ public class GestoreToken {
     	else {
     		bf.append("PA");
     	}
+    	bf.append("_");
+    	
+    	String dynamicParametersKeyCache = dynamicParameters.toString("_", true);
+    	bf.append(dynamicParametersKeyCache);
+    	
     	return bf.toString();
     }	
 	private static void _validazioneInformazioniNegoziazioneToken(boolean checkPerRinegoziazione, EsitoNegoziazioneToken esitoNegoziazioneToken, PolicyNegoziazioneToken policyNegoziazioneToken, boolean saveErrorInCache) throws Exception {
@@ -3055,23 +3101,17 @@ public class GestoreToken {
 	
 	public static HttpResponse http(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken,
 			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD,
-			PdDContext pddContext, IProtocolFactory<?> protocolFactory, String idTransazione,
+			NegoziazioneTokenDynamicParameters dynamicParameters, IProtocolFactory<?> protocolFactory, String idTransazione,
 			IState state, boolean delegata,
 			IDSoggetto idDominio, IDServizio idServizio,
 			EsitoNegoziazioneToken esitoNegoziazioneToken,
 			boolean refreshModeEnabled, String refreshToken,
 			InformazioniNegoziazioneToken_DatiRichiesta datiRichiesta) throws Exception {
 		
-		Map<String, Object> dynamicMap = buildDynamicNegoziazioneTokenMap(busta, requestInfo, pddContext, log, policyNegoziazioneToken.getName());
-		
-		
 		
 		// *** Raccola Parametri ***
 		
-		String endpoint = policyNegoziazioneToken.getEndpoint();
-		if(endpoint!=null && !"".equals(endpoint)) {
-			endpoint = DynamicUtils.convertDynamicPropertyValue("endpoint.gwt", endpoint, dynamicMap, pddContext, true);	
-		}
+		String endpoint = dynamicParameters.getEndpoint();
 		if(datiRichiesta!=null) {
 			datiRichiesta.setEndpoint(endpoint);
 		}
@@ -3098,10 +3138,7 @@ public class GestoreToken {
 		String username = null;
 		String password = null;
 		if(basic) {
-			username = policyNegoziazioneToken.getBasicAuthentication_username();
-			if(username!=null && !"".equals(username)) {
-				username = DynamicUtils.convertDynamicPropertyValue("username.gwt", username, dynamicMap, pddContext, true);	
-			}
+			username = dynamicParameters.getBasicUsername();
 			password = policyNegoziazioneToken.getBasicAuthentication_password();
 			if(datiRichiesta!=null) {
 				datiRichiesta.setClientId(username);
@@ -3111,7 +3148,7 @@ public class GestoreToken {
 		boolean bearer = policyNegoziazioneToken.isBearerAuthentication();
 		String bearerToken = null;
 		if(bearer) {
-			bearerToken = policyNegoziazioneToken.getBeareAuthentication_token();
+			bearerToken = dynamicParameters.getBearerToken();
 			if(datiRichiesta!=null) {
 				datiRichiesta.setClientToken(bearerToken);
 			}
@@ -3154,7 +3191,7 @@ public class GestoreToken {
 		}
 		
 		connettore.setForceDisable_rest_proxyPassReverse(true);
-		connettore.init(pddContext, protocolFactory);
+		connettore.init(dynamicParameters.getPddContext(), protocolFactory);
 		connettore.setRegisterSendIntoContext(false);
 		
 		if(basic && basicAsAuthorizationHeader){
@@ -3223,10 +3260,7 @@ public class GestoreToken {
 		}
 		
 		if(policyNegoziazioneToken.isUsernamePasswordGrant()) {
-			String usernamePasswordGrant = policyNegoziazioneToken.getUsernamePasswordGrant_username();
-			if(usernamePasswordGrant!=null && !"".equals(usernamePasswordGrant)) {
-				usernamePasswordGrant = DynamicUtils.convertDynamicPropertyValue("usernamePasswordGrant.gwt", usernamePasswordGrant, dynamicMap, pddContext, true);	
-			}
+			String usernamePasswordGrant = dynamicParameters.getUsernamePasswordGrant();
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_USERNAME, usernamePasswordGrant);
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_PASSWORD, policyNegoziazioneToken.getUsernamePasswordGrant_password());
 			if(datiRichiesta!=null) {
@@ -3237,8 +3271,8 @@ public class GestoreToken {
 		if(policyNegoziazioneToken.isRfc7523_x509_Grant() || policyNegoziazioneToken.isRfc7523_clientSecret_Grant()) {
 			String jwt = buildJwt(policyNegoziazioneToken,
 					busta, tipoPdD,
-					dynamicMap, pddContext);
-			String signedJwt = signJwt(policyNegoziazioneToken, jwt, contentType, dynamicMap, pddContext);
+					dynamicParameters);
+			String signedJwt = signJwt(policyNegoziazioneToken, jwt, contentType, dynamicParameters);
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_ASSERTION, signedJwt);
 			if(datiRichiesta!=null) {
 				boolean infoNormalizzate = properties.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_transazioniRegistrazioneInformazioniNormalizzate();
@@ -3246,7 +3280,7 @@ public class GestoreToken {
 			}
 		}
 		
-		List<String> scopes = policyNegoziazioneToken.getScopes(dynamicMap, pddContext);
+		List<String> scopes = policyNegoziazioneToken.getScopes(dynamicParameters);
 		if(scopes!=null && !scopes.isEmpty()) {
 			StringBuilder bf = new StringBuilder();
 			for (String scope : scopes) {
@@ -3260,31 +3294,19 @@ public class GestoreToken {
 			}
 		}
 		
-		String aud = policyNegoziazioneToken.getAudience();
-		if(aud!=null && !"".equals(aud)) {
-			aud = DynamicUtils.convertDynamicPropertyValue("aud.gwt", aud, dynamicMap, pddContext, true);	
-		}
+		String aud = dynamicParameters.getAudience();
 		if(aud!=null && !"".equals(aud)) {
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_AUDIENCE, aud);
 		}
 		
 		if(policyNegoziazioneToken.isPDND()) {
-			String formClientId = policyNegoziazioneToken.getFormClientId();
-			if(formClientId==null || "".equals(formClientId)) {
-				formClientId = policyNegoziazioneToken.getJwtClientId();
-			}
-			if(formClientId!=null && !"".equals(formClientId) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(formClientId)) {
-				formClientId = DynamicUtils.convertDynamicPropertyValue("formClientId.gwt", formClientId, dynamicMap, pddContext, true);	
-			}
+			String formClientId = dynamicParameters.getFormClientId();
 			if(formClientId!=null && !"".equals(formClientId) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(formClientId)) {
 				TransportUtils.setParameter(pContent,Costanti.PDND_OAUTH2_RFC_6749_REQUEST_CLIENT_ID, formClientId);
 			}
 		}
 		
-		String parameters = policyNegoziazioneToken.getFormParameters();
-		if(parameters!=null && !"".equals(parameters)) {
-			parameters = DynamicUtils.convertDynamicPropertyValue("parameters.gwt", parameters, dynamicMap, pddContext, true);	
-		}
+		String parameters = dynamicParameters.getParameters();
 		if(parameters!=null && !"".equals(parameters)) {
 			Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(parameters);
 			if(convertTextToProperties!=null && !convertTextToProperties.isEmpty()) {
@@ -3380,7 +3402,7 @@ public class GestoreToken {
 	
 	private static String buildJwt(PolicyNegoziazioneToken policyNegoziazioneToken,
 			Busta busta, TipoPdD tipoPdD,
-			Map<String, Object> dynamicMap, PdDContext pddContext) throws Exception {
+			NegoziazioneTokenDynamicParameters dynamicParameters) throws Exception {
 		
 		// https://datatracker.ietf.org/doc/html/rfc7523
 		
@@ -3393,10 +3415,7 @@ public class GestoreToken {
 		long nowMs = DateManager.getTimeMillis();
 		long nowSeconds = nowMs/1000;
 		
-		String issuer = policyNegoziazioneToken.getJwtIssuer();
-		if(issuer!=null && !"".equals(issuer) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(issuer)) {
-			issuer = DynamicUtils.convertDynamicPropertyValue("issuer.gwt", issuer, dynamicMap, pddContext, true);	
-		}
+		String issuer = dynamicParameters.getSignedJwtIssuer();
 		if(issuer==null) {
 			if(TipoPdD.APPLICATIVA.equals(tipoPdD) && busta!=null && busta.getDestinatario()!=null) {
 				issuer = busta.getDestinatario();
@@ -3413,10 +3432,7 @@ public class GestoreToken {
 		}
 		
 		// For client authentication, the subject MUST be the "client_id" of the OAuth client.
-		String clientId = policyNegoziazioneToken.getJwtClientId();
-		if(clientId!=null && !"".equals(clientId) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(clientId)) {
-			clientId = DynamicUtils.convertDynamicPropertyValue("clientId.gwt", clientId, dynamicMap, pddContext, true);	
-		}
+		String clientId = dynamicParameters.getSignedJwtClientId();
 		if(clientId==null) {
 			throw new Exception("ClientID undefined");
 		}
@@ -3424,10 +3440,7 @@ public class GestoreToken {
 			jwtPayload.put(Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID, clientId);
 		}
 		
-		String subject = policyNegoziazioneToken.getJwtSubject();
-		if(subject!=null && !"".equals(subject) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(subject)) {
-			subject = DynamicUtils.convertDynamicPropertyValue("subject.gwt", subject, dynamicMap, pddContext, true);	
-		}
+		String subject = dynamicParameters.getSignedJwtSubject();
 		if(StringUtils.isNotEmpty(subject)) {
 			if(!Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(subject)) {
 				jwtPayload.put(Claims.OIDC_ID_TOKEN_SUBJECT, subject);
@@ -3440,10 +3453,7 @@ public class GestoreToken {
 		}
 		
 		// The JWT MUST contain an "aud" (audience) claim containing a value that identifies the authorization server as an intended audience. 
-		String jwtAudience = policyNegoziazioneToken.getJwtAudience();
-		if(jwtAudience!=null && !"".equals(jwtAudience) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(jwtAudience)) {
-			jwtAudience = DynamicUtils.convertDynamicPropertyValue("jwtAudience.gwt", jwtAudience, dynamicMap, pddContext, true);	
-		}
+		String jwtAudience = dynamicParameters.getSignedJwtAudience();
 		if(jwtAudience==null) {
 			throw new Exception("JWT-Audience undefined");
 		}
@@ -3468,10 +3478,7 @@ public class GestoreToken {
 		jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED, expired);
 		
 		// The JWT MAY contain a "jti" (JWT ID) claim that provides a unique identifier for the token.
-		String jti = policyNegoziazioneToken.getJwtIdentifier();
-		if(jti!=null && !"".equals(jti) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(jti)) {
-			jti = DynamicUtils.convertDynamicPropertyValue("jti.gwt", jti, dynamicMap, pddContext, true);	
-		}
+		String jti = dynamicParameters.getSignedJwtJti();
 		if(StringUtils.isNotEmpty(jti)) {
 			if(!Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(jti)) {
 				jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID, jti);
@@ -3491,20 +3498,14 @@ public class GestoreToken {
 		if(policyNegoziazioneToken.isPDND()) {
 			
 			// purposeId
-			String jwtPurposeId = policyNegoziazioneToken.getJwtPurposeId();
-			if(jwtPurposeId!=null && !"".equals(jwtPurposeId)) {
-				jwtPurposeId = DynamicUtils.convertDynamicPropertyValue("jwtPurposeId.gwt", jwtPurposeId, dynamicMap, pddContext, true);	
-			}
+			String jwtPurposeId = dynamicParameters.getSignedJwtPurposeId();
 			if(jwtPurposeId==null) {
 				throw new Exception("JWT-PurposeId undefined");
 			}
 			jwtPayload.put(Costanti.PDND_PURPOSE_ID, jwtPurposeId);
 			
 			// sessionInfo
-			String sessionInfo = policyNegoziazioneToken.getJwtSessionInfo();
-			if(sessionInfo!=null && !"".equals(sessionInfo)) {
-				sessionInfo = DynamicUtils.convertDynamicPropertyValue("sessionInfo.gwt", sessionInfo, dynamicMap, pddContext, true);	
-			}
+			String sessionInfo = dynamicParameters.getSignedJwtSessionInfo();
 			if(sessionInfo!=null && !"".equals(sessionInfo)) {
 				Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(sessionInfo);
 				ObjectNode sessionInfoPayload = null;
@@ -3539,10 +3540,7 @@ public class GestoreToken {
 		}
 		
 		// claims
-		String claims = policyNegoziazioneToken.getJwtClaims();
-		if(claims!=null && !"".equals(claims)) {
-			claims = DynamicUtils.convertDynamicPropertyValue("claims.gwt", claims, dynamicMap, pddContext, true);	
-		}
+		String claims = dynamicParameters.getSignedJwtClaims();
 		if(claims!=null && !"".equals(claims)) {
 			Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(claims);
 			if(convertTextToProperties!=null && !convertTextToProperties.isEmpty()) {
@@ -3571,7 +3569,7 @@ public class GestoreToken {
 	}
 	
 	private static String signJwt(PolicyNegoziazioneToken policyNegoziazioneToken, String payload, String contentType,
-			Map<String, Object> dynamicMap, PdDContext pddContext) throws Exception {
+			NegoziazioneTokenDynamicParameters dynamicParameters) throws Exception {
 		
 		String signAlgo = policyNegoziazioneToken.getJwtSignAlgorithm();
 		if(signAlgo==null) {
@@ -3624,25 +3622,18 @@ public class GestoreToken {
 			jwtHeaders.setKid(keyAlias);
 		}
 		else if(policyNegoziazioneToken.isJwtSignIncludeKeyIdWithClientId()) {
-			String clientId = policyNegoziazioneToken.getJwtClientId();
-			if(clientId!=null && !"".equals(clientId)) {
-				clientId = DynamicUtils.convertDynamicPropertyValue("kid.clientId.gwt", clientId, dynamicMap, pddContext, true);	
-			}
+			String clientId = dynamicParameters.getSignedJwtClientId();
 			jwtHeaders.setKid(clientId);
 		}
 		else if(policyNegoziazioneToken.isJwtSignIncludeKeyIdCustom()) {
-			String customId = policyNegoziazioneToken.getJwtSignIncludeKeyIdCustom();
-			if(customId!=null && !"".equals(customId)) {
-				customId = DynamicUtils.convertDynamicPropertyValue("kid.customId.gwt", customId, dynamicMap, pddContext, true);	
-			}
+			String customId = dynamicParameters.getSignedJwtCustomId();
 			jwtHeaders.setKid(customId);
 		}
 		if(policyNegoziazioneToken.isJwtSignIncludeX509Cert()) {
 			jwtHeaders.setAddX5C(true);
 		}
-		String url = policyNegoziazioneToken.getJwtSignIncludeX509URL();
+		String url = dynamicParameters.getSignedJwtX509Url();
 		if(url!=null && !"".equals(url)) {
-			url = DynamicUtils.convertDynamicPropertyValue("url.gwt", url, dynamicMap, pddContext, true);	
 			jwtHeaders.setX509Url(new URI(url));
 		}
 		if(policyNegoziazioneToken.isJwtSignIncludeX509CertSha1()) {
@@ -3712,7 +3703,7 @@ public class GestoreToken {
 	
 	// ********* [ATTRIBUTE AUTHORITY] ENDPOINT TOKEN ****************** */
 	
-	public static final String ATTRIBUTE_AUTHORITY_FUNCTION = "Negoziazione";
+	public static final String ATTRIBUTE_AUTHORITY_FUNCTION = "AttributeAuthority";
 	
 	public static EsitoRecuperoAttributi readAttributes(Logger log, org.openspcoop2.pdd.core.token.attribute_authority.AbstractDatiInvocazione datiInvocazione,
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
@@ -3726,17 +3717,18 @@ public class GestoreToken {
 		Busta busta = datiInvocazione.getBusta();
 		RequestInfo requestInfo = datiInvocazione.getRequestInfo();	
 		
+		Map<String, Object> dynamicMap = buildDynamicAAMap(message, busta, requestInfo, pddContext, log,
+				policyAttributeAuthority.getName(), datiInvocazione);
+		AttributeAuthorityDynamicParameters dynamicParameters = new AttributeAuthorityDynamicParameters(dynamicMap, pddContext, policyAttributeAuthority);
+		
 		if(GestoreToken.cacheToken==null){
-			
-			Map<String, Object> dynamicMap = buildDynamicAAMap(message, busta, requestInfo, pddContext, log,
-					policyAttributeAuthority.getName(), datiInvocazione);
-			
+						
 			boolean addIdAndDate = true;
-			String request = buildDynamicAARequest(message, busta, requestInfo, pddContext, log, policyAttributeAuthority, dynamicMap, addIdAndDate);
+			String request = buildDynamicAARequest(message, busta, requestInfo, log, policyAttributeAuthority, dynamicParameters, addIdAndDate);
 			
 			esitoRecuperoAttributi = _readAttributes(log, policyAttributeAuthority, 
-					pddContext, protocolFactory,
-					dynamicMap,
+					protocolFactory,
+					dynamicParameters,
 					request, portaDelegata,
 					datiInvocazione.getState(),
 					idDominio, idServizio);
@@ -3745,20 +3737,20 @@ public class GestoreToken {
 				// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone) 
 				_validazioneInformazioniAttributiRecuperati(esitoRecuperoAttributi, policyAttributeAuthority, 
 						policyAttributeAuthority.isSaveErrorInCache(),
-						pddContext, protocolFactory,
-						dynamicMap);
+						protocolFactory,
+						dynamicParameters);
 			}
 			
 		}
     	else{
     		String funzione = ATTRIBUTE_AUTHORITY_FUNCTION;
     		
-    		Map<String, Object> dynamicMap = buildDynamicAAMap(message, busta, requestInfo, pddContext, log,
-					policyAttributeAuthority.getName(), datiInvocazione);
-    		
     		boolean addIdAndDate = true;
-    		String requestKeyCache = buildDynamicAARequest(message, busta, requestInfo, pddContext, log, policyAttributeAuthority, dynamicMap, !addIdAndDate);
-    		String keyCache = buildCacheKeyRecuperoAttributi(policyAttributeAuthority.getName(), funzione, portaDelegata, requestKeyCache);
+    		
+    		// Aggiungo anche la richiesta poichè può venire costruita con freemarker o template e quindi può essere dinamica a sua volta (non considero però le date)
+    		String requestKeyCache = buildDynamicAARequest(message, busta, requestInfo, log, policyAttributeAuthority, dynamicParameters, !addIdAndDate);
+    		
+    		String keyCache = buildCacheKeyRecuperoAttributi(policyAttributeAuthority.getName(), funzione, portaDelegata, dynamicParameters, requestKeyCache);
 
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
@@ -3778,94 +3770,123 @@ public class GestoreToken {
 			}
     		
 			String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
-			//synchronized (GestoreToken.semaphoreAttributeAuthority) {
-			GestoreToken.lockAttributeAuthority.acquire("readAttributes", idTransazione);
-			try {
-				
-				response = 
-					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
-				if(response != null){
-					if(response.getObject()!=null){
-						GestoreToken.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
-						esitoRecuperoAttributi = (EsitoRecuperoAttributi) response.getObject();
-						esitoRecuperoAttributi.setInCache(true);
-					}else if(response.getException()!=null){
-						GestoreToken.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
-						throw (Exception) response.getException();
-					}else{
-						GestoreToken.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
-					}
-				}
-
-				if(esitoRecuperoAttributi==null) {
-					// Effettuo la query
-					GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
+			
+			if(esitoRecuperoAttributi==null) {
+			
+				//synchronized (GestoreToken.semaphoreAttributeAuthority) {
+				GestoreToken.lockAttributeAuthority.acquire("readAttributes", idTransazione);
+				try {
 					
-					String request = null;
-					if(policyAttributeAuthority.isRequestDynamicPayloadJwt()) {
-						request = buildDynamicAARequest(message, busta, requestInfo, pddContext, log, policyAttributeAuthority, dynamicMap, addIdAndDate);
+					response = 
+						(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+					if(response != null){
+						if(response.getObject()!=null){
+							GestoreToken.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+							esitoRecuperoAttributi = (EsitoRecuperoAttributi) response.getObject();
+							esitoRecuperoAttributi.setInCache(true);
+						}else if(response.getException()!=null){
+							GestoreToken.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+							throw (Exception) response.getException();
+						}else{
+							GestoreToken.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+						}
+					}
+	
+					if(esitoRecuperoAttributi==null) {
+						// Effettuo la query
+						GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
+						
+						String request = null;
+						if(policyAttributeAuthority.isRequestDynamicPayloadJwt()) {
+							// ricostruisco per considerare le date
+							request = buildDynamicAARequest(message, busta, requestInfo, log, policyAttributeAuthority, dynamicParameters, addIdAndDate);
+						}
+						else {
+							request = requestKeyCache;
+						}
+						
+						esitoRecuperoAttributi = _readAttributes(log, policyAttributeAuthority, 
+								protocolFactory,
+								dynamicParameters,
+								request, portaDelegata,
+								datiInvocazione.getState(),
+								idDominio, idServizio);
+							
+						// Aggiungo la risposta in cache (se esiste una cache)	
+						// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
+						// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
+						// - impostare il noCache a true
+						if(esitoRecuperoAttributi!=null){ // altrimenti lo mettero' in cache al giro dopo.
+							esitoRecuperoAttributi.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
+							if(!esitoRecuperoAttributi.isNoCache()){
+								GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
+								try{	
+									org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+									responseCache.setObject(esitoRecuperoAttributi);
+									GestoreToken.cacheToken.put(keyCache,responseCache);
+								}catch(UtilsException e){
+									GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+								}
+							}
+						}else{
+							throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
+						}
+						
+						if(esitoRecuperoAttributi.isValido()) {
+							// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone) 
+							_validazioneInformazioniAttributiRecuperati(esitoRecuperoAttributi, policyAttributeAuthority, 
+									policyAttributeAuthority.isSaveErrorInCache(),
+									protocolFactory,
+									dynamicParameters);
+						}
 					}
 					else {
-						request = requestKeyCache;
-					}
 					
-					esitoRecuperoAttributi = _readAttributes(log, policyAttributeAuthority, 
-							pddContext, protocolFactory,
-							dynamicMap,
-							request, portaDelegata,
-							datiInvocazione.getState(),
-							idDominio, idServizio);
+						// l'ho preso in cache
 						
-					// Aggiungo la risposta in cache (se esiste una cache)	
-					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
-					// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
-					// - impostare il noCache a true
-					if(esitoRecuperoAttributi!=null){ // altrimenti lo mettero' in cache al giro dopo.
-						esitoRecuperoAttributi.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
-						if(!esitoRecuperoAttributi.isNoCache()){
-							GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
-							try{	
-								org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
-								responseCache.setObject(esitoRecuperoAttributi);
-								GestoreToken.cacheToken.put(keyCache,responseCache);
-							}catch(UtilsException e){
-								GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+						if(esitoRecuperoAttributi.isValido()) {
+							// controllo la data qua
+							_validazioneInformazioniAttributiRecuperati(esitoRecuperoAttributi, policyAttributeAuthority, 
+									policyAttributeAuthority.isSaveErrorInCache(),
+									protocolFactory,
+									dynamicParameters);
+							if(!esitoRecuperoAttributi.isValido() && !esitoRecuperoAttributi.isDateValide()) {
+								// DEVO riavviare la negoziazione poichè è scaduto
+								GestoreToken.cacheToken.remove(keyCache);
+								riavviaNegoziazione = true;
 							}
 						}
-					}else{
-						throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
+						
 					}
 					
-					if(esitoRecuperoAttributi.isValido()) {
-						// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone) 
-						_validazioneInformazioniAttributiRecuperati(esitoRecuperoAttributi, policyAttributeAuthority, 
-								policyAttributeAuthority.isSaveErrorInCache(),
-								pddContext, protocolFactory,
-								dynamicMap);
-					}
+				} finally{
+					// fine synchronized
+					GestoreToken.lockAttributeAuthority.release("readAttributes", idTransazione);
 				}
-				else {
+			}
+			else {
 				
-					// l'ho preso in cache
-					
-					if(esitoRecuperoAttributi.isValido()) {
-						// controllo la data qua
-						_validazioneInformazioniAttributiRecuperati(esitoRecuperoAttributi, policyAttributeAuthority, 
-								policyAttributeAuthority.isSaveErrorInCache(),
-								pddContext, protocolFactory,
-								dynamicMap);
-						if(!esitoRecuperoAttributi.isValido() && !esitoRecuperoAttributi.isDateValide()) {
+				// l'ho preso in cache
+				
+				if(esitoRecuperoAttributi.isValido()) {
+					// controllo la data qua
+					_validazioneInformazioniAttributiRecuperati(esitoRecuperoAttributi, policyAttributeAuthority, 
+							policyAttributeAuthority.isSaveErrorInCache(),
+							protocolFactory,
+							dynamicParameters);
+					if(!esitoRecuperoAttributi.isValido() && !esitoRecuperoAttributi.isDateValide()) {
+						GestoreToken.lockAttributeAuthority.acquire("removeAttributes", idTransazione);
+						try {
 							// DEVO riavviare la negoziazione poichè è scaduto
 							GestoreToken.cacheToken.remove(keyCache);
 							riavviaNegoziazione = true;
+						} finally{
+							// fine synchronized
+							GestoreToken.lockAttributeAuthority.release("removeAttributes", idTransazione);
 						}
 					}
-					
 				}
 				
-			} finally{
-				// fine synchronized
-				GestoreToken.lockAttributeAuthority.release("readAttributes", idTransazione);
 			}
     	}
 		
@@ -3877,8 +3898,8 @@ public class GestoreToken {
 	}
 	
 	private static EsitoRecuperoAttributi _readAttributes(Logger log, PolicyAttributeAuthority policyAttributeAuthority,
-			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
-			Map<String, Object> dynamicMap,
+			IProtocolFactory<?> protocolFactory,
+			AttributeAuthorityDynamicParameters dynamicParameters,
 			String request, boolean portaDelegata,
 			IState state,
 			IDSoggetto idDominio, IDServizio idServizio) {
@@ -3904,8 +3925,8 @@ public class GestoreToken {
 			byte[] risposta = null;
 			try {
 				httpResponse = http(log, policyAttributeAuthority,
-						pddContext, protocolFactory,
-						dynamicMap,
+						protocolFactory,
+						dynamicParameters,
 						request,
 						state, portaDelegata,
 						idDominio, idServizio);
@@ -4022,7 +4043,7 @@ public class GestoreToken {
     	return bf.toString();
 	}
 	private static String buildCacheKeyRecuperoAttributi(String nomePolicy, String funzione, boolean portaDelegata,
-			String request) {
+			AttributeAuthorityDynamicParameters dynamicParameters, String request) {
     	StringBuilder bf = new StringBuilder();
     	bf.append(buildCacheKeyRecuperoAttributiPrefix(nomePolicy, funzione));
     	if(portaDelegata){ // serve per non aver classcast exception nei risultati
@@ -4032,6 +4053,11 @@ public class GestoreToken {
     		bf.append("PA");
     	}
     	bf.append("_");
+    	
+    	String dynamicParametersKeyCache = dynamicParameters.toString("_", true);
+    	bf.append(dynamicParametersKeyCache);
+    	bf.append("_");
+    	
     	bf.append(Base64Utilities.encodeAsString(request.getBytes())); // codifico in base64 la richiesta
     	return bf.toString();
     }
@@ -4137,9 +4163,9 @@ public class GestoreToken {
 	}
 	
 	private static String buildDynamicAARequest(OpenSPCoop2Message message, Busta busta, 
-			RequestInfo requestInfo, PdDContext pddContext, Logger log, 
+			RequestInfo requestInfo, Logger log, 
 			PolicyAttributeAuthority policyAttributeAuthority,
-			Map<String, Object> dynamicMap,
+			AttributeAuthorityDynamicParameters dynamicParameters,
 			boolean addIdAndDate) throws Exception {
 			
 		String dynamicContent = policyAttributeAuthority.getRequestDynamicPayload();
@@ -4147,15 +4173,15 @@ public class GestoreToken {
 		
 		if(policyAttributeAuthority.isRequestDynamicPayloadTemplate() || policyAttributeAuthority.isRequestDynamicPayloadJwt()) {
 			if(policyAttributeAuthority.isRequestDynamicPayloadTemplate()) {
-				request = DynamicUtils.convertDynamicPropertyValue("AADynamicRequest.gwt", dynamicContent, dynamicMap, pddContext, true);
+				request = dynamicParameters.getRequestDynamicPayloadTemplate();
 			}
 			else {
-				request = buildAAJwt(policyAttributeAuthority, dynamicMap, pddContext, addIdAndDate);
+				request = buildAAJwt(policyAttributeAuthority, dynamicParameters, addIdAndDate);
 			}
 		}
 		else if(policyAttributeAuthority.isRequestDynamicPayloadFreemarkerTemplate()) {
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			DynamicUtils.convertFreeMarkerTemplate("AADynamicRequest.ftl", dynamicContent.getBytes(), dynamicMap, bout);
+			DynamicUtils.convertFreeMarkerTemplate("AADynamicRequest.ftl", dynamicContent.getBytes(), dynamicParameters.getDynamicMap(), bout);
 			bout.flush();
 			bout.close();
 			request = bout.toString();
@@ -4166,7 +4192,7 @@ public class GestoreToken {
 		}
 		else if(policyAttributeAuthority.isRequestDynamicPayloadVelocityTemplate()) {
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			DynamicUtils.convertVelocityTemplate("AADynamicRequest.vm", dynamicContent.getBytes(), dynamicMap, bout);
+			DynamicUtils.convertVelocityTemplate("AADynamicRequest.vm", dynamicContent.getBytes(), dynamicParameters.getDynamicMap(), bout);
 			bout.flush();
 			bout.close();
 			request = bout.toString();
@@ -4189,7 +4215,7 @@ public class GestoreToken {
 	}
 	
 	private static String buildAAJwt(PolicyAttributeAuthority policyAttributeAuthority, 
-			Map<String, Object> dynamicMap_template, PdDContext pddContext,
+			AttributeAuthorityDynamicParameters dynamicParameters,
 			boolean addIdAndDate) throws Exception {
 		
 		// https://datatracker.ietf.org/doc/html/rfc7523
@@ -4203,39 +4229,27 @@ public class GestoreToken {
 		long nowMs = DateManager.getTimeMillis();
 		long nowSeconds = nowMs/1000;
 		
-		String issuer = policyAttributeAuthority.getRequestJwtIssuer();
-		if(issuer!=null && !"".equals(issuer)) {
-			issuer = DynamicUtils.convertDynamicPropertyValue("issuer.gwt", issuer, dynamicMap_template, pddContext, true);	
-		}
+		String issuer = dynamicParameters.getIssuer();
 		if(issuer==null || "".equals(issuer)) {
 			issuer = op2Properties.getIdentitaPortaDefault(null).getNome();
 		}
 		jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUER, issuer);
 		
-		String subject = policyAttributeAuthority.getRequestJwtSubject();
-		if(subject!=null && !"".equals(subject)) {
-			subject = DynamicUtils.convertDynamicPropertyValue("subject.gwt", subject, dynamicMap_template, pddContext, true);	
-		}
+		String subject = dynamicParameters.getSubject();
 		if(subject==null) {
 			throw new Exception("JWT-Subject undefined");
 		}
 		jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_SUBJECT, subject);
 		
 		// The JWT MUST contain an "aud" (audience) claim containing a value that identifies the authorization server as an intended audience. 
-		String audience = policyAttributeAuthority.getRequestJwtAudience();
-		if(audience!=null && !"".equals(subject)) {
-			audience = DynamicUtils.convertDynamicPropertyValue("audience.gwt", audience, dynamicMap_template, pddContext, true);	
-		}
+		String audience = dynamicParameters.getAudience();
 		if(audience==null) {
 			throw new Exception("JWT-Audience undefined");
 		}
 		jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE, audience);
 		
 		// claims
-		String claims = policyAttributeAuthority.getRequestJwtClaims();
-		if(claims!=null && !"".equals(claims)) {
-			claims = DynamicUtils.convertDynamicPropertyValue("claims.gwt", claims, dynamicMap_template, pddContext, true);	
-		}
+		String claims = dynamicParameters.getClaims();
 		if(claims!=null && !"".equals(claims)) {
 			Properties convertTextToProperties = PropertiesUtilities.convertTextToProperties(claims);
 			if(convertTextToProperties!=null && !convertTextToProperties.isEmpty()) {
@@ -4293,8 +4307,8 @@ public class GestoreToken {
 	}
 	
 	private static void _validazioneInformazioniAttributiRecuperati(EsitoRecuperoAttributi esitoRecuperoAttributi, PolicyAttributeAuthority policyAttributeAuthority, boolean saveErrorInCache,
-			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
-			Map<String, Object> dynamicMap) throws Exception {
+			IProtocolFactory<?> protocolFactory,
+			AttributeAuthorityDynamicParameters dynamicParameters) throws Exception {
 		
 		Date now = DateManager.getDate();
 		
@@ -4350,9 +4364,8 @@ public class GestoreToken {
 		}
 		
 		if(esitoRecuperoAttributi.isValido()) {		
-			String audience = policyAttributeAuthority.getResponseAudience();
+			String audience = dynamicParameters.getResponseAudience();
 			if(audience!=null && !"".equals(audience)) {
-				audience = DynamicUtils.convertDynamicPropertyValue("audience.gwt", audience, dynamicMap, pddContext, true);	
 				if( esitoRecuperoAttributi.getInformazioniAttributi().getAud()==null || !esitoRecuperoAttributi.getInformazioniAttributi().getAud().contains(audience) ) {				
 					esitoRecuperoAttributi.setTokenValidazioneFallita();
 	    			if(policyAttributeAuthority.isSaveErrorInCache()) {
@@ -4390,18 +4403,15 @@ public class GestoreToken {
 	}
 	
 	public static HttpResponse http(Logger log, PolicyAttributeAuthority policyAttributeAuthority,
-			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
-			Map<String, Object> dynamicMap,
+			IProtocolFactory<?> protocolFactory,
+			AttributeAuthorityDynamicParameters dynamicParameters,
 			String request,
 			IState state, boolean delegata,
 			IDSoggetto idDominio, IDServizio idServizio) throws Exception {
 		
 		// *** Raccola Parametri ***
 		
-		String endpoint = policyAttributeAuthority.getEndpoint();
-		if(endpoint!=null && !"".equals(endpoint)) {
-			endpoint = DynamicUtils.convertDynamicPropertyValue("endpoint.gwt", endpoint, dynamicMap, pddContext, true);	
-		}
+		String endpoint = dynamicParameters.getEndpoint();
 		HttpRequestMethod httpMethod = policyAttributeAuthority.getRequestHttpMethod();
 		
 		
@@ -4424,20 +4434,14 @@ public class GestoreToken {
 		String username = null;
 		String password = null;
 		if(basic) {
-			username = policyAttributeAuthority.getBasicAuthentication_username();
-			if(username!=null && !"".equals(username)) {
-				username = DynamicUtils.convertDynamicPropertyValue("username.gwt", username, dynamicMap, pddContext, true);	
-			}
+			username = dynamicParameters.getBasicUsername();
 			password = policyAttributeAuthority.getBasicAuthentication_password();
 		}
 		
 		boolean bearer = policyAttributeAuthority.isBearerAuthentication();
 		String bearerToken = null;
 		if(bearer) {
-			bearerToken = policyAttributeAuthority.getBeareAuthentication_token();
-//			if(bearerToken!=null && !"".equals(bearerToken)) {
-//				bearerToken = DynamicUtils.convertDynamicPropertyValue("bearerToken.gwt", bearerToken, dynamicMap, pddContext, true);	
-//			}
+			bearerToken = dynamicParameters.getBearerToken();
 		}
 		
 		
@@ -4477,7 +4481,7 @@ public class GestoreToken {
 		}
 		
 		connettore.setForceDisable_rest_proxyPassReverse(true);
-		connettore.init(pddContext, protocolFactory);
+		connettore.init(dynamicParameters.getPddContext(), protocolFactory);
 		connettore.setRegisterSendIntoContext(false);
 		
 		if(basic){

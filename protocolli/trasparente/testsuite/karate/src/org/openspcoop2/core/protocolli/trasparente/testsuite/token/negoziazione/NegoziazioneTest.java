@@ -54,13 +54,31 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
-		_test(logCore, api_negoziazione, "clientid_clientsecret", null,
+		HttpResponse response = _test(logCore, api_negoziazione, "clientid_clientsecret", null,
+				false,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"clientCredentials\"",
 				"\"clientId\":\"ClientIDVerificaNegoziazioneConSecret\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/clientid_clientsecret\"",
 				"\"accessToken\":\"",
-				"\"expiresIn\":");
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneClientCredentials\""
+				);
+		String idRichiestaOriginale = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		
+		// effettuo un altro test verificando che viene utilizzato il token salvato in cache
+		
+		_test(logCore, api_negoziazione, "clientid_clientsecret", null,
+				false,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"clientCredentials\"",
+				"\"clientId\":\"ClientIDVerificaNegoziazioneConSecret\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/clientid_clientsecret\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneClientCredentials\"",
+				"\"transactionId\":\""+idRichiestaOriginale+"\""
+				);
 	}
 	
 	@Test
@@ -75,13 +93,61 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-audience", "testNegoziazioneAudience");
 		headers.put("test-p2", "testNegoziazioneP2");
 		
-		_test(logCore, api_negoziazione, "clientid_clientsecret2", headers,
+		HttpResponse response = _test(logCore, api_negoziazione, "clientid_clientsecret2", headers,
+				false,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"clientCredentials\"",
 				"\"clientId\":\"ClientIDVerificaNegoziazioneConSecret2\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/clientid_clientsecret2\"",
 				"\"accessToken\":\"",
-				"\"expiresIn\":");
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneClientCredentials2\"");
+		String idRichiestaOriginale = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		headers.put("test-user", "ClientIDVerificaNegoziazioneConSecret2-ERRATO");
+		
+		_test(logCore, api_negoziazione, "clientid_clientsecret2", headers,
+				true,
+				"Connessione terminata con errore (codice trasporto: 401)%AuthenticationFailed");
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		headers.put("test-user", "ClientIDVerificaNegoziazioneConSecret2");
+		headers.put("test-scope", "testNegoziazioneScope2-ERRATO");
+		
+		_test(logCore, api_negoziazione, "clientid_clientsecret2", headers,
+				true,
+				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		headers.put("test-scope", "testNegoziazioneScope2");
+		headers.put("test-audience", "testNegoziazioneAudience-ERRATO");
+		
+		_test(logCore, api_negoziazione, "clientid_clientsecret2", headers,
+				true,
+				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		headers.put("test-audience", "testNegoziazioneAudience");
+		headers.put("test-p2", "testNegoziazioneP2-ERRATO");
+		
+		_test(logCore, api_negoziazione, "clientid_clientsecret2", headers,
+				true,
+				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+		
+		// provo a modificare una informazione dinamica, ripristinando la configurazione corretta
+		headers.put("test-p2", "testNegoziazioneP2");
+		_test(logCore, api_negoziazione, "clientid_clientsecret2", headers,
+				false,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"clientCredentials\"",
+				"\"clientId\":\"ClientIDVerificaNegoziazioneConSecret2\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/clientid_clientsecret2\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneClientCredentials2\"",
+				"\"transactionId\":\""+idRichiestaOriginale+"\""
+				);
 	}
 	
 	@Test
@@ -92,13 +158,31 @@ public class NegoziazioneTest extends ConfigLoader {
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put("test-azione", "clientid_clientsecret3");
 		
-		_test(logCore, api_negoziazione, "clientid_clientsecret3", headers,
+		HttpResponse response = _test(logCore, api_negoziazione, "clientid_clientsecret3", headers,
+				false,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"clientCredentials\"",
 				"\"clientToken\":\"TOKEN-XXX\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/clientid_clientsecret3\"",
 				"\"accessToken\":\"",
-				"\"expiresIn\":");
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneClientCredentials3\""
+				);
+		String idRichiestaOriginale = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		
+		// effettuo un altro test verificando che viene utilizzato il token salvato in cache
+		
+		_test(logCore, api_negoziazione, "clientid_clientsecret3", headers,
+				false,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"clientCredentials\"",
+				"\"clientToken\":\"TOKEN-XXX\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/clientid_clientsecret3\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneClientCredentials3\"",
+				"\"transactionId\":\""+idRichiestaOriginale+"\""
+				);
 	}
 
 	@Test
@@ -110,13 +194,50 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers.put("test-azione", "user_password");
 		headers.put("test-username", "ResourceOwnerPasswordUsername");
 		
-		_test(logCore, api_negoziazione, "user_password", headers,
+		HttpResponse response = _test(logCore, api_negoziazione, "user_password", headers,
+				false,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"usernamePassword\"",
 				"\"username\":\"ResourceOwnerPasswordUsername\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/user_password\"",
 				"\"accessToken\":\"",
-				"\"expiresIn\":");
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneUserPassword\"");
+		String idRichiestaOriginale = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		headers.put("test-azione", "user_passwordERRATA");
+		
+		_test(logCore, api_negoziazione, "user_password", headers,
+				true,
+				"Connessione terminata con errore (codice trasporto: 404)%UndefinedOperation");
+		
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		headers.put("test-azione", "user_password");
+		headers.put("test-username", "ResourceOwnerPasswordUsernameERRATO");
+		
+		_test(logCore, api_negoziazione, "user_password", headers,
+				true,
+				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+		
+		
+		// effettuo un altro test verificando che viene utilizzato il token salvato in cache
+		
+		headers.put("test-username", "ResourceOwnerPasswordUsername");
+		
+		_test(logCore, api_negoziazione, "user_password", headers,
+				false,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"usernamePassword\"",
+				"\"username\":\"ResourceOwnerPasswordUsername\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/user_password\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneUserPassword\"",
+				"\"transactionId\":\""+idRichiestaOriginale+"\""
+				);
 	}
 	
 	@Test
@@ -126,35 +247,101 @@ public class NegoziazioneTest extends ConfigLoader {
 	
 		// Test HDR
 		
-		Map<String, String> headers = new HashMap<String, String>();
-		headers.put("test-azione", "signedJWT_clientSecret");
-		headers.put("test-suffix", "DYNAMIC");
-		headers.put("test-decode-position", "0");
+		Map<String, String> headers_0 = new HashMap<String, String>();
+		headers_0.put("test-azione", "signedJWT_clientSecret");
+		headers_0.put("test-suffix", "DYNAMIC");
+		headers_0.put("test-decode-position", "0");
 		
-		_test(logCore, api_negoziazione, "signedJWT_clientSecret", headers,
+		HttpResponse response = _test(logCore, api_negoziazione, "signedJWT_clientSecret", headers_0,
+				false,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_clientSecret\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT_clientSecret\"",
 				"\"accessToken\":\"",
-				"\"expiresIn\":");
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWTwithClientSecret\"");
+		String idRichiestaOriginale_0 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
-		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		// serviva prima di implementare i parametri dinamici all'interno della chiave della cache.
+		//org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
 		// Test PAYLOAD
 		
-		headers = new HashMap<String, String>();
-		headers.put("test-azione", "signedJWT_clientSecret");
-		headers.put("test-suffix", "DYNAMIC");
-		headers.put("test-decode-position", "1");
+		Map<String, String> headers_1 = new HashMap<String, String>();
+		headers_1.put("test-azione", "signedJWT_clientSecret");
+		headers_1.put("test-suffix", "DYNAMIC");
+		headers_1.put("test-decode-position", "1");
 		
-		_test(logCore, api_negoziazione, "signedJWT_clientSecret", headers,
+		response = _test(logCore, api_negoziazione, "signedJWT_clientSecret", headers_1,
+				false,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_clientSecret\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT_clientSecret\"",
 				"\"accessToken\":\"",
-				"\"expiresIn\":");
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWTwithClientSecret\"");
+		String idRichiestaOriginale_1 = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		
+		headers_0.put("test-azione", "signedJWT_clientSecretERRATA");
+		_test(logCore, api_negoziazione, "signedJWT_clientSecret", headers_0,
+				true,
+				"Connessione terminata con errore (codice trasporto: 404)%UndefinedOperation");
+		headers_0.put("test-azione", "signedJWT_clientSecret");
+		
+		headers_1.put("test-azione", "signedJWT_clientSecretERRATA");
+		_test(logCore, api_negoziazione, "signedJWT_clientSecret", headers_1,
+				true,
+				"Connessione terminata con errore (codice trasporto: 404)%UndefinedOperation");
+		headers_1.put("test-azione", "signedJWT_clientSecret");
+			
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		
+		// Sull'header non vi sono informazioni dinamiche per questa policy
+//		headers_0.put("test-suffix", "DYNAMICERRATA");
+//		_test(logCore, api_negoziazione, "signedJWT_clientSecret", headers_0,
+//				true,
+//				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+//		headers_0.put("test-suffix", "DYNAMIC");
+		
+		headers_1.put("test-suffix", "DYNAMICERRATA");
+		_test(logCore, api_negoziazione, "signedJWT_clientSecret", headers_1,
+				true,
+				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+		headers_1.put("test-suffix", "DYNAMIC");
+		
+	
+		
+		// effettuo un altro test verificando che viene utilizzato il token salvato in cache
+		
+		_test(logCore, api_negoziazione, "signedJWT_clientSecret", headers_0,
+				false,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_clientSecret\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT_clientSecret\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWTwithClientSecret\"",
+				"\"transactionId\":\""+idRichiestaOriginale_0+"\""
+				);
+		
+		_test(logCore, api_negoziazione, "signedJWT_clientSecret", headers_1,
+				false,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_clientSecret\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT_clientSecret\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWTwithClientSecret\"",
+				"\"transactionId\":\""+idRichiestaOriginale_1+"\""
+				);
 	}
 	
 	@Test
@@ -164,37 +351,120 @@ public class NegoziazioneTest extends ConfigLoader {
 	
 		// Test HDR
 		
-		Map<String, String> headers = new HashMap<String, String>();
-		headers.put("test-azione", "signedJWT_clientSecret2");
-		headers.put("test-suffix", "DYNAMIC");
-		headers.put("test-decode-position", "0");
-		headers.put("test-p2", "testNegoziazioneP2");
+		Map<String, String> headers_0 = new HashMap<String, String>();
+		headers_0.put("test-azione", "signedJWT_clientSecret2");
+		headers_0.put("test-suffix", "DYNAMIC");
+		headers_0.put("test-decode-position", "0");
+		headers_0.put("test-p2", "testNegoziazioneP2");
 		
-		_test(logCore, api_negoziazione, "signedJWT_clientSecret2", headers,
+		HttpResponse response = _test(logCore, api_negoziazione, "signedJWT_clientSecret2", headers_0,
+				false,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_clientSecret\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT_clientSecret2\"",
 				"\"accessToken\":\"",
-				"\"expiresIn\":");
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWTwithClientSecret2\"");
+		String idRichiestaOriginale_0 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
-		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		// serviva prima di implementare i parametri dinamici all'interno della chiave della cache.
+		//org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
 		// Test PAYLOAD
 		
-		headers = new HashMap<String, String>();
-		headers.put("test-azione", "signedJWT_clientSecret2");
-		headers.put("test-suffix", "DYNAMIC");
-		headers.put("test-decode-position", "1");
-		headers.put("test-p2", "testNegoziazioneP2");
+		Map<String, String> headers_1 = new HashMap<String, String>();
+		headers_1.put("test-azione", "signedJWT_clientSecret2");
+		headers_1.put("test-suffix", "DYNAMIC");
+		headers_1.put("test-decode-position", "1");
+		headers_1.put("test-p2", "testNegoziazioneP2");
 		
-		_test(logCore, api_negoziazione, "signedJWT_clientSecret2", headers,
+		response = _test(logCore, api_negoziazione, "signedJWT_clientSecret2", headers_1,
+				false,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_clientSecret\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT_clientSecret2\"",
 				"\"accessToken\":\"",
-				"\"expiresIn\":");
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWTwithClientSecret2\"");
+		String idRichiestaOriginale_1 = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		
+		headers_0.put("test-azione", "signedJWT_clientSecret2ERRATA");
+		_test(logCore, api_negoziazione, "signedJWT_clientSecret2", headers_0,
+				true,
+				"Connessione terminata con errore (codice trasporto: 404)%UndefinedOperation");
+		headers_0.put("test-azione", "signedJWT_clientSecret2");
+		
+		headers_1.put("test-azione", "signedJWT_clientSecret2ERRATA");
+		_test(logCore, api_negoziazione, "signedJWT_clientSecret2", headers_1,
+				true,
+				"Connessione terminata con errore (codice trasporto: 404)%UndefinedOperation");
+		headers_1.put("test-azione", "signedJWT_clientSecret2");
+			
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		
+		// Sull'header non vi sono informazioni dinamiche per questa policy
+//		headers_0.put("test-suffix", "DYNAMICERRATA");
+//		_test(logCore, api_negoziazione, "signedJWT_clientSecret2", headers_0,
+//				true,
+//				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+//		headers_0.put("test-suffix", "DYNAMIC");
+		
+		headers_1.put("test-suffix", "DYNAMICERRATA");
+		_test(logCore, api_negoziazione, "signedJWT_clientSecret2", headers_1,
+				true,
+				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+		headers_1.put("test-suffix", "DYNAMIC");
+		
+		
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		
+		// Sull'header non vi sono informazioni dinamiche per questa policy
+//		headers_0.put("test-p2", "testNegoziazioneP2ERRATA");
+//		_test(logCore, api_negoziazione, "signedJWT_clientSecret2", headers_0,
+//				true,
+//				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+//		headers_0.put("test-p2", "testNegoziazioneP2");
+		
+		headers_1.put("test-p2", "testNegoziazioneP2ERRATA");
+		_test(logCore, api_negoziazione, "signedJWT_clientSecret2", headers_1,
+				true,
+				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+		headers_1.put("test-p2", "testNegoziazioneP2");
+		
+		
+		
+		// effettuo un altro test verificando che viene utilizzato il token salvato in cache
+		
+		 _test(logCore, api_negoziazione, "signedJWT_clientSecret2", headers_0,
+					false,
+					"\"type\":\"retrieved_token\"",
+					"\"grantType\":\"rfc7523_clientSecret\"",
+					"\"jwtClientAssertion\":{\"token\":\"",
+					"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT_clientSecret2\"",
+					"\"accessToken\":\"",
+					"\"expiresIn\":",
+					"\"policy\":\"TestNegoziazioneSignedJWTwithClientSecret2\"",
+					"\"transactionId\":\""+idRichiestaOriginale_0+"\""
+					);
+		
+		 _test(logCore, api_negoziazione, "signedJWT_clientSecret2", headers_1,
+					false,
+					"\"type\":\"retrieved_token\"",
+					"\"grantType\":\"rfc7523_clientSecret\"",
+					"\"jwtClientAssertion\":{\"token\":\"",
+					"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT_clientSecret2\"",
+					"\"accessToken\":\"",
+					"\"expiresIn\":",
+					"\"policy\":\"TestNegoziazioneSignedJWTwithClientSecret2\"",
+					"\"transactionId\":\""+idRichiestaOriginale_1+"\""
+					);
 	}
 	
 	@Test
@@ -204,35 +474,101 @@ public class NegoziazioneTest extends ConfigLoader {
 	
 		// Test HDR
 		
-		Map<String, String> headers = new HashMap<String, String>();
-		headers.put("test-azione", "signedJWT_clientSecret3");
-		headers.put("test-suffix", "DYNAMIC");
-		headers.put("test-decode-position", "0");
+		Map<String, String> headers_0 = new HashMap<String, String>();
+		headers_0.put("test-azione", "signedJWT_clientSecret3");
+		headers_0.put("test-suffix", "DYNAMIC");
+		headers_0.put("test-decode-position", "0");
 		
-		_test(logCore, api_negoziazione, "signedJWT_clientSecret3", headers,
+		HttpResponse response = _test(logCore, api_negoziazione, "signedJWT_clientSecret3", headers_0,
+				false,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_clientSecret\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT_clientSecret3\"",
 				"\"accessToken\":\"",
-				"\"expiresIn\":");
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWTwithClientSecret3\"");
+		String idRichiestaOriginale_0 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
-		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		// serviva prima di implementare i parametri dinamici all'interno della chiave della cache.
+		//org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
 		// Test PAYLOAD
 		
-		headers = new HashMap<String, String>();
-		headers.put("test-azione", "signedJWT_clientSecret3");
-		headers.put("test-suffix", "DYNAMIC");
-		headers.put("test-decode-position", "1");
+		Map<String, String> headers_1 = new HashMap<String, String>();
+		headers_1.put("test-azione", "signedJWT_clientSecret3");
+		headers_1.put("test-suffix", "DYNAMIC");
+		headers_1.put("test-decode-position", "1");
 		
-		_test(logCore, api_negoziazione, "signedJWT_clientSecret3", headers,
+		response = _test(logCore, api_negoziazione, "signedJWT_clientSecret3", headers_1,
+				false,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_clientSecret\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT_clientSecret3\"",
 				"\"accessToken\":\"",
-				"\"expiresIn\":");
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWTwithClientSecret3\"");
+		String idRichiestaOriginale_1 = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		
+		headers_0.put("test-azione", "signedJWT_clientSecret3ERRATA");
+		_test(logCore, api_negoziazione, "signedJWT_clientSecret3", headers_0,
+				true,
+				"Connessione terminata con errore (codice trasporto: 404)%UndefinedOperation");
+		headers_0.put("test-azione", "signedJWT_clientSecret3");
+		
+		headers_1.put("test-azione", "signedJWT_clientSecret3ERRATA");
+		_test(logCore, api_negoziazione, "signedJWT_clientSecret3", headers_1,
+				true,
+				"Connessione terminata con errore (codice trasporto: 404)%UndefinedOperation");
+		headers_1.put("test-azione", "signedJWT_clientSecret3");
+			
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		
+		headers_0.put("test-suffix", "DYNAMICERRATA");
+		_test(logCore, api_negoziazione, "signedJWT_clientSecret3", headers_0,
+				true,
+				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+		headers_0.put("test-suffix", "DYNAMIC");
+
+		// Sul payload non vi sono informazioni dinamiche per questa policy, influenzate dal test-suffix
+//		headers_1.put("test-suffix", "DYNAMICERRATA");
+//		_test(logCore, api_negoziazione, "signedJWT_clientSecret3", headers_1,
+//				true,
+//				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+//		headers_1.put("test-suffix", "DYNAMIC");
+		
+		
+		
+		// effettuo un altro test verificando che viene utilizzato il token salvato in cache
+		
+		_test(logCore, api_negoziazione, "signedJWT_clientSecret3", headers_0,
+				false,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_clientSecret\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT_clientSecret3\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWTwithClientSecret3\"",
+				"\"transactionId\":\""+idRichiestaOriginale_0+"\""
+				);
+		
+		_test(logCore, api_negoziazione, "signedJWT_clientSecret3", headers_1,
+				false,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_clientSecret\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT_clientSecret3\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWTwithClientSecret3\"",
+				"\"transactionId\":\""+idRichiestaOriginale_1+"\""
+				);
 	}
 	
 	@Test
@@ -242,35 +578,99 @@ public class NegoziazioneTest extends ConfigLoader {
 	
 		// Test HDR
 		
-		Map<String, String> headers = new HashMap<String, String>();
-		headers.put("test-azione", "signedJWT");
-		headers.put("test-suffix", "DYNAMIC");
-		headers.put("test-decode-position", "0");
+		Map<String, String> headers_0 = new HashMap<String, String>();
+		headers_0.put("test-azione", "signedJWT");
+		headers_0.put("test-suffix", "DYNAMIC");
+		headers_0.put("test-decode-position", "0");
 		
-		_test(logCore, api_negoziazione, "signedJWT", headers,
+		HttpResponse response = _test(logCore, api_negoziazione, "signedJWT", headers_0,
+				false,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT\"",
 				"\"accessToken\":\"",
-				"\"expiresIn\":");
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWT\"");
+		String idRichiestaOriginale_0 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
-		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		// serviva prima di implementare i parametri dinamici all'interno della chiave della cache.
+		//org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
 		// Test PAYLOAD
 		
-		headers = new HashMap<String, String>();
-		headers.put("test-azione", "signedJWT");
-		headers.put("test-suffix", "DYNAMIC");
-		headers.put("test-decode-position", "1");
+		Map<String, String> headers_1 = new HashMap<String, String>();
+		headers_1.put("test-azione", "signedJWT");
+		headers_1.put("test-suffix", "DYNAMIC");
+		headers_1.put("test-decode-position", "1");
 		
-		_test(logCore, api_negoziazione, "signedJWT", headers,
+		response = _test(logCore, api_negoziazione, "signedJWT", headers_1,
+				false,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT\"",
 				"\"accessToken\":\"",
-				"\"expiresIn\":");
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWT\"");
+		String idRichiestaOriginale_1 = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		
+		headers_0.put("test-azione", "signedJWTERRATA");
+		_test(logCore, api_negoziazione, "signedJWT", headers_0,
+				true,
+				"Connessione terminata con errore (codice trasporto: 404)%UndefinedOperation");
+		headers_0.put("test-azione", "signedJWT");
+		
+		headers_1.put("test-azione", "signedJWTERRATA");
+		_test(logCore, api_negoziazione, "signedJWT", headers_1,
+				true,
+				"Connessione terminata con errore (codice trasporto: 404)%UndefinedOperation");
+		headers_1.put("test-azione", "signedJWT");
+		
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		
+		// Sull'header non vi sono informazioni dinamiche per questa policy
+//		headers_0.put("test-suffix", "DYNAMICERRATA");
+//		_test(logCore, api_negoziazione, "signedJWT", headers_0,
+//				true,
+//				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+//		headers_0.put("test-suffix", "DYNAMIC");
+		
+		headers_1.put("test-suffix", "DYNAMICERRATA");
+		_test(logCore, api_negoziazione, "signedJWT", headers_1,
+				true,
+				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+		headers_1.put("test-suffix", "DYNAMIC");
+				
+		
+		
+		// effettuo un altro test verificando che viene utilizzato il token salvato in cache
+		
+		_test(logCore, api_negoziazione, "signedJWT", headers_0,
+				false,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_x509\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWT\"",
+				"\"transactionId\":\""+idRichiestaOriginale_0+"\"");
+
+		_test(logCore, api_negoziazione, "signedJWT", headers_1,
+				false,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_x509\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWT\"",
+				"\"transactionId\":\""+idRichiestaOriginale_1+"\"");
 	}
 	
 	@Test
@@ -280,37 +680,105 @@ public class NegoziazioneTest extends ConfigLoader {
 	
 		// Test HDR
 		
-		Map<String, String> headers = new HashMap<String, String>();
-		headers.put("test-azione", "signedJWT2");
-		headers.put("test-suffix", "DYNAMIC");
-		headers.put("test-decode-position", "0");
-		headers.put("test-p2", "testNegoziazioneP2");
+		Map<String, String> headers_0 = new HashMap<String, String>();
+		headers_0.put("test-azione", "signedJWT2");
+		headers_0.put("test-suffix", "DYNAMIC");
+		headers_0.put("test-decode-position", "0");
+		headers_0.put("test-p2", "testNegoziazioneP2");
 		
-		_test(logCore, api_negoziazione, "signedJWT2", headers,
+		HttpResponse response = _test(logCore, api_negoziazione, "signedJWT2", headers_0,
+				false,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT2\"",
 				"\"accessToken\":\"",
-				"\"expiresIn\":");
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWT2\"");
+		String idRichiestaOriginale_0 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
-		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		// serviva prima di implementare i parametri dinamici all'interno della chiave della cache.
+		//org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
 		// Test PAYLOAD
 		
-		headers = new HashMap<String, String>();
-		headers.put("test-azione", "signedJWT2");
-		headers.put("test-suffix", "DYNAMIC");
-		headers.put("test-decode-position", "1");
-		headers.put("test-p2", "testNegoziazioneP2");
+		Map<String, String> headers_1 = new HashMap<String, String>();
+		headers_1.put("test-azione", "signedJWT2");
+		headers_1.put("test-suffix", "DYNAMIC");
+		headers_1.put("test-decode-position", "1");
+		headers_1.put("test-p2", "testNegoziazioneP2");
 		
-		_test(logCore, api_negoziazione, "signedJWT2", headers,
+		response = _test(logCore, api_negoziazione, "signedJWT2", headers_1,
+				false,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT2\"",
 				"\"accessToken\":\"",
-				"\"expiresIn\":");
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWT2\"");
+		String idRichiestaOriginale_1 = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		
+		
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		
+		headers_0.put("test-azione", "signedJWT2ERRATA");
+		_test(logCore, api_negoziazione, "signedJWT2", headers_0,
+				true,
+				"Connessione terminata con errore (codice trasporto: 404)%UndefinedOperation");
+		headers_0.put("test-azione", "signedJWT2");
+		
+		headers_1.put("test-azione", "signedJWT2ERRATA");
+		_test(logCore, api_negoziazione, "signedJWT2", headers_1,
+				true,
+				"Connessione terminata con errore (codice trasporto: 404)%UndefinedOperation");
+		headers_1.put("test-azione", "signedJWT2");
+		
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		
+		// Sull'header non vi sono informazioni dinamiche per questa policy
+//		headers_0.put("test-suffix", "DYNAMICERRATA");
+//		_test(logCore, api_negoziazione, "signedJWT2", headers_0,
+//				true,
+//				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+//		headers_0.put("test-suffix", "DYNAMIC");
+		
+		headers_1.put("test-suffix", "DYNAMICERRATA");
+		_test(logCore, api_negoziazione, "signedJWT2", headers_1,
+				true,
+				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+		headers_1.put("test-suffix", "DYNAMIC");
+		
+		
+		
+		// effettuo un altro test verificando che viene utilizzato il token salvato in cache
+		
+		_test(logCore, api_negoziazione, "signedJWT2", headers_0,
+				false,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_x509\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT2\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWT2\"",
+				"\"transactionId\":\""+idRichiestaOriginale_0+"\""
+				);
+		
+		_test(logCore, api_negoziazione, "signedJWT2", headers_1,
+				false,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_x509\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT2\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWT2\"",
+				"\"transactionId\":\""+idRichiestaOriginale_1+"\""
+				);
+		
 	}
 	
 	@Test
@@ -320,35 +788,103 @@ public class NegoziazioneTest extends ConfigLoader {
 	
 		// Test HDR
 		
-		Map<String, String> headers = new HashMap<String, String>();
-		headers.put("test-azione", "signedJWT3");
-		headers.put("test-suffix", "DYNAMIC");
-		headers.put("test-decode-position", "0");
+		Map<String, String> headers_0 = new HashMap<String, String>();
+		headers_0.put("test-azione", "signedJWT3");
+		headers_0.put("test-suffix", "DYNAMIC");
+		headers_0.put("test-decode-position", "0");
 		
-		_test(logCore, api_negoziazione, "signedJWT3", headers,
+		HttpResponse response = _test(logCore, api_negoziazione, "signedJWT3", headers_0,
+				false,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT3\"",
 				"\"accessToken\":\"",
-				"\"expiresIn\":");
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWT3\"");
+		String idRichiestaOriginale_0 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
-		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		// serviva prima di implementare i parametri dinamici all'interno della chiave della cache.
+		//org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
 		// Test PAYLOAD
 		
-		headers = new HashMap<String, String>();
-		headers.put("test-azione", "signedJWT3");
-		headers.put("test-suffix", "DYNAMIC");
-		headers.put("test-decode-position", "1");
+		Map<String, String> headers_1 = new HashMap<String, String>();
+		headers_1.put("test-azione", "signedJWT3");
+		headers_1.put("test-suffix", "DYNAMIC");
+		headers_1.put("test-decode-position", "1");
 		
-		_test(logCore, api_negoziazione, "signedJWT3", headers,
+		response = _test(logCore, api_negoziazione, "signedJWT3", headers_1,
+				false,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT3\"",
 				"\"accessToken\":\"",
-				"\"expiresIn\":");
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWT3\"");
+		String idRichiestaOriginale_1 = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		
+		headers_0.put("test-azione", "signedJWT3ERRATA");
+		_test(logCore, api_negoziazione, "signedJWT3", headers_0,
+				true,
+				"Connessione terminata con errore (codice trasporto: 404)%UndefinedOperation");
+		headers_0.put("test-azione", "signedJWT3");
+		
+		headers_1.put("test-azione", "signedJWT3ERRATA");
+		_test(logCore, api_negoziazione, "signedJWT3", headers_1,
+				true,
+				"Connessione terminata con errore (codice trasporto: 404)%UndefinedOperation");
+		headers_1.put("test-azione", "signedJWT3");
+			
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		
+		headers_0.put("test-suffix", "DYNAMICERRATA");
+		_test(logCore, api_negoziazione, "signedJWT3", headers_0,
+				true,
+				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+		headers_0.put("test-suffix", "DYNAMIC");
+
+		// Sul payload non vi sono informazioni dinamiche per questa policy, influenzate dal test-suffix
+//		headers_1.put("test-suffix", "DYNAMICERRATA");
+//		_test(logCore, api_negoziazione, "signedJWT3", headers_1,
+//				true,
+//				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+//		headers_1.put("test-suffix", "DYNAMIC");
+		
+		
+		
+		
+		// effettuo un altro test verificando che viene utilizzato il token salvato in cache
+		
+		_test(logCore, api_negoziazione, "signedJWT3", headers_0,
+				false,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_x509\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT3\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWT3\"",
+				"\"transactionId\":\""+idRichiestaOriginale_0+"\""
+				);
+		
+		_test(logCore, api_negoziazione, "signedJWT3", headers_1,
+				false,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_x509\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT3\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWT3\"",
+				"\"transactionId\":\""+idRichiestaOriginale_1+"\""
+				);
+		
 	}
 	
 	@Test
@@ -358,42 +894,112 @@ public class NegoziazioneTest extends ConfigLoader {
 	
 		// Test HDR
 		
-		Map<String, String> headers = new HashMap<String, String>();
-		headers.put("test-azione", "signedJWT-PDND");
-		headers.put("test-suffix", "DYNAMIC");
-		headers.put("test-decode-position", "0");
-		headers.put("test-p2", "testNegoziazioneP2");
+		Map<String, String> headers_0 = new HashMap<String, String>();
+		headers_0.put("test-azione", "signedJWT-PDND");
+		headers_0.put("test-suffix", "DYNAMIC");
+		headers_0.put("test-decode-position", "0");
+		headers_0.put("test-p2", "testNegoziazioneP2");
 		
-		_test(logCore, api_negoziazione, "signedJWT-PDND", headers,
+		HttpResponse response = _test(logCore, api_negoziazione, "signedJWT-PDND", headers_0,
+				false,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT-PDND\"",
 				"\"accessToken\":\"",
-				"\"expiresIn\":");
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWT-PDND\"");
+		String idRichiestaOriginale_0 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
-		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		// serviva prima di implementare i parametri dinamici all'interno della chiave della cache.
+		//org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
 		// Test PAYLOAD
 		
-		headers = new HashMap<String, String>();
-		headers.put("test-azione", "signedJWT-PDND");
-		headers.put("test-suffix", "DYNAMIC");
-		headers.put("test-decode-position", "1");
-		headers.put("test-p2", "testNegoziazioneP2");
+		Map<String, String> headers_1 = new HashMap<String, String>();
+		headers_1.put("test-azione", "signedJWT-PDND");
+		headers_1.put("test-suffix", "DYNAMIC");
+		headers_1.put("test-decode-position", "1");
+		headers_1.put("test-p2", "testNegoziazioneP2");
 		
-		_test(logCore, api_negoziazione, "signedJWT-PDND", headers,
+		response = _test(logCore, api_negoziazione, "signedJWT-PDND", headers_1,
+				false,
 				"\"type\":\"retrieved_token\"",
 				"\"grantType\":\"rfc7523_x509\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT-PDND\"",
 				"\"accessToken\":\"",
-				"\"expiresIn\":");
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWT-PDND\"");
+		String idRichiestaOriginale_1 = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		
+		
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		
+		headers_0.put("test-azione", "signedJWT-PDNDERRATA");
+		_test(logCore, api_negoziazione, "signedJWT-PDND", headers_0,
+				true,
+				"Connessione terminata con errore (codice trasporto: 404)%UndefinedOperation");
+		headers_0.put("test-azione", "signedJWT-PDND");
+		
+		headers_1.put("test-azione", "signedJWT-PDNDERRATA");
+		_test(logCore, api_negoziazione, "signedJWT-PDND", headers_1,
+				true,
+				"Connessione terminata con errore (codice trasporto: 404)%UndefinedOperation");
+		headers_1.put("test-azione", "signedJWT-PDND");
+		
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		
+		// Sull'header non vi sono informazioni dinamiche per questa policy
+//		headers_0.put("test-suffix", "DYNAMICERRATA");
+//		_test(logCore, api_negoziazione, "signedJWT-PDND", headers_0,
+//				true,
+//				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+//		headers_0.put("test-suffix", "DYNAMIC");
+		
+		headers_1.put("test-suffix", "DYNAMICERRATA");
+		_test(logCore, api_negoziazione, "signedJWT-PDND", headers_1,
+				true,
+				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
+		headers_1.put("test-suffix", "DYNAMIC");
+		
+		
+		
+		// effettuo un altro test verificando che viene utilizzato il token salvato in cache
+		
+		_test(logCore, api_negoziazione, "signedJWT-PDND", headers_0,
+				false,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_x509\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT-PDND\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWT-PDND\"",
+				"\"transactionId\":\""+idRichiestaOriginale_0+"\""
+				);
+		
+		_test(logCore, api_negoziazione, "signedJWT-PDND", headers_1,
+				false,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_x509\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT-PDND\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWT-PDND\"",
+				"\"transactionId\":\""+idRichiestaOriginale_1+"\""
+				);
+		
 	}
 	
 	
 	private static HttpResponse _test(Logger logCore, String api, String operazione,
-			Map<String, String> headers, String ... tokenInfoCheck) throws Exception {
+			Map<String, String> headers, 
+			boolean error, String diagnostico,
+			String ... tokenInfoCheck) throws Exception {
 		
 		String contentType = HttpConstants.CONTENT_TYPE_JSON;
 		byte[]content = Bodies.getJson(Bodies.SMALL_SIZE).getBytes();
@@ -425,10 +1031,22 @@ public class NegoziazioneTest extends ConfigLoader {
 		String idTransazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		assertNotNull(idTransazione);
 		
-		long esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
-		verifyOk(response, 200, contentType);
+		if(!error) {
+		
+			long esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
+			verifyOk(response, 200, contentType);
 						
-		DBVerifier.verify(idTransazione, esitoExpected, null, tokenInfoCheck);
+			DBVerifier.verify(idTransazione, esitoExpected, null, tokenInfoCheck);
+			
+		}
+		else {
+			
+			long esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_INVOCAZIONE);
+			verifyOk(response, 503, HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);
+			
+			DBVerifier.verify(idTransazione, esitoExpected, diagnostico);
+			
+		}
 		
 		return response;
 		

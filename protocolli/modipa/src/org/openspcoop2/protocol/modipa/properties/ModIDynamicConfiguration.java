@@ -3606,7 +3606,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				
 				StringProperty profiloSicurezzaMessaggioDigestEncodingItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, idProfiloSicurezzaMessaggioDigestEncodingItem);
 				DigestEncoding actualValue = null;
-				if(profiloSicurezzaMessaggioDigestEncodingItemValue!=null && profiloSicurezzaMessaggioDigestEncodingItemValue.getValue()!=null) {
+				if(profiloSicurezzaMessaggioDigestEncodingItemValue!=null && profiloSicurezzaMessaggioDigestEncodingItemValue.getValue()!=null && StringUtils.isNotEmpty(profiloSicurezzaMessaggioDigestEncodingItemValue.getValue())) {
 					try {
 						actualValue = DigestEncoding.valueOf(profiloSicurezzaMessaggioDigestEncodingItemValue.getValue());
 					}catch(Exception e) {

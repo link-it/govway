@@ -22,6 +22,7 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.token.negoziazione
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -117,17 +118,22 @@ public class DBVerifier {
 
 		
 		Object otoken_info = row.get("token_info");
-		assertNotNull(msg,otoken_info);
-		assertTrue(msg+" otoken_info classe '"+otoken_info.getClass().getName()+"'", (otoken_info instanceof String));
-		String tokenInfo = null;
-		if(otoken_info instanceof String) {
-			tokenInfo = (String)otoken_info;
-		}
-		assertNotNull(msg+" (token info string)",tokenInfo);
 		if(tokenInfoCheck!=null && tokenInfoCheck.length>0) {
-			for (String info: tokenInfoCheck) {
-				assertTrue(msg+" tokenInfo contains '"+info+"' (token:"+tokenInfo+")", (tokenInfo.contains(info)));
+			assertNotNull(msg,otoken_info);
+			assertTrue(msg+" otoken_info classe '"+otoken_info.getClass().getName()+"'", (otoken_info instanceof String));
+			String tokenInfo = null;
+			if(otoken_info instanceof String) {
+				tokenInfo = (String)otoken_info;
 			}
+			assertNotNull(msg+" (token info string)",tokenInfo);
+			if(tokenInfoCheck!=null && tokenInfoCheck.length>0) {
+				for (String info: tokenInfoCheck) {
+					assertTrue(msg+" tokenInfo contains '"+info+"' (token:"+tokenInfo+")", (tokenInfo.contains(info)));
+				}
+			}
+		}
+		else {
+			assertNull(msg,otoken_info);
 		}
 		
 		

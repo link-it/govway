@@ -40,6 +40,7 @@ public class InformazioniNegoziazioneToken_DatiRichiesta  extends org.openspcoop
 	
 	public InformazioniNegoziazioneToken_DatiRichiesta() {} // per serializzatore
 
+	private String policy;
 	private String transactionId;
 	private String grantType;
 	private Boolean refresh;
@@ -53,7 +54,13 @@ public class InformazioniNegoziazioneToken_DatiRichiesta  extends org.openspcoop
 	private Date receiveResponse;
 	private Date parseResponse;
 	private Date processComplete;
-	
+
+	public String getPolicy() {
+		return this.policy;
+	}
+	public void setPolicy(String policy) {
+		this.policy = policy;
+	}
 	public String getTransactionId() {
 		return this.transactionId;
 	}

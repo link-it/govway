@@ -396,6 +396,7 @@ public class TestBasicNegoziazioneTokenParser {
 			jwtClientAssertion = new InformazioniJWTClientAssertion(log, testBase64, true); // effettuo analisi negoziazione
 			
 			datiRichiesta = new InformazioniNegoziazioneToken_DatiRichiesta();
+			datiRichiesta.setPolicy("TEST");
 			datiRichiesta.setTransactionId(idTransazione);
 			datiRichiesta.setJwtClientAssertion(jwtClientAssertion);
 			InformazioniNegoziazioneToken info = new InformazioniNegoziazioneToken(datiRichiesta, 200, rawResponse, tokenParser);

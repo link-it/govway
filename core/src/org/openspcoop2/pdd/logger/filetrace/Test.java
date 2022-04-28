@@ -175,6 +175,7 @@ public class Test {
 		InformazioniToken informazioniToken = new InformazioniToken(SorgenteInformazioniToken.JWT, new String(Base64Utilities.decode(payload.getBytes())), new BasicTokenParser(TipologiaClaims.INTROSPECTION_RESPONSE_RFC_7662));
 		
 		InformazioniNegoziazioneToken_DatiRichiesta datiRichiesta = new InformazioniNegoziazioneToken_DatiRichiesta();
+		datiRichiesta.setPolicy("TEST");
 		datiRichiesta.setTransactionId(transazioneDTO.getIdTransazione());
 		datiRichiesta.setClientId("clientIdXX");
 		datiRichiesta.setClientToken("clientBEARERTOKEN");

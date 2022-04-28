@@ -24,14 +24,11 @@ package org.openspcoop2.pdd.core.token;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
-import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.dynamic.DynamicException;
-import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.token.parser.BasicNegoziazioneTokenParser;
 import org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser;
 import org.openspcoop2.pdd.core.token.parser.TipologiaClaims;
@@ -140,12 +137,12 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PASSWORD);
 	}
 	
-	public List<String> getScopes(Map<String, Object> dynamicMap, PdDContext pddContext) throws DynamicException{
+	public String getScopeString() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_SCOPES);
+	}
+	public List<String> getScopes(NegoziazioneTokenDynamicParameters dynamicParameters) throws DynamicException{
 		List<String> l = new ArrayList<>();
-		String scopes = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_SCOPES);
-		if(scopes!=null && !"".equals(scopes)) {
-			scopes = DynamicUtils.convertDynamicPropertyValue("scopes.gwt", scopes, dynamicMap, pddContext, true);	
-		}
+		String scopes = dynamicParameters.getScope();
 		if(scopes!=null) {
 			if(scopes.contains(",")) {
 				String [] tmp = scopes.split(",");
