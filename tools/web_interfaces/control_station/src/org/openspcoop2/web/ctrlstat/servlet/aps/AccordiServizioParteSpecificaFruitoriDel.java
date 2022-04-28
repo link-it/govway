@@ -79,7 +79,7 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 		HttpSession session = request.getSession(true);
 
 		// Salvo il vecchio PageData
-		PageData pdold = ServletUtils.getPageDataFromSession(session);
+		PageData pdold = ServletUtils.getPageDataFromSession(request, session);
 
 		// Inizializzo PageData
 		PageData pd = new PageData();
@@ -103,7 +103,6 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 
 			// prendo l'id del soggetto erogatore lo propago
 			// lo metto nel pd come campo hidden
-			// PageData oldPD = (PageData) session.getAttribute("PageData");
 			pd.setHidden(pdold.getHidden());
 
 			// Preparo il menu
@@ -238,12 +237,12 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 
 			apsHelper.prepareServiziFruitoriList(lista, id, ricerca);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI, 
 					ForwardParams.DEL());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,
 					ForwardParams.DEL());
 		} 

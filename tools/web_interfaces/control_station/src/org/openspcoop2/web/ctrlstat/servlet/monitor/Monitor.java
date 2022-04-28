@@ -202,7 +202,7 @@ public final class Monitor extends Action {
 		HttpSession session = request.getSession(true);
 
 		// Salvo il vecchio PageData
-		PageData pdold = ServletUtils.getPageDataFromSession(session);
+		PageData pdold = ServletUtils.getPageDataFromSession(request, session);
 
 		// Inizializzo PageData
 		PageData pd = new PageData();
@@ -242,7 +242,7 @@ public final class Monitor extends Action {
 
 				this.showForm(session, monitorHelper, pd, tipoProfcoll, MonitorMethods.getMethodsNames(), "", "", mb, monitorCore);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping,
 						MonitorCostanti.OBJECT_NAME_MONITOR, 
@@ -266,7 +266,7 @@ public final class Monitor extends Action {
 				formBean = this.getBeanForm(errors, monitorHelper);
 			} else {
 				// prendo il form dalla sessione xe' salvato precedentemente
-				formBean =  (MonitorFormBean) session.getAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FORM_BEAN);
+				formBean = ServletUtils.getObjectFromSession(request, session, MonitorFormBean.class, MonitorCostanti.SESSION_ATTRIBUTE_FORM_BEAN);
 				errors.add("Dati form non validi. I dati non sono presenti in sessione.");
 			}
 
@@ -283,7 +283,7 @@ public final class Monitor extends Action {
 
 				//				return mapping.findForward("MonitorForm");
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping,
 						MonitorCostanti.OBJECT_NAME_MONITOR, 
@@ -293,7 +293,7 @@ public final class Monitor extends Action {
 			// controllo se visualizzazione dettaglio messaggio
 			if (formBean.getMethod().equals(MonitorCostanti.DEFAULT_VALUE_FORM_BEAN_METHOD_DETAILS)) {
 
-				MonitorFormBean oldFormBeanRicerca = (MonitorFormBean) session.getAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FORM_BEAN);
+				MonitorFormBean oldFormBeanRicerca = ServletUtils.getObjectFromSession(request, session, MonitorFormBean.class, MonitorCostanti.SESSION_ATTRIBUTE_FORM_BEAN);
 
 				String idMessaggio = formBean.getIdMessaggio();
 				FilterSearch filter = new FilterSearch();
@@ -325,7 +325,7 @@ public final class Monitor extends Action {
 					// visualizzo dettagli messaggio
 					this.showDettagliMessaggio(pd, monitorHelper, messaggio, oldFormBeanRicerca);
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeFinished(mapping, MonitorCostanti.OBJECT_NAME_MONITOR, 
 							MonitorCostanti.TIPO_OPERAZIONE_MONITOR_DETTAGLI);
@@ -344,7 +344,7 @@ public final class Monitor extends Action {
 
 						//						return mapping.findForward("DettagliOk");
 
-						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+						ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 						return ServletUtils.getStrutsForwardEditModeFinished(mapping, MonitorCostanti.OBJECT_NAME_MONITOR, 
 								MonitorCostanti.TIPO_OPERAZIONE_MONITOR_DETTAGLI);
@@ -355,7 +355,7 @@ public final class Monitor extends Action {
 						// messaggio non e' piu presente
 						this.showForm(session, monitorHelper, pd, tipoProfcoll, MonitorMethods.getMethodsNames(), "", "", formBean, monitorCore);
 
-						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+						ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 						return ServletUtils.getStrutsForwardEditModeInProgress(mapping, MonitorCostanti.OBJECT_NAME_MONITOR, 
 								MonitorCostanti.TIPO_OPERAZIONE_MONITOR_DETTAGLI);
@@ -549,7 +549,7 @@ public final class Monitor extends Action {
 				//				return mapping.findForward("StatoNalOk");
 
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping, MonitorCostanti.OBJECT_NAME_MONITOR, 
 						MonitorCostanti.TIPO_OPERAZIONE_MONITOR_STATO_PDD);
@@ -561,7 +561,7 @@ public final class Monitor extends Action {
 
 				String newSearch = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_NEW_SEARCH);
 				if ((newSearch != null) && newSearch.equals(MonitorCostanti.DEFAULT_VALUE_FALSE)) {
-					Object oldfilter = session.getAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FILTER_SEARCH);
+					Object oldfilter = ServletUtils.getObjectFromSession(request, session, MonitorCostanti.SESSION_ATTRIBUTE_FILTER_SEARCH);
 					if (oldfilter != null && oldfilter instanceof FiltroStatoConsegnaAsincrona) {
 						filterConsegnaAsincrona = (FiltroStatoConsegnaAsincrona) oldfilter;
 					}
@@ -571,7 +571,7 @@ public final class Monitor extends Action {
 
 				int idLista = Liste.MONITOR_MSG;
 				ricerca = monitorHelper.checkSearchParameters(idLista, ricerca);
-				ServletUtils.addListElementIntoSession(session, MonitorCostanti.OBJECT_NAME_MONITOR);
+				ServletUtils.addListElementIntoSession(request, session, MonitorCostanti.OBJECT_NAME_MONITOR);
 				// per i criteri di
 				// ricerca dalla jsp
 				filter.setLimit(ricerca.getPageSize(idLista));
@@ -590,8 +590,8 @@ public final class Monitor extends Action {
 				ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 				// conservo il form bean nella session per eventuali richieste
 				// successive (nextPage)
-				session.setAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FORM_BEAN, formBean);
-				session.setAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FILTER_SEARCH, filterConsegnaAsincrona);
+				ServletUtils.setObjectIntoSession(request, session, formBean, MonitorCostanti.SESSION_ATTRIBUTE_FORM_BEAN);
+				ServletUtils.setObjectIntoSession(request, session, filterConsegnaAsincrona, MonitorCostanti.SESSION_ATTRIBUTE_FILTER_SEARCH);
 				
 				// refresh ricerca
 				List<Parameter> listRefresh = new ArrayList<Parameter>();
@@ -600,7 +600,7 @@ public final class Monitor extends Action {
 				listRefresh.add(pSorgente);
 				pd.addComandoAggiornaRicercaButton(MonitorCostanti.SERVLET_NAME_MONITOR, listRefresh);
 				
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping, MonitorCostanti.OBJECT_NAME_MONITOR, 
 						MonitorCostanti.TIPO_OPERAZIONE_MONITOR);
@@ -614,7 +614,7 @@ public final class Monitor extends Action {
 
 				String newSearch = monitorHelper.getParameter(MonitorCostanti.PARAMETRO_MONITOR_NEW_SEARCH);
 				if ((newSearch != null) && newSearch.equals(MonitorCostanti.DEFAULT_VALUE_FALSE)) {
-					Object oldfilter = session.getAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FILTER_SEARCH);
+					Object oldfilter = ServletUtils.getObjectFromSession(request, session, MonitorCostanti.SESSION_ATTRIBUTE_FILTER_SEARCH);
 					if (oldfilter != null && oldfilter instanceof FilterSearch) {
 						filter = (FilterSearch) oldfilter;
 					}
@@ -624,7 +624,7 @@ public final class Monitor extends Action {
 
 				int idLista = Liste.MONITOR_MSG;
 				ricerca = monitorHelper.checkSearchParameters(idLista, ricerca);
-				ServletUtils.addListElementIntoSession(session, MonitorCostanti.OBJECT_NAME_MONITOR);
+				ServletUtils.addListElementIntoSession(request, session, MonitorCostanti.OBJECT_NAME_MONITOR);
 				// per i criteri di
 				// ricerca dalla jsp
 				filter.setLimit(ricerca.getPageSize(idLista));
@@ -646,8 +646,8 @@ public final class Monitor extends Action {
 				ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 				// conservo il form bean nella session per eventuali richieste
 				// successive (nextPage)
-				session.setAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FORM_BEAN, formBean);
-				session.setAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FILTER_SEARCH, filter);
+				ServletUtils.setObjectIntoSession(request, session, formBean, MonitorCostanti.SESSION_ATTRIBUTE_FORM_BEAN);
+				ServletUtils.setObjectIntoSession(request, session, filter, MonitorCostanti.SESSION_ATTRIBUTE_FILTER_SEARCH);
 
 				if(singlePdD){
 					request.setAttribute(Costanti.REQUEST_ATTIBUTE_PARAMS, ServletUtils.getParametersAsString(false, pMethod, pNewSearch, pSorgente));
@@ -663,7 +663,7 @@ public final class Monitor extends Action {
 				listRefresh.add(pSorgente);
 				pd.addComandoAggiornaRicercaButton(MonitorCostanti.SERVLET_NAME_MONITOR, listRefresh);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping, MonitorCostanti.OBJECT_NAME_MONITOR, 
 						MonitorCostanti.TIPO_OPERAZIONE_MONITOR);
@@ -753,14 +753,12 @@ public final class Monitor extends Action {
 					Parameter pMethod = new Parameter(MonitorCostanti.PARAMETRO_MONITOR_METHOD, formBean.getMethod());
 					Parameter pActionconfirm = new Parameter(MonitorCostanti.PARAMETRO_MONITOR_ACTION_CONFIRM, Costanti.CHECK_BOX_ENABLED);
 
-					session.setAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FORM_BEAN, formBean);
-					session.setAttribute(MonitorCostanti.SESSION_ATTRIBUTE_FILTER_SEARCH, filter);
-
-					
+					ServletUtils.setObjectIntoSession(request, session, formBean, MonitorCostanti.SESSION_ATTRIBUTE_FORM_BEAN);
+					ServletUtils.setObjectIntoSession(request, session, filter, MonitorCostanti.SESSION_ATTRIBUTE_FILTER_SEARCH);
 
 					request.setAttribute(Costanti.REQUEST_ATTIBUTE_PARAMS, ServletUtils.getParametersAsString(false, pMethod, pActionconfirm));
 
-					ServletUtils.addListElementIntoSession(session, MonitorCostanti.OBJECT_NAME_MONITOR);
+					ServletUtils.addListElementIntoSession(request, session, MonitorCostanti.OBJECT_NAME_MONITOR);
 					
 					if(stato.getTotMessaggi()>0){
 						
@@ -785,7 +783,7 @@ public final class Monitor extends Action {
 						
 						this.showForm(  session, monitorHelper, pd, tipoProfcoll, MonitorMethods.getMethodsNames(), "", "", formBean, monitorCore);
 					}	
-						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+						ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 						return ServletUtils.getStrutsForwardEditModeInProgress(mapping, MonitorCostanti.OBJECT_NAME_MONITOR, 
 								MonitorCostanti.TIPO_OPERAZIONE_MONITOR);
 
@@ -828,7 +826,7 @@ public final class Monitor extends Action {
 
 					this.showForm(  session, monitorHelper, pd, tipoProfcoll, MonitorMethods.getMethodsNames(), "", "", formBean, monitorCore);
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeInProgress(mapping, MonitorCostanti.OBJECT_NAME_MONITOR, 
 							MonitorCostanti.TIPO_OPERAZIONE_MONITOR);
@@ -838,7 +836,7 @@ public final class Monitor extends Action {
 					// return mapping.findForward("DeleteOk");
 				}
 			} else {
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, 
 						MonitorCostanti.OBJECT_NAME_MONITOR, 
@@ -863,21 +861,21 @@ public final class Monitor extends Action {
 				
 				pd.disableEditMode();
 				
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, 
 						MonitorCostanti.OBJECT_NAME_MONITOR, 
 						MonitorCostanti.TIPO_OPERAZIONE_MONITOR);
 			}
 			catch (Throwable e) {
-				return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+				return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 						MonitorCostanti.OBJECT_NAME_MONITOR, 
 						MonitorCostanti.TIPO_OPERAZIONE_MONITOR);
 			}  
 			
 		}
 		catch (Throwable e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					MonitorCostanti.OBJECT_NAME_MONITOR, 
 					MonitorCostanti.TIPO_OPERAZIONE_MONITOR);
 		}  

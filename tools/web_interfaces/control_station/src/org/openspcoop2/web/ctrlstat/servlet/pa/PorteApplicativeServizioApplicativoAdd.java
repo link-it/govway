@@ -336,7 +336,7 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 					pd.setInserisciBottoni(false);
 					pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeCheckError(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO, 
 							ForwardParams.ADD());
@@ -350,7 +350,7 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO,
 						ForwardParams.ADD());
@@ -462,7 +462,7 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 				//					}
 				//					
 				//					//[TODO] controllare in fase di esecuzione il comportamento di questo punto
-				//					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				//					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				//					// Forward control to the specified success URI
 				//					return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO, 
 				//							ForwardParams.ADD());
@@ -476,7 +476,7 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO, 
 						ForwardParams.ADD());
@@ -502,12 +502,12 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 
 			porteApplicativeHelper.preparePorteAppServizioApplicativoList(nomePorta, ricerca, lista);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO, 
 					ForwardParams.ADD());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO,
 					ForwardParams.ADD());
 		} 

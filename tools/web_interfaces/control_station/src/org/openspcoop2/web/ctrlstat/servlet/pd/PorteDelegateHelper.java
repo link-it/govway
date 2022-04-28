@@ -163,7 +163,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 		boolean multitenant = this.pddCore.isMultitenant();
 
-//		Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
+//		Boolean confPers = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 		
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
@@ -812,7 +812,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			String servletChiamante = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ADD;
 			
 			boolean isSupportatoAutenticazioneSoggetti = true; // sempre nelle porte delegate
-			Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
+			Boolean confPers = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
 			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale,
@@ -2112,7 +2112,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				// In teoria non dovrei mai trovarmi qui
 				break;
 			case PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_SOGGETTO:
-				ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE,
+				ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE,
 						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, id));
 				
 				String soggettoTitle = null;
@@ -2143,7 +2143,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				break;
 			case PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE:
 			default:
-				ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE);
+				ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE);
 				lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PORTE_DELEGATE, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST));
 				if(search.equals("")){
 					this.pd.setSearchDescription("");
@@ -2428,7 +2428,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO, pId, pIdSoggetto, pIdAsps, pIdFrizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO, pId, pIdSoggetto, pIdAsps, pIdFrizione);
 
 			int idLista = Liste.PORTE_DELEGATE_SERVIZIO_APPLICATIVO;
 			int limit = ricerca.getPageSize(idLista);
@@ -2556,7 +2556,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_RUOLI, pId, pIdSoggetto, pIdAsps, pIdFrizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_RUOLI, pId, pIdSoggetto, pIdAsps, pIdFrizione);
 
 			int idLista = Liste.PORTE_DELEGATE_RUOLI;
 			int limit = ricerca.getPageSize(idLista);
@@ -2677,7 +2677,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_SCOPE, pId, pIdSoggetto, pIdAsps, pIdFrizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_SCOPE, pId, pIdSoggetto, pIdAsps, pIdFrizione);
 
 			int idLista = Liste.PORTE_DELEGATE_SCOPE;
 			int limit = ricerca.getPageSize(idLista);
@@ -2800,7 +2800,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE, pId, pIdSoggetto, pIdAsps, pIdFrizione); 
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE, pId, pIdSoggetto, pIdAsps, pIdFrizione); 
 
 			int idLista = Liste.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE;
 			int limit = ricerca.getPageSize(idLista);
@@ -2918,7 +2918,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST, pId, pIdSoggetto, pIdAsps, pIdFrizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST, pId, pIdSoggetto, pIdAsps, pIdFrizione);
 
 			int idLista = Liste.PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA;
 			int limit = ricerca.getPageSize(idLista);
@@ -3138,7 +3138,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST, pId, pIdSoggetto, pIdAsps, pIdFrizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST, pId, pIdSoggetto, pIdAsps, pIdFrizione);
 
 			int idLista = Liste.PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST;
 			int limit = ricerca.getPageSize(idLista);
@@ -3255,7 +3255,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RESPONSE, pId, pIdSoggetto, pIdAsps, pIdFrizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RESPONSE, pId, pIdSoggetto, pIdAsps, pIdFrizione);
 
 			int idLista = Liste.PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RISPOSTA;
 			int limit = ricerca.getPageSize(idLista);
@@ -3395,7 +3395,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_MTOM_REQUEST, pId, pIdSoggetto, pIdAsps, pIdFrizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_MTOM_REQUEST, pId, pIdSoggetto, pIdAsps, pIdFrizione);
 
 			int idLista = Liste.PORTE_DELEGATE_MTOM_REQUEST;
 			int limit = ricerca.getPageSize(idLista);
@@ -3508,7 +3508,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_MTOM_RESPONSE, pId, pIdSoggetto, pIdAsps, pIdFrizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_MTOM_RESPONSE, pId, pIdSoggetto, pIdAsps, pIdFrizione);
 
 			int idLista = Liste.PORTE_DELEGATE_MTOM_RESPONSE;
 			int limit = ricerca.getPageSize(idLista);
@@ -3754,7 +3754,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO, pId, pIdSoggetto, pIdAsps, pIdFruizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO, pId, pIdSoggetto, pIdAsps, pIdFruizione);
 
 			int idLista = Liste.PORTE_DELEGATE_PROP;
 			int limit = ricerca.getPageSize(idLista);
@@ -3973,7 +3973,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA, pId, pIdSoggetto, pIdAsps, pIdFrizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA, pId, pIdSoggetto, pIdAsps, pIdFrizione);
 
 			int idLista = Liste.PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA;
 			int limit = ricerca.getPageSize(idLista);
@@ -4164,7 +4164,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 			Parameter pFromList = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICABILITA_LIST, "true");
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI, 
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI, 
 					pId, pIdSoggetto, pIdAsps, pIdFruizione);
 
 			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI;
@@ -4448,7 +4448,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 			Parameter pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, idTrasformazione+"");
 			
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA, 
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA, 
 					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione);
 			
 
@@ -4678,7 +4678,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 			Parameter pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, idTrasformazione+"");
 			Parameter pIdTrasformazioneRisposta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE_RISPOSTA, idTrasformazioneRisposta + "");
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_HEADER, 
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_HEADER, 
 					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione,pIdTrasformazioneRisposta);
 
 			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_HEADER;
@@ -4834,7 +4834,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 			Parameter pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, idTrasformazione+"");
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_HEADER, 
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_HEADER, 
 					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione);
 
 			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_HEADER;
@@ -4977,7 +4977,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 			Parameter pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, idTrasformazione+"");
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_PARAMETRO, 
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_PARAMETRO, 
 					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione);
 
 			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_PARAMETRI;
@@ -5140,7 +5140,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				parameters.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICABILITA_LIST, listaTmp));
 			}
 			
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO, 
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO, 
 					parameters);
 
 			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO;
@@ -5366,7 +5366,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AUTORIZZAZIONE_CUSTOM_PROPERTIES, pId, pIdSoggetto, pIdAsps, pIdFruizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AUTORIZZAZIONE_CUSTOM_PROPERTIES, pId, pIdSoggetto, pIdAsps, pIdFruizione);
 
 			int idLista = Liste.PORTE_DELEGATE_PROPRIETA_AUTORIZZAZIONE;
 			int limit = ricerca.getPageSize(idLista);
@@ -5558,7 +5558,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES, pId, pIdSoggetto, pIdAsps, pIdFruizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES, pId, pIdSoggetto, pIdAsps, pIdFruizione);
 
 			int idLista = Liste.PORTE_DELEGATE_PROPRIETA_AUTORIZZAZIONE_CONTENUTO;
 			int limit = ricerca.getPageSize(idLista);
@@ -5750,7 +5750,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AUTENTICAZIONE_CUSTOM_PROPERTIES, pId, pIdSoggetto, pIdAsps, pIdFruizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AUTENTICAZIONE_CUSTOM_PROPERTIES, pId, pIdSoggetto, pIdAsps, pIdFruizione);
 
 			int idLista = Liste.PORTE_DELEGATE_PROPRIETA_AUTENTICAZIONE;
 			int limit = ricerca.getPageSize(idLista);

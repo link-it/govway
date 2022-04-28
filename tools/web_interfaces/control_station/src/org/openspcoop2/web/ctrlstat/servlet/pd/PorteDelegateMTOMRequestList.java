@@ -83,13 +83,13 @@ public class PorteDelegateMTOMRequestList extends Action {
 			porteDelegateHelper.preparePorteDelegateMTOMRequestList(nomePorta, ricerca, lista);
 	
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 	
 			// Forward control to the specified success URI
 		 	return ServletUtils.getStrutsForward(mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_MTOM_REQUEST,
 		 			ForwardParams.LIST());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_MTOM_REQUEST, 
 					ForwardParams.LIST());
 		}

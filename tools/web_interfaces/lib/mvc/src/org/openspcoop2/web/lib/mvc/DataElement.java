@@ -23,6 +23,7 @@
 
 package org.openspcoop2.web.lib.mvc;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,8 +44,13 @@ import org.apache.commons.lang.StringUtils;
  * @version $Rev$, $Date$
  * 
  */
-public class DataElement {
+public class DataElement implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L; 
+
 	public enum STATO_APERTURA_SEZIONI { APERTO, CHIUSO, DISABILITATO }
 	
 	private static Map<String, String> escapeMap = null;

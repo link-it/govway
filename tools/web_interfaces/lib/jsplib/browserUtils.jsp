@@ -78,10 +78,10 @@ public String getBrowserVersion(String []info){
 }
 %>
 <%
-String iddati = request.getParameter("iddati");
-String params = (String) request.getAttribute("params");
-String gdString = "GeneralData";
-String pdString = "PageData";
+String iddati = request.getParameter(Costanti.PARAMETER_NAME_ID_DATI);
+String params = (String) request.getAttribute(Costanti.PARAMETER_NAME_PARAMS);
+String gdString = Costanti.SESSION_ATTRIBUTE_GENERAL_DATA;
+String pdString = Costanti.SESSION_ATTRIBUTE_PAGE_DATA;
 if (iddati != null && !iddati.equals("notdefined")) {
   gdString += iddati;
   pdString += iddati;
@@ -92,8 +92,8 @@ else {
 
 if(params == null) params="";
 
-GeneralData gd = (GeneralData) session.getAttribute(gdString);
-PageData pd = (PageData) session.getAttribute(pdString);
+GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
+PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
 
 %>
 <script type="text/javascript">

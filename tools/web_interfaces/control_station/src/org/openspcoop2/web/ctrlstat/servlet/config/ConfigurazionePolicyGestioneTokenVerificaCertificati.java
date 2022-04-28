@@ -535,7 +535,7 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 							if(oTipo!=null && oTipo instanceof String) {
 								String ti = (String) oTipo;
 								Config config = configManager.getConfigurazione(propertiesSourceConfiguration, ti);
-								ServletUtils.removeConfigurazioneBeanFromSession(session, config.getId());
+								ServletUtils.removeConfigurazioneBeanFromSession(request, session, config.getId());
 							}
 						}
 					}
@@ -560,7 +560,7 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 					// salvo l'oggetto ricerca nella sessione
 					ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 					
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 					// Forward control to the specified success URI
 					return ServletUtils.getStrutsForwardEditModeFinished(mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI, CostantiControlStation.TIPO_OPERAZIONE_VERIFICA_CERTIFICATI);
@@ -604,7 +604,7 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 					
 					pd.setDati(dati);
 					
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 					
 					return ServletUtils.getStrutsForwardEditModeFinished(mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN, ForwardParams.CHANGE());
 					
@@ -614,12 +614,12 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 		
 			else {
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI, ForwardParams.OTHER(""));
 			}
 			
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI, ForwardParams.OTHER(""));
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_VERIFICA_CERTIFICATI, ForwardParams.OTHER(""));
 		}  
 	}
 }

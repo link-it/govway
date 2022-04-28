@@ -147,11 +147,11 @@ public class ConfigurazioneAllarmiAdd extends Action {
 			allarme.setGroupBy(new AllarmeRaggruppamento());
 			
 			if(first) {
-				confHelper.savePluginIntoSession(session, null);
-				confHelper.saveParametriIntoSession(session, null);
+				confHelper.savePluginIntoSession(request, session, null);
+				confHelper.saveParametriIntoSession(request, session, null);
 			}
 			
-			List<org.openspcoop2.monitor.sdk.parameters.Parameter<?>> parameters = confHelper.readParametriFromSession(session);
+			List<org.openspcoop2.monitor.sdk.parameters.Parameter<?>> parameters = confHelper.readParametriFromSession(request, session);
 			
 			String applicabilita = Filtri.FILTRO_APPLICABILITA_VALORE_CONFIGURAZIONE;
 			if(ruoloPorta!=null) {
@@ -166,7 +166,7 @@ public class ConfigurazioneAllarmiAdd extends Action {
 			List<Plugin> listaPlugin = confCore.pluginsAllarmiList(applicabilita, true);
 			int numeroPluginRegistrati = listaPlugin.size();
 			
-			Plugin plugin = confHelper.readPluginFromSession(session);
+			Plugin plugin = confHelper.readPluginFromSession(request, session);
 			allarme.setPlugin(plugin);
 						
 			// Dati Attivazione
@@ -221,8 +221,8 @@ public class ConfigurazioneAllarmiAdd extends Action {
 						allarme.setPlugin(null);
 						parameters=null;
 						
-						confHelper.removeParametriFromSession(session);
-						confHelper.removePluginFromSession(session);
+						confHelper.removeParametriFromSession(request, session);
+						confHelper.removePluginFromSession(request, session);
 					} else {
 						for (Plugin pluginBean : listaPlugin) {
 							String key = pluginBean.getLabel() + ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_PLUGIN_NOME_SEP + pluginBean.getClassName();
@@ -268,8 +268,8 @@ public class ConfigurazioneAllarmiAdd extends Action {
 //									par.setValue(par.getRendering().getDefaultValue());
 //								}
 								
-								confHelper.saveParametriIntoSession(session, parameters);
-								confHelper.savePluginIntoSession(session, allarme.getPlugin());
+								confHelper.saveParametriIntoSession(request, session, parameters);
+								confHelper.savePluginIntoSession(request, session, allarme.getPlugin());
 							}catch(Exception e){
 								ControlStationCore.getLog().error(e.getMessage(), e);
 								allarme.setNome(null);
@@ -278,8 +278,8 @@ public class ConfigurazioneAllarmiAdd extends Action {
 								allarme.setTipo(null);
 								parameters=null;
 								pluginSelectedExceptionMessage = e.getMessage();
-								confHelper.removeParametriFromSession(session);
-								confHelper.removePluginFromSession(session);
+								confHelper.removeParametriFromSession(request, session);
+								confHelper.removePluginFromSession(request, session);
 							}
 						}
 					}
@@ -350,7 +350,7 @@ public class ConfigurazioneAllarmiAdd extends Action {
 				
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ALLARMI, ForwardParams.ADD());
 			}
@@ -371,7 +371,7 @@ public class ConfigurazioneAllarmiAdd extends Action {
 				
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, 
 						ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ALLARMI, 
@@ -447,12 +447,12 @@ public class ConfigurazioneAllarmiAdd extends Action {
 			
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ALLARMI, ForwardParams.ADD());
 		} catch (Throwable e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ALLARMI, ForwardParams.ADD());
 		}  
 	}

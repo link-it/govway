@@ -131,11 +131,11 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 				confHelper.aggiornaConfigurazioneProperties(configurazioneBean);
 			} else {
 				// reset di eventuali configurazioni salvate in sessione
-				ServletUtils.removeConfigurazioneBeanFromSession(session, configurazioneBean.getId());
+				ServletUtils.removeConfigurazioneBeanFromSession(request, session, configurazioneBean.getId());
 			}
 			
 			configurazioneBean.updateConfigurazione(configurazione);
-			ServletUtils.saveConfigurazioneBeanIntoSession(session, configurazioneBean, configurazioneBean.getId());
+			ServletUtils.saveConfigurazioneBeanIntoSession(request, session, configurazioneBean, configurazioneBean.getId());
 			
 			// reset elemento dalla cache
 			if(resetElementoCache) {
@@ -204,7 +204,7 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 							if(oTipo!=null && oTipo instanceof String) {
 								String ti = (String) oTipo;
 								Config config = configManager.getConfigurazione(propertiesSourceConfiguration, ti);
-								ServletUtils.removeConfigurazioneBeanFromSession(session, config.getId());
+								ServletUtils.removeConfigurazioneBeanFromSession(request, session, config.getId());
 							}
 						}
 					}
@@ -229,7 +229,7 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 					// salvo l'oggetto ricerca nella sessione
 					ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 					
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 					// Forward control to the specified success URI
 					return ServletUtils.getStrutsForwardEditModeFinished(mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN, ForwardParams.CHANGE());
@@ -269,7 +269,7 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 				
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping,	ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN,ForwardParams.CHANGE());
 			}
@@ -296,7 +296,7 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 				
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN, ForwardParams.CHANGE());
 			}
@@ -343,16 +343,16 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			confHelper.prepareGestorePolicyTokenList(ricerca, lista, idLista); 
 			
 			// reset di eventuali configurazioni salvate in sessione
-			ServletUtils.removeConfigurazioneBeanFromSession(session, configurazioneBean.getId());
+			ServletUtils.removeConfigurazioneBeanFromSession(request, session, configurazioneBean.getId());
 			
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN, ForwardParams.CHANGE());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN, ForwardParams.CHANGE());
 		}  
 	}

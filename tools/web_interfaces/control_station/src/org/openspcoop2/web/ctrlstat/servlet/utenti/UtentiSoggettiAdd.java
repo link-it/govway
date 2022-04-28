@@ -154,7 +154,7 @@ public class UtentiSoggettiAdd extends Action {
 						pd.setMessage(UtentiCostanti.LABEL_UTENTI_SOGGETTI_DISPONIBILI_ESAURITI, MessageType.INFO);
 						pd.disableEditMode();
 						pd.setDati(dati);
-						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+						ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 						return ServletUtils.getStrutsForwardEditModeInProgress(mapping,	UtentiCostanti.OBJECT_NAME_UTENTI_SOGGETTI,ForwardParams.ADD());
 					} else {
 						String msf = MessageFormat.format(UtentiCostanti.LABEL_UTENTI_SOGGETTI_DISPONIBILI_ESAURITI_PER_LA_MODALITA_XX, utentiHelper.getLabelProtocollo(protocollo));
@@ -167,7 +167,7 @@ public class UtentiSoggettiAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, UtentiCostanti.OBJECT_NAME_UTENTI_SOGGETTI,ForwardParams.ADD());
 			}
@@ -186,7 +186,7 @@ public class UtentiSoggettiAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, UtentiCostanti.OBJECT_NAME_UTENTI_SOGGETTI,ForwardParams.ADD());
 			}
@@ -211,12 +211,12 @@ public class UtentiSoggettiAdd extends Action {
 			utentiHelper.prepareUtentiSoggettiList(ricerca, lista, user);
 
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, UtentiCostanti.OBJECT_NAME_UTENTI_SOGGETTI, ForwardParams.ADD());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					UtentiCostanti.OBJECT_NAME_UTENTI_SOGGETTI, ForwardParams.ADD());
 		} 
 	}

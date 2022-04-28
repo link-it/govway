@@ -70,7 +70,7 @@ public class LoginMessagePage extends Action {
 			ConsoleHelper consoleHelper = new ConsoleHelper(request, pd, session);
 
 			// lettura parametri errore login dalla sessione
-			String messageText = (String) session.getAttribute(Costanti.PRINCIPAL_ERROR_MSG);
+			String messageText = ServletUtils.getObjectFromSession(request, session, String.class, Costanti.PRINCIPAL_ERROR_MSG);
 			if(messageText == null) {
 				messageText = Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE;
 			}
@@ -99,13 +99,13 @@ public class LoginMessagePage extends Action {
 			pd.setMessage(messageText, messageTitle, mt);
 
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, LoginCostanti.OBJECT_NAME_LOGIN_MESSAGE_PAGE, ForwardParams.OTHER(""));
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, LoginCostanti.OBJECT_NAME_LOGIN_MESSAGE_PAGE, ForwardParams.OTHER(""));
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, LoginCostanti.OBJECT_NAME_LOGIN_MESSAGE_PAGE, ForwardParams.OTHER(""));
 		}
 	}
 }

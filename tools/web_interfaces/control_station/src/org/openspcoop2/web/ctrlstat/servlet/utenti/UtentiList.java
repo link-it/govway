@@ -85,12 +85,12 @@ public final class UtentiList extends Action {
 			utentiHelper.prepareUtentiList(ricerca, lista, utentiCore.isSinglePdD());
 	
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			return ServletUtils.getStrutsForward(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.LIST());
 			
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.LIST());
 		} 
 	}

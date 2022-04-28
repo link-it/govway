@@ -23,6 +23,8 @@
 
 package org.openspcoop2.web.lib.mvc;
 
+import java.io.Serializable;
+
 /**
  * MenuEntry
  * 
@@ -33,7 +35,12 @@ package org.openspcoop2.web.lib.mvc;
  * @version $Rev$, $Date$
  * 
  */
-public class MenuEntry {
+public class MenuEntry implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
     String title;
     String [][] entries;

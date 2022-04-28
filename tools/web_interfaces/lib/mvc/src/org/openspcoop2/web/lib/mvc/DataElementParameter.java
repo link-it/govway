@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.web.lib.mvc;
 
+import java.io.Serializable;
+
 /**
  * DataElementParameter
  * 
@@ -26,7 +28,12 @@ package org.openspcoop2.web.lib.mvc;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DataElementParameter {
+public class DataElementParameter implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private Integer size= null; 
 	private Integer cols= null;

@@ -23,6 +23,8 @@
 
 package org.openspcoop2.web.lib.mvc;
 
+import java.io.Serializable;
+
 /**
  * GeneralLink
  * 
@@ -33,9 +35,13 @@ package org.openspcoop2.web.lib.mvc;
  * @version $Rev$, $Date$
  * 
  */
-public class GeneralLink {
+public class GeneralLink implements Serializable{
 
-    String label;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	String label;
     String url;
     String target;
     String onclick;

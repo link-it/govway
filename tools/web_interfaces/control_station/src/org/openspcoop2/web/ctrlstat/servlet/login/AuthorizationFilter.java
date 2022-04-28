@@ -156,7 +156,7 @@ public final class AuthorizationFilter implements Filter {
 			// Autenticazione gestita dall'applicazione 
 			if(this.loginApplication){
 				HttpSession session = request.getSession(true);
-				session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD, this.core.isSinglePdD());
+				ServletUtils.setObjectIntoSession(request, session, this.core.isSinglePdD(), CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 				
 				if (isRisorsaProtetta(request)) { 
 					
@@ -187,7 +187,7 @@ public final class AuthorizationFilter implements Filter {
 					} else {
 						
 						// utente loggato
-						session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_TIPO_DB, this.core.getTipoDatabase());
+						ServletUtils.setObjectIntoSession(request, session, this.core.getTipoDatabase(), CostantiControlStation.SESSION_PARAMETRO_TIPO_DB);
 						
 						boolean singlePdDBooleanValue = this.core.isSinglePdD();
 						
@@ -323,11 +323,11 @@ public final class AuthorizationFilter implements Filter {
 								
 								if(isOk) {
 									// utente loggato
-									session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_TIPO_DB, this.core.getTipoDatabase());
+									ServletUtils.setObjectIntoSession(request, session, this.core.getTipoDatabase(), CostantiControlStation.SESSION_PARAMETRO_TIPO_DB);
 									
 									LoginCore loginCore = new LoginCore(this.core);
 									
-									LoginSessionUtilities.setLoginParametersSession(session, loginCore, username);
+									LoginSessionUtilities.setLoginParametersSession(request, session, loginCore, username);
 									
 									loginHelper.updateTipoInterfaccia();
 									
@@ -344,7 +344,7 @@ public final class AuthorizationFilter implements Filter {
 											|| loginHelper.getPd().getMessage().equals(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE_CONFIGURAZIONE_NON_CORRETTO)) {
 										
 										log.debug("Utente non valido: " + loginHelper.getPd().getMessage());
-										session.setAttribute(Costanti.PRINCIPAL_ERROR_MSG, MessageFormat.format(Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_UTENTE_NON_VALIDO, username,	loginHelper.getPd().getMessage())); 
+										ServletUtils.setObjectIntoSession(request, session, MessageFormat.format(Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_UTENTE_NON_VALIDO, username,	loginHelper.getPd().getMessage()), Costanti.PRINCIPAL_ERROR_MSG);
 										
 										ServletUtils.removeUserLoginFromSession(session);
 										String redirPageUrl = StringUtils.isNotEmpty(this.loginUtenteNonValidoRedirectUrl) ? this.loginUtenteNonValidoRedirectUrl : request.getContextPath() +  "/" + LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE;
@@ -355,11 +355,10 @@ public final class AuthorizationFilter implements Filter {
 									}
 									
 									log.debug("Utente non autorizzato: " + loginHelper.getPd().getMessage());
-									session.setAttribute(Costanti.PRINCIPAL_ERROR_MSG, MessageFormat.format(Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_UTENTE_NON_AUTORIZZATO, username,	loginHelper.getPd().getMessage())); 
+									ServletUtils.setObjectIntoSession(request, session, MessageFormat.format(Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_UTENTE_NON_AUTORIZZATO, username, loginHelper.getPd().getMessage()), Costanti.PRINCIPAL_ERROR_MSG);
 									
 									ServletUtils.removeUserLoginFromSession(session);
-									String redirPageUrl =
-											StringUtils.isNotEmpty(this.loginUtenteNonAutorizzatoRedirectUrl) ? this.loginUtenteNonAutorizzatoRedirectUrl : request.getContextPath() +  "/" + LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE;
+									String redirPageUrl = StringUtils.isNotEmpty(this.loginUtenteNonAutorizzatoRedirectUrl) ? this.loginUtenteNonAutorizzatoRedirectUrl : request.getContextPath() +  "/" + LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE;
 
 									// Messaggio di errore
 									response.sendRedirect(redirPageUrl);
@@ -372,7 +371,7 @@ public final class AuthorizationFilter implements Filter {
 								String redirPageUrl = StringUtils.isNotEmpty(this.loginErroreInternoRedirectUrl) ? this.loginErroreInternoRedirectUrl : request.getContextPath() +  "/" + LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE ;
 
 								// Messaggio di errore
-								session.setAttribute(Costanti.PRINCIPAL_ERROR_MSG, Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_ERRORE_INTERNO); 
+								ServletUtils.setObjectIntoSession(request, session, Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_ERRORE_INTERNO, Costanti.PRINCIPAL_ERROR_MSG);
 
 								response.sendRedirect(redirPageUrl);
 								return;
@@ -383,7 +382,7 @@ public final class AuthorizationFilter implements Filter {
 							ServletUtils.removeUserLoginFromSession(session);
 							
 							// Messaggio di errore
-							session.setAttribute(Costanti.PRINCIPAL_ERROR_MSG, Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_PRINCIPAL_ASSENTE); 
+							ServletUtils.setObjectIntoSession(request, session, Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_PRINCIPAL_ASSENTE, Costanti.PRINCIPAL_ERROR_MSG);
 							
 							String redirPageUrl =
 									StringUtils.isNotEmpty(this.loginUtenteNonAutorizzatoRedirectUrl) ? this.loginUtenteNonAutorizzatoRedirectUrl : request.getContextPath() + "/" + LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE;
@@ -402,7 +401,7 @@ public final class AuthorizationFilter implements Filter {
 							ServletUtils.removeUserLoginFromSession(session);
 							
 							// Messaggio di errore
-							session.setAttribute(Costanti.PRINCIPAL_ERROR_MSG, Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_SESSIONE_SCADUTA); 
+							ServletUtils.setObjectIntoSession(request, session, Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_SESSIONE_SCADUTA, Costanti.PRINCIPAL_ERROR_MSG);
 							
 							String redirPageUrl =  StringUtils.isNotEmpty(this.loginSessioneScadutaRedirectUrl)
 									? this.loginSessioneScadutaRedirectUrl : request.getContextPath() + "/" +  LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE;
@@ -411,10 +410,10 @@ public final class AuthorizationFilter implements Filter {
 						} 
 						
 						log.debug("Utente Loggato sessione valida.");
-						session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD, this.core.isSinglePdD());
+						ServletUtils.setObjectIntoSession(request, session, this.core.isSinglePdD(), CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 						
 						// utente loggato
-						session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_TIPO_DB, this.core.getTipoDatabase());
+						ServletUtils.setObjectIntoSession(request, session, this.core.getTipoDatabase(), CostantiControlStation.SESSION_PARAMETRO_TIPO_DB);
 						
 						boolean singlePdDBooleanValue = this.core.isSinglePdD();
 						
@@ -578,7 +577,7 @@ public final class AuthorizationFilter implements Filter {
 				// Preparo il menu
 				lH.makeMenu();
 				
-				LoginSessionUtilities.setLoginParametersSession(session, loginCore, userLogin);
+				LoginSessionUtilities.setLoginParametersSession(request, session, loginCore, userLogin);
 				lH.updateTipoInterfaccia();
 				
 				// Inizializzo parametri di ricerca
@@ -597,7 +596,7 @@ public final class AuthorizationFilter implements Filter {
 			}
 		}
 		
-		ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+		ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 		this.filterConfig.getServletContext().getRequestDispatcher(servletDispatcher).forward(request, response);
 	}
@@ -636,7 +635,7 @@ public final class AuthorizationFilter implements Filter {
 		if(msgErrore!=null)
 			pd.setMessage(msgErrore,msgErroreTitle,messageType);
 		
-		ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd, true);
+		ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);
 
 		this.filterConfig.getServletContext().getRequestDispatcher(servletDispatcher).forward(request, response);
 		

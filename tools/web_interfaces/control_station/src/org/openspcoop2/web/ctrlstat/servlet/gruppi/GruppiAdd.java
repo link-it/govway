@@ -102,7 +102,7 @@ public final class GruppiAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping,	GruppiCostanti.OBJECT_NAME_GRUPPI, ForwardParams.ADD());
 			}
@@ -123,7 +123,7 @@ public final class GruppiAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, GruppiCostanti.OBJECT_NAME_GRUPPI, ForwardParams.ADD());
 			}
@@ -152,11 +152,11 @@ public final class GruppiAdd extends Action {
 			
 			gruppiHelper.prepareGruppiList(ricerca, lista);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, GruppiCostanti.OBJECT_NAME_GRUPPI, ForwardParams.ADD());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, GruppiCostanti.OBJECT_NAME_GRUPPI, ForwardParams.ADD());
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, GruppiCostanti.OBJECT_NAME_GRUPPI, ForwardParams.ADD());
 		}
 	}
 

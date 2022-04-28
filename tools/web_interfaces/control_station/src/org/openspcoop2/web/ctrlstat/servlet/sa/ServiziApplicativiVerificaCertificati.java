@@ -724,7 +724,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					
 					ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 					
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 					return ServletUtils.getStrutsForwardEditModeFinished(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI, CostantiControlStation.TIPO_OPERAZIONE_VERIFICA_CERTIFICATI);
 					
 				}
@@ -1385,19 +1385,19 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 								
 					pd.setDati(dati);
 					
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 					return ServletUtils.getStrutsForwardEditModeFinished(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, ForwardParams.CHANGE());
 					
 				}
 			}
 			else {
 				
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI, ForwardParams.OTHER(""));
 			}
 			
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI, ForwardParams.OTHER(""));
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_VERIFICA_CERTIFICATI, ForwardParams.OTHER(""));
 		}  
 	}
 }

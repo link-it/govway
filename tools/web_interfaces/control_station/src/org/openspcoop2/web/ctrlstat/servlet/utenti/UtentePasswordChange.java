@@ -81,7 +81,7 @@ public final class UtentePasswordChange extends Action {
 			String newpw = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PASSWORD);
 			String first = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_FIRST);
 
-			PageData oldPD = ServletUtils.getPageDataFromSession(session);
+			PageData oldPD = ServletUtils.getPageDataFromSession(request, session);
 			
 			UtentiCore utentiCore = new UtentiCore();
 			
@@ -105,7 +105,7 @@ public final class UtentePasswordChange extends Action {
 				
 				pd.setDati(dati);
 		
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, UtentiCostanti.OBJECT_NAME_UTENTE_PASSWORD,ForwardParams.CHANGE());
 			}
@@ -126,7 +126,7 @@ public final class UtentePasswordChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, UtentiCostanti.OBJECT_NAME_UTENTE_PASSWORD,ForwardParams.CHANGE());
 
@@ -160,10 +160,10 @@ public final class UtentePasswordChange extends Action {
 			
 			
 			// eliminare stato password scaduta dalla sessione
-			ServletUtils.removeObjectFromSession(session, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
+			ServletUtils.removeObjectFromSession(request, session, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
 
 			// porto l'utente dove andrebbe dopo il login effettuato con successo.
-			LoginSessionUtilities.setLoginParametersSession(session, utentiCore, userToUpdate);
+			LoginSessionUtilities.setLoginParametersSession(request, session, utentiCore, userToUpdate);
 			utentiHelper.updateTipoInterfaccia();
 			
 			utentiCore.performAuditLogin(userToUpdate);
@@ -197,12 +197,12 @@ public final class UtentePasswordChange extends Action {
 			// Refresh Menu' Preparo il menu
 			utentiHelper.makeMenu();
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, UtentiCostanti.OBJECT_NAME_UTENTE_PASSWORD, ForwardParams.CHANGE());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, UtentiCostanti.OBJECT_NAME_UTENTE_PASSWORD, ForwardParams.CHANGE());
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, UtentiCostanti.OBJECT_NAME_UTENTE_PASSWORD, ForwardParams.CHANGE());
 		}
 	}
 }

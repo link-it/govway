@@ -266,7 +266,7 @@ public class ScopeHelper extends ConsoleHelper{
 	public void prepareScopeList(ISearch ricerca, List<Scope> lista)
 			throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, ScopeCostanti.OBJECT_NAME_SCOPE);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ScopeCostanti.OBJECT_NAME_SCOPE);
 			
 			boolean modalitaCompleta = this.isModalitaCompleta();
 			

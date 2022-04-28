@@ -107,12 +107,12 @@ public class UtentiSoggettiDel extends Action {
 			utentiHelper.prepareUtentiSoggettiList(ricerca, lista, user);
 	
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			return ServletUtils.getStrutsForward(mapping, UtentiCostanti.OBJECT_NAME_UTENTI_SOGGETTI, ForwardParams.DEL());
 			
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					UtentiCostanti.OBJECT_NAME_UTENTI_SOGGETTI, ForwardParams.DEL());
 		} 
 	}

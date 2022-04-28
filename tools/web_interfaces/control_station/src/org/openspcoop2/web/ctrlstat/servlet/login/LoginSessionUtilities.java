@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.login;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -39,7 +40,7 @@ import org.openspcoop2.web.lib.users.dao.User;
  */
 public class LoginSessionUtilities {
 
-	public static void setLoginParametersSession(HttpSession session,ControlStationCore core,String login) throws Exception{
+	public static void setLoginParametersSession(HttpServletRequest request, HttpSession session, ControlStationCore core,String login) throws Exception{
 				
 		UtentiCore utentiCore = new UtentiCore(core);
 		
@@ -67,28 +68,28 @@ public class LoginSessionUtilities {
 		switch (gui) {
 			case AVANZATA:
 			case COMPLETA:
-				session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_INFO_PROTOCOLLO, gestioneInfoProtocol);
-				session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI, showAccordiAzioni);
+				ServletUtils.setObjectIntoSession(request, session, gestioneInfoProtocol, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_INFO_PROTOCOLLO);
+				ServletUtils.setObjectIntoSession(request, session, showAccordiAzioni, CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI);
 				Utilities.readTipologiaConnettori(core);
-				session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_SOGGETTI_VIRTUALI, soggVirt);
+				ServletUtils.setObjectIntoSession(request, session, soggVirt, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_SOGGETTI_VIRTUALI);
 				break;
 			case STANDARD:
-				session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_INFO_PROTOCOLLO, false);
-				session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI, false);
+				ServletUtils.setObjectIntoSession(request, session, false, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_INFO_PROTOCOLLO);
+				ServletUtils.setObjectIntoSession(request, session, false, CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI);
 				Utilities.setTipologiaConnettori(TipologiaConnettori.TIPOLOGIA_CONNETTORI_HTTP);
-				session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_SOGGETTI_VIRTUALI, false);
+				ServletUtils.setObjectIntoSession(request, session, false, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_SOGGETTI_VIRTUALI);
 				break;
 		}
-		session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_MODALITA_INTERFACCIA, gui.toString() );
-
-		session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD, singlePdD);
-		session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE, showAccordiCooperazione);
-		session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE, confPers);
-		session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_SAME_DB_WEBUI, sameDBWebUI);
+		ServletUtils.setObjectIntoSession(request, session, gui.toString(), CostantiControlStation.SESSION_PARAMETRO_MODALITA_INTERFACCIA);
+		
+		ServletUtils.setObjectIntoSession(request, session, singlePdD, CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+		ServletUtils.setObjectIntoSession(request, session, showAccordiCooperazione, CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);
+		ServletUtils.setObjectIntoSession(request, session, confPers, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
+		ServletUtils.setObjectIntoSession(request, session, sameDBWebUI, CostantiControlStation.SESSION_PARAMETRO_SAME_DB_WEBUI);
 	}
 	
 	
-	public static void cleanLoginParametersSession(HttpSession session) throws Exception{
+	public static void cleanLoginParametersSession(HttpServletRequest request, HttpSession session) throws Exception{
 		
 		ServletUtils.removeUserLoginFromSession(session);
 		
@@ -96,15 +97,15 @@ public class LoginSessionUtilities {
 				
 		ServletUtils.removeUserFromSession(session);
 				
-		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_INFO_PROTOCOLLO);
-		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI);
-		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_SOGGETTI_VIRTUALI);
-		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_MODALITA_INTERFACCIA);
-		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
-		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);
-		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
-		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_SAME_DB_WEBUI);
-		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_TIPO_DB);
+		ServletUtils.removeObjectFromSession(request, session, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_INFO_PROTOCOLLO);
+		ServletUtils.removeObjectFromSession(request, session, CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI);
+		ServletUtils.removeObjectFromSession(request, session, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_SOGGETTI_VIRTUALI);
+		ServletUtils.removeObjectFromSession(request, session, CostantiControlStation.SESSION_PARAMETRO_MODALITA_INTERFACCIA);
+		ServletUtils.removeObjectFromSession(request, session, CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+		ServletUtils.removeObjectFromSession(request, session, CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);
+		ServletUtils.removeObjectFromSession(request, session, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
+		ServletUtils.removeObjectFromSession(request, session, CostantiControlStation.SESSION_PARAMETRO_SAME_DB_WEBUI);
+		ServletUtils.removeObjectFromSession(request, session, CostantiControlStation.SESSION_PARAMETRO_TIPO_DB);
 
 	}
 	

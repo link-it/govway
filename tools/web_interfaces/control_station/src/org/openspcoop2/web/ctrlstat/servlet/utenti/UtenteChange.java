@@ -178,7 +178,7 @@ public final class UtenteChange extends Action {
 
 						pd.setDati(dati);
 
-						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+						ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 						return ServletUtils.getStrutsForwardEditModeCheckError(mapping, UtentiCostanti.OBJECT_NAME_UTENTE, ForwardParams.CHANGE());
 
@@ -241,11 +241,11 @@ public final class UtenteChange extends Action {
 					utentiCore.performUpdateOperation(userLogin, utentiHelper.smista(), myS);
 				}
 				
-				LoginSessionUtilities.cleanLoginParametersSession(session);
+				LoginSessionUtilities.cleanLoginParametersSession(request, session);
 
 				ServletUtils.setUserIntoSession(session, myS); // update in sessione.
 				utentiHelper.setTipoInterfaccia(myS.getInterfaceType()); // update InterfaceType
-				LoginSessionUtilities.setLoginParametersSession(session, utentiCore, userLogin);
+				LoginSessionUtilities.setLoginParametersSession(request, session, utentiCore, userLogin);
 
 				pd.setMessage("Modifiche effettuate con successo", Costanti.MESSAGE_TYPE_INFO);
 
@@ -345,12 +345,12 @@ public final class UtenteChange extends Action {
 			// Refresh Menu' Preparo il menu
 			utentiHelper.makeMenu();
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, UtentiCostanti.OBJECT_NAME_UTENTE, ForwardParams.CHANGE());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());
 		}
 	}

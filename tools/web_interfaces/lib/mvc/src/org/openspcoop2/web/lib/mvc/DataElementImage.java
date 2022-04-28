@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.web.lib.mvc;
 
+import java.io.Serializable;
+
 /**
  * DataElementImage
  * 
@@ -26,7 +28,7 @@ package org.openspcoop2.web.lib.mvc;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DataElementImage {
+public class DataElementImage implements Serializable {
 
 	private String image;
 	private String toolTip;

@@ -58,6 +58,8 @@ public class Costanti {
 	public final static String PARAMETER_NAME_MSG_ERROR_EXPORT = "errorExport";
 	
 	public final static String PARAMETER_NAME_SEARCH_LIST_DONE= "_searchDone";
+	public final static String PARAMETER_NAME_ID_DATI= "iddati";
+	public final static String PARAMETER_NAME_PARAMS = "params";
 	
 	
 	/** PARAMETER ATTRIBUTE */
@@ -145,12 +147,13 @@ public class Costanti {
 	
 	protected final static String SESSION_ATTRIBUTE_LOGIN = "Login";
 	protected final static String SESSION_ATTRIBUTE_USER = "User";
-	protected final static String SESSION_ATTRIBUTE_GENERAL_DATA = "GeneralData";
-	protected final static String SESSION_ATTRIBUTE_PAGE_DATA = "PageData";
+	public final static String SESSION_ATTRIBUTE_GENERAL_DATA = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "GeneralData";
+	public final static String SESSION_ATTRIBUTE_PAGE_DATA = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "PageData";
 	public final static String SESSION_ATTRIBUTE_RICERCA = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "Ricerca";
-	protected final static String SESSION_ATTRIBUTE_RISULTATI_LISTA = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "RisultatiLista";
+	public final static String SESSION_ATTRIBUTE_RISULTATI_LISTA = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "RisultatiLista";
 	protected final static String SESSION_ATTRIBUTE_CONTA_LISTE = "contaListe";
-	protected final static String SESSION_ATTRIBUTE_LIST_ELEMENT ="ListElement";
+	public final static String SESSION_ATTRIBUTE_LIST_ELEMENT = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "ListElement";
+	public final static String SESSION_ATTRIBUTE_ID_DATI = PARAMETER_NAME_ID_DATI;
 	protected final static String SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED = org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED;
 	protected final static String SESSION_ATTRIBUTE_VALUE_SOGGETTO_VIRTUALE_YES ="yes";
 	protected final static String SESSION_ATTRIBUTE_GESTIONE_WSBL ="GestioneWSBL";

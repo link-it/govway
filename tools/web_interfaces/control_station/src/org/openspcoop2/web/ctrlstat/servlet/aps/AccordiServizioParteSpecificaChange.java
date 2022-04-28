@@ -693,7 +693,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 					pd.setDati(dati);
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
 							ForwardParams.CHANGE());
@@ -1377,7 +1377,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
 					}
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 					
 					return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,
 							ForwardParams.CHANGE());
@@ -1574,7 +1574,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
 						ForwardParams.CHANGE());
@@ -1780,7 +1780,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					// disabilito la form
 					pd.disableEditMode();
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
 							ForwardParams.CHANGE());
@@ -1810,7 +1810,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 				apsHelper.prepareServiziList(ricerca, listaServizi);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 					ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);
@@ -2056,7 +2056,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 					pd.setDati(dati);
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardGeneralError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
 							ForwardParams.CHANGE());
@@ -2097,7 +2097,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 			apsHelper.prepareServiziList(ricerca, listaServizi);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 				ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);
@@ -2107,7 +2107,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,
 					ForwardParams.CHANGE());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,
 					ForwardParams.CHANGE());
 		}  

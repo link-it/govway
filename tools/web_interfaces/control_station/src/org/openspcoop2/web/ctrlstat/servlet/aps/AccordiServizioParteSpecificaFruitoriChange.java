@@ -161,7 +161,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request);
 			
 			// prendo i dati hidden del pdold e li metto nel pd attuale
-			PageData pdOld = ServletUtils.getPageDataFromSession(session);
+			PageData pdOld = ServletUtils.getPageDataFromSession(request, session);
 			pd.setHidden(pdOld.getHidden());
 
 			
@@ -413,7 +413,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			String nomeSoggettoErogatore = asps.getNomeSoggettoErogatore();
 			String idSoggettoErogatoreDelServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
 			if ((idSoggettoErogatoreDelServizio == null) || idSoggettoErogatoreDelServizio.equals("")) {
-				PageData oldPD = ServletUtils.getPageDataFromSession(session);
+				PageData oldPD = ServletUtils.getPageDataFromSession(request, session);
 
 				idSoggettoErogatoreDelServizio = oldPD.getHidden(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
 
@@ -999,7 +999,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
 					}
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,
 							ForwardParams.CHANGE());
@@ -1152,7 +1152,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI, 
 						ForwardParams.CHANGE());
@@ -1291,7 +1291,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					// disabilito la form
 					pd.disableEditMode();
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI, 
 							ForwardParams.CHANGE());
@@ -1484,7 +1484,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 					pd.setDati(dati);
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI, 
 							ForwardParams.CHANGE());
@@ -1506,7 +1506,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);
 					asps = apsCore.getAccordoServizioParteSpecifica(idServizioInt);
 					erogazioniHelper.prepareErogazioneChange(TipoOperazione.CHANGE, asps, new IDSoggetto(fruitore.getTipo(), fruitore.getNome()));
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 					return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
 				}
 				
@@ -1563,10 +1563,10 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				fwP = PorteDelegateCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE;
 			}
 	
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			return ServletUtils.getStrutsForwardEditModeFinished( mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,fwP);
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,
 					ForwardParams.CHANGE());
 		} 

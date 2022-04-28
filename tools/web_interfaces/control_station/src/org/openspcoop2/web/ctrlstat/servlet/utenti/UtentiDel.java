@@ -148,7 +148,7 @@ public final class UtentiDel extends Action {
 					// Preparo il menu
 					pd.setMessage(msgErroreModalita);
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 					
 					return ServletUtils.getStrutsForwardGeneralError(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.DEL());	
 				}
@@ -252,7 +252,7 @@ public final class UtentiDel extends Action {
 								// Preparo il menu
 								pd.setMessage("Non è possibile eliminare l'utente '"+nomesu+"', poichè non esistono altri utenti con il permesso per la gestione dei 'Servizi'");
 		
-								ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+								ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 								
 								return ServletUtils.getStrutsForwardGeneralError(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.DEL());	
 								
@@ -344,8 +344,7 @@ public final class UtentiDel extends Action {
 				pd.setDati(dati);
 				pd.setMessage(msg, Costanti.MESSAGE_TYPE_INFO);
 	
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-//				session.setAttribute("PageDataOld", pdold);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForward(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.DEL(), UtentiCostanti.STRUTS_FORWARD_INFO);	
 
@@ -397,7 +396,7 @@ public final class UtentiDel extends Action {
 											// Preparo il menu
 											pd.setMessage("Non è possibile eliminare il permesso 'Accordi Cooperazione', poichè non esistono altri utenti con tale permesso");
 	
-											ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+											ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 	
 											return ServletUtils.getStrutsForwardGeneralError(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());
 										}
@@ -447,12 +446,12 @@ public final class UtentiDel extends Action {
 		
 				utentiHelper.prepareUtentiList(ricerca, lista, utentiCore.isSinglePdD());
 		
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForward(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.DEL());	
 			}
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.DEL());
 		} 
 	}

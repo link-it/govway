@@ -106,7 +106,7 @@ public final class EliminazioneXML extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, Costanti.OBJECT_NAME_ARCHIVI_ELIMINAZIONE_XML, Costanti.TIPO_OPERAZIONE_ARCHIVI_ELIMINAZIONE_XML);
 			}
@@ -133,7 +133,7 @@ public final class EliminazioneXML extends Action {
 
 				pd.setMessage(Costanti.LABEL_FILE_NON_VALIDO+errorBuffer.toString());
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, Costanti.OBJECT_NAME_ARCHIVI_ELIMINAZIONE_XML, Costanti.TIPO_OPERAZIONE_ARCHIVI_ELIMINAZIONE_XML);
 		
@@ -216,7 +216,7 @@ public final class EliminazioneXML extends Action {
 			
 			pd.setDati(dati);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			if(errore!=null)
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, Costanti.OBJECT_NAME_ARCHIVI_ELIMINAZIONE_XML, Costanti.TIPO_OPERAZIONE_ARCHIVI_ELIMINAZIONE_XML);
@@ -224,7 +224,7 @@ public final class EliminazioneXML extends Action {
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping, Costanti.OBJECT_NAME_ARCHIVI_ELIMINAZIONE_XML, Costanti.TIPO_OPERAZIONE_ARCHIVI_ELIMINAZIONE_XML);
 
 		}catch(Exception e){
-			return ServletUtils.getStrutsForwardError(LoaderCore.log, e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(LoaderCore.log, e, pd, request, session, gd, mapping, 
 					Costanti.OBJECT_NAME_ARCHIVI_ELIMINAZIONE_XML, Costanti.TIPO_OPERAZIONE_ARCHIVI_ELIMINAZIONE_XML);
 		}
 	}

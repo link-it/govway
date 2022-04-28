@@ -130,7 +130,7 @@ public final class ConfigurazioneAccessoRegistro extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, 
 						ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ACCESSO_REGISTRO_SERVIZI,
@@ -149,7 +149,7 @@ public final class ConfigurazioneAccessoRegistro extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, 
 						ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ACCESSO_REGISTRO_SERVIZI,
@@ -181,13 +181,13 @@ public final class ConfigurazioneAccessoRegistro extends Action {
 			
 			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ACCESSO_REGISTRO_MODIFICATA_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping,
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ACCESSO_REGISTRO_SERVIZI,
 					ConfigurazioneCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE_ACCESSO_REGISTRO_SERVIZI);
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ACCESSO_REGISTRO_SERVIZI,
 					ConfigurazioneCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE_ACCESSO_REGISTRO_SERVIZI);
 		}

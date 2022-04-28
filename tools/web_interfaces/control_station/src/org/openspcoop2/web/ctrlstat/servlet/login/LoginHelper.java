@@ -133,7 +133,7 @@ public class LoginHelper extends ConsoleHelper {
 		try{
 		
 			// elimino attributo che abilita il cambio della password
-			ServletUtils.removeObjectFromSession(this.session, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
+			ServletUtils.removeObjectFromSession(this.request, this.session, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
 			// controllo scadenza password
 			PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
 			if(this.utentiCore.isCheckPasswordExpire(passwordVerifier)) {

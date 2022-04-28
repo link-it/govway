@@ -138,13 +138,13 @@ public final class PddSinglePdDDel extends Action {
 
 			pddHelper.preparePddSinglePddList(lista, ricerca);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward(mapping, PddCostanti.OBJECT_NAME_PDD_SINGLEPDD, ForwardParams.DEL());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					PddCostanti.OBJECT_NAME_PDD_SINGLEPDD, ForwardParams.DEL());
 		}
 	}

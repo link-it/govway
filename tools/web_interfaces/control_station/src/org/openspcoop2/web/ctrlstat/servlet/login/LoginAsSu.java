@@ -73,7 +73,7 @@ public final class LoginAsSu extends Action {
 			// Se login = null, devo visualizzare la pagina per l'inserimento dati
 			if (login == null) {
 	
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd, true);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);
 	
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, LoginCostanti.OBJECT_NAME_LOGIN_AS_SU, ForwardParams.LOGIN());
 			}
@@ -82,7 +82,7 @@ public final class LoginAsSu extends Action {
 			boolean isOk = loginHelper.loginCheckData(LoginTipologia.WITHOUT_PASSWORD);
 			if (!isOk) {
 				
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd, true);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);
 	
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, LoginCostanti.OBJECT_NAME_LOGIN_AS_SU, ForwardParams.LOGIN());
 			}
@@ -91,7 +91,7 @@ public final class LoginAsSu extends Action {
 			
 			LoginCore loginCore = new LoginCore();
 			
-			LoginSessionUtilities.setLoginParametersSession(session, loginCore, login);
+			LoginSessionUtilities.setLoginParametersSession(request, session, loginCore, login);
 			
 			loginCore.performAuditLogout(loginOLD);
 			loginCore.performAuditLogin(login);
@@ -107,13 +107,13 @@ public final class LoginAsSu extends Action {
 	
 			pd.setMessage(LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO,Costanti.MESSAGE_TYPE_INFO_SINTETICO);
 	
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd, true);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);
 	
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, LoginCostanti.OBJECT_NAME_LOGIN_AS_SU, ForwardParams.LOGIN());
 			
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					LoginCostanti.OBJECT_NAME_LOGIN_AS_SU, ForwardParams.LOGIN());
 		} 
 	}

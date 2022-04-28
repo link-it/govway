@@ -155,7 +155,7 @@ public final class AuthorisationFilter implements Filter {
 			}
 		}
 		
-		ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+		ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 		this.filterConfig.getServletContext().getRequestDispatcher(servletDispatcher).forward(request, response);
 		

@@ -20,6 +20,7 @@
 
 package org.openspcoop2.web.lib.mvc;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -32,8 +33,12 @@ import java.util.Set;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ListElement {
+public class ListElement implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String oggetto; 
 	private Map<String,Object> parameters = new HashMap<String,Object>();
 

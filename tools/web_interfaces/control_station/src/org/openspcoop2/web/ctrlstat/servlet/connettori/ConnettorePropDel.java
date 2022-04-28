@@ -117,7 +117,7 @@ public final class ConnettorePropDel extends Action {
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(connettoriCore);
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(connettoriCore);
 			
-			String superUser = (String) session.getAttribute("Login");
+			String superUser = ServletUtils.getUserLoginFromSession(session);
 			String saveNomeFru = "", saveTipoFru = "";
 			
 			if (servlet.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE)) {
@@ -322,12 +322,12 @@ public final class ConnettorePropDel extends Action {
 
 			connettoriHelper.prepareConnettorePropList(lista, new Search(true), newMyId,tipoAccordo);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			return ServletUtils.getStrutsForward(mapping, ConnettoriCostanti.OBJECT_NAME_CONNETTORI_CUSTOM_PROPERTIES, ForwardParams.DEL());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ConnettoriCostanti.OBJECT_NAME_CONNETTORI_CUSTOM_PROPERTIES, ForwardParams.DEL());
 		} 
 	}

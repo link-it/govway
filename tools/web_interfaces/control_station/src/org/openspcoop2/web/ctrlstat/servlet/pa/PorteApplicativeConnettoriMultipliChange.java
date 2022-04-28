@@ -1270,7 +1270,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI,
 						ForwardParams.CHANGE());
@@ -1409,7 +1409,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI, 
 						ForwardParams.CHANGE());
@@ -1744,7 +1744,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 						ServiziApplicativiUtilities.checkStatoConnettore(saCore, sa, connis, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 						if(inUsoMessage.length()>0) {
 							pd.setMessage(inUsoMessage.toString());
-							ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+							ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 							return ServletUtils.getStrutsForwardGeneralError(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI, ForwardParams.CHANGE());
 						}
 
@@ -1963,12 +1963,12 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			porteApplicativeHelper.preparePorteAppConnettoriMultipliList_fromChangeConnettore(pa.getNome(), ricerca, listaFiltrata, pa, 
 					nomeConnettoreChangeList);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI, 
 					ForwardParams.CHANGE());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI,
 					ForwardParams.CHANGE());
 		}  

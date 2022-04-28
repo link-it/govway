@@ -82,7 +82,7 @@ public class Operazioni extends Action{
 
 				opHelper.showForm("", "", formBean);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping,
 						OperazioniCostanti.OBJECT_NAME_OPERAZIONI,OperazioniCostanti.TIPO_OPERAZIONE_OPERAZIONI);
@@ -91,7 +91,7 @@ public class Operazioni extends Action{
 			// controllo se visualizzazione dettaglio operazione
 			if (formBean.getMethod().equals(OperazioniCostanti.DEFAULT_VALUE_FORM_BEAN_METHOD_DETAILS)) {
 
-				OperazioniFormBean oldFormBeanRicerca = (OperazioniFormBean) session.getAttribute(OperazioniCostanti.SESSION_ATTRIBUTE_FORM_BEAN);
+				OperazioniFormBean oldFormBeanRicerca = ServletUtils.getObjectFromSession(request, session, OperazioniFormBean.class, OperazioniCostanti.SESSION_ATTRIBUTE_FORM_BEAN);
 
 				String idOperazione = formBean.getIdOperazione();
 
@@ -111,7 +111,7 @@ public class Operazioni extends Action{
 					// visualizzo dettagli Operazione
 					opHelper.showDettagliMessaggio(operazione, oldFormBeanRicerca);
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeFinished(mapping,
 							OperazioniCostanti.OBJECT_NAME_OPERAZIONI, 
@@ -126,7 +126,7 @@ public class Operazioni extends Action{
 
 					opHelper.showForm("", "", formBean);
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeInProgress(mapping, OperazioniCostanti.OBJECT_NAME_OPERAZIONI, 
 							OperazioniCostanti.TIPO_OPERAZIONE_DETAIL);
@@ -148,15 +148,15 @@ public class Operazioni extends Action{
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 
-			session.setAttribute(OperazioniCostanti.SESSION_ATTRIBUTE_FORM_BEAN, formBean);
+			ServletUtils.setObjectIntoSession(request, session, formBean, OperazioniCostanti.SESSION_ATTRIBUTE_FORM_BEAN);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForward(mapping, OperazioniCostanti.OBJECT_NAME_OPERAZIONI,
 					ForwardParams.LIST());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					OperazioniCostanti.OBJECT_NAME_OPERAZIONI, 
 					OperazioniCostanti.TIPO_OPERAZIONE_OPERAZIONI);
 		}  

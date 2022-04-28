@@ -94,7 +94,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 	public void prepareApiList(List<AccordoServizioParteComuneSintetico> lista, ISearch ricerca, String tipoAccordo) throws Exception {
 		try {
 
-			ServletUtils.addListElementIntoSession(this.session, ApiCostanti.OBJECT_NAME_APC_API,
+			ServletUtils.addListElementIntoSession(this.request, this.session, ApiCostanti.OBJECT_NAME_APC_API,
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO, tipoAccordo));
 			
 			ServletUtils.setObjectIntoSession(this.request, this.session, Boolean.valueOf(true), ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
@@ -569,11 +569,11 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(this.request, this.session, ricerca);
  
-			ServletUtils.setGeneralAndPageDataIntoSession(this.session, gd, this.pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(this.request, this.session, gd, this.pd);
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ApiCostanti.OBJECT_NAME_APC_API, CostantiControlStation.TIPO_OPERAZIONE_RESET_CACHE_ELEMENTO);
 		} else { // reset richiesto dal dettaglio, torno al dettaglio
 			this.prepareApiChange(tipoOp, as);
-			ServletUtils.setGeneralAndPageDataIntoSession(this.session, gd, this.pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(this.request, this.session, gd, this.pd);
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ApiCostanti.OBJECT_NAME_APC_API, ForwardParams.CHANGE());
 		}
 	}

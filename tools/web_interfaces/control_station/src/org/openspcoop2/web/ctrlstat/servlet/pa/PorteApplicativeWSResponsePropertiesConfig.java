@@ -115,11 +115,11 @@ public class PorteApplicativeWSResponsePropertiesConfig  extends Action {
 				porteApplicativeHelper.aggiornaConfigurazioneProperties(configurazioneBean);
 			} else {
 				// reset di eventuali configurazioni salvate in sessione
-				ServletUtils.removeConfigurazioneBeanFromSession(session, configurazioneBean.getId());
+				ServletUtils.removeConfigurazioneBeanFromSession(request, session, configurazioneBean.getId());
 			}
 			
 			configurazioneBean.updateConfigurazione(configurazione);
-			ServletUtils.saveConfigurazioneBeanIntoSession(session, configurazioneBean, configurazioneBean.getId());
+			ServletUtils.saveConfigurazioneBeanIntoSession(request, session, configurazioneBean, configurazioneBean.getId());
 
 			Parameter pId = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, id);
 			Parameter pIdSoggetto = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg);
@@ -164,7 +164,7 @@ public class PorteApplicativeWSResponsePropertiesConfig  extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_PROPERTIES_CONFIG, ForwardParams.OTHER(""));
 			}
@@ -190,7 +190,7 @@ public class PorteApplicativeWSResponsePropertiesConfig  extends Action {
 				
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping,	PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_PROPERTIES_CONFIG, ForwardParams.OTHER(""));
 			}
@@ -227,7 +227,7 @@ public class PorteApplicativeWSResponsePropertiesConfig  extends Action {
 			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 			
 			configurazioneBean.updateConfigurazione(configurazione);
-			ServletUtils.saveConfigurazioneBeanIntoSession(session, configurazioneBean, configurazioneBean.getId());
+			ServletUtils.saveConfigurazioneBeanIntoSession(request, session, configurazioneBean, configurazioneBean.getId());
 
 			dati = porteApplicativeHelper.addPropertiesConfigToDati(tipoOperazione,dati, configName, configurazioneBean);
 
@@ -240,12 +240,12 @@ public class PorteApplicativeWSResponsePropertiesConfig  extends Action {
 			
 			pd.setMessage(CostantiControlStation.LABEL_AGGIORNAMENTO_CONFIGURAZIONE_PROPERTIES_EFFETTUATO_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_PROPERTIES_CONFIG, ForwardParams.OTHER(""));
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_PROPERTIES_CONFIG, 
 					ForwardParams.OTHER(""));
 		}  

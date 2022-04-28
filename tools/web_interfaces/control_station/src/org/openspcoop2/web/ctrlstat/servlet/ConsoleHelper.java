@@ -378,6 +378,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		return postbackElementName!=null && postbackElementName.startsWith(Costanti.PARAMETRO_FILTER_VALUE);
 	}
 	
+	@Override
+	public <T> T getAttributeFromSession(String attributeName, Class<T> type){
+		return ServletUtils.getObjectFromSession(this.request, this.session, type, attributeName);
+	}
+	
 	public void clearFiltroSoggettoByPostBackProtocollo(int posizioneFiltroProtocollo, ISearch ricerca, int idLista) throws Exception {
 		String postBackElement = this.getPostBackElementName();
 		if((Costanti.PARAMETRO_FILTER_VALUE+posizioneFiltroProtocollo).equals(postBackElement)) {
@@ -1541,7 +1546,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			User u = this.utentiCore.getUser(userLogin);
 			pu = u.getPermessi();
 
-			Boolean singlePdD = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+			Boolean singlePdD = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 			if(singlePdD==null) {
 				singlePdD = this.core!=null ? this.core.isSinglePdD() : true;
 			}
@@ -10034,7 +10039,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String nomePorta, String objectName, List<Parameter> listaParametriSessione,
 			String labelPerPorta, ServiceBinding serviceBinding, AccordoServizioParteComuneSintetico aspc) throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, objectName,listaParametriSessione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, objectName,listaParametriSessione);
 
 			// setto la barra del titolo
 
@@ -11260,7 +11265,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				connettoriList.add(TipiConnettore.HTTPS.toString());
 			}
 			
-			Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
+			Boolean confPers = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
 			if(confPers==null) {
 				confPers = this.core!=null ? this.core.isShowConfigurazioniPersonalizzate() : true;
 			}
@@ -13105,7 +13110,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	/** Gestione Properties MVC */
 	
 	public void aggiornaConfigurazioneProperties(ConfigBean configurazione) throws Exception {
-		ConfigBean oldConfigurazione = ServletUtils.readConfigurazioneBeanFromSession(this.session, configurazione.getId());
+		ConfigBean oldConfigurazione = ServletUtils.readConfigurazioneBeanFromSession(this.request, this.session, configurazione.getId());
 		
 		for (String key : configurazione.getListakeys()) {
 			Boolean oldItemVisible = oldConfigurazione != null ? oldConfigurazione.getItem(key).getVisible() : null;
@@ -13178,7 +13183,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	public boolean hasOnlyPermessiDiagnosticaReportistica(User user) throws Exception {
 		PermessiUtente pu = user.getPermessi();
-		Boolean singlePdD = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+		Boolean singlePdD = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 		if(singlePdD==null) {
 			singlePdD = this.core!=null ? this.core.isSinglePdD() : true;
 		}

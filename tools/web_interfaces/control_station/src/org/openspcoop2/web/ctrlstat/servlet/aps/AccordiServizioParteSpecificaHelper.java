@@ -1746,8 +1746,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 		try{
 
-			// String userLogin = (String) this.session.getAttribute("Login");
-
 			String ruolo = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RUOLO);
 
 			// Campi obbligatori
@@ -1866,8 +1864,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			throws Exception {
 
 		try{
-
-			// String userLogin = (String) this.session.getAttribute("Login");
 
 			String ruolo = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RUOLO);
 			String tipoFile = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_FILE  );
@@ -2064,7 +2060,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(pModificaAPI!=null) {
 				listAllegatiSession.add(pModificaAPI);
 			}
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_ALLEGATI, 
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_ALLEGATI, 
 					listAllegatiSession.toArray(new Parameter[1]));
 
 			int idLista = Liste.SERVIZI_ALLEGATI;
@@ -2247,7 +2243,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			throws Exception {
 		try {
 
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS);
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS);
 
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
@@ -3011,7 +3007,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		try {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 			
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI, 
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI, 
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id));
 
 			int idLista = Liste.SERVIZI_FRUITORI;
@@ -3032,7 +3028,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			String idSoggettoErogatoreDelServizio = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
 			if ((idSoggettoErogatoreDelServizio == null) || idSoggettoErogatoreDelServizio.equals("")) {
-				PageData oldPD = ServletUtils.getPageDataFromSession(this.session);
+				PageData oldPD = ServletUtils.getPageDataFromSession(this.request, this.session);
 
 				idSoggettoErogatoreDelServizio = oldPD.getHidden(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
 
@@ -3155,7 +3151,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				boolean esterno = this.pddCore.isPddEsterna(fruitoreSogg.getPortaDominio());
 
 				// Elimino eventuale configurazione messa come parent (tanto viene re-inserita se entro dentro la lista della configurazione)
-				ServletUtils.removeObjectFromSession(this.session, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT);
+				ServletUtils.removeObjectFromSession(this.request, this.session, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT);
 									
 				IDServizio idServizio = this.idServizioFactory.getIDServizioFromAccordo(asps);
 				
@@ -3230,8 +3226,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 			// preparo bottoni
-			// String gestioneWSBL = (String)
-			// this.session.getAttribute("GestioneWSBL");
 			/*
 			 * if(lista!=null && lista.size()>0){
 			 * if (AccordiServizioParteComuneUtilities.getImportaEsporta()) {
@@ -3263,7 +3257,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			IExtendedListServlet extendedServletList = this.core.getExtendedServletPortaApplicativa();
 			
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE,
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE,
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id),
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, idSoggettoErogatoreDelServizio));
 
@@ -3388,7 +3382,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 			
 			if ((idSoggettoErogatoreDelServizio == null) || idSoggettoErogatoreDelServizio.equals("")) {
-				PageData oldPD = ServletUtils.getPageDataFromSession(this.session);
+				PageData oldPD = ServletUtils.getPageDataFromSession(this.request, this.session);
 
 				idSoggettoErogatoreDelServizio = oldPD.getHidden(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
 			}
@@ -4736,7 +4730,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE,
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE,
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, idServizio),
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO, idSoggettoFruitore),
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, idFruzione));
@@ -5006,7 +5000,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			Parameter parametroTipoSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE, idSoggettoFruitore.getTipo());
 			Parameter parametroNomeSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE, idSoggettoFruitore.getNome());
 			
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE,
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE,
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, idServizio),
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO, idSoggFruitoreDelServizio),
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, idFruzione),

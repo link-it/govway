@@ -1378,7 +1378,7 @@ public class UtentiHelper extends ConsoleHelper {
 
 	public void prepareUtentiList(ISearch ricerca, List<User> lista, boolean singlePdD) throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, UtentiCostanti.OBJECT_NAME_UTENTI);
+			ServletUtils.addListElementIntoSession(this.request, this.session, UtentiCostanti.OBJECT_NAME_UTENTI);
 
 			String userLogin = ServletUtils.getUserLoginFromSession(this.session);
 
@@ -1673,7 +1673,7 @@ public class UtentiHelper extends ConsoleHelper {
 
 	public void prepareUtentiSoggettiList(Search ricerca, List<IDSoggetto> lista, User user) throws Exception{
 		try {
-			ServletUtils.addListElementIntoSession(this.session, UtentiCostanti.OBJECT_NAME_UTENTI_SOGGETTI,
+			ServletUtils.addListElementIntoSession(this.request, this.session, UtentiCostanti.OBJECT_NAME_UTENTI_SOGGETTI,
 					new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, user.getLogin()));
 
 			int idLista = Liste.UTENTI_SOGGETTI;
@@ -1761,7 +1761,7 @@ public class UtentiHelper extends ConsoleHelper {
 	
 	public void prepareUtentiServiziList(Search ricerca, List<IDServizio> lista, User user) throws Exception{
 		try {
-			ServletUtils.addListElementIntoSession(this.session, UtentiCostanti.OBJECT_NAME_UTENTI_SERVIZI,
+			ServletUtils.addListElementIntoSession(this.request, this.session, UtentiCostanti.OBJECT_NAME_UTENTI_SERVIZI,
 					new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, user.getLogin()));
 
 			int idLista = Liste.UTENTI_SERVIZI;

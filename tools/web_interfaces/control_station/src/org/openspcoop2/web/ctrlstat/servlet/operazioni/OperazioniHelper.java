@@ -76,7 +76,7 @@ public class OperazioniHelper extends ConsoleHelper{
 			Parameter pOperazione = new Parameter(OperazioniCostanti.PARAMETRO_OPERAZIONI_OPERAZIONE, formBean.getTipo());
 			Parameter pDetail = new Parameter(OperazioniCostanti.PARAMETRO_OPERAZIONI_METHOD, OperazioniCostanti.DEFAULT_VALUE_FORM_BEAN_METHOD_DETAILS);
 
-			ServletUtils.addListElementIntoSession(this.session, OperazioniCostanti.OBJECT_NAME_OPERAZIONI, pOperazione, pUtente);
+			ServletUtils.addListElementIntoSession(this.request, this.session, OperazioniCostanti.OBJECT_NAME_OPERAZIONI, pOperazione, pUtente);
 
 			int idLista =  this.operazioniCore.getIdLista(formBean); 
 			int limit = ricerca.getPageSize(idLista);

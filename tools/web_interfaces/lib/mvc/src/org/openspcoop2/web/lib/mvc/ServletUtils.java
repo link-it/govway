@@ -54,11 +54,11 @@ public class ServletUtils {
 
 	/* ------ STRUTS -FORWARD -ERROR */
 
-	public static ActionForward getStrutsForwardError(Logger log,Throwable e,PageData pd,HttpSession session, GeneralData gd, ActionMapping mapping, String objectName,ForwardParams forwardType){
-		return getStrutsForwardError(log, e, pd, session, gd, mapping, objectName, forwardType, Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE);
+	public static ActionForward getStrutsForwardError(Logger log,Throwable e,PageData pd,HttpServletRequest request, HttpSession session, GeneralData gd, ActionMapping mapping, String objectName,ForwardParams forwardType){
+		return getStrutsForwardError(log, e, pd, request, session, gd, mapping, objectName, forwardType, Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE);
 	}
 	
-	public static ActionForward getStrutsForwardError(Logger log,Throwable e,PageData pd,HttpSession session, GeneralData gd, ActionMapping mapping, String objectName,ForwardParams forwardType,String message){
+	public static ActionForward getStrutsForwardError(Logger log,Throwable e,PageData pd,HttpServletRequest request, HttpSession session, GeneralData gd, ActionMapping mapping, String objectName,ForwardParams forwardType,String message){
 		if(e!=null)
 			log.error("SistemaNonDisponibile: "+e.getMessage(), e);
 		else
@@ -66,7 +66,7 @@ public class ServletUtils {
 		pd.disableEditMode();
 		pd.setMessage(message);
 		pd.setMostraLinkHome(true); 
-		ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+		ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 		return ServletUtils.getStrutsForwardGeneralError(mapping, objectName, forwardType);
 	}
 
@@ -317,12 +317,12 @@ public class ServletUtils {
 	
 	/* ------ SESSION ---- */
 	
-	public static void addListElementIntoSession(HttpSession session,String objectName, List<Parameter> parameters){
+	public static void addListElementIntoSession(HttpServletRequest request, HttpSession session,String objectName, List<Parameter> parameters){
 		Parameter[] parameter = parameters != null ? parameters.toArray(new Parameter[parameters.size()]) : null;
-		addListElementIntoSession(session, objectName, parameter);
+		addListElementIntoSession(request, session, objectName, parameter);
 	}
 
-	public static void addListElementIntoSession(HttpSession session,String objectName, Parameter ... parameter){
+	public static void addListElementIntoSession(HttpServletRequest request, HttpSession session,String objectName, Parameter ... parameter){
 		ListElement listElement = new ListElement();
 		listElement.setOggetto(objectName);
 		if(parameter!=null && parameter.length>0){
@@ -334,13 +334,13 @@ public class ServletUtils {
 				}
 			}
 		}
-		session.setAttribute(Costanti.SESSION_ATTRIBUTE_LIST_ELEMENT, listElement);
+		setObjectIntoSession(request, session, listElement, Costanti.SESSION_ATTRIBUTE_LIST_ELEMENT);
 	}
 
-	public static void setGeneralAndPageDataIntoSession(HttpSession session,GeneralData gd,PageData pd){
-		setGeneralAndPageDataIntoSession(session, gd, pd, false);
+	public static void setGeneralAndPageDataIntoSession(HttpServletRequest request, HttpSession session,GeneralData gd,PageData pd){
+		setGeneralAndPageDataIntoSession(request, session, gd, pd, false);
 	}
-	public static void setGeneralAndPageDataIntoSession(HttpSession session,GeneralData gd,PageData pd,boolean readOnlyDisabled){
+	public static void setGeneralAndPageDataIntoSession(HttpServletRequest request, HttpSession session,GeneralData gd,PageData pd,boolean readOnlyDisabled){
 
 		//		if(readOnlyDisabled==false){
 		//			/*
@@ -359,25 +359,21 @@ public class ServletUtils {
 		//			pd.setInserisciBottoni(false);
 		//		}
 		//		
-		session.setAttribute(Costanti.SESSION_ATTRIBUTE_GENERAL_DATA, gd);
-		session.setAttribute(Costanti.SESSION_ATTRIBUTE_PAGE_DATA, pd);
+		setObjectIntoSession(request, session, gd, Costanti.SESSION_ATTRIBUTE_GENERAL_DATA);
+		setObjectIntoSession(request, session, pd, Costanti.SESSION_ATTRIBUTE_PAGE_DATA);
 	}
 
-	public static PageData getPageDataFromSession(HttpSession session){
-		return (PageData) session.getAttribute(Costanti.SESSION_ATTRIBUTE_PAGE_DATA);
+	public static PageData getPageDataFromSession(HttpServletRequest request, HttpSession session){
+		return getObjectFromSession(request, session, PageData.class, Costanti.SESSION_ATTRIBUTE_PAGE_DATA);
 	}
 
 	public static boolean existsSearchObjectFromSession(HttpServletRequest request, HttpSession session) {
 		return getObjectFromSession(request, session, ISearch.class, Costanti.SESSION_ATTRIBUTE_RICERCA) != null;
-//		
-//		ISearch ricerca = (ISearch) session.getAttribute(Costanti.SESSION_ATTRIBUTE_RICERCA);
-//		return ricerca!=null;
 	}
 	
 	public static ISearch getSearchObjectFromSession(HttpServletRequest request, HttpSession session, Class<?> searchImpl) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
 		ISearch ricerca = getObjectFromSession(request, session, ISearch.class, Costanti.SESSION_ATTRIBUTE_RICERCA);
-		
-//		ISearch ricerca = (ISearch) session.getAttribute(Costanti.SESSION_ATTRIBUTE_RICERCA);
+
 		if (ricerca == null) {
 			ricerca = (ISearch) ClassLoaderUtilities.newInstance(searchImpl);
 		}
@@ -385,12 +381,9 @@ public class ServletUtils {
 	}
 	public static void setSearchObjectIntoSession(HttpServletRequest request, HttpSession session,ISearch ricerca){
 		setObjectIntoSession(request, session, ricerca, Costanti.SESSION_ATTRIBUTE_RICERCA);
-		
-//		session.setAttribute(Costanti.SESSION_ATTRIBUTE_RICERCA, ricerca);
 	}
 	public static void removeSearchObjectFromSession(HttpServletRequest request, HttpSession session){
 		removeObjectFromSession(request, session, ISearch.class, Costanti.SESSION_ATTRIBUTE_RICERCA);
-//		session.removeAttribute(Costanti.SESSION_ATTRIBUTE_RICERCA);
 	}
 
 	public static String getSearchFromSession(ISearch ricerca, int idLista){
@@ -403,25 +396,14 @@ public class ServletUtils {
 	}
 	public static void setRisultatiRicercaIntoSession(HttpServletRequest request, HttpSession session, int idLista, List<?> risultatiRicerca){
 		setObjectIntoSession(request, session, risultatiRicerca, getKeyRisultatiRicerca(idLista));
-		
-//		session.setAttribute(getKeyRisultatiRicerca(idLista), risultatiRicerca);
 	}
 	@SuppressWarnings("unchecked")
 	public static <T> List<T> getRisultatiRicercaFromSession(HttpServletRequest request, HttpSession session, int idLista, Class<T> classType){
 		return getObjectFromSession(request, session, List.class, getKeyRisultatiRicerca(idLista));
-		
-//		Object o = session.getAttribute(getKeyRisultatiRicerca(idLista));
-//		if(o!=null) {
-//			return (List<T>) o;
-//		}
-//		return null;
 	}
 	public static List<?> removeRisultatiRicercaFromSession(HttpServletRequest request, HttpSession session, int idLista){
 		Object o = removeObjectFromSession(request, session, List.class, getKeyRisultatiRicerca(idLista));
-		
-//		Object o = session.getAttribute(getKeyRisultatiRicerca(idLista));
 		if(o!=null) {
-//			session.removeAttribute(getKeyRisultatiRicerca(idLista));
 			return (List<?>) o;
 		}
 		return null;
@@ -518,8 +500,8 @@ public class ServletUtils {
 		session.setAttribute(objectName,obj);
 	}
 
-	public static void removeObjectFromSession(HttpSession session,String objectName){
-		session.removeAttribute(objectName);
+	public static void removeObjectFromSession(HttpServletRequest request, HttpSession session,String objectName){
+		removeObjectFromSession(request, session, null, objectName, false);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -570,6 +552,51 @@ public class ServletUtils {
 		return objectClass.cast(obj);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static Object getObjectFromSession(HttpServletRequest request, HttpSession session, String objectName){
+		if(objectName.startsWith(Costanti.SESSION_ATTRIBUTE_TAB_KEY_PREFIX)) {
+		
+			// lettura dalla sessione associata all'id del tab
+			String tabId = (String) request.getAttribute(Costanti.PARAMETER_TAB_KEY);
+			
+			String prevTabId = request.getParameter(Costanti.PARAMETER_PREV_TAB_KEY);
+			
+			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
+			
+			if(sessionMap == null) {
+				sessionMap = new HashMap<String, Map<String,Object>>(); 
+			}
+			
+			Map<String, Object> mapTabId = null;
+			if(sessionMap.containsKey(tabId)) {
+				mapTabId = sessionMap.get(tabId);
+				
+			} else {
+				// primo accesso copio le informazioni dalla mappa relativa al tab precedente
+				copiaAttributiSessioneTab(session, prevTabId, tabId);
+				sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
+				mapTabId = sessionMap.get(tabId);
+			}
+			
+			if(mapTabId.containsKey(objectName))
+				return mapTabId.get(objectName);
+			
+			// leggi dall request
+//			if(request != null) {
+//				String parameterValue = request.getParameter(objectName);
+//				
+//				if(parameterValue != null) {
+//					return objectClass.cast(parameterValue);
+//				}
+//			}
+		}
+		
+		// comportamento normale
+		Object obj = session.getAttribute(objectName);
+
+		return obj;
+	}
+	
 	public static String getStringAttributeFromSession(String attributeName, HttpSession session, HttpServletRequest request) {
 		return getObjectFromSession(request, session, String.class, attributeName);
 	}
@@ -589,11 +616,7 @@ public class ServletUtils {
 		Map<String, Object> mapDest = null;
 		if(sessionMap.containsKey(idSessioneTabSrc)) {
 			Map<String, Object> mapSrc = sessionMap.get(idSessioneTabSrc);
-//			mapDest = new HashMap<String, Object>();
-			
 			mapDest = (HashMap<String, Object>) SerializationUtils.clone(((HashMap<String, Object>)mapSrc));
-			
-//			mapDest.putAll(((HashMap<String, Object>)mapSrc).clone());
 		} else {
 			mapDest = new HashMap<String, Object>();
 		}
@@ -603,8 +626,11 @@ public class ServletUtils {
 		session.setAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP, sessionMap);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static <T> T removeObjectFromSession(HttpServletRequest request, HttpSession session,Class<T> objectClass, String objectName){
+		return removeObjectFromSession(request, session, objectClass, objectName, true);
+	}
+	@SuppressWarnings("unchecked")
+	private static <T> T removeObjectFromSession(HttpServletRequest request, HttpSession session,Class<T> objectClass, String objectName, boolean returnValue){
 		if(objectName.startsWith(Costanti.SESSION_ATTRIBUTE_TAB_KEY_PREFIX)) {
 		
 			// lettura dalla sessione associata all'id del tab
@@ -614,33 +640,42 @@ public class ServletUtils {
 			
 			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 			
-			if(sessionMap != null) {
-				Map<String, Object> mapTabId = null;
-				if(sessionMap.containsKey(tabId)) {
-					mapTabId = sessionMap.get(tabId);
-					
-				} else {
-					// primo accesso copio le informazioni dalla mappa relativa al tab precedente
-					copiaAttributiSessioneTab(session, prevTabId, tabId);
-					mapTabId = sessionMap.get(tabId);
-				}
-				
-				if(mapTabId.containsKey(objectName))
-					return objectClass.cast(mapTabId.remove(objectName));
-			} else {
+			if(sessionMap == null) {
 				sessionMap = new HashMap<String, Map<String,Object>>(); 
+			}
+			
+			Map<String, Object> mapTabId = null;
+			if(sessionMap.containsKey(tabId)) {
+				mapTabId = sessionMap.get(tabId);
+				
+			} else {
+				// primo accesso copio le informazioni dalla mappa relativa al tab precedente
+				copiaAttributiSessioneTab(session, prevTabId, tabId);
+				sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
+				mapTabId = sessionMap.get(tabId);
+			}
+			
+			if(mapTabId.containsKey(objectName)) {
+				Object obj = mapTabId.remove(objectName);
+				
+				if(returnValue) {
+					return objectClass.cast(obj);
+				}
 			}
 		}
 		
 		// comportamento normale
 		Object obj = session.getAttribute(objectName);
 
-		if(obj == null)
-			return null;
+		if(obj != null) {
 		
-		session.removeAttribute(objectName);
-
-		return objectClass.cast(obj);
+			session.removeAttribute(objectName);
+	
+			if(returnValue) {
+				return objectClass.cast(obj);
+			}
+		}
+		return null;
 	}
 
 	public static String getParametersAsString(boolean createFirstParameter, Parameter ... parameter ) {
@@ -684,21 +719,16 @@ public class ServletUtils {
 		}
 	}
 	
-	public static void saveConfigurazioneBeanIntoSession(HttpSession session,ConfigBean configurazioneBean, String objectName){
-		session.setAttribute(Costanti.SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX + objectName, configurazioneBean);
+	public static void saveConfigurazioneBeanIntoSession(HttpServletRequest request, HttpSession session,ConfigBean configurazioneBean, String objectName){
+		setObjectIntoSession(request, session, configurazioneBean, Costanti.SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX + objectName);
 	}
 	
-	public static void removeConfigurazioneBeanFromSession(HttpSession session,String objectName){
-		session.removeAttribute(Costanti.SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX +  objectName);
+	public static void removeConfigurazioneBeanFromSession(HttpServletRequest request, HttpSession session,String objectName){
+		removeObjectFromSession(request, session, Costanti.SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX +  objectName);
 	}
 
-	public static ConfigBean readConfigurazioneBeanFromSession(HttpSession session, String objectName){
-		Object obj = session.getAttribute(Costanti.SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX + objectName);
-
-		if(obj == null)
-			return null;
-
-		return (ConfigBean) obj;
+	public static ConfigBean readConfigurazioneBeanFromSession(HttpServletRequest request, HttpSession session, String objectName){
+		return getObjectFromSession(request, session, ConfigBean.class, Costanti.SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX + objectName);
 	}
 	
 	

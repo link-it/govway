@@ -183,12 +183,12 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 	
 			//rimuovo eventuali tracce della procedura 
 			if(actionConfirm == null){
-				session.removeAttribute(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CHANGE_TMP);
+				ServletUtils.removeObjectFromSession(request, session, AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CHANGE_TMP);
 			}else {
 				// se passo da qui sto tornando dalla maschera di conferma ripristino il wsdl dalla sessione 
 					this.wsdl = ServletUtils.getObjectFromSession(request, session, String.class, 
 							AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CHANGE_TMP);
-					session.removeAttribute(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CHANGE_TMP);
+					ServletUtils.removeObjectFromSession(request, session, AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CHANGE_TMP);
 			}
 			
 			if(ServletUtils.isEditModeInProgress(this.editMode)){// && apcHelper.isEditModeInProgress()){
@@ -404,7 +404,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, 
 						AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, AccordiServizioParteComuneCostanti.TIPO_OPERAZIONE_WSDL_CHANGE);
@@ -428,7 +428,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, 
 						AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, AccordiServizioParteComuneCostanti.TIPO_OPERAZIONE_WSDL_CHANGE);
@@ -516,7 +516,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 							pd.setBottoni(bottoni );
 
-							ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+							ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 							return ServletUtils.getStrutsForwardEditModeInProgress(mapping, 
 									AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, AccordiServizioParteComuneCostanti.TIPO_OPERAZIONE_WSDL_CHANGE);
@@ -622,7 +622,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, 
 						AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, AccordiServizioParteComuneCostanti.TIPO_OPERAZIONE_WSDL_CHANGE);
@@ -635,7 +635,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			//se sono in modalita' standard
 			if(apcHelper.isModalitaStandard()) {
 				apcHelper.prepareApiChange(TipoOperazione.OTHER, as); 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ApiCostanti.OBJECT_NAME_APC_API, ForwardParams.CHANGE());
 			}
 			
@@ -806,12 +806,12 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			// se viene premuto invio
 			gd = generalHelper.initGeneralData(request,AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, AccordiServizioParteComuneCostanti.TIPO_OPERAZIONE_WSDL_CHANGE);	
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, AccordiServizioParteComuneCostanti.TIPO_OPERAZIONE_WSDL_CHANGE);
 		}
 	}

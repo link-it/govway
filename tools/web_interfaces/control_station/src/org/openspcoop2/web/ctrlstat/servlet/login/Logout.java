@@ -74,7 +74,7 @@ public final class Logout extends Action {
 				loginCore.performAuditLogout(loggedUser);
 			}
 			
-			LoginSessionUtilities.cleanLoginParametersSession(session);
+			LoginSessionUtilities.cleanLoginParametersSession(request, session);
 	
 			pd.setMessage(LoginCostanti.LABEL_LOGOUT_EFFETTUATO_CON_SUCCESSO,Costanti.MESSAGE_TYPE_INFO_SINTETICO); 
 			
@@ -96,7 +96,7 @@ public final class Logout extends Action {
  			// dalla sessione la login dell'utente
  			gd = generalHelper.initGeneralData(request,LoginCostanti.SERVLET_NAME_LOGIN);
  			
- 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd, true);
+ 			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);
  			
  			
  			if(StringUtils.isBlank(loginCore.getLogoutUrlDestinazione())) {
@@ -119,7 +119,7 @@ public final class Logout extends Action {
 //			return ServletUtils.getStrutsForwardEditModeFinished(mapping, LoginCostanti.OBJECT_NAME_LOGOUT, ForwardParams.LOGOUT());
 			
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					LoginCostanti.OBJECT_NAME_LOGOUT, ForwardParams.LOGOUT());
 		}
 	}

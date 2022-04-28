@@ -2144,14 +2144,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 			if(useIdSogg){
 				Parameter pProvider = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, idProvider); 
-				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI,pProvider );
+				ServletUtils.addListElementIntoSession(this.request, this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI,pProvider );
 			}else 
-				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI);
+				ServletUtils.addListElementIntoSession(this.request, this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI);
 
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
 			@SuppressWarnings("unused")
-			Boolean singlePdD = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+			Boolean singlePdD = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 			
 			if(!modalitaCompleta && !useIdSogg) {
 				this.pd.setCustomListViewName(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_NOME_VISTA_CUSTOM_LISTA);
@@ -3612,9 +3612,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 			if(useIdSogg){
 				Parameter pProvider = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, idProvider); 
-				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_RUOLI,pSA,pProvider );
+				ServletUtils.addListElementIntoSession(this.request, this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_RUOLI,pSA,pProvider );
 			}else 
-				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_RUOLI,pSA,
+				ServletUtils.addListElementIntoSession(this.request, this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_RUOLI,pSA,
 						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_ACCESSO_DA_CHANGE, accessDaChangeTmp));
 			
 			int idLista = Liste.SERVIZIO_APPLICATIVO_RUOLI;
@@ -3970,9 +3970,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				List<Parameter> parametersServletSAChangeProvider = new ArrayList<Parameter>();
 				parametersServletSAChangeProvider.add(pProvider);
 				parametersServletSAChangeProvider.addAll(parametersServletSAChange);
-				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_CREDENZIALI, parametersServletSAChangeProvider.toArray(new Parameter[parametersServletSAChangeProvider.size()]));
+				ServletUtils.addListElementIntoSession(this.request, this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_CREDENZIALI, parametersServletSAChangeProvider.toArray(new Parameter[parametersServletSAChangeProvider.size()]));
 			}else 
-				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_CREDENZIALI, parametersServletSAChange.toArray(new Parameter[parametersServletSAChange.size()]));
+				ServletUtils.addListElementIntoSession(this.request, this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_CREDENZIALI, parametersServletSAChange.toArray(new Parameter[parametersServletSAChange.size()]));
 
 			// Prendo il soggetto
 			String tmpTitle = null;
@@ -4486,9 +4486,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				List<Parameter> parametersServletSAChangeProvider = new ArrayList<Parameter>();
 				parametersServletSAChangeProvider.add(pProvider);
 				parametersServletSAChangeProvider.addAll(parametersServletSAChange);
-				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_PROPRIETA, parametersServletSAChangeProvider.toArray(new Parameter[parametersServletSAChangeProvider.size()]));
+				ServletUtils.addListElementIntoSession(this.request, this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_PROPRIETA, parametersServletSAChangeProvider.toArray(new Parameter[parametersServletSAChangeProvider.size()]));
 			}else 
-				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_PROPRIETA, parametersServletSAChange.toArray(new Parameter[parametersServletSAChange.size()]));
+				ServletUtils.addListElementIntoSession(this.request, this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_PROPRIETA, parametersServletSAChange.toArray(new Parameter[parametersServletSAChange.size()]));
 
 			int idLista = Liste.SERVIZI_APPLICATIVI_PROP;
 			int limit = ricerca.getPageSize(idLista);

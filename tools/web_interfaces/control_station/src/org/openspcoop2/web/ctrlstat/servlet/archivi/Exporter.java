@@ -508,13 +508,13 @@ public final class Exporter extends Action {
 				
 			}
 			
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 		
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ArchiviCostanti.OBJECT_NAME_ARCHIVI_EXPORT, 
 					ArchiviCostanti.TIPO_OPERAZIONE_EXPORT);
 			
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ArchiviCostanti.OBJECT_NAME_ARCHIVI_EXPORT,
 					ArchiviCostanti.TIPO_OPERAZIONE_EXPORT);
 		}

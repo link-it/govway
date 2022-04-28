@@ -414,7 +414,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 			// prendo l'id del soggetto erogatore lo propago
 			// lo metto nel pd come campo hidden
-			PageData oldPD = ServletUtils.getPageDataFromSession(session);
+			PageData oldPD = ServletUtils.getPageDataFromSession(request, session);
 			pd.setHidden(oldPD.getHidden());
 
 			String idSoggErogatore = oldPD.getHidden(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
@@ -831,7 +831,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,
 						ForwardParams.ADD());
@@ -976,7 +976,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI, 
 						ForwardParams.ADD());
@@ -1140,7 +1140,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 					pd.setDati(dati);
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI, 
 							ForwardParams.ADD());
@@ -1157,13 +1157,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			String mynomeprov = asps.getNomeSoggettoErogatore();
 			String mytipoprov = asps.getTipoSoggettoErogatore();
 
-			// creo la porta delegata in automatico uso i dati nella
-			// sessione
-			// String tipoSoggettoErogatore = (String)
-			// session.getAttribute("tipoSoggettoErogatore");
-			// String nomeSoggettoErogatore = (String)
-			// session.getAttribute("nomeSoggettoErogatore");
-
+			// creo la porta delegata in automatico 
 			boolean generazionePortaDelegata = true;
 			/*
 			 * bug-fix #61 Se il soggetto (fruitore) afferisce a una porta di
@@ -1250,13 +1244,13 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 			apsHelper.prepareServiziFruitoriList(lista, this.id, ricerca);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished( mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,
 					ForwardParams.ADD());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,
 					ForwardParams.ADD());
 		}  

@@ -553,7 +553,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			if(azioneConnettoreIdPorta == null)
 				azioneConnettoreIdPorta = "";
 			
-			ServletUtils.addListElementIntoSession(this.session, ConnettoriCostanti.OBJECT_NAME_CONNETTORI_CUSTOM_PROPERTIES,
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConnettoriCostanti.OBJECT_NAME_CONNETTORI_CUSTOM_PROPERTIES,
 					new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servlet),
 					new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, id),
 					new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SOGGETTO, nomeprov),
@@ -2153,7 +2153,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			boolean visualizzaSezioneSAServer, boolean servizioApplicativoServerEnabled, String servizioApplicativoServer, String[] listaSAServer) throws Exception {
 
 
-		Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
+		Boolean confPers = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
 
 		TipologiaConnettori tipologiaConnettori = null;
 		try {
@@ -3050,7 +3050,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			boolean autenticazioneToken, String tokenPolicy) {
 
 
-		Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
+		Boolean confPers = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
 
 		TipologiaConnettori tipologiaConnettori = null;
 		try {

@@ -157,7 +157,7 @@ public class UtentiServiziAdd extends Action {
 						pd.setMessage(UtentiCostanti.LABEL_UTENTI_SERVIZI_DISPONIBILI_ESAURITI, MessageType.INFO);
 						pd.disableEditMode();
 						pd.setDati(dati);
-						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+						ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 						return ServletUtils.getStrutsForwardEditModeInProgress(mapping,	UtentiCostanti.OBJECT_NAME_UTENTI_SERVIZI,ForwardParams.ADD());
 					} else {
 						String msf = MessageFormat.format(UtentiCostanti.LABEL_UTENTI_SERVIZI_DISPONIBILI_ESAURITI_PER_LA_MODALITA_XX, utentiHelper.getLabelProtocollo(protocollo));
@@ -170,7 +170,7 @@ public class UtentiServiziAdd extends Action {
 				
 				pd.setDati(dati);
 				
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, UtentiCostanti.OBJECT_NAME_UTENTI_SERVIZI,ForwardParams.ADD());
 			}
@@ -189,7 +189,7 @@ public class UtentiServiziAdd extends Action {
 				
 				pd.setDati(dati);
 				
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, UtentiCostanti.OBJECT_NAME_UTENTI_SERVIZI,ForwardParams.ADD());
 			}
@@ -215,12 +215,12 @@ public class UtentiServiziAdd extends Action {
 			utentiHelper.prepareUtentiServiziList(ricerca, lista, user);
 	
 			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, UtentiCostanti.OBJECT_NAME_UTENTI_SERVIZI, ForwardParams.ADD());
 			
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					UtentiCostanti.OBJECT_NAME_UTENTI_SERVIZI, ForwardParams.ADD());
 		} 
 	}

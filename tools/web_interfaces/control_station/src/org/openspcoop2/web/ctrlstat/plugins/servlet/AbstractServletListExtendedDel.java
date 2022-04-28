@@ -36,8 +36,8 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.DBManager;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
-import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedList;
+import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -66,7 +66,7 @@ public abstract class AbstractServletListExtendedDel extends AbstractServletList
 		HttpSession session = request.getSession(true);
 
 		// Salvo il vecchio PageData
-		// PageData pdold = (PageData) session.getAttribute("PageData");
+		// PageData pdold = ServletUtils.getObjectFromSession(request, session, PageData.class, Costanti.SESSION_ATTRIBUTE_PAGE_DATA);
 
 
 		// Inizializzo PageData
@@ -180,13 +180,13 @@ public abstract class AbstractServletListExtendedDel extends AbstractServletList
 					pd.setMessage(msgCompletato,Costanti.MESSAGE_TYPE_INFO);
 			}
 			
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			// Forward control to the specified success URI
 		 	return ServletUtils.getStrutsForward(mapping, this.getObjectName(),
 		 			ForwardParams.DEL());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					this.getObjectName(), 
 					ForwardParams.DEL());
 		}  

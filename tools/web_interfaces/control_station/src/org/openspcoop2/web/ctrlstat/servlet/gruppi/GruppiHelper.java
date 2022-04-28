@@ -241,7 +241,7 @@ public class GruppiHelper extends ConsoleHelper{
 	public void prepareGruppiList(ISearch ricerca, List<Gruppo> lista)
 			throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, GruppiCostanti.OBJECT_NAME_GRUPPI);
+			ServletUtils.addListElementIntoSession(this.request, this.session, GruppiCostanti.OBJECT_NAME_GRUPPI);
 			
 			this.pd.setCustomListViewName(GruppiCostanti.GRUPPI_NOME_VISTA_CUSTOM_LISTA);
 

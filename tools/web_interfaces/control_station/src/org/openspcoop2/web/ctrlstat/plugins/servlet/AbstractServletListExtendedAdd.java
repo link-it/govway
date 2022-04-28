@@ -108,7 +108,7 @@ public abstract class AbstractServletListExtendedAdd extends AbstractServletList
 				
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, 
 						this.getObjectName(), 
@@ -140,7 +140,7 @@ public abstract class AbstractServletListExtendedAdd extends AbstractServletList
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, 
 						this.getObjectName(),
@@ -176,13 +176,13 @@ public abstract class AbstractServletListExtendedAdd extends AbstractServletList
 				pd.setMessage(msgCompletato,Costanti.MESSAGE_TYPE_INFO);
 			}
 			
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, 
 					this.getObjectName(),
 					ForwardParams.ADD());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					this.getObjectName(), 
 					ForwardParams.ADD());
 		}  

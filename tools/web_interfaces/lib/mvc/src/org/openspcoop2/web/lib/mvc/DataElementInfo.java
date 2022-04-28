@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.web.lib.mvc;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -30,7 +31,12 @@ import org.apache.commons.lang.StringUtils;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DataElementInfo {
+public class DataElementInfo implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	public DataElementInfo(String headerFinestraModale) {
 		this.headerFinestraModale = headerFinestraModale;

@@ -22,10 +22,10 @@
 
 
 <%
-	String params = (String) request.getAttribute("params");
+String params = (String) request.getAttribute(Costanti.PARAMETER_NAME_PARAMS);
 if(params == null) params="";
-GeneralData gd = (GeneralData) session.getAttribute("GeneralData");
-PageData pd = (PageData) session.getAttribute("PageData");
+GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, Costanti.SESSION_ATTRIBUTE_GENERAL_DATA);
+PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, Costanti.SESSION_ATTRIBUTE_PAGE_DATA);
 
 String message = pd.getMessage();
 String messageType = pd.getMessageType();

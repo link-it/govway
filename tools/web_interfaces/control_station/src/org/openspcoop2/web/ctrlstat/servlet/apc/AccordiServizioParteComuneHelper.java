@@ -283,14 +283,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			uri = this.idAccordoFactory.getUriFromAccordo(as);
 			String labelASTitle = this.getLabelIdAccordo(as); 
 
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_EROGATORI,
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_EROGATORI,
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO, tipoAccordo),
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, uri));
 
 
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
-			//String superUser = (String) this.session.getAttribute("Login");
 
 			int idLista = Liste.ACCORDI_EROGATORI;
 			int limit = ricerca.getPageSize(idLista);
@@ -471,7 +470,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			Parameter pIdAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, as.getId() + "");
 			Parameter pNomeAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, uri);
 
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_ALLEGATI,pIdAccordo, pNomeAccordo, pTipoAccordo);
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_ALLEGATI,pIdAccordo, pNomeAccordo, pTipoAccordo);
 
 			int idLista = Liste.ACCORDI_ALLEGATI;
 			int limit = ricerca.getPageSize(idLista);
@@ -753,7 +752,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			Parameter pNomeAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, uri);
 			Parameter pNomePortTypes = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME,nomept);
 
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_PORT_TYPE_OPERATIONS,
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_PORT_TYPE_OPERATIONS,
 					pIdAccordo,pNomeAccordo,pTipoAccordo, pNomePortTypes);
 
 			Map<String, String> campiHidden = new HashMap<String, String>();
@@ -1523,7 +1522,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			Parameter pIdAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idApc);
 			Parameter pNomeAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, uri);
 
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_PORT_TYPES, pIdAccordo,pTipoAccordo,pNomeAccordo);
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_PORT_TYPES, pIdAccordo,pTipoAccordo,pNomeAccordo);
 
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
@@ -2183,7 +2182,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			uri = this.idAccordoFactory.getUriFromAccordo(as);
 			String labelASTitle = this.getLabelIdAccordo(as); 
 
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_AZIONI,
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_AZIONI,
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idAs),
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO, tipoAccordo),
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, uri));
@@ -3074,8 +3073,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			boolean confirm, String canaleStato, String canale, List<CanaleConfigurazione> canaleList, boolean gestioneCanaliEnabled
 			) throws Exception {
 
-		Boolean showAccordiAzioni = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI);
-		Boolean showAccordiCooperazione = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);
+		Boolean showAccordiAzioni = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI);
+		Boolean showAccordiCooperazione = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);
 		boolean isInterfacciaAvanzata = this.isModalitaAvanzata();
 		boolean ripristinoStatoOperativo = this.core.isGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale();
 
@@ -4201,7 +4200,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 		}
 
-		Boolean gestioneInfoProtocollo = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_INFO_PROTOCOLLO);
+		Boolean gestioneInfoProtocollo = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_INFO_PROTOCOLLO);
 				//&& !serviceBinding.equals(ServiceBinding.REST);
 		boolean isSoap = serviceBinding.equals(ServiceBinding.SOAP);
 
@@ -4540,7 +4539,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			String gruppi, String canaleStato, String canale
 			) throws Exception {
 
-		Boolean showAccordiCooperazione = (Boolean) this.session.getAttribute("ShowAccordiCooperazione");
+		Boolean showAccordiCooperazione = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);
 
 		boolean modificheAbilitate = false;
 		if( tipoOperazione.equals(TipoOperazione.ADD) ){
@@ -5248,7 +5247,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 	public void prepareAccordiList(List<AccordoServizioParteComuneSintetico> lista, ISearch ricerca, String tipoAccordo) throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC,
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC,
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO, tipoAccordo));
 
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
@@ -5324,9 +5323,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			// Ordine Colonne: 
 			// Nome | [AccordoCooperazione] |ServiceBinding | Stato | Risorse | Servizi | Azioni | Erogatori | [Componenti] |Allegati
 
-			Boolean gestioneInfoProtocollo = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_INFO_PROTOCOLLO);
-			Boolean showAccordiAzioni = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI);
-			Boolean showAccordiCooperazione = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);
+			Boolean gestioneInfoProtocollo = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_INFO_PROTOCOLLO);
+			Boolean showAccordiAzioni = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI);
+			Boolean showAccordiCooperazione = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);
 			Boolean showColonnaAccordiCooperazione = tipoAccordo!=null && tipoAccordo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_SERVIZIO_COMPOSTO);
 
 			// controllo eventuali risultati ricerca
@@ -5741,7 +5740,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			String labelASTitle = this.getLabelIdAccordo(as); 
 			
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_COMPONENTI,
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_COMPONENTI,
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, ""+as.getId())
 					);
 
@@ -5903,7 +5902,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				idLista = Liste.ACCORDI_PORTTYPE_AZIONI_MESSAGE_OUTPUT;
 			}
 
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE,
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_PORT_TYPE_OPERATIONS_MESSAGE,
 					pIdAccordo, pTipoAccordo,  pNomePt, pNomeOp, pTipoMsg);
 
 			int limit = ricerca.getPageSize(idLista);
@@ -6286,7 +6285,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			Parameter pIdAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idApc);
 			Parameter pNomeAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, uri);
 
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES,
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES,
 					pIdAccordo,	pTipoAccordo, pNomeAccordo);
 
 //			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
@@ -7296,7 +7295,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			Parameter pNomeAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, uri);
 			Parameter pIdRisorsa = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_ID, risorsa.getId()+"");
 			Parameter pNomeRisorsa = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, risorsa.getNome());
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_RISPOSTE,
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_RISPOSTE,
 					pIdAccordo,pTipoAccordo,pNomeAccordo, pNomeRisorsa,pIdRisorsa);
 
 			int idLista = Liste.ACCORDI_API_RESOURCES_RESPONSE;
@@ -7472,7 +7471,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			int status = resourceResponse != null ? resourceResponse.getStatus() : -1;
 			Parameter pResponseStatus = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS, statusS);
 			
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_REPRESENTATIONS,
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_REPRESENTATIONS,
 					pIdAccordo, pTipoAccordo, pNomeAccordo, pNomeRisorsa, pIsRequest, pResponseStatus,pNomeRisorsa);
 
 			int idLista = isRequest ? Liste.ACCORDI_API_RESOURCES_REPRESENTATION_REQUEST : Liste.ACCORDI_API_RESOURCES_REPRESENTATION_RESPONSE;
@@ -7628,7 +7627,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			Parameter pResponseStatus = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_RESPONSE_STATUS, statusS);
 
 			Parameter pNomeRisorsa = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, risorsa.getNome());
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_PARAMETERS,
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_PARAMETERS,
 					pIdAccordo, pTipoAccordo,pNomeAccordo, pIsRequest, pResponseStatus,	pNomeRisorsa);
 
 			int idLista = isRequest ? Liste.ACCORDI_API_RESOURCES_PARAMETERS_REQUEST : Liste.ACCORDI_API_RESOURCES_PARAMETERS_RESPONSE;

@@ -266,7 +266,7 @@ public class RuoliHelper extends ConsoleHelper{
 	
 	public void prepareRuoliList(ISearch ricerca, List<Ruolo> lista) throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, RuoliCostanti.OBJECT_NAME_RUOLI);
+			ServletUtils.addListElementIntoSession(this.request, this.session, RuoliCostanti.OBJECT_NAME_RUOLI);
 			
 			boolean modalitaCompleta = this.isModalitaCompleta();
 			

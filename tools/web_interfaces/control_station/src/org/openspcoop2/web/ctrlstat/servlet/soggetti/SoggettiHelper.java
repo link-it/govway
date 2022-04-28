@@ -1118,7 +1118,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				this.pd.setCustomListViewName(SoggettiCostanti.SOGGETTI_NOME_VISTA_CUSTOM_LISTA);
 			}
 			
-			ServletUtils.addListElementIntoSession(this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI);
+			ServletUtils.addListElementIntoSession(this.request, this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI);
 
 			boolean multiTenant = this.core.isMultitenant();
 			
@@ -1647,7 +1647,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 	public void prepareSoggettiConfigList(List<org.openspcoop2.core.config.Soggetto> lista, ISearch ricerca) throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI);
+			ServletUtils.addListElementIntoSession(this.request, this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI);
 
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
@@ -1929,7 +1929,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			String accessDaChangeTmp = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_RUOLI_ACCESSO_DA_CHANGE);
 			boolean accessDaChange = ServletUtils.isCheckBoxEnabled(accessDaChangeTmp);
 
-			ServletUtils.addListElementIntoSession(this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI_RUOLI, 
+			ServletUtils.addListElementIntoSession(this.request, this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI_RUOLI, 
 					new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id),
 					new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_RUOLI_ACCESSO_DA_CHANGE, accessDaChangeTmp));
 
@@ -2054,7 +2054,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			parametersServletSoggettoChange.add(pNomeSoggetto);
 			parametersServletSoggettoChange.add(pTipoSoggetto);
 			
-			ServletUtils.addListElementIntoSession(this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI_CREDENZIALI, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()]));
+			ServletUtils.addListElementIntoSession(this.request, this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI_CREDENZIALI, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()]));
 
 			this.pd.setIndex(0);
 			this.pd.setPageSize(soggettoRegistry.sizeCredenzialiList());
@@ -2367,7 +2367,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			parametersServletSoggettoChange.add(pNomeSoggetto);
 			parametersServletSoggettoChange.add(pTipoSoggetto);
 			
-			ServletUtils.addListElementIntoSession(this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI_PROPRIETA, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()]));
+			ServletUtils.addListElementIntoSession(this.request, this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI_PROPRIETA, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()]));
 
 			// setto la barra del titolo
 			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(soggettoRegistry.getTipo());

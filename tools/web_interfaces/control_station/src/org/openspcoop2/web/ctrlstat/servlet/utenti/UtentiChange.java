@@ -116,7 +116,7 @@ public final class UtentiChange extends Action {
 			
 			String scadenza = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_SCADENZA);
 			
-			Boolean singlePdD = (Boolean) session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+			Boolean singlePdD = ServletUtils.getBooleanAttributeFromSession(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD, session, request);
 			
 			List<String> protocolliRegistratiConsole = utentiCore.getProtocolli();
 			
@@ -231,7 +231,7 @@ public final class UtentiChange extends Action {
 					}
 				}
 				
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());
 
@@ -262,7 +262,7 @@ public final class UtentiChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());
 			}
@@ -334,7 +334,7 @@ public final class UtentiChange extends Action {
 							// Preparo il menu
 							pd.setMessage("Non è possibile eliminare il permesso 'Servizi', poichè non esistono altri utenti con tale permesso");
 	
-							ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+							ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 	
 							return ServletUtils.getStrutsForwardGeneralError(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());	
 	
@@ -408,7 +408,7 @@ public final class UtentiChange extends Action {
 				pd.setDati(dati);
 				pd.setMessage(msg,Costanti.MESSAGE_TYPE_INFO);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForward(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE(),UtentiCostanti.STRUTS_FORWARD_INFO);	
 
@@ -560,7 +560,7 @@ public final class UtentiChange extends Action {
 								// Preparo il menu
 								pd.setMessage("Non è possibile eliminare il permesso 'Accordi Cooperazione', poichè non esistono altri utenti con tale permesso");
 	
-								ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+								ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 	
 								return ServletUtils.getStrutsForwardGeneralError(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());
 							}
@@ -584,11 +584,11 @@ public final class UtentiChange extends Action {
 				// Se sto modificando l'utente che è anche quello connesso
 				if(userLogin.equals(user.getLogin())){
 
-					LoginSessionUtilities.cleanLoginParametersSession(session);
+					LoginSessionUtilities.cleanLoginParametersSession(request, session);
 
 					ServletUtils.setUserIntoSession(session, user); // update in sessione.
 					utentiHelper.setTipoInterfaccia(user.getInterfaceType()); // update InterfaceType
-					LoginSessionUtilities.setLoginParametersSession(session, utentiCore, userLogin);
+					LoginSessionUtilities.setLoginParametersSession(request, session, utentiCore, userLogin);
 
 				}
 
@@ -611,7 +611,7 @@ public final class UtentiChange extends Action {
 
 					pd.setMessage("Utente '"+userLogin+"' modificato con successo", Costanti.MESSAGE_TYPE_INFO);
 					
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForward(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE(),UtentiCostanti.STRUTS_FORWARD_PERMESSI_OK);	
 
@@ -635,13 +635,13 @@ public final class UtentiChange extends Action {
 
 					utentiHelper.prepareUtentiList(ricerca, lista, singlePdD);
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeFinished(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());
 				}
 			}
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());
 		}
 	}

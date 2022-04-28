@@ -21,14 +21,13 @@
 <%@ page session="true" import="java.util.*, org.openspcoop2.web.lib.mvc.*" %>
 <html>
 <%
-String iddati = request.getParameter("iddati");
-String params = (String) request.getAttribute("params");
+String iddati = request.getParameter(Costanti.PARAMETER_NAME_ID_DATI);
+String params = (String) request.getAttribute(Costanti.PARAMETER_NAME_PARAMS);
 
 if (params == null)
 	 params="";
 
-ListElement listElement = 
-	  (org.openspcoop2.web.lib.mvc.ListElement) session.getAttribute("ListElement");
+ListElement listElement = ServletUtils.getObjectFromSession(request, session, ListElement.class, Costanti.SESSION_ATTRIBUTE_LIST_ELEMENT);
 
 String nomeServlet = listElement.getOggetto();
 String nomeServletAdd = nomeServlet+"Add.do";
@@ -37,8 +36,8 @@ String nomeServletList = nomeServlet+"List.do";
 	  
 String formatPar = listElement.formatParametersURL();
 
-String gdString = "GeneralData";
-String pdString = "PageData";
+String gdString = Costanti.SESSION_ATTRIBUTE_GENERAL_DATA;
+String pdString = Costanti.SESSION_ATTRIBUTE_PAGE_DATA;
 if (iddati != null && !iddati.equals("notdefined")) {
   gdString += iddati;
   pdString += iddati;
@@ -47,12 +46,12 @@ else {
   iddati = "notdefined";
 }
 
-GeneralData gd = (GeneralData) session.getAttribute(gdString);
-PageData pd = (PageData) session.getAttribute(pdString);
+GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
+PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
 
-Vector v = pd.getDati();
+Vector<?> v = pd.getDati();
 int n = v.size();
-String search = request.getParameter("search");
+String search = request.getParameter(Costanti.SEARCH_PARAMETER_NAME);
 if (search == null)
   search = "";
 

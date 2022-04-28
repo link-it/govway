@@ -170,7 +170,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE);
 			}
 			else if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_COMPLETA.equals(tipologia)) {
-				ServletUtils.removeObjectFromSession(session, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+				ServletUtils.removeObjectFromSession(request, session, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			}
 			
 			if(addFilterToRicerca && this.isSoggettoMultitenantSelezionato()) {
@@ -437,7 +437,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 	public void prepareErogazioniList(ISearch ricerca, List<AccordoServizioParteSpecifica> lista) throws Exception {
 		try {
 
-			ServletUtils.addListElementIntoSession(this.session, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI);
 
 			String tipologia = ServletUtils.getObjectFromSession(this.request, this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = this.isGestioneFruitori(tipologia);
@@ -3829,11 +3829,11 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(this.request, this.session, ricerca);
 			
-			ServletUtils.setGeneralAndPageDataIntoSession(this.session, gd, this.pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(this.request, this.session, gd, this.pd);
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, CostantiControlStation.TIPO_OPERAZIONE_RESET_CACHE_ELEMENTO);
 		} else { // reset richiesto dal dettaglio, torno al dettaglio
 			this.prepareErogazioneChange(tipoOp, asps, idSoggettoFruitore);
-			ServletUtils.setGeneralAndPageDataIntoSession(this.session, gd, this.pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(this.request, this.session, gd, this.pd);
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
 		}
 	}
