@@ -119,6 +119,11 @@
             <stringProp name="Argument.value">${__P(iterazione,1)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="testName" elementType="Argument">
+            <stringProp name="Argument.name">testName</stringProp>
+            <stringProp name="Argument.value">${__P(testName,&quot;TESTNAME&quot;)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
         </collectionProp>
       </Arguments>
       <hashTree/>
@@ -167,7 +172,7 @@
           <stringProp name="shareMode">shareMode.all</stringProp>
         </CSVDataSet>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REST_${protocollo}_${threads}_${dimensioneRichiesta}_${profiloSicurezza}_${tipoTest}_${sleepMin}_${sleepMax}_${azione}_${iterazione}" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="${testName}_${protocollo}_${threads}_${dimensioneRichiesta}_${profiloSicurezza}_${tipoTest}_${sleepMin}_${sleepMax}_${azione}_${iterazione}" enabled="true">
           <elementProp name="HTTPsampler.Files" elementType="HTTPFileArgs">
             <collectionProp name="HTTPFileArgs.files">
               <elementProp name="${dirFile}/rest/messaggi/${dimensioneRichiesta}B.json" elementType="HTTPFileArg">
@@ -272,7 +277,7 @@
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">${dirResult}/REST_${protocollo}_${threads}_${dimensioneRichiesta}_${profiloSicurezza}_${tipoTest}_${sleepMin}_${sleepMax}_${azione}_${iterazione}.csv</stringProp>
+        <stringProp name="filename">${dirResult}/${testName}_${protocollo}_${threads}_${dimensioneRichiesta}_${profiloSicurezza}_${tipoTest}_${sleepMin}_${sleepMax}_${azione}_${iterazione}.csv</stringProp>
       </ResultCollector>
       <hashTree/>
       <kg.apc.jmeter.listener.GraphsGeneratorListener guiclass="TestBeanGUI" testclass="kg.apc.jmeter.listener.GraphsGeneratorListener" testname="jp@gc - Graphs Generator" enabled="false">

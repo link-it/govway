@@ -323,21 +323,50 @@ function soapModiIDAuthRichiestaFiltroDuplicati() {
 
 
 function build_jmx_command() {
-	echo "${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=${threadNumber} -Jduration=${duration} -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JtipoTest=${tipoTest} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloSicurezza=${profiloSicurezza} -JdirResult=${outputDir} -j ${logDir}/jmeter.log -Jiterazione=$it"
+	echo "${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=${threadNumber} -Jduration=${duration} -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JtipoTest=${tipoTest} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloSicurezza=${profiloSicurezza} -JdirResult=${outputDir} -j ${logDir}/jmeter.log -Jiterazione=$it -JtestName=${testConfigurator}"
 }
 
+function clean_db() {
+	echo ""
+	echo -e "====================="
+	echo -e "LANCIO SCRIPT DI PULIZIA DB: $scriptDatabaseCleaner"
+	echo -e "====================="
+	echo -e ""
+	if ./$scriptDatabaseCleaner; then
+		echo -e ""
+		echo -e "====================="
+		echo -e "Script $scriptDatabaseCleaner eseguito con successo"
+		echo -e "====================="
+		echo -e ""
+	else
+		echo -e ""
+		echo -e "====================="
+		echo -e "ERRORE nell'esecuzione dello script $scriptDatabaseCleaner"
+		echo -e "====================="
+		echo -e ""
+		exit 1
+	fi
+
+}
 
 function run_jmx_test() {
 	rm -rf ${outputDir}
 	mkdir -p ${outputDir}
+	rm -rf ${logDir}
+	mkdir -p ${logDir}
+
 	for threadNumber in $threads; do
-		echo "$threadNumber"
 		for dimensione in $dimensioni; do
-			echo "- $dimensione"
 			for tipoTest in $tipiTest; do
 				for sleepMin in "${!minMaxSleeps[@]}"; do
 					sleepMax=${minMaxSleeps[$sleepMin]}
+					
+					if [[ ! -z $scriptDatabaseCleaner ]]; then
+						clean_db
+					fi
 
+					echo "$threadNumber"
+					echo "- $dimensione"
 					echo "--- ${profiloSicurezza}/$tipoTest"
 					echo "------- delay min:${sleepMin} max:${sleepMax}"
 					echo "--------- test (protocollo:${protocollo} profiloSicurezza:${profiloSicurezza} tipoTest:$tipoTest dimensione:$dimensione threads:$threadNumber azione:$azione sleepMin:$sleepMin sleepMax:$sleepMax) ..."
@@ -362,6 +391,10 @@ function run_jmx_test() {
 						eval $command
 						rm ${resultDir}/OUTPUT.txt
 					done
+					
+					if [[ $debug == "false" ]]; then
+						rm -rf ${logDir}/failed*
+					fi
 
 					echo ""
 					echo "--------- test (protocollo:${protocollo} profiloSicurezza:${profiloSicurezza} tipoTest:${tipoTest} dimensione:$dimensione threads:$threadNumber azione:$azione sleepMin:$sleepMin sleepMax:$sleepMax) finished"
@@ -420,11 +453,12 @@ function aggregate_report() {
 	# Arricchisco il file aggregatiConPlugin.csv con i valori di input dei test
 	# Per l'occasione creo un nuovo file.
 	headers=`sed -n '1{p;q}' ${outputDir}/aggregatiConPlugin.csv`
-	headers="$headers,riscaldamento,iterazione,profiloSicurezza,sleepMax,sleepMin,protocollo,dimensione,tipoTest,azione,soggetto,threads,threads.ramp-up"
+	headers="$headers,riscaldamento,testName,iterazione,profiloSicurezza,sleepMax,sleepMin,protocollo,dimensione,tipoTest,azione,soggetto,threads,threads.ramp-up"
 	echo $headers > ${outputDir}/aggregatiConPluginExtended.csv
 
-	# Leggo le linee dal file e le arrichisco
+	# Leggo le linee dal file degli aggregati e le arrichisco
 	while read -r line; do
+		# La label identifica il csv dal quale prendere i valori di test
 		label=`cut -f 1 -d "," <<< $line`
 
 		if [ "$label" = "TOTAL" ]; then
@@ -432,7 +466,7 @@ function aggregate_report() {
 			continue
 		fi
 
-		# Leggo la seconda riga ed estraggo gli ultimi cinque valori
+		# Leggo la seconda riga ed estraggo gli ultimi valori
 		csvfile=${outputDir}/${label}.csv
 		#echo "CSV FILE: $csvfile"
 
@@ -452,9 +486,10 @@ function aggregate_report() {
 		_sleepMax=${test_input_values[-9]}
 		_profiloSicurezza=${test_input_values[-10]}
 		_iterazione=${test_input_values[-11]}
+		_testName=${test_input_values[-12]}
 		_riscaldamento=$riscaldamento
 
-		new_line="$line,$_riscaldamento,$_iterazione,$_profiloSicurezza,$_sleepMax,$_sleepMin,$_protocollo,$_dimensione,$_tipo_test,$_azione,$_soggetto,$_threads,$_ramp_up"
+		new_line="$line,$_riscaldamento,$_testName,$_iterazione,$_profiloSicurezza,$_sleepMax,$_sleepMin,$_protocollo,$_dimensione,$_tipo_test,$_azione,$_soggetto,$_threads,$_ramp_up"
 
 		echo $new_line >> ${outputDir}/aggregatiConPluginExtended.csv
 
@@ -572,6 +607,9 @@ echo -e "\n==================================="
 echo -e "Esecuzione batteria di test: $testToRun"
 echo -e "===================================\n"
 
+startDate=$(date -I)
+startHour=$(date +%H)
+
 rm -r ${resultDir}
 mkdir -p ${resultDir}
 
@@ -606,12 +644,17 @@ for testConfigurator in $testToRun; do
 	# Scrivo headers e concateno tutti i csv prodotti
 	echo $headers > ${resultDir}/allResults.csv
 	tail -q -n +2 $files >> ${resultDir}/allResults.csv
-
 done
 
+# Creo il file dei risultati minimo, con solo il throughput
+awk 'BEGIN { FPAT = "([^,]+)|(\"[^\"]+\")" } { print $1 "," $11 }' ${resultDir}/allResults.csv > ${resultDir}/allResults-throughput.csv
 
+rm -f ${resultDir}/*.tar.gz
 
-tar -czf ${resultDir}/results.tar.gz -C ${resultDir} .
+resultName="govway-benchmark-results-$startDate-$startHour.tgz"
+echo "SCRIVO IN $resultName"
 
+tar -czf $resultName -C ${resultDir} .
+mv $resultName $resultDir
 
 

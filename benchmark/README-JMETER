@@ -4,7 +4,7 @@
 . Estrarre l'archivio e modificare `bin/user.properties`
 
 	. Aggiungere la seguente definizione:
-      	. sample_variables=profiloSicurezza,sleepMax,sleepMin,protocollo,dimensioneRichiesta,tipoTest,azione,soggetto,threads,threads.ramp-up
+      	. sample_variables=testName,iterazione,profiloSicurezza,sleepMax,sleepMin,protocollo,dimensioneRichiesta,tipoTest,azione,soggetto,threads,threads.ramp-up
 		Questo per riportare nei csv anche le variabili di input del test.
 
 	. Installare il gestore di plugin per jmeter:

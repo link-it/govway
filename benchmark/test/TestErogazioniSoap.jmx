@@ -119,6 +119,11 @@
             <stringProp name="Argument.value">${__P(iterazione,1)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="testName" elementType="Argument">
+            <stringProp name="Argument.name">testName</stringProp>
+            <stringProp name="Argument.value">${__P(testName,&quot;TESTNAME&quot;)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
         </collectionProp>
       </Arguments>
       <hashTree/>
@@ -155,7 +160,7 @@
           <stringProp name="variableName">random</stringProp>
         </RandomVariableConfig>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="SOAP_${protocollo}_${threads}_${dimensioneRichiesta}_${profiloSicurezza}_${tipoTest}_${sleepMin}_${sleepMax}_${azione}_${iterazione}" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="${testName}_${protocollo}_${threads}_${dimensioneRichiesta}_${profiloSicurezza}_${tipoTest}_${sleepMin}_${sleepMax}_${azione}_${iterazione}" enabled="true">
           <elementProp name="HTTPsampler.Files" elementType="HTTPFileArgs">
             <collectionProp name="HTTPFileArgs.files">
               <elementProp name="${dirFile}/soap/sicurezza/${profiloSicurezza}/${dimensioneRichiesta}B.xml" elementType="HTTPFileArg">
@@ -252,7 +257,7 @@
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">${dirResult}/SOAP_${protocollo}_${threads}_${dimensioneRichiesta}_${profiloSicurezza}_${tipoTest}_${sleepMin}_${sleepMax}_${azione}_${iterazione}.csv</stringProp>
+        <stringProp name="filename">${dirResult}/${testName}_${protocollo}_${threads}_${dimensioneRichiesta}_${profiloSicurezza}_${tipoTest}_${sleepMin}_${sleepMax}_${azione}_${iterazione}.csv</stringProp>
       </ResultCollector>
       <hashTree/>
     </hashTree>
