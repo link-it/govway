@@ -237,6 +237,20 @@ public class CostantiPdD {
     public final static String HEADER_INTEGRAZIONE_TOKEN_FAMILY_NAME = "familyName";
     public final static String HEADER_INTEGRAZIONE_TOKEN_EMAIL = "email";
     
+    // ulteriori claim usati per adesso solo nella configurazione della cache key
+    // Payload
+    public final static String HEADER_INTEGRAZIONE_TOKEN_IDENTIFIER = "identifier";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_PURPOSE_ID = "purposeId";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_SESSION_INFO = "sessionInfo";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_CLAIMS = "claims";
+    // Header
+    public final static String HEADER_INTEGRAZIONE_TOKEN_HEADER_KID = "kid";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_HEADER_X509_URL = "x509Url";
+    // FormRequest
+    public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_SCOPE = "form.scope";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_AUDIENCE = "form.audience";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_CLIENT_ID = "form.clientId";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_PARAMETERS = "form.parameters";
     
     /** Attesa attiva di default effettuata per ottenere un lock, in millisecondi */
     public final static long GET_LOCK_ATTESA_ATTIVA = 90 * 1000; // 2 minuti

@@ -896,9 +896,24 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		Map<String, String> headers_0 = new HashMap<String, String>();
 		headers_0.put("test-azione", "signedJWT-PDND");
+		
+		headers_0.put("test-kid", "PDND");
+		
+		headers_0.put("test-issuer", "DYNAMIC");
+		headers_0.put("test-subject", "DYNAMIC");
+		headers_0.put("test-clientId", "DYNAMIC");
+		headers_0.put("test-aud", "DYNAMIC");
+		headers_0.put("test-jti", "DYNAMIC");
+		headers_0.put("test-purposeId", "DYNAMIC");
+		headers_0.put("test-sessionInfo", "DYNAMIC");
+		headers_0.put("test-claim", "DYNAMIC");
+		
+		headers_0.put("test-scope", "DYNAMIC");
+		headers_0.put("test-formClientId", "DYNAMIC");
+		headers_0.put("test-p2", "testNegoziazioneP2");
+				
 		headers_0.put("test-suffix", "DYNAMIC");
 		headers_0.put("test-decode-position", "0");
-		headers_0.put("test-p2", "testNegoziazioneP2");
 		
 		HttpResponse response = _test(logCore, api_negoziazione, "signedJWT-PDND", headers_0,
 				false,
@@ -918,9 +933,24 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		Map<String, String> headers_1 = new HashMap<String, String>();
 		headers_1.put("test-azione", "signedJWT-PDND");
+		
+		headers_1.put("test-kid", "PDND");
+		
+		headers_1.put("test-issuer", "DYNAMIC");
+		headers_1.put("test-subject", "DYNAMIC");
+		headers_1.put("test-clientId", "DYNAMIC");
+		headers_1.put("test-aud", "DYNAMIC");
+		headers_1.put("test-jti", "DYNAMIC");
+		headers_1.put("test-purposeId", "DYNAMIC");
+		headers_1.put("test-sessionInfo", "DYNAMIC");
+		headers_1.put("test-claim", "DYNAMIC");
+		
+		headers_1.put("test-scope", "DYNAMIC");
+		headers_1.put("test-formClientId", "DYNAMIC");
+		headers_1.put("test-p2", "testNegoziazioneP2");
+		
 		headers_1.put("test-suffix", "DYNAMIC");
 		headers_1.put("test-decode-position", "1");
-		headers_1.put("test-p2", "testNegoziazioneP2");
 		
 		response = _test(logCore, api_negoziazione, "signedJWT-PDND", headers_1,
 				false,
@@ -948,22 +978,6 @@ public class NegoziazioneTest extends ConfigLoader {
 				true,
 				"Connessione terminata con errore (codice trasporto: 404)%UndefinedOperation");
 		headers_1.put("test-azione", "signedJWT-PDND");
-		
-		
-		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
-		
-		// Sull'header non vi sono informazioni dinamiche per questa policy
-//		headers_0.put("test-suffix", "DYNAMICERRATA");
-//		_test(logCore, api_negoziazione, "signedJWT-PDND", headers_0,
-//				true,
-//				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
-//		headers_0.put("test-suffix", "DYNAMIC");
-		
-		headers_1.put("test-suffix", "DYNAMICERRATA");
-		_test(logCore, api_negoziazione, "signedJWT-PDND", headers_1,
-				true,
-				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
-		headers_1.put("test-suffix", "DYNAMIC");
 		
 		
 		
@@ -996,7 +1010,7 @@ public class NegoziazioneTest extends ConfigLoader {
 	}
 	
 	
-	private static HttpResponse _test(Logger logCore, String api, String operazione,
+	protected static HttpResponse _test(Logger logCore, String api, String operazione,
 			Map<String, String> headers, 
 			boolean error, String diagnostico,
 			String ... tokenInfoCheck) throws Exception {

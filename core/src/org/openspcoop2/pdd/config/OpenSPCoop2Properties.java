@@ -1870,6 +1870,7 @@ public class OpenSPCoop2Properties {
 			this.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest();
 			this.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest_date();
 			this.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_transazioniRegistrazioneInformazioniNormalizzate();
+			this.initGestioneRetrieveToken_cacheKey();
 						
 			// Gestione AttributeAuthority
 			this.isGestioneAttributeAuthority_debug();
@@ -20158,6 +20159,38 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_transazioniRegistrazioneInformazioniNormalizzate;
 	}
 
+	private static Map<String, Boolean> gestioneRetrieveToken_cacheKey = null;
+	private void initGestioneRetrieveToken_cacheKey() throws Exception {
+		Properties p = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.retrieveToken.cacheKey.");
+		if(p!=null) {
+			gestioneRetrieveToken_cacheKey = new HashMap<String, Boolean>();
+			for (Object oKey : p.keySet()) {
+				if(oKey!=null && oKey instanceof String) {
+					String key = (String) oKey;
+					String v = p.getProperty(key);
+					if(v!=null) {
+						boolean b = Boolean.valueOf(v.trim());
+						gestioneRetrieveToken_cacheKey.put(key,b);
+					}
+				}
+			}
+		}
+	}
+	public boolean isGestioneRetrieveToken_cacheKey(String tipo) {
+		if(gestioneRetrieveToken_cacheKey!=null && !gestioneRetrieveToken_cacheKey.isEmpty() && gestioneRetrieveToken_cacheKey.containsKey(tipo)) {
+			return gestioneRetrieveToken_cacheKey.get(tipo);
+		}
+		
+		// logica di default
+		if(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_IDENTIFIER.equals(tipo) || 
+				CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SESSION_INFO.equals(tipo)) {
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+	
 	
 	
 	/* ------------- Gestione Attribute Authority ---------------------*/

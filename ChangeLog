@@ -6,6 +6,9 @@
 	Se all'interno di una policy erano stati definiti parametri dinamici, risolti a runtime, la chiave della cache non teneva conto della risoluzione di tali parametri.
 	Questo comportava che una policy con parametri dinamici utilizzata ad esempio su più fruizioni poteva provocare che il token negoziato in seguito all'invocazione di una prima fruizione, 
 	venisse erroneamente riutilizzato (trovato in cache) per l'invocazione di una seconda fruizione (ad esempio purposeId utilizzato su PDND configurato come proprietà della fruizione).
+	La chiave della cache è adesso composta anche dai parametri valorizzati nella form request, e dagli eventuali parametri indicati nell'header e nel payload del token per i tipi di negoziazione che lo prevedevono.
+	I parametri utilizzati a formare la chiave della cache sono configurabili nel file govway.properties;
+	per default vengono tutti utilizzati ad accezione dei seguenti parametri presenti nel payload del token: jti e sessionInfo (per PDND).
 	Durante l'intervento è stato risolto anche un problema di performance per cui l'accesso sincronizzato all'interno della gestione della cache per i token 
 	avveniva erroneamente per ogni richiesta anche se il token era già presente in cache.
 	Infine è stato aggiunto il nome della policy utilizzata per negoziare il token, tra le informazioni salvate nella traccia.

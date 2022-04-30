@@ -22,6 +22,8 @@ package org.openspcoop2.pdd.core.token;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 
@@ -59,6 +61,57 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	private String audience;
 	private String formClientId;
 	private String parameters;
+	
+	
+	// static config
+	
+	private static boolean signedJwtIssuer_cacheKey;
+	private static boolean signedJwtClientId_cacheKey;
+	private static boolean signedJwtSubject_cacheKey;
+	private static boolean signedJwtAudience_cacheKey;
+	private static boolean signedJwtJti_cacheKey;
+	private static boolean signedJwtPurposeId_cacheKey;
+	private static boolean signedJwtSessionInfo_cacheKey;
+	private static boolean signedJwtClaims_cacheKey;
+	
+	private static boolean signedJwtCustomId_cacheKey; 
+	private static boolean signedJwtX509Url_cacheKey;
+	
+	private static boolean scope_cacheKey;
+	private static boolean audience_cacheKey;
+	private static boolean formClientId_cacheKey;
+	private static boolean parameters_cacheKey; 
+	
+	private static Boolean init_cacheKey = null;
+	private static synchronized void initCacheKey() {
+		if(init_cacheKey==null) {
+			OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+			
+			signedJwtIssuer_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ISSUER);
+			signedJwtClientId_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_CLIENT_ID);
+			signedJwtSubject_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SUBJECT);
+			signedJwtAudience_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_AUDIENCE);
+			signedJwtJti_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_IDENTIFIER);
+			signedJwtPurposeId_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PURPOSE_ID);
+			signedJwtSessionInfo_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SESSION_INFO);
+			signedJwtClaims_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_CLAIMS);
+			
+			signedJwtCustomId_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_HEADER_KID); 
+			signedJwtX509Url_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_HEADER_X509_URL);
+			
+			scope_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_SCOPE);
+			audience_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_AUDIENCE);
+			formClientId_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_CLIENT_ID);
+			parameters_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_PARAMETERS); 
+			
+			init_cacheKey = true;
+		}
+	}
+	private static void checkInitCacheKey() {
+		if(init_cacheKey==null) {
+			initCacheKey();
+		}
+	}
 	
 
 	public NegoziazioneTokenDynamicParameters(Map<String, Object> dynamicMap, PdDContext pddContext, PolicyNegoziazioneToken policyNegoziazioneToken) throws Exception {
@@ -188,6 +241,10 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			sb.append(superS);
 		}
 		
+		if(cacheKey) {
+			checkInitCacheKey();
+		}
+		
 		if(StringUtils.isNotEmpty(this.endpoint)) {
 			if(sb.length()>0) {
 				sb.append(separator);
@@ -214,87 +271,87 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			sb.append("usernamePasswordGrant:").append(this.usernamePasswordGrant);
 		}
 		
-		if(StringUtils.isNotEmpty(this.signedJwtIssuer)) {
+		if(StringUtils.isNotEmpty(this.signedJwtIssuer) && (!cacheKey || signedJwtIssuer_cacheKey)) {
 			if(sb.length()>0) {
 				sb.append(separator);
 			}
 			sb.append("iss:").append(this.signedJwtIssuer);
 		}
-		if(StringUtils.isNotEmpty(this.signedJwtClientId)) {
+		if(StringUtils.isNotEmpty(this.signedJwtClientId) && (!cacheKey || signedJwtClientId_cacheKey)) {
 			if(sb.length()>0) {
 				sb.append(separator);
 			}
 			sb.append("clientId:").append(this.signedJwtClientId);
 		}
-		if(StringUtils.isNotEmpty(this.signedJwtSubject)) {
+		if(StringUtils.isNotEmpty(this.signedJwtSubject) && (!cacheKey || signedJwtSubject_cacheKey)) {
 			if(sb.length()>0) {
 				sb.append(separator);
 			}
 			sb.append("sub:").append(this.signedJwtSubject);
 		}
-		if(StringUtils.isNotEmpty(this.signedJwtAudience)) {
+		if(StringUtils.isNotEmpty(this.signedJwtAudience) && (!cacheKey || signedJwtAudience_cacheKey)) {
 			if(sb.length()>0) {
 				sb.append(separator);
 			}
 			sb.append("aud:").append(this.signedJwtAudience);
 		}
-		if(StringUtils.isNotEmpty(this.signedJwtJti)) {
+		if(StringUtils.isNotEmpty(this.signedJwtJti) && (!cacheKey || signedJwtJti_cacheKey)) {
 			if(sb.length()>0) {
 				sb.append(separator);
 			}
 			sb.append("jti:").append(this.signedJwtJti);
 		}
-		if(StringUtils.isNotEmpty(this.signedJwtPurposeId)) {
+		if(StringUtils.isNotEmpty(this.signedJwtPurposeId) && (!cacheKey || signedJwtPurposeId_cacheKey)) {
 			if(sb.length()>0) {
 				sb.append(separator);
 			}
 			sb.append("purposeId:").append(this.signedJwtPurposeId);
 		}
-		if(StringUtils.isNotEmpty(this.signedJwtSessionInfo)) {
+		if(StringUtils.isNotEmpty(this.signedJwtSessionInfo) && (!cacheKey || signedJwtSessionInfo_cacheKey)) {
 			if(sb.length()>0) {
 				sb.append(separator);
 			}
 			sb.append("sInfo:").append(this.signedJwtSessionInfo);
 		}
-		if(StringUtils.isNotEmpty(this.signedJwtClaims)) {
+		if(StringUtils.isNotEmpty(this.signedJwtClaims) && (!cacheKey || signedJwtClaims_cacheKey)) {
 			if(sb.length()>0) {
 				sb.append(separator);
 			}
 			sb.append("claims:").append(this.signedJwtClaims);
 		}
 		
-		if(StringUtils.isNotEmpty(this.signedJwtCustomId)) {
+		if(StringUtils.isNotEmpty(this.signedJwtCustomId) && (!cacheKey || signedJwtCustomId_cacheKey)) {
 			if(sb.length()>0) {
 				sb.append(separator);
 			}
 			sb.append("kid:").append(this.signedJwtCustomId);
 		}
-		if(StringUtils.isNotEmpty(this.signedJwtX509Url)) {
+		if(StringUtils.isNotEmpty(this.signedJwtX509Url) && (!cacheKey || signedJwtX509Url_cacheKey)) {
 			if(sb.length()>0) {
 				sb.append(separator);
 			}
 			sb.append("x5u:").append(this.signedJwtX509Url);
 		}
 		
-		if(StringUtils.isNotEmpty(this.scope)) {
+		if(StringUtils.isNotEmpty(this.scope) && (!cacheKey || scope_cacheKey)) {
 			if(sb.length()>0) {
 				sb.append(separator);
 			}
 			sb.append("scope:").append(this.scope);
 		}
-		if(StringUtils.isNotEmpty(this.audience)) {
+		if(StringUtils.isNotEmpty(this.audience) && (!cacheKey || audience_cacheKey)) {
 			if(sb.length()>0) {
 				sb.append(separator);
 			}
 			sb.append("formAudience:").append(this.audience);
 		}
-		if(StringUtils.isNotEmpty(this.formClientId)) {
+		if(StringUtils.isNotEmpty(this.formClientId) && (!cacheKey || formClientId_cacheKey)) {
 			if(sb.length()>0) {
 				sb.append(separator);
 			}
 			sb.append("formClientId:").append(this.formClientId);
 		}
-		if(StringUtils.isNotEmpty(this.parameters)) {
+		if(StringUtils.isNotEmpty(this.parameters) && (!cacheKey || parameters_cacheKey)) {
 			if(sb.length()>0) {
 				sb.append(separator);
 			}
