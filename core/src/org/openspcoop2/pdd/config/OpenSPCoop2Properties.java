@@ -1260,6 +1260,11 @@ public class OpenSPCoop2Properties {
 			// Connettore (BIO)
 			this.getBIOConfig_syncClient_maxPerRoute();
 			this.getBIOConfig_syncClient_maxTotal();
+			this.getBIOConfig_syncClient_defaultHttpLibrary();
+			this.getBIOConfig_gestioneToken_defaultHttpLibrary();
+			this.getBIOConfig_retrieveToken_defaultHttpLibrary();
+			this.getBIOConfig_gestioneAttributeAuthority_defaultHttpLibrary();
+			this.initMapBIOConfig_convertToHttps();
 			
 			// Connettore (NIO)
 			if(this.isNIOConfig_convertToAsyncClient()) {
@@ -12498,6 +12503,119 @@ public class OpenSPCoop2Properties {
 	}
 	
 	
+	private static String getBIOConfig_syncClient_defaultHttpLibrary = null;
+	public String getBIOConfig_syncClient_defaultHttpLibrary() {	
+		if(OpenSPCoop2Properties.getBIOConfig_syncClient_defaultHttpLibrary==null){
+			String pName = "org.openspcoop2.pdd.connettori.syncClient.defaultHttpLibrary";
+			try{ 
+				String v = null;
+				v = this.reader.getValue_convertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					OpenSPCoop2Properties.getBIOConfig_syncClient_defaultHttpLibrary = v;
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_HTTP_LIBRARY);
+					OpenSPCoop2Properties.getBIOConfig_syncClient_defaultHttpLibrary = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_HTTP_LIBRARY;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_HTTP_LIBRARY+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getBIOConfig_syncClient_defaultHttpLibrary = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_HTTP_LIBRARY;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getBIOConfig_syncClient_defaultHttpLibrary;
+	}
+	
+	private static String getBIOConfig_gestioneToken_defaultHttpLibrary = null;
+	public String getBIOConfig_gestioneToken_defaultHttpLibrary() {	
+		if(OpenSPCoop2Properties.getBIOConfig_gestioneToken_defaultHttpLibrary==null){
+			String pName = "org.openspcoop2.pdd.gestioneToken.httpLibrary";
+			try{ 
+				String v = null;
+				v = this.reader.getValue_convertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					OpenSPCoop2Properties.getBIOConfig_gestioneToken_defaultHttpLibrary = v;
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_HTTP_LIBRARY);
+					OpenSPCoop2Properties.getBIOConfig_gestioneToken_defaultHttpLibrary = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_HTTP_LIBRARY;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_HTTP_LIBRARY+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getBIOConfig_gestioneToken_defaultHttpLibrary = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_HTTP_LIBRARY;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getBIOConfig_gestioneToken_defaultHttpLibrary;
+	}
+	
+	private static String getBIOConfig_retrieveToken_defaultHttpLibrary = null;
+	public String getBIOConfig_retrieveToken_defaultHttpLibrary() {	
+		if(OpenSPCoop2Properties.getBIOConfig_retrieveToken_defaultHttpLibrary==null){
+			String pName = "org.openspcoop2.pdd.retrieveToken.httpLibrary";
+			try{ 
+				String v = null;
+				v = this.reader.getValue_convertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					OpenSPCoop2Properties.getBIOConfig_retrieveToken_defaultHttpLibrary = v;
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_HTTP_LIBRARY);
+					OpenSPCoop2Properties.getBIOConfig_retrieveToken_defaultHttpLibrary = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_HTTP_LIBRARY;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_HTTP_LIBRARY+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getBIOConfig_retrieveToken_defaultHttpLibrary = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_HTTP_LIBRARY;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getBIOConfig_retrieveToken_defaultHttpLibrary;
+	}
+	
+	private static String getBIOConfig_gestioneAttributeAuthority_defaultHttpLibrary = null;
+	public String getBIOConfig_gestioneAttributeAuthority_defaultHttpLibrary() {	
+		if(OpenSPCoop2Properties.getBIOConfig_gestioneAttributeAuthority_defaultHttpLibrary==null){
+			String pName = "org.openspcoop2.pdd.gestioneAttributeAuthority.httpLibrary";
+			try{ 
+				String v = null;
+				v = this.reader.getValue_convertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					OpenSPCoop2Properties.getBIOConfig_gestioneAttributeAuthority_defaultHttpLibrary = v;
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_HTTP_LIBRARY);
+					OpenSPCoop2Properties.getBIOConfig_gestioneAttributeAuthority_defaultHttpLibrary = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_HTTP_LIBRARY;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_HTTP_LIBRARY+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getBIOConfig_gestioneAttributeAuthority_defaultHttpLibrary = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_HTTP_LIBRARY;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getBIOConfig_gestioneAttributeAuthority_defaultHttpLibrary;
+	}
+	
+	private static Map<String, String> mapBIOConfig_convertToHttps = null;
+	private void initMapBIOConfig_convertToHttps() throws Exception {
+		Properties p = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.connettori.convertToBioHttps.");
+		if(p!=null) {
+			mapBIOConfig_convertToHttps = new HashMap<String, String>();
+			for (Object oKey : p.keySet()) {
+				if(oKey!=null && oKey instanceof String) {
+					String key = (String) oKey;
+					mapBIOConfig_convertToHttps.put(key, p.getProperty(key));
+				}
+			}
+		}
+	}
+	public String convertToHttpsConnector(String tipo) {
+		if(mapBIOConfig_convertToHttps!=null && !mapBIOConfig_convertToHttps.isEmpty() && mapBIOConfig_convertToHttps.containsKey(tipo)) {
+			return mapBIOConfig_convertToHttps.get(tipo);
+		}
+		return tipo;
+	}
+	
+	
 	/* ***************** NIO  ************* */
 	
 	private static Boolean isNIOConfig_convertToAsyncClient = null;
@@ -12524,13 +12642,22 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isNIOConfig_convertToAsyncClient;
 	}
 	
-	private static Properties mapNIOConfig_convertToAsyncClient = null;
+	private static Map<String, String> mapNIOConfig_convertToAsyncClient = null;
 	private void initMapNIOConfig_convertToAsyncClient() throws Exception {
-		mapNIOConfig_convertToAsyncClient = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.connettori.convertToNio.");
+		Properties p = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.connettori.convertToNio.");
+		if(p!=null) {
+			mapNIOConfig_convertToAsyncClient = new HashMap<String, String>();
+			for (Object oKey : p.keySet()) {
+				if(oKey!=null && oKey instanceof String) {
+					String key = (String) oKey;
+					mapNIOConfig_convertToAsyncClient.put(key, p.getProperty(key));
+				}
+			}
+		}
 	}
 	public String convertToAsyncClientConnector(String tipo) {
 		if(mapNIOConfig_convertToAsyncClient!=null && !mapNIOConfig_convertToAsyncClient.isEmpty() && mapNIOConfig_convertToAsyncClient.containsKey(tipo)) {
-			return mapNIOConfig_convertToAsyncClient.getProperty(tipo);
+			return mapNIOConfig_convertToAsyncClient.get(tipo);
 		}
 		return tipo;
 	}

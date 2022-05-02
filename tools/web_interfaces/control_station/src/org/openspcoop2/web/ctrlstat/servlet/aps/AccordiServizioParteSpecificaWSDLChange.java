@@ -473,7 +473,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String token_policy = null;
 			String proxy_enabled = null, proxy_hostname  = null,proxy_port  = null,proxy_username  = null,proxy_password = null;
 			String tempiRisposta_enabled = null, tempiRisposta_connectionTimeout = null, tempiRisposta_readTimeout = null, tempiRisposta_tempoMedioRisposta = null;
-			String transfer_mode = null, transfer_mode_chunk_size = null, redirect_mode = null, redirect_max_hop = null, opzioniAvanzate = null;
+			String transfer_mode = null, transfer_mode_chunk_size = null, redirect_mode = null, redirect_max_hop = null, opzioniAvanzate = null, clientLibrary = null;
 			// file
 			String requestOutputFileName = null;
 			String requestOutputFileName_permissions = null;
@@ -648,6 +648,13 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					}
 				}
 				
+				if(clientLibrary==null && props!=null){
+					String v = props.get(CostantiDB.CONNETTORE_HTTP_CLIENT_LIBRARY);
+					if(v!=null && !"".equals(v)){
+						clientLibrary = v.trim();
+					}
+				}
+				
 				if(token_policy==null && props!=null){
 					String v = props.get(CostantiDB.CONNETTORE_TOKEN_POLICY);
 					if(v!=null && !"".equals(v)){
@@ -656,7 +663,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					}
 				}
 				
-				opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, transfer_mode, redirect_mode);
+				opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, transfer_mode, redirect_mode, clientLibrary);
 				
 				// http
 				if (url == null) {
@@ -852,7 +859,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					isConnettoreCustomUltimaImmagineSalvata, 
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop, clientLibrary,
 					requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,

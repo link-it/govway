@@ -1,3 +1,9 @@
+2022-04-23  Andrea Poli <apoli@link.it>
+
+	Aggiunta informazione sulla libreria client http da utilizzare
+
+	ALTER TABLE connettori ADD COLUMN client_library VARCHAR(255);
+
 2022-04-11  Andrea Poli <apoli@link.it>
 
 	Aggiunta nuova cache per i dati gestiti nelle richieste

@@ -129,6 +129,7 @@ public class ConnettorePluginApiHelper extends AbstractConnettoreApiHelper<Conne
 				"", 	// this.transfer_mode_chunk_size, 
 				"", 	// this.redirect_mode, 
 				"", 	// this.redirect_max_hop,
+				null,   // this.clientLibrary
 				null,	// this.requestOutputFileName,
 				null,   // this.requestOutputFileName_permissions
 				null,	// this.requestOutputFileNameHeaders,
@@ -203,6 +204,7 @@ public class ConnettorePluginApiHelper extends AbstractConnettoreApiHelper<Conne
 				"", 	// this.transfer_mode_chunk_size, 
 				"", 	// this.redirect_mode, 
 				"", 	// this.redirect_max_hop,
+				null,   // this.clientLibrary
 				null,	// this.requestOutputFileName,
 				null,   // this.requestOutputFileName_permissions
 				null,	// this.requestOutputFileNameHeaders,
@@ -284,6 +286,7 @@ public class ConnettorePluginApiHelper extends AbstractConnettoreApiHelper<Conne
 						"", 	// this.transfer_mode_chunk_size, 
 						"", 	// this.redirect_mode, 
 						"", 	// this.redirect_max_hop,
+						null,   // this.clientLibrary
 						null,	// this.requestOutputFileName,
 						null,   // this.requestOutputFileName_permissions
 						null,	// this.requestOutputFileNameHeaders,

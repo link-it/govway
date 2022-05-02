@@ -131,6 +131,18 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="client_library" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="client_library"/>
+                                <linkit:sql-ddl-column-comment>Indicazione sulla libreria client da utilizzare</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[Indicazione sulla libreria client da utilizzare]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="nome" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>

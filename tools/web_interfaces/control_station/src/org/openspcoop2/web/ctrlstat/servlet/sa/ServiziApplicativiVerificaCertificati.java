@@ -1041,6 +1041,14 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 						}
 					}
 					
+					String clientLibrary = null;
+					if(clientLibrary==null && props!=null){
+						String v = props.get(CostantiDB.CONNETTORE_HTTP_CLIENT_LIBRARY);
+						if(v!=null && !"".equals(v)){
+							clientLibrary = v.trim();
+						}
+					}
+					
 					String token_policy = null;
 					boolean autenticazioneToken = false;
 					if(token_policy==null && props!=null){
@@ -1051,7 +1059,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 						}
 					}
 					
-					String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(saHelper, transfer_mode, redirect_mode);
+					String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(saHelper, transfer_mode, redirect_mode, clientLibrary);
 					
 					String autenticazioneHttp = saHelper.getAutenticazioneHttp(null, endpointtype, user);
 					
@@ -1365,7 +1373,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 							isConnettoreCustomUltimaImmagineSalvata, 
 							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop, clientLibrary,
 							requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,

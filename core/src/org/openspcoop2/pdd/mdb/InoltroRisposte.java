@@ -988,12 +988,13 @@ public class InoltroRisposte extends GenericLib{
 
 			//	Connettore per consegna
 			String tipoConnector = connettore.getTipo();
-			msgDiag.addKeyword(CostantiPdD.KEY_TIPO_CONNETTORE, tipoConnector);
 			org.openspcoop2.core.config.Property [] cps = null;
 			if(connettore.getPropertyList().size()>0){
 				cps = connettore.getPropertyList().toArray(new org.openspcoop2.core.config.Property[connettore.getPropertyList().size()]);
 			}
 			ConnettoreMsg connettoreMsg = new ConnettoreMsg(tipoConnector,responseMessage,cps);
+			tipoConnector = connettoreMsg.getTipoConnettore(); // refresh per client implementation
+			msgDiag.addKeyword(CostantiPdD.KEY_TIPO_CONNETTORE, tipoConnector);
 			connettoreMsg.setBusta(busta);
 			connettoreMsg.setIdModulo(InoltroRisposte.ID_MODULO);
 			connettoreMsg.setProtocolFactory(protocolFactory);
@@ -1082,7 +1083,7 @@ public class InoltroRisposte extends GenericLib{
 			// timeout di default
 			if(connettoreMsg.getConnectorProperties()==null){
 				java.util.Map<String,String> propCon = new java.util.HashMap<String,String>();
-				connettoreMsg.setConnectorProperties(propCon);
+				connettoreMsg.initConnectorProperties(propCon);
 			}
 			if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)==null){
 				connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT,""+this.propertiesReader.getConnectionTimeout_inoltroBuste());

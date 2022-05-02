@@ -163,6 +163,7 @@ public class ConnettoriCostanti {
 	public final static String PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE = "transfer_chunk_size";
 	public final static String PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE = "redirect_mode";
 	public final static String PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP = "redirect_max_hop";
+	public final static String PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_CLIENT_LIBRARY = "client_library";
 	
 	public final static String PARAMETRO_CONNETTORE_JMS_NOME_CODA = "nomeJms";
 	public final static String PARAMETRO_CONNETTORE_JMS_TIPO_CODA = "tipoJms";
@@ -288,6 +289,7 @@ public class ConnettoriCostanti {
 	public final static String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE = "Chunk Length (Bytes)";
 	public final static String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE = "Gestione Redirect";
 	public final static String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP = "Max Numero di Redirect";
+	public final static String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_CLIENT_LIBRARY = "Implementazione HttpClient";
 	
 	public final static String LABEL_PARAMETRO_CONNETTORE_TOKEN_POLICY = CostantiLabel.LABEL_CONNETTORE_TOKEN_POLICY;
 	
@@ -494,6 +496,8 @@ public class ConnettoriCostanti {
 	
 	public final static String DEFAULT_GESTIONE_REDIRECT = "default"; 
 	public final static String[] TIPI_GESTIONE_REDIRECT = { DEFAULT_GESTIONE_REDIRECT, CostantiConfigurazione.ABILITATO.getValue() , CostantiConfigurazione.DISABILITATO.getValue() , };
+	
+	public final static String DEFAULT_CLIENT_LIBRARY = "default"; 
 	
 	public final static String DEFAULT_CONNETTORE_TYPE_CUSTOM = "custom";
 	

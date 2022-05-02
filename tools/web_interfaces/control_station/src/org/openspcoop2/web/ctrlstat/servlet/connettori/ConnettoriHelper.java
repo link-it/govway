@@ -673,7 +673,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			Boolean isConnettoreCustomUltimaImmagineSalvata,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
-			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
+			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop, String clientLibrary,
 			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
@@ -694,7 +694,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				isConnettoreCustomUltimaImmagineSalvata,
 				proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
 				tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-				opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+				opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop, clientLibrary,
 				requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
 				requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 				responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -890,7 +890,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 	}
 	
 	public Vector<DataElement> addOpzioniAvanzateHttpToDati(Vector<DataElement> dati,
-			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop){
+			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop, String clientLibrary){
 		
 		boolean showOpzioniAvanzate = this.isModalitaAvanzata()
 				&& ServletUtils.isCheckBoxEnabled(opzioniAvanzate);
@@ -908,6 +908,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				transfer_mode_chunk_size=null;
 				redirect_mode=null;
 				redirect_max_hop=null;
+				clientLibrary=null;
 			}
 		}
 		
@@ -978,11 +979,35 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de.setValue(redirect_max_hop);
 		dati.addElement(de);
 		
+		
+		// Implementazione
+		de = new DataElement();
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_CLIENT_LIBRARY);
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_CLIENT_LIBRARY);
+		if(showOpzioniAvanzate && 
+				this.connettoriCore.getConnettoriClientLibraryValues().size()>2 // 2 perchè il primo valore è default
+				){
+			if(clientLibrary==null || "".equals(clientLibrary)){
+				clientLibrary = ConnettoriCostanti.DEFAULT_CLIENT_LIBRARY;
+			}
+			de.setType(DataElementType.SELECT);
+			de.setValues(this.connettoriCore.getConnettoriClientLibraryValues());
+			de.setLabels(this.connettoriCore.getConnettoriClientLibraryLabels());
+			de.setPostBack(false);
+			de.setSelected(clientLibrary);
+			de.setSize(this.getSize());
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+		}
+		de.setValue(clientLibrary);
+		dati.addElement(de);
+		
 		return dati;
 	}
 	
 	public Vector<DataElement> addOpzioniAvanzateHttpToDatiAsHidden(Vector<DataElement> dati,
-			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop){
+			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop, String clientLibrary){
 		
 		boolean showOpzioniAvanzate = this.isModalitaAvanzata()
 				&& ServletUtils.isCheckBoxEnabled(opzioniAvanzate);
@@ -994,6 +1019,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				transfer_mode_chunk_size=null;
 				redirect_mode=null;
 				redirect_max_hop=null;
+				clientLibrary=null;
 			}
 		}
 		
@@ -1022,6 +1048,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(redirect_max_hop);
+		dati.addElement(de);
+		
+		
+		// Implementazione
+		de = new DataElement();
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_CLIENT_LIBRARY);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue(clientLibrary);
 		dati.addElement(de);
 		
 		return dati;
@@ -2143,7 +2177,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			Boolean isConnettoreCustomUltimaImmagineSalvata,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
-			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
+			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop, String clientLibrary,
 			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
@@ -2231,7 +2265,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						tipoconn, servletChiamante, elem1, elem2, elem3, elem4, elem5, elem6, elem7, stato, 
 						proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword, 
 						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta, 
-						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop, 
+						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop, clientLibrary,
 						requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
 						requestOutputParentDirCreateIfNotExists, requestOutputOverwriteIfExists, 
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -2517,7 +2551,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				// Opzioni Avanzate
 				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
-					this.addOpzioniAvanzateHttpToDati(dati, opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop);
+					this.addOpzioniAvanzateHttpToDati(dati, opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop, clientLibrary);
 				}
 				
 			} else {
@@ -3002,7 +3036,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				// Opzioni Avanzate
 				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
-					this.addOpzioniAvanzateHttpToDati(dati, opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop);
+					this.addOpzioniAvanzateHttpToDati(dati, opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop, clientLibrary);
 				}
 	
 			}
@@ -3043,7 +3077,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String elem4, String elem5, String elem6, String elem7, String stato,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
-			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
+			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop, String clientLibrary,
 			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
@@ -3258,7 +3292,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		
 		// Opzioni Avanzate
 		if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
-			this.addOpzioniAvanzateHttpToDatiAsHidden(dati, opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop);
+			this.addOpzioniAvanzateHttpToDatiAsHidden(dati, opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop, clientLibrary);
 		}
 		
 		// Token Policy
@@ -3327,7 +3361,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String transfer_mode_chunk_size = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
 			String redirect_mode = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
 			String redirect_max_hop = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
-			String opzioniAvanzate = getOpzioniAvanzate(this,transfer_mode, redirect_mode);
+			String clientLibrary = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_CLIENT_LIBRARY);
+			String opzioniAvanzate = getOpzioniAvanzate(this,transfer_mode, redirect_mode, clientLibrary);
 						
 			// http
 			String url = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
@@ -3400,7 +3435,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					tipoconn, autenticazioneHttp,
 					proxy_enabled,proxy_hostname,proxy_port,proxy_username,proxy_password,
 					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop, clientLibrary,
 					requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
 					requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -3428,7 +3463,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String tipoconn, String autenticazioneHttp,
 			String proxy_enabled, String proxy_hostname, String proxy_port, String proxy_username, String proxy_password,
 			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
-			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
+			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop, String clientLibrary,
 			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
@@ -3514,7 +3549,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 				if (redirect_mode == null)
 					redirect_mode = "";
 				if (redirect_max_hop == null)
-					redirect_max_hop = "";			
+					redirect_max_hop = "";	
+				if (clientLibrary == null)
+					clientLibrary = "";
 				if (requestOutputFileName == null)
 					requestOutputFileName = "";
 				if (requestOutputFileName_permissions == null)
@@ -3561,6 +3598,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						(transfer_mode_chunk_size.indexOf(" ") != -1) ||
 						(redirect_mode.indexOf(" ") != -1) ||
 						(redirect_max_hop.indexOf(" ") != -1) ||
+						(clientLibrary.indexOf(" ") != -1) ||
 						(requestOutputFileName.indexOf(" ") != -1) ||
 						(requestOutputFileNameHeaders.indexOf(" ") != -1) ||
 						(requestOutputFileName_permissions.indexOf(" ") != -1) ||
@@ -4231,7 +4269,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpsKeyAlias, String httpsTrustStoreCRLs,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
-			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
+			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop, String clientLibrary,
 			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
@@ -4440,6 +4478,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 			}
 			
+			if(clientLibrary!=null && !"".equals(clientLibrary)){
+				prop = new org.openspcoop2.core.registry.Property();
+				prop.setNome(CostantiDB.CONNETTORE_HTTP_CLIENT_LIBRARY);
+				prop.setValore(clientLibrary);
+				connettore.addProperty(prop);
+			}
+			
 			if(tokenPolicy!=null && !"".equals(tokenPolicy) && !CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicy)) {
 				prop = new org.openspcoop2.core.registry.Property();
 				prop.setNome(CostantiDB.CONNETTORE_TOKEN_POLICY);
@@ -4474,7 +4519,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpsKeyAlias, String httpsTrustStoreCRLs,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
-			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
+			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop, String clientLibrary,
 			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
@@ -4668,6 +4713,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 			}
 			
+			if(clientLibrary!=null && !"".equals(clientLibrary)){
+				prop = new org.openspcoop2.core.config.Property();
+				prop.setNome(CostantiDB.CONNETTORE_HTTP_CLIENT_LIBRARY);
+				prop.setValore(clientLibrary);
+				connettore.addProperty(prop);
+			}
+			
 			if(tokenPolicy!=null && !"".equals(tokenPolicy) && !CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicy)) {
 				prop = new org.openspcoop2.core.config.Property();
 				prop.setNome(CostantiDB.CONNETTORE_TOKEN_POLICY);
@@ -4686,13 +4738,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 	}
 
-	public static String getOpzioniAvanzate(ConsoleHelper helper,String transfer_mode, String redirect_mode) throws Exception{
+	public static String getOpzioniAvanzate(ConsoleHelper helper,String transfer_mode, String redirect_mode, String clientLibrary) throws Exception{
 
 		String opzioniAvanzate = helper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
-		return getOpzioniAvanzate(opzioniAvanzate, transfer_mode, redirect_mode);
+		return getOpzioniAvanzate(opzioniAvanzate, transfer_mode, redirect_mode, clientLibrary);
 		
 	}
-	public static String getOpzioniAvanzate(String opzioniAvanzate,String transfer_mode, String redirect_mode){
+	public static String getOpzioniAvanzate(String opzioniAvanzate,String transfer_mode, String redirect_mode, String clientLibrary){
 		
 		if(opzioniAvanzate!=null && !"".equals(opzioniAvanzate)){
 			return opzioniAvanzate;
@@ -4701,7 +4753,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 		if(opzioniAvanzate==null || "".equals(opzioniAvanzate)){
 			opzioniAvanzate = Costanti.CHECK_BOX_DISABLED;
 		}
-		if( (transfer_mode!=null && !"".equals(transfer_mode)) || (redirect_mode!=null && !"".equals(redirect_mode)) ){
+		if( (transfer_mode!=null && !"".equals(transfer_mode)) || 
+				(redirect_mode!=null && !"".equals(redirect_mode)) || 
+				(clientLibrary!=null && !"".equals(clientLibrary)) ){
 			opzioniAvanzate = Costanti.CHECK_BOX_ENABLED;
 		}
 		return opzioniAvanzate;

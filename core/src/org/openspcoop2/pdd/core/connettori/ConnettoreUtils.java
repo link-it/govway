@@ -43,6 +43,8 @@ import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.connettori.httpcore.ConnettoreHTTPCORE;
+import org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPCORE5;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
@@ -292,13 +294,40 @@ public class ConnettoreUtils {
 		return location;
 	}
 	
-	public static String formatTipoConnettore(OpenSPCoop2Properties props, String tipoConnector, boolean async) {
-		if(tipoConnector!=null) {
-			if(async && props.isNIOConfig_convertToAsyncClient()) {
-				return props.convertToAsyncClientConnector(tipoConnector);
+	public static String formatTipoConnettoreByClientImpl(String tipoConnettore, Map<String, String> p) {
+		
+		boolean http = (TipiConnettore.HTTP.toString().equals(tipoConnettore) 
+				|| 
+		TipiConnettore.HTTPS.toString().equals(tipoConnettore));
+		if(!http) {
+			return tipoConnettore;
+		}
+		
+		OpenSPCoop2Properties op2 = OpenSPCoop2Properties.getInstance();
+		String clientImpl = null;
+		if(p!=null && !p.isEmpty()) {
+			clientImpl = p.get(CostantiConnettori.CONNETTORE_HTTP_CLIENT_LIBRARY);
+		}
+		if(clientImpl!=null) {
+			if(TipiConnettore.HTTP.toString().equals(tipoConnettore) ) {
+				return clientImpl;
+			}
+			else if(TipiConnettore.HTTPS.toString().equals(tipoConnettore) ) {
+				String tipoHttps = op2.convertToHttpsConnector(clientImpl);
+				if(tipoHttps!=null) {
+					return tipoHttps;
+				}
+				else {
+					return tipoConnettore;
+				}
+			}
+			else {
+				return tipoConnettore;
 			}
 		}
-		return tipoConnector;
+		else {
+			return op2.getBIOConfig_syncClient_defaultHttpLibrary();
+		}
 	}
 
 	public static void printDatiConnettore(org.openspcoop2.core.registry.Connettore connettore, String labelTipoConnettore, String labelNomeConnettore,

@@ -1991,12 +1991,16 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 			this.msgDiag.mediumDebug("Impostazione messaggio del connettore...");
 			// Connettore per consegna
 			this.tipoConnector = connettore.getTipo();
-			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_CONNETTORE, this.tipoConnector);
 			org.openspcoop2.core.config.Property [] cps = null;
 			if(connettore.getPropertyList().size()>0){
 				cps = connettore.getPropertyList().toArray(new org.openspcoop2.core.config.Property[connettore.getPropertyList().size()]);
 			}
 			this.connettoreMsg = new ConnettoreMsg(this.tipoConnector,this.requestMessageTrasformato,cps);
+			if(this.asyncResponseCallback!=null) {
+				this.connettoreMsg.convertToAsyncClient(this.propertiesReader);
+			}
+			this.tipoConnector = this.connettoreMsg.getTipoConnettore(); // refresh per client implementation
+			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_CONNETTORE, this.tipoConnector);
 			this.connettoreMsg.setBusta(this.bustaRichiesta);
 			this.connettoreMsg.setIdModulo(InoltroBuste.ID_MODULO);
 			this.connettoreMsg.setMsgDiagnostico(this.msgDiag);
@@ -2029,8 +2033,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 			// Carico connettore richiesto
 			if(this.invokerNonSupportato==false){
 				try{
-					String tipoConnettoreEffettivo = ConnettoreUtils.formatTipoConnettore(this.propertiesReader, this.tipoConnector, (this.asyncResponseCallback!=null));
-					this.connectorSender = (IConnettore) this.pluginLoader.newConnettore(tipoConnettoreEffettivo);
+					this.connectorSender = (IConnettore) this.pluginLoader.newConnettore(this.tipoConnector);
 				}
 				catch(Exception e){
 					this.msgDiag.logErroreGenerico(e,"Inizializzazione Connettore"); // l'errore contiene gia tutte le informazioni
@@ -2090,7 +2093,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 			// timeout di default
 			if(this.connettoreMsg.getConnectorProperties()==null){
 				java.util.Map<String,String> propCon = new java.util.HashMap<String,String>();
-				this.connettoreMsg.setConnectorProperties(propCon);
+				this.connettoreMsg.initConnectorProperties(propCon);
 			}
 			if(this.connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)==null){
 				this.connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT,""+this.propertiesReader.getConnectionTimeout_inoltroBuste());

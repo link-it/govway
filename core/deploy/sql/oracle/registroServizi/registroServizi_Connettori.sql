@@ -15,6 +15,8 @@ CREATE TABLE connettori
 	-- nel caso di http indicazione se seguire il redirect o meno
 	redirect_mode VARCHAR2(255),
 	redirect_max_hop NUMBER,
+	-- Indicazione sulla libreria client da utilizzare
+	client_library VARCHAR2(255),
 	-- nome coda jms
 	nome VARCHAR2(255),
 	-- tipo coda jms (queue,topic)

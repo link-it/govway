@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.core;
 
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.controllo_traffico.beans.JMXConstants;
+import org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPSCORE5;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.utils.Costanti;
 import org.openspcoop2.utils.Map;
@@ -317,6 +318,8 @@ public class CostantiPdD {
     public static final int CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE = 100;
     /** Maximum limit of connection on total */
     public static final int CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL = 100;
+    /** Default http library */
+    public static final String CONNETTORE_BIO_SYNC_CLIENT_HTTP_LIBRARY = ConnettoreHTTPSCORE5.ENDPOINT_TYPE;
     
     /** Pool Size Applicative Threads */
     public static final int CONNETTORE_NIO_ASYNC_REQUEST_POOL_SIZE = 100;

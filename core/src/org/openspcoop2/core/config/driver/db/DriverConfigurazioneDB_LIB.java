@@ -821,6 +821,8 @@ public class DriverConfigurazioneDB_LIB {
 		String redirect_mode = null; // in caso di tipo http e https
 		Integer redirect_max_hop = null; // in caso di tipo http e https
 		
+		String client_library = null;
+		
 		String token_policy = null;
 		
 		boolean isAbilitato = false;
@@ -909,6 +911,12 @@ public class DriverConfigurazioneDB_LIB {
 				redirect_max_hop = Integer.parseInt(valoreProperty);
 			}
 			
+			// ClientLibrary
+			if (nomeProperty.equals(CostantiDB.CONNETTORE_HTTP_CLIENT_LIBRARY)){
+				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
+				client_library = valoreProperty;
+			}
+			
 			// TokenPolicy
 			if (nomeProperty.equals(CostantiDB.CONNETTORE_TOKEN_POLICY)){
 				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
@@ -968,6 +976,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("transfer_mode_chunk_size", "?");
 				sqlQueryObject.addInsertField("redirect_mode", "?");
 				sqlQueryObject.addInsertField("redirect_max_hop", "?");
+				sqlQueryObject.addInsertField("client_library", "?");
 				sqlQueryObject.addInsertField("nome", "?");
 				sqlQueryObject.addInsertField("tipo", "?");
 				sqlQueryObject.addInsertField("utente", "?");
@@ -1010,6 +1019,7 @@ public class DriverConfigurazioneDB_LIB {
 				else{
 					stm.setNull(index++, Types.INTEGER);
 				}
+				stm.setString(index++, (isAbilitato ? client_library : null));
 				stm.setString(index++, isAbilitato ? nome : null);
 				stm.setString(index++, isAbilitato ? tipo : null);
 				stm.setString(index++, (isAbilitato ? utente : null));
@@ -1061,7 +1071,7 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, token_policy);
 
 				DriverConfigurazioneDB_LIB.log.debug("CRUDConnettore CREATE : \n" + DBUtils.formatSQLString(sqlQuery, endpointtype, url, 
-						transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+						transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop, client_library,
 						nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore,debug,
 						proxy, proxy_type, proxy_hostname, proxy_port, proxy_username, proxy_password,
 						tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_avgResponseTime,
@@ -1172,6 +1182,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("transfer_mode_chunk_size", "?");
 				sqlQueryObject.addUpdateField("redirect_mode", "?");
 				sqlQueryObject.addUpdateField("redirect_max_hop", "?");
+				sqlQueryObject.addUpdateField("client_library", "?");
 				sqlQueryObject.addUpdateField("nome", "?");
 				sqlQueryObject.addUpdateField("tipo", "?");
 				sqlQueryObject.addUpdateField("utente", "?");
@@ -1215,6 +1226,7 @@ public class DriverConfigurazioneDB_LIB {
 				else{
 					stm.setNull(index++, Types.INTEGER);
 				}
+				stm.setString(index++, (isAbilitato ? client_library : null));
 				stm.setString(index++, nome);
 				stm.setString(index++, tipo);
 				stm.setString(index++, utente);
@@ -1269,7 +1281,7 @@ public class DriverConfigurazioneDB_LIB {
 				stm.executeUpdate();
 				stm.close();
 				DriverConfigurazioneDB_LIB.log.debug("CRUDConnettore UPDATE : \n" + DBUtils.formatSQLString(sqlQuery, endpointtype, url, 
-						transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+						transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop, client_library,
 						nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas,nomeConnettore, debug,
 						proxy, proxy_type, proxy_hostname, proxy_port, proxy_username, proxy_password,
 						tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_avgResponseTime,
@@ -12941,6 +12953,17 @@ public class DriverConfigurazioneDB_LIB {
 							prop.setValore(redirectMode.trim());
 							connettore.addProperty(prop);
 						}
+					}
+					
+					// client_library
+					String client_library = rs.getString("client_library");
+					if(client_library!=null && !"".equals(client_library)){
+						
+						prop = new Property();
+						prop.setNome(CostantiDB.CONNETTORE_HTTP_CLIENT_LIBRARY);
+						prop.setValore(client_library.trim());
+						connettore.addProperty(prop);
+
 					}
 					
 					// token policy

@@ -38,6 +38,7 @@ import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ForwardProxy;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.OutRequestContext;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
@@ -159,6 +160,8 @@ public class ConnettoreMsg  {
 		this.tipoConnector = type;
 		this.request = r;
 		this.properties = pr;
+		
+		this.tipoConnector = ConnettoreUtils.formatTipoConnettoreByClientImpl(this.tipoConnector, this.properties);
 	}
 	/**
 	 * Costruttore. 
@@ -198,6 +201,8 @@ public class ConnettoreMsg  {
 			}
 		}
 		this.properties = pr;
+		
+		this.tipoConnector = ConnettoreUtils.formatTipoConnettoreByClientImpl(this.tipoConnector, this.properties);
 	}
 	/**
 	 * Costruttore. 
@@ -221,9 +226,19 @@ public class ConnettoreMsg  {
 		this.sbustamentoSoap = sb;
 		this.tipoAutenticazione = tipoAuth;
 		this.credenziali = cr;
+		
+		this.tipoConnector = ConnettoreUtils.formatTipoConnettoreByClientImpl(this.tipoConnector, this.properties);
 	}
 
-
+	public void convertToAsyncClient(OpenSPCoop2Properties propertiesReader) {
+		if(this.tipoConnector!=null) {
+			if(propertiesReader.isNIOConfig_convertToAsyncClient()) {
+				this.tipoConnector = propertiesReader.convertToAsyncClientConnector(this.tipoConnector);
+			}
+		}
+	}
+	
+	
 
 	
 
@@ -235,8 +250,20 @@ public class ConnettoreMsg  {
 	 * @param tipo Tipo di Connettore.
 	 * 
 	 */    
-	public void setTipoConnettore(String tipo) {
+	public void setTipoConnettore(String tipo, java.util.Map<String,String> p) {
 		this.tipoConnector = tipo;
+		this.properties = p;
+		
+		this.tipoConnector = ConnettoreUtils.formatTipoConnettoreByClientImpl(this.tipoConnector, this.properties);
+	}
+	/**
+	 * Imposta le proprieta' del connettore.
+	 *
+	 * @param p Proprieta' del Connettore
+	 * 
+	 */   
+	public void initConnectorProperties(java.util.Map<String,String> p) {
+		this.properties = p;
 	}
 	/**
 	 * Imposta il messaggio da spedire.
@@ -246,15 +273,6 @@ public class ConnettoreMsg  {
 	 */   
 	public void setRequestMessage(OpenSPCoop2Message r) {
 		this.request = r;
-	}
-	/**
-	 * Imposta le proprieta' del connettore.
-	 *
-	 * @param p Proprieta' del Connettore
-	 * 
-	 */   
-	public void setConnectorProperties(java.util.Map<String,String> p) {
-		this.properties = p;
 	}
 	/**
 	 * Imposta l'indicazione su di un eventuale sbustamento SOAP.

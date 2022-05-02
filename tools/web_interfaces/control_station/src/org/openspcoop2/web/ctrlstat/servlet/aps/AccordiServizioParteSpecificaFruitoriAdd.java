@@ -155,7 +155,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 	
 	private String tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta;
 
-	private String transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop, opzioniAvanzate;
+	private String transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop, opzioniAvanzate, clientLibrary;
 	
 	// file
 	private String requestOutputFileName = null;
@@ -286,7 +286,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			this.transfer_mode_chunk_size = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
 			this.redirect_mode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
 			this.redirect_max_hop = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
-			this.opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, this.transfer_mode, this.redirect_mode);
+			this.clientLibrary = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_CLIENT_LIBRARY);
+			this.opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(apsHelper, this.transfer_mode, this.redirect_mode, this.clientLibrary);
 
 			// http
 			this.url = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL  );
@@ -814,7 +815,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								isConnettoreCustomUltimaImmagineSalvata, 
 								this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 								this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
-								this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+								this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop, this.clientLibrary,
 								this.requestOutputFileName, this.requestOutputFileName_permissions, this.requestOutputFileNameHeaders, this.requestOutputFileNameHeaders_permissions,
 								this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
@@ -855,7 +856,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					this.tipoconn,this.validazioneDocumenti,null,this.autenticazioneHttp,
 					this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 					this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
-					this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+					this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop, this.clientLibrary,
 					this.requestOutputFileName, this.requestOutputFileName_permissions, this.requestOutputFileNameHeaders, this.requestOutputFileNameHeaders_permissions,
 					this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 					this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
@@ -960,7 +961,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							isConnettoreCustomUltimaImmagineSalvata, 
 							this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 							this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
-							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop, this.clientLibrary,
 							this.requestOutputFileName, this.requestOutputFileName_permissions, this.requestOutputFileNameHeaders, this.requestOutputFileNameHeaders_permissions,
 							this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
@@ -1016,7 +1017,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						this.httpsKeyAlias, this.httpsTrustStoreCRLs,
 						this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 						this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
-						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop, this.clientLibrary,
 						this.requestOutputFileName, this.requestOutputFileName_permissions, this.requestOutputFileNameHeaders, this.requestOutputFileNameHeaders_permissions,
 						this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 						this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
@@ -1124,7 +1125,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								isConnettoreCustomUltimaImmagineSalvata, 
 								this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 								this.tempiRisposta_enabled, this.tempiRisposta_connectionTimeout, this.tempiRisposta_readTimeout, this.tempiRisposta_tempoMedioRisposta,
-								this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+								this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop, this.clientLibrary,
 								this.requestOutputFileName, this.requestOutputFileName_permissions, this.requestOutputFileNameHeaders, this.requestOutputFileNameHeaders_permissions,
 								this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,

@@ -43,7 +43,6 @@ import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.CostantiConnettori;
-import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDGenericProperties;
@@ -62,11 +61,10 @@ import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreBaseHTTP;
-import org.openspcoop2.pdd.core.connettori.ConnettoreHTTP;
-import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPS;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
@@ -2357,14 +2355,12 @@ public class GestoreToken {
 		
 		ConnettoreMsg connettoreMsg = new ConnettoreMsg();
 		ConnettoreBaseHTTP connettore = null;
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		String clientLibrary = op2Properties.getBIOConfig_gestioneToken_defaultHttpLibrary(); 
 		if(https) {
-			connettoreMsg.setTipoConnettore(TipiConnettore.HTTPS.getNome());
-			connettore = new ConnettoreHTTPS();
+			clientLibrary = op2Properties.convertToHttpsConnector(clientLibrary); 
 		}
-		else {
-			connettoreMsg.setTipoConnettore(TipiConnettore.HTTP.getNome());
-			connettore = new ConnettoreHTTP();
-		}
+		connettore = (ConnettoreBaseHTTP) PddPluginLoader.getInstance().newConnettore(clientLibrary);
 		
 		ForwardProxy forwardProxy = null;
 		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
@@ -2403,7 +2399,7 @@ public class GestoreToken {
 			connettoreMsg.setCredenziali(credenziali);
 		}
 		
-		connettoreMsg.setConnectorProperties(new java.util.HashMap<String,String>());
+		connettoreMsg.initConnectorProperties(new java.util.HashMap<String,String>());
 		connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_LOCATION, endpoint);
 		boolean debug = false;
 		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
@@ -2954,14 +2950,12 @@ public class GestoreToken {
 		
 		ConnettoreMsg connettoreMsg = new ConnettoreMsg();
 		ConnettoreBaseHTTP connettore = null;
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		String clientLibrary = op2Properties.getBIOConfig_retrieveToken_defaultHttpLibrary();
 		if(https) {
-			connettoreMsg.setTipoConnettore(TipiConnettore.HTTPS.getNome());
-			connettore = new ConnettoreHTTPS();
+			clientLibrary = op2Properties.convertToHttpsConnector(clientLibrary); 
 		}
-		else {
-			connettoreMsg.setTipoConnettore(TipiConnettore.HTTP.getNome());
-			connettore = new ConnettoreHTTP();
-		}
+		connettore = (ConnettoreBaseHTTP) PddPluginLoader.getInstance().newConnettore(clientLibrary);
 		
 		ForwardProxy forwardProxy = null;
 		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
@@ -2995,7 +2989,7 @@ public class GestoreToken {
 			connettoreMsg.setCredenziali(credenziali);
 		}
 		
-		connettoreMsg.setConnectorProperties(new java.util.HashMap<String,String>());
+		connettoreMsg.initConnectorProperties(new java.util.HashMap<String,String>());
 		connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_LOCATION, endpoint);
 		if(debug) {
 			connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_DEBUG, true+"");
@@ -4275,14 +4269,12 @@ public class GestoreToken {
 		
 		ConnettoreMsg connettoreMsg = new ConnettoreMsg();
 		ConnettoreBaseHTTP connettore = null;
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		String clientLibrary = op2Properties.getBIOConfig_gestioneAttributeAuthority_defaultHttpLibrary();
 		if(https) {
-			connettoreMsg.setTipoConnettore(TipiConnettore.HTTPS.getNome());
-			connettore = new ConnettoreHTTPS();
+			clientLibrary = op2Properties.convertToHttpsConnector(clientLibrary); 
 		}
-		else {
-			connettoreMsg.setTipoConnettore(TipiConnettore.HTTP.getNome());
-			connettore = new ConnettoreHTTP();
-		}
+		connettore = (ConnettoreBaseHTTP) PddPluginLoader.getInstance().newConnettore(clientLibrary);
 		
 		ForwardProxy forwardProxy = null;
 		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
@@ -4316,7 +4308,7 @@ public class GestoreToken {
 			connettoreMsg.setCredenziali(credenziali);
 		}
 		
-		connettoreMsg.setConnectorProperties(new java.util.HashMap<String,String>());
+		connettoreMsg.initConnectorProperties(new java.util.HashMap<String,String>());
 		connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_LOCATION, endpoint);
 		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
 		boolean debug = properties.isGestioneAttributeAuthority_debug();	

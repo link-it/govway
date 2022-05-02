@@ -545,6 +545,8 @@ public final class CostantiDB {
     
     public static final String CONNETTORE_HTTP_REDIRECT_FOLLOW = CostantiConnettori.CONNETTORE_HTTP_REDIRECT_FOLLOW;
     public static final String CONNETTORE_HTTP_REDIRECT_MAX_HOP = CostantiConnettori.CONNETTORE_HTTP_REDIRECT_MAX_HOP;
+    
+    public static final String CONNETTORE_HTTP_CLIENT_LIBRARY = CostantiConnettori.CONNETTORE_HTTP_CLIENT_LIBRARY;
         
     public static final String CONNETTORE_JMS_NOME = CostantiConnettori.CONNETTORE_LOCATION; //il nome del connettore sarebbe la proprieta location
     public static final String CONNETTORE_JMS_TIPO = CostantiConnettori.CONNETTORE_JMS_TIPO;

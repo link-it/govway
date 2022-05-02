@@ -284,6 +284,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 					null,							// transfer_mode_chunk_size, 
 					null,							// redirect_mode, 
 					null,							// redirect_max_hop,
+					null,						    // clientLibrary
 					null,							// requestOutputFileName,
 					null,							// requestOutputFileName_permissions,
 					null,							// requestOutputFileNameHeaders,

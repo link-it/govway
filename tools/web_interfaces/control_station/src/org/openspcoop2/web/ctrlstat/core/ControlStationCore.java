@@ -185,6 +185,7 @@ import org.openspcoop2.web.ctrlstat.registro.GestoreRegistroServiziRemoto;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.audit.DriverAudit;
@@ -945,7 +946,15 @@ public class ControlStationCore {
 	}
 	
 	/** Connettori */
+	private List<String> getConnettoriClientLibraryValues;
+	private List<String> getConnettoriClientLibraryLabels;
 	private boolean isConnettoriAllTypesEnabled;
+	public List<String> getConnettoriClientLibraryValues() {
+		return this.getConnettoriClientLibraryValues;
+	}
+	public List<String> getConnettoriClientLibraryLabels() {
+		return this.getConnettoriClientLibraryLabels;
+	}
 	public boolean isConnettoriAllTypesEnabled() {
 		return this.isConnettoriAllTypesEnabled;
 	}
@@ -2392,6 +2401,8 @@ public class ControlStationCore {
 		this.isApplicativiCredenzialiBasicCheckUniqueUsePassword = core.isApplicativiCredenzialiBasicCheckUniqueUsePassword;
 
 		/** Connettori */
+		this.getConnettoriClientLibraryValues = core.getConnettoriClientLibraryValues;
+		this.getConnettoriClientLibraryLabels = core.getConnettoriClientLibraryLabels;
 		this.isConnettoriAllTypesEnabled = core.isConnettoriAllTypesEnabled;
 		
 		/** Connettori Multipli */
@@ -2819,7 +2830,13 @@ public class ControlStationCore {
 			this.messageEngines = consoleProperties.getMessageEngines();
 			this.isSoggettiCredenzialiBasicCheckUniqueUsePassword = consoleProperties.isSoggettiCredenzialiBasicCheckUniqueUsePassword();
 			this.isApplicativiCredenzialiBasicCheckUniqueUsePassword = consoleProperties.isApplicativiCredenzialiBasicCheckUniqueUsePassword();
-			this.isConnettoriAllTypesEnabled = consoleProperties.isConnettoriAllTypesEnabled();
+			this.getConnettoriClientLibraryValues = new ArrayList<String>();
+			this.getConnettoriClientLibraryValues.add(ConnettoriCostanti.DEFAULT_CLIENT_LIBRARY);
+			this.getConnettoriClientLibraryValues.addAll(consoleProperties.getConnettoriClientLibraryValues());
+			this.getConnettoriClientLibraryLabels = new ArrayList<String>();
+			this.getConnettoriClientLibraryLabels.add(ConnettoriCostanti.DEFAULT_CLIENT_LIBRARY);
+			this.getConnettoriClientLibraryLabels.addAll(consoleProperties.getConnettoriClientLibraryLabels());
+ 			this.isConnettoriAllTypesEnabled = consoleProperties.isConnettoriAllTypesEnabled();
 			this.isConnettoriMultipliEnabled = consoleProperties.isConnettoriMultipliEnabled();
 			this.isConnettoriMultipliConsegnaCondizionaleStessFiltroPermesso = consoleProperties.isConnettoriMultipliConsegnaCondizionaleStessFiltroPermesso();
 			this.isConnettoriMultipliConsegnaMultiplaEnabled = consoleProperties.isConnettoriMultipliConsegnaMultiplaEnabled();

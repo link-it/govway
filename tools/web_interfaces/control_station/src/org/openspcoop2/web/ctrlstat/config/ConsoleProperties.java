@@ -420,6 +420,31 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "applicativi.credenzialiBasic.checkUnique.usePassword");
 	}
 
+	public List<String> getConnettoriClientLibraryValues() throws UtilsException{
+		List<String> l = new ArrayList<String>();
+		String p = this.readProperty(true, "connettori.clientLibrary");
+		if(p!=null && !"".equals(p.trim())){
+			String [] tmp = p.trim().split(",");
+			for (int i = 0; i < tmp.length; i++) {
+				tmp[i] = tmp[i].trim();
+				l.add(tmp[i]);
+			}
+		}
+		return l;
+	}
+	public List<String> getConnettoriClientLibraryLabels() throws UtilsException{
+		List<String> l = new ArrayList<String>();
+		String p = this.readProperty(true, "connettori.clientLibrary.labels");
+		if(p!=null && !"".equals(p.trim())){
+			String [] tmp = p.trim().split(",");
+			for (int i = 0; i < tmp.length; i++) {
+				tmp[i] = tmp[i].trim();
+				l.add(tmp[i]);
+			}
+		}
+		return l;
+	}
+	
 	public boolean isConnettoriAllTypesEnabled() throws UtilsException{
 		return this.readBooleanProperty(true, "connettori.allTypes.enabled");
 	}

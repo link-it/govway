@@ -68,6 +68,8 @@ public class CostantiConnettori {
     
     public static final String CONNETTORE_HTTP_DATA_TRANSFER_MODE = "dataTransferMode";
     public static final String CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE = "transferChunkSize";
+    
+    public static final String CONNETTORE_HTTP_CLIENT_LIBRARY = "clientLibrary";
 
     
 	/** JMS PROPERTIES */

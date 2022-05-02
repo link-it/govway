@@ -4362,8 +4362,7 @@ public class ConfigurazionePdDReader {
 		ConnettoreMsg connettoreMsg = null;
 		if(connettore != null){
 			connettoreMsg = new ConnettoreMsg();
-			connettoreMsg.setTipoConnettore(connettore.getTipo());
-			connettoreMsg.setConnectorProperties(properties);
+			connettoreMsg.setTipoConnettore(connettore.getTipo(), properties);
 			connettoreMsg.setSbustamentoSOAP(CostantiConfigurazione.ABILITATO.equals(serv.getSbustamentoSoap()));
 			connettoreMsg.setSbustamentoInformazioniProtocollo(!CostantiConfigurazione.DISABILITATO.equals(serv.getSbustamentoInformazioniProtocollo()));
 			connettoreMsg.setPropertiesTrasporto(protocol_properties);
@@ -4563,8 +4562,7 @@ public class ConfigurazionePdDReader {
 		ConnettoreMsg connettoreMsg = null;
 		if(connettore != null){
 			connettoreMsg = new ConnettoreMsg();
-			connettoreMsg.setTipoConnettore(connettore.getTipo());
-			connettoreMsg.setConnectorProperties(properties);
+			connettoreMsg.setTipoConnettore(connettore.getTipo(), properties);
 
 			connettoreMsg.setSbustamentoSOAP(CostantiConfigurazione.ABILITATO.equals(serv.getSbustamentoSoap()));
 			connettoreMsg.setSbustamentoInformazioniProtocollo(!CostantiConfigurazione.DISABILITATO.equals(serv.getSbustamentoInformazioniProtocollo()));
@@ -4684,8 +4682,7 @@ public class ConfigurazionePdDReader {
 		ConnettoreMsg connettoreMsg = null;
 		if(connettore != null){
 			connettoreMsg = new ConnettoreMsg();
-			connettoreMsg.setTipoConnettore(connettore.getTipo());
-			connettoreMsg.setConnectorProperties(properties);
+			connettoreMsg.setTipoConnettore(connettore.getTipo(), properties);
 			connettoreMsg.setSbustamentoSOAP(CostantiConfigurazione.ABILITATO.equals(serv.getSbustamentoSoap()));
 			connettoreMsg.setSbustamentoInformazioniProtocollo(!CostantiConfigurazione.DISABILITATO.equals(serv.getSbustamentoInformazioniProtocollo()));
 			connettoreMsg.setPropertiesTrasporto(protocol_properties);

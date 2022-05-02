@@ -1773,6 +1773,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 			/* ------------------- Preparo Spedizione -----------------------*/
 			this.msgDiag.mediumDebug("Inizializzazione connettore per la spedizione...");
 			//	Connettore per consegna
+			if(this.asyncResponseCallback!=null) {
+				this.connettoreMsg.convertToAsyncClient(this.propertiesReader);
+			}
 			this.tipoConnector = this.connettoreMsg.getTipoConnettore();
 			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_CONNETTORE, this.tipoConnector);
 			
@@ -1794,8 +1797,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 			// Carico connettore richiesto
 			if(this.invokerNonSupportato==false){
 				try{
-					String tipoConnettoreEffettivo = ConnettoreUtils.formatTipoConnettore(this.propertiesReader, this.tipoConnector, (this.asyncResponseCallback!=null));
-					this.connectorSender = (IConnettore) this.pluginLoader.newConnettore(tipoConnettoreEffettivo);
+					this.connectorSender = (IConnettore) this.pluginLoader.newConnettore(this.tipoConnector);
 				}
 				catch(Exception e){
 					this.msgDiag.logErroreGenerico(e,"Inizializzazione Connettore"); // l'errore contiene gia tutte le informazioni
@@ -1855,7 +1857,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 			// timeout di default
 			if(this.connettoreMsg.getConnectorProperties()==null){
 				java.util.Map<String,String> propCon = new java.util.HashMap<String,String>();
-				this.connettoreMsg.setConnectorProperties(propCon);
+				this.connettoreMsg.initConnectorProperties(propCon);
 			}
 			if(this.connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)==null){
 				this.connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT,""+this.propertiesReader.getConnectionTimeout_consegnaContenutiApplicativi());

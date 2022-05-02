@@ -140,6 +140,7 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 				"", 	// this.transfer_mode_chunk_size, 
 				"", 	// this.redirect_mode, 
 				"", 	// this.redirect_max_hop,
+				null,   // this.clientLibrary
 				conn.getRichiesta().getFile(),	// this.requestOutputFileName,
 				conn.getRichiesta().getFilePermissions(),   // this.requestOutputFileName_permissions
 				conn.getRichiesta().getFileHeaders(),	// this.requestOutputFileNameHeaders,
@@ -239,6 +240,7 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 				"", 	// this.transfer_mode_chunk_size, 
 				"", 	// this.redirect_mode, 
 				"", 	// this.redirect_max_hop,
+				null,   // this.clientLibrary
 				conn.getRichiesta().getFile(),	// this.requestOutputFileName,
 				conn.getRichiesta().getFilePermissions(),   // this.requestOutputFileName_permissions
 				conn.getRichiesta().getFileHeaders(),	// this.requestOutputFileNameHeaders,
@@ -334,6 +336,7 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 				"", 	// this.transfer_mode_chunk_size, 
 				"", 	// this.redirect_mode, 
 				"", 	// this.redirect_max_hop,
+				null,   // this.clientLibrary
 				conn.getRichiesta().getFile(),	// this.requestOutputFileName,
 				conn.getRichiesta().getFilePermissions(),   // this.requestOutputFileName_permissions
 				conn.getRichiesta().getFileHeaders(),	// this.requestOutputFileNameHeaders,

@@ -720,6 +720,7 @@ public class ErogazioniApiHelper {
         		"",		// transfer_mode_chunk_size, 
         		"",		// redirect_mode, 
         		"",		// redirect_max_hop, 
+        		null,   // this.clientLibrary
         		null,	// requestOutputFileName,
         		null,	// requestOutputFileName_permissions,
         		null,	// requestOutputFileNameHeaders, 
@@ -1499,6 +1500,7 @@ public class ErogazioniApiHelper {
         		"",		// transfer_mode_chunk_size, 
         		"",		// redirect_mode, 
         		"",		// redirect_max_hop, 
+        		null,   // this.clientLibrary
         		null,	// requestOutputFileName,
         		null,	// requestOutputFileName_permissions,
         		null,	// requestOutputFileNameHeaders, 
@@ -1652,6 +1654,7 @@ public class ErogazioniApiHelper {
 				"", 	// this.transfer_mode_chunk_size, 
 				"", 	// this.redirect_mode, 
 				"", 	// this.redirect_max_hop,
+				null,   // this.clientLibrary
 				null,	// this.requestOutputFileName,
 				null,	// this.requestOutputFileName_permissions,
 				null,	// this.requestOutputFileNameHeaders,

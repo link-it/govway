@@ -116,7 +116,13 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.credenziali" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.credenziali.engine" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.connettori" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.connettori.httpcore" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.connettori.httpcore5" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.connettori.nio" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.connettori.httpcore.nio" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.connettori.httpcore5.nio" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.connettori.httpjava.nio" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.connettori.jetty.nio" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.controllo_traffico" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.controllo_traffico.plugins" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.controllo_traffico.policy" />
