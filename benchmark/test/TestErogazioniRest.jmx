@@ -228,6 +228,10 @@
                 <stringProp name="Header.name">GovWay-StressTest-SleepMax</stringProp>
                 <stringProp name="Header.value">${sleepMax}</stringProp>
               </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">GovWay-StressTest-UserId</stringProp>
+                <stringProp name="Header.value">ID-Applicativo-StressTest</stringProp>
+              </elementProp>
             </collectionProp>
           </HeaderManager>
           <hashTree/>

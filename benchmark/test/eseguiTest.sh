@@ -5,16 +5,18 @@ then
 fi
 source ../config.properties
 
-# TODO: Rimettere l'opzione -a 
+# TODO: rendi tipiTest una variabile normale e non un array, e togli il for quando la si usa
+
+# TODO: Metti nell'elenco test quelli di rateLimiting
 
 jmeterRestTestFile=${BENCHMARK_HOME}/test/TestErogazioniRest.jmx
 jmeterSoapTestFile=${BENCHMARK_HOME}/test/TestErogazioniSoap.jmx
 jmeterGraphFile=${BENCHMARK_HOME}/test/GraphsGenerator.jmx
 
 
-elencoTestRest="trasparente  trasparenteNoRegistrazione  trasparenteValidazione  trasparenteNoRegistrazioneValidazione  modiDoppioHeaderRichiesta  modiDoppioHeaderRichiestaRispostaDigestRichiesta  modiDoppioHeaderRichiestaFiltroDuplicati  modiHeaderAgidOAuthRichiesta  modiHeaderAgidOAuthRichiestaRispostaDigestRichiesta  modiHeaderAgidOAuthRichiestaFiltroDuplicati"
+elencoTestRest="trasparente  trasparenteNoRegistrazione  trasparenteRegistrazioneFileTrace  trasparenteRegistrazioneDbConFile  trasparenteValidazione  trasparenteNoRegistrazioneValidazione  trasparenteRateLimiting  modiDoppioHeaderRichiesta  modiDoppioHeaderRichiestaRispostaDigestRichiesta  modiDoppioHeaderRichiestaFiltroDuplicati  modiHeaderAgidOAuthRichiesta  modiHeaderAgidOAuthRichiestaRispostaDigestRichiesta  modiHeaderAgidOAuthRichiestaFiltroDuplicati"
 
-elencoTestSoap="soapTrasparente  soapTrasparenteNoRegistrazione  soapTrasparenteValidazione  soapTrasparenteNoRegistrazioneValidazione  soapModiIntegritaPayloadRichiesta  soapModiIntegritaPayloadRichiestaRispostaDigestRichiesta  soapModiIntegritaPayloadRichiestaFiltroDuplicati  soapModiIDAuthRichiesta  soapModiIDAuthRichiestaRisposta  soapModiIDAuthRichiestaFiltroDuplicati"
+elencoTestSoap="soapTrasparente  soapTrasparenteNoRegistrazione  soapTrasparenteRegistrazioneFileTrace  soapTrasparenteRegistrazioneDbConFile  soapTrasparenteValidazione  soapTrasparenteNoRegistrazioneValidazione soapTrasparenteRateLimiting  soapModiIntegritaPayloadRichiesta  soapModiIntegritaPayloadRichiestaRispostaDigestRichiesta  soapModiIntegritaPayloadRichiestaFiltroDuplicati  soapModiIDAuthRichiesta  soapModiIDAuthRichiestaRisposta  soapModiIDAuthRichiestaFiltroDuplicati"
 
 elencoTest="$elencoTestRest $elencoTestSoap"
 
@@ -62,10 +64,12 @@ function usage() {
 # 		REST
 # --- API Gateway --
 # protocollo=api
-# tipiTest="Proxy Validazione"
+# tipiTest="Proxy Validazione RateLimiting"
 # Azioni [profiloSicurezza=none] - nessun profilo di sicurezza
 # 	test: vengono registrate le transazioni
 # 	test2: non vegono registrate le transazioni
+#	test3: vengono registrate le transazioni solo su filesystem
+#	test4: vengono registrate le transazioni sia su db che su filesystem
 
 # -- ModI --
 # protocollo=rest
@@ -82,10 +86,13 @@ function usage() {
 #		SOAP
 # --- API Gateway --
 # protocollo=api
-# tipiTest="Proxy Validazione"
+# tipiTest="Proxy Validazione RateLimiting"
 # Azioni [profiloSicurezza=none]
-#	  test: vengono registrate le transazioni
-#	  test2: non vegono registrate le transazioni
+#	test: vengono registrate le transazioni
+#	test2: non vegono registrate le transazioni
+#	test3: vengono registrate le transazioni solo su filesystem
+#	test4: vengono registrate le transazioni sia su db che su filesystem
+
 # -- ModI --
 # protocollo=soap
 # tipiTest="Proxy"
@@ -124,6 +131,28 @@ function trasparenteNoRegistrazione() {
 }
 
 
+testDescriptions[trasparenteRegistrazioneFileTrace]="Vengono registrate le transazioni solo su filesystem"
+function trasparenteRegistrazioneFileTrace() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=none
+	protocollo=api
+	tipiTest=Proxy
+	azione=test3
+	outputDir=${resultDir}/${FUNCNAME[0]}
+}
+
+
+testDescriptions[trasparenteRegistrazioneDbConFile]="Vengono registrate le transazioni sia su database che su filesystem"
+function trasparenteRegistrazioneDbConFile() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=none
+	protocollo=api
+	tipiTest=Proxy
+	azione=test4
+	outputDir=${resultDir}/${FUNCNAME[0]}
+}
+
+
 testDescriptions[trasparenteValidazione]="Vengono registrate le transazioni"
 function trasparenteValidazione() {
 	jmeterTestFile=${jmeterRestTestFile}
@@ -142,6 +171,17 @@ function trasparenteNoRegistrazioneValidazione() {
 	protocollo=api
 	tipiTest=Validazione
 	azione=test2
+	outputDir=${resultDir}/${FUNCNAME[0]}
+}
+
+
+testDescriptions[trasparenteRateLimiting]="Test policy rate limiting complessiva e per richiedente"
+function trasparenteRateLimiting() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=none
+	protocollo=api
+	tipiTest=RateLimiting
+	azione=test
 	outputDir=${resultDir}/${FUNCNAME[0]}
 }
 
@@ -226,10 +266,32 @@ function soapTrasparente() {
 testDescriptions[soapTrasparenteNoRegistrazione]="Non vengono registrate le transazioni"
 function soapTrasparenteNoRegistrazione() {
 	jmeterTestFile=${jmeterSoapTestFile}
-	profiloSicurezza=none
+	profiloSicurezza=azione2
 	protocollo=api
 	tipiTest=Proxy
 	azione=test2
+	outputDir=${resultDir}/${FUNCNAME[0]}
+}
+
+
+testDescriptions[soapTrasparenteRegistrazioneFileTrace]="Vengono registrate le transazioni solo su filesystem"
+function soapTrasparenteRegistrazioneFileTrace() {
+	jmeterTestFile=${jmeterSoapTestFile}
+	profiloSicurezza=azione3
+	protocollo=api
+	tipiTest=Proxy
+	azione=test3
+	outputDir=${resultDir}/${FUNCNAME[0]}
+}
+
+
+testDescriptions[soapTrasparenteRegistrazioneDbConFile]="Vengono registrate le transazioni sia su database che su filesystem"
+function soapTrasparenteRegistrazioneDbConFile() {
+	jmeterTestFile=${jmeterSoapTestFile}
+	profiloSicurezza=azione4
+	protocollo=api
+	tipiTest=Proxy
+	azione=test4
 	outputDir=${resultDir}/${FUNCNAME[0]}
 }
 
@@ -252,6 +314,17 @@ function soapTrasparenteNoRegistrazioneValidazione() {
 	protocollo=api
 	tipiTest=Validazione
 	azione=test2
+	outputDir=${resultDir}/${FUNCNAME[0]}
+}
+
+
+testDescriptions[soapTrasparenteRateLimiting]="Test policy rate limiting complessiva e per richiedente"
+function soapTrasparenteRateLimiting() {
+	jmeterTestFile=${jmeterSoapTestFile}
+	profiloSicurezza=none
+	protocollo=api
+	tipiTest=RateLimiting
+	azione=test
 	outputDir=${resultDir}/${FUNCNAME[0]}
 }
 
@@ -620,6 +693,10 @@ for testConfigurator in $testToRun; do
 
 	# Chiamo la funzione di test che configura l'ambiente.
 	$testConfigurator
+	if (( $? != 0 )); then
+		echo "Errore durante la configurazione del test: $testConfigurator uscita..."
+	fi
+	
 	# Eseguo il test jmx
 	run_jmx_test
 	# Aggrego i risultati e produco grafici e dashboard
