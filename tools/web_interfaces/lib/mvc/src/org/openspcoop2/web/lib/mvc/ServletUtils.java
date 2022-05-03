@@ -632,11 +632,9 @@ public class ServletUtils {
 	@SuppressWarnings("unchecked")
 	private static <T> T removeObjectFromSession(HttpServletRequest request, HttpSession session,Class<T> objectClass, String objectName, boolean returnValue){
 		if(objectName.startsWith(Costanti.SESSION_ATTRIBUTE_TAB_KEY_PREFIX)) {
-		
+			
 			// lettura dalla sessione associata all'id del tab
 			String tabId = (String) request.getAttribute(Costanti.PARAMETER_TAB_KEY);
-			
-			String prevTabId = request.getParameter(Costanti.PARAMETER_PREV_TAB_KEY);
 			
 			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 			
@@ -644,23 +642,20 @@ public class ServletUtils {
 				sessionMap = new HashMap<String, Map<String,Object>>(); 
 			}
 			
-			Map<String, Object> mapTabId = null;
-			if(sessionMap.containsKey(tabId)) {
-				mapTabId = sessionMap.get(tabId);
-				
-			} else {
-				// primo accesso copio le informazioni dalla mappa relativa al tab precedente
-				copiaAttributiSessioneTab(session, prevTabId, tabId);
-				sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
-				mapTabId = sessionMap.get(tabId);
+			Object obj = null;
+			// la remove deve essere fatta da tutti i tab session
+			for (String mapTabKey : sessionMap.keySet()) {
+				Map<String, Object> mapTabId = sessionMap.get(mapTabKey);
+				// se il tab e' quello corrente allora restituisco anche l'oggetto
+				if(tabId.equals(mapTabKey)) {
+					obj = mapTabId.remove(objectName);
+				} else {
+					mapTabId.remove(objectName);
+				}
 			}
 			
-			if(mapTabId.containsKey(objectName)) {
-				Object obj = mapTabId.remove(objectName);
-				
-				if(returnValue) {
-					return objectClass.cast(obj);
-				}
+			if(obj != null && returnValue) {
+				return objectClass.cast(obj);
 			}
 		}
 		
