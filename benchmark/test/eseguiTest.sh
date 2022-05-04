@@ -103,12 +103,13 @@ function usage() {
 
 
 # TODO: Prendi il realpath dello script eseguiTest.sh e usa un percorso assoluto
+declare -A tests
 . ./conf/trasparente-rest.sh
 . ./conf/trasparente-soap.sh
 . ./conf/modi-rest.sh
 . ./conf/modi-soap.sh
 
-elencoTest="$elencoTestTrasparenteRest $elencoTestTrasparenteRestSoap $elencoTestModiRest $elencoTestModiSoap"
+elencoTest="$elencoTestTrasparenteRest $elencoTestTrasparenteSoap $elencoTestModiRest $elencoTestModiSoap"
 
 function build_jmx_command() {
 	echo "${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=${threadNumber} -Jduration=${duration} -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JtipoTest=${tipoTest} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloSicurezza=${profiloSicurezza} -JdirResult=${outputDir} -j ${logDir}/jmeter.log -Jiterazione=$it -JtestName=${testConfigurator}"
@@ -407,9 +408,11 @@ for testConfigurator in $testToRun; do
 	echo -e "===================================\n"
 
 	# Chiamo la funzione di test che configura l'ambiente.
-	$testConfigurator
+	#$testConfigurator
+	${tests[$testConfigurator]}
 	if (( $? != 0 )); then
 		echo "Errore durante la configurazione del test: $testConfigurator uscita..."
+		exit 1
 	fi
 	
 	# Eseguo il test jmx

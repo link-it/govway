@@ -1,3 +1,5 @@
+Abilitare la modalità multitenant su govway e riavviarlo.
+
 Lanciare tutta la test-suite con
 	./eseguiTest.sh
 

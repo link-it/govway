@@ -1,4 +1,11 @@
-elencoTestModiRest="rest_modi_DBTrace_Integrity_AgidAuth_OnlyRequest rest_modi_DBTrace_Integrity_AgidAuth_RequestDigestInResponse rest_modi_DBTrace_Integrity_AgidAuth_OnlyRequest_NoDuplicates rest_modi_DBTrace_Integriy_OAuth2Auth_OnlyRequest  rest_modi_DBTrace_Integriy_OAuth2Auth_RequestDigestInResponse  rest_modi_DBTrace_Integriy_OAuth2Auth_OnlyRequest_NoDuplicates"
+elencoTestModiRest="rest_modi_db-trace_integrity_agid-auth_request-only rest_modi_db-trace_integrity_agid-auth_request-digest-in-response rest_modi_db-trace_integrity_agid-auth_request-only_no-duplicates rest_modi_db-trace_integrity_oauth2-auth_request-only  rest_modi_db-trace_Integriy_oauth2-auth_request-digest-in-response  rest_modi_db-trace_integrity_oauth2-auth_request-only_no-duplicates"
+
+tests["rest_modi_db-trace_integrity_agid-auth_request-only"]=rest_modi_DBTrace_Integrity_AgidAuth_OnlyRequest
+tests["rest_modi_db-trace_integrity_agid-auth_request-digest-in-response"]=rest_modi_DBTrace_Integrity_AgidAuth_RequestDigestInResponse
+tests["rest_modi_db-trace_integrity_agid-auth_request-only_no-duplicates"]=rest_modi_DBTrace_Integrity_AgidAuth_OnlyRequest_NoDuplicates
+tests["rest_modi_db-trace_integrity_oauth2-auth_request-only"]=rest_modi_DBTrace_Integriy_OAuth2Auth_OnlyRequest
+tests["rest_modi_db-trace_Integriy_oauth2-auth_request-digest-in-response"]=rest_modi_DBTrace_Integriy_OAuth2Auth_RequestDigestInResponse
+tests["rest_modi_db-trace_integrity_oauth2-auth_request-only_no-duplicates"]=rest_modi_DBTrace_Integriy_OAuth2Auth_OnlyRequest_NoDuplicates
 
 
 function rest_modi_DBTrace_Integrity_AgidAuth_OnlyRequest() {
@@ -54,7 +61,6 @@ function rest_modi_DBTrace_Integriy_OAuth2Auth_RequestDigestInResponse() {
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="LineeGuida con header Agid e header OAuth anche nella risposta + digestRichiesta"
 }
-
 
 function rest_modi_DBTrace_Integriy_OAuth2Auth_OnlyRequest_NoDuplicates() {
 	jmeterTestFile=${jmeterRestTestFile}

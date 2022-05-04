@@ -1,5 +1,12 @@
-elencoTestTrasparenteRest="rest_proxy_DBTrace  rest_proxy_NoTrace  rest_proxy_FileTrace  rest_proxy_FileDBTrace  rest_proxy_DBTrace_Validazione rest_proxy_NoTrace_Validazione rest_proxy_DBTrace_RateLimiting"
+elencoTestTrasparenteRest="rest_proxy_db-trace  rest_proxy_no-trace rest_proxy_file-trace  rest_proxy_file-db-trace rest_proxy_db-trace_validazione rest_proxy_no-trace_validazione rest_proxy_db-trace_rate-limting"
 
+tests["rest_proxy_db-trace"]="rest_proxy_DBTrace"
+tests["rest_proxy_no-trace"]="rest_proxy_NoTrace"
+tests["rest_proxy_file-trace"]="rest_proxy_FileTrace"
+tests["rest_proxy_file-db-trace"]="rest_proxy_FileDBTrace"
+tests["rest_proxy_db-trace_validazione"]="rest_proxy_DBTrace_Validazione"
+tests["rest_proxy_no-trace_validazione"]="rest_proxy_NoTrace_Validazione"
+tests["rest_proxy_db-trace_rate-limting"]="rest_proxy_DBTrace_RateLimiting"
 
 function rest_proxy_DBTrace() {
 	jmeterTestFile=${jmeterRestTestFile}
