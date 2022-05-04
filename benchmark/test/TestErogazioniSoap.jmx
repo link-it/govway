@@ -129,10 +129,6 @@
       <hashTree/>
       <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="ConfigurazioneBackendTest" enabled="true">
         <collectionProp name="HeaderManager.headers">
-          <elementProp name="" elementType="Header">
-            <stringProp name="Header.name">TipoTest</stringProp>
-            <stringProp name="Header.value">${serverSleep}</stringProp>
-          </elementProp>
         </collectionProp>
       </HeaderManager>
       <hashTree/>
