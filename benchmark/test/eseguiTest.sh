@@ -1,63 +1,3 @@
-if [ ! -f ../config.properties ]
-then
-        echo "File config.properties not exists"
-        exit 10
-fi
-source ../config.properties
-
-# TODO: rendi tipiTest una variabile normale e non un array, e togli il for quando la si usa
-
-# TODO: Metti nell'elenco test quelli di rateLimiting
-
-jmeterRestTestFile=${BENCHMARK_HOME}/test/TestErogazioniRest.jmx
-jmeterSoapTestFile=${BENCHMARK_HOME}/test/TestErogazioniSoap.jmx
-jmeterGraphFile=${BENCHMARK_HOME}/test/GraphsGenerator.jmx
-
-
-elencoTestRest="trasparente  trasparenteNoRegistrazione  trasparenteRegistrazioneFileTrace  trasparenteRegistrazioneDbConFile  trasparenteValidazione  trasparenteNoRegistrazioneValidazione  trasparenteRateLimiting  modiDoppioHeaderRichiesta  modiDoppioHeaderRichiestaRispostaDigestRichiesta  modiDoppioHeaderRichiestaFiltroDuplicati  modiHeaderAgidOAuthRichiesta  modiHeaderAgidOAuthRichiestaRispostaDigestRichiesta  modiHeaderAgidOAuthRichiestaFiltroDuplicati"
-
-elencoTestSoap="soapTrasparente  soapTrasparenteNoRegistrazione  soapTrasparenteRegistrazioneFileTrace  soapTrasparenteRegistrazioneDbConFile  soapTrasparenteValidazione  soapTrasparenteNoRegistrazioneValidazione soapTrasparenteRateLimiting  soapModiIntegritaPayloadRichiesta  soapModiIntegritaPayloadRichiestaRispostaDigestRichiesta  soapModiIntegritaPayloadRichiestaFiltroDuplicati  soapModiIDAuthRichiesta  soapModiIDAuthRichiestaRisposta  soapModiIDAuthRichiestaFiltroDuplicati"
-
-elencoTest="$elencoTestRest $elencoTestSoap"
-
-soggetto=ENTE
-duration="60"
-threads="50 100 200"
-threadsRampUp=5
-dimensioni="1024 51200 409600"
-iterazioni=1
-riscaldamento=false
-keep=false
-allTests=false
-
-# ServerDelay
-declare -A minMaxSleeps
-minMaxSleeps[0]=1		# No Delay
-minMaxSleeps[50]=100	# Intervallo 1
-minMaxSleeps[100]=500	# Intervallo 2
-minMaxSleeps[200]=1000  # Intervallo 3
-
-function usage() {
-	echo -e ""
-	echo -e "UTILIZZO"
-	echo -e "	NOTA: Tutte le opzioni vanno specificate prima dell'elenco dei test, altrimenti saranno ignorate!\n"
-	echo -e "	./eseguiTest.sh [-a] [-r] [-i X] [-k] [-d X] [-s X] [-n X] [-u X] [-t X] test\n"
-	echo -e "		-a: Esegui tutti i test                       (All)"
-	echo -e " 		-r: Esegui il riscaldamento                   (Riscaldamento)"
-	echo -e "		-i: Esege tutta la batteria di test X volte   (Iterazioni)"
-	echo -e "		-k: Mantiene i csv intermedi                  (Keep)\n"
-	echo -e "		Opzioni per iniziare una sola istanza di un test\n"
-	echo -e "		-d: Specifica una delle possibili dimensioni  (Dimensione)"
-	echo -e " 			1024, 51200, 409600"
-	echo -e "		-s: Specifica il minSleep,determinando il max (Sleep)"
-	echo -e "			0->1, 50->100, 100->500, 200->1000"
-	echo -e "		-n: Numero di threads                         (Nthreads)"
-	echo -e "		-u: Ramp-up                                   (ramp-Up)"
-	echo -e "		-t: Durata in secondi                         (Time duration)\n"
-	echo -e "		Test REST = [ $elencoTestRest ]\n"
-	echo -e "		Test SOAP = [ $elencoTestSoap ]\n"
-}
-
 # I seguenti valori identificano un test e vengono configurati dalle funzioni
 # di test di sotto.
 
@@ -105,295 +45,70 @@ function usage() {
 #	  test5: LineeGuida con IDAuth anche nella risposta
 #	  test6: LineeGuida con IDAuth nella sola richiesta + filtroDuplicati
 
+# TODO: rendi tipiTest una variabile normale e non un array, e togli il for quando la si usa
+# TODO: Metti nell'elenco test quelli di rateLimiting
 
-# Questo array associativo contiene la descrizioni dei test da riportare nella dashboard
-declare -A testDescriptions
 
-testDescriptions[trasparente]="Vengono registrate le transazioni"
-function trasparente() {
-	jmeterTestFile=${jmeterRestTestFile}
-	profiloSicurezza=none
-	protocollo=api
-	tipiTest=Proxy
-	azione=test
-	outputDir=${resultDir}/${FUNCNAME[0]}
+if [ ! -f ../config.properties ]
+then
+        echo "File config.properties not exists"
+        exit 10
+fi
+source ../config.properties
+
+jmeterRestTestFile=${BENCHMARK_HOME}/test/TestErogazioniRest.jmx
+jmeterSoapTestFile=${BENCHMARK_HOME}/test/TestErogazioniSoap.jmx
+jmeterGraphFile=${BENCHMARK_HOME}/test/GraphsGenerator.jmx
+
+
+soggetto=ENTE
+duration="60"
+threads="50 100 200"
+threadsRampUp=5
+dimensioni="1024 51200 409600"
+iterazioni=1
+riscaldamento=false
+keep=false
+allTests=false
+
+# ServerDelay
+declare -A minMaxSleeps
+minMaxSleeps[0]=1		# No Delay
+minMaxSleeps[50]=100	# Intervallo 1
+minMaxSleeps[100]=500	# Intervallo 2
+minMaxSleeps[200]=1000  # Intervallo 3
+
+function usage() {
+	echo -e ""
+	echo -e "UTILIZZO"
+	echo -e "	NOTA: Tutte le opzioni vanno specificate prima dell'elenco dei test, altrimenti saranno ignorate!\n"
+	echo -e "	./eseguiTest.sh [-a] [-r] [-i X] [-k] [-d X] [-s X] [-n X] [-u X] [-t X] test\n"
+	echo -e "		-a: Esegui tutti i test                       (All)"
+	echo -e " 		-r: Esegui il riscaldamento                   (Riscaldamento)"
+	echo -e "		-i: Esege tutta la batteria di test X volte   (Iterazioni)"
+	echo -e "		-k: Mantiene i csv intermedi                  (Keep)\n"
+	echo -e "		Opzioni per iniziare una sola istanza di un test\n"
+	echo -e "		-d: Specifica una delle possibili dimensioni  (Dimensione)"
+	echo -e " 			1024, 51200, 409600"
+	echo -e "		-s: Specifica il minSleep,determinando il max (Sleep)"
+	echo -e "			0->1, 50->100, 100->500, 200->1000"
+	echo -e "		-n: Numero di threads                         (Nthreads)"
+	echo -e "		-u: Ramp-up                                   (ramp-Up)"
+	echo -e "		-t: Durata in secondi                         (Time duration)\n"
+	echo -e "		Test Trasparente REST = [ $elencoTestTrasparenteRest ]\n"
+	echo -e "		Test Trasparente SOAP = [ $elencoTestTrasparenteSoap ]\n"
+	echo -e "		Test ModiPA SOAP = [ $elencoTestModiRest ]\n"
+	echo -e "		Test ModiPA REST = [ $elencoTestModiSoap ]\n"
 }
 
 
-testDescriptions[trasparenteNoRegistrazione]="Non vengono registrate le transazioni"
-function trasparenteNoRegistrazione() {
-	jmeterTestFile=${jmeterRestTestFile}
-	profiloSicurezza=none
-	protocollo=api
-	tipiTest=Proxy
-	azione=test2
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
+# TODO: Prendi il realpath dello script eseguiTest.sh e usa un percorso assoluto
+. ./conf/trasparente-rest.sh
+. ./conf/trasparente-soap.sh
+. ./conf/modi-rest.sh
+. ./conf/modi-soap.sh
 
-
-testDescriptions[trasparenteRegistrazioneFileTrace]="Vengono registrate le transazioni solo su filesystem"
-function trasparenteRegistrazioneFileTrace() {
-	jmeterTestFile=${jmeterRestTestFile}
-	profiloSicurezza=none
-	protocollo=api
-	tipiTest=Proxy
-	azione=test3
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[trasparenteRegistrazioneDbConFile]="Vengono registrate le transazioni sia su database che su filesystem"
-function trasparenteRegistrazioneDbConFile() {
-	jmeterTestFile=${jmeterRestTestFile}
-	profiloSicurezza=none
-	protocollo=api
-	tipiTest=Proxy
-	azione=test4
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[trasparenteValidazione]="Vengono registrate le transazioni"
-function trasparenteValidazione() {
-	jmeterTestFile=${jmeterRestTestFile}
-	profiloSicurezza=none
-	protocollo=api
-	tipiTest=Validazione
-	azione=test
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[trasparenteNoRegistrazioneValidazione]="Non vengono registrate le transazioni"
-function trasparenteNoRegistrazioneValidazione() {
-	jmeterTestFile=${jmeterRestTestFile}
-	profiloSicurezza=none
-	protocollo=api
-	tipiTest=Validazione
-	azione=test2
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[trasparenteRateLimiting]="Test policy rate limiting complessiva e per richiedente"
-function trasparenteRateLimiting() {
-	jmeterTestFile=${jmeterRestTestFile}
-	profiloSicurezza=none
-	protocollo=api
-	tipiTest=RateLimiting
-	azione=test
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[modiDoppioHeaderRichiesta]="LineeGuida con doppio header nella sola richiesta"
-function modiDoppioHeaderRichiesta() {
-	jmeterTestFile=${jmeterRestTestFile}
-	profiloSicurezza=digest
-	protocollo=rest
-	tipiTest=Proxy
-	azione=test
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[modiDoppioHeaderRichiestaRispostaDigestRichiesta]="LineeGuida con dobbio header anche nella risposta + digestRichiesta"
-function modiDoppioHeaderRichiestaRispostaDigestRichiesta() {
-	jmeterTestFile=${jmeterRestTestFile}
-	profiloSicurezza=digest
-	protocollo=rest
-	tipiTest=Proxy
-	azione=test2
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[modiDoppioHeaderRichiestaFiltroDuplicati]="LineeGuida con doppio header nella sola richiesta + filtroDuplicati"
-function modiDoppioHeaderRichiestaFiltroDuplicati() {
-	jmeterTestFile=${jmeterRestTestFile}
-	profiloSicurezza=digest
-	protocollo=rest
-	tipiTest=Proxy
-	azione=test3
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[modiHeaderAgidOAuthRichiesta]="LineeGuida con header Agid e header OAuth nella sola richiesta"
-function modiHeaderAgidOAuthRichiesta() {
-	jmeterTestFile=${jmeterRestTestFile}
-	profiloSicurezza=digest
-	protocollo=rest
-	tipiTest=Proxy
-	azione=test4
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[modiHeaderAgidOAuthRichiestaRispostaDigestRichiesta]="LineeGuida con header Agid e header OAuth anche nella risposta + digestRichiesta"
-function modiHeaderAgidOAuthRichiestaRispostaDigestRichiesta() {
-	jmeterTestFile=${jmeterRestTestFile}
-	profiloSicurezza=digest
-	protocollo=rest
-	tipiTest=Proxy
-	azione=test5
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[modiHeaderAgidOAuthRichiestaFiltroDuplicati]="LineeGuida con header Agid e header OAuth nella sola richiesta + filtroDuplicati"
-function modiHeaderAgidOAuthRichiestaFiltroDuplicati() {
-	jmeterTestFile=${jmeterRestTestFile}
-	profiloSicurezza=digest
-	protocollo=rest
-	tipiTest=Proxy
-	azione=test6
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[soapTrasparente]="Vengono registrate le transazioni"
-function soapTrasparente() {
-	jmeterTestFile=${jmeterSoapTestFile}
-	profiloSicurezza=none
-	protocollo=api
-	tipiTest=Proxy
-	azione=test
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[soapTrasparenteNoRegistrazione]="Non vengono registrate le transazioni"
-function soapTrasparenteNoRegistrazione() {
-	jmeterTestFile=${jmeterSoapTestFile}
-	profiloSicurezza=azione2
-	protocollo=api
-	tipiTest=Proxy
-	azione=test2
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[soapTrasparenteRegistrazioneFileTrace]="Vengono registrate le transazioni solo su filesystem"
-function soapTrasparenteRegistrazioneFileTrace() {
-	jmeterTestFile=${jmeterSoapTestFile}
-	profiloSicurezza=azione3
-	protocollo=api
-	tipiTest=Proxy
-	azione=test3
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[soapTrasparenteRegistrazioneDbConFile]="Vengono registrate le transazioni sia su database che su filesystem"
-function soapTrasparenteRegistrazioneDbConFile() {
-	jmeterTestFile=${jmeterSoapTestFile}
-	profiloSicurezza=azione4
-	protocollo=api
-	tipiTest=Proxy
-	azione=test4
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[soapTrasparenteValidazione]="Vengono registrate le transazioni"
-function soapTrasparenteValidazione() {
-	jmeterTestFile=${jmeterSoapTestFile}
-	profiloSicurezza=none
-	protocollo=api
-	tipiTest=Validazione
-	azione=test
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[soapTrasparenteNoRegistrazioneValidazione]="Non vengono registrate le transazioni"
-function soapTrasparenteNoRegistrazioneValidazione() {
-	jmeterTestFile=${jmeterSoapTestFile}
-	profiloSicurezza=none
-	protocollo=api
-	tipiTest=Validazione
-	azione=test2
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[soapTrasparenteRateLimiting]="Test policy rate limiting complessiva e per richiedente"
-function soapTrasparenteRateLimiting() {
-	jmeterTestFile=${jmeterSoapTestFile}
-	profiloSicurezza=none
-	protocollo=api
-	tipiTest=RateLimiting
-	azione=test
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[soapModiIntegritaPayloadRichiesta]="LineeGuida con integrità del payload nella sola richiesta"
-function soapModiIntegritaPayloadRichiesta() {
-	jmeterTestFile=${jmeterSoapTestFile}
-	profiloSicurezza=digest
-	protocollo=soap
-	tipiTest=Proxy
-	azione=test
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[soapModiIntegritaPayloadRichiestaRispostaDigestRichiesta]="LineeGuida con integrità del payload anche nella risposta + digestRichiesta"
-function soapModiIntegritaPayloadRichiestaRispostaDigestRichiesta() {
-	jmeterTestFile=${jmeterSoapTestFile}
-	profiloSicurezza=digest
-	protocollo=soap
-	tipiTest=Proxy
-	azione=test2
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[soapModiIntegritaPayloadRichiestaFiltroDuplicati]="LineeGuida con integrità del payload nella sola richiesta + filtroDuplicati"
-function soapModiIntegritaPayloadRichiestaFiltroDuplicati() {
-	jmeterTestFile=${jmeterSoapTestFile}
-	profiloSicurezza=digest
-	protocollo=soap
-	tipiTest=Proxy
-	azione=test3
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[soapModiIDAuthRichiesta]="LineeGuida con IDAuth nella sola richiesta"
-function soapModiIDAuthRichiesta() {
-	jmeterTestFile=${jmeterSoapTestFile}
-	profiloSicurezza=auth
-	protocollo=soap
-	tipiTest=Proxy
-	azione=test4
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[soapModiIDAuthRichiestaRisposta]="LineeGuida con IDAuth anche nella risposta"
-function soapModiIDAuthRichiestaRisposta() {
-	jmeterTestFile=${jmeterSoapTestFile}
-	profiloSicurezza=auth
-	protocollo=soap
-	tipiTest=Proxy
-	azione=test5
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
-
-testDescriptions[soapModiIDAuthRichiestaFiltroDuplicati]="LineeGuida con IDAuth nella sola richiesta + filtroDuplicati"
-function soapModiIDAuthRichiestaFiltroDuplicati() {
-	jmeterTestFile=${jmeterSoapTestFile}
-	profiloSicurezza=auth
-	protocollo=soap
-	tipiTest=Proxy
-	azione=test6
-	outputDir=${resultDir}/${FUNCNAME[0]}
-}
-
+elencoTest="$elencoTestTrasparenteRest $elencoTestTrasparenteRestSoap $elencoTestModiRest $elencoTestModiSoap"
 
 function build_jmx_command() {
 	echo "${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=${threadNumber} -Jduration=${duration} -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JtipoTest=${tipoTest} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloSicurezza=${profiloSicurezza} -JdirResult=${outputDir} -j ${logDir}/jmeter.log -Jiterazione=$it -JtestName=${testConfigurator}"
@@ -405,7 +120,7 @@ function clean_db() {
 	echo -e "LANCIO SCRIPT DI PULIZIA DB: $scriptDatabaseCleaner"
 	echo -e "====================="
 	echo -e ""
-	if ./$scriptDatabaseCleaner; then
+	if $scriptDatabaseCleaner; then
 		echo -e ""
 		echo -e "====================="
 		echo -e "Script $scriptDatabaseCleaner eseguito con successo"
@@ -503,7 +218,7 @@ function aggregate_report() {
 
 	# Produco dashboard e statistiche di jmeter
 	set -x
-	${binJMeter}/jmeter -g ${outputDir}/${joinedCsv} -o ${outputDir}/dashboard -Jjmeter.reportgenerator.report_title="$1 - ${testDescriptions[$1]}"
+	${binJMeter}/jmeter -g ${outputDir}/${joinedCsv} -o ${outputDir}/dashboard -Jjmeter.reportgenerator.report_title="$1 - $description"
 	set +x
 
 	echo -e "\n========================"
