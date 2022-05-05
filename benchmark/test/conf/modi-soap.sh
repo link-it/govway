@@ -1,4 +1,6 @@
-elencoTestModiSoap="soap_modi_db-trace_integrity_request-only  soap_modi_db-trace_integrity_request-digest-in-response  soap_modi_db-trace_integrity_request-only_no-duplicates soap_modi_db-trace_id-auth_request-only  soap_modi_db-trace_id-auth_request-digest-in-response soap_modi_db-trace_id-auth_request-only_no-duplicates"
+elencoTestModiSoap="soap_modi_db-trace_integrity_request-only soap_modi_db-trace_id-auth_request-only
+			soap_modi_db-trace_integrity_request-digest-in-response soap_modi_db-trace_id-auth_request-digest-in-response
+			soap_modi_db-trace_integrity_request-only_no-duplicates soap_modi_db-trace_id-auth_request-only_no-duplicates"
 
 tests["soap_modi_db-trace_integrity_request-only"]=soap_modi_DBTrace_Integrity_OnlyRequest
 tests["soap_modi_db-trace_integrity_request-digest-in-response"]=soap_modi_DBTrace_Integrity_RequestDigestInResponse

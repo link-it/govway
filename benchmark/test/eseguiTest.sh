@@ -95,10 +95,11 @@ function usage() {
 	echo -e "		-n: Numero di threads                         (Nthreads)"
 	echo -e "		-u: Ramp-up                                   (ramp-Up)"
 	echo -e "		-t: Durata in secondi                         (Time duration)\n"
-	echo -e "		Test Trasparente REST = [ $elencoTestTrasparenteRest ]\n"
-	echo -e "		Test Trasparente SOAP = [ $elencoTestTrasparenteSoap ]\n"
-	echo -e "		Test ModiPA SOAP = [ $elencoTestModiRest ]\n"
-	echo -e "		Test ModiPA REST = [ $elencoTestModiSoap ]\n"
+	echo -e "		Scenari di test:\n"
+	echo -e "		API Gateway REST = [ $elencoTestTrasparenteRest ]\n"
+	echo -e "		API Gateway SOAP = [ $elencoTestTrasparenteSoap ]\n"
+	echo -e "		ModI REST = [ $elencoTestModiRest ]\n"
+	echo -e "		ModI SOAP = [ $elencoTestModiSoap ]\n"
 }
 
 

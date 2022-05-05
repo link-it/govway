@@ -1,4 +1,6 @@
-elencoTestModiRest="rest_modi_db-trace_integrity_agid-auth_request-only rest_modi_db-trace_integrity_agid-auth_request-digest-in-response rest_modi_db-trace_integrity_agid-auth_request-only_no-duplicates rest_modi_db-trace_integrity_oauth2-auth_request-only  rest_modi_db-trace_Integriy_oauth2-auth_request-digest-in-response  rest_modi_db-trace_integrity_oauth2-auth_request-only_no-duplicates"
+elencoTestModiRest="rest_modi_db-trace_integrity_agid-auth_request-only rest_modi_db-trace_integrity_oauth2-auth_request-only
+			rest_modi_db-trace_integrity_agid-auth_request-digest-in-response rest_modi_db-trace_Integriy_oauth2-auth_request-digest-in-response
+			rest_modi_db-trace_integrity_agid-auth_request-only_no-duplicates rest_modi_db-trace_integrity_oauth2-auth_request-only_no-duplicates"
 
 tests["rest_modi_db-trace_integrity_agid-auth_request-only"]=rest_modi_DBTrace_Integrity_AgidAuth_OnlyRequest
 tests["rest_modi_db-trace_integrity_agid-auth_request-digest-in-response"]=rest_modi_DBTrace_Integrity_AgidAuth_RequestDigestInResponse

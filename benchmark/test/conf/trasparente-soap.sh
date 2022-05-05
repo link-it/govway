@@ -1,15 +1,18 @@
-elencoTestTrasparenteSoap="soap_proxy_db-trace  soap_proxy_no-trace soap_proxy_file-trace  soap_proxy_file-db-trace soap_proxy_db-trace_validazione soap_proxy_no-trace_validazione soap_proxy_db-trace_rate-limting soap_proxy_no-trace_rate-limting soap_proxy_db-trace_rate-limting_too-many-requests  soap_proxy_db-partial-trace_rate-limting_too-many-requests"
+elencoTestTrasparenteSoap="soap_proxy_no-trace soap_proxy_db-trace soap_proxy_file-trace soap_proxy_file-db-trace 
+			soap_proxy_no-trace_validation soap_proxy_db-trace_validation
+			soap_proxy_no-trace_rate-limiting soap_proxy_db-trace_rate-limiting
+			soap_proxy_db-trace_rate-limiting_too-many-requests soap_proxy_db-partial-trace_rate-limiting_too-many-requests"
 
 tests["soap_proxy_db-trace"]="soap_proxy_DBTrace"
 tests["soap_proxy_no-trace"]="soap_proxy_NoTrace"
 tests["soap_proxy_file-trace"]="soap_proxy_FileTrace"
 tests["soap_proxy_file-db-trace"]="soap_proxy_FileDBTrace"
-tests["soap_proxy_db-trace_validazione"]="soap_proxy_DBTrace_Validazione"
-tests["soap_proxy_no-trace_validazione"]="soap_proxy_NoTrace_Validazione"
-tests["soap_proxy_db-trace_rate-limting"]="soap_proxy_DBTrace_RateLimiting"
-tests["soap_proxy_no-trace_rate-limting"]="soap_proxy_NoTrace_RateLimiting"
-tests["soap_proxy_db-trace_rate-limting_too-many-requests"]="soap_proxy_DBTrace_RateLimiting_TooManyRequests"
-tests["soap_proxy_db-partial-trace_rate-limting_too-many-requests"]="soap_proxy_DBPartialTrace_RateLimiting_TooManyRequests"
+tests["soap_proxy_db-trace_validation"]="soap_proxy_DBTrace_Validazione"
+tests["soap_proxy_no-trace_validation"]="soap_proxy_NoTrace_Validazione"
+tests["soap_proxy_db-trace_rate-limiting"]="soap_proxy_DBTrace_RateLimiting"
+tests["soap_proxy_no-trace_rate-limiting"]="soap_proxy_NoTrace_RateLimiting"
+tests["soap_proxy_db-trace_rate-limiting_too-many-requests"]="soap_proxy_DBTrace_RateLimiting_TooManyRequests"
+tests["soap_proxy_db-partial-trace_rate-limiting_too-many-requests"]="soap_proxy_DBPartialTrace_RateLimiting_TooManyRequests"
 
 function soap_proxy_DBTrace() {
 	jmeterTestFile=${jmeterSoapTestFile}
@@ -68,7 +71,7 @@ function soap_proxy_DBTrace_Validazione() {
 
 function soap_proxy_NoTrace_Validazione() {
 	jmeterTestFile=${jmeterSoapTestFile}
-	profiloSicurezza=none
+	profiloSicurezza=azione2
 	protocollo=api
 	tipiTest=Validazione
 	azione=test2
