@@ -61,6 +61,7 @@ public class MultipartContent {
 		if(this.mimeMultipart==null) {
 			try{
 				this.mimeMultipart = new MimeMultipart(new ByteArrayInputStream(this.content), this.contentType);
+				this.content = null;
 			}catch(Exception e){
 				throw new MessageException(e.getMessage(),e);
 			}
@@ -72,9 +73,9 @@ public class MultipartContent {
 		}
 		return this.mimeMultipart;
 	}
-	public byte[] getContent() {
-		return this.content;
-	}
+//	public byte[] getContent() {
+//		return this.content;
+//	}
 	
 	public void writeTo(OutputStream os) throws MessageException {
 		try{

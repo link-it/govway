@@ -1362,7 +1362,7 @@ paths:
       tags:
         - multipart
       description: Esempio di invio documenti (multipart) con content-type multipart/form-data
-      operationId: SendDocumentMultipartFormDataStrict
+      operationId: SendDocumentMultipartFormDataMixedStrict
       requestBody:
         content:
           multipart/form-data: # Media type

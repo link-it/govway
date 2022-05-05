@@ -277,7 +277,9 @@ public class ContentExtractor {
 				return bout.toByteArray();
 			}
 			else {
-				return this.message.castAsRest().getContentAsByteArray();
+				// non viene preservato il charset, es il test org.openspcoop2.pdd.core.trasformazioni.Test fallisce: Test [zip-json] (charset: ISO-8859-1) ... nei caratteri strani
+				//return this.message.castAsRest().getContentAsByteArray();
+				return this.message.castAsRest().getContentAsString().getBytes();
 			}
 		}catch(Throwable t) {
 			throw new DynamicException(t.getMessage(),t);
