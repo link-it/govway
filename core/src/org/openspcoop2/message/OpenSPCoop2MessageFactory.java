@@ -473,7 +473,7 @@ public abstract class OpenSPCoop2MessageFactory {
 				
 				// ** Attachments **
 				
-				contentTypeForEnvelope = ContentTypeUtilities.buildMultipartContentType(byteMsg, contentTypeForEnvelope);
+				contentTypeForEnvelope = ContentTypeUtilities.buildMultipartRelatedContentType(byteMsg, contentTypeForEnvelope);
 				String boundary = MultipartUtils.findBoundary(byteMsg);
 
 				// Il messaggio deve essere imbustato.

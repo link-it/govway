@@ -39,6 +39,7 @@ import org.openspcoop2.message.utils.DumpMessaggio;
 import org.openspcoop2.message.utils.DumpMessaggioConfig;
 import org.openspcoop2.message.utils.DumpMessaggioMultipartInfo;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
+import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 
@@ -123,96 +124,127 @@ public class DumpRestMessageUtils {
 			if((config.isDumpBody() || config.isDumpAttachments()) && hasContent && 
 					MessageType.MIME_MULTIPART.equals(msg.getMessageType())){
 				OpenSPCoop2RestMimeMultipartMessage msgMime = msg.castAsRestMimeMultipart();
-				for (int i = 0; i < msgMime.getContent().countBodyParts(); i++) {
-					BodyPart bodyPart = msgMime.getContent().getBodyPart(i);
-					
-					if(i>0) {
-						if(!config.isDumpAttachments()) {
-							break;
+				MultipartContent mc = msgMime.getContent();
+				MimeMultipart mimeMultipart = (mc!=null) ? mc.getMimeMultipart() : null;
+				if(mimeMultipart!=null) {
+					for (int i = 0; i < mimeMultipart.countBodyParts(); i++) {
+						BodyPart bodyPart = mimeMultipart.getBodyPart(i);
+						
+						if(i>0) {
+							if(!config.isDumpAttachments()) {
+								break;
+							}
 						}
-					}
-					
-					DumpMessaggioMultipartInfo multipartInfoBody = null;	
-					DumpAttachment dumpAttach = null;
-					if(i==0 && config.isDumpBody()) {
 						
-						multipartInfoBody = new DumpMessaggioMultipartInfo();
+						DumpMessaggioMultipartInfo multipartInfoBody = null;	
+						DumpAttachment dumpAttach = null;
+						if(i==0 && config.isDumpBody()) {
+							
+							multipartInfoBody = new DumpMessaggioMultipartInfo();
+							
+							multipartInfoBody.setContentId(mimeMultipart.getContentID(bodyPart));
+							multipartInfoBody.setContentLocation(mimeMultipart.getContentDisposition(bodyPart)); // Uso Disposition in REST, più opportuna
+							multipartInfoBody.setContentType(bodyPart.getContentType());
+							
+						}
+						else {
 						
-						multipartInfoBody.setContentId(msgMime.getContent().getContentID(bodyPart));
-						multipartInfoBody.setContentLocation(msgMime.getContent().getContentLocation(bodyPart));
-						multipartInfoBody.setContentType(bodyPart.getContentType());
-						
-					}
-					else {
-					
-						dumpAttach = new DumpAttachment();
-						
-				    	dumpAttach.setContentId(msgMime.getContent().getContentID(bodyPart));
-				    	dumpAttach.setContentLocation(msgMime.getContent().getContentLocation(bodyPart));
-				    	dumpAttach.setContentType(bodyPart.getContentType());
-					}
-				    	
-					if(config.isDumpMultipartHeaders()) {
-				    	Enumeration<?> en = bodyPart.getAllHeaders();
-				    	if(en!=null) {
-					    	while(en.hasMoreElements()) {
-					    		Object keyO = en.nextElement();
-					    		if(keyO instanceof String) {
-					    			String key = (String) keyO;
-					    			String [] values = bodyPart.getHeader(key);
-					    			List<String> lValues = new ArrayList<String>();
-					    			if(values!=null && values.length>0) {
-					    				for (int j = 0; j < values.length; j++) {
-					    					lValues.add(values[j]);
-										}
-					    			}
-					    			if(!lValues.isEmpty()) {
-						    			if(multipartInfoBody!=null) {
-						    				multipartInfoBody.getHeadersValues().put(key, lValues);
+							dumpAttach = new DumpAttachment();
+							
+					    	dumpAttach.setContentId(mimeMultipart.getContentID(bodyPart));
+					    	dumpAttach.setContentLocation(mimeMultipart.getContentDisposition(bodyPart)); // Uso Disposition in REST, più opportuna
+					    	dumpAttach.setContentType(bodyPart.getContentType());
+						}
+					    	
+						if(config.isDumpMultipartHeaders()) {
+					    	Enumeration<?> en = bodyPart.getAllHeaders();
+					    	if(en!=null) {
+						    	while(en.hasMoreElements()) {
+						    		Object keyO = en.nextElement();
+						    		if(keyO instanceof String) {
+						    			String key = (String) keyO;
+						    			String [] values = bodyPart.getHeader(key);
+						    			List<String> lValues = new ArrayList<String>();
+						    			if(values!=null && values.length>0) {
+						    				for (int j = 0; j < values.length; j++) {
+						    					lValues.add(values[j]);
+											}
 						    			}
-						    			else {
-						    				dumpAttach.getHeadersValues().put(key, lValues);
+						    			if(!lValues.isEmpty()) {
+							    			if(multipartInfoBody!=null) {
+							    				multipartInfoBody.getHeadersValues().put(key, lValues);
+							    			}
+							    			else {
+							    				dumpAttach.getHeadersValues().put(key, lValues);
+							    			}
 						    			}
-					    			}
-					    		}
+						    		}
+						    		else if(keyO instanceof javax.mail.Header) {
+						    			javax.mail.Header hdr = (javax.mail.Header) keyO;
+						    			if(hdr!=null && hdr.getName()!=null) {
+						    				if(multipartInfoBody!=null) {
+						    					List<String> lValues = null;
+						    					if(multipartInfoBody.getHeadersValues().containsKey(hdr.getName())) {
+						    						lValues = multipartInfoBody.getHeadersValues().get(hdr.getName());
+						    					}
+						    					else {
+						    						lValues = new ArrayList<String>();
+						    						multipartInfoBody.getHeadersValues().put(hdr.getName(), lValues);
+						    					}
+						    					lValues.add(hdr.getValue());
+						    				}
+							    			else {
+							    				List<String> lValues = null;
+						    					if(dumpAttach.getHeadersValues().containsKey(hdr.getName())) {
+						    						lValues = dumpAttach.getHeadersValues().get(hdr.getName());
+						    					}
+						    					else {
+						    						lValues = new ArrayList<String>();
+						    						dumpAttach.getHeadersValues().put(hdr.getName(), lValues);
+						    					}
+						    					lValues.add(hdr.getValue());
+							    			}
+						    			}
+						    		}
+						    	}
 					    	}
+						}
+	
+				    	ByteArrayOutputStream boutAttach = null;
+				    	if(dumpAllBodyParts){
+				    		boutAttach = (ByteArrayOutputStream) DumpRestMessageUtils._dumpBodyPart(msg, bodyPart, true); 
+				    	}else{
+				    		Object o = _dumpBodyPart(msg, bodyPart, false);
+				    		if(o == null){
+				    			dumpAttach.setErrorContentNotSerializable("Contenuto attachment non recuperato??");
+				    		}
+				    		else if(o instanceof String){
+				    			boutAttach = new ByteArrayOutputStream();
+				    			boutAttach.write(((String)o).getBytes());
+				    			boutAttach.flush();
+				    			boutAttach.close();
+				    		}
+				    		else if(o instanceof java.io.ByteArrayOutputStream){
+				    			boutAttach = (java.io.ByteArrayOutputStream) o;
+				    		}
+				    		else{
+				    			dumpAttach.setErrorContentNotSerializable("Contenuto attachment non è visualizzabile, tipo: "+o.getClass().getName());
+				    		}
+				    	}
+				    	if(multipartInfoBody!=null) {
+				    		dumpMessaggio.setBody(boutAttach);
+				    		
+				    		dumpMessaggio.setMultipartInfoBody(multipartInfoBody);
+				    	}
+				    	else {
+				    		dumpAttach.setContent(boutAttach);
+				    		
+					    	if(dumpMessaggio.getAttachments()==null) {
+					    		dumpMessaggio.setAttachments(new ArrayList<>());
+					    	}
+				    		dumpMessaggio.getAttachments().add(dumpAttach);
 				    	}
 					}
-
-			    	ByteArrayOutputStream boutAttach = null;
-			    	if(dumpAllBodyParts){
-			    		boutAttach = (ByteArrayOutputStream) DumpRestMessageUtils._dumpBodyPart(msg, bodyPart, true); 
-			    	}else{
-			    		Object o = _dumpBodyPart(msg, bodyPart, false);
-			    		if(o == null){
-			    			dumpAttach.setErrorContentNotSerializable("Contenuto attachment non recuperato??");
-			    		}
-			    		else if(o instanceof String){
-			    			boutAttach = new ByteArrayOutputStream();
-			    			boutAttach.write(((String)o).getBytes());
-			    			boutAttach.flush();
-			    			boutAttach.close();
-			    		}
-			    		else if(o instanceof java.io.ByteArrayOutputStream){
-			    			boutAttach = (java.io.ByteArrayOutputStream) o;
-			    		}
-			    		else{
-			    			dumpAttach.setErrorContentNotSerializable("Contenuto attachment non è visualizzabile, tipo: "+o.getClass().getName());
-			    		}
-			    	}
-			    	if(multipartInfoBody!=null) {
-			    		dumpMessaggio.setBody(boutAttach);
-			    		
-			    		dumpMessaggio.setMultipartInfoBody(multipartInfoBody);
-			    	}
-			    	else {
-			    		dumpAttach.setContent(boutAttach);
-			    		
-				    	if(dumpMessaggio.getAttachments()==null) {
-				    		dumpMessaggio.setAttachments(new ArrayList<>());
-				    	}
-			    		dumpMessaggio.getAttachments().add(dumpAttach);
-			    	}
 				}
 			}
 			
@@ -311,68 +343,72 @@ public class DumpRestMessageUtils {
 			
 			if((config.isDumpBody() || config.isDumpAttachments()) && hasContent && MessageType.MIME_MULTIPART.equals(msg.getMessageType())){
 				OpenSPCoop2RestMimeMultipartMessage msgMime = msg.castAsRestMimeMultipart();
-				for (int i = 0; i < msgMime.getContent().countBodyParts(); i++) {
-					
-					if(i>0) {
-						if(!config.isDumpAttachments()) {
-							break;
+				MultipartContent mc = msgMime.getContent();
+				MimeMultipart mimeMultipart = mc!=null ? mc.getMimeMultipart() : null;
+				if(mimeMultipart!=null) {
+					for (int i = 0; i < mimeMultipart.countBodyParts(); i++) {
+						
+						if(i>0) {
+							if(!config.isDumpAttachments()) {
+								break;
+							}
 						}
-					}
-					
-					BodyPart bodyPart = msgMime.getContent().getBodyPart(i);
-					
-					if(i>0 || !config.isDumpBody()) {
-						out.append("\n------ BodyPart-"+(i+1)+" ------\n");
-					}
-					
-					out.append("\n*** MimePart Header ***\n");
-					String contentIdBodyPart = msgMime.getContent().getContentID(bodyPart);
-			    	if(contentIdBodyPart!=null) {
-						out.append("- "+HttpConstants.CONTENT_ID+": "+contentIdBodyPart+"\n");
-					}
-					String contentLocationBodyPart = msgMime.getContent().getContentLocation(bodyPart);
-					if(contentLocationBodyPart!=null) {
-						out.append("- "+HttpConstants.CONTENT_LOCATION+": "+contentLocationBodyPart+"\n");
-					}
-					if(bodyPart.getContentType()!=null) {
-						out.append("- "+HttpConstants.CONTENT_LOCATION+": "+bodyPart.getContentType()+"\n");
-					}
-					if(config.isDumpMultipartHeaders()) {
-						Enumeration<?> en = bodyPart.getAllHeaders();
-						if(en!=null) {
-					    	while(en.hasMoreElements()) {
-					    		Object keyO = en.nextElement();
-					    		if(keyO instanceof String) {
-					    			String key = (String) keyO;
-					    			if(HttpConstants.CONTENT_ID.equalsIgnoreCase(key) ||
-					    					HttpConstants.CONTENT_LOCATION.equalsIgnoreCase(key) ||
-					    					HttpConstants.CONTENT_TYPE.equalsIgnoreCase(key)) {
-					    				continue;
-					    			}
-					    			String [] values = bodyPart.getHeader(key);
-					    			if(values!=null && values.length>0) {
-					    				for (int j = 0; j < values.length; j++) {
-							    			out.append("- "+key+": "+values[j]+"\n");
-										}
-					    			}
-					    		}
-					    	}
+						
+						BodyPart bodyPart = mimeMultipart.getBodyPart(i);
+						
+						if(i>0 || !config.isDumpBody()) {
+							out.append("\n------ BodyPart-"+(i+1)+" ------\n");
 						}
+						
+						out.append("\n*** MimePart Header ***\n");
+						String contentIdBodyPart = mimeMultipart.getContentID(bodyPart);
+				    	if(contentIdBodyPart!=null) {
+							out.append("- "+HttpConstants.CONTENT_ID+": "+contentIdBodyPart+"\n");
+						}
+						String contentLocationBodyPart = mimeMultipart.getContentDisposition(bodyPart); // Uso Disposition in REST, più opportuna
+						if(contentLocationBodyPart!=null) {
+							out.append("- "+HttpConstants.CONTENT_DISPOSITION+": "+contentLocationBodyPart+"\n");
+						}
+						if(bodyPart.getContentType()!=null) {
+							out.append("- "+HttpConstants.CONTENT_TYPE+": "+bodyPart.getContentType()+"\n");
+						}
+						if(config.isDumpMultipartHeaders()) {
+							Enumeration<?> en = bodyPart.getAllHeaders();
+							if(en!=null) {
+						    	while(en.hasMoreElements()) {
+						    		Object keyO = en.nextElement();
+						    		if(keyO instanceof String) {
+						    			String key = (String) keyO;
+						    			if(HttpConstants.CONTENT_ID.equalsIgnoreCase(key) ||
+						    					HttpConstants.CONTENT_DISPOSITION.equalsIgnoreCase(key) ||
+						    					HttpConstants.CONTENT_TYPE.equalsIgnoreCase(key)) {
+						    				continue;
+						    			}
+						    			String [] values = bodyPart.getHeader(key);
+						    			if(values!=null && values.length>0) {
+						    				for (int j = 0; j < values.length; j++) {
+								    			out.append("- "+key+": "+values[j]+"\n");
+											}
+						    			}
+						    		}
+						    	}
+							}
+						}
+						out.append("\n");
+	
+				    	if(dumpAllBodyParts){
+				    		out.append(DumpRestMessageUtils.dumpBodyPart(msg, bodyPart));
+				    	}else{
+				    		//Object o = ap.getContent(); NON FUNZIONA CON TOMCAT
+				    		Object o = bodyPart.getDataHandler().getContent();
+				    		//System.out.println("["+o.getClass().getName()+"])"+ap.getContentType()+"(");			    		
+				    		if(o instanceof String){
+				    			out.append((String)o);
+				    		}else{
+				    			 out.append("Contenuto attachments non è visualizzabile, tipo: "+o.getClass().getName());
+				    		}
+				    	}
 					}
-					out.append("\n");
-
-			    	if(dumpAllBodyParts){
-			    		out.append(DumpRestMessageUtils.dumpBodyPart(msg, bodyPart));
-			    	}else{
-			    		//Object o = ap.getContent(); NON FUNZIONA CON TOMCAT
-			    		Object o = bodyPart.getDataHandler().getContent();
-			    		//System.out.println("["+o.getClass().getName()+"])"+ap.getContentType()+"(");			    		
-			    		if(o instanceof String){
-			    			out.append((String)o);
-			    		}else{
-			    			 out.append("Contenuto attachments non è visualizzabile, tipo: "+o.getClass().getName());
-			    		}
-			    	}
 				}
 			}
 			

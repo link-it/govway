@@ -20,13 +20,24 @@
 
 package org.openspcoop2.message;
 
+import java.io.InputStream;
+
+import javax.mail.BodyPart;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.rest.MultipartContent;
 import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_soap_impl;
+import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.mime.MimeMultipart;
+import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.openspcoop2.utils.resources.Charset;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.w3c.dom.Element;
 
 /**
@@ -114,6 +125,40 @@ public class MessageUtils {
 					return (Element) xmlMsg.getContent(bufferMessage_readOnly, idTransazione);
 				}
 			}
+			else if(MessageType.MIME_MULTIPART.equals(msg.getMessageType())) {
+				// Prendo il primo part che corrisponde ad un xml
+				OpenSPCoop2RestMimeMultipartMessage mimeMsg = msg.castAsRestMimeMultipart();
+				if(mimeMsg.hasContent()) {
+					MultipartContent mc = mimeMsg.getContent();
+					if(mc!=null) {
+						MimeMultipart mm = mc.getMimeMultipart();
+						if(mm!=null && mm.countBodyParts()>0) {
+							for (int i = 0; i < mm.countBodyParts(); i++) {
+								try {
+									BodyPart bodyPart = mm.getBodyPart(i);
+									String contentType = bodyPart.getContentType();
+									if(contentType!=null) {
+										/*
+							  			<mediaType messageType="xml">text/xml</mediaType>
+						    			<mediaType messageType="xml">application/xml</mediaType>
+						    			<mediaType messageType="xml" regExpr="true">.*\+xml</mediaType>
+						    			*/
+										if(HttpConstants.CONTENT_TYPE_TEXT_XML.equals(contentType)
+												||
+												HttpConstants.CONTENT_TYPE_XML.equals(contentType)
+												||
+												RegularExpressionEngine.isMatch(contentType, ".*\\+xml")) {
+											InputStream is = bodyPart.getInputStream();
+											byte [] xmlBytes = Utilities.getAsByteArray(is);
+											return XMLUtils.getInstance(msg.getFactory()).newElement(xmlBytes);
+										}
+									}
+								}catch(Throwable t) {}
+							}
+						}
+					}
+				}
+			}
 			return null;
 		}
 		catch(MessageException me) {
@@ -128,6 +173,44 @@ public class MessageUtils {
 			if(MessageType.JSON.equals(msg.getMessageType())){
 				OpenSPCoop2RestJsonMessage json = msg.castAsRestJson();
 				return json.getContent(bufferMessage_readOnly, idTransazione);
+			}
+			else if(MessageType.MIME_MULTIPART.equals(msg.getMessageType())) {
+				// Prendo il primo part che corrisponde ad un json
+				OpenSPCoop2RestMimeMultipartMessage mimeMsg = msg.castAsRestMimeMultipart();
+				if(mimeMsg.hasContent()) {
+					MultipartContent mc = mimeMsg.getContent();
+					if(mc!=null) {
+						MimeMultipart mm = mc.getMimeMultipart();
+						if(mm!=null && mm.countBodyParts()>0) {
+							for (int i = 0; i < mm.countBodyParts(); i++) {
+								try {
+									BodyPart bodyPart = mm.getBodyPart(i);
+									String contentType = bodyPart.getContentType();
+									if(contentType!=null) {
+										/*
+							  			<mediaType messageType="json">text/json</mediaType>
+										<mediaType messageType="json">text/x-json</mediaType>
+						    			<mediaType messageType="json">application/json</mediaType>
+						    			<mediaType messageType="json">application/x-json</mediaType>
+						    			<mediaType messageType="json" regExpr="true">.*\+json</mediaType>
+						    			*/
+										if(HttpConstants.CONTENT_TYPE_JSON.equals(contentType)
+												||
+												RegularExpressionEngine.isMatch(contentType, ".*/json|.*/x-json|.*\\+json")) {
+											InputStream is = bodyPart.getInputStream();
+											byte [] jsonBytes = Utilities.getAsByteArray(is);
+											String charset = ContentTypeUtilities.readCharsetFromContentType(contentType);
+											if(charset==null) {
+												charset = Charset.UTF_8.getValue();
+											}
+											return new String(jsonBytes,charset);
+										}
+									}
+								}catch(Throwable t) {}
+							}
+						}
+					}
+				}
 			}
 			return null;
 		}

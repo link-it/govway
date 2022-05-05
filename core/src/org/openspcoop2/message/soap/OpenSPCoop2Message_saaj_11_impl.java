@@ -103,7 +103,7 @@ public class OpenSPCoop2Message_saaj_11_impl extends AbstractOpenSPCoop2Message_
 		try {
 			String ct = getMessage1_1_FIX_Impl().getContentType();
 			ContentType cType = new ContentType(ct);
-			if(cType.getBaseType().equalsIgnoreCase(HttpConstants.CONTENT_TYPE_MULTIPART)) {
+			if(cType.getBaseType().equalsIgnoreCase(HttpConstants.CONTENT_TYPE_MULTIPART_RELATED)) {
 				if(getMessage1_1_FIX_Impl().getMimeMultipart() != null)
 					cType.setParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_BOUNDARY, 
 							getMessage1_1_FIX_Impl().getMimeMultipart().getContentType().getParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_BOUNDARY));

@@ -116,6 +116,8 @@ public class HttpConstants {
 	/** Download */
 	public final static String CONTENT_DISPOSITION = "Content-Disposition";
 	public final static String CONTENT_DISPOSITION_ATTACH_FILE_PREFIX = "attachment; filename=";
+	public final static String CONTENT_DISPOSITION_NAME_PREFIX = "name=";
+	public final static String CONTENT_DISPOSITION_FILENAME_PREFIX = "filename=";
 	
 	/** Cache */
 	public final static String CACHE_STATUS_DIRECTIVE_NO_CACHE = "no-cache";
@@ -188,16 +190,21 @@ public class HttpConstants {
 	public final static String CONTENT_TYPE_MULTIPART_ALTERNATIVE_SUBTYPE = "alternative";
 	public final static String CONTENT_TYPE_MULTIPART_MIXED_SUBTYPE = "mixed";
 	public final static String CONTENT_TYPE_MULTIPART_RELATED_SUBTYPE = "related";
+	public final static String CONTENT_TYPE_MULTIPART_FORM_DATA_SUBTYPE = "form-data";
 	
 	public final static String CONTENT_TYPE_MULTIPART_ALTERNATIVE = CONTENT_TYPE_MULTIPART_TYPE+"/"+CONTENT_TYPE_MULTIPART_ALTERNATIVE_SUBTYPE;
 	public final static String CONTENT_TYPE_MULTIPART_MIXED = CONTENT_TYPE_MULTIPART_TYPE+"/"+CONTENT_TYPE_MULTIPART_MIXED_SUBTYPE;
 	public final static String CONTENT_TYPE_MULTIPART_RELATED = CONTENT_TYPE_MULTIPART_TYPE+"/"+CONTENT_TYPE_MULTIPART_RELATED_SUBTYPE;
+	public final static String CONTENT_TYPE_MULTIPART_FORM_DATA = CONTENT_TYPE_MULTIPART_TYPE+"/"+CONTENT_TYPE_MULTIPART_FORM_DATA_SUBTYPE;
 	
+	@Deprecated
 	public final static String CONTENT_TYPE_MULTIPART = CONTENT_TYPE_MULTIPART_RELATED;
+	
 	public final static String CONTENT_TYPE_MULTIPART_PARAMETER_BOUNDARY = "boundary";
 	public final static String CONTENT_TYPE_MULTIPART_PARAMETER_TYPE = "type";
 	public final static String CONTENT_TYPE_MULTIPART_PARAMETER_START = "start";
 	public final static String CONTENT_TYPE_MULTIPART_PARAMETER_START_INFO = "start-info";
+	public final static String CONTENT_TYPE_MULTIPART_PARAMETER_FORM_DATA = "form-data";
 	
 	/** Source */
     public final static String SEPARATOR_SOURCE = ":";

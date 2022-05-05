@@ -286,6 +286,7 @@ public class ContentTypeUtilities {
 		}
 	}
 	
+	@Deprecated
 	public static boolean isMultipart(String cType) throws UtilsException {
 		return isMultipartRelated(cType);
 	}
@@ -298,11 +299,28 @@ public class ContentTypeUtilities {
 	public static boolean isMultipartAlternative(String cType) throws UtilsException {
 		return _isMultipart(cType, HttpConstants.CONTENT_TYPE_MULTIPART_ALTERNATIVE);
 	}
+	public static boolean isMultipartFormData(String cType) throws UtilsException {
+		return _isMultipart(cType, HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA);
+	}
 	private static boolean _isMultipart(String cType, String expected) throws UtilsException {
 		try{
 			ContentType contentType = new ContentType(cType);
 			String baseType = contentType.getBaseType().toLowerCase(); 
 			if(baseType!=null && baseType.equals(expected)){
+				return true;
+			}
+			return false;
+			
+		} catch (Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
+	public static boolean isMultipartContentType(String cType) throws UtilsException {
+		try{
+			ContentType contentType = new ContentType(cType);
+			String baseType = contentType.getBaseType().toLowerCase(); 
+			if(baseType!=null && baseType.startsWith( (HttpConstants.CONTENT_TYPE_MULTIPART_TYPE+"/")) ){
 				return true;
 			}
 			return false;
@@ -320,7 +338,7 @@ public class ContentTypeUtilities {
 			if(baseType == null)
 				internalContentType = null;
 			boolean mtom = false;
-			if(baseType.equals(HttpConstants.CONTENT_TYPE_MULTIPART)){
+			if(baseType.equals(HttpConstants.CONTENT_TYPE_MULTIPART_RELATED)){
 				String typeParam = contentType.getParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_TYPE); 
 				if (typeParam != null) {
 					internalContentType = typeParam.toLowerCase();
@@ -343,14 +361,28 @@ public class ContentTypeUtilities {
 		}
 	}
 	
+	@Deprecated
 	public static String buildMultipartContentType(byte [] message, String type) throws UtilsException{
+		return buildMultipartRelatedContentType(message, type);
+	}
+	public static String buildMultipartRelatedContentType(byte [] message, String type) throws UtilsException{
+		return buildMultipartContentType(HttpConstants.CONTENT_TYPE_MULTIPART_RELATED_SUBTYPE, message, type);
+	}
+	public static String buildMultipartContentType(String subtype, byte [] message, String type) throws UtilsException{
 		if(MultipartUtils.messageWithAttachment(message)){
 			String IDfirst  = MultipartUtils.firstContentID(message);
-			return buildMultipartContentType(message, type, IDfirst);
+			return buildMultipartContentType(subtype, message, type, IDfirst);
 		}
 		throw new UtilsException("Messaggio non contiene una struttura mime");
 	}
+	@Deprecated
 	public static String buildMultipartContentType(byte [] message, String type, String ID) throws UtilsException{
+		return buildMultipartRelatedContentType(message, type, ID);
+	}
+	public static String buildMultipartRelatedContentType(byte [] message, String type, String ID) throws UtilsException{
+		return buildMultipartContentType(HttpConstants.CONTENT_TYPE_MULTIPART_RELATED_SUBTYPE, message, type, ID);
+	}
+	public static String buildMultipartContentType(String subtype, byte [] message, String type, String ID) throws UtilsException{
 		if(MultipartUtils.messageWithAttachment(message)){
 						
 			String boundary = MultipartUtils.findBoundary(message);
@@ -358,7 +390,7 @@ public class ContentTypeUtilities {
 				throw new UtilsException("Errore avvenuto durante la lettura del boundary associato al multipart message.");
 			}
 			StringBuilder bf = new StringBuilder();
-			bf.append(HttpConstants.CONTENT_TYPE_MULTIPART);
+			bf.append(HttpConstants.CONTENT_TYPE_MULTIPART_TYPE+"/"+subtype);
 			if(type!=null){
 				bf.append("; ").append(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_TYPE).append("=\"").append(type).append("\"");
 			}
@@ -385,10 +417,10 @@ public class ContentTypeUtilities {
 			if(baseType == null)
 				soapContentType = null;
 			boolean mtom = false;
-			if(baseType.equals(HttpConstants.CONTENT_TYPE_MULTIPART)){
+			if(baseType.equals(HttpConstants.CONTENT_TYPE_MULTIPART_RELATED)){
 				String typeParam = contentType.getParameter(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_TYPE); 
 				if (typeParam == null) {
-					throw new SOAPException("Missing '"+HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_TYPE+"' parameter in "+HttpConstants.CONTENT_TYPE_MULTIPART);
+					throw new SOAPException("Missing '"+HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_TYPE+"' parameter in "+HttpConstants.CONTENT_TYPE_MULTIPART_RELATED);
 				} else {
 					soapContentType = typeParam.toLowerCase();
 					if(HttpConstants.CONTENT_TYPE_APPLICATION_XOP_XML.equals(soapContentType)){
@@ -424,9 +456,9 @@ public class ContentTypeUtilities {
 			if(contentType.getBaseType()==null){
 				throw new UtilsException("ContentType.baseType non definito");
 			}
-			if(HttpConstants.CONTENT_TYPE_MULTIPART.equals(contentType.getBaseType().toLowerCase())==false){
+			if(HttpConstants.CONTENT_TYPE_MULTIPART_RELATED.equals(contentType.getBaseType().toLowerCase())==false){
 				throw new UtilsException("ContentType.baseType ["+contentType.getBaseType()+
-						"] differente da quello atteso per un messaggio MTOM/XOP ["+HttpConstants.CONTENT_TYPE_MULTIPART+"]");
+						"] differente da quello atteso per un messaggio MTOM/XOP ["+HttpConstants.CONTENT_TYPE_MULTIPART_RELATED+"]");
 			}
 			if(contentType.getParameterList()==null || contentType.getParameterList().size()<=0){
 				throw new UtilsException("ContentType non conforme a quanto definito nella specifica MTOM/XOP (non sono presenti parametri)");

@@ -328,6 +328,8 @@
     			<mediaType messageType="json">application/x-json</mediaType>
     			<mediaType messageType="json" regExpr="true">.*\+json</mediaType>
     			<mediaType messageType="mimeMultipart" regExpr="true">multipart\/related*</mediaType>
+    			<!-- https://swagger.io/docs/specification/describing-request-body/multipart-requests/ -->
+    			<mediaType messageType="mimeMultipart" regExpr="true">multipart\/(form-data|mixed)+</mediaType>
     			<!-- rfc1341: mixed|alternative|digest|parallel -->
     			<mediaType messageType="mimeMultipart" regExpr="true">multipart\/(related|mixed|alternative|digest|parallel)+</mediaType>
     			<!-- rfc2616: byteranges -->

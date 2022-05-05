@@ -673,7 +673,7 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 		else {
 			String ct = this.getContentType();
 			try {
-				return ct!=null && ContentTypeUtilities.isMultipart(ct);
+				return ct!=null && ContentTypeUtilities.isMultipartRelated(ct);
 			}catch(Exception e) {
 				throw new MessageException(e.getMessage(),e);
 			}

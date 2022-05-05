@@ -39,6 +39,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.rest.MultipartContent;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -987,31 +988,34 @@ public class Tracciamento {
 				else if(MessageType.MIME_MULTIPART.equals(msg.getMessageType())){
 					// per motivi di streaming, se non e' costruito non lo tracciamo
 					if(msg.isContentBuilded()){
-						MimeMultipart mime = msg.castAsRestMimeMultipart().getContent();
-						if(mime!=null){
-							for (int i = 0; i < mime.countBodyParts(); i++) {
-								BodyPart bodyPart = mime.getBodyPart(i);
-								String contentId = mime.getContentID(bodyPart);
-								if(contentId==null){
-									// provo a vedere se c'e' un disposition
-									contentId = mime.getContentDisposition(bodyPart);
-								}
-								
-								Allegato allegato = new Allegato();
-						    	allegato.setContentId(contentId);
-						    	allegato.setContentLocation(mime.getContentLocation(bodyPart));
-						    	allegato.setContentType(bodyPart.getContentType());
-						    	
-						    	if(securityInfo!=null && contentId!=null){
-							    	for (int j = 0; j < securityInfo.sizeListaAllegati(); j++) {
-										Allegato a = securityInfo.getAllegato(j);
-										if(a.getContentId()!=null && a.getContentId().equals(contentId)){
-											allegato.setDigest(a.getDigest());
-										}
+						MultipartContent mc = msg.castAsRestMimeMultipart().getContent();
+						if(mc!=null) {
+							MimeMultipart mime = mc.getMimeMultipart();
+							if(mime!=null) {
+								for (int i = 0; i < mime.countBodyParts(); i++) {
+									BodyPart bodyPart = mime.getBodyPart(i);
+									String contentId = mime.getContentID(bodyPart);
+									if(contentId==null){
+										// provo a vedere se c'e' un disposition
+										contentId = mime.getContentDisposition(bodyPart);
 									}
-						    	}
-						    	
-						    	traccia.addAllegato(allegato);
+									
+									Allegato allegato = new Allegato();
+							    	allegato.setContentId(contentId);
+							    	allegato.setContentLocation(mime.getContentLocation(bodyPart));
+							    	allegato.setContentType(bodyPart.getContentType());
+							    	
+							    	if(securityInfo!=null && contentId!=null){
+								    	for (int j = 0; j < securityInfo.sizeListaAllegati(); j++) {
+											Allegato a = securityInfo.getAllegato(j);
+											if(a.getContentId()!=null && a.getContentId().equals(contentId)){
+												allegato.setDigest(a.getDigest());
+											}
+										}
+							    	}
+							    	
+							    	traccia.addAllegato(allegato);
+								}
 							}
 						}
 					}

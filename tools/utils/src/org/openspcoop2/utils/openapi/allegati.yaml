@@ -35,7 +35,9 @@ tags:
   - name: nullable
     description: test su nullable serialization 
   - name: discriminator
-    description: test su discriminator  
+    description: test su discriminator 
+  - name: multipart
+    description: test su multipart  
     
 paths:
           
@@ -1126,7 +1128,699 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pet5'
-                                    
+               
+  /documenti/multipart/form-data/strict:
+    post:
+      tags:
+        - multipart
+      description: Esempio di invio documenti (multipart) con content-type multipart/form-data
+      operationId: SendDocumentMultipartFormDataStrict
+      requestBody:
+        content:
+          multipart/form-data: # Media type
+            schema:            # Request payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: aapplication/zip, application/pdf
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/form-data: # Media type
+            schema:            # Response payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: application/zip, application/pdf
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/multipart/mixed/strict:
+    post:
+      tags:
+        - multipart
+      description: Esempio di invio documenti (multipart) con content-type multipart/mixed
+      operationId: SendDocumentMultipartMixedStrict
+      requestBody:
+        content:
+          multipart/mixed: # Media type
+            schema:            # Request payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  type: object
+                  required:
+                     - altro
+                     - pet
+                  properties:
+                    altro:
+                      type: string
+                    pet:
+                      type: object
+                      oneOf:
+                                    - $ref: '#/components/schemas/Dog2'
+                                    - $ref: '#/components/schemas/Cat2'
+                      discriminator:
+                                    propertyName: pet_type
+                                    mapping:
+                                      'Dog': '#/components/schemas/Dog2'
+                                      'Cat': '#/components/schemas/Cat2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: application/zip, application/pdf
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/mixed: # Media type
+            schema:            # Response payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  type: object
+                  required:
+                     - altro
+                     - pet
+                  properties:
+                    altro:
+                      type: string
+                    pet:
+                      type: object
+                      oneOf:
+                                    - $ref: '#/components/schemas/Dog2'
+                                    - $ref: '#/components/schemas/Cat2'
+                      discriminator:
+                                    propertyName: pet_type
+                                    mapping:
+                                      'Dog': '#/components/schemas/Dog2'
+                                      'Cat': '#/components/schemas/Cat2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: application/zip, application/pdf
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/multipart/form-data-and-mixed/strict:
+    post:
+      tags:
+        - multipart
+      description: Esempio di invio documenti (multipart) con content-type multipart/form-data
+      operationId: SendDocumentMultipartFormDataStrict
+      requestBody:
+        content:
+          multipart/form-data: # Media type
+            schema:            # Request payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: aapplication/zip, application/pdf
+          multipart/mixed: # Media type
+            schema:            # Request payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/form-data: # Media type
+            schema:            # Response payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: application/zip, application/pdf
+           multipart/mixed: # Media type
+            schema:            # Response payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/multipart/form-data/optionalWithoutEncoding:
+    post:
+      tags:
+        - multipart
+      description: Esempio di invio documenti (multipart) con content-type multipart/form-data (non sono definiti required gli elementi), non è presente additionalProperties=false, e non è definito l'encoding
+      operationId: SendDocumentMultipartFormDataOptional
+      requestBody:
+        content:
+          multipart/form-data: # Media type
+            schema:            # Request payload
+              type: object
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/form-data: # Media type
+            schema:            # Response payload
+              type: object
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/multipart/mixed/optionalWithoutEncoding:
+    post:
+      tags:
+        - multipart
+      description: Esempio di invio documenti (multipart) con content-type multipart/mixed (non sono definiti required gli elementi), non è presente additionalProperties=false, e non è definito l'encoding
+      operationId: SendDocumentMultipartMixedOptional
+      requestBody:
+        content:
+          multipart/mixed: # Media type
+            schema:            # Request payload
+              type: object
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  type: object
+                  required:
+                     - altro
+                     - pet
+                  properties:
+                    altro:
+                      type: string
+                    pet:
+                      type: object
+                      oneOf:
+                                    - $ref: '#/components/schemas/Dog2'
+                                    - $ref: '#/components/schemas/Cat2'
+                      discriminator:
+                                    propertyName: pet_type
+                                    mapping:
+                                      'Dog': '#/components/schemas/Dog2'
+                                      'Cat': '#/components/schemas/Cat2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/mixed: # Media type
+            schema:            # Response payload
+              type: object
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  type: object
+                  required:
+                     - altro
+                     - pet
+                  properties:
+                    altro:
+                      type: string
+                    pet:
+                      type: object
+                      oneOf:
+                                    - $ref: '#/components/schemas/Dog2'
+                                    - $ref: '#/components/schemas/Cat2'
+                      discriminator:
+                                    propertyName: pet_type
+                                    mapping:
+                                      'Dog': '#/components/schemas/Dog2'
+                                      'Cat': '#/components/schemas/Cat2'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+              
+  /documenti/multipart/form-data/array-binary:
+    post:
+      tags:
+        - multipart
+      description: Esempio di invio documenti (multipart) con content-type multipart/form-data un array di elementi
+      operationId: SendDocumentMultipartFormDataArrayBinary
+      requestBody:
+        content:
+          multipart/form-data: # Media type
+            schema:            # Request payload
+              type: object
+              properties:
+                archivi:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+            encoding: # The same level as schema
+              archivi: 
+                contentType: application/pdf
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/form-data: # Media type
+            schema:            # Response payload
+              type: object
+              properties:
+                archivi:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/DocBinary'
+            encoding: # The same level as schema
+              archivi: 
+                contentType: application/pdf
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'             
+        
+
+  /documenti/multipart/mixed/array-binary:
+    post:
+      tags:
+        - multipart
+      description: Esempio di invio documenti (multipart) con content-type multipart/midex e un array di elementi
+      operationId: SendDocumentMultipartMixedArrayBinary
+      requestBody:
+        content:
+          multipart/mixed: # Media type
+            schema:            # Request payload
+              $ref: '#/components/schemas/ArrayBinaryRequest'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/mixed: # Media type
+            schema:            # Response payload
+              type: object
+              properties:
+                archivi:
+                  $ref: '#/components/schemas/ArrayDocBinary'
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/multipart/form-data/array-json:
+    post:
+      tags:
+        - multipart
+      description: Esempio di invio documenti (multipart) con content-type multipart/form-data un array di elementi json
+      operationId: SendDocumentMultipartFormDataArrayJson
+      requestBody:
+        content:
+          multipart/form-data: # Media type
+            schema:            # Request payload
+              type: object
+              properties:
+                archivi:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Pet2'
+            encoding: # The same level as schema
+              archivi: 
+                contentType: application/json
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/form-data: # Media type
+            schema:            # Response payload
+              type: object
+              properties:
+                archivi:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/DocJson'
+            encoding: # The same level as schema
+              archivi: 
+                contentType: application/json
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'             
+        
+
+  /documenti/multipart/mixed/array-json:
+    post:
+      tags:
+        - multipart
+      description: Esempio di invio documenti (multipart) con content-type multipart/midex e un array di elementi json
+      operationId: SendDocumentMultipartMixedArrayJson
+      requestBody:
+        content:
+          multipart/mixed: # Media type
+            schema:            # Request payload
+              $ref: '#/components/schemas/ArrayJsonRequest'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/mixed: # Media type
+            schema:            # Response payload
+              type: object
+              properties:
+                archivi:
+                  $ref: '#/components/schemas/ArrayDocJson'
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
 components:
 
   parameters:
@@ -2089,6 +2783,42 @@ components:
         age:
           type: integer
       additionalProperties: false
+
+    ArrayBinaryRequest:
+       type: object
+       properties:
+          archivi:
+             type: array
+             items:
+               type: string
+               format: binary
+
+    ArrayDocBinary:
+       type: array
+       items:
+          type: string
+          format: binary
+
+    DocBinary:
+       type: string
+       format: binary
+
+
+    ArrayJsonRequest:
+       type: object
+       properties:
+          archivi:
+             type: array
+             items:
+               $ref: '#/components/schemas/Pet2'
+
+    ArrayDocJson:
+       type: array
+       items:
+          $ref: '#/components/schemas/Pet2'
+
+    DocJson:
+       $ref: '#/components/schemas/Pet2'
 
 
     ProblemInLineOriginaleTeamDigitale:

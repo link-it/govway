@@ -78,6 +78,7 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.dch.InputStreamDataSource;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
+import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.transport.TransportRequestContext;
@@ -747,65 +748,68 @@ public class AS4Imbustamento {
 		if(MessageType.MIME_MULTIPART.equals(restMessage.getMessageType())){
 					
 			OpenSPCoop2RestMimeMultipartMessage msgMime = restMessage.castAsRestMimeMultipart();
+			MimeMultipart mimeMultipart = msgMime.getContent()!=null ? msgMime.getContent().getMimeMultipart() : null;
+			if(mimeMultipart!=null) {
 			
-			countAttach = msgMime.getContent().countBodyParts();
-			
-			int index = 1;
-			for (int i = 0; i < countAttach; i++) {
-				BodyPart bodyPart = msgMime.getContent().getBodyPart(i);
+				countAttach = mimeMultipart.countBodyParts();
 				
-				if(payloadConfig.size()<(i+1)) {
-					throw new ProtocolException("Attachment-"+index+" non previsto in payload profile '"+payloadProfile+"'");
+				int index = 1;
+				for (int i = 0; i < countAttach; i++) {
+					BodyPart bodyPart = mimeMultipart.getBodyPart(i);
+					
+					if(payloadConfig.size()<(i+1)) {
+						throw new ProtocolException("Attachment-"+index+" non previsto in payload profile '"+payloadProfile+"'");
+					}
+					Payload payload = payloadConfig.get(i);
+	
+					String contentID = mimeMultipart.getContentID(bodyPart);
+					if(contentID==null){
+						throw new ProtocolException("BodyPart without ContentID");
+					}
+					
+					String contentIDforHRef = contentID; 
+					if(contentIDforHRef.startsWith("<")){
+						contentIDforHRef = contentIDforHRef.substring(1);
+					}
+					if(contentIDforHRef.endsWith(">")){
+						contentIDforHRef = contentIDforHRef.substring(0,contentIDforHRef.length()-1);
+					}
+					
+					//String partInfoCid = "cid:attach"+(index++);
+					String partInfoCid = payload.getCid();
+					String cid = "cid:"+contentIDforHRef;
+					mapIdPartInfoToIdAttach.put(partInfoCid, cid);
+					
+					String contentType = bodyPart.getContentType();
+					if(contentType==null){
+						throw new ProtocolException("BodyPart without ContentType");
+					}
+					String contentTypeUtilizzato = payload.getMimeType();
+					if(contentTypeUtilizzato==null) {
+						contentTypeUtilizzato = ContentTypeUtilities.readBaseTypeFromContentType(contentType);
+					}
+					
+					AttachmentPart ap = as4Message.createAttachmentPart(bodyPart.getDataHandler());
+					ap.setContentId(contentID);
+					as4Message.addAttachmentPart(ap);
+					
+					PartInfo pInfo = new PartInfo();
+					pInfo.setHref(partInfoCid);
+					PartProperties partProperties = new PartProperties();
+					Property property = new Property();
+					property.setName(AS4Costanti.AS4_USER_MESSAGE_PAYLOAD_INFO_PROPERTIES_MIME_TYPE);
+					property.setBase(contentTypeUtilizzato);
+					partProperties.addProperty(property);
+					pInfo.setPartProperties(partProperties);
+					payloadInfo.addPartInfo(pInfo);
+					
+					LargePayloadType pBodyInfo = new LargePayloadType();
+					pBodyInfo.setPayloadId(partInfoCid);
+					pBodyInfo.setContentType(contentTypeUtilizzato);
+					submitRequest.addPayload(pBodyInfo);
+					
+					index++;
 				}
-				Payload payload = payloadConfig.get(i);
-
-				String contentID = msgMime.getContent().getContentID(bodyPart);
-				if(contentID==null){
-					throw new ProtocolException("BodyPart without ContentID");
-				}
-				
-				String contentIDforHRef = contentID; 
-				if(contentIDforHRef.startsWith("<")){
-					contentIDforHRef = contentIDforHRef.substring(1);
-				}
-				if(contentIDforHRef.endsWith(">")){
-					contentIDforHRef = contentIDforHRef.substring(0,contentIDforHRef.length()-1);
-				}
-				
-				//String partInfoCid = "cid:attach"+(index++);
-				String partInfoCid = payload.getCid();
-				String cid = "cid:"+contentIDforHRef;
-				mapIdPartInfoToIdAttach.put(partInfoCid, cid);
-				
-				String contentType = bodyPart.getContentType();
-				if(contentType==null){
-					throw new ProtocolException("BodyPart without ContentType");
-				}
-				String contentTypeUtilizzato = payload.getMimeType();
-				if(contentTypeUtilizzato==null) {
-					contentTypeUtilizzato = ContentTypeUtilities.readBaseTypeFromContentType(contentType);
-				}
-				
-				AttachmentPart ap = as4Message.createAttachmentPart(bodyPart.getDataHandler());
-				ap.setContentId(contentID);
-				as4Message.addAttachmentPart(ap);
-				
-				PartInfo pInfo = new PartInfo();
-				pInfo.setHref(partInfoCid);
-				PartProperties partProperties = new PartProperties();
-				Property property = new Property();
-				property.setName(AS4Costanti.AS4_USER_MESSAGE_PAYLOAD_INFO_PROPERTIES_MIME_TYPE);
-				property.setBase(contentTypeUtilizzato);
-				partProperties.addProperty(property);
-				pInfo.setPartProperties(partProperties);
-				payloadInfo.addPartInfo(pInfo);
-				
-				LargePayloadType pBodyInfo = new LargePayloadType();
-				pBodyInfo.setPayloadId(partInfoCid);
-				pBodyInfo.setContentType(contentTypeUtilizzato);
-				submitRequest.addPayload(pBodyInfo);
-				
-				index++;
 			}
 			
 		}

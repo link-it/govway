@@ -720,7 +720,7 @@ public class TestOptimizedHeader {
 		if(fileName.startsWith("requestSOAPMultipartRelatedMIMEpdf")) {
 			String ctMultipartRefreshed = null;
 			String ct = MessageType.SOAP_11.equals(messageType) ? HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
-			ctMultipartRefreshed = ContentTypeUtilities.buildMultipartContentType(resource, ct, ID_SOAP_ENVELOPE_MULTIPART);
+			ctMultipartRefreshed = ContentTypeUtilities.buildMultipartRelatedContentType(resource, ct, ID_SOAP_ENVELOPE_MULTIPART);
 			list.add(ctMultipartRefreshed);
 		}
 		else {
@@ -2331,10 +2331,10 @@ public class TestOptimizedHeader {
 			String ctMultipartRefreshed = null;
 			String ct = MessageType.SOAP_11.equals(messageType) ? HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
 			if(fileName.startsWith("requestSOAPMultipartRelatedMIMEpdf")) {
-				ctMultipartRefreshed = ContentTypeUtilities.buildMultipartContentType(b, ct, ID_SOAP_ENVELOPE_MULTIPART);
+				ctMultipartRefreshed = ContentTypeUtilities.buildMultipartRelatedContentType(b, ct, ID_SOAP_ENVELOPE_MULTIPART);
 			}
 			else {
-				ctMultipartRefreshed = ContentTypeUtilities.buildMultipartContentType(b, ct);
+				ctMultipartRefreshed = ContentTypeUtilities.buildMultipartRelatedContentType(b, ct);
 			}
 			//System.out.println("CT ["+ct+"] ["+f.getAbsolutePath()+"]");
 			//System.out.println("CT ["+ctMultipartRefreshed+"]");

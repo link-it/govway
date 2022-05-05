@@ -48,19 +48,29 @@ import org.slf4j.Logger;
 public class DumpMessaggioUtils {
 
 
-	public static DumpMessaggio getFromBytes(byte[] content, String contentType) throws Exception {
-		if(ContentTypeUtilities.isMultipart(contentType)) {
+	public static DumpMessaggio getFromBytes(byte[] content, String contentType, String formato) throws Exception {
+		if(ContentTypeUtilities.isMultipartContentType(contentType)) {
 
 			//			MessageType messageType = MessageType.SOAP_11;
 			// test
 			MessageType messageType = null;
+			if(formato!=null) {
+				try {
+					messageType = MessageType.valueOf(formato.toUpperCase());
+				}catch(Throwable t) {}
+			}
 			if(messageType==null) {
-				String contentTypeInternal = ContentTypeUtilities.getInternalMultipartContentType(contentType);
-				if(HttpConstants.CONTENT_TYPE_SOAP_1_1.equalsIgnoreCase(contentTypeInternal) || contentTypeInternal.toLowerCase().startsWith(HttpConstants.CONTENT_TYPE_SOAP_1_1)) {
-					messageType = MessageType.SOAP_11;
-				}
-				else if(HttpConstants.CONTENT_TYPE_SOAP_1_2.equalsIgnoreCase(contentTypeInternal) || contentTypeInternal.toLowerCase().startsWith(HttpConstants.CONTENT_TYPE_SOAP_1_2)) {
-					messageType = MessageType.SOAP_12;
+				if(ContentTypeUtilities.isMultipartRelated(contentType)) {
+					String contentTypeInternal = ContentTypeUtilities.getInternalMultipartContentType(contentType);
+					if(HttpConstants.CONTENT_TYPE_SOAP_1_1.equalsIgnoreCase(contentTypeInternal) || contentTypeInternal.toLowerCase().startsWith(HttpConstants.CONTENT_TYPE_SOAP_1_1)) {
+						messageType = MessageType.SOAP_11;
+					}
+					else if(HttpConstants.CONTENT_TYPE_SOAP_1_2.equalsIgnoreCase(contentTypeInternal) || contentTypeInternal.toLowerCase().startsWith(HttpConstants.CONTENT_TYPE_SOAP_1_2)) {
+						messageType = MessageType.SOAP_12;
+					}
+					else {
+						messageType = MessageType.SOAP_12; // cmq è soap12
+					}
 				}
 				else {
 					messageType = MessageType.MIME_MULTIPART;

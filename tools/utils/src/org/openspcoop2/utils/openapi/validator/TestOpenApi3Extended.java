@@ -20,6 +20,7 @@
 
 
 package org.openspcoop2.utils.openapi.validator;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -34,6 +35,8 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiReaderConfig;
@@ -44,6 +47,7 @@ import org.openspcoop2.utils.rest.ValidatorException;
 import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.rest.api.ApiSchema;
 import org.openspcoop2.utils.rest.api.ApiSchemaType;
+import org.openspcoop2.utils.rest.entity.BinaryHttpRequestEntity;
 import org.openspcoop2.utils.rest.entity.BinaryHttpResponseEntity;
 import org.openspcoop2.utils.rest.entity.DocumentHttpResponseEntity;
 import org.openspcoop2.utils.rest.entity.ElementHttpResponseEntity;
@@ -3377,10 +3381,22 @@ public class TestOpenApi3Extended {
 		
 		System.out.println("Test #23 validazione contenuto base64 ...");
 		
-		if (openAPILibrary == OpenAPILibrary.swagger_request_validator)  {
-			testBase64Validation(openAPILibrary, mergeSpec, apiValidatorOpenApi);
+		if (openAPILibrary == OpenAPILibrary.openapi4j || openAPILibrary == OpenAPILibrary.swagger_request_validator)  {
+			boolean oldValue = false;
+			try {
+				if (openAPILibrary == OpenAPILibrary.openapi4j) {
+					// per default è disabilitata
+					oldValue = org.openapi4j.schema.validator.v3.ValidationOptions.VALIDATE_BASE64_VALUES;
+					org.openapi4j.schema.validator.v3.ValidationOptions.VALIDATE_BASE64_VALUES=true;
+				}
+				testBase64Validation(openAPILibrary, mergeSpec, apiValidatorOpenApi);
+			}finally {
+				if (openAPILibrary == OpenAPILibrary.openapi4j) {
+					org.openapi4j.schema.validator.v3.ValidationOptions.VALIDATE_BASE64_VALUES=oldValue;
+				}
+			}
 		} else {
-			System.out.println("Skippo Test validazione file upload in base64 per libreria differente da swagger_request_validator");
+			System.out.println("Skippo Test validazione file upload in base64 per libreria differente da swagger_request_validator e openapi4j");
 		}
 		
 		System.out.println("Test #23 validazione contenuto base64 completato\n\n");
@@ -3395,6 +3411,28 @@ public class TestOpenApi3Extended {
 		testMergeKey(openAPILibrary, mergeSpec);
 		
 		System.out.println("Test #24 openapi che usano testMergeKey completato\n\n");
+		
+		
+		
+		// ** Test per validazione con openapi che usano multipart request ... **
+		
+		System.out.println("Test #25 openapi che usano multipart request ...");
+		
+		if (openAPILibrary == OpenAPILibrary.openapi4j)  {
+		
+			testMultipartRequest(openAPILibrary, mergeSpec);
+			
+			testMultipartRequestAsArray(openAPILibrary, mergeSpec);
+			
+		}
+		else {
+			
+			System.out.println("Skippo Test multipart request per libreria differente da openapi4j");
+			
+			// swagger request: https://bitbucket.org/atlassian/swagger-request-validator/issues/149/v20-add-support-for-multipart-form-data
+			
+		}
+		System.out.println("Test #25 openapi che usano multipart request completato\n\n");
 		
 		
 	}
@@ -3667,7 +3705,13 @@ public class TestOpenApi3Extended {
 			invalidRequest.setHeaders(parametersTrasporto);
 			invalidRequest.setContentType(HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
 	
-			String erroreAttesoRichiesta = "[ERROR] [REQUEST] err.format.base64.badLength, should be multiple of 4: 7"; 
+			String erroreAttesoRichiesta = null;
+			if (openAPILibrary == OpenAPILibrary.openapi4j)  {
+				erroreAttesoRichiesta = "body: Value '{ asper' does not match format 'base64'. (code: 1007)";
+			}
+			else if (openAPILibrary == OpenAPILibrary.swagger_request_validator) {
+				erroreAttesoRichiesta = "[ERROR] [REQUEST] err.format.base64.badLength, should be multiple of 4: 7";
+			}
 			try {				
 				validator.validate(invalidRequest);
 				throw new Exception("Errore atteso '"+erroreAttesoRichiesta+"' non rilevato");			
@@ -3709,7 +3753,13 @@ public class TestOpenApi3Extended {
 			invalidResponse.setContentType(HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
 			invalidResponse.setHeaders(parametersTrasporto);
 	
-			String erroreAttesoRisposta = "[ERROR] [RESPONSE] err.format.base64.badLength, should be multiple of 4: 7"; 
+			String erroreAttesoRisposta = null;
+			if (openAPILibrary == OpenAPILibrary.openapi4j)  {
+				erroreAttesoRisposta = "body: Value '{ asper' does not match format 'base64'. (code: 1007)";
+			}
+			else if (openAPILibrary == OpenAPILibrary.swagger_request_validator) {
+				erroreAttesoRisposta = "[ERROR] [RESPONSE] err.format.base64.badLength, should be multiple of 4: 7";
+			}
 			try {				
 				validator.validate(invalidResponse);
 				throw new Exception("Errore atteso '"+erroreAttesoRisposta+"' non rilevato");			
@@ -3838,6 +3888,1070 @@ public class TestOpenApi3Extended {
 		System.out.println("Test Risposta Superato!");
 		
 		System.out.println("TEST OpenAPI YAML con mergeKey completato!");
+
+	}
+	
+	private static void testMultipartRequest(OpenAPILibrary openAPILibrary, boolean mergeSpec)
+			throws UtilsException, ProcessingException, URISyntaxException, Exception {
+		System.out.println("#### Verifica Multipart Request ####");
+		
+		URL url = TestOpenApi3Extended.class.getResource("/org/openspcoop2/utils/openapi/allegati.yaml");
+					
+		ApiSchema apiSchemaYaml = new ApiSchema("teamdigitale-openapi_definitions.yaml", 
+				Utilities.getAsByteArray(TestOpenApi3Extended.class.getResourceAsStream("/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml")), ApiSchemaType.YAML);
+					
+		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
+		configOpenApi4j.setProcessInclude(false);
+		apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi4j, apiSchemaYaml);
+		
+		Api apiOpenApi4j = apiReaderOpenApi4j.read();
+								
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
+		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
+		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
+		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
+		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi4j, configO);
+
+		String cat = "{\"pet_type\": \"Cat\",  \"age\": 3}";
+		String dog1 = "{\"pet_type\": \"Dog\",  \"bark\": false,  \"breed\": \"Dingo\" }";
+		String dog2 = "{\"pet_type\": \"Dog\",  \"bark\": true }";
+		String contenuto_cat = "{\"altro\":\"descrizione generica\", \"pet\":"+cat+"}";
+		String contenuto_dog1 = "{\"altro\":\"descrizione generica\", \"pet\":"+dog1+"}";
+		String contenuto_dog2 = "{\"altro\":\"descrizione generica\", \"pet\":"+dog2+"}";
+		String contenuto_errato1 = "{\"altroErrore\":\"descrizione generica\", \"pet\":"+dog2+"}";
+		String contenuto_errato2 = "{\"pet\":"+dog2+"}";
+		String catErrato = "{\"pet_type\": \"CatErrato\",  \"age\": 3}";
+		String contenuto_errato3 = "{\"altro\":\"descrizione generica\", \"pet\":"+catErrato+"}";
+		
+		byte [] pdf = Utilities.getAsByteArray(TestOpenApi3Extended.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test.pdf"));
+		byte [] pdfEncodedBase64 = Base64Utilities.encode(pdf);
+		
+		
+		
+		List<String> macroTest_path = new ArrayList<String>();
+		List<String> macroTest_subtype = new ArrayList<String>();
+		
+		macroTest_path.add("/documenti/multipart/form-data/strict");
+		macroTest_subtype.add(HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA_SUBTYPE);
+		
+		macroTest_path.add("/documenti/multipart/mixed/strict");
+		macroTest_subtype.add(HttpConstants.CONTENT_TYPE_MULTIPART_MIXED_SUBTYPE);
+		
+		macroTest_path.add("/documenti/multipart/form-data/optionalWithoutEncoding");
+		macroTest_subtype.add(HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA_SUBTYPE);
+		
+		macroTest_path.add("/documenti/multipart/mixed/optionalWithoutEncoding");
+		macroTest_subtype.add(HttpConstants.CONTENT_TYPE_MULTIPART_MIXED_SUBTYPE);
+		
+		macroTest_path.add("/documenti/multipart/form-data-and-mixed/strict");
+		macroTest_subtype.add(HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA_SUBTYPE);
+		
+		macroTest_path.add("/documenti/multipart/form-data-and-mixed/strict");
+		macroTest_subtype.add(HttpConstants.CONTENT_TYPE_MULTIPART_MIXED_SUBTYPE);
+		
+		for (int j = 0; j < macroTest_path.size(); j++) {
+			
+			String macroTestPath = macroTest_path.get(j);
+			String macroTestSubtype = macroTest_subtype.get(j);
+			
+
+			List<String> tipoTest = new ArrayList<String>();
+			List<Boolean> erroreAttesoTest = new ArrayList<Boolean>();
+			List<String> msgErroreAttesoTest = new ArrayList<String>();
+			List<String> msgErroreAttesoRispostaTest = new ArrayList<String>();
+			List<String> pathTest = new ArrayList<String>();
+			List<HttpRequestMethod> methodTest = new ArrayList<HttpRequestMethod>();
+			List<String> attachment_subtype = new ArrayList<String>();
+			
+			List<String> attachment1_name = new ArrayList<String>();
+			List<String> attachment1_content = new ArrayList<String>();
+			List<String> attachment1_contentType = new ArrayList<String>();
+			List<String> attachment1_fileName = new ArrayList<String>();
+			
+			List<String> attachment2_name = new ArrayList<String>();
+			List<String> attachment2_content = new ArrayList<String>();
+			List<String> attachment2_contentType = new ArrayList<String>();
+			List<String> attachment2_fileName = new ArrayList<String>();
+			
+			List<String> attachment3_name = new ArrayList<String>();
+			List<byte[]> attachment3_content = new ArrayList<byte[]>();
+			List<String> attachment3_contentType = new ArrayList<String>();
+			List<String> attachment3_fileName = new ArrayList<String>();
+			
+			List<String> attachment4_name = new ArrayList<String>();
+			List<byte[]> attachment4_content = new ArrayList<byte[]>();
+			List<String> attachment4_contentType = new ArrayList<String>();
+			List<String> attachment4_fileName = new ArrayList<String>();
+			
+			List<String> attachment5_name = new ArrayList<String>();
+			List<byte[]> attachment5_content = new ArrayList<byte[]>();
+			List<String> attachment5_contentType = new ArrayList<String>();
+			List<String> attachment5_fileName = new ArrayList<String>();
+			
+			
+			// *** Test1: corretto ***
+			
+			tipoTest.add("OK-1: cat");
+			erroreAttesoTest.add(false);
+			msgErroreAttesoTest.add(null);
+			msgErroreAttesoRispostaTest.add(null);
+			pathTest.add(macroTestPath);
+			methodTest.add(HttpRequestMethod.POST);
+			attachment_subtype.add(macroTestSubtype);
+			attachment1_name.add("\"id\"");
+			attachment1_content.add(Integer.MAX_VALUE+"");
+			attachment1_contentType.add(HttpConstants.CONTENT_TYPE_PLAIN);
+			attachment1_fileName.add(null);
+			attachment2_name.add("\"metadati\"");
+			attachment2_content.add(contenuto_cat);
+			attachment2_contentType.add(HttpConstants.CONTENT_TYPE_JSON);
+			attachment2_fileName.add(null);
+			attachment3_name.add("\"docPdf\"");
+			attachment3_content.add(pdf);
+			attachment3_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment3_fileName.add("\"attachment.pdf\"");
+			attachment4_name.add("\"docPdf2\"");
+			attachment4_content.add(pdfEncodedBase64);
+			attachment4_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment4_fileName.add("\"attachment2.pdf\"");
+			attachment5_name.add(null);
+			attachment5_content.add(null);
+			attachment5_contentType.add(null);
+			attachment5_fileName.add(null);
+			
+			// *** Test2: corretto2 ***
+			
+			tipoTest.add("OK-2: dog1");
+			erroreAttesoTest.add(false);
+			msgErroreAttesoTest.add(null);
+			msgErroreAttesoRispostaTest.add(null);
+			pathTest.add(macroTestPath);
+			methodTest.add(HttpRequestMethod.POST);
+			attachment_subtype.add(macroTestSubtype);
+			attachment1_name.add("\"id\"");
+			attachment1_content.add(Integer.MAX_VALUE+"");
+			attachment1_contentType.add(HttpConstants.CONTENT_TYPE_PLAIN);
+			attachment1_fileName.add(null);
+			attachment2_name.add("\"metadati\"");
+			attachment2_content.add(contenuto_dog1);
+			attachment2_contentType.add(HttpConstants.CONTENT_TYPE_JSON);
+			attachment2_fileName.add(null);
+			attachment3_name.add("\"docPdf\"");
+			attachment3_content.add(pdf);
+			attachment3_contentType.add(HttpConstants.CONTENT_TYPE_PDF);	
+			attachment3_fileName.add("\"attachment.pdf\"");
+			attachment4_name.add("\"docPdf2\"");
+			attachment4_content.add(pdfEncodedBase64);
+			attachment4_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment4_fileName.add("\"attachment2.pdf\"");
+			attachment5_name.add(null);
+			attachment5_content.add(null);
+			attachment5_contentType.add(null);
+			attachment5_fileName.add(null);
+			
+			// *** Test3: corretto3 ***
+			
+			tipoTest.add("OK-3: dog2 con file name in tutti i parametri");
+			erroreAttesoTest.add(false);
+			msgErroreAttesoTest.add(null);
+			msgErroreAttesoRispostaTest.add(null);
+			pathTest.add(macroTestPath);
+			methodTest.add(HttpRequestMethod.POST);
+			attachment_subtype.add(macroTestSubtype);
+			attachment1_name.add("\"id\"");
+			attachment1_content.add(Integer.MAX_VALUE+"");
+			attachment1_contentType.add(HttpConstants.CONTENT_TYPE_PLAIN);
+			attachment1_fileName.add("\"id.txt\"");
+			attachment2_name.add("\"metadati\"");
+			attachment2_content.add(contenuto_dog2);
+			attachment2_contentType.add(HttpConstants.CONTENT_TYPE_JSON);
+			attachment2_fileName.add("\"metadati.json\"");
+			attachment3_name.add("\"docPdf\"");
+			attachment3_content.add(pdf);
+			attachment3_contentType.add(HttpConstants.CONTENT_TYPE_PDF);	
+			attachment3_fileName.add("\"attachment.pdf\"");
+			attachment4_name.add("\"docPdf2\"");
+			attachment4_content.add(pdfEncodedBase64);
+			attachment4_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment4_fileName.add("\"attachment2.pdf\"");
+			attachment5_name.add(null);
+			attachment5_content.add(null);
+			attachment5_contentType.add(null);
+			attachment5_fileName.add(null);
+			
+			
+			// *** Test4: corretto, parameter senza doppi apici ***
+			
+			tipoTest.add("OK-4: parameter senza doppi apici \"");
+			erroreAttesoTest.add(false);
+			msgErroreAttesoTest.add(null);
+			msgErroreAttesoRispostaTest.add(null);
+			pathTest.add(macroTestPath);
+			methodTest.add(HttpRequestMethod.POST);
+			attachment_subtype.add(macroTestSubtype);
+			attachment1_name.add("id");
+			attachment1_content.add(Integer.MAX_VALUE+"");
+			attachment1_contentType.add(HttpConstants.CONTENT_TYPE_PLAIN);
+			attachment1_fileName.add(null);
+			attachment2_name.add("metadati");
+			attachment2_content.add(contenuto_dog2);
+			attachment2_contentType.add(HttpConstants.CONTENT_TYPE_JSON);
+			attachment2_fileName.add(null);
+			attachment3_name.add("docPdf");
+			attachment3_content.add(pdf);
+			attachment3_contentType.add(HttpConstants.CONTENT_TYPE_PDF);	
+			attachment3_fileName.add("\"attachment.pdf\"");
+			attachment4_name.add("docPdf2");
+			attachment4_content.add(pdfEncodedBase64);
+			attachment4_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment4_fileName.add("\"attachment2.pdf\"");
+			attachment5_name.add(null);
+			attachment5_content.add(null);
+			attachment5_contentType.add(null);
+			attachment5_fileName.add(null);
+			
+			
+			// *** Test5: corretto, fileName senza doppi apici ***
+			
+			tipoTest.add("OK-5: fileName senza doppi apici \"");
+			erroreAttesoTest.add(false);
+			msgErroreAttesoTest.add(null);
+			msgErroreAttesoRispostaTest.add(null);
+			pathTest.add(macroTestPath);
+			methodTest.add(HttpRequestMethod.POST);
+			attachment_subtype.add(macroTestSubtype);
+			attachment1_name.add("\"id\"");
+			attachment1_content.add(Integer.MAX_VALUE+"");
+			attachment1_contentType.add(HttpConstants.CONTENT_TYPE_PLAIN);
+			attachment1_fileName.add(null);
+			attachment2_name.add("\"metadati\"");
+			attachment2_content.add(contenuto_dog2);
+			attachment2_contentType.add(HttpConstants.CONTENT_TYPE_JSON);
+			attachment2_fileName.add(null);
+			attachment3_name.add("\"docPdf\"");
+			attachment3_content.add(pdf);
+			attachment3_contentType.add(HttpConstants.CONTENT_TYPE_PDF);	
+			attachment3_fileName.add("attachment.pdf");
+			attachment4_name.add("\"docPdf2\"");
+			attachment4_content.add(pdfEncodedBase64);
+			attachment4_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment4_fileName.add("attachment2.pdf");
+			attachment5_name.add(null);
+			attachment5_content.add(null);
+			attachment5_contentType.add(null);
+			attachment5_fileName.add(null);
+			
+			
+			// *** Test6: corretto, fileName non presente ***
+			
+			tipoTest.add("OK-6: fileName non presente \"");
+			erroreAttesoTest.add(false);
+			msgErroreAttesoTest.add(null);
+			msgErroreAttesoRispostaTest.add(null);
+			pathTest.add(macroTestPath);
+			methodTest.add(HttpRequestMethod.POST);
+			attachment_subtype.add(macroTestSubtype);
+			attachment1_name.add("\"id\"");
+			attachment1_content.add(Integer.MAX_VALUE+"");
+			attachment1_contentType.add(HttpConstants.CONTENT_TYPE_PLAIN);
+			attachment1_fileName.add(null);
+			attachment2_name.add("\"metadati\"");
+			attachment2_content.add(contenuto_dog2);
+			attachment2_contentType.add(HttpConstants.CONTENT_TYPE_JSON);
+			attachment2_fileName.add(null);
+			attachment3_name.add("\"docPdf\"");
+			attachment3_content.add(pdf);
+			attachment3_contentType.add(HttpConstants.CONTENT_TYPE_PDF);	
+			attachment3_fileName.add(null);
+			attachment4_name.add("\"docPdf2\"");
+			attachment4_content.add(pdfEncodedBase64);
+			attachment4_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment4_fileName.add(null);
+			attachment5_name.add(null);
+			attachment5_content.add(null);
+			attachment5_contentType.add(null);
+			attachment5_fileName.add(null);
+			
+					
+			
+			
+			// *** Test7: parametro docPdf2 (opzionale) non presente ***
+			
+			tipoTest.add("OK-7: parametro docPdf2 (opzionale) non presente");
+			erroreAttesoTest.add(false);
+			msgErroreAttesoTest.add(null);
+			msgErroreAttesoRispostaTest.add(null);
+			pathTest.add(macroTestPath);
+			methodTest.add(HttpRequestMethod.POST);
+			attachment_subtype.add(macroTestSubtype);
+			attachment1_name.add("\"id\"");
+			attachment1_content.add(Integer.MAX_VALUE+"");
+			attachment1_contentType.add(HttpConstants.CONTENT_TYPE_PLAIN);
+			attachment1_fileName.add(null);
+			attachment2_name.add("\"metadati\"");
+			attachment2_content.add(contenuto_dog2);
+			attachment2_contentType.add(HttpConstants.CONTENT_TYPE_JSON);
+			attachment2_fileName.add(null);
+			attachment3_name.add("\"docPdf\"");
+			attachment3_content.add(pdf);
+			attachment3_contentType.add(HttpConstants.CONTENT_TYPE_PDF);	
+			attachment3_fileName.add("\"attachment.pdf\"");
+			attachment4_name.add(null);
+			attachment4_content.add(null);
+			attachment4_contentType.add(null);
+			attachment4_fileName.add(null);
+			attachment5_name.add(null);
+			attachment5_content.add(null);
+			attachment5_contentType.add(null);
+			attachment5_fileName.add(null);
+			
+			
+			// *** Test8: posizioni invertite degli attachments ***
+			
+			tipoTest.add("OK-8: posizioni invertite");
+			erroreAttesoTest.add(false);
+			msgErroreAttesoTest.add(null);
+			msgErroreAttesoRispostaTest.add(null);
+			pathTest.add(macroTestPath);
+			methodTest.add(HttpRequestMethod.POST);
+			attachment_subtype.add(macroTestSubtype);
+			attachment2_name.add("\"id\"");
+			attachment2_content.add(Integer.MAX_VALUE+"");
+			attachment2_contentType.add(HttpConstants.CONTENT_TYPE_PLAIN);
+			attachment2_fileName.add(null);
+			attachment1_name.add("\"metadati\"");
+			attachment1_content.add(contenuto_dog2);
+			attachment1_contentType.add(HttpConstants.CONTENT_TYPE_JSON);
+			attachment1_fileName.add(null);
+			attachment4_name.add("\"docPdf\"");
+			attachment4_content.add(pdf);
+			attachment4_contentType.add(HttpConstants.CONTENT_TYPE_PDF);	
+			attachment4_fileName.add("\"attachment.pdf\"");
+			attachment3_name.add("\"docPdf2\"");
+			attachment3_content.add(pdfEncodedBase64);
+			attachment3_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment3_fileName.add("\"attachment2.pdf\"");
+			attachment5_name.add(null);
+			attachment5_content.add(null);
+			attachment5_contentType.add(null);
+			attachment5_fileName.add(null);
+			
+			
+			
+			
+			
+			
+			
+			
+			// *** Test ERRORE 1: ulteriore attachment non previsto ***
+			
+			tipoTest.add("ERROR-1: attachment ulteriore, non previsto");
+			if(macroTestPath.endsWith("optionalWithoutEncoding")) {
+				erroreAttesoTest.add(false);
+				msgErroreAttesoTest.add(null);
+				msgErroreAttesoRispostaTest.add(null);
+			}
+			else {
+				erroreAttesoTest.add(true);
+				msgErroreAttesoTest.add("Additional property 'docUlteriore' is not allowed. (code: 1000)");
+				msgErroreAttesoRispostaTest.add("Additional property 'docUlteriore' is not allowed. (code: 1000)");
+			}
+			pathTest.add(macroTestPath);
+			methodTest.add(HttpRequestMethod.POST);
+			attachment_subtype.add(macroTestSubtype);
+			attachment1_name.add("\"id\"");
+			attachment1_content.add(Integer.MAX_VALUE+"");
+			attachment1_contentType.add(HttpConstants.CONTENT_TYPE_PLAIN);
+			attachment1_fileName.add(null);
+			attachment2_name.add("\"metadati\"");
+			attachment2_content.add(contenuto_cat);
+			attachment2_contentType.add(HttpConstants.CONTENT_TYPE_JSON);
+			attachment2_fileName.add(null);
+			attachment3_name.add("\"docPdf\"");
+			attachment3_content.add(pdf);
+			attachment3_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment3_fileName.add("\"attachment.pdf\"");
+			attachment4_name.add("\"docPdf2\"");
+			attachment4_content.add(pdfEncodedBase64);
+			attachment4_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment4_fileName.add("\"attachment2.pdf\"");
+			attachment5_name.add("\"docUlteriore\"");
+			attachment5_content.add(pdfEncodedBase64);
+			attachment5_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment5_fileName.add("\"attachmentOther.bin\"");
+			
+			
+			
+			// *** Test ERRORE 2: contenuto errato nei metadati, required claim non presente ***
+			
+			tipoTest.add("ERROR-2: contenuto errato nei metadati, required claim 'altro' presente con un nome differente");
+			erroreAttesoTest.add(true);
+			msgErroreAttesoTest.add("body.metadati: Field 'altro' is required. (code: 1026)");
+			msgErroreAttesoRispostaTest.add("body.metadati: Field 'altro' is required. (code: 1026)");
+			pathTest.add(macroTestPath);
+			methodTest.add(HttpRequestMethod.POST);
+			attachment_subtype.add(macroTestSubtype);
+			attachment1_name.add("\"id\"");
+			attachment1_content.add(Integer.MAX_VALUE+"");
+			attachment1_contentType.add(HttpConstants.CONTENT_TYPE_PLAIN);
+			attachment1_fileName.add(null);
+			attachment2_name.add("\"metadati\"");
+			attachment2_content.add(contenuto_errato1);
+			attachment2_contentType.add(HttpConstants.CONTENT_TYPE_JSON);
+			attachment2_fileName.add(null);
+			attachment3_name.add("\"docPdf\"");
+			attachment3_content.add(pdf);
+			attachment3_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment3_fileName.add("\"attachment.pdf\"");
+			attachment4_name.add("\"docPdf2\"");
+			attachment4_content.add(pdfEncodedBase64);
+			attachment4_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment4_fileName.add("\"attachment2.pdf\"");
+			attachment5_name.add(null);
+			attachment5_content.add(null);
+			attachment5_contentType.add(null);
+			attachment5_fileName.add(null);
+			
+	
+					
+			// *** Test ERRORE 3: contenuto errato nei metadati, required claim non presente e fileName presente in tutti i parametri ***
+			
+			tipoTest.add("ERROR-3: contenuto errato nei metadati, required claim 'altro' non presente e fileName presente in tutti i parametri");
+			erroreAttesoTest.add(true);
+			msgErroreAttesoTest.add("body.metadati: Field 'altro' is required. (code: 1026)");
+			msgErroreAttesoRispostaTest.add("body.metadati: Field 'altro' is required. (code: 1026)");
+			pathTest.add(macroTestPath);
+			methodTest.add(HttpRequestMethod.POST);
+			attachment_subtype.add(macroTestSubtype);
+			attachment1_name.add("\"id\"");
+			attachment1_content.add(Integer.MAX_VALUE+"");
+			attachment1_contentType.add(HttpConstants.CONTENT_TYPE_PLAIN);
+			attachment1_fileName.add("\"id.txt\"");
+			attachment2_name.add("\"metadati\"");
+			attachment2_content.add(contenuto_errato2);
+			attachment2_contentType.add(HttpConstants.CONTENT_TYPE_JSON);
+			attachment2_fileName.add("\"metadati.json\"");
+			attachment3_name.add("\"docPdf\"");
+			attachment3_content.add(pdf);
+			attachment3_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment3_fileName.add("\"attachment.pdf\"");
+			attachment4_name.add("\"docPdf2\"");
+			attachment4_content.add(pdfEncodedBase64);
+			attachment4_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment4_fileName.add("\"attachment2.pdf\"");
+			attachment5_name.add(null);
+			attachment5_content.add(null);
+			attachment5_contentType.add(null);
+			attachment5_fileName.add(null);
+			
+			
+			
+			// *** Test ERRORE 4: contenuto errato nei metadati, discriminator value errato ***
+			
+			tipoTest.add("ERROR-4: contenuto errato nei metadati, discriminator value errato");
+			erroreAttesoTest.add(true);
+			msgErroreAttesoTest.add("body.metadati.pet: Schema selection can't be made for discriminator 'pet_type' with value 'CatErrato'. (code: 1003)");
+			msgErroreAttesoRispostaTest.add("body.metadati.pet: Schema selection can't be made for discriminator 'pet_type' with value 'CatErrato'. (code: 1003)");
+			pathTest.add(macroTestPath);
+			methodTest.add(HttpRequestMethod.POST);
+			attachment_subtype.add(macroTestSubtype);
+			attachment1_name.add("\"id\"");
+			attachment1_content.add(Integer.MAX_VALUE+"");
+			attachment1_contentType.add(HttpConstants.CONTENT_TYPE_PLAIN);
+			attachment1_fileName.add(null);
+			attachment2_name.add("\"metadati\"");
+			attachment2_content.add(contenuto_errato3);
+			attachment2_contentType.add(HttpConstants.CONTENT_TYPE_JSON);
+			attachment2_fileName.add(null);
+			attachment3_name.add("\"docPdf\"");
+			attachment3_content.add(pdf);
+			attachment3_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment3_fileName.add("\"attachment.pdf\"");
+			attachment4_name.add("\"docPdf2\"");
+			attachment4_content.add(pdfEncodedBase64);
+			attachment4_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment4_fileName.add("\"attachment2.pdf\"");
+			attachment5_name.add(null);
+			attachment5_content.add(null);
+			attachment5_contentType.add(null);
+			attachment5_fileName.add(null);
+			
+			
+			
+			// *** Test ERRORE 5: parametro primitivo id con value errato (string) ***
+			
+			tipoTest.add("ERROR-5: parametro primitivo id con value errato (string)");
+			erroreAttesoTest.add(true);
+			msgErroreAttesoTest.add("body.id: Value 'ValoreNonInteroERR' does not match format 'int32'. (code: 1007)");
+			msgErroreAttesoRispostaTest.add("body.id: Value 'ValoreNonInteroERR' does not match format 'int32'. (code: 1007)");
+			pathTest.add(macroTestPath);
+			methodTest.add(HttpRequestMethod.POST);
+			attachment_subtype.add(macroTestSubtype);
+			attachment1_name.add("\"id\"");
+			attachment1_content.add("ValoreNonInteroERR");
+			attachment1_contentType.add(HttpConstants.CONTENT_TYPE_PLAIN);
+			attachment1_fileName.add(null);
+			attachment2_name.add("\"metadati\"");
+			attachment2_content.add(contenuto_cat);
+			attachment2_contentType.add(HttpConstants.CONTENT_TYPE_JSON);
+			attachment2_fileName.add(null);
+			attachment3_name.add("\"docPdf\"");
+			attachment3_content.add(pdf);
+			attachment3_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment3_fileName.add("\"attachment.pdf\"");
+			attachment4_name.add("\"docPdf2\"");
+			attachment4_content.add(pdfEncodedBase64);
+			attachment4_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment4_fileName.add("\"attachment2.pdf\"");
+			attachment5_name.add(null);
+			attachment5_content.add(null);
+			attachment5_contentType.add(null);
+			attachment5_fileName.add(null);
+			
+			
+			
+			
+			// *** Test ERRORE 6: parametro primitivo id con value errato (string) e fileName presente ***
+			
+			tipoTest.add("ERROR-6: parametro primitivo id con value errato (string) e fileName presente");
+			erroreAttesoTest.add(true);
+			msgErroreAttesoTest.add("body.id: Value 'ValoreNonInteroERR' does not match format 'int32'. (code: 1007)");
+			msgErroreAttesoRispostaTest.add("body.id: Value 'ValoreNonInteroERR' does not match format 'int32'. (code: 1007)");
+			pathTest.add(macroTestPath);
+			methodTest.add(HttpRequestMethod.POST);
+			attachment_subtype.add(macroTestSubtype);
+			attachment1_name.add("\"id\"");
+			attachment1_content.add("ValoreNonInteroERR");
+			attachment1_contentType.add(HttpConstants.CONTENT_TYPE_PLAIN);
+			attachment1_fileName.add("\"id.txt\"");
+			attachment2_name.add("\"metadati\"");
+			attachment2_content.add(contenuto_cat);
+			attachment2_contentType.add(HttpConstants.CONTENT_TYPE_JSON);
+			attachment2_fileName.add("\"metadati.json\"");
+			attachment3_name.add("\"docPdf\"");
+			attachment3_content.add(pdf);
+			attachment3_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment3_fileName.add("\"attachment.pdf\"");
+			attachment4_name.add("\"docPdf2\"");
+			attachment4_content.add(pdfEncodedBase64);
+			attachment4_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment4_fileName.add("\"attachment2.pdf\"");
+			attachment5_name.add(null);
+			attachment5_content.add(null);
+			attachment5_contentType.add(null);
+			attachment5_fileName.add(null);
+			
+			
+			
+	
+			// *** Test ERRORE 7: parametro docPdf non presente ***
+			
+			tipoTest.add("ERROR-7: parametro docPdf non presente");
+			if(macroTestPath.endsWith("optionalWithoutEncoding")) {
+				erroreAttesoTest.add(false);
+				msgErroreAttesoTest.add(null);
+				msgErroreAttesoRispostaTest.add(null);
+			}
+			else {
+				erroreAttesoTest.add(true);
+				msgErroreAttesoTest.add("body: Field 'docPdf' is required. (code: 1026)");
+				msgErroreAttesoRispostaTest.add("body: Field 'docPdf' is required. (code: 1026)");
+			}
+			pathTest.add(macroTestPath);
+			methodTest.add(HttpRequestMethod.POST);
+			attachment_subtype.add(macroTestSubtype);
+			attachment1_name.add("\"id\"");
+			attachment1_content.add(Integer.MAX_VALUE+"");
+			attachment1_contentType.add(HttpConstants.CONTENT_TYPE_PLAIN);
+			attachment1_fileName.add(null);
+			attachment2_name.add("\"metadati\"");
+			attachment2_content.add(contenuto_cat);
+			attachment2_contentType.add(HttpConstants.CONTENT_TYPE_JSON);
+			attachment2_fileName.add(null);
+			attachment3_name.add(null);
+			attachment3_content.add(null);
+			attachment3_contentType.add(null);
+			attachment3_fileName.add(null);
+			attachment4_name.add("\"docPdf2\"");
+			attachment4_content.add(pdfEncodedBase64);
+			attachment4_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment4_fileName.add("\"attachment2.pdf\"");
+			attachment5_name.add(null);
+			attachment5_content.add(null);
+			attachment5_contentType.add(null);
+			attachment5_fileName.add(null);
+			
+			
+			
+			// *** Test ERRORE 8: parametro docPdf non dichiarato tramite name ***
+			
+			tipoTest.add("ERROR-8: parametro docPdf non dichiarato tramite name");
+			if(macroTestPath.endsWith("optionalWithoutEncoding")) {
+				erroreAttesoTest.add(false);
+				msgErroreAttesoTest.add(null);
+				msgErroreAttesoRispostaTest.add(null);
+			}
+			else {
+				erroreAttesoTest.add(true);
+				msgErroreAttesoTest.add("body: Field 'docPdf' is required. (code: 1026)");
+				msgErroreAttesoRispostaTest.add("body: Field 'docPdf' is required. (code: 1026)");
+			}
+			pathTest.add(macroTestPath);
+			methodTest.add(HttpRequestMethod.POST);
+			attachment_subtype.add(macroTestSubtype);
+			attachment1_name.add("\"id\"");
+			attachment1_content.add(Integer.MAX_VALUE+"");
+			attachment1_contentType.add(HttpConstants.CONTENT_TYPE_PLAIN);
+			attachment1_fileName.add(null);
+			attachment2_name.add("\"metadati\"");
+			attachment2_content.add(contenuto_cat);
+			attachment2_contentType.add(HttpConstants.CONTENT_TYPE_JSON);
+			attachment2_fileName.add(null);
+			attachment3_name.add(null);
+			attachment3_content.add(pdf);
+			attachment3_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment3_fileName.add("\"attachment.pdf\"");
+			attachment4_name.add("\"docPdf2\"");
+			attachment4_content.add(pdfEncodedBase64);
+			attachment4_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment4_fileName.add("\"attachment2.pdf\"");
+			attachment5_name.add(null);
+			attachment5_content.add(null);
+			attachment5_contentType.add(null);
+			attachment5_fileName.add(null);
+			
+			
+			
+			
+			// *** Test ERRORE 9: content-type multipart opposto tra mixed e form-data ***
+			if(!macroTestPath.contains("form-data-and-mixed")) {
+				tipoTest.add("ERROR-9: content-type multipart opposto tra mixed e form-data");
+				erroreAttesoTest.add(true);
+				String subtype = HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA_SUBTYPE.equals(macroTestSubtype) ? HttpConstants.CONTENT_TYPE_MULTIPART_MIXED_SUBTYPE : HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA_SUBTYPE;
+				msgErroreAttesoTest.add("Content type 'multipart/"+subtype+";");
+				msgErroreAttesoRispostaTest.add("is not allowed for body content. (code: 203)");
+				pathTest.add(macroTestPath);
+				methodTest.add(HttpRequestMethod.POST);
+				attachment_subtype.add(subtype);
+				attachment1_name.add("\"id\"");
+				attachment1_content.add(Integer.MAX_VALUE+"");
+				attachment1_contentType.add(HttpConstants.CONTENT_TYPE_PLAIN);
+				attachment1_fileName.add(null);
+				attachment2_name.add("\"metadati\"");
+				attachment2_content.add(contenuto_cat);
+				attachment2_contentType.add(HttpConstants.CONTENT_TYPE_JSON);
+				attachment2_fileName.add(null);
+				attachment3_name.add("\"docPdf\"");
+				attachment3_content.add(pdf);
+				attachment3_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+				attachment3_fileName.add("\"attachment.pdf\"");
+				attachment4_name.add("\"docPdf2\"");
+				attachment4_content.add(pdfEncodedBase64);
+				attachment4_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+				attachment4_fileName.add("\"attachment2.pdf\"");
+				attachment5_name.add(null);
+				attachment5_content.add(null);
+				attachment5_contentType.add(null);
+				attachment5_fileName.add(null);
+			}
+			
+			
+			
+			
+			// *** Test ERRORE 10: content-type multipart diverso da quello definito ***
+			
+			tipoTest.add("ERROR-10: content-type multipart diverso da quello definito");
+			erroreAttesoTest.add(true);
+			String subtype = HttpConstants.CONTENT_TYPE_MULTIPART_RELATED_SUBTYPE;
+			msgErroreAttesoTest.add("Content type 'multipart/"+subtype+";");
+			msgErroreAttesoRispostaTest.add("is not allowed for body content. (code: 203)");
+			pathTest.add(macroTestPath);
+			methodTest.add(HttpRequestMethod.POST);
+			attachment_subtype.add(subtype);
+			attachment1_name.add("\"id\"");
+			attachment1_content.add(Integer.MAX_VALUE+"");
+			attachment1_contentType.add(HttpConstants.CONTENT_TYPE_PLAIN);
+			attachment1_fileName.add(null);
+			attachment2_name.add("\"metadati\"");
+			attachment2_content.add(contenuto_cat);
+			attachment2_contentType.add(HttpConstants.CONTENT_TYPE_JSON);
+			attachment2_fileName.add(null);
+			attachment3_name.add("\"docPdf\"");
+			attachment3_content.add(pdf);
+			attachment3_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment3_fileName.add("\"attachment.pdf\"");
+			attachment4_name.add("\"docPdf2\"");
+			attachment4_content.add(pdfEncodedBase64);
+			attachment4_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+			attachment4_fileName.add("\"attachment2.pdf\"");
+			attachment5_name.add(null);
+			attachment5_content.add(null);
+			attachment5_contentType.add(null);
+			attachment5_fileName.add(null);
+			
+			
+			
+	
+			
+			
+		
+	
+			
+			
+			// Esecuzione test
+			
+			
+			for (int i = 0; i < attachment1_name.size(); i++) {
+			
+				String tipo = tipoTest.get(i);
+				
+				boolean erroreAtteso = erroreAttesoTest.get(i);
+				String msgErroreAttesoRichiesta = msgErroreAttesoTest.get(i);
+				String msgErroreAttesoRisposta = msgErroreAttesoRispostaTest.get(i);
+				
+				String path = pathTest.get(i);
+				HttpRequestMethod method = methodTest.get(i);
+				
+				
+				MimeMultipart mm = MultipartUtilities.buildMimeMultipart(attachment_subtype.get(i),
+						attachment1_content.get(i), attachment1_contentType.get(i), attachment1_name.get(i), attachment1_fileName.get(i),
+						attachment2_content.get(i), attachment2_contentType.get(i), attachment2_name.get(i), attachment2_fileName.get(i),
+						attachment3_content.get(i), attachment3_contentType.get(i), attachment3_name.get(i), attachment3_fileName.get(i),
+						attachment4_content.get(i), attachment4_contentType.get(i), attachment4_name.get(i), attachment4_fileName.get(i),
+						attachment5_content.get(i), attachment5_contentType.get(i), attachment5_name.get(i), attachment5_fileName.get(i));
+				
+				ByteArrayOutputStream os = new ByteArrayOutputStream();
+				mm.writeTo(os);
+				os.flush();
+				os.close();
+				
+				String contentTypeSwA = mm.getContentType();
+				
+			    //System.out.println("Multipart ("+contentTypeSwA+"): \n"+os.toString());
+	
+				
+				System.out.println("\tTest Richiesta ["+tipo+"] path:"+path+" ...");
+				
+				BinaryHttpRequestEntity request = new BinaryHttpRequestEntity();
+				request.setUrl(path);	
+				request.setMethod(method);
+				request.setContent(os.toByteArray());
+				Map<String, List<String>> parametersTrasporto = new HashMap<>();
+				TransportUtils.addHeader(parametersTrasporto,HttpConstants.CONTENT_TYPE, contentTypeSwA);
+				request.setHeaders(parametersTrasporto);
+				request.setContentType(contentTypeSwA);
+									
+				try {				
+					apiValidatorOpenApi4j.validate(request);
+					if(erroreAtteso) {
+						throw new Exception("Atteso errore '"+msgErroreAttesoRichiesta+"' non rilevato");
+					}
+				} catch (ValidatorException e) {
+					if(erroreAtteso && e.getMessage()!=null && e.getMessage().contains(msgErroreAttesoRichiesta)) {
+						System.out.println("Errore atteso: "+e.getMessage());
+					}
+					else {
+						throw new Exception("Errore non atteso: "+e.getMessage());
+					}
+				}
+				
+				System.out.println("\tTest Richiesta ["+tipo+"] path:"+path+" superato");
+			
+				
+				System.out.println("\tTest Risposta ["+tipo+"] path:"+path+" ...");
+				
+				BinaryHttpResponseEntity response = new BinaryHttpResponseEntity();
+				
+				response.setStatus(200);		
+				response.setMethod(method);
+				response.setUrl(path);	
+				Map<String, List<String>> responseHeaders = new HashMap<>();
+				TransportUtils.setHeader(responseHeaders,HttpConstants.CONTENT_TYPE, contentTypeSwA);
+				response.setHeaders(responseHeaders);
+				response.setContentType(contentTypeSwA);
+				response.setContent(os.toByteArray());
+			
+				try {				
+					apiValidatorOpenApi4j.validate(response);
+					if(erroreAtteso) {
+						throw new Exception("Atteso errore '"+msgErroreAttesoRichiesta+"' non rilevato");
+					}
+				} catch (ValidatorException e) {
+					if(erroreAtteso && e.getMessage()!=null && e.getMessage().contains(msgErroreAttesoRisposta)) {
+						System.out.println("Errore atteso: "+e.getMessage());
+					}
+					else {
+						throw new Exception("Errore non atteso: "+e.getMessage());
+					}
+				}
+				
+				System.out.println("\tTest Risposta ["+tipo+"] path:"+path+" superato");
+			}
+				
+		}
+
+		System.out.println("TEST Verifica Multipart Request completato!");
+
+	}
+	
+	private static void testMultipartRequestAsArray(OpenAPILibrary openAPILibrary, boolean mergeSpec)
+			throws UtilsException, ProcessingException, URISyntaxException, Exception {
+		System.out.println("#### Verifica Multipart Request as array ####");
+		
+		URL url = TestOpenApi3Extended.class.getResource("/org/openspcoop2/utils/openapi/allegati.yaml");
+					
+		ApiSchema apiSchemaYaml = new ApiSchema("teamdigitale-openapi_definitions.yaml", 
+				Utilities.getAsByteArray(TestOpenApi3Extended.class.getResourceAsStream("/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml")), ApiSchemaType.YAML);
+					
+		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
+		configOpenApi4j.setProcessInclude(false);
+		apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi4j, apiSchemaYaml);
+		
+		Api apiOpenApi4j = apiReaderOpenApi4j.read();
+								
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
+		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
+		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
+		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
+		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi4j, configO);
+
+		String cat = "{\"pet_type\": \"Cat\",  \"age\": 3}";
+		String dog1 = "{\"pet_type\": \"Dog\",  \"bark\": false,  \"breed\": \"Dingo\" }";
+		String dog2 = "{\"pet_type\": \"Dog\",  \"bark\": true }";
+		String contenuto_cat = "{\"altro\":\"descrizione generica\", \"pet\":"+cat+"}";
+		String contenuto_dog1 = "{\"altro\":\"descrizione generica\", \"pet\":"+dog1+"}";
+		String contenuto_dog2 = "{\"altro\":\"descrizione generica\", \"pet\":"+dog2+"}";
+		String contenuto_errato1 = "{\"altroErrore\":\"descrizione generica\", \"pet\":"+dog2+"}";
+		String contenuto_errato2 = "{\"pet\":"+dog2+"}";
+		String catErrato = "{\"pet_type\": \"CatErrato\",  \"age\": 3}";
+		String contenuto_errato3 = "{\"altro\":\"descrizione generica\", \"pet\":"+catErrato+"}";
+		
+		byte [] pdf = Utilities.getAsByteArray(TestOpenApi3Extended.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test.pdf"));
+				
+		
+		List<String> macroTest_path = new ArrayList<String>();
+		List<String> macroTest_subtype = new ArrayList<String>();
+		
+		macroTest_path.add("/documenti/multipart/form-data/array-binary");
+		macroTest_subtype.add(HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA_SUBTYPE);
+		
+		macroTest_path.add("/documenti/multipart/mixed/array-binary");
+		macroTest_subtype.add(HttpConstants.CONTENT_TYPE_MULTIPART_MIXED_SUBTYPE);
+		
+		macroTest_path.add("/documenti/multipart/form-data/array-json");
+		macroTest_subtype.add(HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA_SUBTYPE);
+		
+		macroTest_path.add("/documenti/multipart/mixed/array-json");
+		macroTest_subtype.add(HttpConstants.CONTENT_TYPE_MULTIPART_MIXED_SUBTYPE);
+		
+		
+		
+		for (int j = 0; j < macroTest_path.size(); j++) {
+			
+			String macroTestPath = macroTest_path.get(j);
+			String macroTestSubtype = macroTest_subtype.get(j);
+			
+
+			List<String> tipoTest = new ArrayList<String>();
+			List<Boolean> erroreAttesoTest = new ArrayList<Boolean>();
+			List<String> msgErroreAttesoTest = new ArrayList<String>();
+			List<String> msgErroreAttesoRispostaTest = new ArrayList<String>();
+			List<String> pathTest = new ArrayList<String>();
+			List<HttpRequestMethod> methodTest = new ArrayList<HttpRequestMethod>();
+			List<String> attachment_subtype = new ArrayList<String>();
+			
+			List<String> attachment_name = new ArrayList<String>();
+			List<List<byte[]>> attachment_content = new ArrayList<List<byte[]>>();
+			List<String> attachment_contentType = new ArrayList<String>();
+			List<String> attachment_fileName = new ArrayList<String>();
+			String templateNumero = MultipartUtilities.templateNumero;
+						
+			
+			// *** Test1: corretto ***
+			
+			tipoTest.add("OK-1: cat");
+			erroreAttesoTest.add(false);
+			msgErroreAttesoTest.add(null);
+			msgErroreAttesoRispostaTest.add(null);
+			pathTest.add(macroTestPath);
+			methodTest.add(HttpRequestMethod.POST);
+			attachment_subtype.add(macroTestSubtype);
+			attachment_name.add("\"archivi\"");
+			List<byte[]> l = new ArrayList<byte[]>();
+			if(macroTestPath.endsWith("array-json")) {
+				l.add(contenuto_cat.getBytes());
+				l.add(contenuto_dog1.getBytes());
+				l.add(contenuto_dog2.getBytes());
+			}
+			else {
+				l.add(pdf);
+				l.add(pdf);
+				l.add(pdf);
+			}
+			attachment_content.add(l);
+			if(macroTestPath.endsWith("array-json")) {
+				attachment_contentType.add(HttpConstants.CONTENT_TYPE_JSON);
+				attachment_fileName.add("\"attachment"+templateNumero+".json\"");
+				//attachment_fileName.add(null);
+			}
+			else {
+				attachment_contentType.add(HttpConstants.CONTENT_TYPE_PDF);
+				attachment_fileName.add("\"attachment"+templateNumero+".pdf\"");
+			}
+			
+			
+			
+			// *** Test1: errore ***
+			
+			if(macroTestPath.endsWith("array-json")) {
+				tipoTest.add("ERROR-1: contenuto errato nei metadati, required claim 'altro' presente con un nome differente");
+				erroreAttesoTest.add(true);
+				msgErroreAttesoTest.add("body.archivi.0: Field 'altro' is required. (code: 1026)");
+				msgErroreAttesoRispostaTest.add("body.archivi.0: Field 'altro' is required. (code: 1026)");
+				pathTest.add(macroTestPath);
+				methodTest.add(HttpRequestMethod.POST);
+				attachment_subtype.add(macroTestSubtype);
+				attachment_name.add("\"archivi\"");
+				l = new ArrayList<byte[]>();
+				l.add(contenuto_errato1.getBytes());
+				l.add(contenuto_dog1.getBytes());
+				l.add(contenuto_dog2.getBytes());
+				attachment_content.add(l);
+				attachment_contentType.add(HttpConstants.CONTENT_TYPE_JSON);
+				attachment_fileName.add("\"attachment"+templateNumero+".json\"");
+				
+				tipoTest.add("ERROR-2: contenuto errato nei metadati, required claim 'altro' non presente e fileName non presente");
+				erroreAttesoTest.add(true);
+				msgErroreAttesoTest.add("body.archivi.1: Field 'altro' is required. (code: 1026)");
+				msgErroreAttesoRispostaTest.add("body.archivi.1: Field 'altro' is required. (code: 1026)");
+				pathTest.add(macroTestPath);
+				methodTest.add(HttpRequestMethod.POST);
+				attachment_subtype.add(macroTestSubtype);
+				attachment_name.add("\"archivi\"");
+				l = new ArrayList<byte[]>();
+				l.add(contenuto_cat.getBytes());
+				l.add(contenuto_errato2.getBytes());
+				l.add(contenuto_dog2.getBytes());
+				attachment_content.add(l);
+				attachment_contentType.add(HttpConstants.CONTENT_TYPE_JSON);
+				attachment_fileName.add(null);
+				
+				tipoTest.add("ERROR-3: contenuto errato nei metadati, discriminator value errato");
+				erroreAttesoTest.add(true);
+				msgErroreAttesoTest.add("body.archivi.2.pet: Schema selection can't be made for discriminator 'pet_type' with value 'CatErrato'. (code: 1003)");
+				msgErroreAttesoRispostaTest.add("body.archivi.2.pet: Schema selection can't be made for discriminator 'pet_type' with value 'CatErrato'. (code: 1003)");
+				pathTest.add(macroTestPath);
+				methodTest.add(HttpRequestMethod.POST);
+				attachment_subtype.add(macroTestSubtype);
+				attachment_name.add("\"archivi\"");
+				l = new ArrayList<byte[]>();
+				l.add(contenuto_cat.getBytes());
+				l.add(contenuto_dog1.getBytes());
+				l.add(contenuto_errato3.getBytes());
+				attachment_content.add(l);
+				attachment_contentType.add(HttpConstants.CONTENT_TYPE_JSON);
+				attachment_fileName.add("\"attachment"+templateNumero+".json\"");
+			}
+			
+		
+			
+			// Esecuzione test
+			
+			
+			for (int i = 0; i < attachment_name.size(); i++) {
+			
+				String tipo = tipoTest.get(i);
+				
+				boolean erroreAtteso = erroreAttesoTest.get(i);
+				String msgErroreAttesoRichiesta = msgErroreAttesoTest.get(i);
+				String msgErroreAttesoRisposta = msgErroreAttesoRispostaTest.get(i);
+				
+				String path = pathTest.get(i);
+				HttpRequestMethod method = methodTest.get(i);
+				
+				MimeMultipart mm = MultipartUtilities.buildMimeMultipart(attachment_subtype.get(i),
+						attachment_content.get(i), attachment_contentType.get(i), attachment_name.get(i), attachment_fileName.get(i));
+								
+				ByteArrayOutputStream os = new ByteArrayOutputStream();
+				mm.writeTo(os);
+				os.flush();
+				os.close();
+				
+				String contentTypeSwA = mm.getContentType();
+				
+			   // System.out.println("Multipart ("+contentTypeSwA+"): \n"+os.toString());
+				if(macroTestPath.endsWith("array-json")) {
+					System.out.println("Multipart ("+contentTypeSwA+"): \n"+os.toString());
+				}
+				
+				System.out.println("\tTest Richiesta ["+tipo+"] path:"+path+" ...");
+				
+				BinaryHttpRequestEntity request = new BinaryHttpRequestEntity();
+				request.setUrl(path);	
+				request.setMethod(method);
+				request.setContent(os.toByteArray());
+				Map<String, List<String>> parametersTrasporto = new HashMap<>();
+				TransportUtils.addHeader(parametersTrasporto,HttpConstants.CONTENT_TYPE, contentTypeSwA);
+				request.setHeaders(parametersTrasporto);
+				request.setContentType(contentTypeSwA);
+									
+				try {				
+					apiValidatorOpenApi4j.validate(request);
+					if(erroreAtteso) {
+						throw new Exception("Atteso errore '"+msgErroreAttesoRichiesta+"' non rilevato");
+					}
+				} catch (ValidatorException e) {
+					if(erroreAtteso && e.getMessage()!=null && e.getMessage().contains(msgErroreAttesoRichiesta)) {
+						System.out.println("Errore atteso: "+e.getMessage());
+					}
+					else {
+						throw new Exception("Errore non atteso: "+e.getMessage());
+					}
+				}
+				
+				System.out.println("\tTest Richiesta ["+tipo+"] path:"+path+" superato");
+			
+				
+				System.out.println("\tTest Risposta ["+tipo+"] path:"+path+" ...");
+				
+				BinaryHttpResponseEntity response = new BinaryHttpResponseEntity();
+				
+				response.setStatus(200);		
+				response.setMethod(method);
+				response.setUrl(path);	
+				Map<String, List<String>> responseHeaders = new HashMap<>();
+				TransportUtils.setHeader(responseHeaders,HttpConstants.CONTENT_TYPE, contentTypeSwA);
+				response.setHeaders(responseHeaders);
+				response.setContentType(contentTypeSwA);
+				response.setContent(os.toByteArray());
+			
+				try {				
+					apiValidatorOpenApi4j.validate(response);
+					if(erroreAtteso) {
+						throw new Exception("Atteso errore '"+msgErroreAttesoRichiesta+"' non rilevato");
+					}
+				} catch (ValidatorException e) {
+					if(erroreAtteso && e.getMessage()!=null && e.getMessage().contains(msgErroreAttesoRisposta)) {
+						System.out.println("Errore atteso: "+e.getMessage());
+					}
+					else {
+						throw new Exception("Errore non atteso: "+e.getMessage());
+					}
+				}
+				
+				System.out.println("\tTest Risposta ["+tipo+"] path:"+path+" superato");
+			}
+			
+			
+		}
+
+		System.out.println("TEST Verifica Multipart Request as array completato!");
 
 	}
 }

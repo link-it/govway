@@ -54,8 +54,8 @@ public class MessageUtilities {
 		case BINARY:		
 			contentType = HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM;
 			break;
-		case MIME_MULTIPART:		
-			contentType = HttpConstants.CONTENT_TYPE_MULTIPART;
+		case MIME_MULTIPART:	// e' sicuro REST	
+			contentType = HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA;
 			break;
 		}
 		return contentType;

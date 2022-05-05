@@ -1175,7 +1175,7 @@ public class SingleFileExporter implements IExporter{
 					byte [] content = baos.toByteArray();
 					String contentType = dumpDB.getContentType();
 					
-					dumpMessaggio = DumpMessaggioUtils.getFromBytes(content, contentType);
+					dumpMessaggio = DumpMessaggioUtils.getFromBytes(content, contentType, dumpDB.getFormatoMessaggio());
 					
 					
 					if(dumpMessaggio.getBody()!=null) {

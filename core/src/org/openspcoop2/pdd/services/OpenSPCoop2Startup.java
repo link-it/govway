@@ -83,6 +83,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory_impl;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.rest.MultipartContent;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
@@ -828,6 +829,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					OpenSPCoop2Startup.log.info("Registrati ulteriori '"+MessageImpl.alternativeAcceptedContentType1_2.size()+"' content-type associabili ai messaggi SOAP 1.2: "+sbCT.toString());
 					
 				}
+				
+				// RestMultipartLazy
+				MultipartContent.BUILD_LAZY=propertiesReader.useRestMultipartLazy();
+				OpenSPCoop2Startup.log.info("OpenSPCoop2RestMimeMultipartMessage lazy="+MultipartContent.BUILD_LAZY);
 				
 				// MessageSecurity
 				MessageSecurityFactory.setMessageSecurityContextClassName(classNameReader.getMessageSecurityContext(propertiesReader.getMessageSecurityContext()));
@@ -2177,7 +2182,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 
-
+			// Libreria di validazione openapi4j
+			try {
+				org.openapi4j.schema.validator.v3.ValidationOptions.VALIDATE_BASE64_VALUES=propertiesReader.isValidazioneContenutiApplicativi_openApi_openapi4j_validateBase64Values();
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Configurazione libreria di validazione openapi4j");
+				return;
+			}
 
 
 

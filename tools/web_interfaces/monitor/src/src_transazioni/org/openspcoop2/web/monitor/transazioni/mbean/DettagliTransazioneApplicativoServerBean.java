@@ -299,7 +299,7 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 		case RISPOSTA_INGRESSO_DUMP_BINARIO:
 		case RISPOSTA_USCITA_DUMP_BINARIO:
 			try {
-				if(ContentTypeUtilities.isMultipart(contentType)) {
+				if(ContentTypeUtilities.isMultipartContentType(contentType)) {
 					return contentLength.intValue() < multipartThreshold.intValue();
 				}
 			} catch (UtilsException e) {

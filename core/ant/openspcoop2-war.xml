@@ -155,6 +155,7 @@
 				<include name="commons-beanutils-1.9.4.jar"/> <!--jmx mini console -->
 				<include name="commons-lang3-3.9.jar"/>
 				<include name="commons-compress-1.21.jar"/>
+				<include name="commons-fileupload-1.4.jar"/>
 			</lib>
 			<lib dir="${required_lib}/log">
 				<include name="slf4j-api-1.7.30-gov4j-1.jar"/>

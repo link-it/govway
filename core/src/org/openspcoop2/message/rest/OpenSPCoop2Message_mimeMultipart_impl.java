@@ -30,16 +30,15 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2RestMimeMultipartMessage;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
-import org.openspcoop2.utils.mime.MimeMultipart;
 
 /**
- * Implementazione dell'OpenSPCoop2Message utilizzabile per messaggi binari
+ * Implementazione dell'OpenSPCoop2Message utilizzabile per messaggi multipart
  *
  * @author Andrea Poli (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class OpenSPCoop2Message_mimeMultipart_impl extends AbstractBaseOpenSPCoop2RestMessage<MimeMultipart> implements OpenSPCoop2RestMimeMultipartMessage {
+public class OpenSPCoop2Message_mimeMultipart_impl extends AbstractBaseOpenSPCoop2RestMessage<MultipartContent> implements OpenSPCoop2RestMimeMultipartMessage {
 
 	public OpenSPCoop2Message_mimeMultipart_impl(OpenSPCoop2MessageFactory messageFactory) {
 		super(messageFactory);
@@ -49,9 +48,9 @@ public class OpenSPCoop2Message_mimeMultipart_impl extends AbstractBaseOpenSPCoo
 	}
 	
 	@Override
-	protected MimeMultipart buildContent() throws MessageException{
+	protected MultipartContent buildContent() throws MessageException{
 		try{
-			return new MimeMultipart(this.countingInputStream, this.contentType);
+			return new MultipartContent(this.countingInputStream, this.contentType);
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
 		}finally {
@@ -61,16 +60,16 @@ public class OpenSPCoop2Message_mimeMultipart_impl extends AbstractBaseOpenSPCoo
 		}
 	}
 	@Override
-	protected MimeMultipart buildContent(DumpByteArrayOutputStream contentBuffer) throws MessageException{
+	protected MultipartContent buildContent(DumpByteArrayOutputStream contentBuffer) throws MessageException{
 		try{
 			if(contentBuffer.isSerializedOnFileSystem()) {
 				try(InputStream is = new FileInputStream(contentBuffer.getSerializedFile())){
-					return new MimeMultipart(is, this.contentType);
+					return new MultipartContent(is, this.contentType);
 				}
 			}
 			else {
 				try(InputStream is = new ByteArrayInputStream(contentBuffer.toByteArray())){
-					return new MimeMultipart(is, this.contentType);
+					return new MultipartContent(is, this.contentType);
 				}
 			}
 		}catch(Exception e){

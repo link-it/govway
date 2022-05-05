@@ -254,7 +254,9 @@ public class GestoreCorrelazioneApplicativa {
 					}
 				}
 				else{
-					if(MessageType.XML.equals(message.getMessageType())){
+					if(MessageType.XML.equals(message.getMessageType()) || 
+							MessageType.MIME_MULTIPART.equals(message.getMessageType()) // viene prelevato il primo xml trovato
+							){
 						// Nei GET il messaggio e' vuoto
 //						if(element==null){
 //							throw new Exception("Contenuto non presente nel messaggio");
@@ -516,8 +518,10 @@ public class GestoreCorrelazioneApplicativa {
 					}
 					else{
 						try{
-							if(ServiceBinding.REST.equals(message.getServiceBinding()) && !MessageType.XML.equals(message.getMessageType())
-									&& !MessageType.JSON.equals(message.getMessageType())){
+							if(ServiceBinding.REST.equals(message.getServiceBinding()) && 
+									!MessageType.XML.equals(message.getMessageType()) && 
+									!MessageType.JSON.equals(message.getMessageType()) &&
+									!MessageType.MIME_MULTIPART.equals(message.getMessageType())){
 								throw new Exception("MessageType ["+message.getMessageType()+"] non supportato con correlazione di tipo '"+
 										CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_CONTENT_BASED.toString()+"'");
 							}
@@ -732,7 +736,9 @@ public class GestoreCorrelazioneApplicativa {
 					}
 				}
 				else{
-					if(MessageType.XML.equals(message.getMessageType())){
+					if(MessageType.XML.equals(message.getMessageType()) || 
+							MessageType.MIME_MULTIPART.equals(message.getMessageType()) // viene prelevato il primo xml trovato
+							){
 						// il body http puo' essere vuoto
 //						if(element==null){
 //							throw new Exception("Contenuto non presente nel messaggio");
@@ -958,8 +964,10 @@ public class GestoreCorrelazioneApplicativa {
 					}
 					else{
 						try{
-							if(ServiceBinding.REST.equals(message.getServiceBinding()) && !MessageType.XML.equals(message.getMessageType())
-									&& !MessageType.JSON.equals(message.getMessageType())){
+							if(ServiceBinding.REST.equals(message.getServiceBinding()) && 
+									!MessageType.XML.equals(message.getMessageType()) && 
+									!MessageType.JSON.equals(message.getMessageType()) &&
+									!MessageType.MIME_MULTIPART.equals(message.getMessageType())){
 								throw new Exception("MessageType ["+message.getMessageType()+"] non supportato con correlazione di tipo '"+
 										CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_CONTENT_BASED.toString()+"'");
 							}

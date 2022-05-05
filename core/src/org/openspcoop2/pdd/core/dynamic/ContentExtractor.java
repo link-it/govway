@@ -277,7 +277,7 @@ public class ContentExtractor {
 				return bout.toByteArray();
 			}
 			else {
-				return this.message.castAsRest().getContentAsString().getBytes();
+				return this.message.castAsRest().getContentAsByteArray();
 			}
 		}catch(Throwable t) {
 			throw new DynamicException(t.getMessage(),t);

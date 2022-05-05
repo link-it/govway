@@ -21,7 +21,7 @@
 package org.openspcoop2.message;
 
 
-import org.openspcoop2.utils.mime.MimeMultipart;
+import org.openspcoop2.message.rest.MultipartContent;
 
 /**
  * OpenSPCoop2RestMimeMultipartMessage
@@ -31,7 +31,7 @@ import org.openspcoop2.utils.mime.MimeMultipart;
  * @version $Rev$, $Date$
  */
 
-public interface OpenSPCoop2RestMimeMultipartMessage extends OpenSPCoop2RestMessage<MimeMultipart> {
+public interface OpenSPCoop2RestMimeMultipartMessage extends OpenSPCoop2RestMessage<MultipartContent> {
 	
 	
 }

@@ -319,7 +319,7 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 						saveChanges();
 						pulizia = true;
 					}
-					else if((ContentTypeUtilities.isMultipart(contentType)) ){
+					else if((ContentTypeUtilities.isMultipartRelated(contentType)) ){
 						// Bug Fix: OP-678 'Unable to internalize message' con messaggi senza attachments con ContentType 'multipart/related; ...type="text/xml"'
 						//			Capita per i messaggi che contengono un content type multipart e però non sono effettivamente presenti attachments.
 						saveChanges();

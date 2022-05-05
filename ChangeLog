@@ -1,3 +1,13 @@
+2022-05-05  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayMonitor, Utils]
+	Aggiunta funzionalità OP-1363
+	La funzionalità di validazione dei contenuti supporta adesso anche le richieste multipart form-data e mixed descritte in:
+	- https://swagger.io/docs/specification/describing-request-body/multipart-requests/
+	- https://swagger.io/docs/specification/describing-request-body/file-upload/
+	È stato inoltre aggiunto il supporto per la correlazione applicativa su richieste multipart: l'identificativo viene ricercato all'interno del primo part che rappresenta un contenuto xml o json.
+	Infine la console di monitoraggio consente adesso di ispezionare il contenuto multipart delle richieste.
+
 2022-04-28  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

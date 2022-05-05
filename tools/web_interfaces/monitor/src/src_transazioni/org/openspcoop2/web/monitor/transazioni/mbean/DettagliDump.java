@@ -265,7 +265,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 		String toRet = null;
 		try {
 			String contentType = this.dumpMessaggio.getContentType();
-			if(ContentTypeUtilities.isMultipart(contentType)){
+			if(ContentTypeUtilities.isMultipartRelated(contentType)){
 				contentType = ContentTypeUtilities.getInternalMultipartContentType(contentType);
 			}
 			String ext = MimeTypeUtils.fileExtensionForMIMEType(contentType);
@@ -331,7 +331,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 		String toRet = null;
 		try {
 			String contentType = this.dumpMessaggio.getContentType();
-			if(ContentTypeUtilities.isMultipart(contentType)){
+			if(ContentTypeUtilities.isMultipartRelated(contentType)){
 				contentType = ContentTypeUtilities.getInternalMultipartContentType(contentType);
 			}
 			String ext = MimeTypeUtils.fileExtensionForMIMEType(contentType);

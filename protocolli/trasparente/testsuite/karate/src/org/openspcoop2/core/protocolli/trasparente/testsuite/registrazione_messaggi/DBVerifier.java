@@ -121,7 +121,7 @@ public class DBVerifier {
 		}
 	}
 	
-	private static void _verify(String idTransazione, 
+	public static void _verify(String idTransazione, 
 			boolean richiestaIngressoHeader, boolean richiestaIngressoBody,
 			boolean richiestaUscitaHeader, boolean richiestaUscitaBody,
 			boolean rispostaIngressoHeader, boolean rispostaIngressoBody,

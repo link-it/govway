@@ -265,7 +265,10 @@ Di seguito vengono descritti i test del package 'rate_limiting':
 Di seguito vengono descritti i test del package 'validazione':
 
 - 'parametri', verifica la serializzazione descritta in 'https://swagger.io/docs/specification/serialization/' oltre alla verifica che sia header che parametri possono esistere molteplici volte nella richiesta e nella risposta.
-   ant run_test -Ddelete=false -Dload=false -Dpackage=validazione.parametri     
+   ant run_test -Ddelete=false -Dload=false -Dpackage=validazione.parametri  
+
+- 'multipart', verifica la funzionalità descritta in 'https://swagger.io/docs/specification/describing-request-body/multipart-requests/' e 'https://swagger.io/docs/specification/describing-request-body/file-upload/'.
+  ant run_test -Ddelete=false -Dload=false -Dpackage=validazione.multipart   
 
 Di seguito vengono descritti i test del package 'trasformazione':
 

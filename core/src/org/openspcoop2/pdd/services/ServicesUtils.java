@@ -310,7 +310,7 @@ public class ServicesUtils {
 		try {
 			if(contentType!=null && contentType.contains(HttpConstants.CONTENT_TYPE_PARAMETER_CHARSET)){
 				String charset = null;
-				if(ContentTypeUtilities.isMultipart(contentType)) {
+				if(ContentTypeUtilities.isMultipartContentType(contentType)) {
 					String ct = ContentTypeUtilities.getInternalMultipartContentType(charset);
 					if(ct!=null) {
 						charset = ContentTypeUtilities.readCharsetFromContentType(ct);

@@ -297,7 +297,7 @@ public class ServiceBindingConfiguration implements Serializable {
 		boolean mtom = false;
 		if(ServiceBinding.SOAP.equals(serviceBinding) && mediaType!=null){
 			try{
-				if(ContentTypeUtilities.isMultipart(mediaType)){
+				if(ContentTypeUtilities.isMultipartRelated(mediaType)){
 					withAttachments = true;
 					String internal = ContentTypeUtilities.getInternalMultipartContentType(mediaType);
 					if(internal!=null){

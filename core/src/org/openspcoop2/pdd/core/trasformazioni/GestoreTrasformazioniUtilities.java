@@ -544,7 +544,7 @@ public class GestoreTrasformazioniUtilities {
 						else {
 							boolean rebuildWithAttachments = false;
 							if(contentTypeInput!=null) {
-								rebuildWithAttachments = ContentTypeUtilities.isMultipart(contentTypeInput);
+								rebuildWithAttachments = ContentTypeUtilities.isMultipartRelated(contentTypeInput);
 							}
 							if(rebuildWithAttachments) {
 								OpenSPCoop2MessageParseResult pr = null;
