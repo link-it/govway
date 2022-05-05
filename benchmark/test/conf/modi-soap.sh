@@ -22,7 +22,7 @@ function soap_modi_DBTrace_Integrity_OnlyRequest() {
 
 function soap_modi_DBTrace_Integrity_RequestDigestInResponse() {
 	jmeterTestFile=${jmeterSoapTestFile}
-	profiloSicurezza=digest
+	profiloSicurezza=digest-response
 	protocollo=soap
 	tipiTest=Proxy
 	azione=test2
@@ -33,7 +33,7 @@ function soap_modi_DBTrace_Integrity_RequestDigestInResponse() {
 
 function soap_modi_DBTrace_Integrity_OnlyRequest_NoDuplicates() {
 	jmeterTestFile=${jmeterSoapTestFile}
-	profiloSicurezza=digest
+	profiloSicurezza=digest-no-duplicates
 	protocollo=soap
 	tipiTest=Proxy
 	azione=test3
@@ -55,7 +55,7 @@ function soap_modi_DBTrace_IdAuth_OnlyRequest() {
 
 function soap_modi_DBTrace_IdAuth_RequestDigestInResponse() {
 	jmeterTestFile=${jmeterSoapTestFile}
-	profiloSicurezza=auth
+	profiloSicurezza=auth-response
 	protocollo=soap
 	tipiTest=Proxy
 	azione=test5
@@ -66,7 +66,7 @@ function soap_modi_DBTrace_IdAuth_RequestDigestInResponse() {
 
 function soap_modi_DBTrace_IdAuth_OnlyRequest_NoDuplicates() {
 	jmeterTestFile=${jmeterSoapTestFile}
-	profiloSicurezza=auth
+	profiloSicurezza=auth-no-duplicates
 	protocollo=soap
 	tipiTest=Proxy
 	azione=test6
