@@ -1,7 +1,7 @@
 elencoTestTrasparenteSoap="soap_proxy_no-trace soap_proxy_db-trace soap_proxy_file-trace soap_proxy_file-db-trace 
 			soap_proxy_no-trace_validation soap_proxy_db-trace_validation
 			soap_proxy_no-trace_rate-limiting soap_proxy_db-trace_rate-limiting
-			soap_proxy_db-trace_rate-limiting_too-many-requests soap_proxy_db-partial-trace_rate-limiting_too-many-requests"
+			soap_proxy_no-trace_rate-limiting_too-many-requests soap_proxy_db-trace_rate-limiting_too-many-requests soap_proxy_db-partial-trace_rate-limiting_too-many-requests"
 
 tests["soap_proxy_db-trace"]="soap_proxy_DBTrace"
 tests["soap_proxy_no-trace"]="soap_proxy_NoTrace"
@@ -11,6 +11,7 @@ tests["soap_proxy_db-trace_validation"]="soap_proxy_DBTrace_Validazione"
 tests["soap_proxy_no-trace_validation"]="soap_proxy_NoTrace_Validazione"
 tests["soap_proxy_db-trace_rate-limiting"]="soap_proxy_DBTrace_RateLimiting"
 tests["soap_proxy_no-trace_rate-limiting"]="soap_proxy_NoTrace_RateLimiting"
+tests["soap_proxy_no-trace_rate-limiting_too-many-requests"]="soap_proxy_NoTrace_RateLimiting_TooManyRequests"
 tests["soap_proxy_db-trace_rate-limiting_too-many-requests"]="soap_proxy_DBTrace_RateLimiting_TooManyRequests"
 tests["soap_proxy_db-partial-trace_rate-limiting_too-many-requests"]="soap_proxy_DBPartialTrace_RateLimiting_TooManyRequests"
 
@@ -99,6 +100,17 @@ function soap_proxy_NoTrace_RateLimiting() {
 	azione=test2
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="Test policy rate limiting complessiva e per richiedente senza tracciamento"
+}
+
+
+function soap_proxy_NoTrace_RateLimiting_TooManyRequests() {
+	jmeterTestFile=${jmeterSoapTestFile}
+	profiloSicurezza=azione5
+	protocollo=api
+	tipiTest=RateLimiting
+	azione=test5
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="Test policy rate limiting complessiva e per richiedente con superamento della policy senza tracciamento"
 }
 
 
