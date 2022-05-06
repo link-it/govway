@@ -83,7 +83,7 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(session);
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			@SuppressWarnings("unused")
-			User user = ServletUtils.getUserFromSession(session);
+			User user = ServletUtils.getUserFromSession(request, session);
 
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte applicative

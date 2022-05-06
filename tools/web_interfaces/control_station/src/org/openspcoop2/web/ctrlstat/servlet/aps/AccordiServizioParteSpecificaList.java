@@ -130,7 +130,7 @@ public final class AccordiServizioParteSpecificaList extends Action {
 			}
 			
 			String superUser   = ServletUtils.getUserLoginFromSession(session);
-			PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
+			PermessiUtente pu = ServletUtils.getUserFromSession(request, session).getPermessi();
 			
 			boolean [] permessi = new boolean[2];
 			permessi[0] = pu.isServizi();

@@ -448,10 +448,10 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			else 
 				this.pd.setCustomListViewName(ErogazioniCostanti.ASPS_EROGAZIONI_NOME_VISTA_CUSTOM_LISTA_EROGAZIONI);
 
-			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 			boolean showServiceBinding = true;
 			if( !showProtocolli ) {
-				List<String> l = this.core.getProtocolli(this.session);
+				List<String> l = this.core.getProtocolli(this.request, this.session);
 				if(l.size()>0) {
 					IProtocolFactory<?> p = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(l.get(0));
 					if(p.getManifest().getBinding().getRest()==null || p.getManifest().getBinding().getSoap()==null) {
@@ -470,7 +470,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			String protocolloS = filterProtocollo;
 			if(protocolloS==null) {
 				// significa che e' stato selezionato un protocollo nel menu in alto a destra
-				List<String> protocolli = this.core.getProtocolli(this.session);
+				List<String> protocolli = this.core.getProtocolli(this.request, this.session);
 				if(protocolli!=null && protocolli.size()==1) {
 					protocolloS = protocolli.get(0);
 				}
@@ -1370,7 +1370,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -1416,7 +1416,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		else 
 			this.pd.setCustomListViewName(ErogazioniCostanti.ASPS_EROGAZIONI_NOME_VISTA_CUSTOM_FORM_EROGAZIONE);
 
-		boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+		boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 		Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
 		Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
 		Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, asps.getId()+"");

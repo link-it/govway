@@ -20,14 +20,20 @@
 package org.openspcoop2.web.monitor.core.mbean;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -38,7 +44,9 @@ import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.lib.users.dao.UserPassword;
+import org.openspcoop2.web.monitor.core.bean.LoginBean;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.IService;
@@ -80,7 +88,9 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 	private ICrypt passwordManager_backwardCompatibility;
 
 	private PasswordVerifier passwordVerifier = null;
-
+	
+	private boolean salvaModificheProfiloInSessione = false;
+	
 	public UtentiBean() {
 		this.service = new UserService();
 
@@ -101,6 +111,8 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 			if(config.isBackwardCompatibility()) {
 				this.passwordManager_backwardCompatibility = CryptFactory.getOldMD5Crypt(log);
 			}
+			
+			this.salvaModificheProfiloInSessione = pddMonitorProperties.isModificaProfiloUtenteDaFormAggiornaSessione();
 			
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
@@ -160,6 +172,39 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 		this.user = this.service.findById(this.user.getLogin());
 	}
 
+	public String salvaProfilo() {
+		
+		User userToUpdate = this.service.findById(this.user.getLogin());
+		
+		String modalitaDefaultUtente = this.user.getProtocolloSelezionatoPddMonitor();
+		userToUpdate.setProtocolloSelezionatoPddMonitor((modalitaDefaultUtente != null && !modalitaDefaultUtente.equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)) ? modalitaDefaultUtente : null);
+		String soggettoDefaultUtente = this.user.getSoggettoSelezionatoPddMonitor();
+		userToUpdate.setSoggettoSelezionatoPddMonitor((soggettoDefaultUtente != null && !soggettoDefaultUtente.equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)) ? soggettoDefaultUtente : null);
+		
+		try {
+			((UserService)this.service).salvaModalita(userToUpdate.getLogin(), userToUpdate.getProtocolloSelezionatoPddMonitor());
+			((UserService)this.service).salvaSoggettoPddMonitor(userToUpdate.getLogin(), userToUpdate.getSoggettoSelezionatoPddMonitor());
+			
+			if(this.salvaModificheProfiloInSessione) {
+				Utility.getLoggedUser().getUtente().setProtocolloSelezionatoPddMonitor(userToUpdate.getProtocolloSelezionatoPddMonitor());
+				Utility.getLoggedUser().getUtente().setSoggettoSelezionatoPddMonitor(userToUpdate.getSoggettoSelezionatoPddMonitor());
+			}
+			
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Profilo Utente modificato correttamente"));
+		} catch (Exception e) {
+			log.error("Salvataggio Profilo Utente non riuscito",e);
+			MessageUtils.addErrorMsg("Salvataggio Profilo Utente non riuscito");
+			return null;
+		}
+		
+		// salvataggio della password solo se e' spuntata la check box nella pagina
+		if(this.showFormCambiaPassword) {
+			return this.cambioPassword();
+		}
+		
+		return null;
+	}
+	
 	public String cambioPassword() {
 
 		try {
@@ -396,7 +441,6 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 		}
 	}
 
-
 	@Override
 	public String delete() {
 		// operazione non piu' permessa nel monitor
@@ -449,7 +493,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 	}
 
 	public String getProfilo() {
-		return "Profilo Utente";
+		return Costanti.LABEL_PROFILO;
 	}
 
 	public void setProfilo(String profilo) {
@@ -522,5 +566,118 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 		this.userToUpdate = userToUpdate;
 	}
 	
+	public List<SelectItem> getModalitaDisponibiliItems() throws Exception {
+		List<String> protocolliDisponibli = Utility.getLoginBean().listaProtocolliDisponibilePerUtentePddMonitor();
+		List<SelectItem> modalita = new ArrayList<>();
+		for (String protocollo : protocolliDisponibli) {
+			modalita.add(new SelectItem(protocollo, NamingUtils.getLabelProtocollo(protocollo)));
+		}
+
+		modalita.add(0, new SelectItem(Costanti.VALUE_PARAMETRO_MODALITA_ALL, Costanti.LABEL_PARAMETRO_MODALITA_ALL));
+		
+		return modalita;   
+	}
 	
+	public String getModalitaDefault() throws Exception {
+		if(this.getModalitaDefaultUtente().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL))
+			return Costanti.LABEL_PARAMETRO_MODALITA_ALL;
+				
+		return NamingUtils.getLabelProtocollo(Utility.getLoginBean().listaProtocolliDisponibilePerUtentePddMonitor().get(0));
+	}
+
+	public boolean isVisualizzaSelectModalitaDisponibili() throws Exception {
+		return Utility.getLoginBean().listaProtocolliDisponibilePerUtentePddMonitor().size() > 1;
+	}
+
+	public void setVisualizzaSelectModalitaDisponibili(boolean visualizzaSelectModalitaDisponibili) {
+		
+	}
+	
+	public String getModalitaDefaultUtente() {
+		if(this.user.getProtocolloSelezionatoPddMonitor() == null)
+			return Costanti.VALUE_PARAMETRO_MODALITA_ALL;
+		
+		return this.user.getProtocolloSelezionatoPddMonitor();
+	}
+
+	public void setModalitaDefaultUtente(String modalita) {
+		this.user.setProtocolloSelezionatoPddMonitor(modalita);
+	}
+
+	public void modalitaDefaultUtenteSelected(ActionEvent ae) {
+		
+	}
+	
+	public String getSoggettoDefaultUtente() {
+		if(this.user.getSoggettoSelezionatoPddMonitor() == null)
+			return Costanti.VALUE_PARAMETRO_MODALITA_ALL;
+		
+		return this.user.getSoggettoSelezionatoPddMonitor();
+	}
+	
+	public void setSoggettoDefaultUtente(String idSoggettoDefaultUtente) {
+		this.user.setSoggettoSelezionatoPddMonitor(idSoggettoDefaultUtente);
+	}
+	
+	public void idSoggettoDefaultUtenteSelected(ActionEvent ae) {
+		
+	}
+	
+	public boolean isVisualizzaSezioneSelezioneSoggetto() {
+		log.debug("AAAAAAAAAAA: " + this.toString() + " isVisualizzaSezioneSelezioneSoggetto: " + (!this.getModalitaDefaultUtente().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)));
+		return !this.getModalitaDefaultUtente().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL);
+	}
+
+	public void setVisualizzaSezioneSelezioneSoggetto(boolean visualizzaSezioneSelezioneSoggetto) {
+	}
+
+	public boolean isVisualizzaSelectSoggettiDisponibili() throws Exception {
+		if(!this.getModalitaDefaultUtente().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL))
+			return LoginBean.listaSoggettiDisponibiliPerProtocollo(Utility.getLoggedUser(), this.getModalitaDefaultUtente()).size() > 1;
+			
+		return false;
+	}
+	
+	public String getSoggettoDefault() throws Exception {
+		if(LoginBean.listaSoggettiDisponibiliPerProtocollo(Utility.getLoggedUser(), this.getModalitaDefaultUtente()).size() > 1) {
+			return Costanti.LABEL_PARAMETRO_MODALITA_ALL;
+		}
+		
+		Soggetto soggetto = LoginBean.listaSoggettiDisponibiliPerProtocollo(Utility.getLoggedUser(), this.getModalitaDefaultUtente()).get(0);
+		IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto()); 
+		
+		return NamingUtils.getLabelSoggetto(idSoggetto);
+	}
+	
+	public List<SelectItem> getSoggettiDisponibiliItems() throws Exception {
+		List<Soggetto> soggettiDisponibli = LoginBean.listaSoggettiDisponibiliPerProtocollo(Utility.getLoggedUser(), this.getModalitaDefaultUtente());
+		List<SelectItem> modalita = new ArrayList<>();
+		
+		List<String> listaLabel = new ArrayList<>();
+		Map<String, IDSoggetto> mapLabelIds = new HashMap<>();
+		for (Soggetto soggetto : soggettiDisponibli) {
+			IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto()); 
+			String labelSoggetto = NamingUtils.getLabelSoggetto(idSoggetto);
+			if(!listaLabel.contains(labelSoggetto)) {
+				listaLabel.add(labelSoggetto);
+				mapLabelIds.put(labelSoggetto, idSoggetto);
+			}
+		}
+		
+		// Per ordinare in maniera case insensistive
+		Collections.sort(listaLabel, new Comparator<String>() {
+			 @Override
+			public int compare(String o1, String o2) {
+		           return o1.toLowerCase().compareTo(o2.toLowerCase());
+		        }
+			});
+		
+		for (String label : listaLabel) {
+			modalita.add(new SelectItem(NamingUtils.getSoggettoFromLabel(this.getModalitaDefaultUtente(), label).toString(), label));
+		}
+
+		modalita.add(0, new SelectItem(Costanti.VALUE_PARAMETRO_MODALITA_ALL, Costanti.LABEL_PARAMETRO_MODALITA_ALL));
+		
+		return modalita;   
+	}
 }

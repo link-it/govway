@@ -240,7 +240,7 @@ public final class Monitor extends Action {
 				// recupero eventuali parametri nella request
 				MonitorFormBean mb = this.getBeanForm(errors, monitorHelper);
 
-				this.showForm(session, monitorHelper, pd, tipoProfcoll, MonitorMethods.getMethodsNames(), "", "", mb, monitorCore);
+				this.showForm(request, session, monitorHelper, pd, tipoProfcoll, MonitorMethods.getMethodsNames(), "", "", mb, monitorCore);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
@@ -353,7 +353,7 @@ public final class Monitor extends Action {
 						pd.setMessage("Il messaggio [" + formBean.getIdMessaggio() + "] non e' piu presente. Impossibile visualizzare il dettaglio.");
 						// rinvio alla visulizzazione del form in quanto il
 						// messaggio non e' piu presente
-						this.showForm(session, monitorHelper, pd, tipoProfcoll, MonitorMethods.getMethodsNames(), "", "", formBean, monitorCore);
+						this.showForm(request, session, monitorHelper, pd, tipoProfcoll, MonitorMethods.getMethodsNames(), "", "", formBean, monitorCore);
 
 						ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
@@ -781,7 +781,7 @@ public final class Monitor extends Action {
 						dati.add(ServletUtils.getDataElementForEditModeFinished());
 						pd.setDati(dati);
 						
-						this.showForm(  session, monitorHelper, pd, tipoProfcoll, MonitorMethods.getMethodsNames(), "", "", formBean, monitorCore);
+						this.showForm(request, session, monitorHelper, pd, tipoProfcoll, MonitorMethods.getMethodsNames(), "", "", formBean, monitorCore);
 					}	
 						ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 						return ServletUtils.getStrutsForwardEditModeInProgress(mapping, MonitorCostanti.OBJECT_NAME_MONITOR, 
@@ -824,7 +824,7 @@ public final class Monitor extends Action {
 					
 					}
 
-					this.showForm(  session, monitorHelper, pd, tipoProfcoll, MonitorMethods.getMethodsNames(), "", "", formBean, monitorCore);
+					this.showForm(request, session, monitorHelper, pd, tipoProfcoll, MonitorMethods.getMethodsNames(), "", "", formBean, monitorCore);
 
 					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
@@ -1150,7 +1150,7 @@ public final class Monitor extends Action {
 		}
 	}
 
-	private void showForm( HttpSession session, MonitorHelper monitorHelper, PageData pd, String[] profiliCollaborazione, 
+	private void showForm(HttpServletRequest request, HttpSession session, MonitorHelper monitorHelper, PageData pd, String[] profiliCollaborazione, 
 			String[] metodiMonitor, String azione, String soglia, MonitorFormBean mb, MonitorCore monitorCore) throws Exception {
 		try {
 			monitorHelper.makeMenu();
@@ -1457,7 +1457,7 @@ public final class Monitor extends Action {
 				List<String> tipiServizi_label = new ArrayList<String>();
 				tipiServizi.add("");
 				tipiServizi_label.add("-");
-				List<String> list = monitorCore.getProtocolli(session);
+				List<String> list = monitorCore.getProtocolli(request, session);
 				for (String protocolloL : list) {
 					tipiServizi.addAll(aspsCore.getTipiServiziGestitiProtocollo(protocolloL,ServiceBinding.SOAP));
 					tipiServizi_label.addAll(aspsCore.getTipiServiziGestitiProtocollo(protocolloL,ServiceBinding.SOAP));

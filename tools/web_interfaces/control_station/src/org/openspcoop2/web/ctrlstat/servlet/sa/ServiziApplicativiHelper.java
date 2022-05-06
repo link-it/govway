@@ -474,7 +474,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
 	
-			boolean showProtocolli = TipoOperazione.CHANGE.equals(tipoOperazione) && (this.core.countProtocolli(this.session)>1);
+			boolean showProtocolli = TipoOperazione.CHANGE.equals(tipoOperazione) && (this.core.countProtocolli(this.request, this.session)>1);
 			
 			if( (listaTipiProtocollo != null && listaTipiProtocollo.size() > 1) || showProtocolli){
 				if(TipoOperazione.CHANGE.equals(tipoOperazione)){
@@ -2201,7 +2201,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				protocolloS = filterProtocollo;
 				if(protocolloS==null) {
 					// significa che e' stato selezionato un protocollo nel menu in alto a destra
-					List<String> protocolli = this.core.getProtocolli(this.session);
+					List<String> protocolli = this.core.getProtocolli(this.request, this.session);
 					if(protocolli!=null && protocolli.size()==1) {
 						protocolloS = protocolli.get(0);
 					}
@@ -2457,10 +2457,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				ServletUtils.enabledPageDataSearch(this.pd, labelApplicativi, search);
 			}
 
-			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 			
 			boolean profiloModIPAusato = false;
-			List<String> protocolli = this.core.getProtocolli(this.session);
+			List<String> protocolli = this.core.getProtocolli(this.request, this.session);
 			if(protocolli!=null && protocolli.size()==1) {
 				profiloModIPAusato = this.isProfiloModIPA(protocolli.get(0));
 			}
@@ -2505,7 +2505,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.SERVIZIO_APPLICATIVO, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.SERVIZIO_APPLICATIVO, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 

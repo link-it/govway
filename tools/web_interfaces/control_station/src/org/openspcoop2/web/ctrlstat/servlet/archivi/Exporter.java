@@ -242,71 +242,71 @@ public final class Exporter extends Action {
 			case GRUPPO:
 				provenienza = new Parameter(GruppiCostanti.LABEL_GRUPPI, GruppiCostanti.SERVLET_NAME_GRUPPI_LIST);
 				identificativi = exporterUtils.getIdsGruppi(objToExport);
-				protocolli = archiviCore.getProtocolli(session);
+				protocolli = archiviCore.getProtocolli(request, session);
 				break;
 			case RUOLO:
 				provenienza = new Parameter(RuoliCostanti.LABEL_RUOLI, RuoliCostanti.SERVLET_NAME_RUOLI_LIST);
 				identificativi = exporterUtils.getIdsRuoli(objToExport);
-				protocolli = archiviCore.getProtocolli(session);
+				protocolli = archiviCore.getProtocolli(request, session);
 				break;
 			case SCOPE:
 				provenienza = new Parameter(ScopeCostanti.LABEL_SCOPE, ScopeCostanti.SERVLET_NAME_SCOPE_LIST);
 				identificativi = exporterUtils.getIdsScope(objToExport);
-				protocolli = archiviCore.getProtocolli(session);
+				protocolli = archiviCore.getProtocolli(request, session);
 				break;
 			case CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIG_POLICY:
 				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_POLICY, 
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY_LIST);
 				identificativi = exporterUtils.getIdsControlloTrafficoConfigPolicy(objToExport);
-				protocolli = archiviCore.getProtocolli(session);
+				protocolli = archiviCore.getProtocolli(request, session);
 				break;
 			case CONFIGURAZIONE_CONTROLLO_TRAFFICO_ACTIVE_POLICY:
 				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK, 
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_LIST);
 				identificativi = exporterUtils.getIdsControlloTrafficoActivePolicy(objToExport);
-				protocolli = archiviCore.getProtocolli(session);
+				protocolli = archiviCore.getProtocolli(request, session);
 				break;
 			case ALLARME:
 				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ALLARMI, 
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ALLARMI_LIST);
 				identificativi = exporterUtils.getIdsAllarmi(objToExport);
-				protocolli = archiviCore.getProtocolli(session);
+				protocolli = archiviCore.getProtocolli(request, session);
 				break;
 			case CONFIGURAZIONE_TOKEN_POLICY:
 				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN, 
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
 								ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_TOKEN);
 				identificativi = exporterUtils.getIdsTokenPolicy(objToExport);
-				protocolli = archiviCore.getProtocolli(session);
+				protocolli = archiviCore.getProtocolli(request, session);
 				break;
 			case CONFIGURAZIONE_ATTRIBUTE_AUTHORITY:
 				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY, 
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST+"?"+
 								ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE+"="+ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE_VALORE_ATTRIBUTE_AUTHORITY);
 				identificativi = exporterUtils.getIdsTokenPolicy(objToExport);
-				protocolli = archiviCore.getProtocolli(session);
+				protocolli = archiviCore.getProtocolli(request, session);
 				break;
 			case CONFIGURAZIONE_PLUGIN_CLASSE:
 				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_CLASSI, 
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PLUGINS_CLASSI_LIST);
 				identificativi = exporterUtils.getIdsPluginClassi(objToExport);
-				protocolli = archiviCore.getProtocolli(session);
+				protocolli = archiviCore.getProtocolli(request, session);
 				break;
 			case CONFIGURAZIONE_PLUGIN_ARCHVIO:
 				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PLUGINS_REGISTRO_ARCHIVI, 
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PLUGINS_ARCHIVI_LIST);
 				identificativi = exporterUtils.getIdsPluginArchivi(objToExport);
-				protocolli = archiviCore.getProtocolli(session);
+				protocolli = archiviCore.getProtocolli(request, session);
 				break;
 			case CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA:
 				provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROXY_PASS_REGOLE,
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA_LIST);
 				identificativi = exporterUtils.getIdsUrlInvocazioneRegole(objToExport);
-				protocolli = archiviCore.getProtocolli(session);
+				protocolli = archiviCore.getProtocolli(request, session);
 				break;
 			case CONFIGURAZIONE:
 				//provenienza = new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE, null); e' al primo livello
-				protocolli = archiviCore.getProtocolli(session);
+				protocolli = archiviCore.getProtocolli(request, session);
 				if(tipoConfigurazione==null){
 					tipoConfigurazione = ArchiveType.ALL.toString();
 				}

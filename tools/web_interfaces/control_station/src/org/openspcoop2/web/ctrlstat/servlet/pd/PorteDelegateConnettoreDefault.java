@@ -621,7 +621,7 @@ public class PorteDelegateConnettoreDefault extends Action {
 						ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE);
 						
 						String superUser =   ServletUtils.getUserLoginFromSession(session); 
-						PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
+						PermessiUtente pu = ServletUtils.getUserFromSession(request, session).getPermessi();
 						boolean [] permessi = new boolean[2];
 						permessi[0] = pu.isServizi();
 						permessi[1] = pu.isAccordiCooperazione();

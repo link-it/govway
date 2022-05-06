@@ -220,7 +220,7 @@ public final class PorteApplicativeAbilitazione extends Action {
 						idLista = Liste.SERVIZI;
 						ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 						boolean [] permessi = new boolean[2];
-						PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
+						PermessiUtente pu = ServletUtils.getUserFromSession(request, session).getPermessi();
 						permessi[0] = pu.isServizi();
 						permessi[1] = pu.isAccordiCooperazione();
 						List<AccordoServizioParteSpecifica> listaS = null;

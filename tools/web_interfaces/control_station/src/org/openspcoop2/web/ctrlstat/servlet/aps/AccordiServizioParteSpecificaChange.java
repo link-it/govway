@@ -428,7 +428,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			// La lista degli SA viene filtrata per tipo se sono abilitati gli applicativiServer.
 			String tipoSA = (isApplicativiServerEnabled && gestioneErogatori) ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER : null;
 			
-			PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
+			PermessiUtente pu = ServletUtils.getUserFromSession(request, session).getPermessi();
 
 			boolean soggettoOperativo = true;
 			boolean generaPACheckSoggetto = true; 

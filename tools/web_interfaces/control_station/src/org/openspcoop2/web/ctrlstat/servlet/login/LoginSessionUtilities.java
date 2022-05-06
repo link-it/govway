@@ -62,7 +62,7 @@ public class LoginSessionUtilities {
 		
 		Boolean showAccordiCooperazione = user.getPermessi().isAccordiCooperazione();
 		
-		ServletUtils.setUserIntoSession(session, user);
+		ServletUtils.setUserIntoSession(request, session, user);
 				
 		InterfaceType gui = user.getInterfaceType();
 		switch (gui) {
@@ -95,7 +95,7 @@ public class LoginSessionUtilities {
 		
 		ServletUtils.removeContaListeFromSession(session);
 				
-		ServletUtils.removeUserFromSession(session);
+		ServletUtils.removeUserFromSession(request, session);
 				
 		ServletUtils.removeObjectFromSession(request, session, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_INFO_PROTOCOLLO);
 		ServletUtils.removeObjectFromSession(request, session, CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI);

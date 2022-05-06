@@ -331,7 +331,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 			used = asps != null && asps.size() > 0;
 
 			// lista dei protocolli supportati
-			listaTipiProtocollo = apcCore.getProtocolliByFilter(session, true, false);
+			listaTipiProtocollo = apcCore.getProtocolliByFilter(request, session, true, false);
 
 			// primo accesso 
 			if(this.tipoProtocollo == null){
@@ -339,7 +339,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 					this.tipoProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 				}
 				else{
-					this.tipoProtocollo = apsCore.getProtocolloDefault(session, listaTipiProtocollo);
+					this.tipoProtocollo = apsCore.getProtocolloDefault(request, session, listaTipiProtocollo);
 				}
 			}
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.tipoProtocollo);

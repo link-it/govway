@@ -136,7 +136,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			pu.setAccordiCooperazione(false);
 		}
 		else {
-			pu = ServletUtils.getUserFromSession(apsHelper.getSession()).getPermessi();
+			pu = ServletUtils.getUserFromSession(apsHelper.getRequest(), apsHelper.getSession()).getPermessi();
 		}
 		boolean [] permessi = new boolean[2];
 		permessi[0] = pu.isServizi();

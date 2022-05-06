@@ -340,7 +340,7 @@ public class ArchiviExporter extends HttpServlet {
 					
 			
 			// Filtro per il protocollo attivo sulla console
-			List<String> protocolli = archiviCore.getProtocolli(session);
+			List<String> protocolli = archiviCore.getProtocolli(request, session);
 			List<String> tipiSoggetti = new ArrayList<>();
 			List<String> tipiServizi = new ArrayList<>();
 			for (String protocolloUtente : protocolli) {

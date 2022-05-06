@@ -213,7 +213,7 @@ public class ErogazioniDetailsUtilities {
 		String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(idServizio.getSoggettoErogatore().getTipo());
 		//org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory = org.openspcoop2.protocol.engine.ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 		String labelProtocollo = consoleHelper.getLabelProtocollo(protocollo);
-		boolean showProtocolli = consoleHelper.getSession()!=null ? (soggettiCore.countProtocolli(consoleHelper.getSession())>1) : true;
+		boolean showProtocolli = consoleHelper.getSession()!=null ? (soggettiCore.countProtocolli(consoleHelper.getRequest(), consoleHelper.getSession())>1) : true;
 		
 		AccordoServizioParteSpecifica asps = apsCore.getServizio(idServizio);
 		AccordoServizioParteComuneSintetico as = apcCore.getAccordoServizioSintetico(asps.getIdAccordo());

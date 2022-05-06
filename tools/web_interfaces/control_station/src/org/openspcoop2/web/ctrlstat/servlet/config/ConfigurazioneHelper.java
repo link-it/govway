@@ -3968,7 +3968,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			String send = ArchiviCostanti.SERVLET_NAME_PACKAGE_EXPORT+"?"+
 					ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE.name();
-			List<String> protocolli = this.confCore.getProtocolli(this.session, true);
+			List<String> protocolli = this.confCore.getProtocolli(this.request, this.session, true);
 			String protocollo = protocolli.get(0);
 			if(protocollo!=null && !"".equals(protocollo)){
 				send = send + "&" + ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO+"="+ protocollo;
@@ -4130,7 +4130,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			InformazioniProtocollo infoProt = pFactory.getInformazioniProtocol();
 					
-			User user = ServletUtils.getUserFromSession(this.session);
+			User user = ServletUtils.getUserFromSession(this.request, this.session);
 			String userLogin = user.getLogin();
 			
 			if(mapPFactory.size()>1) {
@@ -8231,7 +8231,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIG_POLICY, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIG_POLICY, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -8837,7 +8837,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if (this.core.isShowPulsantiImportExport() && (nomePorta==null || StringUtils.isEmpty(nomePorta))) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ACTIVE_POLICY, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ACTIVE_POLICY, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -13762,7 +13762,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		boolean protocolloAssociatoFiltroNonSelezionatoUtente = false;
 		if(policy.getFiltro().isEnabled()){
-			protocolliValue = this.confCore.getProtocolli(this.session);
+			protocolliValue = this.confCore.getProtocolli(this.request, this.session);
 			if(policy.getFiltro().getProtocollo()!=null) {
 				// sara' sempre impostato, a meno della prima volta (create policy)
 				if(protocolliValue.contains(policy.getFiltro().getProtocollo())==false) {
@@ -13788,7 +13788,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							protocolloSelezionatoValue = protocolliValue.get(0);
 						}
 						else {
-							protocolloSelezionatoValue = this.confCore.getProtocolloDefault(this.session, protocolliValue);
+							protocolloSelezionatoValue = this.confCore.getProtocolloDefault(this.request, this.session, protocolliValue);
 						}
 					}
 					//protocolli = enrichListConQualsiasi(protocolli); NOTA: In questa versione un protocollo deve essere per forza selezionato.
@@ -14275,7 +14275,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 					else {
 					
-						User user = ServletUtils.getUserFromSession(this.session);
+						User user = ServletUtils.getUserFromSession(this.request, this.session);
 						String userLogin = user.getLogin();
 						
 						List<String> tipiSoggettiGestitiProtocollo = this.soggettiCore.getTipiSoggettiGestitiProtocollo(protocolloSelezionatoValue);
@@ -14400,7 +14400,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						
 						listSA = new ArrayList<>();
 						
-						User user = ServletUtils.getUserFromSession(this.session);
+						User user = ServletUtils.getUserFromSession(this.request, this.session);
 						String userLogin = user.getLogin();
 						
 						List<IDServizioApplicativoDB> listServiziApplicativiTmp = null;
@@ -16293,7 +16293,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					org.openspcoop2.protocol.sdk.constants.ArchiveType archiveType = attributeAuthority ?
 							org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_ATTRIBUTE_AUTHORITY :
 							org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_TOKEN_POLICY;
-					if(exporterUtils.existsAtLeastOneExportMode(archiveType, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(archiveType, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -16921,7 +16921,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -17706,7 +17706,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_PLUGIN_ARCHVIO, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_PLUGIN_ARCHVIO, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -18340,7 +18340,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_PLUGIN_CLASSE, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_PLUGIN_CLASSE, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -18792,7 +18792,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if (this.core.isShowPulsantiImportExport()  && (nomePorta==null || StringUtils.isEmpty(nomePorta))) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.ALLARME, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.ALLARME, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -21017,7 +21017,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		boolean protocolloAssociatoFiltroNonSelezionatoUtente = false;
 		if(allarme.getFiltro().isEnabled()){
-			protocolliValue = this.confCore.getProtocolli(this.session);
+			protocolliValue = this.confCore.getProtocolli(this.request, this.session);
 			if(allarme.getFiltro().getProtocollo()!=null) {
 				// sara' sempre impostato, a meno della prima volta (create policy)
 				if(protocolliValue.contains(allarme.getFiltro().getProtocollo())==false) {
@@ -21043,7 +21043,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							protocolloSelezionatoValue = protocolliValue.get(0);
 						}
 						else {
-							protocolloSelezionatoValue = this.confCore.getProtocolloDefault(this.session, protocolliValue);
+							protocolloSelezionatoValue = this.confCore.getProtocolloDefault(this.request, this.session, protocolliValue);
 						}
 					}
 					//protocolli = enrichListConQualsiasi(protocolli); NOTA: In questa versione un protocollo deve essere per forza selezionato.
@@ -21531,7 +21531,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 					else {
 					
-						User user = ServletUtils.getUserFromSession(this.session);
+						User user = ServletUtils.getUserFromSession(this.request, this.session);
 						String userLogin = user.getLogin();
 						
 						List<String> tipiSoggettiGestitiProtocollo = this.soggettiCore.getTipiSoggettiGestitiProtocollo(protocolloSelezionatoValue);
@@ -21656,7 +21656,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						
 						listSA = new ArrayList<>();
 						
-						User user = ServletUtils.getUserFromSession(this.session);
+						User user = ServletUtils.getUserFromSession(this.request, this.session);
 						String userLogin = user.getLogin();
 						
 						List<IDServizioApplicativoDB> listServiziApplicativiTmp = null;

@@ -94,7 +94,7 @@ public class UtentiSoggettiAdd extends Action {
 			
 			if(protocollo == null) {
 				if(protocolli!=null && protocolli.size()>0) {
-					protocollo = utentiCore.getProtocolloDefault(null, protocolli);
+					protocollo = utentiCore.getProtocolloDefault(request, null, protocolli);
 				}
 			}
 			

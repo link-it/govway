@@ -39,6 +39,7 @@ import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.monitor.core.config.ApplicationProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -893,6 +894,14 @@ public class PddMonitorProperties {
 	
 	public boolean isRuoloConfiguratoreAttivo() throws Exception{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("utenti.ruoloConfiguratore.enabled", true, true));
+	}
+	
+	public boolean isModificaProfiloUtenteDaLinkAggiornaDB() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("utenti.modificaProfiloUtenteDaLink.aggiornaInfoSuDb", true, true));
+	}
+	
+	public boolean isModificaProfiloUtenteDaFormAggiornaSessione() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("utenti.modificaProfiloUtenteDaForm.aggiornaInfoInSessione", true, true));
 	}
 	
 	// Gestore Filtri

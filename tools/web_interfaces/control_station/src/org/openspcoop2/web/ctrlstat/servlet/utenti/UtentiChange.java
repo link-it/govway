@@ -114,6 +114,12 @@ public final class UtentiChange extends Action {
 			String isSoggettiAll = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_ABILITAZIONI_SOGGETTI_ALL);
 			String isServiziAll = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_ABILITAZIONI_SERVIZI_ALL);
 			
+			String tipoModalitaConsoleGestione = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
+			String idSoggettoConsoleGestione = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO);
+			
+			String tipoModalitaConsoleMonitoraggio = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR);
+			String idSoggettoConsoleMonitoraggio = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR);
+			
 			String scadenza = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_SCADENZA);
 			
 			Boolean singlePdD = ServletUtils.getBooleanAttributeFromSession(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD, session, request);
@@ -158,11 +164,71 @@ public final class UtentiChange extends Action {
 				}
 				protocolliSupportati  = oldProtocolliSupportati;
 				first = true;
+				
+				if(tipoModalitaConsoleGestione == null) {
+					tipoModalitaConsoleGestione =  user.getProtocolloSelezionatoPddConsole();
+				}
+				
+				// nessun profilo selezionato imposto all
+				if(tipoModalitaConsoleGestione == null) {
+					tipoModalitaConsoleGestione = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+				}
+				
+				
+				if(idSoggettoConsoleGestione == null) {
+					idSoggettoConsoleGestione = user.getSoggettoSelezionatoPddConsole();
+				}
+				
+				// nessun soggetto selezionato imposto all
+				if(idSoggettoConsoleGestione == null) {
+					idSoggettoConsoleGestione = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+				}
+				
+				if(tipoModalitaConsoleMonitoraggio == null) {
+					tipoModalitaConsoleMonitoraggio =  user.getProtocolloSelezionatoPddMonitor();
+				}
+				
+				// nessun profilo selezionato imposto all
+				if(tipoModalitaConsoleMonitoraggio == null) {
+					tipoModalitaConsoleMonitoraggio = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+				}
+				
+				
+				if(idSoggettoConsoleMonitoraggio == null) {
+					idSoggettoConsoleMonitoraggio = user.getSoggettoSelezionatoPddMonitor();
+				}
+				
+				// nessun soggetto selezionato imposto all
+				if(idSoggettoConsoleMonitoraggio == null) {
+					idSoggettoConsoleMonitoraggio = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+				}
 			}
-
 			
 //			tipoGui = (tipoGui==null) ? user.getInterfaceType().toString() : tipoGui;
 			InterfaceType interfaceType = InterfaceType.convert(tipoGui, true);
+			
+			String postBackElementName = utentiHelper.getPostBackElementName();
+			
+			if (postBackElementName != null) {
+				
+				// selezione modalita'
+				if(postBackElementName.startsWith(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX)) {
+					tipoModalitaConsoleGestione = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+					idSoggettoConsoleGestione = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+					tipoModalitaConsoleMonitoraggio = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+					idSoggettoConsoleMonitoraggio = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+				}
+				
+				// cambio del profilo, reset del valore del soggetto
+				if(postBackElementName.equals(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA)) {
+					idSoggettoConsoleGestione = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+				}
+				
+				// cambio del profilo, reset del valore del soggetto
+				if(postBackElementName.equals(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR)) {
+					idSoggettoConsoleMonitoraggio = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+				}
+			}
 			
 			// Preparo il menu
 			utentiHelper.makeMenu();
@@ -216,7 +282,8 @@ public final class UtentiChange extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.CHANGE, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						changepwd,modalitaScelte, isSoggettiAll, isServiziAll, user, scadenza, dataUltimoAggiornamentoPassword, oldScadenza);
+						changepwd,modalitaScelte, isSoggettiAll, isServiziAll, user, scadenza, dataUltimoAggiornamentoPassword, oldScadenza, 
+						tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio);
 
 				pd.setDati(dati);
 
@@ -258,7 +325,8 @@ public final class UtentiChange extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.CHANGE, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						changepwd,modalitaScelte, isSoggettiAll, isServiziAll, user, scadenza, dataUltimoAggiornamentoPassword, oldScadenza);
+						changepwd,modalitaScelte, isSoggettiAll, isServiziAll, user, scadenza, dataUltimoAggiornamentoPassword, oldScadenza, 
+						tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio);
 
 				pd.setDati(dati);
 
@@ -403,7 +471,8 @@ public final class UtentiChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				utentiHelper.addChangeUtenteInfoToDati(dati, nomesu, changepwd, pwsu, confpwsu, interfaceType, 
-						isServizi, isDiagnostica, isReportistica, isSistema, isMessaggi, isUtenti, isAuditing,isAccordiCooperazione,paginaSuServizi,  uws, paginaSuAccordi, uwp,modalitaScelte);
+						isServizi, isDiagnostica, isReportistica, isSistema, isMessaggi, isUtenti, isAuditing,isAccordiCooperazione,paginaSuServizi, 
+						uws, paginaSuAccordi, uwp,modalitaScelte, tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio);
 
 				pd.setDati(dati);
 				pd.setMessage(msg,Costanti.MESSAGE_TYPE_INFO);
@@ -442,6 +511,10 @@ public final class UtentiChange extends Action {
 
 				// Modifico i dati dell'utente
 				user.setInterfaceType(InterfaceType.valueOf(tipoGui));
+				user.setProtocolloSelezionatoPddConsole(!tipoModalitaConsoleGestione.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? tipoModalitaConsoleGestione : null);
+				user.setSoggettoSelezionatoPddConsole(!idSoggettoConsoleGestione.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? idSoggettoConsoleGestione : null);
+				user.setProtocolloSelezionatoPddMonitor(!tipoModalitaConsoleMonitoraggio.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? tipoModalitaConsoleMonitoraggio : null);
+				user.setSoggettoSelezionatoPddMonitor(!idSoggettoConsoleMonitoraggio.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? idSoggettoConsoleMonitoraggio : null);
 					
 				String puString = "";
 
@@ -584,12 +657,15 @@ public final class UtentiChange extends Action {
 				// Se sto modificando l'utente che è anche quello connesso
 				if(userLogin.equals(user.getLogin())){
 
-					LoginSessionUtilities.cleanLoginParametersSession(request, session);
+					if(utentiCore.isUtenzeModificaProfiloUtenteDaFormAggiornaSessione()) {
+						LoginSessionUtilities.cleanLoginParametersSession(request, session);
 
-					ServletUtils.setUserIntoSession(session, user); // update in sessione.
-					utentiHelper.setTipoInterfaccia(user.getInterfaceType()); // update InterfaceType
-					LoginSessionUtilities.setLoginParametersSession(request, session, utentiCore, userLogin);
-
+						ServletUtils.setUserIntoSession(request, session, user); // update in sessione.
+//						utentiHelper.setTipoInterfaccia(user.getInterfaceType()); // update InterfaceType
+						LoginSessionUtilities.setLoginParametersSession(request, session, utentiCore, userLogin);
+					} else {
+						ServletUtils.setUserIntoSession(request, session, user); // update in sessione.
+					}
 				}
 
 				boolean isLoggedUser = userLogin.equals(user.getLogin());

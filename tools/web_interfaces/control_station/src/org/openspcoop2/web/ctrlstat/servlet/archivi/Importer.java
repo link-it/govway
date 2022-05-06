@@ -173,11 +173,11 @@ public final class Importer extends Action {
 			}
 			
 			// protocolli supportati
-			List<String> protocolli = archiviCore.getProtocolli(session);
+			List<String> protocolli = archiviCore.getProtocolli(request, session);
 			if(protocolli.size()>1){
 				protocolli = new ArrayList<String>();
 				protocolli.add(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED);
-				protocolli.addAll(archiviCore.getProtocolli(session));
+				protocolli.addAll(archiviCore.getProtocolli(request, session));
 			}
 			this.protocollo = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
 			if("".equals(this.protocollo) || ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED.equals(this.protocollo)){

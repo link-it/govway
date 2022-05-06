@@ -267,12 +267,12 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			
 			// Tipi protocollo supportati
 			// Controllo comunque quelli operativi, almeno uno deve esistere
-			List<String> listaTipiProtocollo = apcCore.getProtocolliByFilter(session, true, PddTipologia.OPERATIVO, false, this.isServizioComposto);
+			List<String> listaTipiProtocollo = apcCore.getProtocolliByFilter(request, session, true, PddTipologia.OPERATIVO, false, this.isServizioComposto);
 
 			// primo accesso 
 			this.tipoProtocollo =  apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
 			if(this.tipoProtocollo == null){
-				this.tipoProtocollo = apcCore.getProtocolloDefault(session, listaTipiProtocollo);
+				this.tipoProtocollo = apcCore.getProtocolloDefault(request, session, listaTipiProtocollo);
 			}
 			
 			String nuovaVersioneTmp = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE);
@@ -422,7 +422,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			if(listaTipiProtocollo.size()<=0) {
 				boolean msg = true;
 				if(this.isServizioComposto) {
-					List<String> listaTipiProtocolloSenzaAccordiCooperazione = apcCore.getProtocolliByFilter(session, true, PddTipologia.OPERATIVO, false, false);
+					List<String> listaTipiProtocolloSenzaAccordiCooperazione = apcCore.getProtocolliByFilter(request, session, true, PddTipologia.OPERATIVO, false, false);
 					if(listaTipiProtocolloSenzaAccordiCooperazione.size()>0) {
 						pd.setMessage("Non risultano registrati accordi di cooperazione", Costanti.MESSAGE_TYPE_INFO);
 						msg = false;
@@ -630,7 +630,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					this.scadenza= "";
 					this.privato = false;
 					if(this.tipoProtocollo == null){
-						this.tipoProtocollo = apcCore.getProtocolloDefault(session, listaTipiProtocollo);
+						this.tipoProtocollo = apcCore.getProtocolloDefault(request, session, listaTipiProtocollo);
 					}
 					this.referente= "";
 

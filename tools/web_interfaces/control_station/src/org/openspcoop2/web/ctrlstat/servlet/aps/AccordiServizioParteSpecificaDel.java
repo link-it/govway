@@ -175,7 +175,7 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
-			PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
+			PermessiUtente pu = ServletUtils.getUserFromSession(request, session).getPermessi();
 
 			boolean [] permessi = new boolean[2];
 			permessi[0] = pu.isServizi();

@@ -141,7 +141,7 @@ public final class RuoliChange extends Action {
 						boolean filtroSoggetto = false;
 						String filterApiContesto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_API_CONTESTO);
 						if(!Filtri.FILTRO_API_CONTESTO_VALUE_SOGGETTI.equals(filterApiContesto) && ruoliHelper.isSoggettoMultitenantSelezionato()) {
-							List<String> protocolli = ruoliCore.getProtocolli(session,false);
+							List<String> protocolli = ruoliCore.getProtocolli(request, session,false);
 							if(protocolli!=null && protocolli.size()==1) { // dovrebbe essere l'unico caso in cui un soggetto multitenant è selezionato
 								filtroSoggetto = true;
 							}

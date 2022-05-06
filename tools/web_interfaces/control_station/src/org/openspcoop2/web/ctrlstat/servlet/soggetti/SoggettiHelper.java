@@ -1133,7 +1133,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			String protocolloSel = filterProtocollo;
 			if(protocolloSel==null) {
 				// significa che e' stato selezionato un protocollo nel menu in alto a destra
-				List<String> protocolli = this.core.getProtocolli(this.session);
+				List<String> protocolli = this.core.getProtocolli(this.request, this.session);
 				if(protocolli!=null && protocolli.size()==1) {
 					protocolloSel = protocolli.get(0);
 				}
@@ -1229,7 +1229,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
 			}
 
-			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 
 			setLabelColonne(modalitaCompleta, multiTenant, showProtocolli);
 
@@ -1267,7 +1267,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.SOGGETTO, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.SOGGETTO, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -1660,7 +1660,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			String protocolloSel = filterProtocollo;
 			if(protocolloSel==null) {
 				// significa che e' stato selezionato un protocollo nel menu in alto a destra
-				List<String> protocolli = this.core.getProtocolli(this.session);
+				List<String> protocolli = this.core.getProtocolli(this.request, this.session);
 				if(protocolli!=null && protocolli.size()==1) {
 					protocolloSel = protocolli.get(0);
 				}
@@ -1712,7 +1712,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
 			}
 
-			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 			
 			// setto le label delle colonne
 			int totEl = this.isModalitaCompleta() ? 3 : 1;
@@ -1841,7 +1841,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.SOGGETTO, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.SOGGETTO, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 

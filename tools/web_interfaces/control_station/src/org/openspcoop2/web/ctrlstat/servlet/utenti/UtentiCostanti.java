@@ -98,6 +98,8 @@ public class UtentiCostanti {
 	public final static String LABEL_UTENTI = "Utenti";
 	public final static String LABEL_INFO_UTENTE = "Utente";
 	public final static String LABEL_UTENTE = "Profilo Utente";
+	public final static String LABEL_PROFILO_UTENTE = "Profilo Utente";
+	public final static String LABEL_PROFILO = "Profilo";
 	public final static String LABEL_INFORMAZIONI_UTENTE = "Informazioni Utente";
 	public final static String LABEL_PASSWORD = "Password";
 	public final static String LABEL_MODALITA_INTERFACCIA = "Modalit&agrave; Interfaccia";
@@ -126,7 +128,8 @@ public class UtentiCostanti {
 	public final static String LABEL_UTENTI_SOGGETTI_DISPONIBILI_ESAURITI_PER_LA_MODALITA_XX = "Non esistono altri soggetti del "+org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI_HTML_ESCAPE.toLowerCase()+" {0} associabili all''utente";
 	public final static String LABEL_UTENTI_SERVIZI_DISPONIBILI_ESAURITI = "Non esistono altri servizi associabili all'utente";
 	public final static String LABEL_UTENTI_SERVIZI_DISPONIBILI_ESAURITI_PER_LA_MODALITA_XX = "Non esistono altri servizi del "+org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI_HTML_ESCAPE.toLowerCase()+" {0} associabili all''utente";
-
+	public final static String LABEL_PROFILO_UTENTE_CONSOLE_GESTIONE = "govwayConsole";
+	public final static String LABEL_PROFILO_UTENTE_CONSOLE_MONITOR = "govwayMonitor";
 	
 	/* PARAMETRI */
 	
@@ -170,6 +173,8 @@ public class UtentiCostanti {
 	public final static String PARAMETRO_UTENTE_CHANGE_SOGGETTO = "change_sog";
 	public final static String PARAMETRO_UTENTE_ID_SOGGETTO = "id_sog";
 	public final static String PARAMETRO_UTENTE_ID_SOGGETTO_LIST = "label_id_list";
+	public final static String PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR = "tipo_mod_mon";
+	public final static String PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR = "id_sog_mon";
 	
 	/* LABEL PARAMETRI */
 	

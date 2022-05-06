@@ -693,7 +693,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					if(!useIdSogg){
 						boolean filtroSoggetto = false;
 						if(saHelper.isSoggettoMultitenantSelezionato()) {
-							List<String> protocolli = saCore.getProtocolli(session,false);
+							List<String> protocolli = saCore.getProtocolli(request, session,false);
 							if(protocolli!=null && protocolli.size()==1) { // dovrebbe essere l'unico caso in cui un soggetto multitenant è selezionato
 								String protocollo = protocolli.get(0);
 								filtroSoggetto = !saHelper.isProfiloModIPA(protocollo);  // in modipa devono essere fatti vedere anche quelli

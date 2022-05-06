@@ -420,15 +420,14 @@ public class ServletUtils {
 		session.removeAttribute(Costanti.SESSION_ATTRIBUTE_LOGIN);
 	}
 
-	public static User getUserFromSession(HttpSession session){
-		User user = (User) session.getAttribute(Costanti.SESSION_ATTRIBUTE_USER);
-		return user;
+	public static User getUserFromSession(HttpServletRequest request, HttpSession session){
+		return getObjectFromSession(request, session, User.class, Costanti.SESSION_ATTRIBUTE_USER);
 	}
-	public static void setUserIntoSession(HttpSession session,User user){
-		session.setAttribute(Costanti.SESSION_ATTRIBUTE_USER, user);
+	public static void setUserIntoSession(HttpServletRequest request, HttpSession session,User user){
+		setObjectIntoSession(request, session, user, Costanti.SESSION_ATTRIBUTE_USER);
 	}
-	public static void removeUserFromSession(HttpSession session){
-		session.removeAttribute(Costanti.SESSION_ATTRIBUTE_USER);
+	public static void removeUserFromSession(HttpServletRequest request, HttpSession session){
+		removeObjectFromSession(request, session, Costanti.SESSION_ATTRIBUTE_USER);
 	}
 
 	public static Boolean getContaListeFromSession(HttpSession session){

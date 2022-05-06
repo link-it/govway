@@ -101,12 +101,12 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			
 			this.pd.setCustomListViewName(ApiCostanti.APC_API_NOME_VISTA_CUSTOM_LISTA_API);
 			
-			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 			boolean showServiceBinding = true;
 			boolean showResources = true;
 			boolean showServices = true;
 			if( !showProtocolli ) {
-				List<String> l = this.core.getProtocolli(this.session);
+				List<String> l = this.core.getProtocolli(this.request, this.session);
 				if(l.size()>0) {
 					IProtocolFactory<?> p = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(l.get(0));
 					if(p.getManifest().getBinding().getRest()==null) {
@@ -131,7 +131,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			String protocolloS = filterProtocol;
 			if(protocolloS==null) {
 				// significa che e' stato selezionato un protocollo nel menu in alto a destra
-				List<String> protocolli = this.core.getProtocolli(this.session);
+				List<String> protocolli = this.core.getProtocolli(this.request, this.session);
 				if(protocolli!=null && protocolli.size()==1) {
 					protocolloS = protocolli.get(0);
 				}
@@ -424,10 +424,10 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
 					boolean exists = false;
 					if(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE.equals(tipoAccordo)){
-						exists = exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_PARTE_COMUNE, this.session);
+						exists = exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_PARTE_COMUNE, this.request, this.session);
 					}
 					else{
-						exists = exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_COMPOSTO, this.session);
+						exists = exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_COMPOSTO, this.request, this.session);
 					}
 					if(exists){
 
@@ -590,7 +590,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		
 		IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromAccordo(as);
 		String labelAccordo = getLabelIdAccordo(tipoProtocollo, idAccordo);
-		boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+		boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 		// sezione 1 riepilogo
 		// nome accordo + link edit
 		// nome soggetto referente + link edit

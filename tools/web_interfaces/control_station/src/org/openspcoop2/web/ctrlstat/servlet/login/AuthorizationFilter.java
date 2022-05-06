@@ -329,7 +329,7 @@ public final class AuthorizationFilter implements Filter {
 									
 									LoginSessionUtilities.setLoginParametersSession(request, session, loginCore, username);
 									
-									loginHelper.updateTipoInterfaccia();
+									// loginHelper.updateTipoInterfaccia();
 									
 									loginCore.performAuditLogin(username);
 									
@@ -578,7 +578,7 @@ public final class AuthorizationFilter implements Filter {
 				lH.makeMenu();
 				
 				LoginSessionUtilities.setLoginParametersSession(request, session, loginCore, userLogin);
-				lH.updateTipoInterfaccia();
+				//lH.updateTipoInterfaccia();
 				
 				// Inizializzo parametri di ricerca
 				Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);

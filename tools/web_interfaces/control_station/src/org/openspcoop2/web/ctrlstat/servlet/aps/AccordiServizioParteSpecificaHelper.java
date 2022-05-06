@@ -2247,17 +2247,17 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
-			User user = ServletUtils.getUserFromSession(this.session);
+			User user = ServletUtils.getUserFromSession(this.request, this.session);
 
 			Boolean isAccordiCooperazione = user.getPermessi().isAccordiCooperazione();
 			Boolean isServizi = user.getPermessi().isServizi();
 
 			String tipologia = ServletUtils.getObjectFromSession(this.request, this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			
-			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 			boolean showServiceBinding = true;
 			if( !showProtocolli ) {
-				List<String> l = this.core.getProtocolli(this.session);
+				List<String> l = this.core.getProtocolli(this.request, this.session);
 				if(l.size()>0) {
 					IProtocolFactory<?> p = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(l.get(0));
 					if(p.getManifest().getBinding().getRest()==null || p.getManifest().getBinding().getSoap()==null) {
@@ -2975,7 +2975,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -6380,7 +6380,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			versioniValues[i+1] = tmp;
 		}
 
-		User user = ServletUtils.getUserFromSession(this.session);
+		User user = ServletUtils.getUserFromSession(this.request, this.session);
 
 		boolean creaDataElementVersione = this.apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(tipoProtocollo);
 		boolean visualizzaSceltaVersioneServizio = creaDataElementVersione;
@@ -9878,7 +9878,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String paramCambiaAPI = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_CAMBIA_API);
 			String paramCambiaErogatore = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_CAMBIA_SOGGETTO_EROGATORE);
 			
-			User user = ServletUtils.getUserFromSession(this.session);
+			User user = ServletUtils.getUserFromSession(this.request, this.session);
 			Boolean isAccordiCooperazione = user.getPermessi().isAccordiCooperazione();
 			Boolean isServizi = user.getPermessi().isServizi();
 			String asLabel = AccordiServizioParteSpecificaCostanti.LABEL_APC_COMPOSTO;

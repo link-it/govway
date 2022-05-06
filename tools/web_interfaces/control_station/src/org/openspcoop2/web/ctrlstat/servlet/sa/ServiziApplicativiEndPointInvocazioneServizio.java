@@ -1372,7 +1372,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
 					}
 					boolean [] permessi = new boolean[2];
-					PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
+					PermessiUtente pu = ServletUtils.getUserFromSession(request, session).getPermessi();
 					permessi[0] = pu.isServizi();
 					permessi[1] = pu.isAccordiCooperazione();
 					List<AccordoServizioParteSpecifica> listaS = null;

@@ -552,7 +552,7 @@ public class SoggettiVerificaCertificati extends Action {
 						versioniProtocollo.add(versioneProtocollo);
 					}
 
-					List<String> listaTipiProtocollo = soggettiCore.getProtocolli(session);
+					List<String> listaTipiProtocollo = soggettiCore.getProtocolli(request, session);
 									
 					boolean pddOperativa = false;
 					if(soggettoRegistry.getPortaDominio()!=null && !"".equals(soggettoRegistry.getPortaDominio())){

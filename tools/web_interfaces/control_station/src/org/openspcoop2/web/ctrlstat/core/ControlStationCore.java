@@ -394,7 +394,7 @@ public class ControlStationCore {
 	private String protocolloDefault = null;
 	private long jdbcSerializableAttesaAttiva = 0;
 	private int jdbcSerializableCheck = 0;
-	public String getProtocolloDefault(HttpSession session, List<String> listaProtocolliUtilizzabili) throws DriverRegistroServiziException {
+	public String getProtocolloDefault(HttpServletRequest request, HttpSession session, List<String> listaProtocolliUtilizzabili) throws DriverRegistroServiziException {
 		if(listaProtocolliUtilizzabili!=null && listaProtocolliUtilizzabili.size()>0) {
 			// cerco prima il default
 			for (String protocolloUtilizzabile : listaProtocolliUtilizzabili) {
@@ -404,7 +404,7 @@ public class ControlStationCore {
 			}
 			return listaProtocolliUtilizzabili.get(0); // torno il primo
 		}
-		List<String> protocolli = this.getProtocolli(session);
+		List<String> protocolli = this.getProtocolli(request, session);
 		if(protocolli!=null && protocolli.size()==1) {
 			return protocolli.get(0); // si tratta del protocollo selezionato se ce ne sono piu' di uno
 		}
@@ -600,6 +600,15 @@ public class ControlStationCore {
 		}
 		
 		return false;
+	}
+	
+	private boolean utenzeModificaProfiloUtenteDaLinkAggiornaDB;
+	public boolean isUtenzeModificaProfiloUtenteDaLinkAggiornaDB() {
+		return this.utenzeModificaProfiloUtenteDaLinkAggiornaDB;
+	}
+	private boolean utenzeModificaProfiloUtenteDaFormAggiornaSessione;
+	public boolean isUtenzeModificaProfiloUtenteDaFormAggiornaSessione() {
+		return this.utenzeModificaProfiloUtenteDaFormAggiornaSessione;
 	}
 	
 	/** Login */
@@ -2301,6 +2310,8 @@ public class ControlStationCore {
 		this.utenzePasswordEncryptEngine = core.utenzePasswordEncryptEngine;
 		this.utenzePasswordManager = core.utenzePasswordManager;
 		this.utenzePasswordManager_backwardCompatibility = core.utenzePasswordManager_backwardCompatibility;
+		this.utenzeModificaProfiloUtenteDaFormAggiornaSessione = core.utenzeModificaProfiloUtenteDaFormAggiornaSessione;
+		this.utenzeModificaProfiloUtenteDaLinkAggiornaDB = core.utenzeModificaProfiloUtenteDaLinkAggiornaDB;
 		
 		/** Login */
 		this.loginApplication = core.loginApplication;
@@ -2774,6 +2785,8 @@ public class ControlStationCore {
 			this.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto = consoleProperties.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto();
 			this.utenzePasswordConfiguration = consoleProperties.getConsoleUtenzePassword();
 			this.utenzeLunghezzaPasswordGenerate = consoleProperties.getConsoleUtenzeLunghezzaPasswordGenerate();
+			this.utenzeModificaProfiloUtenteDaFormAggiornaSessione = consoleProperties.isConsoleUtenzeModificaProfiloUtenteDaFormAggiornaSessione();
+			this.utenzeModificaProfiloUtenteDaLinkAggiornaDB = consoleProperties.isConsoleUtenzeModificaProfiloUtenteDaLinkAggiornaDB();
 			this.applicativiPasswordConfiguration = consoleProperties.getConsoleApplicativiPassword();
 			this.applicativiBasicPasswordEnableConstraints = consoleProperties.isConsoleApplicativiBasicPasswordEnableConstraints();
 			this.applicativiBasicLunghezzaPasswordGenerate = consoleProperties.getConsoleApplicativiBasicLunghezzaPasswordGenerate();
@@ -6668,27 +6681,27 @@ public class ControlStationCore {
 		}
 	}
 
-	public int countProtocolli(HttpSession session) throws  DriverRegistroServiziException {
-		return this.countProtocolli(session, false);
+	public int countProtocolli(HttpServletRequest request, HttpSession session) throws  DriverRegistroServiziException {
+		return this.countProtocolli(request, session, false);
 	}
-	public int countProtocolli(HttpSession session, boolean ignoreProtocolloSelezionato) throws  DriverRegistroServiziException {
-		List<String> l = this.getProtocolli(session, ignoreProtocolloSelezionato);
+	public int countProtocolli(HttpServletRequest request, HttpSession session, boolean ignoreProtocolloSelezionato) throws  DriverRegistroServiziException {
+		List<String> l = this.getProtocolli(request, session, ignoreProtocolloSelezionato);
 		return l.size();
 	}
-	public List<String> getProtocolli(HttpSession session) throws  DriverRegistroServiziException {
-		return this.getProtocolli(session, false);
+	public List<String> getProtocolli(HttpServletRequest request, HttpSession session) throws  DriverRegistroServiziException {
+		return this.getProtocolli(request, session, false);
 	}
-	public List<String> getProtocolli(HttpSession session, boolean ignoreProtocolloSelezionato) throws  DriverRegistroServiziException {
-		return this.getProtocolli(session, ignoreProtocolloSelezionato, false);
+	public List<String> getProtocolli(HttpServletRequest request, HttpSession session, boolean ignoreProtocolloSelezionato) throws  DriverRegistroServiziException {
+		return this.getProtocolli(request, session, ignoreProtocolloSelezionato, false);
 	}
-	public List<String> getProtocolli(HttpSession session, boolean ignoreProtocolloSelezionato, 
+	public List<String> getProtocolli(HttpServletRequest request, HttpSession session, boolean ignoreProtocolloSelezionato, 
 			boolean consideraProtocolliCompatibiliSoggettoSelezionato) throws  DriverRegistroServiziException {
 		String getProtocolli = "getProtocolli";
 		try{
 
 			List<String> protocolliList = new ArrayList<String>();
 			
-			User u =ServletUtils.getUserFromSession(session);
+			User u =ServletUtils.getUserFromSession(request, session);
 			
 			if(!ignoreProtocolloSelezionato) {
 				if(u.getProtocolloSelezionatoPddConsole()!=null) {
@@ -6730,31 +6743,31 @@ public class ControlStationCore {
 		
 		return ProtocolUtils.orderProtocolli(protocolliList);
 	}
-	public List<String> getProtocolliByFilter(HttpSession session, boolean filtraSoggettiEsistenti, 
+	public List<String> getProtocolliByFilter(HttpServletRequest request, HttpSession session, boolean filtraSoggettiEsistenti, 
 			boolean filtraAccordiEsistenti) throws  DriverRegistroServiziException {
-		return this.getProtocolliByFilter(session, filtraSoggettiEsistenti, filtraAccordiEsistenti, false);
+		return this.getProtocolliByFilter(request, session, filtraSoggettiEsistenti, filtraAccordiEsistenti, false);
 	}
-	public List<String> getProtocolliByFilter(HttpSession session, boolean filtraSoggettiEsistenti, 
+	public List<String> getProtocolliByFilter(HttpServletRequest request, HttpSession session, boolean filtraSoggettiEsistenti, 
 			boolean filtraAccordiEsistenti, boolean filtraAccordiCooperazioneEsistenti) throws  DriverRegistroServiziException {
-		return getProtocolliByFilter(session, filtraSoggettiEsistenti, null, 
+		return getProtocolliByFilter(request, session, filtraSoggettiEsistenti, null, 
 				filtraAccordiEsistenti, filtraAccordiCooperazioneEsistenti);
 	}
-	public List<String> getProtocolliByFilter(HttpSession session, boolean filtraSoggettiEsistenti, PddTipologia dominio, 
+	public List<String> getProtocolliByFilter(HttpServletRequest request, HttpSession session, boolean filtraSoggettiEsistenti, PddTipologia dominio, 
 			boolean filtraAccordiEsistenti) throws  DriverRegistroServiziException {
-		return getProtocolliByFilter(session, filtraSoggettiEsistenti, dominio, 
+		return getProtocolliByFilter(request, session, filtraSoggettiEsistenti, dominio, 
 				filtraAccordiEsistenti, false);
 	}
-	public List<String> getProtocolliByFilter(HttpSession session, boolean filtraSoggettiEsistenti, PddTipologia dominio, 
+	public List<String> getProtocolliByFilter(HttpServletRequest request, HttpSession session, boolean filtraSoggettiEsistenti, PddTipologia dominio, 
 			boolean filtraAccordiEsistenti, boolean filtraAccordiCooperazioneEsistenti) throws  DriverRegistroServiziException {
-		return this.getProtocolliByFilter(session, filtraSoggettiEsistenti, dominio, 
+		return this.getProtocolliByFilter(request, session, filtraSoggettiEsistenti, dominio, 
 				filtraAccordiEsistenti, filtraAccordiCooperazioneEsistenti, 
 				false);
 	}
-	public List<String> getProtocolliByFilter(HttpSession session, boolean filtraSoggettiEsistenti, PddTipologia dominio, 
+	public List<String> getProtocolliByFilter(HttpServletRequest request, HttpSession session, boolean filtraSoggettiEsistenti, PddTipologia dominio, 
 			boolean filtraAccordiEsistenti, boolean filtraAccordiCooperazioneEsistenti, 
 			boolean consideraProtocolliCompatibiliSoggettoSelezionato) throws  DriverRegistroServiziException {
 		
-		List<String> _listaTipiProtocollo = this.getProtocolli(session, false, consideraProtocolliCompatibiliSoggettoSelezionato);
+		List<String> _listaTipiProtocollo = this.getProtocolli(request, session, false, consideraProtocolliCompatibiliSoggettoSelezionato);
 		
 		String userLogin = ServletUtils.getUserLoginFromSession(session);
 		

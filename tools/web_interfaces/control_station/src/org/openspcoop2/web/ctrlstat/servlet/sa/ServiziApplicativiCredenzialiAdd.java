@@ -294,7 +294,7 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 			
 			
 			// Tipi protocollo supportati
-			List<String> listaTipiProtocollo = saCore.getProtocolliByFilter(session, true, PddTipologia.OPERATIVO, false);
+			List<String> listaTipiProtocollo = saCore.getProtocolliByFilter(request, session, true, PddTipologia.OPERATIVO, false);
 
 			// Preparo il menu
 			saHelper.makeMenu();

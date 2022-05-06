@@ -164,7 +164,7 @@ public final class UtentePasswordChange extends Action {
 
 			// porto l'utente dove andrebbe dopo il login effettuato con successo.
 			LoginSessionUtilities.setLoginParametersSession(request, session, utentiCore, userToUpdate);
-			utentiHelper.updateTipoInterfaccia();
+			//utentiHelper.updateTipoInterfaccia();
 			
 			utentiCore.performAuditLogin(userToUpdate);
 			

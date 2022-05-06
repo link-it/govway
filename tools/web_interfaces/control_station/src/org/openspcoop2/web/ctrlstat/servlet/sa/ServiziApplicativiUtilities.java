@@ -132,7 +132,7 @@ public class ServiziApplicativiUtilities {
 		else {
 			tipoProtocollo = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
 			if(tipoProtocollo == null){
-				tipoProtocollo = saCore.getProtocolloDefault(saHelper.getSession(), listaTipiProtocollo);
+				tipoProtocollo = saCore.getProtocolloDefault(saHelper.getRequest(), saHelper.getSession(), listaTipiProtocollo);
 			}
 		
 			boolean filtraSoggettiEsterni = false;

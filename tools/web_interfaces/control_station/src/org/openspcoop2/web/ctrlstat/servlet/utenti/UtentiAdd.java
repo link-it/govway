@@ -92,6 +92,12 @@ public final class UtentiAdd extends Action {
 			String confpwsu = null; //utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
 			String tipoGui = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
 			
+			String tipoModalitaConsoleGestione = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
+			String idSoggettoConsoleGestione = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO);
+			
+			String tipoModalitaConsoleMonitoraggio = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR);
+			String idSoggettoConsoleMonitoraggio = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR);
+			
 			InterfaceType interfaceType = null;
 			if(tipoGui==null) {
 				//interfaceType = utentiHelper.getTipoInterfaccia();
@@ -99,6 +105,26 @@ public final class UtentiAdd extends Action {
 			}
 			else {
 				interfaceType = InterfaceType.convert(tipoGui, true);
+			}
+			
+			// nessun profilo selezionato imposto all
+			if(tipoModalitaConsoleGestione == null) {
+				tipoModalitaConsoleGestione = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+			}
+			
+			// nessun soggetto selezionato imposto all
+			if(idSoggettoConsoleGestione == null) {
+				idSoggettoConsoleGestione = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+			}
+			
+			// nessun profilo selezionato imposto all
+			if(tipoModalitaConsoleMonitoraggio == null) {
+				tipoModalitaConsoleMonitoraggio = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+			}
+			
+			// nessun soggetto selezionato imposto all
+			if(idSoggettoConsoleMonitoraggio == null) {
+				idSoggettoConsoleMonitoraggio = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
 			}
 			
 			String isServizi = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
@@ -123,6 +149,29 @@ public final class UtentiAdd extends Action {
 			for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
 				String protocolloName = protocolliRegistratiConsole.get(i);
 				modalitaScelte[i] = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX + protocolloName);
+			}
+			
+			String postBackElementName = utentiHelper.getPostBackElementName();
+			
+			if (postBackElementName != null) {
+				
+				// selezione modalita'
+				if(postBackElementName.startsWith(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX)) {
+					tipoModalitaConsoleGestione = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+					idSoggettoConsoleGestione = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+					tipoModalitaConsoleMonitoraggio = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+					idSoggettoConsoleMonitoraggio = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+				}
+				
+				// cambio del profilo, reset del valore del soggetto
+				if(postBackElementName.equals(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA)) {
+					idSoggettoConsoleGestione = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+				}
+				
+				// cambio del profilo, reset del valore del soggetto
+				if(postBackElementName.equals(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR)) {
+					idSoggettoConsoleMonitoraggio = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+				}
 			}
 						
 			// Preparo il menu
@@ -156,7 +205,8 @@ public final class UtentiAdd extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.ADD, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						null,modalitaScelte, isSoggettiAll, isServiziAll, null, scadenza, null, false);
+						null,modalitaScelte, isSoggettiAll, isServiziAll, null, scadenza, null, false,
+						tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio);
 				
 				pd.setDati(dati);
 		
@@ -185,7 +235,8 @@ public final class UtentiAdd extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.ADD, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						null,modalitaScelte, isSoggettiAll, isServiziAll, null, scadenza, null, false);
+						null,modalitaScelte, isSoggettiAll, isServiziAll, null, scadenza, null, false,
+						tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio);
 				
 				pd.setDati(dati);
 	
@@ -210,6 +261,11 @@ public final class UtentiAdd extends Action {
 			newU.setLogin(nomesu);
 			newU.setPassword(pwsu);
 			newU.setInterfaceType(InterfaceType.valueOf(tipoGui));
+			newU.setProtocolloSelezionatoPddConsole(!tipoModalitaConsoleGestione.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? tipoModalitaConsoleGestione : null);
+			newU.setSoggettoSelezionatoPddConsole(!idSoggettoConsoleGestione.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? idSoggettoConsoleGestione : null);
+			newU.setProtocolloSelezionatoPddMonitor(!tipoModalitaConsoleMonitoraggio.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? tipoModalitaConsoleMonitoraggio : null);
+			newU.setSoggettoSelezionatoPddMonitor(!idSoggettoConsoleMonitoraggio.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? idSoggettoConsoleMonitoraggio : null);
+			
 			String puString = "";
 			if (ServletUtils.isCheckBoxEnabled(isServizi))
 				puString = Permessi.SERVIZI.toString();

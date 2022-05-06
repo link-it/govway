@@ -531,7 +531,7 @@ public final class ServiziApplicativiAdd extends Action {
 			
 			
 			// Tipi protocollo supportati
-			List<String> listaTipiProtocollo = saCore.getProtocolliByFilter(session, true, PddTipologia.OPERATIVO, false);
+			List<String> listaTipiProtocollo = saCore.getProtocolliByFilter(request, session, true, PddTipologia.OPERATIVO, false);
 			
 
 			// Preparo il menu
@@ -1304,7 +1304,7 @@ public final class ServiziApplicativiAdd extends Action {
 				
 				boolean filtroSoggetto = false;
 				if(saHelper.isSoggettoMultitenantSelezionato()) {
-					List<String> protocolli = saCore.getProtocolli(session,false);
+					List<String> protocolli = saCore.getProtocolli(request, session,false);
 					if(protocolli!=null && protocolli.size()==1) { // dovrebbe essere l'unico caso in cui un soggetto multitenant è selezionato
 						String protocollo = protocolli.get(0);
 						filtroSoggetto = !saHelper.isProfiloModIPA(protocollo);  // in modipa devono essere fatti vedere anche quelli

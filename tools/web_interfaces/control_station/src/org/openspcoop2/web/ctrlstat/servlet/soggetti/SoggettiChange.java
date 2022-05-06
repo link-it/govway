@@ -309,7 +309,7 @@ public final class SoggettiChange extends Action {
 			}
 			
 			// Tipi protocollo supportati
-			List<String> listaTipiProtocollo = soggettiCore.getProtocolli(session);
+			List<String> listaTipiProtocollo = soggettiCore.getProtocolli(request, session);
 			//tipiSoggetti = soggettiCore.getTipiSoggettiGestiti(versioneProtocollo); // all tipi soggetti gestiti
 			// Nella change non e' piu' possibile cambiare il protocollo
 			this.protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(this.tipoprov);
@@ -1353,7 +1353,7 @@ public final class SoggettiChange extends Action {
 			if (!oldnomeprov.equals(this.nomeprov) || !oldtipoprov.equals(this.tipoprov)) {
 				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.SOGGETTI);
 				
-				User user = ServletUtils.getUserFromSession(session);
+				User user = ServletUtils.getUserFromSession(request, session);
 				String oldSog = oldtipoprov+"/"+oldnomeprov;
 				if(user!=null && oldSog.equals(user.getSoggettoSelezionatoPddConsole())) {
 					user.setSoggettoSelezionatoPddConsole(this.tipoprov+"/"+this.nomeprov);

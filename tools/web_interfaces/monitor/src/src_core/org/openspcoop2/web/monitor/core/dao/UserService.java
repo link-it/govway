@@ -23,7 +23,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
+import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -149,6 +151,36 @@ public class UserService implements IUserService {
 		} catch (DriverUsersDBException e) {
 			UserService.log.error(e.getMessage(), e);
 			throw e;
+		}
+	}
+	
+	@Override
+	public void salvaModalita(String login, String modalita) throws NotFoundException, ServiceException {
+		try {
+			boolean existsUser = this.utenteDAO.existsUser(login);
+
+			if(!existsUser)
+				throw new NotFoundException("Utente ["+login+"] non registrato");
+
+			this.utenteDAO.saveProtocolloUtilizzatoPddMonitor(login, modalita);
+		} catch (DriverUsersDBException e) {
+			UserService.log.error(e.getMessage(), e);
+			throw new ServiceException(e);
+		}
+	}
+	
+	@Override
+	public void salvaSoggettoPddMonitor(String login, String soggetto) throws NotFoundException, ServiceException {
+		try {
+			boolean existsUser = this.utenteDAO.existsUser(login);
+
+			if(!existsUser)
+				throw new NotFoundException("Utente ["+login+"] non registrato");
+
+			this.utenteDAO.saveSoggettoUtilizzatoPddMonitor(login, soggetto);
+		} catch (DriverUsersDBException e) {
+			UserService.log.error(e.getMessage(), e);
+			throw new ServiceException(e);
 		}
 	}
 }

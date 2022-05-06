@@ -2273,7 +2273,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				ServletUtils.enabledPageDataSearch(this.pd, PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE, search);
 			}
 
-			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 			
 			List<String> listaLabel = new ArrayList<String>();
 

@@ -113,7 +113,7 @@ public final class ErogazioniList extends Action {
 			erogazioniHelper.checkGestione(request, session, ricerca, idLista, tipologiaParameterName,true);
 			
 			String superUser   = ServletUtils.getUserLoginFromSession(session);
-			PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
+			PermessiUtente pu = ServletUtils.getUserFromSession(request, session).getPermessi();
 			
 			boolean [] permessi = new boolean[2];
 			permessi[0] = pu.isServizi();

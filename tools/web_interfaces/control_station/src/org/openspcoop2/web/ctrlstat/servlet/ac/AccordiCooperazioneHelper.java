@@ -289,7 +289,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 				ServletUtils.enabledPageDataSearch(this.pd, AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, search);
 			}
 
-			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 			
 //			String gestioneWSBL = ServletUtils.getGestioneWSBLFromSession(this.session);
 //			if(gestioneWSBL == null){
@@ -426,7 +426,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 				if (this.core.isShowPulsantiImportExport()) {
 					
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_COOPERAZIONE, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_COOPERAZIONE, this.request, this.session)){
 					
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 	

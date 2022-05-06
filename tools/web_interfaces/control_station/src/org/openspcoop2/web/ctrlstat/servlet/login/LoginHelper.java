@@ -114,7 +114,7 @@ public class LoginHelper extends ConsoleHelper {
 			}
 
 			// setto l utente in sessione
-			ServletUtils.setUserIntoSession(this.session, u);
+			ServletUtils.setUserIntoSession(this.request, this.session, u);
 			
 			return true;
 
@@ -143,7 +143,7 @@ public class LoginHelper extends ConsoleHelper {
 					if(passwordVerifier.isPasswordExpire(u.getLastUpdatePassword(), bfMotivazioneErrore)) {
 						// imposto attributo che abilita il cambio della password
 						ServletUtils.setObjectIntoSession(this.request, this.session, login, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
-						ServletUtils.removeUserFromSession(this.session);
+						ServletUtils.removeUserFromSession(this.request, this.session);
 						this.pd.setMessage(bfMotivazioneErrore.toString(),MessageType.ERROR_SINTETICO);
 						return false;
 					}

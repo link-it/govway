@@ -146,7 +146,7 @@ public class Costanti {
 	public static final String SESSION_ATTRIBUTE_TAB_KEYS_MAP ="_tabKeysMap_";
 	
 	protected final static String SESSION_ATTRIBUTE_LOGIN = "Login";
-	protected final static String SESSION_ATTRIBUTE_USER = "User";
+	protected final static String SESSION_ATTRIBUTE_USER = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "User";
 	public final static String SESSION_ATTRIBUTE_GENERAL_DATA = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "GeneralData";
 	public final static String SESSION_ATTRIBUTE_PAGE_DATA = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "PageData";
 	public final static String SESSION_ATTRIBUTE_RICERCA = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "Ricerca";

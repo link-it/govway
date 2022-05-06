@@ -20,92 +20,129 @@
 					<f:facet name="header">
 						<h:outputText id="outDettagliUtente" value="#{utentiBean.profilo}" />
 					</f:facet>
-					<a4j:outputPanel rendered="#{applicationBean.user and applicationBean.showCambiaPassword and utentiBean.showFormCambiaPassword}">
-						<p class="legend" id="pCampiObbligatori">
-							<strong>Note:</strong> (<em>*</em>) Campi obbligatori 
-						</p>
-					</a4j:outputPanel>
-					<link:fieldset legend="Utente" collapsible="false" closed="false">
-						<link:prop label="Nome" >
-							<div class="divNoEdit"> 
-								<h:outputText value="#{utentiBean.user.login}" id="nomeUtenteProfilo" styleClass="spanNoEdit" />
-							</div>
-						</link:prop>
-						<link:prop label="#{applicationBean.labelProfili}" >
-							<div class="divNoEdit"> 
-								<h:outputText value="#{utentiBean.modalitaDisponibiliUser}"  id="modalitaUtenteProfilo" styleClass="spanNoEdit"/>
-							</div>
-						</link:prop>
-					</link:fieldset>
-					<c:if test="#{applicationBean.operatore and !applicationBean.amministratore}">
-						<c:if test="#{not empty utentiBean.listaSoggettiAssociatiUtente}">
-							<link:fieldset legend="Soggetti Associati" collapsible="false" closed="false">	
-								<rich:dataTable value="#{utentiBean.listaSoggettiAssociatiUtente}" var="item" id="tableSoggs" width="100%" rowClasses="even, odd">
-									<rich:column>
-										<f:facet name="header">
-											<h:outputText value="Soggetto"  id="outSoggetto1"/>
-										</f:facet>
-										<h:outputText value="#{item.name}"/>
-									</rich:column>
-									<rich:column>
-										<f:facet name="header">
-											<h:outputText value="Profilo Interoperabilità"  id="outProfilo1"/>
-										</f:facet>
-										<h:outputText value="#{item.value}"/>
-									</rich:column>
-								</rich:dataTable>
-							</link:fieldset>
-						</c:if>
-						<c:if test="#{not empty utentiBean.listaServiziAssociatiUtente}">
-							<link:fieldset legend="Servizi Associati" collapsible="false" closed="false">
-								<rich:dataTable value="#{utentiBean.listaServiziAssociatiUtente}" var="item" id="tableServs" width="100%" rowClasses="even, odd">
-									<rich:column>
-										<f:facet name="header">
-											<h:outputText value="Servizio"  id="outServizio1"/>
-										</f:facet>
-										<h:outputText value="#{item.name}"/>
-									</rich:column>
-									<rich:column>
-										<f:facet name="header">
-											<h:outputText value="Profilo Interoperabilità"  id="outProfilo2"/>
-										</f:facet>
-										<h:outputText value="#{item.value}"/>
-									</rich:column>
-								</rich:dataTable>
-							</link:fieldset>
-						</c:if>
-					</c:if>
-					<c:if test="#{applicationBean.user and applicationBean.showCambiaPassword}">
-						<a4j:outputPanel layout="block" id="panelRoleUser" rendered="#{not empty utentiBean.user.id and utentiBean.user.id gt 0}">
-							<h:form id="formRoleUser" prependId="false">
-								<h:inputHidden id="inUser" value="#{utentiBean.user.id}"/>
-								<link:fieldset legend="Password" rendered="#{not empty utentiBean.user.id and utentiBean.user.id gt 0}" collapsible="false" closed="false">
-									<link:prop label="Modifica">
-										<h:selectBooleanCheckbox id="_modificaPwd" styleClass="controlset" value="#{utentiBean.showFormCambiaPassword}" >
-											<a4j:support status="mainStatus" event="onchange" reRender="panelDettaglioUtente" />
-											</h:selectBooleanCheckbox>
+					<h:form id="formRoleUser" prependId="false">
+						<a4j:outputPanel id="formPnl" ajaxRendered="false" layout="block">
+							<a4j:outputPanel rendered="#{applicationBean.user and applicationBean.showCambiaPassword and utentiBean.showFormCambiaPassword}">
+								<p class="legend" id="pCampiObbligatori">
+									<strong>Note:</strong> (<em>*</em>) Campi obbligatori 
+								</p>
+							</a4j:outputPanel>
+							<link:fieldset legend="Utente" collapsible="false" closed="false">
+								<link:prop label="Nome" >
+									<div class="divNoEdit"> 
+										<h:outputText value="#{utentiBean.user.login}" id="nomeUtenteProfilo" styleClass="spanNoEdit" />
+									</div>
+								</link:prop>
+								
+								<div class="subtitle">
+									<h:outputText id="idSubtitleProfilo" value="#{utentiBean.profilo}" styleClass="subtitle" />
+								</div>
+								
+								<a4j:outputPanel layout="block" id="panelModalitaDefaultUtenteText" rendered="#{!utentiBean.visualizzaSelectModalitaDisponibili}">
+									<link:prop label="#{applicationBean.labelProfilo}">
+										<div class="divNoEdit"> 
+											<h:outputText value="#{utentiBean.modalitaDefault}"  id="modalitaDefaultUtente" styleClass="spanNoEdit"/>
+										</div>
 									</link:prop>
-									
-									<a4j:outputPanel layout="block" rendered="#{utentiBean.showFormCambiaPassword}" id="fieldFormPwdPanel">	
-										<link:prop label="Vecchia" required="true" rendered="#{utentiBean.showVecchiaPassword}">
-											<h:inputSecret label="Vecchia" id="_oldPwdChange" value="#{utentiBean.vecchiaPassword}"  styleClass="inputLinkLong"/>
-										</link:prop>
-									
-										<link:prop label="Nuova" required="true">
-											<h:inputSecret label="Nuova" id="_pwdChange" value="#{utentiBean.user.password}"   styleClass="inputLinkLong"/>
-										</link:prop>
-											
-										<link:prop label="Conferma Nuova" required="true" note="#{utentiBean.notePassword}" noteEscape="false">
-											<h:inputSecret id="conpwdChange" label="Conferma Nuova" value="#{utentiBean.confermaPassword}"   styleClass="inputLinkLong"/>
+								</a4j:outputPanel>
+								<a4j:outputPanel layout="block" id="panelModalitaDefaultUtenteCombo" rendered="#{utentiBean.visualizzaSelectModalitaDisponibili}">
+									<link:prop label="#{applicationBean.labelProfilo}">
+										<rich:comboBox id="protocolloCombo" value="#{utentiBean.modalitaDefaultUtente}" converter="selectItemConverter" 
+											defaultLabel="Seleziona #{applicationBean.labelProfilo}" directInputSuggestions="true" width="416" enableManualInput="false">
+											<f:selectItems value="#{utentiBean.modalitaDisponibiliItems}"/>
+											<a4j:support status="mainStatus" event="onselect" actionListener="#{utentiBean.modalitaDefaultUtenteSelected}" reRender="formPnl" limitToList="true"/>
+										</rich:comboBox>
+									</link:prop>
+								</a4j:outputPanel>
+								<a4j:outputPanel layout="block" id="panelSoggettoDefaultUtente" rendered="#{utentiBean.visualizzaSezioneSelezioneSoggetto}">
+									<a4j:outputPanel layout="block" id="panelSoggettoDefaultUtenteText" rendered="#{!utentiBean.visualizzaSelectSoggettiDisponibili}">
+										<link:prop label="#{applicationBean.labelSoggettoCompact}">
+											<div class="divNoEdit"> 
+												<h:outputText value="#{utentiBean.soggettoDefault}"  id="soggettoDefaultUtente" styleClass="spanNoEdit"/>
+											</div>
 										</link:prop>
 									</a4j:outputPanel>
-								</link:fieldset>
-								<a4j:outputPanel layout="block" styleClass="buttonrow"  rendered="#{utentiBean.showFormCambiaPassword}" id="buttonFormPwdPanel">
-									<a4j:commandButton id="modificaPwd" styleClass="icon-save" action="#{utentiBean.cambioPassword}" value="Modifica Password" reRender="panelRoleUser" style="margin-left: 24px;"/>
+									<a4j:outputPanel layout="block" id="panelSoggettoDefaultUtenteCombo" rendered="#{utentiBean.visualizzaSelectSoggettiDisponibili}">
+										<link:prop label="#{applicationBean.labelSoggettoCompact}">
+											<rich:comboBox id="soggettoDefaultCombo" value="#{utentiBean.soggettoDefaultUtente}" converter="selectItemConverter" 
+												defaultLabel="Seleziona #{applicationBean.labelSoggettoCompact}" directInputSuggestions="true" width="416" enableManualInput="false">
+												<f:selectItems value="#{utentiBean.soggettiDisponibiliItems}"/>
+											</rich:comboBox>
+										</link:prop>
+									</a4j:outputPanel>
 								</a4j:outputPanel>
-							</h:form>
+								
+							</link:fieldset>
+							<c:if test="#{applicationBean.operatore and !applicationBean.amministratore}">
+								<c:if test="#{not empty utentiBean.listaSoggettiAssociatiUtente}">
+									<link:fieldset legend="Soggetti Associati" collapsible="false" closed="false">	
+										<rich:dataTable value="#{utentiBean.listaSoggettiAssociatiUtente}" var="item" id="tableSoggs" width="100%" rowClasses="even, odd">
+											<rich:column>
+												<f:facet name="header">
+													<h:outputText value="Soggetto"  id="outSoggetto1"/>
+												</f:facet>
+												<h:outputText value="#{item.name}"/>
+											</rich:column>
+											<rich:column>
+												<f:facet name="header">
+													<h:outputText value="Profilo Interoperabilità"  id="outProfilo1"/>
+												</f:facet>
+												<h:outputText value="#{item.value}"/>
+											</rich:column>
+										</rich:dataTable>
+									</link:fieldset>
+								</c:if>
+								<c:if test="#{not empty utentiBean.listaServiziAssociatiUtente}">
+									<link:fieldset legend="Servizi Associati" collapsible="false" closed="false">
+										<rich:dataTable value="#{utentiBean.listaServiziAssociatiUtente}" var="item" id="tableServs" width="100%" rowClasses="even, odd">
+											<rich:column>
+												<f:facet name="header">
+													<h:outputText value="Servizio"  id="outServizio1"/>
+												</f:facet>
+												<h:outputText value="#{item.name}"/>
+											</rich:column>
+											<rich:column>
+												<f:facet name="header">
+													<h:outputText value="Profilo Interoperabilità"  id="outProfilo2"/>
+												</f:facet>
+												<h:outputText value="#{item.value}"/>
+											</rich:column>
+										</rich:dataTable>
+									</link:fieldset>
+								</c:if>
+							</c:if>
+							<c:if test="#{applicationBean.user and applicationBean.showCambiaPassword}">
+								<a4j:outputPanel layout="block" id="panelRoleUser" rendered="#{not empty utentiBean.user.id and utentiBean.user.id gt 0}">
+									
+										<h:inputHidden id="inUser" value="#{utentiBean.user.id}"/>
+										<link:fieldset legend="Password" rendered="#{not empty utentiBean.user.id and utentiBean.user.id gt 0}" collapsible="false" closed="false">
+											<link:prop label="Modifica">
+												<h:selectBooleanCheckbox id="_modificaPwd" styleClass="controlset" value="#{utentiBean.showFormCambiaPassword}" >
+													<a4j:support status="mainStatus" event="onchange" reRender="formPnl" />
+													</h:selectBooleanCheckbox>
+											</link:prop>
+											
+											<a4j:outputPanel layout="block" rendered="#{utentiBean.showFormCambiaPassword}" id="fieldFormPwdPanel">	
+												<link:prop label="Vecchia" required="true" rendered="#{utentiBean.showVecchiaPassword}">
+													<h:inputSecret label="Vecchia" id="_oldPwdChange" value="#{utentiBean.vecchiaPassword}"  styleClass="inputLinkLong"/>
+												</link:prop>
+											
+												<link:prop label="Nuova" required="true">
+													<h:inputSecret label="Nuova" id="_pwdChange" value="#{utentiBean.user.password}"   styleClass="inputLinkLong"/>
+												</link:prop>
+													
+												<link:prop label="Conferma Nuova" required="true" note="#{utentiBean.notePassword}" noteEscape="false">
+													<h:inputSecret id="conpwdChange" label="Conferma Nuova" value="#{utentiBean.confermaPassword}"   styleClass="inputLinkLong"/>
+												</link:prop>
+											</a4j:outputPanel>
+										</link:fieldset>
+								</a4j:outputPanel>
+							</c:if>
+							<a4j:outputPanel layout="block" styleClass="buttonrow"  rendered="#{true}" id="buttonFormPwdPanel">
+								<a4j:commandButton id="salvaProfiloBtn" styleClass="icon-save" action="#{utentiBean.salvaProfilo}" value="Salva" reRender="panelDettaglioUtente" style="margin-left: 24px;"/>
+							</a4j:outputPanel>
 						</a4j:outputPanel>
-					</c:if>
+					</h:form>
 				</rich:panel>
 			</div>
 		</ui:define>

@@ -374,7 +374,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			used = asps != null && asps.size() > 0;
 
 			// lista dei protocolli supportati
-			List<String> listaTipiProtocollo = apcCore.getProtocolli(session);
+			List<String> listaTipiProtocollo = apcCore.getProtocolli(request, session);
 
 			// se il protocollo e' null (primo accesso ) lo ricavo dall'accordo di servizio
 			if(tipoProtocollo == null){

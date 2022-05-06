@@ -136,7 +136,7 @@ public final class ScopeChange extends Action {
 					
 					if(lista==null) {
 						boolean filtroSoggetto = false;
-						List<String> protocolli = scopeCore.getProtocolli(session,false);
+						List<String> protocolli = scopeCore.getProtocolli(request, session,false);
 						if(protocolli!=null && protocolli.size()==1) { // dovrebbe essere l'unico caso in cui un soggetto multitenant è selezionato
 							filtroSoggetto = true;
 						}

@@ -140,11 +140,11 @@ public final class AccordiCooperazioneAdd extends Action {
 			acHelper.makeMenu();
 
 			// Tipi protocollo supportati
-			List<String> listaTipiProtocollo = acCore.getProtocolliByFilter(session, true, false);
+			List<String> listaTipiProtocollo = acCore.getProtocolliByFilter(request, session, true, false);
 			
 			// primo accesso inizializzo con il protocollo di default
 			if(this.tipoProtocollo == null){
-				this.tipoProtocollo = acCore.getProtocolloDefault(session, listaTipiProtocollo);
+				this.tipoProtocollo = acCore.getProtocolloDefault(request, session, listaTipiProtocollo);
 			}
 			
 			if(listaTipiProtocollo.size()<=0) {

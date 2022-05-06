@@ -609,7 +609,7 @@ public class PddHelper extends ConsoleHelper {
 				ServletUtils.enabledPageDataSearch(this.pd, PddCostanti.LABEL_PORTE_DI_DOMINIO, search);
 			}
 
-			User user = ServletUtils.getUserFromSession(this.session);
+			User user = ServletUtils.getUserFromSession(this.request, this.session);
 			boolean showConfigurazioneSistema = user!=null && user.getPermessi()!=null && user.getPermessi().isSistema() &&
 					this.pddCore.getJmxPdD_aliases()!=null && this.pddCore.getJmxPdD_aliases().size()>0;
 			

@@ -41,6 +41,7 @@ public class Costanti {
 	public final static String LABEL_PARAMETRO_SOGGETTO_OPERATIVO = "Soggetto Operativo";
 	public final static String LABEL_PARAMETRO_SOGGETTO_COMPACT = "Soggetto Operativo";
 	public final static String LABEL_PARAMETRO_SOGGETTI_COMPACT = "Soggetti Operativi";
+	public static final String LABEL_PROFILO = "Profilo";
 	
 	public static final String LABEL_PARAMETRO_MODALITA_ALL = "Tutti";
 	public static final String VALUE_PARAMETRO_MODALITA_ALL = "qualsiasi";

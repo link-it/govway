@@ -79,7 +79,7 @@ public class GeneralHelper {
 	protected HttpSession session;
 	protected ControlStationCore core;
 	protected PddCore pddCore;
-	protected UtentiCore utentiCore;
+//	protected UtentiCore utentiCore;
 	protected SoggettiCore soggettiCore;
 	protected Logger log;
 
@@ -88,7 +88,7 @@ public class GeneralHelper {
 		try {
 			this.core = new ControlStationCore();
 			this.pddCore = new PddCore(this.core);
-			this.utentiCore = new UtentiCore(this.core);
+//			this.utentiCore = new UtentiCore(this.core);
 			this.soggettiCore = new SoggettiCore(this.core);
 		} catch (Exception e) {
 			this.log = ControlStationLogger.getPddConsoleCoreLogger();
@@ -122,13 +122,14 @@ public class GeneralHelper {
 		String userLogin = ServletUtils.getUserLoginFromSession(this.session);
 		String css = this.core.getConsoleCSS();
 
-		User u = null;
-		try {
-			u = this.utentiCore.getUser(userLogin,false);
-		} catch (DriverUsersDBException dude) {
-			// Se arrivo qui, è successo qualcosa di strano
-			//this.log.error("initGeneralData: " + dude.getMessage(), dude);
-		}
+		// per avere diversi 'profili' utente per i vari tab leggo l'utente dalla sessione del tab
+		User u = ServletUtils.getUserFromSession(request, this.session);
+//		try {
+//			u = this.utentiCore.getUser(userLogin,false);
+//		} catch (DriverUsersDBException dude) {
+//			// Se arrivo qui, è successo qualcosa di strano
+//			//this.log.error("initGeneralData: " + dude.getMessage(), dude);
+//		}
 
 		boolean displayUtente = false;
 		boolean displayLogin = true;
@@ -227,10 +228,10 @@ public class GeneralHelper {
 			gd.setHeaderLinks(link);
 
 			if(!u.hasOnlyPermessiUtenti())  
-				gd.setModalitaLinks(this.caricaMenuProtocolliUtente(u));
+				gd.setModalitaLinks(this.caricaMenuProtocolliUtente(request, u));
 			
 			if(!u.hasOnlyPermessiUtenti())  // si e' deciso di farlo vedere sempre, sarà senza tendina: && this.core.isMultitenant())  
-				gd.setSoggettiLinks(this.caricaMenuSoggetti(u));
+				gd.setSoggettiLinks(this.caricaMenuSoggetti(request, u));
 		}
 
 		return gd;
@@ -280,12 +281,12 @@ public class GeneralHelper {
 		return 50;
 	}
 
-	public Vector<GeneralLink> caricaMenuProtocolliUtente(User u){
+	public Vector<GeneralLink> caricaMenuProtocolliUtente(HttpServletRequest request, User u){
 		Vector<GeneralLink> link = new Vector<GeneralLink>();
 
 		// 1. controllo se ho piu' di un protocollo disponibile per l'utente
 		try {
-			List<String> protocolliDispondibili = this.core.getProtocolli(this.session,true);
+			List<String> protocolliDispondibili = this.core.getProtocolli(request, this.session,true);
 
 			if(protocolliDispondibili != null && protocolliDispondibili.size() > 0) {
 				// prelevo l'eventuale protocollo selezionato
@@ -350,12 +351,12 @@ public class GeneralHelper {
 		return link;
 	}
 
-	public Vector<GeneralLink> caricaMenuSoggetti(User u){
+	public Vector<GeneralLink> caricaMenuSoggetti(HttpServletRequest request, User u){
 		Vector<GeneralLink> link = new Vector<GeneralLink>();
 
 		try {
 			// prelevo l'eventuale protocollo selezionato
-			List<String> protocolliDispondibili = this.core.getProtocolli(this.session,true);
+			List<String> protocolliDispondibili = this.core.getProtocolli(request, this.session,true);
 			String protocolloSelezionato = u.getProtocolloSelezionatoPddConsole();
 			if(protocolliDispondibili.size()==1) {
 				protocolloSelezionato = protocolliDispondibili.get(0); // forzo

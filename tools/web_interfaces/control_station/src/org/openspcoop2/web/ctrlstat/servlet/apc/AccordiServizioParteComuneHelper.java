@@ -5253,12 +5253,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 			
 			
-			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 			boolean showServiceBinding = true;
 			boolean showResources = true;
 			boolean showServices = true;
 			if( !showProtocolli ) {
-				List<String> l = this.core.getProtocolli(this.session);
+				List<String> l = this.core.getProtocolli(this.request, this.session);
 				if(l.size()>0) {
 					IProtocolFactory<?> p = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(l.get(0));
 					if(p.getManifest().getBinding().getRest()==null) {
@@ -5676,10 +5676,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
 					boolean exists = false;
 					if(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE.equals(tipoAccordo)){
-						exists = exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_PARTE_COMUNE, this.session);
+						exists = exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_PARTE_COMUNE, this.request, this.session);
 					}
 					else{
-						exists = exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_COMPOSTO, this.session);
+						exists = exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_COMPOSTO, this.request, this.session);
 					}
 					if(exists){
 

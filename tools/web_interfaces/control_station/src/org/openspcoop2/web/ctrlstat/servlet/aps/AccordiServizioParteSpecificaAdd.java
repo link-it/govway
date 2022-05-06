@@ -508,14 +508,14 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			// Tipi protocollo supportati
 			boolean filtraSoggettiEsistenti = true;
 			boolean filtraAccordiEsistenti = true;
-			List<String> listaTipiProtocollo = apcCore.getProtocolliByFilter(session, filtraSoggettiEsistenti, null, filtraAccordiEsistenti, false, true);
+			List<String> listaTipiProtocollo = apcCore.getProtocolliByFilter(request, session, filtraSoggettiEsistenti, null, filtraAccordiEsistenti, false, true);
 					
 			// Preparo il menu
 			apsHelper.makeMenu();
 
 			if(listaTipiProtocollo.size()<=0) {
 				
-				List<String> _listaTipiProtocolloSoloSoggetti = apcCore.getProtocolliByFilter(session, filtraSoggettiEsistenti, null, !filtraAccordiEsistenti, false, true);			
+				List<String> _listaTipiProtocolloSoloSoggetti = apcCore.getProtocolliByFilter(request, session, filtraSoggettiEsistenti, null, !filtraAccordiEsistenti, false, true);			
 				if(_listaTipiProtocolloSoloSoggetti.size()>0) {
 					pd.setMessage("Non risultano registrate API", Costanti.MESSAGE_TYPE_INFO);
 				}
@@ -543,7 +543,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			
 			this.tipoProtocollo = apsHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
 			if(this.tipoProtocollo == null){
-				this.tipoProtocollo = apsCore.getProtocolloDefault(session, listaTipiProtocollo);
+				this.tipoProtocollo = apsCore.getProtocolloDefault(request, session, listaTipiProtocollo);
 			}
 			
 			boolean connettoreStatic = false;
@@ -602,7 +602,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						// se ancora non ho scelto l'accordo da mostrare quando entro
 						if(accordoPrimoAccesso == -1){
 							//mostro il primo accordo che ha tipo che corrisponde a quello di default
-							if(apcCore.getProtocolloDefault(session,listaTipiProtocollo).equals(soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo()))){
+							if(apcCore.getProtocolloDefault(request, session,listaTipiProtocollo).equals(soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo()))){
 								accordoPrimoAccesso = i;
 							}
 						}

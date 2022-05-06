@@ -2167,7 +2167,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				ServletUtils.enabledPageDataSearch(this.pd, PorteDelegateCostanti.LABEL_PORTE_DELEGATE, search);
 			}
 
-			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 			
 			// setto le label delle colonne
 			List<String> labelsList= new ArrayList<String>();
