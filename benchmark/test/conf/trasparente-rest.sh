@@ -21,6 +21,7 @@ function rest_proxy_DBTrace() {
 	protocollo=api
 	tipiTest=Proxy
 	azione=test
+	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="Vengono registrate le transazioni"
 }
@@ -32,6 +33,7 @@ function rest_proxy_NoTrace() {
 	protocollo=api
 	tipiTest=Proxy
 	azione=test2
+	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="Non vengono registrate le transazioni"
 }
@@ -43,6 +45,7 @@ function rest_proxy_FileTrace() {
 	protocollo=api
 	tipiTest=Proxy
 	azione=test3
+	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="Vengono registrate le transazioni solo su filesystem"
 }
@@ -55,6 +58,7 @@ function rest_proxy_FileDBTrace() {
 	protocollo=api
 	tipiTest=Proxy
 	azione=test4
+	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="Vengono registrate le transazioni sia su database che su filesystem"
 }
@@ -67,6 +71,7 @@ function rest_proxy_DBTrace_Validazione() {
 	protocollo=api
 	tipiTest=Validazione
 	azione=test
+	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="Vengono registrate le transazioni"
 }
@@ -89,6 +94,7 @@ function rest_proxy_DBTrace_RateLimiting() {
 	protocollo=api
 	tipiTest=RateLimiting
 	azione=test
+	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="Test policy rate limiting complessiva e per richiedente"
 }
@@ -100,6 +106,7 @@ function rest_proxy_NoTrace_RateLimiting() {
 	protocollo=api
 	tipiTest=RateLimiting
 	azione=test2
+	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="Test policy rate limiting complessiva e per richiedente senza tracciamento"
 }
@@ -111,6 +118,7 @@ function rest_proxy_NoTrace_RateLimiting_TooManyRequests() {
 	protocollo=api
 	tipiTest=RateLimiting
 	azione=test5
+	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="Test policy rate limiting complessiva e per richiedente con superamento policy senza tracciamento"
 }
@@ -122,6 +130,7 @@ function rest_proxy_DBTrace_RateLimiting_TooManyRequests() {
 	protocollo=api
 	tipiTest=RateLimiting
 	azione=test3
+	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="Test policy rate limiting complessiva e per richiedente con superamento policy"
 }
@@ -133,6 +142,7 @@ function rest_proxy_DBPartialTrace_RateLimiting_TooManyRequests() {
 	protocollo=api
 	tipiTest=RateLimiting
 	azione=test4
+	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="Test policy rate limiting complessiva e per richiedente con superamento policy e tracciamento parziale"
 }

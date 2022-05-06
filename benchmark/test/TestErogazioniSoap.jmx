@@ -89,6 +89,11 @@
             <stringProp name="Argument.value">${__P(azione,test)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="contentType" elementType="Argument">
+            <stringProp name="Argument.name">contentType</stringProp>
+            <stringProp name="Argument.value">${__P(contentType,text/xml; charset=UTF-8)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
           <elementProp name="soggetto" elementType="Argument">
             <stringProp name="Argument.name">soggetto</stringProp>
             <stringProp name="Argument.value">${__P(soggetto,ENTE)}</stringProp>
@@ -167,7 +172,7 @@
               <elementProp name="${dirFile}/soap/sicurezza/${profiloSicurezza}/${dimensioneRichiesta}B.xml" elementType="HTTPFileArg">
                 <stringProp name="File.path">${dirFile}/soap/sicurezza/${profiloSicurezza}/${dimensioneRichiesta}B.xml</stringProp>
                 <stringProp name="File.paramname"></stringProp>
-                <stringProp name="File.mimetype">application/soap+xml; charset=UTF-8; action=test</stringProp>
+                <stringProp name="File.mimetype">${contentType}</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
@@ -195,7 +200,7 @@
             <collectionProp name="HeaderManager.headers">
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
-                <stringProp name="Header.value">text/xml; charset=UTF-8</stringProp>
+                <stringProp name="Header.value">${contentType}</stringProp>
               </elementProp>
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">SOAPAction</stringProp>

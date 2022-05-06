@@ -15,6 +15,7 @@ function soap_modi_DBTrace_Integrity_OnlyRequest() {
 	protocollo=soap
 	tipiTest=Proxy
 	azione=test
+	contentType=text/xml; charset=UTF-8
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="LineeGuida con integrità del payload nella sola richiesta"
 }
@@ -26,6 +27,7 @@ function soap_modi_DBTrace_Integrity_RequestDigestInResponse() {
 	protocollo=soap
 	tipiTest=Proxy
 	azione=test2
+	contentType=text/xml; charset=UTF-8
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="LineeGuida con integrità del payload anche nella risposta + digestRichiesta"
 }
@@ -37,6 +39,7 @@ function soap_modi_DBTrace_Integrity_OnlyRequest_NoDuplicates() {
 	protocollo=soap
 	tipiTest=Proxy
 	azione=test3
+	contentType=text/xml; charset=UTF-8
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="LineeGuida con integrità del payload nella sola richiesta + filtroDuplicati"
 }
@@ -48,6 +51,7 @@ function soap_modi_DBTrace_IdAuth_OnlyRequest() {
 	protocollo=soap
 	tipiTest=Proxy
 	azione=test4
+	contentType=text/xml; charset=UTF-8
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="LineeGuida con IdAuth nella sola richiesta"
 }
@@ -59,6 +63,7 @@ function soap_modi_DBTrace_IdAuth_RequestDigestInResponse() {
 	protocollo=soap
 	tipiTest=Proxy
 	azione=test5
+	contentType=text/xml; charset=UTF-8
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="LineeGuida con IdAuth anche nella risposta"
 }
@@ -70,6 +75,7 @@ function soap_modi_DBTrace_IdAuth_OnlyRequest_NoDuplicates() {
 	protocollo=soap
 	tipiTest=Proxy
 	azione=test6
+	contentType=text/xml; charset=UTF-8
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="LineeGuida con IdAuth nella sola richiesta + filtroDuplicati"
 }

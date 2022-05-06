@@ -16,6 +16,7 @@ function rest_modi_DBTrace_Integrity_AgidAuth_OnlyRequest() {
 	protocollo=rest
 	tipiTest=Proxy
 	azione=test
+	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="LineeGuida con doppio header nella sola richiesta"
 }
@@ -27,6 +28,7 @@ function rest_modi_DBTrace_Integrity_AgidAuth_RequestDigestInResponse() {
 	protocollo=rest
 	tipiTest=Proxy
 	azione=test2
+	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="LineeGuida con dobbio header anche nella risposta + digestRichiesta"
 }
@@ -38,6 +40,7 @@ function rest_modi_DBTrace_Integrity_AgidAuth_OnlyRequest_NoDuplicates() {
 	protocollo=rest
 	tipiTest=Proxy
 	azione=test3
+	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="LineeGuida con doppio header nella sola richiesta + filtroDuplicati"
 }
@@ -49,6 +52,7 @@ function rest_modi_DBTrace_Integriy_OAuth2Auth_OnlyRequest() {
 	protocollo=rest
 	tipiTest=Proxy
 	azione=test4
+	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="LineeGuida con header Agid e header OAuth nella sola richiesta"
 }
@@ -60,6 +64,7 @@ function rest_modi_DBTrace_Integriy_OAuth2Auth_RequestDigestInResponse() {
 	protocollo=rest
 	tipiTest=Proxy
 	azione=test5
+	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="LineeGuida con header Agid e header OAuth anche nella risposta + digestRichiesta"
 }
@@ -70,6 +75,7 @@ function rest_modi_DBTrace_Integriy_OAuth2Auth_OnlyRequest_NoDuplicates() {
 	protocollo=rest
 	tipiTest=Proxy
 	azione=test6
+	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="LineeGuida con header Agid e header OAuth nella sola richiesta + filtroDuplicati"
 }
