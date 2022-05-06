@@ -488,3 +488,51 @@ And match header Agid-JWT-Signature == '#notpresent'
 * call check_traccia_self_signed ({ tid: tid, tipo: 'Risposta', token: server_integrity_token, x509sub: 'CN=ExampleServer2HSM, OU=Test, O=Test, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0302', other_checks: other_checks_risposta, profilo_interazione: 'crud' })
 
 
+
+@multipart-request-form-data
+Scenario: Test Multipart Request con Content-Type multipart/form-data
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR0302MultipartRequest/v1"
+And path 'multipart', 'form-data'
+And request read('multipart-request.bin')
+And header Content-Type = 'multipart/form-data; boundary="----=_Part_0_1037475674.1651780088034"'
+And header GovWay-TestSuite-Test-ID = 'multipart-request-form-data-idar0302'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 200
+And match response == read('multipart-request.bin')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+
+@multipart-request-mixed
+Scenario: Test Multipart Request con Content-Type multipart/mixed e validazione attiva
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR0302MultipartRequest/v1"
+And path 'multipart', 'mixed'
+And request read('multipart-request.bin')
+And header Content-Type = 'multipart/mixed; boundary="----=_Part_0_1037475674.1651780088034"'
+And header GovWay-TestSuite-Test-ID = 'multipart-request-mixed-idar0302'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 200
+And match response == read('multipart-request.bin')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+
+@multipart-request-dump
+Scenario: Test Multipart Request con Content-Type multipart/form-data e dump attivo
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR0302MultipartRequest/v1"
+And path 'multipart', 'test-dump'
+And request read('multipart-request.bin')
+And header Content-Type = 'multipart/form-data; boundary="----=_Part_0_1037475674.1651780088034"'
+And header GovWay-TestSuite-Test-ID = 'multipart-request-dump-idar0302'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 200
+And match response == read('multipart-request.bin')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+

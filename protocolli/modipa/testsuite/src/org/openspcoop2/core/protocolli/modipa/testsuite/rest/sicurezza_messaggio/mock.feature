@@ -286,6 +286,23 @@ Scenario: isTest('connettivita-base-idar0302-header-bearer')
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
+Scenario: isTest('multipart-request-form-data-idar0302') || isTest('multipart-request-dump-idar0302')
+
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * def responseStatus = 200
+    * def responseHeaders = { Content-Type: 'multipart/form-data; boundary="----=_Part_0_1037475674.1651780088034"' }
+    * def response = read('classpath:test/rest/sicurezza-messaggio/multipart-request.bin')
+
+Scenario: isTest('multipart-request-mixed-idar0302')
+
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * def responseStatus = 200
+    * def responseHeaders = { Content-Type: 'multipart/mixed; boundary="----=_Part_0_1037475674.1651780088034"' }
+    * def response = read('classpath:test/rest/sicurezza-messaggio/multipart-request.bin')
+
+
 # catch all
 #
 #
