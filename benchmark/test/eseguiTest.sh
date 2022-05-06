@@ -1,54 +1,3 @@
-# I seguenti valori identificano un test e vengono configurati dalle funzioni
-# di test di sotto.
-
-# 		REST
-# --- API Gateway --
-# protocollo=api
-# tipiTest="Proxy Validazione RateLimiting"
-# Azioni [profiloSicurezza=none] - nessun profilo di sicurezza
-# 	test: vengono registrate le transazioni
-# 	test2: non vegono registrate le transazioni
-#	test3: vengono registrate le transazioni solo su filesystem
-#	test4: vengono registrate le transazioni sia su db che su filesystem
-
-# -- ModI --
-# protocollo=rest
-# tipiTest="Proxy"
-
-# Azioni [profiloSicurezza=digest] - digest: profilo con integrità del payload
-#	  test: LineeGuida con doppio header nella sola richiesta
-#	  test2: LineeGuida con dobbio header anche nella risposta + digestRichiesta
-#	  test3: LineeGuida con doppio header nella sola richiesta + filtroDuplicati
-#	  test4: LineeGuida con header Agid e header OAuth nella sola richiesta
-#	  test5: LineeGuida con header Agid e header OAuth anche nella risposta + digestRichiesta
-#	  test6: LineeGuida con header Agid e header OAuth nella sola richiesta + filtroDuplicati
-
-#		SOAP
-# --- API Gateway --
-# protocollo=api
-# tipiTest="Proxy Validazione RateLimiting"
-# Azioni [profiloSicurezza=none]
-#	test: vengono registrate le transazioni
-#	test2: non vegono registrate le transazioni
-#	test3: vengono registrate le transazioni solo su filesystem
-#	test4: vengono registrate le transazioni sia su db che su filesystem
-
-# -- ModI --
-# protocollo=soap
-# tipiTest="Proxy"
-# Azioni [profiloSicurezza=digest]
-#	  test: LineeGuida con integrità del payload nella sola richiesta
-#	  test2: LineeGuida con integrità del payload anche nella risposta + digestRichiesta
-#	  test3: LineeGuida con integrità del payload nella sola richiesta + filtroDuplicati
-# Azioni [profiloSicurezza=auth]
-#	  test4: LineeGuida con IDAuth nella sola richiesta
-#	  test5: LineeGuida con IDAuth anche nella risposta
-#	  test6: LineeGuida con IDAuth nella sola richiesta + filtroDuplicati
-
-# TODO: rendi tipiTest una variabile normale e non un array, e togli il for quando la si usa
-# TODO: Metti nell'elenco test quelli di rateLimiting
-
-
 if [ ! -f ../config.properties ]
 then
         echo "File config.properties not exists"
@@ -103,7 +52,7 @@ function usage() {
 }
 
 
-# TODO: Prendi il realpath dello script eseguiTest.sh e usa un percorso assoluto
+
 declare -A tests
 . ./conf/trasparente-rest.sh
 . ./conf/trasparente-soap.sh
@@ -113,7 +62,7 @@ declare -A tests
 elencoTest="$elencoTestTrasparenteRest $elencoTestTrasparenteSoap $elencoTestModiRest $elencoTestModiSoap"
 
 function build_jmx_command() {
-	echo "${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=${threadNumber} -Jduration=${duration} -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JtipoTest=${tipoTest} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloSicurezza=${profiloSicurezza} -JdirResult=${outputDir} -j ${logDir}/jmeter.log -Jiterazione=$it -JtestName=${testConfigurator}"
+	echo "${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -JnodoRunProtocol=${nodoRunProtocol} -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=${threadNumber} -Jduration=${duration} -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JtipoTest=${tipoTest} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloSicurezza=${profiloSicurezza} -JdirResult=${outputDir} -j ${logDir}/jmeter.log -Jiterazione=$it -JtestName=${testConfigurator}"
 }
 
 function clean_db() {

@@ -14,6 +14,11 @@
     <hashTree>
       <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="Variabili del Test" enabled="true">
         <collectionProp name="Arguments.arguments">
+          <elementProp name="nodoRun.protocol" elementType="Argument">
+            <stringProp name="Argument.name">nodoRun.protocol</stringProp>
+            <stringProp name="Argument.value">${__P(nodoRunProtocol,http)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
           <elementProp name="nodoRun.hostname" elementType="Argument">
             <stringProp name="Argument.name">nodoRun.hostname</stringProp>
             <stringProp name="Argument.value">${__P(nodoRunIP,127.0.0.1)}</stringProp>
@@ -183,7 +188,7 @@
           </elementProp>
           <stringProp name="HTTPSampler.domain">${nodoRun.hostname}</stringProp>
           <stringProp name="HTTPSampler.port">${nodoRun.port}</stringProp>
-          <stringProp name="HTTPSampler.protocol">http</stringProp>
+          <stringProp name="HTTPSampler.protocol">${nodoRun.protocol}</stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
           <stringProp name="HTTPSampler.path">/govway/${protocollo}/in/${soggetto}/StressTestRest${tipoTest}/v1/${azione}</stringProp>
           <stringProp name="HTTPSampler.method">PUT</stringProp>

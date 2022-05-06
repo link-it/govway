@@ -2,6 +2,7 @@ BENCHMARK_HOME=absolute benchmark dir
 binJMeter=apache jmeter home/bin/
 
 # Nodo GovWay Locale
+nodoRunProtocol=http
 nodoRunIP=GovWayServer
 nodoRunPort=8080
 proxyHost=
