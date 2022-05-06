@@ -10,7 +10,7 @@ Di seguito alcuni esempi di reports generabili.
 Tabella:
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneSoggettoRemotoTabella.png
-    :scale: 100%
+    :scale: 50%
     :align: center
     :name: mon_distribuzioneSoggettoRemotoTabella_fig
 
@@ -19,7 +19,7 @@ Tabella:
 **Grafico 'Pie Chart' sul numero di transazioni**:
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneSoggettoRemotoPie.png
-    :scale: 100%
+    :scale: 50%
     :align: center
     :name: mon_distribuzioneSoggettoRemotoPie_fig
 

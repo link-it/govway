@@ -1,3 +1,12 @@
+2022-05-06  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor, Documentazione]
+	Risolto Bug
+	I grafici (PieChart e BarChart) della distribuzione per errore non venivano visualizzati dalla console
+	nel caso in cui tra le tipologie di errore individuate fosse presente un errore la cui descrizione presentava l'apice singolo.
+	Ad esempio 'Operazione non Individuata' che viene descritta come: La richiesta non indirizza un'operazione esistente sull'API invocata.
+	È stata inoltre aggiunta la documentazione della funzionalità statistica di distribuzione per errore nel manuale di monitoraggio.
+
 2022-05-05  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayMonitor, Utils]

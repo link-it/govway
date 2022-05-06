@@ -32,6 +32,11 @@ I tipi di report che si possono generare sono:
    periodo, rispetto agli esiti riscontrati (OK, Errore, Fault
    Applicativo).
 
+-  Distribuzione per Errori
+
+   Consente di visualizzare la distribuzione delle richieste, in un dato
+   periodo, rispetto alle tipologie di errore riscontrato.
+
 -  Distribuzione per Soggetto Remoto
 
    Consente di visualizzare la distribuzione del numero di richieste, KB
@@ -86,6 +91,7 @@ Per ogni report è possibile specificare dei criteri di filtro come descritto ne
         criteriFiltro
 	andamentoTemporale
 	distribuzioneEsito
+	distribuzioneErrori
 	distribuzioneSoggettoLocale
 	distribuzioneSoggettoRemoto
 	distribuzioneAPI

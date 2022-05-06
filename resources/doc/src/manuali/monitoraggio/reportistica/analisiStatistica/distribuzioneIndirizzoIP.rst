@@ -10,7 +10,7 @@ di reports generabili.
 Tabella:
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneIPTabella.png
-    :scale: 100%
+    :scale: 50%
     :align: center
     :name: mon_distribuzioneIPTabella_fig
 
@@ -19,7 +19,7 @@ Tabella:
 Grafico 'Bar Chart' sul numero di transazioni:
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneIPBar.png
-    :scale: 100%
+    :scale: 50%
     :align: center
     :name: mon_distribuzioneIPBar_fig
 
@@ -28,7 +28,7 @@ Grafico 'Bar Chart' sul numero di transazioni:
 Grafico 'Pie Chart' sul numero di transazioni:
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneIPPie.png
-    :scale: 100%
+    :scale: 50%
     :align: center
     :name: mon_distribuzioneIPPie_fig
 

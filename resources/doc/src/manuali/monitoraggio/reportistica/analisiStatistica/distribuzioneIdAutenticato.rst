@@ -1,6 +1,6 @@
 .. _mon_stats_id_autenticato:
 
-Distribuzione per Identificativo Autenticato
+Distribuzione per Principal
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Fornisce statistiche sulle transazioni sulla base della loro

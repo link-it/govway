@@ -10,7 +10,7 @@ di reports generabili.
 Tabella:
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneEsitoTabella.png
-    :scale: 100%
+    :scale: 50%
     :align: center
     :name: mon_distribuzioneEsitoTabella_fig
 
@@ -19,7 +19,7 @@ Tabella:
 Grafico 'Bar Chart' sul numero di transazioni:
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneEsitoBar.png
-    :scale: 100%
+    :scale: 50%
     :align: center
     :name: mon_distribuzioneEsitoBar_fig
 
@@ -28,7 +28,7 @@ Grafico 'Bar Chart' sul numero di transazioni:
 Grafico 'Line Chart' sul numero di transazioni:
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneEsitoLine.png
-    :scale: 100%
+    :scale: 50%
     :align: center
     :name: mon_distribuzioneEsitoLine_fig
 

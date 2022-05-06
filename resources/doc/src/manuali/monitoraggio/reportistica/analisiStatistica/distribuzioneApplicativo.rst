@@ -12,7 +12,7 @@ Di seguito alcuni esempi di report generabili.
 Tabella:
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneApplicativoTabella.png
-    :scale: 100%
+    :scale: 50%
     :align: center
     :name: mon_distribuzioneApplicativoTabella_fig
 
@@ -21,7 +21,7 @@ Tabella:
 Grafico 'Pie Chart' sul numero di transazioni:
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneApplicativoPie.png
-    :scale: 100%
+    :scale: 50%
     :align: center
     :name: mon_distribuzioneApplicativoPie_fig
 

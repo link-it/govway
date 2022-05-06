@@ -10,7 +10,7 @@ soggetti locali. Di seguito alcuni esempi di reports generabili.
 Tabella:
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneSoggettoTabella.png
-    :scale: 100%
+    :scale: 50%
     :align: center
     :name: mon_distribuzioneSoggettoTabella_fig
 
@@ -19,7 +19,7 @@ Tabella:
 **Grafico 'Pie Chart' sul numero di transazioni**:
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneSoggettoPie.png
-    :scale: 100%
+    :scale: 50%
     :align: center
     :name: mon_distribuzioneSoggettoPie_fig
 
@@ -28,7 +28,7 @@ Tabella:
 **Grafico 'Bar Chart' sul numero di transazioni:**
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneSoggettoBar.png
-    :scale: 100%
+    :scale: 50%
     :align: center
     :name: mon_distribuzioneSoggettoBar_fig
 

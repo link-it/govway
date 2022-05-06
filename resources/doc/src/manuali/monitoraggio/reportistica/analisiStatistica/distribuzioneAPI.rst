@@ -9,7 +9,7 @@ Di seguito alcuni esempi di reports generabili.
 Tabella:
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneAPITabella.png
-    :scale: 100%
+    :scale: 50%
     :align: center
     :name: mon_distribuzioneApiTabella_fig
 
@@ -18,7 +18,7 @@ Tabella:
 **Grafico 'Pie Chart' sul numero di transazioni:**
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneAPIPie.png
-    :scale: 100%
+    :scale: 50%
     :align: center
     :name: mon_distribuzioneApiPie_fig
 
@@ -27,7 +27,7 @@ Tabella:
 **Grafico 'Bar Chart' sul tempo medio di risposta:**
 
 .. figure:: ../../_figure_monitoraggio/DistribuzioneAPIBar.png
-    :scale: 100%
+    :scale: 50%
     :align: center
     :name: mon_distribuzioneApiBar_fig
 
