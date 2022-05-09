@@ -14,6 +14,10 @@ proxyPort=
 #proxyHost=172.16.2.254
 #proxyPort=8080
 
+# Timeout
+connectionTimeout=10000
+readTimeout=60000
+
 # Client
 clientIP=StressTestClient
 

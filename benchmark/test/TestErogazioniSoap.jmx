@@ -34,6 +34,16 @@
             <stringProp name="Argument.value">${__P(nodoRunPort,8080)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="connectionTimeout" elementType="Argument">
+            <stringProp name="Argument.name">connectionTimeout</stringProp>
+            <stringProp name="Argument.value">${__P(connectionTimeout,10000)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="readTimeout" elementType="Argument">
+            <stringProp name="Argument.name">readTimeout</stringProp>
+            <stringProp name="Argument.value">${__P(readTimeout,60000)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
           <elementProp name="client" elementType="Argument">
             <stringProp name="Argument.name">client</stringProp>
             <stringProp name="Argument.value">${__P(clientIP,127.0.0.1)}</stringProp>
@@ -126,7 +136,7 @@
           </elementProp>
           <elementProp name="dirResult" elementType="Argument">
             <stringProp name="Argument.name">dirResult</stringProp>
-            <stringProp name="Argument.value">${__P(dirResult,/opt/local/GIT_GOV/JMeter/INPS/results)}</stringProp>
+            <stringProp name="Argument.value">${__P(dirResult,results)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="iterazione" elementType="Argument">
@@ -197,8 +207,8 @@
           <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
           <stringProp name="HTTPSampler.proxyHost">${proxyHost}</stringProp>
           <stringProp name="HTTPSampler.proxyPort">${proxyPort}</stringProp>
-          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">${connectionTimeout}</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">${readTimeout}</stringProp>
         </HTTPSamplerProxy>
         <hashTree>
           <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
