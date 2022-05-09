@@ -558,7 +558,8 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 			return this.dynamicSOAPPart;
 		}
 		else {
-			return this.getContent().getSOAPPart();
+			T c = this.getContent();
+			return c!=null ? c.getSOAPPart() : null;
 		}
 	}
 	

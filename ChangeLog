@@ -1,3 +1,12 @@
+2022-05-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Migliorata diagnostica emessa in presenza di una richiesta SOAP vuota (senza http payload).
+	Il precedente errore riportava un null pointer:
+	   "Riscontrato errore ... errore durante il controllo del namespace del soap envelope: null"
+	La nuova diagnostica riporta invece la causa dell'errore:
+	   "Riscontrato errore ... errore durante il controllo del namespace del soap envelope: Invalid empty message"
+
 2022-05-06  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayMonitor, Documentazione]

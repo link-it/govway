@@ -45,6 +45,7 @@ import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
 import javax.xml.soap.Text;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -431,9 +432,22 @@ public class SoapUtils {
 				envelopeNamespace = reader.getNamespace();
 			}
 			if(envelopeNamespace==null) {
-				SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
-				envelopeNamespace = envelope.getNamespaceURI();
+				SOAPPart soapPart = message.getSOAPPart();
+				if(soapPart!=null) {
+					SOAPEnvelope envelope = soapPart.getEnvelope();
+					if(envelope!=null) {
+						envelopeNamespace = envelope.getNamespaceURI();
+					}
+				}
 			}
+			
+			if(envelopeNamespace==null && message instanceof AbstractOpenSPCoop2Message_soap_impl) {
+				boolean hasContent = ((AbstractOpenSPCoop2Message_soap_impl<?>)message).hasContent();
+				if(!hasContent) {
+					throw new MessageException("Invalid empty message");
+				}
+			}
+			
 			if(messageType.equals(MessageType.SOAP_11) &&  Costanti.SOAP_ENVELOPE_NAMESPACE.equals(envelopeNamespace)) {
 				return true;
 			}
