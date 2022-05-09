@@ -824,6 +824,9 @@ public class CostantiPdD {
     
     
     public final static String CONNETTORE_MULTIPLO_SELEZIONATO = "CONNETTORE_MULTIPLO_SELEZIONATO";
+    
+    
+    public final static String FILTRO_DUPLICATI_TEST = "FILTRO_DUPLICATI_TEST";
 }
 
 

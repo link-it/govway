@@ -59,7 +59,6 @@ import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.constants.Costanti;
-import org.openspcoop2.protocol.engine.driver.FiltroDuplicati;
 import org.openspcoop2.protocol.engine.driver.History;
 import org.openspcoop2.protocol.engine.driver.IFiltroDuplicati;
 import org.openspcoop2.protocol.engine.driver.ProfiloDiCollaborazione;
@@ -2617,11 +2616,16 @@ public class Sbustamento extends GenericLib{
 		IFiltroDuplicati gestoreFiltroDuplicati = (IFiltroDuplicati) loader.newInstance(gestoreFiltroDuplicatiClass);
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.OPENSPCOOP_STATE, openspcoopstate );
 		gestoreFiltroDuplicati.init(pddContext);
-		if(gestoreFiltroDuplicati instanceof FiltroDuplicati){
-			((FiltroDuplicati)gestoreFiltroDuplicati).setHistoryBuste(historyBuste);
-			((FiltroDuplicati)gestoreFiltroDuplicati).setRepositoryBuste(repositoryBuste);
-			((FiltroDuplicati)gestoreFiltroDuplicati).setGestioneStateless((openspcoopstate instanceof OpenSPCoopStateless) && (oneWayVersione11==false));
-			((FiltroDuplicati)gestoreFiltroDuplicati).setRepositoryIntervalloScadenzaMessaggi(propertiesReader.getRepositoryIntervalloScadenzaMessaggi());
+		if(gestoreFiltroDuplicati instanceof org.openspcoop2.protocol.engine.driver.FiltroDuplicati){
+			((org.openspcoop2.protocol.engine.driver.FiltroDuplicati)gestoreFiltroDuplicati).setHistoryBuste(historyBuste);
+			((org.openspcoop2.protocol.engine.driver.FiltroDuplicati)gestoreFiltroDuplicati).setRepositoryBuste(repositoryBuste);
+			((org.openspcoop2.protocol.engine.driver.FiltroDuplicati)gestoreFiltroDuplicati).setGestioneStateless((openspcoopstate instanceof OpenSPCoopStateless) && (oneWayVersione11==false));
+			((org.openspcoop2.protocol.engine.driver.FiltroDuplicati)gestoreFiltroDuplicati).setRepositoryIntervalloScadenzaMessaggi(propertiesReader.getRepositoryIntervalloScadenzaMessaggi());
+		}
+		else if(gestoreFiltroDuplicati instanceof org.openspcoop2.pdd.core.transazioni.FiltroDuplicati) {
+			if(pddContext!=null && pddContext.containsKey(CostantiPdD.FILTRO_DUPLICATI_TEST)) {
+				((org.openspcoop2.pdd.core.transazioni.FiltroDuplicati)gestoreFiltroDuplicati).setUseTransactionIdForTest(true);
+			}
 		}
 		return gestoreFiltroDuplicati;
 	}

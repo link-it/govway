@@ -78,6 +78,7 @@ import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazioneCanaliNodo;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
@@ -3930,10 +3931,10 @@ public class RicezioneContenutiApplicativi {
 		/* ------------ Validazione Contenuti Applicativi ------------- */
 		msgDiag.mediumDebug("Controllo validazione xsd abilitata/disabilitata...");
 		ValidazioneContenutiApplicativi validazioneContenutoApplicativoApplicativo = null;
-		List<Proprieta> proprietaValidazioneContenutoApplicativoApplicativo = null;
+		List<Proprieta> proprietaPorta = null;
 		try {
 			validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(portaDelegata,implementazionePdDDestinatario, true);
-			proprietaValidazioneContenutoApplicativoApplicativo = portaDelegata.getProprietaList();
+			proprietaPorta = portaDelegata.getProprietaList();
 		} catch (Exception e) {
 			msgDiag.logErroreGenerico(e,"getTipoValidazioneContenutoApplicativo(pd,"+implementazionePdDDestinatario+")");
 			openspcoopstate.releaseResource();
@@ -3977,7 +3978,7 @@ public class RicezioneContenutiApplicativi {
 					ValidatoreMessaggiApplicativi validatoreMessaggiApplicativi = new ValidatoreMessaggiApplicativi(
 							registroServiziReader, richiestaDelegata.getIdServizio(), requestMessage,readInterface,
 							propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione(),
-							proprietaValidazioneContenutoApplicativoApplicativo,
+							proprietaPorta,
 							pddContext);
 				
 					// Validazione WSDL
@@ -4016,7 +4017,7 @@ public class RicezioneContenutiApplicativi {
 					// Init Validatore
 					msgDiag.mediumDebug("Validazione della richiesta (initValidator)...");
 					ValidatoreMessaggiApplicativiRest validatoreMessaggiApplicativi = 
-						new ValidatoreMessaggiApplicativiRest(registroServiziReader, richiestaDelegata.getIdServizio(), requestMessage, readInterface, proprietaValidazioneContenutoApplicativoApplicativo,
+						new ValidatoreMessaggiApplicativiRest(registroServiziReader, richiestaDelegata.getIdServizio(), requestMessage, readInterface, proprietaPorta,
 								protocolFactory, pddContext);
 					
 					if(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.equals(validazioneContenutoApplicativoApplicativo.getTipo()) &&
@@ -5059,6 +5060,15 @@ public class RicezioneContenutiApplicativi {
 			msgDiag.mediumDebug("Invio messaggio al modulo di Imbustamento...");
 		}
 		try {
+			
+			// set tipologia di filtro duplicati
+			if(proprietaPorta!=null && !proprietaPorta.isEmpty()) {
+				boolean filtroDuplicatiTestEnabled = CostantiProprieta.isFiltroDuplicatiTestEnabled(proprietaPorta, false); // filtro duplicati usato per test
+				if(filtroDuplicatiTestEnabled) {
+					pddContext.addObject(CostantiPdD.FILTRO_DUPLICATI_TEST, filtroDuplicatiTestEnabled);
+				}
+			}
+			
 			// Creazione ImbustamentoMessage
 			msgDiag.highDebug("Creazione ObjectMessage for send nell'infrastruttura.");
 

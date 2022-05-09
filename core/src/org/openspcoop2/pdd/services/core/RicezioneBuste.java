@@ -79,6 +79,7 @@ import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazioneCanaliNodo;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
@@ -6069,7 +6070,7 @@ public class RicezioneBuste {
 
 		/* ------------ Validazione Contenuti Applicativi e Autorizzazione per Contenuto  ------------- */
 		ValidazioneContenutiApplicativi validazioneContenutoApplicativoApplicativo = null;
-		List<Proprieta> proprietaValidazioneContenutoApplicativoApplicativo = null;
+		List<Proprieta> proprietaPorta = null;
 		String tipoAutorizzazionePerContenuto = null;
 		if(functionAsRouter == false && 
 				isMessaggioErroreProtocollo==false && 
@@ -6094,13 +6095,13 @@ public class RicezioneBuste {
 						//	Richiesta Asincrona
 						if(bustaRichiesta.getRiferimentoMessaggio()==null){
 							validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente, true);
-							proprietaValidazioneContenutoApplicativoApplicativo = pa.getProprietaList();
+							proprietaPorta = pa.getProprietaList();
 							tipoAutorizzazionePerContenuto = configurazionePdDReader.getAutorizzazioneContenuto(pa);
 						}else{
 							//	Risposta Asincrona
 							if(RuoloBusta.RISPOSTA.equals(ruoloBustaRicevuta.toString())){
 								validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pd,implementazionePdDMittente, true);
-								proprietaValidazioneContenutoApplicativoApplicativo = pd.getProprietaList();
+								proprietaPorta = pd.getProprietaList();
 								// NOTA: deve essere registrato un tipo di autorizzazione per contenuto busta uguale al tipo di autorizzazione utilizzato lato servizi applicativi.
 								tipoAutorizzazionePerContenuto = configurazionePdDReader.getAutorizzazioneContenuto(pd);
 							}
@@ -6111,7 +6112,7 @@ public class RicezioneBuste {
 									isRicevutaAsincrona_modalitaAsincrona = true;	
 								}else{
 									validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pd,implementazionePdDMittente, true);
-									proprietaValidazioneContenutoApplicativoApplicativo = pd.getProprietaList();
+									proprietaPorta = pd.getProprietaList();
 									// NOTA: deve essere registrato un tipo di autorizzazione per contenuto busta uguale al tipo di autorizzazione utilizzato lato servizi applicativi.
 									tipoAutorizzazionePerContenuto = configurazionePdDReader.getAutorizzazioneContenuto(pd);
 								}
@@ -6124,13 +6125,13 @@ public class RicezioneBuste {
 						//	Richiesta Asincrona
 						if(bustaRichiesta.getRiferimentoMessaggio()==null){
 							validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente, true);
-							proprietaValidazioneContenutoApplicativoApplicativo = pa.getProprietaList();
+							proprietaPorta = pa.getProprietaList();
 							tipoAutorizzazionePerContenuto = configurazionePdDReader.getAutorizzazioneContenuto(pa);
 						}else{
 							//	Risposta Asincrona
 							if(RuoloBusta.RISPOSTA.equals(ruoloBustaRicevuta.toString())){
 								validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente, true);
-								proprietaValidazioneContenutoApplicativoApplicativo = pa.getProprietaList();
+								proprietaPorta = pa.getProprietaList();
 								tipoAutorizzazionePerContenuto = configurazionePdDReader.getAutorizzazioneContenuto(pa);
 							}
 							// Ricevuta alla richiesta/risposta.
@@ -6140,7 +6141,7 @@ public class RicezioneBuste {
 									isRicevutaAsincrona_modalitaAsincrona = true;	
 								}else{
 									validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pd,implementazionePdDMittente, true);
-									proprietaValidazioneContenutoApplicativoApplicativo = pd.getProprietaList();
+									proprietaPorta = pd.getProprietaList();
 									// NOTA: deve essere registrato un tipo di autorizzazione per contenuto busta uguale al tipo di autorizzazione utilizzato lato servizi applicativi.
 									tipoAutorizzazionePerContenuto = configurazionePdDReader.getAutorizzazioneContenuto(pd);
 								}
@@ -6152,7 +6153,7 @@ public class RicezioneBuste {
 				}else{
 					msgDiag.mediumDebug("Controllo abilitazione validazione dei contenuti applicativi della richiesta...");
 					validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente, true);
-					proprietaValidazioneContenutoApplicativoApplicativo = pa.getProprietaList();
+					proprietaPorta = pa.getProprietaList();
 					tipoAutorizzazionePerContenuto = configurazionePdDReader.getAutorizzazioneContenuto(pa);
 				}
 			}catch(Exception e){
@@ -6211,7 +6212,7 @@ public class RicezioneBuste {
 							ValidatoreMessaggiApplicativi validatoreMessaggiApplicativi = 
 								new ValidatoreMessaggiApplicativi(registroServiziReader,idServizio,requestMessage,readInterface,
 										propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione(),
-										proprietaValidazioneContenutoApplicativoApplicativo,
+										proprietaPorta,
 										pddContext);
 	
 							// Validazione WSDL 
@@ -6252,7 +6253,7 @@ public class RicezioneBuste {
 							// Init Validatore
 							msgDiag.mediumDebug("Validazione della richiesta (initValidator)...");
 							ValidatoreMessaggiApplicativiRest validatoreMessaggiApplicativi = 
-								new ValidatoreMessaggiApplicativiRest(registroServiziReader, idServizio, requestMessage, readInterface, proprietaValidazioneContenutoApplicativoApplicativo,
+								new ValidatoreMessaggiApplicativiRest(registroServiziReader, idServizio, requestMessage, readInterface, proprietaPorta,
 										protocolFactory, pddContext);
 							
 							if(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.equals(validazioneContenutoApplicativoApplicativo.getTipo()) &&
@@ -7004,6 +7005,14 @@ public class RicezioneBuste {
 				msgDiag.mediumDebug("Invio messaggio al modulo di Sbustamento...");
 				msgRequest.aggiornaProprietarioMessaggio(org.openspcoop2.pdd.mdb.Sbustamento.ID_MODULO);
 
+				// set tipologia di filtro duplicati
+				if(proprietaPorta!=null && !proprietaPorta.isEmpty()) {
+					boolean filtroDuplicatiTestEnabled = CostantiProprieta.isFiltroDuplicatiTestEnabled(proprietaPorta, false); // filtro duplicati usato per test
+					if(filtroDuplicatiTestEnabled) {
+						pddContext.addObject(CostantiPdD.FILTRO_DUPLICATI_TEST, filtroDuplicatiTestEnabled);
+					}
+				}
+				
 				// setto parametri SbustamentoMessage
 				msgDiag.highDebug("Creazione ObjectMessage for send nell'infrastruttura.");
 				richiestaApplicativa.setIdCorrelazioneApplicativa(correlazioneApplicativa);

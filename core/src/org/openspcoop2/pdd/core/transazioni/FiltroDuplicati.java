@@ -86,6 +86,14 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 	private String colonna_data_id_msg_risposta = null;
 	private String colonna_id_messaggio_risposta = null;
 	
+	private boolean useTransactionIdForTest = false; // solo per test
+	public boolean isUseTransactionIdForTest() {
+		return this.useTransactionIdForTest;
+	}
+	public void setUseTransactionIdForTest(boolean useTransactionIdForTest) {
+		this.useTransactionIdForTest = useTransactionIdForTest;
+	}
+
 	private static final String ID_MODULO = "FiltroDuplicati";
 	
 
@@ -117,8 +125,10 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 	}
 	
 	@Override
-	public boolean isDuplicata(IProtocolFactory<?> protocolFactory, String idBusta) throws ProtocolException {
+	public boolean isDuplicata(IProtocolFactory<?> protocolFactory, String idBustaParam) throws ProtocolException {
 		
+		String idBusta = this.useTransactionIdForTest ? this.idTransazione : idBustaParam;
+				
 		long timeStart = -1;
 		TransazioniFiltroDuplicatiProcessTimes times = null;
 		try {
@@ -131,7 +141,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 				return this.filtroDuplicatiProtocol.isDuplicata(protocolFactory, idBusta);
 			}
 			
-			//System.out.println("@@IS_DUPLICATA ["+idBusta+"] ...");
+			//System.out.println("@@IS_DUPLICATA ["+idBusta+"] idTransaction("+this.idTransazione+") (useTransactionIdForTest:"+this.useTransactionIdForTest+") ...");
 			
 			// E' duplicata se esiste nel contesto una transazione con tale idBusta 
 			if(TransactionContext.containsIdentificativoProtocollo(idBusta)){

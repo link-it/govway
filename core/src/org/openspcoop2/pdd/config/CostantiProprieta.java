@@ -200,6 +200,18 @@ public class CostantiProprieta {
 	}
 	
 	
+	// ****  FILTRO DUPLICATI *****
+	
+	public static final String FILTRO_DUPLICATI_TEST_ENABLED = VALUE_ENABLED;
+	public static final String FILTRO_DUPLICATI_TEST_DISABLED = VALUE_DISABLED;
+	
+	private static final String FILTRO_DUPLICATI_TEST = "duplicates-filter-test.enabled";
+	
+	public static boolean isFiltroDuplicatiTestEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		return readBooleanValueWithDefault(proprieta, FILTRO_DUPLICATI_TEST, defaultValue, FILTRO_DUPLICATI_TEST_ENABLED, FILTRO_DUPLICATI_TEST_DISABLED);
+	}
+	
+	
 	
 	// METODI DI UTILITA GENERICI
 	
