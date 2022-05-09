@@ -1,0 +1,738 @@
+openapi: 3.0.3
+servers:
+  - url: http://petstore.swagger.io/api
+    description: esempio
+
+info:
+  x-api-id: https://esempioId
+  title: Document Retrieve
+  x-summary: Servizio demo che consente di comprendere le varie modalità di scambio degli allegati
+  description: Servizio demo che consente di comprendere le varie modalità di scambio degli allegati
+  version: "0.1"
+  contact:
+    email: info@link.it
+  license:
+    name: GPL v3.0
+    url: 'https://www.gnu.org/licenses/gpl-3.0.txt'
+
+tags:
+  - name: multipart
+    description: test su multipart  
+    
+paths:
+ 
+  /test:
+    put:
+      tags:
+        - multipart
+      description: test
+      operationId: test
+      requestBody:
+        content:
+          multipart/form-data: # Media type
+            schema:            # Request payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: aapplication/zip, application/pdf
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/form-data: # Media type
+            schema:            # Response payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: application/zip, application/pdf
+        default:
+          $ref: '#/components/responses/default'
+
+  /test2:
+    put:
+      tags:
+        - multipart
+      description: test2
+      operationId: test2
+      requestBody:
+        content:
+          multipart/form-data: # Media type
+            schema:            # Request payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: aapplication/zip, application/pdf
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/form-data: # Media type
+            schema:            # Response payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: application/zip, application/pdf
+        default:
+          $ref: '#/components/responses/default'
+
+  /test3:
+    put:
+      tags:
+        - multipart
+      description: test3
+      operationId: test3
+      requestBody:
+        content:
+          multipart/form-data: # Media type
+            schema:            # Request payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: aapplication/zip, application/pdf
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/form-data: # Media type
+            schema:            # Response payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: application/zip, application/pdf
+        default:
+          $ref: '#/components/responses/default'
+
+  /test4:
+    put:
+      tags:
+        - multipart
+      description: test4
+      operationId: test4
+      requestBody:
+        content:
+          multipart/form-data: # Media type
+            schema:            # Request payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: aapplication/zip, application/pdf
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/form-data: # Media type
+            schema:            # Response payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: application/zip, application/pdf
+        default:
+          $ref: '#/components/responses/default'
+
+  /test5:
+    put:
+      tags:
+        - multipart
+      description: test5
+      operationId: test5
+      requestBody:
+        content:
+          multipart/form-data: # Media type
+            schema:            # Request payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: aapplication/zip, application/pdf
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/form-data: # Media type
+            schema:            # Response payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: application/zip, application/pdf
+        default:
+          $ref: '#/components/responses/default'
+
+  /test6:
+    put:
+      tags:
+        - multipart
+      description: test6
+      operationId: test6
+      requestBody:
+        content:
+          multipart/form-data: # Media type
+            schema:            # Request payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: aapplication/zip, application/pdf
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/form-data: # Media type
+            schema:            # Response payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: application/zip, application/pdf
+        default:
+          $ref: '#/components/responses/default'
+
+  /test7:
+    put:
+      tags:
+        - multipart
+      description: test7
+      operationId: test7
+      requestBody:
+        content:
+          multipart/form-data: # Media type
+            schema:            # Request payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: aapplication/zip, application/pdf
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+           multipart/form-data: # Media type
+            schema:            # Response payload
+              type: object
+              required:
+                  - id
+                  - metadati
+                  - docPdf
+              properties:      # Request parts
+                id:            # Part 1 (int value)
+                  type: integer
+                  format: int32
+                metadati:       # Part2 (object)
+                  $ref: '#/components/schemas/Pet'
+                docPdf:  # Part 3 (an pdf)
+                  type: string
+                  format: binary
+                docPdf2:  # Part 4 (an pdf codificato in base64)
+                  type: string
+                  format: base64
+              additionalProperties: false
+            encoding: # The same level as schema
+              id: 
+                contentType: text/plain
+                headers: # Custom headers
+                  X-Custom-Header:
+                    description: This is a custom header
+                    schema:
+                      type: integer
+                      format: int32
+              metadati: 
+                contentType: application/json
+              docPdf: 
+                contentType: application/pdf
+              docPdf2: 
+                contentType: application/zip, application/pdf
+        default:
+          $ref: '#/components/responses/default'
+
+components:
+
+  responses:
+  
+    default:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+      description: Unexpected error
+
+  schemas:
+
+    Category:
+      title: Category
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    Tag:
+      title: Tag
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    Pet:
+      title: Pet
+      required:
+        - name
+        - photoUrls
+      type: object
+      properties:
+        name:
+          type: string
+        photoUrls:
+          type: array
+          items:
+            type: string
+          description: ''
+        id:
+          type: integer
+          format: int64
+        category:
+          $ref: '#/components/schemas/Category'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+          description: ''
+        status:
+          $ref: '#/components/schemas/Status6'
+        other:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pet'
+    Status6:
+      title: Status6
+      enum:
+        - available
+        - pending
+        - sold
+      type: string
+
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+          description: |
+            An absolute URI that identifies the problem type.  When dereferenced,
+            it SHOULD provide human-readable documentation for the problem type
+            (e.g., using HTML).
+          default: 'about:blank'
+          example: 'https://tools.ietf.org/html/rfc7231#section-6.6.4'
+        title:
+          type: string
+          description: |
+            A short, summary of the problem type. Written in english and readable
+            for engineers (usually not suited for non technical stakeholders and
+            not localized); example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: |
+            The HTTP status code generated by the origin server for this occurrence
+            of the problem.
+          minimum: 100
+          maximum: 600
+          exclusiveMaximum: true
+          example: 503
+        detail:
+          type: string
+          description: |
+            A human readable explanation specific to this occurrence of the
+            problem. You MUST NOT expose internal informations, personal
+            data or implementation details through this field.
+          example: Request took too long to complete.
+        instance:
+          type: string
+          format: uri
+          description: |
+            An absolute URI that identifies the specific occurrence of the problem.
+            It may or may not yield further information if dereferenced.
+
+security:
+  - {}

@@ -13,6 +13,7 @@ tests["rest_modi_db-trace_integrity_oauth2-auth_request-only_no-duplicates"]=res
 function rest_modi_DBTrace_Integrity_AgidAuth_OnlyRequest() {
 	jmeterTestFile=${jmeterRestTestFile}
 	profiloSicurezza=digest
+	profiloMessaggi=none
 	protocollo=rest
 	tipiTest=Proxy
 	azione=test
@@ -25,6 +26,7 @@ function rest_modi_DBTrace_Integrity_AgidAuth_OnlyRequest() {
 function rest_modi_DBTrace_Integrity_AgidAuth_RequestDigestInResponse() {
 	jmeterTestFile=${jmeterRestTestFile}
 	profiloSicurezza=digest
+	profiloMessaggi=none
 	protocollo=rest
 	tipiTest=Proxy
 	azione=test2
@@ -37,6 +39,7 @@ function rest_modi_DBTrace_Integrity_AgidAuth_RequestDigestInResponse() {
 function rest_modi_DBTrace_Integrity_AgidAuth_OnlyRequest_NoDuplicates() {
 	jmeterTestFile=${jmeterRestTestFile}
 	profiloSicurezza=digest
+	profiloMessaggi=none
 	protocollo=rest
 	tipiTest=Proxy
 	azione=test3
@@ -49,6 +52,7 @@ function rest_modi_DBTrace_Integrity_AgidAuth_OnlyRequest_NoDuplicates() {
 function rest_modi_DBTrace_Integriy_OAuth2Auth_OnlyRequest() {
 	jmeterTestFile=${jmeterRestTestFile}
 	profiloSicurezza=digest
+	profiloMessaggi=none
 	protocollo=rest
 	tipiTest=Proxy
 	azione=test4
@@ -61,6 +65,7 @@ function rest_modi_DBTrace_Integriy_OAuth2Auth_OnlyRequest() {
 function rest_modi_DBTrace_Integriy_OAuth2Auth_RequestDigestInResponse() {
 	jmeterTestFile=${jmeterRestTestFile}
 	profiloSicurezza=digest
+	profiloMessaggi=none
 	protocollo=rest
 	tipiTest=Proxy
 	azione=test5
@@ -72,6 +77,7 @@ function rest_modi_DBTrace_Integriy_OAuth2Auth_RequestDigestInResponse() {
 function rest_modi_DBTrace_Integriy_OAuth2Auth_OnlyRequest_NoDuplicates() {
 	jmeterTestFile=${jmeterRestTestFile}
 	profiloSicurezza=digest
+	profiloMessaggi=none
 	protocollo=rest
 	tipiTest=Proxy
 	azione=test6
