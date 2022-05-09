@@ -392,7 +392,7 @@ for testConfigurator in $testToRun; do
 done
 
 # Creo il file dei risultati minimo, con solo il throughput
-awk 'BEGIN { FPAT = "([^,]+)|(\"[^\"]+\")" } { print $1 "," $11 }' ${resultDir}/allResults.csv > ${resultDir}/allResults-throughput.csv
+awk 'BEGIN { FPAT = "([^,]+)|(\"[^\"]+\")" } { print $1 "," $11 "," $10 }' ${resultDir}/allResults.csv > ${resultDir}/allResults-throughput.csv
 
 rm -f ${resultDir}/*.tar.gz
 
