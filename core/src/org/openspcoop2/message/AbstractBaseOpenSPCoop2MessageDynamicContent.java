@@ -20,7 +20,9 @@
 
 package org.openspcoop2.message;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -45,274 +47,308 @@ import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
  */
 public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends AbstractBaseOpenSPCoop2Message {
 
-	protected CountingInputStream countingInputStream; 
+	protected CountingInputStream countingInputStream;
 	protected String contentType;
 	protected String contentTypeCharsetName = Charset.UTF_8.getValue();
-	
+
 	protected boolean supportReadOnly = true;
-	
-	protected boolean contentUpdatable=false;
+
+	protected boolean contentUpdatable = false;
 	protected T content;
 	protected boolean hasContent = false;
-	
+
 	protected OpenSPCoop2MessageSoapStreamReader soapStreamReader;
-	
+
 	protected DumpByteArrayOutputStream contentBuffer;
 	private static int soglia;
 	private static File repositoryFile;
+
 	public static void setSoglia(int soglia) {
 		AbstractBaseOpenSPCoop2MessageDynamicContent.soglia = soglia;
 	}
+
 	public static void setRepositoryFile(File repositoryFile) {
 		AbstractBaseOpenSPCoop2MessageDynamicContent.repositoryFile = repositoryFile;
 	}
-	
-	private static boolean soapReader = false; // attivato sul gateway tramite il metodo sottostante; in modo che le altre applicazioni non utilizzino questa funzionalità (TestService,Console...) 
+
+	private static boolean soapReader = false; // attivato sul gateway tramite il metodo sottostante; in modo che le
+												// altre applicazioni non utilizzino questa funzionalità
+												// (TestService,Console...)
 	private static int soapReaderBufferThresholdKb = 10;
+
 	public static void setSoapReader(boolean soapReader) {
 		AbstractBaseOpenSPCoop2MessageDynamicContent.soapReader = soapReader;
 	}
+
 	public static void setSoapReaderBufferThresholdKb(int bufferThresholdKb) {
 		AbstractBaseOpenSPCoop2MessageDynamicContent.soapReaderBufferThresholdKb = bufferThresholdKb;
 	}
-	
-	
+
 	/* Costruttore */
-	
+
 	protected AbstractBaseOpenSPCoop2MessageDynamicContent(OpenSPCoop2MessageFactory messageFactory) {
 		super(messageFactory);
 		this.hasContent = false;
 	}
-	
-	protected AbstractBaseOpenSPCoop2MessageDynamicContent(OpenSPCoop2MessageFactory messageFactory, InputStream isParam,String contentType, 
-			boolean soap, OpenSPCoop2MessageSoapStreamReader soapStreamReader) throws MessageException {
+
+	protected AbstractBaseOpenSPCoop2MessageDynamicContent(OpenSPCoop2MessageFactory messageFactory,
+			InputStream isParam, String contentType, boolean soap, OpenSPCoop2MessageSoapStreamReader soapStreamReader)
+			throws MessageException {
 		super(messageFactory);
-		try{
+		try {
 			this.contentType = contentType;
-			if(contentType!=null){
+			if (contentType != null) {
 				String ch = ContentTypeUtilities.readCharsetFromContentType(contentType);
-				if(ch!=null){
+				if (ch != null) {
 					this.contentTypeCharsetName = ch;
 				}
 			}
-			if(isParam!=null){
-				
-				if(soap && soapStreamReader!=null) {
+			if (isParam != null) {
+
+				if (soap && soapStreamReader != null) {
 					soapStreamReader.checkException(); // senno si entra nell'if dello stream vuoto prima
 				}
-				
-				// check se esiste del contenuto nello stream, lo stream può essere diverso da null però vuoto.
+
+				// check se esiste del contenuto nello stream, lo stream può essere diverso da
+				// null però vuoto.
 				InputStream normalizedIs = Utilities.normalizeStream(isParam, false);
-				if(normalizedIs==null) {
+				if (normalizedIs == null) {
 					// stream vuoto
 					this.hasContent = false;
 				} else {
-					
-					if(soap) {
-						if(soapStreamReader==null) {
-							if(AbstractBaseOpenSPCoop2MessageDynamicContent.soapReader) {
+
+					if (soap) {
+						if (soapStreamReader == null) {
+							if (AbstractBaseOpenSPCoop2MessageDynamicContent.soapReader) {
 								this.soapStreamReader = new OpenSPCoop2MessageSoapStreamReader(messageFactory,
-										this.contentType, normalizedIs, AbstractBaseOpenSPCoop2MessageDynamicContent.soapReaderBufferThresholdKb);
+										this.contentType, normalizedIs,
+										AbstractBaseOpenSPCoop2MessageDynamicContent.soapReaderBufferThresholdKb);
 								try {
 									this.soapStreamReader.read();
-								}finally {
+								} finally {
 									// anche in caso di eccezione devo cmq aggiornare is
 									normalizedIs = this.soapStreamReader.getBufferedInputStream();
 								}
 							}
-						}
-						else {
+						} else {
 							this.soapStreamReader = soapStreamReader;
-							if(this.soapStreamReader!=null) {
+							if (this.soapStreamReader != null) {
 								this.soapStreamReader.checkException();
 							}
 						}
 					}
-					
+
 					this.countingInputStream = new CountingInputStream(normalizedIs);
 					this.hasContent = true;
 				}
 
 			}
-		}catch(Exception e){
-			throw new MessageException(e.getMessage(),e);
+		} catch (Exception e) {
+			throw new MessageException(e.getMessage(), e);
 		}
 	}
-	
 
-	
 	/* Metodi richiesti da chi implementa questa classe base */
-	
-	protected abstract T buildContent() throws MessageException;
-	protected abstract T buildContent(DumpByteArrayOutputStream contentBuffer) throws MessageException;
-	protected abstract String buildContentAsString() throws MessageException;
-	protected abstract byte[] buildContentAsByteArray() throws MessageException;
-	protected abstract void serializeContent(OutputStream os, boolean consume) throws MessageException;
-	protected void setUpdatableContent() throws MessageException{}
-	
 
-	
+	protected abstract T buildContent() throws MessageException;
+
+	protected abstract T buildContent(DumpByteArrayOutputStream contentBuffer) throws MessageException;
+
+	protected abstract String buildContentAsString() throws MessageException;
+
+	protected abstract byte[] buildContentAsByteArray() throws MessageException;
+
+	protected abstract void serializeContent(OutputStream os, boolean consume) throws MessageException;
+
+	protected void setUpdatableContent() throws MessageException {
+	}
+
 	/* Informazioni SOAP (senza costruire il DOM) */
-	
+
 	public OpenSPCoop2MessageSoapStreamReader getSoapReader() {
 		return this.soapStreamReader;
 	}
-	
+
 	public void releaseSoapReader() {
-		if(this.soapStreamReader!=null) {
+		if (this.soapStreamReader != null) {
 			this.soapStreamReader.releaseBufferedInputStream();
 			this.soapStreamReader.clearHeader();
 			this.soapStreamReader = null;
 		}
 	}
-	
-	
+
 	/* Contenuto */
-	
-	private synchronized void initializeContent(boolean readOnly, String idTransazione) throws MessageException{
-		if(this.hasContent){
-			if(this.content==null){
-				
-				if(readOnly && this.supportReadOnly) {
-					this.contentBuffer=new DumpByteArrayOutputStream(AbstractBaseOpenSPCoop2MessageDynamicContent.soglia, 
-							AbstractBaseOpenSPCoop2MessageDynamicContent.repositoryFile, 
-							idTransazione, this.getMessageRole().name());
+
+	private synchronized void initializeContent(boolean readOnly, String idTransazione) throws MessageException {
+		if (this.hasContent) {
+			if (this.content == null) {
+
+				if (readOnly && this.supportReadOnly) {
+					this.contentBuffer = new DumpByteArrayOutputStream(
+							AbstractBaseOpenSPCoop2MessageDynamicContent.soglia,
+							AbstractBaseOpenSPCoop2MessageDynamicContent.repositoryFile, idTransazione,
+							this.getMessageRole().name());
 					try {
 						CopyStream.copy(this.countingInputStream, this.contentBuffer);
 						this.content = this.buildContent(this.contentBuffer);
-					}catch(Throwable t) {
+					} catch (Throwable t) {
 						MessageUtils.registerParseException(this, t, true);
-						throw new MessageException(t.getMessage(),t);
-					}finally {
+						throw new MessageException(t.getMessage(), t);
+					} finally {
 						try {
 							this.countingInputStream.close();
-						}catch(Exception eClose) {}
+						} catch (Exception eClose) {
+						}
 					}
-				}
-				else {
+				} else {
 					try {
 						this.content = this.buildContent();
-					}catch(Throwable t) {
+					} catch (Throwable t) {
 						MessageUtils.registerParseException(this, t, true);
-						throw new MessageException(t.getMessage(),t);
+						throw new MessageException(t.getMessage(), t);
 					}
 				}
-				
+
 			}
 		}
 	}
 
 	@Override
 	public boolean isContentBuilded() {
-		return this.content!=null;
+		return this.content != null;
 	}
-	
+
+	public InputStream getInputStreamFromContentBuffer() throws MessageException {
+		if(this.contentBuffer==null) {
+			return null;
+		}
+		try {
+			if(this.contentBuffer.isSerializedOnFileSystem()) {
+				return new FileInputStream(this.contentBuffer.getSerializedFile());
+			}
+			else {
+				return new ByteArrayInputStream(this.contentBuffer.toByteArray());
+			}
+		}catch(Exception e) {
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
+
 	public InputStream getInputStream() {
 		return this.countingInputStream;
 	}
-	
-	public boolean hasContent() throws MessageException,MessageNotSupportedException{
+
+	public boolean hasContent() throws MessageException, MessageNotSupportedException {
 		return this.hasContent;
 	}
 
-	public T getContent() throws MessageException,MessageNotSupportedException{
+	public void initContent() throws MessageException,MessageNotSupportedException{
+		getContent();
+	}
+	public void initContent(boolean readOnly, String idTransazione) throws MessageException,MessageNotSupportedException{
+		getContent(readOnly, idTransazione);
+	}
+	
+	public T getContent() throws MessageException, MessageNotSupportedException {
 		return getContent(false, null);
 	}
-	public T getContent(boolean readOnly, String idTransazione) throws MessageException,MessageNotSupportedException{
-		if(this.hasContent){
-			if(!readOnly) {
+
+	public T getContent(boolean readOnly, String idTransazione) throws MessageException, MessageNotSupportedException {
+		if (this.hasContent) {
+			if (!readOnly) {
 				boolean aggiornaContenuto = false;
-				if(this.content!=null && !this.contentUpdatable) {
+				if (this.content != null && !this.contentUpdatable) {
 					aggiornaContenuto = true;
 				}
 				this.contentUpdatable = true;
-				if(aggiornaContenuto) {
+				if (aggiornaContenuto) {
 					// contenuto precedentemente già creato in modalità read-only
 					// il metodo ha bisogno che contentUpdatable sia a true
 					setUpdatableContent();
 				}
 			}
-			// nota l'assegnazione di contentUpdatable viene usata poi dentro l'inizializzaizone del contenuto per rilasciare le risorse
-			if(this.content==null){
+			// nota l'assegnazione di contentUpdatable viene usata poi dentro
+			// l'inizializzaizone del contenuto per rilasciare le risorse
+			if (this.content == null) {
 				this.initializeContent(readOnly, idTransazione);
 			}
 		}
 		return this.content; // può tornare null
 	}
-	
-	public String getContentAsString() throws MessageException,MessageNotSupportedException{
+
+	public String getContentAsString() throws MessageException, MessageNotSupportedException {
 		return getContentAsString(false, null);
 	}
-	public String getContentAsString(boolean readOnly, String idTransazione) throws MessageException,MessageNotSupportedException{
-		try{
-			if(this.hasContent){
-				if(this.content==null){
+
+	public String getContentAsString(boolean readOnly, String idTransazione)
+			throws MessageException, MessageNotSupportedException {
+		try {
+			if (this.hasContent) {
+				if (this.content == null) {
 					this.initializeContent(readOnly, idTransazione);
 				}
-				
-				if(!readOnly) {
+
+				if (!readOnly) {
 					this.contentUpdatable = true;
 				}
-				
+
 				return this.buildContentAsString();
 			}
 			return null;
-		}catch(MessageException e){
+		} catch (MessageException e) {
 			throw e;
-		}
-		catch(Exception e){
-			throw new MessageException(e.getMessage(),e);
+		} catch (Exception e) {
+			throw new MessageException(e.getMessage(), e);
 		}
 	}
-	
-	public byte[] getContentAsByteArray() throws MessageException,MessageNotSupportedException{
+
+	public byte[] getContentAsByteArray() throws MessageException, MessageNotSupportedException {
 		return getContentAsByteArray(false, null);
 	}
-	public byte[] getContentAsByteArray(boolean readOnly, String idTransazione) throws MessageException,MessageNotSupportedException{
-		try{
-			if(this.hasContent){
-				if(this.content==null){
+
+	public byte[] getContentAsByteArray(boolean readOnly, String idTransazione)
+			throws MessageException, MessageNotSupportedException {
+		try {
+			if (this.hasContent) {
+				if (this.content == null) {
 					this.initializeContent(readOnly, idTransazione);
 				}
-				
-				if(!readOnly) {
+
+				if (!readOnly) {
 					this.contentUpdatable = true;
 				}
-				
+
 				return this.buildContentAsByteArray();
 			}
 			return null;
-		}catch(MessageException e){
+		} catch (MessageException e) {
 			throw e;
-		}
-		catch(Exception e){
-			throw new MessageException(e.getMessage(),e);
+		} catch (Exception e) {
+			throw new MessageException(e.getMessage(), e);
 		}
 	}
-	
-	public void updateContent(T content) throws MessageException, MessageNotSupportedException{
+
+	public void updateContent(T content) throws MessageException, MessageNotSupportedException {
 		this.content = content;
 		this.contentUpdatable = true;
-		if(this.contentBuffer!=null) {
+		if (this.contentBuffer != null) {
 			this.contentBuffer.clearResources();
 			this.contentBuffer = null;
 		}
-		if(this.content!=null) {
+		if (this.content != null) {
 			this.hasContent = true;
-		}
-		else {
+		} else {
 			this.hasContent = false;
 			this.contentType = null;
 		}
 	}
-	
+
 	public void setContentUpdatable() {
 		this.contentUpdatable = true;
 	}
-		
-	
+
 	/* ContentType */
-	
+
 	@Override
 	public void updateContentType() throws MessageException {
 		// nop;
@@ -328,57 +364,57 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 		return this.contentType;
 	}
 
-	
 	/* WriteTo e Save */
-	
+
 	@Override
 	public void writeTo(OutputStream os, boolean consume) throws MessageException {
 		this.writeTo(os, consume, false, null);
 	}
-	public void writeTo(OutputStream os, boolean consume, boolean readOnly, String idTransazione) throws MessageException{
+
+	public void writeTo(OutputStream os, boolean consume, boolean readOnly, String idTransazione)
+			throws MessageException {
 		writeTo(os, consume, readOnly, idTransazione, null);
 	}
-	public void writeTo(OutputStream os, boolean consume, boolean readOnly, String idTransazione, StringBuilder debug) throws MessageException{
-		try{
-			if(this.hasContent){
-				
-				if(!consume && this.content==null) {
-					if(!readOnly) {
+
+	public void writeTo(OutputStream os, boolean consume, boolean readOnly, String idTransazione, StringBuilder debug)
+			throws MessageException {
+		try {
+			if (this.hasContent) {
+
+				if (!consume && this.content == null) {
+					if (!readOnly) {
 						this.contentUpdatable = true; // riverso soap header eventuale nel content che verrà costruito
 					}
 					this.initializeContent(readOnly, idTransazione); // per poi entrare nel ramo sotto serializeContent
 				}
-			
+
 				CountingOutputStream cos = new CountingOutputStream(os);
-				if(this.contentBuffer!=null && !this.contentUpdatable) {
-					if(this.soapStreamReader!=null && this.soapStreamReader.isSoapHeaderModified() && this.contentType!=null) {
-						if(debug!=null) {
+				if (this.contentBuffer != null && !this.contentUpdatable) {
+					if (this.soapStreamReader != null && this.soapStreamReader.isSoapHeaderModified()
+							&& this.contentType != null) {
+						if (debug != null) {
 							debug.append(Costanti.WRITE_MODE_SERIALIZE_BUFFER_WITH_HEADER);
 						}
 						this.soapStreamReader.writeOptimizedHeaderTo(this.contentBuffer.getInputStream(), cos, true);
-					}
-					else {
-						if(debug!=null) {
+					} else {
+						if (debug != null) {
 							debug.append(Costanti.WRITE_MODE_SERIALIZE_BUFFER);
 						}
 						this.contentBuffer.writeTo(cos);
 					}
-				}
-				else if(this.content!=null){
-					if(debug!=null) {
+				} else if (this.content != null) {
+					if (debug != null) {
 						debug.append(Costanti.WRITE_MODE_SERIALIZE_CONTENT);
 					}
 					this.serializeContent(cos, consume);
-				}
-				else{
-					if(this.soapStreamReader!=null && this.soapStreamReader.isSoapHeaderModified()) {
-						if(debug!=null) {
+				} else {
+					if (this.soapStreamReader != null && this.soapStreamReader.isSoapHeaderModified()) {
+						if (debug != null) {
 							debug.append(Costanti.WRITE_MODE_SERIALIZE_STREAM_WITH_HEADER);
 						}
 						this.soapStreamReader.writeOptimizedHeaderTo(this.countingInputStream, cos, true);
-					}
-					else {
-						if(debug!=null) {
+					} else {
+						if (debug != null) {
 							debug.append(Costanti.WRITE_MODE_SERIALIZE_STREAM);
 						}
 						Utilities.copy(this.countingInputStream, cos);
@@ -387,47 +423,43 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 				}
 				this.outgoingsize = cos.getByteCount();
 			}
-		}
-		catch(MessageException e){
+		} catch (MessageException e) {
 			throw e;
-		}
-		catch(Exception e){
-			throw new MessageException(e.getMessage(),e);
-		}finally {
-			if(consume) {
+		} catch (Exception e) {
+			throw new MessageException(e.getMessage(), e);
+		} finally {
+			if (consume) {
 				try {
-					if(this.contentBuffer!=null) {
+					if (this.contentBuffer != null) {
 						this.contentBuffer.unlock();
 						this.contentBuffer.clearResources();
-						this.contentBuffer=null;
+						this.contentBuffer = null;
 					}
-				}catch(Throwable t) {}
+				} catch (Throwable t) {
+				}
 			}
 		}
 	}
-	
+
 	@Override
-	public void saveChanges() throws MessageException{
+	public void saveChanges() throws MessageException {
 		// nop;
 	}
-	
+
 	@Override
-	public boolean saveRequired(){
+	public boolean saveRequired() {
 		return false;
 	}
-	
-	
+
 	/* Content Length */
-	
+
 	@Override
 	public long getIncomingMessageContentLength() {
-		if(this.countingInputStream!=null) {
+		if (this.countingInputStream != null) {
 			return this.countingInputStream.getByteCount();
-		}
-		else {
+		} else {
 			return super.getIncomingMessageContentLength();
 		}
-	}	
-	
+	}
 
 }

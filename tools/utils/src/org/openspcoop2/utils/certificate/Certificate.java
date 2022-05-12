@@ -63,6 +63,9 @@ public class Certificate implements Serializable {
 		}
 	}
 	
+	public List<CertificateInfo> getChain() {
+		return this.certificateChain;
+	}
 	public List<CertificateInfo> getCertificateChain() {
 		return this.certificateChain;
 	}

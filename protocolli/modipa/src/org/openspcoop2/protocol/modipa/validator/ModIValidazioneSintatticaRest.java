@@ -44,6 +44,8 @@ import org.openspcoop2.protocol.modipa.utils.ModIUtilities;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
+import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
+import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneUtils;
@@ -52,6 +54,7 @@ import org.openspcoop2.security.message.MessageSecurityContextParameters;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityContext_impl;
 import org.openspcoop2.security.message.jose.MessageSecurityReceiver_jose;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.digest.DigestEncoding;
 import org.openspcoop2.utils.json.JSONUtils;
@@ -637,6 +640,22 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 					identificazioneApplicativoMittente(x509,busta);
 				}
 			}
+		}
+		
+		if(request && this.context!=null) {
+			
+			SecurityToken securityTokenForContext = ModIUtilities.newSecurityToken(this.context);
+			
+			RestMessageSecurityToken restSecurityToken = new RestMessageSecurityToken();
+			restSecurityToken.setCertificate(new CertificateInfo(x509, securityTokenHeader));
+			restSecurityToken.setToken(token);		
+			if(HttpConstants.AUTHORIZATION.equalsIgnoreCase(securityTokenHeader)) {
+				securityTokenForContext.setAuthorization(restSecurityToken);
+			}
+			else {
+				securityTokenForContext.setIntegrity(restSecurityToken);	
+			}
+			
 		}
 		
 		// NOTA: Inizializzare da qua il dynamicMap altrimenti non ci finisce l'identificazione del mittente effettuata dal metodo sopra 'identificazioneApplicativoMittente'

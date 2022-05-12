@@ -1,0 +1,15 @@
+Per creare un certificato con estensioni:
+
+Per signature:
+openssl req -new -config govway_test_openssl_csr.conf -keyout govway_test_oid_sign.key -out govway_test_oid_sign.csr -reqexts sign_cert
+openssl x509 -req -days 36500 -in govway_test_oid_sign.csr -signkey govway_test_oid_sign.key -sha256 -out govway_test_oid_sign.cer -extensions sign_cert -extfile govway_test_openssl_csr.conf
+
+Per tls:
+openssl req -new -config govway_test_openssl_csr.conf -keyout govway_test_oid_auth.key -out govway_test_oid_auth.csr -reqexts auth_cert -extensions auth_cert
+openssl x509 -req -days 36500 -in govway_test_oid_auth.csr -signkey govway_test_oid_auth.key -sha256 -out govway_test_oid_auth.cer -extensions auth_cert -extfile govway_test_openssl_csr.conf
+
+Per verificare extensions:
+penssl req -text -in govway_test_oid_auth.csr | grep -A 6 "Requested Extensions:"
+openssl x509 -text -noout -in govway_test_oid_auth.cer | grep -A10 "X509v3 extensions:"
+
+Per entrambi usare come password 123456 e lasciare i default proposti

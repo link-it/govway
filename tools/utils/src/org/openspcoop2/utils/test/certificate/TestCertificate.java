@@ -116,4 +116,31 @@ public class TestCertificate {
 		
 	}
 	
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".OID_keyUsage_sign"})
+	public void testOID_keyUsage_sign() throws Exception{
+		
+		TestLogger.info("Run test '"+ID_TEST+".OID_keyUsage_sign' ...");
+		org.openspcoop2.utils.certificate.test.CertificateTest.testOID_keyUsage_sign();
+		TestLogger.info("Run test '"+ID_TEST+".OID_keyUsage_sign' ok");
+		
+	}
+	
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".OID_keyUsage_auth"})
+	public void testOID_keyUsage_auth() throws Exception{
+		
+		TestLogger.info("Run test '"+ID_TEST+".OID_keyUsage_auth' ...");
+		org.openspcoop2.utils.certificate.test.CertificateTest.testOID_keyUsage_auth();
+		TestLogger.info("Run test '"+ID_TEST+".OID_keyUsage_auth' ok");
+		
+	}
+	
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".OID_keyUsage_multipleOU"})
+	public void testOID_keyUsage_multipleOU() throws Exception{
+		
+		TestLogger.info("Run test '"+ID_TEST+".OID_keyUsage_multipleOU' ...");
+		org.openspcoop2.utils.certificate.test.CertificateTest.testOID_keyUsage_multipleOU();
+		TestLogger.info("Run test '"+ID_TEST+".OID_keyUsage_multipleOU' ok");
+		
+	}
+	
 }

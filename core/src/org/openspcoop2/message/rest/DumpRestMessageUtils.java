@@ -109,7 +109,7 @@ public class DumpRestMessageUtils {
 							bout.write(msg.castAsRestJson().getContentAsByteArray());
 							break;
 						case BINARY:
-							bout.write(msg.castAsRestBinary().getContent());
+							bout.write(msg.castAsRestBinary().getContent().getContent());
 							break;
 						default:
 							throw new MessageException("MessageType ["+msg.getMessageType()+"] unsupported");

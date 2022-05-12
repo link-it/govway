@@ -55,3 +55,20 @@ Then status 401
 """
 * def result = get_traccia(responseHeaders['GovWay-Transaction-ID'][0], 'Risposta') 
 * match result contains deep traccia_to_match
+
+
+@autenticazione-client-criteri-autorizzativi
+Scenario: IDAC02 Autenticazione Client con criteri autorizzativi per contenuto (es. security token)
+
+* def body = read("classpath:bodies/modipa-blocking-sample-request.json")
+* def resp = read("classpath:test/risposte-default/rest/bloccante/response.json")
+
+Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/ApiDemoBlockingRestIDAC02CheckAuthz/v1'
+And path 'resources', 1, 'M'
+And request body
+When method post
+Then status 200
+And match response == resp
+
+* call check_traccia ({ fruizione_tid: responseHeaders['GovWay-Transaction-ID'][0], erogazione_tid: responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0] })
+

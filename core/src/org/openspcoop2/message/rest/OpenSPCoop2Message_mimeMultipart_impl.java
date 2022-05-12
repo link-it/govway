@@ -20,9 +20,7 @@
 
 package org.openspcoop2.message.rest;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -61,20 +59,7 @@ public class OpenSPCoop2Message_mimeMultipart_impl extends AbstractBaseOpenSPCoo
 	}
 	@Override
 	protected MultipartContent buildContent(DumpByteArrayOutputStream contentBuffer) throws MessageException{
-		try{
-			if(contentBuffer.isSerializedOnFileSystem()) {
-				try(InputStream is = new FileInputStream(contentBuffer.getSerializedFile())){
-					return new MultipartContent(is, this.contentType);
-				}
-			}
-			else {
-				try(InputStream is = new ByteArrayInputStream(contentBuffer.toByteArray())){
-					return new MultipartContent(is, this.contentType);
-				}
-			}
-		}catch(Exception e){
-			throw new MessageException(e.getMessage(),e);
-		}
+		return new MultipartContent(contentBuffer, this.contentType);
 	}
 	
 	@Override
@@ -105,7 +90,7 @@ public class OpenSPCoop2Message_mimeMultipart_impl extends AbstractBaseOpenSPCoo
 	@Override
 	protected void serializeContent(OutputStream os, boolean consume) throws MessageException {
 		try{
-			this.content.writeTo(os);
+			this.content.writeTo(os, consume);
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
 		}

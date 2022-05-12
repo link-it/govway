@@ -610,7 +610,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 						urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList,
 						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 
-				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, false, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
+				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, false, pa,protocollo, 
+						autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
 						old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList,
 						confPers); 
 
@@ -701,7 +702,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 						urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList,
 						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 
-				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, false, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
+				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, false, pa,protocollo,
+						autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
 						old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList,
 						confPers); 
 
@@ -1175,7 +1177,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 					urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList,
 					identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 
-			porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, false, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
+			porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, false, pa,protocollo,
+					autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
 					old_autorizzazione_contenuti_custom, urlAutorizzazioneContenutiCustomPropertiesList, numAutorizzazioneContenutiCustomPropertiesList,
 					confPers); 
 

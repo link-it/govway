@@ -21,11 +21,12 @@
 package org.openspcoop2.message.rest;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.openspcoop2.message.exception.MessageException;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.mime.MimeMultipart;
 
 /**
@@ -35,59 +36,69 @@ import org.openspcoop2.utils.mime.MimeMultipart;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class MultipartContent {
+public class MultipartContent extends AbstractLazyContent<MimeMultipart> {
 
-	public static boolean BUILD_LAZY = true;
-	
-	private MimeMultipart mimeMultipart;
-	private byte[] content;
-	private String contentType;
-	
 	public MultipartContent(InputStream is, String contentType) throws MessageException {
 		try{
-			this.contentType = contentType;
 			if(BUILD_LAZY) {
-				this.content = Utilities.getAsByteArray(is);
+				this.init(is, contentType);
 			}
 			else {
-				this.mimeMultipart = new MimeMultipart(is, contentType);
+				this.init(new MimeMultipart(is, contentType));
 			}
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
 		}
 	}
-	
-	public void buildMimeMultipart() throws MessageException {
-		if(this.mimeMultipart==null) {
-			try{
-				this.mimeMultipart = new MimeMultipart(new ByteArrayInputStream(this.content), this.contentType);
-				this.content = null;
-			}catch(Exception e){
-				throw new MessageException(e.getMessage(),e);
-			}
-		}
-	}
-	public MimeMultipart getMimeMultipart() throws MessageException {
-		if(this.mimeMultipart==null) {
-			buildMimeMultipart();
-		}
-		return this.mimeMultipart;
-	}
-//	public byte[] getContent() {
-//		return this.content;
-//	}
-	
-	public void writeTo(OutputStream os) throws MessageException {
+	public MultipartContent(DumpByteArrayOutputStream contentBuffer, String contentType) throws MessageException {
 		try{
-			if(this.mimeMultipart!=null) {
-				this.mimeMultipart.writeTo(os);
+			if(BUILD_LAZY) {
+				this.init(contentBuffer, contentType);
 			}
-			else if(this.content!=null) {
-				os.write(this.content);
+			else {
+				if(contentBuffer.isSerializedOnFileSystem()) {
+					try(InputStream is = new FileInputStream(contentBuffer.getSerializedFile())){
+						this.init(new MimeMultipart(is, contentType));
+					}
+				}
+				else {
+					try(InputStream is = new ByteArrayInputStream(contentBuffer.toByteArray())){
+						this.init(new MimeMultipart(is, contentType));
+					}
+				}
 			}
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
 		}
+	}
+	
+	@Override
+	public MimeMultipart buildContent(InputStream is) throws MessageException {
+		try {
+			return new MimeMultipart(is, this.contentType);
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public MimeMultipart buildContent(byte[] c) throws MessageException {
+		try(InputStream is = new ByteArrayInputStream(c)){
+			return new MimeMultipart(is, this.contentType);
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public void writeContentTo(OutputStream os, boolean consume) throws MessageException {
+		try {
+			this.content.writeTo(os);
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
+	
+	public MimeMultipart getMimeMultipart() throws MessageException {
+		return this.getContent();
 	}
 	
 }

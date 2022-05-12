@@ -83,7 +83,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory_impl;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
-import org.openspcoop2.message.rest.MultipartContent;
+import org.openspcoop2.message.rest.AbstractLazyContent;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.monitor.engine.dynamic.CorePluginLoader;
@@ -831,8 +831,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}
 				
 				// RestMultipartLazy
-				MultipartContent.BUILD_LAZY=propertiesReader.useRestMultipartLazy();
-				OpenSPCoop2Startup.log.info("OpenSPCoop2RestMimeMultipartMessage lazy="+MultipartContent.BUILD_LAZY);
+				AbstractLazyContent.BUILD_LAZY=propertiesReader.useRestMultipartLazy();
+				OpenSPCoop2Startup.log.info("OpenSPCoop2Content lazy="+AbstractLazyContent.BUILD_LAZY);
 				
 				// MessageSecurity
 				MessageSecurityFactory.setMessageSecurityContextClassName(classNameReader.getMessageSecurityContext(propertiesReader.getMessageSecurityContext()));

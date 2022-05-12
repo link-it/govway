@@ -57,6 +57,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.rest.OpenSPCoop2Message_binary_impl;
 import org.openspcoop2.message.utils.WWWAuthenticateErrorCode;
 import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
@@ -1493,7 +1494,7 @@ public class GestoreToken {
 				remove = true;
 			}
 			if(remove) {
-				byte[] contenuto = datiInvocazione.getMessage().castAsRestBinary().getContent(); // dovrebbe essere un binary
+				byte[] contenuto = datiInvocazione.getMessage().castAsRestBinary().getContent().getContent(); // dovrebbe essere un binary
 				// MyVariableOne=ValueOne&MyVariableTwo=ValueTwo
 				String contenutoAsString = new String(contenuto);
 				String [] split = contenutoAsString.split("&");
@@ -1517,7 +1518,7 @@ public class GestoreToken {
 				}
 				if(bf.length()>0) {
 					byte [] newContenuto = bf.toString().getBytes();
-					datiInvocazione.getMessage().castAsRestBinary().updateContent(newContenuto);
+					((OpenSPCoop2Message_binary_impl)datiInvocazione.getMessage().castAsRestBinary()).updateContent(newContenuto);
 				}
 				else {
 					datiInvocazione.getMessage().castAsRestBinary().updateContent(null);

@@ -853,7 +853,7 @@ public class AS4Imbustamento {
 				ap.setContent(restMessage.castAsRestJson().getContent(), contentTypeUtilizzato);
 			}
 			else {
-				InputStreamDataSource isSource = new InputStreamDataSource("eDeliveryPayload", contentTypeUtilizzato, restMessage.castAsRestBinary().getContent());
+				InputStreamDataSource isSource = new InputStreamDataSource("eDeliveryPayload", contentTypeUtilizzato, restMessage.castAsRestBinary().getContent().getContent());
 				ap = as4Message.createAttachmentPart(new DataHandler(isSource));
 			}
 

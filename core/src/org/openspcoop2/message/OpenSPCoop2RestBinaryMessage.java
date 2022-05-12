@@ -20,6 +20,8 @@
 
 package org.openspcoop2.message;
 
+import org.openspcoop2.message.rest.BinaryContent;
+
 /**
  * OpenSPCoop2RestJsonMessage
  *
@@ -28,6 +30,6 @@ package org.openspcoop2.message;
  * @version $Rev$, $Date$
  */
 
-public interface OpenSPCoop2RestBinaryMessage extends OpenSPCoop2RestMessage<byte[]> {
+public interface OpenSPCoop2RestBinaryMessage extends OpenSPCoop2RestMessage<BinaryContent> {
 	
 }

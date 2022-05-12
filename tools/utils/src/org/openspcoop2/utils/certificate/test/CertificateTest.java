@@ -21,6 +21,7 @@
 package org.openspcoop2.utils.certificate.test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +29,12 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
+import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.certificate.CertificatePrincipal;
 import org.openspcoop2.utils.certificate.CertificateUtils;
+import org.openspcoop2.utils.certificate.ExtendedKeyUsage;
+import org.openspcoop2.utils.certificate.KeyUsage;
+import org.openspcoop2.utils.certificate.OID;
 import org.openspcoop2.utils.certificate.PrincipalType;
 
 /**
@@ -66,6 +72,12 @@ public class CertificateTest {
 		testTraFormatiDifferente_MultipleOU();
 		
 		testTraFormatiDifferente_MultipleOU_specialChar();
+		
+		testOID_keyUsage_sign();
+		
+		testOID_keyUsage_auth();
+		
+		testOID_keyUsage_multipleOU();
 				
 	}
 
@@ -361,5 +373,368 @@ public class CertificateTest {
 
 		}
 
+	}
+	
+	
+	public static void testOID_keyUsage_sign() throws Exception {
+		_testOID_keyUsage("govway_test_oid_sign.cer", true, false);
+	}
+	public static void testOID_keyUsage_auth() throws Exception {
+		_testOID_keyUsage("govway_test_oid_auth.cer", false, true);
+	}
+	public static void testOID_keyUsage_multipleOU() throws Exception {
+		_testOID_keyUsage("multipleOU.cer", false, false);
+	}
+	private static void _testOID_keyUsage(String nomeCertificato, boolean forSign, boolean forAuth) throws Exception {
+		
+		System.out.println("========================= Test OID KeyUsage ["+nomeCertificato+"] ==============================");
+		
+		Certificate cer = ArchiveLoader.load(Utilities.getAsByteArray(CertificateTest.class.getResourceAsStream(PREFIX+nomeCertificato)));
+		
+		CertificateInfo cerInfo = cer.getCertificate();
+		CertificatePrincipal cp = cerInfo.getSubject();
+		
+		List<OID> oid = cp.getOID();
+		System.out.println("Subject con i seguenti elementi: ["+oid+"]");
+		String attesi = "C, ST, L, O, OU, CN, EMAIL_ADDRESS, ORGANIZATION_IDENTIFIER";
+		Map<String, String> valoriAttesi = new HashMap<String, String>();
+		valoriAttesi.put("C", "IT");
+		valoriAttesi.put("ST", "Pisa");
+		valoriAttesi.put("L", "Pisa");
+		valoriAttesi.put("O", "Link.it");
+		valoriAttesi.put("OU", "IPAIT-UO_TEST");
+		valoriAttesi.put("CN", "Esempio di Test - Servizi di InteroperabilitÃ  (prova)");
+		valoriAttesi.put("EMAIL_ADDRESS", "info@link.it");
+		valoriAttesi.put("ORGANIZATION_IDENTIFIER", "CF:IT-00012345678");
+		if(nomeCertificato.contains("multipleOU")) {
+			attesi = "C, ST, L, O, OU, OU, OU, CN";
+			valoriAttesi.put("ST", "Italy");
+			valoriAttesi.put("L", "govway_l");
+			valoriAttesi.put("O", "govway_o");
+			valoriAttesi.put("CN", "govway_test_multiple_out");
+		}
+		if(!oid.toString().equals("["+attesi+"]")) {
+			throw new Exception("Attesi OID seguenti '"+("["+attesi+"]")+"', rilevati '"+oid.toString()+"'");
+		}
+		String [] tmp = attesi.split(",");
+		for (String s : tmp) {
+			s = s.trim();
+			
+			boolean casoSpecialeOU = nomeCertificato.contains("multipleOU") && "OU".equals(s);
+			
+			int dimensioneAttesa = 1;
+			if(casoSpecialeOU) {
+				dimensioneAttesa = 3;
+			}
+			
+			String valoreAtteso = null;
+			if(!casoSpecialeOU) {
+				valoreAtteso = valoriAttesi.get(s);
+				if(valoreAtteso==null) {
+					throw new Exception("Non è stato definito un valore atteso per '"+s+"'");
+				}
+			}
+			
+			if(casoSpecialeOU) {
+				if(cp.getInfos(s)==null || cp.getInfos(s).isEmpty()) {
+					throw new Exception("Atteso elemento '"+s+"' non rilevato");
+				}
+				List<String> v = cp.getInfos(s);
+				if(v==null || v.size()!=3) {
+					throw new Exception("Atteso elemento '"+s+"' con 3 valori, trovati:  "+v);
+				}
+				if(!v.contains("govway 1st OU")) {
+					throw new Exception("Atteso elemento '"+s+"' con 3 valori di cui uno 'govway 1st OU'; non è stato rilevato tra i valori disponibili: "+v);
+				}
+				if(!v.contains("govway 2nd OU")) {
+					throw new Exception("Atteso elemento '"+s+"' con 3 valori di cui uno 'govway 2nd OU'; non è stato rilevato tra i valori disponibili: "+v);
+				}
+				if(!v.contains("govway OU")) {
+					throw new Exception("Atteso elemento '"+s+"' con 3 valori di cui uno 'govway OU'; non è stato rilevato tra i valori disponibili: "+v);
+				}
+				
+				String vPos = cp.getInfo(s, 0);
+				if(!"govway 1st OU".equals(vPos)) {
+					throw new Exception("Atteso elemento '"+s+"' con valore 'govway 1st OU'; è stato rilevato il valore '"+vPos+"'");
+				}
+				vPos = cp.getInfo(s, 1);
+				if(!"govway 2nd OU".equals(vPos)) {
+					throw new Exception("Atteso elemento '"+s+"' con valore 'govway 2nd OU'; è stato rilevato il valore '"+vPos+"'");
+				}
+				vPos = cp.getInfo(s, 2);
+				if(!"govway OU".equals(vPos)) {
+					throw new Exception("Atteso elemento '"+s+"' con valore 'govway OU'; è stato rilevato il valore '"+vPos+"'");
+				}
+			}
+			else {
+				if(cp.getInfo(s)==null) {
+					throw new Exception("Atteso elemento '"+s+"' non rilevato");
+				}
+				String v = cp.getInfo(s);
+				if(!valoreAtteso.equals(v)) {
+					throw new Exception("Atteso elemento '"+s+"' con valore '"+valoreAtteso+"'; è stato rilevato invece il valore '"+v+"'");
+				}
+			}
+			
+			List<String> l = cp.getInfos(s);
+			if(l==null || l.size()!=dimensioneAttesa) {
+				throw new Exception("Atteso elemento '"+s+"' con dimensione uguale a "+dimensioneAttesa);
+			}
+			
+			OID o = OID.valueOf(s.toUpperCase());
+			if(o==null) {
+				throw new Exception("Conversione '"+s+"' non riuscita");
+			}
+			if(cp.getInfoByOID(o)==null) {
+				throw new Exception("Atteso OID '"+o+"' non rilevato");
+			}
+			l = cp.getInfosByOID(o);
+			if(l==null || l.size()!=dimensioneAttesa) {
+				throw new Exception("Atteso OID '"+o+"' con dimensione uguale a "+dimensioneAttesa);
+			}
+			
+			org.bouncycastle.asn1.ASN1ObjectIdentifier asn1 = o.getOID();
+			if(cp.getInfoByOID(asn1)==null) {
+				throw new Exception("Atteso OID '"+asn1+"' non rilevato");
+			}
+			l = cp.getInfosByOID(asn1);
+			if(l==null || l.size()!=dimensioneAttesa) {
+				throw new Exception("Atteso OID '"+asn1+"' con dimensione uguale a "+dimensioneAttesa);
+			}
+			
+			if(casoSpecialeOU) {
+				if(cp.getInfosByOID(o)==null || cp.getInfosByOID(o).isEmpty()) {
+					throw new Exception("Atteso elemento '"+s+"' non rilevato");
+				}
+				List<String> v = cp.getInfosByOID(o);
+				if(v==null || v.size()!=3) {
+					throw new Exception("Atteso elemento '"+s+"' con 3 valori, trovati:  "+v);
+				}
+				if(!v.contains("govway 1st OU")) {
+					throw new Exception("Atteso elemento '"+s+"' con 3 valori di cui uno 'govway 1st OU'; non è stato rilevato tra i valori disponibili: "+v);
+				}
+				if(!v.contains("govway 2nd OU")) {
+					throw new Exception("Atteso elemento '"+s+"' con 3 valori di cui uno 'govway 2nd OU'; non è stato rilevato tra i valori disponibili: "+v);
+				}
+				if(!v.contains("govway OU")) {
+					throw new Exception("Atteso elemento '"+s+"' con 3 valori di cui uno 'govway OU'; non è stato rilevato tra i valori disponibili: "+v);
+				}
+				
+				String vPos = cp.getInfoByOID(o, 0);
+				if(!"govway 1st OU".equals(vPos)) {
+					throw new Exception("Atteso elemento '"+s+"' con valore 'govway 1st OU'; è stato rilevato il valore '"+vPos+"'");
+				}
+				vPos = cp.getInfoByOID(o, 1);
+				if(!"govway 2nd OU".equals(vPos)) {
+					throw new Exception("Atteso elemento '"+s+"' con valore 'govway 2nd OU'; è stato rilevato il valore '"+vPos+"'");
+				}
+				vPos = cp.getInfoByOID(o, 2);
+				if(!"govway OU".equals(vPos)) {
+					throw new Exception("Atteso elemento '"+s+"' con valore 'govway OU'; è stato rilevato il valore '"+vPos+"'");
+				}
+			}
+			else {
+				if(cp.getInfoByOID(o)==null) {
+					throw new Exception("Atteso elemento '"+s+"' non rilevato");
+				}
+				String v = cp.getInfoByOID(o);
+				if(!valoreAtteso.equals(v)) {
+					throw new Exception("Atteso elemento '"+s+"' con valore '"+valoreAtteso+"'; è stato rilevato invece il valore '"+v+"'");
+				}
+			}
+		}
+		
+		if(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP)!=null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' rilevato ma non atteso");
+		}
+		if(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP.getID())!=null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' rilevato ma non atteso");
+		}
+		if(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP.getOID())!=null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' rilevato ma non atteso");
+		}
+		if(cp.getInfo(OID.COUNTRY_OF_CITIZENSHIP.name())!=null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' rilevato ma non atteso");
+		}
+		if(cp.getInfosByOID(OID.COUNTRY_OF_CITIZENSHIP)!=null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' rilevato ma non atteso");
+		}
+		if(cp.getInfosByOID(OID.COUNTRY_OF_CITIZENSHIP.getID())!=null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' rilevato ma non atteso");
+		}
+		if(cp.getInfosByOID(OID.COUNTRY_OF_CITIZENSHIP.getOID())!=null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' rilevato ma non atteso");
+		}
+		if(cp.getInfos(OID.COUNTRY_OF_CITIZENSHIP.name())!=null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' rilevato ma non atteso");
+		}
+		if(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP,0)!=null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' rilevato ma non atteso");
+		}
+		if(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP.getID(),0)!=null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' rilevato ma non atteso");
+		}
+		if(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP.getOID(),0)!=null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' rilevato ma non atteso");
+		}
+		if(cp.getInfo(OID.COUNTRY_OF_CITIZENSHIP.name(),0)!=null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' rilevato ma non atteso");
+		}
+		
+		String defaultValue = "DEF_VALUE";
+		if(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP, defaultValue)==null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value non rilevato");
+		}
+		else if(!defaultValue.equals(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP, defaultValue))) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value rilevato con un valore '"+defaultValue.equals(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP, defaultValue)+"' differente da quello atteso '"+defaultValue+"'"));
+		}
+		if(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP.getID(), defaultValue)==null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value non rilevato");
+		}
+		else if(!defaultValue.equals(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP.getID(), defaultValue))) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value rilevato con un valore '"+defaultValue.equals(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP.getID(), defaultValue)+"' differente da quello atteso '"+defaultValue+"'"));
+		}
+		if(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP.getOID(), defaultValue)==null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value non rilevato");
+		}
+		else if(!defaultValue.equals(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP.getOID(), defaultValue))) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value rilevato con un valore '"+defaultValue.equals(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP.getOID(), defaultValue)+"' differente da quello atteso '"+defaultValue+"'"));
+		}
+		if(cp.getInfo(OID.COUNTRY_OF_CITIZENSHIP.name(), defaultValue)==null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value non rilevato");
+		}
+		else if(!defaultValue.equals(cp.getInfo(OID.COUNTRY_OF_CITIZENSHIP.name(), defaultValue))) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value rilevato con un valore '"+defaultValue.equals(cp.getInfo(OID.COUNTRY_OF_CITIZENSHIP.name(), defaultValue)+"' differente da quello atteso '"+defaultValue+"'"));
+		}
+		if(cp.getInfosByOID(OID.COUNTRY_OF_CITIZENSHIP, defaultValue)==null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value non rilevato");
+		}
+		else if(!defaultValue.equals(cp.getInfosByOID(OID.COUNTRY_OF_CITIZENSHIP, defaultValue).get(0))) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value rilevato con un valore '"+defaultValue.equals(cp.getInfosByOID(OID.COUNTRY_OF_CITIZENSHIP, defaultValue).get(0)+"' differente da quello atteso '"+defaultValue+"'"));
+		}
+		if(cp.getInfosByOID(OID.COUNTRY_OF_CITIZENSHIP.getID(), defaultValue)==null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value non rilevato");
+		}
+		else if(!defaultValue.equals(cp.getInfosByOID(OID.COUNTRY_OF_CITIZENSHIP.getID(), defaultValue).get(0))) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value rilevato con un valore '"+defaultValue.equals(cp.getInfosByOID(OID.COUNTRY_OF_CITIZENSHIP.getID(), defaultValue).get(0)+"' differente da quello atteso '"+defaultValue+"'"));
+		}
+		if(cp.getInfosByOID(OID.COUNTRY_OF_CITIZENSHIP.getOID(), defaultValue)==null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value non rilevato");
+		}
+		else if(!defaultValue.equals(cp.getInfosByOID(OID.COUNTRY_OF_CITIZENSHIP.getOID(), defaultValue).get(0))) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value rilevato con un valore '"+defaultValue.equals(cp.getInfosByOID(OID.COUNTRY_OF_CITIZENSHIP.getOID(), defaultValue).get(0)+"' differente da quello atteso '"+defaultValue+"'"));
+		}
+		if(cp.getInfos(OID.COUNTRY_OF_CITIZENSHIP.name(), defaultValue)==null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value non rilevato");
+		}
+		else if(!defaultValue.equals(cp.getInfos(OID.COUNTRY_OF_CITIZENSHIP.name(), defaultValue).get(0))) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value rilevato con un valore '"+defaultValue.equals(cp.getInfos(OID.COUNTRY_OF_CITIZENSHIP.name(), defaultValue).get(0)+"' differente da quello atteso '"+defaultValue+"'"));
+		}
+		if(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP, defaultValue,0)==null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value non rilevato");
+		}
+		else if(!defaultValue.equals(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP, defaultValue, 0))) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value rilevato con un valore '"+defaultValue.equals(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP, defaultValue, 0)+"' differente da quello atteso '"+defaultValue+"'"));
+		}
+		if(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP.getID(), defaultValue,0)==null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value non rilevato");
+		}
+		else if(!defaultValue.equals(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP.getID(), defaultValue, 0))) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value rilevato con un valore '"+defaultValue.equals(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP.getID(), defaultValue, 0)+"' differente da quello atteso '"+defaultValue+"'"));
+		}
+		if(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP.getOID(), defaultValue,0)==null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value non rilevato");
+		}
+		else if(!defaultValue.equals(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP.getOID(), defaultValue, 0))) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value rilevato con un valore '"+defaultValue.equals(cp.getInfoByOID(OID.COUNTRY_OF_CITIZENSHIP.getOID(), defaultValue, 0)+"' differente da quello atteso '"+defaultValue+"'"));
+		}
+		if(cp.getInfo(OID.COUNTRY_OF_CITIZENSHIP.name(), defaultValue,0)==null) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value non rilevato");
+		}
+		else if(!defaultValue.equals(cp.getInfo(OID.COUNTRY_OF_CITIZENSHIP.name(), defaultValue, 0))) {
+			throw new Exception("OID '"+OID.COUNTRY_OF_CITIZENSHIP+"' con default value rilevato con un valore '"+defaultValue.equals(cp.getInfo(OID.COUNTRY_OF_CITIZENSHIP.name(), defaultValue, 0)+"' differente da quello atteso '"+defaultValue+"'"));
+		}
+		
+		List<KeyUsage> keyUsage = cerInfo.getKeyUsage();
+		System.out.println("KeyUsage: ["+keyUsage+"]");
+		if(forSign) {
+			attesi = "DIGITAL_SIGNATURE, NON_REPUDIATION"; 
+		}
+		else if(forAuth) {
+			attesi = "KEY_ENCIPHERMENT";
+		}
+		else {
+			attesi = "";
+		}
+		if(!keyUsage.toString().equals("["+attesi+"]")) {
+			throw new Exception("Attesi KeyUsage seguenti '"+("["+attesi+"]")+"', rilevati '"+keyUsage.toString()+"'");
+		}
+		if(!"".equals(attesi)) {
+			tmp = attesi.split(",");
+			for (String s : tmp) {
+				s = s.trim();
+				
+				if(!cerInfo.hasKeyUsage(s)) {
+					throw new Exception("Atteso KeyUsage '"+s+"'; non è stato rilevato");
+				}
+				
+				KeyUsage k = KeyUsage.valueOf(s);
+				if(!cerInfo.hasKeyUsage(k)) {
+					throw new Exception("Atteso KeyUsage '"+k+"'; non è stato rilevato");
+				}
+			}
+		}
+		if(cerInfo.hasKeyUsage(KeyUsage.KEY_AGREEMENT)) {
+			throw new Exception("KeyUsage '"+KeyUsage.KEY_AGREEMENT+"' rilevato ma non atteso");
+		}
+		
+		List<ExtendedKeyUsage> extendedKeyUsage = cerInfo.getExtendedKeyUsage();
+		System.out.println("ExtendedKeyUsage: ["+extendedKeyUsage+"]");
+		if(forSign || forAuth) {
+			attesi = "SERVER_AUTH, CLIENT_AUTH"; 
+		}
+		else {
+			attesi = "";
+		}
+		if(!extendedKeyUsage.toString().equals("["+attesi+"]")) {
+			throw new Exception("Attesi ExtendedKeyUsage seguenti '"+("["+attesi+"]")+"', rilevati '"+extendedKeyUsage.toString()+"'");
+		}
+		if(!"".equals(attesi)) {
+			tmp = attesi.split(",");
+			for (String s : tmp) {
+				s = s.trim();
+				
+				if(!cerInfo.hasExtendedKeyUsage(s)) {
+					throw new Exception("Atteso KeyUsage '"+s+"'; non è stato rilevato");
+				}
+				
+				ExtendedKeyUsage k = ExtendedKeyUsage.valueOf(s);
+				if(!cerInfo.hasExtendedKeyUsage(k)) {
+					throw new Exception("Atteso ExtendedKeyUsage '"+k+"'; non è stato rilevato");
+				}
+			}
+		}
+		if(cerInfo.hasExtendedKeyUsage(ExtendedKeyUsage.DVCS)) {
+			throw new Exception("ExtendedKeyUsage '"+ExtendedKeyUsage.DVCS+"' rilevato ma non atteso");
+		}
+		
+		List<String> extendedKeyUsageOID = cerInfo.getExtendedKeyUsageByOID();
+		if(forSign || forAuth) {
+			attesi = "1.3.6.1.5.5.7.3.1, 1.3.6.1.5.5.7.3.2";
+		}
+		else {
+			attesi = "";
+		}
+		if("".equals(attesi)) {
+			if(extendedKeyUsageOID!=null) {
+				throw new Exception("ExtendedKeyUsage non attesi: "+extendedKeyUsageOID);
+			}
+		}
+		else {
+			if(!extendedKeyUsageOID.toString().equals("["+attesi+"]")) {
+				throw new Exception("Attesi ExtendedKeyUsage OID seguenti '"+("["+attesi+"]")+"', rilevati '"+extendedKeyUsageOID.toString()+"'");
+			}
+		}
+		
 	}
 }

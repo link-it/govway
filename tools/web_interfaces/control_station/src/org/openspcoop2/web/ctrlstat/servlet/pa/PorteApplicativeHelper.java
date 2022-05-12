@@ -1768,7 +1768,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					urlAutorizzazioneErogazioneApplicativiAutenticati, 0, urlAutorizzazioneErogazioneCustomPropertiesList , 0,
 					identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 			
-			this.controlloAccessiAutorizzazioneContenuti(dati, tipoOp, false, autorizzazioneContenutiStato, 
+			this.controlloAccessiAutorizzazioneContenuti(dati, tipoOp, false, null,protocollo,
+					autorizzazioneContenutiStato, 
 					autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding, 
 					false, urlAutorizzazioneContenutiErogazioneCustomPropertiesList, 0,
 					confPers); 

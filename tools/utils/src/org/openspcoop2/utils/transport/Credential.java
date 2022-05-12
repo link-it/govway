@@ -116,6 +116,9 @@ public class Credential implements Serializable {
 	public void setBearerToken(String bearerToken) {
 		this.bearerToken = bearerToken;
 	}
+	public Certificate getCertificateChain() {
+		return this.certificate;
+	}
 	public Certificate getCertificate() {
 		return this.certificate;
 	}

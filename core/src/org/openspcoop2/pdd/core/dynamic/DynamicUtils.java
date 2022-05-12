@@ -55,6 +55,7 @@ import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
+import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.utils.DynamicStringReplace;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.ArchiveType;
@@ -251,6 +252,13 @@ public class DynamicUtils {
 	    			dynamicMap.put(Costanti.MAP_ATTRIBUTES, informazioniAttributiNormalizzati);
 	    		}
 			}
+			if(dynamicMap.containsKey(Costanti.MAP_SECURITY_TOKEN)==false) {
+				Object oSecToken = dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.SECURITY_TOKEN);
+	    		if(oSecToken!=null) {
+	    			SecurityToken securityToken = (SecurityToken) oSecToken;
+	    			dynamicMap.put(Costanti.MAP_SECURITY_TOKEN, securityToken);
+	    		}
+			}
 			if (!dynamicMap.containsKey(Costanti.MAP_API_IMPL_CONFIG_PROPERTY)) {
 				Map<String, String> configProperties = null; // aggiungo sempre, piu' pratico il controllo nei template engine
 				if (dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE)) {
@@ -426,6 +434,8 @@ public class DynamicUtils {
 	// DYNAMIC MAP
 	
 	// Mappa che non contiene 'response' field
+	@Deprecated
+	// Cercare sempre di passare l'oggetto busta
 	public static Map<String, Object> buildDynamicMap(OpenSPCoop2Message msg, Context context, Logger log, 
 			boolean bufferMessage_readOnly) throws DynamicException {
 		return buildDynamicMap(msg, context, null, log, 

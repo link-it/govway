@@ -140,6 +140,9 @@ public class Costanti {
     public final static String MAP_ATTRIBUTES = "aa"; // attributeAuthority, all'interno poi c'è il metodo attributes
     public final static String TYPE_MAP_ATTRIBUTES = org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi.class.getName();
     
+    public final static String MAP_SECURITY_TOKEN = "securityToken";
+    public final static String TYPE_MAP_SECURITY_TOKEN = org.openspcoop2.protocol.sdk.SecurityToken.class.getName();
+    
     public final static String MAP_ERROR_HANDLER_OBJECT = "errorHandler";
     public final static String TYPE_MAP_ERROR_HANDLER_OBJECT = org.openspcoop2.pdd.core.dynamic.ErrorHandler.class.getName();
 	

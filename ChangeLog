@@ -1,3 +1,15 @@
+2022-05-12  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, Utils]
+	Aggiunta funzionalità OP-1366
+	La classe org.openspcoop2.utils.certificate.CertificateInfo è stata arricchita per consentire di:
+	- accedere ai singoli campi di un DN;
+	- conoscere se una keyUsage è presente o meno sul certificato;
+	- conoscere se un purpose (extendedKeyUsage) è presente o meno sul certificato.
+	I certificati scambiati nelle richieste sono adesso consultabili accedendo al contesto (keyword 'transportContext' e 'securityToken') e
+	sono quindi utilizzabili a livello autorizzativo sia nell'autorizzazione per Token Claims che nell'autorizzazione per contenuti.
+	I certificati accessibili sono sia quelli di canale (tls) che quelli scambiati nei token di sicurezza messaggio ModI.	
+
 2022-05-09  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

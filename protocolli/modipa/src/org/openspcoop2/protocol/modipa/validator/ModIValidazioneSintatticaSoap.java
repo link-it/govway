@@ -55,6 +55,8 @@ import org.openspcoop2.protocol.modipa.utils.SOAPInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
+import org.openspcoop2.protocol.sdk.SecurityToken;
+import org.openspcoop2.protocol.sdk.SoapMessageSecurityToken;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneUtils;
@@ -68,6 +70,7 @@ import org.openspcoop2.security.message.constants.WSSAttachmentsConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityContext_impl;
 import org.openspcoop2.security.message.saml.SAMLBuilderConfigConstants;
 import org.openspcoop2.security.message.wss4j.MessageSecurityReceiver_wss4j;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
@@ -483,6 +486,17 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			}
 		}
 		
+		SoapMessageSecurityToken soapSecurityToken = null;
+		if(request && this.context!=null) {
+			
+			SecurityToken securityTokenForContext = ModIUtilities.newSecurityToken(this.context);
+			
+			soapSecurityToken = new SoapMessageSecurityToken();
+			soapSecurityToken.setCertificate(new CertificateInfo(x509, "soapEnvelope"));
+			//soapSecurityToken.setToken(token); // imposto in fondo a questo metodo		
+			securityTokenForContext.setEnvelope(soapSecurityToken);
+			
+		}
 		
 		// NOTA: Inizializzare da qua il dynamicMap altrimenti non ci finisce l'identificazione del mittente effettuata dal metodo sopra 'identificazioneApplicativoMittente'
 		Map<String, Object> dynamicMap = null;
@@ -809,7 +823,11 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		soapSecurity.setWss4jSignature(wss4jSignature);
 		msg.addContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_SOAP, soapSecurity);
 		
-		return soapSecurity.buildTraccia(msg.getMessageType());
+		SOAPEnvelope soapEnvelope = soapSecurity.buildTraccia(msg.getMessageType());
+		if(soapSecurityToken!=null) {
+			soapSecurityToken.setToken(soapEnvelope);
+		}
+		return soapEnvelope;
 		
 	}
 	

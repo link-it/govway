@@ -58,7 +58,7 @@ public class GestoreAutorizzazioneContenutiBuiltIn {
 		
 		/* Costruisco dynamic Map */
 		boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
-		Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(msg, pddContext, log, bufferMessage_readOnly);
+		Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(msg, pddContext, datiInvocazione.getBusta(), log, bufferMessage_readOnly);
 		
 		
 		/* Analisi regole di autorizzazione */

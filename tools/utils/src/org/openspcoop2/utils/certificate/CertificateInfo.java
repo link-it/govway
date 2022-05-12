@@ -202,9 +202,32 @@ public class CertificateInfo implements Serializable {
 		return this.certificate.getVersion();
 	}
 	
-	public List<String> getExtendedKeyUsage() throws CertificateParsingException {
+	public List<KeyUsage> getKeyUsage(){
+		return KeyUsage.getKeyUsage(this.certificate);
+	}
+	public boolean[] getKeyUsageAsMap() {
+		return this.certificate.getKeyUsage();
+	}
+	public boolean hasKeyUsage(KeyUsage keyUsage) {
+		return keyUsage.hasKeyUsage(this.certificate);
+	}
+	public boolean hasKeyUsage(String keyUsage) {
+		return hasKeyUsage(KeyUsage.valueOf(keyUsage.toUpperCase()));
+	}
+	
+	public List<ExtendedKeyUsage> getExtendedKeyUsage() throws CertificateParsingException{
+		return ExtendedKeyUsage.getKeyUsage(this.certificate);
+	}
+	public List<String> getExtendedKeyUsageByOID() throws CertificateParsingException {
 		return this.certificate.getExtendedKeyUsage();
 	}
+	public boolean hasExtendedKeyUsage(ExtendedKeyUsage keyUsage) throws CertificateParsingException {
+		return keyUsage.hasKeyUsage(this.certificate);
+	}
+	public boolean hasExtendedKeyUsage(String keyUsage) throws CertificateParsingException {
+		return hasExtendedKeyUsage(ExtendedKeyUsage.valueOf(keyUsage.toUpperCase()));
+	}
+	
 	
     /**
      * Utility method to test if a certificate is self-issued. This is

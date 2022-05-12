@@ -111,6 +111,11 @@ Prerequisiti:
 + Configurare in testsuite.properties i dati per l'accesso al db di govway
 	- Copiare sotto la cartella jdbc il driver postgresql ( o quello del database utilizzato )
 
++ Modificare le properties del config_loader in modo che vengano caricate le policy utente.
+	Impostare in <.../distrib/properties/config_loader.cli.properties>
+
+		policy.enable=true
+
 + Compilare i test con
 	ant build
 

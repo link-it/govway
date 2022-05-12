@@ -264,6 +264,22 @@ public class CertificateUtils {
 		//System.out.println("DOPO ["+bf.toString()+"]");
 		return bf.toString();
 	}
+	
+	public static Map<String, String> formatPrincipalToMap(String principal, PrincipalType type) throws UtilsException{
+		Map<String, String> returnMap = new HashMap<String, String>();
+		Map<String, List<String>> hashPrincipal = CertificateUtils.getPrincipalIntoMap(principal, type);
+		for (String key : hashPrincipal.keySet()) {
+			
+			List<String> listValues = hashPrincipal.get(key);
+			for (String value : listValues) {
+				String keyFormat = CertificateUtils.formatKeyPrincipal(key);
+				String valueFormat = CertificateUtils.formatValuePrincipal(value);
+				returnMap.put(keyFormat, valueFormat);
+			}
+			
+		}
+		return returnMap;
+	}
 
 	public static void validaPrincipal(String principalParam, PrincipalType type) throws UtilsException{
 		

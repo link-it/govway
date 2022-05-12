@@ -445,6 +445,30 @@ public class DynamicStringReplace {
 				}
 			}
 			
+			if(utilsException!=null && e instanceof java.lang.NoSuchMethodException && !withoutParams) {
+				// Fix per metodi boolean senza 'get' o 'is' che contengono parametri
+				try{
+					String originalMethod = methodName;
+					if(originalMethod.contains("(") && originalMethod.endsWith(")")) { // supporta 1 solo parametro stringa
+						int startParams = originalMethod.indexOf("(");
+						originalMethod = originalMethod.substring(0, startParams);
+					}
+					
+					if(parametersClass!=null && !parametersClass.isEmpty()) {
+						m = o.getClass().getMethod(originalMethod, parametersClass.toArray(new Class[1]));
+					}
+					// non si dovrebbe entrare in questo caso essendoci l'if sopra con !withoutParams
+//					else {
+//						m = o.getClass().getMethod(originalMethod);
+//					}
+					if(m!=null) {
+						utilsException = null;
+					}
+				}catch(Throwable eIgnore){ 
+					// rilancio eccezione originale
+				}
+			}
+			
 			if(utilsException!=null) {
 				throw utilsException;
 			}

@@ -31,7 +31,7 @@ Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trust
 		isTest('riferimento-x509-x509Key-ThumbprintKey') ||  isTest('riferimento-x509-IssuerSerial-x509Key') || 
 		isTest('manomissione-token-risposta') || 
 		isTest('low-ttl-erogazione') ||	isTest('low-iat-ttl-erogazione') || 
-		isTest('connettivita-base-idas02') 
+		isTest('connettivita-base-idas02') || isTest('check-authz-idas02') 
     
     * match bodyPath('/Envelope/Header') == ''
     * def responseStatus = 200

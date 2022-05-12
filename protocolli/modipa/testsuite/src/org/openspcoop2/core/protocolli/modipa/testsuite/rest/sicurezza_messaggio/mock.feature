@@ -42,6 +42,7 @@ Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trust
 	isTest('custom-claims') || isTest('custom-claims-sub-iss-clientid-empty') || 
 	isTest('manomissione-token-risposta') || 
 	isTest('connettivita-base-idar02') || isTest('riutilizzo-token') || 
+	isTest('check-authz-idar02') ||
 	isTest('manomissione-token-risposta-idar03') || isTest('manomissione-token-risposta-idar0302') || isTest('manomissione-payload-risposta-idar0302') || 
 	isTest('doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmato') ||
 	isTest('doppi-header-cornice-sicurezza-e-custom-claims-e-hdr-authorization-firmato-richiesta') ||
@@ -205,7 +206,8 @@ Scenario: isTest('informazioni-utente-header') || isTest('informazioni-utente-qu
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 
-Scenario: isTest('idar03-token-richiesta') || isTest('idar03-token-risposta')
+Scenario: isTest('idar03-token-richiesta') || isTest('idar03-token-risposta') || isTest('check-authz-idar03') || 
+	isTest('check-authz-doppi-header-idar03') || isTest('check-authz-oauth2-doppi-header-idar03')
 
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
     * def responseStatus = 200

@@ -5858,6 +5858,7 @@ public class RicezioneBuste {
 				identitaServizioApplicativoFruitore.setIdSoggettoProprietario(idSoggettoMittentePerAutorizzazione);
 				
 				datiInvocazione = new DatiInvocazionePortaApplicativa();
+				datiInvocazione.setBusta(bustaRichiesta);
 				datiInvocazione.setToken(token);
 				datiInvocazione.setPddContext(pddContext);
 				datiInvocazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());
@@ -6425,6 +6426,7 @@ public class RicezioneBuste {
 						identitaServizioApplicativoFruitore.setIdSoggettoProprietario(idSoggettoMittentePerAutorizzazione);
 						
 						datiInvocazione = new DatiInvocazionePortaApplicativa();
+						datiInvocazione.setBusta(bustaRichiesta);
 						datiInvocazione.setToken(token);
 						datiInvocazione.setPddContext(pddContext);
 						datiInvocazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());

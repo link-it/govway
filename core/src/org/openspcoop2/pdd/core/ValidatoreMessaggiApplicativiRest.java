@@ -24,6 +24,7 @@
 package org.openspcoop2.pdd.core;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,10 +42,8 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.rest.AccordoServizioWrapper;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2RestBinaryMessage;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
-import org.openspcoop2.message.OpenSPCoop2RestMimeMultipartMessage;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
@@ -68,8 +67,8 @@ import org.openspcoop2.utils.openapi.OpenapiApi;
 import org.openspcoop2.utils.openapi.UniqueInterfaceGenerator;
 import org.openspcoop2.utils.openapi.UniqueInterfaceGeneratorConfig;
 import org.openspcoop2.utils.openapi.validator.OpenAPILibrary;
-import org.openspcoop2.utils.openapi.validator.OpenapiLibraryValidatorConfig;
 import org.openspcoop2.utils.openapi.validator.OpenapiApiValidatorConfig;
+import org.openspcoop2.utils.openapi.validator.OpenapiLibraryValidatorConfig;
 import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiReaderConfig;
@@ -86,6 +85,8 @@ import org.openspcoop2.utils.rest.entity.ElementHttpRequestEntity;
 import org.openspcoop2.utils.rest.entity.ElementHttpResponseEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseResponseEntity;
+import org.openspcoop2.utils.rest.entity.InputStreamHttpRequestEntity;
+import org.openspcoop2.utils.rest.entity.InputStreamHttpResponseEntity;
 import org.openspcoop2.utils.rest.entity.TextHttpRequestEntity;
 import org.openspcoop2.utils.rest.entity.TextHttpResponseEntity;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
@@ -423,7 +424,7 @@ public class ValidatoreMessaggiApplicativiRest {
 			throw ex;
 		}
 			
-		
+		InputStream isContent = null;
 		try{
 			org.openspcoop2.utils.transport.TransportRequestContext transportContext = null;
 			if(isRichiesta) {
@@ -494,26 +495,26 @@ public class ValidatoreMessaggiApplicativiRest {
 					}
 					break;
 				case BINARY:
-					httpRequest = new BinaryHttpRequestEntity();
-					if(this.message.castAsRest().hasContent()) {
-						OpenSPCoop2RestBinaryMessage binaryMsg = this.message.castAsRestBinary();
-						byte[] contentBinary = binaryMsg.getContent(this.bufferMessage_readOnly, idTransazione);						
-						((BinaryHttpRequestEntity)httpRequest).setContent(contentBinary);
-					}
-					break;
 				case MIME_MULTIPART:
-					httpRequest = new BinaryHttpRequestEntity();
-					if(this.message.castAsRest().hasContent()) {
-						
-						// serve per bufferizzare la richiesta
-						OpenSPCoop2RestMimeMultipartMessage mimeMsg = this.message.castAsRestMimeMultipart();
-						mimeMsg.getContent(this.bufferMessage_readOnly, idTransazione);
-						
-						ByteArrayOutputStream bout = new ByteArrayOutputStream();
-						this.message.writeTo(bout, false);
-						bout.flush();
-						bout.close();
-						((BinaryHttpRequestEntity)httpRequest).setContent(bout.toByteArray());
+					OpenSPCoop2RestMessage<?> restMsg = this.message.castAsRest();
+					if(restMsg.hasContent()) {
+						restMsg.initContent(this.bufferMessage_readOnly, idTransazione); // bufferizzo
+						isContent = restMsg.getInputStreamFromContentBuffer();
+						if(isContent!=null) {
+							httpRequest = new InputStreamHttpRequestEntity();
+							((InputStreamHttpRequestEntity)httpRequest).setContent(isContent);
+						}
+						else {
+							httpRequest = new BinaryHttpRequestEntity();
+							ByteArrayOutputStream bout = new ByteArrayOutputStream();
+							this.message.writeTo(bout, false);
+							bout.flush();
+							bout.close();
+							((BinaryHttpRequestEntity)httpRequest).setContent(bout.toByteArray());
+						}
+					}
+					else {
+						httpRequest = new BinaryHttpRequestEntity();
 					}
 					break;
 				default:
@@ -570,26 +571,26 @@ public class ValidatoreMessaggiApplicativiRest {
 					}
 					break;
 				case BINARY:
-					httpResponse = new BinaryHttpResponseEntity();
-					if(this.message.castAsRest().hasContent()) {
-						OpenSPCoop2RestBinaryMessage binaryMsg = this.message.castAsRestBinary();
-						byte[] contentBinary = binaryMsg.getContent(this.bufferMessage_readOnly, idTransazione);						
-						((BinaryHttpResponseEntity)httpResponse).setContent(contentBinary);
-					}
-					break;
 				case MIME_MULTIPART:
-					httpResponse = new BinaryHttpResponseEntity();
-					if(this.message.castAsRest().hasContent()) {
-
-						// serve per bufferizzare la richiesta
-						OpenSPCoop2RestMimeMultipartMessage mimeMsg = this.message.castAsRestMimeMultipart();
-						mimeMsg.getContent(this.bufferMessage_readOnly, idTransazione);
-						
-						ByteArrayOutputStream bout = new ByteArrayOutputStream();
-						this.message.writeTo(bout, false);
-						bout.flush();
-						bout.close();
-						((BinaryHttpResponseEntity)httpResponse).setContent(bout.toByteArray());
+					OpenSPCoop2RestMessage<?> restMsg = this.message.castAsRest();
+					if(restMsg.hasContent()) {
+						restMsg.initContent(this.bufferMessage_readOnly, idTransazione); // bufferizzo
+						isContent = restMsg.getInputStreamFromContentBuffer();
+						if(isContent!=null) {
+							httpResponse = new InputStreamHttpResponseEntity();
+							((InputStreamHttpResponseEntity)httpResponse).setContent(isContent);
+						}
+						else {
+							httpResponse = new BinaryHttpResponseEntity();
+							ByteArrayOutputStream bout = new ByteArrayOutputStream();
+							this.message.writeTo(bout, false);
+							bout.flush();
+							bout.close();
+							((BinaryHttpResponseEntity)httpResponse).setContent(bout.toByteArray());
+						}
+					}
+					else {
+						httpResponse = new BinaryHttpResponseEntity();
 					}
 					break;
 				default:
@@ -624,9 +625,15 @@ public class ValidatoreMessaggiApplicativiRest {
 		}finally {
 			try {
 				apiValidator.close(this.logger, this.accordoServizioWrapper.getApi(), validatorConfig);
-			}catch(Exception e){
+			}catch(Throwable e){
 				this.logger.error("validateWithInterface close error: "+e.getMessage(),e);
 			}
+			try {
+				if(isContent!=null) {
+					isContent.close();
+					isContent = null;
+				}
+			}catch(Throwable t) {}
 		}
 		
 	}

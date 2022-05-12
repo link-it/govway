@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2RestBinaryMessage;
 import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 
@@ -37,21 +38,23 @@ import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class OpenSPCoop2Message_binary_impl extends AbstractBaseOpenSPCoop2RestMessage<byte[]> implements OpenSPCoop2RestBinaryMessage {
+public class OpenSPCoop2Message_binary_impl extends AbstractBaseOpenSPCoop2RestMessage<BinaryContent> implements OpenSPCoop2RestBinaryMessage {
 
 	public OpenSPCoop2Message_binary_impl(OpenSPCoop2MessageFactory messageFactory) {
 		super(messageFactory);
-		this.supportReadOnly = false; // il contenuto e' gia un binary.
+		//this.supportReadOnly = false; // il contenuto e' gia un binary.
+		this.supportReadOnly = true; // in modo da sfruttare il buffer
 	}
 	public OpenSPCoop2Message_binary_impl(OpenSPCoop2MessageFactory messageFactory, InputStream is,String contentType) throws MessageException {
 		super(messageFactory, is, contentType);
-		this.supportReadOnly = false; // il contenuto e' gia un binary.
+		//this.supportReadOnly = false; // il contenuto e' gia un binary.
+		this.supportReadOnly = true; // in modo da sfruttare il buffer
 	}
 	
 	@Override
-	protected byte[] buildContent() throws MessageException{
+	protected BinaryContent buildContent() throws MessageException{
 		try{
-			return Utilities.getAsByteArray(this.countingInputStream);
+			return new BinaryContent(this.countingInputStream, this.contentType);
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
 		}finally {
@@ -61,31 +64,38 @@ public class OpenSPCoop2Message_binary_impl extends AbstractBaseOpenSPCoop2RestM
 		}
 	}
 	@Override
-	protected byte[] buildContent(DumpByteArrayOutputStream contentBuffer) throws MessageException{
-		return contentBuffer.toByteArray();
+	protected BinaryContent buildContent(DumpByteArrayOutputStream contentBuffer) throws MessageException{
+		return new BinaryContent(contentBuffer, this.contentType);
 	}
 
 	@Override
 	protected String buildContentAsString() throws MessageException{
 		try{
-			return Utilities.getAsString(new ByteArrayInputStream(this.content), this.contentTypeCharsetName);
+			return Utilities.getAsString(new ByteArrayInputStream(this.content.getContent()), this.contentTypeCharsetName);
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
 		}
 	}
 	@Override
 	protected byte[] buildContentAsByteArray() throws MessageException{
-		return this.content;
+		return this.content.getContent();
 	}
 	
 	@Override
 	protected void serializeContent(OutputStream os, boolean consume) throws MessageException {
 		try{
-			os.write(this.content);
+			this.content.writeTo(os, consume);
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
 		}
 	}
 
+	public void updateContent(byte[] content) throws MessageException, MessageNotSupportedException {
+		if(this.content!=null && this.content.contentBuffer!=null) {
+			this.content.contentBuffer.clearResources();
+			this.content = null;
+		}
+		this.content = new BinaryContent(new ByteArrayInputStream(content), this.contentType);
+	}
 	
 }

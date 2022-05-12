@@ -94,6 +94,7 @@ Nel caso di utilizzo di template 'Freemarker' o 'Velocity' sono disponibili i se
   - freemarker: new("my.package.name","Parametro1","ParametroN")
 
 - transportContext (org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext); permette di accedere ai dati della richiesta http (servlet request, principal ...)
+- securityToken (org.openspcoop2.protocol.sdk.SecurityToken); utilizzabile solamente su erogazioni con profilo d'interoperabilità 'ModI', permette di accedere ai security token presenti nella richiesta
 - request/response: permette di accedere al contenuto della richiesta/risposta (org.openspcoop2.pdd.core.dynamic.ContentExtractor)
 - attachments (org.openspcoop2.pdd.core.dynamic.AttachmentsReader); consente di ottenere gli allegati registrati sull'API
 - context (java.util.Map<String, Object>); permette di accedere al contesto della richiesta.

@@ -23,7 +23,6 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
-import java.io.ByteArrayInputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,14 +91,15 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 	
-    @Override
+	@Override
 	public String getProtocollo() {
     	return "";
     }
 	
 	public final static String LOCATION = "govway://echo";
     
-
+	private DumpByteArrayOutputStream requestBout = null;
+	
 	
 	
 
@@ -268,41 +268,31 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 			boolean consumeRequestMessage = true;
 			if(this.debug)
 				this.logger.debug("Serializzazione (consume-request-message:"+consumeRequestMessage+")...");
-			byte [] requestBytes = null;
 			if(this.isDumpBinarioRichiesta()) {
-				DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
-						TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
-				try {
-					if(this.isSoap && this.sbustamentoSoap){
-						this.logger.debug("Sbustamento...");
-						TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,bout);
-					}else{
-						this.requestMsg.writeTo(bout, consumeRequestMessage);
-					}
-					bout.flush();
-					bout.close();
-					requestBytes = bout.toByteArray();
-										
-					this.dumpBinarioRichiestaUscita(bout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
-				}finally {
-					try {
-						bout.clearResources();
-					}catch(Throwable t) {
-						this.logger.error("Release resources failed: "+t.getMessage(),t);
-					}
-				}
-			}
-			else {
-				java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
+				this.requestBout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+						"NullEcho-"+TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
 				if(this.isSoap && this.sbustamentoSoap){
 					this.logger.debug("Sbustamento...");
-					TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,bout);
+					TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,this.requestBout);
 				}else{
-					this.requestMsg.writeTo(bout, consumeRequestMessage);
+					this.requestMsg.writeTo(this.requestBout, consumeRequestMessage);
 				}
-				bout.flush();
-				bout.close();
-				requestBytes = bout.toByteArray();
+				this.requestBout.flush();
+				this.requestBout.close();
+									
+				this.dumpBinarioRichiestaUscita(this.requestBout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
+			}
+			else {
+				this.requestBout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+						"NullEcho-"+TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue()); 
+				if(this.isSoap && this.sbustamentoSoap){
+					this.logger.debug("Sbustamento...");
+					TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,this.requestBout);
+				}else{
+					this.requestMsg.writeTo(this.requestBout, consumeRequestMessage);
+				}
+				this.requestBout.flush();
+				this.requestBout.close();
 			}
 			
 			
@@ -324,7 +314,14 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 				notifierInputStreamParams = this.preInResponseContext.getNotifierInputStreamParams();
 			}
 			
-			this.isResponse = new ByteArrayInputStream(requestBytes);
+			if(this.requestBout.isSerializedOnFileSystem()) {
+				//System.out.println("FROM FILE ["+this.requestBout.getSerializedFile()+"]");
+				this.isResponse = new java.io.FileInputStream(this.requestBout.getSerializedFile());
+			}
+			else {
+				//System.out.println("FROM BUFF ["+this.requestBout.size()+"]");
+				this.isResponse = new java.io.ByteArrayInputStream(this.requestBout.toByteArray());
+			}
 			
 			this.normalizeInputStreamResponse(readConnectionTimeout);
 			
@@ -608,7 +605,7 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 			this.logger.error("Riscontrato errore durante l'echo del messaggio: "+msgErrore,e);
 			return false;
 		}finally{
-			
+					
 			// *** GB ***
 			if(validatoreSintattico!=null){
 				validatoreSintattico.setHeaderSOAP(null);
@@ -665,7 +662,17 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
     	//return ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, this.propertiesUrlBased, LOCATION);
     	return LOCATION;
     }
-    
+
+    @Override
+	public void disconnect() throws ConnettoreException {
+    	try {
+			if(this.requestBout!=null) {
+				this.requestBout.clearResources();
+			}
+		}catch(Throwable t) {
+			this.logger.error("Release resources failed: "+t.getMessage(),t);
+		}
+	}
 }
 
 

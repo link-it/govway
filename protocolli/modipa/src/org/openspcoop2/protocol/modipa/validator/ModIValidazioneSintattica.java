@@ -57,6 +57,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
@@ -281,6 +282,13 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 				
 				String securityChannelProfile = ModIPropertiesUtils.readPropertySecurityChannelProfile(aspc);
 				bustaRitornata.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_CANALE, securityChannelProfile.toUpperCase());
+				
+				if(request && this.context!=null) {
+					
+					@SuppressWarnings("unused")
+					SecurityToken securityTokenForContext = ModIUtilities.newSecurityToken(this.context); // creo per averlo a disposizione anche se non e' presente la sicurezza messaggio
+					
+				}
 				
 				
 				/* *** SICUREZZA MESSAGGIO *** */

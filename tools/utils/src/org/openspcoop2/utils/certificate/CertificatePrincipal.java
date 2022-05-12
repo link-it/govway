@@ -20,6 +20,10 @@
 
 package org.openspcoop2.utils.certificate;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.x500.RDN;
@@ -39,6 +43,7 @@ public class CertificatePrincipal {
 
 	private X500Principal principal;
 	private PrincipalType type;
+	private X500Name x500name;
 
 	public CertificatePrincipal(X500Principal principal, PrincipalType type) {
 		this.principal = principal;
@@ -73,23 +78,162 @@ public class CertificatePrincipal {
 	public String getNameNormalized() throws UtilsException {
 		return CertificateUtils.formatPrincipal(this.toString(), this.type);
 	}
+	public Map<String, List<String>> toMap() throws UtilsException {
+		return CertificateUtils.getPrincipalIntoMap(this.toString(), this.type);
+	}
+	public Map<String, String> toSimpleMap() throws UtilsException {
+		return CertificateUtils.formatPrincipalToMap(this.toString(), this.type);
+	}
 	
-	public String getCN() {
-		X500Name x500name = new JcaX509CertificateHolderSelector(this.principal,null).getIssuer();
-		RDN [] cnArray = x500name.getRDNs(BCStyle.CN);
-		if(cnArray!=null && cnArray.length>0 && cnArray[0]!=null) {
-			RDN cn = x500name.getRDNs(BCStyle.CN)[0];
-			if(cn.getFirst()!=null && cn.getFirst().getValue()!=null) {
-				return cn.getFirst().getValue().toString();
-			}
-			else {
-				return CN_EMPTY;
-			}
-		}
-		else {
-			return CN_EMPTY;
+	
+	private synchronized void initX500Name() {
+		if(this.x500name==null) {
+			this.x500name=new JcaX509CertificateHolderSelector(this.principal,null).getIssuer();
 		}
 	}
 	
 	public static final String CN_EMPTY = "__undefined__";
+	public String getCN() {
+		return getInfoByOID(BCStyle.CN, CN_EMPTY);
+	}
+	
+	public List<OID> getOID(){
+		List<OID> l = new ArrayList<OID>();
+		if(this.x500name==null) {
+			this.initX500Name();
+		}
+		RDN [] rdnArray = this.x500name.getRDNs();
+		if(rdnArray!=null && rdnArray.length>0) {
+			for (RDN rdn : rdnArray) {
+				if(rdn!=null) {
+					OID oid = OID.toOID(rdn.getFirst().getType());
+//					if(oid==null) {
+//						System.out.println("NULLLL ["+rdn.getFirst().getType()+"]: "+rdn.getFirst().getType().getId());
+//					}
+					l.add(oid);
+				}
+			}
+		}
+		return l;
+	}
+	
+	public String getInfo(String oid) {
+		return getInfoByOID(OID.valueOf(oid.toUpperCase()));
+	}
+	public String getInfo(String oid, String defaultEmptyValue) {
+		return getInfoByOID(OID.valueOf(oid.toUpperCase()),defaultEmptyValue);
+	}
+	
+	public String getInfoByOID(String oid) {
+		return getInfoByOID(new org.bouncycastle.asn1.ASN1ObjectIdentifier(oid));
+	}
+	public String getInfoByOID(String oid, String defaultEmptyValue) {
+		return getInfoByOID(new org.bouncycastle.asn1.ASN1ObjectIdentifier(oid),defaultEmptyValue);
+	}
+	public String getInfoByOID(OID oid) {
+		return getInfoByOID(oid.getOID());
+	}
+	public String getInfoByOID(OID oid, String defaultEmptyValue) {
+		return getInfoByOID(oid.getOID(),defaultEmptyValue);
+	}
+	public String getInfoByOID(org.bouncycastle.asn1.ASN1ObjectIdentifier oid) {
+		return getInfoByOID(oid, null);
+	}
+	public String getInfoByOID(org.bouncycastle.asn1.ASN1ObjectIdentifier oid, String defaultEmptyValue) {
+		if(this.x500name==null) {
+			this.initX500Name();
+		}
+		RDN [] rdnArray = this.x500name.getRDNs(oid);
+		if(rdnArray!=null && rdnArray.length>0 && rdnArray[0]!=null) {
+			RDN rdn = rdnArray[0];
+			if(rdn.getFirst()!=null && rdn.getFirst().getValue()!=null) {
+				return rdn.getFirst().getValue().toString();
+			}
+			else {
+				return defaultEmptyValue;
+			}
+		}
+		else {
+			return defaultEmptyValue;
+		}
+	}
+	
+	public String getInfo(String oid, int position) {
+		return getInfoByOID(OID.valueOf(oid.toUpperCase()), position);
+	}
+	public String getInfo(String oid, String defaultEmptyValue, int position) {
+		return getInfoByOID(OID.valueOf(oid.toUpperCase()),defaultEmptyValue, position);
+	}
+	
+	public String getInfoByOID(String oid, int position) {
+		return getInfoByOID(new org.bouncycastle.asn1.ASN1ObjectIdentifier(oid), position);
+	}
+	public String getInfoByOID(String oid, String defaultEmptyValue, int position) {
+		return getInfoByOID(new org.bouncycastle.asn1.ASN1ObjectIdentifier(oid),defaultEmptyValue, position);
+	}
+	public String getInfoByOID(OID oid, int position) {
+		return getInfoByOID(oid.getOID(), position);
+	}
+	public String getInfoByOID(OID oid, String defaultEmptyValue, int position) {
+		return getInfoByOID(oid.getOID(),defaultEmptyValue, position);
+	}
+	public String getInfoByOID(org.bouncycastle.asn1.ASN1ObjectIdentifier oid, int position) {
+		return getInfoByOID(oid, null, position);
+	}
+	public String getInfoByOID(org.bouncycastle.asn1.ASN1ObjectIdentifier oid, String defaultEmptyValue, int position) {
+		List<String> l = getInfosByOID(oid, defaultEmptyValue);
+		if(l!=null && l.size()>position) {
+			return l.get(position);
+		}
+		return defaultEmptyValue;
+	}
+	
+	public List<String> getInfos(String oid) {
+		return getInfosByOID(OID.valueOf(oid.toUpperCase()));
+	}
+	public List<String> getInfos(String oid, String defaultEmptyValue) {
+		return getInfosByOID(OID.valueOf(oid.toUpperCase()),defaultEmptyValue);
+	}
+	
+	public List<String> getInfosByOID(String oid) {
+		return getInfosByOID(new org.bouncycastle.asn1.ASN1ObjectIdentifier(oid));
+	}
+	public List<String> getInfosByOID(String oid, String defaultEmptyValue) {
+		return getInfosByOID(new org.bouncycastle.asn1.ASN1ObjectIdentifier(oid),defaultEmptyValue);
+	}
+	public List<String> getInfosByOID(OID oid) {
+		return getInfosByOID(oid.getOID());
+	}
+	public List<String> getInfosByOID(OID oid, String defaultEmptyValue) {
+		return getInfosByOID(oid.getOID(),defaultEmptyValue);
+	}
+	public List<String> getInfosByOID(org.bouncycastle.asn1.ASN1ObjectIdentifier oid) {
+		return getInfosByOID(oid, null);
+	}
+	public List<String> getInfosByOID(org.bouncycastle.asn1.ASN1ObjectIdentifier oid, String defaultEmptyValue) {
+		if(this.x500name==null) {
+			this.initX500Name();
+		}
+		RDN [] rdnArray = this.x500name.getRDNs(oid);
+		List<String> l = null;
+		if(rdnArray!=null && rdnArray.length>0) {
+			for (RDN rdn : rdnArray) {
+				if(rdn!=null) {
+					if(rdn.getFirst()!=null && rdn.getFirst().getValue()!=null) {
+						if(l==null) {
+							l = new ArrayList<String>();
+						}
+						l.add(rdn.getFirst().getValue().toString());
+					}
+				}
+			}
+		}
+		
+		if(l==null && defaultEmptyValue!=null) {
+			l = new ArrayList<String>();
+			l.add(defaultEmptyValue);
+		}
+		return l;
+	}
+	
 }

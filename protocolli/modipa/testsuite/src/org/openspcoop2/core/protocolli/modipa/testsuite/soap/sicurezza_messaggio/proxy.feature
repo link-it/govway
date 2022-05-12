@@ -378,6 +378,19 @@ Scenario: isTest('riutilizzo-token')
     * def responseStatus = 200
     * def responseHeaders = { 'Content-type': "application/soap+xml" }
 
+Scenario: isTest('check-authz-idas02')
+
+    * xmlstring client_request = bodyPath('/')
+    * eval karateCache.add("Client-Request", client_request)
+
+    * call check_client_token ({ address: "DemoSoggettoFruitore/ApplicativoBlockingIDA01", to: "testsuite" })
+
+    * karate.proceed (govway_base_path + '/soap/in/DemoSoggettoErogatore/SoapBlockingIDAS02CheckAuthz/v1')
+
+    * call check_server_token ({ from: "SoapBlockingIDAS02CheckAuthz/v1", to: "DemoSoggettoFruitore/ApplicativoBlockingIDA01" })
+
+    * xmlstring server_response = response
+    * eval karateCache.add("Server-Response", server_response)
 
 
 #####################################################

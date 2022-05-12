@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.core.autorizzazione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
+import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.state.IState;
 
 /**
@@ -43,6 +44,15 @@ public abstract class AbstractDatiInvocazione {
 	private IState state;
 	
 	private String token;
+	
+	private Busta busta;
+	
+	public Busta getBusta() {
+		return this.busta;
+	}
+	public void setBusta(Busta busta) {
+		this.busta = busta;
+	}
 	
 	public String getToken() {
 		return this.token;

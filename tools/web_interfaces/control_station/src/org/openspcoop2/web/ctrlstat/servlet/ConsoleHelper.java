@@ -6115,10 +6115,10 @@ public class ConsoleHelper implements IConsoleHelper {
 							dInfoTokenClaims.setHeaderBody(DynamicHelperCostanti.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_NO_ATTRIBUTE_AUTHORITY);
 						}
 						if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
-							dInfoTokenClaims.setListBody(DynamicHelperCostanti.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_REST_VALORI);
+							dInfoTokenClaims.setListBody(DynamicHelperCostanti.getLABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_REST_VALORI(this.isProfiloModIPA(protocollo), isPortaDelegata));
 						}
 						else {
-							dInfoTokenClaims.setListBody(DynamicHelperCostanti.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SOAP_VALORI);
+							dInfoTokenClaims.setListBody(DynamicHelperCostanti.getLABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SOAP_VALORI(this.isProfiloModIPA(protocollo), isPortaDelegata));
 						}
 						de.setInfo(dInfoTokenClaims);
 						
@@ -6227,10 +6227,26 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 	}
 	
-	public void controlloAccessiAutorizzazioneContenuti(Vector<DataElement> dati, TipoOperazione tipoOperazione, boolean isPortaDelegata,
+	public void controlloAccessiAutorizzazioneContenuti(Vector<DataElement> dati, TipoOperazione tipoOperazione, boolean isPortaDelegata, Object oggetto, String protocolloParam,
 			String autorizzazioneContenutiStato, String autorizzazioneContenuti, String autorizzazioneContenutiProperties, ServiceBinding serviceBinding,
 			boolean old_autorizzazione_contenuti_custom, String urlAutorizzazioneContenutiCustomPropertiesList, int numAutorizzazioneContenutiCustomPropertiesList,
 			boolean confPers) throws Exception{
+		
+		String protocollo = protocolloParam;
+		if((protocollo==null || "".equals(protocollo)) && oggetto!=null){
+			if(isPortaDelegata){
+				PortaDelegata pd = (PortaDelegata) oggetto;
+				if(pd!=null && pd.getServizio()!=null && pd.getServizio().getTipo()!=null) {
+					protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pd.getServizio().getTipo());
+				}
+			}
+			else {
+				PortaApplicativa pa = (PortaApplicativa) oggetto;
+				if(pa!=null && pa.getServizio()!=null && pa.getServizio().getTipo()!=null) {
+					protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pa.getServizio().getTipo());
+				}
+			}
+		}
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE);
@@ -6281,10 +6297,10 @@ public class ConsoleHelper implements IConsoleHelper {
 				DataElementInfo info = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
 				info.setHeaderBody(DynamicHelperCostanti.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
 				if(ServiceBinding.REST.equals(serviceBinding)) {
-					info.setListBody(DynamicHelperCostanti.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_REST_VALORI);
+					info.setListBody(DynamicHelperCostanti.getLABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_REST_VALORI(this.isProfiloModIPA(protocollo), isPortaDelegata));
 				}
 				else {
-					info.setListBody(DynamicHelperCostanti.LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SOAP_VALORI);
+					info.setListBody(DynamicHelperCostanti.getLABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SOAP_VALORI(this.isProfiloModIPA(protocollo), isPortaDelegata));
 				}
 				de.setValoreDefault("");
 				de.setInfo(info );

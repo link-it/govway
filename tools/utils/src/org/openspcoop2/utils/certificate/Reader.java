@@ -113,10 +113,19 @@ public class Reader {
 			System.out.println("CERT NotBefore: "+c.getCertificate().getNotBefore());
 			System.out.println("CERT NotAfter: "+c.getCertificate().getNotAfter());
 			System.out.println("\n");
-			List<String> extendedKeyUsage = c.getCertificate().getExtendedKeyUsage();
+			List<ExtendedKeyUsage> extendedKeyUsage = c.getCertificate().getExtendedKeyUsage();
 			if(extendedKeyUsage!=null) {
-				for (String usageEx : extendedKeyUsage) {
+				for (ExtendedKeyUsage usageEx : extendedKeyUsage) {
 					System.out.println("CERT ExtendedKeyUsage: "+usageEx);
+					System.out.println("\n");
+				}
+			}
+			List<KeyUsage> keyUsage = c.getCertificate().getKeyUsage();
+			if(keyUsage!=null) {
+				for (KeyUsage usageEx : keyUsage) {
+					System.out.println("CERT KeyUsage: "+usageEx);
+					System.out.println("\n");
+					
 				}
 			}
 			
