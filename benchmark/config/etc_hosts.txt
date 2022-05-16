@@ -1,4 +1,5 @@
 127.0.0.1	StressTestServer
+127.0.0.1	StressTestMultipartServer
 127.0.0.1       GovWayServer
 127.0.0.1       StressTestClient
 127.0.0.1       GovWayDB
