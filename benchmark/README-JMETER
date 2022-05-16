@@ -1,0 +1,41 @@
+. Scaricare apache-jmeter da jmeter.apache.org
+	https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.4.3.tgz
+
+. Estrarre l'archivio e modificare `bin/user.properties`
+
+	. Aggiungere la seguente definizione:
+      	. sample_variables=testName,iterazione,profiloSicurezza,sleepMax,sleepMin,protocollo,dimensioneRichiesta,tipoTest,azione,soggetto,threads,threads.ramp-up
+		Questo per riportare nei csv anche le variabili di input del test.
+
+	. Installare il gestore di plugin per jmeter:
+        . https://jmeter-plugins.org/get/
+
+		Scaricare il jar e copiarlo nella directory /lib/ext di JMeter
+
+	. Dal menu dell' Interfaccia grafica di JMeter andare su Options->Plugin Manager
+
+		Abilitare i seguenti plugins:
+			- Graphs Generator Listener
+			- 3 Basic Graphs
+			- 5 Additional Graphs
+			- Distribution\Percentile Graph
+			- KPI vs KPI Graphs
+			- Command-Line Graph Plotting Tool
+			- Filter Results Tool
+			- Synthesis Report (jpgc-synthesis)
+ 
+ 		NOTA: Se il plugin non viene trovato perchè è stato cambiato il nome. Eseguendo comunque i test, nel jmeter.log si incontreranno dei ClassNotFoundException, è possibile ricercare il plugin
+                per package. Quindi inserire nella barra di ricerca il package del plugin per ritrovarlo.
+
+
+	. Il plugin "Command-Line Graph Plotting Tool" Installerà dei file sotto la directory `bin` di JMeter.
+			 Modificare lo script `bin/JMeterPluginsCMD.sh e fargli usare cmdrunner-2.3.jar
+			Invece di:
+				java -Djava.awt.headless=true -jar $(dirname $0)/../lib/cmdrunner-2.2.jar --tool Reporter "$@"
+			Usare:
+				java -Djava.awt.headless=true -jar $(dirname $0)/../lib/cmdrunner-2.3.jar --tool Reporter "$@"
+
+		E' possibile che questo passo non sia necessario se al momento dell'esecuzione di questi passi, il plugin sia stato aggiornato dagli autori.
+
+
+	. Adesso copiare la cartella di jmeter configurata così come è, sulla macchina dove si vogliono eseguire i benchmark.

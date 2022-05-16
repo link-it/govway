@@ -1,0 +1,249 @@
+openapi: 3.0.0
+info:
+  title: StressTest
+  description: >-
+    OpenAPI di Test
+  version: 1.0.0
+servers:
+  - url: 'http://'
+    variables: {}
+paths:
+  /test:
+    put:
+      summary: test1
+      description: test1
+      operationId: test1
+      parameters: []
+      requestBody:
+        description: test1
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '400':
+          description: error
+        '404':
+          description: error
+        '405':
+          description: error
+  /test2:
+    put:
+      summary: test2
+      description: test2
+      operationId: test2
+      parameters: []
+      requestBody:
+        description: test2
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '400':
+          description: error
+        '404':
+          description: error
+        '405':
+          description: error 
+  /test3:
+    put:
+      summary: test3
+      description: test3
+      operationId: test3
+      parameters: []
+      requestBody:
+        description: test3
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '400':
+          description: error
+        '404':
+          description: error
+        '405':
+          description: error 
+  /test4:
+    put:
+      summary: test4
+      description: test4
+      operationId: test4
+      parameters: []
+      requestBody:
+        description: test4
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '400':
+          description: error
+        '404':
+          description: error
+        '405':
+          description: error 
+  /test5:
+    put:
+      summary: test5
+      description: test5
+      operationId: test5
+      parameters: []
+      requestBody:
+        description: test5
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '400':
+          description: error
+        '404':
+          description: error
+        '405':
+          description: error   
+  /test6:
+    put:
+      summary: test6
+      description: test6
+      operationId: test6
+      parameters: []
+      requestBody:
+        description: test6
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '400':
+          description: error
+        '404':
+          description: error
+        '405':
+          description: error 
+  /test7:
+    put:
+      summary: test7
+      description: test7
+      operationId: test7
+      parameters: []
+      requestBody:
+        description: test7
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+        required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '400':
+          description: error
+        '404':
+          description: error
+        '405':
+          description: error           
+components:
+  schemas:
+    Category:
+      title: Category
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    Tag:
+      title: Tag
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    Pet:
+      title: Pet
+      required:
+        - name
+        - photoUrls
+      type: object
+      properties:
+        name:
+          type: string
+        photoUrls:
+          type: array
+          items:
+            type: string
+          description: ''
+        id:
+          type: integer
+          format: int64
+        category:
+          $ref: '#/components/schemas/Category'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+          description: ''
+        status:
+          $ref: '#/components/schemas/Status6'
+        other:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pet'
+    Status6:
+      title: Status6
+      enum:
+        - available
+        - pending
+        - sold
+      type: string

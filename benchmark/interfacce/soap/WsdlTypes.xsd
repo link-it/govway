@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><s:schema xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:tns="http://services.samples/xsd" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" elementFormDefault="qualified" targetNamespace="http://services.samples/xsd">
+      <s:element name="skcotSyub">
+        <s:complexType>
+          <s:sequence>
+            <s:element maxOccurs="unbounded" minOccurs="0" ref="tns:redro"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="skcotSyub2">
+        <s:complexType>
+          <s:sequence>
+            <s:element maxOccurs="unbounded" minOccurs="0" ref="tns:redro"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="skcotSyub3">
+        <s:complexType>
+          <s:sequence>
+            <s:element maxOccurs="unbounded" minOccurs="0" ref="tns:redro"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="skcotSyub4">
+        <s:complexType>
+          <s:sequence>
+            <s:element maxOccurs="unbounded" minOccurs="0" ref="tns:redro"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="skcotSyub5">
+        <s:complexType>
+          <s:sequence>
+            <s:element maxOccurs="unbounded" minOccurs="0" ref="tns:redro"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="skcotSyub6">
+        <s:complexType>
+          <s:sequence>
+            <s:element maxOccurs="unbounded" minOccurs="0" ref="tns:redro"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="skcotSyub7">
+        <s:complexType>
+          <s:sequence>
+            <s:element maxOccurs="unbounded" minOccurs="0" ref="tns:redro"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="redro">
+        <s:complexType>
+          <s:sequence>
+            <s:element maxOccurs="1" minOccurs="1" name="lobmys" type="s:string"/>
+            <s:element maxOccurs="1" minOccurs="1" name="DIreyub" type="s:string"/>
+            <s:element maxOccurs="1" minOccurs="1" name="ecirp" type="s:float"/>
+            <s:element maxOccurs="1" minOccurs="1" name="emulov" type="s:int"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>

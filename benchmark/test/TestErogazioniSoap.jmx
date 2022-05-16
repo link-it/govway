@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.4.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Erogazioni" enabled="true">
+      <stringProp name="TestPlan.comments"></stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+    </TestPlan>
+    <hashTree>
+      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="Variabili del Test" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="debug" elementType="Argument">
+            <stringProp name="Argument.name">debug</stringProp>
+            <stringProp name="Argument.value">${__P(debug,false)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="nodoRun.protocol" elementType="Argument">
+            <stringProp name="Argument.name">nodoRun.protocol</stringProp>
+            <stringProp name="Argument.value">${__P(nodoRunProtocol,http)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="nodoRun.hostname" elementType="Argument">
+            <stringProp name="Argument.name">nodoRun.hostname</stringProp>
+            <stringProp name="Argument.value">${__P(nodoRunIP,127.0.0.1)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="nodoRun.port" elementType="Argument">
+            <stringProp name="Argument.name">nodoRun.port</stringProp>
+            <stringProp name="Argument.value">${__P(nodoRunPort,8080)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="connectionTimeout" elementType="Argument">
+            <stringProp name="Argument.name">connectionTimeout</stringProp>
+            <stringProp name="Argument.value">${__P(connectionTimeout,10000)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="readTimeout" elementType="Argument">
+            <stringProp name="Argument.name">readTimeout</stringProp>
+            <stringProp name="Argument.value">${__P(readTimeout,60000)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="client" elementType="Argument">
+            <stringProp name="Argument.name">client</stringProp>
+            <stringProp name="Argument.value">${__P(clientIP,127.0.0.1)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="threads" elementType="Argument">
+            <stringProp name="Argument.name">threads</stringProp>
+            <stringProp name="Argument.value">${__P(threads,20)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="threads.ramp-up" elementType="Argument">
+            <stringProp name="Argument.name">threads.ramp-up</stringProp>
+            <stringProp name="Argument.value">${__P(threadsRampUp,5)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="duration" elementType="Argument">
+            <stringProp name="Argument.name">duration</stringProp>
+            <stringProp name="Argument.value">${__P(duration,20)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="dirFile" elementType="Argument">
+            <stringProp name="Argument.name">dirFile</stringProp>
+            <stringProp name="Argument.value">${__P(testFileDir,example)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="dirLog" elementType="Argument">
+            <stringProp name="Argument.name">dirLog</stringProp>
+            <stringProp name="Argument.value">${__P(logDir,log)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="sleepMin" elementType="Argument">
+            <stringProp name="Argument.name">sleepMin</stringProp>
+            <stringProp name="Argument.value">${__P(sleepMin,0)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="sleepMax" elementType="Argument">
+            <stringProp name="Argument.name">sleepMax</stringProp>
+            <stringProp name="Argument.value">${__P(sleepMax,1)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="dimensioneRichiesta" elementType="Argument">
+            <stringProp name="Argument.name">dimensioneRichiesta</stringProp>
+            <stringProp name="Argument.value">${__P(dimensione,1024)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="dimensionRichiesta.valoriPossibili" elementType="Argument">
+            <stringProp name="Argument.name">dimensionRichiesta.valoriPossibili</stringProp>
+            <stringProp name="Argument.value">1024 51200 409600</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="tipoTest" elementType="Argument">
+            <stringProp name="Argument.name">tipoTest</stringProp>
+            <stringProp name="Argument.value">${__P(tipoTest,Proxy)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="azione" elementType="Argument">
+            <stringProp name="Argument.name">azione</stringProp>
+            <stringProp name="Argument.value">${__P(azione,test)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="contentType" elementType="Argument">
+            <stringProp name="Argument.name">contentType</stringProp>
+            <stringProp name="Argument.value">${__P(contentType,text/xml; charset=UTF-8)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="soggetto" elementType="Argument">
+            <stringProp name="Argument.name">soggetto</stringProp>
+            <stringProp name="Argument.value">${__P(soggetto,ENTE)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="proxyHost" elementType="Argument">
+            <stringProp name="Argument.name">proxyHost</stringProp>
+            <stringProp name="Argument.value">${__P(proxyHost,)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="proxyPort" elementType="Argument">
+            <stringProp name="Argument.name">proxyPort</stringProp>
+            <stringProp name="Argument.value">${__P(proxyPort,)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="protocollo" elementType="Argument">
+            <stringProp name="Argument.name">protocollo</stringProp>
+            <stringProp name="Argument.value">${__P(protocollo,api)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="profiloSicurezza" elementType="Argument">
+            <stringProp name="Argument.name">profiloSicurezza</stringProp>
+            <stringProp name="Argument.value">${__P(profiloSicurezza,none)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="dirResult" elementType="Argument">
+            <stringProp name="Argument.name">dirResult</stringProp>
+            <stringProp name="Argument.value">${__P(dirResult,results)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="iterazione" elementType="Argument">
+            <stringProp name="Argument.name">iterazione</stringProp>
+            <stringProp name="Argument.value">${__P(iterazione,1)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="testName" elementType="Argument">
+            <stringProp name="Argument.name">testName</stringProp>
+            <stringProp name="Argument.value">${__P(testName,&quot;TESTNAME&quot;)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </Arguments>
+      <hashTree/>
+      <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="ConfigurazioneBackendTest" enabled="true">
+        <collectionProp name="HeaderManager.headers">
+        </collectionProp>
+      </HeaderManager>
+      <hashTree/>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Invocazione" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <intProp name="LoopController.loops">-1</intProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${threads.ramp-up}</stringProp>
+        <boolProp name="ThreadGroup.scheduler">true</boolProp>
+        <stringProp name="ThreadGroup.duration">${duration}</stringProp>
+        <stringProp name="ThreadGroup.delay">2</stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <boolProp name="ThreadGroup.delayedStart">true</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <RandomVariableConfig guiclass="TestBeanGUI" testclass="RandomVariableConfig" testname="Random Variable" enabled="true">
+          <stringProp name="maximumValue">999999999</stringProp>
+          <stringProp name="minimumValue">1</stringProp>
+          <stringProp name="outputFormat"></stringProp>
+          <boolProp name="perThread">false</boolProp>
+          <stringProp name="randomSeed"></stringProp>
+          <stringProp name="variableName">random</stringProp>
+        </RandomVariableConfig>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="${testName}_${protocollo}_${threads}_${dimensioneRichiesta}_${profiloSicurezza}_${tipoTest}_${sleepMin}_${sleepMax}_${azione}_${iterazione}" enabled="true">
+          <elementProp name="HTTPsampler.Files" elementType="HTTPFileArgs">
+            <collectionProp name="HTTPFileArgs.files">
+              <elementProp name="${dirFile}/soap/sicurezza/${profiloSicurezza}/${dimensioneRichiesta}B.xml" elementType="HTTPFileArg">
+                <stringProp name="File.path">${dirFile}/soap/sicurezza/${profiloSicurezza}/${dimensioneRichiesta}B.xml</stringProp>
+                <stringProp name="File.paramname"></stringProp>
+                <stringProp name="File.mimetype">${contentType}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">${nodoRun.hostname}</stringProp>
+          <stringProp name="HTTPSampler.port">${nodoRun.port}</stringProp>
+          <stringProp name="HTTPSampler.protocol">${nodoRun.protocol}</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/govway/${protocollo}/in/${soggetto}/StressTestSoap${tipoTest}/v1</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.proxyHost">${proxyHost}</stringProp>
+          <stringProp name="HTTPSampler.proxyPort">${proxyPort}</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">${connectionTimeout}</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">${readTimeout}</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">${contentType}</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">SOAPAction</stringProp>
+                <stringProp name="Header.value">${azione}</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">GovWay-StressTest-SleepMin</stringProp>
+                <stringProp name="Header.value">${sleepMin}</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">GovWay-StressTest-SleepMax</stringProp>
+                <stringProp name="Header.value">${sleepMax}</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">GovWay-StressTest-UserId</stringProp>
+                <stringProp name="Header.value">ID-Applicativo-StressTest</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+        </hashTree>
+        <ResultSaver guiclass="ResultSaverGui" testclass="ResultSaver" testname="Save FailedResponses to a file" enabled="false"> <!-- non funziona "${debug}"> -->
+          <stringProp name="FileSaver.filename">${dirLog}/failed</stringProp>
+          <boolProp name="FileSaver.errorsonly">true</boolProp>
+          <boolProp name="FileSaver.successonly">false</boolProp>
+          <boolProp name="FileSaver.skipsuffix">false</boolProp>
+          <boolProp name="FileSaver.skipautonumber">false</boolProp>
+          <boolProp name="FileSaver.addTimstamp">true</boolProp>
+        </ResultSaver>
+        <hashTree/>
+      </hashTree>
+      <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <sampleCount>true</sampleCount>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename">${dirResult}/${testName}_${protocollo}_${threads}_${dimensioneRichiesta}_${profiloSicurezza}_${tipoTest}_${sleepMin}_${sleepMax}_${azione}_${iterazione}.csv</stringProp>
+      </ResultCollector>
+      <hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

@@ -1,0 +1,34 @@
+BENCHMARK_HOME=absolute benchmark dir
+binJMeter=apache jmeter home/bin/
+
+# Nodo GovWay Locale
+nodoRunProtocol=http
+nodoRunIP=GovWayServer
+nodoRunPort=8080
+proxyHost=
+proxyPort=
+
+# Nodo GovWay Remoto
+#nodoRunIP=govway-dev.link.it
+#nodoRunPort=8080
+#proxyHost=172.16.2.254
+#proxyPort=8080
+
+# Timeout
+connectionTimeout=10000
+readTimeout=60000
+
+# Client
+clientIP=StressTestClient
+
+# Directory
+testFileDir=${BENCHMARK_HOME}/example
+logDir=${BENCHMARK_HOME}/log
+resultDir=${BENCHMARK_HOME}/results
+
+# Script per pulire il database di govway prima dell'esecuzione dei test
+scriptDatabaseCleaner=
+
+# Metterlo a true per far produrre a jmeter i log delle richieste in errore
+debug=false
+

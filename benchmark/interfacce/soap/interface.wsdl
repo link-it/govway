@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:tns="http://services.samples/xsd" targetNamespace="http://services.samples/xsd">
+
+  <wsdl:types>
+  
+		<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://services.samples/xsd">
+			<import namespace="http://services.samples/xsd" schemaLocation="WsdlTypes.xsd"/>
+		</schema>
+
+</wsdl:types>
+  <wsdl:message name="TestIn">
+    <wsdl:part element="tns:skcotSyub" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="TestOut">
+    <wsdl:part element="tns:skcotSyub" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="Test2In">
+    <wsdl:part element="tns:skcotSyub2" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="Test2Out">
+    <wsdl:part element="tns:skcotSyub2" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="Test3In">
+    <wsdl:part element="tns:skcotSyub3" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="Test3Out">
+    <wsdl:part element="tns:skcotSyub3" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="Test4In">
+    <wsdl:part element="tns:skcotSyub4" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="Test4Out">
+    <wsdl:part element="tns:skcotSyub4" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="Test5In">
+    <wsdl:part element="tns:skcotSyub5" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="Test5Out">
+    <wsdl:part element="tns:skcotSyub5" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="Test6In">
+    <wsdl:part element="tns:skcotSyub6" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="Test6Out">
+    <wsdl:part element="tns:skcotSyub6" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="Test7In">
+    <wsdl:part element="tns:skcotSyub7" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="Test7Out">
+    <wsdl:part element="tns:skcotSyub7" name="parameters"/>
+  </wsdl:message>
+  
+  <wsdl:portType name="StressTestSoap">
+    <wsdl:operation name="test">
+      <wsdl:input message="tns:TestIn"/>
+      <wsdl:output message="tns:TestOut"/>
+    </wsdl:operation>
+    <wsdl:operation name="test2">
+      <wsdl:input message="tns:Test2In"/>
+      <wsdl:output message="tns:Test2Out"/>
+    </wsdl:operation>
+    <wsdl:operation name="test3">
+      <wsdl:input message="tns:Test3In"/>
+      <wsdl:output message="tns:Test3Out"/>
+    </wsdl:operation>
+    <wsdl:operation name="test4">
+      <wsdl:input message="tns:Test4In"/>
+      <wsdl:output message="tns:Test4Out"/>
+    </wsdl:operation>
+    <wsdl:operation name="test5">
+      <wsdl:input message="tns:Test5In"/>
+      <wsdl:output message="tns:Test5Out"/>
+    </wsdl:operation>
+    <wsdl:operation name="test6">
+      <wsdl:input message="tns:Test6In"/>
+      <wsdl:output message="tns:Test6Out"/>
+    </wsdl:operation>
+    <wsdl:operation name="test7">
+      <wsdl:input message="tns:Test7In"/>
+      <wsdl:output message="tns:Test7Out"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  
+  <wsdl:binding name="StressTestSoap11" type="tns:StressTestSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="test">
+      <soap:operation soapAction="test" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="test2">
+      <soap:operation soapAction="test2" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="test3">
+      <soap:operation soapAction="test3" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="test4">
+      <soap:operation soapAction="test4" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="test5">
+      <soap:operation soapAction="test5" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="test6">
+      <soap:operation soapAction="test6" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="test7">
+      <soap:operation soapAction="test7" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="StressTestSoap12" type="tns:StressTestSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="test">
+      <soap12:operation soapAction="test" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="test2">
+      <soap12:operation soapAction="test2" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="test3">
+      <soap12:operation soapAction="test3" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="test4">
+      <soap12:operation soapAction="test4" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="test5">
+      <soap12:operation soapAction="test5" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="test6">
+      <soap12:operation soapAction="test6" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="test7">
+      <soap12:operation soapAction="test7" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  
+  <wsdl:service name="StressTestSoap">
+    <wsdl:port binding="tns:StressTestSoap11" name="StressTestSoap11">
+      <soap:address location="https://test"/>
+    </wsdl:port>
+    <wsdl:port binding="tns:StressTestSoap12" name="StressTestSoap12">
+      <soap12:address location="https://test"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
