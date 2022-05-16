@@ -370,6 +370,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					
 						// Costruisco OpenAPI3					
 						OAI3Context context = new OAI3Context(uriSchemaNodeRoot, schemaNodeRoot, schemaMap);
+						if(this.openApi4jConfig!=null) {
+							context.setMultipartOptimization(this.openApi4jConfig.isValidateMultipartOptimization());
+						}
 						this.openApi4j = TreeUtil.json.convertValue(context.getBaseDocument(), OpenApi3.class);
 						this.openApi4j.setContext(context);
 						

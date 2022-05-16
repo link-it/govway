@@ -20,11 +20,7 @@
 
 package org.openspcoop2.utils.io;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -33,10 +29,10 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.resources.Loader;
 
 /**
 * DumpByteArrayOutputStream
@@ -45,26 +41,51 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
  * @author $Author$
  * @version $Rev$, $Date$
 */
-public class DumpByteArrayOutputStream extends ByteArrayOutputStream {
+public class DumpByteArrayOutputStream extends OutputStream {
 
-	private int soglia = -1; // -1 senza soglia
-	private int attuale = 0;
-	private File repositoryFile = null;
-	private String idTransazione;
-	private String tipoMessaggio;
-	private File f = null;
-	private boolean fLocked = false;
+	private static String classImpl = DumpByteArrayOutputStream_FastImpl.class.getName();
+	public static String getClassImpl() {
+		return classImpl;
+	}
+	public static void setClassImpl(String classImpl) {
+		DumpByteArrayOutputStream.classImpl = classImpl;
+	}
 
-	private FileOutputStream fout = null;
+	private OutputStream impl;
+	private IDumpByteArrayOutputStream iImpl;
 	
 	public DumpByteArrayOutputStream() {
 		// non e' attivo alcun controllo di soglia
+		try {	
+			Loader l = new Loader();
+			this.impl = (OutputStream) l.newInstance_declaredConstructor(classImpl);
+			this.iImpl = (IDumpByteArrayOutputStream) this.impl;
+		}
+		catch(Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 	public DumpByteArrayOutputStream(int soglia, File repositoryFile, String idTransazione, String tipoMessaggio) {
-		this.soglia = soglia;
-		this.repositoryFile = repositoryFile;
-		this.idTransazione = idTransazione!=null ? idTransazione : getUniqueSerial();
-		this.tipoMessaggio = tipoMessaggio;
+		try {
+			Loader l = new Loader();
+			Integer s = soglia;
+			if(s>0) {
+				if(repositoryFile==null) {
+					throw new Exception("RepositoryFile undefined");
+				}
+				this.impl = (OutputStream) l.newInstance_declaredConstructor(classImpl, s, repositoryFile, 
+						idTransazione!=null ? idTransazione : getUniqueSerial(), 
+						tipoMessaggio!=null ? tipoMessaggio : "dump");
+			}
+			else {
+				// non e' attivo alcun controllo di soglia
+				this.impl = (OutputStream) l.newInstance_declaredConstructor(classImpl);
+			}
+			this.iImpl = (IDumpByteArrayOutputStream) this.impl;
+		}
+		catch(Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
 	}
 
 	public static DumpByteArrayOutputStream newInstance(byte[] content) {
@@ -72,7 +93,11 @@ public class DumpByteArrayOutputStream extends ByteArrayOutputStream {
 		if(content!=null && content.length>0) {
 			out = new DumpByteArrayOutputStream();
 			if(content!=null && content.length>0) {
-				out.writeBytes(content);
+				try {
+					out.write(content);
+				}catch(Exception e) {
+					throw new RuntimeException(e.getMessage(), e);
+				}
 			}
 		}
 		return out;
@@ -94,345 +119,99 @@ public class DumpByteArrayOutputStream extends ByteArrayOutputStream {
 	private static final String formatDir = "yyyyMMdd"; // compatibile con windows S.O.
 	private static final String formatNew = "yyyyMMdd_HHmmssSSS"; // compatibile con windows S.O.
 	private static final String prefix = "dump";
+	protected static File newFile(File repositoryFile, String tipoMessaggio, String idTransazione) throws Exception {
+		Date d = DateManager.getDate();
+		SimpleDateFormat dateformatDir = DateUtils.getDefaultDateTimeFormatter(formatDir);
+		String dateFormatDir = dateformatDir.format(d);
+		File fData = new File(repositoryFile, dateFormatDir);			
+		
+		SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter(formatNew);
+		String dateFormat = dateformat.format(d);
+		String nomeFile = prefix+tipoMessaggio+"_"+dateFormat+"_"+idTransazione.replaceAll("-", "_")+".bin";
+		File f = new File(fData, nomeFile);
+		FileSystemUtilities.mkdirParentDirectory(f);
+		return f;
+	}
 	
-	private void checkInitFile() throws Exception {
-		if(this.f==null) {
-			this._checkInitFile();
-		}
-	}
-	private synchronized void _checkInitFile() throws Exception {
-		if(this.f==null) {
-			Date d = DateManager.getDate();
-			SimpleDateFormat dateformatDir = DateUtils.getDefaultDateTimeFormatter(formatDir);
-			String dateFormatDir = dateformatDir.format(d);
-			File fData = new File(this.repositoryFile, dateFormatDir);			
-			
-			SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter(formatNew);
-			String dateFormat = dateformat.format(d);
-			String nomeFile = prefix+this.tipoMessaggio+"_"+dateFormat+"_"+this.idTransazione.replaceAll("-", "_")+".bin";
-			this.f = new File(fData, nomeFile);
-			FileSystemUtilities.mkdirParentDirectory(this.f);
-			super.flush();
-			super.close();
-			this.fout = new FileOutputStream(this.f);
-			if(super.size()>0) {
-				this.fout.write(super.toByteArray());
-			}
-		}
-	}
 	
 	public boolean isSerializedOnFileSystem() {
-		return this.f!=null;
+		return this.iImpl.isSerializedOnFileSystem();
 	}
 	public File getSerializedFile() {
-		return this.f;
+		return this.iImpl.getSerializedFile();
 	}
 
 	public void lock() {
-		this.fLocked = true;
+		this.iImpl.lock();
 	}
 	public void unlock() {
-		this.fLocked = false;
+		this.iImpl.unlock();
 	}
 	
 	@Override
-	public synchronized void write(int b) {
-		if(this.soglia>0) {
-			if(this.attuale>this.soglia) {
-				try {
-					this.attuale++;
-					
-					if(this.f==null) {
-						checkInitFile();
-					}
-					if(this.fout!=null) {
-						this.fout.write(b);
-					}
-					else {
-						throw new Exception("FileOutputStream '"+this.f.getAbsolutePath()+"' closed");
-					}
-				}catch(Throwable e) {
-					throw new RuntimeException(e.getMessage(),e);
-				}
-				return;
-			}
-		}
-		this.attuale++;
-		super.write(b);
+	public void write(int b) throws IOException {
+		this.iImpl.writeInBuffer(b);
 	}
 
 	@Override
-	public synchronized void write(byte[] b, int off, int len) {
-		if(this.soglia>0) {
-			if( (this.attuale>this.soglia) || ((this.attuale+len)>this.soglia) ) {
-				try {
-					this.attuale=this.attuale+len;
-					
-					if(this.f==null) {
-						checkInitFile();
-					}
-					if(this.fout!=null) {
-						this.fout.write(b, off, len);
-					}
-					else {
-						throw new Exception("FileOutputStream '"+this.f.getAbsolutePath()+"' closed");
-					}
-				}catch(Throwable e) {
-					throw new RuntimeException(e.getMessage(),e);
-				}
-				return;
-			}
-		}
-		this.attuale=this.attuale+len;
-		super.write(b, off, len);
+	public void write(byte[] b, int off, int len) throws IOException {
+		this.iImpl.writeInBuffer(b, off, len);
 	}
-
 
 	@Override
 	public void write(byte[] b) throws IOException {
-		if(this.soglia>0) {
-			if( (this.attuale>this.soglia) || ((this.attuale+b.length)>this.soglia) ) {
-				try {
-					this.attuale=this.attuale+b.length;
-					
-					if(this.f==null) {
-						checkInitFile();
-					}
-					if(this.fout!=null) {
-						this.fout.write(b);
-					}
-					else {
-						throw new Exception("FileOutputStream '"+this.f.getAbsolutePath()+"' closed");
-					}
-				}catch(Throwable e) {
-					throw new RuntimeException(e.getMessage(),e);
-				}
-				return;
-			}
-		}
-		this.attuale=this.attuale+b.length;
-		super.write(b);
-	}
-	
-	@Override
-	public void writeBytes(byte[] b) {
-		if(this.soglia>0) {
-			if( (this.attuale>this.soglia) || ((this.attuale+b.length)>this.soglia) ) {
-				try {
-					if(this.f==null) {
-						checkInitFile();
-					}
-					if(this.fout!=null) {
-						this.fout.write(b);
-					}
-					else {
-						throw new Exception("FileOutputStream '"+this.f.getAbsolutePath()+"' closed");
-					}
-				}catch(Throwable e) {
-					throw new RuntimeException(e.getMessage(),e);
-				}
-				return;
-			}
-		}
-		this.attuale=this.attuale+b.length;
-		super.writeBytes(b);
+		this.iImpl.writeInBuffer(b);
 	}
 
-	@Override
-	public synchronized void reset() {
-		clearResources();
+	
+	public void reset() {
+		this.iImpl.reset();
 	}
 	public void clearResources() {
-		if(this.f!=null) {
-			_clearResources();
-		}
-	}
-	private synchronized void _clearResources() {
-		if(this.f!=null && !this.fLocked) {
-			try {
-				if(this.fout!=null) {
-					this.fout.flush();
-					this.fout.close();
-					this.fout = null;
-				}
-				this.f.delete();
-				this.f = null;
-			}catch(Throwable e) {
-				throw new RuntimeException(e.getMessage(),e);
-			}
-		}
+		this.iImpl.clearResources();
 	}
 
 	
-	@Override
-	public synchronized int size() {
-		if(this.f!=null) {
-			try {
-				return (int) this.f.length();
-			}catch(Throwable e) {
-				throw new RuntimeException(e.getMessage(),e);
-			}
-		}
-		else {
-			return super.size();
-		}
+	public int size() {
+		return this.iImpl.size();
 	}
 	
 	
 	
-	@Override
-	public synchronized void writeTo(OutputStream out) throws IOException {
-		try {
-			this.close();
-		}catch(Throwable e) {
-			throw new RuntimeException(e.getMessage(),e);
-		}
-		if(this.f!=null) {
-			try {
-				CopyStream.copy(this.f, out);
-			}catch(Throwable e) {
-				throw new RuntimeException(e.getMessage(),e);
-			}
-		}
-		else {
-			super.writeTo(out);
-		}
+	public void writeTo(OutputStream out) throws IOException {
+		this.iImpl.writeTo(out);
 	}
 
-	
-	@Override
-	public synchronized byte[] toByteArray() {
-		try {
-			this.close();
-		}catch(Throwable e) {
-			throw new RuntimeException(e.getMessage(),e);
-		}
-		if(this.f!=null) {
-			try {
-				return FileSystemUtilities.readBytesFromFile(this.f);
-			}catch(Throwable e) {
-				throw new RuntimeException(e.getMessage(),e);
-			}
-		}
-		else {
-			return super.toByteArray();
-		}
+	public byte[] toByteArray() {
+		return this.iImpl.serializeToByteArray();
 	}
 
 	@Override
-	public synchronized String toString() {
-		try {
-			this.close();
-		}catch(Throwable e) {
-			throw new RuntimeException(e.getMessage(),e);
-		}
-		if(this.f!=null) {
-			try {
-				return FileSystemUtilities.readFile(this.f);
-			}catch(Throwable e) {
-				throw new RuntimeException(e.getMessage(),e);
-			}
-		}
-		else {
-			return super.toString();
-		}
+	public String toString() {
+		return this.iImpl.toString();
 	}
 
-	@Override
-	public synchronized String toString(String charsetName) throws UnsupportedEncodingException {
-		try {
-			this.close();
-		}catch(Throwable e) {
-			throw new RuntimeException(e.getMessage(),e);
-		}
-		if(this.f!=null) {
-			try {
-				return FileSystemUtilities.readFile(this.f, charsetName);
-			}catch(Throwable e) {
-				throw new RuntimeException(e.getMessage(),e);
-			}
-		}
-		else {
-			return super.toString(charsetName);
-		}
+	public String toString(String charsetName) throws UnsupportedEncodingException {
+		return this.iImpl.serializeToString(charsetName);
 	}
 
-	@Override
-	public synchronized String toString(Charset charset) {
-		try {
-			this.close();
-		}catch(Throwable e) {
-			throw new RuntimeException(e.getMessage(),e);
-		}
-		if(this.f!=null) {
-			try {
-				return FileSystemUtilities.readFile(this.f, charset);
-			}catch(Throwable e) {
-				throw new RuntimeException(e.getMessage(),e);
-			}
-		}
-		else {
-			return super.toString(charset);
-		}
+	public String toString(Charset charset) throws UnsupportedEncodingException {
+		return this.iImpl.serializeToString(charset);
 	}
 
-	@SuppressWarnings("deprecation")
-	@Override
-	public synchronized String toString(int hibyte) {
-		throw new RuntimeException("NotImplemented");
-	}
 
 	@Override
 	public void close() throws IOException {
-		if(this.f!=null) {
-			try {
-				if(this.fout!=null) {
-					this.fout.flush();
-					this.fout.close();
-					this.fout = null;
-				}
-			}catch(Throwable e) {
-				throw new RuntimeException(e.getMessage(),e);
-			}
-		}
-		else {
-			super.flush();
-			super.close();
-		}
+		this.iImpl.close();
 	}
 
 
 	@Override
 	public void flush() throws IOException {
-		if(this.f!=null) {
-			try {
-				if(this.fout!=null) {
-					this.fout.flush();
-				}
-			}catch(Throwable e) {
-				throw new RuntimeException(e.getMessage(),e);
-			}
-		}
-		else {
-			super.flush();
-		}
+		this.iImpl.flush();
 	}
 	
 	public InputStream getInputStream() {
-		try {
-			this.close();
-		}catch(Throwable e) {
-			throw new RuntimeException(e.getMessage(),e);
-		}
-		if(this.f!=null) {
-			try {
-				return new FileInputStream(this.f);
-			}catch(Throwable e) {
-				throw new RuntimeException(e.getMessage(),e);
-			}
-		}
-		else {
-			return new ByteArrayInputStream(super.toByteArray());
-		}
+		return this.iImpl.getInputStream();
 	}
 }

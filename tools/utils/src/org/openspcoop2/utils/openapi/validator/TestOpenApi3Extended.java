@@ -20,6 +20,7 @@
 
 
 package org.openspcoop2.utils.openapi.validator;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.URISyntaxException;
@@ -51,7 +52,10 @@ import org.openspcoop2.utils.rest.entity.BinaryHttpRequestEntity;
 import org.openspcoop2.utils.rest.entity.BinaryHttpResponseEntity;
 import org.openspcoop2.utils.rest.entity.DocumentHttpResponseEntity;
 import org.openspcoop2.utils.rest.entity.ElementHttpResponseEntity;
+import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseResponseEntity;
+import org.openspcoop2.utils.rest.entity.InputStreamHttpRequestEntity;
+import org.openspcoop2.utils.rest.entity.InputStreamHttpResponseEntity;
 import org.openspcoop2.utils.rest.entity.TextHttpRequestEntity;
 import org.openspcoop2.utils.rest.entity.TextHttpResponseEntity;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -3420,9 +3424,18 @@ public class TestOpenApi3Extended {
 		
 		if (openAPILibrary == OpenAPILibrary.openapi4j)  {
 		
-			testMultipartRequest(openAPILibrary, mergeSpec);
+			boolean stream = true;
+			boolean multipartOptimization = true;
 			
-			testMultipartRequestAsArray(openAPILibrary, mergeSpec);
+			testMultipartRequest(openAPILibrary, mergeSpec, !stream, !multipartOptimization);
+			testMultipartRequest(openAPILibrary, mergeSpec, stream, !multipartOptimization);
+			testMultipartRequest(openAPILibrary, mergeSpec, !stream, multipartOptimization);
+			testMultipartRequest(openAPILibrary, mergeSpec, stream, multipartOptimization);
+			
+			testMultipartRequestAsArray(openAPILibrary, mergeSpec, !stream, !multipartOptimization);
+			testMultipartRequestAsArray(openAPILibrary, mergeSpec, stream, !multipartOptimization);
+			testMultipartRequestAsArray(openAPILibrary, mergeSpec, !stream, multipartOptimization);
+			testMultipartRequestAsArray(openAPILibrary, mergeSpec, stream, multipartOptimization);
 			
 		}
 		else {
@@ -3891,9 +3904,10 @@ public class TestOpenApi3Extended {
 
 	}
 	
-	private static void testMultipartRequest(OpenAPILibrary openAPILibrary, boolean mergeSpec)
+	private static void testMultipartRequest(OpenAPILibrary openAPILibrary, boolean mergeSpec,
+			boolean stream, boolean multipartOptimization)
 			throws UtilsException, ProcessingException, URISyntaxException, Exception {
-		System.out.println("#### Verifica Multipart Request ####");
+		System.out.println("#### Verifica Multipart Request (stream:"+stream+" multipartOptimization:"+multipartOptimization+") ####");
 		
 		URL url = TestOpenApi3Extended.class.getResource("/org/openspcoop2/utils/openapi/allegati.yaml");
 					
@@ -3913,6 +3927,7 @@ public class TestOpenApi3Extended {
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
+		configO.getOpenApiValidatorConfig().setValidateMultipartOptimization(multipartOptimization);
 		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi4j, configO);
 
 		String cat = "{\"pet_type\": \"Cat\",  \"age\": 3}";
@@ -4249,7 +4264,7 @@ public class TestOpenApi3Extended {
 			// *** Test ERRORE 1: ulteriore attachment non previsto ***
 			
 			tipoTest.add("ERROR-1: attachment ulteriore, non previsto");
-			if(macroTestPath.endsWith("optionalWithoutEncoding")) {
+			if(macroTestPath.endsWith("optionalWithoutEncoding") || multipartOptimization) {
 				erroreAttesoTest.add(false);
 				msgErroreAttesoTest.add(null);
 				msgErroreAttesoRispostaTest.add(null);
@@ -4450,7 +4465,7 @@ public class TestOpenApi3Extended {
 			// *** Test ERRORE 7: parametro docPdf non presente ***
 			
 			tipoTest.add("ERROR-7: parametro docPdf non presente");
-			if(macroTestPath.endsWith("optionalWithoutEncoding")) {
+			if(macroTestPath.endsWith("optionalWithoutEncoding") || multipartOptimization) {
 				erroreAttesoTest.add(false);
 				msgErroreAttesoTest.add(null);
 				msgErroreAttesoRispostaTest.add(null);
@@ -4489,7 +4504,7 @@ public class TestOpenApi3Extended {
 			// *** Test ERRORE 8: parametro docPdf non dichiarato tramite name ***
 			
 			tipoTest.add("ERROR-8: parametro docPdf non dichiarato tramite name");
-			if(macroTestPath.endsWith("optionalWithoutEncoding")) {
+			if(macroTestPath.endsWith("optionalWithoutEncoding") || multipartOptimization) {
 				erroreAttesoTest.add(false);
 				msgErroreAttesoTest.add(null);
 				msgErroreAttesoRispostaTest.add(null);
@@ -4635,10 +4650,17 @@ public class TestOpenApi3Extended {
 				
 				System.out.println("\tTest Richiesta ["+tipo+"] path:"+path+" ...");
 				
-				BinaryHttpRequestEntity request = new BinaryHttpRequestEntity();
+				HttpBaseRequestEntity<?> request = null;
+				if(stream) {
+					request= new InputStreamHttpRequestEntity();
+					((InputStreamHttpRequestEntity)request).setContent(new ByteArrayInputStream(os.toByteArray()));
+				}
+				else {
+					request = new BinaryHttpRequestEntity();
+					((BinaryHttpRequestEntity)request).setContent(os.toByteArray());
+				}
 				request.setUrl(path);	
 				request.setMethod(method);
-				request.setContent(os.toByteArray());
 				Map<String, List<String>> parametersTrasporto = new HashMap<>();
 				TransportUtils.addHeader(parametersTrasporto,HttpConstants.CONTENT_TYPE, contentTypeSwA);
 				request.setHeaders(parametersTrasporto);
@@ -4663,7 +4685,15 @@ public class TestOpenApi3Extended {
 				
 				System.out.println("\tTest Risposta ["+tipo+"] path:"+path+" ...");
 				
-				BinaryHttpResponseEntity response = new BinaryHttpResponseEntity();
+				HttpBaseResponseEntity<?> response = null;
+				if(stream) {
+					response= new InputStreamHttpResponseEntity();
+					((InputStreamHttpResponseEntity)response).setContent(new ByteArrayInputStream(os.toByteArray()));
+				}
+				else {
+					response = new BinaryHttpResponseEntity();
+					((BinaryHttpResponseEntity)response).setContent(os.toByteArray());
+				}
 				
 				response.setStatus(200);		
 				response.setMethod(method);
@@ -4672,7 +4702,6 @@ public class TestOpenApi3Extended {
 				TransportUtils.setHeader(responseHeaders,HttpConstants.CONTENT_TYPE, contentTypeSwA);
 				response.setHeaders(responseHeaders);
 				response.setContentType(contentTypeSwA);
-				response.setContent(os.toByteArray());
 			
 				try {				
 					apiValidatorOpenApi4j.validate(response);
@@ -4693,13 +4722,14 @@ public class TestOpenApi3Extended {
 				
 		}
 
-		System.out.println("TEST Verifica Multipart Request completato!");
+		System.out.println("TEST Verifica Multipart Request completato (stream:"+stream+" multipartOptimization:"+multipartOptimization+")!");
 
 	}
 	
-	private static void testMultipartRequestAsArray(OpenAPILibrary openAPILibrary, boolean mergeSpec)
+	private static void testMultipartRequestAsArray(OpenAPILibrary openAPILibrary, boolean mergeSpec,
+			boolean stream, boolean multipartOptimization)
 			throws UtilsException, ProcessingException, URISyntaxException, Exception {
-		System.out.println("#### Verifica Multipart Request as array ####");
+		System.out.println("#### Verifica Multipart Request as array (stream:"+stream+" multipartOptimization:"+multipartOptimization+") ####");
 		
 		URL url = TestOpenApi3Extended.class.getResource("/org/openspcoop2/utils/openapi/allegati.yaml");
 					
@@ -4892,10 +4922,17 @@ public class TestOpenApi3Extended {
 				
 				System.out.println("\tTest Richiesta ["+tipo+"] path:"+path+" ...");
 				
-				BinaryHttpRequestEntity request = new BinaryHttpRequestEntity();
+				HttpBaseRequestEntity<?> request = null;
+				if(stream) {
+					request= new InputStreamHttpRequestEntity();
+					((InputStreamHttpRequestEntity)request).setContent(new ByteArrayInputStream(os.toByteArray()));
+				}
+				else {
+					request = new BinaryHttpRequestEntity();
+					((BinaryHttpRequestEntity)request).setContent(os.toByteArray());
+				}
 				request.setUrl(path);	
 				request.setMethod(method);
-				request.setContent(os.toByteArray());
 				Map<String, List<String>> parametersTrasporto = new HashMap<>();
 				TransportUtils.addHeader(parametersTrasporto,HttpConstants.CONTENT_TYPE, contentTypeSwA);
 				request.setHeaders(parametersTrasporto);
@@ -4920,7 +4957,15 @@ public class TestOpenApi3Extended {
 				
 				System.out.println("\tTest Risposta ["+tipo+"] path:"+path+" ...");
 				
-				BinaryHttpResponseEntity response = new BinaryHttpResponseEntity();
+				HttpBaseResponseEntity<?> response = null;
+				if(stream) {
+					response= new InputStreamHttpResponseEntity();
+					((InputStreamHttpResponseEntity)response).setContent(new ByteArrayInputStream(os.toByteArray()));
+				}
+				else {
+					response = new BinaryHttpResponseEntity();
+					((BinaryHttpResponseEntity)response).setContent(os.toByteArray());
+				}
 				
 				response.setStatus(200);		
 				response.setMethod(method);
@@ -4929,7 +4974,6 @@ public class TestOpenApi3Extended {
 				TransportUtils.setHeader(responseHeaders,HttpConstants.CONTENT_TYPE, contentTypeSwA);
 				response.setHeaders(responseHeaders);
 				response.setContentType(contentTypeSwA);
-				response.setContent(os.toByteArray());
 			
 				try {				
 					apiValidatorOpenApi4j.validate(response);
@@ -4951,7 +4995,7 @@ public class TestOpenApi3Extended {
 			
 		}
 
-		System.out.println("TEST Verifica Multipart Request as array completato!");
+		System.out.println("TEST Verifica Multipart Request as array completato (stream:"+stream+" multipartOptimization:"+multipartOptimization+")!");
 
 	}
 }

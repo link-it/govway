@@ -165,6 +165,89 @@ public class Loader {
 		return constructor.newInstance(params);
 	}
 	
+	public Object newInstance_declaredConstructor(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
+		return this.newInstance_declaredConstructor(forName(className));
+	}
+	public Object newInstance_declaredConstructor(Class<?> c) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
+		Constructor<?> constructor = c.getDeclaredConstructor();
+		constructor.setAccessible(true);
+		return constructor.newInstance();
+	}
+	
+	public Object newInstance_declaredConstructor(String className,Object ... params) throws ClassNotFoundException, InstantiationException, IllegalAccessException, SecurityException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException{
+		if(params==null || params.length<=0){
+			return newInstance_declaredConstructor(className);
+		}
+		Class<?> c = forName(className);
+		return this.newInstance_declaredConstructor(c, params);
+	}
+	public Object newInstance_declaredConstructor(Class<?> c,Object ... params) throws ClassNotFoundException, InstantiationException, IllegalAccessException, SecurityException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException{
+		if(params==null || params.length<=0){
+			return newInstance(c);
+		}
+		
+		Constructor<?> constructor = null;
+		if(params.length==1){
+			constructor = c.getDeclaredConstructor(params[0].getClass());
+		}
+		else if(params.length==2){
+			constructor = c.getDeclaredConstructor(params[0].getClass(),params[1].getClass());
+		}
+		else if(params.length==3){
+			constructor = c.getDeclaredConstructor(params[0].getClass(),params[1].getClass(),params[2].getClass());
+		}
+		else if(params.length==4){
+			constructor = c.getDeclaredConstructor(params[0].getClass(),params[1].getClass(),params[2].getClass(),
+					params[3].getClass());
+		}
+		else if(params.length==5){
+			constructor = c.getDeclaredConstructor(params[0].getClass(),params[1].getClass(),params[2].getClass(),
+					params[3].getClass(),params[4].getClass());
+		}
+		else if(params.length==6){
+			constructor = c.getDeclaredConstructor(params[0].getClass(),params[1].getClass(),params[2].getClass(),
+					params[3].getClass(),params[4].getClass(),params[5].getClass());
+		}
+		else if(params.length==7){
+			constructor = c.getDeclaredConstructor(params[0].getClass(),params[1].getClass(),params[2].getClass(),
+					params[3].getClass(),params[4].getClass(),params[5].getClass(),
+					params[6].getClass());
+		}
+		else if(params.length==8){
+			constructor = c.getDeclaredConstructor(params[0].getClass(),params[1].getClass(),params[2].getClass(),
+					params[3].getClass(),params[4].getClass(),params[5].getClass(),
+					params[6].getClass(),params[7].getClass());
+		}
+		else if(params.length==9){
+			constructor = c.getDeclaredConstructor(params[0].getClass(),params[1].getClass(),params[2].getClass(),
+					params[3].getClass(),params[4].getClass(),params[5].getClass(),
+					params[6].getClass(),params[7].getClass(),params[8].getClass());
+		}
+		else if(params.length==10){
+			constructor = c.getDeclaredConstructor(params[0].getClass(),params[1].getClass(),params[2].getClass(),
+					params[3].getClass(),params[4].getClass(),params[5].getClass(),
+					params[6].getClass(),params[7].getClass(),params[8].getClass(),
+					params[9].getClass());
+		}
+		else if(params.length==11){
+			constructor = c.getDeclaredConstructor(params[0].getClass(),params[1].getClass(),params[2].getClass(),
+					params[3].getClass(),params[4].getClass(),params[5].getClass(),
+					params[6].getClass(),params[7].getClass(),params[8].getClass(),
+					params[9].getClass(),params[10].getClass());
+		}
+		else if(params.length==12){
+			constructor = c.getDeclaredConstructor(params[0].getClass(),params[1].getClass(),params[2].getClass(),
+					params[3].getClass(),params[4].getClass(),params[5].getClass(),
+					params[6].getClass(),params[7].getClass(),params[8].getClass(),
+					params[9].getClass(),params[10].getClass(),params[11].getClass());
+		}
+		else{
+			throw new InstantiationException("Method not supported more than 12 parameters");
+		}
+		constructor.setAccessible(true);
+		return constructor.newInstance(params);
+	}
+	
 	public Class<?> forName(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException{
 		Class<?> c = null;
 		if(this.classLoader!=null){

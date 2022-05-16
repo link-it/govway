@@ -1521,6 +1521,7 @@ public class OpenSPCoop2Properties {
 			this.isLoggerSaajDisabilitato();
 			
 			// Dump
+			this.getDumpBufferImpl();
 			this.isDumpAllAttachments();
 			this.isDumpFallito_BloccaCooperazioneInCorso();
 			this.isDumpFallito_BloccoServiziPdD();
@@ -1821,6 +1822,7 @@ public class OpenSPCoop2Properties {
 			this.isValidazioneContenutiApplicativi_openApi_validateResponseHeaders();
 			this.isValidazioneContenutiApplicativi_openApi_validateResponseBody();
 			this.isValidazioneContenutiApplicativi_openApi_validateWildcardSubtypeAsJson();
+			this.isValidazioneContenutiApplicativi_openApi_validateMultipartOptimization();
 			this.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_injectingAdditionalPropertiesFalse();
 			this.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_resolveFullyApiSpec();
 			this.isValidazioneContenutiApplicativi_openApi_openapi4j_validateBase64Values();
@@ -16521,6 +16523,31 @@ public class OpenSPCoop2Properties {
 	
 	
 	/* ----------- Dump --------------------- */
+	
+	private static String getDumpBufferImpl = null;
+	private static Boolean getDumpBufferImpl_read = null;
+	public String getDumpBufferImpl() {	
+		if(OpenSPCoop2Properties.getDumpBufferImpl_read==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.buffer.impl";
+			
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getDumpBufferImpl = name;
+				}
+				
+				OpenSPCoop2Properties.getDumpBufferImpl_read = true;
+				
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}    
+		}
+
+		return OpenSPCoop2Properties.getDumpBufferImpl;
+	}
+	
 	/**
 	 * Indicazione se la porta di dominio deve registrare tutti gli attachments (in caso di dump abilitato) o solo quelli "visualizzabili"
 	 *   
@@ -18994,6 +19021,32 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_validateWildcardSubtypeAsJson;
+	}
+	
+	private static Boolean isValidazioneContenutiApplicativi_openApi_validateMultipartOptimization = null;
+	public boolean isValidazioneContenutiApplicativi_openApi_validateMultipartOptimization(){
+
+		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.validateMultipartOptimization";
+		
+		if(OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_validateMultipartOptimization==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_validateMultipartOptimization = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_validateMultipartOptimization = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_validateMultipartOptimization = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_validateMultipartOptimization;
 	}
 	
 	private static Boolean isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_injectingAdditionalPropertiesFalse = null;

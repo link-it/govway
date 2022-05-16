@@ -18,7 +18,7 @@
 		<jar.group.name>openapi4j</jar.group.name>
 		
 		<openapi4j.version>1.0.4</openapi4j.version>
-		<openapi4j.gov4j.version>1.0.4-gov4j-7</openapi4j.gov4j.version>
+		<openapi4j.gov4j.version>1.0.4-gov4j-8</openapi4j.gov4j.version>
 
 	</properties>
 

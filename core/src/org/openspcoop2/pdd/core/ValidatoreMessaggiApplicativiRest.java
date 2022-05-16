@@ -183,6 +183,7 @@ public class ValidatoreMessaggiApplicativiRest {
 				this.configOpenApiValidator.setValidateResponseHeaders(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateResponseHeaders());
 				this.configOpenApiValidator.setValidateResponseBody(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateResponseBody());
 				this.configOpenApiValidator.setValidateWildcardSubtypeAsJson(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateWildcardSubtypeAsJson());
+				this.configOpenApiValidator.setValidateMultipartOptimization(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateMultipartOptimization());
 				this.configOpenApiValidator.setSwaggerRequestValidator_InjectingAdditionalPropertiesFalse(this.op2Properties.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_injectingAdditionalPropertiesFalse());
 				this.configOpenApiValidator.setSwaggerRequestValidator_ResolveFullyApiSpec(this.op2Properties.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_resolveFullyApiSpec());
 			}
@@ -876,6 +877,23 @@ public class ValidatoreMessaggiApplicativiRest {
 			}
 			else if(disabled.equals(validateWildcardSubtypeAsJson.trim())) {
 				configOpenApi4j.setValidateWildcardSubtypeAsJson(false);
+			}
+		}
+		
+		if(openapi4j) {
+			String validateMultipartOptimization = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
+					//openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_MULTIPART_OPTIMIZATION : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_MULTIPART_OPTIMIZATION);
+					CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_MULTIPART_OPTIMIZATION);
+			if(validateMultipartOptimization==null || StringUtils.isEmpty(validateMultipartOptimization)) {
+				validateMultipartOptimization = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_VALIDATE_MULTIPART_OPTIMIZATION);
+			}
+			if(validateMultipartOptimization!=null && !StringUtils.isEmpty(validateMultipartOptimization)) {
+				if(enabled.equals(validateMultipartOptimization.trim())) {
+					configOpenApi4j.setValidateMultipartOptimization(true);
+				}
+				else if(disabled.equals(validateMultipartOptimization.trim())) {
+					configOpenApi4j.setValidateMultipartOptimization(false);
+				}
 			}
 		}
 		

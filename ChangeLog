@@ -1,3 +1,18 @@
+2022-05-16  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, Utils]
+	Aggiunta funzionalità OP-1363
+	La validazione delle richieste multipart/form-data (o mixed) prevede per default il processamento di tutto lo stream.
+	Poichè le parti "binarie" non richiedono una validazione rispetto ad uno schema e sono tipicamente serializzate dopo i metadati (plain o json) 
+	potrebbero essere "saltate" terminando l'analisi dello stream dopo aver validato i metadati in modo da avere benefici prestazionali 
+	visto che tipicamente le parti binarie rappresentano la maggior dimensione del messaggio in termini di bytes.
+	È stata introdotta la possibilità di attivare l'ottimizzazione sopra indicata nel caso di libreria 'Openapi4j'.
+	Poichè se attivata l'ottimizzazione non consente di individuare se esistono part non definite nella specifica (in presenza di 'additionalProperties=false') 
+	il comportamento di default è quello di non usare l'ottimizzazione.
+	Nell'intervento è stata anche aggiunta un'ottimizzazione riguardante la classe di utilità org.openspcoop2.utls.io.DumpByteArrayOutputStream che consente di bufferizzare uno stream.
+	L'utility è adesso configurabile per selezionare il buffer utilizzato (precedentemente solo 'java.io.ByteArrayOutputStream') e 
+	per default utilizza adesso l'implementazione 'org.springframework.util.FastByteArrayOutputStream'.
+
 2022-05-12  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, Utils]

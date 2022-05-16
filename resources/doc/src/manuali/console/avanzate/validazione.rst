@@ -26,6 +26,10 @@ Se invece si vuole modificare il tipo di validazione effettuata con i motori 'op
 - *validation.openApi.validateResponseBody* (default: true): viene effettuata la validazione del payload http della risposta;
 - *validation.openApi.mergeAPISpec* (default: true): eventuali schemi esterni json o yaml vengono aggiunti all'OpenAPI principale prima di procedere con la validazione.
 
+Per il motore di validazione 'openapi4j' sono disponibili le ultiori proprietà:
+
+- *validation.openApi4j.validateMultipartOptimization* (default: false): attiva il processamento ottimizzato delle richieste multipart/form-data (o mixed). L'ottimizzazione sfrutta l'ipotesi che le parti "binarie", che non richiedono una validazione rispetto ad uno schema, sono tipicamente serializzate dopo i metadati (plain o json) e possono quindi essere "saltate" terminando l'analisi dello stream dopo aver validato i metadati in modo da avere benefici prestazionali visto che tipicamente le parti binarie rappresentano la maggior dimensione del messaggio in termini di bytes. Poichè se attivata l'ottimizzazione non consente di individuare se esistono part non definite nella specifica (in presenza di 'additionalProperties=false') il comportamento di default è quello di non usare l'ottimizzazione.
+
 Per il motore di validazione 'swagger-request-validator' sono disponibili le ultiori proprietà:
 
 - *validation.swaggerRequestValidator.validateWildcardSubtypeAsJson* (default: true): consente di indicare se le richieste associate a media type definiti con il carattere '\*' nel subtype (es. application/\*) debbano essere validate come richieste json;

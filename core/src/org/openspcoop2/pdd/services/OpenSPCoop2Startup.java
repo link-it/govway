@@ -199,6 +199,7 @@ import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.digest.MessageDigestFactory;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.id.serial.InfoStatistics;
+import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.resources.FileSystemMkdirConfig;
@@ -656,6 +657,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					" type="+org.openspcoop2.utils.Semaphore.getSemaphoreType()+
 					" fair="+org.openspcoop2.utils.Semaphore.isFair());
 			
+
 			
 
 
@@ -787,7 +789,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				OpenSPCoop2MessageFactory.setMessageFactoryImpl(classNameReader.getOpenSPCoop2MessageFactory(propertiesReader.getOpenspcoop2MessageFactory()));
 				OpenSPCoop2MessageFactory.initDefaultMessageFactory(true);
 				
-				// Buffer
+				// Buffer Dump
+				if(propertiesReader.getDumpBufferImpl()!=null && !"".equals(propertiesReader.getDumpBufferImpl())) {
+					DumpByteArrayOutputStream.setClassImpl(propertiesReader.getDumpBufferImpl());
+				}
+				OpenSPCoop2Startup.log.info("DumpByteArrayOutputStream buffer implementation: "+DumpByteArrayOutputStream.getClassImpl());
 				OpenSPCoop2Startup.log.info("DumpBinario set buffer threshold: "+propertiesReader.getDumpBinario_inMemoryThreshold());
 				AbstractBaseOpenSPCoop2MessageDynamicContent.setSoglia(propertiesReader.getDumpBinario_inMemoryThreshold());
 				OpenSPCoop2Startup.log.info("DumpBinario set buffer repository: "+propertiesReader.getDumpBinario_repository());

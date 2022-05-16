@@ -313,7 +313,7 @@ public class Utilities {
 			return null;
 		}
 	}
-	public static void writeAsByteArrayOuputStream(ByteArrayOutputStream bout, InputStream isParam,boolean throwExceptionInputStreamEmpty) throws UtilsException{
+	public static void writeAsByteArrayOuputStream(OutputStream bout, InputStream isParam,boolean throwExceptionInputStreamEmpty) throws UtilsException{
 		try{
 			if(isParam==null){
 				if(throwExceptionInputStreamEmpty){

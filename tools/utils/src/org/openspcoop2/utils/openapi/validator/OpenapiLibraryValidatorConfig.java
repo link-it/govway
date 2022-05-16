@@ -51,6 +51,15 @@ public class OpenapiLibraryValidatorConfig {
 	// Dice se trattare il subtype '*' come json e quindi validare lo schema del body passato
 	private boolean validateWildcardSubtypeAsJson = true;
 	
+	// La validazione delle richieste multipart/form-data (o mixed) prevede per default il processamento di tutto lo stream.
+	// Poichè le parti "binarie" non richiedono una validazione rispetto ad uno schema e sono tipicamente serializzate dopo i metadati (plain o json) 
+	// potrebbero essere "saltate" terminando l'analisi dello stream dopo aver validato i metadati in modo da avere benefici prestazionali visto che tipicamente le parti binarie rappresentano 
+	// la maggior dimensione del messaggio in termini di bytes.
+	// L'ottimizzazione sopra indicata non consente però di verificare se esistono part non definite nella specifica da segnalare come non validi quando viene definito l'additionalProperties=false.
+	// Per il motivo precedentemente indicato l'ottimizzazione non è abilitata per default.
+	// NOTA: feature supportata solamente dalla libreria openapi4j.
+	private boolean validateMultipartOptimization = false;
+	
 	/* La libreria swagger_request_validator utilizza per default un transformer che aggiunge additionalProperties=false negli schemi (true)
 	 * Tramite la seguente proprietà è possibile disattivarlo.
 	 * È necessario disattivarlo per poter validare correttamente gli schemi che definiscono tale proprietà a true.
@@ -162,6 +171,14 @@ public class OpenapiLibraryValidatorConfig {
 		this.validateWildcardSubtypeAsJson = validateWildcardSubtypeAsJson;
 	}
 
+	public boolean isValidateMultipartOptimization() {
+		return this.validateMultipartOptimization;
+	}
+
+	public void setValidateMultipartOptimization(boolean validateMultipartOptimization) {
+		this.validateMultipartOptimization = validateMultipartOptimization;
+	}
+	
 	public boolean isSwaggerRequestValidator_InjectingAdditionalPropertiesFalse() {
 		return this.swaggerRequestValidator_injectingAdditionalPropertiesFalse;
 	}
