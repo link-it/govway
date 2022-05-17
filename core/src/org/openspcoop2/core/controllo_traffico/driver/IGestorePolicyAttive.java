@@ -24,6 +24,7 @@ import java.io.OutputStream;
 
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.ConfigurazioneControlloTraffico;
+import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
 import org.slf4j.Logger;
 
 /**
@@ -37,7 +38,7 @@ public interface IGestorePolicyAttive {
 
 	public void initialize(Logger log, Object ... params) throws PolicyException;
 	
-	public IPolicyGroupByActiveThreads getActiveThreadsPolicy(ActivePolicy activePolicy) throws PolicyShutdownException,PolicyException;
+	public IPolicyGroupByActiveThreads getActiveThreadsPolicy(ActivePolicy activePolicy, DatiTransazione datiTransazione, Object state) throws PolicyShutdownException,PolicyException;
 	
 	public IPolicyGroupByActiveThreads getActiveThreadsPolicy(String idActivePolicy) throws PolicyShutdownException,PolicyException,PolicyNotFoundException;
 	

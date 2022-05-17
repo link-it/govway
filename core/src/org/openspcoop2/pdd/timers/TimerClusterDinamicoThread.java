@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.timers;
 
 import org.openspcoop2.pdd.config.DynamicClusterManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.PolicyVerifier;
 import org.openspcoop2.utils.threads.BaseThread;
 import org.slf4j.Logger;
 
@@ -47,6 +48,8 @@ public class TimerClusterDinamicoThread extends BaseThread{
 	private OpenSPCoop2Properties properties;
 	private DynamicClusterManager manager;
 	
+	/** GestioneRateLimiting */
+	private boolean gestioneRateLimiting;
 		
 	
 	/** Costruttore */
@@ -58,6 +61,13 @@ public class TimerClusterDinamicoThread extends BaseThread{
 		this.setTimeout(this.properties.getClusterDinamicoRefreshSecondsInterval());
 
 		this.manager = DynamicClusterManager.getInstance();
+		
+		this.gestioneRateLimiting = this.properties.isControlloTrafficoGestioneCluster();
+		if(this.gestioneRateLimiting) {
+			PolicyVerifier.cluster_limit_roundingDown = this.properties.isControlloTrafficoGestioneCluster_limit_roundingDown();
+			PolicyVerifier.cluster_limit_normalizedQuota = this.properties.isControlloTrafficoGestioneCluster_limit_normalizedQuota();
+			PolicyVerifier.cluster_remaining_zeroValue = this.properties.isControlloTrafficoGestioneCluster_remaining_zeroValue();
+		}
 	}
 	
 	
@@ -72,6 +82,13 @@ public class TimerClusterDinamicoThread extends BaseThread{
 				this.log.error("Errore durante l'aggiornamento del cluster id dinamico: "+e.getMessage(),e);
 			}
 	    	
+	    	try {
+	    		if(this.gestioneRateLimiting ) {
+	    			PolicyVerifier.listClusterNodes = this.manager.getHostnames(this.log);
+	    		}
+	    	}catch(Exception e){
+				this.log.error("Errore durante l'aggiornamento della lista dei nodi per il rate limiting: "+e.getMessage(),e);
+			}
 		}
 		else {
 			this.log.info("Timer "+ID_MODULO+" disabilitato");

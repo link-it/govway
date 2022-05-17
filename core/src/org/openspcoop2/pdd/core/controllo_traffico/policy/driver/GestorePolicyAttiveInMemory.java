@@ -36,17 +36,20 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.ConfigurazioneControlloTraffico;
 import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
+import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
 import org.openspcoop2.core.controllo_traffico.driver.IGestorePolicyAttive;
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreads;
+import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreadsInMemory;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyShutdownException;
 import org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbDeserializer;
 import org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbSerializer;
 import org.openspcoop2.protocol.basic.Costanti;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.ZipUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -65,8 +68,8 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	/** 
 	 * Threads allocati sulle Policy. La chiave è l'active-policy-id
 	 **/
-	private Map<String, PolicyGroupByActiveThreads> mapActiveThreadsPolicy = 
-			new HashMap<String, PolicyGroupByActiveThreads>();
+	private Map<String, IPolicyGroupByActiveThreadsInMemory> mapActiveThreadsPolicy = 
+			new HashMap<String, IPolicyGroupByActiveThreadsInMemory>();
 	private final org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("GestorePolicyAttiveInMemory");
 	
 	private static final String IMPL_DESCR = "Implementazione InMemory IGestorePolicyAttive";
@@ -75,16 +78,26 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	}
 	
 	private Logger log;
+	private PolicyGroupByActiveThreadsInMemoryEnum type;
 	@Override
 	public void initialize(Logger log, Object ... params) throws PolicyException{
 		this.log = log;
+		if(params!=null && params.length>0) {
+			Object o = params[0];
+			if(o!=null && o instanceof PolicyGroupByActiveThreadsInMemoryEnum) {
+				this.type = (PolicyGroupByActiveThreadsInMemoryEnum) o;
+			}
+		}
+		if(this.type==null) {
+			this.type = PolicyGroupByActiveThreadsInMemoryEnum.LOCAL;
+		}
 	}
 	
 	private boolean isStop = false;
 	
 	
 	@Override
-	public IPolicyGroupByActiveThreads getActiveThreadsPolicy(ActivePolicy activePolicy) throws PolicyShutdownException,PolicyException {		
+	public IPolicyGroupByActiveThreads getActiveThreadsPolicy(ActivePolicy activePolicy,DatiTransazione datiTransazione, Object state) throws PolicyShutdownException,PolicyException {		
 		
 		String uniqueIdMap = UniqueIdentifierUtilities.getUniqueId(activePolicy.getInstanceConfiguration());
 				
@@ -96,14 +109,14 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 				throw new PolicyShutdownException("Policy Manager shutdown");
 			}
 			
-			PolicyGroupByActiveThreads active = null;
+			IPolicyGroupByActiveThreadsInMemory active = null;
 			//System.out.println("@@@ getActiveThreadsPolicy["+uniqueIdMap+"] contains["+this.mapActiveThreadsPolicy.containsKey(uniqueIdMap)+"]...");
 			if(this.mapActiveThreadsPolicy.containsKey(uniqueIdMap)){
 				active = this.mapActiveThreadsPolicy.get(uniqueIdMap);
 				//System.out.println("@@@ getActiveThreadsPolicy["+uniqueIdMap+"] GET");
 			}
 			else{
-				active = new PolicyGroupByActiveThreads(activePolicy);
+				active = newPolicyGroupByActiveThreadsInMemory(activePolicy, uniqueIdMap, datiTransazione, state);
 				this.mapActiveThreadsPolicy.put(uniqueIdMap, active);
 				//System.out.println("@@@ getActiveThreadsPolicy["+uniqueIdMap+"] CREATE");
 			}
@@ -122,7 +135,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 				throw new PolicyShutdownException("Policy Manager shutdown");
 			}
 			
-			PolicyGroupByActiveThreads active = null;
+			IPolicyGroupByActiveThreads active = null;
 			//System.out.println("@@@ getActiveThreadsPolicy["+uniqueIdMap+"] contains["+this.mapActiveThreadsPolicy.containsKey(uniqueIdMap)+"]...");
 			if(this.mapActiveThreadsPolicy.containsKey(uniqueIdMap)){
 				active = this.mapActiveThreadsPolicy.get(uniqueIdMap);
@@ -322,7 +335,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 					zipOut.write(idActivePolicy.getBytes());
 					
 					// GroupByThread
-					PolicyGroupByActiveThreads active = this.mapActiveThreadsPolicy.get(idActivePolicy);
+					IPolicyGroupByActiveThreadsInMemory active = this.mapActiveThreadsPolicy.get(idActivePolicy);
 					if(active!=null){
 						
 						ActivePolicy activePolicy = active.getActivePolicy();
@@ -576,7 +589,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 		}
 	}
 	
-	private PolicyGroupByActiveThreads buildPolicyGroupByActiveThreads(ConfigurazionePolicy configurazionePolicy,
+	private IPolicyGroupByActiveThreadsInMemory buildPolicyGroupByActiveThreads(ConfigurazionePolicy configurazionePolicy,
 			AttivazionePolicy attivazionePolicy, Map<IDUnivocoGroupByPolicy, DatiCollezionati> map,
 			ConfigurazioneControlloTraffico configurazioneControlloTraffico) throws Exception{
 		
@@ -596,7 +609,10 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 		activePolicy.setInstanceConfiguration(attivazionePolicy);
 		activePolicy.setTipoRisorsaPolicy(TipoRisorsa.toEnumConstant(configurazionePolicy.getRisorsa(), true));		
 		
-		PolicyGroupByActiveThreads p = new PolicyGroupByActiveThreads(activePolicy);
+		String uniqueIdMap = UniqueIdentifierUtilities.getUniqueId(activePolicy.getInstanceConfiguration());
+		IPolicyGroupByActiveThreadsInMemory p = newPolicyGroupByActiveThreadsInMemory(activePolicy, uniqueIdMap,
+				null, null);
+		
 		if(map!=null && map.size()>0){
 			for (IDUnivocoGroupByPolicy id : map.keySet()) {
 				map.get(id).initActiveRequestCounter();
@@ -606,6 +622,22 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 		
 		return p;
 		
+	}
+	
+	private IPolicyGroupByActiveThreadsInMemory newPolicyGroupByActiveThreadsInMemory(ActivePolicy activePolicy, String uniqueIdMap,
+			DatiTransazione datiTransazione, Object state) throws PolicyException {
+		switch (this.type) {
+		case LOCAL:
+			return new PolicyGroupByActiveThreads(activePolicy);
+		case DATABASE:
+			//return new PolicyGroupByActiveThreadsDB(activePolicy, uniqueIdMap, 
+			//		(state!=null && state instanceof IState) ? ((IState)state) : null, 
+			//		datiTransazione!=null ? datiTransazione.getDominio() : null, 
+			//	    datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
+			// TODO
+			return null;
+		}
+		throw new PolicyException("Unsupported type '"+this.type+"'");
 	}
 }
 

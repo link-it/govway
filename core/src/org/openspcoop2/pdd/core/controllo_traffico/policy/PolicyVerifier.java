@@ -74,6 +74,10 @@ import org.slf4j.Logger;
  */
 public class PolicyVerifier {
 
+	public static List<String> listClusterNodes = null;
+	public static boolean cluster_remaining_zeroValue = false;
+	public static boolean cluster_limit_roundingDown = true;
+	public static boolean cluster_limit_normalizedQuota = false;
 	
 	public static RisultatoVerificaPolicy verifica(
 			ConfigurazionePdDManager configPdDManager, IProtocolFactory<?> protocolFactory,
@@ -96,7 +100,7 @@ public class PolicyVerifier {
 		boolean policyGlobale = !policyAPI;
 		
 		// Registro Threads (NOTA: non i contatori, quelli vegono aggiornati )
-		DatiCollezionati datiCollezionatiReaded = gestorePolicyAttive.getActiveThreadsPolicy(activePolicy).
+		DatiCollezionati datiCollezionatiReaded = gestorePolicyAttive.getActiveThreadsPolicy(activePolicy,datiTransazione, state).
 				registerStartRequest(logCC,datiTransazione.getIdTransazione(),datiGroupBy);
 		
 	
@@ -284,7 +288,7 @@ public class PolicyVerifier {
 			// aggiorno contatori
 			if(isApplicabile || !activePolicy.getConfigurazioneControlloTraffico().isElaborazioneRealtime_incrementaSoloPolicyApplicabile()){
 			
-				DatiCollezionati datiCollezionatiUpdated = gestorePolicyAttive.getActiveThreadsPolicy(activePolicy).updateDatiStartRequestApplicabile(logCC, datiTransazione.getIdTransazione(), datiGroupBy);
+				DatiCollezionati datiCollezionatiUpdated = gestorePolicyAttive.getActiveThreadsPolicy(activePolicy,datiTransazione, state).updateDatiStartRequestApplicabile(logCC, datiTransazione.getIdTransazione(), datiGroupBy);
 				if(datiCollezionatiUpdated!=null) {
 					datiCollezionatiReaded = datiCollezionatiUpdated; 
 					now = datiCollezionatiReaded.getCloneDate(); // Data in cui sono stati prelevati gli intervalli.
@@ -319,6 +323,73 @@ public class PolicyVerifier {
 			if (activePolicy.getInstanceConfiguration().isRidefinisci()){
 				valoreSoglia = activePolicy.getInstanceConfiguration().getValore();
 			}
+			
+			// ** La quota può essere suddivisa tra i nodi del cluster attivi ** 
+			boolean gestioneClusterSupportata = false;
+			long valoreSogliaComplessivoCluster = -1;
+			if(activePolicy.getConfigurazionePolicy().isSimultanee() ||
+					TipoControlloPeriodo.REALTIME.equals(activePolicy.getConfigurazionePolicy().getModalitaControllo())) {
+				
+				switch (activePolicy.getTipoRisorsaPolicy()) {
+				
+					case DIMENSIONE_MASSIMA_MESSAGGIO:
+						// non viene viene verificata dal PolicyVerifier 
+						break;
+						
+					case NUMERO_RICHIESTE:
+					case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
+					case NUMERO_RICHIESTE_FALLITE:
+					case NUMERO_FAULT_APPLICATIVI:
+					case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+						gestioneClusterSupportata = true;
+						break;
+						
+					case OCCUPAZIONE_BANDA:
+						gestioneClusterSupportata = false;
+						break;
+						
+					case TEMPO_COMPLESSIVO_RISPOSTA:
+						gestioneClusterSupportata = false;
+						break;
+						
+					case TEMPO_MEDIO_RISPOSTA:
+						gestioneClusterSupportata = false;
+						break;
+				}
+				
+				if(gestioneClusterSupportata && listClusterNodes!=null && !listClusterNodes.isEmpty() && listClusterNodes.size()>1) {
+					
+					if(!cluster_limit_normalizedQuota) {
+						risultatoVerificaPolicy.setMaxValueBeforeNormalizing(valoreSoglia);
+					}
+					
+					risultatoVerificaPolicy.setRemainingZeroValue(cluster_remaining_zeroValue);
+					
+					// La quota indicata verra suddivisa per difetto, e se la divisione non consente di avere un numero maggiore di 0 viene associato il valore 1 ad ogni nodo.
+					long resto = -1;
+					if(!PolicyVerifier.cluster_limit_roundingDown) {
+						resto = valoreSoglia % ((long)listClusterNodes.size());
+					}
+					valoreSoglia = valoreSoglia / ((long)listClusterNodes.size());
+					if(PolicyVerifier.cluster_limit_roundingDown) {
+						if(valoreSoglia<=0) {
+							valoreSoglia = 1;
+						}
+					}
+					else {
+						if(resto>0) {
+							valoreSoglia = valoreSoglia + 1;
+						}
+					}
+					
+					valoreSogliaComplessivoCluster = valoreSoglia * ((long)listClusterNodes.size());
+					
+				}
+				else {
+					gestioneClusterSupportata = false;
+				}
+			}
+			
 			msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_VALORE_SOGLIA, valoreSoglia+"");
 
 			boolean rilevataViolazione = false;
@@ -338,8 +409,15 @@ public class PolicyVerifier {
 				if(activePolicy.getConfigurazionePolicy().isSimultanee()){
 					
 					long valoreAttuale = datiCollezionatiReaded.getActiveRequestCounter();
-					risultatoVerificaPolicy.setActualValue(valoreAttuale);
-					risultatoVerificaPolicy.setMaxValue(valoreSoglia);
+					if(gestioneClusterSupportata) {
+						//  Gli header 'RateLimit-Remaining' verranno valorizzati per difetto rispetto al numero di nodi attivi.
+						risultatoVerificaPolicy.setActualValue(valoreAttuale*((long)listClusterNodes.size()));
+						risultatoVerificaPolicy.setMaxValue(valoreSogliaComplessivoCluster);
+					}
+					else {
+						risultatoVerificaPolicy.setActualValue(valoreAttuale);
+						risultatoVerificaPolicy.setMaxValue(valoreSoglia);
+					}
 					if(datiCollezionatiReaded.getRightDateWindowCurrentInterval()!=null) {
 						risultatoVerificaPolicy.setMsBeforeResetCounters(datiCollezionatiReaded.getRightDateWindowCurrentInterval().getTime()-DateManager.getTimeMillis());
 					}
@@ -415,8 +493,15 @@ public class PolicyVerifier {
 						checkDate = risultatoStatistico.getDateCheck();
 					}
 							
-					risultatoVerificaPolicy.setActualValue(valoreAttuale);
-					risultatoVerificaPolicy.setMaxValue(valoreSoglia);
+					if(gestioneClusterSupportata) {
+						//  Gli header 'RateLimit-Remaining' verranno valorizzati per difetto rispetto al numero di nodi attivi.
+						risultatoVerificaPolicy.setActualValue(valoreAttuale*((long)listClusterNodes.size()));
+						risultatoVerificaPolicy.setMaxValue(valoreSogliaComplessivoCluster);
+					}
+					else {
+						risultatoVerificaPolicy.setActualValue(valoreAttuale);
+						risultatoVerificaPolicy.setMaxValue(valoreSoglia);
+					}
 					if(TipoFinestra.CORRENTE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione()) || 
 							TipoFinestra.SCORREVOLE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione())){
 						if(rightDate!=null) {

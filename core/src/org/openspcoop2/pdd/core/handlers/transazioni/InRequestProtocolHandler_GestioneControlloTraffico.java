@@ -804,8 +804,10 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 						
 						if(headers!=null && headers.length>0) {
 							
+							Long maxValue = risultatoUtilizzato.getMaxValueBeforeNormalizing()!=null ? risultatoUtilizzato.getMaxValueBeforeNormalizing() : risultatoUtilizzato.getMaxValue();
+							
 							StringBuilder sb = new StringBuilder("");
-							if(windows && risultatoUtilizzato.getMsWindow()!=null && risultatoUtilizzato.getMaxValue()!=null) {
+							if(windows && risultatoUtilizzato.getMsWindow()!=null && maxValue!=null) {
 								long ms = risultatoUtilizzato.getMsWindow();
 								long sec = -1;
 								if(ms>1000) {
@@ -813,11 +815,14 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 									sec = ms / 1000;
 								}
 								if(sec>0) {
-									sb.append(", ").append(risultatoUtilizzato.getMaxValue().longValue()).append(";w=").append(sec);
+									sb.append(", ").append(maxValue.longValue()).append(";w=").append(sec);
 								}
 								if(!altrePolicy.isEmpty()) {
 									for (RisultatoVerificaPolicy r : altrePolicy) {
-										if(r.getMsWindow()!=null && r.getMaxValue()!=null) {
+										
+										Long maxValueR = r.getMaxValueBeforeNormalizing()!=null ? r.getMaxValueBeforeNormalizing() : r.getMaxValue();
+										
+										if(r.getMsWindow()!=null && maxValueR!=null) {
 											ms = r.getMsWindow();
 											sec = -1;
 											if(ms>1000) {
@@ -825,7 +830,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 												sec = ms / 1000;
 											}
 											if(sec>0) {
-												sb.append(", ").append(r.getMaxValue().longValue()).append(";w=").append(sec);
+												sb.append(", ").append(maxValueR.longValue()).append(";w=").append(sec);
 											}
 										}
 									}
@@ -833,7 +838,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 							}
 							
 							for (String header : headers) {
-								headerTrasportoRateLimiting.put(header, risultatoUtilizzato.getMaxValue().longValue()+""+sb.toString());
+								headerTrasportoRateLimiting.put(header, maxValue.longValue()+""+sb.toString());
 							}
 						}
 					}catch(Exception e) { 
@@ -844,6 +849,9 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 						long rimanenti = risultatoUtilizzato.getMaxValue().longValue() - risultatoUtilizzato.getActualValue().longValue();
 						if(rimanenti<0) {  // gli attuali conteggia anche quelle bloccate
 							rimanenti = 0;
+						}
+						if(rimanenti==0 && !risultatoUtilizzato.isViolata() && !risultatoUtilizzato.isRemainingZeroValue()) {
+							rimanenti = 1; // gestione cluster
 						}
 						try {
 							String [] headers = null;
