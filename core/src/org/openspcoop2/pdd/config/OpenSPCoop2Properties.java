@@ -1993,6 +1993,12 @@ public class OpenSPCoop2Properties {
 				}
 				this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository();
 				
+				if(this.isControlloTrafficoGestioneCluster()) {
+					this.isControlloTrafficoGestioneCluster_remaining_zeroValue();
+					this.isControlloTrafficoGestioneCluster_limit_roundingDown();
+					this.isControlloTrafficoGestioneCluster_limit_normalizedQuota();
+				}
+				
 				// header limit
 				this.getControlloTrafficoNumeroRichiesteSimultaneeHeaderLimit();
 				this.getControlloTrafficoNumeroRichiesteHeaderLimit();
@@ -14231,9 +14237,22 @@ public class OpenSPCoop2Properties {
 			try{ 
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties(pName);
-				if(name==null)
-					throw new Exception("non definita");
-				if(name!=null){
+				if(name==null) {
+					// Gestione RateLimiting senza una effettiva attivazione di un cluster dinamico
+					if(!isClusterDinamico()) {
+						boolean rateLimitingGestioneCluster = (this.isControlloTrafficoEnabled() && this.isControlloTrafficoGestioneCluster());
+						if(rateLimitingGestioneCluster) {
+							OpenSPCoop2Properties.group_id = org.openspcoop2.utils.Costanti.OPENSPCOOP2;
+						}
+						else {
+							throw new Exception("non definita");
+						}
+					}
+					else {
+						throw new Exception("non definita");
+					}
+				}
+				else if(name!=null){
 					name = name.trim();
 					OpenSPCoop2Properties.group_id = name;
 				}
@@ -14348,7 +14367,19 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				else{
-					throw new Exception("Non Impostato");
+					// Gestione RateLimiting senza una effettiva attivazione di un cluster dinamico
+					if(!isClusterDinamico()) {
+						boolean rateLimitingGestioneCluster = (this.isControlloTrafficoEnabled() && this.isControlloTrafficoGestioneCluster());
+						if(rateLimitingGestioneCluster) {
+							OpenSPCoop2Properties.getClusterDinamicoIdNumericoCifre = 2; // per default si registra staticamente fino a 99 nodi
+						}
+						else {
+							throw new Exception("Non Impostato");
+						}
+					}
+					else {
+						throw new Exception("Non Impostato");
+					}
 				}
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -23506,6 +23537,103 @@ public class OpenSPCoop2Properties {
 
 		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository;
 	}
+	
+	// Gestione Cluster
+	
+	private static Boolean isControlloTrafficoGestioneCluster = null;
+	public boolean isControlloTrafficoGestioneCluster(){
+		String pName = "org.openspcoop2.pdd.controlloTraffico.gestioneCluster.enabled";
+		if(OpenSPCoop2Properties.isControlloTrafficoGestioneCluster==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isControlloTrafficoGestioneCluster = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isControlloTrafficoGestioneCluster = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isControlloTrafficoGestioneCluster = false;
+			}
+		}
+		return OpenSPCoop2Properties.isControlloTrafficoGestioneCluster;
+	}
+	
+	private static Boolean isControlloTrafficoGestioneCluster_remaining_zeroValue = null;
+	public boolean isControlloTrafficoGestioneCluster_remaining_zeroValue(){
+		String pName = "org.openspcoop2.pdd.controlloTraffico.gestioneCluster.remaining.zeroValue";
+		if(OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_remaining_zeroValue==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_remaining_zeroValue = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_remaining_zeroValue = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_remaining_zeroValue = false;
+			}
+		}
+		return OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_remaining_zeroValue;
+	}
+	
+	private static Boolean isControlloTrafficoGestioneCluster_limit_roundingDown = null;
+	public boolean isControlloTrafficoGestioneCluster_limit_roundingDown(){
+		String pName = "org.openspcoop2.pdd.controlloTraffico.gestioneCluster.limit.roundingDown";
+		if(OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_roundingDown==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_roundingDown = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_roundingDown = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_roundingDown = true;
+			}
+		}
+		return OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_roundingDown;
+	}
+	
+	private static Boolean isControlloTrafficoGestioneCluster_limit_normalizedQuota = null;
+	public boolean isControlloTrafficoGestioneCluster_limit_normalizedQuota(){
+		String pName = "org.openspcoop2.pdd.controlloTraffico.gestioneCluster.limit.normalizedQuota";
+		if(OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_normalizedQuota==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_normalizedQuota = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_normalizedQuota = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_normalizedQuota = false;
+			}
+		}
+		return OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_normalizedQuota;
+	}
+	
+	
+	
 	
 	// Limit
 	

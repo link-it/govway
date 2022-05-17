@@ -1337,8 +1337,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					
 					// aggiorno
 					clusterID = propertiesReader.getClusterId(false);
+				}
 					
-					
+				boolean rateLimitingGestioneCluster = (propertiesReader.isControlloTrafficoEnabled() && propertiesReader.isControlloTrafficoGestioneCluster());
+				if(propertiesReader.isClusterDinamico() || rateLimitingGestioneCluster) {	
 					DynamicClusterManager.initStaticInstance();
 					DynamicClusterManager.getInstance().register(OpenSPCoop2Startup.log);
 				}
@@ -3336,7 +3338,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			/*----------- Inizializzazione Thread per Configurazione Cluster Dinamica --------------*/
 			try{
-				if(propertiesReader.isClusterDinamico()) {
+				boolean rateLimitingGestioneCluster = (propertiesReader.isControlloTrafficoEnabled() && propertiesReader.isControlloTrafficoGestioneCluster());
+				if(propertiesReader.isClusterDinamico() || rateLimitingGestioneCluster) {	
 					OpenSPCoop2Startup.this.threadClusterDinamico = new TimerClusterDinamicoThread(OpenSPCoop2Logger.getLoggerOpenSPCoopTimers());
 					OpenSPCoop2Startup.this.threadClusterDinamico.start();
 					TimerClusterDinamicoThread.STATE = TimerState.ENABLED;
@@ -3427,7 +3430,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}
 		}catch(Throwable e){}
 		try{
-			if(properties.isClusterDinamico()) {
+			boolean rateLimitingGestioneCluster = (properties.isControlloTrafficoEnabled() && properties.isControlloTrafficoGestioneCluster());
+			if(properties.isClusterDinamico() || rateLimitingGestioneCluster) {	
 				DynamicClusterManager.getInstance().unregister(OpenSPCoop2Startup.log);
 			}
 		}catch(Throwable e){}
