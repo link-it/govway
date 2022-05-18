@@ -925,6 +925,7 @@
 				<include name="govway.log4j2.properties" />
 				<include name="govway.protocolAdjunct.log4j2.properties" />
 				<include name="log4j2.properties" />
+				<include name="govway.hazelcast*" />
 			</zipfileset>
 			<zipfileset dir="${build}/tmp" prefix="properties">
 				<include name="govway.properties" />

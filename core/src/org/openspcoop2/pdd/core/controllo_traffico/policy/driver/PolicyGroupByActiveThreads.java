@@ -73,6 +73,19 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	}
 	
 	@Override
+	public void initMap(Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
+		//synchronized (this.semaphore) {
+		this.lock.acquireThrowRuntime("initMap");
+		try {
+			if(map!=null && map.size()>0){
+				this.mapActiveThreads.putAll(map);
+			}
+		}finally {
+			this.lock.release("initMap");
+		}
+	}
+	
+	@Override
 	public void resetCounters(){
 		//synchronized (this.semaphore) {
 		this.lock.acquireThrowRuntime("resetCounters");

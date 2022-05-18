@@ -121,6 +121,8 @@ import org.openspcoop2.pdd.core.controllo_traffico.policy.DatiStatisticiDAOManag
 import org.openspcoop2.pdd.core.controllo_traffico.policy.GestoreCacheControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.GestorePolicyAttive;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.PolicyGroupByActiveThreadsInMemoryEnum;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.TipoGestorePolicy;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.HazelcastManager;
 import org.openspcoop2.pdd.core.eventi.GestoreEventi;
 import org.openspcoop2.pdd.core.handlers.ExitContext;
 import org.openspcoop2.pdd.core.handlers.GeneratoreCasualeDate;
@@ -212,10 +214,6 @@ import org.openspcoop2.utils.semaphore.SemaphoreConfiguration;
 import org.openspcoop2.utils.semaphore.SemaphoreMapping;
 import org.slf4j.Logger;
 
-import com.hazelcast.config.Config;
-import com.hazelcast.config.FileSystemYamlConfig;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
 import com.sun.xml.messaging.saaj.soap.MessageImpl;
 
 
@@ -309,11 +307,6 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	
 	/** Jminix StandaloneMiniConsole */
 	private static StandaloneMiniConsole jminixStandaloneConsole;
-	
-
-	/** Istanza di Hazelcast */
-	public static HazelcastInstance hazelcast = null;
-
 
 	/**
 	 * Startup dell'applicazione WEB di OpenSPCoop
@@ -340,7 +333,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		private void logError(String msg){
 			this.logError(msg,null);
 		}
-		private void logError(String msg,Exception e){
+		private void logError(String msg,Throwable e){
 			if(e==null)
 				OpenSPCoop2Startup.log.error(msg);
 			else
@@ -2395,49 +2388,6 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
-			// TODO: Note that, most of Hazelcast’s distributed objects are created lazily: A distributed object is created once the first operation accesses it.
-			//		Quindi fare una get di una chiave qualsiasi su ciascun nodo al momento dell'inizializzazione.
-			
-			/* ------------ Hazelcast------------ */
-			try {
-				PolicyGroupByActiveThreadsInMemoryEnum rateLimitingPolicy = propertiesReader.getControlloTrafficoGestorePolicyInMemoryType();
-				
-				if (rateLimitingPolicy == null) {
-					// Non avviare hazelcast se la property non è impostata.
-					
-				}
-				else if (rateLimitingPolicy.name().toLowerCase().startsWith("hazelcast")) {
-					OpenSPCoop2Startup.log.info("Trovata configurazione hazelcast per rate limiting clusterizzato: " + rateLimitingPolicy);
-					
-					if(propertiesReader.getHazelcastConfigPath() != null) {
-						OpenSPCoop2Startup.log.info("Lettura YAML configurazione hazelcast: " + propertiesReader.getHazelcastConfigPath());
-						File hazelcastConfigFile = new File(propertiesReader.getHazelcastConfigPath());
-						
-						if (hazelcastConfigFile.exists() ) {
-							/*Config hazelcastConfig = new Config();
-							hazelcastConfig.setConfigurationFile(hazelcastConfigFile);*/
-
-
-							Config hazelcastConfig = new FileSystemYamlConfig(propertiesReader.getHazelcastConfigPath());
-
-							
-							OpenSPCoop2Startup.hazelcast = Hazelcast.newHazelcastInstance(hazelcastConfig);
-						} else {
-							this.logError("Riscontrato errore durante l'inizializzazione di hazelcast: Path " + propertiesReader.getHazelcastConfigPath() + "Inesistente ");
-							return;
-						}
-						
-					} else {
-						this.logError("Riscontrato errore durante l'inizializzazione di hazelcast: Path della configurazione YAML mancante.");
-						return;
-					}
-					
-				}
-				
-			} catch(Exception e){
-				this.logError("Riscontrato errore durante il recupero delle policy in memory per l'attivazione di hazelcast: "+e.getMessage(),e);
-				return;
-			}
 			
 			
 			
@@ -2470,7 +2420,52 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					msgDiag.logStartupError(e,"Inizializzazione Cache ControlloTraffico");
 					return;
 				}
-					
+				
+				// Hazelcast
+				TipoGestorePolicy tipo = propertiesReader.getControlloTrafficoGestorePolicyTipo();
+				if(TipoGestorePolicy.IN_MEMORY.equals(tipo)) {
+					try {
+						PolicyGroupByActiveThreadsInMemoryEnum policyType = propertiesReader.getControlloTrafficoGestorePolicyInMemoryType();
+						boolean hazelcast = false;
+						String configFileHazelcast = null;
+						switch (policyType) {
+						case HAZELCAST:
+							hazelcast = true;
+							configFileHazelcast = propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastConfigPath();
+							break;
+						case HAZELCAST_NEAR_CACHE:
+							hazelcast = true;
+							configFileHazelcast = propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath();
+							break;
+						case HAZELCAST_LOCAL_CACHE:
+							hazelcast = true;
+							configFileHazelcast = propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastLocalCacheConfigPath();
+							break;
+						default:
+							break;
+						}
+						if(hazelcast) {
+							if(configFileHazelcast!=null) {
+								OpenSPCoop2Startup.log.info("Trovata configurazione hazelcast per rate limiting: " + configFileHazelcast);
+							}
+							try {
+								HazelcastManager.initialize(policyType, configFileHazelcast, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId(),
+										OpenSPCoop2Startup.log);
+							}catch(Throwable e) {
+								this.logError("Riscontrato errore durante l'inizializzazione di hazelcast: "+e.getMessage());
+								return;
+							}
+						}
+						
+						OpenSPCoop2Startup.log.info("ControlloTraffico avviato con gestione mappe di tipo '"+policyType+"'");
+						
+					} catch(Throwable e){
+						this.logError("Riscontrato errore durante l'attivazione di hazelcast: "+e.getMessage(),e);
+						return;
+					}
+				}
+
+				
 				// Gestore dei Dati Statistici
 				org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico confControlloTraffico = null;
 				try{
@@ -3432,10 +3427,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					msgDiag.logStartupError(e,"Inizializzazione JminixStandaloneConsole");
 				}
 			}
-
-
 			
 			
+			
+
+
+
 			/* ------------ OpenSPCoop startup terminato  ------------ */
 			long endDate = System.currentTimeMillis();
 			long secondStarter = (endDate - OpenSPCoop2Startup.this.startDate) / 1000;
@@ -3453,11 +3450,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			msgIM.addKeyword(CostantiPdD.KEY_VERSIONE_PORTA, propertiesReader.getPddDetailsForLog());
 			msgIM.addKeyword(CostantiPdD.KEY_TEMPO_AVVIO, secondStarter+" secondi");
 			msgIM.logPersonalizzato("IntegrationManager");
+			
 
 		}
 
 	}
-	
 	
 	/**
 	 * Undeploy dell'applicazione WEB di OpenSPCoop
@@ -3857,8 +3854,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		}catch(Throwable e){}
 		
 		// *** Hazelcast ***
-		if (OpenSPCoop2Startup.hazelcast != null) {
-			OpenSPCoop2Startup.hazelcast.shutdown();
+		if(properties.isControlloTrafficoEnabled()){
+			HazelcastManager.close();
 		}
 		
 		// Attendo qualche secondo

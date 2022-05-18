@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.pdd.core.controllo_traffico.policy.driver;
+package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast;
 
 import java.util.Map.Entry;
 
@@ -32,10 +32,12 @@ import org.slf4j.Logger;
 import com.hazelcast.core.Offloadable;
 import com.hazelcast.map.EntryProcessor;
 
-/**
- * 
- * @author Francesco Scarlato
+/**     
+ *  UpdateDatiRequestProcessor
  *
+ * @author Francesco Scarlato (scarlato@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class UpdateDatiRequestProcessor implements EntryProcessor<IDUnivocoGroupByPolicy, DatiCollezionati, DatiCollezionati>, Offloadable {
 	

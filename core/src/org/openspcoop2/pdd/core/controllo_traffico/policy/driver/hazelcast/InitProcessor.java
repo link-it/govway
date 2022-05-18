@@ -18,16 +18,12 @@
  *
  */
 
-package org.openspcoop2.pdd.core.controllo_traffico.policy.driver;
+package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast;
 
 import java.util.Map.Entry;
 
-import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
-import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
-import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.slf4j.Logger;
 
 import com.hazelcast.core.Offloadable;
 import com.hazelcast.map.EntryProcessor;
@@ -45,33 +41,24 @@ hazelcast.map.invalidation.batchfrequency.seconds: If the collected invalidation
 
 If there are a lot of clients or many mutating operations, batching should remain enabled and the batch size should be configured with the hazelcast.map.invalidation.batch.size system property to a suitable value.
 
- * 	
- * @author Francesco Scarlato
- *
+ * @author Francesco Scarlato (scarlato@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
-public class StartRequestProcessor implements EntryProcessor<IDUnivocoGroupByPolicy, DatiCollezionati, DatiCollezionati>, Offloadable {
+public class InitProcessor implements EntryProcessor<IDUnivocoGroupByPolicy, DatiCollezionati, DatiCollezionati>, Offloadable {
 	
 	private static final long serialVersionUID = 1L;
-	private final ActivePolicy activePolicy;
-
-	public StartRequestProcessor(ActivePolicy policy) {
-		this.activePolicy = policy;
+	
+	private DatiCollezionati dati = null;
+	
+	public InitProcessor(DatiCollezionati dati) {
+		this.dati = dati;
 	}
 	
 	@Override
-	public DatiCollezionati  process(Entry<IDUnivocoGroupByPolicy, DatiCollezionati> entry) {
-		//System.out.println("<"+idTransazione+"> registerStartRequest distribuita");
-		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
-		Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(op2Properties.isControlloTrafficoDebug());
-
-		if (entry.getValue() == null) {
-			entry.setValue(new DatiCollezionati());
-		}
-		
-		
-		entry.getValue().registerStartRequest(log, this.activePolicy);
-		entry.setValue(entry.getValue());
-		return entry.getValue();
+	public DatiCollezionati process(Entry<IDUnivocoGroupByPolicy, DatiCollezionati> entry) {
+		entry.setValue(this.dati);
+		return this.dati;
 	}
 
 	@Override

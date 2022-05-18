@@ -48,7 +48,9 @@ import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyShutdownException;
 import org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbDeserializer;
 import org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbSerializer;
-import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.HazelcastManager;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedNearCache;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedNoCache;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.Utilities;
@@ -207,7 +209,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	
 	@Override
 	public String printInfoPolicy(String id, String separatorGroups) throws PolicyShutdownException,PolicyException,PolicyNotFoundException{
-		PolicyGroupByActiveThreads activeThreads = (PolicyGroupByActiveThreads) this.getActiveThreadsPolicy(id);	
+		IPolicyGroupByActiveThreadsInMemory activeThreads = (IPolicyGroupByActiveThreadsInMemory) this.getActiveThreadsPolicy(id);	
 		try{
 			return activeThreads.printInfos(this.log, separatorGroups);
 		}catch(Exception e){
@@ -299,6 +301,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	
 	@Override
 	public void serialize(OutputStream out) throws PolicyException{
+				
 		//synchronized (this.mapActiveThreadsPolicy) {
 		try {
 			this.lock.acquireThrowRuntime("serialize");
@@ -409,6 +412,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	
 	@Override
 	public void initialize(InputStream in,ConfigurazioneControlloTraffico configurazioneControlloTraffico) throws PolicyException{
+		
 		//synchronized (this.mapActiveThreadsPolicy) {
 		try {
 			this.lock.acquireThrowRuntime("initialize");
@@ -618,7 +622,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			for (IDUnivocoGroupByPolicy id : map.keySet()) {
 				map.get(id).initActiveRequestCounter();
 			}
-			p.getMapActiveThreads().putAll(map);
+			p.initMap(map);
 		}
 		
 		return p;
@@ -631,18 +635,16 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 		case LOCAL:
 			return new PolicyGroupByActiveThreads(activePolicy);
 		case DATABASE:
-			//return new PolicyGroupByActiveThreadsDB(activePolicy, uniqueIdMap, 
-			//		(state!=null && state instanceof IState) ? ((IState)state) : null, 
-			//		datiTransazione!=null ? datiTransazione.getDominio() : null, 
-			//	    datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
-			// TODO
-			return null;
-		case HAZELCAST_LOCAL_COMPUTATION:
+			return new PolicyGroupByActiveThreadsDB(activePolicy, uniqueIdMap, 
+					(state!=null && state instanceof IState) ? ((IState)state) : null, 
+					datiTransazione!=null ? datiTransazione.getDominio() : null, 
+				    datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
+		case HAZELCAST_LOCAL_CACHE:
 			throw new PolicyException("Unsupported type '"+this.type+"'");
 		case HAZELCAST_NEAR_CACHE:
-			return new PolicyGroupByActiveThreadsDistributedNearCache(activePolicy, uniqueIdMap, OpenSPCoop2Startup.hazelcast);
-		case HAZELCAST_ONLY_DISTRIBUTED:
-			return new PolicyGroupByActiveThreadsDistributedNoCache(activePolicy, uniqueIdMap, OpenSPCoop2Startup.hazelcast);
+			return new PolicyGroupByActiveThreadsDistributedNearCache(activePolicy, uniqueIdMap, HazelcastManager.hazelcast);
+		case HAZELCAST:
+			return new PolicyGroupByActiveThreadsDistributedNoCache(activePolicy, uniqueIdMap, HazelcastManager.hazelcast);
 		default:
 			break;
 		}

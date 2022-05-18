@@ -1,0 +1,12 @@
+hazelcast:
+  cluster-name: dev
+  map:
+    "hazelcast-*-rate-limiting":
+      in-memory-format: OBJECT
+
+      near-cache:
+        controllo_traffico:
+          in-memory-format: OBJECT
+          serialize-keys: true
+
+

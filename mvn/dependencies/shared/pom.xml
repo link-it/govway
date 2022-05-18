@@ -46,23 +46,12 @@
 		<xmlunit.version>1.6</xmlunit.version>
 		<xom.version>1.2.11</xom.version>
 		<rhino.version>1.7.13</rhino.version>
+		<hazelcast.version>4.2.5</hazelcast.version>
+		<hibernate.version>6.0.1.Final</hibernate.version>
 
 	</properties>
 
 	<dependencies>
-	
-	   <dependency>
-        <groupId>com.hazelcast</groupId>
-        <artifactId>hazelcast-all</artifactId>
-        <version>4.2.5</version>
-	</dependency>
-
-	<dependency>
-   		<groupId>org.hibernate.orm</groupId>
-	    <artifactId>hibernate-core</artifactId>
-    	<version>6.0.1.Final</version>
-	</dependency>
-
 
 		<dependency>
 			<groupId>org.xmldb</groupId>
@@ -449,6 +438,30 @@
 			<groupId>org.mozilla</groupId>
 			<artifactId>rhino</artifactId>
 			<version>${rhino.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.hazelcast</groupId>
+        		<artifactId>hazelcast-all</artifactId>
+			<version>${hazelcast.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate.orm</groupId>
+        		<artifactId>hibernate-core</artifactId>
+			<version>${hibernate.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

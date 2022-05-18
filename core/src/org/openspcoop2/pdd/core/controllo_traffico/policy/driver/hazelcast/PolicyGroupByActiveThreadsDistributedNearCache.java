@@ -19,7 +19,7 @@
  */
 
 
-package org.openspcoop2.pdd.core.controllo_traffico.policy.driver;
+package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast;
 
 import java.util.Map.Entry;
 
@@ -38,9 +38,10 @@ import com.hazelcast.core.HazelcastInstance;
  * Gestore contatori policy che lavora sulla copia distribuita ed esegue computazioni locali con quello 
  * che trova nella cache.
  * 
- * @author Francesco Scarlato
  *
- *
+ * @author Francesco Scarlato (scarlato@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class PolicyGroupByActiveThreadsDistributedNearCache extends PolicyGroupByActiveThreadsDistributedAbstract {
 
