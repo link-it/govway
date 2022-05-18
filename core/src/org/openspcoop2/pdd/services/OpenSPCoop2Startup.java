@@ -213,6 +213,7 @@ import org.openspcoop2.utils.semaphore.SemaphoreMapping;
 import org.slf4j.Logger;
 
 import com.hazelcast.config.Config;
+import com.hazelcast.config.FileSystemYamlConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.sun.xml.messaging.saaj.soap.MessageImpl;
@@ -2411,10 +2412,21 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					if(propertiesReader.getHazelcastConfigPath() != null) {
 						OpenSPCoop2Startup.log.info("Lettura YAML configurazione hazelcast: " + propertiesReader.getHazelcastConfigPath());
 						File hazelcastConfigFile = new File(propertiesReader.getHazelcastConfigPath());
-						Config hazelcastConfig = new Config();
-						hazelcastConfig.setConfigurationFile(hazelcastConfigFile);
 						
-						OpenSPCoop2Startup.hazelcast = Hazelcast.newHazelcastInstance(hazelcastConfig);
+						if (hazelcastConfigFile.exists() ) {
+							/*Config hazelcastConfig = new Config();
+							hazelcastConfig.setConfigurationFile(hazelcastConfigFile);*/
+
+
+							Config hazelcastConfig = new FileSystemYamlConfig(propertiesReader.getHazelcastConfigPath());
+
+							
+							OpenSPCoop2Startup.hazelcast = Hazelcast.newHazelcastInstance(hazelcastConfig);
+						} else {
+							this.logError("Riscontrato errore durante l'inizializzazione di hazelcast: Path " + propertiesReader.getHazelcastConfigPath() + "Inesistente ");
+							return;
+						}
+						
 					} else {
 						this.logError("Riscontrato errore durante l'inizializzazione di hazelcast: Path della configurazione YAML mancante.");
 						return;
