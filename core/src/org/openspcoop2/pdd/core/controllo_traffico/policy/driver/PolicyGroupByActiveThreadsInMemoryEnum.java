@@ -29,6 +29,9 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy.driver;
 public enum PolicyGroupByActiveThreadsInMemoryEnum {
 
 	LOCAL, 
-	DATABASE
+	DATABASE,
+	HAZELCAST_ONLY_DISTRIBUTED,
+	HAZELCAST_NEAR_CACHE,
+	HAZELCAST_LOCAL_COMPUTATION
 	
 }

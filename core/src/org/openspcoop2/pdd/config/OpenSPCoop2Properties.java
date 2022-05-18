@@ -23488,6 +23488,32 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryType;
 	}
 	
+	
+	private static String hazelCastConfigPath = null;
+	public String getHazelcastConfigPath() {
+		
+		if(OpenSPCoop2Properties.hazelCastConfigPath==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.hazelcast.config";
+
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					hazelCastConfigPath = value;
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata,  se si utilizza hazelcast, questo non funzionerà.");
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata,  se si utilizza hazelcast, questo non funzionerà.");
+			}
+		}
+
+		return OpenSPCoop2Properties.hazelCastConfigPath;		
+	}
+
+	
 	private static String getControlloTrafficoGestorePolicyWSUrl = null;
 	public String getControlloTrafficoGestorePolicyWSUrl() throws Exception {	
 		if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyWSUrl==null){

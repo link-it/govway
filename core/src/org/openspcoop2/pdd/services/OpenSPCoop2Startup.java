@@ -120,6 +120,7 @@ import org.openspcoop2.pdd.core.controllo_traffico.NotificatoreEventi;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.DatiStatisticiDAOManager;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.GestoreCacheControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.GestorePolicyAttive;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.PolicyGroupByActiveThreadsInMemoryEnum;
 import org.openspcoop2.pdd.core.eventi.GestoreEventi;
 import org.openspcoop2.pdd.core.handlers.ExitContext;
 import org.openspcoop2.pdd.core.handlers.GeneratoreCasualeDate;
@@ -211,6 +212,9 @@ import org.openspcoop2.utils.semaphore.SemaphoreConfiguration;
 import org.openspcoop2.utils.semaphore.SemaphoreMapping;
 import org.slf4j.Logger;
 
+import com.hazelcast.config.Config;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import com.sun.xml.messaging.saaj.soap.MessageImpl;
 
 
@@ -304,6 +308,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	
 	/** Jminix StandaloneMiniConsole */
 	private static StandaloneMiniConsole jminixStandaloneConsole;
+	
+
+	/** Istanza di Hazelcast */
+	public static HazelcastInstance hazelcast = null;
+
 
 	/**
 	 * Startup dell'applicazione WEB di OpenSPCoop
@@ -3379,12 +3388,41 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					msgDiag.logStartupError(e,"Inizializzazione JminixStandaloneConsole");
 				}
 			}
+
+			// TODO: Note that, most of Hazelcast’s distributed objects are created lazily: A distributed object is created once the first operation accesses it.
+			//		Quindi fare una get di una chiave qualsiasi su ciascun nodo al momento dell'inizializzazione.
+			
+			/* ------------ Hazelcast------------ */
+			try {
+				PolicyGroupByActiveThreadsInMemoryEnum rateLimitingPolicy = propertiesReader.getControlloTrafficoGestorePolicyInMemoryType();
+				
+				if (rateLimitingPolicy == null) {
+					// Non avviare hazelcast se la property non è impostata.
+					
+				}
+				else if (rateLimitingPolicy.name().toLowerCase().startsWith("hazelcast")) {
+					OpenSPCoop2Startup.log.info("Trovata configurazione hazelcast per rate limiting clusterizzato: " + rateLimitingPolicy);
+					
+					if(propertiesReader.getHazelcastConfigPath() != null) {
+						OpenSPCoop2Startup.log.info("Lettura YAML configurazione hazelcast: " + propertiesReader.getHazelcastConfigPath());
+						File hazelcastConfigFile = new File(propertiesReader.getHazelcastConfigPath());
+						Config hazelcastConfig = new Config();
+						hazelcastConfig.setConfigurationFile(hazelcastConfigFile);
+						
+						OpenSPCoop2Startup.hazelcast = Hazelcast.newHazelcastInstance(hazelcastConfig);
+					} else {
+						this.logError("Riscontrato errore durante l'inizializzazione di hazelcast: Path della configurazione YAML mancante.");
+						return;
+					}
+					
+				}
+				
+			} catch(Exception e){
+				this.logError("Riscontrato errore durante il recupero delle policy in memory per l'attivazione di hazelcast: "+e.getMessage(),e);
+				return;
+			}
 			
 			
-			
-
-
-
 			/* ------------ OpenSPCoop startup terminato  ------------ */
 			long endDate = System.currentTimeMillis();
 			long secondStarter = (endDate - OpenSPCoop2Startup.this.startDate) / 1000;
@@ -3402,11 +3440,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			msgIM.addKeyword(CostantiPdD.KEY_VERSIONE_PORTA, propertiesReader.getPddDetailsForLog());
 			msgIM.addKeyword(CostantiPdD.KEY_TEMPO_AVVIO, secondStarter+" secondi");
 			msgIM.logPersonalizzato("IntegrationManager");
-			
 
 		}
 
 	}
+	
 	
 	/**
 	 * Undeploy dell'applicazione WEB di OpenSPCoop
@@ -3804,6 +3842,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		try{
 			CorePluginLoader.close(OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
 		}catch(Throwable e){}
+		
+		// *** Hazelcast ***
+		if (OpenSPCoop2Startup.hazelcast != null) {
+			OpenSPCoop2Startup.hazelcast.shutdown();
+		}
 		
 		// Attendo qualche secondo
 		Utilities.sleep(2000);

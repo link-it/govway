@@ -50,6 +50,19 @@
 	</properties>
 
 	<dependencies>
+	
+	   <dependency>
+        <groupId>com.hazelcast</groupId>
+        <artifactId>hazelcast-all</artifactId>
+        <version>4.2.5</version>
+	</dependency>
+
+	<dependency>
+   		<groupId>org.hibernate.orm</groupId>
+	    <artifactId>hibernate-core</artifactId>
+    	<version>6.0.1.Final</version>
+	</dependency>
+
 
 		<dependency>
 			<groupId>org.xmldb</groupId>

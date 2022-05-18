@@ -855,6 +855,8 @@
 				<include name="freemarker-2.3.29.jar"/>
 				<include name="snakeyaml-1.28.jar"/>
 				<include name="rhino-1.7.13.jar"/>
+				<include name="hazelcast-all-4.2.5.jar"/>
+				<include name="hibernate-core-6.0.1.Final.jar"/>
 				<!-- NOTA: non includere mai nel runtime Saxon-HE-*.jar poiche' fa agganciare il suo Transformer sostituendosi a Xalan (al massimo vedere di levare la dichiarazione in META-INF) -->
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/log">

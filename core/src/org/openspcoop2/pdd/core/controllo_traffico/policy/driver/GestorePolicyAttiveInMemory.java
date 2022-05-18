@@ -48,6 +48,7 @@ import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyShutdownException;
 import org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbDeserializer;
 import org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbSerializer;
+import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.Utilities;
@@ -636,6 +637,14 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			//	    datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
 			// TODO
 			return null;
+		case HAZELCAST_LOCAL_COMPUTATION:
+			throw new PolicyException("Unsupported type '"+this.type+"'");
+		case HAZELCAST_NEAR_CACHE:
+			throw new PolicyException("Unsupported type '"+this.type+"'");
+		case HAZELCAST_ONLY_DISTRIBUTED:
+			return new PolicyGroupByActiveThreadsDistributedNoCache(activePolicy, uniqueIdMap, OpenSPCoop2Startup.hazelcast);
+		default:
+			break;
 		}
 		throw new PolicyException("Unsupported type '"+this.type+"'");
 	}

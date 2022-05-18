@@ -197,6 +197,8 @@
 	<archive path="/op2_3.3.dev/lib/security/nimbus-jose-jwt-8.6.jar"/>
 	<archive path="/op2_3.3.dev/lib/security/jasypt-1.9.3.jar"/>
 	<!-- shared -->
+        <archive path="/op2_3.3.dev/lib/shared/hibernate-core-6.0.1.Final.jar"/>
+        <archive path="/op2_3.3.dev/lib/shared/hazelcast-all-4.2.5.jar"/>
         <archive path="/op2_3.3.dev/lib/shared/xom-1.2.11.jar"/>
         <archive path="/op2_3.3.dev/lib/shared/xmldb-1.0.jar"/>
         <archive path="/op2_3.3.dev/lib/shared/xercesImpl-2.12.2.jar"/>
