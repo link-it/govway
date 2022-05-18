@@ -640,7 +640,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 		case HAZELCAST_LOCAL_COMPUTATION:
 			throw new PolicyException("Unsupported type '"+this.type+"'");
 		case HAZELCAST_NEAR_CACHE:
-			throw new PolicyException("Unsupported type '"+this.type+"'");
+			return new PolicyGroupByActiveThreadsDistributedNearCache(activePolicy, uniqueIdMap, OpenSPCoop2Startup.hazelcast);
 		case HAZELCAST_ONLY_DISTRIBUTED:
 			return new PolicyGroupByActiveThreadsDistributedNoCache(activePolicy, uniqueIdMap, OpenSPCoop2Startup.hazelcast);
 		default:
