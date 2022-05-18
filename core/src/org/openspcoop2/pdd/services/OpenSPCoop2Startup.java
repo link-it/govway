@@ -2394,6 +2394,38 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			// TODO: Note that, most of Hazelcast’s distributed objects are created lazily: A distributed object is created once the first operation accesses it.
+			//		Quindi fare una get di una chiave qualsiasi su ciascun nodo al momento dell'inizializzazione.
+			
+			/* ------------ Hazelcast------------ */
+			try {
+				PolicyGroupByActiveThreadsInMemoryEnum rateLimitingPolicy = propertiesReader.getControlloTrafficoGestorePolicyInMemoryType();
+				
+				if (rateLimitingPolicy == null) {
+					// Non avviare hazelcast se la property non è impostata.
+					
+				}
+				else if (rateLimitingPolicy.name().toLowerCase().startsWith("hazelcast")) {
+					OpenSPCoop2Startup.log.info("Trovata configurazione hazelcast per rate limiting clusterizzato: " + rateLimitingPolicy);
+					
+					if(propertiesReader.getHazelcastConfigPath() != null) {
+						OpenSPCoop2Startup.log.info("Lettura YAML configurazione hazelcast: " + propertiesReader.getHazelcastConfigPath());
+						File hazelcastConfigFile = new File(propertiesReader.getHazelcastConfigPath());
+						Config hazelcastConfig = new Config();
+						hazelcastConfig.setConfigurationFile(hazelcastConfigFile);
+						
+						OpenSPCoop2Startup.hazelcast = Hazelcast.newHazelcastInstance(hazelcastConfig);
+					} else {
+						this.logError("Riscontrato errore durante l'inizializzazione di hazelcast: Path della configurazione YAML mancante.");
+						return;
+					}
+					
+				}
+				
+			} catch(Exception e){
+				this.logError("Riscontrato errore durante il recupero delle policy in memory per l'attivazione di hazelcast: "+e.getMessage(),e);
+				return;
+			}
 			
 			
 			
@@ -3389,38 +3421,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}
 			}
 
-			// TODO: Note that, most of Hazelcast’s distributed objects are created lazily: A distributed object is created once the first operation accesses it.
-			//		Quindi fare una get di una chiave qualsiasi su ciascun nodo al momento dell'inizializzazione.
-			
-			/* ------------ Hazelcast------------ */
-			try {
-				PolicyGroupByActiveThreadsInMemoryEnum rateLimitingPolicy = propertiesReader.getControlloTrafficoGestorePolicyInMemoryType();
-				
-				if (rateLimitingPolicy == null) {
-					// Non avviare hazelcast se la property non è impostata.
-					
-				}
-				else if (rateLimitingPolicy.name().toLowerCase().startsWith("hazelcast")) {
-					OpenSPCoop2Startup.log.info("Trovata configurazione hazelcast per rate limiting clusterizzato: " + rateLimitingPolicy);
-					
-					if(propertiesReader.getHazelcastConfigPath() != null) {
-						OpenSPCoop2Startup.log.info("Lettura YAML configurazione hazelcast: " + propertiesReader.getHazelcastConfigPath());
-						File hazelcastConfigFile = new File(propertiesReader.getHazelcastConfigPath());
-						Config hazelcastConfig = new Config();
-						hazelcastConfig.setConfigurationFile(hazelcastConfigFile);
-						
-						OpenSPCoop2Startup.hazelcast = Hazelcast.newHazelcastInstance(hazelcastConfig);
-					} else {
-						this.logError("Riscontrato errore durante l'inizializzazione di hazelcast: Path della configurazione YAML mancante.");
-						return;
-					}
-					
-				}
-				
-			} catch(Exception e){
-				this.logError("Riscontrato errore durante il recupero delle policy in memory per l'attivazione di hazelcast: "+e.getMessage(),e);
-				return;
-			}
+
 			
 			
 			/* ------------ OpenSPCoop startup terminato  ------------ */
