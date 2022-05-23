@@ -24,6 +24,8 @@
                                 <linkit:sql-table object-name="definizione-messaggi" object-type="definizione-messaggi"/>
                                 <linkit:sql-comment><![CDATA[**** Correlazione Applicativa ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="correlazione-applicativa" object-type="correlazione-applicativa"/>
+ 				<linkit:sql-comment><![CDATA[**** Controllo Traffico ****]]></linkit:sql-comment>
+                                <linkit:sql-table object-name="ct-map" object-type="ct-map"/>
                             </linkit:sql-table-list>
                         </linkit:sql-script>
                         <linkit:sql-mapping single-table-mapping="false"
@@ -875,6 +877,61 @@
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ora_registrazione" default-current-time="true"/>
                                 <linkit:sql-ddl-column-comment>Data di registrazione della regola di correlazione</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+
+
+    <xsd:element name="ct-map">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="ct_map" sequence-cycle="true"
+                                               comment="Implementazione su database delle mappe utilizzate per il controllo del traffico"> 
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-field name="map_key" />
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="map_key" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="map_key" varchar="300"/> <!-- colonna active_policy_id VARCHAR(275) + '#' + 'yyyy-MM-dd_HH:mm:ss.SSS' (la data potrebbe non esserci) -->
+                                <linkit:sql-ddl-column-comment>Identificativo univoco della policy</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="map_update_time" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="map_update_time"/>
+                                <linkit:sql-ddl-column-comment>Data relativa all'ultima modifica della policy</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="map_value" type="xsd:hexBinary">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="map_value"/>
+                                <linkit:sql-ddl-column-comment>Mappa serializzata</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

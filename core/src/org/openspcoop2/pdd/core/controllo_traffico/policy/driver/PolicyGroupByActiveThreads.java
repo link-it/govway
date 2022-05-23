@@ -30,7 +30,7 @@ import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupBy;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
-import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreads;
+import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreadsInMemory;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.protocol.utils.EsitiProperties;
@@ -44,7 +44,7 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByActiveThreads {
+public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByActiveThreadsInMemory {
 
 	/**
 	 * 
@@ -63,13 +63,29 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	}
 	
 	
+	@Override
 	public ActivePolicy getActivePolicy() {
 		return this.activePolicy;
 	}
+	@Override
 	public Map<IDUnivocoGroupByPolicy, DatiCollezionati> getMapActiveThreads(){
 		return this.mapActiveThreads;
 	}
 	
+	@Override
+	public void initMap(Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
+		//synchronized (this.semaphore) {
+		this.lock.acquireThrowRuntime("initMap");
+		try {
+			if(map!=null && map.size()>0){
+				this.mapActiveThreads.putAll(map);
+			}
+		}finally {
+			this.lock.release("initMap");
+		}
+	}
+	
+	@Override
 	public void resetCounters(){
 		//synchronized (this.semaphore) {
 		this.lock.acquireThrowRuntime("resetCounters");
@@ -215,9 +231,11 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	}
 
 	
+	@Override
 	public long getActiveThreads(){
 		return this.getActiveThreads(null);
 	}
+	@Override
 	public long getActiveThreads(IDUnivocoGroupByPolicy filtro){
 		
 		//synchronized (this.semaphore) {
@@ -246,6 +264,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 		}
 	}
 	
+	@Override
 	public String printInfos(Logger log, String separatorGroups) throws UtilsException{
 		//synchronized (this.semaphore) {
 		this.lock.acquireThrowRuntime("printInfos");

@@ -2430,7 +2430,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					GestoreCacheControlloTraffico.initialize(confControlloTraffico);
 					
 					GestorePolicyAttive.initialize(logControlloTraffico, propertiesReader.getControlloTrafficoGestorePolicyTipo(),
-							propertiesReader.getControlloTrafficoGestorePolicyWSUrl());
+							propertiesReader.getControlloTrafficoGestorePolicyWSUrl(),
+							propertiesReader.getControlloTrafficoGestorePolicyInMemoryType());
 					
 				}catch(Exception e){
 					msgDiag.logStartupError(e,"Inizializzazione Gestori del ControlloTraffico");

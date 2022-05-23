@@ -1,3 +1,12 @@
+2022-05-23  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta gestione del RateLimiting che permette di avere una quota di una policy 'realtime' suddivisa tra i nodi del cluster.
+	La gestione richiede che vi sia un bilanciamento round-robin delle richieste da gestire con policy di rate limiting.
+	In alternativa alla modalità suddetta, è stato aggiunto un gestore delle policy implementato tramite database relazione, 
+	che consente di avere un conteggio delle quote esatto, indipendentemente dal numero di nodi attivi sul cluster. 
+	L'implementazione, essendo implementata tramite meccanismi sincroni, non è utilizzabile in ambienti che richiedono perfomance elevate.
+
 2022-05-16  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, Utils]

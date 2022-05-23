@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.ConfigurazioneControlloTraffico;
+import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
 import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
 import org.openspcoop2.core.controllo_traffico.driver.CostantiServizioControlloTraffico;
 import org.openspcoop2.core.controllo_traffico.driver.IGestorePolicyAttive;
@@ -72,7 +73,7 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 	
 	
 	@Override
-	public IPolicyGroupByActiveThreads getActiveThreadsPolicy(ActivePolicy activePolicy)
+	public IPolicyGroupByActiveThreads getActiveThreadsPolicy(ActivePolicy activePolicy, DatiTransazione datiTransazione, Object state)
 			throws PolicyShutdownException,PolicyException {
 		
 		try{

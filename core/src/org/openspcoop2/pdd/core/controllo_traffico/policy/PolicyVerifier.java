@@ -100,7 +100,7 @@ public class PolicyVerifier {
 		boolean policyGlobale = !policyAPI;
 		
 		// Registro Threads (NOTA: non i contatori, quelli vegono aggiornati )
-		DatiCollezionati datiCollezionatiReaded = gestorePolicyAttive.getActiveThreadsPolicy(activePolicy).
+		DatiCollezionati datiCollezionatiReaded = gestorePolicyAttive.getActiveThreadsPolicy(activePolicy,datiTransazione, state).
 				registerStartRequest(logCC,datiTransazione.getIdTransazione(),datiGroupBy);
 		
 	
@@ -288,7 +288,7 @@ public class PolicyVerifier {
 			// aggiorno contatori
 			if(isApplicabile || !activePolicy.getConfigurazioneControlloTraffico().isElaborazioneRealtime_incrementaSoloPolicyApplicabile()){
 			
-				DatiCollezionati datiCollezionatiUpdated = gestorePolicyAttive.getActiveThreadsPolicy(activePolicy).updateDatiStartRequestApplicabile(logCC, datiTransazione.getIdTransazione(), datiGroupBy);
+				DatiCollezionati datiCollezionatiUpdated = gestorePolicyAttive.getActiveThreadsPolicy(activePolicy,datiTransazione, state).updateDatiStartRequestApplicabile(logCC, datiTransazione.getIdTransazione(), datiGroupBy);
 				if(datiCollezionatiUpdated!=null) {
 					datiCollezionatiReaded = datiCollezionatiUpdated; 
 					now = datiCollezionatiReaded.getCloneDate(); // Data in cui sono stati prelevati gli intervalli.

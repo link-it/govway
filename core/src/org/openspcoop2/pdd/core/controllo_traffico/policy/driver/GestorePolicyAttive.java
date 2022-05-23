@@ -34,11 +34,11 @@ public class GestorePolicyAttive {
 
 	
 	private static IGestorePolicyAttive staticInstance = null;
-	public static synchronized void initialize(Logger log, TipoGestorePolicy tipo, String urlService) throws Exception{
+	public static synchronized void initialize(Logger log, TipoGestorePolicy tipo, String urlService, PolicyGroupByActiveThreadsInMemoryEnum inMemoryType) throws Exception{
 		if(staticInstance==null){
 			if(TipoGestorePolicy.IN_MEMORY.equals(tipo)){
 				staticInstance = new GestorePolicyAttiveInMemory();
-				staticInstance.initialize(log);
+				staticInstance.initialize(log, inMemoryType);
 			}
 			else if(TipoGestorePolicy.WS.equals(tipo)){
 				staticInstance = new GestorePolicyAttiveWS();

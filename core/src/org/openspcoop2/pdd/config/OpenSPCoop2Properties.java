@@ -63,6 +63,7 @@ import org.openspcoop2.pdd.core.autorizzazione.container.IAutorizzazioneSecurity
 import org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazionePortaApplicativa;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.INotify;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.PolicyGroupByActiveThreadsInMemoryEnum;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.TipoGestorePolicy;
 import org.openspcoop2.pdd.core.credenziali.IGestoreCredenziali;
 import org.openspcoop2.pdd.core.credenziali.IGestoreCredenzialiIM;
@@ -1990,6 +1991,14 @@ public class OpenSPCoop2Properties {
 				TipoGestorePolicy tipo = this.getControlloTrafficoGestorePolicyTipo();
 				if(TipoGestorePolicy.WS.equals(tipo)) {
 					this.getControlloTrafficoGestorePolicyWSUrl();
+				}
+				else if(TipoGestorePolicy.IN_MEMORY.equals(tipo)) {
+					PolicyGroupByActiveThreadsInMemoryEnum type = this.getControlloTrafficoGestorePolicyInMemoryType();
+					if(PolicyGroupByActiveThreadsInMemoryEnum.DATABASE.equals(type)) {
+						isControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction();
+						getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva();
+						getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval();
+					}
 				}
 				this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository();
 				
@@ -23459,6 +23468,100 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isControlloTrafficoGestorePolicyTipo;
+	}
+	
+	private static PolicyGroupByActiveThreadsInMemoryEnum getControlloTrafficoGestorePolicyInMemoryType = null;
+	public PolicyGroupByActiveThreadsInMemoryEnum getControlloTrafficoGestorePolicyInMemoryType() throws Exception {	
+		if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryType==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.tipo");
+				if(name==null){
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryType = PolicyGroupByActiveThreadsInMemoryEnum.LOCAL;
+					this.log.warn("Proprieta' 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.tipo' non impostata; viene usato il default: "+OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryType);
+				}
+				else {
+					name = name.trim();
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryType = PolicyGroupByActiveThreadsInMemoryEnum.valueOf(name);
+				}
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.tipo': "+e.getMessage(),e);
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryType;
+	}
+	
+	private static Boolean getControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction = null;
+	public boolean isControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction() {
+		if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.DATABASE.useTransaction";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if (name != null) {
+					name = name.trim();
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction = Boolean.valueOf(name);
+				} else {
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true);
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction =  true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction = true;
+			}   
+		}
+
+		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction;
+	}
+	
+	private static Long getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva = null;
+	public long getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva() {	
+		if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.DATABASE.serializable.attesaAttiva";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if (name != null) {
+					name = name.trim();
+					long time = java.lang.Long.parseLong(name);
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva = time*1000;
+				} else {
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA);
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva =  Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva = Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA;
+			}   
+		}
+
+		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva;
+	}
+
+	private static Integer getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval = null;
+	public int getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval() {	
+		if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.DATABASE.serializable.check";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if (name != null){
+					name = name.trim();
+					int time = java.lang.Integer.parseInt(name);
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval = time;
+				} else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL);
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval = Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval = Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval;
 	}
 	
 	private static String getControlloTrafficoGestorePolicyWSUrl = null;
