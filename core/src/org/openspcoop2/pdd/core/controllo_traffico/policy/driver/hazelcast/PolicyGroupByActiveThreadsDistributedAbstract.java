@@ -54,6 +54,8 @@ public abstract class PolicyGroupByActiveThreadsDistributedAbstract implements I
 		 this.distributedMap = this.hazelcast.getMap("hazelcast-" + uniqueIdMap + "-rate-limiting");
 		 this.startRequestProcessor = new StartRequestProcessor(policy);
 		 this.updateDatiRequestProcessor = new UpdateDatiRequestProcessor(policy);
+		 
+		 var dummy = this.distributedMap.get(new IDUnivocoGroupByPolicy());
 	}
 	
 	

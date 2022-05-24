@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.config.FileSystemYamlConfig;
+import com.hazelcast.config.InMemoryYamlConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 
@@ -78,18 +79,12 @@ public class HazelcastManager {
 			content = Utilities.getAsString(HazelcastManager.class.getResourceAsStream("/"+name),Charset.UTF_8.getValue());
 		}
 		
-		File f = File.createTempFile("hazelcast", "yaml");
-		try {
-			content = content.replace("cluster-name:", "cluster-name: "+groupId+" #");
-			log.info("Hazelcast configuration: \n"+content);
-			FileSystemUtilities.writeFile(f, content.getBytes());
-			hazelcastConfig = new FileSystemYamlConfig(f.getAbsolutePath());
-		}finally{
-			f.delete();
-		}		
+		log.debug("Inizializzo hazelcast con la seguente configurazione: " + content);
+		log.debug("Il cluster-name sarà: " + groupId+"#");
+		
+		hazelcastConfig = new  InMemoryYamlConfig(content);
+		hazelcastConfig.setClusterName("cluster-name: "+groupId+"#");
 				
-		// TODO: Note that, most of Hazelcast’s distributed objects are created lazily: A distributed object is created once the first operation accesses it.
-		//		Quindi fare una get di una chiave qualsiasi su ciascun nodo al momento dell'inizializzazione.
 		hazelcast = Hazelcast.newHazelcastInstance(hazelcastConfig);
 		if(hazelcast==null) {
 			throw new Exception("Hazelcast init failed");

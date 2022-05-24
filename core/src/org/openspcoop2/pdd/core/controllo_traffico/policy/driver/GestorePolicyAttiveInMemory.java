@@ -51,6 +51,8 @@ import org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbSerializer;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.HazelcastManager;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedNearCache;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedNoCache;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.PolicyGroupByActiveThreadsDistributedRedis;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.RedissonManager;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.Utilities;
@@ -645,6 +647,8 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			return new PolicyGroupByActiveThreadsDistributedNearCache(activePolicy, uniqueIdMap, HazelcastManager.hazelcast);
 		case HAZELCAST:
 			return new PolicyGroupByActiveThreadsDistributedNoCache(activePolicy, uniqueIdMap, HazelcastManager.hazelcast);
+		case REDIS:
+			return new PolicyGroupByActiveThreadsDistributedRedis(activePolicy, uniqueIdMap, RedissonManager.redisson);
 		default:
 			break;
 		}

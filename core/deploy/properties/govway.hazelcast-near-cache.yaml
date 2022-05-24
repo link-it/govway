@@ -7,6 +7,6 @@ hazelcast:
       near-cache:
         controllo_traffico:
           in-memory-format: OBJECT
-          serialize-keys: true
+          serialize-keys: false
 
 

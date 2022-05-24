@@ -123,6 +123,7 @@ import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.GestorePolicyAt
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.PolicyGroupByActiveThreadsInMemoryEnum;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.TipoGestorePolicy;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.HazelcastManager;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.RedissonManager;
 import org.openspcoop2.pdd.core.eventi.GestoreEventi;
 import org.openspcoop2.pdd.core.handlers.ExitContext;
 import org.openspcoop2.pdd.core.handlers.GeneratoreCasualeDate;
@@ -212,6 +213,7 @@ import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.semaphore.Semaphore;
 import org.openspcoop2.utils.semaphore.SemaphoreConfiguration;
 import org.openspcoop2.utils.semaphore.SemaphoreMapping;
+import org.redisson.config.Config;
 import org.slf4j.Logger;
 
 import com.sun.xml.messaging.saaj.soap.MessageImpl;
@@ -2440,6 +2442,14 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						case HAZELCAST_LOCAL_CACHE:
 							hazelcast = true;
 							configFileHazelcast = propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastLocalCacheConfigPath();
+							break;
+						case REDIS:
+							try {
+								RedissonManager.initialize(policyType, null, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId(), OpenSPCoop2Startup.log);
+							}catch(Throwable e) {
+								this.logError("Riscontrato errore durante l'inizializzazione del client redis: "+e.getMessage());
+								return;
+							}
 							break;
 						default:
 							break;
