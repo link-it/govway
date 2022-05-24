@@ -499,19 +499,28 @@ public class ValidatoreMessaggiApplicativiRest {
 				case MIME_MULTIPART:
 					OpenSPCoop2RestMessage<?> restMsg = this.message.castAsRest();
 					if(restMsg.hasContent()) {
-						restMsg.initContent(this.bufferMessage_readOnly, idTransazione); // bufferizzo
-						isContent = restMsg.getInputStreamFromContentBuffer();
-						if(isContent!=null) {
+						boolean lazy = restMsg.setInputStreamLazyBuffer(idTransazione); // bufferizzazione lazy
+						InputStream isLazyContent = lazy ? restMsg.getInputStream() : null;
+						if(isLazyContent!=null) {
+							// isContent verra' chiuso sotto nel finally, mentre il lazy no
 							httpRequest = new InputStreamHttpRequestEntity();
-							((InputStreamHttpRequestEntity)httpRequest).setContent(isContent);
+							((InputStreamHttpRequestEntity)httpRequest).setContent(isLazyContent);
 						}
 						else {
-							httpRequest = new BinaryHttpRequestEntity();
-							ByteArrayOutputStream bout = new ByteArrayOutputStream();
-							this.message.writeTo(bout, false);
-							bout.flush();
-							bout.close();
-							((BinaryHttpRequestEntity)httpRequest).setContent(bout.toByteArray());
+							restMsg.initContent(this.bufferMessage_readOnly, idTransazione); // bufferizzo
+							isContent = restMsg.getInputStreamFromContentBuffer();
+							if(isContent!=null) {
+								httpRequest = new InputStreamHttpRequestEntity();
+								((InputStreamHttpRequestEntity)httpRequest).setContent(isContent);
+							}
+							else {
+								httpRequest = new BinaryHttpRequestEntity();
+								ByteArrayOutputStream bout = new ByteArrayOutputStream();
+								this.message.writeTo(bout, false);
+								bout.flush();
+								bout.close();
+								((BinaryHttpRequestEntity)httpRequest).setContent(bout.toByteArray());
+							}
 						}
 					}
 					else {
@@ -575,19 +584,28 @@ public class ValidatoreMessaggiApplicativiRest {
 				case MIME_MULTIPART:
 					OpenSPCoop2RestMessage<?> restMsg = this.message.castAsRest();
 					if(restMsg.hasContent()) {
-						restMsg.initContent(this.bufferMessage_readOnly, idTransazione); // bufferizzo
-						isContent = restMsg.getInputStreamFromContentBuffer();
-						if(isContent!=null) {
+						boolean lazy = restMsg.setInputStreamLazyBuffer(idTransazione); // bufferizzazione lazy
+						InputStream isLazyContent = lazy ? restMsg.getInputStream() : null;
+						if(isLazyContent!=null) {
+							// isContent verra' chiuso sotto nel finally, mentre il lazy no
 							httpResponse = new InputStreamHttpResponseEntity();
-							((InputStreamHttpResponseEntity)httpResponse).setContent(isContent);
+							((InputStreamHttpResponseEntity)httpResponse).setContent(isLazyContent);
 						}
 						else {
-							httpResponse = new BinaryHttpResponseEntity();
-							ByteArrayOutputStream bout = new ByteArrayOutputStream();
-							this.message.writeTo(bout, false);
-							bout.flush();
-							bout.close();
-							((BinaryHttpResponseEntity)httpResponse).setContent(bout.toByteArray());
+							restMsg.initContent(this.bufferMessage_readOnly, idTransazione); // bufferizzo
+							isContent = restMsg.getInputStreamFromContentBuffer();
+							if(isContent!=null) {
+								httpResponse = new InputStreamHttpResponseEntity();
+								((InputStreamHttpResponseEntity)httpResponse).setContent(isContent);
+							}
+							else {
+								httpResponse = new BinaryHttpResponseEntity();
+								ByteArrayOutputStream bout = new ByteArrayOutputStream();
+								this.message.writeTo(bout, false);
+								bout.flush();
+								bout.close();
+								((BinaryHttpResponseEntity)httpResponse).setContent(bout.toByteArray());
+							}
 						}
 					}
 					else {

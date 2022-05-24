@@ -402,13 +402,15 @@ public class DynamicUtils {
 			dynamicMap.put(Costanti.MAP_ELEMENT_URL_REGEXP, urle);
 			dynamicMap.put(Costanti.MAP_ELEMENT_URL_REGEXP.toLowerCase(), urle);
 		}
-		if(dynamicInfo!=null && dynamicInfo.getMessageContent()!=null && dynamicInfo.getMessageContent().isXml()) {
+		if(dynamicInfo!=null && dynamicInfo.getMessageContent()!=null && 
+				(dynamicInfo.getMessageContent().isXml() || dynamicInfo.getMessageContent().isRestMultipart())) {
 			OpenSPCoop2MessageFactory messageFactory = dynamicInfo.getMessage()!=null ? dynamicInfo.getMessage().getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 			PatternExtractor pe = new PatternExtractor(messageFactory, dynamicInfo.getMessageContent(), log);
 			dynamicMap.put(Costanti.MAP_ELEMENT_XML_XPATH, pe);
 			dynamicMap.put(Costanti.MAP_ELEMENT_XML_XPATH.toLowerCase(), pe);
 		}
-		if(dynamicInfo!=null && dynamicInfo.getMessageContent()!=null && dynamicInfo.getMessageContent().isJson()) {
+		if(dynamicInfo!=null && dynamicInfo.getMessageContent()!=null && 
+				(dynamicInfo.getMessageContent().isJson() || dynamicInfo.getMessageContent().isRestMultipart())) {
 			OpenSPCoop2MessageFactory messageFactory = dynamicInfo.getMessage()!=null ? dynamicInfo.getMessage().getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 			PatternExtractor pe = new PatternExtractor(messageFactory, dynamicInfo.getMessageContent(), log);
 			dynamicMap.put(Costanti.MAP_ELEMENT_JSON_PATH, pe);

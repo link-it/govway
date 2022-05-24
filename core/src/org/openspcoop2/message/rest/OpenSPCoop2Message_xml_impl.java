@@ -62,10 +62,10 @@ public class OpenSPCoop2Message_xml_impl extends AbstractBaseOpenSPCoop2RestMess
 	@Override
 	protected Element buildContent() throws MessageException{
 		try{
-			return buildContent(this.countingInputStream);
+			return buildContent(this._getInputStream());
 		}finally{
 			try{
-				this.countingInputStream.close();
+				this._getInputStream().close();
 			}catch(Exception eClose){}
 		}
 	}

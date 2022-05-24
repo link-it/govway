@@ -50,10 +50,10 @@ public class OpenSPCoop2Message_soap11_impl extends AbstractOpenSPCoop2Message_s
 	@Override
 	protected OpenSPCoop2Message_saaj_11_impl buildContent() throws MessageException{
 		try{
-			return buildContent(this.countingInputStream);
+			return buildContent(this._getInputStream());
 		}finally{
 			try{
-				this.countingInputStream.close();
+				this._getInputStream().close();
 			}catch(Exception eClose){}
 		}
 	}

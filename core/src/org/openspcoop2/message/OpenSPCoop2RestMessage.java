@@ -43,6 +43,8 @@ public interface OpenSPCoop2RestMessage<T> extends OpenSPCoop2Message {
 	
 	public boolean hasContent() throws MessageException,MessageNotSupportedException;
 	
+	public boolean setInputStreamLazyBuffer(String idTransazione) throws MessageException;
+	
 	public void initContent() throws MessageException,MessageNotSupportedException;
 	public void initContent(boolean readOnly, String idTransazione) throws MessageException,MessageNotSupportedException;
 	

@@ -40,6 +40,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
+import org.openspcoop2.message.OpenSPCoop2RestMimeMultipartMessage;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
@@ -222,6 +223,10 @@ public class GestoreTrasformazioni {
 				else if(MessageType.JSON.equals(message.getMessageType()) && message.castAsRest().hasContent()){
 					OpenSPCoop2RestJsonMessage json = message.castAsRestJson();
 					messageContent = new MessageContent(json, bufferMessage_readOnly, this.pddContext);
+				}
+				else if(MessageType.MIME_MULTIPART.equals(message.getMessageType()) && message.castAsRest().hasContent()){
+					OpenSPCoop2RestMimeMultipartMessage mime = message.castAsRestMimeMultipart();
+					messageContent = new MessageContent(mime, bufferMessage_readOnly, this.pddContext);
 				}
 				else {
 					contenutoNonNavigabile = true;
@@ -617,6 +622,10 @@ public class GestoreTrasformazioni {
 				else if(MessageType.JSON.equals(message.getMessageType()) && message.castAsRest().hasContent()){
 					OpenSPCoop2RestJsonMessage json = message.castAsRestJson();
 					messageContent = new MessageContent(json, bufferMessage_readOnly, this.pddContext);
+				}
+				else if(MessageType.MIME_MULTIPART.equals(message.getMessageType()) && message.castAsRest().hasContent()){
+					OpenSPCoop2RestMimeMultipartMessage mime = message.castAsRestMimeMultipart();
+					messageContent = new MessageContent(mime, bufferMessage_readOnly, this.pddContext);
 				}
 				else {
 					contenutoNonNavigabile = true;

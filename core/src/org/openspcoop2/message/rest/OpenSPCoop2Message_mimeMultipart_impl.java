@@ -48,12 +48,12 @@ public class OpenSPCoop2Message_mimeMultipart_impl extends AbstractBaseOpenSPCoo
 	@Override
 	protected MultipartContent buildContent() throws MessageException{
 		try{
-			return new MultipartContent(this.countingInputStream, this.contentType);
+			return new MultipartContent(this._getInputStream(), this.contentType);
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
 		}finally {
 			try {
-				this.countingInputStream.close();
+				this._getInputStream().close();
 			}catch(Exception eClose) {}
 		}
 	}

@@ -380,6 +380,50 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 	
 	
 	
+	
+	@Test
+	public void erogazione_form_data_ok_trasformazione() throws Exception {
+		requestOktrasformazione(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA_SUBTYPE);
+	}
+	@Test
+	public void fruizione_form_data_ok_trasformazione() throws Exception {
+		requestOktrasformazione(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA_SUBTYPE);
+	}
+	@Test
+	public void erogazione_mixed_ok_trasformazione() throws Exception {
+		requestOktrasformazione(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_MULTIPART_MIXED_SUBTYPE);
+	}
+	@Test
+	public void fruizione_mixed_ok_trasformazione() throws Exception {
+		requestOktrasformazione(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_MULTIPART_MIXED_SUBTYPE);
+	}
+	private void requestOktrasformazione(TipoServizio tipo, String subtype) throws Exception {
+		
+		String id = UUIDUtilsGenerator.newUUID();
+		
+		String dog1 = "{\"pet_type\": \"Dog\",  \"bark\": false,  \"breed\": \"Dingo\" }";
+		String contenuto_dog1 = "{\"altro\":\""+id+"\", \"pet\":"+dog1+"}";
+		byte [] pdf = Utilities.getAsByteArray(TestOpenApi3Extended.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test.pdf"));
+		byte [] pdfEncodedBase64 = Base64Utilities.encode(pdf);
+		
+		MimeMultipart mm = MultipartUtilities.buildMimeMultipart(HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA_SUBTYPE,
+				Integer.MAX_VALUE+"", HttpConstants.CONTENT_TYPE_PLAIN, "\"id\"", null,
+				contenuto_dog1, HttpConstants.CONTENT_TYPE_JSON, "\"metadati\"", null,
+				pdf, HttpConstants.CONTENT_TYPE_PDF, "\"docPdf\"", "\"attachment.pdf\"",
+				pdfEncodedBase64, HttpConstants.CONTENT_TYPE_PDF, "\"docPdf2\"", "\"attachment2.pdf\"",
+				null, null, null, null);
+		
+		test(logCore, tipo, "test-trasformazione", mm,
+				null, 
+				false,
+				id);
+	}
+	
+	
+	
+	
+	
+	
 	static void test(Logger logCore, TipoServizio tipoServizio, String resource, MimeMultipart mm, 
 			String errore, boolean checkDump, String idCorrelazioneAttesa) throws Exception {
 		
@@ -392,6 +436,9 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 		request.setMethod(HttpRequestMethod.POST);
 		StringBuilder sb = new StringBuilder();
 		sb.append(url);
+		if(resource.contains("trasformazione")) {
+			sb.append("?replyHttpHeader=X-Verifica-Req");
+		}
 		request.setUrl(sb.toString());
 		
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -407,6 +454,16 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 		
 		String idTransazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		assertNotNull(idTransazione);
+		
+		if(resource.contains("trasformazione")) {
+			String hdrReq = response.getHeaderFirstValue("X-Verifica-Req");
+			assertNotNull(hdrReq);
+			assertEquals(idCorrelazioneAttesa, hdrReq);
+			
+			String hdrRes = response.getHeaderFirstValue("X-Verifica-Res");
+			assertNotNull(hdrRes);
+			assertEquals(idCorrelazioneAttesa, hdrRes);
+		}
 		
 		int esitoExpected = -1;
 		if(errore==null) {
@@ -466,7 +523,7 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 			
 		}
 		
-		if(idCorrelazioneAttesa!=null) {
+		if(idCorrelazioneAttesa!=null && !resource.contains("trasformazione")) {
 		
 			String idCorrelazioneRichiesta = DBVerifier.getIdCorrelazioneApplicativaRichiesta(idTransazione);
 			String idCorrelazioneRisposta = DBVerifier.getIdCorrelazioneApplicativaRisposta(idTransazione);

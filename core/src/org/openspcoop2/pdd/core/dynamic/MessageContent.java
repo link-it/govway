@@ -23,6 +23,7 @@ import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
+import org.openspcoop2.message.OpenSPCoop2RestMimeMultipartMessage;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.exception.MessageException;
@@ -44,6 +45,7 @@ public class MessageContent {
 	private OpenSPCoop2SoapMessage soapMessage;
 	private OpenSPCoop2RestXmlMessage restXmlMessage;
 	private OpenSPCoop2RestJsonMessage restJsonMessage;
+	private OpenSPCoop2RestMimeMultipartMessage restMultipartMessage;
 	
 	private String idTransazione;
 	private boolean bufferMessage_readOnly;
@@ -59,6 +61,10 @@ public class MessageContent {
 	public MessageContent(OpenSPCoop2RestJsonMessage restJsonMessage, boolean bufferMessage_readOnly, Context context) {
 		this.restJsonMessage = restJsonMessage;
 		init(this.restJsonMessage, bufferMessage_readOnly, context);
+	}
+	public MessageContent(OpenSPCoop2RestMimeMultipartMessage restMultipartMessage, boolean bufferMessage_readOnly, Context context) {
+		this.restMultipartMessage = restMultipartMessage;
+		init(this.restMultipartMessage, bufferMessage_readOnly, context);
 	}
 	private void init(OpenSPCoop2Message msg, boolean bufferMessage_readOnly, Context context) {
 		this.messageFactory = msg.getFactory();
@@ -78,6 +84,9 @@ public class MessageContent {
 	public boolean isXml() {
 		return this.soapMessage!=null || this.restXmlMessage!=null;
 	}
+	public boolean isRestMultipart() {
+		return this.restMultipartMessage!=null;
+	}
 	
 	private Element element = null;
 	public Element getElement() throws MessageException, MessageNotSupportedException {
@@ -92,6 +101,9 @@ public class MessageContent {
 		else if(this.restXmlMessage!=null) {
 			this.element = MessageUtils.getContentElement(this.restXmlMessage, checkSoapBodyEmpty, this.bufferMessage_readOnly, this.idTransazione);
 		}
+		else if(this.restMultipartMessage!=null) {
+			this.element = MessageUtils.getContentElement(this.restMultipartMessage, checkSoapBodyEmpty, this.bufferMessage_readOnly, this.idTransazione);
+		}
 		
 		return this.element;
 	}
@@ -104,6 +116,9 @@ public class MessageContent {
 		
 		if(this.restJsonMessage!=null) {
 			this.elementJson = MessageUtils.getContentString(this.restJsonMessage, this.bufferMessage_readOnly, this.idTransazione);
+		}
+		else if(this.restMultipartMessage!=null) {
+			this.elementJson = MessageUtils.getContentString(this.restMultipartMessage, this.bufferMessage_readOnly, this.idTransazione);
 		}
 		
 		return this.elementJson;
@@ -119,6 +134,9 @@ public class MessageContent {
 		}
 		else if(this.restJsonMessage!=null) {
 			msg = this.restJsonMessage;
+		}
+		else if(this.restMultipartMessage!=null) {
+			msg = this.restMultipartMessage;
 		}
 		MessageUtils.setUpdatable(msg);
 	}

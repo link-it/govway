@@ -66,7 +66,7 @@ public class OpenSPCoop2Message_json_impl extends AbstractBaseOpenSPCoop2RestMes
 		try{
 			//return org.openspcoop2.utils.Utilities.getAsString(this.countingInputStream, this.contentTypeCharsetName);
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			CopyStream.copy(this.countingInputStream, bout);
+			CopyStream.copy(this._getInputStream(), bout);
 			bout.flush();
 			bout.close();
 			return bout.toString(this.contentTypeCharsetName);
@@ -74,7 +74,7 @@ public class OpenSPCoop2Message_json_impl extends AbstractBaseOpenSPCoop2RestMes
 			throw new MessageException(e.getMessage(),e);
 		}finally {
 			try {
-				this.countingInputStream.close();
+				this._getInputStream().close();
 			}catch(Exception eClose) {}
 		}
 	}

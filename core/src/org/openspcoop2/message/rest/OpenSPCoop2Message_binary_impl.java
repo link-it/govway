@@ -54,12 +54,12 @@ public class OpenSPCoop2Message_binary_impl extends AbstractBaseOpenSPCoop2RestM
 	@Override
 	protected BinaryContent buildContent() throws MessageException{
 		try{
-			return new BinaryContent(this.countingInputStream, this.contentType);
+			return new BinaryContent(this._getInputStream(), this.contentType);
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
 		}finally {
 			try {
-				this.countingInputStream.close();
+				this._getInputStream().close();
 			}catch(Exception eClose) {}
 		}
 	}

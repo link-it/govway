@@ -232,4 +232,48 @@ public class OpenAPI30_MultipartRequestArrayTest extends ConfigLoader {
 				"descrizione generica");
 	}
 	
+	
+	
+	
+	
+	
+	@Test
+	public void erogazione_form_data_ok_array_json_trasformazione() throws Exception {
+		request_ok_array_json_trasformazione(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA_SUBTYPE);
+	}
+	@Test
+	public void fruizione_form_data_ok_array_json_trasformazione() throws Exception {
+		request_ok_array_json_trasformazione(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_MULTIPART_FORM_DATA_SUBTYPE);
+	}
+	@Test
+	public void erogazione_mixed_ok_array_json_trasformazione() throws Exception {
+		request_ok_array_json_trasformazione(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_MULTIPART_MIXED_SUBTYPE);
+	}
+	@Test
+	public void fruizione_mixed_ok_array_json_trasformazione() throws Exception {
+		request_ok_array_json_trasformazione(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_MULTIPART_MIXED_SUBTYPE);
+	}
+	private void request_ok_array_json_trasformazione(TipoServizio tipo, String subtype) throws Exception {
+		
+		String id = UUIDUtilsGenerator.newUUID();
+		
+		String cat = "{\"pet_type\": \"Cat\",  \"age\": 3}";
+		String dog1 = "{\"pet_type\": \"Dog\",  \"bark\": false,  \"breed\": \"Dingo\" }";
+		String dog2 = "{\"pet_type\": \"Dog\",  \"bark\": true }";
+		String contenuto_cat = "{\"altro\":\""+id+"\", \"pet\":"+cat+"}";
+		String contenuto_dog1 = "{\"altro\":\"descrizione generica\", \"pet\":"+dog1+"}";
+		String contenuto_dog2 = "{\"altro\":\"descrizione generica\", \"pet\":"+dog2+"}";
+		List<byte[]> l = new ArrayList<byte[]>();
+		l.add(contenuto_cat.getBytes());
+		l.add(contenuto_dog1.getBytes());
+		l.add(contenuto_dog2.getBytes());
+		
+		MimeMultipart mm = MultipartUtilities.buildMimeMultipart(subtype,
+				l, HttpConstants.CONTENT_TYPE_JSON, "\"archivi\"", "\"attachment"+MultipartUtilities.templateNumero+".json\"");
+		
+		OpenAPI30_MultipartRequestTest.test(logCore, tipo, "test-trasformazione-array-json", mm,
+				null, 
+				false,
+				id);
+	}
 }

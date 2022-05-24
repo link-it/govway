@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.SequenceInputStream;
 
 import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.io.output.CountingOutputStream;
@@ -47,7 +48,7 @@ import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
  */
 public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends AbstractBaseOpenSPCoop2Message {
 
-	protected CountingInputStream countingInputStream;
+	protected CountingInputStream _countingInputStream;
 	protected String contentType;
 	protected String contentTypeCharsetName = Charset.UTF_8.getValue();
 
@@ -138,7 +139,7 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 						}
 					}
 
-					this.countingInputStream = new CountingInputStream(normalizedIs);
+					this._countingInputStream = new CountingInputStream(normalizedIs);
 					this.hasContent = true;
 				}
 
@@ -177,6 +178,27 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 		}
 	}
 
+	/* Input Stream con costruzione del buffer incrementale */
+	
+	public boolean setInputStreamLazyBuffer(String idTransazione) throws MessageException{
+		
+		if(this._countingInputStream==null) {
+			return false;
+		}
+		if(this.content != null || this.contentBuffer!=null) {
+			return false;
+		}
+		if(! (this._countingInputStream instanceof OpenSPCoop2InputStreamDynamicContent) ) {
+			DumpByteArrayOutputStream contentBuffer = new DumpByteArrayOutputStream(
+					AbstractBaseOpenSPCoop2MessageDynamicContent.soglia,
+					AbstractBaseOpenSPCoop2MessageDynamicContent.repositoryFile, idTransazione,
+					this.getMessageRole().name());
+			this._countingInputStream = new OpenSPCoop2InputStreamDynamicContent(this._countingInputStream, contentBuffer);
+		}
+		return true; // se è già OpenSPCoop2InputStreamDynamicContent torno true
+
+	}
+	
 	/* Contenuto */
 
 	private synchronized void initializeContent(boolean readOnly, String idTransazione) throws MessageException {
@@ -184,19 +206,26 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 			if (this.content == null) {
 
 				if (readOnly && this.supportReadOnly) {
-					this.contentBuffer = new DumpByteArrayOutputStream(
-							AbstractBaseOpenSPCoop2MessageDynamicContent.soglia,
-							AbstractBaseOpenSPCoop2MessageDynamicContent.repositoryFile, idTransazione,
-							this.getMessageRole().name());
+					if(this._countingInputStream instanceof OpenSPCoop2InputStreamDynamicContent) {
+						// se e' un OpenSPCoop2InputStreamDynamicContent dovrebbe gia' essere stato inizializzato il buffer
+						this._countingInputStream = ((OpenSPCoop2InputStreamDynamicContent)this._countingInputStream).getWrappedInputStream();
+						this.contentBuffer = ((OpenSPCoop2InputStreamDynamicContent)this._countingInputStream).getBuffer();
+					}
+					else { 
+						this.contentBuffer = new DumpByteArrayOutputStream(
+								AbstractBaseOpenSPCoop2MessageDynamicContent.soglia,
+								AbstractBaseOpenSPCoop2MessageDynamicContent.repositoryFile, idTransazione,
+								this.getMessageRole().name());
+					}
 					try {
-						CopyStream.copy(this.countingInputStream, this.contentBuffer);
+						CopyStream.copy(this._countingInputStream, this.contentBuffer); // se e' un OpenSPCoop2InputStreamDynamicContent riverso quello che rimane nel buffer
 						this.content = this.buildContent(this.contentBuffer);
 					} catch (Throwable t) {
 						MessageUtils.registerParseException(this, t, true);
 						throw new MessageException(t.getMessage(), t);
 					} finally {
 						try {
-							this.countingInputStream.close();
+							this._countingInputStream.close();
 						} catch (Exception eClose) {
 						}
 					}
@@ -235,9 +264,37 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 	}
 
 	public InputStream getInputStream() {
-		return this.countingInputStream;
+		return this._countingInputStream;
 	}
 
+	protected InputStream _getInputStream() throws MessageException {
+		if(this._countingInputStream instanceof OpenSPCoop2InputStreamDynamicContent) {
+			OpenSPCoop2InputStreamDynamicContent di = ((OpenSPCoop2InputStreamDynamicContent)this._countingInputStream); 
+			DumpByteArrayOutputStream bf = di.getBuffer();
+			if(bf!=null && bf.size()>0) {
+				this._countingInputStream = di.getWrappedInputStream();
+				InputStream isBuffered = bf.getInputStream();
+				try {
+					InputStream isRemained = Utilities.normalizeStream(this._countingInputStream, false);
+					if(di.isInputStreamConsumed() || (isRemained==null) ) {
+						return isBuffered;
+					}
+					else {
+						return new SequenceInputStream(isBuffered,isRemained);
+					}
+				}catch(Exception e) {
+					throw new MessageException(e.getMessage(),e);
+				}
+			}
+			else {
+				return this._countingInputStream;
+			}
+		}
+		else {
+			return this._countingInputStream;
+		}
+	}
+	
 	public boolean hasContent() throws MessageException, MessageNotSupportedException {
 		return this.hasContent;
 	}
@@ -412,13 +469,13 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 						if (debug != null) {
 							debug.append(Costanti.WRITE_MODE_SERIALIZE_STREAM_WITH_HEADER);
 						}
-						this.soapStreamReader.writeOptimizedHeaderTo(this.countingInputStream, cos, true);
+						this.soapStreamReader.writeOptimizedHeaderTo(this._getInputStream(), cos, true);
 					} else {
 						if (debug != null) {
 							debug.append(Costanti.WRITE_MODE_SERIALIZE_STREAM);
 						}
-						Utilities.copy(this.countingInputStream, cos);
-						this.countingInputStream.close();
+						Utilities.copy(this._getInputStream(), cos);
+						this._getInputStream().close();
 					}
 				}
 				this.outgoingsize = cos.getByteCount();
@@ -455,8 +512,8 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 
 	@Override
 	public long getIncomingMessageContentLength() {
-		if (this.countingInputStream != null) {
-			return this.countingInputStream.getByteCount();
+		if (this._countingInputStream != null) {
+			return this._countingInputStream.getByteCount();
 		} else {
 			return super.getIncomingMessageContentLength();
 		}

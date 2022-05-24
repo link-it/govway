@@ -133,10 +133,23 @@ public class PatternExtractor {
 						if(this.messageContent.isJson()) {
 							this.elementJson = this.messageContent.getElementJson();
 						}
-						else {
+						else if(this.messageContent.isXml()) {
 							this.element = this.messageContent.getElement();
 							this.dnc = new DynamicNamespaceContext();
 							this.dnc.findPrefixNamespace(this.element);
+						}
+						else if(this.messageContent.isRestMultipart()) {
+							this.elementJson = this.messageContent.getElementJson();
+							if(this.elementJson==null) {
+								this.element = this.messageContent.getElement();
+								if(this.element!=null) {
+									this.dnc = new DynamicNamespaceContext();
+									this.dnc.findPrefixNamespace(this.element);
+								}
+								else {
+									throw new Exception("Invalid multipart content");
+								}
+							}
 						}
 					}catch(Exception e) {
 						throw new DynamicException(e.getMessage(),e);
