@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.protocol.sdk;
 
+import org.openspcoop2.utils.io.Base64Utilities;
+
 /**     
  * RestMessageSecurityToken
  *
@@ -28,4 +30,38 @@ package org.openspcoop2.protocol.sdk;
  */
 public class RestMessageSecurityToken extends AbstractMessageSecurityToken<String> {
 
+	public String getHeader() {
+		if(this.token!=null) {
+			String [] split = this.token.split("\\.");
+			if(split!=null && split.length>0) {
+				return split[0];
+			}
+		}
+		return null;
+	}
+	public String getDecodedHeader() {
+		String hdr = this.getHeader();
+		if(hdr!=null) {
+			return new String(Base64Utilities.decode(hdr));
+		}
+		return null;
+	}
+	
+	public String getPayload() {
+		if(this.token!=null) {
+			String [] split = this.token.split("\\.");
+			if(split!=null && split.length>1) {
+				return split[1];
+			}
+		}
+		return null;
+	}
+	public String getDecodedPayload() {
+		String payload = this.getPayload();
+		if(payload!=null) {
+			return new String(Base64Utilities.decode(payload));
+		}
+		return null;
+	}
+	
 }

@@ -48,6 +48,7 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -103,12 +104,16 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniChange extends 
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
+			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
 			// Prendo nome della porta applicativa
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String nomePorta = pa.getNome();
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(pa.getTipoSoggettoProprietario());
+			
 			long idAspsLong = Long.parseLong(idAsps);
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idAspsLong);
 			AccordoServizioParteComuneSintetico as = null;
@@ -250,7 +255,7 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniChange extends 
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addAzioneConnettoriMultipliConfigToDati(dati, TipoOperazione.CHANGE, serviceBinding, oldNome, nome,
+				dati = porteApplicativeHelper.addAzioneConnettoriMultipliConfigToDati(dati, TipoOperazione.CHANGE, protocollo, serviceBinding, oldNome, nome,
 						patternOperazione,  selezioneConnettoreByFiltro, identificazioneCondizionale, identificazioneCondizionalePattern, 
 						identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso,
 						connettoriValues, connettoriLabels
@@ -283,7 +288,7 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniChange extends 
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addAzioneConnettoriMultipliConfigToDati(dati, TipoOperazione.CHANGE, serviceBinding, oldNome, nome,
+				dati = porteApplicativeHelper.addAzioneConnettoriMultipliConfigToDati(dati, TipoOperazione.CHANGE, protocollo, serviceBinding, oldNome, nome,
 						patternOperazione,  selezioneConnettoreByFiltro, identificazioneCondizionale, identificazioneCondizionalePattern, 
 						identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso,
 						connettoriValues, connettoriLabels

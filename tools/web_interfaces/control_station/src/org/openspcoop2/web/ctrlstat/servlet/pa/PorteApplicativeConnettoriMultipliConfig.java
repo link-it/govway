@@ -57,6 +57,7 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -112,9 +113,12 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
-
+			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
+			
 			PortaApplicativa portaApplicativa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String idporta = portaApplicativa.getNome();
+			
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(portaApplicativa.getTipoSoggettoProprietario());
 
 			MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = porteApplicativeCore.getMappingErogazionePortaApplicativa(portaApplicativa);
 
@@ -478,7 +482,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
 
-				dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
+				dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, protocollo, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
 						numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom, loadBalanceStrategia, modificaStatoAbilitata, 
 						consegnaCondizionale, isSoapOneWay, connettoreImplementaAPI, connettoriImplementaAPIValues, connettoriImplementaAPILabels, connettorePrincipale,
 						notificheCondizionaliEsito, esitiTransazione,
@@ -510,7 +514,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
+				dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, protocollo, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
 						numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom, loadBalanceStrategia, modificaStatoAbilitata,
 						consegnaCondizionale, isSoapOneWay, connettoreImplementaAPI, connettoriImplementaAPIValues, connettoriImplementaAPILabels, connettorePrincipale,
 						notificheCondizionaliEsito, esitiTransazione,
@@ -758,7 +762,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 			// preparo i campi
 			Vector<DataElement> dati = new Vector<DataElement>();
 
-			dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
+			dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, protocollo, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
 					numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom,loadBalanceStrategia, modificaStatoAbilitata,
 					consegnaCondizionale, isSoapOneWay, connettoreImplementaAPI, connettoriImplementaAPIValues, connettoriImplementaAPILabels, connettorePrincipale,
 					notificheCondizionaliEsito, esitiTransazione,

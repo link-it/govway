@@ -47,6 +47,7 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -100,6 +101,7 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
+			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
 			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
@@ -107,6 +109,7 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 			// Prendo nome della porta applicativa
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String nomePorta = pa.getNome();
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(pa.getTipoSoggettoProprietario());
 			
 			Trasformazioni trasformazioni = pa.getTrasformazioni();
 			TrasformazioneRegola oldRegola = null;
@@ -347,7 +350,7 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 					}
 				}
 
-				dati = porteApplicativeHelper.addTrasformazioneRichiestaToDati(TipoOperazione.OTHER, dati, idInt, oldRichiesta, false, idTrasformazioneS, trasformazioneContenutoAbilitato, trasformazioneContenutoTipo,
+				dati = porteApplicativeHelper.addTrasformazioneRichiestaToDati(TipoOperazione.OTHER, protocollo, dati, idInt, oldRichiesta, false, idTrasformazioneS, trasformazioneContenutoAbilitato, trasformazioneContenutoTipo,
 						trasformazioneContenutoTemplate, trasformazioneContenutoTipoCheck, trasformazioneRichiestaContentType, serviceBindingMessage, trasformazioneRestAbilitato, 
 						trasformazioneRestMethod, trasformazioneRestPath, trasformazioneSoapAbilitato, trasformazioneSoapAction, 
 						trasformazioneSoapVersion, trasformazioneSoapEnvelope, trasformazioneSoapEnvelopeTipo, trasformazioneSoapEnvelopeTemplate, trasformazioneSoapEnvelopeTipoCheck, 
@@ -372,7 +375,7 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addTrasformazioneRichiestaToDati(TipoOperazione.OTHER, dati, idInt, oldRichiesta, false, idTrasformazioneS, trasformazioneContenutoAbilitato, trasformazioneContenutoTipo,
+				dati = porteApplicativeHelper.addTrasformazioneRichiestaToDati(TipoOperazione.OTHER, protocollo, dati, idInt, oldRichiesta, false, idTrasformazioneS, trasformazioneContenutoAbilitato, trasformazioneContenutoTipo,
 						trasformazioneContenutoTemplate, trasformazioneContenutoTipoCheck, trasformazioneRichiestaContentType, serviceBindingMessage, trasformazioneRestAbilitato, 
 						trasformazioneRestMethod, trasformazioneRestPath, trasformazioneSoapAbilitato, trasformazioneSoapAction, 
 						trasformazioneSoapVersion, trasformazioneSoapEnvelope, trasformazioneSoapEnvelopeTipo, trasformazioneSoapEnvelopeTemplate, trasformazioneSoapEnvelopeTipoCheck,
@@ -631,7 +634,7 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 			trasformazioneContenutoTipoCheck= "";
 			trasformazioneSoapEnvelopeTipoCheck = "";
 			
-			dati = porteApplicativeHelper.addTrasformazioneRichiestaToDati(TipoOperazione.OTHER, dati, idInt, richiesta, false, trasformazioneAggiornata.getId() + "", trasformazioneContenutoAbilitato, trasformazioneContenutoTipo,
+			dati = porteApplicativeHelper.addTrasformazioneRichiestaToDati(TipoOperazione.OTHER, protocollo, dati, idInt, richiesta, false, trasformazioneAggiornata.getId() + "", trasformazioneContenutoAbilitato, trasformazioneContenutoTipo,
 					trasformazioneContenutoTemplate, trasformazioneContenutoTipoCheck, trasformazioneRichiestaContentType, serviceBindingMessage, trasformazioneRestAbilitato, 
 					trasformazioneRestMethod, trasformazioneRestPath, trasformazioneSoapAbilitato, trasformazioneSoapAction, 
 					trasformazioneSoapVersion, trasformazioneSoapEnvelope, trasformazioneSoapEnvelopeTipo, trasformazioneSoapEnvelopeTemplate, trasformazioneSoapEnvelopeTipoCheck,

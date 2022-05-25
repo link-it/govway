@@ -48,6 +48,7 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -111,6 +112,7 @@ public class PorteApplicativeTrasformazioniRispostaHeaderChange extends Action {
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
+			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
 			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
@@ -118,6 +120,7 @@ public class PorteApplicativeTrasformazioniRispostaHeaderChange extends Action {
 			// Prendo nome della porta applicativa
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String nomePorta = pa.getNome();
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(pa.getTipoSoggettoProprietario());
 			
 			Trasformazioni trasformazioni = pa.getTrasformazioni();
 			TrasformazioneRegola oldRegola = null;
@@ -225,7 +228,7 @@ public class PorteApplicativeTrasformazioniRispostaHeaderChange extends Action {
 					identificazione = oldParametro.getIdentificazioneFallita()!=null ? oldParametro.getIdentificazioneFallita().getValue() : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_IDENTIFICAZIONE_FALLITA;
 				}
 
-				dati = porteApplicativeHelper.addTrasformazioneRispostaHeaderToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRispostaS, idTrasformazioneRispostaHeaderS, nome, tipo, valore, identificazione, apc.getServiceBinding());
+				dati = porteApplicativeHelper.addTrasformazioneRispostaHeaderToDati(TipoOperazione.CHANGE, protocollo, false, dati, idTrasformazioneS, idTrasformazioneRispostaS, idTrasformazioneRispostaHeaderS, nome, tipo, valore, identificazione, apc.getServiceBinding());
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta,idAsps,  dati);
 				
@@ -252,7 +255,7 @@ public class PorteApplicativeTrasformazioniRispostaHeaderChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addTrasformazioneRispostaHeaderToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRispostaS, idTrasformazioneRispostaHeaderS, nome, tipo, valore, identificazione, apc.getServiceBinding());
+				dati = porteApplicativeHelper.addTrasformazioneRispostaHeaderToDati(TipoOperazione.CHANGE, protocollo, false, dati, idTrasformazioneS, idTrasformazioneRispostaS, idTrasformazioneRispostaHeaderS, nome, tipo, valore, identificazione, apc.getServiceBinding());
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta,idAsps,  dati);
 				

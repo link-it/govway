@@ -6570,7 +6570,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	
 	
 	public Vector<DataElement> addConnettoriMultipliConfigurazioneToDati(Vector<DataElement> dati,
-			TipoOperazione tipoOp, String accessoDaAPSParametro, String stato, String modalitaConsegna, String tipoCustom,
+			TipoOperazione tipoOp, String protocollo, String accessoDaAPSParametro, String stato, String modalitaConsegna, String tipoCustom,
 			int numeroProprietaCustom, String servletProprietaCustom, List<Parameter> listaParametriServletProprietaCustom, boolean visualizzaLinkProprietaCustom,
 			String loadBalanceStrategia,boolean modificaStatoAbilitata,
 			boolean consegnaCondizionale, boolean isSoapOneWay, String connettoreImplementaAPI, List<String> connettoriImplementaAPIValues, List<String> connettoriImplementaAPILabels, String connettorePrincipale,
@@ -6924,30 +6924,30 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						dInfoPattern = new DataElementInfo(ModalitaIdentificazione.GOVWAY_TEMPLATE.getLabel());
 						dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 						if(ServiceBinding.REST.equals(serviceBinding)) {
-							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE);
+							dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE(this.isProfiloModIPA(protocollo), false, false));
 						}
 						else {
-							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE);
+							dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE(this.isProfiloModIPA(protocollo), false, false));
 						}
 					}
 					else if(org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyTipoSelettore.FREEMARKER_TEMPLATE.equals(stickyTipoSelettore)) {
 						dInfoPattern = new DataElementInfo(ModalitaIdentificazione.FREEMARKER_TEMPLATE.getLabel());
 						dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER);
 						if(ServiceBinding.REST.equals(serviceBinding)) {
-							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER);
+							dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER(this.isProfiloModIPA(protocollo), false, false));
 						}
 						else {
-							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER);
+							dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER(this.isProfiloModIPA(protocollo), false, false));
 						}
 					}
 					else {
 						dInfoPattern = new DataElementInfo(ModalitaIdentificazione.VELOCITY_TEMPLATE.getLabel());
 						dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY);
 						if(ServiceBinding.REST.equals(serviceBinding)) {
-							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY);
+							dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY(this.isProfiloModIPA(protocollo), false, false));
 						}
 						else {
-							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY);
+							dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY(this.isProfiloModIPA(protocollo), false, false));
 						}
 					}
 					de.setInfo(dInfoPattern);
@@ -7151,30 +7151,30 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						dInfoPattern = new DataElementInfo(ModalitaIdentificazione.GOVWAY_TEMPLATE.getLabel());
 						dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 						if(ServiceBinding.REST.equals(serviceBinding)) {
-							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE);
+							dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE(this.isProfiloModIPA(protocollo), false, false));
 						}
 						else {
-							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE);
+							dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE(this.isProfiloModIPA(protocollo), false, false));
 						}
 					}
 					else if(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.FREEMARKER_TEMPLATE.equals(identificazioneCondizionale)) {
 						dInfoPattern = new DataElementInfo(ModalitaIdentificazione.FREEMARKER_TEMPLATE.getLabel());
 						dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER);
 						if(ServiceBinding.REST.equals(serviceBinding)) {
-							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER);
+							dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER(this.isProfiloModIPA(protocollo), false, false));
 						}
 						else {
-							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER);
+							dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER(this.isProfiloModIPA(protocollo), false, false));
 						}
 					}
 					else {
 						dInfoPattern = new DataElementInfo(ModalitaIdentificazione.VELOCITY_TEMPLATE.getLabel());
 						dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY);
 						if(ServiceBinding.REST.equals(serviceBinding)) {
-							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY);
+							dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY(this.isProfiloModIPA(protocollo), false, false));
 						}
 						else {
-							dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY);
+							dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY(this.isProfiloModIPA(protocollo), false, false));
 						}
 					}
 					de.setInfo(dInfoPattern);
@@ -10119,7 +10119,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			throw new Exception(e);
 		}
 	}
-	public Vector<DataElement> addAzioneConnettoriMultipliConfigToDati(Vector<DataElement> dati, TipoOperazione tipoOp, ServiceBinding serviceBinding,
+	public Vector<DataElement> addAzioneConnettoriMultipliConfigToDati(Vector<DataElement> dati, TipoOperazione tipoOp, String protocollo, ServiceBinding serviceBinding,
 			String oldNome, String nome, String patternOperazione, boolean selezioneConnettoreByFiltro, String identificazioneCondizionale,
 			String identificazioneCondizionalePattern, String identificazioneCondizionalePrefisso, String identificazioneCondizionaleSuffisso,
 			List<String> connettoriValues, List<String> connettoriLabels) throws Exception {
@@ -10254,30 +10254,30 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				dInfoPattern = new DataElementInfo(ModalitaIdentificazione.GOVWAY_TEMPLATE.getLabel());
 				dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 				if(ServiceBinding.REST.equals(serviceBinding)) {
-					dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE);
+					dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE(this.isProfiloModIPA(protocollo), false, false));
 				}
 				else {
-					dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE);
+					dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE(this.isProfiloModIPA(protocollo), false, false));
 				}
 			}
 			else if(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.FREEMARKER_TEMPLATE.equals(identificazioneCondizionale)) {
 				dInfoPattern = new DataElementInfo(ModalitaIdentificazione.FREEMARKER_TEMPLATE.getLabel());
 				dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER);
 				if(ServiceBinding.REST.equals(serviceBinding)) {
-					dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER);
+					dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER(this.isProfiloModIPA(protocollo), false, false));
 				}
 				else {
-					dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER);
+					dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER(this.isProfiloModIPA(protocollo), false, false));
 				}
 			}
 			else {
 				dInfoPattern = new DataElementInfo(ModalitaIdentificazione.VELOCITY_TEMPLATE.getLabel());
 				dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY);
 				if(ServiceBinding.REST.equals(serviceBinding)) {
-					dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY);
+					dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY(this.isProfiloModIPA(protocollo), false, false));
 				}
 				else {
-					dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY);
+					dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY(this.isProfiloModIPA(protocollo), false, false));
 				}
 			}
 			de.setInfo(dInfoPattern);

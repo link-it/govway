@@ -15374,10 +15374,10 @@ public class ConsoleHelper implements IConsoleHelper {
 		return dati;
 	}
 	
-	public Vector<DataElement> addTrasformazioneRispostaToDatiOpAdd(Vector<DataElement> dati, String idTrasformazione, 
+	public Vector<DataElement> addTrasformazioneRispostaToDatiOpAdd(String protocollo, Vector<DataElement> dati, String idTrasformazione, 
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding,
 			String nome, String returnCode, String statusMin, String statusMax, String pattern, String contentType) throws Exception {
-		return addTrasformazioneRispostaToDati(TipoOperazione.ADD, dati, 0, null, false, idTrasformazione, null, 
+		return addTrasformazioneRispostaToDati(TipoOperazione.ADD, protocollo, dati, 0, null, false, idTrasformazione, null, 
 				serviceBinding,
 				nome, returnCode, statusMin, statusMax, pattern, contentType, 
 				null, null, 0,
@@ -15389,7 +15389,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				null,null,null);
 	}
 	
-	public Vector<DataElement> addTrasformazioneRispostaToDati(TipoOperazione tipoOP, Vector<DataElement> dati, long idPorta, TrasformazioneRegolaRisposta risposta, boolean isPortaDelegata, String idTrasformazione, String idTrasformazioneRisposta,
+	public Vector<DataElement> addTrasformazioneRispostaToDati(TipoOperazione tipoOP, String protocollo, Vector<DataElement> dati, long idPorta, TrasformazioneRegolaRisposta risposta, boolean isPortaDelegata, String idTrasformazione, String idTrasformazioneRisposta,
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBindingParam,
 			String nome, String returnCode, String statusMin, String statusMax, String pattern, String contentType,
 			String servletTrasformazioniRispostaHeadersList, List<Parameter> parametriInvocazioneServletTrasformazioniRispostaHeaders, int numeroTrasformazioniRispostaHeaders,
@@ -15414,10 +15414,10 @@ public class ConsoleHelper implements IConsoleHelper {
 		DataElementInfo dInfoPatternTrasporto = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE);
 		dInfoPatternTrasporto.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(infoServiceBinding)) {
-			dInfoPatternTrasporto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI);
+			dInfoPatternTrasporto.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI(this.isProfiloModIPA(protocollo), isPortaDelegata, false));
 		}
 		else {
-			dInfoPatternTrasporto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI);
+			dInfoPatternTrasporto.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI(this.isProfiloModIPA(protocollo), isPortaDelegata, false));
 		}
 		
 		DataElement de = new DataElement();
@@ -15602,7 +15602,8 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO);
 				de.setPostBack(true);
 				de.setSelected(trasformazioneContenutoRispostaTipo.getValue());
-				setTemplateInfo(de, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO, trasformazioneContenutoRispostaTipo, infoServiceBinding, true);
+				setTemplateInfo(de, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TIPO, trasformazioneContenutoRispostaTipo, infoServiceBinding, true,
+						protocollo, isPortaDelegata);
 				dati.addElement(de);
 				
 				if(trasformazioneContenutoRispostaTipo.isTemplateRequired()) {	
@@ -15748,7 +15749,8 @@ public class ConsoleHelper implements IConsoleHelper {
 						de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO);
 						de.setSelected(trasformazioneRispostaSoapEnvelopeTipo.getValue());
 						de.setPostBack(true);
-						setTemplateInfo(de, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO, trasformazioneRispostaSoapEnvelopeTipo, infoServiceBinding, true);
+						setTemplateInfo(de, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE_TIPO, trasformazioneRispostaSoapEnvelopeTipo, infoServiceBinding, true,
+								protocollo, isPortaDelegata);
 						dati.addElement(de);
 						
 						if(trasformazioneRispostaSoapEnvelopeTipo!=null && trasformazioneRispostaSoapEnvelopeTipo.isTemplateRequired()) {
@@ -16449,7 +16451,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return dati;
 	}
 	
-	public Vector<DataElement> addTrasformazioneRichiestaHeaderToDati(TipoOperazione tipoOP, Vector<DataElement> dati, 
+	public Vector<DataElement> addTrasformazioneRichiestaHeaderToDati(TipoOperazione tipoOP, String protocollo, boolean isPortaDelegata, Vector<DataElement> dati, 
 			String idTrasformazione, String idTrasformazioneRichiestaHeader, String nome, String tipo, String valore, String identificazione,
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
 		
@@ -16517,10 +16519,10 @@ public class ConsoleHelper implements IConsoleHelper {
 			DataElementInfo dInfoPattern = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE);
 			dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
-				dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI);
+				dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI(this.isProfiloModIPA(protocollo), isPortaDelegata, false));
 			}
 			else {
-				dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI);
+				dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI(this.isProfiloModIPA(protocollo), isPortaDelegata, false));
 			}
 			de.setInfo(dInfoPattern);
 		}
@@ -16553,7 +16555,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return dati;
 	}
 	
-	public Vector<DataElement> addTrasformazioneRichiestaUrlParameterToDati(TipoOperazione tipoOP, Vector<DataElement> dati, 
+	public Vector<DataElement> addTrasformazioneRichiestaUrlParameterToDati(TipoOperazione tipoOP, String protocollo, boolean isPortaDelegata, Vector<DataElement> dati, 
 			String idTrasformazione, String idTrasformazioneRichiestaUrlParameter, String nome, String tipo, String valore, String identificazione,
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
 		
@@ -16621,10 +16623,10 @@ public class ConsoleHelper implements IConsoleHelper {
 			DataElementInfo dInfoPattern = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE);
 			dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
-				dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI);
+				dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI(this.isProfiloModIPA(protocollo), isPortaDelegata, false));
 			}
 			else {
-				dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI);
+				dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI(this.isProfiloModIPA(protocollo), isPortaDelegata, false));
 			}
 			de.setInfo(dInfoPattern);
 		}
@@ -16657,7 +16659,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return dati;
 	}
 	
-	public Vector<DataElement> addTrasformazioneRispostaHeaderToDati(TipoOperazione tipoOP, Vector<DataElement> dati, 
+	public Vector<DataElement> addTrasformazioneRispostaHeaderToDati(TipoOperazione tipoOP, String protocollo, boolean isPortaDelegata, Vector<DataElement> dati, 
 			String idTrasformazione, String idTrasformazioneRisposta, String idTrasformazioneRispostaHeader, String nome, String tipo, String valore, String identificazione,
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
 		
@@ -16732,10 +16734,10 @@ public class ConsoleHelper implements IConsoleHelper {
 			DataElementInfo dInfoPattern = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE);
 			dInfoPattern.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
-				dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE);
+				dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE(this.isProfiloModIPA(protocollo), isPortaDelegata, false));
 			}
 			else {
-				dInfoPattern.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE);
+				dInfoPattern.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE(this.isProfiloModIPA(protocollo), isPortaDelegata, false));
 			}
 			de.setInfo(dInfoPattern);
 		}
@@ -16774,7 +16776,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				false, null, null);
 	}
 	
-	public Vector<DataElement> addTrasformazioneRichiestaToDati(TipoOperazione tipoOP, Vector<DataElement> dati, long idPorta, TrasformazioneRegolaRichiesta richiesta, boolean isPortaDelegata, String idTrasformazione,
+	public Vector<DataElement> addTrasformazioneRichiestaToDati(TipoOperazione tipoOP, String protocollo, Vector<DataElement> dati, long idPorta, TrasformazioneRegolaRichiesta richiesta, boolean isPortaDelegata, String idTrasformazione,
 			boolean trasformazioneContenutoAbilitato, org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneContenutoTipo, BinaryParameter trasformazioneContenutoTemplate, String trasformazioneContenutoTipoCheck,
 			String trasformazioneRichiestaContentType, 
 			ServiceBinding serviceBindingMessage, boolean trasformazioneRestAbilitato, String trasformazioneRestMethod, String trasformazioneRestPath,
@@ -16787,10 +16789,10 @@ public class ConsoleHelper implements IConsoleHelper {
 		DataElementInfo dInfoPatternTrasporto = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE);
 		dInfoPatternTrasporto.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
-			dInfoPatternTrasporto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI);
+			dInfoPatternTrasporto.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI(this.isProfiloModIPA(protocollo), isPortaDelegata, false));
 		}
 		else {
-			dInfoPatternTrasporto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI);
+			dInfoPatternTrasporto.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI(this.isProfiloModIPA(protocollo), isPortaDelegata, false));
 		}
 		
 		// Id trasformazione hidden
@@ -16921,7 +16923,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO);
 			de.setPostBack(true);
 			de.setSelected(trasformazioneContenutoTipo.getValue());
-			setTemplateInfo(de, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO, trasformazioneContenutoTipo, serviceBinding, false);
+			setTemplateInfo(de, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONVERSIONE_TIPO, trasformazioneContenutoTipo, serviceBinding, false,
+					protocollo, isPortaDelegata);
 			dati.addElement(de);
 			
 			if(trasformazioneContenutoTipo.isTemplateRequired()) {
@@ -17103,7 +17106,8 @@ public class ConsoleHelper implements IConsoleHelper {
 								de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO);
 								de.setSelected(trasformazioneSoapEnvelopeTipo.getValue());
 								de.setPostBack(true);
-								setTemplateInfo(de, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO, trasformazioneSoapEnvelopeTipo, serviceBinding, false);
+								setTemplateInfo(de, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TIPO, trasformazioneSoapEnvelopeTipo, serviceBinding, false,
+										protocollo, isPortaDelegata);
 								dati.addElement(de);
 								
 								if(trasformazioneSoapEnvelopeTipo.isTemplateRequired()) {
@@ -17216,25 +17220,26 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	private void setTemplateInfo(DataElement de, String label, org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneContenutoTipo, 
-			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding, boolean risposta) {
+			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding, boolean risposta,
+			String protocollo, boolean isPortaDelegata) {
 		switch (trasformazioneContenutoTipo) {
 		case TEMPLATE:
 			DataElementInfo dInfoPatternContenuto = new DataElementInfo(label);
 			dInfoPatternContenuto.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TEMPLATE);
 			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
 				if(risposta) {
-					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE(this.isProfiloModIPA(protocollo), isPortaDelegata, false));
 				}
 				else {
-					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI(this.isProfiloModIPA(protocollo), isPortaDelegata, false));
 				}
 			}
 			else {
 				if(risposta) {
-					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE(this.isProfiloModIPA(protocollo), isPortaDelegata, false));
 				}
 				else {
-					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI(this.isProfiloModIPA(protocollo), isPortaDelegata, false));
 				}
 			}
 			de.setInfo(dInfoPatternContenuto);
@@ -17252,18 +17257,18 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
 				if(risposta) {
-					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE_FREEMARKER);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE_FREEMARKER(this.isProfiloModIPA(protocollo), isPortaDelegata, false));
 				}
 				else {
-					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER(this.isProfiloModIPA(protocollo), isPortaDelegata, false));
 				}
 			}
 			else {
 				if(risposta) {
-					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE_FREEMARKER);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE_FREEMARKER(this.isProfiloModIPA(protocollo), isPortaDelegata, false));
 				}
 				else {
-					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER(this.isProfiloModIPA(protocollo), isPortaDelegata, false));
 				}
 			}
 			de.setInfo(dInfoPatternContenuto);
@@ -17281,18 +17286,18 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
 				if(risposta) {
-					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE_VELOCITY);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE_VELOCITY(this.isProfiloModIPA(protocollo), isPortaDelegata, false));
 				}
 				else {
-					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY(this.isProfiloModIPA(protocollo), isPortaDelegata, false));
 				}
 			}
 			else {
 				if(risposta) {
-					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE_VELOCITY);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE_VELOCITY(this.isProfiloModIPA(protocollo), isPortaDelegata, false));
 				}
 				else {
-					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY);
+					dInfoPatternContenuto.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY(this.isProfiloModIPA(protocollo), isPortaDelegata, false));
 				}
 			}
 			de.setInfo(dInfoPatternContenuto);

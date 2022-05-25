@@ -46,6 +46,7 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -116,6 +117,7 @@ public class PorteDelegateTrasformazioniRichiestaUrlParameterChange extends Acti
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteDelegateCore);
+			SoggettiCore soggettiCore = new SoggettiCore(porteDelegateCore);
 			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
@@ -123,6 +125,7 @@ public class PorteDelegateTrasformazioniRichiestaUrlParameterChange extends Acti
 			// Prendo nome della porta applicativa
 			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
 			String nomePorta = portaDelegata.getNome();
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(portaDelegata.getTipoSoggettoProprietario());
 			
 			Trasformazioni trasformazioni = portaDelegata.getTrasformazioni();
 			TrasformazioneRegola oldRegola = null;
@@ -206,7 +209,7 @@ public class PorteDelegateTrasformazioniRichiestaUrlParameterChange extends Acti
 					identificazione = oldParametro.getIdentificazioneFallita()!=null ? oldParametro.getIdentificazioneFallita().getValue() : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_PARAMETRO_IDENTIFICAZIONE_FALLITA;
 				}
 
-				dati = porteDelegateHelper.addTrasformazioneRichiestaUrlParameterToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRichiestaUrlParameterS, nome, tipo, valore, identificazione, apc.getServiceBinding());
+				dati = porteDelegateHelper.addTrasformazioneRichiestaUrlParameterToDati(TipoOperazione.CHANGE, protocollo, true, dati, idTrasformazioneS, idTrasformazioneRichiestaUrlParameterS, nome, tipo, valore, identificazione, apc.getServiceBinding());
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
@@ -234,7 +237,7 @@ public class PorteDelegateTrasformazioniRichiestaUrlParameterChange extends Acti
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addTrasformazioneRichiestaUrlParameterToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRichiestaUrlParameterS, nome, tipo, valore, identificazione, apc.getServiceBinding());
+				dati = porteDelegateHelper.addTrasformazioneRichiestaUrlParameterToDati(TipoOperazione.CHANGE, protocollo, true, dati, idTrasformazioneS, idTrasformazioneRichiestaUrlParameterS, nome, tipo, valore, identificazione, apc.getServiceBinding());
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, 
 						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);

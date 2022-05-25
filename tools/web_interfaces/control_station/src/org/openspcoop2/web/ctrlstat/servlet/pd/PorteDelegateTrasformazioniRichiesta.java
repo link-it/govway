@@ -47,6 +47,7 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -136,12 +137,15 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteDelegateCore);
+			SoggettiCore soggettiCore = new SoggettiCore(porteDelegateCore);
+			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
 
 			// Prendo nome della porta applicativa
 			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
 			String nomePorta = portaDelegata.getNome();
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(portaDelegata.getTipoSoggettoProprietario());
 			
 			Trasformazioni trasformazioni = portaDelegata.getTrasformazioni();
 			TrasformazioneRegola oldRegola = null;
@@ -351,7 +355,7 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 					}
 				}
 
-				dati = porteDelegateHelper.addTrasformazioneRichiestaToDati(TipoOperazione.OTHER, dati, idInt, oldRichiesta, true, idTrasformazioneS, trasformazioneContenutoAbilitato, trasformazioneContenutoTipo,
+				dati = porteDelegateHelper.addTrasformazioneRichiestaToDati(TipoOperazione.OTHER, protocollo, dati, idInt, oldRichiesta, true, idTrasformazioneS, trasformazioneContenutoAbilitato, trasformazioneContenutoTipo,
 						trasformazioneContenutoTemplate, trasformazioneContenutoTipoCheck, trasformazioneRichiestaContentType, serviceBindingMessage, trasformazioneRestAbilitato, 
 						trasformazioneRestMethod, trasformazioneRestPath, trasformazioneSoapAbilitato, trasformazioneSoapAction, 
 						trasformazioneSoapVersion, trasformazioneSoapEnvelope, trasformazioneSoapEnvelopeTipo, trasformazioneSoapEnvelopeTemplate, trasformazioneSoapEnvelopeTipoCheck,
@@ -377,7 +381,7 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addTrasformazioneRichiestaToDati(TipoOperazione.OTHER, dati, idInt, oldRichiesta, true, idTrasformazioneS, trasformazioneContenutoAbilitato, trasformazioneContenutoTipo,
+				dati = porteDelegateHelper.addTrasformazioneRichiestaToDati(TipoOperazione.OTHER, protocollo, dati, idInt, oldRichiesta, true, idTrasformazioneS, trasformazioneContenutoAbilitato, trasformazioneContenutoTipo,
 						trasformazioneContenutoTemplate, trasformazioneContenutoTipoCheck, trasformazioneRichiestaContentType, serviceBindingMessage, trasformazioneRestAbilitato, 
 						trasformazioneRestMethod, trasformazioneRestPath, trasformazioneSoapAbilitato, trasformazioneSoapAction, 
 						trasformazioneSoapVersion, trasformazioneSoapEnvelope, trasformazioneSoapEnvelopeTipo, trasformazioneSoapEnvelopeTemplate, trasformazioneSoapEnvelopeTipoCheck,
@@ -633,7 +637,7 @@ public class PorteDelegateTrasformazioniRichiesta extends Action {
 			trasformazioneContenutoTipoCheck= "";
 			trasformazioneSoapEnvelopeTipoCheck = "";
 			
-			dati = porteDelegateHelper.addTrasformazioneRichiestaToDati(TipoOperazione.OTHER, dati, idInt, richiesta, true, trasformazioneAggiornata.getId() + "", trasformazioneContenutoAbilitato, trasformazioneContenutoTipo,
+			dati = porteDelegateHelper.addTrasformazioneRichiestaToDati(TipoOperazione.OTHER, protocollo, dati, idInt, richiesta, true, trasformazioneAggiornata.getId() + "", trasformazioneContenutoAbilitato, trasformazioneContenutoTipo,
 					trasformazioneContenutoTemplate, trasformazioneContenutoTipoCheck, trasformazioneRichiestaContentType, serviceBindingMessage, trasformazioneRestAbilitato, 
 					trasformazioneRestMethod, trasformazioneRestPath, trasformazioneSoapAbilitato, trasformazioneSoapAction, 
 					trasformazioneSoapVersion, trasformazioneSoapEnvelope, trasformazioneSoapEnvelopeTipo, trasformazioneSoapEnvelopeTemplate, trasformazioneSoapEnvelopeTipoCheck,

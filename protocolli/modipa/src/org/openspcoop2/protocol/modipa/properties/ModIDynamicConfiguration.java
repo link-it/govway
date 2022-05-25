@@ -3180,11 +3180,14 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			
 			c.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 			
+			boolean modi = true;
+			boolean fruizione = false; // e' ininfluente tanto poi faccio il forceNoSecToken
+			boolean forceNoSecToken = true;
 			if(rest) {
-				c.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI);
+				c.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI(modi,fruizione,forceNoSecToken));
 			}
 			else {
-				c.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI);
+				c.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI(modi,fruizione,forceNoSecToken));
 			}
 			
 			return c;

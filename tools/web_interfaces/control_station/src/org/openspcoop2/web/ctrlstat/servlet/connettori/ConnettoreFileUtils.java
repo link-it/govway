@@ -230,7 +230,8 @@ public class ConnettoreFileUtils {
 	public static void addFileDati(Vector<DataElement> dati,int pageSize, ConsoleHelper consoleHelper,
 			String requestOutputFileName, String requestOutputFileName_permissions, String requestOutputFileNameHeaders, String requestOutputFileNameHeaders_permissions,
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
-			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime){
+			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
+			boolean modi, boolean fruizione, boolean forceNoSec){
 
 		DataElement de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT);
@@ -247,7 +248,7 @@ public class ConnettoreFileUtils {
 		de.setSize(pageSize);
 		DataElementInfo dInfoPatternFileName = new DataElementInfo(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
 		dInfoPatternFileName.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
-		dInfoPatternFileName.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI);
+		dInfoPatternFileName.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI(modi, fruizione, forceNoSec));
 		de.setInfo(dInfoPatternFileName);
 		dati.addElement(de);
 		
@@ -291,7 +292,7 @@ public class ConnettoreFileUtils {
 		de.setSize(pageSize);
 		DataElementInfo dInfoPatternFileNameHdr = new DataElementInfo(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
 		dInfoPatternFileNameHdr.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
-		dInfoPatternFileNameHdr.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI);
+		dInfoPatternFileNameHdr.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI(modi, fruizione, forceNoSec));
 		de.setInfo(dInfoPatternFileNameHdr);
 		dati.addElement(de);
 		
@@ -370,7 +371,7 @@ public class ConnettoreFileUtils {
 			de.setRequired(true);
 			DataElementInfo dInfoPatternFileNameResponse = new DataElementInfo(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME);
 			dInfoPatternFileNameResponse.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
-			dInfoPatternFileNameResponse.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI);
+			dInfoPatternFileNameResponse.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI(modi, fruizione, forceNoSec));
 			de.setInfo(dInfoPatternFileNameResponse);
 		}
 		else{
@@ -388,7 +389,7 @@ public class ConnettoreFileUtils {
 			de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS_SIZE);
 			DataElementInfo dInfoPatternFileNameResponseHdr = new DataElementInfo(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
 			dInfoPatternFileNameResponseHdr.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
-			dInfoPatternFileNameResponseHdr.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI);
+			dInfoPatternFileNameResponseHdr.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI(modi, fruizione, forceNoSec));
 			de.setInfo(dInfoPatternFileNameResponseHdr);
 		}
 		else{

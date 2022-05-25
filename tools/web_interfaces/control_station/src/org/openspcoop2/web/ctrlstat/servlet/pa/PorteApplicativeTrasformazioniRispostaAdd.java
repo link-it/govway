@@ -48,6 +48,7 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -115,13 +116,15 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
-			
+			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
+						
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
 			// Prendo nome della porta applicativa
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String nomePorta = pa.getNome();
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(pa.getTipoSoggettoProprietario());
 			
 			Trasformazioni trasformazioni = pa.getTrasformazioni();
 			TrasformazioneRegola regola = null;
@@ -196,7 +199,7 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addTrasformazioneRispostaToDatiOpAdd(dati, idTrasformazioneS, 
+				dati = porteApplicativeHelper.addTrasformazioneRispostaToDatiOpAdd(protocollo, dati, idTrasformazioneS, 
 						apc.getServiceBinding(),
 						nomeRisposta, returnCode, statusMin, statusMax, pattern, contentType);
 				
@@ -242,7 +245,7 @@ public class PorteApplicativeTrasformazioniRispostaAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addTrasformazioneRispostaToDatiOpAdd(dati, idTrasformazioneS, 
+				dati = porteApplicativeHelper.addTrasformazioneRispostaToDatiOpAdd(protocollo, dati, idTrasformazioneS, 
 						apc.getServiceBinding(),
 						nomeRisposta, returnCode, statusMin, statusMax, pattern, contentType);
 				

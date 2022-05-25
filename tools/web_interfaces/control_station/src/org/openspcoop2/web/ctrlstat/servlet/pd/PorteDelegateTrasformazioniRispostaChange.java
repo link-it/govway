@@ -49,6 +49,7 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -150,12 +151,15 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteDelegateCore);
+			SoggettiCore soggettiCore = new SoggettiCore(porteDelegateCore);
+			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
 
 			// Prendo nome della porta applicativa
 			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
 			String nomePorta = portaDelegata.getNome();
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(portaDelegata.getTipoSoggettoProprietario());
 			
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 			AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
@@ -379,7 +383,7 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 					}
 				}
 
-				dati = porteDelegateHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, dati, idInt, oldRisposta, true, idTrasformazioneS, idTrasformazioneRispostaS, 
+				dati = porteDelegateHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, protocollo, dati, idInt, oldRisposta, true, idTrasformazioneS, idTrasformazioneRispostaS, 
 						apc.getServiceBinding(),
 						nomeRisposta,
 						returnCode, statusMin, statusMax, pattern, contentType, servletTrasformazioniRispostaHeadersList, parametriInvocazioneServletTrasformazioniRispostaHeaders, numeroTrasformazioniRispostaHeaders, 
@@ -430,7 +434,7 @@ public class PorteDelegateTrasformazioniRispostaChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, dati, idInt, oldRisposta, true, idTrasformazioneS, idTrasformazioneRispostaS, 
+				dati = porteDelegateHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, protocollo, dati, idInt, oldRisposta, true, idTrasformazioneS, idTrasformazioneRispostaS, 
 						apc.getServiceBinding(),
 						nomeRisposta,
 						returnCode, statusMin, statusMax, pattern, contentType, servletTrasformazioniRispostaHeadersList, parametriInvocazioneServletTrasformazioniRispostaHeaders, numeroTrasformazioniRispostaHeaders, 

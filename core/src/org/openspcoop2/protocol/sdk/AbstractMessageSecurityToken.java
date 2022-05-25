@@ -28,7 +28,7 @@ package org.openspcoop2.protocol.sdk;
  */
 public class AbstractMessageSecurityToken<T> extends AbstractSecurityTokenInfo {
 
-	private T token;
+	protected T token;
 
 	public T getToken() {
 		return this.token;
