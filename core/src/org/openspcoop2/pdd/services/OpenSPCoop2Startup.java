@@ -213,7 +213,6 @@ import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.semaphore.Semaphore;
 import org.openspcoop2.utils.semaphore.SemaphoreConfiguration;
 import org.openspcoop2.utils.semaphore.SemaphoreMapping;
-import org.redisson.config.Config;
 import org.slf4j.Logger;
 
 import com.sun.xml.messaging.saaj.soap.MessageImpl;
@@ -2445,7 +2444,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 							break;
 						case REDIS:
 							try {
-								RedissonManager.initialize(policyType, null, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId(), OpenSPCoop2Startup.log);
+								RedissonManager.initialize(policyType, OpenSPCoop2Startup.log);
 							}catch(Throwable e) {
 								this.logError("Riscontrato errore durante l'inizializzazione del client redis: "+e.getMessage());
 								return;

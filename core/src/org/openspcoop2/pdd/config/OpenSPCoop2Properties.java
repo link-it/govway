@@ -1996,23 +1996,24 @@ public class OpenSPCoop2Properties {
 					PolicyGroupByActiveThreadsInMemoryEnum type = this.getControlloTrafficoGestorePolicyInMemoryType();
 					switch (type) {
 					case DATABASE:
+						isControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction();
 						getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva();
 						getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval();
 						break;
 					case HAZELCAST:
 						getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId();
 						getControlloTrafficoGestorePolicyInMemoryHazelCastConfigPath();
-						getControlloTrafficoGestorePolicyInMemoryHazelcastOneMapPerGroup();
+						isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy();
 						break;
 					case HAZELCAST_NEAR_CACHE:
 						getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId();
 						getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath();
-						getControlloTrafficoGestorePolicyInMemoryHazelcastOneMapPerGroup();
+						isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy();
 						break;
 					case HAZELCAST_LOCAL_CACHE:
 						getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId();
 						getControlloTrafficoGestorePolicyInMemoryHazelCastLocalCacheConfigPath();
-						getControlloTrafficoGestorePolicyInMemoryHazelcastOneMapPerGroup();
+						isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy();
 						break;
 					default:
 						break;
@@ -23516,6 +23517,29 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryType;
 	}
 	
+	private static Boolean getControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction = null;
+	public boolean isControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction() {
+		if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.DATABASE.useTransaction";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if (name != null) {
+					name = name.trim();
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction = Boolean.valueOf(name);
+				} else {
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true);
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction =  true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction = true;
+			}   
+		}
+
+		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction;
+	}
+	
 	private static Long getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva = null;
 	public long getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva() {	
 		if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva==null){
@@ -23646,30 +23670,29 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastLocalCacheConfigPath;		
 	}
 	
-	private static Boolean isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapPerGroup = null;
-	
-	public Boolean getControlloTrafficoGestorePolicyInMemoryHazelcastOneMapPerGroup() {
-		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.oneMapPerGroup";
+	private static Boolean isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy = null;
+	public Boolean isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy() {
+		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.oneMapForeachPolicy";
 		
-		if(OpenSPCoop2Properties.isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapPerGroup==null){
+		if(OpenSPCoop2Properties.isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy==null){
 			try{  
 				String value = this.reader.getValue_convertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
-					OpenSPCoop2Properties.isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapPerGroup = Boolean.parseBoolean(value);
+					OpenSPCoop2Properties.isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy = Boolean.parseBoolean(value);
 				}else{
 					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
-					OpenSPCoop2Properties.isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapPerGroup = false;
+					OpenSPCoop2Properties.isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
-				OpenSPCoop2Properties.isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapPerGroup = false;
+				OpenSPCoop2Properties.isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy = false;
 			}
 		}
 		
-		return OpenSPCoop2Properties.isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapPerGroup;
+		return OpenSPCoop2Properties.isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy;
 	}
 	
 	private static String getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId = null;

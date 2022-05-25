@@ -16,6 +16,8 @@
 	<property name="buildAPI" value="true" />
 	<property name="buildAllAPI" value="false" />
 	<property name="forceDisableJ2eeMode" value="false" />
+	<property name="hazelcastLibraries" value="true" />
+	<property name="redisLibraries" value="false" />
 
 	<!-- Sub-Build-Options -->
 	<property name="buildSchemi" value="true" />

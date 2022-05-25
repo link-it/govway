@@ -57,7 +57,7 @@ public abstract class PolicyGroupByActiveThreadsDistributedAbstract implements I
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(op2Properties.isControlloTrafficoDebug());
 		
-		 if (OpenSPCoop2Properties.getInstance().getControlloTrafficoGestorePolicyInMemoryHazelcastOneMapPerGroup()) {
+		 if (OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy()) {
 			 this.distributedMap = this.hazelcast.getMap("hazelcast-" + uniqueIdMap + "-rate-limiting");
 			 log.info("Hazelcast: Utilizzo Una Distributed Map per gruppo.");
 		 } else {
@@ -158,7 +158,7 @@ public abstract class PolicyGroupByActiveThreadsDistributedAbstract implements I
 	
 	
 	protected IDUnivocoGroupByPolicy augmentIDUnivoco(IDUnivocoGroupByPolicy idUnivoco) {
-		if (OpenSPCoop2Properties.getInstance().getControlloTrafficoGestorePolicyInMemoryHazelcastOneMapPerGroup()) {
+		if (OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy()) {
 			return idUnivoco;
 		} else {
 			return new IDUnivocoGroupByPolicyMapId(idUnivoco, this.uniqueIdMap);

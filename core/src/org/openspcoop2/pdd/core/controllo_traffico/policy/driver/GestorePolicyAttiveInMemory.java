@@ -649,8 +649,6 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			return new PolicyGroupByActiveThreadsDistributedNoCache(activePolicy, uniqueIdMap, HazelcastManager.hazelcast);
 		case REDIS:
 			return new PolicyGroupByActiveThreadsDistributedRedis(activePolicy, uniqueIdMap, RedissonManager.redisson);
-		default:
-			break;
 		}
 		throw new PolicyException("Unsupported type '"+this.type+"'");
 	}

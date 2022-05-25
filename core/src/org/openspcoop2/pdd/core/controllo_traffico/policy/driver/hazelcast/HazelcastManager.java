@@ -28,7 +28,6 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.slf4j.Logger;
 
 import com.hazelcast.config.Config;
-import com.hazelcast.config.FileSystemYamlConfig;
 import com.hazelcast.config.InMemoryYamlConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
@@ -80,10 +79,10 @@ public class HazelcastManager {
 		}
 		
 		log.debug("Inizializzo hazelcast con la seguente configurazione: " + content);
-		log.debug("Il cluster-name sarà: " + groupId+"#");
+		log.debug("Il cluster-name sarà: " + groupId);
 		
-		hazelcastConfig = new  InMemoryYamlConfig(content);
-		hazelcastConfig.setClusterName("cluster-name: "+groupId+"#");
+		hazelcastConfig = new InMemoryYamlConfig(content);
+		hazelcastConfig.setClusterName(groupId);
 				
 		hazelcast = Hazelcast.newHazelcastInstance(hazelcastConfig);
 		if(hazelcast==null) {

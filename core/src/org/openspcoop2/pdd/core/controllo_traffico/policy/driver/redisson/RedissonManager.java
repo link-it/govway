@@ -11,7 +11,7 @@ public class RedissonManager {
 
 		public static RedissonClient redisson = null;
 		
-		public static synchronized void initialize(PolicyGroupByActiveThreadsInMemoryEnum type, String config, String groupId, Logger log) throws Exception {
+		public static synchronized void initialize(PolicyGroupByActiveThreadsInMemoryEnum type, Logger log) throws Exception {
 			Config redisConf = new Config();
 			redisConf.useClusterServers()
 				.addNodeAddress("redis://127.0.0.1:7000", "redis://127.0.0.1:7001", "redis://127.0.0.1:7002")				// E' necessario aggiungere solo un nodo master, gli altri vengono acquisiti durante l'avvio
