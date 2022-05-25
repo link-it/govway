@@ -65,7 +65,7 @@ public class OpenSPCoop2InputStreamDynamicContent extends org.apache.commons.io.
 		if(this.buffer!=null && r!=-1) {
 			this.buffer.write(r);
 		}
-		//System.out.println("read(); [readAll:"+this.isReadAll+"] buffer size: "+((this.buffer!=null) ? this.buffer.size() : "--n.d.--"));
+		//System.out.println("read(); [readAll:"+this.isReadAll+"] (r:"+r+") buffer size: "+((this.buffer!=null) ? this.buffer.size() : "--n.d.--"));
 		if(r==-1) {
 			this.isReadAll = true;
 		}
@@ -78,7 +78,8 @@ public class OpenSPCoop2InputStreamDynamicContent extends org.apache.commons.io.
 		if(this.buffer!=null && r!=-1) {
 			this.buffer.write(b, off, r);
 		}
-		//System.out.println("read(byte[],off:"+off+",len:"+len+"); [readAll:"+this.isReadAll+"] buffer size: "+((this.buffer!=null) ? this.buffer.size() : "--n.d.--"));
+		//System.out.println("read(byte[],off:"+off+",len:"+len+"); [readAll:"+this.isReadAll+"] (r:"+r+") buffer size: "+((this.buffer!=null) ? this.buffer.size() : "--n.d.--"));
+		//System.out.println("\t\t (leng:"+b.length+") ["+new String(b, off, r)+"]");
 		if(r==-1) {
 			this.isReadAll = true;
 		}
@@ -89,9 +90,10 @@ public class OpenSPCoop2InputStreamDynamicContent extends org.apache.commons.io.
 	public int read(byte[] b) throws IOException {
 		int r = this.is.read(b);
 		if(this.buffer!=null && r!=-1) {
-			this.buffer.write(b);
+			this.buffer.write(b, 0, r);
 		}
-		//System.out.println("read(byte[]); [readAll:"+this.isReadAll+"] buffer size: "+((this.buffer!=null) ? this.buffer.size() : "--n.d.--"));
+		//System.out.println("read(byte[]); [readAll:"+this.isReadAll+"] (r:"+r+") buffer size: "+((this.buffer!=null) ? this.buffer.size() : "--n.d.--"));
+		//System.out.println("\t\t (leng:"+b.length+") ["+new String(b)+"]");
 		if(r==-1) {
 			this.isReadAll = true;
 		}
