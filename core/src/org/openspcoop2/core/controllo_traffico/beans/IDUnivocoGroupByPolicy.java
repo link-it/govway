@@ -755,20 +755,28 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 		bf.append("\n");
 		
 		bf.append(id.tokenEMail);
-
+		// Aggiungo un ulteriore campo, per la map unica distribuita sul controllo traffico 
+		bf.append("\n");		
+	
+		if (id instanceof IDUnivocoGroupByPolicyMapId) {
+			IDUnivocoGroupByPolicyMapId v = (IDUnivocoGroupByPolicyMapId) id;
+			bf.append(v.getUniqueMapId());
+		}
 		
 		return bf.toString();
 	}
 	
 	public static IDUnivocoGroupByPolicy deserialize(String s) throws Exception{
-		IDUnivocoGroupByPolicy id = new IDUnivocoGroupByPolicy();
+		IDUnivocoGroupByPolicy id = new IDUnivocoGroupByPolicyMapId();
 		String [] tmp = s.split("\n");
 		if(tmp==null){
 			throw new Exception("Wrong Format");
 		}
 		int oldLength = 11;
 		int newLength = oldLength+1+5; // nella 3.1.0 aggiunto idAutenticato e 5 token claims
-		if(tmp.length!=oldLength && tmp.length!=newLength){
+		int newLength2 = newLength+1;	// Aggiunto uniqueMapId
+		
+		if(tmp.length!=oldLength && tmp.length!=newLength && tmp.length!=newLength2){
 			throw new Exception("Wrong Format (size: "+tmp.length+")");
 		}
 		for (int i = 0; i < tmp.length; i++) {
@@ -822,6 +830,12 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 			}
 			else if(i==16){
 				id.tokenEMail = tmp[i].trim();
+			}
+			else if(i==17){
+				id.tokenEMail = tmp[i].trim();
+			}			
+			else if(i==18){
+				((IDUnivocoGroupByPolicyMapId) id).setUniqueMapId(tmp[i].trim());
 			}
 		}
 		return id;

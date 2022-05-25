@@ -49,6 +49,9 @@ public class PolicyGroupByActiveThreadsDistributedNoCache extends PolicyGroupByA
 	@Override
 	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy)
 			throws PolicyException {
+		
+		datiGroupBy = augmentIDUnivoco(datiGroupBy);
+		
 		return this.distributedMap.executeOnKey(datiGroupBy, this.startRequestProcessor);			
 	}
 	
@@ -57,6 +60,8 @@ public class PolicyGroupByActiveThreadsDistributedNoCache extends PolicyGroupByA
 	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione,
 			IDUnivocoGroupByPolicy datiGroupBy) throws PolicyException, PolicyNotFoundException {
 		
+		datiGroupBy = augmentIDUnivoco(datiGroupBy);
+
 		DatiCollezionati datiCollezionati = this.distributedMap.executeOnKey(datiGroupBy, this.updateDatiRequestProcessor);
 		if (datiCollezionati == null) {
 			throw new PolicyNotFoundException("Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+datiGroupBy.toString()+"]");
@@ -69,6 +74,9 @@ public class PolicyGroupByActiveThreadsDistributedNoCache extends PolicyGroupByA
 	@Override
 	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata)
 			throws PolicyException, PolicyNotFoundException {
+
+		datiGroupBy = augmentIDUnivoco(datiGroupBy);
+
 		// Lavoro sulla copia remota
 		this.distributedMap.executeOnKey(datiGroupBy, new EndRequestProcessor(this.activePolicy, dati, isApplicabile, isViolata));			
 	}

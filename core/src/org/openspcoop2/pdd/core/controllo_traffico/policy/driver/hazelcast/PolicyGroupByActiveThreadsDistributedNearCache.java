@@ -54,6 +54,8 @@ public class PolicyGroupByActiveThreadsDistributedNearCache extends PolicyGroupB
 	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy)
 			throws PolicyException {
 		
+		datiGroupBy = augmentIDUnivoco(datiGroupBy);
+		
 		// Lavoro in asincrono sui contatori della copia remota
 		this.distributedMap.submitToKey(datiGroupBy, this.startRequestProcessor);
 		
@@ -73,6 +75,8 @@ public class PolicyGroupByActiveThreadsDistributedNearCache extends PolicyGroupB
 	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione,
 			IDUnivocoGroupByPolicy datiGroupBy) throws PolicyException, PolicyNotFoundException {
 		
+		datiGroupBy = augmentIDUnivoco(datiGroupBy);
+
 		// Lavoro sulla copia remota
 		this.distributedMap.submitToKey(datiGroupBy, this.updateDatiRequestProcessor);
 
@@ -95,6 +99,8 @@ public class PolicyGroupByActiveThreadsDistributedNearCache extends PolicyGroupB
 	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata)
 			throws PolicyException, PolicyNotFoundException {
 		
+		datiGroupBy = augmentIDUnivoco(datiGroupBy);
+
 		// Lavoro sulla copia remota
 		this.distributedMap.submitToKey(datiGroupBy, new EndRequestProcessor(this.activePolicy, dati, isApplicabile, isViolata));			
 		

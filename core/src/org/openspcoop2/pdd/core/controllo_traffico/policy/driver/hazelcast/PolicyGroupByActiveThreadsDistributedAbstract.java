@@ -23,9 +23,11 @@ import java.util.Map;
 
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
-import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupBy;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
+import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicyMapId;
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreadsInMemory;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
 
@@ -46,18 +48,30 @@ public abstract class PolicyGroupByActiveThreadsDistributedAbstract implements I
 	protected final StartRequestProcessor startRequestProcessor;
 	protected final UpdateDatiRequestProcessor updateDatiRequestProcessor;
 	protected final ActivePolicy activePolicy;
+	protected final String uniqueIdMap;
 	
 	public PolicyGroupByActiveThreadsDistributedAbstract(ActivePolicy policy, String uniqueIdMap, HazelcastInstance hazelcast) {
 		this.activePolicy = policy;
+		this.hazelcast = hazelcast;
+	
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(op2Properties.isControlloTrafficoDebug());
+		
+		 if (OpenSPCoop2Properties.getInstance().getControlloTrafficoGestorePolicyInMemoryHazelcastOneMapPerGroup()) {
+			 this.distributedMap = this.hazelcast.getMap("hazelcast-" + uniqueIdMap + "-rate-limiting");
+			 log.info("Hazelcast: Utilizzo Una Distributed Map per gruppo.");
+		 } else {
+			 this.distributedMap = this.hazelcast.getMap("hazelcast-rate-limiting");
+			 log.info("Hazelcast: Utilizzo Una Distributed Map globale.");
+		 }
 		 
-		 this.hazelcast = hazelcast;
-		 this.distributedMap = this.hazelcast.getMap("hazelcast-" + uniqueIdMap + "-rate-limiting");
 		 this.startRequestProcessor = new StartRequestProcessor(policy);
 		 this.updateDatiRequestProcessor = new UpdateDatiRequestProcessor(policy);
-		 
-		 var dummy = this.distributedMap.get(new IDUnivocoGroupByPolicy());
+		 this.uniqueIdMap = uniqueIdMap;
+		
+		 // dummy get per inizializzare la map
+		 this.distributedMap.get(new IDUnivocoGroupByPolicy());
 	}
-	
 	
 	@Override
 	public ActivePolicy getActivePolicy() {
@@ -80,6 +94,7 @@ public abstract class PolicyGroupByActiveThreadsDistributedAbstract implements I
 	public void initMap(Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
 		if(map!=null && !map.isEmpty()) {
 			for (IDUnivocoGroupByPolicy datiGroupBy : map.keySet()) {
+				datiGroupBy = augmentIDUnivoco(datiGroupBy);
 				DatiCollezionati dati = map.get(datiGroupBy);
 				InitProcessor initProcessor = new InitProcessor(dati);
 				this.distributedMap.executeOnKey(datiGroupBy, initProcessor);			
@@ -94,9 +109,11 @@ public abstract class PolicyGroupByActiveThreadsDistributedAbstract implements I
 
 		long counter = 0;
 		
+		// Quando leggo dalla distributedMap non aumento l'idUnivoco perchè
+		// mi aspetto che sulla map vengano già registrati così.
 		for (var entry : this.distributedMap) {
 			if(filtro!=null){
-				IDUnivocoGroupBy<IDUnivocoGroupByPolicy> idAstype = (IDUnivocoGroupBy<IDUnivocoGroupByPolicy>) entry.getKey();
+				IDUnivocoGroupByPolicy idAstype = entry.getKey();
 				if(!idAstype.match(filtro)){
 					continue;
 				}
@@ -137,7 +154,17 @@ public abstract class PolicyGroupByActiveThreadsDistributedAbstract implements I
 		else{
 			return bf.toString()+separatorGroups;
 		}
-		
 	}
+	
+	
+	protected IDUnivocoGroupByPolicy augmentIDUnivoco(IDUnivocoGroupByPolicy idUnivoco) {
+		if (OpenSPCoop2Properties.getInstance().getControlloTrafficoGestorePolicyInMemoryHazelcastOneMapPerGroup()) {
+			return idUnivoco;
+		} else {
+			return new IDUnivocoGroupByPolicyMapId(idUnivoco, this.uniqueIdMap);
+		}
+	}
+	
+	
 
 }
