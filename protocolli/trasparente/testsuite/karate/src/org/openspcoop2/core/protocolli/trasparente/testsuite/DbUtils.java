@@ -76,7 +76,7 @@ public class DbUtils {
     }
     
     public <T> T readValueArray(String query, Class<T> classObject, Object[] args) {
-        return this.jdbc.queryForObject(query, args, classObject);
+        return this.jdbc.queryForObject(query, classObject, args);
     }
     
     /*public <T> T readValue(String query, Class<T> classObject, Object[] args) {

@@ -17,7 +17,7 @@
 
 		<jar.group.name>spring-security</jar.group.name>
 		
-		<spring-security.version>5.3.10.RELEASE</spring-security.version>
+		<spring-security.version>5.7.1</spring-security.version>
 
 	</properties>
 
@@ -48,6 +48,17 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
+			<version>${spring-security.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-crypto</artifactId>
 			<version>${spring-security.version}</version>
 			<exclusions>
 				<exclusion>
