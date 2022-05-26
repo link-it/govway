@@ -33,6 +33,12 @@ public enum PolicyGroupByActiveThreadsInMemoryEnum {
 	HAZELCAST,
 	HAZELCAST_NEAR_CACHE,
 	HAZELCAST_LOCAL_CACHE,
-	REDIS
+	REDIS;
+	
+	public boolean isHazelcast() {
+		return PolicyGroupByActiveThreadsInMemoryEnum.HAZELCAST.equals(this) ||
+				PolicyGroupByActiveThreadsInMemoryEnum.HAZELCAST_NEAR_CACHE.equals(this) ||
+				PolicyGroupByActiveThreadsInMemoryEnum.HAZELCAST_LOCAL_CACHE.equals(this);
+	}
 	
 }
