@@ -37,6 +37,8 @@ import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
 
+import com.hazelcast.map.IMap;
+
 /**     
  * PolicyGroupByActiveThreads
  *
@@ -67,9 +69,16 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	public ActivePolicy getActivePolicy() {
 		return this.activePolicy;
 	}
+	
+	
 	@Override
 	public Map<IDUnivocoGroupByPolicy, DatiCollezionati> getMapActiveThreads(){
 		return this.mapActiveThreads;
+	}
+	
+	
+	public void setMapActiveThreads(Map<IDUnivocoGroupByPolicy, DatiCollezionati> value) {
+		this.mapActiveThreads = value;
 	}
 	
 	@Override

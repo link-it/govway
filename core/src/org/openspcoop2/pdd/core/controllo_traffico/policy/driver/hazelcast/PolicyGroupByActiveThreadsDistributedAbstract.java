@@ -83,6 +83,10 @@ public abstract class PolicyGroupByActiveThreadsDistributedAbstract implements I
 	public Map<IDUnivocoGroupByPolicy, DatiCollezionati> getMapActiveThreads() {
 		return this.distributedMap;
 	}
+	
+	public IMap<IDUnivocoGroupByPolicy, DatiCollezionati> getDistributedMapActiveThreads(){
+		return this.distributedMap;
+	}
 
 
 	@Override

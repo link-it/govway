@@ -120,6 +120,7 @@ import org.openspcoop2.pdd.core.controllo_traffico.NotificatoreEventi;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.DatiStatisticiDAOManager;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.GestoreCacheControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.GestorePolicyAttive;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.GestorePolicyAttiveInMemory;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.PolicyGroupByActiveThreadsInMemoryEnum;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.TipoGestorePolicy;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.HazelcastManager;
@@ -152,6 +153,7 @@ import org.openspcoop2.pdd.services.core.RicezioneBuste;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
 import org.openspcoop2.pdd.timers.TimerClusterDinamicoThread;
+import org.openspcoop2.pdd.timers.TimerClusteredRateLimitingLocalCache;
 import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativiThread;
 import org.openspcoop2.pdd.timers.TimerEventiThread;
@@ -295,6 +297,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	
 	/** DynamicCluster */
 	private TimerClusterDinamicoThread threadClusterDinamico;
+	
+	/** Clustered Rate Limiting Timer */
+	TimerClusteredRateLimitingLocalCache timerClusteredRateLimitingLocalCache;
+	
 	
 	/** indicazione se è un server j2ee */
 	private boolean serverJ2EE = false;
@@ -2441,6 +2447,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						case HAZELCAST_LOCAL_CACHE:
 							hazelcast = true;
 							configFileHazelcast = propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastLocalCacheConfigPath();
+							if (propertiesReader.isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy()) {
+								throw new Exception("Property isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy non compatibile con HAZELCAST_LOCAL_CACHE");
+							}
 							break;
 						case REDIS:
 							try {
@@ -2453,6 +2462,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						default:
 							break;
 						}
+
 						if(hazelcast) {
 							if(configFileHazelcast!=null) {
 								OpenSPCoop2Startup.log.info("Trovata configurazione hazelcast per rate limiting: " + configFileHazelcast);
@@ -2528,6 +2538,21 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					msgDiag.logStartupError(e,"Inizializzazione Immagine del ControlloTraffico");
 					return;
 				}
+				
+				// Innestarsi qui e avviare il timer				
+				try {
+					PolicyGroupByActiveThreadsInMemoryEnum policyType = propertiesReader.getControlloTrafficoGestorePolicyInMemoryType();
+					if (tipo == TipoGestorePolicy.IN_MEMORY && policyType == PolicyGroupByActiveThreadsInMemoryEnum.HAZELCAST_LOCAL_CACHE) {
+						OpenSPCoop2Startup.this.timerClusteredRateLimitingLocalCache = new TimerClusteredRateLimitingLocalCache((GestorePolicyAttiveInMemory) GestorePolicyAttive.getInstance());
+						OpenSPCoop2Startup.this.timerClusteredRateLimitingLocalCache.setTimeout(4);
+						OpenSPCoop2Startup.this.timerClusteredRateLimitingLocalCache.start();
+					}
+				} catch(Throwable e){
+					this.logError("Riscontrato errore durante l'attivazione del controllo traffico: "+e.getMessage(),e);
+					return;
+				}
+
+		
 				
 				boolean force = true;
 				OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(force).info("Motore di gestione del Controllo del Traffico avviato correttamente");
@@ -3693,6 +3718,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					}
 					
 				}
+				
+				if (this.timerClusteredRateLimitingLocalCache != null) {
+					this.timerClusteredRateLimitingLocalCache.setStop(true);		
+				}
+				
 			}catch(Throwable e){
 				if(logControlloTraffico!=null){
 					logControlloTraffico.error("Errore durante la terminazione del Controllo del Traffico: "+e.getMessage(),e);

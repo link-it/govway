@@ -25,6 +25,8 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -49,10 +51,12 @@ import org.openspcoop2.core.controllo_traffico.driver.PolicyShutdownException;
 import org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbDeserializer;
 import org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbSerializer;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.HazelcastManager;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedLocalCache;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedNearCache;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedNoCache;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.PolicyGroupByActiveThreadsDistributedRedis;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.RedissonManager;
+import org.openspcoop2.pdd.timers.TimerClusteredRateLimitingLocalCache;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.Utilities;
@@ -96,6 +100,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 		if(this.type==null) {
 			this.type = PolicyGroupByActiveThreadsInMemoryEnum.LOCAL;
 		}
+		
 	}
 	
 	private boolean isStop = false;
@@ -642,7 +647,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 					datiTransazione!=null ? datiTransazione.getDominio() : null, 
 				    datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
 		case HAZELCAST_LOCAL_CACHE:
-			throw new PolicyException("Unsupported type '"+this.type+"'");
+			return new PolicyGroupByActiveThreadsDistributedLocalCache(activePolicy, uniqueIdMap, HazelcastManager.hazelcast);
 		case HAZELCAST_NEAR_CACHE:
 			return new PolicyGroupByActiveThreadsDistributedNearCache(activePolicy, uniqueIdMap, HazelcastManager.hazelcast);
 		case HAZELCAST:
@@ -651,6 +656,36 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			return new PolicyGroupByActiveThreadsDistributedRedis(activePolicy, uniqueIdMap, RedissonManager.redisson);
 		}
 		throw new PolicyException("Unsupported type '"+this.type+"'");
+	}
+	
+	
+	public void updateLocalCacheMap() throws PolicyShutdownException {
+		
+		Set<Entry<String, IPolicyGroupByActiveThreadsInMemory>> activeThreadsPolicies;
+		
+		this.lock.acquireThrowRuntime("updateLocalCacheMap");
+		try {
+			
+			if(this.isStop){
+				throw new PolicyShutdownException("Policy Manager shutdown");
+			}
+			activeThreadsPolicies = this.mapActiveThreadsPolicy.entrySet();
+		} finally {
+			this.lock.release("updateLocalCacheMap");
+		}
+		
+		for (var policy : activeThreadsPolicies) {
+			PolicyGroupByActiveThreadsDistributedLocalCache distributedPolicy = (PolicyGroupByActiveThreadsDistributedLocalCache) policy.getValue();
+			
+			Map<IDUnivocoGroupByPolicy, DatiCollezionati> mapActiveThreads = new HashMap<IDUnivocoGroupByPolicy, DatiCollezionati>();
+			for (var entry : distributedPolicy.getDistributedMapActiveThreads().entrySet()) {
+				mapActiveThreads.put(entry.getKey(), entry.getValue());
+			}
+			
+			PolicyGroupByActiveThreads localPolicy = distributedPolicy.getLocalPolicy();
+			localPolicy.setMapActiveThreads(mapActiveThreads);
+		}
+		
 	}
 }
 
