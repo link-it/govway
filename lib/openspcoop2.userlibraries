@@ -159,10 +159,10 @@
 	<archive path="/op2_3.4.dev/lib/lucene/lucene-queries-9.1.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/lucene/lucene-suggest-9.1.0.jar"/>
 	<!-- openapi4j -->
-	<archive path="/op2_3.4.dev/lib/openapi4j/openapi-core-1.0.7-gov4j-3.jar"/>
-	<archive path="/op2_3.4.dev/lib/openapi4j/openapi-parser-1.0.7-gov4j-3.jar"/>
-	<archive path="/op2_3.4.dev/lib/openapi4j/openapi-schema-validator-1.0.7-gov4j-3.jar"/>
-	<archive path="/op2_3.4.dev/lib/openapi4j/openapi-operation-validator-1.0.7-gov4j-3.jar"/>
+	<archive path="/op2_3.4.dev/lib/openapi4j/openapi-core-1.0.7-gov4j-4.jar"/>
+	<archive path="/op2_3.4.dev/lib/openapi4j/openapi-parser-1.0.7-gov4j-4.jar"/>
+	<archive path="/op2_3.4.dev/lib/openapi4j/openapi-schema-validator-1.0.7-gov4j-4.jar"/>
+	<archive path="/op2_3.4.dev/lib/openapi4j/openapi-operation-validator-1.0.7-gov4j-4.jar"/>
 	<!-- opensaml -->
         <archive path="/op2_3.4.dev/lib/opensaml/opensaml-core-3.4.6.jar"/>
         <archive path="/op2_3.4.dev/lib/opensaml/opensaml-messaging-api-3.4.6.jar"/>
@@ -246,21 +246,21 @@
         <archive path="/op2_3.4.dev/lib/soapbox/ultraesb-api-1.7.1.jar"/>
         <archive path="/op2_3.4.dev/lib/soapbox/metro-webservices_xwss_com_sun_xml-2.2.jar"/>
 	<!-- spring -->
-        <archive path="/op2_3.4.dev/lib/spring/spring-web-5.3.19.jar"/>
-        <archive path="/op2_3.4.dev/lib/spring/spring-tx-5.3.19.jar"/>
-        <archive path="/op2_3.4.dev/lib/spring/spring-expression-5.3.19.jar"/>
-        <archive path="/op2_3.4.dev/lib/spring/spring-core-5.3.19.jar"/>
-        <archive path="/op2_3.4.dev/lib/spring/spring-context-5.3.19.jar"/>
-	<archive path="/op2_3.4.dev/lib/spring/spring-context-support-5.3.19.jar"/>
-        <archive path="/op2_3.4.dev/lib/spring/spring-beans-5.3.19.jar"/>
-        <archive path="/op2_3.4.dev/lib/spring/spring-aop-5.3.19.jar"/>
-	<archive path="/op2_3.4.dev/lib/spring/spring-aspects-5.3.19.jar"/>
-        <archive path="/op2_3.4.dev/lib/spring/spring-orm-5.3.19.jar"/>
+        <archive path="/op2_3.4.dev/lib/spring/spring-web-5.3.20.jar"/>
+        <archive path="/op2_3.4.dev/lib/spring/spring-tx-5.3.20.jar"/>
+        <archive path="/op2_3.4.dev/lib/spring/spring-expression-5.3.20.jar"/>
+        <archive path="/op2_3.4.dev/lib/spring/spring-core-5.3.20.jar"/>
+        <archive path="/op2_3.4.dev/lib/spring/spring-context-5.3.20.jar"/>
+	<archive path="/op2_3.4.dev/lib/spring/spring-context-support-5.3.20.jar"/>
+        <archive path="/op2_3.4.dev/lib/spring/spring-beans-5.3.20.jar"/>
+        <archive path="/op2_3.4.dev/lib/spring/spring-aop-5.3.20.jar"/>
+	<archive path="/op2_3.4.dev/lib/spring/spring-aspects-5.3.20.jar"/>
+        <archive path="/op2_3.4.dev/lib/spring/spring-orm-5.3.20.jar"/>
 	<!-- spring-security -->
-	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-core-5.6.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-web-5.6.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-crypto-5.6.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-config-5.6.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-core-5.7.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-web-5.7.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-crypto-5.7.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-config-5.7.1.jar"/>
 	<!-- swagger -->
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-annotations-2.1.13.jar"/>
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-core-2.1.13.jar"/>
@@ -286,7 +286,7 @@
 	<archive path="/op2_3.4.dev/lib/testsuite/karate-junit4-0.9.6.jar"/>
 	<archive path="/op2_3.4.dev/lib/testsuite/hamcrest-core-1.3.jar"/>
 	<archive path="/op2_3.4.dev/lib/testsuite/picocli-4.2.0.jar"/>
-	<archive path="/op2_3.4.dev/lib/testsuite/spring-jdbc-5.3.19.jar"/>
+	<archive path="/op2_3.4.dev/lib/testsuite/spring-jdbc-5.3.20.jar"/>
 	<!-- wadl -->
 	<archive path="/op2_3.4.dev/lib/wadl/wadl-core-1.1.6.jar"/>
 	<archive path="/op2_3.4.dev/lib/wadl/wadl-xslt-1.1.6.jar"/>

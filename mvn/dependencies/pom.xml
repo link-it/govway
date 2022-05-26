@@ -21,7 +21,7 @@
 		<owasp.output.dir>../../dependency-check-result</owasp.output.dir>
 
 		<!-- Versioni condivise dai moduli -->
-		<module.spring.version>5.3.19</module.spring.version>
+		<module.spring.version>5.3.20</module.spring.version>
 	</properties>
 
 	<modules>
