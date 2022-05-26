@@ -66,10 +66,17 @@ public class StartRequestProcessor implements EntryProcessor<IDUnivocoGroupByPol
 		Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(op2Properties.isControlloTrafficoDebug());
 
 		if (entry.getValue() == null) {
-			entry.setValue(new DatiCollezionati());
+			entry.setValue(new DatiCollezionati(this.activePolicy.getInstanceConfiguration().getUpdateTime()));
 		}
-		
-		
+        else {
+        	if(entry.getValue().getUpdatePolicyDate()!=null) {
+            	if(!entry.getValue().getUpdatePolicyDate().equals(this.activePolicy.getInstanceConfiguration().getUpdateTime())) {
+            		// data aggiornata
+            		entry.getValue().resetCounters(this.activePolicy.getInstanceConfiguration().getUpdateTime());
+            	}
+            }
+        }
+
 		entry.getValue().registerStartRequest(log, this.activePolicy);
 		entry.setValue(entry.getValue());
 		return entry.getValue();

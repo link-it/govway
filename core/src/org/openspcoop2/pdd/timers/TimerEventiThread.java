@@ -35,6 +35,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.controllo_traffico.NotificatoreEventi;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
+import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.threads.BaseThread;
 import org.slf4j.Logger;
@@ -113,7 +114,7 @@ public class TimerEventiThread extends BaseThread{
 						if(fRepository.canWrite()==false){
 							throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot write");
 						}
-						fDati = new File(fRepository, org.openspcoop2.core.controllo_traffico.constants.Costanti.controlloTrafficoEventiImage);
+						fDati = new File(fRepository, OpenSPCoop2Startup.controlloTrafficoEventiImage);
 						if(fDati.exists() && fDati.canRead() && fDati.length()>0){
 							FileInputStream fin = new FileInputStream(fDati);
 							this.notificatoreEventi.initialize(fin);

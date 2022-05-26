@@ -52,7 +52,7 @@ public class UpdateDatiRequestProcessor implements EntryProcessor<IDUnivocoGroup
 	public DatiCollezionati  process(Entry<IDUnivocoGroupByPolicy, DatiCollezionati> entry) {
 		//System.out.println("<"+idTransazione+"> registerStartRequest distribuita");
 		if(entry.getValue() == null) {
-			System.out.println("<"/*+idTransazione*/+">updateDatiStartRequestApplicabile Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+entry.getKey().toString()+"]");
+			//System.out.println("<"/*+idTransazione*/+">updateDatiStartRequestApplicabile Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+entry.getKey().toString()+"]");
 			return null;
 		} else {
 			OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();

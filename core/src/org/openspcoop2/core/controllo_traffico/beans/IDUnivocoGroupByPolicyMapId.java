@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.core.controllo_traffico.beans;
 
+import java.io.Serializable;
+
 /**     
  *  IDUnivocoGroupByPolicyMapId
  *
@@ -26,7 +28,7 @@ package org.openspcoop2.core.controllo_traffico.beans;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class IDUnivocoGroupByPolicyMapId extends IDUnivocoGroupByPolicy  {
+public class IDUnivocoGroupByPolicyMapId extends IDUnivocoGroupByPolicy implements Serializable  {
 
 	private static final long serialVersionUID = 1L;
 	

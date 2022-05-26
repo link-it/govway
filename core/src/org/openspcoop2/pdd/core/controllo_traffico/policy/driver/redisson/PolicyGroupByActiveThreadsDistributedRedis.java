@@ -45,7 +45,7 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 		
 		DatiCollezionati datiCollezionati = map.get(datiGroupBy);
 		if (datiCollezionati == null) {
-			datiCollezionati = new DatiCollezionati();
+			datiCollezionati = new DatiCollezionati(this.activePolicy.getInstanceConfiguration().getUpdateTime());
 		}
 		
 		datiCollezionati.registerStartRequest(log, this.activePolicy);

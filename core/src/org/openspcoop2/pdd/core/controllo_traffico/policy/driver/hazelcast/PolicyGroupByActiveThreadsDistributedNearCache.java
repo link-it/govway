@@ -29,6 +29,7 @@ import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.PolicyGroupByActiveThreadsInMemoryEnum;
 import org.slf4j.Logger;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -43,11 +44,11 @@ import com.hazelcast.core.HazelcastInstance;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class PolicyGroupByActiveThreadsDistributedNearCache extends PolicyGroupByActiveThreadsDistributedAbstract {
+public class PolicyGroupByActiveThreadsDistributedNearCache extends PolicyGroupByActiveThreadsDistributedAbstract  {
 
 
-	public PolicyGroupByActiveThreadsDistributedNearCache(ActivePolicy policy, String uniqueIdMap, HazelcastInstance hazelcast) {
-		super(policy, uniqueIdMap, hazelcast);
+	public PolicyGroupByActiveThreadsDistributedNearCache(ActivePolicy policy, String uniqueIdMap, HazelcastInstance hazelcast) throws PolicyException {
+		super(policy, uniqueIdMap, PolicyGroupByActiveThreadsInMemoryEnum.HAZELCAST_NEAR_CACHE, hazelcast);
 	}
 
 	@Override
@@ -61,7 +62,15 @@ public class PolicyGroupByActiveThreadsDistributedNearCache extends PolicyGroupB
 		
 		DatiCollezionati datiCollezionati = this.distributedMap.get(datiGroupBy);
 		if (datiCollezionati == null) {
-			datiCollezionati = new DatiCollezionati();
+			datiCollezionati = new DatiCollezionati(this.activePolicy.getInstanceConfiguration().getUpdateTime());
+		}
+		else {
+			if(datiCollezionati.getUpdatePolicyDate()!=null) {
+				if(!datiCollezionati.getUpdatePolicyDate().equals(this.activePolicy.getInstanceConfiguration().getUpdateTime())) {
+					// data aggiornata
+					datiCollezionati.resetCounters(this.activePolicy.getInstanceConfiguration().getUpdateTime());
+				}
+			}
 		}
 		
 		// Lavoro anche sulla copia locale
@@ -84,9 +93,9 @@ public class PolicyGroupByActiveThreadsDistributedNearCache extends PolicyGroupB
 		// per adesso se la policy non è ancora arrivata nella near cache, agisco in locale come se fosse la prima richiesta.
 		DatiCollezionati datiCollezionati = this.distributedMap.get(datiGroupBy);			
 		if(datiCollezionati == null) {
-			System.out.println("Policy Non Ancora In Near Cache. Conto come fosse la prima richiesta.Dati identificativi ["+datiGroupBy.toString()+"]");
+			log.debug("(idTransazione:"+idTransazione+") Policy non ancora in Near Cache. Conto come fosse la prima richiesta; dati identificativi ["+datiGroupBy.toString()+"]");
 			
-			datiCollezionati = new DatiCollezionati();
+			datiCollezionati = new DatiCollezionati(this.activePolicy.getInstanceConfiguration().getUpdateTime());
 			datiCollezionati.registerStartRequest(log, this.activePolicy);
 			return datiCollezionati;
 		} else {
