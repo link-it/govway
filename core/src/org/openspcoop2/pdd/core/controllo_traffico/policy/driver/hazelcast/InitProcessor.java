@@ -57,8 +57,11 @@ public class InitProcessor implements EntryProcessor<IDUnivocoGroupByPolicy, Dat
 	
 	@Override
 	public DatiCollezionati process(Entry<IDUnivocoGroupByPolicy, DatiCollezionati> entry) {
-		entry.setValue(this.dati);
-		return this.dati;
+		if(entry.getValue()==null) {
+			// devo inizializarla solo allo startup del primo nodo. Gli altri troveranno il valore gia' presente
+			entry.setValue(this.dati);
+		}
+		return entry.getValue();
 	}
 
 	@Override

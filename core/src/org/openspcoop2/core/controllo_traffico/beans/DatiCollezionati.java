@@ -51,6 +51,10 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	public DatiCollezionati(Date updatePolicyDate) {
+		this.updatePolicyDate = updatePolicyDate;
+	}
 
 	// data di lettura delle informazioni
 	private Date cloneDate = null; // non deve essere gestita. Viene solamente inizializzata ad ogni clone
@@ -63,6 +67,8 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	
 	// data di creazione
 	private Date creationDate = null;
+	// data di registrazione/aggiornamento policy
+	private Date updatePolicyDate = null;
 	
 	// dati iniziali
 	private UnitaTemporale policyDateTypeInterval = null;
@@ -105,7 +111,8 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		
 		// data di creazione
 		this.creationDate = DateManager.getDate();
-		
+		// data di registrazione policy
+		this.updatePolicyDate = activePolicy.getInstanceConfiguration().getUpdateTime();
 		
 		// Policy
 		
@@ -273,7 +280,11 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 
 	@Override
 	public Object clone(){
-		DatiCollezionati dati = new DatiCollezionati();
+		
+		// data di registrazione/aggiornamento policy
+		Date updatePolicyDate = new Date(this.updatePolicyDate.getTime());
+		
+		DatiCollezionati dati = new DatiCollezionati(updatePolicyDate);
 		
 		dati.cloneDate = DateManager.getDate();
 		
@@ -399,6 +410,11 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		bf.append("\n");
 		bf.append("\tData Attivazione Policy: ");
 		bf.append(dateformat.format(this.creationDate));
+		
+		// data di registrazione/aggiornamento policy
+		bf.append("\n");
+		bf.append("\tData Registrazione/Aggiornamento Policy: ");
+		bf.append(dateformat.format(this.updatePolicyDate));
 		
 		// Data now
 		Date now = null;
@@ -1007,8 +1023,14 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				
 	}
 	
-	
 	public void resetCounters(){
+		this.resetCounters(null);
+	}
+	public void resetCounters(Date updatePolicyDate){
+		
+		if(updatePolicyDate!=null) {
+			this.updatePolicyDate = updatePolicyDate;
+		}
 		
 		if(this.policyRequestCounter!=null){
 			this.policyRequestCounter = 0l;
@@ -1369,6 +1391,9 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	public Date getCreationDate() {
 		return this.creationDate;
 	}
+	public Date getUpdatePolicyDate() {
+		return this.updatePolicyDate;
+	}
 
 	public Date getPolicyDate() {
 		return this.policyDate;
@@ -1594,6 +1619,10 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	@Deprecated
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
+	}
+	@Deprecated
+	public void setUpdatePolicyDate(Date updatePolicyDate) {
+		this.updatePolicyDate = updatePolicyDate;
 	}
 
 	@Deprecated
@@ -1860,16 +1889,27 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		else
 			bf.append("-");
 
+		
+		// data di registrazione/aggiornamento policy
+		bf.append("\n");
+		if(dati.updatePolicyDate!=null)
+			bf.append(dati.updatePolicyDate.getTime());
+		else
+			bf.append("-");
+		
+		
 		return bf.toString();
 	}
 	
 	public static DatiCollezionati deserialize(String s) throws Exception{
-		DatiCollezionati dati = new DatiCollezionati();
+		DatiCollezionati dati = new DatiCollezionati(null);
 		String [] tmp = s.split("\n");
 		if(tmp==null){
 			throw new Exception("Wrong Format");
 		}
-		if(tmp.length!=27){
+		int oldLength = 27;
+		int dataPolicyLength = oldLength +1;
+		if(tmp.length!=oldLength && tmp.length!=dataPolicyLength){
 			throw new Exception("Wrong Format (size: "+tmp.length+")");
 		}
 		for (int i = 0; i < tmp.length; i++) {
@@ -2052,6 +2092,18 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 					dati.oldPolicyDegradoPrestazionaleCounter = Long.parseLong(tmpValue);
 				}
 			}
+			
+			// data di registrazione/aggiornamento policy
+			else if(i==27){
+				String tmpValue = tmp[i].trim();
+				if(tmpValue!=null && !"-".equals(tmpValue)){
+					dati.updatePolicyDate = new Date(Long.parseLong(tmpValue));
+				}
+			}
+		}
+		
+		if(dati.updatePolicyDate==null) {
+			dati.updatePolicyDate = dati.creationDate; // per backward compatibility
 		}
 		
 		return dati;

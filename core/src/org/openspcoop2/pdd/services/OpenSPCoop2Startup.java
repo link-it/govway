@@ -314,6 +314,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	
 	/** Jminix StandaloneMiniConsole */
 	private static StandaloneMiniConsole jminixStandaloneConsole;
+	
+	/** ControlloTraffico */
+	private static String controlloTrafficoImage;
+	public static String controlloTrafficoEventiImage;
 
 	/**
 	 * Startup dell'applicazione WEB di OpenSPCoop
@@ -2401,6 +2405,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			/* ----------- Gestori utilizzati dal Controllo Traffico ------------ */
+			PolicyGroupByActiveThreadsInMemoryEnum CT_policyType = null;
 			if(propertiesReader.isControlloTrafficoEnabled()){
 						
 				try{
@@ -2429,13 +2434,14 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}
 				
 				// Hazelcast
+				
 				TipoGestorePolicy tipo = propertiesReader.getControlloTrafficoGestorePolicyTipo();
 				if(TipoGestorePolicy.IN_MEMORY.equals(tipo)) {
 					try {
-						PolicyGroupByActiveThreadsInMemoryEnum policyType = propertiesReader.getControlloTrafficoGestorePolicyInMemoryType();
+						CT_policyType = propertiesReader.getControlloTrafficoGestorePolicyInMemoryType();
 						boolean hazelcast = false;
 						String configFileHazelcast = null;
-						switch (policyType) {
+						switch (CT_policyType) {
 						case HAZELCAST:
 							hazelcast = true;
 							configFileHazelcast = propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastConfigPath();
@@ -2453,7 +2459,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 							break;
 						case REDIS:
 							try {
-								RedissonManager.initialize(policyType, OpenSPCoop2Startup.log);
+								RedissonManager.initialize(CT_policyType, OpenSPCoop2Startup.log);
 							}catch(Throwable e) {
 								this.logError("Riscontrato errore durante l'inizializzazione del client redis: "+e.getMessage());
 								return;
@@ -2468,7 +2474,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 								OpenSPCoop2Startup.log.info("Trovata configurazione hazelcast per rate limiting: " + configFileHazelcast);
 							}
 							try {
-								HazelcastManager.initialize(policyType, configFileHazelcast, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId(),
+								HazelcastManager.initialize(CT_policyType, configFileHazelcast, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId(),
 										OpenSPCoop2Startup.log);
 							}catch(Throwable e) {
 								this.logError("Riscontrato errore durante l'inizializzazione di hazelcast: "+e.getMessage());
@@ -2476,7 +2482,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 							}
 						}
 						
-						OpenSPCoop2Startup.log.info("ControlloTraffico avviato con gestione mappe di tipo '"+policyType+"'");
+						OpenSPCoop2Startup.log.info("ControlloTraffico avviato con gestione mappe di tipo '"+CT_policyType+"'");
 						
 					} catch(Throwable e){
 						this.logError("Riscontrato errore durante l'attivazione di hazelcast: "+e.getMessage(),e);
@@ -2521,7 +2527,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						if(fRepository.canWrite()==false){
 							throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot write");
 						}
-						fDati = new File(fRepository, org.openspcoop2.core.controllo_traffico.constants.Costanti.controlloTrafficoImage);
+						OpenSPCoop2Startup.controlloTrafficoImage = org.openspcoop2.core.controllo_traffico.constants.Costanti.getControlloTrafficoImagePrefix(CT_policyType.name());
+						fDati = new File(fRepository, OpenSPCoop2Startup.controlloTrafficoImage);
 						if(fDati.exists() && fDati.canRead() && fDati.length()>0){
 							FileInputStream fin = new FileInputStream(fDati);
 							GestorePolicyAttive.getInstance().initialize(fin,confControlloTraffico);
@@ -3372,6 +3379,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							if(debugEventi)
 								logEventi.debug("Avvio inizializzazione thread per Eventi ...");
+							OpenSPCoop2Startup.controlloTrafficoEventiImage = org.openspcoop2.core.controllo_traffico.constants.Costanti.getControlloTrafficoEventiImagePrefix(CT_policyType.name());
 							OpenSPCoop2Startup.this.threadEventi = new TimerEventiThread(logEventi);
 							OpenSPCoop2Startup.this.threadEventi.start();
 							TimerEventiThread.STATE = TimerState.ENABLED;
@@ -3702,7 +3710,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot write");
 					}		
 					
-					File fDati = new File(fRepository, org.openspcoop2.core.controllo_traffico.constants.Costanti.controlloTrafficoImage);
+					File fDati = new File(fRepository, OpenSPCoop2Startup.controlloTrafficoImage);
 					out = new FileOutputStream(fDati, false); // se già esiste lo sovrascrive
 					GestorePolicyAttive.getInstance().serialize(out);
 					out.flush();
@@ -3713,7 +3721,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					// Il meccanismo di ripristino dell'immagine degli eventi non sembra funzionare
 					// Lascio comunque il codice se in futuro si desidera approfindire la questione
 					if(inizializzazioneAttiva) {
-						fDati = new File(fRepository, org.openspcoop2.core.controllo_traffico.constants.Costanti.controlloTrafficoEventiImage);
+						fDati = new File(fRepository, OpenSPCoop2Startup.controlloTrafficoEventiImage);
 						NotificatoreEventi.getInstance().serialize(fDati);
 					}
 					

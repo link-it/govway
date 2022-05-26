@@ -26,6 +26,7 @@ import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.PolicyGroupByActiveThreadsInMemoryEnum;
 import org.slf4j.Logger;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -41,8 +42,8 @@ import com.hazelcast.core.HazelcastInstance;
 public class PolicyGroupByActiveThreadsDistributedNoCache extends PolicyGroupByActiveThreadsDistributedAbstract {
 		
 	
-	public PolicyGroupByActiveThreadsDistributedNoCache(ActivePolicy policy, String uniqueIdMap, HazelcastInstance hazelcast) {
-		super(policy, uniqueIdMap, hazelcast);		 
+	public PolicyGroupByActiveThreadsDistributedNoCache(ActivePolicy policy, String uniqueIdMap, HazelcastInstance hazelcast) throws PolicyException {
+		super(policy, uniqueIdMap, PolicyGroupByActiveThreadsInMemoryEnum.HAZELCAST, hazelcast);		 
 	}
 
 	
