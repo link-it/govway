@@ -23517,6 +23517,8 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryType;
 	}
 	
+	
+	
 	private static Boolean getControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction = null;
 	public boolean isControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction() {
 		if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction==null){
@@ -23614,6 +23616,31 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastConfigPath;		
+	}
+	
+	private static Integer getControlloTrafficoGestorePolicyInMemoryHazelcast_LocalCacheUpdateInterval = null;
+	
+	public Integer getControlloTrafficoGestorePolicyInMemoryHazelcast_LocalCacheTimerUpdate() {
+		if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelcast_LocalCacheUpdateInterval==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.localCacheUpdateInterval";
+			
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if (name != null) {
+					name = name.trim();
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelcast_LocalCacheUpdateInterval = Integer.valueOf(name);
+				} else {
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+4);
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelcast_LocalCacheUpdateInterval =  4;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+4+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelcast_LocalCacheUpdateInterval = 4;
+			}   
+		}
+
+		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelcast_LocalCacheUpdateInterval;
 	}
 	
 	private static Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath_read = null;

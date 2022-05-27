@@ -6,11 +6,6 @@ hazelcast:
       backup-count: 0
       async-backup-count: 1
       
-      near-cache:
-        controllo_traffico:
-          in-memory-format: OBJECT
-          serialize-keys: false
-
   serialization:
     serializers:
       - type-class: org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy

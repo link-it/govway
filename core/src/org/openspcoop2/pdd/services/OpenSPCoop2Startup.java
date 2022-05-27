@@ -2550,7 +2550,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				try {
 					if (tipo == TipoGestorePolicy.IN_MEMORY && CT_policyType == PolicyGroupByActiveThreadsInMemoryEnum.HAZELCAST_LOCAL_CACHE) {
 						OpenSPCoop2Startup.this.timerClusteredRateLimitingLocalCache = new TimerClusteredRateLimitingLocalCache(logControlloTraffico, (GestorePolicyAttiveInMemory) GestorePolicyAttive.getInstance());
-						OpenSPCoop2Startup.this.timerClusteredRateLimitingLocalCache.setTimeout(4);
+						OpenSPCoop2Startup.this.timerClusteredRateLimitingLocalCache.setTimeout(propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelcast_LocalCacheTimerUpdate());
 						OpenSPCoop2Startup.this.timerClusteredRateLimitingLocalCache.start();
 					}
 				} catch(Throwable e){
