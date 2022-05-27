@@ -7,6 +7,7 @@ import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.PolicyGroupByActiveThreads;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.PolicyGroupByActiveThreadsInMemoryEnum;
 import org.slf4j.Logger;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -23,8 +24,8 @@ public class PolicyGroupByActiveThreadsDistributedLocalCache  extends PolicyGrou
 	private PolicyGroupByActiveThreads localPolicy;
 	
 	public PolicyGroupByActiveThreadsDistributedLocalCache(ActivePolicy policy, String uniqueIdMap,
-			HazelcastInstance hazelcast) {
-		super(policy, uniqueIdMap, hazelcast);
+			HazelcastInstance hazelcast) throws PolicyException {
+		super(policy, uniqueIdMap, PolicyGroupByActiveThreadsInMemoryEnum.HAZELCAST_LOCAL_CACHE, hazelcast);
 		
 		this.localPolicy = new PolicyGroupByActiveThreads(policy);
 	
