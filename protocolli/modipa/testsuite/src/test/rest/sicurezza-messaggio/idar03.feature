@@ -2124,7 +2124,7 @@ And match header Agid-JWT-Signature == '#notpresent'
 
 
 @doppi-header-security-token-trasformazione-authorization-custom
-Scenario: Test con presenza dell'header Authorization, dove viene verificato anche l'utilizzo del security token nelle trasformazioni per inoltrare l'authorization token (solo il payload)
+Scenario: Test con presenza dell'header Authorization, dove viene verificato anche l'utilizzo del security token nelle trasformazioni per inoltrare l'authorization token (solo il payload) e anche un token custom indicato in X-Security-Token
 
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03SecurityTokenTrasformazione/v1"
 And path 'authorization', 'custom'
