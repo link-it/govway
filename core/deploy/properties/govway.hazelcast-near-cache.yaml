@@ -5,7 +5,7 @@ hazelcast:
       in-memory-format: OBJECT
 
       near-cache:
-        controllo_traffico:
+        "hazelcast-*-rate-limiting":
           in-memory-format: OBJECT
           serialize-keys: false
 

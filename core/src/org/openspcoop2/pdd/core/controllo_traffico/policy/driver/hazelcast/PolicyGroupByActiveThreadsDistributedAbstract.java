@@ -92,7 +92,7 @@ public abstract class PolicyGroupByActiveThreadsDistributedAbstract implements I
 			 this.distributedMap = this.hazelcast.getMap(mapName + this.uniqueIdMap_idActivePolicy + "-rate-limiting");
 			 log.info("Hazelcast: Utilizzo Una Distributed Map per gruppo.");
 		 } else {
-			 this.distributedMap = this.hazelcast.getMap("hazelcast-rate-limiting");
+			 this.distributedMap = this.hazelcast.getMap(mapName+"rate-limiting");
 			 log.info("Hazelcast: Utilizzo Una Distributed Map globale.");
 		 }
 		 
