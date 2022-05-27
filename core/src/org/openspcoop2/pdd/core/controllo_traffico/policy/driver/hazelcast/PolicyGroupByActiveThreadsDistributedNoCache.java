@@ -39,7 +39,7 @@ import com.hazelcast.core.HazelcastInstance;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class PolicyGroupByActiveThreadsDistributedNoCache extends PolicyGroupByActiveThreadsDistributedAbstract {
+public class PolicyGroupByActiveThreadsDistributedNoCache extends AbstractPolicyGroupByActiveThreadsDistributed {
 		
 	
 	public PolicyGroupByActiveThreadsDistributedNoCache(ActivePolicy policy, String uniqueIdMap, HazelcastInstance hazelcast) throws PolicyException {

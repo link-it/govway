@@ -81,9 +81,19 @@ public class HazelcastManager {
 				break;
 			case HAZELCAST_NEAR_CACHE:
 				name = "govway.hazelcast-near-cache.yaml";
+				groupId = groupId+"-near-cache";
+				break;
+			case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
+				name = "govway.hazelcast-near-cache-unsafe-sync-map.yaml";
+				groupId = groupId+"-near-cache-unsafe-sync-map";
+				break;
+			case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
+				name = "govway.hazelcast-near-cache-unsafe-async-map.yaml";
+				groupId = groupId+"-near-cache-unsafe-async-map";
 				break;
 			case HAZELCAST_LOCAL_CACHE:
 				name = "govway.hazelcast-local-cache.yaml";
+				groupId = groupId+"-local-cache";
 				break;
 			default:
 				throw new Exception("Hazelcast type '"+type+"' unsupported");

@@ -2,7 +2,8 @@ hazelcast:
   cluster-name: dev
   map:
     "hazelcast-*-rate-limiting":
-      in-memory-format: OBJECT
+      in-memory-format: BINARY
+      #in-memory-format: OBJECT
       backup-count: 0
       async-backup-count: 1
       

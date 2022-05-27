@@ -293,6 +293,8 @@
 				<include name="govway.log4j2.properties" />
 				<include name="govway.protocolAdjunct.log4j2.properties" />
 				<include name="log4j2.properties" />
+			</classes>
+			<classes dir="${properties_dir}/hazelcast">
 				<include name="${hazelcast_properties}" />
 			</classes>
 			<classes dir="${build}/tmp">

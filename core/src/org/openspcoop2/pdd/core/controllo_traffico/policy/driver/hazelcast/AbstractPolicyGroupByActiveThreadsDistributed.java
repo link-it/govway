@@ -45,7 +45,7 @@ import com.hazelcast.map.IMap;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public abstract class PolicyGroupByActiveThreadsDistributedAbstract implements IPolicyGroupByActiveThreadsInMemory {
+public abstract class AbstractPolicyGroupByActiveThreadsDistributed implements IPolicyGroupByActiveThreadsInMemory {
 	
 	protected final HazelcastInstance hazelcast;
 	protected final IMap<IDUnivocoGroupByPolicy, DatiCollezionati> distributedMap;
@@ -58,7 +58,7 @@ public abstract class PolicyGroupByActiveThreadsDistributedAbstract implements I
 	protected String uniqueIdMap_idActivePolicy;
 	protected Date uniqueIdMap_updateTime;
 	
-	public PolicyGroupByActiveThreadsDistributedAbstract(ActivePolicy policy, String uniqueIdMap, PolicyGroupByActiveThreadsInMemoryEnum type, HazelcastInstance hazelcast) throws PolicyException {
+	public AbstractPolicyGroupByActiveThreadsDistributed(ActivePolicy policy, String uniqueIdMap, PolicyGroupByActiveThreadsInMemoryEnum type, HazelcastInstance hazelcast) throws PolicyException {
 		this.activePolicy = policy;
 		this.hazelcast = hazelcast;
 	
@@ -80,6 +80,12 @@ public abstract class PolicyGroupByActiveThreadsDistributedAbstract implements I
 			break;
 		case HAZELCAST_NEAR_CACHE:
 			mapName = "hazelcast-near-cache-";
+			break;
+		case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
+			mapName = "hazelcast-near-cache-unsafe-sync-map-";
+			break;
+		case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
+			mapName = "hazelcast-near-cache-unsafe-async-map-";
 			break;
 		case HAZELCAST_LOCAL_CACHE:
 			mapName = "hazelcast-local-cache-";

@@ -2001,22 +2001,28 @@ public class OpenSPCoop2Properties {
 						getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval();
 						break;
 					case HAZELCAST:
-						getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId();
 						getControlloTrafficoGestorePolicyInMemoryHazelCastConfigPath();
-						isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy();
 						break;
 					case HAZELCAST_NEAR_CACHE:
-						getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId();
 						getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath();
-						isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy();
+						break;
+					case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
+						getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath();
+						break;
+					case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
+						getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath();
 						break;
 					case HAZELCAST_LOCAL_CACHE:
-						getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId();
 						getControlloTrafficoGestorePolicyInMemoryHazelCastLocalCacheConfigPath();
-						isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy();
+						getControlloTrafficoGestorePolicyInMemoryHazelcastLocalCacheTimerUpdate();
 						break;
 					default:
 						break;
+					}
+					
+					if(type.isHazelcast()) {
+						getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId();
+						isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy();
 					}
 					
 					if(PolicyGroupByActiveThreadsInMemoryEnum.DATABASE.equals(type)) {
@@ -23617,32 +23623,7 @@ public class OpenSPCoop2Properties {
 
 		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastConfigPath;		
 	}
-	
-	private static Integer getControlloTrafficoGestorePolicyInMemoryHazelcast_LocalCacheUpdateInterval = null;
-	
-	public Integer getControlloTrafficoGestorePolicyInMemoryHazelcast_LocalCacheTimerUpdate() {
-		if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelcast_LocalCacheUpdateInterval==null){
-			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.localCacheUpdateInterval";
-			
-			try{ 
-				String name = null;
-				name = this.reader.getValue_convertEnvProperties(pName);
-				if (name != null) {
-					name = name.trim();
-					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelcast_LocalCacheUpdateInterval = Integer.valueOf(name);
-				} else {
-					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+4);
-					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelcast_LocalCacheUpdateInterval =  4;
-				}
-			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+4+", errore:"+e.getMessage(),e);
-				OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelcast_LocalCacheUpdateInterval = 4;
-			}   
-		}
-
-		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelcast_LocalCacheUpdateInterval;
-	}
-	
+		
 	private static Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath_read = null;
 	private static String getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath = null;
 	public String getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath() throws Exception {
@@ -23668,6 +23649,60 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath;		
+	}
+	
+	private static Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath_read = null;
+	private static String getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath = null;
+	public String getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath() throws Exception {
+		
+		if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath_read==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.config";
+
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath = value;
+				}
+
+				getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath_read = true;
+				
+			}catch(java.lang.Exception e) {
+				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
+				this.log.error(msgError,e);
+				throw new Exception(msgError,e);
+			}
+		}
+
+		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath;		
+	}
+	
+	private static Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath_read = null;
+	private static String getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath = null;
+	public String getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath() throws Exception {
+		
+		if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath_read==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.config";
+
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath = value;
+				}
+
+				getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath_read = true;
+				
+			}catch(java.lang.Exception e) {
+				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
+				this.log.error(msgError,e);
+				throw new Exception(msgError,e);
+			}
+		}
+
+		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath;		
 	}
 	
 	private static Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastLocalConfigPath_read = null;
@@ -23745,6 +23780,29 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId;
 	}
 
+	private static Integer getControlloTrafficoGestorePolicyInMemoryHazelcastLocalCacheUpdateInterval = null;	
+	public Integer getControlloTrafficoGestorePolicyInMemoryHazelcastLocalCacheTimerUpdate() {
+		if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelcastLocalCacheUpdateInterval==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_LOCAL_CACHE.updateInterval";
+			
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if (name != null) {
+					name = name.trim();
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelcastLocalCacheUpdateInterval = Integer.valueOf(name);
+				} else {
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+5);
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelcastLocalCacheUpdateInterval =  5;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+5+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelcastLocalCacheUpdateInterval = 5;
+			}   
+		}
+
+		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelcastLocalCacheUpdateInterval;
+	}
 	
 	private static String getControlloTrafficoGestorePolicyWSUrl = null;
 	public String getControlloTrafficoGestorePolicyWSUrl() throws Exception {	

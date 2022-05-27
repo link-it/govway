@@ -36,12 +36,14 @@ import org.slf4j.Logger;
 
 import com.hazelcast.core.HazelcastInstance;
 
-/**
- * 
- * @author Francesco Scarlato
- * 
+/**     
+ *  PolicyGroupByActiveThreadsDistributedLocalCache
+ *
+ * @author Francesco Scarlato (scarlato@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
-public class PolicyGroupByActiveThreadsDistributedLocalCache  extends PolicyGroupByActiveThreadsDistributedAbstract {
+public class PolicyGroupByActiveThreadsDistributedLocalCache  extends AbstractPolicyGroupByActiveThreadsDistributed {
 
 	private PolicyGroupByActiveThreads localPolicy;
 	

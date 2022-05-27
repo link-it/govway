@@ -2450,6 +2450,14 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 							hazelcast = true;
 							configFileHazelcast = propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath();
 							break;
+						case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
+							hazelcast = true;
+							configFileHazelcast = propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath();
+							break;
+						case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
+							hazelcast = true;
+							configFileHazelcast = propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath();
+							break;
 						case HAZELCAST_LOCAL_CACHE:
 							hazelcast = true;
 							configFileHazelcast = propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastLocalCacheConfigPath();
@@ -2550,7 +2558,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				try {
 					if (tipo == TipoGestorePolicy.IN_MEMORY && CT_policyType == PolicyGroupByActiveThreadsInMemoryEnum.HAZELCAST_LOCAL_CACHE) {
 						OpenSPCoop2Startup.this.timerClusteredRateLimitingLocalCache = new TimerClusteredRateLimitingLocalCache(logControlloTraffico, (GestorePolicyAttiveInMemory) GestorePolicyAttive.getInstance());
-						OpenSPCoop2Startup.this.timerClusteredRateLimitingLocalCache.setTimeout(propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelcast_LocalCacheTimerUpdate());
+						OpenSPCoop2Startup.this.timerClusteredRateLimitingLocalCache.setTimeout(propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelcastLocalCacheTimerUpdate());
 						OpenSPCoop2Startup.this.timerClusteredRateLimitingLocalCache.start();
 					}
 				} catch(Throwable e){
@@ -3711,18 +3719,20 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot write");
 					}		
 					
-					File fDati = new File(fRepository, OpenSPCoop2Startup.controlloTrafficoImage);
-					out = new FileOutputStream(fDati, false); // se già esiste lo sovrascrive
-					GestorePolicyAttive.getInstance().serialize(out);
-					out.flush();
-					out.close();
-					out = null;
+					if(OpenSPCoop2Startup.controlloTrafficoImage!=null) {
+						File fDati = new File(fRepository, OpenSPCoop2Startup.controlloTrafficoImage);
+						out = new FileOutputStream(fDati, false); // se già esiste lo sovrascrive
+						GestorePolicyAttive.getInstance().serialize(out);
+						out.flush();
+						out.close();
+						out = null;
+					}
 					
 					boolean inizializzazioneAttiva = false;
 					// Il meccanismo di ripristino dell'immagine degli eventi non sembra funzionare
 					// Lascio comunque il codice se in futuro si desidera approfindire la questione
-					if(inizializzazioneAttiva) {
-						fDati = new File(fRepository, OpenSPCoop2Startup.controlloTrafficoEventiImage);
+					if(inizializzazioneAttiva && OpenSPCoop2Startup.controlloTrafficoEventiImage!=null) {
+						File fDati = new File(fRepository, OpenSPCoop2Startup.controlloTrafficoEventiImage);
 						NotificatoreEventi.getInstance().serialize(fDati);
 					}
 					

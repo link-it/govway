@@ -1,0 +1,19 @@
+hazelcast:
+  cluster-name: dev
+  map:
+    "hazelcast-*-rate-limiting":
+      in-memory-format: BINARY
+      #in-memory-format: OBJECT
+      backup-count: 0
+      async-backup-count: 1
+
+      near-cache:
+        hazelcast-near-cache-unsafe-sync-map:
+          in-memory-format: BINARY
+          #in-memory-format: OBJECT
+          serialize-keys: false
+
+  serialization:
+    serializers:
+      - type-class: org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy
+        class-name: org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.IDUnivocoGroupByPolicyStreamSerializer
