@@ -3,6 +3,13 @@ hazelcast:
   map:
     "hazelcast-*-rate-limiting":
       in-memory-format: OBJECT
+      backup-count: 0
+      async-backup-count: 1
+      
+      near-cache:
+        controllo_traffico:
+          in-memory-format: OBJECT
+          serialize-keys: false
 
   serialization:
     serializers:
