@@ -299,7 +299,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	private TimerClusterDinamicoThread threadClusterDinamico;
 	
 	/** Clustered Rate Limiting Timer */
-	TimerClusteredRateLimitingLocalCache timerClusteredRateLimitingLocalCache;
+	private TimerClusteredRateLimitingLocalCache timerClusteredRateLimitingLocalCache;
 	
 	
 	/** indicazione se è un server j2ee */
@@ -2546,16 +2546,17 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					return;
 				}
 				
-				// Innestarsi qui e avviare il timer				
+				// Avvio timer TimerClusteredRateLimitingLocalCache			
 				try {
-					PolicyGroupByActiveThreadsInMemoryEnum policyType = propertiesReader.getControlloTrafficoGestorePolicyInMemoryType();
-					if (tipo == TipoGestorePolicy.IN_MEMORY && policyType == PolicyGroupByActiveThreadsInMemoryEnum.HAZELCAST_LOCAL_CACHE) {
-						OpenSPCoop2Startup.this.timerClusteredRateLimitingLocalCache = new TimerClusteredRateLimitingLocalCache((GestorePolicyAttiveInMemory) GestorePolicyAttive.getInstance());
+					if (tipo == TipoGestorePolicy.IN_MEMORY && CT_policyType == PolicyGroupByActiveThreadsInMemoryEnum.HAZELCAST_LOCAL_CACHE) {
+						OpenSPCoop2Startup.this.timerClusteredRateLimitingLocalCache = new TimerClusteredRateLimitingLocalCache(logControlloTraffico, (GestorePolicyAttiveInMemory) GestorePolicyAttive.getInstance());
 						OpenSPCoop2Startup.this.timerClusteredRateLimitingLocalCache.setTimeout(4);
 						OpenSPCoop2Startup.this.timerClusteredRateLimitingLocalCache.start();
 					}
 				} catch(Throwable e){
-					this.logError("Riscontrato errore durante l'attivazione del controllo traffico: "+e.getMessage(),e);
+					logControlloTraffico.error("Riscontrato errore durante l'attivazione del controllo traffico: "+e.getMessage(),e);
+					logCore.error("Riscontrato errore durante l'attivazione del controllo traffico: "+e.getMessage(),e);
+					msgDiag.logStartupError(e,"Riscontrato errore durante l'attivazione del controllo traffico: "+e.getMessage());
 					return;
 				}
 
@@ -3878,6 +3879,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		try{
 			if(this.threadClusterDinamico!=null)
 				this.threadClusterDinamico.waitShutdown();
+		}catch (Throwable e) {}
+		try{
+			if(this.timerClusteredRateLimitingLocalCache!=null)
+				this.timerClusteredRateLimitingLocalCache.waitShutdown();
 		}catch (Throwable e) {}
 		
 		// Rilascio lock (da fare dopo che i timer sono stati fermati)

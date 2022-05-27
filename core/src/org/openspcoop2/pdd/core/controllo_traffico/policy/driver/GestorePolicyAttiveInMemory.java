@@ -56,7 +56,6 @@ import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.Polic
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedNoCache;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.PolicyGroupByActiveThreadsDistributedRedis;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.RedissonManager;
-import org.openspcoop2.pdd.timers.TimerClusteredRateLimitingLocalCache;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.Utilities;
@@ -294,6 +293,23 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 		}finally {
 			this.lock.release("resetCountersAllActiveThreadsPolicy");
 		}
+	}
+	
+	public Set<Entry<String, IPolicyGroupByActiveThreadsInMemory>> entrySet() throws PolicyShutdownException, PolicyException{
+		Set<Entry<String, IPolicyGroupByActiveThreadsInMemory>> activeThreadsPolicies;
+		
+		this.lock.acquireThrowRuntime("updateLocalCacheMap");
+		try {
+			
+			if(this.isStop){
+				throw new PolicyShutdownException("Policy Manager shutdown");
+			}
+			activeThreadsPolicies = this.mapActiveThreadsPolicy.entrySet();
+		} finally {
+			this.lock.release("updateLocalCacheMap");
+		}
+		
+		return activeThreadsPolicies;
 	}
 	
 	
@@ -658,34 +674,5 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 		throw new PolicyException("Unsupported type '"+this.type+"'");
 	}
 	
-	
-	public void updateLocalCacheMap() throws PolicyShutdownException {
-		
-		Set<Entry<String, IPolicyGroupByActiveThreadsInMemory>> activeThreadsPolicies;
-		
-		this.lock.acquireThrowRuntime("updateLocalCacheMap");
-		try {
-			
-			if(this.isStop){
-				throw new PolicyShutdownException("Policy Manager shutdown");
-			}
-			activeThreadsPolicies = this.mapActiveThreadsPolicy.entrySet();
-		} finally {
-			this.lock.release("updateLocalCacheMap");
-		}
-		
-		for (var policy : activeThreadsPolicies) {
-			PolicyGroupByActiveThreadsDistributedLocalCache distributedPolicy = (PolicyGroupByActiveThreadsDistributedLocalCache) policy.getValue();
-			
-			Map<IDUnivocoGroupByPolicy, DatiCollezionati> mapActiveThreads = new HashMap<IDUnivocoGroupByPolicy, DatiCollezionati>();
-			for (var entry : distributedPolicy.getDistributedMapActiveThreads().entrySet()) {
-				mapActiveThreads.put(entry.getKey(), entry.getValue());
-			}
-			
-			PolicyGroupByActiveThreads localPolicy = distributedPolicy.getLocalPolicy();
-			localPolicy.setMapActiveThreads(mapActiveThreads);
-		}
-		
-	}
 }
 
