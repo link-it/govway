@@ -143,13 +143,16 @@ public abstract class PolicyGroupByActiveThreadsDistributedAbstract implements I
 		
 		// Quando leggo dalla distributedMap non aumento l'idUnivoco perchè
 		// mi aspetto che sulla map vengano già registrati così.
-		for (var entry : this.distributedMap) {
-			if(filtro!=null){
-				IDUnivocoGroupByPolicy idAstype = entry.getKey();
-				if(!idAstype.match(filtro)){
+		
+		if(filtro!=null){
+	//		FIX: iterando nella maniera sottostante si ottiene il seguente errore se si usa la near-cache: key cannot be of type Data! hazelcast 
+	//		for (var entry : this.distributedMap) {
+			for (IDUnivocoGroupByPolicy datiGroupBy : this.distributedMap.keySet()) {
+				if(!datiGroupBy.match(filtro)){
 					continue;
 				}
-				counter += entry.getValue().getActiveRequestCounter();
+				DatiCollezionati datiCollezionati = this.distributedMap.get(datiGroupBy);
+				counter += datiCollezionati.getActiveRequestCounter();
 			}
 		}
 		
@@ -169,8 +172,13 @@ public abstract class PolicyGroupByActiveThreadsDistributedAbstract implements I
 
 		//System.out.println("\n\nPRINT INFO");
 		
-		for (var entry : this.distributedMap) {
-			IDUnivocoGroupByPolicy datiGroupBy = entry.getKey();
+		for (IDUnivocoGroupByPolicy datiGroupBy : this.distributedMap.keySet()) {
+			
+			DatiCollezionati datiCollezionati = this.distributedMap.get(datiGroupBy);
+			
+//		FIX: iterando nella maniera sottostante si ottiene il seguente errore se si usa la near-cache: key cannot be of type Data! hazelcast 
+//		for (var entry : this.distributedMap) {
+//			IDUnivocoGroupByPolicy datiGroupBy = entry.getKey();
 			
 			if (!OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy()) {
 				IDUnivocoGroupByPolicyMapId mapId = (IDUnivocoGroupByPolicyMapId) datiGroupBy;
@@ -186,8 +194,10 @@ public abstract class PolicyGroupByActiveThreadsDistributedAbstract implements I
 			bf.append("Criterio di Collezionamento dei Dati\n");
 			bf.append(datiGroupBy.toString(true));
 			bf.append("\n");
-			entry.getValue().checkDate(log, this.activePolicy); // imposta correttamente gli intervalli
-			bf.append(entry.getValue().toString());
+//			entry.getValue().checkDate(log, this.activePolicy); // imposta correttamente gli intervalli
+//			bf.append(entry.getValue().toString());
+			datiCollezionati.checkDate(log, this.activePolicy); // imposta correttamente gli intervalli
+			bf.append(datiCollezionati.toString());
 			bf.append("\n");
 		}
 
