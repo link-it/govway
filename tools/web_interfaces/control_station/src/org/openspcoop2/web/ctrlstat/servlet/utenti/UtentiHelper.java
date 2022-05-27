@@ -21,6 +21,7 @@ package org.openspcoop2.web.ctrlstat.servlet.utenti;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -128,7 +129,7 @@ public class UtentiHelper extends ConsoleHelper {
 			String changepwd, String [] modalitaGateway,
 			String isSoggettiAll, String isServiziAll, User oldImgUser, String scadenza, Date dataUltimoAggiornamentoPassword , boolean oldScadenza, 
 			String profiloDefaultConsoleGestione, String soggettoDefaultConsoleGestione, 
-			String profiloDefaultConsoleMonitoraggio, String soggettoDefaultConsoleMonitoraggio) throws Exception{
+			String profiloDefaultConsoleMonitoraggio, String soggettoDefaultConsoleMonitoraggio, String homePageMonitoraggio, String intervalloTemporaleReportStatistico) throws Exception{
 
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 		
@@ -774,7 +775,101 @@ public class UtentiHelper extends ConsoleHelper {
 					de.setValue(soggettoDefaultConsoleMonitoraggio);
 					dati.addElement(de);
 				}
+				
+				// Home page console di monitoraggio
+				de = new DataElement();
+				de.setType(DataElementType.SELECT);
+				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+				String[] homePageLabels = { UtentiCostanti.LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI, UtentiCostanti.LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE };
+				de.setValues(UtentiCostanti.VALUES_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+				de.setLabels(homePageLabels);
+				de.setName(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+				de.setPostBack(true);
+				de.setSelected(homePageMonitoraggio);
+				dati.addElement(de);
+				
+				// select per la selezione dell'intervallo temporale del grafico della home
+				if(homePageMonitoraggio.equals(UtentiCostanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE)) {
+					de = new DataElement();
+					de.setType(DataElementType.SELECT);
+					de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+					String[] intervalloTemporaleLabels = { 
+							UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_NO_GRAFICO, 
+							UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIME_24_ORE, 
+							UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI, 
+							UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_30_GIORNI, 
+							UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMO_ANNO };
+					de.setValues(UtentiCostanti.VALUES_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+					de.setLabels(intervalloTemporaleLabels);
+					de.setName(UtentiCostanti.PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+					de.setSelected(intervalloTemporaleReportStatistico);
+					dati.addElement(de);
+				} else {
+					de = new DataElement();
+					de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+					de.setType(DataElementType.HIDDEN);			
+					de.setName(UtentiCostanti.PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+					de.setValue(intervalloTemporaleReportStatistico);
+					dati.addElement(de);
+				}
+				
+			} else {
+				de = new DataElement();
+				de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE);
+				de.setType(DataElementType.HIDDEN);			
+				de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR);
+				de.setValue(profiloDefaultConsoleMonitoraggio);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
+				de.setType(DataElementType.HIDDEN);
+				de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR);
+				de.setValue(soggettoDefaultConsoleMonitoraggio);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+				de.setType(DataElementType.HIDDEN);			
+				de.setName(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+				de.setValue(homePageMonitoraggio);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+				de.setType(DataElementType.HIDDEN);			
+				de.setName(UtentiCostanti.PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+				de.setValue(intervalloTemporaleReportStatistico);
+				dati.addElement(de);
 			}
+		} else {
+			de = new DataElement();
+			de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE);
+			de.setType(DataElementType.HIDDEN);			
+			de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR);
+			de.setValue(profiloDefaultConsoleMonitoraggio);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR);
+			de.setValue(soggettoDefaultConsoleMonitoraggio);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+			de.setType(DataElementType.HIDDEN);			
+			de.setName(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+			de.setValue(homePageMonitoraggio);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+			de.setType(DataElementType.HIDDEN);			
+			de.setName(UtentiCostanti.PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+			de.setValue(intervalloTemporaleReportStatistico);
+			dati.addElement(de);
 		}
 		
 		
@@ -882,7 +977,7 @@ public class UtentiHelper extends ConsoleHelper {
 			boolean scegliSuServizi,
 			String [] uws, boolean scegliSuAccordi,String [] uwp, String [] modalitaGateway, 
 			String profiloDefaultConsoleGestione, String soggettoDefaultConsoleGestione, 
-			String profiloDefaultConsoleMonitoraggio, String soggettoDefaultConsoleMonitoraggio) throws Exception{ 
+			String profiloDefaultConsoleMonitoraggio, String soggettoDefaultConsoleMonitoraggio, String homePageMonitoraggio, String intervalloTemporaleReportStatistico) throws Exception{ 
 
 		DataElement de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME);
@@ -948,6 +1043,20 @@ public class UtentiHelper extends ConsoleHelper {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR);
 		de.setValue(soggettoDefaultConsoleMonitoraggio);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+		de.setType(DataElementType.HIDDEN);			
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+		de.setValue(homePageMonitoraggio);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+		de.setType(DataElementType.HIDDEN);			
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+		de.setValue(intervalloTemporaleReportStatistico);
 		dati.addElement(de);
 
 		de = new DataElement();
@@ -1582,11 +1691,34 @@ public class UtentiHelper extends ConsoleHelper {
 			
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
-			try {
-				InterfaceType.convert(tipoGui, true);
-			}catch(Exception e) {
-				this.pd.setMessage("Tipo dev'essere uno dei seguenti valori: "+InterfaceType.values());
-				return false;
+			// solo per l'utente della govwayConsole
+			boolean utenteConsoleEnabled = 
+					ServletUtils.isCheckBoxEnabled(isServizi) ||
+					ServletUtils.isCheckBoxEnabled(isMessaggi) ||
+					ServletUtils.isCheckBoxEnabled(isAuditing) ||
+					ServletUtils.isCheckBoxEnabled(isSistema) ||
+					ServletUtils.isCheckBoxEnabled(isUtenti) ||				
+					ServletUtils.isCheckBoxEnabled(isAccordiCooperazione);
+			
+			if(utenteConsoleEnabled) {
+				try {
+					InterfaceType.convert(tipoGui, true);
+				}catch(Exception e) {
+					this.pd.setMessage("Tipo dev'essere uno dei seguenti valori: "+InterfaceType.AVANZATA + ", " + InterfaceType.STANDARD + ".");
+					return false;
+				}
+				
+				String homePageMonitoraggio = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+				String intervalloTemporaleHomePageConsoleMonitoraggio = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+
+				if(!Arrays.asList(UtentiCostanti.VALUES_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO).contains(homePageMonitoraggio)) {
+					this.pd.setMessage(UtentiCostanti.LABEL_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO + " contiene un valore non valido.");
+					return false;
+				}
+				if(!Arrays.asList(UtentiCostanti.VALUES_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO).contains(intervalloTemporaleHomePageConsoleMonitoraggio)) {
+					this.pd.setMessage(UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO + " contiene un valore non valido.");
+					return false;
+				}
 			}
 			
 			// Controllo che le password corrispondano
@@ -2597,5 +2729,24 @@ public class UtentiHelper extends ConsoleHelper {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+	
+	public String incapsulaValoreStato(String valoreStato) {
+		if(valoreStato!=null){
+			valoreStato = "{" + valoreStato + "}"; // trasformo in json
+		}
+		return valoreStato;
+	}
+
+	public String extractValoreStato(String valoreStato) {
+		if(valoreStato!=null){
+			if(valoreStato.startsWith("{")){
+				valoreStato = valoreStato.substring(1);
+			}
+			if(valoreStato.endsWith("}")){
+				valoreStato = valoreStato.substring(0, (valoreStato.length()-1) );
+			}
+		}
+		return  valoreStato;
 	}
 }

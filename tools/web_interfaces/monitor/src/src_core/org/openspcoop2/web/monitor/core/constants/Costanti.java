@@ -129,4 +129,28 @@ public class Costanti {
 	public static final String SEARCH_APPLICATIVO_DEFAULT_LABEL_NO_SOGGETTO_LOCALE_KEY = "commons.search.applicativo.defaultLabelNoSoggettoLocal";
 	public static final String SEARCH_APPLICATIVO_DEFAULT_LABEL_NO_SOGGETTO_FRUITORE_KEY = "commons.search.applicativo.defaultLabelNoSoggettoFruitore";
 	
+	/* Home page utente*/
+	
+	/* */
+	public final static String OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE =  NomiTabelle.WELCOME_SCREEN.toString(); 
+	public final static String OGGETTO_STATO_UTENTE_HOME_PAGE = "HOME_PAGE";
+	
+	public final static String LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI_KEY = "utenti.profilo.homePage.transazioni";
+	public final static String LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE_KEY = "utenti.profilo.homePage.statistiche";
+	
+	public final static String LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_NO_GRAFICO_KEY = "utenti.profilo.intervalloTemporaleHomePage.noGrafico";
+	public final static String LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIME_24_ORE_KEY = "utenti.profilo.intervalloTemporaleHomePage.ultime24ore";
+	public final static String LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI_KEY = "utenti.profilo.intervalloTemporaleHomePage.ultimi7giorni";
+	public final static String LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_30_GIORNI_KEY = "utenti.profilo.intervalloTemporaleHomePage.ultimi30giorni";
+	public final static String LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMO_ANNO_KEY = "utenti.profilo.intervalloTemporaleHomePage.ultimoAnno";
+	
+	public final static String VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI = "transazioni";
+	public final static String VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE = "summary";
+	
+	public final static String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_NO_GRAFICO = "--";
+	public final static String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIME_24_ORE = "Ultime 24 ore";
+	public final static String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI = "Ultimi 7 giorni";
+	public final static String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_30_GIORNI = "Ultimi 30 giorni";
+	public final static String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMO_ANNO = "Ultimo anno";
+	
 }

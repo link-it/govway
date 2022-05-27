@@ -42,6 +42,7 @@ import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.crypt.CryptFactory;
 import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
+import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.lib.users.dao.UserPassword;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
@@ -49,9 +50,11 @@ import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
+import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.dao.UserService;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.slf4j.Logger;
 
@@ -184,6 +187,19 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 		try {
 			((UserService)this.service).salvaModalita(userToUpdate.getLogin(), userToUpdate.getProtocolloSelezionatoPddMonitor());
 			((UserService)this.service).salvaSoggettoPddMonitor(userToUpdate.getLogin(), userToUpdate.getSoggettoSelezionatoPddMonitor());
+			
+			// salvataggio homepage e grafico della console di monitoraggio
+			Stato statoHomePage = new Stato();
+			statoHomePage.setOggetto(Costanti.OGGETTO_STATO_UTENTE_HOME_PAGE);
+			statoHomePage.setStato(Utils.incapsulaValoreStato(this.getHomePageUtente()));
+			
+			((UserService)this.service).saveTableState(Costanti.OGGETTO_STATO_UTENTE_HOME_PAGE, userToUpdate, statoHomePage);
+			
+			Stato statoIntevalloTemporaleHomePage = new Stato();
+			statoIntevalloTemporaleHomePage.setOggetto(Costanti.OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE);
+			statoIntevalloTemporaleHomePage.setStato(Utils.incapsulaValoreStato(this.getIntervalloTemporaleUtente()));
+			
+			((UserService)this.service).saveTableState(Costanti.OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE, userToUpdate, statoIntevalloTemporaleHomePage);
 			
 			if(this.salvaModificheProfiloInSessione) {
 				Utility.getLoggedUser().getUtente().setProtocolloSelezionatoPddMonitor(userToUpdate.getProtocolloSelezionatoPddMonitor());
@@ -624,7 +640,6 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 	}
 	
 	public boolean isVisualizzaSezioneSelezioneSoggetto() {
-		log.debug("AAAAAAAAAAA: " + this.toString() + " isVisualizzaSezioneSelezioneSoggetto: " + (!this.getModalitaDefaultUtente().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)));
 		return !this.getModalitaDefaultUtente().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL);
 	}
 
@@ -679,5 +694,108 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 		modalita.add(0, new SelectItem(Costanti.VALUE_PARAMETRO_MODALITA_ALL, Costanti.LABEL_PARAMETRO_MODALITA_ALL));
 		
 		return modalita;   
+	}
+	
+	public String getHomePageUtente() {
+		for (Stato stato : this.user.getStati()) {
+			if(stato.getOggetto().equals(Costanti.OGGETTO_STATO_UTENTE_HOME_PAGE)) {
+				return Utils.extractValoreStato(stato.getStato());
+			}
+		}
+		
+		return Costanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI;
+	}
+
+	public void setHomePageUtente(String homePage) {
+		boolean homePageFound = false;
+		for (Stato stato : this.user.getStati()) {
+			if(stato.getOggetto().equals(Costanti.OGGETTO_STATO_UTENTE_HOME_PAGE)) {
+				stato.setStato(Utils.incapsulaValoreStato(homePage));
+				homePageFound = true;
+				break;
+			}
+		}
+		
+		if(!homePageFound) {
+			Stato statoHomePage = new Stato();
+			statoHomePage.setOggetto(Costanti.OGGETTO_STATO_UTENTE_HOME_PAGE);
+			statoHomePage.setStato(Utils.incapsulaValoreStato(homePage));
+			
+			this.user.getStati().add(statoHomePage);
+		}
+	}
+
+	public void homePageUtenteSelected(ActionEvent ae) {
+		this.setIntervalloTemporaleUtente(Costanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI);
+		
+	}
+	
+	public List<SelectItem> getHomePagesDisponibili() {
+		List<SelectItem> pagine = new ArrayList<>();
+		
+		pagine.add(new SelectItem(Costanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI, MessageManager.getInstance().getMessage(Costanti.LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI_KEY)));
+		pagine.add(new SelectItem(Costanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE, MessageManager.getInstance().getMessage(Costanti.LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE_KEY)));
+		
+		return pagine;   
+	}
+	
+	public List<SelectItem> getIntervalliTemporaliDisponibili() {
+		List<SelectItem> intervalli = new ArrayList<>();
+		
+		intervalli.add(new SelectItem(Costanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_NO_GRAFICO, MessageManager.getInstance().getMessage(Costanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_NO_GRAFICO_KEY)));
+		intervalli.add(new SelectItem(Costanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIME_24_ORE, MessageManager.getInstance().getMessage(Costanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIME_24_ORE_KEY)));
+		intervalli.add(new SelectItem(Costanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI, MessageManager.getInstance().getMessage(Costanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI_KEY)));
+		intervalli.add(new SelectItem(Costanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_30_GIORNI, MessageManager.getInstance().getMessage(Costanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_30_GIORNI_KEY)));
+		intervalli.add(new SelectItem(Costanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMO_ANNO, MessageManager.getInstance().getMessage(Costanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMO_ANNO_KEY)));
+		
+		return intervalli;   
+	}
+	
+	public boolean isVisualizzaSelectIntervalloTemporale() {
+		boolean visualizzaSelectIntervalloTemporale = false;
+		
+		for (Stato stato : this.user.getStati()) {
+			if(stato.getOggetto().equals(Costanti.OGGETTO_STATO_UTENTE_HOME_PAGE)) {
+				if(Utils.extractValoreStato(stato.getStato()).equals(Costanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE)) {
+					visualizzaSelectIntervalloTemporale = true;
+				}
+				break;
+			}
+		}
+		
+		return visualizzaSelectIntervalloTemporale;
+	}
+
+	public void setVisualizzaSelectIntervalloTemporale(boolean visualizzaSelectIntervalloTemporale) {
+	}
+	
+	public String getIntervalloTemporaleUtente() {
+		for (Stato stato : this.user.getStati()) {
+			if(stato.getOggetto().equals(Costanti.OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE)) {
+				return Utils.extractValoreStato(stato.getStato());
+			}
+		}
+		
+		return Costanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIME_24_ORE;
+	}
+
+	public void setIntervalloTemporaleUtente(String intervalloTemporale) {
+		boolean statoIntevalloTemporaleHomePageFound = false;
+		
+		for (Stato stato : this.user.getStati()) {
+			if(stato.getOggetto().equals(Costanti.OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE)) {
+				stato.setStato(Utils.incapsulaValoreStato(intervalloTemporale));
+				statoIntevalloTemporaleHomePageFound = true;
+				break;
+			}
+		}
+		
+		if(!statoIntevalloTemporaleHomePageFound) {
+			Stato statoIntevalloTemporaleHomePage = new Stato();
+			statoIntevalloTemporaleHomePage.setOggetto(Costanti.OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE);
+			statoIntevalloTemporaleHomePage.setStato(Utils.incapsulaValoreStato(intervalloTemporale));
+			
+			this.user.getStati().add(statoIntevalloTemporaleHomePage);
+		}
 	}
 }

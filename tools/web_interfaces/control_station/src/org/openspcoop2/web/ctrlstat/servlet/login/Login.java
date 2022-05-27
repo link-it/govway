@@ -108,6 +108,7 @@ public final class Login extends Action {
 			if (!isOk) {
 				
 				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
+				ServletUtils.setObjectIntoSession(request, session, pd, Costanti.SESSION_ATTRIBUTE_PAGE_DATA_REDIRECT);
 				
 				return ServletUtils.getStrutsForward(mapping, UtentiCostanti.OBJECT_NAME_UTENTE_PASSWORD, ForwardParams.CHANGE());
 

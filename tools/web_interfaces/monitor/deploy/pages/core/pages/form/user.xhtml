@@ -71,6 +71,25 @@
 										</link:prop>
 									</a4j:outputPanel>
 								</a4j:outputPanel>
+								<a4j:outputPanel layout="block" id="panelHomePageUtente" rendered="true">
+									<a4j:outputPanel layout="block" id="panelHomePageUtenteCombo" rendered="#{true}">
+										<link:prop label="#{msg['utenti.profilo.homePage']}">
+											<rich:comboBox id="homePageUtenteCombo" value="#{utentiBean.homePageUtente}" converter="selectItemConverter" 
+												defaultLabel="Seleziona #{msg['utenti.profilo.homePage']}" directInputSuggestions="true" width="416" enableManualInput="false">
+												<a4j:support status="mainStatus" event="onselect" actionListener="#{utentiBean.homePageUtenteSelected}" reRender="formPnl" limitToList="true"/>
+												<f:selectItems value="#{utentiBean.homePagesDisponibili}"/>
+											</rich:comboBox>
+										</link:prop>
+									</a4j:outputPanel>
+									<a4j:outputPanel layout="block" id="panelIntervalloTemporaleUtenteCombo" rendered="#{utentiBean.visualizzaSelectIntervalloTemporale}">
+										<link:prop label="#{msg['utenti.profilo.intervalloTemporaleHomePage']}">
+											<rich:comboBox id="intervalloTemporaleUtenteCombo" value="#{utentiBean.intervalloTemporaleUtente}" converter="selectItemConverter" 
+												defaultLabel="Seleziona #{msg['utenti.profilo.intervalloTemporaleHomePage']}" directInputSuggestions="true" width="416" enableManualInput="false">
+												<f:selectItems value="#{utentiBean.intervalliTemporaliDisponibili}"/>
+											</rich:comboBox>
+										</link:prop>
+									</a4j:outputPanel>
+								</a4j:outputPanel>
 								
 							</link:fieldset>
 							<c:if test="#{applicationBean.operatore and !applicationBean.amministratore}">

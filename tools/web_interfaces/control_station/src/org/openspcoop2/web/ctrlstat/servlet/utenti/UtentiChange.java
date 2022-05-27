@@ -57,6 +57,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.Permessi;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
+import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.lib.users.dao.UserObjects;
 
@@ -119,6 +120,9 @@ public final class UtentiChange extends Action {
 			
 			String tipoModalitaConsoleMonitoraggio = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR);
 			String idSoggettoConsoleMonitoraggio = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR);
+			
+			String homePageMonitoraggio = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+			String intervalloTemporaleHomePageConsoleMonitoraggio = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
 			
 			String scadenza = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_SCADENZA);
 			
@@ -202,6 +206,36 @@ public final class UtentiChange extends Action {
 				if(idSoggettoConsoleMonitoraggio == null) {
 					idSoggettoConsoleMonitoraggio = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
 				}
+				
+				List<Stato> stati = user.getStati();
+				
+				if(homePageMonitoraggio == null) {
+					for (Stato stato : stati) {
+						if(stato.getOggetto().equals(UtentiCostanti.OGGETTO_STATO_UTENTE_HOME_PAGE)) {
+							homePageMonitoraggio = utentiHelper.extractValoreStato(stato.getStato());
+							break;
+						}
+					}
+				}
+				
+				// nessuna home page selezionata imposto transazioni
+				if(homePageMonitoraggio == null) {
+					homePageMonitoraggio = UtentiCostanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI;
+				}
+				
+				if(intervalloTemporaleHomePageConsoleMonitoraggio == null) {
+					for (Stato stato : stati) {
+						if(stato.getOggetto().equals(UtentiCostanti.OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE)) {
+							intervalloTemporaleHomePageConsoleMonitoraggio = utentiHelper.extractValoreStato(stato.getStato());
+							break;
+						}
+					}
+				}
+				
+				// nessuna home page selezionata imposto transazioni
+				if(intervalloTemporaleHomePageConsoleMonitoraggio == null) {
+					intervalloTemporaleHomePageConsoleMonitoraggio = UtentiCostanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI;
+				}
 			}
 			
 //			tipoGui = (tipoGui==null) ? user.getInterfaceType().toString() : tipoGui;
@@ -227,6 +261,11 @@ public final class UtentiChange extends Action {
 				// cambio del profilo, reset del valore del soggetto
 				if(postBackElementName.equals(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR)) {
 					idSoggettoConsoleMonitoraggio = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+				}
+				
+				// cambio della home page, reset del valore del grafico
+				if(postBackElementName.equals(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO)) {
+					intervalloTemporaleHomePageConsoleMonitoraggio = UtentiCostanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI;
 				}
 			}
 			
@@ -283,7 +322,8 @@ public final class UtentiChange extends Action {
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
 						changepwd,modalitaScelte, isSoggettiAll, isServiziAll, user, scadenza, dataUltimoAggiornamentoPassword, oldScadenza, 
-						tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio);
+						tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio,
+						homePageMonitoraggio, intervalloTemporaleHomePageConsoleMonitoraggio);
 
 				pd.setDati(dati);
 
@@ -326,7 +366,8 @@ public final class UtentiChange extends Action {
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
 						changepwd,modalitaScelte, isSoggettiAll, isServiziAll, user, scadenza, dataUltimoAggiornamentoPassword, oldScadenza, 
-						tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio);
+						tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio,
+						homePageMonitoraggio, intervalloTemporaleHomePageConsoleMonitoraggio);
 
 				pd.setDati(dati);
 
@@ -472,7 +513,8 @@ public final class UtentiChange extends Action {
 
 				utentiHelper.addChangeUtenteInfoToDati(dati, nomesu, changepwd, pwsu, confpwsu, interfaceType, 
 						isServizi, isDiagnostica, isReportistica, isSistema, isMessaggi, isUtenti, isAuditing,isAccordiCooperazione,paginaSuServizi, 
-						uws, paginaSuAccordi, uwp,modalitaScelte, tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio);
+						uws, paginaSuAccordi, uwp,modalitaScelte, tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio,
+						homePageMonitoraggio, intervalloTemporaleHomePageConsoleMonitoraggio);
 
 				pd.setDati(dati);
 				pd.setMessage(msg,Costanti.MESSAGE_TYPE_INFO);
@@ -602,6 +644,42 @@ public final class UtentiChange extends Action {
 					if(user.isPermitAllServizi()) {
 						if(user.getServizi() != null && !user.getServizi().isEmpty())
 						user.getServizi().clear();
+					}
+					
+					// salvataggio homepage e grafico della console di monitoraggio
+					boolean homePageFound = false;
+					for (Stato stato : user.getStati()) {
+						if(stato.getOggetto().equals(UtentiCostanti.OGGETTO_STATO_UTENTE_HOME_PAGE)) {
+							stato.setStato(utentiHelper.incapsulaValoreStato(homePageMonitoraggio));
+							homePageFound = true;
+							break;
+						}
+					}
+					
+					if(!homePageFound) {
+						Stato statoHomePage = new Stato();
+						statoHomePage.setOggetto(UtentiCostanti.OGGETTO_STATO_UTENTE_HOME_PAGE);
+						statoHomePage.setStato(utentiHelper.incapsulaValoreStato(homePageMonitoraggio));
+						
+						user.getStati().add(statoHomePage);
+					}
+					
+					boolean statoIntevalloTemporaleHomePageFound = false;
+					
+					for (Stato stato : user.getStati()) {
+						if(stato.getOggetto().equals(UtentiCostanti.OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE)) {
+							stato.setStato(utentiHelper.incapsulaValoreStato(intervalloTemporaleHomePageConsoleMonitoraggio));
+							statoIntevalloTemporaleHomePageFound = true;
+							break;
+						}
+					}
+					
+					if(!statoIntevalloTemporaleHomePageFound) {
+						Stato statoIntevalloTemporaleHomePage = new Stato();
+						statoIntevalloTemporaleHomePage.setOggetto(UtentiCostanti.OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE);
+						statoIntevalloTemporaleHomePage.setStato(utentiHelper.incapsulaValoreStato(intervalloTemporaleHomePageConsoleMonitoraggio));
+						
+						user.getStati().add(statoIntevalloTemporaleHomePage);
 					}
 				}
 

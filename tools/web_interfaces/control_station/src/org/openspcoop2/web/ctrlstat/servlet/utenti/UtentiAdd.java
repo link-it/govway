@@ -52,6 +52,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.Permessi;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
+import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.User;
 
 /**
@@ -98,6 +99,9 @@ public final class UtentiAdd extends Action {
 			String tipoModalitaConsoleMonitoraggio = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR);
 			String idSoggettoConsoleMonitoraggio = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR);
 			
+			String homePageMonitoraggio = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+			String intervalloTemporaleHomePageConsoleMonitoraggio = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+			
 			InterfaceType interfaceType = null;
 			if(tipoGui==null) {
 				//interfaceType = utentiHelper.getTipoInterfaccia();
@@ -125,6 +129,16 @@ public final class UtentiAdd extends Action {
 			// nessun soggetto selezionato imposto all
 			if(idSoggettoConsoleMonitoraggio == null) {
 				idSoggettoConsoleMonitoraggio = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+			}
+			
+			// nessuna home page selezionata imposto transazioni
+			if(homePageMonitoraggio == null) {
+				homePageMonitoraggio = UtentiCostanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI;
+			}
+			
+			// nessun tipo grafico selezionato imposto ultimi 7 giorni
+			if(intervalloTemporaleHomePageConsoleMonitoraggio == null) {
+				intervalloTemporaleHomePageConsoleMonitoraggio = UtentiCostanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI;
 			}
 			
 			String isServizi = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
@@ -172,6 +186,11 @@ public final class UtentiAdd extends Action {
 				if(postBackElementName.equals(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR)) {
 					idSoggettoConsoleMonitoraggio = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
 				}
+				
+				// cambio della home page, reset del valore del grafico
+				if(postBackElementName.equals(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO)) {
+					intervalloTemporaleHomePageConsoleMonitoraggio = UtentiCostanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI;
+				}
 			}
 						
 			// Preparo il menu
@@ -206,7 +225,8 @@ public final class UtentiAdd extends Action {
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
 						null,modalitaScelte, isSoggettiAll, isServiziAll, null, scadenza, null, false,
-						tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio);
+						tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio,
+						homePageMonitoraggio, intervalloTemporaleHomePageConsoleMonitoraggio);
 				
 				pd.setDati(dati);
 		
@@ -236,7 +256,8 @@ public final class UtentiAdd extends Action {
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
 						null,modalitaScelte, isSoggettiAll, isServiziAll, null, scadenza, null, false,
-						tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio);
+						tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio,
+						homePageMonitoraggio, intervalloTemporaleHomePageConsoleMonitoraggio);
 				
 				pd.setDati(dati);
 	
@@ -330,6 +351,17 @@ public final class UtentiAdd extends Action {
 					newU.setPermitAllSoggetti(true);
 				}
 				newU.setPermitAllServizi(ServletUtils.isCheckBoxEnabled(isServiziAll));
+				
+				// salvataggio homepage e grafico della console di monitoraggio
+				Stato statoHomePage = new Stato();
+				statoHomePage.setOggetto(UtentiCostanti.OGGETTO_STATO_UTENTE_HOME_PAGE);
+				statoHomePage.setStato(utentiHelper.incapsulaValoreStato(homePageMonitoraggio));
+				newU.getStati().add(statoHomePage);
+				
+				Stato statoIntevalloTemporaleHomePage = new Stato();
+				statoIntevalloTemporaleHomePage.setOggetto(UtentiCostanti.OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE);
+				statoIntevalloTemporaleHomePage.setStato(utentiHelper.incapsulaValoreStato(intervalloTemporaleHomePageConsoleMonitoraggio));
+				newU.getStati().add(statoIntevalloTemporaleHomePage );
 			}
 			
 			// aggiornamento password

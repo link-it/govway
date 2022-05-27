@@ -50,10 +50,12 @@ import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.IVersionInfo;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.resources.MapReader;
+import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
+import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.dao.DBLoginDAO;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -209,7 +211,7 @@ public class LoginBean extends AbstractLoginBean {
 					this.setSoggettoPddMonitor(this.getLoggedUser().getUtente().getSoggettoSelezionatoPddMonitor());
 					this.setvInfo(this.getLoginDao().readVersionInfo());
 					this.log.info("Utente ["+this.getUsername()+"] autenticato con successo");
-					return "loginSuccess";
+					return LoginBean.getOutcomeLoginSuccess(this.getLoggedUser().getUtente());
 				}else{
 					MessageUtils.addErrorMsg("Il sistema non riesce ad autenticare l'utente "+this.getUsername()+": Username o password non validi.");
 				}
@@ -232,7 +234,7 @@ public class LoginBean extends AbstractLoginBean {
 					this.setLoggedIn(true);
 					this.setvInfo(this.getLoginDao().readVersionInfo());
 					this.log.info("Utente ["+this.getUsername()+"] autenticato con successo");
-					return "loginSuccess";
+					return LoginBean.getOutcomeLoginSuccess(this.getLoggedUser().getUtente());
 				}
 			} catch (ServiceException e) {
 				this.loginErrorMessage = "Si e' verificato un errore durante il login, impossibile autenticare l'utente "+this.getUsername()+"."; 
@@ -283,6 +285,24 @@ public class LoginBean extends AbstractLoginBean {
 			return null;
 		}
 		
+	}
+	
+	public static String getOutcomeLoginSuccess(User user) {
+		String homePage = null;
+		for (Stato stato : user.getStati()) {
+			if(stato.getOggetto().equals(Costanti.OGGETTO_STATO_UTENTE_HOME_PAGE)) {		
+				homePage = Utils.extractValoreStato(stato.getStato());
+				break;
+			}
+		}
+		
+		if(homePage != null) {
+			if(homePage.equals(Costanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI)) {
+				return "transazioniStart";
+			}
+		}
+		
+		return "loginSuccess";
 	}
 
 
@@ -1120,7 +1140,7 @@ public class LoginBean extends AbstractLoginBean {
 				this.setLoggedIn(true);
 				this.setvInfo(this.getLoginDao().readVersionInfo());
 				this.log.info("Profilo Utente ["+this.getUsername()+"] caricato con successo");
-				return "loginSuccess";
+				return LoginBean.getOutcomeLoginSuccess(this.getLoggedUser().getUtente());
 			}
 			return "login";
 		} catch (ServiceException e) {

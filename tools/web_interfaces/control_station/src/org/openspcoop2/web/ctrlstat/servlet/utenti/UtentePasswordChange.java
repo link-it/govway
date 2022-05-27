@@ -81,7 +81,7 @@ public final class UtentePasswordChange extends Action {
 			String newpw = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PASSWORD);
 			String first = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_FIRST);
 
-			PageData oldPD = ServletUtils.getPageDataFromSession(request, session);
+			PageData oldPD = ServletUtils.getObjectFromSession(request, session, PageData.class, Costanti.SESSION_ATTRIBUTE_PAGE_DATA_REDIRECT);
 			
 			UtentiCore utentiCore = new UtentiCore();
 			
@@ -93,7 +93,7 @@ public final class UtentePasswordChange extends Action {
 				
 				pd.setIncludiMenuLateraleSx(false);
 				
-				if(first == null) {
+				if(first == null && oldPD != null) {
 					pd.setMessage(oldPD.getMessage(), MessageType.fromValue(oldPD.getMessageType()));
 				}
 				
