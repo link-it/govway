@@ -175,16 +175,18 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributed implements I
 		this.distributedMap.executeOnEntries(new ResetCountersProcessor());
 	}
 
-
 	@Override
 	public String printInfos(Logger log, String separatorGroups) throws UtilsException {
+		return printInfos(log, separatorGroups, this.distributedMap);
+	}
+	protected String printInfos(Logger log, String separatorGroups, Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) throws UtilsException {
 		StringBuilder bf = new StringBuilder();
 
 		//System.out.println("\n\nPRINT INFO");
 		
-		for (IDUnivocoGroupByPolicy datiGroupBy : this.distributedMap.keySet()) {
+		for (IDUnivocoGroupByPolicy datiGroupBy : map.keySet()) {
 			
-			DatiCollezionati datiCollezionati = this.distributedMap.get(datiGroupBy);
+			DatiCollezionati datiCollezionati = map.get(datiGroupBy);
 			
 //		FIX: iterando nella maniera sottostante si ottiene il seguente errore se si usa la near-cache: key cannot be of type Data! hazelcast 
 //		for (var entry : this.distributedMap) {

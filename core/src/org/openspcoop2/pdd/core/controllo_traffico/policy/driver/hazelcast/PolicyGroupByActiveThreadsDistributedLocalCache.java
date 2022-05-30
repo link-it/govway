@@ -129,7 +129,7 @@ public class PolicyGroupByActiveThreadsDistributedLocalCache  extends AbstractPo
 	
 	@Override
 	public String printInfos(Logger log, String separatorGroups) throws UtilsException {
-		return this.localPolicy.printInfos(log, separatorGroups);
+		return printInfos(log, separatorGroups, this.localPolicy.getMapActiveThreads());
 	}
 
 }

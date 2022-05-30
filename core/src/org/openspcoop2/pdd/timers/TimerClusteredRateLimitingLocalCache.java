@@ -31,7 +31,11 @@ public class TimerClusteredRateLimitingLocalCache extends BaseThread{
 		try {
 			//System.out.println("TIMER DI AGGIORNAMENTO LOCAL CACHE MAP");
 			
+			this.log.info("Sync RateLimiting policy counters ...");
+			
 			updateLocalCacheMap();
+			
+			this.log.info("Sync RateLimiting policy counters finished");
 			
 		} catch (PolicyException e) {
 			this.log.error(e.getMessage(),e);
@@ -47,6 +51,9 @@ public class TimerClusteredRateLimitingLocalCache extends BaseThread{
 		
 		
 		for (var policy : activeThreadsPolicies) {
+			
+			this.log.debug("["+policy.getKey()+"] update ...");
+			
 			PolicyGroupByActiveThreadsDistributedLocalCache distributedPolicy = (PolicyGroupByActiveThreadsDistributedLocalCache) policy.getValue();
 			
 			Map<IDUnivocoGroupByPolicy, DatiCollezionati> mapActiveThreads = new HashMap<IDUnivocoGroupByPolicy, DatiCollezionati>();
@@ -56,6 +63,8 @@ public class TimerClusteredRateLimitingLocalCache extends BaseThread{
 			
 			PolicyGroupByActiveThreads localPolicy = distributedPolicy.getLocalPolicy();
 			localPolicy.setMapActiveThreads(mapActiveThreads);
+			
+			this.log.debug("["+policy.getKey()+"] update ok");
 		}
 		
 	}
