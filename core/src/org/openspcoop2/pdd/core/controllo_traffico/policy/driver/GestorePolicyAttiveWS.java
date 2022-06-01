@@ -33,6 +33,7 @@ import org.openspcoop2.core.controllo_traffico.driver.CostantiServizioControlloT
 import org.openspcoop2.core.controllo_traffico.driver.IGestorePolicyAttive;
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreads;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyShutdownException;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -55,10 +56,15 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 	}
 	
 	private Logger log;
+	private PolicyGroupByActiveThreadsType type;
 	private String uriService;
 	@Override
-	public void initialize(Logger log, Object ... params) throws PolicyException{
+	public void initialize(Logger log, PolicyGroupByActiveThreadsType type, Object ... params) throws PolicyException{
 		this.log = log;
+		this.type = type;
+		if(this.type==null) {
+			this.type = PolicyGroupByActiveThreadsType.LOCAL;
+		}
 		if(params.length<=0){
 			throw new PolicyException("URI Service not found");
 		}
@@ -71,6 +77,10 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 		}
 	}
 	
+	@Override
+	public PolicyGroupByActiveThreadsType getType() {
+		return this.type;
+	}
 	
 	@Override
 	public IPolicyGroupByActiveThreads getActiveThreadsPolicy(ActivePolicy activePolicy, DatiTransazione datiTransazione, Object state)
@@ -216,6 +226,28 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 			throw new PolicyException(e.getMessage(),e);
 		}
 	}
+	
+	@Override
+	public void removeActiveThreadsPolicyUnsafe(String idActivePolicy) throws PolicyShutdownException,PolicyException{
+		try{
+			Map<String, List<String>> p = new HashMap<String, List<String>>();
+			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, idActivePolicy);
+			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_REMOVE_ACTIVE_THREADS_POLICY_UNSAFE, this.log);
+			
+			this.log.debug("[GestorePolicyAttiveWS.removeActiveThreadsPolicyUnsafe] invoke ("+url+") ...");
+			HttpResponse response = HttpUtilities.getHTTPResponse(url);
+			this.log.debug("[GestorePolicyAttiveWS.removeActiveThreadsPolicyUnsafe] invoked with code ["+response.getResultHTTPOperation()+"]");
+			
+			if(response.getResultHTTPOperation()!=200){
+				throw new Exception("[httpCode:"+response.getResultHTTPOperation()+"] "+new String(response.getContent()));
+			}
+			
+		}catch(Exception e){
+			this.log.error("removeActiveThreadsPolicyUnsafe error: "+e.getMessage(),e); 
+			throw new PolicyException(e.getMessage(),e);
+		}
+	}
+	
 	@Override
 	public void removeAllActiveThreadsPolicy() throws PolicyShutdownException, PolicyException {
 		try{

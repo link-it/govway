@@ -26,6 +26,7 @@
                                 <linkit:sql-table object-name="porte-applicative-prop-autenticazione" object-type="NomeValore"/>
                                 <linkit:sql-table object-name="porte-applicative-prop-autorizzazione" object-type="NomeValore"/>
                                 <linkit:sql-table object-name="porte-applicative-prop-autorizzazione-contenuto" object-type="NomeValore"/>
+				<linkit:sql-table object-name="porte-applicative-prop-rate-limiting" object-type="NomeValore"/>
                                 <linkit:sql-table object-name="porte-applicative-prop" object-type="NomeValore"/>
                                 <linkit:sql-table object-name="porte-applicative-mtom-request" object-type="MtomFlowParameter"/>
                                 <linkit:sql-table object-name="porte-applicative-mtom-response" object-type="MtomFlowParameter"/>
@@ -1439,6 +1440,39 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                             <linkit:sql-table-unique-field name="nome"/>
                         </linkit:sql-table-unique>
                         <linkit:sql-table-index name="INDEX_PA_AUTHZC_PROP">
+                            <linkit:sql-table-index-field name="id_porta"/>
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+    </xsd:element>
+
+
+
+
+    <xsd:element name="porte-applicative-prop-rate-limiting" type="NomeValore">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_ct_properties" 
+                        comment="Elenco di proprieta, relative al rate limiting,  associate alla porta">
+                        <linkit:sql-table-constraint unique="uniq_pa_ct_props" index="idx_pa_ct_props"/>
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative"
+                            reference-object-type="porte-applicative"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique>
+                            <linkit:sql-table-unique-field name="id_porta"/>
+                            <linkit:sql-table-unique-field name="nome"/>
+                        </linkit:sql-table-unique>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-field name="valore"/>
+                        </linkit:sql-table-index>
+                        <linkit:sql-table-index name="INDEX_PA_CT_PROP">
                             <linkit:sql-table-index-field name="id_porta"/>
                         </linkit:sql-table-index>
                     </linkit:sql-table-mapping>

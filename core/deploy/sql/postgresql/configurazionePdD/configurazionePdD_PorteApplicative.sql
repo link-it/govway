@@ -277,6 +277,28 @@ CREATE INDEX INDEX_PA_AUTHZC_PROP ON pa_authzc_properties (id_porta);
 
 
 
+CREATE SEQUENCE seq_pa_ct_properties start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE pa_ct_properties
+(
+	id_porta BIGINT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	valore VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_pa_ct_properties') NOT NULL,
+	-- unique constraints
+	CONSTRAINT uniq_pa_ct_props_1 UNIQUE (id_porta,nome),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_ct_properties_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_ct_properties PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX idx_pa_ct_props_1 ON pa_ct_properties (valore);
+CREATE INDEX INDEX_PA_CT_PROP ON pa_ct_properties (id_porta);
+
+
+
 CREATE SEQUENCE seq_pa_properties start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
 
 CREATE TABLE pa_properties

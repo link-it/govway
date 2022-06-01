@@ -35,6 +35,8 @@
 		</xsd:complexType>
 	</xsd:element>
 	
+	<xsd:element name="configurazione-rate-limiting-proprieta" type="configurazione-rate-limiting-proprieta"/>
+
 	<xsd:element name="configurazione-policy" type="configurazione-policy" />
 	
 	<xsd:element name="attivazione-policy" type="attivazione-policy" />
@@ -130,6 +132,14 @@
 		<xsd:sequence>
 			<xsd:element name="tipo-errore" type="xsd:string" default="fault" />
 			<xsd:element name="tipo-errore-includi-descrizione" type="xsd:boolean" default="true" />
+			<xsd:element name="proprieta" type="configurazione-rate-limiting-proprieta" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="configurazione-rate-limiting-proprieta">
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string" />
+			<xsd:element name="valore" type="xsd:string" />
 		</xsd:sequence>
 	</xsd:complexType>
 	

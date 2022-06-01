@@ -72,6 +72,7 @@ import org.openspcoop2.core.config.OpenspcoopSorgenteDati;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Property;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.RegistroPlugin;
 import org.openspcoop2.core.config.RegistroPluginArchivio;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
@@ -101,6 +102,7 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazioneControlloTraffico;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimiting;
+import org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta;
 import org.openspcoop2.core.controllo_traffico.TempiRispostaErogazione;
 import org.openspcoop2.core.controllo_traffico.TempiRispostaFruizione;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
@@ -119,6 +121,7 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoRealtime;
 import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoStatistico;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -162,6 +165,7 @@ import org.openspcoop2.monitor.sdk.plugins.GroupByConfiguration;
 import org.openspcoop2.pdd.config.ConfigurazionePdD;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
@@ -7334,6 +7338,39 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		dati.addElement(de);
 		
+		List<Proprieta> listProprieta = new ArrayList<Proprieta>();
+		if(controlloTraffico.getRateLimiting().sizeProprietaList()>0) {
+			for (ConfigurazioneRateLimitingProprieta rtProp : controlloTraffico.getRateLimiting().getProprietaList()) {
+				Proprieta p = new Proprieta();
+				p.setNome(rtProp.getNome());
+				p.setValore(rtProp.getValore());
+				listProprieta.add(p);
+			}
+		}
+		PolicyConfiguration policyConfig = new PolicyConfiguration(listProprieta, false);
+		String ctModalitaSincronizzazione = policyConfig.getSyncMode();
+		String ctImplementazione = policyConfig.getImpl();
+		String ctContatori = policyConfig.getCount();
+		String ctTipologia = policyConfig.getEngineType();
+		String ctHeaderHttp = policyConfig.getHttpMode();
+		String ctHeaderHttp_limit = policyConfig.getHttpMode_limit();
+		String ctHeaderHttp_remaining = policyConfig.getHttpMode_remaining();
+		String ctHeaderHttp_reset = policyConfig.getHttpMode_reset();
+		String ctHeaderHttp_retryAfter = policyConfig.getHttpMode_retry_after();
+		String ctHeaderHttp_retryAfterBackoff = policyConfig.getHttpMode_retry_after_backoff();
+		this.addOpzioniAvanzateRateLimitingToDati(dati,
+				false,
+				false, 
+				ctModalitaSincronizzazione, ctImplementazione, ctContatori, ctTipologia,
+				ctHeaderHttp, ctHeaderHttp_limit, ctHeaderHttp_remaining, ctHeaderHttp_reset,
+				ctHeaderHttp_retryAfter, ctHeaderHttp_retryAfterBackoff);
+		
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+		
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_LINK);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_LINK);
@@ -7768,7 +7805,46 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			rateLimiting.setTipoErroreIncludiDescrizione(ServletUtils.isCheckBoxEnabled(tipoErroreIncludiDescrizioneMaxThreads));
 		}
 		
-				
+		
+		// parametri	
+		String ctModalitaSincronizzazione = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_SINCRONIZZAZIONE);
+		String ctImplementazione = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_IMPLEMENTAZIONE);
+		String ctContatori = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_CONTATORI);
+		String ctTipologia = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_TIPOLOGIA);
+		String ctHeaderHttp = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP);
+		String ctHeaderHttp_limit = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
+		String ctHeaderHttp_remaining = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
+		String ctHeaderHttp_reset = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
+		String ctHeaderHttp_retryAfter = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
+		String ctHeaderHttp_retryAfterBackoff = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS);
+		
+		if(ctModalitaSincronizzazione!=null && !"".equals(ctModalitaSincronizzazione)) {
+			PolicyConfiguration policyConfig = new PolicyConfiguration();
+			policyConfig.setSyncMode(ctModalitaSincronizzazione);
+			policyConfig.setImpl(ctImplementazione);
+			policyConfig.setCount(ctContatori);
+			policyConfig.setEngineType(ctTipologia);
+			policyConfig.setHttpMode(ctHeaderHttp);
+			policyConfig.setHttpMode_limit(ctHeaderHttp_limit);
+			policyConfig.setHttpMode_remaining(ctHeaderHttp_remaining);
+			policyConfig.setHttpMode_reset(ctHeaderHttp_reset);
+			policyConfig.setHttpMode_retry_after(ctHeaderHttp_retryAfter);
+			policyConfig.setHttpMode_retry_after_backoff(ctHeaderHttp_retryAfterBackoff);
+			List<Proprieta> list= new ArrayList<Proprieta>();
+			policyConfig.saveIn(list);
+			if(rateLimiting.getProprietaList()!=null) {
+				rateLimiting.getProprietaList().clear();
+			}
+			if(list!=null && !list.isEmpty()){
+				for (Proprieta proprieta : list) {
+					ConfigurazioneRateLimitingProprieta rtProp = new ConfigurazioneRateLimitingProprieta();
+					rtProp.setNome(proprieta.getNome());
+					rtProp.setValore(proprieta.getValore());
+					rateLimiting.addProprieta(rtProp);
+				}
+			}
+		}
+		
 		if(sbParsingError.length() > 0){
 			return sbParsingError.toString();
 		}
@@ -8076,6 +8152,36 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setMessage(messaggio);
 			return false;
 		}
+		
+		// rate limiting
+		List<Proprieta> listProprieta = new ArrayList<Proprieta>();
+		if(configurazioneControlloTraffico.getRateLimiting().sizeProprietaList()>0) {
+			for (ConfigurazioneRateLimitingProprieta rtProp : configurazioneControlloTraffico.getRateLimiting().getProprietaList()) {
+				Proprieta p = new Proprieta();
+				p.setNome(rtProp.getNome());
+				p.setValore(rtProp.getValore());
+				listProprieta.add(p);
+			}
+		}
+		PolicyConfiguration policyConfig = new PolicyConfiguration(listProprieta, false);
+		String ctModalitaSincronizzazione = policyConfig.getSyncMode();
+		String ctImplementazione = policyConfig.getImpl();
+		String ctContatori = policyConfig.getCount();
+		String ctTipologia = policyConfig.getEngineType();
+		String ctHeaderHttp = policyConfig.getHttpMode();
+		String ctHeaderHttp_limit = policyConfig.getHttpMode_limit();
+		String ctHeaderHttp_remaining = policyConfig.getHttpMode_remaining();
+		String ctHeaderHttp_reset = policyConfig.getHttpMode_reset();
+		String ctHeaderHttp_retryAfter = policyConfig.getHttpMode_retry_after();
+		String ctHeaderHttp_retryAfterBackoff = policyConfig.getHttpMode_retry_after_backoff();
+		
+		boolean validitaParametri = validaOpzioniAvanzateRateLimiting(null, null,
+				ctModalitaSincronizzazione, ctImplementazione, ctContatori, ctTipologia,
+				ctHeaderHttp, ctHeaderHttp_limit, ctHeaderHttp_remaining, ctHeaderHttp_reset,
+				ctHeaderHttp_retryAfter, ctHeaderHttp_retryAfterBackoff);
+		if(!validitaParametri) {
+			return false;
+		}	
 		
 		// tempi risposta fruizione
 		
@@ -12355,6 +12461,19 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String parametroRisorsaNome, String valoreRisorsa,
 			String parametroEsitiNome, String valoreEsiti,
 			boolean editMode) {
+		addDataElementRisorsa( 
+				dati, 
+				parametroRisorsaNome, valoreRisorsa,
+				parametroEsitiNome, valoreEsiti,
+				editMode,
+				null);
+	}
+	private void addDataElementRisorsa( 
+			Vector<DataElement> dati, 
+			String parametroRisorsaNome, String valoreRisorsa,
+			String parametroEsitiNome, String valoreEsiti,
+			boolean editMode,
+			PolicyGroupByActiveThreadsType type) {
 		
 		if(CostantiControlStation.USE_SELECT_LIST_SEPARATE_METRICHE) {
 			
@@ -12400,8 +12519,24 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(parametroRisorsaNome);
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_RISORSA_TIPO);
 			if(editMode) {
-				de.setValues(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_RISORSE_VALORI);
-				de.setLabels(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_RISORSE_LABELS);
+				if(type!=null) {
+					List<String> valoriFiltrati = new ArrayList<String>();
+					List<String> labelFiltrate = new ArrayList<String>();
+					for (int i = 0; i < CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_RISORSE_VALORI.length; i++) {
+						String v = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_RISORSE_VALORI[i];
+						TipoRisorsaPolicyAttiva tipoRisorsa = TipoRisorsaPolicyAttiva.toEnumConstant(v);
+						if(type.isSupportedResource(tipoRisorsa)) {
+							valoriFiltrati.add(v);
+							labelFiltrate.add(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_RISORSE_LABELS[i]);
+						}
+					}
+					de.setValues(valoriFiltrati);
+					de.setLabels(labelFiltrate);
+				}
+				else {
+					de.setValues(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_RISORSE_VALORI);
+					de.setLabels(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_TIPI_RISORSE_LABELS);
+				}
 				de.setSelected(valoreRisorsa);
 				de.setType(DataElementType.SELECT);
 				de.setPostBack_viaPOST(true);
@@ -12641,7 +12776,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 	
 	public void addAttivazionePolicyToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, AttivazionePolicy policy, String nomeSezione, List<InfoPolicy> policies, 
-			RuoloPolicy ruoloPorta, String nomePorta, ServiceBinding serviceBinding, String modalita) throws Exception {
+			RuoloPolicy ruoloPorta, String nomePorta, ServiceBinding serviceBinding, String modalita, PolicyGroupByActiveThreadsType type) throws Exception {
 				
 		
 		
@@ -12773,6 +12908,19 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					modalitaCongestioneEnabled,
 					modalitaDegradoEnabled,
 					modalitaErrorRateEnabled);
+			
+			// filtro per compatibilita'
+			if(type!=null) {
+				List<InfoPolicy> idPoliciesSoddisfanoCriteriFiltered = new ArrayList<>();
+				for (InfoPolicy infoPolicyCheck : idPoliciesSoddisfanoCriteri) {
+					TipoRisorsaPolicyAttiva tipoRisorsa = TipoRisorsaPolicyAttiva.getTipo(infoPolicyCheck.getTipoRisorsa(), infoPolicyCheck.isCheckRichiesteSimultanee());
+					if(type.isSupportedResource(tipoRisorsa)) {
+						idPoliciesSoddisfanoCriteriFiltered.add(infoPolicyCheck);
+					}
+				}
+				idPoliciesSoddisfanoCriteri = idPoliciesSoddisfanoCriteriFiltered;
+			}
+			
 			if(!idPoliciesSoddisfanoCriteri.isEmpty()) {
 				for (InfoPolicy infoPolicyCheck : idPoliciesSoddisfanoCriteri) {
 					idPoliciesTmp.add(infoPolicyCheck.getIdPolicy());
@@ -12811,6 +12959,18 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 		}
 		else {
+			
+			// filtro per compatibilita'
+			if(type!=null) {
+				List<InfoPolicy> idPoliciesSoddisfanoCriteriFiltered = new ArrayList<>();
+				for (InfoPolicy infoPolicyCheck : policies) {
+					TipoRisorsaPolicyAttiva tipoRisorsa = TipoRisorsaPolicyAttiva.getTipo(infoPolicyCheck.getTipoRisorsa(), infoPolicyCheck.isCheckRichiesteSimultanee());
+					if(type.isSupportedResource(tipoRisorsa)) {
+						idPoliciesSoddisfanoCriteriFiltered.add(infoPolicyCheck);
+					}
+				}
+				policies = idPoliciesSoddisfanoCriteriFiltered;
+			}
 			
 			if(policies==null || policies.size()<=0) {
 				
@@ -13125,7 +13285,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				addDataElementRisorsa(dati, 
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_RISORSA, modalitaRisorsa, 
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_CRITERIO_ESITI, modalitaEsiti,
-						true);
+						true,
+						type);
 				
 				if(!TipoRisorsa.DIMENSIONE_MASSIMA_MESSAGGIO.equals(modalitaRisorsa)) {
 				

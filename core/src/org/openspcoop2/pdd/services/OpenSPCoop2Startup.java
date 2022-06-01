@@ -67,6 +67,7 @@ import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.constants.CacheAlgorithm;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.eventi.Evento;
 import org.openspcoop2.core.eventi.constants.CodiceEventoStatoGateway;
 import org.openspcoop2.core.eventi.constants.TipoEvento;
@@ -290,7 +291,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	private TimerStatisticheThread threadGenerazioneStatisticheMensili;
 	
 	/** DynamicCluster */
-	private TimerClusterDinamicoThread threadClusterDinamico;
+	private static TimerClusterDinamicoThread threadClusterDinamico;
 	
 	/** indicazione se è un server j2ee */
 	private boolean serverJ2EE = false;
@@ -1338,10 +1339,16 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					// aggiorno
 					clusterID = propertiesReader.getClusterId(false);
 				}
-					
-				boolean rateLimitingGestioneCluster = (propertiesReader.isControlloTrafficoEnabled() && propertiesReader.isControlloTrafficoGestioneCluster());
+				
+				boolean rateLimitingGestioneCluster = false;
+				if(propertiesReader.isControlloTrafficoEnabled()) {
+					List<PolicyGroupByActiveThreadsType> list = configurazionePdDManager.getTipiGestoreRateLimiting();
+					rateLimitingGestioneCluster = list!=null && list.contains(PolicyGroupByActiveThreadsType.LOCAL_DIVIDED_BY_NODES);
+				}
+				
 				if(propertiesReader.isClusterDinamico() || rateLimitingGestioneCluster) {	
 					DynamicClusterManager.initStaticInstance();
+					DynamicClusterManager.getInstance().setRateLimitingGestioneCluster(rateLimitingGestioneCluster);
 					DynamicClusterManager.getInstance().register(OpenSPCoop2Startup.log);
 				}
 			}catch(Exception e){
@@ -2422,54 +2429,69 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico confControlloTraffico = null;
 				try{
 					confControlloTraffico = propertiesReader.getConfigurazioneControlloTraffico();
-
 					DatiStatisticiDAOManager.initialize(confControlloTraffico);
-					
+				}catch(Exception e){
+					msgDiag.logStartupError(e,"Inizializzazione Gestori Dati Statistici del ControlloTraffico");
+					return;
+				}
+				
+				// Gestore Controllo Traffico
+				try{
 					GestoreControlloTraffico.initialize(confControlloTraffico.isErroreGenerico());
-					
 					GestoreCacheControlloTraffico.initialize(confControlloTraffico);
-					
-					GestorePolicyAttive.initialize(logControlloTraffico, propertiesReader.getControlloTrafficoGestorePolicyTipo(),
-							propertiesReader.getControlloTrafficoGestorePolicyWSUrl(),
-							propertiesReader.getControlloTrafficoGestorePolicyInMemoryType());
-					
 				}catch(Exception e){
 					msgDiag.logStartupError(e,"Inizializzazione Gestori del ControlloTraffico");
 					return;
 				}
 				
-				File fDati = null;
+				// Gestore RateLimiting
+				List<PolicyGroupByActiveThreadsType> listGestorePolicyRT = null;
 				try{
-					File fRepository = propertiesReader.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository();
-					if(fRepository!=null){
-						if(fRepository.exists()==false){
-							throw new Exception("Directory ["+fRepository.getAbsolutePath()+"] not exists");
-						}
-						if(fRepository.isDirectory()==false){
-							throw new Exception("File ["+fRepository.getAbsolutePath()+"] is not directory");
-						}
-						if(fRepository.canRead()==false){
-							throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot read");
-						}
-						if(fRepository.canWrite()==false){
-							throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot write");
-						}
-						fDati = new File(fRepository, org.openspcoop2.core.controllo_traffico.constants.Costanti.controlloTrafficoImage);
-						if(fDati.exists() && fDati.canRead() && fDati.length()>0){
-							FileInputStream fin = new FileInputStream(fDati);
-							GestorePolicyAttive.getInstance().initialize(fin,confControlloTraffico);
-							fDati.delete();
-						}
-					}
+					List<PolicyGroupByActiveThreadsType> list = configurazionePdDManager.getTipiGestoreRateLimiting();
+					GestorePolicyAttive.initialize(log, logControlloTraffico, propertiesReader.getControlloTrafficoGestorePolicyTipo(),
+							propertiesReader.getControlloTrafficoGestorePolicyWSUrl(),
+							list);
+					listGestorePolicyRT = GestorePolicyAttive.getTipiGestoriAttivi();
 				}catch(Exception e){
-					String img = null;
-					if(fDati!=null){
-						img = fDati.getAbsolutePath();
-					}
-					logControlloTraffico.error("Inizializzazione dell'immagine ["+img+"] per il Controllo del Traffico non riuscita: "+e.getMessage(),e);
-					logCore.error("Inizializzazione dell'immagine ["+img+"] per il Controllo del Traffico non riuscita: "+e.getMessage(),e);
-					msgDiag.logStartupError(e,"Inizializzazione Immagine del ControlloTraffico");
+					msgDiag.logStartupError(e,"Inizializzazione Gestori Policy di Rate Limiting");
 					return;
+				}
+				if(listGestorePolicyRT!=null && !listGestorePolicyRT.isEmpty()) {
+					for (PolicyGroupByActiveThreadsType type : listGestorePolicyRT) {
+						File fDati = null;
+						try{
+							File fRepository = propertiesReader.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository();
+							if(fRepository!=null){
+								if(fRepository.exists()==false){
+									throw new Exception("Directory ["+fRepository.getAbsolutePath()+"] not exists");
+								}
+								if(fRepository.isDirectory()==false){
+									throw new Exception("File ["+fRepository.getAbsolutePath()+"] is not directory");
+								}
+								if(fRepository.canRead()==false){
+									throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot read");
+								}
+								if(fRepository.canWrite()==false){
+									throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot write");
+								}
+								fDati = new File(fRepository, GestorePolicyAttive.getControlloTrafficoImage(type));
+								if(fDati.exists() && fDati.canRead() && fDati.length()>0){
+									FileInputStream fin = new FileInputStream(fDati);
+									GestorePolicyAttive.getInstance(type).initialize(fin,confControlloTraffico);
+									fDati.delete();
+								}
+							}
+						}catch(Exception e){
+							String img = null;
+							if(fDati!=null){
+								img = fDati.getAbsolutePath();
+							}
+							logControlloTraffico.error("Inizializzazione dell'immagine ["+img+"] per il Gestore delle Policy di RateLimiting (tipo:"+type+") non riuscita: "+e.getMessage(),e);
+							logCore.error("Inizializzazione dell'immagine ["+img+"] per il Gestore delle Policy di RateLimiting (tipo:"+type+" non riuscita: "+e.getMessage(),e);
+							msgDiag.logStartupError(e,"Inizializzazione Immagine delle Policy di RateLimiting (tipo:"+type+"");
+							return;
+						}
+					}
 				}
 				
 				boolean force = true;
@@ -3339,12 +3361,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			/*----------- Inizializzazione Thread per Configurazione Cluster Dinamica --------------*/
 			try{
-				boolean rateLimitingGestioneCluster = (propertiesReader.isControlloTrafficoEnabled() && propertiesReader.isControlloTrafficoGestioneCluster());
+				boolean rateLimitingGestioneCluster = false;
+				if(propertiesReader.isControlloTrafficoEnabled()) {
+					rateLimitingGestioneCluster = GestorePolicyAttive.isAttivo(PolicyGroupByActiveThreadsType.LOCAL_DIVIDED_BY_NODES);
+				}
 				if(propertiesReader.isClusterDinamico() || rateLimitingGestioneCluster) {	
-					OpenSPCoop2Startup.this.threadClusterDinamico = new TimerClusterDinamicoThread(OpenSPCoop2Logger.getLoggerOpenSPCoopTimers());
-					OpenSPCoop2Startup.this.threadClusterDinamico.start();
-					TimerClusterDinamicoThread.STATE = TimerState.ENABLED;
-					forceLogEventi.info("Thread per l'aggiornamento del cluster avviato correttamente");
+					startTimerClusterDinamicoThread();
 				}
 			}catch(Exception e){
 				this.logError("Riscontrato errore durante l'inizializzazione del thread che aggiorna il cluster dinamico: "+e.getMessage(),e);
@@ -3408,6 +3430,16 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 	}
 	
+	public static void startTimerClusterDinamicoThread() throws Exception {
+		if(OpenSPCoop2Startup.threadClusterDinamico == null) {
+			Logger forceLogEventi = OpenSPCoop2Logger.getLoggerOpenSPCoopEventi(true);
+			OpenSPCoop2Startup.threadClusterDinamico = new TimerClusterDinamicoThread(OpenSPCoop2Logger.getLoggerOpenSPCoopTimers());
+			OpenSPCoop2Startup.threadClusterDinamico.start();
+			TimerClusterDinamicoThread.STATE = TimerState.ENABLED;
+			forceLogEventi.info("Thread per l'aggiornamento del cluster avviato correttamente");
+		}
+	}
+	
 	/**
 	 * Undeploy dell'applicazione WEB di OpenSPCoop
 	 *
@@ -3426,12 +3458,15 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		
 		// ID Cluster
 		try{
-			if(OpenSPCoop2Startup.this.threadClusterDinamico!=null){
-				OpenSPCoop2Startup.this.threadClusterDinamico.setStop(true);
+			if(OpenSPCoop2Startup.threadClusterDinamico!=null){
+				OpenSPCoop2Startup.threadClusterDinamico.setStop(true);
 			}
 		}catch(Throwable e){}
 		try{
-			boolean rateLimitingGestioneCluster = (properties.isControlloTrafficoEnabled() && properties.isControlloTrafficoGestioneCluster());
+			boolean rateLimitingGestioneCluster = false;
+			if(properties.isControlloTrafficoEnabled()) {
+				rateLimitingGestioneCluster = GestorePolicyAttive.isAttivo(PolicyGroupByActiveThreadsType.LOCAL_DIVIDED_BY_NODES);
+			}
 			if(properties.isClusterDinamico() || rateLimitingGestioneCluster) {	
 				DynamicClusterManager.getInstance().unregister(OpenSPCoop2Startup.log);
 			}
@@ -3601,56 +3636,66 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		if(properties.isControlloTrafficoEnabled()){
 			OutputStream out = null;
 			Logger logControlloTraffico = null;
+			List<PolicyGroupByActiveThreadsType> tipiGestorePolicyRateLimiting = null;
 			try{
-				File fRepository = properties.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository();
-				if(fRepository!=null){
-					
-					logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(properties.isControlloTrafficoDebug());
-					
-					if(fRepository.exists()==false){
-						throw new Exception("Directory ["+fRepository.getAbsolutePath()+"] not exists");
-					}
-					if(fRepository.isDirectory()==false){
-						throw new Exception("File ["+fRepository.getAbsolutePath()+"] is not directory");
-					}
-					if(fRepository.canRead()==false){
-						throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot read");
-					}
-					if(fRepository.canWrite()==false){
-						throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot write");
-					}		
-					
-					File fDati = new File(fRepository, org.openspcoop2.core.controllo_traffico.constants.Costanti.controlloTrafficoImage);
-					out = new FileOutputStream(fDati, false); // se già esiste lo sovrascrive
-					GestorePolicyAttive.getInstance().serialize(out);
-					out.flush();
-					out.close();
-					out = null;
-					
-					boolean inizializzazioneAttiva = false;
-					// Il meccanismo di ripristino dell'immagine degli eventi non sembra funzionare
-					// Lascio comunque il codice se in futuro si desidera approfindire la questione
-					if(inizializzazioneAttiva) {
-						fDati = new File(fRepository, org.openspcoop2.core.controllo_traffico.constants.Costanti.controlloTrafficoEventiImage);
-						NotificatoreEventi.getInstance().serialize(fDati);
-					}
-					
-				}
+				logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(properties.isControlloTrafficoDebug());
+				tipiGestorePolicyRateLimiting = GestorePolicyAttive.getTipiGestoriAttivi();
 			}catch(Throwable e){
 				if(logControlloTraffico!=null){
-					logControlloTraffico.error("Errore durante la terminazione del Controllo del Traffico: "+e.getMessage(),e);
+					logControlloTraffico.error("Errore durante la terminazione dei gestori delle policy di Rate Limiting: "+e.getMessage(),e);
 				}
-			}finally{
-				try{
-					if(out!=null){
-						out.flush();
+			}
+			if(tipiGestorePolicyRateLimiting!=null && !tipiGestorePolicyRateLimiting.isEmpty()) {
+				for (PolicyGroupByActiveThreadsType type : tipiGestorePolicyRateLimiting) {
+					try{
+						File fRepository = properties.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository();
+						if(fRepository!=null){
+							if(fRepository.exists()==false){
+								throw new Exception("Directory ["+fRepository.getAbsolutePath()+"] not exists");
+							}
+							if(fRepository.isDirectory()==false){
+								throw new Exception("File ["+fRepository.getAbsolutePath()+"] is not directory");
+							}
+							if(fRepository.canRead()==false){
+								throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot read");
+							}
+							if(fRepository.canWrite()==false){
+								throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot write");
+							}		
+							
+							File fDati = new File(fRepository, GestorePolicyAttive.getControlloTrafficoImage(type));
+							out = new FileOutputStream(fDati, false); // se già esiste lo sovrascrive
+							GestorePolicyAttive.getInstance(type).serialize(out);
+							out.flush();
+							out.close();
+							out = null;
+							
+							boolean inizializzazioneAttiva = false;
+							// Il meccanismo di ripristino dell'immagine degli eventi non sembra funzionare
+							// Lascio comunque il codice se in futuro si desidera approfindire la questione
+							if(inizializzazioneAttiva) {
+								fDati = new File(fRepository, GestorePolicyAttive.getControlloTrafficoEventiImage(type));
+								NotificatoreEventi.getInstance().serialize(fDati);
+							}
+							
+						}
+					}catch(Throwable e){
+						if(logControlloTraffico!=null){
+							logControlloTraffico.error("Errore durante la terminazione dei gestori delle policy di Rate Limiting: "+e.getMessage(),e);
+						}
+					}finally{
+						try{
+							if(out!=null){
+								out.flush();
+							}
+						}catch(Exception eClose){}
+						try{
+							if(out!=null){
+								out.close();
+							}
+						}catch(Exception eClose){}
 					}
-				}catch(Exception eClose){}
-				try{
-					if(out!=null){
-						out.close();
-					}
-				}catch(Exception eClose){}
+				}
 			}
 		}
 		
@@ -3781,8 +3826,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}
 		}catch (Throwable e) {}
 		try{
-			if(this.threadClusterDinamico!=null)
-				this.threadClusterDinamico.waitShutdown();
+			if(OpenSPCoop2Startup.threadClusterDinamico!=null)
+				OpenSPCoop2Startup.threadClusterDinamico.waitShutdown();
 		}catch (Throwable e) {}
 		
 		// Rilascio lock (da fare dopo che i timer sono stati fermati)

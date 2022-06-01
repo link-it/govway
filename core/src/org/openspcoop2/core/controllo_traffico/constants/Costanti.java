@@ -31,8 +31,24 @@ public class Costanti {
 
 	public final static String SEPARATORE_IDPOLICY_RAGGRUPPAMENTO = " - ";
 	
-	public static String controlloTrafficoImage = "image.bin";
-	public static String controlloTrafficoEventiImage = "imageEventi.bin";
+	private static String controlloTrafficoImagePrefix = "image";
+	private static String controlloTrafficoEventiImagePrefix = "imageEventi";
+	private static String controlloTrafficoImageExt = ".bin";
+	
+	public static String getControlloTrafficoImage(String CT_policyType) {
+		return _getControlloTrafficoImagePrefix(CT_policyType, controlloTrafficoImagePrefix);
+	}
+	public static String getControlloTrafficoEventiImage(String CT_policyType) {
+		return _getControlloTrafficoImagePrefix(CT_policyType, controlloTrafficoEventiImagePrefix);
+	}
+	private static String _getControlloTrafficoImagePrefix(String CT_policyType, String prefix) {
+		StringBuilder sb = new StringBuilder(prefix);
+		if(CT_policyType!=null && !"LOCAL".equals(CT_policyType)) {
+			sb.append("-").append(CT_policyType);
+		}
+		sb.append(controlloTrafficoImageExt);
+		return sb.toString();
+	}
 	
 	public final static String POLICY_GLOBALE = "Globale";
 	public final static String POLICY_API = "API";

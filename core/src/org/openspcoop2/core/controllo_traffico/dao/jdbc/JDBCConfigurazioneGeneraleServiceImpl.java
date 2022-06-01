@@ -41,6 +41,7 @@ import org.openspcoop2.core.controllo_traffico.Cache;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneControlloTraffico;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimiting;
+import org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta;
 import org.openspcoop2.core.controllo_traffico.TempiRispostaErogazione;
 import org.openspcoop2.core.controllo_traffico.TempiRispostaFruizione;
 
@@ -113,6 +114,11 @@ public class JDBCConfigurazioneGeneraleServiceImpl extends JDBCConfigurazioneGen
 		);
 		configurazioneGenerale.setId(id);
 
+		if(configurazioneGenerale.getRateLimiting().sizeProprietaList()>0) {
+			for (ConfigurazioneRateLimitingProprieta prop : configurazioneGenerale.getRateLimiting().getProprietaList()) {
+				this.getServiceManager().getConfigurazioneRateLimitingProprietaService().create(prop);
+			}
+		}
 		
 	}
 
@@ -188,6 +194,12 @@ public class JDBCConfigurazioneGeneraleServiceImpl extends JDBCConfigurazioneGen
 				lstObjects.toArray(new JDBCObject[]{}));
 		}
 
+		this.getServiceManager().getConfigurazioneRateLimitingProprietaService().deleteAll();
+		if(configurazioneGenerale.getRateLimiting().sizeProprietaList()>0) {
+			for (ConfigurazioneRateLimitingProprieta prop : configurazioneGenerale.getRateLimiting().getProprietaList()) {
+				this.getServiceManager().getConfigurazioneRateLimitingProprietaService().create(prop);
+			}
+		}
 
 	}
 	
@@ -250,6 +262,9 @@ public class JDBCConfigurazioneGeneraleServiceImpl extends JDBCConfigurazioneGen
 		}catch(NotFoundException notFound){
 			return;
 		}
+
+		this.getServiceManager().getConfigurazioneRateLimitingProprietaService().deleteAll();
+		
 		
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);

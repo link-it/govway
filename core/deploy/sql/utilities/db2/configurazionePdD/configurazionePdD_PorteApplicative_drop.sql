@@ -24,6 +24,8 @@
 -- DROP INDEX INDEX_PA_MTOMTRES;
 -- DROP INDEX INDEX_PA_MTOMTREQ;
 -- DROP INDEX INDEX_PA_PROP;
+-- DROP INDEX INDEX_PA_CT_PROP;
+-- DROP INDEX idx_pa_ct_props_1;
 -- DROP INDEX INDEX_PA_AUTHZC_PROP;
 -- DROP INDEX INDEX_PA_AUTHZ_PROP;
 -- DROP INDEX INDEX_PA_AUTH_PROP;
@@ -56,6 +58,7 @@ DROP TABLE pa_security_request;
 DROP TABLE pa_mtom_response;
 DROP TABLE pa_mtom_request;
 DROP TABLE pa_properties;
+DROP TABLE pa_ct_properties;
 DROP TABLE pa_authzc_properties;
 DROP TABLE pa_authz_properties;
 DROP TABLE pa_auth_properties;

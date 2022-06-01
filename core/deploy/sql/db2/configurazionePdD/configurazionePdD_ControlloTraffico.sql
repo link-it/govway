@@ -39,6 +39,24 @@ CREATE TABLE ct_config
 
 
 
+CREATE TABLE ct_rt_props
+(
+	rt_prop_name VARCHAR(255) NOT NULL,
+	rt_prop_value VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
+	-- unique constraints
+	CONSTRAINT uniq_rt_prop_policy_1 UNIQUE (rt_prop_name),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_ct_rt_props PRIMARY KEY (id)
+);
+
+-- index
+CREATE UNIQUE INDEX idx_rt_prop_policy_1 ON ct_rt_props (rt_prop_name);
+CREATE INDEX idx_rt_prop_policy_2 ON ct_rt_props (rt_prop_value);
+
+
+
 CREATE TABLE ct_config_policy
 (
 	-- Dati Generali

@@ -39,8 +39,10 @@ import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupBy;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
 import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
+import org.openspcoop2.core.controllo_traffico.driver.CostantiControlloTraffico;
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreadsInMemory;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.DBManager;
@@ -85,6 +87,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 	private boolean mapExists = false;
 	
 	private ActivePolicy activePolicy;
+	private PolicyGroupByActiveThreadsType tipoGestore;
 	private String uniqueIdMap_idActivePolicy;
 	private Date uniqueIdMap_updateTime;
 	private IState state;
@@ -103,8 +106,9 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 	private long attesaAttivaJDBC;
 	private int checkIntervalloJDBC;
 
-	public PolicyGroupByActiveThreadsDB(ActivePolicy activePolicy, String uniqueIdMap, IState state,IDSoggetto dominio, String idTransazione) throws PolicyException {
+	public PolicyGroupByActiveThreadsDB(ActivePolicy activePolicy, PolicyGroupByActiveThreadsType tipoGestore, String uniqueIdMap, IState state,IDSoggetto dominio, String idTransazione) throws PolicyException {
 		this.activePolicy = activePolicy;
+		this.tipoGestore = tipoGestore;
 		this.uniqueIdMap_idActivePolicy = UniqueIdentifierUtilities.extractIdActivePolicy(uniqueIdMap);
 		try {
 			this.uniqueIdMap_updateTime = UniqueIdentifierUtilities.extractUpdateTimeActivePolicy(uniqueIdMap);
@@ -211,6 +215,30 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 		finally {
 			if(resource!=null) {
 				releaseConnessione(resource, this.dominio, "resetCounters");
+			}
+		}
+		
+	}
+	
+	@Override
+	public void remove() throws UtilsException{
+		
+		PolicyConnessioneRuntime resource = null;
+		try {
+			resource = getConnessione(this.state, this.dominio, "remove", this.idTransazione);
+			
+			//checkMap(resource.con);
+			
+			_remove(resource.con);
+			
+		}
+		catch(Throwable e) {
+			this.log.error(e.getMessage(),e);
+			throw new RuntimeException(e.getMessage(),e);
+		}
+		finally {
+			if(resource!=null) {
+				releaseConnessione(resource, this.dominio, "remove");
 			}
 		}
 		
@@ -714,6 +742,17 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 			throw new RuntimeException(e.getMessage(),e);
 		}
 	}
+	private void _remove(Connection con){
+		try {
+			_updateMap(con, OperationType.remove,
+					this.log, this.idTransazione, null,
+					null, false, false,
+					null,
+					null);
+		}catch(Throwable e) {
+			throw new RuntimeException(e.getMessage(),e);
+		}
+	}
 	private long _getActiveThreads(Connection con,IDUnivocoGroupByPolicy filtro){
 		try {
 			return _updateMap(con, OperationType.getActiveThreads,
@@ -834,6 +873,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 					if(!exist) {
 						if(!OperationType.getMapActiveThreads.equals(opType) &&
 								!OperationType.resetCounters.equals(opType)  &&
+								!OperationType.remove.equals(opType) &&
 								!OperationType.getActiveThreads.equals(opType)  &&
 								!OperationType.printInfos.equals(opType)) {
 							throw new Exception("Map with id '"+this.uniqueIdMap_idActivePolicy+"' not found ?");
@@ -866,6 +906,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 					
 					
 					DatiCollezionati datiCollezionati = null;
+					boolean deleteMap = false;
 					boolean updateMap = false;
 					switch (opType) {
 					
@@ -992,6 +1033,15 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 						
 						break;
 						
+						
+					case remove:
+						
+						if(mapActiveThreads!=null) {
+							deleteMap = true;
+						}
+						
+						break;
+						
 					case getActiveThreads:
 						
 						try {
@@ -1027,6 +1077,8 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 						if(mapActiveThreads!=null && !mapActiveThreads.isEmpty()) {
 							for (IDUnivocoGroupByPolicy check : mapActiveThreads.keySet()) {
 								bf.append(separatorGroups);
+								bf.append("\n");
+								bf.append(CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE).append(" ").append(this.tipoGestore.toLabel());
 								bf.append("\n");
 								bf.append("Criterio di Collezionamento dei Dati\n");
 								bf.append(check.toString(true));
@@ -1106,6 +1158,33 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 						}
 						
 						//System.out.println("@update UPDATE ["+opType+"]: "+rows);
+					}
+					
+					if(deleteMap) {
+						
+						ISQLQueryObject sqlDelete = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+						sqlDelete.addDeleteTable(CT_MAP_TABLE);
+						sqlDelete.setANDLogicOperator(true);
+						sqlDelete.addWhereCondition(CT_MAP_COLUMN_KEY+"=?");
+						String queryDelete = sqlDelete.createSQLDelete();
+						
+						if(this.debug) {
+							this.logSql.debug("[deleteMap"+""+this.idTransazione+"] execute "+DBUtils.formatSQLString(queryDelete,
+										this.uniqueIdMap_idActivePolicy));
+						}
+						
+						//System.out.println("INSERT ["+queryInsert.toString()+"]");
+						pstmt = con.prepareStatement(queryDelete);
+						int index = 1;
+						pstmt.setString(index++, this.uniqueIdMap_idActivePolicy);
+						int rows = pstmt.executeUpdate();
+						pstmt.close();
+						
+						if(this.debug) {
+							this.logSql.debug("[updateMap"+""+this.idTransazione+"] executed (rows:"+rows+") "+DBUtils.formatSQLString(queryDelete,
+										this.uniqueIdMap_idActivePolicy));
+						}
+						
 					}
 					
 					if(this.transactionMode) {
@@ -1210,6 +1289,7 @@ enum OperationType {
 	getActiveThreads,
 	printInfos,
 	resetCounters,
+	remove,
 	getMapActiveThreads,
 	initMap
 	

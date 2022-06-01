@@ -163,5 +163,12 @@ public class ObjectFactory {
         return new ElencoPolicyAttive();
     }
 
+    /**
+     * Create an instance of {@link ConfigurazioneRateLimitingProprieta }
+     */
+    public ConfigurazioneRateLimitingProprieta createConfigurazioneRateLimitingProprieta() {
+        return new ConfigurazioneRateLimitingProprieta();
+    }
+
 
  }

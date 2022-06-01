@@ -96,6 +96,7 @@ public final class CostantiDB {
     public static final String PORTE_APPLICATIVE_AUTENTICAZIONE_PROP = "pa_auth_properties";
     public static final String PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP = "pa_authz_properties";
     public static final String PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP = "pa_authzc_properties";
+    public static final String PORTE_APPLICATIVE_RATE_LIMITING_PROP = "pa_ct_properties";
     public static final String PORTE_APPLICATIVE_PROP = "pa_properties";
     public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST = "pa_security_request";
     public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE = "pa_security_response";
@@ -129,6 +130,7 @@ public final class CostantiDB {
     public static final String PORTE_DELEGATE_AUTENTICAZIONE_PROP = "pd_auth_properties";
     public static final String PORTE_DELEGATE_AUTORIZZAZIONE_PROP = "pd_authz_properties";
     public static final String PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_PROP = "pd_authzc_properties";
+    public static final String PORTE_DELEGATE_RATE_LIMITING_PROP = "pd_ct_properties";
     public static final String PORTE_DELEGATE_PROP = "pd_properties";
     public static final String PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST = "pd_security_request";
     public static final String PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE = "pd_security_response";
@@ -180,6 +182,7 @@ public final class CostantiDB {
     public static final String CONFIG_GENERIC_PROPERTY = "generic_property";
     
     public static final String CONTROLLO_TRAFFICO_CONFIG = "ct_config";
+    public static final String CONTROLLO_TRAFFICO_CONFIG_RATE_LIMITING_PROPERTIES = "ct_rt_props";
     public static final String CONTROLLO_TRAFFICO_CONFIG_POLICY = "ct_config_policy";
     public static final String CONTROLLO_TRAFFICO_ACTIVE_POLICY = "ct_active_policy";
     

@@ -30,6 +30,8 @@ public class ModelFactory {
 
 	public static ConfigurazioneGeneraleModel CONFIGURAZIONE_GENERALE = new ConfigurazioneGeneraleModel();
 	
+	public static ConfigurazioneRateLimitingProprietaModel CONFIGURAZIONE_RATE_LIMITING_PROPRIETA = new ConfigurazioneRateLimitingProprietaModel();
+	
 	public static ConfigurazionePolicyModel CONFIGURAZIONE_POLICY = new ConfigurazionePolicyModel();
 	
 	public static AttivazionePolicyModel ATTIVAZIONE_POLICY = new AttivazionePolicyModel();

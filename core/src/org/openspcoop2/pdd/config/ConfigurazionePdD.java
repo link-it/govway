@@ -96,6 +96,7 @@ import org.openspcoop2.monitor.engine.dynamic.IRegistroPluginsReader;
 import org.openspcoop2.monitor.sdk.alarm.AlarmStatus;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -1247,6 +1248,28 @@ public class ConfigurazionePdD  {
 			if(alogConsole!=null){
 				alogConsole.debug(msg);
 			}
+			
+			
+			
+			msg = "[Prefill] Inizializzazione cache (ControlloTraffico), lettura della configurazione delle policy globali di rate limiting ...";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+			
+			try{
+				this.cache.remove(_getKey_getConfigurazionePolicyRateLimitingGlobali());
+				this.getConfigurazionePolicyRateLimitingGlobali(connectionPdD);
+			}
+			catch(DriverConfigurazioneNotFound notFound){}
+			catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+			
+			msg = "[Prefill] Inizializzazione cache (ControlloTraffico), lettura della configurazione delle policy globali di rate limiting completata";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+			
 			
 			
 			
@@ -4231,6 +4254,45 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("[getConfigurazioneControlloTraffico] Configurazione non trovata");
 	}
 	
+	
+	private String _getKey_getConfigurazionePolicyRateLimitingGlobali(){
+		return "ConfigurazionePolicyRateLimitingGlobali";
+	}
+	public PolicyConfiguration getConfigurazionePolicyRateLimitingGlobali(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = this._getKey_getConfigurazionePolicyRateLimitingGlobali();
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((PolicyConfiguration) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		PolicyConfiguration c = null;
+		if(this.cache!=null){
+			c = (PolicyConfiguration) this.getObjectCache(key,"getConfigurazionePolicyRateLimitingGlobali",connectionPdD,ConfigurazionePdDType.controlloTraffico);
+		}else{
+			c = (PolicyConfiguration) this.getObject("getConfigurazionePolicyRateLimitingGlobali",connectionPdD,ConfigurazionePdDType.controlloTraffico);
+		}
+
+		if(c!=null){
+			return c;
+		}
+		else{
+			throw new DriverConfigurazioneNotFound("[getConfigurazionePolicyRateLimitingGlobali] Configurazione Generale non trovata");
+		}
+	}
 	
 	
 	public static String _getKey_ElencoIdPolicyAttiveAPI(TipoPdD tipoPdD, String nomePorta){ // usato anche per resettare la cache puntualmente via jmx, tramite la govwayConsole

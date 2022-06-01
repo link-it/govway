@@ -195,6 +195,18 @@ public final class PorteDelegateAdd extends Action {
 			String [] attributeAuthoritySelezionate = porteDelegateHelper.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
 			String attributeAuthorityAttributi = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI);
 			
+			// RateLimiting
+			String ctModalitaSincronizzazione = porteDelegateHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_SINCRONIZZAZIONE);
+			String ctImplementazione = porteDelegateHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_IMPLEMENTAZIONE);
+			String ctContatori = porteDelegateHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_CONTATORI);
+			String ctTipologia = porteDelegateHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_TIPOLOGIA);
+			String ctHeaderHttp = porteDelegateHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP);
+			String ctHeaderHttp_limit = porteDelegateHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
+			String ctHeaderHttp_remaining = porteDelegateHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
+			String ctHeaderHttp_reset = porteDelegateHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
+			String ctHeaderHttp_retryAfter = porteDelegateHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
+			String ctHeaderHttp_retryAfterBackoff = porteDelegateHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS);
+
 			if(sp == null) {
 				tiposp = "";
 				sp = "";
@@ -581,7 +593,10 @@ public final class PorteDelegateAdd extends Action {
 						autorizzazione_token, autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						null, null,
-						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
+						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
+						ctModalitaSincronizzazione, ctImplementazione, ctContatori, ctTipologia,
+						ctHeaderHttp, ctHeaderHttp_limit, ctHeaderHttp_remaining, ctHeaderHttp_reset,
+						ctHeaderHttp_retryAfter, ctHeaderHttp_retryAfterBackoff);
 
 				pd.setDati(dati);
 
@@ -639,7 +654,10 @@ public final class PorteDelegateAdd extends Action {
 						autorizzazione_token, autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						null, null,
-						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
+						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
+						ctModalitaSincronizzazione, ctImplementazione, ctContatori, ctTipologia,
+						ctHeaderHttp, ctHeaderHttp_limit, ctHeaderHttp_remaining, ctHeaderHttp_reset,
+						ctHeaderHttp_retryAfter, ctHeaderHttp_retryAfterBackoff);
 
 				pd.setDati(dati);
 

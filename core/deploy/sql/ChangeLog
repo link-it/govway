@@ -1,3 +1,7 @@
+2022-05-30  Andrea Poli <apoli@link.it>
+
+	Aggiunte tabelle 'ct_rt_props', 'pa_ct_properties' e 'pd_ct_properties' per gestire i parametri di configurazione del controllo del traffico
+
 2022-05-18  Andrea Poli <apoli@link.it>
 
 	Aggiunta tabella 'ct_map' in runtime repositoy per gestione 'db' del controllo del traffico

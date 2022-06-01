@@ -28,6 +28,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
+import org.openspcoop2.core.controllo_traffico.driver.IGestorePolicyAttive;
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreads;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyShutdownException;
@@ -36,6 +37,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.controllo_traffico.CostantiControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.GeneratoreMessaggiErrore;
 import org.openspcoop2.pdd.core.controllo_traffico.GestoreControlloTraffico;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.GestorePolicyAttive;
 
 /**     
@@ -101,18 +103,31 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 						Object object = context.getPddContext().removeObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_GROUP_BY_CONDITION);
 						Object objectIncrementCounter_policyApplicabile = context.getPddContext().removeObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_POLICY_APPLICABILE);
 						Object objectIncrementCounter_policyViolata = context.getPddContext().removeObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_POLICY_VIOLATA);
+						Object object_policyTypes = context.getPddContext().removeObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_API_OR_GLOBAL_OR_DEFAULT);
+						Object object_policyConfiguration_porta = context.getPddContext().removeObject(CostantiControlloTraffico.PDD_CONTEXT_POLICY_CONFIG_PORTA);
+						Object object_policyConfiguration_globale = context.getPddContext().removeObject(CostantiControlloTraffico.PDD_CONTEXT_POLICY_CONFIG_GLOBALE);
 						if(object!=null && (object instanceof List<?>) &&
 								objectIncrementCounter_policyApplicabile!=null && (objectIncrementCounter_policyApplicabile instanceof List<?>) &&
-								objectIncrementCounter_policyViolata!=null && (objectIncrementCounter_policyViolata instanceof List<?>)){
+								objectIncrementCounter_policyViolata!=null && (objectIncrementCounter_policyViolata instanceof List<?>) &&
+								object_policyTypes!=null && (object_policyTypes instanceof List<?>) &&
+								object_policyConfiguration_globale!=null && (object_policyConfiguration_globale instanceof PolicyConfiguration) &&
+								object_policyConfiguration_porta!=null && (object_policyConfiguration_porta instanceof PolicyConfiguration)){
 							@SuppressWarnings("unchecked")
 							List<IDUnivocoGroupByPolicy> groupByPolicies = (List<IDUnivocoGroupByPolicy>) object; 
 							@SuppressWarnings("unchecked")
 							List<Boolean> incrementCounter_policyApplicabile = (List<Boolean>) objectIncrementCounter_policyApplicabile; 
 							@SuppressWarnings("unchecked")
 							List<Boolean> incrementCounter_policyViolata = (List<Boolean>) objectIncrementCounter_policyViolata; 
+							@SuppressWarnings("unchecked")
+							List<String> policyTypes = (List<String>) object_policyTypes; 
+							PolicyConfiguration policyConfiguration_globale = (PolicyConfiguration) object_policyConfiguration_globale;
+							PolicyConfiguration policyConfiguration_porta = (PolicyConfiguration) object_policyConfiguration_porta;
 							if(groupByPolicies!=null && groupByPolicies.size()==uniqueIdsPolicies.size() &&
 									incrementCounter_policyApplicabile!=null && incrementCounter_policyApplicabile.size()==uniqueIdsPolicies.size() &&
-									incrementCounter_policyViolata!=null && incrementCounter_policyViolata.size()==uniqueIdsPolicies.size()){
+									incrementCounter_policyViolata!=null && incrementCounter_policyViolata.size()==uniqueIdsPolicies.size() &&
+									policyTypes!=null && policyTypes.size()==uniqueIdsPolicies.size() &&
+									policyConfiguration_globale!=null &&
+									policyConfiguration_porta!=null) {
 								
 								MisurazioniTransazione misurazioniTransazione = new MisurazioniTransazione();
 								misurazioniTransazione.setTipoPdD(context.getTipoPorta());
@@ -149,7 +164,21 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 											timeStart = DateManager.getTimeMillis();
 										}
 										
-										IPolicyGroupByActiveThreads policyGroupByActiveThreads = GestorePolicyAttive.getInstance().getActiveThreadsPolicy(uniqueIdMap);
+										String policyAPI = policyTypes.get(i);
+										PolicyConfiguration policyConfiguration = null;
+										if(CostantiControlloTraffico.PDD_CONTEXT_LIST_API_OR_GLOBAL_OR_DEFAULT_VALUE_API.equals(policyAPI)) {
+											policyConfiguration = policyConfiguration_porta;
+										}
+										else if(CostantiControlloTraffico.PDD_CONTEXT_LIST_API_OR_GLOBAL_OR_DEFAULT_VALUE_GLOBAL.equals(policyAPI)) {
+											policyConfiguration = policyConfiguration_globale;
+										}
+										else {
+											//CostantiControlloTraffico.PDD_CONTEXT_LIST_API_OR_GLOBAL_OR_DEFAULT_VALUE_DEFAULT;
+											policyConfiguration = new PolicyConfiguration(true);
+										} 
+										IGestorePolicyAttive gestorePolicy = GestorePolicyAttive.getInstance(policyConfiguration.getType());
+										
+										IPolicyGroupByActiveThreads policyGroupByActiveThreads = gestorePolicy.getActiveThreadsPolicy(uniqueIdMap);
 										
 										if(times!=null) {
 											sb = new StringBuilder(uniqueIdMap);

@@ -48,6 +48,8 @@ public interface IPolicyGroupByActiveThreadsInMemory extends IPolicyGroupByActiv
 	
 	public void resetCounters();
 	
+	public void remove() throws UtilsException;
+	
 	public String printInfos(Logger log, String separatorGroups) throws UtilsException;
 	
 }

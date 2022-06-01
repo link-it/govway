@@ -44,10 +44,13 @@ import org.openspcoop2.core.controllo_traffico.driver.IGestorePolicyAttive;
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreads;
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreadsInMemory;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyShutdownException;
 import org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbDeserializer;
 import org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbSerializer;
+import org.openspcoop2.pdd.config.DynamicClusterManager;
+import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.Utilities;
@@ -78,23 +81,48 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	}
 	
 	private Logger log;
-	private PolicyGroupByActiveThreadsInMemoryEnum type;
+	private PolicyGroupByActiveThreadsType type;
 	@Override
-	public void initialize(Logger log, Object ... params) throws PolicyException{
+	public void initialize(Logger log, PolicyGroupByActiveThreadsType type, Object ... params) throws PolicyException{
 		this.log = log;
-		if(params!=null && params.length>0) {
-			Object o = params[0];
-			if(o!=null && o instanceof PolicyGroupByActiveThreadsInMemoryEnum) {
-				this.type = (PolicyGroupByActiveThreadsInMemoryEnum) o;
-			}
-		}
+		this.type = type;
 		if(this.type==null) {
-			this.type = PolicyGroupByActiveThreadsInMemoryEnum.LOCAL;
+			this.type = PolicyGroupByActiveThreadsType.LOCAL;
+		}
+		
+		switch (this.type) {
+		case LOCAL_DIVIDED_BY_NODES:
+			if(!DynamicClusterManager.isInitialized()) {
+				try {
+					DynamicClusterManager.initStaticInstance();
+					DynamicClusterManager.getInstance().setRateLimitingGestioneCluster(true);
+					DynamicClusterManager.getInstance().register(log);
+					OpenSPCoop2Startup.startTimerClusterDinamicoThread();
+				}catch(Exception e) {
+					throw new PolicyException(e.getMessage(),e);
+				}
+			}
+			else {
+				try {
+					DynamicClusterManager.getInstance().setRateLimitingGestioneCluster(true);
+				}catch(Exception e) {
+					throw new PolicyException(e.getMessage(),e);
+				}
+			}
+			break;
+
+		default:
+			break;
 		}
 	}
 	
 	private boolean isStop = false;
 	
+	
+	@Override
+	public PolicyGroupByActiveThreadsType getType() {
+		return this.type;
+	}
 	
 	@Override
 	public IPolicyGroupByActiveThreads getActiveThreadsPolicy(ActivePolicy activePolicy,DatiTransazione datiTransazione, Object state) throws PolicyShutdownException,PolicyException {		
@@ -194,7 +222,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 					if(i>0){
 						bf.append(separator);
 					}
-					bf.append("Cache["+i+"]=["+key+"]");
+					bf.append("Cache-"+this.type+"["+i+"]=["+key+"]");
 					i++;
 				}
 			}
@@ -229,6 +257,22 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			}
 		}finally {
 			this.lock.release("removeActiveThreadsPolicy");
+		}
+	}
+	
+	@Override
+	public void removeActiveThreadsPolicyUnsafe(String idActivePolicy) throws PolicyShutdownException,PolicyException{
+		if(this.isStop){
+			throw new PolicyShutdownException("Policy Manager shutdown");
+		}
+		
+		IPolicyGroupByActiveThreadsInMemory policy = this.mapActiveThreadsPolicy.remove(idActivePolicy);
+		if(policy!=null) {
+			try {
+				policy.remove();
+			}catch(Throwable e) {
+				this.log.error("removeActiveThreadsPolicyUnsafe failed: "+e.getMessage(),e);
+			}
 		}
 	}
 	
@@ -630,9 +674,11 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			DatiTransazione datiTransazione, Object state) throws PolicyException {
 		switch (this.type) {
 		case LOCAL:
-			return new PolicyGroupByActiveThreads(activePolicy);
+			return new PolicyGroupByActiveThreads(activePolicy, this.type);
+		case LOCAL_DIVIDED_BY_NODES:
+			return new PolicyGroupByActiveThreads(activePolicy, this.type);
 		case DATABASE:
-			return new PolicyGroupByActiveThreadsDB(activePolicy, uniqueIdMap, 
+			return new PolicyGroupByActiveThreadsDB(activePolicy, this.type, uniqueIdMap, 
 					(state!=null && state instanceof IState) ? ((IState)state) : null, 
 					datiTransazione!=null ? datiTransazione.getDominio() : null, 
 				    datiTransazione!=null ? datiTransazione.getIdTransazione() : null);

@@ -30,8 +30,10 @@ import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupBy;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
+import org.openspcoop2.core.controllo_traffico.driver.CostantiControlloTraffico;
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreadsInMemory;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
@@ -57,9 +59,11 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	private final org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("PolicyGroupByActiveThreads");
 	
 	private ActivePolicy activePolicy;
+	private PolicyGroupByActiveThreadsType tipoGestore;
 
-	public PolicyGroupByActiveThreads(ActivePolicy activePolicy) {
+	public PolicyGroupByActiveThreads(ActivePolicy activePolicy, PolicyGroupByActiveThreadsType tipoGestore) {
 		this.activePolicy = activePolicy;
+		this.tipoGestore = tipoGestore;
 	}
 	
 	
@@ -100,6 +104,11 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 		}finally {
 			this.lock.release("resetCounters");
 		}
+	}
+	
+	@Override
+	public void remove() throws UtilsException{
+		// nop;
 	}
 	
 	@Override
@@ -273,6 +282,8 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 			if(this.mapActiveThreads!=null && !this.mapActiveThreads.isEmpty()) {
 				for (IDUnivocoGroupByPolicy datiGroupBy : this.mapActiveThreads.keySet()) {
 					bf.append(separatorGroups);
+					bf.append("\n");
+					bf.append(CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE).append(" ").append(this.tipoGestore.toLabel());
 					bf.append("\n");
 					bf.append("Criterio di Collezionamento dei Dati\n");
 					bf.append(datiGroupBy.toString(true));

@@ -61,6 +61,32 @@ public interface IServiceManager {
 	
 	/*
 	 =====================================================================================================================
+	 Services relating to the object with name:configurazione-rate-limiting-proprieta type:configurazione-rate-limiting-proprieta
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	public IConfigurazioneRateLimitingProprietaServiceSearch getConfigurazioneRateLimitingProprietaServiceSearch() throws ServiceException,NotImplementedException;
+	
+	/**
+	 * Return a service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 *
+	 * @return Service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	public IConfigurazioneRateLimitingProprietaService getConfigurazioneRateLimitingProprietaService() throws ServiceException,NotImplementedException;
+	
+	
+	
+	/*
+	 =====================================================================================================================
 	 Services relating to the object with name:configurazione-policy type:configurazione-policy
 	 =====================================================================================================================
 	*/

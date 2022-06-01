@@ -61,9 +61,13 @@ public class DynamicClusterManager {
 		}
 		return staticInstance;
 	}
+	public static boolean isInitialized() {
+		return staticInstance!=null;
+	}
 	
 	private DriverConfigurazioneDB driverConfigurazioneDB = null;
 	private OpenSPCoop2Properties op2Properties = null;
+	
 	protected DynamicClusterManager() throws CoreException {
 		Object oConfig = ConfigurazionePdDReader.getDriverConfigurazionePdD();
 		if(oConfig instanceof DriverConfigurazioneDB) {
@@ -73,6 +77,14 @@ public class DynamicClusterManager {
 			throw new CoreException("Modalità dinamica utilizzabile solamente con una configurazione su database");
 		}
 		this.op2Properties = OpenSPCoop2Properties.getInstance();
+	}
+	
+	private boolean rateLimitingGestioneCluster = false;
+	public boolean isRateLimitingGestioneCluster() {
+		return this.rateLimitingGestioneCluster;
+	}
+	public void setRateLimitingGestioneCluster(boolean rateLimitingGestioneCluster) {
+		this.rateLimitingGestioneCluster = rateLimitingGestioneCluster;
 	}
 	
 	private int identificativoNumerico = -1;
@@ -197,7 +209,7 @@ public class DynamicClusterManager {
 				String update = sqlQueryObject.createSQLUpdate();
 				pstmt = con.prepareStatement(update);
 				index = 1;
-				pstmt.setString(index++, this.op2Properties.getGroupId());
+				pstmt.setString(index++, this.op2Properties.getGroupId(this.rateLimitingGestioneCluster));
 				Timestamp now = DateManager.getTimestamp();
 				pstmt.setTimestamp(index++, now);
 				pstmt.setTimestamp(index++, now);
@@ -226,7 +238,7 @@ public class DynamicClusterManager {
 				pstmt = con.prepareStatement(insert);
 				index = 1;
 				pstmt.setString(index++, this.op2Properties.getClusterHostname());
-				pstmt.setString(index++, this.op2Properties.getGroupId());
+				pstmt.setString(index++, this.op2Properties.getGroupId(this.rateLimitingGestioneCluster));
 				Timestamp now = DateManager.getTimestamp();
 				pstmt.setTimestamp(index++, now);
 				pstmt.setTimestamp(index++, now);
@@ -274,7 +286,7 @@ public class DynamicClusterManager {
 		try {
 			// Cerco idNumerico disponibile
 			int idNumerico = -1;
-			int cifre = this.op2Properties.getClusterDinamicoIdNumericoCifre();
+			int cifre = this.op2Properties.getClusterDinamicoIdNumericoCifre(this.rateLimitingGestioneCluster);
 			StringBuilder sbCifre = new StringBuilder();
 			for (int i = 0; i < cifre; i++) {
 				sbCifre.append("9");
@@ -291,7 +303,7 @@ public class DynamicClusterManager {
 			String query = sqlQueryObject.createSQLQuery();
 			pstmt = con.prepareStatement(query);
 			int index = 1;
-			pstmt.setString(index++, this.op2Properties.getGroupId());
+			pstmt.setString(index++, this.op2Properties.getGroupId(this.rateLimitingGestioneCluster));
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
 				int countid = rs.getInt("countid");
@@ -319,7 +331,7 @@ public class DynamicClusterManager {
 				query = sqlQueryObject.createSQLQuery();
 				pstmt = con.prepareStatement(query);
 				index = 1;
-				pstmt.setString(index++, this.op2Properties.getGroupId());
+				pstmt.setString(index++, this.op2Properties.getGroupId(this.rateLimitingGestioneCluster));
 				rs = pstmt.executeQuery();
 				int search = 0;
 				while(rs.next()) {
@@ -454,7 +466,7 @@ public class DynamicClusterManager {
 		String gruppo = null;
 		String oldData = null;
 		try {
-			gruppo = this.op2Properties.getGroupId();
+			gruppo = this.op2Properties.getGroupId(this.rateLimitingGestioneCluster);
 			Timestamp oldest = _getTimestampRefresh(this.op2Properties.getClusterDinamicoRefreshSecondsInterval());
 			oldData = DateUtils.getSimpleDateFormatMs().format(oldest);
 			con = this.driverConfigurazioneDB.getConnection("DynamicClusterManager.refresh");

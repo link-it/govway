@@ -24,6 +24,7 @@
                                 <linkit:sql-table object-name="porte-delegate-prop-autenticazione" object-type="NomeValore"/>
                                 <linkit:sql-table object-name="porte-delegate-prop-autorizzazione" object-type="NomeValore"/>
                                 <linkit:sql-table object-name="porte-delegate-prop-autorizzazione-contenuto" object-type="NomeValore"/>
+				<linkit:sql-table object-name="porte-delegate-prop-rate-limiting" object-type="NomeValore"/>
                                 <linkit:sql-table object-name="porte-delegate-prop" object-type="NomeValore"/>
                                 <linkit:sql-table object-name="porte-delegate-mtom-request" object-type="MtomFlowParameter"/>
                                 <linkit:sql-table object-name="porte-delegate-mtom-response" object-type="MtomFlowParameter"/>
@@ -1295,6 +1296,39 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                             <linkit:sql-table-unique-field name="nome"/>
                         </linkit:sql-table-unique>
                         <linkit:sql-table-index name="INDEX_PD_AUTHZC_PROP">
+                            <linkit:sql-table-index-field name="id_porta"/>
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+    </xsd:element>
+
+
+
+
+    <xsd:element name="porte-delegate-prop-rate-limiting" type="NomeValore">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pd_ct_properties" 
+                        comment="Elenco di proprieta, relative al rate limiting,  associate alla porta">
+                        <linkit:sql-table-constraint unique="uniq_pd_ct_props" index="idx_pd_ct_props"/>
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-delegate"
+                            reference-object-type="porte-delegate"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique>
+                            <linkit:sql-table-unique-field name="id_porta"/>
+                            <linkit:sql-table-unique-field name="nome"/>
+                        </linkit:sql-table-unique>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-field name="valore"/>
+                        </linkit:sql-table-index>
+                        <linkit:sql-table-index name="INDEX_PD_CT_PROP">
                             <linkit:sql-table-index-field name="id_porta"/>
                         </linkit:sql-table-index>
                     </linkit:sql-table-mapping>

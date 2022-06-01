@@ -41,6 +41,25 @@ CREATE TABLE ct_config
 
 
 
+CREATE SEQUENCE seq_ct_rt_props start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE ct_rt_props
+(
+	rt_prop_name VARCHAR(255) NOT NULL,
+	rt_prop_value VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_ct_rt_props') NOT NULL,
+	-- unique constraints
+	CONSTRAINT uniq_rt_prop_policy_1 UNIQUE (rt_prop_name),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_ct_rt_props PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX idx_rt_prop_policy_1 ON ct_rt_props (rt_prop_value);
+
+
+
 CREATE SEQUENCE seq_ct_config_policy start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
 
 CREATE TABLE ct_config_policy

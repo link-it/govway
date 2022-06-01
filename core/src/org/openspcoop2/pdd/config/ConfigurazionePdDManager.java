@@ -78,6 +78,7 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ElencoIdPolicy;
 import org.openspcoop2.core.controllo_traffico.ElencoIdPolicyAttive;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDConnettore;
 import org.openspcoop2.core.id.IDGenericProperties;
@@ -105,6 +106,7 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.pdd.core.controllo_traffico.SoglieDimensioneMessaggi;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.dynamic.MessageContent;
@@ -1438,6 +1440,10 @@ public class ConfigurazionePdDManager {
 				canaleApi);
 	}
 	
+	public List<PolicyGroupByActiveThreadsType> getTipiGestoreRateLimiting() throws DriverConfigurazioneException {
+		return this.configurazionePdDReader.getTipiGestoreRateLimiting(this.getConnection());
+	}
+	
 	public List<String> getInitHandlers() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		return this.configurazionePdDReader.getInitHandlers(this.getConnection());
 	}
@@ -1516,6 +1522,10 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getConfigurazioneControlloTraffico(this.getConnection());
 	}
 
+	public PolicyConfiguration getConfigurazionePolicyRateLimitingGlobali() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getConfigurazionePolicyRateLimitingGlobali(this.getConnection());
+	}
+	
 	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveAPI(boolean useCache, TipoPdD tipoPdD, String nomePorta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdDReader.getElencoIdPolicyAttiveAPI(this.getConnection(), useCache, tipoPdD, nomePorta);
 	}

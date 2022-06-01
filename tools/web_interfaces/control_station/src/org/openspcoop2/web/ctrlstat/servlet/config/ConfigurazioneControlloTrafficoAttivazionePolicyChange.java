@@ -32,17 +32,22 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -87,6 +92,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			PorteDelegateCore pdCore = new PorteDelegateCore(confCore);
+			PorteApplicativeCore paCore = new PorteApplicativeCore(confCore);
 			
 			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = confCore.getConfigurazioneControlloTraffico();
 			
@@ -134,6 +140,29 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 				confHelper.addParsingError(sbParsingError,errorAttivazione); 
 			}
 			
+			PolicyGroupByActiveThreadsType type = null;
+			
+			if(ruoloPorta!=null) {
+				
+				if(RuoloPolicy.DELEGATA.equals(ruoloPorta)) {
+					IDPortaDelegata idPD = new IDPortaDelegata();
+					idPD.setNome(nomePorta);
+					PortaDelegata porta = pdCore.getPortaDelegata(idPD);
+					// tipo
+					PolicyConfiguration config = new PolicyConfiguration(porta.getProprietaRateLimitingList(), false);
+					type = config.getType();
+				}
+				else {
+					IDPortaApplicativa idPA = new IDPortaApplicativa();
+					idPA.setNome(nomePorta);
+					PortaApplicativa porta = paCore.getPortaApplicativa(idPA);
+					// tipo
+					PolicyConfiguration config = new PolicyConfiguration(porta.getProprietaRateLimitingList(), false);
+					type = config.getType();
+				}
+				
+			}
+			
 			// Preparo il menu
 			confHelper.makeMenu();
 			
@@ -169,7 +198,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 								
 				// Attivazione
-				confHelper.addAttivazionePolicyToDati(dati, tipoOperazione, policy,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY, infoPolicies, ruoloPorta, nomePorta, serviceBinding, null);
+				confHelper.addAttivazionePolicyToDati(dati, tipoOperazione, policy,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY, infoPolicies, ruoloPorta, nomePorta, serviceBinding, null, type);
 				
 				// Set First is false
 				confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME);
@@ -197,7 +226,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				// Attivazione
-				confHelper.addAttivazionePolicyToDati(dati, tipoOperazione, policy,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY, infoPolicies, ruoloPorta, nomePorta, serviceBinding, null);
+				confHelper.addAttivazionePolicyToDati(dati, tipoOperazione, policy,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY, infoPolicies, ruoloPorta, nomePorta, serviceBinding, null, type);
 				
 				// Set First is false
 				confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME);

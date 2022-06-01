@@ -43,6 +43,7 @@ import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.search.utils.RegistroCore;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
@@ -2388,6 +2389,7 @@ public class DriverControlStationDB  {
 	
 
 	// Controllo Traffico
+		
 	/**
 	 * Restituisce la configurazione generale
 	 * 
@@ -2470,6 +2472,44 @@ public class DriverControlStationDB  {
 				// ignore exception
 			}
 		}
+	}
+	
+	public List<Proprieta> getProprietaRateLimiting() throws DriverControlStationException,DriverControlStationNotFound {
+		String nomeMetodo = "getProprietaRateLimiting";
+		// ritorna la configurazione controllo del traffico della PdD
+		Connection con = null;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		List<Proprieta> l = null;
+		try {
+			l = ControlloTrafficoDriverUtils.getProprietaRateLimiting(con, this.log, this.tipoDB);
+		}catch (Exception se) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+		return l;
 	}
 	
 	/**

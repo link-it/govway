@@ -25,15 +25,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.util.Date;
+import java.util.List;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.eventi.dao.IEventoService;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.controllo_traffico.NotificatoreEventi;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.GestorePolicyAttive;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.threads.BaseThread;
@@ -97,36 +100,46 @@ public class TimerEventiThread extends BaseThread{
 			// Il meccanismo di ripristino dell'immagine degli eventi non sembra funzionare
 			// Lascio comunque il codice se in futuro si desidera approfindire la questione
 			if(inizializzazioneAttiva) {
-				File fDati = null;
+				List<PolicyGroupByActiveThreadsType> tipiGestorePolicyRateLimiting = null;
 				try{
-					File fRepository = this.properties.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository();
-					if(fRepository!=null){
-						if(fRepository.exists()==false){
-							throw new Exception("Directory ["+fRepository.getAbsolutePath()+"] not exists");
-						}
-						if(fRepository.isDirectory()==false){
-							throw new Exception("File ["+fRepository.getAbsolutePath()+"] is not directory");
-						}
-						if(fRepository.canRead()==false){
-							throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot read");
-						}
-						if(fRepository.canWrite()==false){
-							throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot write");
-						}
-						fDati = new File(fRepository, org.openspcoop2.core.controllo_traffico.constants.Costanti.controlloTrafficoEventiImage);
-						if(fDati.exists() && fDati.canRead() && fDati.length()>0){
-							FileInputStream fin = new FileInputStream(fDati);
-							this.notificatoreEventi.initialize(fin);
-							fDati.delete();
-							this.forceCheckPrimoAvvio = true;
+					tipiGestorePolicyRateLimiting = GestorePolicyAttive.getTipiGestoriAttivi();
+				}catch(Throwable e){
+					this.log.error("Errore durante l'inizializzazione dell'immagine degli eventi per il Controllo del Traffico: "+e.getMessage(),e);
+				}
+				if(tipiGestorePolicyRateLimiting!=null && !tipiGestorePolicyRateLimiting.isEmpty()) {
+					for (PolicyGroupByActiveThreadsType type : tipiGestorePolicyRateLimiting) {
+						File fDati = null;
+						try{
+							File fRepository = this.properties.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository();
+							if(fRepository!=null){
+								if(fRepository.exists()==false){
+									throw new Exception("Directory ["+fRepository.getAbsolutePath()+"] not exists");
+								}
+								if(fRepository.isDirectory()==false){
+									throw new Exception("File ["+fRepository.getAbsolutePath()+"] is not directory");
+								}
+								if(fRepository.canRead()==false){
+									throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot read");
+								}
+								if(fRepository.canWrite()==false){
+									throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot write");
+								}
+								fDati = new File(fRepository, GestorePolicyAttive.getControlloTrafficoEventiImage(type));
+								if(fDati.exists() && fDati.canRead() && fDati.length()>0){
+									FileInputStream fin = new FileInputStream(fDati);
+									this.notificatoreEventi.initialize(fin);
+									fDati.delete();
+									this.forceCheckPrimoAvvio = true;
+								}
+							}
+						}catch(Exception e){
+							String img = null;
+							if(fDati!=null){
+								img = fDati.getAbsolutePath();
+							}
+							throw new HandlerException("Inizializzazione dell'immagine degli eventi ["+img+"] per il Controllo del Traffico non riuscita: "+e.getMessage(),e);
 						}
 					}
-				}catch(Exception e){
-					String img = null;
-					if(fDati!=null){
-						img = fDati.getAbsolutePath();
-					}
-					throw new HandlerException("Inizializzazione dell'immagine degli eventi ["+img+"] per il Controllo del Traffico non riuscita: "+e.getMessage(),e);
 				}
 			}
 		}

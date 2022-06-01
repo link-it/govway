@@ -34,12 +34,14 @@ import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.Search;
 import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta;
 import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
 import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
@@ -81,7 +83,7 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class ControlloTrafficoDriverUtils {
-
+	
 	public static ConfigurazioneGenerale getConfigurazioneControlloTraffico(Connection con, Logger log, String tipoDB) throws ServiceException,NotFoundException {
 		String nomeMetodo = "getConfigurazioneControlloTraffico";
 		// ritorna la configurazione controllo del traffico della PdD
@@ -127,6 +129,33 @@ public class ControlloTrafficoDriverUtils {
 			throw new ServiceException("[" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		}
 		
+	}
+
+	public static List<Proprieta> getProprietaRateLimiting(Connection con, Logger log, String tipoDB) throws ServiceException,NotFoundException {
+		String nomeMetodo = "getProprietaRateLimiting";
+		// ritorna la configurazione controllo del traffico della PdD
+		
+		List<Proprieta> list = new ArrayList<Proprieta>();
+		try {
+			
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, log);
+			List<ConfigurazioneRateLimitingProprieta> l = serviceManager.getConfigurazioneRateLimitingProprietaServiceSearch().findAll(serviceManager.getConfigurazioneRateLimitingProprietaServiceSearch().newPaginatedExpression());
+			if(l!=null && !l.isEmpty()) {
+				for (ConfigurazioneRateLimitingProprieta configurazioneRateLimitingProprieta : l) {
+					Proprieta p = new Proprieta();
+					p.setNome(configurazioneRateLimitingProprieta.getNome());
+					p.setValore(configurazioneRateLimitingProprieta.getValore());
+					list.add(p);
+				}
+			}
+		}catch (Exception se) {
+			throw new ServiceException("[" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} 
+
+		return list;
 	}
 	
 	/**

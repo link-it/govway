@@ -148,6 +148,7 @@
 			<xsd:element name="proprieta-autenticazione" type="proprieta" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="proprieta-autorizzazione" type="proprieta" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="proprieta-autorizzazione-contenuto" type="proprieta" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="proprieta-rate-limiting" type="proprieta" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="xacml-policy" type="xsd:string" minOccurs="0" />
 			<xsd:element name="servizio-applicativo" type="porta-delegata-servizio-applicativo" maxOccurs="unbounded" minOccurs="0" />
 			<xsd:element name="ruoli" type="autorizzazione-ruoli" maxOccurs="1" minOccurs="0" />	
@@ -485,6 +486,7 @@
 			<xsd:element name="proprieta-autenticazione" type="proprieta" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="proprieta-autorizzazione" type="proprieta" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="proprieta-autorizzazione-contenuto" type="proprieta" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="proprieta-rate-limiting" type="proprieta" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="xacml-policy" type="xsd:string" minOccurs="0" />
 			<xsd:element name="soggetti" type="porta-applicativa-autorizzazione-soggetti" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="servizi-applicativi-autorizzati" type="porta-applicativa-autorizzazione-servizi-applicativi" maxOccurs="1" minOccurs="0" />	

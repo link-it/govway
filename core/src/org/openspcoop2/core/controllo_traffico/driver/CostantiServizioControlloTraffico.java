@@ -47,6 +47,8 @@ public class CostantiServizioControlloTraffico {
     
     public final static String OPERAZIONE_REMOVE_ACTIVE_THREADS_POLICY = "removeActiveThreadsPolicy";
     
+    public final static String OPERAZIONE_REMOVE_ACTIVE_THREADS_POLICY_UNSAFE = "removeActiveThreadsPolicyUnsafe";
+    
     public final static String OPERAZIONE_REMOVE_ALL_ACTIVE_THREADS_POLICY = "removeAllActiveThreadsPolicy";
     
     public final static String OPERAZIONE_RESET_COUNTERS_ACTIVE_THREADS_POLICY = "resetCountersActiveThreadsPolicy";

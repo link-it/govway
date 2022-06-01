@@ -119,6 +119,7 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.controllo_traffico" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.controllo_traffico.plugins" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.controllo_traffico.policy" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.controllo_traffico.policy.config" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.controllo_traffico.policy.driver" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.dynamic" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.eventi" />

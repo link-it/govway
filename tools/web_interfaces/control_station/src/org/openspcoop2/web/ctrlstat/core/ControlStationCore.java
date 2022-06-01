@@ -82,6 +82,7 @@ import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDGruppo;
@@ -856,6 +857,7 @@ public class ControlStationCore {
 	private boolean isControlloTrafficoPolicyGlobaleGroupByApi;
 	private boolean isControlloTrafficoPolicyGlobaleFiltroApi;
 	private boolean isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore;
+	private List<PolicyGroupByActiveThreadsType> controlloTrafficoPolicyRateLimitingTipiGestori;
 	public boolean isControlloTrafficoPolicyGlobaleGroupByApi() {
 		return this.isControlloTrafficoPolicyGlobaleGroupByApi;
 	}
@@ -864,6 +866,9 @@ public class ControlStationCore {
 	}
 	public boolean isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore() {
 		return this.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore;
+	}
+	public List<PolicyGroupByActiveThreadsType> getControlloTrafficoPolicyRateLimitingTipiGestori() {
+		return this.controlloTrafficoPolicyRateLimitingTipiGestori;
 	}
 	
 	/** Auditing */
@@ -2345,6 +2350,7 @@ public class ControlStationCore {
 		this.isControlloTrafficoPolicyGlobaleGroupByApi = core.isControlloTrafficoPolicyGlobaleGroupByApi;
 		this.isControlloTrafficoPolicyGlobaleFiltroApi = core.isControlloTrafficoPolicyGlobaleFiltroApi;
 		this.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore = core.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore;
+		this.controlloTrafficoPolicyRateLimitingTipiGestori = core.controlloTrafficoPolicyRateLimitingTipiGestori;
 		
 		/** Auditing */
 		this.isAuditingRegistrazioneElementiBinari = core.isAuditingRegistrazioneElementiBinari;
@@ -2789,6 +2795,7 @@ public class ControlStationCore {
 			this.isControlloTrafficoPolicyGlobaleGroupByApi = consoleProperties.isControlloTrafficoPolicyGlobaleGroupByApi();
 			this.isControlloTrafficoPolicyGlobaleFiltroApi = consoleProperties.isControlloTrafficoPolicyGlobaleFiltroApi();
 			this.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore = consoleProperties.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore();
+			this.controlloTrafficoPolicyRateLimitingTipiGestori = consoleProperties.getControlloTrafficoPolicyRateLimitingTipiGestori(); 
 			this.isAuditingRegistrazioneElementiBinari = consoleProperties.isAuditingRegistrazioneElementiBinari();
 			this.isIntegrationManagerEnabled = consoleProperties.isIntegrationManagerEnabled();
 			this.isIntegrationManagerTraceMessageBoxOperationEnabled = consoleProperties.isIntegrationManagerTraceMessageBoxOperationEnabled();

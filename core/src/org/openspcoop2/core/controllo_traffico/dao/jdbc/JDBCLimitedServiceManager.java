@@ -28,6 +28,8 @@ import javax.sql.DataSource;
 
 import org.openspcoop2.core.controllo_traffico.dao.IConfigurazioneGeneraleServiceSearch;
 import org.openspcoop2.core.controllo_traffico.dao.IConfigurazioneGeneraleService;
+import org.openspcoop2.core.controllo_traffico.dao.IConfigurazioneRateLimitingProprietaServiceSearch;
+import org.openspcoop2.core.controllo_traffico.dao.IConfigurazioneRateLimitingProprietaService;
 import org.openspcoop2.core.controllo_traffico.dao.IConfigurazionePolicyServiceSearch;
 import org.openspcoop2.core.controllo_traffico.dao.IConfigurazionePolicyService;
 import org.openspcoop2.core.controllo_traffico.dao.IAttivazionePolicyServiceSearch;
@@ -101,6 +103,38 @@ public class JDBCLimitedServiceManager extends JDBCServiceManager {
 	@Override
 	public IConfigurazioneGeneraleService getConfigurazioneGeneraleService() throws ServiceException,NotImplementedException{
 		return new JDBCConfigurazioneGeneraleService(this.unlimitedJdbcServiceManager);
+	}
+	
+	
+	
+	/*
+	 =====================================================================================================================
+	 Services relating to the object with name:configurazione-rate-limiting-proprieta type:configurazione-rate-limiting-proprieta
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public IConfigurazioneRateLimitingProprietaServiceSearch getConfigurazioneRateLimitingProprietaServiceSearch() throws ServiceException,NotImplementedException{
+		return new JDBCConfigurazioneRateLimitingProprietaServiceSearch(this.unlimitedJdbcServiceManager);
+	}
+	
+	/**
+	 * Return a service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 *
+	 * @return Service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public IConfigurazioneRateLimitingProprietaService getConfigurazioneRateLimitingProprietaService() throws ServiceException,NotImplementedException{
+		return new JDBCConfigurazioneRateLimitingProprietaService(this.unlimitedJdbcServiceManager);
 	}
 	
 	

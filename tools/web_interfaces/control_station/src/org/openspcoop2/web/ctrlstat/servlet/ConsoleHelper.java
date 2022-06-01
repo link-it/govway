@@ -89,6 +89,7 @@ import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataLocalForward;
 import org.openspcoop2.core.config.PortaTracciamento;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneControl;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale;
@@ -128,6 +129,7 @@ import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDFruizione;
@@ -189,6 +191,8 @@ import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULL;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
@@ -9344,6 +9348,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String protocollo, ServiceBinding serviceBinding,
 			StatoFunzionalita allegaBody, StatoFunzionalita scartaBody, 
 			String integrazione, String behaviour,
+			List<Proprieta> proprietaRateLimiting,
 			StatoFunzionalita stateless, PortaDelegataLocalForward localForward,
 			StatoFunzionalita ricevutaAsincronaSimmetrica, StatoFunzionalita ricevutaAsincronaAsimmetrica,
 			StatoFunzionalita gestioneManifest, ConfigurazionePortaHandler configPortaHandler) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverConfigurazioneException {
@@ -9351,6 +9356,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				protocollo, serviceBinding,
 				allegaBody, scartaBody, 
 				integrazione, behaviour,
+				proprietaRateLimiting,
 				stateless, localForward,
 				ricevutaAsincronaSimmetrica, ricevutaAsincronaAsimmetrica,
 				gestioneManifest, configPortaHandler, true);
@@ -9359,6 +9365,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String protocollo, ServiceBinding serviceBinding,
 			StatoFunzionalita allegaBody, StatoFunzionalita scartaBody, 
 			String integrazione, String behaviour,
+			List<Proprieta> proprietaRateLimiting,
 			StatoFunzionalita stateless, PortaDelegataLocalForward localForward,
 			StatoFunzionalita ricevutaAsincronaSimmetrica, StatoFunzionalita ricevutaAsincronaAsimmetrica,
 			StatoFunzionalita gestioneManifest, ConfigurazionePortaHandler configPortaHandler, boolean upperFirstChar) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverConfigurazioneException {
@@ -9463,6 +9470,51 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			bfTooltips.append(CostantiControlStation.LABEL_METADATI_INTEGRAZIONE).append(": ").append(integrazioneString.toString());
+		}
+		if(proprietaRateLimiting!=null && !proprietaRateLimiting.isEmpty()) {
+			try {
+				PolicyConfiguration config = new PolicyConfiguration(proprietaRateLimiting, false);
+				if(!Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DEFAULT.equals(config.getSyncMode()) || !Constants.VALUE_HTTP_HEADER_DEFAULT.equals(config.getHttpMode())) {
+					
+					if(bf.length()>0) {
+						bf.append(", ");
+					}
+					bf.append(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
+					
+					if(bfTooltips.length()>0) {
+						bfTooltips.append("\n");
+					}
+					bfTooltips.append(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING).append(": ");
+					if(!Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DEFAULT.equals(config.getSyncMode())){
+						bfTooltips.append(Constants.LABEL_MODALITA_SINCRONIZZAZIONE).append(" ");
+						if(Constants.VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE.equals(config.getSyncMode())){
+							bfTooltips.append(Constants.LABEL_MODALITA_SINCRONIZZAZIONE_LOCALE);
+						}
+						else if(Constants.VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE_SUDDIVISA_TRA_NODI.equals(config.getSyncMode())){
+							bfTooltips.append(Constants.LABEL_MODALITA_SINCRONIZZAZIONE_LOCALE_SUDDIVISA_TRA_NODI);
+						}
+						else if(Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA.equals(config.getSyncMode())){
+							bfTooltips.append(Constants.LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA);
+						}
+						
+						if(!Constants.VALUE_HTTP_HEADER_DEFAULT.equals(config.getHttpMode())){
+							bfTooltips.append(", ");
+						}
+					}
+					if(!Constants.VALUE_HTTP_HEADER_DEFAULT.equals(config.getHttpMode())){
+						bfTooltips.append(Constants.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP);
+						if(Constants.VALUE_HTTP_HEADER_DISABILITATO.equals(config.getHttpMode())){
+							bfTooltips.append(" ").append("disabilitati");
+						}
+						else if(Constants.VALUE_HTTP_HEADER_RIDEFINITO.equals(config.getHttpMode())){
+							bfTooltips.append(" ").append("gestione personalizzata");
+						}
+					}
+					
+				}
+			}catch(Exception e) {
+				throw new DriverConfigurazioneException(e.getMessage(),e);
+			}
 		}
 		if(behaviour!=null && !"".equals(behaviour)) {
 			String [] tmp = behaviour.split(",");
@@ -19063,6 +19115,319 @@ public class ConsoleHelper implements IConsoleHelper {
 		dati.addElement(de);
 		
 	}
+	
+	public void addOpzioniAvanzateRateLimitingToDati(Vector<DataElement> dati,
+			boolean addTitle,
+			boolean nascondiSezioneOpzioniAvanzate, 
+			String ctModalitaSincronizzazione, String ctImplementazione, String ctContatori, String ctTipologia,
+			String ctHeaderHttp, String ctHeaderHttp_limit, String ctHeaderHttp_remaining, String ctHeaderHttp_reset,
+			String ctHeaderHttp_retryAfter, String ctHeaderHttp_retryAfterBackoff) throws Exception {
+		
+		if(addTitle) {
+			DataElement de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
+			dati.addElement(de);
+		}
+		
+		DataElement de = new DataElement();
+		de.setName(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_SINCRONIZZAZIONE);
+		de.setLabel(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_SINCRONIZZAZIONE);
+		de.setValue(ctModalitaSincronizzazione);
+		if(nascondiSezioneOpzioniAvanzate ){
+			de.setType(DataElementType.HIDDEN);
+		} else {
+			de.setValues(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getVALUES_MODALITA_SINCRONIZZAZIONE(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori()));
+			de.setLabels(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getLABELS_MODALITA_SINCRONIZZAZIONE(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori()));
+			de.setSelected(ctModalitaSincronizzazione);
+			de.setType(DataElementType.SELECT);
+			de.setPostBack(true);
+		}
+		dati.addElement(de);
+		
+		
+		de = new DataElement();
+		de.setName(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP);
+		de.setLabel(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP);
+		de.setValue(ctHeaderHttp);
+		if(nascondiSezioneOpzioniAvanzate ){
+			de.setType(DataElementType.HIDDEN);
+		} else {
+			de.setValues(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUES_MODALITA_GENERAZIONE_HEADER_HTTP);
+			de.setLabels(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABELS_MODALITA_GENERAZIONE_HEADER_HTTP);
+			de.setSelected(ctHeaderHttp);
+			de.setType(DataElementType.SELECT);
+			de.setPostBack(true);
+		}
+		dati.addElement(de);
+		
+		
+		List<String> implValues = null;
+		if(!nascondiSezioneOpzioniAvanzate &&
+				org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA.equals(ctModalitaSincronizzazione)) {
+			implValues = org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getVALUES_MODALITA_IMPLEMENTAZIONE(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori());
+				
+			if(implValues.size()>1) {
+				de = new DataElement();
+				de.setType(DataElementType.SUBTITLE);
+				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_CONFIGURAZIONE_SICRONIZZAZIONE_DISTRIBUITA);
+				dati.addElement(de);
+			}
+		}
+		
+		de = new DataElement();
+		de.setName(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_IMPLEMENTAZIONE);
+		de.setLabel(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_IMPLEMENTAZIONE);
+		de.setValue(ctImplementazione);
+		if(nascondiSezioneOpzioniAvanzate || 
+				!org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA.equals(ctModalitaSincronizzazione)){
+			de.setType(DataElementType.HIDDEN);
+		} else {
+			if(implValues.size()==1) {
+				de.setValue(implValues.get(0));
+				de.setType(DataElementType.HIDDEN);
+			}
+			else {
+				de.setValues(implValues);
+				de.setLabels(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getLABELS_MODALITA_IMPLEMENTAZIONE(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori()));
+				de.setSelected(ctImplementazione);
+				de.setType(DataElementType.SELECT);
+				de.setPostBack(true);
+			}
+		}
+		dati.addElement(de);
+		
+		
+		de = new DataElement();
+		de.setName(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_CONTATORI);
+		de.setLabel(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_CONTATORI);
+		de.setValue(ctContatori);
+		if(nascondiSezioneOpzioniAvanzate || 
+				!org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA.equals(ctModalitaSincronizzazione) ||
+				!org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST.equals(ctImplementazione)){
+			de.setType(DataElementType.HIDDEN);
+		} else {
+			List<String> values = org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getVALUES_MODALITA_CONTATORI(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(),ctImplementazione);
+			if(values==null || values.size()<=0) {
+				de.setType(DataElementType.HIDDEN);
+			}
+			else if(values.size()==1){
+				de.setValue(values.get(0));
+				de.setType(DataElementType.HIDDEN);
+			}
+			else {
+				de.setValues(values);
+				de.setLabels(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getLABELS_MODALITA_CONTATORI(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(),ctImplementazione));
+				de.setSelected(ctContatori);
+				de.setType(DataElementType.SELECT);
+				de.setPostBack(true);
+			}
+		}
+		dati.addElement(de);
+		
+		
+		de = new DataElement();
+		de.setName(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_TIPOLOGIA);
+		de.setLabel(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_TIPOLOGIA);
+		de.setValue(ctTipologia);
+		if(nascondiSezioneOpzioniAvanzate || 
+				!org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA.equals(ctModalitaSincronizzazione)){
+			de.setType(DataElementType.HIDDEN);
+		} else {
+			List<String> values = org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getVALUES_MODALITA_TIPOLOGIA(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(),ctImplementazione, ctContatori);
+			if(values==null || values.size()<=0) {
+				de.setType(DataElementType.HIDDEN);
+			}
+			else if(values.size()==1){
+				de.setValue(values.get(0));
+				de.setType(DataElementType.HIDDEN);
+			}
+			else {
+				de.setValues(values);
+				de.setLabels(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getLABELS_MODALITA_TIPOLOGIA(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(), ctImplementazione, ctContatori));
+				de.setSelected(ctTipologia);
+				de.setType(DataElementType.SELECT);
+				de.setPostBack(true);
+			}
+		}
+		dati.addElement(de);
+		
+		
+		
+		if(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_HTTP_HEADER_RIDEFINITO.equals(ctHeaderHttp)) {
+			de = new DataElement();
+			de.setType(DataElementType.SUBTITLE);
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_CONFIGURAZIONE_HEADER_HTTP);
+			dati.addElement(de);
+		}
+		
+		
+		de = new DataElement();
+		de.setName(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
+		de.setLabel(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
+		de.setValue(ctHeaderHttp_limit);
+		if(nascondiSezioneOpzioniAvanzate || !org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_HTTP_HEADER_RIDEFINITO.equals(ctHeaderHttp) ){
+			de.setType(DataElementType.HIDDEN);
+		} else {
+			de.setValues(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
+			de.setLabels(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
+			de.setSelected(ctHeaderHttp_limit);
+			de.setType(DataElementType.SELECT);
+			de.setPostBack(false);
+		}
+		dati.addElement(de);
+		
+			
+		de = new DataElement();
+		de.setName(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
+		de.setLabel(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
+		de.setValue(ctHeaderHttp_remaining);
+		if(nascondiSezioneOpzioniAvanzate || !org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_HTTP_HEADER_RIDEFINITO.equals(ctHeaderHttp) ){
+			de.setType(DataElementType.HIDDEN);
+		} else {
+			de.setValues(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
+			de.setLabels(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
+			de.setSelected(ctHeaderHttp_remaining);
+			de.setType(DataElementType.SELECT);
+			de.setPostBack(false);
+		}
+		dati.addElement(de);
+		
+		
+		de = new DataElement();
+		de.setName(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
+		de.setLabel(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
+		de.setValue(ctHeaderHttp_reset);
+		if(nascondiSezioneOpzioniAvanzate || !org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_HTTP_HEADER_RIDEFINITO.equals(ctHeaderHttp) ){
+			de.setType(DataElementType.HIDDEN);
+		} else {
+			de.setValues(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
+			de.setLabels(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
+			de.setSelected(ctHeaderHttp_reset);
+			de.setType(DataElementType.SELECT);
+			de.setPostBack(false);
+		}
+		dati.addElement(de);
+		
+		
+		de = new DataElement();
+		de.setName(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
+		de.setLabel(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
+		de.setValue(ctHeaderHttp_retryAfter);
+		if(nascondiSezioneOpzioniAvanzate || !org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_HTTP_HEADER_RIDEFINITO.equals(ctHeaderHttp) ){
+			de.setType(DataElementType.HIDDEN);
+		} else {
+			de.setValues(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
+			de.setLabels(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
+			de.setSelected(ctHeaderHttp_retryAfter);
+			de.setType(DataElementType.SELECT);
+			de.setPostBack(true);
+		}
+		dati.addElement(de);
+		
+		
+
+		de = new DataElement();
+		de.setName(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS);
+		de.setLabel(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS);
+		de.setValue(ctHeaderHttp_retryAfterBackoff);
+		if(nascondiSezioneOpzioniAvanzate || 
+				!org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_HTTP_HEADER_RIDEFINITO.equals(ctHeaderHttp) || 
+				!org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_HTTP_HEADER_ABILITATO_BACKOFF.equals(ctHeaderHttp_retryAfter) ){
+			de.setType(DataElementType.HIDDEN);
+		} else {
+			de.setType(DataElementType.NUMBER);
+			de.setMinValue(1);
+			de.setRequired(true);
+		}
+		dati.addElement(de);
+		
+	}
+	
+	
+	public boolean validaOpzioniAvanzateRateLimiting(RuoloPolicy ruoloPolicy, String nome) throws Exception {
+	
+		String ctModalitaSincronizzazione = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_SINCRONIZZAZIONE);
+		String ctImplementazione = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_IMPLEMENTAZIONE);
+		String ctContatori = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_CONTATORI);
+		String ctTipologia = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_TIPOLOGIA);
+		String ctHeaderHttp = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP);
+		String ctHeaderHttp_limit = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
+		String ctHeaderHttp_remaining = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
+		String ctHeaderHttp_reset = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
+		String ctHeaderHttp_retryAfter = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
+		String ctHeaderHttp_retryAfterBackoff = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS);
+		
+		return validaOpzioniAvanzateRateLimiting(ruoloPolicy, nome,
+				ctModalitaSincronizzazione, ctImplementazione, ctContatori, ctTipologia,
+				ctHeaderHttp, ctHeaderHttp_limit, ctHeaderHttp_remaining, ctHeaderHttp_reset,
+				ctHeaderHttp_retryAfter, ctHeaderHttp_retryAfterBackoff);
+	}
+	public boolean validaOpzioniAvanzateRateLimiting(RuoloPolicy ruoloPolicy, String nome,
+			String ctModalitaSincronizzazione, String ctImplementazione, String ctContatori, String ctTipologia,
+			String ctHeaderHttp, String ctHeaderHttp_limit, String ctHeaderHttp_remaining, String ctHeaderHttp_reset,
+			String ctHeaderHttp_retryAfter, String ctHeaderHttp_retryAfterBackoff) throws Exception {
+		
+		if(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_HTTP_HEADER_RIDEFINITO.equals(ctHeaderHttp) &&
+				org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_HTTP_HEADER_ABILITATO_BACKOFF.equals(ctHeaderHttp_retryAfter) ){
+			int backoffInt = -1;
+			try{
+				backoffInt = Integer.parseInt(ctHeaderHttp_retryAfterBackoff);
+			}catch(Exception e){
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_DATI_NON_VALIDI_INSERIRE_UN_NUMERO_INTERO_MAGGIORE_DI_ZERO, org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS)); 
+				return false;
+			}
+			if(backoffInt <= 0){
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_DATI_NON_VALIDI_INSERIRE_UN_NUMERO_INTERO_MAGGIORE_DI_ZERO, org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS)); 
+				return false;
+			}
+		}
+		
+		
+		PolicyConfiguration policyConfig = new PolicyConfiguration();
+		policyConfig.setSyncMode(ctModalitaSincronizzazione);
+		policyConfig.setImpl(ctImplementazione);
+		policyConfig.setCount(ctContatori);
+		policyConfig.setEngineType(ctTipologia);
+		policyConfig.setHttpMode(ctHeaderHttp);
+		policyConfig.setHttpMode_limit(ctHeaderHttp_limit);
+		policyConfig.setHttpMode_remaining(ctHeaderHttp_remaining);
+		policyConfig.setHttpMode_reset(ctHeaderHttp_reset);
+		policyConfig.setHttpMode_retry_after(ctHeaderHttp_retryAfter);
+		policyConfig.setHttpMode_retry_after_backoff(ctHeaderHttp_retryAfterBackoff);
+		policyConfig.saveIn(new ArrayList<Proprieta>()); // inizializza il tipo
+		PolicyGroupByActiveThreadsType type = policyConfig.getType();
+		
+		
+		Search ricercaAll = new Search(true);
+		List<TipoRisorsaPolicyAttiva> listaTipoRisorsa = this.confCore.attivazionePolicyTipoRisorsaList(ricercaAll, ruoloPolicy, nome);
+		StringBuilder sb = new StringBuilder();
+		for (TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva : listaTipoRisorsa) {
+			if(type!=null && !type.isSupportedResource(tipoRisorsaPolicyAttiva)) {
+				if(sb.length()>0) {
+					sb.append(", ");
+				}
+				sb.append(tipoRisorsaPolicyAttiva.getValue());
+			}
+		}
+		if(sb.length()>0) {
+			String oggetto = "globalmente";
+			if(ruoloPolicy!=null) {
+				if(RuoloPolicy.APPLICATIVA.equals(ruoloPolicy)){
+					oggetto = "sull'erogazione";
+				}
+				else if(RuoloPolicy.DELEGATA.equals(ruoloPolicy)){
+					oggetto = "sulla fruizione";
+				}
+			}
+			this.pd.setMessage("La "+org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_SINCRONIZZAZIONE+
+					" selezionata non è utilizzabile poichè non compatibile con alcune metriche associate alle policy attive "+oggetto+": "+sb.toString());
+			return false;
+		}
+		
+		return true;
+	}
+	
 	
 	public void addIntegrazioneMetadatiToDati(Vector<DataElement> dati, String integrazioneStato, String integrazione,
 			String[] integrazioneGruppi, List<GruppoIntegrazione> integrazioneGruppiDaVisualizzare,

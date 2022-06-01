@@ -21,7 +21,10 @@
 
 package org.openspcoop2.pdd.core.jmx;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -41,7 +44,7 @@ import javax.management.ReflectionException;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.beans.JMXConstants;
-import org.openspcoop2.core.controllo_traffico.driver.IGestorePolicyAttive;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyShutdownException;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
@@ -448,7 +451,6 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 	/* Variabili per la gestione JMX */
 	private Logger log;
 	private GestoreControlloTraffico gestoreControlloTraffico;
-	private IGestorePolicyAttive gestorePolicyAttive;
 	
 	/* Costruttore */
 	public ControlloTraffico() throws Exception{
@@ -484,8 +486,6 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 			
 			this.maxThreads = configurazioneGenerale.getControlloTraffico().getControlloMaxThreadsSoglia();
 		
-			this.gestorePolicyAttive = GestorePolicyAttive.getInstance();
-			
 			this.gestoreControlloTraffico = GestoreControlloTraffico.getInstance();
 			this.activeThreads = this.gestoreControlloTraffico.sizeActiveThreads();
 			
@@ -508,9 +508,20 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 
 	public String getAllIdPolicy(){
 		try{
-			if(this.gestorePolicyAttive==null)
+			List<PolicyGroupByActiveThreadsType> tipiGestorePolicyAttivi = GestorePolicyAttive.getTipiGestoriAttivi();
+			if(tipiGestorePolicyAttivi==null || tipiGestorePolicyAttivi.isEmpty()) {
 				throw new Exception("GestorePolicyAttive non abilitato");
-			return this.gestorePolicyAttive.printKeysPolicy("\n");
+			}
+			StringBuilder sb = new StringBuilder();
+			for (PolicyGroupByActiveThreadsType type : tipiGestorePolicyAttivi) {
+				String p = GestorePolicyAttive.getInstance(type).printKeysPolicy("\n");
+				if(sb.length()>0) {
+					sb.append("\n");
+				}
+				sb.append(p);
+			}
+			return sb.toString();
+			
 		}catch(PolicyShutdownException notFound){
 			return "GestorePolicyAttive in shutdown; controllare lo stato di GovWay";
 		}catch(Throwable e){
@@ -521,12 +532,44 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 	
 	public String getStatoPolicy(String id){
 		try{
-			if(this.gestorePolicyAttive==null)
+			List<PolicyGroupByActiveThreadsType> tipiGestorePolicyAttivi = GestorePolicyAttive.getTipiGestoriAttivi();
+			if(tipiGestorePolicyAttivi==null || tipiGestorePolicyAttivi.isEmpty()) {
 				throw new Exception("GestorePolicyAttive non abilitato");
+			}
 			if(id==null)
 				throw new Exception("Parametro non fornito");
 			try{
-				return this.gestorePolicyAttive.printInfoPolicy(id, "================================================================");
+				Map<PolicyGroupByActiveThreadsType, String> infos = new HashMap<PolicyGroupByActiveThreadsType, String>();
+				PolicyNotFoundException notFound = null;
+				for (PolicyGroupByActiveThreadsType type : tipiGestorePolicyAttivi) {
+					try {
+						infos.put(type, GestorePolicyAttive.getInstance(type).printInfoPolicy(id, "================================================================"));			
+					}catch(PolicyNotFoundException notFoundE){
+						notFound = notFoundE;
+					}
+				}
+				if(infos.isEmpty()) {
+					if(notFound!=null) {
+						throw notFound;
+					}
+					else {
+						throw new PolicyNotFoundException();
+					}
+				}
+				else if(infos.size()==1) {
+					return infos.get(infos.keySet().iterator().next());
+				}
+				else {
+					StringBuilder sb = new StringBuilder();
+					for (PolicyGroupByActiveThreadsType policyGroupByActiveThreadsType : infos.keySet()) {
+						if(sb.length()>0) {
+							sb.append("\n\n");
+						}
+						sb.append("*** Gestore '").append(policyGroupByActiveThreadsType.name()).append("' ***\n");
+						sb.append(infos.get(policyGroupByActiveThreadsType));
+					}
+					return sb.toString();
+				}
 			}catch(PolicyNotFoundException notFound){
 				return "Informazioni sulla Policy non disponibili; non sono ancora transitate richieste che soddisfano i criteri di filtro impostati";
 			}catch(PolicyShutdownException notFound){
@@ -540,9 +583,13 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 	
 	public String removeAllPolicies(){
 		try{
-			if(this.gestorePolicyAttive==null)
+			List<PolicyGroupByActiveThreadsType> tipiGestorePolicyAttivi = GestorePolicyAttive.getTipiGestoriAttivi();
+			if(tipiGestorePolicyAttivi==null || tipiGestorePolicyAttivi.isEmpty()) {
 				throw new Exception("GestorePolicyAttive non abilitato");
-			this.gestorePolicyAttive.removeAllActiveThreadsPolicy();
+			}
+			for (PolicyGroupByActiveThreadsType type : tipiGestorePolicyAttivi) {
+				GestorePolicyAttive.getInstance(type).removeAllActiveThreadsPolicy();
+			}
 			return "Operazione 'remove' effettuata con successo";
 		}catch(PolicyShutdownException notFound){
 			return "GestorePolicyAttive in shutdown; controllare lo stato di GovWay";
@@ -554,9 +601,13 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 	
 	public String resetAllPolicies(){
 		try{
-			if(this.gestorePolicyAttive==null)
+			List<PolicyGroupByActiveThreadsType> tipiGestorePolicyAttivi = GestorePolicyAttive.getTipiGestoriAttivi();
+			if(tipiGestorePolicyAttivi==null || tipiGestorePolicyAttivi.isEmpty()) {
 				throw new Exception("GestorePolicyAttive non abilitato");
-			this.gestorePolicyAttive.resetCountersAllActiveThreadsPolicy();
+			}
+			for (PolicyGroupByActiveThreadsType type : tipiGestorePolicyAttivi) {
+				GestorePolicyAttive.getInstance(type).resetCountersAllActiveThreadsPolicy();
+			}
 			return JMXUtils.MSG_RESET_CACHE_EFFETTUATO_SUCCESSO;
 		}catch(PolicyShutdownException notFound){
 			return "GestorePolicyAttive in shutdown; controllare lo stato di GovWay";
@@ -568,11 +619,15 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 	
 	public String removePolicy(String id){
 		try{
-			if(this.gestorePolicyAttive==null)
+			List<PolicyGroupByActiveThreadsType> tipiGestorePolicyAttivi = GestorePolicyAttive.getTipiGestoriAttivi();
+			if(tipiGestorePolicyAttivi==null || tipiGestorePolicyAttivi.isEmpty()) {
 				throw new Exception("GestorePolicyAttive non abilitato");
+			}
 			if(id==null)
 				throw new Exception("Parametro non fornito");
-			this.gestorePolicyAttive.removeActiveThreadsPolicy(id);
+			for (PolicyGroupByActiveThreadsType type : tipiGestorePolicyAttivi) {
+				GestorePolicyAttive.getInstance(type).removeActiveThreadsPolicy(id);
+			}
 			return "Operazione 'remove' effettuata con successo";
 		}catch(PolicyShutdownException notFound){
 			return "GestorePolicyAttive in shutdown; controllare lo stato di GovWay";
@@ -584,11 +639,15 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 	
 	public String resetPolicy(String id){
 		try{
-			if(this.gestorePolicyAttive==null)
+			List<PolicyGroupByActiveThreadsType> tipiGestorePolicyAttivi = GestorePolicyAttive.getTipiGestoriAttivi();
+			if(tipiGestorePolicyAttivi==null || tipiGestorePolicyAttivi.isEmpty()) {
 				throw new Exception("GestorePolicyAttive non abilitato");
+			}
 			if(id==null)
 				throw new Exception("Parametro non fornito");
-			this.gestorePolicyAttive.resetCountersActiveThreadsPolicy(id);
+			for (PolicyGroupByActiveThreadsType type : tipiGestorePolicyAttivi) {
+				GestorePolicyAttive.getInstance(type).resetCountersActiveThreadsPolicy(id);
+			}
 			return JMXUtils.MSG_RESET_CACHE_EFFETTUATO_SUCCESSO;
 		}catch(PolicyShutdownException notFound){
 			return "GestorePolicyAttive in shutdown; controllare lo stato di GovWay";

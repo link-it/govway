@@ -1,3 +1,10 @@
+2022-06-01  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1365
+	Il tipo di gestore delle policy di RateLimiting è adesso configurabile da console sia a livello di configurazione generale del controllo del traffico che nelle opzioni avanzate di una erogazione o fruizione.
+	Oltre al tipo di gestore è adesso possibile personalizzare gli aspetti riguardanti gli header HTTP restituiti al client.
+
 2022-05-25  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

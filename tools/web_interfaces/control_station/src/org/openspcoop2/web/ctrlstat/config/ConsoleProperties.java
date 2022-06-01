@@ -35,6 +35,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.pdd.config.ConfigurazionePriorita;
@@ -323,6 +324,19 @@ public class ConsoleProperties {
 	
 	public boolean isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore() throws UtilsException{
 		return this.readBooleanProperty(true, "controlloTraffico.policyGlobale.filtro.api.soggettoErogatore");
+	}
+	
+	public List<PolicyGroupByActiveThreadsType> getControlloTrafficoPolicyRateLimitingTipiGestori() throws UtilsException{
+		List<PolicyGroupByActiveThreadsType> l = new ArrayList<PolicyGroupByActiveThreadsType>();
+		String p = this.readProperty(false, "controlloTraffico.policyRateLimiting.tipiGestori");
+		if(p!=null && !"".equals(p.trim())){
+			String [] tmp = p.trim().split(",");
+			for (int i = 0; i < tmp.length; i++) {
+				tmp[i] = tmp[i].trim();
+				l.add(PolicyGroupByActiveThreadsType.valueOf(tmp[i]));
+			}
+		}
+		return l;
 	}
 	
 	public boolean isAuditingRegistrazioneElementiBinari() throws UtilsException{

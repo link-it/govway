@@ -62,6 +62,7 @@ import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -159,7 +160,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			String autorizzazione_token, String autorizzazione_tokenOptions,
 			String autorizzazioneScope, int numScope, String autorizzazioneScopeMatch, BinaryParameter allegatoXacmlPolicy,
 			String messageEngine, String canale,
-			String identificazioneAttributiStato, String[] attributeAuthorityLabels, String[] attributeAuthorityValues, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception {
+			String identificazioneAttributiStato, String[] attributeAuthorityLabels, String[] attributeAuthorityValues, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi,
+			String ctModalitaSincronizzazione, String ctImplementazione, String ctContatori, String ctTipologia,
+			String ctHeaderHttp, String ctHeaderHttp_limit, String ctHeaderHttp_remaining, String ctHeaderHttp_reset,
+			String ctHeaderHttp_retryAfter, String ctHeaderHttp_retryAfterBackoff) throws Exception {
 
 		boolean multitenant = this.pddCore.isMultitenant();
 
@@ -957,6 +961,19 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				}
 			}
 		}
+		
+		
+		// Rate Limiting
+		if(tipoOp.equals(TipoOperazione.CHANGE) && datiAltroPorta) {
+			addOpzioniAvanzateRateLimitingToDati(dati,
+					true,
+					nascondiSezioneOpzioniAvanzate,
+					ctModalitaSincronizzazione, ctImplementazione, ctContatori, ctTipologia,
+					ctHeaderHttp, ctHeaderHttp_limit, ctHeaderHttp_remaining, ctHeaderHttp_reset,
+					ctHeaderHttp_retryAfter, ctHeaderHttp_retryAfterBackoff);
+		}
+		
+		
 		
 		// Message Handlers
 		if (tipoOp.equals(TipoOperazione.CHANGE)) {
@@ -1775,6 +1792,13 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			if(tipoOp == TipoOperazione.CHANGE && datiAltroPorta) {
 				boolean validazioneIntegrazione = this.validaIntegrazioneMetadati();
 				if(!validazioneIntegrazione)
+					return false;
+			}
+			
+			// rate limiting
+			if(tipoOp == TipoOperazione.CHANGE && datiAltroPorta) {
+				boolean validazioneRT = this.validaOpzioniAvanzateRateLimiting(RuoloPolicy.DELEGATA,nomePD);
+				if(!validazioneRT)
 					return false;
 			}
 			

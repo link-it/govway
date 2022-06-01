@@ -21,11 +21,13 @@
 package org.openspcoop2.pdd.config;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
@@ -33,6 +35,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta;
 import org.openspcoop2.core.controllo_traffico.ElencoIdPolicy;
 import org.openspcoop2.core.controllo_traffico.ElencoIdPolicyAttive;
 import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
@@ -46,6 +49,7 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 
 /**     
@@ -104,6 +108,52 @@ public class ConfigurazionePdD_controlloTraffico extends AbstractConfigurazioneP
 
 	}
 	
+	
+	
+	
+	private static PolicyConfiguration configurazionePolicyRateLimitingGlobali = null;
+	public PolicyConfiguration getConfigurazionePolicyRateLimitingGlobali(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		
+		if( this.configurazioneDinamica || ConfigurazionePdD_controlloTraffico.configurazionePolicyRateLimitingGlobali==null){
+			ConfigurazionePdDConnectionResource cr = null;
+			try{
+				cr = this.getConnection(connectionPdD, "ControlloTraffico.getConfigurazionePolicyRateLimitingGlobali");
+				org.openspcoop2.core.controllo_traffico.dao.IServiceManager sm = 
+						(org.openspcoop2.core.controllo_traffico.dao.IServiceManager) DAOFactory.getInstance(this.log).
+						getServiceManager(org.openspcoop2.core.controllo_traffico.utils.ProjectInfo.getInstance(),
+								cr.connectionDB,this.smp,this.log);
+				
+				List<Proprieta> list = new ArrayList<Proprieta>();
+				List<ConfigurazioneRateLimitingProprieta> l = sm.getConfigurazioneRateLimitingProprietaServiceSearch().findAll(sm.getConfigurazioneRateLimitingProprietaServiceSearch().newPaginatedExpression());
+				if(l!=null && !l.isEmpty()) {
+					for (ConfigurazioneRateLimitingProprieta configurazioneRateLimitingProprieta : l) {
+						Proprieta p = new Proprieta();
+						p.setNome(configurazioneRateLimitingProprieta.getNome());
+						p.setValore(configurazioneRateLimitingProprieta.getValore());
+						list.add(p);
+					}
+				}
+				
+				ConfigurazionePdD_controlloTraffico.configurazionePolicyRateLimitingGlobali = new PolicyConfiguration(list, true);
+			}
+			catch(NotFoundException e) {
+				String errorMsg = "Configurazione delle policy globali di rate limiting non trovata: "+e.getMessage();
+				this.log.debug(errorMsg,e);
+				throw new DriverConfigurazioneNotFound(errorMsg,e);
+			}
+			catch(Exception e){
+				String errorMsg = "Errore durante la configurazione del Controllo del Traffico: "+e.getMessage();
+				this.log.error(errorMsg,e);
+				throw new DriverConfigurazioneException(errorMsg,e);
+			}
+			finally {
+				this.releaseConnection(cr);
+			}
+		}
+
+		return ConfigurazionePdD_controlloTraffico.configurazionePolicyRateLimitingGlobali;
+
+	}
 	
 	
 	

@@ -39,6 +39,24 @@ CREATE TABLE ct_config
 
 
 
+CREATE TABLE ct_rt_props
+(
+	rt_prop_name VARCHAR(255) NOT NULL,
+	rt_prop_value VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- unique constraints
+	CONSTRAINT uniq_rt_prop_policy_1 UNIQUE (rt_prop_name),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_ct_rt_props PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
+
+-- index
+CREATE UNIQUE INDEX idx_rt_prop_policy_1 ON ct_rt_props (rt_prop_name);
+CREATE INDEX idx_rt_prop_policy_2 ON ct_rt_props (rt_prop_value);
+
+
+
 CREATE TABLE ct_config_policy
 (
 	-- Dati Generali

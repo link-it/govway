@@ -48,9 +48,6 @@ public class TimerClusterDinamicoThread extends BaseThread{
 	private OpenSPCoop2Properties properties;
 	private DynamicClusterManager manager;
 	
-	/** GestioneRateLimiting */
-	private boolean gestioneRateLimiting;
-		
 	
 	/** Costruttore */
 	public TimerClusterDinamicoThread(Logger log) throws Exception{
@@ -61,15 +58,8 @@ public class TimerClusterDinamicoThread extends BaseThread{
 		this.setTimeout(this.properties.getClusterDinamicoRefreshSecondsInterval());
 
 		this.manager = DynamicClusterManager.getInstance();
-		
-		this.gestioneRateLimiting = this.properties.isControlloTrafficoGestioneCluster();
-		if(this.gestioneRateLimiting) {
-			PolicyVerifier.cluster_limit_roundingDown = this.properties.isControlloTrafficoGestioneCluster_limit_roundingDown();
-			PolicyVerifier.cluster_limit_normalizedQuota = this.properties.isControlloTrafficoGestioneCluster_limit_normalizedQuota();
-			PolicyVerifier.cluster_remaining_zeroValue = this.properties.isControlloTrafficoGestioneCluster_remaining_zeroValue();
-		}
 	}
-	
+
 	
 	@Override
 	public void process(){
@@ -83,7 +73,7 @@ public class TimerClusterDinamicoThread extends BaseThread{
 			}
 	    	
 	    	try {
-	    		if(this.gestioneRateLimiting ) {
+	    		if(this.manager.isRateLimitingGestioneCluster()) {
 	    			PolicyVerifier.listClusterNodes = this.manager.getHostnames(this.log);
 	    		}
 	    	}catch(Exception e){

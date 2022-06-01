@@ -225,6 +225,26 @@ CREATE INDEX INDEX_PD_AUTHZC_PROP ON pd_authzc_properties (id_porta);
 
 
 
+CREATE TABLE pd_ct_properties
+(
+	id_porta BIGINT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	valore VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- unique constraints
+	CONSTRAINT uniq_pd_ct_props_1 UNIQUE (id_porta,nome),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pd_ct_properties_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
+	CONSTRAINT pk_pd_ct_properties PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
+
+-- index
+CREATE INDEX idx_pd_ct_props_1 ON pd_ct_properties (valore);
+CREATE INDEX INDEX_PD_CT_PROP ON pd_ct_properties (id_porta);
+
+
+
 CREATE TABLE pd_properties
 (
 	id_porta BIGINT NOT NULL,

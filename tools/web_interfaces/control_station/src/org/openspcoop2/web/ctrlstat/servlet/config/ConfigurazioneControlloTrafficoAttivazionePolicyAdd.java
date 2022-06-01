@@ -41,10 +41,12 @@ import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.controllo_traffico.utils.ControlloTrafficoDriverUtils;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -154,6 +156,8 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyAdd extends Action 
 				confHelper.addParsingError(sbParsingError,errorAttivazione); 
 			}
 			
+			PolicyGroupByActiveThreadsType type = null;
+			
 			if(ruoloPorta!=null) {
 				
 				String protocollo = null;
@@ -167,12 +171,18 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyAdd extends Action 
 					// il tipo e nome serve per l'applicativo fruitore
 					tipoSoggettoProprietario = porta.getTipoSoggettoProprietario();
 					nomeSoggettoProprietario = porta.getNomeSoggettoProprietario();
+					// tipo
+					PolicyConfiguration config = new PolicyConfiguration(porta.getProprietaRateLimitingList(), false);
+					type = config.getType();
 				}
 				else {
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setNome(nomePorta);
 					PortaApplicativa porta = paCore.getPortaApplicativa(idPA);
 					protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(porta.getTipoSoggettoProprietario());
+					// tipo
+					PolicyConfiguration config = new PolicyConfiguration(porta.getProprietaRateLimitingList(), false);
+					type = config.getType();
 				}
 				
 				policy.getFiltro().setEnabled(true);
@@ -184,7 +194,21 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyAdd extends Action 
 					policy.getFiltro().setNomeFruitore(nomeSoggettoProprietario);
 				}
 				
+				// verifico rispetto alla configurazione globale
+				if(type==null) {
+					PolicyConfiguration pc = confCore.getConfigurazioneControlloTrafficoRateLimitingProperties();
+					if(pc!=null) {
+						type = pc.getType();
+					}
+				}
 			}
+			else {
+				PolicyConfiguration pc = confCore.getConfigurazioneControlloTrafficoRateLimitingProperties();
+				if(pc!=null) {
+					type = pc.getType();
+				}
+			}
+			
 			
 			// Preparo il menu
 			confHelper.makeMenu();
@@ -230,7 +254,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyAdd extends Action 
 //				}
 				
 				// Attivazione
-				confHelper.addAttivazionePolicyToDati(dati, tipoOperazione, policy,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY, infoPolicies, ruoloPorta, nomePorta, serviceBinding, modalita);
+				confHelper.addAttivazionePolicyToDati(dati, tipoOperazione, policy,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY, infoPolicies, ruoloPorta, nomePorta, serviceBinding, modalita, type);
 				
 				// Set First is false
 				confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME);
@@ -256,7 +280,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyAdd extends Action 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				// Attivazione
-				confHelper.addAttivazionePolicyToDati(dati, tipoOperazione, policy,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY, infoPolicies, ruoloPorta, nomePorta, serviceBinding, modalita);
+				confHelper.addAttivazionePolicyToDati(dati, tipoOperazione, policy,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY, infoPolicies, ruoloPorta, nomePorta, serviceBinding, modalita, type);
 				
 				// Set First is false
 				confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME);

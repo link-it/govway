@@ -14967,6 +14967,156 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 	}
 	
+	public List<String> porteDelegateRateLimitingValoriUnivoci(String pName) throws DriverConfigurazioneException {
+		
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		ArrayList<String> lista = new ArrayList<String>();
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("porteDelegateRateLimitingValoriUnivoci");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteDelegateRateLimitingValoriUnivoci] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_RATE_LIMITING_PROP);
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.addSelectField("valore");
+			sqlQueryObject.addWhereCondition("nome = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String queryString = sqlQueryObject.createSQLQuery();
+			
+			stmt = con.prepareStatement(queryString);
+			stmt.setString(1, pName);
+			risultato = stmt.executeQuery();
+			while (risultato.next()) {
+				lista.add(risultato.getString("valore"));
+			}
+			risultato.close();
+			stmt.close();
+
+			
+			return lista;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteDelegateRateLimitingValoriUnivoci] Errore : " + qe.getMessage(),qe);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public List<String> porteApplicativeRateLimitingValoriUnivoci(String pName) throws DriverConfigurazioneException {
+		
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		ArrayList<String> lista = new ArrayList<String>();
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("porteApplicativeRateLimitingValoriUnivoci");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteApplicativeRateLimitingValoriUnivoci] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_RATE_LIMITING_PROP);
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.addSelectField("valore");
+			sqlQueryObject.addWhereCondition("nome = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String queryString = sqlQueryObject.createSQLQuery();
+			
+			stmt = con.prepareStatement(queryString);
+			stmt.setString(1, pName);
+			risultato = stmt.executeQuery();
+			while (risultato.next()) {
+				lista.add(risultato.getString("valore"));
+			}
+			risultato.close();
+			stmt.close();
+
+			
+			return lista;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteApplicativeRateLimitingValoriUnivoci] Errore : " + qe.getMessage(),qe);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
 	/**
 	 * Ritorna la lista di proprieta per l'autorizzazione contenuti custom di una Porta Applicativa
 	 */
@@ -23436,6 +23586,29 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				
 				
 				
+				// rate limiting prop
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_RATE_LIMITING_PROP);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				rs=stm.executeQuery();
+				while (rs.next()) {
+					prop = new Proprieta();
+					prop.setId(rs.getLong("id"));
+					prop.setNome(rs.getString("nome"));
+					prop.setValore(rs.getString("valore"));
+					pa.addProprietaRateLimiting(prop);
+				}
+				rs.close();
+				stm.close();
+				
+				
+				
+				
+				
 				// pa.addSetProperty(setProperty); .....
 				prop = null;
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -24486,6 +24659,29 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				
 				
 				
+				
+				// proprieta rate limiting
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_RATE_LIMITING_PROP);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaDelegata);
+				rs=stm.executeQuery();
+				while (rs.next()) {
+					prop = new Proprieta();
+					prop.setId(rs.getLong("id"));
+					prop.setNome(rs.getString("nome"));
+					prop.setValore(rs.getString("valore"));
+					pd.addProprietaRateLimiting(prop);
+				}
+				rs.close();
+				stm.close();
+				
+				
+				
+				
 				// pd.addSetProperty(setProperty); .....
 				prop = null;
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -25182,6 +25378,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt.close();
 			
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_RATE_LIMITING_PROP);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_PROP);
 			updateString = sqlQueryObject.createSQLDelete();
 			stmt = con.prepareStatement(updateString);
@@ -25321,6 +25524,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt.executeUpdate();
 			stmt.close();
 
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_RATE_LIMITING_PROP);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_PROP);
 			updateString = sqlQueryObject.createSQLDelete();

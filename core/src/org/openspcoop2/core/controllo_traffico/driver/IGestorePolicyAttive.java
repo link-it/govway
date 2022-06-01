@@ -36,7 +36,9 @@ import org.slf4j.Logger;
  */
 public interface IGestorePolicyAttive {
 
-	public void initialize(Logger log, Object ... params) throws PolicyException;
+	public void initialize(Logger log, PolicyGroupByActiveThreadsType type, Object ... params) throws PolicyException;
+	
+	public PolicyGroupByActiveThreadsType getType();
 	
 	public IPolicyGroupByActiveThreads getActiveThreadsPolicy(ActivePolicy activePolicy, DatiTransazione datiTransazione, Object state) throws PolicyShutdownException,PolicyException;
 	
@@ -49,6 +51,8 @@ public interface IGestorePolicyAttive {
 	public String printInfoPolicy(String id, String separatorGroups) throws PolicyShutdownException,PolicyException,PolicyNotFoundException;
 	
 	public void removeActiveThreadsPolicy(String idActivePolicy) throws PolicyShutdownException,PolicyException;
+	
+	public void removeActiveThreadsPolicyUnsafe(String idActivePolicy) throws PolicyShutdownException,PolicyException;
 	
 	public void removeAllActiveThreadsPolicy() throws PolicyShutdownException,PolicyException;
 	

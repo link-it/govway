@@ -72,6 +72,7 @@ import org.openspcoop2.core.transazioni.utils.PropertiesSerializator;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
 import org.openspcoop2.pdd.core.integrazione.TipoIntegrazione;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -214,6 +215,18 @@ public final class PorteApplicativeChange extends Action {
 					}
 				}
 			}
+			
+			// RateLimiting
+			String ctModalitaSincronizzazione = porteApplicativeHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_SINCRONIZZAZIONE);
+			String ctImplementazione = porteApplicativeHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_IMPLEMENTAZIONE);
+			String ctContatori = porteApplicativeHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_CONTATORI);
+			String ctTipologia = porteApplicativeHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_TIPOLOGIA);
+			String ctHeaderHttp = porteApplicativeHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP);
+			String ctHeaderHttp_limit = porteApplicativeHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
+			String ctHeaderHttp_remaining = porteApplicativeHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
+			String ctHeaderHttp_reset = porteApplicativeHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
+			String ctHeaderHttp_retryAfter = porteApplicativeHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
+			String ctHeaderHttp_retryAfterBackoff = porteApplicativeHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS);
 			
 			// check su oldNomePD
 			PageData pdOld =  ServletUtils.getPageDataFromSession(session);
@@ -812,6 +825,20 @@ public final class PorteApplicativeChange extends Action {
 					}
 				}
 				
+				if(ctModalitaSincronizzazione==null) {
+					PolicyConfiguration policyConfig = new PolicyConfiguration(pa.getProprietaRateLimitingList(), false);
+					ctModalitaSincronizzazione = policyConfig.getSyncMode();
+					ctImplementazione = policyConfig.getImpl();
+					ctContatori = policyConfig.getCount();
+					ctTipologia = policyConfig.getEngineType();
+					ctHeaderHttp = policyConfig.getHttpMode();
+					ctHeaderHttp_limit = policyConfig.getHttpMode_limit();
+					ctHeaderHttp_remaining = policyConfig.getHttpMode_remaining();
+					ctHeaderHttp_reset = policyConfig.getHttpMode_reset();
+					ctHeaderHttp_retryAfter = policyConfig.getHttpMode_retry_after();
+					ctHeaderHttp_retryAfterBackoff = policyConfig.getHttpMode_retry_after_backoff();
+				}
+				
 				if (messageEngine == null) {
 					if(pa.getOptions()!=null) {
 						Map<String, List<String>> props = PropertiesSerializator.convertoFromDBColumnValue(pa.getOptions());
@@ -1109,7 +1136,10 @@ public final class PorteApplicativeChange extends Action {
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						messageEngine, pa.getCanale(),
-						identificazioneAttributiStato, null,null, attributeAuthoritySelezionate, attributeAuthorityAttributi);
+						identificazioneAttributiStato, null,null, attributeAuthoritySelezionate, attributeAuthorityAttributi,
+						ctModalitaSincronizzazione, ctImplementazione, ctContatori, ctTipologia,
+						ctHeaderHttp, ctHeaderHttp_limit, ctHeaderHttp_remaining, ctHeaderHttp_reset,
+						ctHeaderHttp_retryAfter, ctHeaderHttp_retryAfterBackoff);
 
 				pd.setDati(dati);
 
@@ -1284,7 +1314,10 @@ public final class PorteApplicativeChange extends Action {
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						messageEngine, pa.getCanale(),
-						identificazioneAttributiStato, null,null, attributeAuthoritySelezionate, attributeAuthorityAttributi);
+						identificazioneAttributiStato, null,null, attributeAuthoritySelezionate, attributeAuthorityAttributi,
+						ctModalitaSincronizzazione, ctImplementazione, ctContatori, ctTipologia,
+						ctHeaderHttp, ctHeaderHttp_limit, ctHeaderHttp_remaining, ctHeaderHttp_reset,
+						ctHeaderHttp_retryAfter, ctHeaderHttp_retryAfterBackoff);
 
 				pd.setDati(dati);
 
@@ -1435,6 +1468,22 @@ public final class PorteApplicativeChange extends Action {
 					valoriFinaliIntegrazione.addAll(integrazioneGruppiValoriDeiGruppi.get(group.getValue()));
 				}
 				pa.setIntegrazione(StringUtils.join(valoriFinaliIntegrazione.toArray(new String[valoriFinaliIntegrazione.size()]), ","));
+			}
+			
+			if(datiAltroPorta) {
+				PolicyConfiguration policyConfig = new PolicyConfiguration();
+				policyConfig.setSyncMode(ctModalitaSincronizzazione);
+				policyConfig.setImpl(ctImplementazione);
+				policyConfig.setCount(ctContatori);
+				policyConfig.setEngineType(ctTipologia);
+				policyConfig.setHttpMode(ctHeaderHttp);
+				policyConfig.setHttpMode_limit(ctHeaderHttp_limit);
+				policyConfig.setHttpMode_remaining(ctHeaderHttp_remaining);
+				policyConfig.setHttpMode_reset(ctHeaderHttp_reset);
+				policyConfig.setHttpMode_retry_after(ctHeaderHttp_retryAfter);
+				policyConfig.setHttpMode_retry_after_backoff(ctHeaderHttp_retryAfterBackoff);
+				pa.setProprietaRateLimitingList(new ArrayList<Proprieta>());
+				policyConfig.saveIn(pa.getProprietaRateLimitingList());
 			}
 			
 			if(!porteApplicativeCore.isConnettoriMultipliEnabled()) {

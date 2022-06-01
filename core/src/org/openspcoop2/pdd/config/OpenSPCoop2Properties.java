@@ -50,6 +50,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.constants.TransferLengthModes;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.message.AttachmentsProcessingMode;
@@ -63,7 +64,6 @@ import org.openspcoop2.pdd.core.autorizzazione.container.IAutorizzazioneSecurity
 import org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazionePortaApplicativa;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.INotify;
-import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.PolicyGroupByActiveThreadsInMemoryEnum;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.TipoGestorePolicy;
 import org.openspcoop2.pdd.core.credenziali.IGestoreCredenziali;
 import org.openspcoop2.pdd.core.credenziali.IGestoreCredenzialiIM;
@@ -1435,10 +1435,10 @@ public class OpenSPCoop2Properties {
 				}
 				this.getClusterDinamicoRefreshSecondsInterval();
 				this.getClusterHostname();
-				if(this.getGroupId()==null) {
+				if(this.getGroupId(false)==null) {
 					return false;
 				}
-				if(this.getClusterDinamicoIdNumericoCifre()<0) {
+				if(this.getClusterDinamicoIdNumericoCifre(false)<0) {
 					return false;
 				}
 				this.isUseHashClusterId();
@@ -1993,20 +1993,23 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoGestorePolicyWSUrl();
 				}
 				else if(TipoGestorePolicy.IN_MEMORY.equals(tipo)) {
-					PolicyGroupByActiveThreadsInMemoryEnum type = this.getControlloTrafficoGestorePolicyInMemoryType();
-					if(PolicyGroupByActiveThreadsInMemoryEnum.DATABASE.equals(type)) {
-						isControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction();
-						getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva();
-						getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval();
-					}
+					@SuppressWarnings("unused")
+					PolicyGroupByActiveThreadsType type = this.getControlloTrafficoGestorePolicyInMemoryType();
+					
+					//if(PolicyGroupByActiveThreadsInMemoryEnum.LOCAL_DIVIDED_BY_NODES.equals(type)) {
+					this.isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodes_remaining_zeroValue();
+					this.isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodes_limit_roundingDown();
+					this.isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodes_limit_normalizedQuota();
+					//}
+					
+					//if(PolicyGroupByActiveThreadsInMemoryEnum.DATABASE.equals(type)) {
+					isControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction();
+					getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva();
+					getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval();
+					//}
+					
 				}
 				this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository();
-				
-				if(this.isControlloTrafficoGestioneCluster()) {
-					this.isControlloTrafficoGestioneCluster_remaining_zeroValue();
-					this.isControlloTrafficoGestioneCluster_limit_roundingDown();
-					this.isControlloTrafficoGestioneCluster_limit_normalizedQuota();
-				}
 				
 				// header limit
 				this.getControlloTrafficoNumeroRichiesteSimultaneeHeaderLimit();
@@ -14240,7 +14243,7 @@ public class OpenSPCoop2Properties {
 	}
 		
 	private static String group_id = null;
-	public String getGroupId() {
+	public String getGroupId(boolean rateLimitingGestioneCluster) {
 		String pName = "org.openspcoop2.pdd.group_id";
 		if(OpenSPCoop2Properties.group_id==null){
 			try{ 
@@ -14249,7 +14252,6 @@ public class OpenSPCoop2Properties {
 				if(name==null) {
 					// Gestione RateLimiting senza una effettiva attivazione di un cluster dinamico
 					if(!isClusterDinamico()) {
-						boolean rateLimitingGestioneCluster = (this.isControlloTrafficoEnabled() && this.isControlloTrafficoGestioneCluster());
 						if(rateLimitingGestioneCluster) {
 							OpenSPCoop2Properties.group_id = org.openspcoop2.utils.Costanti.OPENSPCOOP2;
 						}
@@ -14362,7 +14364,7 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Integer getClusterDinamicoIdNumericoCifre = null;
-	public int getClusterDinamicoIdNumericoCifre() {	
+	public int getClusterDinamicoIdNumericoCifre(boolean rateLimitingGestioneCluster) {	
 		String pName = "org.openspcoop2.pdd.cluster_id.numeric.dinamico.cifre";
 		if(OpenSPCoop2Properties.getClusterDinamicoIdNumericoCifre==null){
 			try{ 
@@ -14378,7 +14380,6 @@ public class OpenSPCoop2Properties {
 				else{
 					// Gestione RateLimiting senza una effettiva attivazione di un cluster dinamico
 					if(!isClusterDinamico()) {
-						boolean rateLimitingGestioneCluster = (this.isControlloTrafficoEnabled() && this.isControlloTrafficoGestioneCluster());
 						if(rateLimitingGestioneCluster) {
 							OpenSPCoop2Properties.getClusterDinamicoIdNumericoCifre = 2; // per default si registra staticamente fino a 99 nodi
 						}
@@ -14398,8 +14399,8 @@ public class OpenSPCoop2Properties {
 
 		return OpenSPCoop2Properties.getClusterDinamicoIdNumericoCifre;
 	}
-	public boolean isClusterIdNumericoDinamico() {
-		return getClusterDinamicoIdNumericoCifre()>0;
+	public boolean isClusterIdNumericoDinamico(boolean rateLimitingGestioneCluster) {
+		return getClusterDinamicoIdNumericoCifre(rateLimitingGestioneCluster)>0;
 	}
 
 	private static Boolean isTimerLockByDatabase = null;
@@ -23470,19 +23471,19 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isControlloTrafficoGestorePolicyTipo;
 	}
 	
-	private static PolicyGroupByActiveThreadsInMemoryEnum getControlloTrafficoGestorePolicyInMemoryType = null;
-	public PolicyGroupByActiveThreadsInMemoryEnum getControlloTrafficoGestorePolicyInMemoryType() throws Exception {	
+	private static PolicyGroupByActiveThreadsType getControlloTrafficoGestorePolicyInMemoryType = null;
+	public PolicyGroupByActiveThreadsType getControlloTrafficoGestorePolicyInMemoryType() throws Exception {	
 		if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryType==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.tipo");
 				if(name==null){
-					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryType = PolicyGroupByActiveThreadsInMemoryEnum.LOCAL;
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryType = PolicyGroupByActiveThreadsType.LOCAL;
 					this.log.warn("Proprieta' 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.tipo' non impostata; viene usato il default: "+OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryType);
 				}
 				else {
 					name = name.trim();
-					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryType = PolicyGroupByActiveThreadsInMemoryEnum.valueOf(name);
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryType = PolicyGroupByActiveThreadsType.valueOf(name);
 				}
 			} catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.tipo': "+e.getMessage(),e);
@@ -23491,6 +23492,75 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryType;
+	}
+	
+	private static Boolean isControlloTrafficoGestioneCluster_remaining_zeroValue = null;
+	public boolean isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodes_remaining_zeroValue(){
+		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.LOCAL_DIVIDED_BY_NODES.remaining.zeroValue";
+		if(OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_remaining_zeroValue==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_remaining_zeroValue = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_remaining_zeroValue = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_remaining_zeroValue = false;
+			}
+		}
+		return OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_remaining_zeroValue;
+	}
+	
+	private static Boolean isControlloTrafficoGestioneCluster_limit_roundingDown = null;
+	public boolean isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodes_limit_roundingDown(){
+		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.LOCAL_DIVIDED_BY_NODES.limit.roundingDown";
+		if(OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_roundingDown==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_roundingDown = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_roundingDown = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_roundingDown = true;
+			}
+		}
+		return OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_roundingDown;
+	}
+	
+	private static Boolean isControlloTrafficoGestioneCluster_limit_normalizedQuota = null;
+	public boolean isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodes_limit_normalizedQuota(){
+		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.LOCAL_DIVIDED_BY_NODES.limit.normalizedQuota";
+		if(OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_normalizedQuota==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_normalizedQuota = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_normalizedQuota = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_normalizedQuota = false;
+			}
+		}
+		return OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_normalizedQuota;
 	}
 	
 	private static Boolean getControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction = null;
@@ -23641,99 +23711,7 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository;
 	}
 	
-	// Gestione Cluster
 	
-	private static Boolean isControlloTrafficoGestioneCluster = null;
-	public boolean isControlloTrafficoGestioneCluster(){
-		String pName = "org.openspcoop2.pdd.controlloTraffico.gestioneCluster.enabled";
-		if(OpenSPCoop2Properties.isControlloTrafficoGestioneCluster==null){
-			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
-
-				if(value!=null){
-					value = value.trim();
-					OpenSPCoop2Properties.isControlloTrafficoGestioneCluster = Boolean.parseBoolean(value);
-				}else{
-					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
-					OpenSPCoop2Properties.isControlloTrafficoGestioneCluster = false;
-				}
-
-			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
-				OpenSPCoop2Properties.isControlloTrafficoGestioneCluster = false;
-			}
-		}
-		return OpenSPCoop2Properties.isControlloTrafficoGestioneCluster;
-	}
-	
-	private static Boolean isControlloTrafficoGestioneCluster_remaining_zeroValue = null;
-	public boolean isControlloTrafficoGestioneCluster_remaining_zeroValue(){
-		String pName = "org.openspcoop2.pdd.controlloTraffico.gestioneCluster.remaining.zeroValue";
-		if(OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_remaining_zeroValue==null){
-			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
-
-				if(value!=null){
-					value = value.trim();
-					OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_remaining_zeroValue = Boolean.parseBoolean(value);
-				}else{
-					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
-					OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_remaining_zeroValue = false;
-				}
-
-			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
-				OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_remaining_zeroValue = false;
-			}
-		}
-		return OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_remaining_zeroValue;
-	}
-	
-	private static Boolean isControlloTrafficoGestioneCluster_limit_roundingDown = null;
-	public boolean isControlloTrafficoGestioneCluster_limit_roundingDown(){
-		String pName = "org.openspcoop2.pdd.controlloTraffico.gestioneCluster.limit.roundingDown";
-		if(OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_roundingDown==null){
-			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
-
-				if(value!=null){
-					value = value.trim();
-					OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_roundingDown = Boolean.parseBoolean(value);
-				}else{
-					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
-					OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_roundingDown = true;
-				}
-
-			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
-				OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_roundingDown = true;
-			}
-		}
-		return OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_roundingDown;
-	}
-	
-	private static Boolean isControlloTrafficoGestioneCluster_limit_normalizedQuota = null;
-	public boolean isControlloTrafficoGestioneCluster_limit_normalizedQuota(){
-		String pName = "org.openspcoop2.pdd.controlloTraffico.gestioneCluster.limit.normalizedQuota";
-		if(OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_normalizedQuota==null){
-			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
-
-				if(value!=null){
-					value = value.trim();
-					OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_normalizedQuota = Boolean.parseBoolean(value);
-				}else{
-					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
-					OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_normalizedQuota = false;
-				}
-
-			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
-				OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_normalizedQuota = false;
-			}
-		}
-		return OpenSPCoop2Properties.isControlloTrafficoGestioneCluster_limit_normalizedQuota;
-	}
 	
 	
 	

@@ -47,6 +47,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.PROPRIETA_AUTENTICAZIONE = new org.openspcoop2.core.config.model.ProprietaModel(new Field("proprieta-autenticazione",org.openspcoop2.core.config.Proprieta.class,"porta-applicativa",PortaApplicativa.class));
 		this.PROPRIETA_AUTORIZZAZIONE = new org.openspcoop2.core.config.model.ProprietaModel(new Field("proprieta-autorizzazione",org.openspcoop2.core.config.Proprieta.class,"porta-applicativa",PortaApplicativa.class));
 		this.PROPRIETA_AUTORIZZAZIONE_CONTENUTO = new org.openspcoop2.core.config.model.ProprietaModel(new Field("proprieta-autorizzazione-contenuto",org.openspcoop2.core.config.Proprieta.class,"porta-applicativa",PortaApplicativa.class));
+		this.PROPRIETA_RATE_LIMITING = new org.openspcoop2.core.config.model.ProprietaModel(new Field("proprieta-rate-limiting",org.openspcoop2.core.config.Proprieta.class,"porta-applicativa",PortaApplicativa.class));
 		this.XACML_POLICY = new Field("xacml-policy",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.SOGGETTI = new org.openspcoop2.core.config.model.PortaApplicativaAutorizzazioneSoggettiModel(new Field("soggetti",org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti.class,"porta-applicativa",PortaApplicativa.class));
 		this.SERVIZI_APPLICATIVI_AUTORIZZATI = new org.openspcoop2.core.config.model.PortaApplicativaAutorizzazioneServiziApplicativiModel(new Field("servizi-applicativi-autorizzati",org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServiziApplicativi.class,"porta-applicativa",PortaApplicativa.class));
@@ -106,6 +107,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.PROPRIETA_AUTENTICAZIONE = new org.openspcoop2.core.config.model.ProprietaModel(new ComplexField(father,"proprieta-autenticazione",org.openspcoop2.core.config.Proprieta.class,"porta-applicativa",PortaApplicativa.class));
 		this.PROPRIETA_AUTORIZZAZIONE = new org.openspcoop2.core.config.model.ProprietaModel(new ComplexField(father,"proprieta-autorizzazione",org.openspcoop2.core.config.Proprieta.class,"porta-applicativa",PortaApplicativa.class));
 		this.PROPRIETA_AUTORIZZAZIONE_CONTENUTO = new org.openspcoop2.core.config.model.ProprietaModel(new ComplexField(father,"proprieta-autorizzazione-contenuto",org.openspcoop2.core.config.Proprieta.class,"porta-applicativa",PortaApplicativa.class));
+		this.PROPRIETA_RATE_LIMITING = new org.openspcoop2.core.config.model.ProprietaModel(new ComplexField(father,"proprieta-rate-limiting",org.openspcoop2.core.config.Proprieta.class,"porta-applicativa",PortaApplicativa.class));
 		this.XACML_POLICY = new ComplexField(father,"xacml-policy",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.SOGGETTI = new org.openspcoop2.core.config.model.PortaApplicativaAutorizzazioneSoggettiModel(new ComplexField(father,"soggetti",org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti.class,"porta-applicativa",PortaApplicativa.class));
 		this.SERVIZI_APPLICATIVI_AUTORIZZATI = new org.openspcoop2.core.config.model.PortaApplicativaAutorizzazioneServiziApplicativiModel(new ComplexField(father,"servizi-applicativi-autorizzati",org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServiziApplicativi.class,"porta-applicativa",PortaApplicativa.class));
@@ -169,6 +171,8 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 	public org.openspcoop2.core.config.model.ProprietaModel PROPRIETA_AUTORIZZAZIONE = null;
 	 
 	public org.openspcoop2.core.config.model.ProprietaModel PROPRIETA_AUTORIZZAZIONE_CONTENUTO = null;
+	 
+	public org.openspcoop2.core.config.model.ProprietaModel PROPRIETA_RATE_LIMITING = null;
 	 
 	public IField XACML_POLICY = null;
 	 

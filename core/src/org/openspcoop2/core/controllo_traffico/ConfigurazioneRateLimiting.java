@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /** <p>Java class for configurazione-rate-limiting complex type.
@@ -37,6 +39,7 @@ import java.io.Serializable;
  * 		&lt;sequence&gt;
  * 			&lt;element name="tipo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1" default="fault"/&gt;
  * 			&lt;element name="tipo-errore-includi-descrizione" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="true"/&gt;
+ * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/core/controllo_traffico}configurazione-rate-limiting-proprieta" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 		&lt;/sequence&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -51,7 +54,8 @@ import java.io.Serializable;
 @XmlType(name = "configurazione-rate-limiting", 
   propOrder = {
   	"tipoErrore",
-  	"tipoErroreIncludiDescrizione"
+  	"tipoErroreIncludiDescrizione",
+  	"proprieta"
   }
 )
 
@@ -95,6 +99,30 @@ public class ConfigurazioneRateLimiting extends org.openspcoop2.utils.beans.Base
     this.tipoErroreIncludiDescrizione = tipoErroreIncludiDescrizione;
   }
 
+  public void addProprieta(ConfigurazioneRateLimitingProprieta proprieta) {
+    this.proprieta.add(proprieta);
+  }
+
+  public ConfigurazioneRateLimitingProprieta getProprieta(int index) {
+    return this.proprieta.get( index );
+  }
+
+  public ConfigurazioneRateLimitingProprieta removeProprieta(int index) {
+    return this.proprieta.remove( index );
+  }
+
+  public List<ConfigurazioneRateLimitingProprieta> getProprietaList() {
+    return this.proprieta;
+  }
+
+  public void setProprietaList(List<ConfigurazioneRateLimitingProprieta> proprieta) {
+    this.proprieta=proprieta;
+  }
+
+  public int sizeProprietaList() {
+    return this.proprieta.size();
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -109,5 +137,35 @@ public class ConfigurazioneRateLimiting extends org.openspcoop2.utils.beans.Base
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="tipo-errore-includi-descrizione",required=true,nillable=false,defaultValue="true")
   protected boolean tipoErroreIncludiDescrizione = true;
+
+  @XmlElement(name="proprieta",required=true,nillable=false)
+  protected List<ConfigurazioneRateLimitingProprieta> proprieta = new ArrayList<ConfigurazioneRateLimitingProprieta>();
+
+  /**
+   * @deprecated Use method getProprietaList
+   * @return List&lt;ConfigurazioneRateLimitingProprieta&gt;
+  */
+  @Deprecated
+  public List<ConfigurazioneRateLimitingProprieta> getProprieta() {
+  	return this.proprieta;
+  }
+
+  /**
+   * @deprecated Use method setProprietaList
+   * @param proprieta List&lt;ConfigurazioneRateLimitingProprieta&gt;
+  */
+  @Deprecated
+  public void setProprieta(List<ConfigurazioneRateLimitingProprieta> proprieta) {
+  	this.proprieta=proprieta;
+  }
+
+  /**
+   * @deprecated Use method sizeProprietaList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeProprieta() {
+  	return this.proprieta.size();
+  }
 
 }

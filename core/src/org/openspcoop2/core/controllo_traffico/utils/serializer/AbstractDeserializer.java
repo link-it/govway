@@ -26,6 +26,7 @@ import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimiting;
+import org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ElencoPolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneControlloTraffico;
@@ -364,6 +365,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public ConfigurazioneRateLimiting readConfigurazioneRateLimitingFromString(String in) throws DeserializerException {
 		return (ConfigurazioneRateLimiting) this.xmlToObj(in.getBytes(), ConfigurazioneRateLimiting.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: configurazione-rate-limiting-proprieta
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * @return Object type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneRateLimitingProprieta readConfigurazioneRateLimitingProprieta(String fileName) throws DeserializerException {
+		return (ConfigurazioneRateLimitingProprieta) this.xmlToObj(fileName, ConfigurazioneRateLimitingProprieta.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * @return Object type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneRateLimitingProprieta readConfigurazioneRateLimitingProprieta(File file) throws DeserializerException {
+		return (ConfigurazioneRateLimitingProprieta) this.xmlToObj(file, ConfigurazioneRateLimitingProprieta.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * @return Object type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneRateLimitingProprieta readConfigurazioneRateLimitingProprieta(InputStream in) throws DeserializerException {
+		return (ConfigurazioneRateLimitingProprieta) this.xmlToObj(in, ConfigurazioneRateLimitingProprieta.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * @return Object type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneRateLimitingProprieta readConfigurazioneRateLimitingProprieta(byte[] in) throws DeserializerException {
+		return (ConfigurazioneRateLimitingProprieta) this.xmlToObj(in, ConfigurazioneRateLimitingProprieta.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * @return Object type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ConfigurazioneRateLimitingProprieta readConfigurazioneRateLimitingProprietaFromString(String in) throws DeserializerException {
+		return (ConfigurazioneRateLimitingProprieta) this.xmlToObj(in.getBytes(), ConfigurazioneRateLimitingProprieta.class);
 	}	
 	
 	

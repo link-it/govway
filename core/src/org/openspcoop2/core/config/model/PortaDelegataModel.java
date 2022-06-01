@@ -46,6 +46,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.PROPRIETA_AUTENTICAZIONE = new org.openspcoop2.core.config.model.ProprietaModel(new Field("proprieta-autenticazione",org.openspcoop2.core.config.Proprieta.class,"porta-delegata",PortaDelegata.class));
 		this.PROPRIETA_AUTORIZZAZIONE = new org.openspcoop2.core.config.model.ProprietaModel(new Field("proprieta-autorizzazione",org.openspcoop2.core.config.Proprieta.class,"porta-delegata",PortaDelegata.class));
 		this.PROPRIETA_AUTORIZZAZIONE_CONTENUTO = new org.openspcoop2.core.config.model.ProprietaModel(new Field("proprieta-autorizzazione-contenuto",org.openspcoop2.core.config.Proprieta.class,"porta-delegata",PortaDelegata.class));
+		this.PROPRIETA_RATE_LIMITING = new org.openspcoop2.core.config.model.ProprietaModel(new Field("proprieta-rate-limiting",org.openspcoop2.core.config.Proprieta.class,"porta-delegata",PortaDelegata.class));
 		this.XACML_POLICY = new Field("xacml-policy",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.PortaDelegataServizioApplicativoModel(new Field("servizio-applicativo",org.openspcoop2.core.config.PortaDelegataServizioApplicativo.class,"porta-delegata",PortaDelegata.class));
 		this.RUOLI = new org.openspcoop2.core.config.model.AutorizzazioneRuoliModel(new Field("ruoli",org.openspcoop2.core.config.AutorizzazioneRuoli.class,"porta-delegata",PortaDelegata.class));
@@ -102,6 +103,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.PROPRIETA_AUTENTICAZIONE = new org.openspcoop2.core.config.model.ProprietaModel(new ComplexField(father,"proprieta-autenticazione",org.openspcoop2.core.config.Proprieta.class,"porta-delegata",PortaDelegata.class));
 		this.PROPRIETA_AUTORIZZAZIONE = new org.openspcoop2.core.config.model.ProprietaModel(new ComplexField(father,"proprieta-autorizzazione",org.openspcoop2.core.config.Proprieta.class,"porta-delegata",PortaDelegata.class));
 		this.PROPRIETA_AUTORIZZAZIONE_CONTENUTO = new org.openspcoop2.core.config.model.ProprietaModel(new ComplexField(father,"proprieta-autorizzazione-contenuto",org.openspcoop2.core.config.Proprieta.class,"porta-delegata",PortaDelegata.class));
+		this.PROPRIETA_RATE_LIMITING = new org.openspcoop2.core.config.model.ProprietaModel(new ComplexField(father,"proprieta-rate-limiting",org.openspcoop2.core.config.Proprieta.class,"porta-delegata",PortaDelegata.class));
 		this.XACML_POLICY = new ComplexField(father,"xacml-policy",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.PortaDelegataServizioApplicativoModel(new ComplexField(father,"servizio-applicativo",org.openspcoop2.core.config.PortaDelegataServizioApplicativo.class,"porta-delegata",PortaDelegata.class));
 		this.RUOLI = new org.openspcoop2.core.config.model.AutorizzazioneRuoliModel(new ComplexField(father,"ruoli",org.openspcoop2.core.config.AutorizzazioneRuoli.class,"porta-delegata",PortaDelegata.class));
@@ -161,6 +163,8 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 	public org.openspcoop2.core.config.model.ProprietaModel PROPRIETA_AUTORIZZAZIONE = null;
 	 
 	public org.openspcoop2.core.config.model.ProprietaModel PROPRIETA_AUTORIZZAZIONE_CONTENUTO = null;
+	 
+	public org.openspcoop2.core.config.model.ProprietaModel PROPRIETA_RATE_LIMITING = null;
 	 
 	public IField XACML_POLICY = null;
 	 

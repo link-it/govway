@@ -126,6 +126,7 @@ import org.openspcoop2.core.controllo_traffico.ElencoIdPolicyAttive;
 import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDConnettore;
 import org.openspcoop2.core.id.IDGenericProperties;
@@ -159,6 +160,8 @@ import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.pdd.core.controllo_traffico.DimensioneMessaggiConfigurationUtils;
 import org.openspcoop2.pdd.core.controllo_traffico.SoglieDimensioneMessaggi;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.InterceptorPolicyUtilities;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
@@ -7459,7 +7462,7 @@ public class ConfigurazionePdDReader {
 			OpenSPCoop2Properties op2Prop = OpenSPCoop2Properties.getInstance();
 			String idNodo = null;
 			if(op2Prop.isClusterDinamico()) {
-				idNodo = op2Prop.getGroupId();
+				idNodo = op2Prop.getGroupId(false);
 			}
 			else {
 				idNodo = op2Prop.getClusterId(false);
@@ -7564,7 +7567,41 @@ public class ConfigurazionePdDReader {
 				tags, canale);
 	}
 
-	
+	protected List<PolicyGroupByActiveThreadsType> getTipiGestoreRateLimiting(Connection connectionPdD) throws DriverConfigurazioneException {
+		
+		List<PolicyGroupByActiveThreadsType> list = new ArrayList<PolicyGroupByActiveThreadsType>();
+		try {
+			PolicyConfiguration pc = this.configurazionePdD.getConfigurazionePolicyRateLimitingGlobali(connectionPdD); 
+			list.add(pc.getType()); // default
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		if(this.configurazionePdD.getDriverConfigurazionePdD() instanceof DriverConfigurazioneDB) {
+			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.configurazionePdD.getDriverConfigurazionePdD();
+			
+			List<String> listPD =  driver.porteDelegateRateLimitingValoriUnivoci(Constants.GESTORE);
+			if(listPD!=null && !listPD.isEmpty()) {
+				for (String type : listPD) {
+					PolicyGroupByActiveThreadsType typeE = PolicyGroupByActiveThreadsType.valueOf(type);
+					if(!list.contains(typeE)) {
+						list.add(typeE);
+					}
+				}
+			}
+			
+			List<String> listPA =  driver.porteApplicativeRateLimitingValoriUnivoci(Constants.GESTORE);
+			if(listPA!=null && !listPA.isEmpty()) {
+				for (String type : listPA) {
+					PolicyGroupByActiveThreadsType typeE = PolicyGroupByActiveThreadsType.valueOf(type);
+					if(!list.contains(typeE)) {
+						list.add(typeE);
+					}
+				}
+			}
+		}
+		
+		return list;
+	}
 	
 	protected List<String> getInitHandlers(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		ConfigurazioneGeneraleHandler confGenerale = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getConfigurazioneHandler();
@@ -7807,6 +7844,10 @@ public class ConfigurazionePdDReader {
 		return this.configurazionePdD.getConfigurazioneControlloTraffico(connectionPdD);
 	}
 
+	public PolicyConfiguration getConfigurazionePolicyRateLimitingGlobali(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getConfigurazionePolicyRateLimitingGlobali(connectionPdD);
+	}
+	
 	public Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> getElencoIdPolicyAttiveAPI(Connection connectionPdD, boolean useCache, TipoPdD tipoPdD, String nomePorta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdD.getElencoIdPolicyAttiveAPI(connectionPdD, useCache, tipoPdD, nomePorta);
 	}

@@ -23,6 +23,7 @@
 							<linkit:sql-table-list>
 								<linkit:sql-comment><![CDATA[CONTROLLO TRAFFICO]]></linkit:sql-comment>
 								<linkit:sql-table object-name="configurazione-generale" object-type="configurazione-generale"/>
+								<linkit:sql-table object-name="configurazione-rate-limiting-proprieta" object-type="configurazione-rate-limiting-proprieta"/>
 								<linkit:sql-table object-name="configurazione-policy" object-type="configurazione-policy" />
 								<linkit:sql-table object-name="attivazione-policy" object-type="attivazione-policy" />
 							</linkit:sql-table-list>
@@ -82,6 +83,28 @@
 		</xsd:complexType>
 	</xsd:element>
 	
+	<xsd:element name="configurazione-rate-limiting-proprieta" type="configurazione-rate-limiting-proprieta">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true" />
+					<linkit:sql-table-mapping name="ct_rt_props"
+						comment="Proprietà generali di configurazione del RateLimiting">
+						<linkit:sql-table-constraint unique="uniq_rt_prop_policy"
+							index="idx_rt_prop_policy" 
+							check="chk_rt_prop_policy"/>
+						<linkit:sql-table-unique create-index="true">
+							<linkit:sql-table-unique-field name="nome"/>
+						</linkit:sql-table-unique>
+						<linkit:sql-table-index>
+							<linkit:sql-table-index-field name="valore"/>
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+	</xsd:element>
+
 	<xsd:element name="configurazione-policy" type="configurazione-policy">
 		<xsd:annotation>
 			<xsd:appinfo>
@@ -416,6 +439,44 @@
 							xmlns:linkit="http://www.link.it/project_generator">
 							<linkit:sql-column-mapping name="rt_includi_errore"/>
 							<linkit:sql-ddl-column-comment><![CDATA[Indicazione se in un eventuale errore deve anche essere inclusa una descrizione]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<!-- Proprietà -->
+			<xsd:element name="proprieta" type="configurazione-rate-limiting-proprieta" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-id-mapping object-name="configurazione-rate-limiting-proprieta" object-type="configurazione-rate-limiting-proprieta"
+									relationship="none"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="configurazione-rate-limiting-proprieta">
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="rt_prop_name"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Nome della proprietà]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="valore" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="rt_prop_value"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Valore associato alla proprietà]]></linkit:sql-ddl-column-comment>
 						</linkit:generator>
 					</xsd:appinfo>
 				</xsd:annotation>

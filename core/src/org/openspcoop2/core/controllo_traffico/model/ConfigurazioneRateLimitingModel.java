@@ -42,6 +42,7 @@ public class ConfigurazioneRateLimitingModel extends AbstractModel<Configurazion
 	
 		this.TIPO_ERRORE = new Field("tipo-errore",java.lang.String.class,"configurazione-rate-limiting",ConfigurazioneRateLimiting.class);
 		this.TIPO_ERRORE_INCLUDI_DESCRIZIONE = new Field("tipo-errore-includi-descrizione",boolean.class,"configurazione-rate-limiting",ConfigurazioneRateLimiting.class);
+		this.PROPRIETA = new org.openspcoop2.core.controllo_traffico.model.ConfigurazioneRateLimitingProprietaModel(new Field("proprieta",org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta.class,"configurazione-rate-limiting",ConfigurazioneRateLimiting.class));
 	
 	}
 	
@@ -51,6 +52,7 @@ public class ConfigurazioneRateLimitingModel extends AbstractModel<Configurazion
 	
 		this.TIPO_ERRORE = new ComplexField(father,"tipo-errore",java.lang.String.class,"configurazione-rate-limiting",ConfigurazioneRateLimiting.class);
 		this.TIPO_ERRORE_INCLUDI_DESCRIZIONE = new ComplexField(father,"tipo-errore-includi-descrizione",boolean.class,"configurazione-rate-limiting",ConfigurazioneRateLimiting.class);
+		this.PROPRIETA = new org.openspcoop2.core.controllo_traffico.model.ConfigurazioneRateLimitingProprietaModel(new ComplexField(father,"proprieta",org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta.class,"configurazione-rate-limiting",ConfigurazioneRateLimiting.class));
 	
 	}
 	
@@ -59,6 +61,8 @@ public class ConfigurazioneRateLimitingModel extends AbstractModel<Configurazion
 	public IField TIPO_ERRORE = null;
 	 
 	public IField TIPO_ERRORE_INCLUDI_DESCRIZIONE = null;
+	 
+	public org.openspcoop2.core.controllo_traffico.model.ConfigurazioneRateLimitingProprietaModel PROPRIETA = null;
 	 
 
 	@Override

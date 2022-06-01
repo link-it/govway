@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
+import org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimiting;
+import org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta;
 import org.openspcoop2.core.controllo_traffico.dao.jdbc.converter.ConfigurazioneGeneraleFieldConverter;
 import org.openspcoop2.core.controllo_traffico.dao.jdbc.fetch.ConfigurazioneGeneraleFetch;
 import org.openspcoop2.generic_project.beans.CustomField;
@@ -41,6 +43,7 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
+import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
 import org.openspcoop2.generic_project.utils.UtilsTemplate;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
@@ -288,7 +291,13 @@ public class JDBCConfigurazioneGeneraleServiceSearchImpl implements IJDBCService
 		configurazioneGenerale = (ConfigurazioneGenerale) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet.createSQLQuery(), jdbcProperties.isShowSql(), ConfigurazioneGenerale.model(), this.getConfigurazioneGeneraleFetch());
 
 
-
+		IPaginatedExpression pagExpr = this.getServiceManager().getConfigurazioneRateLimitingProprietaServiceSearch().newPaginatedExpression();
+		List<ConfigurazioneRateLimitingProprieta> listProprieta = this.getServiceManager().getConfigurazioneRateLimitingProprietaServiceSearch().findAll(pagExpr);
+		if(configurazioneGenerale.getRateLimiting()==null && listProprieta!=null && !listProprieta.isEmpty()) {
+			configurazioneGenerale.setRateLimiting(new ConfigurazioneRateLimiting());
+		}
+		configurazioneGenerale.getRateLimiting().setProprietaList(listProprieta);
+		
 		
         return configurazioneGenerale;  
 	

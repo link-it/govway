@@ -4457,6 +4457,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									protocollo, serviceBindingMessage,
 									paAssociata.getAllegaBody(), paAssociata.getScartaBody(), 
 									paAssociata.getIntegrazione(), behaviour,
+									paAssociata.getProprietaRateLimitingList(),
 									paAssociata.getStateless(), null, 
 									paAssociata.getRicevutaAsincronaSimmetrica(), paAssociata.getRicevutaAsincronaAsimmetrica(),
 									paAssociata.getGestioneManifest(), paAssociata.getConfigurazioneHandler());
@@ -6060,6 +6061,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									protocollo, serviceBindingMessage,
 									pdAssociata.getAllegaBody(), pdAssociata.getScartaBody(), 
 									pdAssociata.getIntegrazione(), null, 
+									pdAssociata.getProprietaRateLimitingList(),
 									pdAssociata.getStateless(), pdAssociata.getLocalForward(), 
 									pdAssociata.getRicevutaAsincronaSimmetrica(), pdAssociata.getRicevutaAsincronaAsimmetrica(),
 									pdAssociata.getGestioneManifest(), pdAssociata.getConfigurazioneHandler());

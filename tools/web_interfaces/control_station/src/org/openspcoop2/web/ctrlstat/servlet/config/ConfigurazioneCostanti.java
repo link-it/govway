@@ -779,6 +779,8 @@ public class ConfigurazioneCostanti {
 	
 	public final static String LABEL_CONFIGURAZIONE_INFORMAZIONI_RUNTIME = "Informazioni Runtime";
 	public final static String LABEL_CONFIGURAZIONE_NUOVA_POLICY = "Nuova";
+	public final static String LABEL_CONFIGURAZIONE_POLICY_CONFIGURAZIONE_SICRONIZZAZIONE_DISTRIBUITA = "Sincronizzazione Distribuita";
+	public final static String LABEL_CONFIGURAZIONE_POLICY_CONFIGURAZIONE_HEADER_HTTP = "Header HTTP";
 	public final static String LABEL_CONFIGURAZIONE_POLICY = "Policy";
 	public final static String LABEL_CONFIGURAZIONE_GLOBAL_POLICY = "Policy";
 	public final static String LABEL_CONFIGURAZIONE_VALORI_SOGLIA = "Valori di Soglia";
@@ -1779,6 +1781,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_TEMPO_MEDIO_RISPOSTA_LABEL = "Tempo Medio di Risposta";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MILLISECONDI_NOTE = "Indicazione in millisecondi (ms)";
 	
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY = "Policy";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_LINK = "Policy";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK = "Policy Globali";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_TIPOLOGIA_ERRORE = "Tipo Errore per le API SOAP";

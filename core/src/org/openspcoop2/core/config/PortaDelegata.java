@@ -46,6 +46,7 @@ import java.util.List;
  * 			&lt;element name="proprieta-autenticazione" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="proprieta-autorizzazione" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="proprieta-autorizzazione-contenuto" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="proprieta-rate-limiting" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="xacml-policy" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}porta-delegata-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config}autorizzazione-ruoli" minOccurs="0" maxOccurs="1"/&gt;
@@ -108,6 +109,7 @@ import java.util.List;
   	"proprietaAutenticazione",
   	"proprietaAutorizzazione",
   	"proprietaAutorizzazioneContenuto",
+  	"proprietaRateLimiting",
   	"xacmlPolicy",
   	"servizioApplicativo",
   	"ruoli",
@@ -276,6 +278,30 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   public int sizeProprietaAutorizzazioneContenutoList() {
     return this.proprietaAutorizzazioneContenuto.size();
+  }
+
+  public void addProprietaRateLimiting(Proprieta proprietaRateLimiting) {
+    this.proprietaRateLimiting.add(proprietaRateLimiting);
+  }
+
+  public Proprieta getProprietaRateLimiting(int index) {
+    return this.proprietaRateLimiting.get( index );
+  }
+
+  public Proprieta removeProprietaRateLimiting(int index) {
+    return this.proprietaRateLimiting.remove( index );
+  }
+
+  public List<Proprieta> getProprietaRateLimitingList() {
+    return this.proprietaRateLimiting;
+  }
+
+  public void setProprietaRateLimitingList(List<Proprieta> proprietaRateLimiting) {
+    this.proprietaRateLimiting=proprietaRateLimiting;
+  }
+
+  public int sizeProprietaRateLimitingList() {
+    return this.proprietaRateLimiting.size();
   }
 
   public java.lang.String getXacmlPolicy() {
@@ -927,6 +953,36 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
   @Deprecated
   public int sizeProprietaAutorizzazioneContenuto() {
   	return this.proprietaAutorizzazioneContenuto.size();
+  }
+
+  @XmlElement(name="proprieta-rate-limiting",required=true,nillable=false)
+  protected List<Proprieta> proprietaRateLimiting = new ArrayList<Proprieta>();
+
+  /**
+   * @deprecated Use method getProprietaRateLimitingList
+   * @return List&lt;Proprieta&gt;
+  */
+  @Deprecated
+  public List<Proprieta> getProprietaRateLimiting() {
+  	return this.proprietaRateLimiting;
+  }
+
+  /**
+   * @deprecated Use method setProprietaRateLimitingList
+   * @param proprietaRateLimiting List&lt;Proprieta&gt;
+  */
+  @Deprecated
+  public void setProprietaRateLimiting(List<Proprieta> proprietaRateLimiting) {
+  	this.proprietaRateLimiting=proprietaRateLimiting;
+  }
+
+  /**
+   * @deprecated Use method sizeProprietaRateLimitingList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeProprietaRateLimiting() {
+  	return this.proprietaRateLimiting.size();
   }
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")

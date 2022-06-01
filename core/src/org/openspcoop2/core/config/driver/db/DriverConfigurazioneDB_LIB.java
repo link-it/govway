@@ -2230,7 +2230,7 @@ public class DriverConfigurazioneDB_LIB {
 					stm.executeUpdate();
 				}
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " associazioni ServizioApplicativo<->PortaDelegata associati alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " associazioni ServizioApplicativo<->PortaDelegata associati alla PortaDelegata[" + idPortaDelegata + "]");
 
 				// set prop autenticazione
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -2248,7 +2248,7 @@ public class DriverConfigurazioneDB_LIB {
 					stm.executeUpdate();
 				}
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " SetProtocolPropAutenticazione associati alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " SetProtocolPropAutenticazione associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				// set prop autorizzazione
@@ -2267,7 +2267,7 @@ public class DriverConfigurazioneDB_LIB {
 					stm.executeUpdate();
 				}
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " SetProtocolPropAutorizzazione associati alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " SetProtocolPropAutorizzazione associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				// set prop autorizzazione contenuto
@@ -2286,7 +2286,29 @@ public class DriverConfigurazioneDB_LIB {
 					stm.executeUpdate();
 				}
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " SetProtocolPropAutorizzazioneContenuto associati alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " SetProtocolPropAutorizzazioneContenuto associati alla PortaDelegata[" + idPortaDelegata + "]");
+				
+				
+				
+				// set prop rate limiting
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_RATE_LIMITING_PROP);
+				sqlQueryObject.addInsertField("id_porta", "?");
+				sqlQueryObject.addInsertField("nome", "?");
+				sqlQueryObject.addInsertField("valore", "?");
+				sqlQuery = sqlQueryObject.createSQLInsert();
+				stm = con.prepareStatement(sqlQuery);
+				for (i = 0; i < aPD.sizeProprietaRateLimitingList(); i++) {
+					Proprieta propProtocollo = aPD.getProprietaRateLimiting(i);
+					stm.setLong(1, aPD.getId());
+					stm.setString(2, propProtocollo.getNome());
+					stm.setString(3, propProtocollo.getValore());
+					stm.executeUpdate();
+				}
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " SetProtocolPropRateLimiting associati alla PortaDelegata[" + idPortaDelegata + "]");
+				
+				
 				
 				
 				
@@ -2306,7 +2328,7 @@ public class DriverConfigurazioneDB_LIB {
 					stm.executeUpdate();
 				}
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " SetProtocolProp associati alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " SetProtocolProp associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				// Ruoli
 				n=0;
@@ -2480,7 +2502,7 @@ public class DriverConfigurazioneDB_LIB {
 						}
 					}
 				}
-				DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " associazioni ExtendedInfo<->PortaDelegata associati alla PortaDelegata[" + idPortaDelegata + "]");
+				DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " associazioni ExtendedInfo<->PortaDelegata associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				break;
 
@@ -3224,6 +3246,46 @@ public class DriverConfigurazioneDB_LIB {
 				
 				
 				
+				/*Proprieta Rate Limiting associate alla Porta Delegata*/
+
+				//La lista di proprieta contiene tutte e sole le proprieta associate alla porta
+				//cancello le proprieta per poi sincronizzarle con la lista passata
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_RATE_LIMITING_PROP);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaDelegata);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Eliminate "+n+" proprieta di rate limiting associate alla Porta Delegata "+idPortaDelegata);
+				// set prop
+				newProps = 0;
+				for (i = 0; i < aPD.sizeProprietaRateLimitingList(); i++) {
+					Proprieta propProtocollo = aPD.getProprietaRateLimiting(i);
+
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_RATE_LIMITING_PROP);
+					sqlQueryObject.addInsertField("id_porta", "?");
+					sqlQueryObject.addInsertField("nome", "?");
+					sqlQueryObject.addInsertField("valore", "?");
+					sqlQuery = sqlQueryObject.createSQLInsert();
+					stm = con.prepareStatement(sqlQuery);
+
+					stm.setLong(1, idPortaDelegata);
+					stm.setString(2, propProtocollo.getNome());
+					stm.setString(3, propProtocollo.getValore());
+					stm.executeUpdate();
+					stm.close();
+					newProps++;
+				}
+				DriverConfigurazioneDB_LIB.log.debug("Inserted " + newProps + " SetProtocolPropRateLimiting associati alla PortaDelegata[" + idPortaDelegata + "]");
+				
+				
+				
+				
+				
+				
 				/*Proprieta associate alla Porta Delegata*/
 
 				//La lista di proprieta contiene tutte e sole le proprieta associate alla porta
@@ -3689,6 +3751,18 @@ public class DriverConfigurazioneDB_LIB {
 				stm.close();
 				if (n > 0)
 					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " SetProtocolProp associati alla PortaDelegata[" + idPortaDelegata + "]");
+				
+				// cancello le prop di rate limiting
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_RATE_LIMITING_PROP);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaDelegata);
+				n=stm.executeUpdate();
+				stm.close();
+				if (n > 0)
+					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " SetProtocolPropRateLimiting associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				// cancello le prop di autorizzazione contenuti
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -5649,7 +5723,7 @@ public class DriverConfigurazioneDB_LIB {
 					
 				}
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " servizi applicativi associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " servizi applicativi associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 
 				
 				
@@ -5711,7 +5785,7 @@ public class DriverConfigurazioneDB_LIB {
 						}
 	
 						stm.close();
-						DriverConfigurazioneDB_LIB.log.debug("Insererted " + j + " SetSAProp associati al Servizio Applicativo [" + nomeSA + "](id:"+idSA+") della PortaApplicativa[" + idPortaApplicativa + "]");
+						DriverConfigurazioneDB_LIB.log.debug("Inseriti " + j + " SetSAProp associati al Servizio Applicativo [" + nomeSA + "](id:"+idSA+") della PortaApplicativa[" + idPortaApplicativa + "]");
 					}
 				}
 				
@@ -5733,7 +5807,7 @@ public class DriverConfigurazioneDB_LIB {
 						stm.executeUpdate();
 					}
 					stm.close();
-					DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " SeBehaviourProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+					DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " SeBehaviourProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				}
 				
 				
@@ -5754,7 +5828,7 @@ public class DriverConfigurazioneDB_LIB {
 					stm.executeUpdate();
 				}
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " SetProtocolPropAutenticazione associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " SetProtocolPropAutenticazione associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				// set prop autorizzazione
@@ -5773,7 +5847,7 @@ public class DriverConfigurazioneDB_LIB {
 					stm.executeUpdate();
 				}
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " SetProtocolPropAutorizzazione associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " SetProtocolPropAutorizzazione associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				
@@ -5793,8 +5867,30 @@ public class DriverConfigurazioneDB_LIB {
 					stm.executeUpdate();
 				}
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " SetProtocolPropAutorizzazioneContenuti associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " SetProtocolPropAutorizzazioneContenuti associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 								
+				
+				
+				// set prop rate limiting
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_RATE_LIMITING_PROP);
+				sqlQueryObject.addInsertField("id_porta", "?");
+				sqlQueryObject.addInsertField("nome", "?");
+				sqlQueryObject.addInsertField("valore", "?");
+				sqlQuery = sqlQueryObject.createSQLInsert();
+				stm = con.prepareStatement(sqlQuery);
+				for (i = 0; i < aPA.sizeProprietaRateLimitingList(); i++) {
+					propProtocollo = aPA.getProprietaRateLimiting(i);
+					stm.setLong(1, idPortaApplicativa);
+					stm.setString(2, propProtocollo.getNome());
+					stm.setString(3, propProtocollo.getValore());
+					stm.executeUpdate();
+				}
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " SetProtocolPropRateLimiting associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				
+				
+				
 				
 				
 				// set prop
@@ -5813,7 +5909,7 @@ public class DriverConfigurazioneDB_LIB {
 					stm.executeUpdate();
 				}
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " SetProtocolProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " SetProtocolProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 
 				
 				// Ruoli
@@ -5918,7 +6014,7 @@ public class DriverConfigurazioneDB_LIB {
 						stm.executeUpdate();
 					}
 					stm.close();
-					DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " servizi applicativi autorizzati associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+					DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " servizi applicativi autorizzati associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				}
 				
 				
@@ -6820,7 +6916,7 @@ public class DriverConfigurazioneDB_LIB {
 						}
 	
 						stm.close();
-						DriverConfigurazioneDB_LIB.log.debug("Insererted " + j + " SetSAProp associati al Servizio Applicativo [" + nomeSA + "](id:"+idSA+") della PortaApplicativa[" + idPortaApplicativa + "]");
+						DriverConfigurazioneDB_LIB.log.debug("Inseriti " + j + " SetSAProp associati al Servizio Applicativo [" + nomeSA + "](id:"+idSA+") della PortaApplicativa[" + idPortaApplicativa + "]");
 					}
 				}
 				
@@ -6855,7 +6951,7 @@ public class DriverConfigurazioneDB_LIB {
 						stm.executeUpdate();
 					}
 					stm.close();
-					DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " SeBehaviourProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+					DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " SeBehaviourProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				}
 				
 				
@@ -6975,6 +7071,49 @@ public class DriverConfigurazioneDB_LIB {
 					newProps++;
 				}
 				DriverConfigurazioneDB_LIB.log.debug("Inserted " + newProps + " SetProtocolPropAutorizzazioneContenuto associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				/*Proprieta rate limiting associate alla Porta Applicativa*/
+				//TODO possibilie ottimizzazione
+				//La lista di proprieta contiene tutte e sole le proprieta associate alla porta
+				//cancello le proprieta per poi sincronizzarle con la lista passata
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_RATE_LIMITING_PROP);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Eliminate "+n+" proprieta di rate limiting associate alla Porta Applicativa "+idPortaApplicativa);
+				// set prop
+				newProps = 0;
+				for (i = 0; i < aPA.sizeProprietaRateLimitingList(); i++) {
+					propProtocollo = aPA.getProprietaRateLimiting(i);
+
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_RATE_LIMITING_PROP);
+					sqlQueryObject.addInsertField("id_porta", "?");
+					sqlQueryObject.addInsertField("nome", "?");
+					sqlQueryObject.addInsertField("valore", "?");
+					sqlQuery = sqlQueryObject.createSQLInsert();
+					stm = con.prepareStatement(sqlQuery);
+
+					stm.setLong(1, idPortaApplicativa);
+					stm.setString(2, propProtocollo.getNome());
+					stm.setString(3, propProtocollo.getValore());
+					stm.executeUpdate();
+					stm.close();
+					newProps++;
+				}
+				DriverConfigurazioneDB_LIB.log.debug("Inserted " + newProps + " SetProtocolPropRateLimiting associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				
@@ -7172,7 +7311,7 @@ public class DriverConfigurazioneDB_LIB {
 						stm.executeUpdate();
 					}
 					stm.close();
-					DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " servizi applicativi autorizzati associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+					DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " servizi applicativi autorizzati associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 				}
 				
 				
@@ -7606,6 +7745,19 @@ public class DriverConfigurazioneDB_LIB {
 				if (n > 0)
 					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " SetProtocolProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 
+				// cancello le prop di rate limiting
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_RATE_LIMITING_PROP);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				n=stm.executeUpdate();
+				stm.close();
+				if (n > 0)
+					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " SetProtocolPropRateLimiting associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+
+				
 				// cancello le prop di autorizzazione contenuti
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP);

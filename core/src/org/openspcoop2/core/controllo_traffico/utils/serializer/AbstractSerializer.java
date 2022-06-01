@@ -28,6 +28,7 @@ import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimiting;
+import org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ElencoPolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneControlloTraffico;
@@ -715,6 +716,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(ConfigurazioneRateLimiting configurazioneRateLimiting,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(ConfigurazioneRateLimiting.class, configurazioneRateLimiting, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: configurazione-rate-limiting-proprieta
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>configurazioneRateLimitingProprieta</var> of type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>configurazioneRateLimitingProprieta</var>
+	 * @param configurazioneRateLimitingProprieta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ConfigurazioneRateLimitingProprieta configurazioneRateLimitingProprieta) throws SerializerException {
+		this.objToXml(fileName, ConfigurazioneRateLimitingProprieta.class, configurazioneRateLimitingProprieta, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>configurazioneRateLimitingProprieta</var> of type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>configurazioneRateLimitingProprieta</var>
+	 * @param configurazioneRateLimitingProprieta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ConfigurazioneRateLimitingProprieta configurazioneRateLimitingProprieta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ConfigurazioneRateLimitingProprieta.class, configurazioneRateLimitingProprieta, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>configurazioneRateLimitingProprieta</var> of type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * 
+	 * @param file Xml file to serialize the object <var>configurazioneRateLimitingProprieta</var>
+	 * @param configurazioneRateLimitingProprieta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ConfigurazioneRateLimitingProprieta configurazioneRateLimitingProprieta) throws SerializerException {
+		this.objToXml(file, ConfigurazioneRateLimitingProprieta.class, configurazioneRateLimitingProprieta, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>configurazioneRateLimitingProprieta</var> of type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * 
+	 * @param file Xml file to serialize the object <var>configurazioneRateLimitingProprieta</var>
+	 * @param configurazioneRateLimitingProprieta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ConfigurazioneRateLimitingProprieta configurazioneRateLimitingProprieta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ConfigurazioneRateLimitingProprieta.class, configurazioneRateLimitingProprieta, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>configurazioneRateLimitingProprieta</var> of type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * 
+	 * @param out OutputStream to serialize the object <var>configurazioneRateLimitingProprieta</var>
+	 * @param configurazioneRateLimitingProprieta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ConfigurazioneRateLimitingProprieta configurazioneRateLimitingProprieta) throws SerializerException {
+		this.objToXml(out, ConfigurazioneRateLimitingProprieta.class, configurazioneRateLimitingProprieta, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>configurazioneRateLimitingProprieta</var> of type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * 
+	 * @param out OutputStream to serialize the object <var>configurazioneRateLimitingProprieta</var>
+	 * @param configurazioneRateLimitingProprieta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ConfigurazioneRateLimitingProprieta configurazioneRateLimitingProprieta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ConfigurazioneRateLimitingProprieta.class, configurazioneRateLimitingProprieta, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>configurazioneRateLimitingProprieta</var> of type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * 
+	 * @param configurazioneRateLimitingProprieta Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ConfigurazioneRateLimitingProprieta configurazioneRateLimitingProprieta) throws SerializerException {
+		return this.objToXml(ConfigurazioneRateLimitingProprieta.class, configurazioneRateLimitingProprieta, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>configurazioneRateLimitingProprieta</var> of type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * 
+	 * @param configurazioneRateLimitingProprieta Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ConfigurazioneRateLimitingProprieta configurazioneRateLimitingProprieta,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ConfigurazioneRateLimitingProprieta.class, configurazioneRateLimitingProprieta, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>configurazioneRateLimitingProprieta</var> of type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * 
+	 * @param configurazioneRateLimitingProprieta Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ConfigurazioneRateLimitingProprieta configurazioneRateLimitingProprieta) throws SerializerException {
+		return this.objToXml(ConfigurazioneRateLimitingProprieta.class, configurazioneRateLimitingProprieta, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>configurazioneRateLimitingProprieta</var> of type {@link org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimitingProprieta}
+	 * 
+	 * @param configurazioneRateLimitingProprieta Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ConfigurazioneRateLimitingProprieta configurazioneRateLimitingProprieta,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ConfigurazioneRateLimitingProprieta.class, configurazioneRateLimitingProprieta, prettyPrint).toString();
 	}
 	
 	
