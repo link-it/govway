@@ -172,7 +172,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyAdd extends Action 
 					tipoSoggettoProprietario = porta.getTipoSoggettoProprietario();
 					nomeSoggettoProprietario = porta.getNomeSoggettoProprietario();
 					// tipo
-					PolicyConfiguration config = new PolicyConfiguration(porta.getProprietaRateLimitingList(), false);
+					PolicyConfiguration config = new PolicyConfiguration(porta.getProprietaRateLimitingList(), confCore.getControlloTrafficoPolicyRateLimitingTipiGestori(), false);
 					type = config.getType();
 				}
 				else {
@@ -181,7 +181,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyAdd extends Action 
 					PortaApplicativa porta = paCore.getPortaApplicativa(idPA);
 					protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(porta.getTipoSoggettoProprietario());
 					// tipo
-					PolicyConfiguration config = new PolicyConfiguration(porta.getProprietaRateLimitingList(), false);
+					PolicyConfiguration config = new PolicyConfiguration(porta.getProprietaRateLimitingList(), confCore.getControlloTrafficoPolicyRateLimitingTipiGestori(), false);
 					type = config.getType();
 				}
 				

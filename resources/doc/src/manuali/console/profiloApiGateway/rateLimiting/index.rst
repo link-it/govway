@@ -14,7 +14,7 @@ questi strumenti è presente nella sezione :ref:`traffico`, dove viene illustrat
 per configurare le policy e più in dettaglio nella sezione :ref:`trafficoPolicy` riguardo
 l'attivazione di policy a valenza globale.
 
-Una policy di rate limiting si compone concettualmente dei seguenti elementi:
+Una policy di rate limiting si compone concettualmente dei seguenti elementi che verranno maggiormente dettagliati nella sezione :ref:`rateLimiting_attivazioneNuovaPolicy`:
 
 - *Criterio di Misurazione*: elemento che consente di calcolare un valore utile per la valutazione della policy. Il valore calcolato dipende dalla **metrica** scelta. La metrica viene scelta in fase di configurazione tra quelle disponibili, che sono:
 
@@ -29,18 +29,21 @@ Una policy di rate limiting si compone concettualmente dei seguenti elementi:
     - *Numero Fault Applicativi*: vengono conteggiate il numero di richieste che veicolano un fault applicativo; raggiunto il limite, ogni successiva richiesta viene bloccata.
     - *Numero Richieste Fallite o Fault Applicativi*: vengono conteggiate il numero di richieste fallite o che veicolano un fault applicativo; raggiunto il limite, ogni successiva richiesta viene bloccata.
 
-  Per ottenere un valore di confronto, alla metrica è necessario associare un intervallo di osservazione che consente di stabilire univocamente il conteggio risultante (fa eccezione 'Numero Richieste Simultanee'). L'intervallo di osservazione può essere espresso scegliendone uno tra i seguenti:
+- *Dimensione della Finestra Temporale*: per ottenere un valore di confronto, alla metrica è necessario associare un intervallo di osservazione che consente di stabilire univocamente il conteggio risultante (fa eccezione la metrica 'Numero Richieste Simultanee'). L'intervallo di osservazione può essere espresso scegliendone uno tra i seguenti:
 
     - *Minuti*
     - *Orario*
     - *Giornaliero*
+
+    .. note::
+	L'intervallo indicato definisce una 'fixed window'. Ad esempio definendo 1 minuto, anche se la prima richiesta arriva alle 12:00:07 l'intervallo di osservazione sarà [12:00:00.000 - 12:00:59.999], il successivo [12:01:00.000 - 12:01:59.999] e così via...
 
 - *Soglia di Confronto*: elemento della policy che fornisce il valore di soglia da confrontare con il valore ottenuto dalla metrica impostata.
 
 - *Filtro di Applicabilità*: elemento della policy che stabilisce i criteri per i quali è applicabile la policy sui flussi in elaborazione sul Gateway (filtro su mittente, api, applicativo, ecc.).
 
 
-Per ogni singola erogazione o fruizione di API è possibile definire più politiche di Rate Limiting, anche con medesima metrica. Per ogni richiesta viene applicato un algoritmo di valutazione delle policy che è il seguente (una descrizione di dettaglio viene fornita nella sezioni successive):
+Per ogni singola erogazione o fruizione di API è possibile definire più politiche di Rate Limiting, anche con medesima metrica. Per ogni richiesta viene applicato un algoritmo di valutazione delle policy che è il seguente (una descrizione di dettaglio viene fornita nella sezione :ref:`rateLimiting_criteriValutazione`):
 
 - le policy vengono raggruppate «per metrica» e per ogni metrica vengono valutate nell’ordine di elenco.
 

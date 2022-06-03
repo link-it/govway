@@ -42,6 +42,16 @@
 				</imports> 
 			</module> 
 		</dependencies> -->
+		<!-- start export dependencies
+		<dependencies>
+			<system export="true">
+				<paths>
+					<path name="sun/reflect"/>
+					<path name="sun/misc"/>
+				</paths>
+			</system>
+		</dependencies>
+		end export dependencies -->
 	</deployment>
 	<sub-deployment name="govway.war">
 		<exclusions>

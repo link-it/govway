@@ -9473,7 +9473,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		if(proprietaRateLimiting!=null && !proprietaRateLimiting.isEmpty()) {
 			try {
-				PolicyConfiguration config = new PolicyConfiguration(proprietaRateLimiting, false);
+				PolicyConfiguration config = new PolicyConfiguration(proprietaRateLimiting, this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(), false);
 				if(!Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DEFAULT.equals(config.getSyncMode()) || !Constants.VALUE_HTTP_HEADER_DEFAULT.equals(config.getHttpMode())) {
 					
 					if(bf.length()>0) {
@@ -19167,7 +19167,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA.equals(ctModalitaSincronizzazione)) {
 			implValues = org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getVALUES_MODALITA_IMPLEMENTAZIONE(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori());
 				
-			if(implValues.size()>1) {
+			if(implValues.size()>1 || (implValues.size()==1 && org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST.equals(implValues.get(0)))) {
 				de = new DataElement();
 				de.setType(DataElementType.SUBTITLE);
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_CONFIGURAZIONE_SICRONIZZAZIONE_DISTRIBUITA);
@@ -19184,12 +19184,16 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setType(DataElementType.HIDDEN);
 		} else {
 			if(implValues.size()==1) {
-				de.setValue(implValues.get(0));
+				ctImplementazione = implValues.get(0);
+				de.setValue(ctImplementazione);
 				de.setType(DataElementType.HIDDEN);
 			}
 			else {
 				de.setValues(implValues);
 				de.setLabels(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getLABELS_MODALITA_IMPLEMENTAZIONE(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori()));
+				if(ctImplementazione==null || StringUtils.isEmpty(ctImplementazione)) {
+					ctImplementazione = implValues.get(0);
+				}
 				de.setSelected(ctImplementazione);
 				de.setType(DataElementType.SELECT);
 				de.setPostBack(true);
@@ -19212,12 +19216,16 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setType(DataElementType.HIDDEN);
 			}
 			else if(values.size()==1){
-				de.setValue(values.get(0));
+				ctContatori = values.get(0);
+				de.setValue(ctContatori);
 				de.setType(DataElementType.HIDDEN);
 			}
 			else {
 				de.setValues(values);
 				de.setLabels(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getLABELS_MODALITA_CONTATORI(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(),ctImplementazione));
+				if(ctContatori==null || StringUtils.isEmpty(ctContatori)) {
+					ctContatori = values.get(0);
+				}
 				de.setSelected(ctContatori);
 				de.setType(DataElementType.SELECT);
 				de.setPostBack(true);
@@ -19239,15 +19247,19 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setType(DataElementType.HIDDEN);
 			}
 			else if(values.size()==1){
-				de.setValue(values.get(0));
+				ctTipologia = values.get(0);
+				de.setValue(ctTipologia);
 				de.setType(DataElementType.HIDDEN);
 			}
 			else {
 				de.setValues(values);
 				de.setLabels(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getLABELS_MODALITA_TIPOLOGIA(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(), ctImplementazione, ctContatori));
+				if(ctTipologia==null || StringUtils.isEmpty(ctTipologia)) {
+					ctTipologia = values.get(0);
+				}
 				de.setSelected(ctTipologia);
 				de.setType(DataElementType.SELECT);
-				de.setPostBack(true);
+				de.setPostBack(false);
 			}
 		}
 		dati.addElement(de);

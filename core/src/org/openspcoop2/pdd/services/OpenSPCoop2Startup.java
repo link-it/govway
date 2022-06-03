@@ -121,6 +121,9 @@ import org.openspcoop2.pdd.core.controllo_traffico.NotificatoreEventi;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.DatiStatisticiDAOManager;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.GestoreCacheControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.GestorePolicyAttive;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.GestorePolicyAttiveInMemory;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.HazelcastManager;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.RedissonManager;
 import org.openspcoop2.pdd.core.eventi.GestoreEventi;
 import org.openspcoop2.pdd.core.handlers.ExitContext;
 import org.openspcoop2.pdd.core.handlers.GeneratoreCasualeDate;
@@ -149,6 +152,7 @@ import org.openspcoop2.pdd.services.core.RicezioneBuste;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
 import org.openspcoop2.pdd.timers.TimerClusterDinamicoThread;
+import org.openspcoop2.pdd.timers.TimerClusteredRateLimitingLocalCache;
 import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativiThread;
 import org.openspcoop2.pdd.timers.TimerEventiThread;
@@ -293,6 +297,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	/** DynamicCluster */
 	private static TimerClusterDinamicoThread threadClusterDinamico;
 	
+	/** Clustered Rate Limiting Timer */
+	private static TimerClusteredRateLimitingLocalCache timerClusteredRateLimitingLocalCache;
+	
+	
 	/** indicazione se è un server j2ee */
 	private boolean serverJ2EE = false;
 	protected long startDate ;
@@ -331,7 +339,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		private void logError(String msg){
 			this.logError(msg,null);
 		}
-		private void logError(String msg,Exception e){
+		private void logError(String msg,Throwable e){
 			if(e==null)
 				OpenSPCoop2Startup.log.error(msg);
 			else
@@ -2424,7 +2432,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					msgDiag.logStartupError(e,"Inizializzazione Cache ControlloTraffico");
 					return;
 				}
-					
+				
 				// Gestore dei Dati Statistici
 				org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico confControlloTraffico = null;
 				try{
@@ -2441,6 +2449,28 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					GestoreCacheControlloTraffico.initialize(confControlloTraffico);
 				}catch(Exception e){
 					msgDiag.logStartupError(e,"Inizializzazione Gestori del ControlloTraffico");
+					return;
+				}
+				
+				// HazelcastManager
+				try{
+					Map<PolicyGroupByActiveThreadsType,String> config = new HashMap<PolicyGroupByActiveThreadsType, String>();
+					config.put(PolicyGroupByActiveThreadsType.HAZELCAST, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastConfigPath());
+					config.put(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath());
+					config.put(PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastLocalCacheConfigPath());
+					config.put(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath());
+					config.put(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath());
+					HazelcastManager.initialize(log, logControlloTraffico, config, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId());
+				}catch(Exception e){
+					msgDiag.logStartupError(e,"Inizializzazione HazelcastManager");
+					return;
+				}
+				
+				// RedisManager
+				try{
+					RedissonManager.initialize(log, logControlloTraffico, propertiesReader.getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrl());
+				}catch(Exception e){
+					msgDiag.logStartupError(e,"Inizializzazione RedisManager");
 					return;
 				}
 				
@@ -2481,17 +2511,29 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 									fDati.delete();
 								}
 							}
-						}catch(Exception e){
+						}catch(Throwable e){
 							String img = null;
 							if(fDati!=null){
 								img = fDati.getAbsolutePath();
 							}
 							logControlloTraffico.error("Inizializzazione dell'immagine ["+img+"] per il Gestore delle Policy di RateLimiting (tipo:"+type+") non riuscita: "+e.getMessage(),e);
 							logCore.error("Inizializzazione dell'immagine ["+img+"] per il Gestore delle Policy di RateLimiting (tipo:"+type+" non riuscita: "+e.getMessage(),e);
-							msgDiag.logStartupError(e,"Inizializzazione Immagine delle Policy di RateLimiting (tipo:"+type+"");
+							msgDiag.logStartupError(e,"Inizializzazione Immagine delle Policy di RateLimiting (tipo:"+type+")");
 							return;
 						}
 					}
+					
+					// ripulisco vecchi contatori rimasti in memoria
+					for (PolicyGroupByActiveThreadsType type : listGestorePolicyRT) {
+						try{
+							GestorePolicyAttive.getInstance(type).cleanOldActiveThreadsPolicy();
+						}catch(Throwable e){
+							logControlloTraffico.error("Pulizia dei dati presenti nella memoria del gestore delle Policy di RateLimiting (tipo:"+type+") non riuscita: "+e.getMessage(),e);
+							logCore.error("Pulizia dei dati presenti nella memoria del gestore delle Policy di RateLimiting (tipo:"+type+") non riuscita: "+e.getMessage(),e);
+							msgDiag.logStartupError(e,"Pulizia dei dati presenti nella memoria del gestore delle Policy di RateLimiting (tipo:"+type+")");
+						}
+					}
+					
 				}
 				
 				boolean force = true;
@@ -3440,6 +3482,21 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		}
 	}
 	
+	public static boolean isStartedTimerClusteredRateLimitingLocalCache() {
+		return OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache!=null;
+	}
+	public static void startTimerClusteredRateLimitingLocalCache(GestorePolicyAttiveInMemory gestore) throws Exception {
+		if(OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache == null) {
+			OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
+			Logger logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(true);//properties.isControlloTrafficoDebug());
+			OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache = new TimerClusteredRateLimitingLocalCache(OpenSPCoop2Logger.getLoggerOpenSPCoopTimers(), gestore);
+			OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache.setTimeout(properties.getControlloTrafficoGestorePolicyInMemoryHazelcastLocalCacheTimerUpdate());
+			OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache.start();
+			logControlloTraffico.info("Thread per l'aggiornamento della LocalCache tramite Hazelcast avviato correttamente");
+		}
+	}
+	
+	
 	/**
 	 * Undeploy dell'applicazione WEB di OpenSPCoop
 	 *
@@ -3697,6 +3754,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					}
 				}
 			}
+			
+			if (OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache != null) {
+				OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache.setStop(true);		
+			}
 		}
 		
 		// Fermo timer runtime
@@ -3829,6 +3890,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			if(OpenSPCoop2Startup.threadClusterDinamico!=null)
 				OpenSPCoop2Startup.threadClusterDinamico.waitShutdown();
 		}catch (Throwable e) {}
+		try{
+			if(OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache!=null)
+				OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache.waitShutdown();
+		}catch (Throwable e) {}
 		
 		// Rilascio lock (da fare dopo che i timer sono stati fermati)
 		// L'errore puo' avvenire poiche' lo shutdown puo' anche disattivare il datasource
@@ -3849,6 +3914,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		try{
 			CorePluginLoader.close(OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
 		}catch(Throwable e){}
+		
+		// *** Hazelcast ***
+		if(properties.isControlloTrafficoEnabled()){
+			HazelcastManager.close();
+		}
 		
 		// Attendo qualche secondo
 		Utilities.sleep(2000);

@@ -37,15 +37,15 @@ public class CostantiControlloTraffico {
 		
 	public final static String LABEL_MODALITA_IMPLEMENTAZIONE = "Implementazione";
 	
-	public final static String LABEL_MODALITA_IMPLEMENTAZIONE_DATABASE = "Database";
-	public final static String LABEL_MODALITA_IMPLEMENTAZIONE_HAZELCAST = "Hazelcast";
-	public final static String LABEL_MODALITA_IMPLEMENTAZIONE_REDIS = "Redis";
+	public final static String LABEL_MODALITA_IMPLEMENTAZIONE_DATABASE = "database";
+	public final static String LABEL_MODALITA_IMPLEMENTAZIONE_HAZELCAST = "hazelcast";
+	public final static String LABEL_MODALITA_IMPLEMENTAZIONE_REDIS = "redis";
 		
 	
 	public final static String LABEL_MODALITA_CONTATORI = "Misurazione";
 	
-	public final static String LABEL_MODALITA_CONTATORI_EXACT = "Esatta";
-	public final static String LABEL_MODALITA_CONTATORI_APPROXIMATED = "Approssimata";
+	public final static String LABEL_MODALITA_CONTATORI_EXACT = "esatta";
+	public final static String LABEL_MODALITA_CONTATORI_APPROXIMATED = "approssimata";
 	
 	public final static String LABEL_MODALITA_TIPOLOGIA = "Algoritmo";
 	
@@ -54,5 +54,7 @@ public class CostantiControlloTraffico {
 	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE = "local-cache";
 	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC = "remote-sync";
 	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC = "remote-async";
+	
+	public final static String LABEL_MODALITA_TIPOLOGIA_REDIS_REDDISSON = "redisson-map";
 
 }

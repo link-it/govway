@@ -74,6 +74,7 @@
 			<include name="security/*"/>
 			<include name="opensaml/*"/>
 			<include name="wss4j/*"/>
+			<include name="redis/*"/>
 			<include name="shared/*"/>
 			<include name="soapbox/*"/>
 			<include name="spring/*"/>

@@ -185,11 +185,11 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 				PolicyConfiguration _policyConfiguration_api = null;
 				if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPD()!=null){
 					PortaDelegata pd = configPdDManager.getPortaDelegata(context.getIntegrazione().getIdPD());
-					_policyConfiguration_api = new PolicyConfiguration(pd.getProprietaRateLimitingList(), true);
+					_policyConfiguration_api = new PolicyConfiguration(pd.getProprietaRateLimitingList());
 				}
 				else if(context.getIntegrazione()!=null && context.getIntegrazione().getIdPA()!=null){
 					PortaApplicativa pa = configPdDManager.getPortaApplicativa(context.getIntegrazione().getIdPA());
-					_policyConfiguration_api = new PolicyConfiguration(pa.getProprietaRateLimitingList(), true);
+					_policyConfiguration_api = new PolicyConfiguration(pa.getProprietaRateLimitingList());
 				}
 				if(_policyConfiguration_api==null) {
 					throw new Exception("Policy configuration not found");
@@ -837,7 +837,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 									headerTrasportoRateLimiting.put(header, rimanenti+"");
 								}
 							}
-						}catch(Exception e) { 
+						}catch(Throwable e) { 
 							// errore non dovrebbe succedere
 						}
 					}
@@ -935,7 +935,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 									headerTrasportoRateLimiting.put(header, maxValue.longValue()+""+sb.toString());
 								}
 							}
-						}catch(Exception e) { 
+						}catch(Throwable e) { 
 							// errore non dovrebbe succedere
 						}
 					}
@@ -985,7 +985,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 									headerTrasportoRateLimiting.put(header, rimanenti+"");
 								}
 							}
-						}catch(Exception e) { 
+						}catch(Throwable e) { 
 							// errore non dovrebbe succedere
 						}
 					}
@@ -1041,7 +1041,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 									headerTrasportoRateLimiting.put(header, sec+"");
 								}
 							}
-						}catch(Exception e) { 
+						}catch(Throwable e) { 
 							// errore non dovrebbe succedere
 						}
 					}

@@ -35,7 +35,21 @@ public enum PolicyGroupByActiveThreadsType {
 
 	LOCAL, 
 	LOCAL_DIVIDED_BY_NODES, 
-	DATABASE;
+	DATABASE,
+	HAZELCAST,
+	HAZELCAST_NEAR_CACHE,
+	HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP,
+	HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP,
+	HAZELCAST_LOCAL_CACHE,
+	REDISSON;
+	
+	public boolean isHazelcast() {
+		return PolicyGroupByActiveThreadsType.HAZELCAST.equals(this) ||
+				PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE.equals(this) ||
+				PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(this) ||
+				PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(this) ||
+				PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE.equals(this);
+	}
 	
 	public String toLabel() {
 		switch (this) {
@@ -45,6 +59,24 @@ public enum PolicyGroupByActiveThreadsType {
 			return CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE_LOCALE_SUDDIVISA_TRA_NODI;
 		case DATABASE:
 			return CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA+" - "+CostantiControlloTraffico.LABEL_MODALITA_IMPLEMENTAZIONE_DATABASE;
+		case HAZELCAST:
+			return CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA+" - "+CostantiControlloTraffico.LABEL_MODALITA_IMPLEMENTAZIONE_HAZELCAST +
+					" ("+CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC+")";
+		case HAZELCAST_NEAR_CACHE:
+			return CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA+" - "+CostantiControlloTraffico.LABEL_MODALITA_IMPLEMENTAZIONE_HAZELCAST +
+					" ("+CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE+")";
+		case HAZELCAST_LOCAL_CACHE:
+			return CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA+" - "+CostantiControlloTraffico.LABEL_MODALITA_IMPLEMENTAZIONE_HAZELCAST +
+					" ("+CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE+")";
+		case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
+			return CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA+" - "+CostantiControlloTraffico.LABEL_MODALITA_IMPLEMENTAZIONE_HAZELCAST +
+					" ("+CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC+")";
+		case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
+			return CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA+" - "+CostantiControlloTraffico.LABEL_MODALITA_IMPLEMENTAZIONE_HAZELCAST +
+					" ("+CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC+")";
+		case REDISSON:
+			return CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA+" - "+CostantiControlloTraffico.LABEL_MODALITA_IMPLEMENTAZIONE_REDIS +
+					" ("+CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_REDIS_REDDISSON+")";
 		}
 		return null;
 	}
@@ -63,6 +95,19 @@ public enum PolicyGroupByActiveThreadsType {
 			all.remove(TipoRisorsaPolicyAttiva.TEMPO_MEDIO_RISPOSTA);
 			return all;
 		case DATABASE:
+			return all;
+		case HAZELCAST:
+			return all;
+		case HAZELCAST_NEAR_CACHE:
+			return all;
+		case HAZELCAST_LOCAL_CACHE:
+			return all;
+		case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
+		case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
+			all.remove(TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_SIMULTANEE);
+			// ALTRE ?
+			return all;
+		case REDISSON:
 			return all;
 		}
 		return null;

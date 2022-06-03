@@ -7347,7 +7347,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				listProprieta.add(p);
 			}
 		}
-		PolicyConfiguration policyConfig = new PolicyConfiguration(listProprieta, false);
+		PolicyConfiguration policyConfig = new PolicyConfiguration(listProprieta, this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(), false);
 		String ctModalitaSincronizzazione = policyConfig.getSyncMode();
 		String ctImplementazione = policyConfig.getImpl();
 		String ctContatori = policyConfig.getCount();
@@ -8163,7 +8163,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				listProprieta.add(p);
 			}
 		}
-		PolicyConfiguration policyConfig = new PolicyConfiguration(listProprieta, false);
+		PolicyConfiguration policyConfig = new PolicyConfiguration(listProprieta, this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(), false);
 		String ctModalitaSincronizzazione = policyConfig.getSyncMode();
 		String ctImplementazione = policyConfig.getImpl();
 		String ctContatori = policyConfig.getCount();

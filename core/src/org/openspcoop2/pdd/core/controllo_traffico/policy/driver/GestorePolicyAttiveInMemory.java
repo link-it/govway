@@ -25,6 +25,8 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -50,6 +52,14 @@ import org.openspcoop2.core.controllo_traffico.driver.PolicyShutdownException;
 import org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbDeserializer;
 import org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbSerializer;
 import org.openspcoop2.pdd.config.DynamicClusterManager;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.HazelcastManager;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedLocalCache;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedNearCache;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedNearCacheWithoutEntryProcessorPutAsync;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedNearCacheWithoutEntryProcessorPutSync;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedNoCache;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.PolicyGroupByActiveThreadsDistributedRedis;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.RedissonManager;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -91,6 +101,8 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 		}
 		
 		switch (this.type) {
+		case LOCAL:
+			break;
 		case LOCAL_DIVIDED_BY_NODES:
 			if(!DynamicClusterManager.isInitialized()) {
 				try {
@@ -110,8 +122,29 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 				}
 			}
 			break;
+			
+		case DATABASE:
+			break;
+		
+		case HAZELCAST:
+		case HAZELCAST_NEAR_CACHE:
+		case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
+		case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
+			HazelcastManager.getInstance(this.type);
+			break;
+		case HAZELCAST_LOCAL_CACHE:
+			HazelcastManager.getInstance(this.type);
+			if(!OpenSPCoop2Startup.isStartedTimerClusteredRateLimitingLocalCache()) {
+				try {
+					OpenSPCoop2Startup.startTimerClusteredRateLimitingLocalCache(this);
+				}catch(Exception e) {
+					throw new PolicyException(e.getMessage(),e);
+				}
+			}
+			break;
 
-		default:
+		case REDISSON:
+			RedissonManager.getRedissonClient();
 			break;
 		}
 	}
@@ -328,6 +361,23 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 		}finally {
 			this.lock.release("resetCountersAllActiveThreadsPolicy");
 		}
+	}
+	
+	public Set<Entry<String, IPolicyGroupByActiveThreadsInMemory>> entrySet() throws PolicyShutdownException, PolicyException{
+		Set<Entry<String, IPolicyGroupByActiveThreadsInMemory>> activeThreadsPolicies;
+		
+		this.lock.acquireThrowRuntime("updateLocalCacheMap");
+		try {
+			
+			if(this.isStop){
+				throw new PolicyShutdownException("Policy Manager shutdown");
+			}
+			activeThreadsPolicies = this.mapActiveThreadsPolicy.entrySet();
+		} finally {
+			this.lock.release("updateLocalCacheMap");
+		}
+		
+		return activeThreadsPolicies;
 	}
 	
 	
@@ -635,6 +685,28 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 		}
 	}
 	
+	@Override
+	public void cleanOldActiveThreadsPolicy() throws PolicyException{
+		this.lock.acquireThrowRuntime("cleanOldActiveThreadsPolicy");
+		try {
+			if(this.mapActiveThreadsPolicy!=null && !this.mapActiveThreadsPolicy.isEmpty()) {
+				for (String uniqueIdMap : this.mapActiveThreadsPolicy.keySet()) {
+					for (PolicyGroupByActiveThreadsType tipo : GestorePolicyAttive.getTipiGestoriAttivi()) {
+						if(!tipo.equals(this.type)) {
+							//System.out.println("======== RIPULISCO DALLA PARTENZA in '"+tipo+"' ["+uniqueIdMap+"] !!!");
+							GestorePolicyAttive.getInstance(tipo).removeActiveThreadsPolicyUnsafe(uniqueIdMap);
+						}
+					}
+				}
+			}
+		}catch(Exception e){
+			throw new PolicyException(e.getMessage(),e);
+		}	
+		finally {
+			this.lock.release("cleanOldActiveThreadsPolicy");
+		}
+	}
+	
 	private IPolicyGroupByActiveThreadsInMemory buildPolicyGroupByActiveThreads(ConfigurazionePolicy configurazionePolicy,
 			AttivazionePolicy attivazionePolicy, Map<IDUnivocoGroupByPolicy, DatiCollezionati> map,
 			ConfigurazioneControlloTraffico configurazioneControlloTraffico) throws Exception{
@@ -682,8 +754,21 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 					(state!=null && state instanceof IState) ? ((IState)state) : null, 
 					datiTransazione!=null ? datiTransazione.getDominio() : null, 
 				    datiTransazione!=null ? datiTransazione.getIdTransazione() : null);
+		case HAZELCAST_LOCAL_CACHE:
+			return new PolicyGroupByActiveThreadsDistributedLocalCache(activePolicy, uniqueIdMap, HazelcastManager.getInstance(this.type));
+		case HAZELCAST_NEAR_CACHE:
+			return new PolicyGroupByActiveThreadsDistributedNearCache(activePolicy, uniqueIdMap, HazelcastManager.getInstance(this.type));
+		case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
+			return new PolicyGroupByActiveThreadsDistributedNearCacheWithoutEntryProcessorPutSync(activePolicy, uniqueIdMap, HazelcastManager.getInstance(this.type));
+		case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
+			return new PolicyGroupByActiveThreadsDistributedNearCacheWithoutEntryProcessorPutAsync(activePolicy, uniqueIdMap, HazelcastManager.getInstance(this.type));
+		case HAZELCAST:
+			return new PolicyGroupByActiveThreadsDistributedNoCache(activePolicy, uniqueIdMap, HazelcastManager.getInstance(this.type));
+		case REDISSON:
+			return new PolicyGroupByActiveThreadsDistributedRedis(activePolicy, uniqueIdMap, RedissonManager.getRedissonClient());
 		}
 		throw new PolicyException("Unsupported type '"+this.type+"'");
 	}
+	
 }
 

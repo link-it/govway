@@ -80,23 +80,41 @@ public class PolicyConfiguration implements Serializable {
 	public PolicyConfiguration(boolean runtime) throws Exception{
 		this.initRuntimeInfo(runtime);
 	}
-	public PolicyConfiguration(List<Proprieta> p, boolean runtime) throws Exception{
+	public PolicyConfiguration(List<Proprieta> p) throws Exception{
+		this(p, null, true);
+	}
+	public PolicyConfiguration(List<Proprieta> p, List<PolicyGroupByActiveThreadsType> tipiSupportati, boolean runtime) throws Exception{
 		if(p!=null && !p.isEmpty()) {
-			this.syncMode = getValue(p, Constants.MODALITA_SINCRONIZZAZIONE, Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DEFAULT);
-			List<PolicyGroupByActiveThreadsType> l = new ArrayList<PolicyGroupByActiveThreadsType>();
-			for (PolicyGroupByActiveThreadsType policyGroupByActiveThreadsInMemoryEnum : PolicyGroupByActiveThreadsType.values()) {
-				l.add(policyGroupByActiveThreadsInMemoryEnum);
+			
+			if(tipiSupportati==null) {
+				if(runtime) {
+					tipiSupportati = new ArrayList<PolicyGroupByActiveThreadsType>();
+					for (PolicyGroupByActiveThreadsType type : PolicyGroupByActiveThreadsType.values()) {
+						tipiSupportati.add(type);
+					}
+				}
+				else {
+					throw new Exception("Tipi supportati non indicati");
+				}
 			}
-			if(!Constants.getVALUES_MODALITA_SINCRONIZZAZIONE(l).contains(this.syncMode)) {
+			
+			this.syncMode = getValue(p, Constants.MODALITA_SINCRONIZZAZIONE, Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DEFAULT);
+			if(!Constants.getVALUES_MODALITA_SINCRONIZZAZIONE(tipiSupportati).contains(this.syncMode)) {
 				throw new Exception("Value '"+this.syncMode+"' unsupported for property '"+Constants.MODALITA_SINCRONIZZAZIONE+"'");
 			}
 			
 			if(Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA.equals(this.syncMode)) {
 				this.impl = getValue(p, Constants.MODALITA_IMPLEMENTAZIONE, null);
 				if(this.impl==null) {
-					throw new Exception("Value undefined for property '"+Constants.MODALITA_IMPLEMENTAZIONE+"'");
+					if(runtime) {
+						throw new Exception("Value undefined for property '"+Constants.MODALITA_IMPLEMENTAZIONE+"'");
+					}
+					else {
+						// default
+						this.impl = Constants.getVALUES_MODALITA_IMPLEMENTAZIONE(tipiSupportati).get(0);
+					}
 				}  
-				if(!Constants.getVALUES_MODALITA_IMPLEMENTAZIONE(l).contains(this.impl)) {
+				if(!Constants.getVALUES_MODALITA_IMPLEMENTAZIONE(tipiSupportati).contains(this.impl)) {
 					throw new Exception("Value '"+this.impl+"' unsupported for property '"+Constants.MODALITA_IMPLEMENTAZIONE+"'");
 				}
 				
@@ -104,18 +122,42 @@ public class PolicyConfiguration implements Serializable {
 					
 					this.count = getValue(p, Constants.MODALITA_CONTATORI, null);
 					if(this.count==null) {
-						throw new Exception("Value undefined for property '"+Constants.MODALITA_CONTATORI+"'");
+						if(runtime) {
+							throw new Exception("Value undefined for property '"+Constants.MODALITA_CONTATORI+"'");
+						}
+						else {
+							// default
+							this.count = Constants.getVALUES_MODALITA_CONTATORI(tipiSupportati, this.impl).get(0);
+						}
 					}  
-					if(!Constants.getVALUES_MODALITA_CONTATORI(l, this.impl).contains(this.count)) {
-						throw new Exception("Value '"+this.count+"' unsupported for property '"+Constants.MODALITA_CONTATORI+"'");
+					if(!Constants.getVALUES_MODALITA_CONTATORI(tipiSupportati, this.impl).contains(this.count)) {
+						if(runtime) {
+							throw new Exception("Value '"+this.count+"' unsupported for property '"+Constants.MODALITA_CONTATORI+"'");
+						}
+						else {
+							// default (e' cambiato impl)
+							this.count = Constants.getVALUES_MODALITA_CONTATORI(tipiSupportati, this.impl).get(0);
+						}
 					}
 					
 					this.engineType = getValue(p, Constants.MODALITA_TIPOLOGIA, null);
 					if(this.engineType==null) {
-						throw new Exception("Value undefined for property '"+Constants.MODALITA_TIPOLOGIA+"'");
+						if(runtime) {
+							throw new Exception("Value undefined for property '"+Constants.MODALITA_TIPOLOGIA+"'");
+						}
+						else {
+							// default
+							this.engineType = Constants.getVALUES_MODALITA_TIPOLOGIA(tipiSupportati, this.impl, this.count).get(0);
+						}
 					}  
-					if(!Constants.getVALUES_MODALITA_TIPOLOGIA(l, this.impl, this.count).contains(this.count)) {
-						throw new Exception("Value '"+this.engineType+"' unsupported for property '"+Constants.MODALITA_TIPOLOGIA+"'");
+					if(!Constants.getVALUES_MODALITA_TIPOLOGIA(tipiSupportati, this.impl, this.count).contains(this.engineType)) {
+						if(runtime) {
+							throw new Exception("Value '"+this.engineType+"' unsupported for property '"+Constants.MODALITA_TIPOLOGIA+"'");
+						}
+						else {
+							// default (e' cambiato impl o count)
+							this.engineType = Constants.getVALUES_MODALITA_TIPOLOGIA(tipiSupportati, this.impl, this.count).get(0);
+						}
 					}
 				}
 			}
@@ -184,11 +226,33 @@ public class PolicyConfiguration implements Serializable {
 				this.type = PolicyGroupByActiveThreadsType.LOCAL_DIVIDED_BY_NODES;
 			}
 			else if(Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA.equals(this.syncMode)) {
-				
 				if(Constants.VALUE_MODALITA_IMPLEMENTAZIONE_DATABASE.equals(this.impl)) {
 					this.type = PolicyGroupByActiveThreadsType.DATABASE;
 				}
-				
+				else if(Constants.VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST.equals(this.impl)) {
+					if(Constants.VALUE_MODALITA_CONTATORI_EXACT.equals(this.count)) {
+						if(Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC.equals(this.engineType)) {
+							this.type = PolicyGroupByActiveThreadsType.HAZELCAST;
+						}
+						else if(Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE.equals(this.engineType)) {
+							this.type = PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE;
+						}
+						else if(Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE.equals(this.engineType)) {
+							this.type = PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE;
+						}
+					}
+					else if(Constants.VALUE_MODALITA_CONTATORI_APPROXIMATED.equals(this.count)) {
+						if(Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC.equals(this.engineType)) {
+							this.type = PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP;
+						}
+						else if(Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC.equals(this.engineType)) {
+							this.type = PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP;
+						}
+					}
+				}
+				else if(Constants.VALUE_MODALITA_IMPLEMENTAZIONE_REDIS.equals(this.impl)) {
+					this.type = PolicyGroupByActiveThreadsType.REDISSON;
+				}
 			}
 		}
 		
@@ -221,6 +285,18 @@ public class PolicyConfiguration implements Serializable {
 				}
 				break;
 			case DATABASE:
+				break;
+			case HAZELCAST:
+				break;
+			case HAZELCAST_NEAR_CACHE:
+				break;
+			case HAZELCAST_LOCAL_CACHE:
+				break;
+			case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
+				break;
+			case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
+				break;
+			case REDISSON:
 				break;
 			}
 			

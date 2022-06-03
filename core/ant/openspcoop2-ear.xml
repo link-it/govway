@@ -640,6 +640,30 @@
 				<var name="com_sun_xml_security_jar" value="xml-security-impl-1.0.jar"/>
 			</then>
 		</if>
+		<!-- hazecalst lib -->
+		<var name="hazelcast-all_jar" value="" />
+		<var name="hazelcast-hibernate_jar" value="" />
+		<var name="hazelcast_properties" value="" />
+		<if>
+			<or>
+				<equals arg1="${hazelcastLibraries}" arg2="true"/>
+			</or>
+			<then>
+				<var name="hazelcast-all_jar" value="hazelcast-all-4.2.5.jar" />
+				<var name="hazelcast-hibernate_jar" value="hibernate-core-6.0.1.Final.jar" />
+				<var name="hazelcast_properties" value="govway.hazelcast*" />
+			</then>
+		</if>
+		<!-- redis lib -->
+		<var name="redis_jar" value="" />
+		<if>
+			<or>
+				<equals arg1="${redisLibraries}" arg2="true"/>
+			</or>
+			<then>
+				<var name="redis_jar" value="*.jar" />
+			</then>
+		</if>
 		<!-- jboss_app -->
 		<var name="jboss_app_xml" value=""/>
 		<if>
@@ -733,7 +757,38 @@
 						</concat>
 					</then>
 				</if>
-				
+				<if>
+					<or>
+						<equals arg1="${hazelcastLibraries}" arg2="true"/>
+						<equals arg1="${redisLibraries}" arg2="true"/>
+					</or>
+					<then>
+						<replace file="${build}/tmp/jboss-deployment-structure.xml" token="&lt;!-- start export dependencies" value="&lt;!-- start export dependencies -->"/>
+						<replace file="${build}/tmp/jboss-deployment-structure.xml" token="end export dependencies -->" value="&lt;!-- end export dependencies -->"/>
+						<if>
+							<and>
+								<equals arg1="${hazelcastLibraries}" arg2="true"/>
+								<not>
+									<equals arg1="${redisLibraries}" arg2="true"/>
+								</not>							
+							</and>
+							<then>
+								<replace file="${build}/tmp/jboss-deployment-structure.xml" token="&lt;path name=&quot;sun/reflect&quot;/>" value="&lt;!-- &lt;path name=&quot;sun/reflect&quot;/> -->"/>					
+							</then>
+						</if>
+						<if>
+							<and>
+								<equals arg1="${redisLibraries}" arg2="true"/>
+								<not>
+									<equals arg1="${hazelcastLibraries}" arg2="true"/>
+								</not>							
+							</and>
+							<then>
+								<replace file="${build}/tmp/jboss-deployment-structure.xml" token="&lt;path name=&quot;sun/misc&quot;/>" value="&lt;!-- &lt;path name=&quot;sun/misc&quot;/> -->"/>					
+							</then>
+						</if>
+					</then>
+				</if>
 			</then>
 		</if>
 		<!-- jboss_all -->
@@ -855,7 +910,12 @@
 				<include name="freemarker-2.3.29.jar"/>
 				<include name="snakeyaml-1.28.jar"/>
 				<include name="rhino-1.7.13.jar"/>
+				<include name="${hazelcast-all_jar}"/>
+				<include name="${hazelcast-hibernate_jar}"/>
 				<!-- NOTA: non includere mai nel runtime Saxon-HE-*.jar poiche' fa agganciare il suo Transformer sostituendosi a Xalan (al massimo vedere di levare la dichiarazione in META-INF) -->
+			</zipfileset>
+			<zipfileset prefix="lib" dir="${required_lib}/redis">
+				<include name="${redis_jar}"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/log">
 				<include name="slf4j-api-1.7.30-gov4j-1.jar"/>
@@ -923,6 +983,9 @@
 				<include name="govway.log4j2.properties" />
 				<include name="govway.protocolAdjunct.log4j2.properties" />
 				<include name="log4j2.properties" />
+			</zipfileset>
+			<zipfileset dir="${properties_dir}/hazelcast" prefix="properties">
+				<include name="${hazelcast_properties}" />
 			</zipfileset>
 			<zipfileset dir="${build}/tmp" prefix="properties">
 				<include name="govway.properties" />

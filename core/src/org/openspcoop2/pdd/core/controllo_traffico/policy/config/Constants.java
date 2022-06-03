@@ -112,7 +112,16 @@ public class Constants {
 			if(PolicyGroupByActiveThreadsType.DATABASE.equals(tipo)) {
 				database = true;
 			}
-			// ...
+			else if(PolicyGroupByActiveThreadsType.HAZELCAST.equals(tipo) ||
+					PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE.equals(tipo) ||
+					PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE.equals(tipo) ||
+					PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(tipo) ||
+					PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(tipo)) {
+				hazelcast = true;
+			}
+			else if(PolicyGroupByActiveThreadsType.REDISSON.equals(tipo)) {
+				redis = true;
+			}
 		}
 		List<String> l = new ArrayList<String>();
 		if(hazelcast) {
@@ -150,7 +159,15 @@ public class Constants {
 		boolean approximated = false;
 		if(VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST.equals(impl)) {
 			for (PolicyGroupByActiveThreadsType tipo : tipiSupportati) {
-				// ...
+				if(PolicyGroupByActiveThreadsType.HAZELCAST.equals(tipo) ||
+						PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE.equals(tipo) ||
+						PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE.equals(tipo)) {
+					exact = true;
+				}
+				else if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(tipo) ||
+						PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(tipo)) {
+					approximated = true;
+				}
 			}
 		}
 		List<String> l = new ArrayList<String>();
@@ -173,6 +190,9 @@ public class Constants {
 	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE = "local-cache";
 	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC = "remote-sync";
 	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC = "remote-async";
+	
+	public final static String VALUE_MODALITA_TIPOLOGIA_REDIS_REDDISSON = "redisson-map";
+	
 	public final static List<String> getVALUES_MODALITA_TIPOLOGIA(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, String counter){
 		return _getMODALITA_TIPOLOGIA(tipiSupportati, impl, counter, true);
 	}
@@ -184,6 +204,9 @@ public class Constants {
 	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE;	
 	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC;	
 	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC;	
+
+	public final static String LABEL_MODALITA_TIPOLOGIA_REDIS_REDDISSON = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_REDIS_REDDISSON;
+
 	public final static List<String> getLABELS_MODALITA_TIPOLOGIA(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, String counter){
 		return _getMODALITA_TIPOLOGIA(tipiSupportati, impl, counter, false);
 	}
@@ -192,7 +215,32 @@ public class Constants {
 		List<String> l = new ArrayList<String>();
 		if(VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST.equals(impl)) {
 			for (PolicyGroupByActiveThreadsType tipo : tipiSupportati) {
-				// ...
+				if(VALUE_MODALITA_CONTATORI_EXACT.equals(counter)) {
+					if(PolicyGroupByActiveThreadsType.HAZELCAST.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC : LABEL_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC);
+					}
+					else if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE : LABEL_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE);
+					}
+					else if(PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE : LABEL_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE);
+					}
+				}
+				else if(VALUE_MODALITA_CONTATORI_APPROXIMATED.equals(counter)) {
+					if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC : LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC);
+					}
+					else if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC : LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC);
+					}
+				}
+			}
+		}
+		else if(VALUE_MODALITA_IMPLEMENTAZIONE_REDIS.equals(impl)) {
+			for (PolicyGroupByActiveThreadsType tipo : tipiSupportati) {
+				if(PolicyGroupByActiveThreadsType.REDISSON.equals(tipo)) {
+					l.add(values ? VALUE_MODALITA_TIPOLOGIA_REDIS_REDDISSON : LABEL_MODALITA_TIPOLOGIA_REDIS_REDDISSON);
+				}
 			}
 		}
 		return l;

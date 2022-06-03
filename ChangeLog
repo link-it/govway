@@ -1,3 +1,9 @@
+2022-06-03  Francesco Scarlato <scarlato@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1365
+	Aggiunti gestori delle policy di RateLimiting utilizzabili su scenari distribuiti che utilizzano la libreria 'Hazelcast'.
+
 2022-06-01  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

@@ -134,7 +134,7 @@ public class ConfigurazionePdD_controlloTraffico extends AbstractConfigurazioneP
 					}
 				}
 				
-				ConfigurazionePdD_controlloTraffico.configurazionePolicyRateLimitingGlobali = new PolicyConfiguration(list, true);
+				ConfigurazionePdD_controlloTraffico.configurazionePolicyRateLimitingGlobali = new PolicyConfiguration(list);
 			}
 			catch(NotFoundException e) {
 				String errorMsg = "Configurazione delle policy globali di rate limiting non trovata: "+e.getMessage();

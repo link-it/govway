@@ -66,4 +66,5 @@ public interface IGestorePolicyAttive {
 	
 	public void initialize(InputStream in,ConfigurazioneControlloTraffico configurazioneControlloTraffico) throws PolicyException;
 	
+	public void cleanOldActiveThreadsPolicy() throws PolicyException;
 }

@@ -840,7 +840,7 @@ public final class PorteDelegateChange extends Action {
 				}
 				
 				if(ctModalitaSincronizzazione==null) {
-					PolicyConfiguration policyConfig = new PolicyConfiguration(pde.getProprietaRateLimitingList(), false);
+					PolicyConfiguration policyConfig = new PolicyConfiguration(pde.getProprietaRateLimitingList(), porteDelegateCore.getControlloTrafficoPolicyRateLimitingTipiGestori(), false);
 					ctModalitaSincronizzazione = policyConfig.getSyncMode();
 					ctImplementazione = policyConfig.getImpl();
 					ctContatori = policyConfig.getCount();

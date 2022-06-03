@@ -933,7 +933,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 							}
 							else{
 								//System.out.println("<"+idTransazione+">registerStartRequest CHECK CONTAINS ["+datiGroupBy+"]=false");
-								datiCollezionati = new DatiCollezionati();
+								datiCollezionati = new DatiCollezionati(this.activePolicy.getInstanceConfiguration().getUpdateTime());
 								//System.out.println("<"+idTransazione+">registerStartRequest PUT");
 								mapActiveThreads.put(datiGroupBy, datiCollezionati); // registro nuova immagine
 							}

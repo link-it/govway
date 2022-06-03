@@ -76,6 +76,11 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 		return this.mapActiveThreads;
 	}
 	
+	
+	public void setMapActiveThreads(Map<IDUnivocoGroupByPolicy, DatiCollezionati> value) {
+		this.mapActiveThreads = value;
+	}
+	
 	@Override
 	public void initMap(Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
 		//synchronized (this.semaphore) {
@@ -128,7 +133,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 			}
 			else{
 				//System.out.println("<"+idTransazione+">registerStartRequest CHECK CONTAINS ["+datiGroupBy+"]=false");
-				datiCollezionati = new DatiCollezionati();
+				datiCollezionati = new DatiCollezionati(this.activePolicy.getInstanceConfiguration().getUpdateTime());
 				//System.out.println("<"+idTransazione+">registerStartRequest PUT");
 				this.mapActiveThreads.put(datiGroupBy, datiCollezionati); // registro nuova immagine
 			}

@@ -149,7 +149,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 					idPD.setNome(nomePorta);
 					PortaDelegata porta = pdCore.getPortaDelegata(idPD);
 					// tipo
-					PolicyConfiguration config = new PolicyConfiguration(porta.getProprietaRateLimitingList(), false);
+					PolicyConfiguration config = new PolicyConfiguration(porta.getProprietaRateLimitingList(), confCore.getControlloTrafficoPolicyRateLimitingTipiGestori(), false);
 					type = config.getType();
 				}
 				else {
@@ -157,7 +157,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 					idPA.setNome(nomePorta);
 					PortaApplicativa porta = paCore.getPortaApplicativa(idPA);
 					// tipo
-					PolicyConfiguration config = new PolicyConfiguration(porta.getProprietaRateLimitingList(), false);
+					PolicyConfiguration config = new PolicyConfiguration(porta.getProprietaRateLimitingList(), confCore.getControlloTrafficoPolicyRateLimitingTipiGestori(), false);
 					type = config.getType();
 				}
 				

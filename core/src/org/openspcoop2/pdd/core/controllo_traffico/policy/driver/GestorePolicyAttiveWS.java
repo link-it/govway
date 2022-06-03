@@ -316,6 +316,10 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 			throws PolicyException {
 		// nop;
 	}
+	@Override
+	public void cleanOldActiveThreadsPolicy() throws PolicyException{
+		// nop;
+	}
 
 	
 }

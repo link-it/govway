@@ -826,7 +826,7 @@ public final class PorteApplicativeChange extends Action {
 				}
 				
 				if(ctModalitaSincronizzazione==null) {
-					PolicyConfiguration policyConfig = new PolicyConfiguration(pa.getProprietaRateLimitingList(), false);
+					PolicyConfiguration policyConfig = new PolicyConfiguration(pa.getProprietaRateLimitingList(), porteApplicativeCore.getControlloTrafficoPolicyRateLimitingTipiGestori(), false);
 					ctModalitaSincronizzazione = policyConfig.getSyncMode();
 					ctImplementazione = policyConfig.getImpl();
 					ctContatori = policyConfig.getCount();

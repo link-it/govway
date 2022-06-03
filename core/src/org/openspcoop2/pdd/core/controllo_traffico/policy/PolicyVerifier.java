@@ -79,9 +79,6 @@ import org.slf4j.Logger;
 public class PolicyVerifier {
 
 	public static List<String> listClusterNodes = null;
-//	public static boolean cluster_remaining_zeroValue = false;
-//	public static boolean cluster_limit_roundingDown = true;
-//	public static boolean cluster_limit_normalizedQuota = false;
 	
 	public static RisultatoVerificaPolicy verifica(
 			ConfigurazionePdDManager configPdDManager, IProtocolFactory<?> protocolFactory,
@@ -107,7 +104,7 @@ public class PolicyVerifier {
 		DatiCollezionati datiCollezionatiReaded = gestorePolicyAttive.getActiveThreadsPolicy(activePolicy,datiTransazione, state).
 				registerStartRequest(logCC,datiTransazione.getIdTransazione(),datiGroupBy);
 		
-		// check fatto solamene nel minuto precedente alla creazione dei nuovi Dati 
+		// check fatto solamente nel minuto precedente alla creazione dei nuovi Dati 
 		Date check = new Date(DateManager.getTimeMillis()-(1000*60));
 		if(datiCollezionatiReaded.getCreationDate().after(check)) {
 			String uniqueIdMap = null;

@@ -1382,7 +1382,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			
 			List<Proprieta> l = driver.getProprietaRateLimiting();
-			PolicyConfiguration p = new PolicyConfiguration(l, false);
+			PolicyConfiguration p = new PolicyConfiguration(l, this.getControlloTrafficoPolicyRateLimitingTipiGestori(), false);
 			return p;
 			
 		} catch (DriverControlStationNotFound de) {
