@@ -513,6 +513,7 @@ public class JDBCAttivazionePolicyServiceSearchImpl implements IJDBCServiceSearc
 		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.NOME_SERVIZIO,true));
 		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.VERSIONE_SERVIZIO,true));
 		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.AZIONE,true));
+		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.TOKEN_CLAIMS,true));
 		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_ENABLED,true));
 		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_TIPO,true));
 		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_NOME,true));

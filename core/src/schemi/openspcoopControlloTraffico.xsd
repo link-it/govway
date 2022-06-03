@@ -232,6 +232,8 @@
 			<xsd:element name="versione-servizio" type="xsd:integer" minOccurs="0" />
 			
 			<xsd:element name="azione" type="xsd:string" minOccurs="0" />
+
+			<xsd:element name="token-claims" type="xsd:string" minOccurs="0" />
 			
 			<xsd:element name="informazione-applicativa-enabled" type="xsd:boolean" default="false" /> <!-- Permette di indicare se il filtro deve utilizzare una informazione applicativa -->		
 			<xsd:element name="informazione-applicativa-tipo" type="xsd:string" minOccurs="0" />			

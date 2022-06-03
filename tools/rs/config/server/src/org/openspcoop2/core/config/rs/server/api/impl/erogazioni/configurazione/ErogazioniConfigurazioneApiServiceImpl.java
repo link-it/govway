@@ -1283,7 +1283,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			List<CorrelazioneApplicativaElemento> lista = env.paCore.porteApplicativeCorrelazioneApplicativaList(pa.getId().intValue(), ricerca);
 
 			if ( env.findall_404 && lista.isEmpty() ) {
-				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting associata");
+				throw FaultCode.NOT_FOUND.toException("Nessuna regola di correlazione applicativa associata");
 			}
 			
 			ListaCorrelazioneApplicativaRichiesta ret = ListaUtils.costruisciListaPaginata(context.getUriInfo(), 
@@ -1340,7 +1340,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			List<CorrelazioneApplicativaRispostaElemento> lista = env.paCore.porteApplicativeCorrelazioneApplicativaRispostaList(pa.getId().intValue(), ricerca);
 
 			if ( env.findall_404 && lista.isEmpty() ) {
-				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting associata");
+				throw FaultCode.NOT_FOUND.toException("Nessuna regola di correlazione applicativa della risposta associata");
 			}
 			
 			ListaCorrelazioneApplicativaRisposta ret = ListaUtils.costruisciListaPaginata(context.getUriInfo(), 

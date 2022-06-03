@@ -1159,6 +1159,18 @@
 					</xsd:appinfo>
 				</xsd:annotation>
 			</xsd:element>
+
+			<xsd:element name="token-claims" type="xsd:string" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="filtro_token_claims" text="true"/>
+							<linkit:sql-ddl-column-comment><![CDATA[L'attivazione della policy riguarda solamente transazioni che possiedono i token claim indicati]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
 			
 			<xsd:element name="informazione-applicativa-enabled" type="xsd:boolean" default="false" > <!-- Permette di indicare se il filtro deve utilizzare una informazione applicativa -->
 				<xsd:annotation>

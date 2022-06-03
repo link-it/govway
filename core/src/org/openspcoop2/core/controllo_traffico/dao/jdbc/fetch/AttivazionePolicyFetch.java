@@ -111,6 +111,8 @@ public class AttivazionePolicyFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "filtro_versione_servizio", AttivazionePolicy.model().FILTRO.VERSIONE_SERVIZIO.getFieldType()));
 				setParameter(object.getFiltro(), "setAzione", AttivazionePolicy.model().FILTRO.AZIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "filtro_azione", AttivazionePolicy.model().FILTRO.AZIONE.getFieldType()));
+				setParameter(object.getFiltro(), "setTokenClaims", AttivazionePolicy.model().FILTRO.TOKEN_CLAIMS.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "filtro_token_claims", AttivazionePolicy.model().FILTRO.TOKEN_CLAIMS.getFieldType()));
 				setParameter(object.getFiltro(), "setInformazioneApplicativaEnabled", AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_ENABLED.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "filtro_key_enabled", AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_ENABLED.getFieldType()));
 				setParameter(object.getFiltro(), "setInformazioneApplicativaTipo", AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_TIPO.getFieldType(),
@@ -227,6 +229,8 @@ public class AttivazionePolicyFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"filtro.versione-servizio"));
 				setParameter(object.getFiltro(), "setAzione", AttivazionePolicy.model().FILTRO.AZIONE.getFieldType(),
 					this.getObjectFromMap(map,"filtro.azione"));
+				setParameter(object.getFiltro(), "setTokenClaims", AttivazionePolicy.model().FILTRO.TOKEN_CLAIMS.getFieldType(),
+					this.getObjectFromMap(map,"filtro.token-claims"));
 				setParameter(object.getFiltro(), "setInformazioneApplicativaEnabled", AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_ENABLED.getFieldType(),
 					this.getObjectFromMap(map,"filtro.informazione-applicativa-enabled"));
 				setParameter(object.getFiltro(), "setInformazioneApplicativaTipo", AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_TIPO.getFieldType(),

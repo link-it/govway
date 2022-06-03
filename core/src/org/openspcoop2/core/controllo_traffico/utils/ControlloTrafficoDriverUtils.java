@@ -1477,6 +1477,13 @@ public class ControlloTrafficoDriverUtils {
 					expression.isNull(AttivazionePolicy.model().FILTRO.SERVIZIO_APPLICATIVO_FRUITORE);
 				}
 				
+				if(filtro.getTokenClaims()!=null){
+					expression.like(AttivazionePolicy.model().FILTRO.TOKEN_CLAIMS, filtro.getTokenClaims(), LikeMode.EXACT); // Colonna CLOB
+				}
+				else{
+					expression.isNull(AttivazionePolicy.model().FILTRO.TOKEN_CLAIMS);
+				}
+				
 				expression.equals(AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_ENABLED, filtro.isInformazioneApplicativaEnabled());
 				if(filtro.isInformazioneApplicativaEnabled() &&
 						filtro.getInformazioneApplicativaTipo()!=null &&

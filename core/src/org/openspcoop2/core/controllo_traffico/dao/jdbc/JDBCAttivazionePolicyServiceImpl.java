@@ -96,6 +96,7 @@ public class JDBCAttivazionePolicyServiceImpl extends JDBCAttivazionePolicyServi
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.NOME_SERVIZIO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.VERSIONE_SERVIZIO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.AZIONE,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.TOKEN_CLAIMS,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_ENABLED,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_TIPO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_NOME,false),"?");
@@ -146,6 +147,7 @@ public class JDBCAttivazionePolicyServiceImpl extends JDBCAttivazionePolicyServi
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getFiltro().getNomeServizio(),AttivazionePolicy.model().FILTRO.NOME_SERVIZIO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getFiltro().getVersioneServizio(),AttivazionePolicy.model().FILTRO.VERSIONE_SERVIZIO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getFiltro().getAzione(),AttivazionePolicy.model().FILTRO.AZIONE.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getFiltro().getTokenClaims(),AttivazionePolicy.model().FILTRO.TOKEN_CLAIMS.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getFiltro().getInformazioneApplicativaEnabled(),AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_ENABLED.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getFiltro().getInformazioneApplicativaTipo(),AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_TIPO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getFiltro().getInformazioneApplicativaNome(),AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_NOME.getFieldType()),
@@ -276,6 +278,8 @@ public class JDBCAttivazionePolicyServiceImpl extends JDBCAttivazionePolicyServi
 		lstObjects.add(new JDBCObject(attivazionePolicy_filtro.getVersioneServizio(), AttivazionePolicy.model().FILTRO.VERSIONE_SERVIZIO.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.AZIONE,false), "?");
 		lstObjects.add(new JDBCObject(attivazionePolicy_filtro.getAzione(), AttivazionePolicy.model().FILTRO.AZIONE.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.TOKEN_CLAIMS,false), "?");
+		lstObjects.add(new JDBCObject(attivazionePolicy_filtro.getTokenClaims(), AttivazionePolicy.model().FILTRO.TOKEN_CLAIMS.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_ENABLED,false), "?");
 		lstObjects.add(new JDBCObject(attivazionePolicy_filtro.getInformazioneApplicativaEnabled(), AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_ENABLED.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_TIPO,false), "?");

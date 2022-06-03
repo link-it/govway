@@ -4331,6 +4331,15 @@ public class ErogazioniApiHelper {
 		
 		dest.setRuoloRichiedente(src.getRuoloFruitore());
 		
+		if(src.getTokenClaims()!=null && !"".equals(src.getTokenClaims())) {
+			List<String> proprieta = new ArrayList<>();
+			String[] psplit = src.getTokenClaims().split("\n");
+			for(String pr: psplit) {
+				proprieta.add(pr);
+			}
+			dest.setTokenClaims(proprieta);
+		}
+		
 		dest.setChiaveNome(src.getInformazioneApplicativaNome());
 		dest.setChiaveTipo(
 				Enums.rateLimitingChiaveEnum.get( TipoFiltroApplicativo.toEnumConstant(src.getInformazioneApplicativaTipo()) )
@@ -4678,6 +4687,18 @@ public class ErogazioniApiHelper {
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_FRUITORE,
 				evalnull( () -> body.getRuoloRichiedente() )  
 			);
+		
+		String tokenClaims = null;
+		if(body.getTokenClaims()!=null && !body.getTokenClaims().isEmpty()) {
+			tokenClaims = String.join("\n", body.getTokenClaims());
+		}
+		if(tokenClaims!=null) {
+			wrap.overrideParameter(
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_TOKEN_CLAIMS,
+					tokenClaims   
+				);
+		}
+		
 		
 		wrap.overrideParameter(
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED,

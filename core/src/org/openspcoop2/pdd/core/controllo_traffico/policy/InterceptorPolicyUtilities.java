@@ -21,6 +21,7 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -49,6 +50,7 @@ import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.slf4j.Logger;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
@@ -356,6 +358,7 @@ public class InterceptorPolicyUtilities {
 					if(informazioniTokenNormalizzate.getUserInfo()!=null) {
 						datiTransazione.setTokenEMail(informazioniTokenNormalizzate.getUserInfo().getEMail());
 					}
+					datiTransazione.setTokenClaims(informazioniTokenNormalizzate.getClaims());
 				}
 			}
 			
@@ -533,7 +536,7 @@ public class InterceptorPolicyUtilities {
 					return false;
 				}
 			}
-			
+						
 			if(filtro.getRuoloErogatore()!=null && !"".equals(filtro.getRuoloErogatore())){
 				if(datiTransazione.getIdServizio() == null ||
 						datiTransazione.getIdServizio().getSoggettoErogatore()==null || 
@@ -650,6 +653,43 @@ public class InterceptorPolicyUtilities {
 					if(!found) {
 						return false;
 					}
+				}
+			}
+			
+			if(filtro.getTokenClaims()!=null && !"".equals(filtro.getTokenClaims())){
+				Properties properties = PropertiesUtilities.convertTextToProperties(filtro.getTokenClaims());
+				boolean isOk = true;
+				if(properties!=null && properties.size()>0) {
+					for (Object o : properties.keySet()) {
+						if(o!=null && o instanceof String) {
+							String key = (String) o;
+							String value = properties.getProperty(key);
+							if(datiTransazione.getTokenClaims()==null || datiTransazione.getTokenClaims().isEmpty()) {
+								isOk = false;
+								break;
+							}
+							if(datiTransazione.getTokenClaims().containsKey(key)==false) {
+								isOk = false;
+								break;
+							}
+							String v = datiTransazione.getTokenClaims().get(key);
+							if(value==null || "".equals(value)) {
+								if (! (v == null || "".equals(v)) ) {
+									isOk = false;
+									break;
+								}
+							}
+							else {
+								if(!value.equals(v)) {
+									isOk = false;
+									break;
+								}
+							}
+						}
+					}
+				}
+				if(!isOk) {
+					return false;
 				}
 			}
 						

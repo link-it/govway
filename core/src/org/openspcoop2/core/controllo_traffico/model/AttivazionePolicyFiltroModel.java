@@ -57,6 +57,7 @@ public class AttivazionePolicyFiltroModel extends AbstractModel<AttivazionePolic
 		this.NOME_SERVIZIO = new Field("nome-servizio",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.VERSIONE_SERVIZIO = new Field("versione-servizio",java.lang.Integer.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.AZIONE = new Field("azione",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
+		this.TOKEN_CLAIMS = new Field("token-claims",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.INFORMAZIONE_APPLICATIVA_ENABLED = new Field("informazione-applicativa-enabled",boolean.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.INFORMAZIONE_APPLICATIVA_TIPO = new Field("informazione-applicativa-tipo",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.INFORMAZIONE_APPLICATIVA_NOME = new Field("informazione-applicativa-nome",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
@@ -85,6 +86,7 @@ public class AttivazionePolicyFiltroModel extends AbstractModel<AttivazionePolic
 		this.NOME_SERVIZIO = new ComplexField(father,"nome-servizio",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.VERSIONE_SERVIZIO = new ComplexField(father,"versione-servizio",java.lang.Integer.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.AZIONE = new ComplexField(father,"azione",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
+		this.TOKEN_CLAIMS = new ComplexField(father,"token-claims",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.INFORMAZIONE_APPLICATIVA_ENABLED = new ComplexField(father,"informazione-applicativa-enabled",boolean.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.INFORMAZIONE_APPLICATIVA_TIPO = new ComplexField(father,"informazione-applicativa-tipo",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.INFORMAZIONE_APPLICATIVA_NOME = new ComplexField(father,"informazione-applicativa-nome",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
@@ -127,6 +129,8 @@ public class AttivazionePolicyFiltroModel extends AbstractModel<AttivazionePolic
 	public IField VERSIONE_SERVIZIO = null;
 	 
 	public IField AZIONE = null;
+	 
+	public IField TOKEN_CLAIMS = null;
 	 
 	public IField INFORMAZIONE_APPLICATIVA_ENABLED = null;
 	 

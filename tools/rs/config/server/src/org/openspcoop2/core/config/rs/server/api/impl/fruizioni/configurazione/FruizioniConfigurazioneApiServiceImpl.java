@@ -1123,7 +1123,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			List<CorrelazioneApplicativaElemento> lista = env.pdCore.porteDelegateCorrelazioneApplicativaList(pd.getId().intValue(), ricerca);
 
 			if ( env.findall_404 && lista.isEmpty() ) {
-				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting associata");
+				throw FaultCode.NOT_FOUND.toException("Nessuna regola di correlazione applicativa associata");
 			}
 			
 			ListaCorrelazioneApplicativaRichiesta ret = ListaUtils.costruisciListaPaginata(context.getUriInfo(), 
@@ -1181,7 +1181,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			List<CorrelazioneApplicativaRispostaElemento> lista = env.pdCore.porteDelegateCorrelazioneApplicativaRispostaList(pd.getId().intValue(), ricerca);
 
 			if ( env.findall_404 && lista.isEmpty() ) {
-				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting associata");
+				throw FaultCode.NOT_FOUND.toException("Nessuna regola di correlazione applicativa della risposta associata");
 			}
 			
 			ListaCorrelazioneApplicativaRisposta ret = ListaUtils.costruisciListaPaginata(context.getUriInfo(), 

@@ -53,6 +53,7 @@ import java.io.Serializable;
  * 			&lt;element name="nome-servizio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="versione-servizio" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="token-claims" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="informazione-applicativa-enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/&gt;
  * 			&lt;element name="informazione-applicativa-tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="informazione-applicativa-nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
@@ -87,6 +88,7 @@ import java.io.Serializable;
   	"nomeServizio",
   	"versioneServizio",
   	"azione",
+  	"tokenClaims",
   	"informazioneApplicativaEnabled",
   	"informazioneApplicativaTipo",
   	"informazioneApplicativaNome",
@@ -266,6 +268,14 @@ public class AttivazionePolicyFiltro extends org.openspcoop2.utils.beans.BaseBea
     this.azione = azione;
   }
 
+  public java.lang.String getTokenClaims() {
+    return this.tokenClaims;
+  }
+
+  public void setTokenClaims(java.lang.String tokenClaims) {
+    this.tokenClaims = tokenClaims;
+  }
+
   public boolean isInformazioneApplicativaEnabled() {
     return this.informazioneApplicativaEnabled;
   }
@@ -378,6 +388,10 @@ public class AttivazionePolicyFiltro extends org.openspcoop2.utils.beans.BaseBea
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="azione",required=false,nillable=false)
   protected java.lang.String azione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="token-claims",required=false,nillable=false)
+  protected java.lang.String tokenClaims;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="informazione-applicativa-enabled",required=true,nillable=false,defaultValue="false")

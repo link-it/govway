@@ -1,3 +1,8 @@
+2022-06-03  Andrea Poli <apoli@link.it>
+
+	Aggiunta possibilità di filtrare policy di rate limiting per token claims
+	ALTER TABLE ct_active_policy ADD COLUMN filtro_token_claims TEXT;
+
 2022-05-30  Andrea Poli <apoli@link.it>
 
 	Aggiunte tabelle 'ct_rt_props', 'pa_ct_properties' e 'pd_ct_properties' per gestire i parametri di configurazione del controllo del traffico

@@ -2881,6 +2881,13 @@ components:
           $ref: 'govway_core.yaml#/components/schemas/NCName'
         applicativo_fruitore:
           $ref: 'govway_core.yaml#/components/schemas/NCName'
+        token_claims:
+          type: "array"
+          description: "Indicare i claims richiesti (nome=valore); è possibile elencare\
+            \ differenti valori ammissibili separandoli con la virgola"
+          items:
+            maxLength: 200
+            type: "string"
         chiave_tipo:
           $ref: '#/components/schemas/RateLimitingChiaveEnum'
         chiave_nome:

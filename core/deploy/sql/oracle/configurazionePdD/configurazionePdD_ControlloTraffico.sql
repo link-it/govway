@@ -208,6 +208,7 @@ CREATE TABLE ct_active_policy
 	filtro_nome_servizio VARCHAR2(255),
 	filtro_versione_servizio NUMBER,
 	filtro_azione CLOB,
+	filtro_token_claims CLOB,
 	-- Filtro per Chiave Applicativa
 	filtro_key_enabled NUMBER NOT NULL,
 	filtro_key_type VARCHAR2(255),

@@ -151,6 +151,7 @@ CREATE TABLE ct_active_policy
 	filtro_nome_servizio VARCHAR(255),
 	filtro_versione_servizio INT,
 	filtro_azione CLOB,
+	filtro_token_claims CLOB,
 	-- Filtro per Chiave Applicativa
 	filtro_key_enabled SMALLINT NOT NULL DEFAULT 0,
 	filtro_key_type VARCHAR(255),

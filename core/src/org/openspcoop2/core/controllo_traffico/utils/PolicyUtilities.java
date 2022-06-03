@@ -21,6 +21,7 @@
 package org.openspcoop2.core.controllo_traffico.utils;
 
 import java.text.SimpleDateFormat;
+import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
@@ -31,6 +32,7 @@ import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.RisultatoStato;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 
 /**
  * PolicyUtilities 
@@ -190,6 +192,23 @@ public class PolicyUtilities {
 				}
 				bf.append("SAFruitore:");
 				bf.append(filtro.getServizioApplicativoFruitore());
+			}
+			
+			if(filtro.getTokenClaims()!=null){
+				Properties properties = PropertiesUtilities.convertTextToProperties(filtro.getTokenClaims());
+				if(properties!=null && properties.size()>0) {
+					for (Object o : properties.keySet()) {
+						if(o!=null && o instanceof String) {
+							String key = (String) o;
+							String value = properties.getProperty(key);
+							if(bf.length()>0){
+								bf.append(", ");
+							}
+							bf.append("Token-").append(key).append(":");
+							bf.append(value);			
+						}
+					}
+				}
 			}
 			
 			if(filtro.isInformazioneApplicativaEnabled()){

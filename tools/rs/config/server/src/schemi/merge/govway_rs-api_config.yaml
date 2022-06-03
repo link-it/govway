@@ -8,7 +8,7 @@ info:
   license:
     name: "GPL v3.0"
     url: "https://www.gnu.org/licenses/gpl-3.0.txt"
-  version: "3.3.6.p1"
+  version: "3.3.7"
   x-api-id: "https://govway.org/apiConfig"
   x-summary: "Servizi per la configurazione di GovWay"
 servers:
@@ -7993,7 +7993,7 @@ components:
               http: "#/components/schemas/ConnettoreHttp"
               file: "#/components/schemas/ConnettoreFile"
               jms: "#/components/schemas/ConnettoreJms"
-              null: "#/components/schemas/ConnettoreNull"
+              "null": "#/components/schemas/ConnettoreNull"
               echo: "#/components/schemas/ConnettoreEcho"
               plugin: "#/components/schemas/ConnettorePlugin"
               applicativo-server: "#/components/schemas/ConnettoreApplicativoServer"
@@ -9018,7 +9018,7 @@ components:
               http: "#/components/schemas/ConnettoreHttp"
               file: "#/components/schemas/ConnettoreFile"
               jms: "#/components/schemas/ConnettoreJms"
-              null: "#/components/schemas/ConnettoreNull"
+              "null": "#/components/schemas/ConnettoreNull"
               echo: "#/components/schemas/ConnettoreEcho"
               plugin: "#/components/schemas/ConnettorePlugin"
               applicativo-server: "#/components/schemas/ConnettoreApplicativoServer"
@@ -9046,7 +9046,7 @@ components:
               http: "#/components/schemas/ConnettoreHttp"
               file: "#/components/schemas/ConnettoreFile"
               jms: "#/components/schemas/ConnettoreJms"
-              null: "#/components/schemas/ConnettoreNull"
+              "null": "#/components/schemas/ConnettoreNull"
               echo: "#/components/schemas/ConnettoreEcho"
               plugin: "#/components/schemas/ConnettorePlugin"
           oneOf:
@@ -10848,6 +10848,13 @@ components:
           $ref: "#/components/schemas/NCName"
         applicativo_fruitore:
           $ref: "#/components/schemas/NCName"
+        token_claims:
+          type: "array"
+          description: "Indicare i claims richiesti (nome=valore); è possibile elencare\
+            \ differenti valori ammissibili separandoli con la virgola"
+          items:
+            maxLength: 200
+            type: "string"
         chiave_tipo:
           $ref: "#/components/schemas/RateLimitingChiaveEnum"
         chiave_nome:

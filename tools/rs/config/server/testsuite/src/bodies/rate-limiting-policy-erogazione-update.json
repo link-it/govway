@@ -5,6 +5,7 @@
 
     "filtro": {
 	"azione": ["GET_pet.findByStatus","GET_pet.findByTags"],
+	"token_claims":["cA=v1","cB=v2"],
         "chiave_tipo": "content-based",
         "chiave_nome": "chiave1",
         "filtro_chiave_valore": "chiave_valore1"

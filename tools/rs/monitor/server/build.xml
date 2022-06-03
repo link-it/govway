@@ -266,6 +266,7 @@
 			<exclude name="**/*README"/>
 			<exclude name="*.userlibraries"/>
 			<exclude name="axis14/*"/>
+                        <exclude name="**/applicationServer/**"/><!-- Non vanno aggiunti, poiche' la sua presenta fa fallire la serializzazione xml: java.lang.NoSuchMethodError: 'com.fasterxml.jackson.core.io.ContentReference com.fasterxml.jackson.dataformat.yaml.YAMLFactory._createContentReference' -->
 		</fileset>
 	</path>
 	<path id="classpath_dist" >

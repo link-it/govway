@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
@@ -185,6 +187,7 @@ import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.transport.http.HttpResponse;
@@ -9139,6 +9142,23 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 			}
 			
+			if(filtro.getTokenClaims()!=null){
+				Properties properties = PropertiesUtilities.convertTextToProperties(filtro.getTokenClaims());
+				if(properties!=null && properties.size()>0) {
+					for (Object o : properties.keySet()) {
+						if(o!=null && o instanceof String) {
+							String key = (String) o;
+							String value = properties.getProperty(key);
+							if(bf.length()>0){
+								bf.append(", ");
+							}
+							bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_TOKEN_CLAIMS_PREFIX).append(key).append(": ");
+							bf.append(value);			
+						}
+					}
+				}
+			}
+			
 			if(filtro.isInformazioneApplicativaEnabled()){
 				if(bf.length()>0){
 					bf.append(", ");
@@ -12223,6 +12243,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 			}
 			
+			// claims
+			String tokenClaims = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_TOKEN_CLAIMS);
+			if(tokenClaims!=null && !"".equals(tokenClaims) && !ConfigurazioneCostanti.VALUE_CONFIGURAZIONE_RATE_LIMITING_QUALSIASI.equals(tokenClaims) ){
+				policy.getFiltro().setTokenClaims(tokenClaims);
+			}
+			else{
+				if(!first){
+					policy.getFiltro().setTokenClaims(null);
+				}
+			}
+			
 			// per Chiave
 			String perChiave = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED);
 			if(first==false){
@@ -12282,6 +12313,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			policy.getFiltro().setTipoServizio(null);
 			policy.getFiltro().setNomeServizio(null);
 			policy.getFiltro().setAzione(null);
+			policy.getFiltro().setTokenClaims(null);
 			policy.getFiltro().setInformazioneApplicativaEnabled(false);
 			policy.getFiltro().setInformazioneApplicativaTipo(null);
 			policy.getFiltro().setInformazioneApplicativaNome(null);
@@ -13915,6 +13947,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		String servizioApplicativoFruitoreSelezionatoLabel = null;
 		String servizioApplicativoFruitoreSelezionatoValue = null;
 		
+		String tokenClaims = null;
+		
 		boolean filtroByKey = false;
 		
 		// Cerco Ruoli con queste caratteristiche
@@ -14607,6 +14641,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 			}
 			
+			tokenClaims = policy.getFiltro().getTokenClaims();
+			
 			// filtro by key se non sono richiesti campionamenti statistici
 			// NON è vero. Il filtro ci può sempre essere
 			//if(infoPolicy!=null && infoPolicy.isUtilizzoRisorseStatistiche()==false){
@@ -15148,6 +15184,18 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setPostBack_viaPOST(true);
 					}
 				}
+				dati.addElement(de);
+			}
+			
+			if(tokenAbilitato) {
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_TOKEN_CLAIMS);
+				de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_TOKEN_CLAIMS_NOTE);
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_TOKEN_CLAIMS);
+				de.setValue(tokenClaims);
+				de.setType(DataElementType.TEXT_AREA);
+				de.setRows(6);
+				de.setCols(55);
 				dati.addElement(de);
 			}
 			
@@ -15965,10 +16013,29 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					policy.getFiltro().getTipoServizio()==null &&
 					policy.getFiltro().getNomeServizio()==null &&
 					policy.getFiltro().getAzione()==null &&
+					policy.getFiltro().getTokenClaims()==null &&
 					policy.getFiltro().isInformazioneApplicativaEnabled()==false){
 				String messaggio = "Se si abilita il filtro deve essere selezionato almeno un criterio";
 				this.pd.setMessage(messaggio);
 				return false;
+			}
+			
+			if(policy.getFiltro().getTokenClaims()!=null && !"".equals(policy.getFiltro().getTokenClaims())) {
+				Scanner scanner = new Scanner(policy.getFiltro().getTokenClaims());
+				try {
+					while (scanner.hasNextLine()) {
+						String line = scanner.nextLine();
+						if(line==null || line.trim().equals("")) {
+							continue;
+						}
+						if(line.contains("=")==false) {
+							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_TOKEN);
+							return false;
+						}
+					}
+				}finally {
+					scanner.close();
+				}
 			}
 			
 			if(policy.getFiltro().isInformazioneApplicativaEnabled()){

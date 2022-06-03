@@ -184,6 +184,7 @@ CREATE TABLE ct_active_policy
 	filtro_nome_servizio VARCHAR(255),
 	filtro_versione_servizio INT,
 	filtro_azione VARCHAR(65535),
+	filtro_token_claims VARCHAR(65535),
 	-- Filtro per Chiave Applicativa
 	filtro_key_enabled BOOLEAN NOT NULL,
 	filtro_key_type VARCHAR(255),

@@ -23,6 +23,8 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.filt
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Date;
+import java.util.Properties;
 import java.util.Vector;
 
 import org.junit.Test;
@@ -33,6 +35,11 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoS
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils.PolicyAlias;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.security.JOSESerialization;
+import org.openspcoop2.utils.security.JWSOptions;
+import org.openspcoop2.utils.security.JsonSignature;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
@@ -555,5 +562,130 @@ public class RestTest extends ConfigLoader {
 	
 	
 
+	
+	
+	@Test
+	public void filtroTokenClaimsErogazione() throws Exception {
+		filtroTokenClaims(TipoServizio.EROGAZIONE, "FiltroTokenClaims","SUB2", "SUB1");
+	}
+	
+	@Test
+	public void filtroTokenClaimsFruizione() throws Exception {
+		filtroTokenClaims(TipoServizio.FRUIZIONE, "FiltroTokenClaims","SUB2", "SUB1");
+	}
+	
+	/**
+	 * Testiamo che la policy venga applicata solo per il soggetto indicato
+	 * nel filtro. Il filtro per soggetto è applicabile solamente per le erogazioni.
+	 * 
+	 * La policy che andiamo a testare è NumeroRichiesteCompletateConSuccesso con
+	 * finestra Oraria.
+	 */
+	public void filtroTokenClaims(TipoServizio tipoServizio, String erogazione, String subNonFiltrato, String subFiltrato) throws Exception {
+		// Sulla stessa api 
+		final int maxRequests = 5;
+
+		// Signature Json
+		JWSOptions options = new JWSOptions(JOSESerialization.COMPACT);
+		Properties signatureProps = new Properties();
+		signatureProps.put("rs.security.keystore.file", "/etc/govway/keys/pa.p12");
+		signatureProps.put("rs.security.keystore.type","pkcs12");
+		signatureProps.put("rs.security.keystore.alias","paP12");
+		signatureProps.put("rs.security.keystore.password","keypa");
+		signatureProps.put("rs.security.key.password","keypa");
+		signatureProps.put("rs.security.signature.algorithm","RS256");
+		signatureProps.put("rs.security.signature.include.cert","false");
+		signatureProps.put("rs.security.signature.include.public.key","false");
+		signatureProps.put("rs.security.signature.include.key.id","true");
+		signatureProps.put("rs.security.signature.include.cert.sha1","false");
+		signatureProps.put("rs.security.signature.include.cert.sha256","false");
+		
+		JsonSignature jsonSignature = null;
+		jsonSignature = new JsonSignature(signatureProps, options);
+		
+		Date now = DateManager.getDate();
+		Date campione = new Date( (now.getTime()/1000)*1000);
+		Date iat = new Date(campione.getTime());
+		
+		String nonFiltrato = "{\n"+
+		  "\"sub\": \""+subNonFiltrato+"\",\n"+
+		  "\"iss\": \"ISS\",\n"+
+		  "\"preferred_username\": \"John Doe\",\n"+
+		  "\"azp\": \"clientTest\",\n"+
+		  "\"iat\": "+(iat.getTime()/1000)+"\n"+
+		"}";
+		String tokenSigned_nonFiltrato = jsonSignature.sign(nonFiltrato);
+		
+		String filtrato = "{\n"+
+		  "\"sub\": \""+subFiltrato+"\",\n"+
+		  "\"iss\": \"ISS\",\n"+
+		  "\"preferred_username\": \"John Doe\",\n"+
+		  "\"azp\": \"clientTest\",\n"+
+		  "\"iat\": "+(iat.getTime()/1000)+"\n"+
+		"}";
+		String tokenSigned_filtrato = jsonSignature.sign(filtrato);
+		
+		
+		final PolicyAlias policy = PolicyAlias.ORARIO;
+		final int windowSize = Utils.getPolicyWindowSize(policy);
+		
+		final String idPolicy = tipoServizio == TipoServizio.EROGAZIONE
+				? dbUtils.getIdPolicyErogazione("SoggettoInternoTest", erogazione, policy)
+				: dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policy);
+				
+
+		final String urlServizio = tipoServizio == TipoServizio.EROGAZIONE
+				? basePath + "/SoggettoInternoTest/"+erogazione+"/v1/orario"
+				: basePath + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1/orario";
+		
+		Utils.resetCounters(idPolicy);
+		Utils.waitForPolicy(policy);
+		Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0);
+		
+		// Faccio N richieste che non devono essere conteggiate perchè di un richiedente non filtrato
+		
+		HttpRequest requestNonFiltrata = new HttpRequest();
+		requestNonFiltrata.setContentType("application/json");
+		requestNonFiltrata.setMethod(HttpRequestMethod.GET);
+		requestNonFiltrata.setUrl(urlServizio);
+		requestNonFiltrata.addHeader(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+tokenSigned_nonFiltrato);
+		
+		Vector<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests+1);
+		
+		assertEquals(maxRequests+1, nonFiltrateResponses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
+		
+		Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0);
+
+		// Faccio N richieste che devono far scattare la policy perchè di un richiedente filtrato
+		
+		HttpRequest requestFiltrata = new HttpRequest();
+		requestFiltrata.setContentType("application/json");
+		requestFiltrata.setMethod(HttpRequestMethod.GET);
+		requestFiltrata.setUrl(urlServizio);
+		requestFiltrata.addHeader(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+tokenSigned_filtrato);
+		
+		
+		Vector<HttpResponse> filtrateResponsesOk = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
+		
+		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
+
+		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.RestTest.checkOkRequests(filtrateResponsesOk, windowSize, maxRequests);
+		
+		Vector<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
+		
+		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, maxRequests);
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.RestTest.checkFailedRequests(filtrateResponsesBlocked, windowSize, maxRequests);
+		
+		// Faccio N richieste che non devono essere filtrate e devono passare
+		
+		nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests+1);
+			
+		assertEquals(maxRequests+1, nonFiltrateResponses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
+			
+		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, maxRequests);
+		
+	}
+	
 
 }

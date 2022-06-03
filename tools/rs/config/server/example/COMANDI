@@ -535,6 +535,7 @@ Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate su
 
 	+ ADD RATE LIMITING POLICY
 ./add erogazioni/PetStore/2/configurazioni/rate-limiting bodies/RateLimitingPolicyErogazioneNew.json gruppo=GruppoJson
+./add erogazioni/PetStore/2/configurazioni/rate-limiting bodies/RateLimitingPolicyErogazioneTokenClaims.json gruppo=GruppoJson
 
 	+ LIST RATE LIMITING POLICY
 ./get erogazioni/PetStore/2/configurazioni/rate-limiting/ gruppo=GruppoJson

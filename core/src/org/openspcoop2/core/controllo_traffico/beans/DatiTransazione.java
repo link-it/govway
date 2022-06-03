@@ -22,7 +22,9 @@ package org.openspcoop2.core.controllo_traffico.beans;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
@@ -67,6 +69,8 @@ public class DatiTransazione extends org.openspcoop2.utils.beans.BaseBean implem
 	private String tokenClientId;
 	private String tokenUsername;
 	private String tokenEMail; 
+	
+	private Map<String, String> tokenClaims;
 	
 
 	
@@ -210,5 +214,21 @@ public class DatiTransazione extends org.openspcoop2.utils.beans.BaseBean implem
 
 	public void setTokenEMail(String tokenEMail) {
 		this.tokenEMail = tokenEMail;
+	}
+	
+	public Map<String, String> getTokenClaims() {
+		return this.tokenClaims;
+	}
+
+	public void setTokenClaims(Map<String, Object> tokenClaims) {
+		this.tokenClaims = new HashMap<String, String>();
+		if(tokenClaims!=null && !tokenClaims.isEmpty()) {
+			for (String key : tokenClaims.keySet()) {
+				Object v = tokenClaims.get(key);
+				if(v!=null && v instanceof String) {
+					this.tokenClaims.put(key, (String) v);
+				}
+			}
+		}
 	}
 }

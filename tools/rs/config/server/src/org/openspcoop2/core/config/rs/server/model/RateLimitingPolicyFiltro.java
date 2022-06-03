@@ -37,6 +37,12 @@ public class RateLimitingPolicyFiltro  {
   @Schema(description = "")
   private String applicativoFruitore = null;
   
+  @Schema(description = "Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola")
+ /**
+   * Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola  
+  **/
+  private List<String> tokenClaims = null;
+  
   @Schema(description = "")
   private RateLimitingChiaveEnum chiaveTipo = null;
   
@@ -114,6 +120,30 @@ public class RateLimitingPolicyFiltro  {
   }
 
  /**
+   * Indicare i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
+   * @return tokenClaims
+  **/
+  @JsonProperty("token_claims")
+  @Valid
+  public List<String> getTokenClaims() {
+    return this.tokenClaims;
+  }
+
+  public void setTokenClaims(List<String> tokenClaims) {
+    this.tokenClaims = tokenClaims;
+  }
+
+  public RateLimitingPolicyFiltro tokenClaims(List<String> tokenClaims) {
+    this.tokenClaims = tokenClaims;
+    return this;
+  }
+
+  public RateLimitingPolicyFiltro addTokenClaimsItem(String tokenClaimsItem) {
+    this.tokenClaims.add(tokenClaimsItem);
+    return this;
+  }
+
+ /**
    * Get chiaveTipo
    * @return chiaveTipo
   **/
@@ -179,6 +209,7 @@ public class RateLimitingPolicyFiltro  {
     sb.append("    azione: ").append(RateLimitingPolicyFiltro.toIndentedString(this.azione)).append("\n");
     sb.append("    ruoloRichiedente: ").append(RateLimitingPolicyFiltro.toIndentedString(this.ruoloRichiedente)).append("\n");
     sb.append("    applicativoFruitore: ").append(RateLimitingPolicyFiltro.toIndentedString(this.applicativoFruitore)).append("\n");
+    sb.append("    tokenClaims: ").append(RateLimitingPolicyFiltro.toIndentedString(this.tokenClaims)).append("\n");
     sb.append("    chiaveTipo: ").append(RateLimitingPolicyFiltro.toIndentedString(this.chiaveTipo)).append("\n");
     sb.append("    chiaveNome: ").append(RateLimitingPolicyFiltro.toIndentedString(this.chiaveNome)).append("\n");
     sb.append("    filtroChiaveValore: ").append(RateLimitingPolicyFiltro.toIndentedString(this.filtroChiaveValore)).append("\n");

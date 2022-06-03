@@ -1,0 +1,28 @@
+{
+    "nome": "policyTest",
+    "stato": "abilitato",
+    
+    "configurazione": {
+	"identificazione": "criteri",
+	"metrica": "occupazione-banda",
+	"intervallo": "orario"
+    },
+
+    "soglia_ridefinita": true,
+    "soglia_valore": 302,
+
+    "filtro": {
+        "soggetto_fruitore": "SoggettoJson",
+        "chiave_tipo": "content-based",
+        "chiave_nome": "chiave1",
+	"token_claims":["cA=v1","cB=v2"],
+        "filtro_chiave_valore": "chiave_valore1"
+    },
+
+    "raggruppamento": {
+        "richiedente": false,
+        "azione": true,
+        "chiave_tipo": "content-based",
+        "chiave_nome": "chiave_nome1"
+    }
+}

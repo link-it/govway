@@ -262,6 +262,13 @@ public class AttivazionePolicyFieldConverter extends AbstractSQLFieldConverter {
 				return "filtro_azione";
 			}
 		}
+		if(field.equals(AttivazionePolicy.model().FILTRO.TOKEN_CLAIMS)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".filtro_token_claims";
+			}else{
+				return "filtro_token_claims";
+			}
+		}
 		if(field.equals(AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_ENABLED)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".filtro_key_enabled";
@@ -483,6 +490,9 @@ public class AttivazionePolicyFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(AttivazionePolicy.model().FILTRO, returnAlias);
 		}
 		if(field.equals(AttivazionePolicy.model().FILTRO.AZIONE)){
+			return this.toTable(AttivazionePolicy.model().FILTRO, returnAlias);
+		}
+		if(field.equals(AttivazionePolicy.model().FILTRO.TOKEN_CLAIMS)){
 			return this.toTable(AttivazionePolicy.model().FILTRO, returnAlias);
 		}
 		if(field.equals(AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_ENABLED)){
