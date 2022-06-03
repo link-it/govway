@@ -99,6 +99,8 @@ Si compilano i campi seguenti:
 
    -  *Soggetto o Applicativo Fruitore*: In aternativca al filtro per ruolo, è possibile specificare un soggetto fruitore ed eventualmente uno dei suoi applicativi.
 
+   -  *Token Claims*: consente di indicare per riga (nome=valore) i "claims" che le richieste devono possedere nel token OAuth2.
+
    -  *Chiave*: Si tratta di un'opzione avanzata che consente
       di filtrare le richieste in ingresso sul gateway in base ad una
       chiave che può essere specificata in maniera personalizzata

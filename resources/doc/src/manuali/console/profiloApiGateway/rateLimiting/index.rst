@@ -43,6 +43,8 @@ Una policy di rate limiting si compone concettualmente dei seguenti elementi che
 - *Filtro di Applicabilità*: elemento della policy che stabilisce i criteri per i quali è applicabile la policy sui flussi in elaborazione sul Gateway (filtro su mittente, api, applicativo, ecc.).
 
 
+*Criteri di valutazione delle policy*
+
 Per ogni singola erogazione o fruizione di API è possibile definire più politiche di Rate Limiting, anche con medesima metrica. Per ogni richiesta viene applicato un algoritmo di valutazione delle policy che è il seguente (una descrizione di dettaglio viene fornita nella sezione :ref:`rateLimiting_criteriValutazione`):
 
 - le policy vengono raggruppate «per metrica» e per ogni metrica vengono valutate nell’ordine di elenco.
@@ -54,8 +56,30 @@ Per ogni singola erogazione o fruizione di API è possibile definire più politi
 - se la policy non viola invece i livelli di soglia previsti, si prosegue nella valutazione di ulteriori policy per quella metrica, solo se la policy è marcata come «prosegui».
 
 
+*Header HTTP informativi restituiti ai client: quote e finestre temporali*
+
+All'applicativo client vengono restituiti header http informativi che consentono di conoscere:
+
+- il numero massimo di richieste effettuabili (quota);
+- la finestra temporale in cui si applica la quota (informazione non attiva per default);
+- il numero di secondi mancanti alla prossima finestra temporale dove il numero di richieste conteggiate verrà azzerato;
+- il numero di richieste ancora effettuabili nella finestra temporale in corso;
+- in caso di violazione della policy, il numero di secondi dopo i quali riprovare ad utilizzare il servizio.
+
+Una descrizione di dettaglio degli header http viene fornita nella sezione :ref:`headerGWRateLimiting`.
+
+
+*Rate Limiting in un cluster di nodi*
+
+Se si desidera applicare un rate limiting in presenza di un cluster di più nodi, è necessario attuare una configurazione differente da quella di default.
+Se ogni nodo effettua il proprio conteggio, un client potrebbe violare una policy solamente su alcuni nodi e non su altri.
+Nella sezione :ref:`headerGWRateLimitingCluster` vengono descritte diverse modalità di configurazione di GovWay in modo da supportare il rate limiting in presenza di più nodi.
+
+
 .. toctree::
    :maxdepth: 2
 
    attivazioneNuovaPolicy
    criteriValutazione
+   headerXRateLimit/index
+   cluster/index

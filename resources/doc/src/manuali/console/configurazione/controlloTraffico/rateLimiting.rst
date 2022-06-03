@@ -27,13 +27,17 @@ traffico. Gli elementi di configurazione presenti sono:
       Descrizione Errore* è abilitato, od una risposta http vuota
       altrimenti.
 
--  *Registro Policy*: Consente di accedere al Registro delle Policy per
+-  *Sincronizzazione*: consente di configurare la modalità di conteggio delle policy di rate limiting in modo da supportare scenari di cluster di più nodi. I parametri di configurazione sono identici a quanto descritto nella sezione :ref:`headerGWRateLimitingCluster`.
+
+-  *HTTP Headers*: permette di personalizzare gli header HTTP ritornati al client che contengono informazioni sulle policy di rate limiting attive. I parametri di configurazione sono identici a quanto descritto nella sezione :ref:`headerGWRateLimitingConfig`.
+
+-  *Registro Policy*: consente di accedere al Registro delle Policy per
    visualizzare, modificare e creare le policy di controllo istanziabili
    per la configurazione del rate limiting. Tra parentesi viene
    visualizzato il numero di policy attualmente presenti nel registro.
    Questa funzionalità è descritta nella sezione :ref:`registroPolicy`.
 
--  *Policy Globali*: Consente di accedere al Registro delle Policy
+-  *Policy Globali*: consente di accedere al Registro delle Policy
    Attivate in ambito globale, cioè operative sul traffico complessivo
    che transita sul gateway. A queste policy si aggiungono quelle
    eventualmente definite localmente nella configurazione specifica di

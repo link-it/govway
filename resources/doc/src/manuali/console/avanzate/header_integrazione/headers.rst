@@ -10,7 +10,7 @@ alla govwayConsole in modalità *avanzata* (Sezione :ref:`modalitaAvanzata`).
 .. note::
     Gli header di trasporto relativi alle funzionalità di Rate-Limiting e Service-Unavailable, descritti nella sezione :ref:`headerRisposta`, vengono generati solamente nella modalità *Header HTTP*.
 
-A partire dall'erogazione o fruizione di una API, accedendo alla sezione Configurazione, descritta nella sezione :ref:`configSpecifica`, in modalità avanzata compare
+A partire dall'erogazione o fruizione di una API, accedendo alla sezione :ref:`configSpecifica` in modalità avanzata compare
 una sezione precedentemente non documentata denominata *Opzioni Avanzate*. All'interno di tale sezione è possibile agire sulla
 configurazione della voce *Metadati* nella sezione *Integrazione* per attivare gli header di integrazione desiderati :
 
