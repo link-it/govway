@@ -55,10 +55,109 @@ Di seguito vengono fornite le varie modalità di sincronizzazione distribuita co
 
     Sincronizzazione Distribuita con misurazione delle metriche esatta in remoto ed utilizzo di una "NearCache" in locale
 
+- *Local Cache*: attivabile impostando la sincronizzazione '*Distribuita*' e scegliendo le voci '*Misurazione esatta*' e '*Algoritmo local-cache*' (:numref:`configurazioneSincronizzazioneRateLimitingHazelcastLocalCache`). Con questa modalità l'incremento viene effettuato sempre in maniera atomica dal gestore dei dati remoto, ma la sua esecuzione avviene in maniera asincrona senza bloccare il client che utilizza copia locale che viene risincronizzata rispetto ai dati remoti con sincronizzazioni periodiche ogni 5 secondi. L'intervallo di risincronizzazione può essere modificato agendo sul file *<directory-lavoro>/govway_local.properties* tramite la seguente proprietà:
+
+   ::
+
+      # Intervallo di aggiornamento della cache in secondi
+      org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_LOCAL_CACHE.updateInterval=5
+
+  .. figure:: ../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingHazelcastLocalCache.png
+    :scale: 100%
+    :align: center
+    :name: configurazioneSincronizzazioneRateLimitingHazelcastLocalCache
+
+    Sincronizzazione Distribuita con misurazione delle metriche esatta in remoto ed utilizzo di una cache locale
+
+- *Misurazione approssimata con "get and set sincrono"*: attivabile impostando la sincronizzazione '*Distribuita*' e scegliendo le voci '*Misurazione approssimata*' e '*Algoritmo remote-sync*' (:numref:`configurazioneSincronizzazioneRateLimitingHazelcastRemoteSync`). Con questa modalità l'incremento viene effettuato utilizzando un approccio ingenuo "get and set" in cui la pubblicazione sul datastore remoto dei dati avviene tramite un'operazione sincrona.
+
+  .. figure:: ../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingHazelcastRemoteSync.png
+    :scale: 100%
+    :align: center
+    :name: configurazioneSincronizzazioneRateLimitingHazelcastRemoteSync
+
+    Sincronizzazione Distribuita con misurazione delle metriche approssimata tramite algoritmo "get and set" con pubblicazione sincrona
+
+- *Misurazione approssimata con "get and set asincrono"*: attivabile impostando la sincronizzazione '*Distribuita*' e scegliendo le voci '*Misurazione approssimata*' e '*Algoritmo remote-async*' (:numref:`configurazioneSincronizzazioneRateLimitingHazelcastRemoteAsync`). Come nella precedente modalità l'incremento viene effettuato utilizzando un approccio ingenuo "get and set", però la pubblicazione sul datastore remoto avviene tramite un'operazione asincrona.
+
+  .. figure:: ../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingHazelcastRemoteAsync.png
+    :scale: 100%
+    :align: center
+    :name: configurazioneSincronizzazioneRateLimitingHazelcastRemoteAsync
+
+    Sincronizzazione Distribuita con misurazione delle metriche approssimata tramite algoritmo "get and set" con pubblicazione asincrona
 
 
+*Configurazione di Hazelcast*
 
+Di seguito vengono mostrate le configurazioni Hazelcast di default utilizzate nelle modalità sopra indicate.
 
-TODO: Fornire indicazioni su come modificare la configurazione hazelcast riportando anche i default utilizzzati (tanto sono 2) per ogni motore
+.. note::
+  Per ogni modalità viene utilizzato un cluster name differente formato dal valore configurabile nella proprietà *org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.group_id* (default govway) agendo sul file *<directory-lavoro>/govway_local.properties*. Al valore indicato viene aggiunto un suffisso che riporta la modalità selezionata.
 
+La modalità *Misurazione Esatta* utilizza la seguente configurazione:
+
+   ::
+
+      hazelcast:
+        cluster-name: govway
+        map:
+          "hazelcast-*-rate-limiting":
+            in-memory-format: BINARY
+      
+        serialization:
+          serializers:
+            - type-class: org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy
+              class-name: org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.IDUnivocoGroupByPolicyStreamSerializer
+
+La modalità *Local Cache* utilizza la seguente configurazione:
+
+   ::
+
+      hazelcast:
+        cluster-name: govway
+        map:
+          "hazelcast-*-rate-limiting":
+            in-memory-format: BINARY
+            backup-count: 0
+            async-backup-count: 1
+      
+        serialization:
+          serializers:
+            - type-class: org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy
+              class-name: org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.IDUnivocoGroupByPolicyStreamSerializer
+
+Le modalità *Near Cache* e *Misurazione approssimata con "get and set"* utilizzano tutte, per default, una configurazione identica:
+
+   ::
+
+      hazelcast:
+        cluster-name: govway
+        map:
+          "hazelcast-*-rate-limiting":
+            in-memory-format: BINARY
+            backup-count: 0
+            async-backup-count: 1
+      
+            near-cache:
+              hazelcast-near-cache:
+                in-memory-format: BINARY
+                serialize-keys: false
+
+        serialization:
+          serializers:
+            - type-class: org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy
+              class-name: org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.IDUnivocoGroupByPolicyStreamSerializer
+
+È possibile utilizzare una configurazione differente da quella di default definendo un file di configurazione yaml nella *<directory-lavoro>* di govway specifico per ogni modalità:
+
+- *Misurazione Esatta*: *<directory-lavoro>/govway.hazelcast.yaml*
+
+- *Near Cache*: *<directory-lavoro>/govway.hazelcast-near-cache.yaml*
+
+- *Local Cache*: *<directory-lavoro>/govway.hazelcast-local-cache.yaml*
+
+- *Misurazione approssimata con "get and set sincrono*: *<directory-lavoro>/govway.hazelcast-near-cache-unsafe-sync-map.yaml*
+
+- *Misurazione approssimata con "get and set asincrono*: *<directory-lavoro>/govway.hazelcast-near-cache-unsafe-async-map.yaml*
 
