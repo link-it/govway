@@ -26,39 +26,39 @@ La maschera di configurazione fornirà le seguenti ulteriori voci nel caso venga
 
 - *Limiti di Quota*: consente di personalizzare la generazione degli header '\*-Limit':
 
-	- *Default*: il valore conterrà solamente il numero massimo di richieste effettuabili nella finestra temporale;
-
-	- *Abilitato (senza finestra temporale)*: equivalente alla voce 'Default';
+	- *Abilitato (senza finestra temporale)*: il valore contiene solamente il numero massimo di richieste effettuabili nella finestra temporale;
 
 	- *Abilitato (con finestra temporale)*: oltre al numero massimo di richieste, viene anche riportata la finestra temporale e le ulteriori finestre delle policy attive che possiedono una medesima metrica ma sono meno restrittive (esempio: X-RateLimit-Limit: 10, 10;w=60, 1000;w=3600);
 
-	- *Disabilitato*: gli header '\*-Limit' non verranno generati.
+	- *Disabilitato*: gli header '\*-Limit' non verranno generati;
+
+	- *Default*: viene utilizzata la modalità indicata nel file di proprietà "govway.properties" che nella configurazione di default del prodotto equivalente alla voce 'Abilitato (senza finestra temporale)'.
 
 - *Rimanenza della Quota*:
 
-	- *Default*: il valore conterrà il numero di richieste ancora effettuabili nella finestra temporale in corso;
+	- *Abilitato*: il valore contiene il numero di richieste ancora effettuabili nella finestra temporale in corso;
 
-	- *Abilitato*: equivalente alla voce 'Default';
+	- *Disabilitato*: gli header '\*-Remaining' non verranno generati;
 
-	- *Disabilitato*: gli header '\*-Remaining' non verranno generati.
+	- *Default*: viene utilizzata la modalità indicata nel file di proprietà "govway.properties" che nella configurazione di default del prodotto equivalente alla voce 'Abilitato';
 
 - *Reset della Quota (secondi)*:
 
-	- *Default*: il valore conterrà il numero di secondi mancanti alla prossima finestra temporale;
+	- *Abilitato*: il valore contiene il numero di secondi mancanti alla prossima finestra temporale;
 
-	- *Abilitato*: equivalente alla voce 'Default';
+	- *Disabilitato*: gli header '\*-Reset' non verranno generati;
 
-	- *Disabilitato*: gli header '\*-Reset' non verranno generati.
+	- *Default*: viene utilizzata la modalità indicata nel file di proprietà "govway.properties" che nella configurazione di default del prodotto equivalente alla voce 'Abilitato';
 
 - *Retry-After*:
 
-	- *Default*: l'header viene valorizzato sommando al numero di secondi mancante alla prossima finestra temporale un tempo di backoff rappresentato da un numero random di secondi tra 0 e 60;
+	- *Abilitato (con backoff)*: l'header viene valorizzato sommando al numero di secondi mancante alla prossima finestra temporale un tempo di backoff rappresentato da un numero random di secondi tra 0 e un intervallo massimo configurabile da console;
 
-	- *Abilitato (con backoff)*: equivalente alla voce 'Default', dove però viene consentito ridefinire il numero random di secondi;
-	
 	- *Abilitato (senza backoff)*: l'header viene valorizzato solamente con il numero di secondi mancante alla prossima finestra temporale;
 
-	- *Disabilitato*: l'header non viene generato.
+	- *Disabilitato*: l'header non viene generato;
+
+	- *Default*: viene utilizzata la modalità indicata nel file di proprietà "govway.properties" che nella configurazione di default del prodotto equivalente alla voce 'Abilitato (con backoff)' dove l'intervallo massimo di backoff è 60 secondi.
 
 .. figure:: ../../../_figure_console/ConfigurazioneHeaderRateLimitingRidefinito.png
     :scale: 100%

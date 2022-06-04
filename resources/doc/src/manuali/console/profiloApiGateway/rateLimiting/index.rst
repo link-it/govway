@@ -71,8 +71,7 @@ Una descrizione di dettaglio degli header http viene fornita nella sezione :ref:
 
 *Rate Limiting in un cluster di nodi*
 
-Se si desidera applicare un rate limiting in presenza di un cluster di più nodi, è necessario attuare una configurazione differente da quella di default.
-Se ogni nodo effettua il proprio conteggio, un client potrebbe violare una policy solamente su alcuni nodi e non su altri.
+Se si desidera applicare un rate limiting in presenza di un cluster di più nodi deve essere configurato un gestore delle policy differente da quello di default con il quale ogni nodo effettuerebbe il proprio conteggio.
 Nella sezione :ref:`headerGWRateLimitingCluster` vengono descritte diverse modalità di configurazione di GovWay in modo da supportare il rate limiting in presenza di più nodi.
 
 
