@@ -41,6 +41,49 @@
 		    <param name="file" value="govway.properties"/>
 		</antcall>
 
+		<concat destfile="${build}/tmp/govway.properties" append="yes" >
+
+# ----- Distribuzione Sincronizzata -------------
+		</concat>
+		<if>
+			<or>
+				<equals arg1="${hazelcastLibraries}" arg2="true"/>
+			</or>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${build}/tmp/govway.properties"/>
+					<param name="token" value="org.openspcoop2.pdd.hazelcast.enabled"/>
+					<param name="value" value="true"/>
+				</antcall>				
+			</then>
+			<else>
+				<antcall target="set_property">
+				    <param name="file" value="${build}/tmp/govway.properties"/>
+					<param name="token" value="org.openspcoop2.pdd.hazelcast.enabled"/>
+					<param name="value" value="false"/>
+				</antcall>				
+			</else>
+		</if>
+		<if>
+			<or>
+				<equals arg1="${redisLibraries}" arg2="true"/>
+			</or>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${build}/tmp/govway.properties"/>
+					<param name="token" value="org.openspcoop2.pdd.redis.enabled"/>
+					<param name="value" value="true"/>
+				</antcall>				
+			</then>
+			<else>
+				<antcall target="set_property">
+				    <param name="file" value="${build}/tmp/govway.properties"/>
+					<param name="token" value="org.openspcoop2.pdd.redis.enabled"/>
+					<param name="value" value="false"/>
+				</antcall>				
+			</else>
+		</if>
+
 		<!-- govway.msgDiagnostici.properties -->
 		<mkdir dir="${build}/tmpNative2ASCII_src" />
 		<mkdir dir="${build}/tmpNative2ASCII_dest" />

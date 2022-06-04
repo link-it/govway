@@ -2009,24 +2009,28 @@ public class OpenSPCoop2Properties {
 					//}
 					
 					//case HAZELCAST:
-					getControlloTrafficoGestorePolicyInMemoryHazelCastConfigPath();
-					//case HAZELCAST_NEAR_CACHE:
-					getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath();
-					//case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
-					getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath();
-					//case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
-					getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath();
-					//case HAZELCAST_LOCAL_CACHE:
-					getControlloTrafficoGestorePolicyInMemoryHazelCastLocalCacheConfigPath();
-					getControlloTrafficoGestorePolicyInMemoryHazelcastLocalCacheTimerUpdate();
-					
-					//if(type.isHazelcast()) {
-					getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId();
-					isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy();
+					if(isHazelcastEngineEnabled()) {
+						getControlloTrafficoGestorePolicyInMemoryHazelCastConfigPath();
+						//case HAZELCAST_NEAR_CACHE:
+						getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath();
+						//case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
+						getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath();
+						//case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
+						getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath();
+						//case HAZELCAST_LOCAL_CACHE:
+						getControlloTrafficoGestorePolicyInMemoryHazelCastLocalCacheConfigPath();
+						getControlloTrafficoGestorePolicyInMemoryHazelcastLocalCacheTimerUpdate();
+						
+						//if(type.isHazelcast()) {
+						getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId();
+						isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy();
+					}
 					
 					// case REDIS
-					getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrl();
-					isControlloTrafficoGestorePolicyInMemoryRedisOneMapForeachPolicy();
+					if(isRedisEngineEnabled()) {
+						getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrl();
+						isControlloTrafficoGestorePolicyInMemoryRedisOneMapForeachPolicy();
+					}
 					
 				}
 				this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository();
@@ -23654,6 +23658,28 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval;
 	}
 
+	private static Boolean isHazelcastEngineEnabled = null;
+	public boolean isHazelcastEngineEnabled() {	
+		if(OpenSPCoop2Properties.isHazelcastEngineEnabled==null){
+			String pName = "org.openspcoop2.pdd.hazelcast.enabled";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isHazelcastEngineEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isHazelcastEngineEnabled = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isHazelcastEngineEnabled;
+	}
+	
 	
 	private static Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastConfigPath_read = null;
 	private static String getControlloTrafficoGestorePolicyInMemoryHazelCastConfigPath = null;
@@ -23862,6 +23888,28 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelcastLocalCacheUpdateInterval;
 	}
 
+	
+	private static Boolean isRedisEngineEnabled = null;
+	public boolean isRedisEngineEnabled() {	
+		if(OpenSPCoop2Properties.isRedisEngineEnabled==null){
+			String pName = "org.openspcoop2.pdd.redis.enabled";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isRedisEngineEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isRedisEngineEnabled = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isRedisEngineEnabled;
+	}
 	
 	private static List<String> getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrl = null;
 	private static boolean getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrlRead = false;

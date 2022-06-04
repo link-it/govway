@@ -2453,25 +2453,29 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}
 				
 				// HazelcastManager
-				try{
-					Map<PolicyGroupByActiveThreadsType,String> config = new HashMap<PolicyGroupByActiveThreadsType, String>();
-					config.put(PolicyGroupByActiveThreadsType.HAZELCAST, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastConfigPath());
-					config.put(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath());
-					config.put(PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastLocalCacheConfigPath());
-					config.put(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath());
-					config.put(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath());
-					HazelcastManager.initialize(log, logControlloTraffico, config, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId());
-				}catch(Exception e){
-					msgDiag.logStartupError(e,"Inizializzazione HazelcastManager");
-					return;
+				if(propertiesReader.isHazelcastEngineEnabled()) {
+					try{
+						Map<PolicyGroupByActiveThreadsType,String> config = new HashMap<PolicyGroupByActiveThreadsType, String>();
+						config.put(PolicyGroupByActiveThreadsType.HAZELCAST, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastConfigPath());
+						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath());
+						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastLocalCacheConfigPath());
+						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath());
+						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath());
+						HazelcastManager.initialize(log, logControlloTraffico, config, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId());
+					}catch(Exception e){
+						msgDiag.logStartupError(e,"Inizializzazione HazelcastManager");
+						return;
+					}
 				}
 				
 				// RedisManager
-				try{
-					RedissonManager.initialize(log, logControlloTraffico, propertiesReader.getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrl());
-				}catch(Exception e){
-					msgDiag.logStartupError(e,"Inizializzazione RedisManager");
-					return;
+				if(propertiesReader.isRedisEngineEnabled()) {
+					try{
+						RedissonManager.initialize(log, logControlloTraffico, propertiesReader.getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrl());
+					}catch(Exception e){
+						msgDiag.logStartupError(e,"Inizializzazione RedisManager");
+						return;
+					}
 				}
 				
 				// Gestore RateLimiting
