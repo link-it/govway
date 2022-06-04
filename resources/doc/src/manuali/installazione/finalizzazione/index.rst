@@ -43,7 +43,9 @@ tematiche:
    GovWay permette definire un rate limiting sulle singole erogazioni o
    fruizioni di API. Le metriche utilizzabili riguardano il numero di
    richieste all'interno di un intervallo temporale, l'occupazione di
-   banda, il tempo di risposta etc.
+   banda, il tempo di risposta etc. 
+
+   Tutti i contatori delle metriche, per default, vengono gestiti localmente in un nodo. Per poter utilizzare politiche di rate limiting su un cluster di nodi è possibile abilitare una sincronizzazione distribuita dei contatori che richiede l'utilizzo di un archivio dati centralizzato implementato tramite Hazelcast. Il suo utilizzo richiede alcune configurazioni del sistema descritte nella sezione :ref:`finalizzazioneHazelcast`.
 
    Oltre al rate limiting GovWay consente di fissare un numero limite
    complessivo, indipendente dalle APIs, riguardo alle richieste

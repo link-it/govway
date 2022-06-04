@@ -161,3 +161,7 @@ Le modalità *Near Cache* e *Misurazione approssimata con "get and set"* utilizz
 
 - *Misurazione approssimata con "get and set asincrono*: *<directory-lavoro>/govway.hazelcast-near-cache-unsafe-async-map.yaml*
 
+
+*Log di Hazelcast*
+
+I log emessi da Hazelcast, riguardanti lo stato della sincronizzazione dei nodi del cluster sono riversati nel file di log *<directory-log>/govway_hazelcast.log*
