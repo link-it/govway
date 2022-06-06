@@ -53,7 +53,7 @@ public class PolicyGroupByActiveThreadsDistributedNoCache extends AbstractPolicy
 		
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
 		
-		return this.distributedMap.executeOnKey(datiGroupBy, this.startRequestProcessor);			
+		return this.distributedMap.executeOnKey(datiGroupBy, this.startRequestProcessor);
 	}
 	
 	
@@ -64,10 +64,9 @@ public class PolicyGroupByActiveThreadsDistributedNoCache extends AbstractPolicy
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
 
 		DatiCollezionati datiCollezionati = this.distributedMap.executeOnKey(datiGroupBy, this.updateDatiRequestProcessor);
-		if (datiCollezionati == null) {
-			throw new PolicyNotFoundException("Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+datiGroupBy.toString()+"]");
-		}
-		
+		//if (datiCollezionati != null) {
+		//	throw new PolicyNotFoundException("Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+datiGroupBy.toString()+"]");
+		//}
 		return datiCollezionati;
 	}
 	

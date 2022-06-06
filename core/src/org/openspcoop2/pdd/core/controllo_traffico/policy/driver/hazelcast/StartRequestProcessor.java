@@ -78,8 +78,15 @@ public class StartRequestProcessor implements EntryProcessor<IDUnivocoGroupByPol
         }
 
 		entry.getValue().registerStartRequest(log, this.activePolicy);
+		
+		// mi salvo l'attuale stato
+		DatiCollezionati datiCollezionatiReaded = (DatiCollezionati) entry.getValue().clone(); 
+		// Tutti i restanti controlli sono effettuati usando il valore di datiCollezionatiReaded, che e' gia' stato modificato
+		// E' possibile procedere con l'analisi rispetto al valore che possiedono il counter dentro questo scope.
+		
 		entry.setValue(entry.getValue());
-		return entry.getValue();
+		
+		return datiCollezionatiReaded;
 	}
 
 	@Override

@@ -82,33 +82,33 @@ public enum PolicyGroupByActiveThreadsType {
 	}
 	
 	public List<TipoRisorsaPolicyAttiva> getSupportedResources(){
-		List<TipoRisorsaPolicyAttiva> all = new ArrayList<TipoRisorsaPolicyAttiva>();
+		List<TipoRisorsaPolicyAttiva> list = new ArrayList<TipoRisorsaPolicyAttiva>();
 		for (TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva : TipoRisorsaPolicyAttiva.values()) {
-			all.add(tipoRisorsaPolicyAttiva);
+			list.add(tipoRisorsaPolicyAttiva);
 		}
 		switch (this) {
 		case LOCAL:
-			return all;
+			return list;
 		case LOCAL_DIVIDED_BY_NODES:
-			all.remove(TipoRisorsaPolicyAttiva.OCCUPAZIONE_BANDA);
-			all.remove(TipoRisorsaPolicyAttiva.TEMPO_COMPLESSIVO_RISPOSTA);
-			all.remove(TipoRisorsaPolicyAttiva.TEMPO_MEDIO_RISPOSTA);
-			return all;
+			list.remove(TipoRisorsaPolicyAttiva.OCCUPAZIONE_BANDA);
+			list.remove(TipoRisorsaPolicyAttiva.TEMPO_COMPLESSIVO_RISPOSTA);
+			list.remove(TipoRisorsaPolicyAttiva.TEMPO_MEDIO_RISPOSTA);
+			return list;
 		case DATABASE:
-			return all;
+			return list;
 		case HAZELCAST:
-			return all;
+			return list;
 		case HAZELCAST_NEAR_CACHE:
-			return all;
+			list.remove(TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_SIMULTANEE);
+			return list;
 		case HAZELCAST_LOCAL_CACHE:
-			return all;
+			return list;
 		case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
 		case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
-			all.remove(TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_SIMULTANEE);
-			// ALTRE ?
-			return all;
+			list.remove(TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_SIMULTANEE);
+			return list;
 		case REDISSON:
-			return all;
+			return list;
 		}
 		return null;
 	}

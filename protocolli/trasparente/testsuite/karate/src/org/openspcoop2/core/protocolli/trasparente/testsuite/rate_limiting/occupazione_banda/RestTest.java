@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.junit.Test;
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.HeaderValues;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
@@ -85,37 +87,67 @@ public class RestTest extends ConfigLoader {
 	
 	@Test
 	public void perMinutoDefaultErogazione() throws Exception {
+		perMinutoDefaultErogazione(null);
+	}
+	public void perMinutoDefaultErogazione(PolicyGroupByActiveThreadsType policyType) throws Exception {
 
-		final int sogliaKb = 1024;
-		final int requestToPass = 3;
-		final int requestSizeBytes = (sogliaKb*1000/ (requestToPass-1))/4;
+		if(policyType!=null && !policyType.isSupportedResource(TipoRisorsaPolicyAttiva.OCCUPAZIONE_BANDA)) {
+			logRateLimiting.warn("Test occupazioneBandaErogazioni con policy type '"+policyType+"' non effettuato poichè non supportato dal gestore");
+			return;
+		}
 		
-		String idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", "OccupazioneBandaRest",
-				PolicyAlias.MINUTODEFAULT);
-		Utils.resetCounters(idPolicy);
-
-		idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", "OccupazioneBandaRest", PolicyAlias.MINUTODEFAULT);
-		Commons.checkPreConditionsOccupazioneBanda(idPolicy);
+		try {
 		
-		Utils.waitForNewMinute();
-		
-		// Faccio n-1 richieste parallele per testare eventuali race conditions sui contatori,
-		// alla fine faccio l'ultima che fa scattare la policy
-
-		HttpRequest request = new HttpRequest();
-		request.setContentType("application/json");
-		request.setContent(generatePayload(requestSizeBytes));
-		request.setMethod(HttpRequestMethod.POST);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/OccupazioneBandaRest/v1/minuto-default");
-
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
-		
-		Utils.waitForZeroActiveRequests(idPolicy, 3);
-		
-		responses.addAll(Utils.makeSequentialRequests(request, 1));
-
-		checkAssertions(responses, 1024, 60);
-		Commons.checkPostConditionsOccupazioneBanda(idPolicy);
+			final int sogliaKb = 1024;
+			final int requestToPass = 3;
+			final int requestSizeBytes = (sogliaKb*1000/ (requestToPass-1))/4;
+	
+			dbUtils.setEngineTypeErogazione("SoggettoInternoTest", "OccupazioneBandaRest", policyType);
+			
+			long idErogazione = dbUtils.getIdErogazione("SoggettoInternoTest", "OccupazioneBandaRest");
+			Utils.ripulisciRiferimentiCacheErogazione(idErogazione);
+					
+			HttpRequest request = new HttpRequest();
+			request.setContentType("application/json");
+			request.setContent(generatePayload(requestSizeBytes));
+			request.setMethod(HttpRequestMethod.POST);
+			request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/OccupazioneBandaRest/v1/minuto-default");
+			
+			// attivo nuovo motore
+			Utils.makeParallelRequests(request, 1);
+			
+			
+			String idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", "OccupazioneBandaRest",
+					PolicyAlias.MINUTODEFAULT);
+			Utils.resetCounters(idPolicy);
+	
+			idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", "OccupazioneBandaRest", PolicyAlias.MINUTODEFAULT);
+			Commons.checkPreConditionsOccupazioneBanda(idPolicy, policyType);
+			
+			Utils.waitForNewMinute();
+			
+			// Faccio n-1 richieste parallele per testare eventuali race conditions sui contatori,
+			// alla fine faccio l'ultima che fa scattare la policy
+	
+			Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
+			
+			Utils.waitForZeroActiveRequests(idPolicy, 3, policyType);
+			
+			responses.addAll(Utils.makeSequentialRequests(request, 1));
+	
+			checkAssertions(responses, 1024, 60, policyType);
+			Commons.checkPostConditionsOccupazioneBanda(idPolicy, policyType);
+			
+		}finally {
+			
+			// ripristino
+			
+			dbUtils.setEngineTypeErogazione("SoggettoInternoTest", "OccupazioneBandaRest", null);
+			
+			long idErogazione = dbUtils.getIdErogazione("SoggettoInternoTest", "OccupazioneBandaRest");
+			Utils.ripulisciRiferimentiCacheErogazione(idErogazione);
+			
+		}
 	}
 	
 	
@@ -199,31 +231,60 @@ public class RestTest extends ConfigLoader {
 	
 	@Test
 	public void perMinutoDefaultFruizione() throws Exception {
+		perMinutoDefaultFruizione(null);
+	}
+	public void perMinutoDefaultFruizione(PolicyGroupByActiveThreadsType policyType) throws Exception {
 		
-		final int sogliaKb = 1024;
-		final int requestToPass = 3;
-		final int requestSizeBytes = (sogliaKb*1000/ (requestToPass-1))/4;
+		if(policyType!=null && !policyType.isSupportedResource(TipoRisorsaPolicyAttiva.OCCUPAZIONE_BANDA)) {
+			logRateLimiting.warn("Test occupazioneBandaFruizioni con policy type '"+policyType+"' non effettuato poichè non supportato dal gestore");
+			return;
+		}
 		
-		String idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "OccupazioneBandaRest", PolicyAlias.MINUTODEFAULT);
-		Utils.resetCounters(idPolicy);
-
-		idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "OccupazioneBandaRest", PolicyAlias.MINUTODEFAULT);
-		Commons.checkPreConditionsOccupazioneBanda(idPolicy);
+		try {
 		
-		Utils.waitForNewMinute();
-
-		HttpRequest request = new HttpRequest();
-		request.setContentType("application/json");
-		request.setContent(generatePayload(requestSizeBytes));
-		request.setMethod(HttpRequestMethod.POST);
-		request.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/OccupazioneBandaRest/v1/minuto-default");
-
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
-		Utils.waitForZeroActiveRequests(idPolicy, 3);
-		responses.addAll(Utils.makeSequentialRequests(request, 1));
-
-		checkAssertions(responses, 1024, 60);
-		Commons.checkPostConditionsOccupazioneBanda(idPolicy);
+			final int sogliaKb = 1024;
+			final int requestToPass = 3;
+			final int requestSizeBytes = (sogliaKb*1000/ (requestToPass-1))/4;
+			
+			dbUtils.setEngineTypeFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "OccupazioneBandaRest", policyType);
+			
+			long idFruizione = dbUtils.getIdFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "OccupazioneBandaRest");
+			Utils.ripulisciRiferimentiCacheFruizione(idFruizione);
+					
+			HttpRequest request = new HttpRequest();
+			request.setContentType("application/json");
+			request.setContent(generatePayload(requestSizeBytes));
+			request.setMethod(HttpRequestMethod.POST);
+			request.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/OccupazioneBandaRest/v1/minuto-default");
+			
+			// attivo nuovo motore
+			Utils.makeParallelRequests(request, 1);
+			
+			String idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "OccupazioneBandaRest", PolicyAlias.MINUTODEFAULT);
+			Utils.resetCounters(idPolicy);
+	
+			idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "OccupazioneBandaRest", PolicyAlias.MINUTODEFAULT);
+			Commons.checkPreConditionsOccupazioneBanda(idPolicy, policyType);
+			
+			Utils.waitForNewMinute();
+	
+			Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
+			Utils.waitForZeroActiveRequests(idPolicy, 3, policyType);
+			responses.addAll(Utils.makeSequentialRequests(request, 1));
+	
+			checkAssertions(responses, 1024, 60, policyType);
+			Commons.checkPostConditionsOccupazioneBanda(idPolicy, policyType);
+			
+		}finally {
+			
+			// ripristino
+			
+			dbUtils.setEngineTypeFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "OccupazioneBandaRest", null);
+			
+			long idFruizione = dbUtils.getIdFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "OccupazioneBandaRest");
+			Utils.ripulisciRiferimentiCacheFruizione(idFruizione);
+			
+		}
 	}
 	
 	
@@ -282,6 +343,15 @@ public class RestTest extends ConfigLoader {
 	
 	
 	private void checkAssertions(Vector<HttpResponse> responses, int maxKb, int windowSize) throws Exception {
+		checkAssertions(responses, maxKb, windowSize, PolicyGroupByActiveThreadsType.LOCAL);
+	}
+	private void checkAssertions(Vector<HttpResponse> responses, int maxKb, int windowSize, PolicyGroupByActiveThreadsType policyType) throws Exception {
+		
+		if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(policyType) ||
+				PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(policyType)) {
+			// numero troppo casuali
+			return;
+		}
 		
 		responses.forEach(r -> { 			
 				assertNotEquals(null,Integer.valueOf(r.getHeaderFirstValue(Headers.BandWidthQuotaReset)));

@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.junit.Test;
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.HeaderValues;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
@@ -172,22 +174,25 @@ public class RestTest extends ConfigLoader {
 	
 	@Test
 	public void perMinutoErogazione() throws Exception {
-		testErogazione("RichiesteFalliteFaultRest", PolicyAlias.MINUTO);
+		testErogazione("RichiesteFalliteFaultRest", PolicyAlias.MINUTO, null);
 	}
 	
 	@Test
 	public void perMinutoDefaultErogazione() throws Exception {
-		testErogazione("RichiesteFalliteFaultRest", PolicyAlias.MINUTODEFAULT);
+		perMinutoDefaultErogazione(null);
+	}
+	public void perMinutoDefaultErogazione(PolicyGroupByActiveThreadsType policyType) throws Exception {
+		testErogazione("RichiesteFalliteFaultRest", PolicyAlias.MINUTODEFAULT, policyType);
 	}
 	
 	@Test
 	public void orarioErogazione() throws Exception {
-		testErogazione("RichiesteFalliteFaultRest", PolicyAlias.ORARIO);
+		testErogazione("RichiesteFalliteFaultRest", PolicyAlias.ORARIO, null);
 	}
 	
 	@Test
 	public void giornalieroErogazione() throws Exception {
-		testErogazione("RichiesteFalliteFaultRest", PolicyAlias.GIORNALIERO);
+		testErogazione("RichiesteFalliteFaultRest", PolicyAlias.GIORNALIERO, null);
 	}
 	
 	@Test
@@ -208,22 +213,25 @@ public class RestTest extends ConfigLoader {
 	
 	@Test
 	public void perMinutoFruizione() throws Exception {
-		testFruizione("RichiesteFalliteFaultRest", PolicyAlias.MINUTO);
+		testFruizione("RichiesteFalliteFaultRest", PolicyAlias.MINUTO, null);
 	}
 	
 	@Test
 	public void perMinutoDefaultFruizione() throws Exception {
-		testFruizione("RichiesteFalliteFaultRest", PolicyAlias.MINUTODEFAULT);
+		perMinutoDefaultFruizione(null);
+	}
+	public void perMinutoDefaultFruizione(PolicyGroupByActiveThreadsType policyType) throws Exception {
+		testFruizione("RichiesteFalliteFaultRest", PolicyAlias.MINUTODEFAULT, policyType);
 	}
 	
 	@Test
 	public void orarioFruizione() throws Exception {
-		testFruizione("RichiesteFalliteFaultRest", PolicyAlias.ORARIO);
+		testFruizione("RichiesteFalliteFaultRest", PolicyAlias.ORARIO, null);
 	}
 	
 	@Test
 	public void giornalieroFruizione() throws Exception {
-		testFruizione("RichiesteFalliteFaultRest", PolicyAlias.GIORNALIERO);
+		testFruizione("RichiesteFalliteFaultRest", PolicyAlias.GIORNALIERO, null);
 	}
 	
 	@Test
@@ -241,54 +249,81 @@ public class RestTest extends ConfigLoader {
 		testFruizioneSequenziale("RichiesteFalliteFaultRest", PolicyAlias.GIORNALIERO);
 	}
 	
-	public void testErogazione(String erogazione, PolicyAlias policy) throws Exception {
+	public void testErogazione(String erogazione, PolicyAlias policy, PolicyGroupByActiveThreadsType policyType) throws Exception {
 		
-		// Facciamo un batch di richieste fallite e un batch di richieste con fault,
-		// che devono essere tutte conteggiate
-		int maxRequests = getMaxRequests(policy);
-		int windowSize = Utils.getPolicyWindowSize(policy);
-		String path = Utils.getPolicyPath(policy);
-		
-		String idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", erogazione, policy);
-		Utils.resetCounters(idPolicy);
-		
-		idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", erogazione, policy);
-		Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0);
-				
-		Utils.waitForPolicy(policy);
-		
-		int toFail = maxRequests/2;
-		int toFault = maxRequests-toFail;
-		
-		HttpRequest toFailRequest = new HttpRequest();
-		toFailRequest.setContentType("application/json");
-		toFailRequest.setMethod(HttpRequestMethod.GET);
-		toFailRequest.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?returnCode=500");
-						
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(toFailRequest, toFail);
-		
-		HttpRequest toFaultRequest = new HttpRequest();
-		toFaultRequest.setContentType("application/json");
-		toFaultRequest.setMethod(HttpRequestMethod.GET);
-		toFaultRequest.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?problem=true");
-		
-		Vector<HttpResponse> faultedResponses = Utils.makeParallelRequests(toFaultRequest, toFault); 
-		
-		for (var r : faultedResponses) {
-			JSONObject jsonResp = JsonPathExpressionEngine.getJSONObject(new String(r.getContent()));
-			Utils.matchEchoFaultResponseRest(jsonResp);
+		if(policyType!=null && !policyType.isSupportedResource(TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI)) {
+			logRateLimiting.warn("Test numeroRichiesteFalliteOFaultErogazione con policy type '"+policyType+"' non effettuato poichè non supportato dal gestore");
+			return;
 		}
 		
-		responses.addAll(faultedResponses);
-
-		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
+		try {
 		
-		Vector<HttpResponse>  blockedResponses = Utils.makeParallelRequests(toFailRequest, toFailRequests);
-
-		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, toFailRequests);
-		
-		checkOkRequests(responses, windowSize, maxRequests);
-		checkFailedRequests(blockedResponses, windowSize, maxRequests);		
+			// Facciamo un batch di richieste fallite e un batch di richieste con fault,
+			// che devono essere tutte conteggiate
+			int maxRequests = getMaxRequests(policy);
+			int windowSize = Utils.getPolicyWindowSize(policy);
+			String path = Utils.getPolicyPath(policy);
+			
+			dbUtils.setEngineTypeErogazione("SoggettoInternoTest", erogazione, policyType);
+			
+			long idErogazione = dbUtils.getIdErogazione("SoggettoInternoTest", erogazione);
+			Utils.ripulisciRiferimentiCacheErogazione(idErogazione);
+					
+			HttpRequest toFailRequest = new HttpRequest();
+			toFailRequest.setContentType("application/json");
+			toFailRequest.setMethod(HttpRequestMethod.GET);
+			toFailRequest.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?returnCode=500");
+			
+			HttpRequest toFaultRequest = new HttpRequest();
+			toFaultRequest.setContentType("application/json");
+			toFaultRequest.setMethod(HttpRequestMethod.GET);
+			toFaultRequest.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?problem=true");
+			
+			// attivo nuovo motore
+			Utils.makeParallelRequests(toFailRequest, 1);
+			Utils.makeParallelRequests(toFaultRequest, 1);
+			
+			String idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", erogazione, policy);
+			Utils.resetCounters(idPolicy);
+			
+			idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", erogazione, policy);
+			Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0, policyType, TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI);
+					
+			Utils.waitForPolicy(policy);
+			
+			int toFail = maxRequests/2;
+			int toFault = maxRequests-toFail;
+						
+			Vector<HttpResponse> responses = Utils.makeParallelRequests(toFailRequest, toFail);
+			
+			Vector<HttpResponse> faultedResponses = Utils.makeParallelRequests(toFaultRequest, toFault); 
+			
+			for (var r : faultedResponses) {
+				JSONObject jsonResp = JsonPathExpressionEngine.getJSONObject(new String(r.getContent()));
+				Utils.matchEchoFaultResponseRest(jsonResp);
+			}
+			
+			responses.addAll(faultedResponses);
+	
+			Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0, policyType, TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI);
+			
+			Vector<HttpResponse>  blockedResponses = Utils.makeParallelRequests(toFailRequest, toFailRequests);
+	
+			Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, toFailRequests, policyType, TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI);
+			
+			checkOkRequests(responses, windowSize, maxRequests, policyType);
+			checkFailedRequests(blockedResponses, windowSize, maxRequests, policyType);		
+			
+		}finally {
+			
+			// ripristino
+			
+			dbUtils.setEngineTypeErogazione("SoggettoInternoTest", erogazione, null);
+			
+			long idErogazione = dbUtils.getIdErogazione("SoggettoInternoTest", erogazione);
+			Utils.ripulisciRiferimentiCacheErogazione(idErogazione);
+			
+		}
 	}
 	
 	
@@ -324,54 +359,81 @@ public class RestTest extends ConfigLoader {
 	}
 	
 	
-	public void testFruizione(String erogazione, PolicyAlias policy) throws Exception {
+	public void testFruizione(String erogazione, PolicyAlias policy, PolicyGroupByActiveThreadsType policyType) throws Exception {
 		
-		// Facciamo un batch di richieste fallite e un batch di richieste con fault,
-		// che devono essere tutte conteggiate
-		int maxRequests = getMaxRequests(policy);
-		int windowSize = Utils.getPolicyWindowSize(policy);
-		String path = Utils.getPolicyPath(policy);
-		
-		String idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policy);
-		Utils.resetCounters(idPolicy);
-		
-		idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policy);
-		Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0);
-				
-		Utils.waitForPolicy(policy);
-		
-		int toFail = maxRequests/2;
-		int toFault = maxRequests-toFail;
-		
-		HttpRequest toFailRequest = new HttpRequest();
-		toFailRequest.setContentType("application/json");
-		toFailRequest.setMethod(HttpRequestMethod.GET);
-		toFailRequest.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?returnCode=500");
-						
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(toFailRequest, toFail);
-		
-		HttpRequest toFaultRequest = new HttpRequest();
-		toFaultRequest.setContentType("application/json");
-		toFaultRequest.setMethod(HttpRequestMethod.GET);
-		toFaultRequest.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?problem=true");
-		
-		Vector<HttpResponse> faultedResponses = Utils.makeParallelRequests(toFaultRequest, toFault); 
-		
-		for (var r : faultedResponses) {
-			JSONObject jsonResp = JsonPathExpressionEngine.getJSONObject(new String(r.getContent()));
-			Utils.matchEchoFaultResponseRest(jsonResp);
+		if(policyType!=null && !policyType.isSupportedResource(TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI)) {
+			logRateLimiting.warn("Test numeroRichiesteFalliteOFaultFruizione con policy type '"+policyType+"' non effettuato poichè non supportato dal gestore");
+			return;
 		}
 		
-		responses.addAll(faultedResponses);
-
-		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
+		try {
 		
-		Vector<HttpResponse>  blockedResponses = Utils.makeParallelRequests(toFailRequest, toFailRequests);
-
-		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, toFailRequests);
-		
-		checkOkRequests(responses, windowSize, maxRequests);
-		checkFailedRequests(blockedResponses, windowSize, maxRequests);		
+			// Facciamo un batch di richieste fallite e un batch di richieste con fault,
+			// che devono essere tutte conteggiate
+			int maxRequests = getMaxRequests(policy);
+			int windowSize = Utils.getPolicyWindowSize(policy);
+			String path = Utils.getPolicyPath(policy);
+			
+			dbUtils.setEngineTypeFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policyType);
+			
+			long idFruizione = dbUtils.getIdFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione);
+			Utils.ripulisciRiferimentiCacheFruizione(idFruizione);
+					
+			HttpRequest toFailRequest = new HttpRequest();
+			toFailRequest.setContentType("application/json");
+			toFailRequest.setMethod(HttpRequestMethod.GET);
+			toFailRequest.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?returnCode=500");
+			
+			HttpRequest toFaultRequest = new HttpRequest();
+			toFaultRequest.setContentType("application/json");
+			toFaultRequest.setMethod(HttpRequestMethod.GET);
+			toFaultRequest.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?problem=true");
+			
+			// attivo nuovo motore
+			Utils.makeParallelRequests(toFailRequest, 1);
+			Utils.makeParallelRequests(toFaultRequest, 1);
+			
+			String idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policy);
+			Utils.resetCounters(idPolicy);
+			
+			idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policy);
+			Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0, policyType, TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI);
+					
+			Utils.waitForPolicy(policy);
+			
+			int toFail = maxRequests/2;
+			int toFault = maxRequests-toFail;
+							
+			Vector<HttpResponse> responses = Utils.makeParallelRequests(toFailRequest, toFail);
+			
+			Vector<HttpResponse> faultedResponses = Utils.makeParallelRequests(toFaultRequest, toFault); 
+			
+			for (var r : faultedResponses) {
+				JSONObject jsonResp = JsonPathExpressionEngine.getJSONObject(new String(r.getContent()));
+				Utils.matchEchoFaultResponseRest(jsonResp);
+			}
+			
+			responses.addAll(faultedResponses);
+	
+			Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0, policyType, TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI);
+			
+			Vector<HttpResponse>  blockedResponses = Utils.makeParallelRequests(toFailRequest, toFailRequests);
+	
+			Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, toFailRequests, policyType, TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI);
+			
+			checkOkRequests(responses, windowSize, maxRequests, policyType);
+			checkFailedRequests(blockedResponses, windowSize, maxRequests, policyType);		
+			
+		}finally {
+			
+			// ripristino
+			
+			dbUtils.setEngineTypeFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, null);
+			
+			long idFruizione = dbUtils.getIdFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione);
+			Utils.ripulisciRiferimentiCacheFruizione(idFruizione);
+			
+		}
 	}
 	
 	
@@ -408,6 +470,9 @@ public class RestTest extends ConfigLoader {
 	
 	
 	private void checkOkRequests(Vector<HttpResponse> responses, int windowSize, int maxRequests) {
+		checkOkRequests(responses, windowSize, maxRequests, PolicyGroupByActiveThreadsType.LOCAL);
+	}
+	private void checkOkRequests(Vector<HttpResponse> responses, int windowSize, int maxRequests, PolicyGroupByActiveThreadsType policyType) {
 		// Delle richieste ok Controllo lo header *-Limit, *-Reset e lo status code
 		
 		responses.forEach( r -> {
@@ -425,6 +490,15 @@ public class RestTest extends ConfigLoader {
 	}
 	
 	private void checkFailedRequests(Vector<HttpResponse> responses, int windowSize, int maxRequests) throws Exception {
+		checkFailedRequests(responses, windowSize, maxRequests, PolicyGroupByActiveThreadsType.LOCAL);
+	}
+	private void checkFailedRequests(Vector<HttpResponse> responses, int windowSize, int maxRequests, PolicyGroupByActiveThreadsType policyType) throws Exception {
+		
+		if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(policyType) ||
+				PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(policyType)) {
+			// numero troppo casuali
+			return;
+		}
 		
 		for (var r: responses) {
 			Utils.checkXLimitHeader(logRateLimiting, Headers.FailedOrFaultLimit, r.getHeaderFirstValue(Headers.FailedOrFaultLimit), maxRequests);			

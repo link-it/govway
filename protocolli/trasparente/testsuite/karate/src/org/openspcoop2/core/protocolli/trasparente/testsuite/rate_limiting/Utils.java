@@ -24,10 +24,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste.NumeroRichiestePolicyInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicException;
@@ -214,6 +218,42 @@ public class Utils {
 		//HttpUtilities.check(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password"));
 	}
 	
+	public static void ripulisciRiferimentiCacheErogazione(long idErogazione) {
+		Map<String,String> queryParams = Map.of(
+				"resourceName", "ConfigurazionePdD",
+				"methodName", "ripulisciRiferimentiCacheErogazione",
+				"paramValue", idErogazione+""
+			);
+		String jmxUrl = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.buildUrl(queryParams, System.getProperty("govway_base_path") + "/check");
+		logRateLimiting.info("Resetto l'erogazione "+idErogazione+" sulla url: " + jmxUrl );
+		
+		try {
+			String resp = new String(HttpUtilities.getHTTPResponse(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password")).getContent());
+			logRateLimiting.info(resp);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		//HttpUtilities.check(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password"));
+	}
+	
+	public static void ripulisciRiferimentiCacheFruizione(long idFruizione) {
+		Map<String,String> queryParams = Map.of(
+				"resourceName", "ConfigurazionePdD",
+				"methodName", "ripulisciRiferimentiCacheFruizione",
+				"paramValue", idFruizione+""
+			);
+		String jmxUrl = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.buildUrl(queryParams, System.getProperty("govway_base_path") + "/check");
+		logRateLimiting.info("Resetto la fruizione "+idFruizione+" sulla url: " + jmxUrl );
+		
+		try {
+			String resp = new String(HttpUtilities.getHTTPResponse(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password")).getContent());
+			logRateLimiting.info(resp);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		//HttpUtilities.check(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password"));
+	}
+	
 	
 	public static String getPolicy(String idPolicy) {
 		Map<String,String> queryParams = Map.of(
@@ -317,6 +357,9 @@ public class Utils {
 	}
 
 	public static void checkConditionsNumeroRichieste(String idPolicy, Integer attive, Integer conteggiate, Integer bloccate) {
+		checkConditionsNumeroRichieste(idPolicy, attive, conteggiate, bloccate, null, null);
+	}
+	public static void checkConditionsNumeroRichieste(String idPolicy, Integer attive, Integer conteggiate, Integer bloccate, PolicyGroupByActiveThreadsType policyType, TipoRisorsaPolicyAttiva tipoRisorsa) {
 		int remainingChecks = Integer.valueOf(System.getProperty("rl_check_policy_conditions_retry"));
 		int delay = Integer.valueOf(System.getProperty("rl_check_policy_conditions_delay"));
 		
@@ -331,9 +374,27 @@ public class Utils {
 				
 				NumeroRichiestePolicyInfo polInfo = new NumeroRichiestePolicyInfo(jmxPolicyInfo);
 			
-				assertEquals(attive, polInfo.richiesteAttive);
-				assertEquals(conteggiate, polInfo.richiesteConteggiate);
-				assertEquals(bloccate, polInfo.richiesteBloccate);
+				if(!PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(policyType) && 
+						!PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(policyType)) {
+					assertEquals(attive, polInfo.richiesteAttive);
+				}
+				
+				if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(policyType) ||
+						PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(policyType)) {
+					if(!TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI.equals(tipoRisorsa)) {
+						assertTrue(polInfo.richiesteConteggiate<=conteggiate);
+					}
+					assertTrue(polInfo.richiesteBloccate<=bloccate);
+				}
+				else {
+					assertEquals(conteggiate, polInfo.richiesteConteggiate);
+					assertEquals(bloccate, polInfo.richiesteBloccate);
+				}
+				
+				if(policyType!=null) {
+					// Devo controllarlo somanete se non e' null. Quando si fa il reset dell'erogazione/fruizione e non passa ancora una richiesta, rimane il motore precedente
+					assertEquals(policyType.toLabel(), polInfo.sincronizzazione);
+				}
 				break;
 			} catch (AssertionError e) {
 				if(remainingChecks == 0) {
@@ -347,11 +408,21 @@ public class Utils {
 	
 
 	public static void waitForZeroActiveRequests(String idPolicy, int richiesteConteggiate) {
+		waitForZeroActiveRequests(idPolicy, richiesteConteggiate, PolicyGroupByActiveThreadsType.LOCAL);
+	}
+	public static void waitForZeroActiveRequests(String idPolicy, int richiesteConteggiate, PolicyGroupByActiveThreadsType policyType) {
 		Logger logRateLimiting = LoggerWrapperFactory.getLogger("testsuite.rate_limiting");
 		
 		int remainingChecks = Integer.valueOf(System.getProperty("rl_check_policy_conditions_retry"));
 		int delay = Integer.valueOf(System.getProperty("rl_check_policy_conditions_delay"));
 
+		if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(policyType) ||
+				PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(policyType)) {
+			// aspetto un solo tempo di delay
+			org.openspcoop2.utils.Utilities.sleep(delay);
+			return;
+		}
+		
 		while(true) {
 			try {
 				String jmxPolicyInfo = getPolicy(idPolicy);
@@ -400,9 +471,14 @@ public class Utils {
 		String[] lines = jmxPolicyInfo.split(System.lineSeparator());
 		for (String l : lines) {
 			l = l.strip();
-			String[] keyValue = l.split(":");
-			if(keyValue.length == 2) {
-				ret.put(keyValue[0].strip(), keyValue[1].strip());
+			if(l.startsWith(PolicyFields.Sincronizzazione+" ")) {
+				ret.put(PolicyFields.Sincronizzazione, l.substring((PolicyFields.Sincronizzazione+" ").length()));
+			}
+			else {
+				String[] keyValue = l.split(":");
+				if(keyValue.length == 2) {
+					ret.put(keyValue[0].strip(), keyValue[1].strip());
+				}
 			}
 		}
 		return ret;
@@ -522,5 +598,19 @@ public class Utils {
 		boolean equalsWithReason = HeaderValues.RETURNCODE_TOO_MANY_REQUESTS.equalsIgnoreCase(returnCode);
 		boolean equalsWithoutReason = HeaderValues.RETURNCODE_TOO_MANY_REQUESTS_NO_REASON.equalsIgnoreCase(returnCode);
 		assertTrue("Verifico return code 429: '"+returnCode+"'", (equalsWithReason || equalsWithoutReason));
+	}
+	
+	public static Collection<Object[]> getPolicyGroupByActiveThreadsTypeAsArray() {
+		return Arrays.asList(new Object[][] {
+			{ null }, 
+			{ PolicyGroupByActiveThreadsType.LOCAL },
+			{ PolicyGroupByActiveThreadsType.LOCAL_DIVIDED_BY_NODES },
+			{ PolicyGroupByActiveThreadsType.DATABASE },
+			{ PolicyGroupByActiveThreadsType.HAZELCAST },
+			{ PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE },
+			{ PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE },
+			{ PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP },
+			{ PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP }
+		});
 	}
 }

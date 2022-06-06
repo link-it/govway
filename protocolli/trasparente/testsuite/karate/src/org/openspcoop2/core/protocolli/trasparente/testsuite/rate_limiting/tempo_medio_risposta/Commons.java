@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
 
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.PolicyFields;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -39,6 +40,9 @@ import org.slf4j.Logger;
 public class Commons {
 
 	static void checkPreConditionsTempoMedioRisposta(String idPolicy)  {
+		checkPreConditionsTempoMedioRisposta(idPolicy, PolicyGroupByActiveThreadsType.LOCAL);
+	}
+	static void checkPreConditionsTempoMedioRisposta(String idPolicy, PolicyGroupByActiveThreadsType policyType)  {
 		
 		Logger logRateLimiting = LoggerWrapperFactory.getLogger("testsuite.rate_limiting");
 		
@@ -54,11 +58,21 @@ public class Commons {
 				logRateLimiting.info(jmxPolicyInfo);
 				Map<String, String> policyValues = Utils.parsePolicy(jmxPolicyInfo);
 				
-				assertEquals("0", policyValues.get(PolicyFields.RichiesteAttive));
+				if(!PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(policyType) && 
+						!PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(policyType)) {
+					assertEquals("0", policyValues.get(PolicyFields.RichiesteAttive));
+				}
+				
 				assertEquals("0", policyValues.get(PolicyFields.RichiesteConteggiate));
 				assertEquals("0 ms", policyValues.get(PolicyFields.Contatore));
 				assertEquals("0 ms", policyValues.get(PolicyFields.ValoreMedio));
 				assertEquals("0", policyValues.get(PolicyFields.RichiesteBloccate));
+				
+				if(policyType!=null) {
+					// Devo controllarlo somanete se non e' null. Quando si fa il reset dell'erogazione/fruizione e non passa ancora una richiesta, rimane il motore precedente
+					assertEquals(policyType.toLabel(), policyValues.get(PolicyFields.Sincronizzazione));
+				}
+				
 				break;
 			} catch (AssertionError e) {
 				if(remainingChecks == 0) {

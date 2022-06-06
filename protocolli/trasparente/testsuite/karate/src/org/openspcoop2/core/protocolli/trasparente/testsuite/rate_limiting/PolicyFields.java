@@ -34,6 +34,7 @@ public class PolicyFields {
 	public static final String RichiesteBloccate = "Numero Richieste Bloccate";
 	public static final String Contatore = "Contatore";
 	public static final String ValoreMedio = "Valore Medio";
+	public static final String Sincronizzazione = "Sincronizzazione";
 	
 
 }

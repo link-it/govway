@@ -129,6 +129,11 @@
         connettoriMultipli.consegnaCondizionale.stessoFiltro=true
    In modo che la console consenta di assegnare più volte lo stesso filtro a connettori diversi in una consegna condizionale e rilevare l'errore a runtime durante una richiesta.
 
+- Impostare in <console_local.properties>:
+	# Gestore Policy
+	controlloTraffico.policyRateLimiting.tipiGestori=LOCAL,LOCAL_DIVIDED_BY_NODES,HAZELCAST,HAZELCAST_NEAR_CACHE,HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP,HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP,HAZELCAST_LOCAL_CACHE,DATABASE
+   In modo che la console consenta di impostare il gestore 'DATABASE'
+
 - Impostare in govway_local.properties la seguente proprietà per poter effettuare il test sul claim iat
 	
 	org.openspcoop2.pdd.gestioneToken.iat=120

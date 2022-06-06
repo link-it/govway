@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.junit.Test;
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.HeaderValues;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
@@ -53,149 +55,213 @@ public class RestTest extends ConfigLoader {
 	
 	@Test
 	public void perMinutoErogazione() throws Exception {
-		testErogazione(PolicyAlias.MINUTO);
+		testErogazione(PolicyAlias.MINUTO, null);
 	}
 	
 	@Test
 	public void perMinutoDefaultErogazione() throws Exception {
-		testErogazione(PolicyAlias.MINUTODEFAULT);
+		perMinutoDefaultErogazione(null);
+	}
+	public void perMinutoDefaultErogazione(PolicyGroupByActiveThreadsType policyType) throws Exception {
+		testErogazione(PolicyAlias.MINUTODEFAULT, policyType);
 	}
 	
 	@Test
 	public void orarioErogazione() throws Exception {
-		testErogazione(PolicyAlias.ORARIO);
+		testErogazione(PolicyAlias.ORARIO, null);
 	}
 	
 	@Test
 	public void giornalieroErogazione() throws Exception {
-		testErogazione(PolicyAlias.GIORNALIERO);
+		testErogazione(PolicyAlias.GIORNALIERO, null);
 	}
 	
 	@Test
 	public void perMinutoFruizione() throws Exception {
-		testFruizione(PolicyAlias.MINUTO);
+		testFruizione(PolicyAlias.MINUTO, null);
 	}
 	
 	@Test
 	public void perMinutoDefaultFruizione() throws Exception {
-		testFruizione(PolicyAlias.MINUTODEFAULT);
+		perMinutoDefaultFruizione(null);
+	}
+	public void perMinutoDefaultFruizione(PolicyGroupByActiveThreadsType policyType) throws Exception {
+		testFruizione(PolicyAlias.MINUTODEFAULT, policyType);
 	}
 	
 	@Test
 	public void orarioFruizione() throws Exception {
-		testFruizione(PolicyAlias.ORARIO);
+		testFruizione(PolicyAlias.ORARIO, null);
 	}
 	
 	@Test
 	public void giornalieroFruizione() throws Exception {
-		testFruizione(PolicyAlias.GIORNALIERO);
+		testFruizione(PolicyAlias.GIORNALIERO, null);
 	}
 	
-	public void testErogazione(PolicyAlias policy) throws Exception {
+	public void testErogazione(PolicyAlias policy, PolicyGroupByActiveThreadsType policyType) throws Exception {
 		
-		final int windowSize = Utils.getPolicyWindowSize(policy);
-		final int soglia = getSoglia(policy);
-		final int small_delay = soglia/2;
-		final int small_delay_count = 2;
-		final int big_delay = (small_delay_count+1)*soglia - small_delay*(small_delay_count) + 20;
+		if(policyType!=null && !policyType.isSupportedResource(TipoRisorsaPolicyAttiva.TEMPO_COMPLESSIVO_RISPOSTA)) {
+			logRateLimiting.warn("Test tempoMedioRispostaErogazione con policy type '"+policyType+"' non effettuato poichè non supportato dal gestore");
+			return;
+		}
 		
+		try {
 		
-		String path = Utils.getPolicyPath(policy);
-		String idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", erogazione, policy);
-		Utils.resetCounters(idPolicy);
-		
-		idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", erogazione, policy);
-		Commons.checkPreConditionsTempoMedioRisposta(idPolicy);
-		
-		Utils.waitForPolicy(policy);
-		
-		// Faccio prima 3 richieste che passano
-		
-		HttpRequest request = new HttpRequest();
-		request.setContentType("application/json");
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl( System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?sleep="+small_delay );
-		
-		Vector<HttpResponse> notBlockedResponses = Utils.makeParallelRequests(request, small_delay_count);
-		
-		// Poi faccio una richiesta che fa scattare la policy
-		
-		request.setContentType("application/json");
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl( System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?sleep="+big_delay );
-		
-		notBlockedResponses.addAll(Utils.makeParallelRequests(request, 1));
-		
-		
-		Utils.checkConditionsNumeroRichieste(idPolicy, 0, small_delay_count+1, 0);
-		
-		// Poi faccio n richieste che non passano
-		
-		request.setContentType("application/json");
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl( System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?sleep="+small_delay );
-		
-		Vector<HttpResponse> blockedResponses = Utils.makeParallelRequests(request, small_delay_count);
-		
-		Utils.checkConditionsNumeroRichieste(idPolicy, 0, small_delay_count+1, small_delay_count);
-		checkPassedRequests(notBlockedResponses, windowSize, soglia);
-		checkBlockedRequests(blockedResponses, windowSize, soglia);
+			final int windowSize = Utils.getPolicyWindowSize(policy);
+			final int soglia = getSoglia(policy);
+			final int small_delay = soglia/2;
+			final int small_delay_count = 2;
+			final int big_delay = (small_delay_count+1)*soglia - small_delay*(small_delay_count) + 20;
+			
+			dbUtils.setEngineTypeErogazione("SoggettoInternoTest", erogazione, policyType);
+			
+			long idErogazione = dbUtils.getIdErogazione("SoggettoInternoTest", erogazione);
+			Utils.ripulisciRiferimentiCacheErogazione(idErogazione);
+					
+			String path = Utils.getPolicyPath(policy);
+			HttpRequest request = new HttpRequest();
+			request.setContentType("application/json");
+			request.setMethod(HttpRequestMethod.GET);
+			request.setUrl( System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?sleep="+small_delay );
+			
+			// attivo nuovo motore
+			Utils.makeParallelRequests(request, 1);
+			
+			String idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", erogazione, policy);
+			Utils.resetCounters(idPolicy);
+			
+			idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", erogazione, policy);
+			Commons.checkPreConditionsTempoMedioRisposta(idPolicy, policyType);
+			
+			Utils.waitForPolicy(policy);
+			
+			// Faccio prima 3 richieste che passano
+						
+			Vector<HttpResponse> notBlockedResponses = Utils.makeParallelRequests(request, small_delay_count);
+			
+			// Poi faccio una richiesta che fa scattare la policy
+			
+			request.setContentType("application/json");
+			request.setMethod(HttpRequestMethod.GET);
+			request.setUrl( System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?sleep="+big_delay );
+			
+			notBlockedResponses.addAll(Utils.makeParallelRequests(request, 1));
+			
+			
+			Utils.checkConditionsNumeroRichieste(idPolicy, 0, small_delay_count+1, 0, policyType, TipoRisorsaPolicyAttiva.TEMPO_MEDIO_RISPOSTA);
+			
+			// Poi faccio n richieste che non passano
+			
+			request.setContentType("application/json");
+			request.setMethod(HttpRequestMethod.GET);
+			request.setUrl( System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?sleep="+small_delay );
+			
+			Vector<HttpResponse> blockedResponses = Utils.makeParallelRequests(request, small_delay_count);
+			
+			Utils.checkConditionsNumeroRichieste(idPolicy, 0, small_delay_count+1, small_delay_count, policyType, TipoRisorsaPolicyAttiva.TEMPO_MEDIO_RISPOSTA);
+			checkPassedRequests(notBlockedResponses, windowSize, soglia, policyType);
+			checkBlockedRequests(blockedResponses, windowSize, soglia, policyType);
+			
+		}finally {
+			
+			// ripristino
+			
+			dbUtils.setEngineTypeErogazione("SoggettoInternoTest", erogazione, null);
+			
+			long idErogazione = dbUtils.getIdErogazione("SoggettoInternoTest", erogazione);
+			Utils.ripulisciRiferimentiCacheErogazione(idErogazione);
+			
+		}
 	}
 	
 	
-	public void testFruizione(PolicyAlias policy) throws Exception {
+	public void testFruizione(PolicyAlias policy, PolicyGroupByActiveThreadsType policyType) throws Exception {
 		
-		final int windowSize = Utils.getPolicyWindowSize(policy);
-		final int soglia = getSoglia(policy);
-		final int small_delay = soglia/2;
-		final int small_delay_count = 2;
-		final int big_delay = (small_delay_count+1)*soglia - small_delay*(small_delay_count) + 20;
+		if(policyType!=null && !policyType.isSupportedResource(TipoRisorsaPolicyAttiva.TEMPO_COMPLESSIVO_RISPOSTA)) {
+			logRateLimiting.warn("Test tempoMedioRispostaFruizione con policy type '"+policyType+"' non effettuato poichè non supportato dal gestore");
+			return;
+		}
+		
+		try {
+		
+			final int windowSize = Utils.getPolicyWindowSize(policy);
+			final int soglia = getSoglia(policy);
+			final int small_delay = soglia/2;
+			final int small_delay_count = 2;
+			final int big_delay = (small_delay_count+1)*soglia - small_delay*(small_delay_count) + 20;
+	
+			String path = Utils.getPolicyPath(policy);
+			
+			dbUtils.setEngineTypeFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policyType);
+			
+			long idFruizione = dbUtils.getIdFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione);
+			Utils.ripulisciRiferimentiCacheFruizione(idFruizione);
+					
+			HttpRequest request = new HttpRequest();
+			request.setContentType("application/json");
+			request.setMethod(HttpRequestMethod.GET);
+			request.setUrl( System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?sleep="+small_delay );
+			
+			// attivo nuovo motore
+			Utils.makeParallelRequests(request, 1);
+			
+			String idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policy);
+			Utils.resetCounters(idPolicy);
+			
+			idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policy);
+			Commons.checkPreConditionsTempoMedioRisposta(idPolicy, policyType);
+			
+			Utils.waitForPolicy(policy);
+	
+			
+			// Faccio prima richieste che passano
 
-		String path = Utils.getPolicyPath(policy);
-		String idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policy);
-		Utils.resetCounters(idPolicy);
-		
-		idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policy);
-		Commons.checkPreConditionsTempoMedioRisposta(idPolicy);
-		
-		Utils.waitForPolicy(policy);
-
-		
-		// Faccio prima richieste che passano
-		
-		HttpRequest request = new HttpRequest();
-		request.setContentType("application/json");
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl( System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?sleep="+small_delay );
-		
-		Vector<HttpResponse> notBlockedResponses = Utils.makeParallelRequests(request, small_delay_count);
-		
-		// Poi faccio una richiesta che fa scattare la policy
-		
-		request.setContentType("application/json");
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl( System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?sleep="+big_delay );
-		
-		notBlockedResponses.add(Utils.makeRequest(request));
-		
-		Utils.checkConditionsNumeroRichieste(idPolicy, 0, small_delay_count+1, 0);
-		
-		// Poi faccio n richieste che non passano
-		
-		request.setContentType("application/json");
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl( System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?sleep="+small_delay );
-		
-		Vector<HttpResponse> blockedResponses = Utils.makeParallelRequests(request, small_delay_count);
-		
-		Utils.checkConditionsNumeroRichieste(idPolicy, 0, small_delay_count+1, small_delay_count);
-		checkPassedRequests(notBlockedResponses, windowSize, soglia);
-		checkBlockedRequests(blockedResponses, windowSize, soglia);
+			Vector<HttpResponse> notBlockedResponses = Utils.makeParallelRequests(request, small_delay_count);
+			
+			// Poi faccio una richiesta che fa scattare la policy
+			
+			request.setContentType("application/json");
+			request.setMethod(HttpRequestMethod.GET);
+			request.setUrl( System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?sleep="+big_delay );
+			
+			notBlockedResponses.add(Utils.makeRequest(request));
+			
+			Utils.checkConditionsNumeroRichieste(idPolicy, 0, small_delay_count+1, 0, policyType, TipoRisorsaPolicyAttiva.TEMPO_MEDIO_RISPOSTA);
+			
+			// Poi faccio n richieste che non passano
+			
+			request.setContentType("application/json");
+			request.setMethod(HttpRequestMethod.GET);
+			request.setUrl( System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?sleep="+small_delay );
+			
+			Vector<HttpResponse> blockedResponses = Utils.makeParallelRequests(request, small_delay_count);
+			
+			Utils.checkConditionsNumeroRichieste(idPolicy, 0, small_delay_count+1, small_delay_count, policyType, TipoRisorsaPolicyAttiva.TEMPO_MEDIO_RISPOSTA);
+			checkPassedRequests(notBlockedResponses, windowSize, soglia, policyType);
+			checkBlockedRequests(blockedResponses, windowSize, soglia, policyType);
+			
+		}finally {
+			
+			// ripristino
+	
+			dbUtils.setEngineTypeFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, null);
+			
+			long idFruizione = dbUtils.getIdFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione);
+			Utils.ripulisciRiferimentiCacheFruizione(idFruizione);
+			
+		}
 		
 	}
 	
-	
-	private void checkPassedRequests(Vector<HttpResponse> responses, int windowSize, int soglia) {
+	private void checkPassedRequests(Vector<HttpResponse> responses, int windowSize, int soglia, PolicyGroupByActiveThreadsType policyType) {
+		
+		if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(policyType) ||
+				PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(policyType)) {
+			// numero troppo casuali
+			return;
+		}
+		
 		// Delle richieste ok Controllo lo header *-Limit, *-Reset e lo status code
 		
 		responses.forEach( r -> {
@@ -211,8 +277,13 @@ public class RestTest extends ConfigLoader {
 		});
 	}
 	
-	private void checkBlockedRequests(Vector<HttpResponse> responses, int windowSize, int soglia) throws Exception {
+	private void checkBlockedRequests(Vector<HttpResponse> responses, int windowSize, int soglia, PolicyGroupByActiveThreadsType policyType) throws Exception {
 		
+		if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(policyType) ||
+				PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(policyType)) {
+			// numero troppo casuali
+			return;
+		}
 		
 		for (var r: responses) {
 			Utils.checkXLimitHeader(logRateLimiting, Headers.AvgTimeResponseLimit, r.getHeaderFirstValue(Headers.AvgTimeResponseLimit), soglia);			

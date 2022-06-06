@@ -58,9 +58,16 @@ public class UpdateDatiRequestProcessor implements EntryProcessor<IDUnivocoGroup
 			OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 			Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(op2Properties.isControlloTrafficoDebug());
 
-			entry.getValue().updateDatiStartRequestApplicabile(log, this.activePolicy);
-			entry.setValue(entry.getValue());
-			return entry.getValue();
+			DatiCollezionati datiCollezionatiReaded = null;
+			boolean updated = entry.getValue().updateDatiStartRequestApplicabile(log, this.activePolicy);
+			if(updated) {
+				datiCollezionatiReaded = (DatiCollezionati) entry.getValue().clone();
+				entry.setValue(entry.getValue());
+			}
+			
+			// Tutti i restanti controlli sono effettuati usando il valore di datiCollezionatiReaded, che e' gia' stato modificato
+			// E' possibile procedere con l'analisi rispetto al valore che possiedono il counter dentro questo scope.
+			return datiCollezionatiReaded;
 		}
 	}
 

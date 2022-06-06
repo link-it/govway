@@ -264,7 +264,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 		}
 		
 		// Tutti i restanti controlli sono effettuati usando il valore di datiCollezionatiReaded, che e' gia' stato modificato
-		// Inoltre e' stato re-inserito nella map come oggetto nuovo, quindi il valore dentro il metodo non subira' trasformazioni (essendo stato fatto il clone)
+		// Inoltre e' stato re-inserito nella map come oggetto nuovo, quindi il valore dentro il metodo non subira' trasformazioni (essendo stato fatto il deserialize da db)
 		// E' possibile procedere con l'analisi rispetto al valore che possiedono il counter dentro questo scope.
 		
 		return datiCollezionatiReaded;
@@ -291,7 +291,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 		}
 		
 		// Tutti i restanti controlli sono effettuati usando il valore di datiCollezionatiReaded, che e' gia' stato modificato
-		// Inoltre e' stato re-inserito nella map come oggetto nuovo, quindi il valore dentro il metodo non subira' trasformazioni (essendo stato fatto il clone)
+		// Inoltre e' stato re-inserito nella map come oggetto nuovo, quindi il valore dentro il metodo non subira' trasformazioni (essendo stato fatto il deserialize da db)
 		// E' possibile procedere con l'analisi rispetto al valore che possiedono il counter dentro questo scope.
 		
 		return datiCollezionatiReaded;

@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.junit.Test;
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.HeaderValues;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
@@ -178,23 +180,26 @@ public class RestTest extends ConfigLoader {
 	
 	@Test
 	public void perMinutoErogazione() throws Exception {
-		testErogazione("RichiesteFaultRest", PolicyAlias.MINUTO);
+		testErogazione("RichiesteFaultRest", PolicyAlias.MINUTO, null);
 	}
 	
 	
 	@Test
 	public void perMinutoDefaultErogazione() throws Exception {
-		testErogazione("RichiesteFaultRest", PolicyAlias.MINUTODEFAULT);
+		perMinutoDefaultErogazione(null);
+	}
+	public void perMinutoDefaultErogazione(PolicyGroupByActiveThreadsType policyType) throws Exception {
+		testErogazione("RichiesteFaultRest", PolicyAlias.MINUTODEFAULT, policyType);
 	}
 	
 	@Test
 	public void orarioErogazione() throws Exception {
-		testErogazione("RichiesteFaultRest", PolicyAlias.ORARIO);
+		testErogazione("RichiesteFaultRest", PolicyAlias.ORARIO, null);
 	}
 	
 	@Test
 	public void giornalieroErogazione() throws Exception {
-		testErogazione("RichiesteFaultRest", PolicyAlias.GIORNALIERO);
+		testErogazione("RichiesteFaultRest", PolicyAlias.GIORNALIERO, null);
 	}
 	
 	@Test
@@ -214,22 +219,25 @@ public class RestTest extends ConfigLoader {
 	
 	@Test
 	public void perMinutoFruizione() throws Exception {
-		testFruizione("RichiesteFaultRest", PolicyAlias.MINUTO);
+		testFruizione("RichiesteFaultRest", PolicyAlias.MINUTO, null);
 	}
 	
 	@Test
 	public void perMinutoDefaultFruizione() throws Exception {
-		testFruizione("RichiesteFaultRest", PolicyAlias.MINUTODEFAULT);
+		perMinutoDefaultFruizione(null);
+	}
+	public void perMinutoDefaultFruizione(PolicyGroupByActiveThreadsType policyType) throws Exception {
+		testFruizione("RichiesteFaultRest", PolicyAlias.MINUTODEFAULT, policyType);
 	}
 	
 	@Test
 	public void orarioFruizione() throws Exception {
-		testFruizione("RichiesteFaultRest", PolicyAlias.ORARIO);
+		testFruizione("RichiesteFaultRest", PolicyAlias.ORARIO, null);
 	}
 	
 	@Test
 	public void giornalieroFruizione() throws Exception {
-		testFruizione("RichiesteFaultRest", PolicyAlias.GIORNALIERO);
+		testFruizione("RichiesteFaultRest", PolicyAlias.GIORNALIERO, null);
 	}
 	
 	@Test
@@ -248,35 +256,61 @@ public class RestTest extends ConfigLoader {
 	}
 	
 	
-	public void testErogazione(String erogazione, PolicyAlias policy) throws Exception {
+	public void testErogazione(String erogazione, PolicyAlias policy, PolicyGroupByActiveThreadsType policyType) throws Exception {
 	
-		int maxRequests = getMaxRequests(policy);
-		int windowSize = Utils.getPolicyWindowSize(policy);
-		String path = Utils.getPolicyPath(policy);
+		if(policyType!=null && !policyType.isSupportedResource(TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI)) {
+			logRateLimiting.warn("Test numeroFaultErogazione con policy type '"+policyType+"' non effettuato poichè non supportato dal gestore");
+			return;
+		}
 		
-		String idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", erogazione, policy);
-		Utils.resetCounters(idPolicy);
+		try {
 		
-		idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", erogazione, policy);
-		Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0);
+			int maxRequests = getMaxRequests(policy);
+			int windowSize = Utils.getPolicyWindowSize(policy);
+			String path = Utils.getPolicyPath(policy);
+			
+			dbUtils.setEngineTypeErogazione("SoggettoInternoTest", erogazione, policyType);
+			
+			long idErogazione = dbUtils.getIdErogazione("SoggettoInternoTest", erogazione);
+			Utils.ripulisciRiferimentiCacheErogazione(idErogazione);
+					
+			HttpRequest request = new HttpRequest();
+			request.setContentType("application/json");
+			request.setMethod(HttpRequestMethod.GET);
+			request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?problem=true");
+			
+			// attivo nuovo motore
+			Utils.makeParallelRequests(request, 1);
+			
+			String idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", erogazione, policy);
+			Utils.resetCounters(idPolicy);
+			
+			idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", erogazione, policy);
+			Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0, policyType, TipoRisorsaPolicyAttiva.NUMERO_FAULT_APPLICATIVI);
+					
+			Utils.waitForPolicy(policy);
 				
-		Utils.waitForPolicy(policy);
-		
-		HttpRequest request = new HttpRequest();
-		request.setContentType("application/json");
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?problem=true");
-						
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
-
-		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
-		
-		Vector<HttpResponse>  failedResponses = Utils.makeParallelRequests(request, toFailRequests);
-
-		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, toFailRequests);
-		
-		checkOkRequests(responses, windowSize, maxRequests);
-		checkFailedRequests(failedResponses, windowSize, maxRequests);		
+			Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
+	
+			Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0, policyType, TipoRisorsaPolicyAttiva.NUMERO_FAULT_APPLICATIVI);
+			
+			Vector<HttpResponse>  failedResponses = Utils.makeParallelRequests(request, toFailRequests);
+	
+			Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, toFailRequests, policyType, TipoRisorsaPolicyAttiva.NUMERO_FAULT_APPLICATIVI);
+			
+			checkOkRequests(responses, windowSize, maxRequests, policyType);
+			checkFailedRequests(failedResponses, windowSize, maxRequests, policyType);		
+			
+		}finally {
+			
+			// ripristino
+			
+			dbUtils.setEngineTypeErogazione("SoggettoInternoTest", erogazione, null);
+			
+			long idErogazione = dbUtils.getIdErogazione("SoggettoInternoTest", erogazione);
+			Utils.ripulisciRiferimentiCacheErogazione(idErogazione);
+			
+		}
 	}
 	
 	
@@ -312,35 +346,61 @@ public class RestTest extends ConfigLoader {
 	}
 	
 	
-	public void testFruizione(String erogazione, PolicyAlias policy) throws Exception {
+	public void testFruizione(String erogazione, PolicyAlias policy, PolicyGroupByActiveThreadsType policyType) throws Exception {
 		
-		int maxRequests = getMaxRequests(policy);
-		int windowSize = Utils.getPolicyWindowSize(policy);
-		String path = Utils.getPolicyPath(policy);
+		if(policyType!=null && !policyType.isSupportedResource(TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI)) {
+			logRateLimiting.warn("Test numeroFaultFruizione con policy type '"+policyType+"' non effettuato poichè non supportato dal gestore");
+			return;
+		}
 		
-		String idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policy);
-		Utils.resetCounters(idPolicy);
+		try {
 		
-		idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policy);
-		Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0);
-				
-		Utils.waitForPolicy(policy);
-		
-		HttpRequest request = new HttpRequest();
-		request.setContentType("application/json");
-		request.setMethod(HttpRequestMethod.GET);
-		request.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?problem=true");
-						
-		Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
-
-		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
-		
-		Vector<HttpResponse>  failedResponses = Utils.makeParallelRequests(request, toFailRequests);
-
-		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, toFailRequests);
-		
-		checkOkRequests(responses, windowSize, maxRequests);
-		checkFailedRequests(failedResponses, windowSize, maxRequests);		
+			int maxRequests = getMaxRequests(policy);
+			int windowSize = Utils.getPolicyWindowSize(policy);
+			String path = Utils.getPolicyPath(policy);
+			
+			dbUtils.setEngineTypeFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policyType);
+			
+			long idFruizione = dbUtils.getIdFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione);
+			Utils.ripulisciRiferimentiCacheFruizione(idFruizione);
+					
+			HttpRequest request = new HttpRequest();
+			request.setContentType("application/json");
+			request.setMethod(HttpRequestMethod.GET);
+			request.setUrl(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?problem=true");
+			
+			// attivo nuovo motore
+			Utils.makeParallelRequests(request, 1);
+			
+			String idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policy);
+			Utils.resetCounters(idPolicy);
+			
+			idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policy);
+			Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0, policyType, TipoRisorsaPolicyAttiva.NUMERO_FAULT_APPLICATIVI);
+					
+			Utils.waitForPolicy(policy);
+							
+			Vector<HttpResponse> responses = Utils.makeParallelRequests(request, maxRequests);
+	
+			Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0, policyType, TipoRisorsaPolicyAttiva.NUMERO_FAULT_APPLICATIVI);
+			
+			Vector<HttpResponse>  failedResponses = Utils.makeParallelRequests(request, toFailRequests);
+	
+			Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, toFailRequests, policyType, TipoRisorsaPolicyAttiva.NUMERO_FAULT_APPLICATIVI);
+			
+			checkOkRequests(responses, windowSize, maxRequests, policyType);
+			checkFailedRequests(failedResponses, windowSize, maxRequests, policyType);	
+			
+		}finally {
+			
+			// ripristino
+			
+			dbUtils.setEngineTypeFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, null);
+			
+			long idFruizione = dbUtils.getIdFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione);
+			Utils.ripulisciRiferimentiCacheFruizione(idFruizione);
+			
+		}
 	}
 	
 	
@@ -377,6 +437,9 @@ public class RestTest extends ConfigLoader {
 	
 	
 	private void checkOkRequests(Vector<HttpResponse> responses, int windowSize, int maxRequests) {
+		checkOkRequests(responses, windowSize, maxRequests, PolicyGroupByActiveThreadsType.LOCAL);
+	}
+	private void checkOkRequests(Vector<HttpResponse> responses, int windowSize, int maxRequests, PolicyGroupByActiveThreadsType policyType) {
 		// Delle richieste ok Controllo lo header *-Limit, *-Reset e lo status code
 		
 		responses.forEach( r -> {
@@ -395,6 +458,15 @@ public class RestTest extends ConfigLoader {
 	
 	
 	private void checkFailedRequests(Vector<HttpResponse> responses, int windowSize, int maxRequests) throws Exception {
+		checkFailedRequests(responses, windowSize, maxRequests, PolicyGroupByActiveThreadsType.LOCAL);
+	}
+	private void checkFailedRequests(Vector<HttpResponse> responses, int windowSize, int maxRequests, PolicyGroupByActiveThreadsType policyType) throws Exception {
+		
+		if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(policyType) ||
+				PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(policyType)) {
+			// numero troppo casuali
+			return;
+		}
 		
 		JsonPathExpressionEngine jsonPath = new JsonPathExpressionEngine();
 		

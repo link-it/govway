@@ -22,6 +22,7 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.nume
 
 import static org.junit.Assert.assertEquals;
 
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.PolicyFields;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 
@@ -35,6 +36,9 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils
 public class Commons {
 
 	public static void checkPostConditionsRichiesteSimultanee(String idPolicy) {
+		checkPostConditionsRichiesteSimultanee(idPolicy, PolicyGroupByActiveThreadsType.LOCAL);
+	}
+	public static void checkPostConditionsRichiesteSimultanee(String idPolicy, PolicyGroupByActiveThreadsType policyType) {
 		
 		int remainingChecks = Integer.valueOf(System.getProperty("rl_check_policy_conditions_retry"));
 		int delay = Integer.valueOf(System.getProperty("rl_check_policy_conditions_delay"));
@@ -50,6 +54,12 @@ public class Commons {
 				Utils.logRateLimiting.info(jmxPolicyInfo);
 				RichiesteSimultaneePolicyInfo polInfo = new RichiesteSimultaneePolicyInfo(jmxPolicyInfo);
 				assertEquals(Integer.valueOf(0), polInfo.richiesteAttive);
+				
+				if(policyType!=null) {
+					// Devo controllarlo somanete se non e' null. Quando si fa il reset dell'erogazione/fruizione e non passa ancora una richiesta, rimane il motore precedente
+					assertEquals(policyType.toLabel(), polInfo.sincronizzazione);
+				}
+				
 				break;
 			} catch (AssertionError e) {
 				if(remainingChecks == 0) {
@@ -63,6 +73,9 @@ public class Commons {
 	}
 
 	public static void checkPreConditionsRichiesteSimultanee(String idPolicy) {
+		checkPreConditionsRichiesteSimultanee(idPolicy, PolicyGroupByActiveThreadsType.LOCAL);
+	}
+	public static void checkPreConditionsRichiesteSimultanee(String idPolicy, PolicyGroupByActiveThreadsType policyType) {
 		
 		int remainingChecks = Integer.valueOf(System.getProperty("rl_check_policy_conditions_retry"));
 		int delay = Integer.valueOf(System.getProperty("rl_check_policy_conditions_delay"));
@@ -77,6 +90,12 @@ public class Commons {
 				Utils.logRateLimiting.info(jmxPolicyInfo);
 				RichiesteSimultaneePolicyInfo polInfo = new RichiesteSimultaneePolicyInfo(jmxPolicyInfo);
 				assertEquals(Integer.valueOf(0), polInfo.richiesteAttive);
+				
+				if(policyType!=null) {
+					// Devo controllarlo somanete se non e' null. Quando si fa il reset dell'erogazione/fruizione e non passa ancora una richiesta, rimane il motore precedente
+					assertEquals(policyType.toLabel(), polInfo.sincronizzazione);
+				}
+				
 				break;
 			} catch (AssertionError e) {
 				if(remainingChecks == 0) {

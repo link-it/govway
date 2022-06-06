@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.junit.Test;
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.HeaderValues;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
@@ -53,22 +55,57 @@ public class RestTest extends ConfigLoader {
 	
 	@Test
 	public void perMinutoErogazione() throws Exception {
+		perMinutoErogazione(null);
+	}
+	public void perMinutoErogazione(PolicyGroupByActiveThreadsType policyType) throws Exception {
 
-		String idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", "TempoComplessivoRisposta", PolicyAlias.MINUTO);
-		Utils.resetCounters(idPolicy);
+		if(policyType!=null && !policyType.isSupportedResource(TipoRisorsaPolicyAttiva.TEMPO_COMPLESSIVO_RISPOSTA)) {
+			logRateLimiting.warn("Test tempoComplessivoRispostaErogazione con policy type '"+policyType+"' non effettuato poichè non supportato dal gestore");
+			return;
+		}
 		
-		idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", "TempoComplessivoRisposta", PolicyAlias.MINUTO);
-		Commons.checkPreConditionsTempoComplessivoRisposta(idPolicy); 
+		try {
+			
+			dbUtils.setEngineTypeErogazione("SoggettoInternoTest", "TempoComplessivoRisposta", policyType);
+			
+			long idErogazione = dbUtils.getIdErogazione("SoggettoInternoTest", "TempoComplessivoRisposta");
+			Utils.ripulisciRiferimentiCacheErogazione(idErogazione);
+					
+			HttpRequest request = new HttpRequest();
+			request.setContentType("application/json");
+			request.setMethod(HttpRequestMethod.GET);
+			String url = System.getProperty("govway_base_path") + "/SoggettoInternoTest/TempoComplessivoRisposta/v1/minuto?sleep=2000";
+			request.setUrl( url );
+			
+			// attivo nuovo motore
+			Utils.makeParallelRequests(request, 1);
+
+			String idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", "TempoComplessivoRisposta", PolicyAlias.MINUTO);
+			Utils.resetCounters(idPolicy);
+			
+			idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", "TempoComplessivoRisposta", PolicyAlias.MINUTO);
+			Commons.checkPreConditionsTempoComplessivoRisposta(idPolicy, policyType); 
+			
+			// Aspetto lo scoccare del minuto
+			
+			Utils.waitForNewMinute();
 		
-		// Aspetto lo scoccare del minuto
-		
-		Utils.waitForNewMinute();
+			Vector<HttpResponse> responses = makeRequests(url, idPolicy);
+			
+			checkAssertions(responses, 1, 60, policyType);
+			
+			Commons.checkPostConditionsTempoComplessivoRisposta(idPolicy, policyType);		
+			
+		}finally {
+			
+			// ripristino
 	
-		Vector<HttpResponse> responses = makeRequests(System.getProperty("govway_base_path") + "/SoggettoInternoTest/TempoComplessivoRisposta/v1/minuto?sleep=2000", idPolicy);
-		
-		checkAssertions(responses, 1, 60);
-		
-		Commons.checkPostConditionsTempoComplessivoRisposta(idPolicy);		
+			dbUtils.setEngineTypeErogazione("SoggettoInternoTest", "TempoComplessivoRisposta", null);
+			
+			long idErogazione = dbUtils.getIdErogazione("SoggettoInternoTest", "TempoComplessivoRisposta");
+			Utils.ripulisciRiferimentiCacheErogazione(idErogazione);
+			
+		}
 	}
 	
 	
@@ -112,20 +149,54 @@ public class RestTest extends ConfigLoader {
 	
 	@Test
 	public void perMinutoFruizione() throws Exception {
+		 perMinutoFruizione(null);
+	}
+	public void perMinutoFruizione(PolicyGroupByActiveThreadsType policyType) throws Exception {
 
-		String idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "TempoComplessivoRisposta", PolicyAlias.MINUTO);
-		Utils.resetCounters(idPolicy);
+		if(policyType!=null && !policyType.isSupportedResource(TipoRisorsaPolicyAttiva.TEMPO_COMPLESSIVO_RISPOSTA)) {
+			logRateLimiting.warn("Test tempoComplessivoRispostaFruizione con policy type '"+policyType+"' non effettuato poichè non supportato dal gestore");
+			return;
+		}
 		
-		idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "TempoComplessivoRisposta", PolicyAlias.MINUTO);
-		Commons.checkPreConditionsTempoComplessivoRisposta(idPolicy); 
-				
-		Utils.waitForNewMinute();
-	
-		Vector<HttpResponse> responses = makeRequests(System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/TempoComplessivoRisposta/v1/minuto?sleep=2000",idPolicy);
+		try {
+			
+			dbUtils.setEngineTypeFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "TempoComplessivoRisposta", policyType);
+			
+			long idFruizione = dbUtils.getIdFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "TempoComplessivoRisposta");
+			Utils.ripulisciRiferimentiCacheFruizione(idFruizione);
+					
+			HttpRequest request = new HttpRequest();
+			request.setContentType("application/json");
+			request.setMethod(HttpRequestMethod.GET);
+			String url = System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/TempoComplessivoRisposta/v1/minuto?sleep=2000";
+			request.setUrl( url );
+			
+			// attivo nuovo motore
+			Utils.makeParallelRequests(request, 1);
+			
+			String idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "TempoComplessivoRisposta", PolicyAlias.MINUTO);
+			Utils.resetCounters(idPolicy);
+			
+			idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "TempoComplessivoRisposta", PolicyAlias.MINUTO);
+			Commons.checkPreConditionsTempoComplessivoRisposta(idPolicy, policyType); 
+					
+			Utils.waitForNewMinute();
 		
-		checkAssertions(responses, 1, 60);
-		
-		Commons.checkPostConditionsTempoComplessivoRisposta(idPolicy);		
+			Vector<HttpResponse> responses = makeRequests(url,idPolicy);
+			
+			checkAssertions(responses, 1, 60, policyType);
+			
+			Commons.checkPostConditionsTempoComplessivoRisposta(idPolicy, policyType);		
+			
+		}finally {
+			
+			// ripristino
+
+			dbUtils.setEngineTypeFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "TempoComplessivoRisposta", null);
+			
+			long idFruizione = dbUtils.getIdFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "TempoComplessivoRisposta");
+			Utils.ripulisciRiferimentiCacheFruizione(idFruizione);
+		}
 	}
 	
 	
@@ -197,7 +268,16 @@ public class RestTest extends ConfigLoader {
 	}
 	
 	private void checkAssertions(Vector<HttpResponse> responses, int maxSeconds, int windowSize) throws Exception {
+		checkAssertions(responses, maxSeconds, windowSize, PolicyGroupByActiveThreadsType.LOCAL);
+	}
+	private void checkAssertions(Vector<HttpResponse> responses, int maxSeconds, int windowSize, PolicyGroupByActiveThreadsType policyType) throws Exception {
 				
+		if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(policyType) ||
+				PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(policyType)) {
+			// numero troppo casuali
+			return;
+		}
+		
 		responses.forEach(r -> { 			
 				assertNotEquals(null,Integer.valueOf(r.getHeaderFirstValue(Headers.RateLimitTimeResponseQuotaReset)));
 				Utils.checkXLimitHeader(logRateLimiting, Headers.RateLimitTimeResponseQuotaLimit, r.getHeaderFirstValue(Headers.RateLimitTimeResponseQuotaLimit), maxSeconds);
