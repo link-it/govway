@@ -3,41 +3,29 @@
 Sincronizzazione Distribuita
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Una sincronizzazione distribuitta consente di implementare politiche di rate limiting, in presenza di un cluster di più nodi, senza dipendere da alcun bilanciamento del carico.
+Questa modalità consente di implementare qualunque politica di rate limiting in maniera effettivamente distribuita tra i nodi del cluster, indipendentemente dalle modalità previste per il bilanciamento del carico.
 
-Il conteggio delle metriche viene attuato tramite un archivio dati centralizzato implementato tramite Hazelcast.
+Il conteggio delle metriche viene effettuato tramite un archivio dati distribuito implementato tramite Hazelcast (https://github.com/hazelcast/).
 
 *Vantaggi*
 
-Non vi è alcuna dipendenza rispetto al bilanciamento delle richieste.
+Non vi è alcuna dipendenza rispetto alla modalità di bilanciamento del carico, nè alcuna limitazione sul tipo di policy applicabile.
 
 *Svantaggi*
 
-Aumento della latenza che impatta su ogni richiesta per via dell'archiviazione dei dati in remoto e per la concorrenza delle operazioni di incremento. Per ovviare al degrado delle performance vengono fornite differenti varianti di sincronizzazione che consentono di avere performance migliori a discapito della precisione nei conteggi. 
-
+Aumento della latenza di gestione delle richieste, dovuta alla concorrenza delle operazioni sui contatori distribuiti. Per ovviare al potenziale degrado prestazionale vengono fornite varie modalità di sincronizzazione che consentono di ottimizzare le prestazioni, rinunciando alla completa precisione dei conteggi. 
 
 *Differenti tecniche di sincronizzazione*
 
-Il principale problema con un archivio dati centralizzato è dovuto alla concorrenza delle operazioni attuate quando il numero di richieste simultanee è elevato. 
+Il principale problema con un archivio dati centralizzato è dovuto alla concorrenza delle operazioni di aggiornamento che devono essere effettuate in maniera atomica per assicurare la consistenza del dato totale conteggiato. In presenza di elevato traffico questo può comportare un apprezzabile degrado prestazionale.
 
-Ogni operazione, per poter mantenere una consistenza dei dati, viene eseguita impedendo a qualsiasi altra richiesta di modificare il contatore e quindi tale blocco diventa rapidamente un collo di bottiglia per le prestazioni.
+Per mitigare il problema, è possibile utilizzare modalità asincrone di aggiornamento dei dati tra i nodi del cluster. Con questo approccio il dato 'master' risulta sempre consistente mentre la copia locale di ogni nodo viene aggiornata con sincronizzazioni periodiche, con la controindicazione che la precisione dei conteggi soffre delle finestre di risincronizzazione.
 
-Per poter migliorare le performance è possibile utilizzare approcci in cui l'operazione di incremento viene effettuata sempre in maniera atomica dal gestore dei dati remoto, ma la sua esecuzione avviene in maniera asincrona senza bloccare il client il quale utilizzerà una copia locale dei contatori per implementare la politica di rate limiting. Con questo approccio i dati remoti risultano sempre essere consistenti mentre la copia locale viene aggiornata con sincronizzazioni periodiche e quindi la precisione dei contatori soffre delle finestre di risincronizzazione.
+Un'altra possibilità è quella di utilizzare un approccio "get and set", in cui si recupera il valore corrente, lo si incrementa e quindi lo si rispedisce al datastore senza utilizzare le tecniche di incremento atomico fornite dal gestore stesso. In questo modo il dato 'master' perderà di precisione poichè potrà capitare che richieste simultanee gestite su nodi differenti prelevino la stessa informazione e la modifichino senza tenere conto delle altre analoghe operazioni in corso, ottenendo così che il conteggio risulti approssimato per difetto. Per migliorare ulteriormente le prestazioni, anche l'operazione di 'set' può essere resa asincrona. 
 
-Un altra modalità è quello di utilizzare un approccio ingenuo "get and set", in cui si recupera il contatore corrente, lo si incrementa e quindi lo si rinvia al datastore senza utilizzare tecniche di incremento atomico fornite dal gestore stesso. Con questa modalità i dati remoti diventeranno inconsistenti poichè potra capitare che richieste simultanee gestite su nodi differenti prelevino la stessa informazione e la modificano senza tenere conto delle altre richieste in essere. La modalità consente quindi di avere una base dati remota che però non garantirà una misurazione esatta delle metriche, ma bensì approssimata per difetto. Il vantaggio è che le performance sono migliori poichè vi sono meno colli di bottiglia dovuti alle operazioni atomiche ed inoltre anche le operazioni "set" possono essere configurate per essere riversate in maniera asincrona favorandone maggiore performance a discapito della precisione delle misurazioni.
+Di seguito vengono fornite le varie modalità di sincronizzazione distribuita configurabili su GovWay, presentate in ordine, dalla modalità di 'Misurazione Esatta' che garantisce il rispetto puntuale delle politiche previste, fino alla modalità con "get and set asincrono", che è quella che garantisce le prestazioni migliori ma con una maggiore perdita di precisione dei conteggi.
 
-Il grafico (:numref:`configurazioneSincronizzazioneRateLimitingGrafico`) mostra come le performance migliorano in maniera inversamente proporzionale alla precisione nei conteggi delle metriche. 
-
-.. figure:: ../../../_figure_console/GraficoRateLimitingSincronizzazioneDistribuita.png
-    :scale: 100%
-    :align: center
-    :name: configurazioneSincronizzazioneRateLimitingGrafico
-
-    Sincronizzazione Distribuita - performance rispetto alla precisione nei conteggi.
-
-Di seguito vengono fornite le varie modalità di sincronizzazione distribuita configurabili su GovWay in ordine dalla modalità che garantisce una misurazione esatta delle metriche a quella più lasca che consente di avere maggiori performance.
-
-- *Misurazione Esatta*: attivabile impostando la sincronizzazione '*Distribuita*' e scegliendo le voci '*Misurazione esatta*' e '*Algoritmo full-sync*' (:numref:`configurazioneSincronizzazioneRateLimitingHazelcastFullSync`). Con questa modalità sia i dati remoti che quelli locali al nodo risultano essere sempre consistenti.
+- *Misurazione Esatta*: attivabile impostando la sincronizzazione '*Distribuita*' e scegliendo le voci '*Misurazione esatta*' e '*Algoritmo full-sync*' (:numref:`configurazioneSincronizzazioneRateLimitingHazelcastFullSync`). Con questa modalità sia il dato 'master' che quelli locali al nodo risultano essere sempre aggiornati.
 
   .. figure:: ../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingHazelcastFullSync.png
     :scale: 100%
@@ -46,7 +34,7 @@ Di seguito vengono fornite le varie modalità di sincronizzazione distribuita co
 
     Sincronizzazione Distribuita con misurazione delle metriche esatta
 
-- *Near Cache*: attivabile impostando la sincronizzazione '*Distribuita*' e scegliendo le voci '*Misurazione esatta*' e '*Algoritmo near-cache*' (:numref:`configurazioneSincronizzazioneRateLimitingHazelcastNearCache`). Con questa modalità l'incremento viene effettuato sempre in maniera atomica dal gestore dei dati remoto, ma la sua esecuzione avviene in maniera asincrona senza bloccare il client che utilizza una "NearCache" per consultare i dati locali al nodo. La "NearCache" è una struttura dati fornita da Hazelcast che viene risincronizzata rispetto ai dati remoti con sincronizzazioni periodiche. Maggiori dettagli vengono forniti nella documentazione del prodotto: https://docs.hazelcast.com/imdg/latest/performance/near-cache
+- *Near Cache*: attivabile impostando la sincronizzazione '*Distribuita*' e scegliendo le voci '*Misurazione esatta*' e '*Algoritmo near-cache*' (:numref:`configurazioneSincronizzazioneRateLimitingHazelcastNearCache`). Con questa modalità l'incremento del dato 'master' viene effettuato sempre in maniera atomica, ma la sua esecuzione avviene in maniera asincrona senza bloccare il nodo che ha effettuato l'operazione che utilizza una "NearCache" per consultare i dati locali al nodo. La "NearCache" è una struttura dati fornita da Hazelcast che viene risincronizzata rispetto ai dati remoti con sincronizzazioni periodiche. Maggiori dettagli vengono forniti nella documentazione del prodotto: https://docs.hazelcast.com/imdg/latest/performance/near-cache
 
   .. figure:: ../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingHazelcastNearCache.png
     :scale: 100%
@@ -55,7 +43,7 @@ Di seguito vengono fornite le varie modalità di sincronizzazione distribuita co
 
     Sincronizzazione Distribuita con misurazione delle metriche esatta in remoto ed utilizzo di una "NearCache" in locale
 
-- *Local Cache*: attivabile impostando la sincronizzazione '*Distribuita*' e scegliendo le voci '*Misurazione esatta*' e '*Algoritmo local-cache*' (:numref:`configurazioneSincronizzazioneRateLimitingHazelcastLocalCache`). Con questa modalità l'incremento viene effettuato sempre in maniera atomica dal gestore dei dati remoto, ma la sua esecuzione avviene in maniera asincrona senza bloccare il client che utilizza copia locale che viene risincronizzata rispetto ai dati remoti con sincronizzazioni periodiche ogni 5 secondi. L'intervallo di risincronizzazione può essere modificato agendo sul file *<directory-lavoro>/govway_local.properties* tramite la seguente proprietà:
+- *Local Cache*: attivabile impostando la sincronizzazione '*Distribuita*' e scegliendo le voci '*Misurazione esatta*' e '*Algoritmo local-cache*' (:numref:`configurazioneSincronizzazioneRateLimitingHazelcastLocalCache`). Questa modalità è analoga alla precedente, ma i nodi del gateway, anzichè utilizzare la "NearCache" di Hazelcast, utilizzano una propria copia locale del dato che viene risincronizzata ogni 5 secondi. L'intervallo di risincronizzazione può essere modificato agendo sul file *<directory-lavoro>/govway_local.properties* tramite la seguente proprietà:
 
    ::
 
@@ -69,7 +57,7 @@ Di seguito vengono fornite le varie modalità di sincronizzazione distribuita co
 
     Sincronizzazione Distribuita con misurazione delle metriche esatta in remoto ed utilizzo di una cache locale
 
-- *Misurazione approssimata con "get and set sincrono"*: attivabile impostando la sincronizzazione '*Distribuita*' e scegliendo le voci '*Misurazione approssimata*' e '*Algoritmo remote-sync*' (:numref:`configurazioneSincronizzazioneRateLimitingHazelcastRemoteSync`). Con questa modalità l'incremento viene effettuato utilizzando un approccio ingenuo "get and set" in cui la pubblicazione sul datastore remoto dei dati avviene tramite un'operazione sincrona.
+- *Misurazione approssimata con "get and set sincrono"*: attivabile impostando la sincronizzazione '*Distribuita*' e scegliendo le voci '*Misurazione approssimata*' e '*Algoritmo remote-sync*' (:numref:`configurazioneSincronizzazioneRateLimitingHazelcastRemoteSync`). Con questa modalità l'incremento viene effettuato utilizzando un approccio "get and set" senza atomicità in cui la modifica del 'dato master' avviene tramite un'operazione sincrona.
 
   .. figure:: ../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingHazelcastRemoteSync.png
     :scale: 100%
@@ -78,7 +66,7 @@ Di seguito vengono fornite le varie modalità di sincronizzazione distribuita co
 
     Sincronizzazione Distribuita con misurazione delle metriche approssimata tramite algoritmo "get and set" con pubblicazione sincrona
 
-- *Misurazione approssimata con "get and set asincrono"*: attivabile impostando la sincronizzazione '*Distribuita*' e scegliendo le voci '*Misurazione approssimata*' e '*Algoritmo remote-async*' (:numref:`configurazioneSincronizzazioneRateLimitingHazelcastRemoteAsync`). Come nella precedente modalità l'incremento viene effettuato utilizzando un approccio ingenuo "get and set", però la pubblicazione sul datastore remoto avviene tramite un'operazione asincrona.
+- *Misurazione approssimata con "get and set asincrono"*: attivabile impostando la sincronizzazione '*Distribuita*' e scegliendo le voci '*Misurazione approssimata*' e '*Algoritmo remote-async*' (:numref:`configurazioneSincronizzazioneRateLimitingHazelcastRemoteAsync`). Come nella precedente modalità l'incremento viene effettuato utilizzando un approccio "get and set" senza atomicità in cui la modifica del 'dato master' avviene tramite un'operazione asincrona.
 
   .. figure:: ../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingHazelcastRemoteAsync.png
     :scale: 100%

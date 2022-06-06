@@ -21,10 +21,9 @@ Sono stati risolti i seguenti bug:
 
 Sono stati risolti i seguenti bug relativi al profilo di interoperabilità 'ModI':
 
-- nel pattern 'Integrity_REST_01' l'header Digest veniva erroneamente sia generato che atteso con una codifica 'hex'. La codifica è stata rivista per utilizzare 'base64' in modo da essere conformi al RFC 5843 (che estende il RFC 3230 indicato nelle Linee Guida). Per garantire una retrocompatibilità è possibile configurare la singola erogazione/fruizione per produrre un header Digest codificato in esadecimale oltre che, in fase di validazione, di accettare entrambe le codifiche. Per default sia la codifica attesa che quella generata è sempre base64.
+- nel pattern 'Integrity_REST_01' l'header Digest veniva erroneamente sia generato che atteso con una codifica 'hex'. La codifica è stata rivista per utilizzare 'base64' in modo da essere conformi al RFC 5843 (che estende il RFC 3230 indicato nelle Linee Guida). Per garantire la retrocompatibilità è possibile configurare la singola erogazione/fruizione per produrre un header Digest codificato in esadecimale, mentre in fase di validazione è possibile accettare entrambe le codifiche. Per default sia la codifica attesa che quella generata è sempre base64.
 
-- risolta mancata rilevazione di identificativo duplicato quando sia il dominio fruitore che quello erogatore veniva gestito sullo stesso GovWay. La mancata rilevazione avveniva solamente se le richieste duplicate venivano ricevute simultaneamente rispetto all'originale.
-
+- risolta mancata rilevazione di identificativo duplicato quando sia il dominio fruitore che quello erogatore venivano gestiti sulla stessa instanza di GovWay. La mancata rilevazione avveniva solamente se le richieste duplicate venivano ricevute simultaneamente rispetto all'originale.
 
 Per la console di gestione sono stati risolti i seguenti bug:
 

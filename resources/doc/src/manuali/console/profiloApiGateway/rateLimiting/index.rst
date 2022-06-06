@@ -3,16 +3,20 @@
 Rate Limiting
 ~~~~~~~~~~~~~
 
-Questa sezione di configurazione, specifica per erogazioni e fruizioni
+Questa sezione di configurazione consente di attivare policy di Rate
+Limiting per una specifica erogazione o fruizione
 (o specifico gruppo di configurazione nell'ambito di
-un'erogazione/fruizione), consente di attivare delle policy di Rate
-Limiting specifiche per l'istanza configurata.
+un'erogazione/fruizione).
 
 L'attivazione di policy di rate limiting rientra nell'ambito degli
 strumenti per il controllo del traffico. La descrizione di dettaglio di
-questi strumenti è presente nella sezione :ref:`traffico`, dove viene illustrato il meccanismo
-per configurare le policy e più in dettaglio nella sezione :ref:`trafficoPolicy` riguardo
+questi strumenti è presente nella sezione :ref:`traffico`, 
+e nella sezione :ref:`trafficoPolicy` per quanto riguarda
 l'attivazione di policy a valenza globale.
+
+.. note::
+
+    In presenza di una installazione con più nodi gateway attivi, GowWay per default effettua il conteggio delle metriche utilizzate dalle policy di rate limiting indipendentemente su ogni singolo nodo del cluster. Questa soluzione è certamente la più efficiente, ma presenta dei limiti evidenti se è necessaria una contabilità precisa del numero di accessi consentiti globalmente da parte dell'intero cluster. In tali situazioni è necessario modificare la configurazioni di default per attivare modalità di conteggio distribuite, come descritto nella sezione :ref:`headerGWRateLimitingCluster`.
 
 Una policy di rate limiting si compone concettualmente dei seguenti elementi che verranno maggiormente dettagliati nella sezione :ref:`rateLimiting_attivazioneNuovaPolicy`:
 
@@ -45,7 +49,7 @@ Una policy di rate limiting si compone concettualmente dei seguenti elementi che
 
 *Criteri di valutazione delle policy*
 
-Per ogni singola erogazione o fruizione di API è possibile definire più politiche di Rate Limiting, anche con medesima metrica. Per ogni richiesta viene applicato un algoritmo di valutazione delle policy che è il seguente (una descrizione di dettaglio viene fornita nella sezione :ref:`rateLimiting_criteriValutazione`):
+Per ogni singola erogazione o fruizione di API è possibile definire più politiche di Rate Limiting, anche con analoga metrica. Per ogni richiesta viene applicato il seguente algoritmo di valutazione delle policy (una descrizione di maggior dettaglio viene fornita nella sezione :ref:`rateLimiting_criteriValutazione`):
 
 - le policy vengono raggruppate «per metrica» e per ogni metrica vengono valutate nell’ordine di elenco.
 
@@ -68,11 +72,6 @@ All'applicativo client vengono restituiti header http informativi che consentono
 
 Una descrizione di dettaglio degli header http viene fornita nella sezione :ref:`headerGWRateLimiting`.
 
-
-*Rate Limiting in un cluster di nodi*
-
-Se si desidera applicare un rate limiting in presenza di un cluster di più nodi deve essere configurato un gestore delle policy differente da quello di default con il quale ogni nodo effettuerebbe il proprio conteggio.
-Nella sezione :ref:`headerGWRateLimitingCluster` vengono descritte diverse modalità di configurazione di GovWay in modo da supportare il rate limiting in presenza di più nodi.
 
 
 .. toctree::

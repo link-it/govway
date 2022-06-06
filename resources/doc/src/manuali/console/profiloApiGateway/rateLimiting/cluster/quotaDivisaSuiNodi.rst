@@ -1,15 +1,15 @@
 .. _headerGWRateLimitingCluster_quotaDivisaSuiNodi:
 
-Sincronizzazione Locale con quota divisa sui nodi
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sincronizzazione Locale con quota divisa tra i nodi
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Il gestore delle policy di rate limiting descritto in questa sezione rappresenta una prima soluzione all'attuazione di un controllo di rate limiting su più nodi.
+Questa modalità di gestione delle policy di rate limiting fornisce una possibile soluzione nei casi in cui sia possibile distribuire equamente tra i nodi tutte le richieste relative alla policy che si intende attuare.
 
-**Requisito**: la presenza di un bilanciamento del carico round robin dove le richieste devono essere distribuite in ordine tra i nodi.
+**Prerequisito**: la presenza di un load balancer che distribuisca in maniera uniforme tra i singoli nodi del cluster le richieste relative ad ogni singola policy.
 
-Il bilanciamento ordinato tra nodi consente di attuare correttamente la policy di rate limiting semplicemente suddividendo la quota configurata per il numero di nodi attivi. 
+In questo caso è possibile attuare correttamente la policy di rate limiting semplicemente suddividendo la quota configurata per il numero di nodi attivi. 
 
-Il gestore attivabile impostando la sincronizzazione '*Locale - quota divisa sui nodi*' attiva una registrazione automatica del nodo al suo avvio e una cancellazione durante lo shutdown in modo da consentire ad ogni nodo di conoscere l'effettivo numero di nodi attivi per poter suddividere la quota configurata correttamente (:numref:`configurazioneSincronizzazioneRateLimitingLocaleQuotaDivisa`).
+La modalità di sincronizzazione '*Locale - quota divisa sui nodi*' attiva la registrazione automatica dei singoli nodi del cluster al proprio avvio e la loro cancellazione durante lo shutdown, in modo da permettere ad ogni nodo di conoscere l'effettivo numero di nodi attivi ai fini del corretto calcolo della quota da applicare su ogni singolo nodo (:numref:`configurazioneSincronizzazioneRateLimitingLocaleQuotaDivisa`).
 
 .. figure:: ../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingLocaleQuotaDivisa.png
     :scale: 100%
@@ -20,29 +20,27 @@ Il gestore attivabile impostando la sincronizzazione '*Locale - quota divisa sui
 
 *Vantaggi*
 
-L'attuazione del controllo di rate limiting possiede le medesime performance della sincronizzazione *Locale* attiva per default sul prodotto.
+Questa modalità assicura le stesse prestazioni della sincronizzazione *Locale* attiva per default sul prodotto.
 
 *Svantaggi*
 
 1. Dipendenza dal Load Balancer
 
-  La soluzione è banalmente attuabile solamente se sui nodi risiede un'unica API e il conteggio avviene esclusivamente per numero di richieste indipendentemente dal client richiedente o dall'operazione invocata. 
+  La soluzione richiede la collaborazione del load balancer, ad esempio con una politica 'round robin' sulle richieste in arrivo sull'endpoint di una specifica API per politiche che richiedono di limitare il numero di richieste per quella API.
+ 
+2. Applicabilità limitata
 
-  La soluzione inizia a presentare difetti non appena vi sono più API, poichè il bilanciamento da configurare sul bilanciatore dovrà essere basato sul contesto dell'API invocata. La soluzione è comunque attuabile se il numero di API complessivo è limitato o comunque viene scelto di applicarla su un numero ristretto, sempre conteggiando esclusivamente per numero di richieste indipendentemente dal client chiamante.
-
-  Inizia invece a diventare di difficile attuazione quando il conteggio deve tener conto del client richiedente (es. 10 richieste al minuto per ogni client) e quindi anche il bilanciamento dovrebbe farlo.
+  La soluzione è banalmente applicabile solo nei casi in cui GovWay gestisca un'unica API e il rate limiting vada applicato esclusivamente al numero di richieste verso quella API, indipendentemente dal client che le stia generando. Nei casi in cui siano gestite più API, la politica di gestione 'round robin' sul bilanciatore dovrà essere gestita separatamente per l'endpoint di ogni API interessata, mentre la soluzione non risulta più applicabile se il conteggio debba tener conto del client richiedente (es. 1000 richieste max al minuto per API, 10 richieste max al minuto per ogni client). In tal caso il bilanciamento dovrebbe avvenire per ogni client fruitore, operazione molto complessa da gestire sui load balancer.
+  
+  Inoltre questa modalità è applicabile solamente con metriche che prevedono di contare il numero di richieste in una finestra temporale. Non è quindi applicabile per le metriche: "Numero Richieste Simultanee", "Occupazione Banda", "Tempo Medio Risposta" e "Tempo Complessivo Risposta".
 
 2. Header "\*-Remaining"
 
-  La modalità prevede di suddividere la quota per il numero di nodi e ciò rende difficile calcolare il valore esatto del numero di richieste ancora effettuabili nella finestra temporale in corso. Nel resto di questa sezione verranno fornite indicazioni sulle tecniche di approssimazione dei valori ritornati negli header "\*-Remaining".
-
-3. Altre metriche
-  
-  Questa tipologia è applicabile solamente con metriche che prevedono di contare il numero di richieste in una finestra temporale. Non è quindi applicabile per le metriche: "Numero Richieste Simultanee", "Occupazione Banda", "Tempo Medio Risposta" e "Tempo Complessivo Risposta".
+  La modalità prevede di suddividere la quota per il numero di nodi e ciò rende difficile calcolare il valore esatto del numero di richieste ancora disponibili nella finestra temporale in corso. Nel resto di questa sezione verranno fornite indicazioni sulle tecniche di approssimazione dei valori ritornati negli header "\*-Remaining".
 
 *Header "\*-Remaining"*
 
-Il valore del numero di richieste ancora effettuabili nella finestra temporale in corso verrà calcolato tramite la tecnica di approssimazione che consiste nel moltiplicare la quota rimasta su un nodo per il numero di nodi attivi.
+Il valore del numero di richieste ancora disponibili nella finestra temporale in corso verrà calcolato tramite una tecnica di approssimazione che consiste nel moltiplicare la quota rimasta su un nodo per il numero di nodi attivi.
 
 Di seguito viene mostrato un flusso di richieste di esempio, supponendo di avere un cluster formato da 2 nodi, e una policy di rate limiting impostata con una metrica che prevede 11 richieste al minuto.
 
@@ -81,11 +79,11 @@ Vi sono alcuni aspetti dell'approssimazione che sono configurabili agendo sul fi
       # Quota normalizzata
       org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.LOCAL_DIVIDED_BY_NODES.limit.normalizedQuota=false
 
-- Remaning 0 o 1: è possibile configurare quale valore ritornare nel caso sia rimasta solamente 1 invocazione a disposizione (per default viene ritornato il valore 1):
+- Remaning 0 o 1: è possibile configurare quale valore restituire nel caso sia rimasta solamente 1 invocazione a disposizione (per default viene ritornato il valore 1):
 
-	- se si torna 1, si permette di rispettare il contratto poichè ad esempio nel caso di 2 nodi, con quota N, alla N-1 esima invocazione il client si vede ricevere un remaining=0 e potrebbe pensare di non poter fare la N-esima invocazione che invece da contratto è disponibile. Lo svantaggio di questa soluzione è che il client riceverà un errore 409 senza mai aver ricevuto remaining=0.
+	- valore 1, viene correttamente rispettato il contratto con il client; ad esempio, nel caso di 2 nodi, con quota N, alla N-1 esima invocazione il client si vede restituire correttamente un remaining=1; lo svantaggio di questa soluzione è che il client riceverà un errore 409 senza mai aver ricevuto una risposta con remaining=0;
 
-	- se si torna 0, rispetto alla precedente soluzione il client può smettere di effettuare invocazioni non appena riceve un remaining=0 evitando quindi di ricevere un 409. Lo svantaggio di questa soluzione è che il client se rispetta l'header effettuerà N-1 invocazioni rispetto alle N previste da contratto.
+	- restituendo 0 il client ottiene un remaining=0 alla pensultima invocazione e potrebbe quindi decidere di non fare ulteriori invocazioni evitando di ricevere un errore 409. Lo svantaggio di questa soluzione è che il client, se rispetta le indicazioni dell'header, effettuerà N-1 invocazioni rispetto alle N consentite dalla propria policy.
 
    ::
 
