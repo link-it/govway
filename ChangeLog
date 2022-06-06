@@ -1,3 +1,10 @@
+2022-06-06  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1369
+	In presenza di una API SOAP con registrazione messaggi abilitata, se la risposta pervenuta contiene un Content-Type non compatibile con quello della richiesta, 
+	GovWay segnala l'anomalia correttamente nei diagnostici ma non registra il contenuto della risposta e degli header HTTP.
+
 2022-06-03  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, ApiRsConfigurazione]

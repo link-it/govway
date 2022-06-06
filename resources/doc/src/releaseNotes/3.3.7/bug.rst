@@ -7,6 +7,8 @@ Sono stati risolti i seguenti bug:
 
 - migliorata diagnostica emessa in presenza di una richiesta SOAP vuota (senza http payload), rispetto al precedente errore che riportava un null pointer:  "Riscontrato errore ... errore durante il controllo del namespace del soap envelope: null". La nuova diagnostica riporta invece la causa dell'errore: "Riscontrato errore ... errore durante il controllo del namespace del soap envelope: Invalid empty message"
 
+- in presenza di una API SOAP con registrazione messaggi abilitata, se la risposta pervenuta conteneva un Content-Type non compatibile con quello della richiesta, GovWay segnalava l'anomalia correttamente nei diagnostici ma non registrava il contenuto della risposta e degli header HTTP;
+
 - la funzionalità di lettura delle richieste SOAP in streaming veniva erroneamente attivata nel servizio di imbustamento Xml2Soap e causava, nel profilo di interoperabilità 'Fatturazione Elettronica', una spedizione di fatture binarie (P7M/ZIP) corrotte;
 
 - modificato nome della proprietà 'topic.*.requestSended' in 'topic.*.requestSent' nella tracciatura su file;

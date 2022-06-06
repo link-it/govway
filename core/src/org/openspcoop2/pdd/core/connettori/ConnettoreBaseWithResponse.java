@@ -138,13 +138,41 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 	
 	protected boolean dumpResponse(Map<String, List<String>> trasporto) throws Exception{
 		
-		if(this.isRest){
-			checkRestResponseMessageType();
-		}
-		else {
-			checkSoapResponseMessageType();
+		Exception exceptionCheck = null;
+		try {
+			if(this.isRest){
+				checkRestResponseMessageType();
+			}
+			else {
+				checkSoapResponseMessageType();
+			}
+		}catch(Exception e) {
+			exceptionCheck = e;
 		}
 		
+		boolean returnValue = false;
+		try {
+			returnValue = _dumpResponse(trasporto);
+		}
+		catch(Exception e) {
+			if(exceptionCheck!=null) {
+				throw exceptionCheck;
+			}
+			else {
+				throw e;
+			}
+		}
+		
+		if(exceptionCheck!=null) {
+			throw exceptionCheck;
+		}
+		else {
+			return returnValue;
+		}
+
+	}
+	
+	private boolean _dumpResponse(Map<String, List<String>> trasporto) throws Exception{
 		if(this.isResponse!=null){
 			// Registro Debug.
 			DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
