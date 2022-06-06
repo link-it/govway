@@ -1,23 +1,19 @@
 .. _headerGWRateLimitingCluster:
 
-Rate Limiting in un cluster di nodi
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Rate Limiting in presenza di un cluster di nodi
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Se si desidera applicare un rate limiting in presenza di un cluster di più nodi, è necessario attuare una configurazione differente da quella di default.
+In presenza di una installazione con più nodi gateway attivi, GowWay per default effettua il conteggio delle metriche utilizzate dalle policy di rate limiting indipendentemente su ogni singolo nodo del cluster. Questa soluzione è certamente la più efficiente, ma presenta dei limiti evidenti se è necessaria una contabilità precisa del numero di accessi consentiti globalmente da parte dell'intero cluster, in quanto si potrebbe riscontrare la violazione di una policy solamente su alcuni nodi e non su altri a seconda di come avvenga la distribuizione delle richieste sui singoli nodi.
 
-Se ogni nodo effettua il proprio conteggio, un client potrebbe violare una policy solamente su alcuni nodi e non su altri.
+In alcuni casi specifici questa soluzione può comunque essere adottata, appoggiandosi alla collaborazione dei load balancer. Ad esempio, nel caso si voglia adottare una politica che limiti il numero di richieste per ogni client fruitore, è possibile utilizzare sui load balancer una politica di sticky session in modo che le richieste dello stesso client siano gestite sempre dalla stessa istanza GovWay, così da ottenere il rispetto puntuale dei limiti impostati. Se invece si volesse adottare una politica che limiti il numero di richieste verso una specifica API, indipendentemente dal client che le effettui, è possibile utilizzare un bilanciamento del carico di tipo 'round robin' per l'endpoint corrispondente a quella API. Le richieste sarebbero così distribuite equamente tra i nodi consentendo di applicare correttamente la policy semplicemente suddividendo la quota per il numero di nodi attivi.
 
-Un semplice modo per attuare il controllo è quello di avvalersi di un bilanciamento del carico basato su sticky sessions in modo che ogni client venga inviato esattamente ad un nodo. Questo approccio presenta lo svantaggio che non è attuabile un'architettura high availability e non è possibile ridimensionare i nodi in presenza di sovraccarico delle richieste.
+Ma già se si volessero attuare entrambe queste politiche simultaneamente, le politiche di load balancing richieste risulterebbero tra loro incompatibili, e si dovrebbe pertanto passare a modalità di calcolo delle metriche distribuite tra i diversi nodi del cluster. Visto che tali modalità hanno un certo impatto prestazionale, è sempre necessaria un'attenta analisi preliminare per individuare la configurazione più indicata per la propria specifica situazione.
 
-Un alternativa alla soluzione precedente, è quella di utilizzare un bilanciamento del carico round robin: le richieste verrano distribuite in ordine tra i nodi consentendo di attuare correttamente la policy semplicemente suddividendo la quota per il numero di nodi attivi. Questa soluzione è banalmente attuabile solamente se sui nodi risiede un'unica API e il conteggio avviene esclusivamente per numero di richieste. La soluzione inizia a presentare difetti non appena vi sono più API, poichè il bilanciamento da configurare sul bilanciatore dovrà essere basato sul contesto dell'API invocata. Un ulteriore svantaggio si presenta quando il conteggio deve tener conto del client richiedente (es. 10 richieste al minuto per ogni client) e quindi anche il bilanciamento diventa complesso e non di facile attuazione.
+GovWay consente di modificare la modalità di gestione di default delle policy di rate limiting sia globalmente che puntualmente rispetto alla singola erogazione o fruizione.
 
-Una soluzione migliore, che consente di non essere legati al bilanciamento del carico, è quella in cui il conteggio viene attuato tramite un archivio dati centralizzato (es. Hazelcast o Redis). Questa soluzione presenta lo svantaggio dovuto all'aumento della latenza che impatterrà su ogni richiesta per via dell'archiviazione dei dati in remoto e per la concorrenza di tali operazioni.
+Per modificare la modalità di default è possibile intervenire nella sezione *Rate Limiting* presente nella maschera di configurazione del *Controllo del Traffico* (sezione :ref:`configurazioneRateLimiting`). Per modificare la modalità di gestione su una singola erogazione o fruizione è richiesto invece l'accesso alla govwayConsole in modalità *avanzata* (sezione :ref:`modalitaAvanzata`). Nel seguito viene documentato come modificare la configurazione per una singola erogazione o fruizione, analoghe modalità potranno essere utilizzate per intervenire a livello globale.
 
-La soluzione scelta per gestire un rate limiting in un cluster di nodi dovrà quindi essere selezionata rispetto allo scenario di utilizzo considerando i pro e i contro di ogni soluzione.
-
-Per selezionare un tipo di gestore delle policy di Rate Limiting differente da quello di default è richiesto l'accesso alla govwayConsole in modalità *avanzata* (sezione :ref:`modalitaAvanzata`).
-
-A partire dall'erogazione o fruizione di una API, accedendo alla sezione :ref:`configSpecifica` in modalità avanzata compare una sezione precedentemente non documentata denominata *Opzioni Avanzate*. All'interno di tale sezione è possibile agire sulla configurazione della voce *Sincronizzazione* nella sezione *Rate Limiting*.
+Dopo aver selezionato una specifica erogazione o fruizione, accedendo alla sezione :ref:`configSpecifica` in modalità avanzata compare la sezione *Opzioni Avanzate*. All'interno di tale sezione è possibile agire sulla configurazione della voce *Sincronizzazione* nella sezione *Rate Limiting* (:numref:`configurazioneSincronizzazioneRateLimitingDefault`).
 
 .. figure:: ../../../_figure_console/ConfigurazioneSincronizzazioneRateLimiting.png
     :scale: 100%
@@ -26,17 +22,16 @@ A partire dall'erogazione o fruizione di una API, accedendo alla sezione :ref:`c
 
     Sincronizzazione del Rate Limiting in un cluster di nodi
 
-Le modalità di gestione delle policy attivabili su GovWay sono i seguenti:
+Le modalità di gestione delle policy attivabili su GovWay sono le seguenti:
 
-- *Default*: ogni nodo effettua il proprio conteggio;
+- *Locale*: ogni nodo effettua il proprio conteggio;
 
-- *Locale*: equivalente alla voce 'Default';
+- *Locale - quota divisa sui nodi*: gestione delle policy tramite bilanciamento del carico, come descritto nella sezione :ref:`headerGWRateLimitingCluster_quotaDivisaSuiNodi`.
 
-- *Locale - quota divisa sui nodi*: gestione delle policy che richiede un bilanciamento del carico. Soluzione descritta nella sezione :ref:`headerGWRateLimitingCluster_quotaDivisaSuiNodi`.
+- *Distribuita*: il conteggio viene attuato tramite un archivio dati distribuito, come descritto nella sezione :ref:`headerGWRateLimitingCluster_distribuita`;
 
-- *Distribuita*: il conteggio viene attuato tramite un archivio dati centralizzato. La soluzione viene descritta nella sezione :ref:`headerGWRateLimitingCluster_distribuita`.
+- *Default*: viene utilizzata la gestione indicata nel file di proprietà "govway.properties" che nella configurazione di default del prodotto è equivalente alla voce 'Locale'.
 
-Oltre a personalizzare la gestione puntualmente su una erogazione o fruizione è possibile attuare una configurazione, identica a quanto già precedentemente descritto, a livello globale di GovWay agendo nella sezione *Rate Limiting* presente nella maschera di configurazione del *Controllo del Traffico* (sezione :ref:`configurazioneRateLimiting`).
 
 .. toctree::
    :maxdepth: 2

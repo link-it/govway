@@ -31,7 +31,7 @@ Sono infine stati risolti i seguenti problemi:
 
 - corretto valore ritornato dalla keyword 'inUrl', dove è stato eliminato il prefisso '[in]' o '[out]' che rimane recuperabile tramite la keyword 'inFunction';
 
-- la tracciatura dell'informazione '${logBase64:errorDetail}' provocava un errore inatteso poichè venivano erroneamente serializzate in base64 le informazioni prima di comprendere il dettaglio dell'errore;
+- la tracciatura dell'informazione '${logBase64:errorDetail}' provocava un errore inatteso poichè venivano erroneamente serializzate in base64 le informazioni prima di interpretare il dettaglio dell'errore;
 
 - le richieste errate (es. API not found) non venivano tracciate se la funzionalità veniva attivata tramite una configurazione globale.
 

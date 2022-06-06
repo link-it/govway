@@ -1,14 +1,14 @@
 Miglioramenti alla funzionalità di RateLimiting
 ------------------------------------------------------------
 
-Aggiunti differenti gestori delle policy di RateLimiting utilizzabili su un cluster di nodi:
+Aggiunte nuove modalità di gestione delle policy di RateLimiting utilizzabili su un cluster di nodi:
 
-- gestore che consente di suddividere la quota per il numero di nodi attivi e si basa su un bilanciamento delle richieste "round robin" (soluzione applicabile solamente in specifici contesti);
+- possibilità di suddividere le quote previste per il numero di nodi attivi; questa modalità permette, potendo sfruttare la collaborazione del load balancer, di ottenere il conteggio corretto delle quote previste anche senza bisogno di utilizzare uno storage distribuito tra i nodi del cluster;
 
-- gestore in cui il conteggio viene attuato tramite un archivio dati centralizzato: Hazelcast. Con questo gestore si ha un degrato delle performance dovuto all’aumento della latenza che impatta su ogni richiesta per via dell’archiviazione dei dati in remoto e per la concorrenza di tali operazioni. Per ovviare al degrado vengono fornite differenti varianti che consentono di avere performance migliori a discapito della precisione nei conteggi.
+- possibilità di gestire il conteggio tramite storage distribuito tra i nodi del cluster; per limitare il degrado prestazionale introdotto dalla gestione del conteggio distribuito, è possibile configurare opzioni di comunicazione asincrona tra i nodi del cluster, ottenendo performance migliori a discapito della precisione nei conteggi.
 
-Il software consente di attivare il gestore delle policy più opportuno puntualmente su ogni erogazione o fruizione di API permettendo quindi di valutare i pro e i contro di ogni soluzione calati nel singolo contesto di utilizzo.
+La modalità di configurazione del rate limiting può essere perfezionata per ogni erogazione o fruizione di API, permettendo quindi di adottare la soluzione più opportuna per ogni singola API gestita da GovWay.
 
-È adesso inoltre possibile personalizzare gli header HTTP restituiti al client contenenti informazioni sulle quote e sulle finestre temporali delle policy di rate limiting: è possibile disabilitarne la generazione o modificarne i valori indicati per quanto concerne la quota (indicazione o meno della finestra temporale) e gli intervalli di retry (utilizzo o meno di un tempo di backoff).
+È inoltre stata introdotta la possibilità di personalizzare gli header HTTP restituiti ai client, relativi alle informazioni sulle quote e sulle finestre temporali delle policy di rate limiting: è possibile disabilitarne del tutto la generazione o modificarne i valori indicati per quanto concerne la quota (indicazione o meno della finestra temporale) e gli intervalli di retry (utilizzo o meno di un tempo di backoff).
 
 È infine stata aggiunta la possibilità di filtrare l'applicabilità di una policy rispetto ai valori presenti in un token OAuth2.

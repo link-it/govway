@@ -6,7 +6,7 @@ Header HTTP informativi restituiti ai client: quote e finestre temporali
 All'applicativo client vengono restituiti header http informativi che consentono di conoscere:
 
 - il numero massimo di richieste effettuabili (quota);
-- la finestra temporale in cui si applica la quota (informazione disponibile solamente con opzione 'window' abilitata, descritta nel seguito di questa sezione);
+- la finestra temporale in cui si applica la quota (informazione disponibile solamente con opzione 'window' abilitata, descritta nella sezione :ref:`headerGWRateLimitingConfig`);
 - il numero di secondi mancanti alla prossima finestra temporale dove il numero di richieste conteggiate verrà azzerato;
 - il numero di richieste ancora effettuabili nella finestra temporale in corso;
 - in caso di violazione della policy, il numero di secondi dopo i quali riprovare ad utilizzare il servizio.
