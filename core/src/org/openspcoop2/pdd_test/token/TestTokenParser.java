@@ -43,6 +43,7 @@ public class TestTokenParser {
 				{TipologiaClaims.GOOGLE.name()},
 				{TipologiaClaims.INTROSPECTION_RESPONSE_RFC_7662.name()},
 				{TipologiaClaims.JSON_WEB_TOKEN_RFC_7519.name()},
+				{TipologiaClaims.JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068.name()},
 				{TipologiaClaims.OIDC_ID_TOKEN.name()},
 				{TipologiaClaims.MAPPING.name()},
 		};

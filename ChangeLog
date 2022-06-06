@@ -1,5 +1,11 @@
 2022-06-06  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1371
+	Nella validazione degli access token è adesso possibile indicare come formato dell'access token anche la struttura definita nel RFC 9068.
+
+2022-06-06  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Risolto Bug OP-1369
 	In presenza di una API SOAP con registrazione messaggi abilitata, se la risposta pervenuta contiene un Content-Type non compatibile con quello della richiesta, 

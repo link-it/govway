@@ -1207,7 +1207,388 @@ public class TestBasicTokenParser {
 		
 		
 		
+		
 		// Test 5
+		if(tipoTest==null || TipologiaClaims.JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068.equals(tipoTest))
+		{
+			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068'...");
+			String cliendId = "18192.apps";
+			String audience = "23223.apps";
+			String audience2 = "7777.apps";
+			String issuer = "testAuthEnte";
+			String username = "Utente di Prova";
+			String subject = "10623542342342323";
+			String s1 = "https://userinfo.email";
+			String s2 = "https://userinfo.profile";
+			String s3 = "altro";
+			String jti = "33aa1676-1f9e-34e2-8515-0cfca111a188";
+			Date now = DateManager.getDate();
+			Date iat = new Date( (now.getTime()/1000)*1000);
+			Date nbf = new Date(iat.getTime() - (1000*20));
+			Date exp = new Date(iat.getTime() + (1000*60));
+			String rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
+					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
+					+ "\"jti\": \""+jti+"\"}";
+			BasicTokenParser tokenParser = new BasicTokenParser(TipologiaClaims.JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068);
+			InformazioniToken info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
+			
+			if(info.getClaims()==null || info.getClaims().isEmpty()) {
+				throw new Exception("Parse non riuscito?");
+			}
+			if(info.getClaims().size()!=10) {
+				throw new Exception("Claims attesi 10, trovati '"+info.getClaims().size()+"'");	
+			}
+			if(!info.getClaims().containsKey("client_id")){
+				throw new Exception("Atteso client_id non presente tra i claims");
+			}
+			if(!info.getClaims().containsKey("aud")){
+				throw new Exception("Atteso aud non presente tra i claims");
+			}
+			if(!info.getClaims().containsKey("sub")){
+				throw new Exception("Atteso sub non presente tra i claims");
+			}
+			if(!info.getClaims().containsKey("iss")){
+				throw new Exception("Atteso iss non presente tra i claims");
+			}
+			if(!info.getClaims().containsKey("username")){
+				throw new Exception("Atteso username non presente tra i claims");
+			}
+			if(!info.getClaims().containsKey("scope")){
+				throw new Exception("Atteso scope non presente tra i claims");
+			}
+			if(!info.getClaims().containsKey("iat")){
+				throw new Exception("Atteso iat non presente tra i claims");
+			}
+			if(!info.getClaims().containsKey("nbf")){
+				throw new Exception("Atteso nbf non presente tra i claims");
+			}
+			if(!info.getClaims().containsKey("exp")){
+				throw new Exception("Atteso exp non presente tra i claims");
+			}
+			if(!info.getClaims().containsKey("jti")){
+				throw new Exception("Atteso jti non presente tra i claims");
+			}
+			
+			if(!cliendId.equals(info.getClientId())){
+				throw new Exception("Atteso client_id '"+cliendId+"' trovato '"+info.getClientId()+"'");
+			}
+			
+			if(info.getAud()==null) {
+				throw new Exception("Audience attesi non trovato");
+			}
+			if(info.getAud().size()!=2) {
+				throw new Exception("Audience attesi 2, trovati '"+info.getAud().size()+"'");
+			}
+			boolean find = false;
+			for (String s : info.getAud()) {
+				if(audience.equals(s)) {
+					find = true;
+					break;
+				}
+			}
+			if(!find) {
+				throw new Exception("Audience atteso '"+audience+"' non trovato");
+			}
+			find = false;
+			for (String s : info.getAud()) {
+				if(audience2.equals(s)) {
+					find = true;
+					break;
+				}
+			}
+			if(!find) {
+				throw new Exception("Audience atteso '"+audience2+"' non trovato");
+			}
+			
+			if(!subject.equals(info.getSub())){
+				throw new Exception("Atteso subject '"+subject+"' trovato '"+info.getSub()+"'");
+			}
+			if(!issuer.equals(info.getIss())){
+				throw new Exception("Atteso issuer '"+issuer+"' trovato '"+info.getIss()+"'");
+			}
+			
+			// non supportato
+			/*
+			if(!username.equals(info.getUsername())){
+				throw new Exception("Atteso username '"+username+"' trovato '"+info.getUsername()+"'");
+			}
+			*/
+			if(info.getUsername()!=null) {
+				throw new Exception("Username non atteso");
+			}
+			
+			// scope comunque aggiunti per supportare alcuni authorization server OIDC che li ritornano
+			if(info.getScopes()==null) {
+				throw new Exception("Scope attesi non trovato");
+			}
+			if(info.getScopes().size()!=3) {
+				throw new Exception("Scope attesi 3, trovati '"+info.getScopes().size()+"'");
+			}
+			find = false;
+			for (String s : info.getScopes()) {
+				if(s1.equals(s)) {
+					find = true;
+					break;
+				}
+			}
+			if(!find) {
+				throw new Exception("Scope atteso '"+s1+"' non trovato");
+			}
+			find = false;
+			for (String s : info.getScopes()) {
+				if(s2.equals(s)) {
+					find = true;
+					break;
+				}
+			}
+			if(!find) {
+				throw new Exception("Scope atteso '"+s2+"' non trovato");
+			}
+			find = false;
+			for (String s : info.getScopes()) {
+				if(s3.equals(s)) {
+					find = true;
+					break;
+				}
+			}
+			if(!find) {
+				throw new Exception("Scope atteso '"+s3+"' non trovato");
+			}
+			
+			Date d = info.getIat();
+			if(d==null) {
+				throw new Exception("Data non trovata");
+			}
+			if(!d.equals(iat)) {
+				throw new Exception("Claim iat differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(iat)+" iat="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			
+			d = info.getNbf();
+			if(d==null) {
+				throw new Exception("Data nbf non trovata");
+			}
+			if(!d.equals(nbf)) {
+				throw new Exception("Claim nbf differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			if(now.before(d)){
+				throw new Exception("Token non utilizzabile, non atteso now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			
+			d = info.getExp();
+			if(d==null) {
+				throw new Exception("Data di scadenza non trovata");
+			}
+			if(!d.equals(exp)) {
+				throw new Exception("Claim exp differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(exp)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			if(!now.before(d)){
+				throw new Exception("Token scaduto non atteso now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			
+			if(!jti.equals(tokenParser.getJWTIdentifier())){
+				throw new Exception("Atteso jti '"+jti+"' trovato '"+tokenParser.getJWTIdentifier()+"'");
+			}
+			
+			if(info.getRoles()!=null) {
+				throw new Exception("Ruoli non attesi");
+			}
+			
+			if(info.getUserInfo()!=null) {
+				if(info.getUserInfo().getFamilyName()!=null) {
+					throw new Exception("Claim family name non atteso");
+				}
+				if(info.getUserInfo().getFirstName()!=null) {
+					throw new Exception("Claim first name non atteso");
+				}
+				if(info.getUserInfo().getFullName()!=null) {
+					throw new Exception("Claim full name non atteso");
+				}
+				if(info.getUserInfo().getMiddleName()!=null) {
+					throw new Exception("Claim middle name non atteso");
+				}
+				if(info.getUserInfo().getEMail()!=null) {
+					throw new Exception("Claim mail non atteso");
+				}
+			}
+			
+			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' ok");
+			
+			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date) ...");
+			
+			iat = new Date( (now.getTime()/1000)*1000);
+			nbf = new Date(iat.getTime() - (1000*60));
+			exp = new Date(iat.getTime() + (1000*60));
+			rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
+					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
+					+ "\"jti\": \""+jti+"\"}";
+			tokenParser = new BasicTokenParser(TipologiaClaims.JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068);
+			info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
+			
+			d = info.getExp();
+			if(d==null) {
+				throw new Exception("Data di scadenza non trovata");
+			}
+			now = DateManager.getDate();
+			if(!now.before(d)){
+				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			now = new Date(now.getTime() + (1000*20));
+			if(!now.before(d)){
+				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			now = new Date(now.getTime() + (1000*60));
+			if(now.before(d)){
+				throw new Exception("(3) Atteso token scaduto, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			
+			d = info.getNbf();
+			if(d==null) {
+				throw new Exception("Data nbf non trovata");
+			}
+			now = DateManager.getDate();
+			if(now.before(d)){
+				throw new Exception("(1) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			now = new Date(now.getTime() - (1000*20));
+			if(now.before(d)){
+				throw new Exception("(2) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			now = new Date(now.getTime() - (1000*60));
+			if(!now.before(d)){
+				throw new Exception("(3) Atteso token non utilizzabile, invece sembre valido? now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			
+			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date) ok");
+			
+			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date con expires con max long value) ...");
+			
+			iat = new Date( (now.getTime()/1000)*1000);
+			nbf = new Date(iat.getTime() - (1000*60));
+			exp = new Date((Long.MAX_VALUE/1000)*1000);
+			rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
+					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
+					+ "\"jti\": \""+jti+"\"}";
+			tokenParser = new BasicTokenParser(TipologiaClaims.JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068);
+			info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
+			
+			d = info.getExp();
+			if(d==null) {
+				throw new Exception("Data di scadenza non trovata");
+			}
+			if(!d.equals(exp)) {
+				throw new Exception("Claim exp differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			now = DateManager.getDate();
+			if(!now.before(d)){
+				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			now = new Date(now.getTime() + (1000*60*60*1));
+			if(!now.before(d)){
+				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			now = new Date(Long.MAX_VALUE-1001);
+			if(!now.before(d)){
+				throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			
+			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date con expires con max long value) ok");
+			
+			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date con expires con overflow long value) ...");
+			
+			iat = new Date( (now.getTime()/1000)*1000);
+			nbf = new Date(iat.getTime() - (1000*60));
+			exp = new Date((Long.MAX_VALUE/1000)*1000);
+			rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
+					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
+					+ "\"jti\": \""+jti+"\"}";
+			tokenParser = new BasicTokenParser(TipologiaClaims.JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068);
+			info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
+			
+			d = info.getExp();
+			if(d==null) {
+				throw new Exception("Data di scadenza non trovata");
+			}
+			if(!d.equals(exp)) {
+				throw new Exception("Claim exp differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" exp="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			now = DateManager.getDate();
+			if(!now.before(d)){
+				throw new Exception("(1) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			now = new Date(now.getTime() + (1000*60*60*1));
+			if(!now.before(d)){
+				throw new Exception("(2) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			now = new Date(Long.MAX_VALUE-1001);
+			if(!now.before(d)){
+				throw new Exception("(3 MaxValue) Token scaduto non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" expires_in="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			
+			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date con expires con overflow long value) ok");
+			
+			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date con nbf con max long value) ...");
+			
+			iat = new Date( (now.getTime()/1000)*1000);
+			nbf = new Date((Long.MAX_VALUE/1000)*1000);
+			exp = new Date(iat.getTime() + (1000*60));
+			rawResponse = "{\"client_id\": \""+cliendId+"\", \"aud\": [ \""+audience+"\" , \""+audience2+"\" ], \"sub\": \""+subject+"\",  \"iss\": \""+issuer+"\", \"username\": \""+username+"\","+
+					" \"scope\": \""+s1+" "+s2+" "+s3+"\","+
+					"  \"iat\": \""+(iat.getTime()/1000)+"\", \"nbf\": \""+(nbf.getTime()/1000)+"\", \"exp\": \""+(exp.getTime()/1000)+"\",  "
+					+ "\"jti\": \""+jti+"\"}";
+			tokenParser = new BasicTokenParser(TipologiaClaims.JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068);
+			info = new InformazioniToken(200, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
+			
+			d = info.getNbf();
+			if(d==null) {
+				throw new Exception("Data nbf non trovata");
+			}
+			if(!d.equals(nbf)) {
+				throw new Exception("Claim nbf differente da quello atteso atteso="+DateUtils.getOldSimpleDateFormatMs().format(nbf)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			now = DateManager.getDate();
+			if(!now.before(d)){
+				throw new Exception("(1) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			now = new Date(now.getTime() + (1000*60*60*1));
+			if(!now.before(d)){
+				throw new Exception("(2) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			now = new Date(Long.MAX_VALUE-1001);
+			if(!now.before(d)){
+				throw new Exception("(3 MaxValue) Token non utilizzabile non atteso, now="+DateUtils.getOldSimpleDateFormatMs().format(now)+" nbf="+DateUtils.getOldSimpleDateFormatMs().format(d));
+			}
+			
+			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (check date con nbf con max long value) ok");
+			
+			
+			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (non valido) ...");
+			
+			rawResponse = "{\"client_id\":\"nonImportante\"}";
+			tokenParser = new BasicTokenParser(TipologiaClaims.JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068);
+			try {
+				info = new InformazioniToken(500, SorgenteInformazioniToken.JWT, rawResponse, tokenParser);
+				if(info.isValid()) {
+					throw new Exception("Attes token non valido (trasporto)");
+				}
+			}catch(Exception e) {
+				if(!e.getMessage().startsWith("Connessione terminata con errore (codice trasporto: 500)")) {
+					throw e;
+				}
+			}
+			
+			System.out.println("Test BasicTokenParser, access token dopo introspection 'JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068' (non valido) ok");
+			
+		}
+		
+		
+		
+		
+		
+		// Test 6
 		if(tipoTest==null || TipologiaClaims.OIDC_ID_TOKEN.equals(tipoTest))
 		{
 			System.out.println("Test BasicTokenParser, access token dopo userInfo 'OIDC_ID_TOKEN'...");
@@ -1574,7 +1955,7 @@ public class TestBasicTokenParser {
 		
 		
 	
-		// Test 6
+		// Test 7
 		if(tipoTest==null || TipologiaClaims.MAPPING.equals(tipoTest))
 		{
 			System.out.println("Test BasicTokenParser, access token dopo validazione jwt 'MAPPING'...");

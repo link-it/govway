@@ -62,6 +62,7 @@ public class BasicTokenUserInfoParser implements ITokenUserInfoParser {
 			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.TOKEN_PARSER_USER_FULL_NAME);
 			return TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
 		case JSON_WEB_TOKEN_RFC_7519:
+		case JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068:
 		case INTROSPECTION_RESPONSE_RFC_7662:
 		case CUSTOM:
 			return null;
@@ -80,6 +81,7 @@ public class BasicTokenUserInfoParser implements ITokenUserInfoParser {
 			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.TOKEN_PARSER_USER_FIRST_NAME);
 			return TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
 		case JSON_WEB_TOKEN_RFC_7519:
+		case JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068:
 		case INTROSPECTION_RESPONSE_RFC_7662:
 		case CUSTOM:
 			return null;
@@ -98,6 +100,7 @@ public class BasicTokenUserInfoParser implements ITokenUserInfoParser {
 			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.TOKEN_PARSER_USER_MIDDLE_NAME);
 			return TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
 		case JSON_WEB_TOKEN_RFC_7519:
+		case JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068:
 		case INTROSPECTION_RESPONSE_RFC_7662:
 		case CUSTOM:
 			return null;
@@ -121,6 +124,7 @@ public class BasicTokenUserInfoParser implements ITokenUserInfoParser {
 			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.TOKEN_PARSER_USER_FAMILY_NAME);
 			return TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
 		case JSON_WEB_TOKEN_RFC_7519:
+		case JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068:
 		case INTROSPECTION_RESPONSE_RFC_7662:
 		case CUSTOM:
 			return null;
@@ -140,6 +144,7 @@ public class BasicTokenUserInfoParser implements ITokenUserInfoParser {
 			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.TOKEN_PARSER_USER_EMAIL);
 			return TokenUtilities.getFirstClaimAsString(this.claims, claimNames);
 		case JSON_WEB_TOKEN_RFC_7519:
+		case JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068:
 		case INTROSPECTION_RESPONSE_RFC_7662:
 		case CUSTOM:
 			return null;

@@ -163,6 +163,7 @@
 		<item type="select" name="validazioneJWTParserType" label="Formato Token" default="OIDC_ID_TOKEN" reloadOnChange="true">
 			<values>
 				<value value="JSON_WEB_TOKEN_RFC_7519" label="RFC 7519 - JSON Web Token "/>
+				<value value="JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068" label="RFC 9068 - JSON Web Token (OAuth2 Access Token) "/>
 				<!-- <value value="INTROSPECTION_RESPONSE_RFC_7662" label="RFC 7662 - Introspection"/> -->
 				<value value="OIDC_ID_TOKEN" label="OpenID Connect - ID Token"/>
 				<value value="GOOGLE" label="Google - ID Token"/>
@@ -645,9 +646,10 @@
 
 			<item type="select" name="introspectionParserType" label="Tipo" default="MAPPING" reloadOnChange="true">
 				<values>
-					<!--  <value value="JSON_WEB_TOKEN_RFC_7519" label="RFC 7519 - JSON Web Token "/> -->
+					<!-- <value value="JSON_WEB_TOKEN_RFC_7519" label="RFC 7519 - JSON Web Token "/> -->
+					<!-- <value value="JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068" label="RFC 9068 - JSON Web Token (OAuth2 Access Token) "/> -->
 					<value value="INTROSPECTION_RESPONSE_RFC_7662" label="RFC 7662 - Introspection"/>
-					<!--  <value value="OIDC_ID_TOKEN" label="OpenID Connect - ID Token"/> -->
+					<!-- <value value="OIDC_ID_TOKEN" label="OpenID Connect - ID Token"/> -->
 					<value value="GOOGLE" label="Google - TokenInfo"/>
 					<value value="MAPPING" label="Personalizzato"/>
 					<value value="CUSTOM" label="Plugin"/>
@@ -1024,8 +1026,9 @@
 
 			<item type="select" name="userInfoParserType" label="Tipo" default="MAPPING" reloadOnChange="true">
 				<values>
-					<!--  <value value="JSON_WEB_TOKEN_RFC_7519" label="RFC 7519 - JSON Web Token "/> 
-					<value value="INTROSPECTION_RESPONSE_RFC_7662" label="RFC 7662 - Introspection"/> -->
+					<!-- <value value="JSON_WEB_TOKEN_RFC_7519" label="RFC 7519 - JSON Web Token "/> -->
+					<!-- <value value="JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068" label="RFC 9068 - JSON Web Token (OAuth2 Access Token) "/> -->
+					<!-- <value value="INTROSPECTION_RESPONSE_RFC_7662" label="RFC 7662 - Introspection"/> -->
 					<value value="OIDC_ID_TOKEN" label="OpenID Connect"/> 
 					<value value="MAPPING" label="Personalizzato"/>
 					<value value="CUSTOM" label="Plugin"/>

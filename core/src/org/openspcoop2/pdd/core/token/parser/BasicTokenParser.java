@@ -66,6 +66,7 @@ public class BasicTokenParser implements ITokenParser {
 		switch (this.parser) {
 		case INTROSPECTION_RESPONSE_RFC_7662:
 		case JSON_WEB_TOKEN_RFC_7519:
+		case JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068:
 		case OIDC_ID_TOKEN:
 		case MAPPING:
 		case CUSTOM:
@@ -110,6 +111,7 @@ public class BasicTokenParser implements ITokenParser {
 			String claim = TokenUtilities.getClaimAsString(this.claims,Claims.INTROSPECTION_RESPONSE_RFC_7662_ACTIVE);
 			return Boolean.valueOf(claim);
 		case JSON_WEB_TOKEN_RFC_7519:
+		case JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068:
 		case OIDC_ID_TOKEN:
 		case MAPPING:
 		case CUSTOM:
@@ -137,6 +139,7 @@ public class BasicTokenParser implements ITokenParser {
 	public String getIssuer() {
 		switch (this.parser) {
 		case JSON_WEB_TOKEN_RFC_7519:
+		case JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068:
 			return TokenUtilities.getClaimAsString(this.claims,Claims.JSON_WEB_TOKEN_RFC_7519_ISSUER);
 		case INTROSPECTION_RESPONSE_RFC_7662:
 			return TokenUtilities.getClaimAsString(this.claims,Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER);
@@ -157,6 +160,7 @@ public class BasicTokenParser implements ITokenParser {
 	public String getSubject() {
 		switch (this.parser) {
 		case JSON_WEB_TOKEN_RFC_7519:
+		case JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068:
 			return TokenUtilities.getClaimAsString(this.claims,Claims.JSON_WEB_TOKEN_RFC_7519_SUBJECT);
 		case INTROSPECTION_RESPONSE_RFC_7662:
 			return TokenUtilities.getClaimAsString(this.claims,Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT);
@@ -180,6 +184,7 @@ public class BasicTokenParser implements ITokenParser {
 		
 		switch (this.parser) {
 		case JSON_WEB_TOKEN_RFC_7519:
+		case JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068:
 			return null; // unsupported
 		case INTROSPECTION_RESPONSE_RFC_7662:
 			return TokenUtilities.getClaimAsString(this.claims,Claims.INTROSPECTION_RESPONSE_RFC_7662_USERNAME);
@@ -209,6 +214,7 @@ public class BasicTokenParser implements ITokenParser {
 	public List<String> getAudience() {
 		switch (this.parser) {
 		case JSON_WEB_TOKEN_RFC_7519:
+		case JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068:
 			return TokenUtilities.getClaimAsList(this.claims,Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE);
 		case INTROSPECTION_RESPONSE_RFC_7662:
 			return TokenUtilities.getClaimAsList(this.claims,Claims.INTROSPECTION_RESPONSE_RFC_7662_AUDIENCE);
@@ -230,6 +236,7 @@ public class BasicTokenParser implements ITokenParser {
 		String tmp = null;
 		switch (this.parser) {
 		case JSON_WEB_TOKEN_RFC_7519:
+		case JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068:
 			tmp =  TokenUtilities.getClaimAsString(this.claims,Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED);
 			break;
 		case INTROSPECTION_RESPONSE_RFC_7662:
@@ -259,6 +266,7 @@ public class BasicTokenParser implements ITokenParser {
 		String tmp = null;
 		switch (this.parser) {
 		case JSON_WEB_TOKEN_RFC_7519:
+		case JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068:
 			tmp =  TokenUtilities.getClaimAsString(this.claims,Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT);
 			break;
 		case INTROSPECTION_RESPONSE_RFC_7662:
@@ -288,6 +296,7 @@ public class BasicTokenParser implements ITokenParser {
 		String tmp = null;
 		switch (this.parser) {
 		case JSON_WEB_TOKEN_RFC_7519:
+		case JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068:
 			tmp =  TokenUtilities.getClaimAsString(this.claims,Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE);
 			break;
 		case INTROSPECTION_RESPONSE_RFC_7662:
@@ -313,6 +322,7 @@ public class BasicTokenParser implements ITokenParser {
 	public String getJWTIdentifier() {
 		switch (this.parser) {
 		case JSON_WEB_TOKEN_RFC_7519:
+		case JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068:
 			return TokenUtilities.getClaimAsString(this.claims,Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID);
 		case INTROSPECTION_RESPONSE_RFC_7662:
 			return TokenUtilities.getClaimAsString(this.claims,Claims.INTROSPECTION_RESPONSE_RFC_7662_JWT_ID);
@@ -333,6 +343,8 @@ public class BasicTokenParser implements ITokenParser {
 		switch (this.parser) {
 		case JSON_WEB_TOKEN_RFC_7519:
 			return null; // unsupported
+		case JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068:
+			return TokenUtilities.getClaimAsString(this.claims,Claims.JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068_CLIENT_ID);
 		case INTROSPECTION_RESPONSE_RFC_7662:
 			return TokenUtilities.getClaimAsString(this.claims,Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID);
 		case OIDC_ID_TOKEN:
@@ -355,6 +367,7 @@ public class BasicTokenParser implements ITokenParser {
 			List<String> claimNames = TokenUtilities.getClaims(this.parserConfig, Costanti.TOKEN_PARSER_ROLE);
 			return TokenUtilities.getFirstClaimAsList(this.claims, claimNames);
 		case JSON_WEB_TOKEN_RFC_7519:
+		case JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068:
 		case INTROSPECTION_RESPONSE_RFC_7662:
 		case OIDC_ID_TOKEN:
 		case GOOGLE:
@@ -369,6 +382,7 @@ public class BasicTokenParser implements ITokenParser {
 		
 		String tmpScopes = null;
 		if(TipologiaClaims.INTROSPECTION_RESPONSE_RFC_7662.equals(this.parser) ||
+				TipologiaClaims.JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068.equals(this.parser) ||
 				TipologiaClaims.OIDC_ID_TOKEN.equals(this.parser) ||
 				TipologiaClaims.JSON_WEB_TOKEN_RFC_7519.equals(this.parser)) {
 			tmpScopes = TokenUtilities.getClaimAsString(this.claims,Claims.INTROSPECTION_RESPONSE_RFC_7662_SCOPE);

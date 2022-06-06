@@ -38,6 +38,9 @@ public class Claims {
 	public final static String JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE = "nbf";
 	public final static String JSON_WEB_TOKEN_RFC_7519_JWT_ID = "jti";
 	
+	// https://www.rfc-editor.org/rfc/rfc9068.html
+	
+	public final static String JSON_WEB_TOKEN_FOR_OAUTH2_ACCESS_TOKENS_RFC_9068_CLIENT_ID = "client_id";
 	
 	// https://tools.ietf.org/html/rfc7662
 	

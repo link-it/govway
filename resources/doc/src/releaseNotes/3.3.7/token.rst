@@ -14,3 +14,5 @@ Sono inoltre stati risolti i seguenti problemi:
 - risolto problema di performance in cui l'accesso sincronizzato all'interno della gestione della cache per i token avveniva erroneamente per ogni richiesta anche se il token era già presente in cache;
 
 - i token ottenuti venivano salvati in cache tramite una chiave formata dal solo nome della Token Policy di negoziazione, ignorando gli eventuali parametri dinamici risolti a runtime. In tale situazione, se una policy con parametri dinamici veniva utilizzata su più fruizioni, poteva succedere che il token negoziato in seguito all'invocazione di una prima fruizione, venisse erroneamente riutilizzato (disponibile in cache) per l'invocazione di una seconda fruizione. Scenario tipico in presenza di PDND dove il purposeId è rappresentato da un parametro dinamico ad esempio indicato dal client tramite un header HTTP. 
+
+Infine nelle policy di validazione dei token è adesso possibile indicare come formato dell'access token anche la struttura definita nel RFC 9068.
