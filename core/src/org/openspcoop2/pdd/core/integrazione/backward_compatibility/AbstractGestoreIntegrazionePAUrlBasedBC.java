@@ -71,8 +71,11 @@ public abstract class AbstractGestoreIntegrazionePAUrlBasedBC extends AbstractCo
 	public void readInRequestHeader(HeaderIntegrazione integrazione,
 			InRequestPAMessage inRequestPAMessage) throws HeaderIntegrazioneException {
 		try{
+			String protocollo = this.getProtocolFactory()!=null ? this.getProtocolFactory().getProtocol() : null;
+			
 			this.utilitiesBC.readUrlProperties(inRequestPAMessage.getUrlProtocolContext().getParameters(), 
-					integrazione);	
+					integrazione,
+					protocollo);	
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePAUrlBased, "+e.getMessage(),e);
 		}
@@ -84,8 +87,11 @@ public abstract class AbstractGestoreIntegrazionePAUrlBasedBC extends AbstractCo
 	public void setOutRequestHeader(HeaderIntegrazione integrazione,
 			OutRequestPAMessage outRequestPAMessage) throws HeaderIntegrazioneException{
 		try{
+			String protocollo = this.getProtocolFactory()!=null ? this.getProtocolFactory().getProtocol() : null;
+			
 			this.utilitiesBC.setUrlProperties(integrazione, outRequestPAMessage.getParameters(),
-					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outRequestPAMessage.getBustaRichiesta(), true, TipoIntegrazione.URL));			
+					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outRequestPAMessage.getBustaRichiesta(), true, TipoIntegrazione.URL),
+					protocollo);			
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePAUrlBased, "+e.getMessage(),e);
 		}

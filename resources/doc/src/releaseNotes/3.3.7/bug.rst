@@ -15,6 +15,8 @@ Sono stati risolti i seguenti bug:
 
 - la configurazione di default della funzionalità 'GovWayProxy' per Token Policy e A.A. descritta nel file govway.properties veniva ignorata;
 
+- negli header di integrazione 'Backward Compatibility OpenSPCoop', gli header che riportano il tipo dei soggetti e il tipo del servizio contengono adesso i valori che venivano utilizzati in OpenSPCoop2 (es. PROXY al posto di gw per il profilo 'API Gateway');
+
 - sono stati risolti i seguenti problemi che avvenivano disabilitando il tracciamento delle transazioni:
 
 	- la funzionalità di tracciatura su file non registrava le informazioni nei topic configurati;

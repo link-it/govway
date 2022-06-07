@@ -58,6 +58,8 @@ public class AbstractGestoreIntegrazionePDSoapWithRequestOutBC extends AbstractG
 			}
 			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
 			
+			String protocollo = this.getProtocolFactory()!=null ? this.getProtocolFactory().getProtocol() : null;
+			
 			SOAPHeaderElement header = this.utilitiesResponseBC.buildHeader(integrazione, 
 					this.openspcoop2 ? 
 							this.openspcoopProperties.getHeaderSoapNameIntegrazione_backwardCompatibility_openspcoop2() :
@@ -78,7 +80,8 @@ public class AbstractGestoreIntegrazionePDSoapWithRequestOutBC extends AbstractG
 					this.openspcoop2 ?
 							this.openspcoopProperties.getHeaderSoapExtProtocolInfoNomeAttributoIntegrazione_backwardCompatibility_openspcoop2() :
 							this.openspcoopProperties.getHeaderSoapExtProtocolInfoNomeAttributoIntegrazione_backwardCompatibility_openspcoop1()	, // nomeAttributo ExtInfoProtocol
-					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outRequestPDMessage.getBustaRichiesta(), true, TipoIntegrazione.SOAP)	
+					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outRequestPDMessage.getBustaRichiesta(), true, TipoIntegrazione.SOAP)	,
+					protocollo
 				);
 			//System.out.println((new org.openspcoop.dao.message.OpenSPCoopMessageFactory().createMessage().getAsString(header)));
 			if(soapMsg.getSOAPHeader() == null){

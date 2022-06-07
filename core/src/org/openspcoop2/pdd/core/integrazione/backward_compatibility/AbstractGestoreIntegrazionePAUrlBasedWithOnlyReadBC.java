@@ -70,8 +70,11 @@ public class AbstractGestoreIntegrazionePAUrlBasedWithOnlyReadBC extends Abstrac
 	public void readInRequestHeader(HeaderIntegrazione integrazione,
 			InRequestPAMessage inRequestPAMessage) throws HeaderIntegrazioneException {
 		try{
+			String protocollo = this.getProtocolFactory()!=null ? this.getProtocolFactory().getProtocol() : null;
+			
 			this.utilities.readUrlProperties(inRequestPAMessage.getUrlProtocolContext().getParameters(), 
-					integrazione);	
+					integrazione,
+					protocollo);	
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePAUrlBased, "+e.getMessage(),e);
 		}

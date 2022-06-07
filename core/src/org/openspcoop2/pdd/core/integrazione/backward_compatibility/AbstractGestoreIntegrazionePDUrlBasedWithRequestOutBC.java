@@ -47,8 +47,11 @@ public class AbstractGestoreIntegrazionePDUrlBasedWithRequestOutBC extends Abstr
 			OutRequestPDMessage outRequestPDMessage) throws HeaderIntegrazioneException{
 	
 		try{
+			String protocollo = this.getProtocolFactory()!=null ? this.getProtocolFactory().getProtocol() : null;
+			
 			this.utilitiesBC.setUrlProperties(integrazione, outRequestPDMessage.getParameters(),
-					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outRequestPDMessage.getBustaRichiesta(), true, TipoIntegrazione.URL));
+					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outRequestPDMessage.getBustaRichiesta(), true, TipoIntegrazione.URL),
+					protocollo);
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePDUrlBased, "+e.getMessage(),e);
 		}

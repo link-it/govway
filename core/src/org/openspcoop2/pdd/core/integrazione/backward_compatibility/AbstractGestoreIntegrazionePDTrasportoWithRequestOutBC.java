@@ -47,8 +47,11 @@ public class AbstractGestoreIntegrazionePDTrasportoWithRequestOutBC extends Abst
 			OutRequestPDMessage outRequestPDMessage) throws HeaderIntegrazioneException{
 	
 		try{
+			String protocollo = this.getProtocolFactory()!=null ? this.getProtocolFactory().getProtocol() : null;
+			
 			this.utilitiesRequestBC.setTransportProperties(integrazione, outRequestPDMessage.getHeaders(),
-					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outRequestPDMessage.getBustaRichiesta(), true, TipoIntegrazione.TRASPORTO));		
+					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outRequestPDMessage.getBustaRichiesta(), true, TipoIntegrazione.TRASPORTO),
+					protocollo);		
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePDTrasporto, "+e.getMessage(),e);
 		}

@@ -1121,6 +1121,12 @@ public class OpenSPCoop2Properties {
 			
 			// Warning
 			this.isIntegrazioneAsincroniConIdCollaborazioneEnabled();
+			this.getNewOldMapping_backward_compatibility_trasparente_soggetto();
+			this.getNewOldMapping_backward_compatibility_trasparente_servizio();
+			this.getNewOldMapping_backward_compatibility_spcoop_soggetto();
+			this.getNewOldMapping_backward_compatibility_spcoop_servizio();
+			this.getNewOldMapping_backward_compatibility_sdi_soggetto();
+			this.getNewOldMapping_backward_compatibility_sdi_servizio();
 			this.getHeaderIntegrazioneSOAPPdDVersione();
 			this.getHeaderIntegrazioneSOAPPdDDetails();
 			this.deleteHeaderIntegrazioneRequestPD();
@@ -9993,6 +9999,155 @@ public class OpenSPCoop2Properties {
 
 		return OpenSPCoop2Properties.isIntegrazioneAsincroniConIdCollaborazioneEnabled;
 	}
+	
+	private static Map<String, String> newOldMapping_backward_compatibility_trasparente_soggetto = null;
+	public Map<String, String> getNewOldMapping_backward_compatibility_trasparente_soggetto() {	
+		if(OpenSPCoop2Properties.newOldMapping_backward_compatibility_trasparente_soggetto==null){
+			String pName = "org.openspcoop2.pdd.integrazione.backward_compatibility.trasparente.soggetto.tipo.";
+			try{ 
+				Properties p = this.reader.readProperties_convertEnvProperties(pName);
+				OpenSPCoop2Properties.newOldMapping_backward_compatibility_trasparente_soggetto=new HashMap<String, String>();
+				if(p!=null && !p.isEmpty()) {
+					for (Object oKey : p.keySet()) {
+						if(oKey!=null && oKey instanceof String) {
+							String key = (String) oKey;
+							String old = p.getProperty(key);
+							OpenSPCoop2Properties.newOldMapping_backward_compatibility_trasparente_soggetto.put(key, old);
+						}
+					}
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' '"+pName+"*': "+e.getMessage(),e);
+				OpenSPCoop2Properties.newOldMapping_backward_compatibility_trasparente_soggetto = null;
+			}    
+		}
+
+		return OpenSPCoop2Properties.newOldMapping_backward_compatibility_trasparente_soggetto;
+	}
+	private static Map<String, String> newOldMapping_backward_compatibility_trasparente_servizio = null;
+	public Map<String, String> getNewOldMapping_backward_compatibility_trasparente_servizio() {	
+		if(OpenSPCoop2Properties.newOldMapping_backward_compatibility_trasparente_servizio==null){
+			String pName = "org.openspcoop2.pdd.integrazione.backward_compatibility.trasparente.servizio.tipo.";
+			try{ 
+				Properties p = this.reader.readProperties_convertEnvProperties(pName);
+				OpenSPCoop2Properties.newOldMapping_backward_compatibility_trasparente_servizio=new HashMap<String, String>();
+				if(p!=null && !p.isEmpty()) {
+					for (Object oKey : p.keySet()) {
+						if(oKey!=null && oKey instanceof String) {
+							String key = (String) oKey;
+							String old = p.getProperty(key);
+							OpenSPCoop2Properties.newOldMapping_backward_compatibility_trasparente_servizio.put(key, old);
+						}
+					}
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' '"+pName+"*': "+e.getMessage(),e);
+				OpenSPCoop2Properties.newOldMapping_backward_compatibility_trasparente_servizio = null;
+			}    
+		}
+
+		return OpenSPCoop2Properties.newOldMapping_backward_compatibility_trasparente_servizio;
+	}
+
+	private static Map<String, String> newOldMapping_backward_compatibility_spcoop_soggetto = null;
+	public Map<String, String> getNewOldMapping_backward_compatibility_spcoop_soggetto() {	
+		if(OpenSPCoop2Properties.newOldMapping_backward_compatibility_spcoop_soggetto==null){
+			String pName = "org.openspcoop2.pdd.integrazione.backward_compatibility.spcoop.soggetto.tipo.";
+			try{ 
+				Properties p = this.reader.readProperties_convertEnvProperties(pName);
+				OpenSPCoop2Properties.newOldMapping_backward_compatibility_spcoop_soggetto=new HashMap<String, String>();
+				if(p!=null && !p.isEmpty()) {
+					for (Object oKey : p.keySet()) {
+						if(oKey!=null && oKey instanceof String) {
+							String key = (String) oKey;
+							String old = p.getProperty(key);
+							OpenSPCoop2Properties.newOldMapping_backward_compatibility_spcoop_soggetto.put(key, old);
+						}
+					}
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' '"+pName+"*': "+e.getMessage(),e);
+				OpenSPCoop2Properties.newOldMapping_backward_compatibility_spcoop_soggetto = null;
+			}    
+		}
+
+		return OpenSPCoop2Properties.newOldMapping_backward_compatibility_spcoop_soggetto;
+	}
+	private static Map<String, String> newOldMapping_backward_compatibility_spcoop_servizio = null;
+	public Map<String, String> getNewOldMapping_backward_compatibility_spcoop_servizio() {	
+		if(OpenSPCoop2Properties.newOldMapping_backward_compatibility_spcoop_servizio==null){
+			String pName = "org.openspcoop2.pdd.integrazione.backward_compatibility.spcoop.servizio.tipo.";
+			try{ 
+				Properties p = this.reader.readProperties_convertEnvProperties(pName);
+				OpenSPCoop2Properties.newOldMapping_backward_compatibility_spcoop_servizio=new HashMap<String, String>();
+				if(p!=null && !p.isEmpty()) {
+					for (Object oKey : p.keySet()) {
+						if(oKey!=null && oKey instanceof String) {
+							String key = (String) oKey;
+							String old = p.getProperty(key);
+							OpenSPCoop2Properties.newOldMapping_backward_compatibility_spcoop_servizio.put(key, old);
+						}
+					}
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' '"+pName+"*': "+e.getMessage(),e);
+				OpenSPCoop2Properties.newOldMapping_backward_compatibility_spcoop_servizio = null;
+			}    
+		}
+
+		return OpenSPCoop2Properties.newOldMapping_backward_compatibility_spcoop_servizio;
+	}
+	
+	private static Map<String, String> newOldMapping_backward_compatibility_sdi_soggetto = null;
+	public Map<String, String> getNewOldMapping_backward_compatibility_sdi_soggetto() {	
+		if(OpenSPCoop2Properties.newOldMapping_backward_compatibility_sdi_soggetto==null){
+			String pName = "org.openspcoop2.pdd.integrazione.backward_compatibility.sdi.soggetto.tipo.";
+			try{ 
+				Properties p = this.reader.readProperties_convertEnvProperties(pName);
+				OpenSPCoop2Properties.newOldMapping_backward_compatibility_sdi_soggetto=new HashMap<String, String>();
+				if(p!=null && !p.isEmpty()) {
+					for (Object oKey : p.keySet()) {
+						if(oKey!=null && oKey instanceof String) {
+							String key = (String) oKey;
+							String old = p.getProperty(key);
+							OpenSPCoop2Properties.newOldMapping_backward_compatibility_sdi_soggetto.put(key, old);
+						}
+					}
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' '"+pName+"*': "+e.getMessage(),e);
+				OpenSPCoop2Properties.newOldMapping_backward_compatibility_sdi_soggetto = null;
+			}    
+		}
+
+		return OpenSPCoop2Properties.newOldMapping_backward_compatibility_sdi_soggetto;
+	}
+	private static Map<String, String> newOldMapping_backward_compatibility_sdi_servizio = null;
+	public Map<String, String> getNewOldMapping_backward_compatibility_sdi_servizio() {	
+		if(OpenSPCoop2Properties.newOldMapping_backward_compatibility_sdi_servizio==null){
+			String pName = "org.openspcoop2.pdd.integrazione.backward_compatibility.sdi.servizio.tipo.";
+			try{ 
+				Properties p = this.reader.readProperties_convertEnvProperties(pName);
+				OpenSPCoop2Properties.newOldMapping_backward_compatibility_sdi_servizio=new HashMap<String, String>();
+				if(p!=null && !p.isEmpty()) {
+					for (Object oKey : p.keySet()) {
+						if(oKey!=null && oKey instanceof String) {
+							String key = (String) oKey;
+							String old = p.getProperty(key);
+							OpenSPCoop2Properties.newOldMapping_backward_compatibility_sdi_servizio.put(key, old);
+						}
+					}
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' '"+pName+"*': "+e.getMessage(),e);
+				OpenSPCoop2Properties.newOldMapping_backward_compatibility_sdi_servizio = null;
+			}    
+		}
+
+		return OpenSPCoop2Properties.newOldMapping_backward_compatibility_sdi_servizio;
+	}
+	
+	
 	
 	/**
 	 * Restituisce le proprieta' che identificano gli header di integrazione in caso di 'trasporto' 

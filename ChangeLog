@@ -1,6 +1,12 @@
 2022-06-07 Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Risolto Bug OP-1375
+	I tipi generati negli header di integrazione 'Backward Compatibility OpenSPCoop' non venivano convertiti nei tipi usati in OpenSPCoop2 (es. gw -> PROXY).
+
+2022-06-07 Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
 	Aggiunta tra le informazioni utilizzabili nella tracciatura su file la keyword 'requesterIP' che consente di ottenere l’indirizzo IP del richiedente.
 	Assumerà la prima informazione valorizzata, trovata nella richiesta, nel seguente ordine: forwardedIP, clientIP.
 

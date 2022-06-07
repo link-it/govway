@@ -89,10 +89,13 @@ public abstract class AbstractGestoreIntegrazionePASoapBC extends AbstractCore i
 			}
 			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
 			
+			String protocollo = this.getProtocolFactory()!=null ? this.getProtocolFactory().getProtocol() : null;
+			
 			this.utilitiesRequestBC.readHeader(soapMsg, integrazione, 
 					this.openspcoop2 ? 
 							this.openspcoopProperties.getHeaderSoapActorIntegrazione_backwardCompatibility_openspcoop2() :
-							this.openspcoopProperties.getHeaderSoapActorIntegrazione_backwardCompatibility_openspcoop1());
+							this.openspcoopProperties.getHeaderSoapActorIntegrazione_backwardCompatibility_openspcoop1(),
+							protocollo);
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePASoap, "+e.getMessage(),e);
 		}
@@ -126,6 +129,8 @@ public abstract class AbstractGestoreIntegrazionePASoapBC extends AbstractCore i
 			}
 			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
 			
+			String protocollo = this.getProtocolFactory()!=null ? this.getProtocolFactory().getProtocol() : null;
+			
 			this.utilitiesRequestBC.updateHeader(soapMsg, 
 					inRequestPAMessage.getSoggettoMittente(), 
 					inRequestPAMessage.getServizio(), 
@@ -150,7 +155,8 @@ public abstract class AbstractGestoreIntegrazionePASoapBC extends AbstractCore i
 					this.openspcoop2 ?
 							this.openspcoopProperties.getHeaderSoapExtProtocolInfoNomeAttributoIntegrazione_backwardCompatibility_openspcoop2() :
 							this.openspcoopProperties.getHeaderSoapExtProtocolInfoNomeAttributoIntegrazione_backwardCompatibility_openspcoop1()	, // nomeAttributo ExtInfoProtocol
-					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(inRequestPAMessage.getBustaRichiesta(), true, TipoIntegrazione.SOAP)
+					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(inRequestPAMessage.getBustaRichiesta(), true, TipoIntegrazione.SOAP),
+					protocollo
 				);
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePASoap, "+e.getMessage(),e);
@@ -170,6 +176,8 @@ public abstract class AbstractGestoreIntegrazionePASoapBC extends AbstractCore i
 				throw new Exception("Non utilizzabile con un Service Binding Rest");
 			}
 			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
+			
+			String protocollo = this.getProtocolFactory()!=null ? this.getProtocolFactory().getProtocol() : null;
 			
 			SOAPHeaderElement header = this.utilitiesRequestBC.buildHeader(integrazione,
 					this.openspcoop2 ? 
@@ -191,7 +199,8 @@ public abstract class AbstractGestoreIntegrazionePASoapBC extends AbstractCore i
 					this.openspcoop2 ?
 							this.openspcoopProperties.getHeaderSoapExtProtocolInfoNomeAttributoIntegrazione_backwardCompatibility_openspcoop2() :
 							this.openspcoopProperties.getHeaderSoapExtProtocolInfoNomeAttributoIntegrazione_backwardCompatibility_openspcoop1()	, // nomeAttributo ExtInfoProtocol
-					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outRequestPAMessage.getBustaRichiesta(), true, TipoIntegrazione.SOAP)
+					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outRequestPAMessage.getBustaRichiesta(), true, TipoIntegrazione.SOAP),
+					protocollo
 				);
 						
 			if(soapMsg.getSOAPHeader() == null){
@@ -217,10 +226,13 @@ public abstract class AbstractGestoreIntegrazionePASoapBC extends AbstractCore i
 			}
 			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
 			
+			String protocollo = this.getProtocolFactory()!=null ? this.getProtocolFactory().getProtocol() : null;
+			
 			this.utilitiesResponseBC.readHeader(soapMsg, integrazione, 
 					this.openspcoop2 ? 
 							this.openspcoopProperties.getHeaderSoapActorIntegrazione_backwardCompatibility_openspcoop2() :
-							this.openspcoopProperties.getHeaderSoapActorIntegrazione_backwardCompatibility_openspcoop1());
+							this.openspcoopProperties.getHeaderSoapActorIntegrazione_backwardCompatibility_openspcoop1(),
+							protocollo);
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePASoap, "+e.getMessage(),e);
 		}
@@ -254,6 +266,8 @@ public abstract class AbstractGestoreIntegrazionePASoapBC extends AbstractCore i
 			}
 			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
 			
+			String protocollo = this.getProtocolFactory()!=null ? this.getProtocolFactory().getProtocol() : null;
+			
 			this.utilitiesResponseBC.updateHeader(soapMsg, 
 					inResponsePAMessage.getSoggettoMittente(), 
 					inResponsePAMessage.getServizio(),
@@ -277,7 +291,8 @@ public abstract class AbstractGestoreIntegrazionePASoapBC extends AbstractCore i
 					this.openspcoop2 ?
 							this.openspcoopProperties.getHeaderSoapExtProtocolInfoNomeAttributoIntegrazione_backwardCompatibility_openspcoop2() :
 							this.openspcoopProperties.getHeaderSoapExtProtocolInfoNomeAttributoIntegrazione_backwardCompatibility_openspcoop1()	, // nomeAttributo ExtInfoProtocol
-					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(inResponsePAMessage.getBustaRichiesta(), false, TipoIntegrazione.SOAP)
+					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(inResponsePAMessage.getBustaRichiesta(), false, TipoIntegrazione.SOAP),
+					protocollo
 				);
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePASoap, "+e.getMessage(),e);

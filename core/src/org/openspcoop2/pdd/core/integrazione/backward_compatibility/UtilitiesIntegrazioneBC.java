@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.core.integrazione.backward_compatibility;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -49,6 +51,7 @@ import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazioneBusta;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazioneException;
 import org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazione;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.xml.XSDResourceResolver;
@@ -386,6 +389,20 @@ public class UtilitiesIntegrazioneBC {
 	private java.util.concurrent.ConcurrentHashMap<String, ValidatoreXSD> validatoreXSD_soap11_map = new java.util.concurrent.ConcurrentHashMap<String, ValidatoreXSD>();
 	private java.util.concurrent.ConcurrentHashMap<String, ValidatoreXSD> validatoreXSD_soap12_map = new java.util.concurrent.ConcurrentHashMap<String, ValidatoreXSD>();
 	
+	private Map<String, String> govway2openspcoop_Mapping_trasparente_soggetto = null;
+	private Map<String, String> govway2openspcoop_Mapping_trasparente_servizio = null;
+	private Map<String, String> govway2openspcoop_Mapping_spcoop_soggetto = null;
+	private Map<String, String> govway2openspcoop_Mapping_spcoop_servizio = null;
+	private Map<String, String> govway2openspcoop_Mapping_sdi_soggetto = null;
+	private Map<String, String> govway2openspcoop_Mapping_sdi_servizio = null;
+	
+	private Map<String, String> openspcoop2govway_Mapping_trasparente_soggetto = null;
+	private Map<String, String> openspcoop2govway_Mapping_trasparente_servizio = null;
+	private Map<String, String> openspcoop2govway_Mapping_spcoop_soggetto = null;
+	private Map<String, String> openspcoop2govway_Mapping_spcoop_servizio = null;
+	private Map<String, String> openspcoop2govway_Mapping_sdi_soggetto = null;
+	private Map<String, String> openspcoop2govway_Mapping_sdi_servizio = null;
+	
 	private boolean request;
 	private boolean openspcoop2;
 	private boolean x_prefix;
@@ -460,6 +477,81 @@ public class UtilitiesIntegrazioneBC {
 			else {
 				this.keySetEnabled_HeaderIntegrazioneSoap = this.openspcoopProperties.getKeyPASetEnabled_HeaderIntegrazioneSoap(request);
 				this.keyReadEnabled_HeaderIntegrazioneSoap = this.openspcoopProperties.getKeyPAReadEnabled_HeaderIntegrazioneSoap();
+			}
+		}catch(Exception e){
+			log.error("Integrazione, errore durante la lettura del file di configurazione: "+e.getMessage(),e);
+		}
+		
+		try {
+			this.govway2openspcoop_Mapping_trasparente_soggetto = this.openspcoopProperties.getNewOldMapping_backward_compatibility_trasparente_soggetto();
+			if(this.govway2openspcoop_Mapping_trasparente_soggetto!=null && !this.govway2openspcoop_Mapping_trasparente_soggetto.isEmpty()) {
+				this.openspcoop2govway_Mapping_trasparente_soggetto = new HashMap<String, String>();
+				for (String govway : this.govway2openspcoop_Mapping_trasparente_soggetto.keySet()) {
+					String openspcoop = this.govway2openspcoop_Mapping_trasparente_soggetto.get(govway);
+					this.openspcoop2govway_Mapping_trasparente_soggetto.put(openspcoop, govway);
+				}
+			}
+		}catch(Exception e){
+			log.error("Integrazione, errore durante la lettura del file di configurazione: "+e.getMessage(),e);
+		}
+		try {
+			this.govway2openspcoop_Mapping_trasparente_servizio = this.openspcoopProperties.getNewOldMapping_backward_compatibility_trasparente_servizio();
+			if(this.govway2openspcoop_Mapping_trasparente_servizio!=null && !this.govway2openspcoop_Mapping_trasparente_servizio.isEmpty()) {
+				this.openspcoop2govway_Mapping_trasparente_servizio = new HashMap<String, String>();
+				for (String govway : this.govway2openspcoop_Mapping_trasparente_servizio.keySet()) {
+					String openspcoop = this.govway2openspcoop_Mapping_trasparente_servizio.get(govway);
+					this.openspcoop2govway_Mapping_trasparente_servizio.put(openspcoop, govway);
+				}
+			}
+		}catch(Exception e){
+			log.error("Integrazione, errore durante la lettura del file di configurazione: "+e.getMessage(),e);
+		}
+		
+		try {
+			this.govway2openspcoop_Mapping_spcoop_soggetto = this.openspcoopProperties.getNewOldMapping_backward_compatibility_spcoop_soggetto();
+			if(this.govway2openspcoop_Mapping_spcoop_soggetto!=null && !this.govway2openspcoop_Mapping_spcoop_soggetto.isEmpty()) {
+				this.openspcoop2govway_Mapping_spcoop_soggetto = new HashMap<String, String>();
+				for (String govway : this.govway2openspcoop_Mapping_spcoop_soggetto.keySet()) {
+					String openspcoop = this.govway2openspcoop_Mapping_spcoop_soggetto.get(govway);
+					this.openspcoop2govway_Mapping_spcoop_soggetto.put(openspcoop, govway);
+				}
+			}
+		}catch(Exception e){
+			log.error("Integrazione, errore durante la lettura del file di configurazione: "+e.getMessage(),e);
+		}
+		try {
+			this.govway2openspcoop_Mapping_spcoop_servizio = this.openspcoopProperties.getNewOldMapping_backward_compatibility_spcoop_servizio();
+			if(this.govway2openspcoop_Mapping_spcoop_servizio!=null && !this.govway2openspcoop_Mapping_spcoop_servizio.isEmpty()) {
+				this.openspcoop2govway_Mapping_spcoop_servizio = new HashMap<String, String>();
+				for (String govway : this.govway2openspcoop_Mapping_spcoop_servizio.keySet()) {
+					String openspcoop = this.govway2openspcoop_Mapping_spcoop_servizio.get(govway);
+					this.openspcoop2govway_Mapping_spcoop_servizio.put(openspcoop, govway);
+				}
+			}
+		}catch(Exception e){
+			log.error("Integrazione, errore durante la lettura del file di configurazione: "+e.getMessage(),e);
+		}
+		
+		try {
+			this.govway2openspcoop_Mapping_sdi_soggetto = this.openspcoopProperties.getNewOldMapping_backward_compatibility_sdi_soggetto();
+			if(this.govway2openspcoop_Mapping_sdi_soggetto!=null && !this.govway2openspcoop_Mapping_sdi_soggetto.isEmpty()) {
+				this.openspcoop2govway_Mapping_sdi_soggetto = new HashMap<String, String>();
+				for (String govway : this.govway2openspcoop_Mapping_sdi_soggetto.keySet()) {
+					String openspcoop = this.govway2openspcoop_Mapping_sdi_soggetto.get(govway);
+					this.openspcoop2govway_Mapping_sdi_soggetto.put(openspcoop, govway);
+				}
+			}
+		}catch(Exception e){
+			log.error("Integrazione, errore durante la lettura del file di configurazione: "+e.getMessage(),e);
+		}
+		try {
+			this.govway2openspcoop_Mapping_sdi_servizio = this.openspcoopProperties.getNewOldMapping_backward_compatibility_sdi_servizio();
+			if(this.govway2openspcoop_Mapping_sdi_servizio!=null && !this.govway2openspcoop_Mapping_sdi_servizio.isEmpty()) {
+				this.openspcoop2govway_Mapping_sdi_servizio = new HashMap<String, String>();
+				for (String govway : this.govway2openspcoop_Mapping_sdi_servizio.keySet()) {
+					String openspcoop = this.govway2openspcoop_Mapping_sdi_servizio.get(govway);
+					this.openspcoop2govway_Mapping_sdi_servizio.put(openspcoop, govway);
+				}
 			}
 		}catch(Exception e){
 			log.error("Integrazione, errore durante la lettura del file di configurazione: "+e.getMessage(),e);
@@ -551,8 +643,75 @@ public class UtilitiesIntegrazioneBC {
 		return hdr;
 	}
 	
+	private String normalizeOpenSPCoop2GovWay_tipoSoggetto(String tipoSoggetto, String protocollo) {
+		String tipo = null;
+		if(protocollo!=null && Costanti.TRASPARENTE_PROTOCOL_NAME.equals(protocollo) && this.openspcoop2govway_Mapping_trasparente_soggetto!=null) {
+			tipo = this.openspcoop2govway_Mapping_trasparente_soggetto.get(tipoSoggetto);
+		}
+		else if(protocollo!=null && Costanti.SPCOOP_PROTOCOL_NAME.equals(protocollo) && this.openspcoop2govway_Mapping_spcoop_soggetto!=null) {
+			tipo = this.openspcoop2govway_Mapping_spcoop_soggetto.get(tipoSoggetto);
+		}
+		else if(protocollo!=null && Costanti.SDI_PROTOCOL_NAME.equals(protocollo) && this.openspcoop2govway_Mapping_sdi_soggetto!=null) {
+			tipo = this.openspcoop2govway_Mapping_sdi_soggetto.get(tipoSoggetto);
+		}
+		if(tipo!=null && StringUtils.isNotEmpty(tipo)) {
+			return tipo;
+		}
+		return tipoSoggetto;
+	}
+	private String normalizeOpenSPCoop2GovWay_tipoServizio(String tipoServizio, String protocollo) {
+		String tipo = null;
+		if(protocollo!=null && Costanti.TRASPARENTE_PROTOCOL_NAME.equals(protocollo) && this.openspcoop2govway_Mapping_trasparente_servizio!=null) {
+			tipo = this.openspcoop2govway_Mapping_trasparente_servizio.get(tipoServizio);
+		}
+		else if(protocollo!=null && Costanti.SPCOOP_PROTOCOL_NAME.equals(protocollo) && this.openspcoop2govway_Mapping_spcoop_servizio!=null) {
+			tipo = this.openspcoop2govway_Mapping_spcoop_servizio.get(tipoServizio);
+		}
+		else if(protocollo!=null && Costanti.SDI_PROTOCOL_NAME.equals(protocollo) && this.openspcoop2govway_Mapping_sdi_servizio!=null) {
+			tipo = this.openspcoop2govway_Mapping_sdi_servizio.get(tipoServizio);
+		}
+		if(tipo!=null && StringUtils.isNotEmpty(tipo)) {
+			return tipo;
+		}
+		return tipoServizio;
+	}
+	
+	private String normalizeGovWay2OpenSPCoop_tipoSoggetto(String tipoSoggetto, String protocollo) {
+		String tipo = null;
+		if(protocollo!=null && Costanti.TRASPARENTE_PROTOCOL_NAME.equals(protocollo) && this.govway2openspcoop_Mapping_trasparente_soggetto!=null) {
+			tipo = this.govway2openspcoop_Mapping_trasparente_soggetto.get(tipoSoggetto);
+		}
+		else if(protocollo!=null && Costanti.SPCOOP_PROTOCOL_NAME.equals(protocollo) && this.govway2openspcoop_Mapping_spcoop_soggetto!=null) {
+			tipo = this.govway2openspcoop_Mapping_spcoop_soggetto.get(tipoSoggetto);
+		}
+		else if(protocollo!=null && Costanti.SDI_PROTOCOL_NAME.equals(protocollo) && this.govway2openspcoop_Mapping_sdi_soggetto!=null) {
+			tipo = this.govway2openspcoop_Mapping_sdi_soggetto.get(tipoSoggetto);
+		}
+		if(tipo!=null && StringUtils.isNotEmpty(tipo)) {
+			return tipo;
+		}
+		return tipoSoggetto;
+	}
+	private String normalizeGovWay2OpenSPCoop_tipoServizio(String tipoServizio, String protocollo) {
+		String tipo = null;
+		if(protocollo!=null && Costanti.TRASPARENTE_PROTOCOL_NAME.equals(protocollo) && this.govway2openspcoop_Mapping_trasparente_servizio!=null) {
+			tipo = this.govway2openspcoop_Mapping_trasparente_servizio.get(tipoServizio);
+		}
+		else if(protocollo!=null && Costanti.SPCOOP_PROTOCOL_NAME.equals(protocollo) && this.govway2openspcoop_Mapping_spcoop_servizio!=null) {
+			tipo = this.govway2openspcoop_Mapping_spcoop_servizio.get(tipoServizio);
+		}
+		else if(protocollo!=null && Costanti.SDI_PROTOCOL_NAME.equals(protocollo) && this.govway2openspcoop_Mapping_sdi_servizio!=null) {
+			tipo = this.govway2openspcoop_Mapping_sdi_servizio.get(tipoServizio);
+		}
+		if(tipo!=null && StringUtils.isNotEmpty(tipo)) {
+			return tipo;
+		}
+		return tipoServizio;
+	}
+	
 	public void readTransportProperties(Map<String, List<String>> prop,
-			HeaderIntegrazione integrazione) throws HeaderIntegrazioneException{
+			HeaderIntegrazione integrazione,
+			String protocollo) throws HeaderIntegrazioneException{
 		try{
 			if(prop!=null && integrazione!=null){
 								
@@ -571,19 +730,25 @@ public class UtilitiesIntegrazioneBC {
 								
 									// Busta
 									if(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setTipoMittente(TransportUtils.getFirstValue(prop,key));	
+										String tipo = TransportUtils.getFirstValue(prop,key);
+										String normalized = normalizeOpenSPCoop2GovWay_tipoSoggetto(tipo, protocollo);
+										integrazione.getBusta().setTipoMittente(normalized);	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE.equals(keywordIntegrazione)) {
 										integrazione.getBusta().setMittente(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setTipoDestinatario(TransportUtils.getFirstValue(prop,key));	
+										String tipo = TransportUtils.getFirstValue(prop,key);
+										String normalized = normalizeOpenSPCoop2GovWay_tipoSoggetto(tipo, protocollo);
+										integrazione.getBusta().setTipoDestinatario(normalized);	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_DESTINATARIO.equals(keywordIntegrazione)) {
 										integrazione.getBusta().setDestinatario(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setTipoServizio(TransportUtils.getFirstValue(prop,key));	
+										String tipo = TransportUtils.getFirstValue(prop,key);
+										String normalized = normalizeOpenSPCoop2GovWay_tipoServizio(tipo, protocollo);
+										integrazione.getBusta().setTipoServizio(normalized);	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO.equals(keywordIntegrazione)) {
 										integrazione.getBusta().setServizio(TransportUtils.getFirstValue(prop,key));	
@@ -635,7 +800,8 @@ public class UtilitiesIntegrazioneBC {
 	}
 	
 	public void readUrlProperties(Map<String, List<String>> prop,
-			HeaderIntegrazione integrazione) throws HeaderIntegrazioneException{
+			HeaderIntegrazione integrazione,
+			String protocollo) throws HeaderIntegrazioneException{
 		try{
 			if(prop!=null && integrazione!=null){
 			
@@ -653,19 +819,25 @@ public class UtilitiesIntegrazioneBC {
 								
 									// Busta
 									if(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setTipoMittente(TransportUtils.getFirstValue(prop,key));	
+										String tipo = TransportUtils.getFirstValue(prop,key);
+										String normalized = normalizeOpenSPCoop2GovWay_tipoSoggetto(tipo, protocollo);
+										integrazione.getBusta().setTipoMittente(normalized);	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE.equals(keywordIntegrazione)) {
 										integrazione.getBusta().setMittente(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setTipoDestinatario(TransportUtils.getFirstValue(prop,key));	
+										String tipo = TransportUtils.getFirstValue(prop,key);
+										String normalized = normalizeOpenSPCoop2GovWay_tipoSoggetto(tipo, protocollo);
+										integrazione.getBusta().setTipoDestinatario(normalized);	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_DESTINATARIO.equals(keywordIntegrazione)) {
 										integrazione.getBusta().setDestinatario(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setTipoServizio(TransportUtils.getFirstValue(prop,key));	
+										String tipo = TransportUtils.getFirstValue(prop,key);
+										String normalized = normalizeOpenSPCoop2GovWay_tipoServizio(tipo, protocollo);
+										integrazione.getBusta().setTipoServizio(normalized);	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO.equals(keywordIntegrazione)) {
 										integrazione.getBusta().setServizio(TransportUtils.getFirstValue(prop,key));	
@@ -720,14 +892,17 @@ public class UtilitiesIntegrazioneBC {
 
 	public void setUrlProperties(HeaderIntegrazione integrazione,
 			Map<String, List<String>> properties,
-			Map<String, String> protocolInfos) throws HeaderIntegrazioneException{
+			Map<String, String> protocolInfos,
+			String protocollo) throws HeaderIntegrazioneException{
 
 		try{
 			if(properties!=null && integrazione!=null){
 				if(integrazione.getBusta()!=null){				
 					if(integrazione.getBusta().getTipoMittente()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE)) {
-							TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE), integrazione.getBusta().getTipoMittente());
+							String tipo = integrazione.getBusta().getTipoMittente();
+							String normalized = normalizeGovWay2OpenSPCoop_tipoSoggetto(tipo, protocollo);
+							TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE), normalized);
 						}
 					}
 					if(integrazione.getBusta().getMittente()!=null) {
@@ -737,7 +912,9 @@ public class UtilitiesIntegrazioneBC {
 					}
 					if(integrazione.getBusta().getTipoDestinatario()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO)) {
-							TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO), integrazione.getBusta().getTipoDestinatario());
+							String tipo = integrazione.getBusta().getTipoDestinatario();
+							String normalized = normalizeGovWay2OpenSPCoop_tipoSoggetto(tipo, protocollo);
+							TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO), normalized);
 						}
 					}
 					if(integrazione.getBusta().getDestinatario()!=null) {
@@ -747,7 +924,9 @@ public class UtilitiesIntegrazioneBC {
 					}
 					if(integrazione.getBusta().getTipoServizio()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO)) {
-							TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO), integrazione.getBusta().getTipoServizio());
+							String tipo = integrazione.getBusta().getTipoServizio();
+							String normalized = normalizeGovWay2OpenSPCoop_tipoServizio(tipo, protocollo);
+							TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO), normalized);
 						}
 					}
 					if(integrazione.getBusta().getServizio()!=null) {
@@ -841,19 +1020,24 @@ public class UtilitiesIntegrazioneBC {
 		}
 	}
 	
-	public void setInfoProductTransportProperties(Map<String, List<String>> properties) throws HeaderIntegrazioneException{
-		setTransportProperties(null, properties, null);
+	public void setInfoProductTransportProperties(Map<String, List<String>> properties,
+			String protocollo) throws HeaderIntegrazioneException{
+		setTransportProperties(null, properties, null,
+				protocollo);
 	}
 	public void setTransportProperties(HeaderIntegrazione integrazione,
 			Map<String, List<String>> properties,
-			Map<String, String> protocolInfos) throws HeaderIntegrazioneException{
+			Map<String, String> protocolInfos,
+			String protocollo) throws HeaderIntegrazioneException{
 
 		try{
 			if(properties!=null && integrazione!=null){
 				if(integrazione.getBusta()!=null){
 					if(integrazione.getBusta().getTipoMittente()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE)) {
-							TransportUtils.setParameter(properties,normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE)), integrazione.getBusta().getTipoMittente());
+							String tipo = integrazione.getBusta().getTipoMittente();
+							String normalized = normalizeGovWay2OpenSPCoop_tipoSoggetto(tipo, protocollo);
+							TransportUtils.setParameter(properties,normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE)), normalized);
 						}
 					}
 					if(integrazione.getBusta().getMittente()!=null) {
@@ -863,7 +1047,9 @@ public class UtilitiesIntegrazioneBC {
 					}
 					if(integrazione.getBusta().getTipoDestinatario()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO)) {
-							TransportUtils.setParameter(properties,normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO)), integrazione.getBusta().getTipoDestinatario());
+							String tipo = integrazione.getBusta().getTipoDestinatario();
+							String normalized = normalizeGovWay2OpenSPCoop_tipoSoggetto(tipo, protocollo);
+							TransportUtils.setParameter(properties,normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO)), normalized);
 						}
 					}
 					if(integrazione.getBusta().getDestinatario()!=null) {
@@ -873,7 +1059,9 @@ public class UtilitiesIntegrazioneBC {
 					}
 					if(integrazione.getBusta().getTipoServizio()!=null) {
 						if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO)) {
-							TransportUtils.setParameter(properties,normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO)), integrazione.getBusta().getTipoServizio());
+							String tipo = integrazione.getBusta().getTipoServizio();
+							String normalized = normalizeGovWay2OpenSPCoop_tipoServizio(tipo, protocollo);
+							TransportUtils.setParameter(properties,normalizeX_(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO)), normalized);
 						}
 					}
 					if(integrazione.getBusta().getServizio()!=null) {
@@ -985,7 +1173,8 @@ public class UtilitiesIntegrazioneBC {
 	
 
 	public void readHeader(OpenSPCoop2SoapMessage message,HeaderIntegrazione integrazione,
-			String actorIntegrazione) throws HeaderIntegrazioneException{
+			String actorIntegrazione,
+			String protocollo) throws HeaderIntegrazioneException{
 		
 		
 		try{			
@@ -1040,6 +1229,7 @@ public class UtilitiesIntegrazioneBC {
 			try{
 				if(this.keyReadEnabled_HeaderIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE)) {
 					tipoMittente = headerElement.getAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE));
+					tipoMittente = normalizeOpenSPCoop2GovWay_tipoSoggetto(tipoMittente, protocollo);
 				}
 			}catch(Exception e){}
 			if(tipoMittente!=null && tipoMittente.compareTo("")!=0)
@@ -1058,6 +1248,7 @@ public class UtilitiesIntegrazioneBC {
 			try{
 				if(this.keyReadEnabled_HeaderIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO)) {
 					tipoDestinatario = headerElement.getAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO));
+					tipoDestinatario = normalizeOpenSPCoop2GovWay_tipoSoggetto(tipoDestinatario, protocollo);
 				}
 			}catch(Exception e){}
 			if(tipoDestinatario!=null && tipoDestinatario.compareTo("")!=0)
@@ -1076,6 +1267,7 @@ public class UtilitiesIntegrazioneBC {
 			try{
 				if(this.keyReadEnabled_HeaderIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO)) {
 					tipoServizio = headerElement.getAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO));
+					tipoServizio = normalizeOpenSPCoop2GovWay_tipoServizio(tipoServizio, protocollo);
 				}
 			}catch(Exception e){}
 			if(tipoServizio!=null && tipoServizio.compareTo("")!=0)
@@ -1179,11 +1371,13 @@ public class UtilitiesIntegrazioneBC {
 			String correlazioneApplicativa,String riferimentoCorrelazioneApplicativaRichiesta, String idTransazione,
 			String actorIntegrazione,String nomeElemento,String prefix,String namespace,
 			String proprietaProtocolloNomeElemento,String proprietaProtocolloNomeTipoElemento,
-			Map<String, String> protocolInfos) throws Exception{
+			Map<String, String> protocolInfos,
+			String protocollo) throws Exception{
 		updateHeader(message, soggettoFruitore, idServizio, idBusta, null, 
 				servizioApplicativo, correlazioneApplicativa, riferimentoCorrelazioneApplicativaRichiesta, idTransazione,
 				actorIntegrazione, nomeElemento, prefix, namespace, 
-				proprietaProtocolloNomeElemento, proprietaProtocolloNomeTipoElemento, protocolInfos);
+				proprietaProtocolloNomeElemento, proprietaProtocolloNomeTipoElemento, protocolInfos,
+				protocollo);
 	}
 	
 	public void updateHeader(OpenSPCoop2SoapMessage message,IDSoggetto soggettoFruitore,IDServizio idServizio,
@@ -1191,7 +1385,8 @@ public class UtilitiesIntegrazioneBC {
 			String correlazioneApplicativa,String riferimentoCorrelazioneApplicativaRichiesta, String idTransazione,
 			String actorIntegrazione,String nomeElemento,String prefix,String namespace,
 			String proprietaProtocolloNomeElemento,String proprietaProtocolloNomeTipoElemento,
-			Map<String, String> protocolInfos) throws Exception{
+			Map<String, String> protocolInfos,
+			String protocollo) throws Exception{
 		
 		HeaderIntegrazione integrazione = new HeaderIntegrazione(idTransazione);
 		integrazione.setIdApplicativo(correlazioneApplicativa);
@@ -1215,13 +1410,15 @@ public class UtilitiesIntegrazioneBC {
 		integrazione.setBusta(busta);
 		
 		this.updateHeader(message, integrazione, actorIntegrazione, nomeElemento, prefix, namespace, 
-				proprietaProtocolloNomeElemento, proprietaProtocolloNomeTipoElemento, protocolInfos);
+				proprietaProtocolloNomeElemento, proprietaProtocolloNomeTipoElemento, protocolInfos,
+				protocollo);
 	}
 		
 	public void updateHeader(OpenSPCoop2SoapMessage message,HeaderIntegrazione integrazione,
 			String actorIntegrazione,String nomeElemento,String prefix,String namespace,
 			String proprietaProtocolloNomeElemento,String proprietaProtocolloNomeTipoElemento,
-			Map<String, String> protocolInfos) throws Exception{
+			Map<String, String> protocolInfos,
+			String protocollo) throws Exception{
 		
 		if(actorIntegrazione==null)
 			throw new Exception("Actor non definito");
@@ -1269,7 +1466,8 @@ public class UtilitiesIntegrazioneBC {
 		// creo header da nuovo
 		SOAPHeaderElement headerIntegrazioneNEW = this.buildHeader(integrazione, nomeElemento, prefix, namespace, 
 				actorIntegrazione, message, 
-				proprietaProtocolloNomeElemento, proprietaProtocolloNomeTipoElemento, protocolInfos);	
+				proprietaProtocolloNomeElemento, proprietaProtocolloNomeTipoElemento, protocolInfos,
+				protocollo);	
 		
 		// Riaggiungo eventuali elementi interni
 		while(v.size()>0){
@@ -1290,7 +1488,8 @@ public class UtilitiesIntegrazioneBC {
 			String prefix,String namespace, String actor, 
 			OpenSPCoop2SoapMessage m,
 			String proprietaProtocolloNomeElemento,String proprietaProtocolloNomeTipoElemento,
-			Map<String, String> protocolInfos) throws HeaderIntegrazioneException{
+			Map<String, String> protocolInfos,
+			String protocollo) throws HeaderIntegrazioneException{
 
 		try{
 			SOAPHeader soapHeader = m.getSOAPHeader();
@@ -1302,7 +1501,7 @@ public class UtilitiesIntegrazioneBC {
 			header.setActor(actor);
 			header.setMustUnderstand(false);
 			
-			setAttributes(integrazione,header);
+			setAttributes(integrazione,header,protocollo);
 			
 			if(this.openspcoop2 && this.keySetEnabled_HeaderIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_PROTOCOL_INFO)) {
 				if(protocolInfos!=null && protocolInfos.size()>0){
@@ -1330,12 +1529,14 @@ public class UtilitiesIntegrazioneBC {
 	}
 	
 	
-	public void setAttributes(HeaderIntegrazione integrazione, SOAPHeaderElement header){
+	public void setAttributes(HeaderIntegrazione integrazione, SOAPHeaderElement header, String protocollo){
 		if(integrazione.getBusta()!=null){
 
 			if(integrazione.getBusta().getTipoMittente()!=null){
 				if(this.keySetEnabled_HeaderIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE)) {
-					header.setAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE), integrazione.getBusta().getTipoMittente());
+					String tipo = integrazione.getBusta().getTipoMittente();
+					String normalized = normalizeGovWay2OpenSPCoop_tipoSoggetto(tipo, protocollo);
+					header.setAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE), normalized);
 				}
 			}
 			if(integrazione.getBusta().getMittente()!=null){
@@ -1346,7 +1547,9 @@ public class UtilitiesIntegrazioneBC {
 
 			if(integrazione.getBusta().getTipoDestinatario()!=null){
 				if(this.keySetEnabled_HeaderIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO)) {
-					header.setAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO), integrazione.getBusta().getTipoDestinatario());
+					String tipo = integrazione.getBusta().getTipoDestinatario();
+					String normalized = normalizeGovWay2OpenSPCoop_tipoSoggetto(tipo, protocollo);
+					header.setAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO), normalized);
 				}
 			}
 			if(integrazione.getBusta().getDestinatario()!=null){
@@ -1357,7 +1560,9 @@ public class UtilitiesIntegrazioneBC {
 
 			if(integrazione.getBusta().getTipoServizio()!=null){
 				if(this.keySetEnabled_HeaderIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO)) {
-					header.setAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO), integrazione.getBusta().getTipoServizio());
+					String tipo = integrazione.getBusta().getTipoServizio();
+					String normalized = normalizeGovWay2OpenSPCoop_tipoServizio(tipo, protocollo);
+					header.setAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO), normalized);
 				}
 			}
 			if(integrazione.getBusta().getServizio()!=null){
