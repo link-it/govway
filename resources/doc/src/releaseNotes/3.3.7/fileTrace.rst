@@ -25,6 +25,8 @@ Aggiunte inoltre ulteriori informazioni, inerenti le comunicazioni gestite dal g
 
 - tokenClaim(nomeClaim): consente di accedere ad un singolo claim di un token OAuth2 validato su GovWay;
 
+- requesterIP: rappresenta l’indirizzo IP del richiedente e assumerà la prima informazione valorizzata, trovata nella richiesta, nel seguente ordine: forwardedIP, clientIP;
+
 - resultCode: consente di ottenere il codice numerico di GovWay che rappresenta l'esito della transazione.
 
 Sono infine stati risolti i seguenti problemi: 

@@ -1,5 +1,11 @@
 2022-06-07 Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Aggiunta tra le informazioni utilizzabili nella tracciatura su file la keyword 'requesterIP' che consente di ottenere l’indirizzo IP del richiedente.
+	Assumerà la prima informazione valorizzata, trovata nella richiesta, nel seguente ordine: forwardedIP, clientIP.
+
+2022-06-07 Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, GovWayConsole]
 	Risolto Bug OP-1373
 	In una ricerca per identificativo (applicativo, messaggio o transazione), 

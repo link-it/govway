@@ -1488,6 +1488,17 @@ public class Info {
 	public java.lang.String getForwardedIP(String defaultValue) {
 		return correctValue(this.transazione.getTransportClientAddress(), defaultValue);
 	}
+	
+	public java.lang.String getRequesterIP() {
+		return getRequesterIP(null);
+	}
+	public java.lang.String getRequesterIP(String defaultValue) {
+		String forwardedIP = getForwardedIP();
+		if(forwardedIP!=null && StringUtils.isNotEmpty(forwardedIP)) {
+			return forwardedIP;
+		}
+		return getClientIP(defaultValue);
+	}
 
 	private DatiMittente _convertToDatiMittente() {
 		

@@ -296,6 +296,11 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 
 - forwardedIP: indirizzo IP presente nella richiesta in uno degli header http appartenente alla classe "Forwarded-For" o "Client-IP";
 
+- requesterIP: rappresenta l'indirizzo IP del  richiedente e assumerà la prima informazione valorizzata, trovata nella richiesta, nel seguente ordine:
+
+	- forwardedIP
+	- clientIP
+
 - requester: rappresenta il richiedente della richiesta e assumerà la prima informazione valorizzata, trovata nella richiesta, nel seguente ordine:
 
 	- tokenUsername: username presente nel token

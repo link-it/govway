@@ -56,13 +56,17 @@ Il progetto [govway-docker](https://github.com/link-it/govway-docker) fornisce t
 ## Standard di Mercato
 Supporto API conformi ai protocolli standard di mercato, come SOAP 1.1 e 1.2, API restful serializzate in Json o XML o semplici dati binari su Http. L'integrazione avviene sempre tramite le API applicative native, indipendentemente dai profili di interoperabilità adottati, gestiti in maniera trasparente dal gateway.
 ## Conformità alle specifiche di interoperabilità italiane ed europee
-Supporto delle nuove linee guida per l'interoperabilità di AGID (ModI) e del "building block" eDelivery del progetto europeo CEF (Connecting European Facilities). Viene inoltre assicurata la retrocompatibilità con il protocollo SPCoop, ancora ampiamente adottato per i servizi della PA.
+Conformità delle API (sia in fruzione che in erogazione) alle nuove Linee Guida AGID di Interoperabilità, sia per i profili tecnici previsti dal nuovo modello di interoperabilità (ModI), sia per la gestione dei token rilasciati dalla PDND (signed jwt, purposeId, sessionInfo). Il tutto in maniera trasparente alle applicazioni interne al dominio. 
+Supporto del "building block" eDelivery del progetto europeo CEF (Connecting European Facilities). 
+Retrocompatibilità con il protocollo SPCoop, ancora ampiamente adottato per i servizi della PA.
 ## Registro delle API
 La registrazione delle API può avvenire manualmente o tramite caricamento dei descrittori delle interfacce (OpenAPI 3.0, Swagger e WADL per i servizi REST, WSDL per i servizi SOAP, Accordi di Servizio per i servizi SPCoop).
 ## Gestione Govlet
 GovWay introduce il concetto di Govlet, un formato di archivio caricabile direttamente dalle Console del prodotto, per una rapida configurazione dei servizi della Pubblica Amministrazione. Ad oggi la libreria di GovLet disponibili per GovWay include i servizi di Fatturazione Elettronica (attiva e passiva), PagoPA e SIOPE+ ed è in rapida espansione.
-## Gestione token (JWT, OAuth2, OIDC)
-Gestione di token di autenticazione conformi agli standard JWT, OAuth2 e OIDC. Supporto della validazione dei token e dell'acquisizione dei claim interni al token per le successive fasi di autenticazione e autorizzazione, anche interagendo con Authorization Server esterni tramite funzionalità di Introspection e UserInfo.
+## Gestione token
+Gestione token di autenticazione conformi agli standard JWT, OAuth2 e OIDC, sia nella fase di fruizione che di erogazione dei servizi.
+In fase di erogazione: supporto della validazione dei token e della verifica dei claim per le successive fasi di autenticazione e autorizzazione, anche interagendo con Authorization Server esterni tramite funzionalità di Introspection e UserInfo.
+In fase di fruizione: supporto alla negoziazione dei token con grant type Client Credentials, Resource Owner Password e Signed JWT (RFC 7523).
 ## Rate Limiting
 Regolazione del traffico in ingresso su GovWay, limitando il numero di richieste o la dimensione di banda occupata per specifiche erogazioni o fruizioni, anche in funzione di parametri come il tempo medio di elaborazione, la quantità di errori o in base a caratteristiche delle specifiche richieste applicative.
 ## Autenticazione
