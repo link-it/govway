@@ -16,7 +16,7 @@
 	<target name="git-version-sql-replace">
 
 		<!-- Imposto versione -->	
-		<var name="pddDetails" value="3.3.6.p1" />
+		<var name="pddDetails" value="3.3.7" />
 		<var name="pddVersionMajor" value="3" />
                 <var name="pddVersionMinor" value="3" />
 
