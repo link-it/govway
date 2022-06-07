@@ -381,10 +381,20 @@ public class Utils {
 				
 				if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(policyType) ||
 						PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(policyType)) {
-					if(!TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI.equals(tipoRisorsa)) {
-						assertTrue(polInfo.richiesteConteggiate<=conteggiate);
+					try {
+						assertTrue("PolicyConteggiate["+polInfo.richiesteConteggiate+"]<=attese["+conteggiate+"]", polInfo.richiesteConteggiate<=conteggiate);
+					}catch(Throwable t) {
+						if(!TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI.equals(tipoRisorsa) &&
+								!TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE.equals(tipoRisorsa) &&
+								!TipoRisorsaPolicyAttiva.NUMERO_FAULT_APPLICATIVI.equals(tipoRisorsa) &&
+								!TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO.equals(tipoRisorsa)) {
+							throw t;
+						}
+						else {
+							logRateLimiting.debug("["+policyType+"] contatori diversi da quelli che attesi: "+t.getMessage(),t);
+						}
 					}
-					assertTrue(polInfo.richiesteBloccate<=bloccate);
+					assertTrue("PolicyRichiesteBloccate["+polInfo.richiesteBloccate+"]<=attese["+bloccate+"]", polInfo.richiesteBloccate<=bloccate);
 				}
 				else {
 					assertEquals(conteggiate, polInfo.richiesteConteggiate);

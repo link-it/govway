@@ -1,3 +1,11 @@
+2022-06-07 Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Risolto Bug OP-1373
+	In una ricerca per identificativo (applicativo, messaggio o transazione), 
+	se la query impiega troppo tempo la console interrompe la ricerca visualizzando un popup che segnala di riprovare stringendo i parametri di ricerca.
+	Il messaggio riportato è stato corretto non essendoci criteri temporali nella ricerca per identificativo.
+
 2022-06-06  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

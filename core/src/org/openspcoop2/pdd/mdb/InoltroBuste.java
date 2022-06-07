@@ -2424,7 +2424,13 @@ public class InoltroBuste extends GenericLib{
 							}
 						}
 					}catch(Throwable t) {
-						this.log.error("Avvenuto errore durante il controllo del charset della risposta: "+t.getMessage(),t);
+						String ct = null;
+						try {
+							if(transportResponseContext!=null) {
+								ct = transportResponseContext.getContentType();
+							}
+						}catch(Throwable tRead) {}	
+						this.log.error("Avvenuto errore durante il controllo del charset della risposta (Content-Type: "+ct+"): "+t.getMessage(),t);
 					}
 					
 				} catch (Exception e) {

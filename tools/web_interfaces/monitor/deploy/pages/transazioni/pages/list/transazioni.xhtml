@@ -562,7 +562,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 					</h:form>
 				</rich:modalPanel>
 				
-				<a4j:outputPanel id="timeoutCtr" layout="block" styleClass="" rendered="#{transazioniDM.timeoutEvent}">
+				<a4j:outputPanel id="timeoutCtr" layout="block" styleClass="" rendered="#{transazioniDM.timeoutEvent and searchFormTransazioni.modalitaRicercaStorico != 'idMessaggio' and searchFormTransazioni.modalitaRicercaStorico != 'idTransazione' and searchFormTransazioni.modalitaRicercaStorico != 'idApplicativoBase'}">
 					<script type="text/javascript">
 						//<![CDATA[
 						   jQuery(document).ready(controllaEventoTimeout);
@@ -570,6 +570,19 @@ xmlns="http://www.w3.org/1999/xhtml"
 						   function controllaEventoTimeout(){  
 							   if(#{transazioniDM.timeoutEvent}){
 									Richfaces.showModalPanel('msgDt_timeoutModal');
+								}
+						   }
+						 //]]>	
+					</script>
+				</a4j:outputPanel>
+				<a4j:outputPanel id="timeoutIdentificativiCtr" layout="block" styleClass="" rendered="#{transazioniDM.timeoutEvent and (searchFormTransazioni.modalitaRicercaStorico eq 'idMessaggio' or searchFormTransazioni.modalitaRicercaStorico eq 'idTransazione' or searchFormTransazioni.modalitaRicercaStorico eq 'idApplicativoBase')}">
+					<script type="text/javascript">
+						//<![CDATA[
+						   jQuery(document).ready(controllaEventoTimeout);
+				
+						   function controllaEventoTimeout(){  
+							   if(#{transazioniDM.timeoutEvent}){
+									Richfaces.showModalPanel('msgDt_timeoutIdentificativiModal');
 								}
 						   }
 						 //]]>	

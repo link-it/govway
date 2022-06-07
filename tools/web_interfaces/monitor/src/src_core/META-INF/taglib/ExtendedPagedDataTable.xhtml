@@ -433,7 +433,7 @@
 				        <h:graphicImage value="/images/tema_link/alert_orange.png" />
 				        <a4j:outputPanel style="font-weight: bold;text-align: left;">
 				        	<p style="margin: 0px 0px 0px 16px;">Il server non ha risposto in tempo.</p>
-				        	<p style="margin: 4px 0px 0px 16px;">Prova a restingere l'intervallo temporale di ricerca.</p>
+				        	<p style="margin: 4px 0px 0px 16px;">Prova a restringere l'intervallo temporale di ricerca.</p>
 				        </a4j:outputPanel>
 				      </h:panelGrid>
 				  </div>
@@ -441,6 +441,28 @@
 		         <div class="buttonrowmodal">
 		     		<input type="button" value="Chiudi" 
 						   onclick="Richfaces.hideModalPanel('#{id}_timeoutModal');return false" />
+		         </div>
+			   </div>
+			</rich:modalPanel>
+			
+			<rich:modalPanel id="#{id}_timeoutIdentificativiModal" width="420" height="200">
+			   <f:facet name="header">
+			   	<h:outputText value="Attenzione" />
+			   </f:facet>
+			   <div class="form-container noborder">
+				  <div class="buttonrowmodal">
+				      <h:panelGrid columns="2">
+				        <h:graphicImage value="/images/tema_link/alert_orange.png" />
+				        <a4j:outputPanel style="font-weight: bold;text-align: left;">
+				        	<p style="margin: 0px 0px 0px 16px;">Il server non ha risposto in tempo.</p>
+				        	<p style="margin: 4px 0px 0px 16px;">Prova ad effettuare una nuova ricerca.</p>
+				        </a4j:outputPanel>
+				      </h:panelGrid>
+				  </div>
+		        <div class="errorsSpacer"/>
+		         <div class="buttonrowmodal">
+		     		<input type="button" value="Chiudi" 
+						   onclick="Richfaces.hideModalPanel('#{id}_timeoutIdentificativiModal');return false" />
 		         </div>
 			   </div>
 			</rich:modalPanel>

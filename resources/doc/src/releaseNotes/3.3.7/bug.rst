@@ -40,4 +40,6 @@ Per la console di gestione sono stati risolti i seguenti bug:
 
 Per la console di monitoraggio sono stati risolti i seguenti bug:
 
-- i grafici (PieChart e BarChart) della distribuzione per errore non venivano visualizzati dalla console nel caso in cui tra le tipologie di errore individuate fosse presente un errore la cui descrizione presentava l'apice singolo.
+- i grafici (PieChart e BarChart) della distribuzione per errore non venivano visualizzati dalla console nel caso in cui tra le tipologie di errore individuate fosse presente un errore la cui descrizione presentava l'apice singolo;
+
+- in una ricerca per identificativo (applicativo, messaggio o transazione), se la query impiega troppo tempo la console interrompe la ricerca visualizzando un popup che segnala di riprovare stringendo i parametri di ricerca. Il messaggio riportato è stato corretto non essendoci criteri temporali nella ricerca per identificativo.
