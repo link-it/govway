@@ -49,6 +49,16 @@
             <stringProp name="Argument.value">${__P(readTimeout,60000)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="client" elementType="Argument">
+            <stringProp name="Argument.name">client</stringProp>
+            <stringProp name="Argument.value">${__P(clientIP,127.0.0.1)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="forwardedIP" elementType="Argument">
+            <stringProp name="Argument.name">forwardedIP</stringProp>
+            <stringProp name="Argument.value">${__P(forwardedIP,127.0.0.1)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
           <elementProp name="threads" elementType="Argument">
             <stringProp name="Argument.name">threads</stringProp>
             <stringProp name="Argument.value">${__P(threads,20)}</stringProp>
@@ -178,7 +188,7 @@
       </ThreadGroup>
       <hashTree>
         <RandomVariableConfig guiclass="TestBeanGUI" testclass="RandomVariableConfig" testname="Random Variable" enabled="true">
-          <stringProp name="maximumValue">999999999</stringProp>
+          <stringProp name="maximumValue">1000</stringProp>
           <stringProp name="minimumValue">1</stringProp>
           <stringProp name="outputFormat"></stringProp>
           <boolProp name="perThread">false</boolProp>
@@ -257,6 +267,14 @@
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">GovWay-StressTest-UserId</stringProp>
                 <stringProp name="Header.value">ID-Applicativo-StressTest</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">GovWay-StressTest-UniqueUserId</stringProp>
+                <stringProp name="Header.value">ID-Applicativo-StressTest-${random}</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">X-Forwarded-For</stringProp>
+                <stringProp name="Header.value">${forwardedIP}</stringProp>
               </elementProp>
             </collectionProp>
           </HeaderManager>

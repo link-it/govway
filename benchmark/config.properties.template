@@ -20,6 +20,7 @@ readTimeout=60000
 
 # Client
 clientIP=StressTestClient
+forwardedIP=127.0.0.1
 
 # Directory
 testFileDir=${BENCHMARK_HOME}/example

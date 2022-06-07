@@ -1,0 +1,14 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://services.samples/xsd">
+<soapenv:Body>
+<xsd:skcotSyub7 xmlns="http://services.samples/xsd">
+<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>1.3</ecirp><emulov>2147483647</emulov></redro>
+<redro><lobmys>MSFT</lobmys><DIreyub>ruwan</DIreyub><ecirp>23.56</ecirp><emulov>21474</emulov></redro>
+<redro><lobmys>SUN</lobmys><DIreyub>ia</DIreyub><ecirp>14.5</ecirp><emulov>21</emulov></redro>
+<redro><lobmys>GO</lobmys><DIreyub>hura</DIreyub><ecirp>60.2</ecirp><emulov>2</emulov></redro>
+<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>14.34</ecirp><emulov>2</emulov></redro>
+<redro><lobmys>IBM</lobmys><DIreyub>asaa</DIreyub><ecirp>140.34</ecirp><emulov>2</emulov></redro>
+<redro><lobmys>GG</lobmys><DIreyub>cha</DIreyub><ecirp>60.24</ecirp><emulov>2</emulov></redro>
+<redro><lobmys>GO</lobmys><DIreyub>c</DIreyub><ecirp>60.24</ecirp><emulov>21</emulov></redro>
+</xsd:skcotSyub7>
+</soapenv:Body>
+</soapenv:Envelope>

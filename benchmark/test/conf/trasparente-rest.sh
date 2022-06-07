@@ -1,6 +1,7 @@
 elencoTestTrasparenteRest="rest_proxy_no-trace rest_proxy_db-trace rest_proxy_file-trace rest_proxy_file-db-trace 
 			rest_proxy_no-trace_validation rest_proxy_db-trace_validation
 			rest_proxy_no-trace_rate-limiting rest_proxy_db-trace_rate-limiting
+			rest_proxy_no-trace_rate-limiting_groupby-requester rest_proxy_db-trace_rate-limiting_groupby-requester
 			rest_proxy_no-trace_rate-limiting_too-many-requests rest_proxy_db-trace_rate-limiting_too-many-requests rest_proxy_db-partial-trace_rate-limiting_too-many-requests
 			rest_proxy_no-trace_multipart rest_proxy_db-trace_multipart rest_proxy_no-trace_multipart_validation rest_proxy_db-trace_multipart_validation"
 
@@ -12,6 +13,8 @@ tests["rest_proxy_db-trace_validation"]="rest_proxy_DBTrace_Validazione"
 tests["rest_proxy_no-trace_validation"]="rest_proxy_NoTrace_Validazione"
 tests["rest_proxy_db-trace_rate-limiting"]="rest_proxy_DBTrace_RateLimiting"
 tests["rest_proxy_no-trace_rate-limiting"]="rest_proxy_NoTrace_RateLimiting"
+tests["rest_proxy_db-trace_rate-limiting_groupby-requester"]="rest_proxy_DBTrace_RateLimiting_GroupByRequester"
+tests["rest_proxy_no-trace_rate-limiting_groupby-requester"]="rest_proxy_NoTrace_RateLimiting_GroupByRequester"
 tests["rest_proxy_no-trace_rate-limiting_too-many-requests"]="rest_proxy_NoTrace_RateLimiting_TooManyRequests"
 tests["rest_proxy_db-trace_rate-limiting_too-many-requests"]="rest_proxy_DBTrace_RateLimiting_TooManyRequests"
 tests["rest_proxy_db-partial-trace_rate-limiting_too-many-requests"]="rest_proxy_DBPartialTrace_RateLimiting_TooManyRequests"
@@ -123,6 +126,32 @@ function rest_proxy_NoTrace_RateLimiting() {
 	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="Test policy rate limiting complessiva e per richiedente senza tracciamento"
+}
+
+
+function rest_proxy_DBTrace_RateLimiting_GroupByRequester() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=none
+	profiloMessaggi=none
+	protocollo=api
+	tipiTest=RateLimiting
+	azione=test7
+	contentType=application/json
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="Test policy rate limiting complessiva e per richiedente, con richiedenti unici"
+}
+
+
+function rest_proxy_NoTrace_RateLimiting_GroupByRequester() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=none
+	profiloMessaggi=none
+	protocollo=api
+	tipiTest=RateLimiting
+	azione=test6
+	contentType=application/json
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="Test policy rate limiting complessiva e per richiedente, con richiedenti unici, senza tracciamento"
 }
 
 
