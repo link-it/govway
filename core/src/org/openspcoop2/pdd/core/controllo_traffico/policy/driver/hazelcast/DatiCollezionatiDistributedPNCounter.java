@@ -52,21 +52,6 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati {
 		this.policyDegradoPrestazionaleDate = hazelcast.getCPSubsystem().getAtomicLong(uniqueMapId + "-policyDegradoPrestazionaleDate");
 		this.policyDegradoPrestazionaleRequestCounter = hazelcast.getPNCounter("pncounter-" + uniqueMapId + "-policyDegradoPrestazionaleRequestCounter-rate-limiting");
 		this.policyDegradoPrestazionaleCounter = hazelcast.getPNCounter("pncounter-" + uniqueMapId + "-policyDegradoPrestazionaleCounter-rate-limiting");
-		
-		// Inizializzo la super.policyDate e super.policyDegradoPrestazionaleDate, in questo modo non verranno resettati
-		// da ciascun nodo del cluster ogni qualvolta questo viene contattato per la prima volta
-		// TODO: Valuta con andrea un'altra soluzione per evitare questi accessi sincroni al dato distribuito ogni volta che viene
-		// raggiunta una nuova policy.  Magari fare override del metodo checkPolicyCounterForDate e checkPolicyCounterForDateDegradoPrestazionale
-		// QUesto non funziona!
-		long currentClusterDate = this.policyDate.get();
-		if (currentClusterDate != 0) {
-			super.setPolicyDate(new Date(currentClusterDate));
-		}
-	
-		currentClusterDate = this.policyDegradoPrestazionaleDate.get();
-		if(currentClusterDate != 0) {
-			super.setPolicyDegradoPrestazionaleDate(new Date(currentClusterDate));
-		}
 	}
 	
 	
@@ -76,45 +61,65 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati {
 		// Inizializzo il padre
 		dati.clone_impl(this);
 		
-		if (dati.getUpdatePolicyDate() != null) {
+		
+		if (this.updatePolicyDate.get() == 0) {
 			this.updatePolicyDate.set(dati.getUpdatePolicyDate().getTime());
 		}
-
-		// TODO: Questo metodo viene chiamato dalla initMap, serve nella fase di deserializzazione dello stato del controllo traffico.
-		// Qui ci vuole un bel lock distribuito per evitare che se due nodi si riavviano in contemporanea, si sballi tutto?
 		
-		// Resetto prima i contatori visto che con i PNCounter non posso fare il set diretto
-		this.resetCounters();
-		
-		this.activeRequestCounter.addAndGet(dati.getActiveRequestCounter());
-		
+		// Se non ho la policyDate, non considero il resto delle informazioni, che senza di essa non hanno senso.
 		if (dati.getPolicyDate() != null) {
-			this.policyDate.set(dati.getPolicyDate().getTime());
+			// Quando clono un DatiCollezionati e lo metto dentro una versione distribuita, Devo stare attento a non resettare
+			// i contatori ogni volta perchè questa inizializzazione può essere fatta contemporaneamente e in momenti diversi
+			// da più nodi. Se la policyDate è settata, assumo che l'oggetto distribuito sia stato già inizializzato e non lo resetto.
+			
+			if (this.policyDate.get() == 0) {
+				
+				if (this.policyDate.compareAndSet(0, dati.getPolicyDate().getTime())) {
+					
+					// Resetto prima i contatori visto che con i PNCounter non posso fare il set diretto
+					this.policyRequestCounter.subtractAndGet(this.policyRequestCounter.get());
+					this.policyDenyRequestCounter.subtractAndGet(this.policyDenyRequestCounter.get());
+					this.policyCounter.subtractAndGet(this.policyCounter.get());
+					
+					if (dati.getPolicyRequestCounter() != null) {
+						this.policyRequestCounter.addAndGet(dati.getPolicyRequestCounter());
+					}
+					
+					if (dati.getPolicyCounter() != null) {
+						this.policyCounter.addAndGet(dati.getPolicyCounter());
+					}
+					
+					if (dati.getPolicyDenyRequestCounter() != null) {
+						this.policyDenyRequestCounter.addAndGet(dati.getPolicyDenyRequestCounter());
+					}
+					
+				}
+			}
 		}
-		
-		if (dati.getPolicyRequestCounter() != null) {
-			this.policyRequestCounter.addAndGet(dati.getPolicyRequestCounter());
-		}
-		
-		if (dati.getPolicyCounter() != null) {
-			this.policyCounter.addAndGet(dati.getPolicyCounter());
-		}
-		
-		if (dati.getPolicyDenyRequestCounter() != null) {
-			this.policyDenyRequestCounter.addAndGet(dati.getPolicyDenyRequestCounter());
-		}
-		
+	
+		// Se non ho la policyDegradoPrestazionaleDate, non considero il resto delle informazioni, che senza di essa non hanno senso.
 		if (dati.getPolicyDegradoPrestazionaleDate() != null) {
-			this.policyDegradoPrestazionaleDate.set(dati.getPolicyDegradoPrestazionaleDate().getTime());
+		
+			if (this.policyDegradoPrestazionaleDate.get() == 0) {
+	
+				if (this.policyDegradoPrestazionaleDate.compareAndSet(0, dati.getPolicyDegradoPrestazionaleDate().getTime())) {
+	
+					// Resetto prima i contatori visto che con i PNCounter non posso fare il set diretto
+					this.policyDegradoPrestazionaleRequestCounter.subtractAndGet(this.policyDegradoPrestazionaleRequestCounter.get());
+					this.policyDegradoPrestazionaleCounter.subtractAndGet(this.policyDegradoPrestazionaleCounter.get());
+					
+					if (dati.getPolicyDegradoPrestazionaleRequestCounter() != null) {
+						this.policyDegradoPrestazionaleRequestCounter.addAndGet(dati.getPolicyDegradoPrestazionaleRequestCounter());
+					}
+					
+					if (dati.getPolicyDegradoPrestazionaleCounter() != null) {
+						this.policyDegradoPrestazionaleCounter.addAndGet(dati.getPolicyDegradoPrestazionaleCounter());
+					}
+				}
+			}
 		}
 		
-		if (dati.getPolicyDegradoPrestazionaleRequestCounter() != null) {
-			this.policyDegradoPrestazionaleRequestCounter.addAndGet(dati.getPolicyDegradoPrestazionaleRequestCounter());
-		}
 		
-		if (dati.getPolicyDegradoPrestazionaleCounter() != null) {
-			this.policyDegradoPrestazionaleCounter.addAndGet(dati.getPolicyDegradoPrestazionaleCounter());
-		}
 	}
 	
 	@Override
@@ -248,7 +253,7 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati {
 		super.resetCounters(updatePolicyDate);
 		
 		if(updatePolicyDate!=null) {
-			this.updatePolicyDate.setAsync(updatePolicyDate.getTime());
+			this.updatePolicyDate.set(updatePolicyDate.getTime());
 		}
 		
 		this.policyRequestCounter.subtractAndGet(this.policyRequestCounter.get());

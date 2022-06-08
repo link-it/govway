@@ -20,48 +20,12 @@ public class DatiCollezionatiDistributedAsync extends DatiCollezionatiDistribute
 		super(updatePolicyDate, hazelcast, uniqueMapId);
 	}
 	
+	
 	public DatiCollezionatiDistributedAsync(DatiCollezionati dati, HazelcastInstance hazelcast, String uniqueMapId) {
-		this(dati.getUpdatePolicyDate(), hazelcast, uniqueMapId);
-		
-		// Inizializzo il padre
-		dati.clone_impl(this);
-		
-		if (dati.getUpdatePolicyDate() != null) {
-			this.updatePolicyDate.setAsync(dati.getUpdatePolicyDate().getTime());
-		}
-		
-		this.activeRequestCounter.setAsync(dati.getActiveRequestCounter());
-
-		if (dati.getPolicyDate() != null) {
-			this.policyDate.setAsync(dati.getPolicyDate().getTime());
-		}
-		
-		if (dati.getPolicyRequestCounter() != null) {
-			this.policyRequestCounter.setAsync(dati.getPolicyRequestCounter());
-		}
-		
-		if (dati.getPolicyCounter() != null) {
-			this.policyCounter.setAsync(dati.getPolicyCounter());
-		}
-		
-		if (dati.getPolicyDenyRequestCounter() != null) {
-			this.policyDenyRequestCounter.setAsync(dati.getPolicyDenyRequestCounter());
-		}
-		
-		if (dati.getPolicyDegradoPrestazionaleDate() != null) {
-			this.policyDegradoPrestazionaleDate.setAsync(dati.getPolicyDegradoPrestazionaleDate().getTime());
-		}
-		
-		if (dati.getPolicyDegradoPrestazionaleRequestCounter() != null) {
-			this.policyDegradoPrestazionaleRequestCounter.setAsync(dati.getPolicyDegradoPrestazionaleRequestCounter());
-		}
-		
-		if (dati.getPolicyDegradoPrestazionaleCounter() != null) {
-			this.policyDegradoPrestazionaleCounter.setAsync(dati.getPolicyDegradoPrestazionaleCounter());
-		}
-	
+		super(dati, hazelcast, uniqueMapId);
 	}
-	
+
+	// TODO: Anche questo può sballare?
 	@Override
 	protected void initDatiIniziali(ActivePolicy activePolicy){
 		super.initDatiIniziali(activePolicy);
@@ -70,10 +34,7 @@ public class DatiCollezionatiDistributedAsync extends DatiCollezionatiDistribute
 		this.activeRequestCounter.setAsync(super.getActiveRequestCounter());
 	}
 	
-	
-	// TODO: Qui si può lockare in maniera distribuita oppure andare senza lock
-	//	e accettare alcune inconsistenze, perchè il reset dei contatori non è atomico nel complesso
-	// (Il singolo contatore si resetta atomicamente ma non tutti insieme)
+
 	@Override
 	protected void resetPolicyCounterForDate(Date d) {
 		super.resetPolicyCounterForDate(d);

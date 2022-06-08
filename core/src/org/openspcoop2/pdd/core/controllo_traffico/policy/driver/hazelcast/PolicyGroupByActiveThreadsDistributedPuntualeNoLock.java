@@ -21,16 +21,8 @@ import org.slf4j.Logger;
 import com.hazelcast.core.HazelcastInstance;
 
 /**
- * Non usiamo lock distribuite e la concorrenza all'interno del nodo la gestiamo con una ConcurrentHashMap
- * La lock ritorna locale e viene utilizzata solo nella creazione delle entry. L'ho aggiunta perchè mi è capitato una volta che
- * dopo centro richieste in parallelo il contatore non fosse praticamente decrementato, credo sia dovuto 
- *
- *
- *  TODO: Aggiungere inizializzazione degli IAtomicLong dei DatiCollezionatiDistributed altrimenti la prima richiesta ci mette un pò.
+ * Non usiamo lock distribuite e la concorrenza all'interno del nodo la gestiamo con una ConcurrentHashMap 
  * Visto che accettiamo un inconsistenza nei contatori, non cloniamo neanche.
- * 
- * TODO: Secondo me la lock non serve, di fatto la creazione concorrente dei contatori viene gestita da hazelcast, e il resto dei DatiCollezionati
- * durante la creazione è lo stesso per tutti, per adesso la rimuovo, la rimettiamo se troviamo grosse inconsistenze.
  * 
  * @author Francesco Scarlato
  *
@@ -41,7 +33,6 @@ public class PolicyGroupByActiveThreadsDistributedPuntualeNoLock  implements Ser
 	
 	private final Map<IDUnivocoGroupByPolicy, DatiCollezionati> mapActiveThreads = new ConcurrentHashMap<IDUnivocoGroupByPolicy, DatiCollezionati>();
 
-	//private final org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("PolicyGroupByActiveThreadsDistributedPuntualeNoLock");
 
     private final HazelcastInstance hazelcast;
     private final String uniqueMapId;
@@ -69,7 +60,6 @@ public class PolicyGroupByActiveThreadsDistributedPuntualeNoLock  implements Ser
 	}
 	
 	
-	// TODO: Non conviene serializzare direttamente DatiCollezionatiDistributed?
 	@Override
 	public void initMap(Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
 		
@@ -99,18 +89,13 @@ public class PolicyGroupByActiveThreadsDistributedPuntualeNoLock  implements Ser
 		
 		DatiCollezionati datiCollezionati;
 		
-		/*this.lock.acquireThrowRuntime("registerStartRequest", idTransazione);
-		try {*/
-			datiCollezionati = this.mapActiveThreads.get(datiGroupBy);
-		
-			if (datiCollezionati == null){				
-				datiCollezionati = BuilderDatiCollezionatiDistributed.build(this.tipoDatiCollezionati, this.activePolicy.getInstanceConfiguration().getUpdateTime(), this.hazelcast, this.uniqueMapId);
-				this.mapActiveThreads.put(datiGroupBy, datiCollezionati); // registro nuova immagine
-			}
+		datiCollezionati = this.mapActiveThreads.get(datiGroupBy);
+	
+		if (datiCollezionati == null){				
+			datiCollezionati = BuilderDatiCollezionatiDistributed.build(this.tipoDatiCollezionati, this.activePolicy.getInstanceConfiguration().getUpdateTime(), this.hazelcast, this.uniqueMapId);
+			this.mapActiveThreads.put(datiGroupBy, datiCollezionati); // registro nuova immagine
+		}
 			
-/*		} finally {
-			this.lock.release("registerStartRequest");
-		}*/
 		
 		// incremento il numero di thread, fuori dal lock, perchè lavoriamo con atomic
 		// e accettiamo inconsistenze
