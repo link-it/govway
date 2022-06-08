@@ -54,6 +54,8 @@ public class CostantiControlloTraffico {
 	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE = "local-cache";
 	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC = "remote-sync";
 	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC = "remote-async";
+	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_PUNTUALE = "puntuale";
+	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_PUNTUALE_NOLOCK = "puntuale-nolock";
 	
 	public final static String LABEL_MODALITA_TIPOLOGIA_REDIS_REDDISSON = "redisson-map";
 

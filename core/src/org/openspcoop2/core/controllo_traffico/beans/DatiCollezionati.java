@@ -60,13 +60,13 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	private Date cloneDate = null; // non deve essere gestita. Viene solamente inizializzata ad ogni clone
 	
 	// tipo di risorsa
-	private TipoRisorsa tipoRisorsa = null;
+	protected TipoRisorsa tipoRisorsa = null;
 	
 	// threads
 	private Long activeRequestCounter = null; // tiene traccia del numero di richieste attive sempre. Utile in jmx
 	
 	// data di creazione
-	private Date creationDate = null;
+	protected Date creationDate = null;
 	// data di registrazione/aggiornamento policy
 	private Date updatePolicyDate = null;
 	
@@ -75,7 +75,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	private Integer policyDateInterval = null;
 	private Boolean policyDateCurrentInterval  = null;
 	private TipoFinestra policyDateWindowInterval = null;
-	private Boolean policyRealtime  = null;
+	protected Boolean policyRealtime  = null;
 	// dati dinamici
 	private Date policyDate = null;
 	private Long policyRequestCounter = null;
@@ -90,7 +90,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	private Integer policyDegradoPrestazionaleDateInterval  = null;
 	private Boolean policyDegradoPrestazionaleDateCurrentInterval = null;
 	private TipoFinestra policyDegradoPrestazionaleDateWindowInterval = null;
-	private Boolean policyDegradoPrestazionaleRealtime  = null;
+	protected  Boolean policyDegradoPrestazionaleRealtime  = null;
 	// dati dinamici degrado prestazionale
 	private Date policyDegradoPrestazionaleDate = null;
 	private Long policyDegradoPrestazionaleRequestCounter = null;
@@ -101,7 +101,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	
 		
 
-	private void initDatiIniziali(ActivePolicy activePolicy){
+	protected void initDatiIniziali(ActivePolicy activePolicy){
 		
 		// tipo di risorsa
 		this.tipoRisorsa = activePolicy.getTipoRisorsaPolicy();
@@ -276,15 +276,20 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		}
 	}
 	
-
-
 	@Override
-	public Object clone(){
-		
-		// data di registrazione/aggiornamento policy
+	public Object clone() {
 		Date updatePolicyDate = new Date(this.updatePolicyDate.getTime());
 		
 		DatiCollezionati dati = new DatiCollezionati(updatePolicyDate);
+		
+		return clone_impl(dati);
+	}
+
+
+	
+	public Object clone_impl(DatiCollezionati dati){
+		
+		// data di registrazione/aggiornamento policy
 		
 		dati.cloneDate = DateManager.getDate();
 		
@@ -799,7 +804,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	
 	
 
-	private boolean isRisorsaContaNumeroRichieste(TipoRisorsa tipoRisorsa) {
+	protected boolean isRisorsaContaNumeroRichieste(TipoRisorsa tipoRisorsa) {
 		switch (tipoRisorsa) {
 		case NUMERO_RICHIESTE:
 		case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
@@ -815,7 +820,9 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		}
 		return false;
 	}
-	private boolean isRisorsaContaNumeroRichiesteDipendentiEsito(TipoRisorsa tipoRisorsa) {
+	
+	
+	protected boolean isRisorsaContaNumeroRichiesteDipendentiEsito(TipoRisorsa tipoRisorsa) {
 		switch (tipoRisorsa) {
 		case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
 		case NUMERO_RICHIESTE_FALLITE:
@@ -833,19 +840,33 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	}
 	
 
-	private void checkPolicyCounterForDate(Logger log, ActivePolicy activePolicy){
+	protected void resetPolicyCounterForDate(Date d) {
+		this.policyDate = d;
+		if(this.policyRealtime!=null && this.policyRealtime){
+			this.policyRequestCounter = 0l;
+			this.policyDenyRequestCounter = 0l;
+			if(this.tipoRisorsa==null || !isRisorsaContaNumeroRichieste(this.tipoRisorsa)){
+				this.policyCounter = 0l;
+			}
+		}
+	}
+	
+	
+	protected void resetPolicyCounterForDateDegradoPrestazionale(Date d) {
+		this.policyDegradoPrestazionaleDate = d;
+		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
+			this.policyDegradoPrestazionaleRequestCounter = 0l;
+			this.policyDegradoPrestazionaleCounter = 0l;
+		}
+		
+	}
+	
+
+	protected void checkPolicyCounterForDate(Logger log, ActivePolicy activePolicy){
 		
 		if(this.policyDate==null){
-			
 			// first-init
-			this.policyDate = DateUtils.convertToLeftInterval(DateManager.getDate(),this.policyDateTypeInterval);
-			if(this.policyRealtime!=null && this.policyRealtime){
-				this.policyRequestCounter = 0l;
-				this.policyDenyRequestCounter = 0l;
-				if(this.tipoRisorsa==null || !isRisorsaContaNumeroRichieste(this.tipoRisorsa)){
-					this.policyCounter = 0l;
-				}
-			}
+			resetPolicyCounterForDate(DateUtils.convertToLeftInterval(DateManager.getDate(),this.policyDateTypeInterval));
 			
 			if(this.policyRealtime!=null && !this.policyRealtime){
 				// statistico. Serve subito anche l'intervallo precedente
@@ -920,16 +941,8 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 								dateformat.format(now)+"]: "+before);
 					}
 				}
-				this.policyDate = d;
-				if(this.policyRealtime!=null && this.policyRealtime){
-					this.policyRequestCounter = 0l;
-					this.policyDenyRequestCounter = 0l;
-					if(this.tipoRisorsa==null || !isRisorsaContaNumeroRichieste(this.tipoRisorsa)){
-						//SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
-						//System.out.println("Resetto policy counter a zero per intervallo d["+dateformat.format(d)+"]");
-						this.policyCounter = 0l;
-					}
-				}
+				
+				resetPolicyCounterForDate(d);
 				
 			} 
 			
@@ -937,17 +950,13 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				
 	}
 	
-	
-	private void checkPolicyCounterForDateDegradoPrestazionale(Logger log, ActivePolicy activePolicy){
+
+	protected void checkPolicyCounterForDateDegradoPrestazionale(Logger log, ActivePolicy activePolicy){
 		
 		if(this.policyDegradoPrestazionaleDate==null){
 			
 			// first-init
-			this.policyDegradoPrestazionaleDate = DateUtils.convertToLeftInterval(DateManager.getDate(),this.policyDegradoPrestazionaleDateTypeInterval);
-			if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
-				this.policyDegradoPrestazionaleRequestCounter = 0l;
-				this.policyDegradoPrestazionaleCounter = 0l;
-			}
+			resetPolicyCounterForDateDegradoPrestazionale(DateUtils.convertToLeftInterval(DateManager.getDate(),this.policyDegradoPrestazionaleDateTypeInterval));
 			
 			if(this.policyDegradoPrestazionaleRealtime!=null && !this.policyDegradoPrestazionaleRealtime){
 				// statistico. Serve subito anche l'intervallo precedente
@@ -1011,12 +1020,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 								dateformat.format(now)+"]: "+before);
 					}
 				}
-				this.policyDegradoPrestazionaleDate = d;
-				if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
-					this.policyDegradoPrestazionaleRequestCounter = 0l;
-					this.policyDegradoPrestazionaleCounter = 0l;
-				}
-				
+				resetPolicyCounterForDateDegradoPrestazionale(d);
 			} 
 			
 		}
@@ -1298,7 +1302,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 					
 	}
 	
-	private long getLatenza(TipoLatenza tipoLatenza, MisurazioniTransazione dati){
+	protected long getLatenza(TipoLatenza tipoLatenza, MisurazioniTransazione dati){
 		long latenza = 0;
 		switch (tipoLatenza) {
 		case TOTALE:
