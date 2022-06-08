@@ -27,7 +27,7 @@ Di seguito vengono fornite le varie modalità di sincronizzazione distribuita co
 
 - *Misurazione Esatta*: attivabile impostando la sincronizzazione '*Distribuita*' e scegliendo le voci '*Misurazione esatta*' e '*Algoritmo full-sync*' (:numref:`configurazioneSincronizzazioneRateLimitingHazelcastFullSync`). Con questa modalità sia il dato 'master' che quelli locali al nodo risultano essere sempre aggiornati.
 
-  .. figure:: ../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingHazelcastFullSync.png
+  .. figure:: ../../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingHazelcastFullSync.png
     :scale: 100%
     :align: center
     :name: configurazioneSincronizzazioneRateLimitingHazelcastFullSync
@@ -36,7 +36,7 @@ Di seguito vengono fornite le varie modalità di sincronizzazione distribuita co
 
 - *Near Cache*: attivabile impostando la sincronizzazione '*Distribuita*' e scegliendo le voci '*Misurazione esatta*' e '*Algoritmo near-cache*' (:numref:`configurazioneSincronizzazioneRateLimitingHazelcastNearCache`). Con questa modalità l'incremento del dato 'master' viene effettuato sempre in maniera atomica, ma la sua esecuzione avviene in maniera asincrona senza bloccare il nodo che ha effettuato l'operazione che utilizza una "NearCache" per consultare i dati locali al nodo. La "NearCache" è una struttura dati fornita da Hazelcast che viene risincronizzata rispetto ai dati remoti con sincronizzazioni periodiche. Maggiori dettagli vengono forniti nella documentazione del prodotto: https://docs.hazelcast.com/imdg/latest/performance/near-cache
 
-  .. figure:: ../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingHazelcastNearCache.png
+  .. figure:: ../../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingHazelcastNearCache.png
     :scale: 100%
     :align: center
     :name: configurazioneSincronizzazioneRateLimitingHazelcastNearCache
@@ -50,7 +50,7 @@ Di seguito vengono fornite le varie modalità di sincronizzazione distribuita co
       # Intervallo di aggiornamento della cache in secondi
       org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_LOCAL_CACHE.updateInterval=5
 
-  .. figure:: ../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingHazelcastLocalCache.png
+  .. figure:: ../../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingHazelcastLocalCache.png
     :scale: 100%
     :align: center
     :name: configurazioneSincronizzazioneRateLimitingHazelcastLocalCache
@@ -59,7 +59,7 @@ Di seguito vengono fornite le varie modalità di sincronizzazione distribuita co
 
 - *Misurazione approssimata con "get and set sincrono"*: attivabile impostando la sincronizzazione '*Distribuita*' e scegliendo le voci '*Misurazione approssimata*' e '*Algoritmo remote-sync*' (:numref:`configurazioneSincronizzazioneRateLimitingHazelcastRemoteSync`). Con questa modalità l'incremento viene effettuato utilizzando un approccio "get and set" senza atomicità in cui la modifica del 'dato master' avviene tramite un'operazione sincrona.
 
-  .. figure:: ../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingHazelcastRemoteSync.png
+  .. figure:: ../../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingHazelcastRemoteSync.png
     :scale: 100%
     :align: center
     :name: configurazioneSincronizzazioneRateLimitingHazelcastRemoteSync
@@ -68,7 +68,7 @@ Di seguito vengono fornite le varie modalità di sincronizzazione distribuita co
 
 - *Misurazione approssimata con "get and set asincrono"*: attivabile impostando la sincronizzazione '*Distribuita*' e scegliendo le voci '*Misurazione approssimata*' e '*Algoritmo remote-async*' (:numref:`configurazioneSincronizzazioneRateLimitingHazelcastRemoteAsync`). Come nella precedente modalità l'incremento viene effettuato utilizzando un approccio "get and set" senza atomicità in cui la modifica del 'dato master' avviene tramite un'operazione asincrona.
 
-  .. figure:: ../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingHazelcastRemoteAsync.png
+  .. figure:: ../../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingHazelcastRemoteAsync.png
     :scale: 100%
     :align: center
     :name: configurazioneSincronizzazioneRateLimitingHazelcastRemoteAsync
@@ -76,80 +76,11 @@ Di seguito vengono fornite le varie modalità di sincronizzazione distribuita co
     Sincronizzazione Distribuita con misurazione delle metriche approssimata tramite algoritmo "get and set" con pubblicazione asincrona
 
 
-*Configurazione di Hazelcast*
+Nella sezione :ref:`headerGWRateLimitingCluster_distribuita_hazelcastConfig` vengono fornite informazioni sul tipo di configurazione utilizzata su Hazelcast, mentre nella sezione :ref:`headerGWRateLimitingCluster_distribuita_hazelcastLog` viene indicato dove è possibile reperire i log emessi da Hazelcast.
 
-Di seguito vengono mostrate le configurazioni Hazelcast di default utilizzate nelle modalità sopra indicate.
+.. toctree::
+   :maxdepth: 2
 
-.. note::
-  Per ogni modalità viene utilizzato un cluster name differente formato dal valore configurabile nella proprietà *org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.group_id* (default govway) agendo sul file *<directory-lavoro>/govway_local.properties*. Al valore indicato viene aggiunto un suffisso che riporta la modalità selezionata.
+   configurazioneHazelcast
+   logHazelcast
 
-La modalità *Misurazione Esatta* utilizza la seguente configurazione:
-
-   ::
-
-      hazelcast:
-        cluster-name: govway
-        map:
-          "hazelcast-*-rate-limiting":
-            in-memory-format: BINARY
-      
-        serialization:
-          serializers:
-            - type-class: org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy
-              class-name: org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.IDUnivocoGroupByPolicyStreamSerializer
-
-La modalità *Local Cache* utilizza la seguente configurazione:
-
-   ::
-
-      hazelcast:
-        cluster-name: govway
-        map:
-          "hazelcast-*-rate-limiting":
-            in-memory-format: BINARY
-            backup-count: 0
-            async-backup-count: 1
-      
-        serialization:
-          serializers:
-            - type-class: org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy
-              class-name: org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.IDUnivocoGroupByPolicyStreamSerializer
-
-Le modalità *Near Cache* e *Misurazione approssimata con "get and set"* utilizzano tutte, per default, una configurazione identica:
-
-   ::
-
-      hazelcast:
-        cluster-name: govway
-        map:
-          "hazelcast-*-rate-limiting":
-            in-memory-format: BINARY
-            backup-count: 0
-            async-backup-count: 1
-      
-            near-cache:
-              hazelcast-near-cache:
-                in-memory-format: BINARY
-                serialize-keys: false
-
-        serialization:
-          serializers:
-            - type-class: org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy
-              class-name: org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.IDUnivocoGroupByPolicyStreamSerializer
-
-È possibile utilizzare una configurazione differente da quella di default definendo un file di configurazione yaml nella *<directory-lavoro>* di govway specifico per ogni modalità:
-
-- *Misurazione Esatta*: *<directory-lavoro>/govway.hazelcast.yaml*
-
-- *Near Cache*: *<directory-lavoro>/govway.hazelcast-near-cache.yaml*
-
-- *Local Cache*: *<directory-lavoro>/govway.hazelcast-local-cache.yaml*
-
-- *Misurazione approssimata con "get and set sincrono*: *<directory-lavoro>/govway.hazelcast-near-cache-unsafe-sync-map.yaml*
-
-- *Misurazione approssimata con "get and set asincrono*: *<directory-lavoro>/govway.hazelcast-near-cache-unsafe-async-map.yaml*
-
-
-*Log di Hazelcast*
-
-I log emessi da Hazelcast, riguardanti lo stato della sincronizzazione dei nodi del cluster sono riversati nel file di log *<directory-log>/govway_hazelcast.log*

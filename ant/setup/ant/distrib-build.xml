@@ -2073,6 +2073,73 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
  ]]></replacevalue>
 		</replace>		
 
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[_
+ RELEASE.jar]]></replacetoken>
+			<replacevalue><![CDATA[_RELEASE.jar
+ ]]></replacevalue>
+		</replace>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[_R
+ ELEASE.jar]]></replacetoken>
+			<replacevalue><![CDATA[_RELEASE.jar
+ ]]></replacevalue>
+		</replace>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[_RE
+ LEASE.jar]]></replacetoken>
+			<replacevalue><![CDATA[_RELEASE.jar
+ ]]></replacevalue>
+		</replace>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[_REL
+ EASE.jar]]></replacetoken>
+			<replacevalue><![CDATA[_RELEASE.jar
+ ]]></replacevalue>
+		</replace>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[_RELE
+ ASE.jar]]></replacetoken>
+			<replacevalue><![CDATA[_RELEASE.jar
+ ]]></replacevalue>
+		</replace>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[_RELEA
+ SE.jar]]></replacetoken>
+			<replacevalue><![CDATA[_RELEASE.jar
+ ]]></replacevalue>
+		</replace>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[_RELEAS
+ E.jar]]></replacetoken>
+			<replacevalue><![CDATA[_RELEASE.jar
+ ]]></replacevalue>
+		</replace>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[_RELEASE
+ .jar]]></replacetoken>
+			<replacevalue><![CDATA[_RELEASE.jar
+ ]]></replacevalue>
+		</replace>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[_RELEASE.
+ jar]]></replacetoken>
+			<replacevalue><![CDATA[_RELEASE.jar
+ ]]></replacevalue>
+		</replace>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[_RELEASE.j
+ ar]]></replacetoken>
+			<replacevalue><![CDATA[_RELEASE.jar
+ ]]></replacevalue>
+		</replace>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[_RELEASE.ja
+ r]]></replacetoken>
+			<replacevalue><![CDATA[_RELEASE.jar
+ ]]></replacevalue>
+		</replace>
+
 		<!-- replace jar di openspcoop con patch version (eseguo anche dopo il replace dei jar, sempre per avere piu' possibilita' poiche' vanno a capo) -->
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="_RELEASE." value="-${antinstaller_versione_attuale_con_p_level}."/>
 

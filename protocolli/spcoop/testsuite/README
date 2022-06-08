@@ -276,7 +276,7 @@ I test presenti verificano il corretto funzionamento della Porta di Dominio risp
 Viene verificato che la PdD gestisca correttamente messaggi Soap scorretti (es. ContentType/Namespace diverso da quello atteso, headers non gestiti dalla PdD, strutture xml errate).
 Usare le seguenti batterie di test:
 (NOTA1: Provarlo anche con Dump disabilitato)
-(NOTA2: Provarlo anche con MultipartParsing abilitato + DumpBinarioBinarioAbilitato:soloSuFile) ATTENZIONE: in quest'ultimo caso si ottengono degli errori nel Dump e questo comporta errori durante il test delle risorse esterne per le RISPOSTE e INTEGRATION_MANAGER
+(NOTA2: Provarlo anche con MultipartParsing abilitato + DumpBinarioBinarioAbilitato:soloSuFile) ATTENZIONE: in quest'ultimo caso si ottengono degli errori nel Dump e questo comporta errori durante il test delle risorse esterne per le RICHIESTE, RISPOSTE e INTEGRATION_MANAGER
 - SOAPMessageScorretti.RICHIESTA_ALTRI_DATI
 - SOAPMessageScorretti.PD_XML_RICHIESTA
 - SOAPMessageScorretti.PA_XML_RICHIESTA

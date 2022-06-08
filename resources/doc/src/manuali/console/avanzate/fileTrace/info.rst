@@ -296,7 +296,7 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 
 - forwardedIP: indirizzo IP presente nella richiesta in uno degli header http appartenente alla classe "Forwarded-For" o "Client-IP";
 
-- requesterIP: rappresenta l'indirizzo IP del  richiedente e assumerà la prima informazione valorizzata, trovata nella richiesta, nel seguente ordine:
+- requesterIP: (o ipRequester) rappresenta l'indirizzo IP del richiedente e assumerà la prima informazione valorizzata, trovata nella richiesta, nel seguente ordine:
 
 	- forwardedIP
 	- clientIP
@@ -308,8 +308,6 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 	- application: identificativo dell'applicativo richiedente
 	- principal: identificato (credenziali) con cui l'applicativo è stato autenticato; se il tipo di autenticazione risulta essere 'ssl' viene ritornato il valore dell'attributo CN
 	- tokenClientId: clientId presente nel token
-
-- ipRequester: rappresenta l'indirizzo ip del richiedente e viene valorizzato con il forwardedIP se presente, o altrimenti con il clientIP.
 
 **Negoziazione Token**
 

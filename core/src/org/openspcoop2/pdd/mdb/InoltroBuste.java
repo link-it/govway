@@ -889,13 +889,14 @@ public class InoltroBuste extends GenericLib{
 
 		// Risposta
 		OpenSPCoop2Message responseMessage = null;
-
+		
 
 		// Punto di inizio per la transazione.
 		Validatore validatore = null;
 		BustaRawContent<?> headerProtocolloRisposta = null;
 		IConnettore connectorSenderForDisconnect = null;
 		String location = "";
+		boolean useResponseForParseException = false;
 		try{
 
 
@@ -1001,7 +1002,7 @@ public class InoltroBuste extends GenericLib{
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_514_ROUTING_CONFIGURATION_ERROR),
 							idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,eForwardRoute,
-							(responseMessage!=null ? responseMessage.getParseException() : null));
+							(requestMessagePrimaTrasformazione!=null ? requestMessagePrimaTrasformazione.getParseException() : null));
 					esito.setEsitoInvocazione(true);
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
 							msgDiag.getMessaggio_replaceKeywords("routingTable.esaminaInCorsoFallita"));
@@ -1011,7 +1012,7 @@ public class InoltroBuste extends GenericLib{
 								this.generatoreErrore.build(pddContext,IntegrationFunctionError.INTERNAL_REQUEST_ERROR,
 										ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 										get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_514_ROUTING_CONFIGURATION_ERROR),eForwardRoute,
-											(responseMessage!=null ? responseMessage.getParseException() : null));
+											(requestMessagePrimaTrasformazione!=null ? requestMessagePrimaTrasformazione.getParseException() : null));
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
 						esito.setEsitoInvocazione(true);
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -1118,7 +1119,7 @@ public class InoltroBuste extends GenericLib{
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_509_READ_REQUEST_MSG),
 							idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,e,
-							(responseMessage!=null ? responseMessage.getParseException() : null));
+							(requestMessagePrimaTrasformazione!=null ? requestMessagePrimaTrasformazione.getParseException() : null));
 					esito.setEsitoInvocazione(true);
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"msgRequest.getMessage()");
 				}else{
@@ -1127,7 +1128,7 @@ public class InoltroBuste extends GenericLib{
 								this.generatoreErrore.build(pddContext,IntegrationFunctionError.INTERNAL_REQUEST_ERROR,
 										ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 											get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_509_READ_REQUEST_MSG),e,
-												(responseMessage!=null ? responseMessage.getParseException() : null));
+												(requestMessagePrimaTrasformazione!=null ? requestMessagePrimaTrasformazione.getParseException() : null));
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
 						esito.setEsitoInvocazione(true);
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"msgRequest.getMessage()");
@@ -1189,7 +1190,7 @@ public class InoltroBuste extends GenericLib{
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),
 							idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,e,
-							(responseMessage!=null ? responseMessage.getParseException() : null));
+							(requestMessagePrimaTrasformazione!=null ? requestMessagePrimaTrasformazione.getParseException() : null));
 					esito.setEsitoInvocazione(true);
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"getTipiIntegrazione(pd)");
 				}else{
@@ -1198,7 +1199,7 @@ public class InoltroBuste extends GenericLib{
 								this.generatoreErrore.build(pddContext,IntegrationFunctionError.INTERNAL_REQUEST_ERROR,
 										ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 											get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
-												(responseMessage!=null ? responseMessage.getParseException() : null));
+												(requestMessagePrimaTrasformazione!=null ? requestMessagePrimaTrasformazione.getParseException() : null));
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
 						esito.setEsitoInvocazione(true);
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"getTipiIntegrazione(pd)");
@@ -1319,7 +1320,7 @@ public class InoltroBuste extends GenericLib{
 						else {
 							responseMessageError = this.generatoreErrore.build(pddContext,integrationFunctionError,
 									erroreIntegrazione,e,
-										(responseMessage!=null ? responseMessage.getParseException() : null));
+										(requestMessagePrimaTrasformazione!=null ? requestMessagePrimaTrasformazione.getParseException() : null));
 						}
 						
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
@@ -1433,7 +1434,7 @@ public class InoltroBuste extends GenericLib{
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_526_GESTIONE_IMBUSTAMENTO),
 							idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,e,
-							(responseMessage!=null ? responseMessage.getParseException() : null));
+							(requestMessagePrimaTrasformazione!=null ? requestMessagePrimaTrasformazione.getParseException() : null));
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,msgErroreImbusta);
 					esito.setEsitoInvocazione(true);
 				}else{
@@ -1442,7 +1443,7 @@ public class InoltroBuste extends GenericLib{
 								this.generatoreErrore.build(pddContext,IntegrationFunctionError.INTEROPERABILITY_PROFILE_ENVELOPING_REQUEST_FAILED,
 										ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 											get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_526_GESTIONE_IMBUSTAMENTO),e,
-												(responseMessage!=null ? responseMessage.getParseException() : null));
+												(requestMessagePrimaTrasformazione!=null ? requestMessagePrimaTrasformazione.getParseException() : null));
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,msgErroreImbusta);
 						esito.setEsitoInvocazione(true);
@@ -1505,7 +1506,7 @@ public class InoltroBuste extends GenericLib{
 						OpenSPCoop2Message responseMessageError = null;
 						responseMessageError = this.generatoreErrore.build(pddContext,IntegrationFunctionError.INTERNAL_REQUEST_ERROR,
 								erroreIntegrazione,configException,
-								(responseMessage!=null ? responseMessage.getParseException() : null));
+								(requestMessagePrimaTrasformazione!=null ? requestMessagePrimaTrasformazione.getParseException() : null));
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
 						esito.setEsitoInvocazione(true);
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, configException.getMessage());
@@ -1550,7 +1551,7 @@ public class InoltroBuste extends GenericLib{
 						OpenSPCoop2Message responseMessageError = null;
 						responseMessageError = this.generatoreErrore.build(pddContext,IntegrationFunctionError.ATTACHMENTS_PROCESSING_REQUEST_FAILED,
 								erroreIntegrazione,e,
-									(responseMessage!=null ? responseMessage.getParseException() : null));
+									(requestMessagePrimaTrasformazione!=null ? requestMessagePrimaTrasformazione.getParseException() : null));
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
 						esito.setEsitoInvocazione(true);
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -1687,7 +1688,7 @@ public class InoltroBuste extends GenericLib{
 						if(erroreIntegrazione!=null){
 							responseMessageError = this.generatoreErrore.build(pddContext,IntegrationFunctionError.MESSAGE_SECURITY_REQUEST_FAILED,
 									erroreIntegrazione,messageSecurityException,
-										(responseMessage!=null ? responseMessage.getParseException() : null));
+										(requestMessagePrimaTrasformazione!=null ? requestMessagePrimaTrasformazione.getParseException() : null));
 						}else{
 							Eccezione ecc = Eccezione.getEccezioneValidazione(ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(msgErrore, codiceErroreCooperazione),protocolFactory);
 							responseMessageError = this.generatoreErrore.build(pddContext,IntegrationFunctionError.MESSAGE_SECURITY_REQUEST_FAILED,
@@ -1733,7 +1734,7 @@ public class InoltroBuste extends GenericLib{
 						OpenSPCoop2Message responseMessageError = null;
 						responseMessageError = this.generatoreErrore.build(pddContext,IntegrationFunctionError.ATTACHMENTS_PROCESSING_REQUEST_FAILED,
 								erroreIntegrazione,e,
-									(responseMessage!=null ? responseMessage.getParseException() : null));
+									(requestMessagePrimaTrasformazione!=null ? requestMessagePrimaTrasformazione.getParseException() : null));
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
 						esito.setEsitoInvocazione(true);
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -1806,7 +1807,7 @@ public class InoltroBuste extends GenericLib{
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_526_GESTIONE_IMBUSTAMENTO),
 							idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,e,
-							(responseMessage!=null ? responseMessage.getParseException() : null));
+							(requestMessagePrimaTrasformazione!=null ? requestMessagePrimaTrasformazione.getParseException() : null));
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,msgErroreImbusta);
 					esito.setEsitoInvocazione(true);
 				}else{
@@ -1825,7 +1826,7 @@ public class InoltroBuste extends GenericLib{
 						OpenSPCoop2Message responseMessageError = 
 								this.generatoreErrore.build(pddContext,IntegrationFunctionError.INTEROPERABILITY_PROFILE_ENVELOPING_REQUEST_FAILED,
 										erroreIntegrazione,e,
-												(responseMessage!=null ? responseMessage.getParseException() : null));
+												(requestMessagePrimaTrasformazione!=null ? requestMessagePrimaTrasformazione.getParseException() : null));
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,msgErroreImbusta);
 						esito.setEsitoInvocazione(true);
@@ -2126,7 +2127,7 @@ public class InoltroBuste extends GenericLib{
 					ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaDelegata.getIdModuloInAttesa(),bustaRichiesta,
 							erroreIntegrazione,
 							idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,e,
-							(responseMessage!=null ? responseMessage.getParseException() : null));
+							(requestMessagePrimaTrasformazione!=null ? requestMessagePrimaTrasformazione.getParseException() : null));
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,msgErrore);
 					esito.setEsitoInvocazione(true);
 				}else{
@@ -2140,7 +2141,7 @@ public class InoltroBuste extends GenericLib{
 						}
 						OpenSPCoop2Message responseMessageError = 
 								this.generatoreErrore.build(pddContext,integrationFunctionError,erroreIntegrazione,e,
-									(responseMessage!=null ? responseMessage.getParseException() : null));
+									(requestMessagePrimaTrasformazione!=null ? requestMessagePrimaTrasformazione.getParseException() : null));
 						if(e instanceof HandlerException){
 							HandlerException he = (HandlerException) e;
 							he.customized(responseMessageError);
@@ -2349,6 +2350,7 @@ public class InoltroBuste extends GenericLib{
 							connectorSender.getContentLength(), 
 							motivoErroreConsegna, connectorSender.getEccezioneProcessamento());
 					responseMessage = connectorSender.getResponse();	
+					useResponseForParseException = true;
 					if(responseMessage!=null){
 						responseMessage.setTransportRequestContext(requestMessagePrimaTrasformazione.getTransportRequestContext());
 						responseMessage.setTransportResponseContext(transportResponseContext);
@@ -5130,10 +5132,19 @@ public class InoltroBuste extends GenericLib{
 				}
 
 				if( sendRispostaApplicativa ){
+					
+					ParseException parseException = null;
+					if(useResponseForParseException) {
+						parseException = (responseMessage!=null ? responseMessage.getParseException() : null);
+					}
+					else {
+						parseException = (requestMessagePrimaTrasformazione!=null ? requestMessagePrimaTrasformazione.getParseException() : null);	
+					}
+					
 					OpenSPCoop2Message responseMessageError = 
 							this.generatoreErrore.build(pddContext,AbstractErrorGenerator.getIntegrationInternalError(pddContext),
 									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),e,
-										(responseMessage!=null ? responseMessage.getParseException() : null));
+									parseException);
 					try{
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, "ErroreGenerale");

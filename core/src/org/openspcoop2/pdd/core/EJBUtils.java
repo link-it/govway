@@ -2658,6 +2658,20 @@ public class EJBUtils {
 		}
 		if(parseException!=null){
 			errorMsg.setParseException(parseException);
+			if(this.pddContext!=null) {
+				if(MessageRole.REQUEST.equals(parseException.getMessageRole())){
+					this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
+					this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION,	parseException);
+					errorMsg.addContextProperty(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
+					errorMsg.addContextProperty(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, parseException);
+				}
+				else if(MessageRole.RESPONSE.equals(parseException.getMessageRole())){
+					this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
+					this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, parseException);
+					errorMsg.addContextProperty(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
+					errorMsg.addContextProperty(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, parseException);
+				}
+			}
 		}
 		sendAsRispostaBustaErrore(idModuloInAttesa,busta,errorMsg,false,idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore);
 	}

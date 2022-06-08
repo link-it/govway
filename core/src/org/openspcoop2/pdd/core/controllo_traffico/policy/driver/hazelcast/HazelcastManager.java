@@ -202,6 +202,8 @@ public class HazelcastManager {
 			throw new PolicyException("Hazelcast type '"+type+"' unsupported");
 		}
 		
+		content = content.replace("cluster-name:", "cluster-name: "+groupId+"\n#cluster-name:");
+		
 		HazelcastManager.log.debug("Inizializzo hazelcast con la seguente configurazione (cluster-id"+groupId+"): " + content);
 		HazelcastManager.logStartup.debug("Inizializzo hazelcast con la seguente configurazione (cluster-id"+groupId+"): " + content);
 		

@@ -376,7 +376,16 @@ public class Utils {
 			
 				if(!PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(policyType) && 
 						!PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(policyType)) {
-					assertEquals(attive, polInfo.richiesteAttive);
+					try {
+						assertEquals(attive, polInfo.richiesteAttive);
+					}catch(Throwable t) {
+						if(!PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE.equals(policyType)) {
+							throw t;
+						}
+						else {
+							logRateLimiting.debug("["+policyType+"] richieste attive diverse da quelle attese per risorsa ("+tipoRisorsa+"): "+t.getMessage(),t);
+						}
+					}
 				}
 				
 				if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(policyType) ||
@@ -391,7 +400,7 @@ public class Utils {
 							throw t;
 						}
 						else {
-							logRateLimiting.debug("["+policyType+"] contatori diversi da quelli che attesi: "+t.getMessage(),t);
+							logRateLimiting.debug("["+policyType+"] contatori diversi da quelli che attesi per risorsa ("+tipoRisorsa+"): "+t.getMessage(),t);
 						}
 					}
 					assertTrue("PolicyRichiesteBloccate["+polInfo.richiesteBloccate+"]<=attese["+bloccate+"]", polInfo.richiesteBloccate<=bloccate);

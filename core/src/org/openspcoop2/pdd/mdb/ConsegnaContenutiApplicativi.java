@@ -1078,7 +1078,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 
 		OpenSPCoop2Message responseMessage = null;
-
+		
 
 		try{
 			if(msgRequest.isRiconsegnaMessaggio(servizioApplicativo) == false){
@@ -1259,7 +1259,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_507_COSTRUZIONE_IDENTIFICATIVO),
 								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-								(responseMessage!=null ? responseMessage.getParseException() : null),
+								(consegnaMessagePrimaTrasformazione!=null ? consegnaMessagePrimaTrasformazione.getParseException() : null),
 								pddContext);
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, "imbustatore.buildID(idMessageResponse)");
@@ -1359,6 +1359,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		String location = "";
 		OpenSPCoop2Message consegnaMessageTrasformato = null;
 		long responseContentLength = -1;
+		boolean useResponseForParseException = false;
 		try{	    
 
 
@@ -1427,7 +1428,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_509_READ_REQUEST_MSG),
 							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-							(responseMessage!=null ? responseMessage.getParseException() : null),
+							(consegnaMessagePrimaTrasformazione!=null ? consegnaMessagePrimaTrasformazione.getParseException() : null),
 							pddContext);
 					
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, "msgRequest.getMessage()");
@@ -1607,7 +1608,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 									erroreIntegrazione,
 									idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-									(responseMessage!=null ? responseMessage.getParseException() : null),
+									(consegnaMessagePrimaTrasformazione!=null ? consegnaMessagePrimaTrasformazione.getParseException() : null),
 									pddContext);
 						}
 						esito.setEsitoInvocazione(true); 
@@ -1988,7 +1989,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 							erroreIntegrazione,
 							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-							(responseMessage!=null ? responseMessage.getParseException() : null),
+							(consegnaMessagePrimaTrasformazione!=null ? consegnaMessagePrimaTrasformazione.getParseException() : null),
 							pddContext);
 					
 					esito.setEsitoInvocazione(true); 
@@ -2184,6 +2185,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							connectorSender.getContentLength(), 
 							motivoErroreConsegna, connectorSender.getEccezioneProcessamento());
 					responseMessage = connectorSender.getResponse();
+					useResponseForParseException = true;
 					if(responseMessage!=null){
 						responseMessage.setTransportRequestContext(consegnaMessagePrimaTrasformazione.getTransportRequestContext());
 						responseMessage.setTransportResponseContext(transportResponseContext);
@@ -3899,11 +3901,19 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			if(existsModuloInAttesaRispostaApplicativa) {
 				try{
 					
+					ParseException parseException = null;
+					if(useResponseForParseException) {
+						parseException = (responseMessage!=null ? responseMessage.getParseException() : null);
+					}
+					else {
+						parseException = (consegnaMessagePrimaTrasformazione!=null ? consegnaMessagePrimaTrasformazione.getParseException() : null);	
+					}
+					
 					this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								getErroreIntegrazione(),
 							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-							(responseMessage!=null ? responseMessage.getParseException() : null),
+							parseException,
 							pddContext);
 					
 					esito.setEsitoInvocazione(true); 

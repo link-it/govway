@@ -1,5 +1,5 @@
 hazelcast:
-  cluster-name: dev
+  cluster-name: govway
   map:
     "hazelcast-*-rate-limiting":
       in-memory-format: BINARY
@@ -17,3 +17,8 @@ hazelcast:
     serializers:
       - type-class: org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy
         class-name: org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.IDUnivocoGroupByPolicyStreamSerializer
+
+  network:
+    port:
+      auto-increment: false
+      port: 5705

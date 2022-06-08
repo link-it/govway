@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
+import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
@@ -191,7 +192,7 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 						result.setParseException(this.parseResult.getMessage().getParseException());
 					}
 					else{
-						result.setParseException(ParseExceptionUtils.buildParseException(t));
+						result.setParseException(ParseExceptionUtils.buildParseException(t,MessageRole.REQUEST));
 					}
 					return result;
 				}finally{

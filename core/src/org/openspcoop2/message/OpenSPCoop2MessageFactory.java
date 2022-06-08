@@ -417,7 +417,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			result.setMessage(op2Msg);
 		}catch(Throwable t){
 			try {
-				result.setParseException(ParseExceptionUtils.buildParseException(t));
+				result.setParseException(ParseExceptionUtils.buildParseException(t,messageRole));
 			}catch(Throwable e) {
 //				System.err.println("ECCEZIONE?");
 //				e.printStackTrace(System.err);
@@ -614,7 +614,7 @@ public abstract class OpenSPCoop2MessageFactory {
 					soapMessage.getSOAPHeader();
 				} catch (Throwable soapException) {
 					result.setMessage(null);
-					result.setParseException(ParseExceptionUtils.buildParseException(soapException));
+					result.setParseException(ParseExceptionUtils.buildParseException(soapException, messageRole));
 				}
 				
 				soapMessage.setSoapAction(soapAction);
@@ -623,7 +623,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			return result;
 		}catch(Throwable t){
 			OpenSPCoop2MessageParseResult result = new OpenSPCoop2MessageParseResult();
-			result.setParseException(ParseExceptionUtils.buildParseException(t));
+			result.setParseException(ParseExceptionUtils.buildParseException(t, messageRole));
 			return result;
 		}
 	}

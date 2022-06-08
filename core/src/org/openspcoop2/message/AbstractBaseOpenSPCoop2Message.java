@@ -1061,7 +1061,7 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	
 	@Override
 	public void setParseException(Throwable e){
-		this.parseException = ParseExceptionUtils.buildParseException(e);
+		this.parseException = ParseExceptionUtils.buildParseException(e, this.messageRole);
 	}
 	
 	

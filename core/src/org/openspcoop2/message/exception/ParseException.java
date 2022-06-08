@@ -22,6 +22,8 @@ package org.openspcoop2.message.exception;
 
 import java.io.Serializable;
 
+import org.openspcoop2.message.constants.MessageRole;
+
 /**
  * ParseException
  *
@@ -37,19 +39,26 @@ public class ParseException implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private MessageRole messageRole;
 	private Throwable sourceException;
 	private Throwable parseException;
+	
+	public MessageRole getMessageRole() {
+		return this.messageRole;
+	}
 	
 	public Throwable getSourceException() {
 		return this.sourceException;
 	}
-	public void setSourceException(Throwable sourceException) {
+	public void setSourceException(Throwable sourceException, MessageRole messageRole) {
 		this.sourceException = sourceException;
+		this.messageRole = messageRole;
 	}
 	public Throwable getParseException() {
 		return this.parseException;
 	}
-	public void setParseException(Throwable parseException) {
+	public void setParseException(Throwable parseException, MessageRole messageRole) {
 		this.parseException = parseException;
+		this.messageRole = messageRole;
 	}
 }

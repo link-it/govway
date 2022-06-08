@@ -282,7 +282,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 				Exception e = new Exception(msgErrore);
 				this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
 				this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION,
-						ParseExceptionUtils.buildParseException(e));
+						ParseExceptionUtils.buildParseException(e, MessageRole.RESPONSE));
 				throw e;
 			}else{
 				msgErrore = msgErrore+"; viene utilizzata forzatamente la tipologia "+MessageType.BINARY.name() +" come modalità di gestione del messaggio";
@@ -438,7 +438,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 						}
 						this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
 						this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION,
-								ParseExceptionUtils.buildParseException(e));
+								ParseExceptionUtils.buildParseException(e, MessageRole.RESPONSE));
 						throw e;
 					}else{
 						this.messageTypeResponse = MessageType.SOAP_11;

@@ -45,20 +45,22 @@ Per creare una tag version:
     Non editare il file a mano, ma usare lo strumento: https://publiccode-editor.developers.italia.it/
     NOTA!!!!! Dentro il file publiccode.yml è presente anche una release date da aggiornare!!!!!!
 
-14. Validare i sql generati dall'installer su tutti i database (anche mysql e sqlserver) per prevenire eventuali errori di vincoli come unique e index che non vengono creati per la lunghezza delle chiavi.
+14. Verificare che con gli stresstest tramite benchmark si ottengano risultati simili o migliori della precedente versione.
+
+15. Validare i sql generati dall'installer su tutti i database (anche mysql e sqlserver) per prevenire eventuali errori di vincoli come unique e index che non vengono creati per la lunghezza delle chiavi.
     Inoltre validare le patch SQL partendo dalla precedente versione per tutti i database, anche qua per prevenire errori di sintassi.
 
-15. Sistemare migratore delle configurazioni da OpenSPCoop
+16. Sistemare migratore delle configurazioni da OpenSPCoop
     Per verificare:
     - export da openspcoop2
     - fare una importazione per ogni modalità e verificare che non vi siano errori (o ce ne siano di coerenti) con il comando:  grep -r "ERROR" log/ | grep -v "HTTP 409 Conflict"
     NOTA: prima dell'import verificare che esista 1 solo soggetto di default per ogni profilo tramite il comando: "select * from soggetti where is_default=1"
     NOTA2: inoltre eliminare tutte le API, Erogazioni e Fruizioni già esistenti sul db di destinazione che stiamo migrando.
 
-16. Verificare che gli indirizzi dei webSite principali dei protocolli siano ancora attivi.
+17. Verificare che gli indirizzi dei webSite principali dei protocolli siano ancora attivi.
     find protocolli/ -name openspcoop2-manifest.xml | xargs grep webSite
 
-17. Sistemare docker-compose.yml e database presente in resources/scenari/scenari.zip
+18. Sistemare docker-compose.yml e database presente in resources/scenari/scenari.zip
    Per farlo, ad esempio se stiamo rilasciando la versione 3.3.1:
    - fare il clone di govway-docker
    - generare una versione dell'installer semi-definitiva (con master build version) e copiarla dentro la directory compose_bin/ di govway-docker
@@ -98,14 +100,14 @@ Per creare una tag version:
     - !!Come utenza root ricreare l'archivio scenari.zip
 	NOTA: Senza utenza root non viene salvata la parte del database postgresql
 
-18. Sistemare docker-compose.yml e database presente anche in resources/scenari/scenari_oauth_client_credentials/scenari_oauth_client_credentials.zip
+19. Sistemare docker-compose.yml e database presente anche in resources/scenari/scenari_oauth_client_credentials/scenari_oauth_client_credentials.zip
     Sistemare anche il database utilizzando le medesime istruzioni del punto precedente.
     Come test di verifica usare i comandi descritti in: https://github.com/teamdigitale/api-gateway-tools/blob/master/gateways/govway/DOCKER.md
 
-19. Riprovare i scenari descritti in precedenza con l'ultima versione "MASTER" pubblicata su docker-hub
+20. Riprovare i scenari descritti in precedenza con l'ultima versione "MASTER" pubblicata su docker-hub
 
-20. Riportazione indicazione di backwardCompatibility e hotUpgrade sul wiki (per indicare le info sull'aggiornamento della base dati)
+21. Riportazione indicazione di backwardCompatibility e hotUpgrade sul wiki (per indicare le info sull'aggiornamento della base dati)
 
-21. Aggiungere la nuova versione come directory all'interno degli script di distribuzione delle immagini docker
+22. Aggiungere la nuova versione come directory all'interno degli script di distribuzione delle immagini docker
 
-22. (PVersion) Creazione versione tag
+23. (PVersion) Creazione versione tag

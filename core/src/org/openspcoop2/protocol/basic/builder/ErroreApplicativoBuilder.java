@@ -56,6 +56,7 @@ import org.openspcoop2.message.config.ConfigurationRFC7807;
 import org.openspcoop2.message.config.IntegrationErrorReturnConfiguration;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.soap.SOAPFaultCode;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
@@ -1089,13 +1090,29 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 						}
 					}
 					
+					ParseException parseException = null;
 					if(eccezioneProtocollo!=null){
-						msg.setParseException(eccezioneProtocollo.getParseException());
+						parseException = eccezioneProtocollo.getParseException();
 					}
 					else if(eccezioneIntegrazione!=null){
-						msg.setParseException(eccezioneIntegrazione.getParseException());
+						parseException = eccezioneIntegrazione.getParseException();
 					}
-					
+					msg.setParseException(parseException);
+					if(parseException!=null && context!=null) {
+						if(MessageRole.REQUEST.equals(parseException.getMessageRole())){
+							context.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
+							context.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION,	parseException);
+							msg.addContextProperty(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
+							msg.addContextProperty(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, parseException);
+						}
+						else if(MessageRole.RESPONSE.equals(parseException.getMessageRole())){
+							context.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
+							context.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, parseException);
+							msg.addContextProperty(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
+							msg.addContextProperty(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, parseException);
+						}
+					}
+						
 					return msg;
 					
 			}

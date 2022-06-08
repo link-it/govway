@@ -20,6 +20,7 @@ log
 lucene
 opensaml
 openapi4j
+redis
 reports
 saaj
 security

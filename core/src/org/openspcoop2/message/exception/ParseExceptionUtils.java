@@ -20,6 +20,7 @@
 
 package org.openspcoop2.message.exception;
 
+import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.utils.LimitExceededIOException;
 import org.openspcoop2.utils.LimitedInputStream;
 import org.openspcoop2.utils.TimeoutIOException;
@@ -42,14 +43,14 @@ public class ParseExceptionUtils {
 		
 	// Parse-Exception
 	
-	public static ParseException buildParseException(Throwable e){
+	public static ParseException buildParseException(Throwable e, MessageRole messageRole){
 		
 		ParseException pe = new ParseException();
-		pe.setSourceException(e);
+		pe.setSourceException(e, messageRole);
 		
 		if(e==null){
-			pe.setParseException(new Exception("Occurs Parsing Error"));
-			pe.setSourceException(new Exception("Occurs Parsing Error"));
+			pe.setParseException(new Exception("Occurs Parsing Error"), messageRole);
+			pe.setSourceException(new Exception("Occurs Parsing Error"), messageRole);
 			return pe;
 		}
 		
@@ -69,8 +70,8 @@ public class ParseExceptionUtils {
 				}
 			}
 			if(timeoutException!=null) {
-				pe.setParseException(timeoutException);
-				pe.setSourceException(timeoutException);
+				pe.setParseException(timeoutException, messageRole);
+				pe.setSourceException(timeoutException, messageRole);
 				return pe;
 			}
 		}
@@ -91,19 +92,19 @@ public class ParseExceptionUtils {
 				}
 			}
 			if(limitedException!=null) {
-				pe.setParseException(limitedException);
-				pe.setSourceException(limitedException);
+				pe.setParseException(limitedException, messageRole);
+				pe.setSourceException(limitedException, messageRole);
 				return pe;
 			}
 		}
 		
 		Throwable tmp = ParseExceptionUtils.getParseException(e);
 		if(tmp!=null){
-			pe.setParseException(tmp);
+			pe.setParseException(tmp, messageRole);
 			return pe;
 		}
 		
-		pe.setParseException(getInnerNotEmptyMessageException(e));
+		pe.setParseException(getInnerNotEmptyMessageException(e), messageRole);
 		return pe;
 	}
 	

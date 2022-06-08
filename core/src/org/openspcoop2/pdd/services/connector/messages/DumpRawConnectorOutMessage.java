@@ -33,6 +33,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.ParseException;
@@ -210,7 +211,7 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 				this.parseException = message.getParseException();
 			}
 			else{
-				this.parseException = ParseExceptionUtils.buildParseException(t);
+				this.parseException = ParseExceptionUtils.buildParseException(t,MessageRole.RESPONSE);
 			}
 			this.log.error("SendResponse error: "+t.getMessage(),t);
 			// Devo lanciare l'eccezione senno il servizio esce con 200

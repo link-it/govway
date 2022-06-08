@@ -37,5 +37,5 @@ Le modalità di gestione delle policy attivabili su GovWay sono le seguenti:
    :maxdepth: 2
 
    quotaDivisaSuiNodi
-   distribuita
+   distribuita/index
 

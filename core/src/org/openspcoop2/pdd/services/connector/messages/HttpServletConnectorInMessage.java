@@ -331,7 +331,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 				}
 			}catch(Throwable t){
 				OpenSPCoop2MessageParseResult result = new OpenSPCoop2MessageParseResult();
-				result.setParseException(ParseExceptionUtils.buildParseException(t));
+				result.setParseException(ParseExceptionUtils.buildParseException(t,MessageRole.REQUEST));
 				return result;
 			}
 			OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.log,this.requestInfo, MessageRole.REQUEST).createMessage(this.requestMessageType,
@@ -343,7 +343,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 		}catch(Throwable t){
 			//throw new ConnectorException(e.getMessage(),e);
 			OpenSPCoop2MessageParseResult result = new OpenSPCoop2MessageParseResult();
-			result.setParseException(ParseExceptionUtils.buildParseException(t));
+			result.setParseException(ParseExceptionUtils.buildParseException(t,MessageRole.REQUEST));
 			return result;
 		}	
 	}

@@ -74,6 +74,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.soap.mtom.MtomXomReference;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.pdd.config.ClassNameProperties;
@@ -7576,6 +7577,25 @@ public class RicezioneBuste {
 					msgDiag.mediumDebug("Lettura messaggio di risposta...");
 					try{
 						responseMessage = msgResponse.getMessage();
+						if(responseMessage!=null && this.msgContext.getPddContext()!=null) {
+							Object o = responseMessage.getContextProperty(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO);
+							if(o!=null && o instanceof Boolean) {
+								this.msgContext.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
+							}
+							o = responseMessage.getContextProperty(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
+							if(o!=null && o instanceof ParseException) {
+								this.msgContext.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, o);
+							}
+							
+							o = responseMessage.getContextProperty(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO);
+							if(o!=null && o instanceof Boolean) {
+								this.msgContext.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
+							}
+							o = responseMessage.getContextProperty(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
+							if(o!=null && o instanceof ParseException) {
+								this.msgContext.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, o);
+							}
+						}
 						idCorrelazioneApplicativaRisposta = msgResponse.getIDCorrelazioneApplicativaRisposta();
 					}catch(Exception e){
 						// Il router potrebbe ricevere il SOAPFault da reinoltrare
@@ -7761,6 +7781,15 @@ public class RicezioneBuste {
 					}
 				}catch(Exception e){
 					
+					// STATEFUL
+					if (msgResponse!=null && !portaStateless && !routingStateless){ 
+						try {
+							// Aggiorno proprietario Messaggio
+							msgDiag.mediumDebug("Aggiornamento proprietario messaggio risposta ...");
+							msgResponse.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
+						}catch(Throwable t) {}
+					}
+					
 					if(functionAsRouter && 
 							!( identitaPdD.getTipo().equals(bustaRisposta.getTipoMittente()) && identitaPdD.getNome().equals(bustaRisposta.getMittente()) ) 
 					){
@@ -7814,6 +7843,16 @@ public class RicezioneBuste {
 					try{
 						mtomProcessor.mtomBeforeSecurity(responseMessage, RuoloMessaggio.RISPOSTA);
 					}catch(Exception e){
+						
+						// STATEFUL
+						if (msgResponse!=null && !portaStateless && !routingStateless){ 
+							try {
+								// Aggiorno proprietario Messaggio
+								msgDiag.mediumDebug("Aggiornamento proprietario messaggio risposta ...");
+								msgResponse.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
+							}catch(Throwable t) {}
+						}
+						
 						// L'errore viene registrato dentro il metodo mtomProcessor.mtomBeforeSecurity
 						//msgDiag.logErroreGenerico(e,"MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")");
 						
@@ -7882,6 +7921,16 @@ public class RicezioneBuste {
 							}
 							
 						}catch(Exception e){
+							
+							// STATEFUL
+							if (msgResponse!=null && !portaStateless && !routingStateless){ 
+								try {
+									// Aggiorno proprietario Messaggio
+									msgDiag.mediumDebug("Aggiornamento proprietario messaggio risposta ...");
+									msgResponse.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
+								}catch(Throwable t) {}
+							}
+							
 							msgDiag.addKeywordErroreProcessamento(e);
 							msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaInErrore");
 							logCore.error("[MessageSecurityResponse]" + e.getMessage(),e);
@@ -7913,6 +7962,16 @@ public class RicezioneBuste {
 					try{
 						mtomProcessor.mtomAfterSecurity(responseMessage, RuoloMessaggio.RISPOSTA);
 					}catch(Exception e){
+						
+						// STATEFUL
+						if (msgResponse!=null && !portaStateless && !routingStateless){ 
+							try {
+								// Aggiorno proprietario Messaggio
+								msgDiag.mediumDebug("Aggiornamento proprietario messaggio risposta ...");
+								msgResponse.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
+							}catch(Throwable t) {}
+						}
+						
 						// L'errore viene registrato dentro il metodo mtomProcessor.mtomAfterSecurity
 						//msgDiag.logErroreGenerico(e,"MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")");
 						
@@ -7969,6 +8028,16 @@ public class RicezioneBuste {
 						msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento (after-security) ["+responseMessage.getClass().getName()+"]");
 					}
 				}catch(Exception e){
+					
+					// STATEFUL
+					if (msgResponse!=null && !portaStateless && !routingStateless){ 
+						try {
+							// Aggiorno proprietario Messaggio
+							msgDiag.mediumDebug("Aggiornamento proprietario messaggio risposta ...");
+							msgResponse.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
+						}catch(Throwable t) {}
+					}
+					
 					if(functionAsRouter && 
 							!( identitaPdD.getTipo().equals(bustaRisposta.getTipoMittente()) && identitaPdD.getNome().equals(bustaRisposta.getMittente()) ) 
 					){
