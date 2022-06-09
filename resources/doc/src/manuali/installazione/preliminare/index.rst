@@ -50,4 +50,4 @@ sulla seguente piattaforma di riferimento:
 
 -  *PostgreSQL 9 (version: 9.2.24)*, *PostgreSQL 13 (version: 13.2)* e *Oracle 11g ExpressEdition (version: 11.2.0.2.0)*
 
--  *WildFly 18 (version: 18.0.1.Final)*, *WildFly 25 (version: 25.0.0.Final)*, *WildFly 26 (version: 26.0.1.Final)* e *Tomcat 9 (version: 9.0.31)*
+-  *WildFly 18 (version: 18.0.1.Final)*, *WildFly 25 (version: 25.0.0.Final)*, *WildFly 26 (version: 26.1.1.Final)* e *Tomcat 9 (version: 9.0.31)*

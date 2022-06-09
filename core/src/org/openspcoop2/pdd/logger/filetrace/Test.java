@@ -63,7 +63,6 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
-import org.openspcoop2.utils.certificate.test.CertificateTest;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
@@ -116,6 +115,29 @@ public class Test {
 	private static String payload = "ewogICJpYXQiOiAxNjUwMDMyOTAzLAogICJuYmYiOiAxNjUwMDMyOTAzLAogICJleHAiOiAxNjUwMDMzMDAzLAogICJqdGkiOiAiNGU2MWRjMTQtYmNjOC0xMWVjLTllOTktMDA1MDU2YWUwMzA3IiwKICAiYXVkIjogInRlc3QiLAogICJjbGllbnRfaWQiOiAiY1Rlc3QiLAogICJpc3MiOiAiaXNzVGVzdCIsCiAgInN1YiI6ICJzdWJUZXN0Igp9";
 	private static String clientAssertionBase64 = hdr+"."+payload+".PDdXpT5htzB6JI0TdYsfsIBjH8tSV0IkIiKAI0S1IYkqcS6pOs84MsfVk3wnd1_dSiR-2KSpGzZU9s8TuGoXcdR-4oa6EN0RNJJsF8zC1KHVx1IBl4jcZGRY5vAgtKwBC87bPz7EaYXtesS3Go-fl5HTFWvZ4OR3yxvsrCfTy_ehQwVJwJy9yKrIpQFq_dSQr_xQbRBL495D9Fp4p54vNdP3IRtoDq16NUhwkH_dbQJGUJdYZ2M31bBZUvgu9RRZz_ftjI78Swwq5FIwIG7r5trwgmVebZtdLF2Ni5Vc2rL7ZNuBpH7Y_knRgRYbH4HxnMoHOU6nU8yM_ZPZyhHneA";
 	
+	// CertificateTest.class.getResourceAsStream(CertificateTest.PREFIX+"govway_test.pem")
+	private static String PEM_CERTIFICATE = "-----BEGIN CERTIFICATE-----\n"+
+		"MIIDqzCCApMCBFx+TB4wDQYJKoZIhvcNAQELBQAwgZkxGzAZBgkqhkiG9w0BCQEW\n"+
+		"DGluZm9AbGluay5pdDELMAkGA1UEBhMCSVQxDjAMBgNVBAgMBUl0YWx5MRYwFAYD\n"+
+		"VQQHDA1nb3Z3YXlfdGVzdF9sMRYwFAYDVQQKDA1nb3Z3YXlfdGVzdF9vMRcwFQYD\n"+
+		"VQQLDA5nb3Z3YXlfdGVzdF9vdTEUMBIGA1UEAwwLZ292d2F5X3Rlc3QwHhcNMTkw\n"+
+		"MzA1MTAxNDU0WhcNMzkwMjI4MTAxNDU0WjCBmTEbMBkGCSqGSIb3DQEJARYMaW5m\n"+
+		"b0BsaW5rLml0MQswCQYDVQQGEwJJVDEOMAwGA1UECAwFSXRhbHkxFjAUBgNVBAcM\n"+
+		"DWdvdndheV90ZXN0X2wxFjAUBgNVBAoMDWdvdndheV90ZXN0X28xFzAVBgNVBAsM\n"+
+		"DmdvdndheV90ZXN0X291MRQwEgYDVQQDDAtnb3Z3YXlfdGVzdDCCASIwDQYJKoZI\n"+
+		"hvcNAQEBBQADggEPADCCAQoCggEBAIYKIiJf5v4On8XusNe0kMmbkMEz4fd0aLjf\n"+
+		"H795IT3MF9mLL/3QK1Lie724aRLEEIsxmHsYVxLP6gGf4rTCmC7NA5XjmHWMqPRz\n"+
+		"8fNqNraJ6lVRHLDmBi8Rfr9tS/HYlNtTYo4aTwUua0WXo+UuiuC4gqS8e9Ns+liz\n"+
+		"yzNHveS9/kZ2sKmUu+qmRGK6mMd0NfMcPGv/wOK6QHHjGH+5+5yGkgjX8MIAufC5\n"+
+		"SZmmadOhsgttxk56AJEaybZTbCfXuSSuTtxNo6ldT4gsPdPo2pFIT02ld0wmkxaY\n"+
+		"tl6gADMUuhN91/WZKQTzxPVMqekdcpPil9pBwQ6x8eqh4Z2GdvECAwEAATANBgkq\n"+
+		"hkiG9w0BAQsFAAOCAQEAfYvf74G75VrQJwjSu3Q59jdwpFcdJlitG9MK1/WUVuVm\n"+
+		"YURTCHOUs1XPeKFCffNpEqh3X5JAz6ir2rSCwhKNQ5I73IDvKAE/PE1ojYKqwQr2\n"+
+		"QHxfkBlmfslX3XChnejE6yHkjWOYlDDWA01bEtEocCrH89mAxWACVfysCt/qkWrJ\n"+
+		"76hXtZ/nLnVIE7v+f9WujRHNUPOJRjMAU7Je0/hSq0o4+7AhQhaAZg9XDDzDdX+5\n"+
+		"OuJcjmVhtLqmByTErfO4euoYslflgMSEDbmNoUslZzpZqlyZKe4S8+PuzmHWzs5k\n"+
+		"Zq21s4Yl5IIZPl8ZAxThukMw9oX3TCBfdgZ8eQurlw==\n"+
+		"-----END CERTIFICATE-----";
 	
 	public static void test(TipoPdD tipoPdD, boolean log4j, int esito, boolean requestWithPayload) throws Exception{
 		
@@ -197,7 +219,8 @@ public class Test {
 		
 		SecurityToken securityToken = new SecurityToken();
 		Certificate cert = 
-				ArchiveLoader.load(ArchiveType.CER, Utilities.getAsByteArray(CertificateTest.class.getResourceAsStream(CertificateTest.PREFIX+"govway_test.pem")), 0, null);
+				//ArchiveLoader.load(ArchiveType.CER, Utilities.getAsByteArray(CertificateTest.class.getResourceAsStream(CertificateTest.PREFIX+"govway_test.pem")), 0, null);
+				ArchiveLoader.load(ArchiveType.CER, PEM_CERTIFICATE.getBytes(), 0, null);
 		RestMessageSecurityToken restToken = new RestMessageSecurityToken();
 		restToken.setCertificate(cert.getCertificate());
 		restToken.setToken(clientAssertionBase64);
