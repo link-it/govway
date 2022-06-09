@@ -274,19 +274,17 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 
 - principalAuthType: tipo di autenticazione (basic/ssl/principal) con cui l'applicativo è stato autenticato;
 
-- token: token OAuth2 presente nella richiesta;
+- clientCertificateSubjectDN: distinguished name del subject relativo al certificato tls client; 
 
-- tokenIssuer: issuer presente nel token;
+- clientCertificateSubjectCN: common name del subject relativo al certificato tls client;
 
-- tokenSubject: subject presente nel token;
-
-- tokenClientId: clientId presente nel token;
+- clientCertificateSubjectDNInfo(String oid): ritorna l'informazione indicata come parametro relativa al subject del certificato tls client;
 	
-- tokenUsername: username presente nel token;
+- clientCertificateIssuerDN: distinguished name dell'issuer relativo al certificato tls client; 
 
-- tokenMail: eMail presente nel token;
+- clientCertificateIssuerCN: common name dell'issuer relativo al certificato tls client; 
 
-- tokenClaim(nomeClaim): valore del claim indicato come parametro e presente nel token;
+- clientCertificateIssuerDNInfo(String oid): ritorna l'informazione indicata come parametro relativa all'issuer del certificato tls client;
 
 - attribute(nomeAttributo): valore dell'attributo indicato come parametro (informazione disponibile solamente se nell'erogazione/fruizione è stata configurata una sola A.A.);
 
@@ -309,6 +307,59 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 	- principal: identificato (credenziali) con cui l'applicativo è stato autenticato; se il tipo di autenticazione risulta essere 'ssl' viene ritornato il valore dell'attributo CN
 	- tokenClientId: clientId presente nel token
 
+**Validazione Token**
+
+- token: token OAuth2 presente nella richiesta;
+
+- tokenIssuer: issuer presente nel token;
+
+- tokenSubject: subject presente nel token;
+
+- tokenClientId: clientId presente nel token;
+	
+- tokenUsername: username presente nel token;
+
+- tokenMail: eMail presente nel token;
+
+- tokenClaim(nomeClaim): valore del claim indicato come parametro e presente nel token;
+
+.. note::
+      Le informazioni seguenti sono presenti solamente se è stata abilitata la validazione JWT del token
+
+- tokenRaw: JWT token presente nella richiesta; 
+
+- tokenHeaderRaw: porzione dell'header relativa al token JWT presente nella richiesta, in formato base64; 
+
+- tokenPayloadRaw: porzione del payload relativa al token JWT presente nella richiesta, in formato base64; 
+
+- tokenDecodedHeader: contenuto decodificato dell'header presente nel token JWT; 
+
+- tokenDecodedPayload: contenuto decodificato del payload presente nel token JWT; 
+
+- tokenHeaderClaim(nomeClaim): valore del claim indicato come parametro e presente nell'header del token JWT;
+
+- tokenPayloadClaim(nomeClaim): valore del claim indicato come parametro e presente nel payload del token JWT;
+	
+- tokenHeaderClaims(): claims (nome=valore) presenti nell'header del token JWT;
+	
+- tokenHeaderClaims(claimSeparator, nameValueSeparator): simile alla precedente opzione, consente di indicare i separatori utilizzati;
+
+- tokenPayloadClaims(): claims (nome=valore) presenti nel payload del token JWT;
+	
+- tokenPayloadClaims(claimSeparator, nameValueSeparator): simile alla precedente opzione, consente di indicare i separatori utilizzati;
+
+- tokenCertificateSubjectDN: distinguished name del subject relativo al certificato con cui è stato firmato il token JWT; 
+
+- tokenCertificateSubjectCN: common name del subject relativo al certificato con cui è stato firmato il token JWT; 
+
+- tokenCertificateSubjectDNInfo(String oid): ritorna l'informazione indicata come parametro relativa al subject del certificato con cui è stato firmato il token JWT;
+	
+- tokenCertificateIssuerDN: distinguished name dell'issuer relativo al certificato con cui è stato firmato il token JWT; 
+
+- tokenCertificateIssuerCN: common name dell'issuer relativo al certificato con cui è stato firmato il token JWT; 
+
+- tokenCertificateIssuerDNInfo(String oid): ritorna l'informazione indicata come parametro relativa all'issuer del certificato con cui è stato firmato il token JWT.
+
 **Negoziazione Token**
 
 - retrievedAccessToken: access token ottenuto dall'authorization server configurato nella Token Policy associata al connettore;
@@ -329,6 +380,71 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 
 - retrievedTokenRequestUrl: endpoint dell'authorization server.
 	
+**Informazioni specifiche dei Profili di Interoperabilità**
+
+- requestPropertiesKeys: nomi delle proprietà associate alla traccia della richiesta;
+
+- requestProperties: proprietà (nome=valore), associate alla traccia della richiesta, separate da uno spazio;
+
+- requestProperties(propertySeparator, valueSeparator): simile alla precedente opzione, consente di indicare i separatori utilizzati;
+
+- requestProperty(nomeProprietà): valore della proprietà indicata come parametro;
+
+- responsePropertiesKeys: nomi delle proprietà associate alla traccia della risposta;
+
+- responseProperties: proprietà (nome=valore), associate alla traccia della risposta, separate da uno spazio;
+
+- responseProperties(propertySeparator, valueSeparator): simile alla precedente opzione, consente di indicare i separatori utilizzati;
+
+- responseProperty(nomeProprietà): valore della proprietà indicata come parametro.
+
+**ModI**
+
+- tokenModI<tokenType>Raw: security token presente nella richiesta; 
+
+- tokenModI<tokenType>CertificateSubjectDN: distinguished name del subject relativo al certificato con cui è stato firmato il security token; 
+
+- tokenModI<tokenType>CertificateSubjectCN: common name del subject relativo al certificato con cui è stato firmato il security token; 
+
+- tokenModI<tokenType>CertificateSubjectDNInfo(String oid): ritorna l'informazione indicata come parametro relativa al subject del certificato con cui è stato firmato il security token;
+	
+- tokenModI<tokenType>CertificateIssuerDN: distinguished name dell'issuer relativo al certificato con cui è stato firmato il security token; 
+
+- tokenModI<tokenType>CertificateIssuerCN: common name dell'issuer relativo al certificato con cui è stato firmato il security token; 
+
+- tokenModI<tokenType>CertificateIssuerDNInfo(String oid): ritorna l'informazione indicata come parametro relativa all'issuer del certificato con cui è stato firmato il security token.
+
+I tipi di token disponibili sono:
+
+- Authorization: security token ricevuto nell'header HTTP 'Authorization';
+
+- Integrity: security token ricevuto nell'header HTTP 'Agid-JWT-Signature';
+
+- Soap: security token ricevuto nell'header SOAP;
+
+Per i tipi di token 'Authorization' e 'Integrity', relativi ad API di tipo REST, sono disponibili anche le seguenti informazioni:
+
+- tokenModI<tokenType>HeaderRaw: porzione dell'header relativa al security token presente nella richiesta, in formato base64; 
+
+- tokenModI<tokenType>PayloadRaw: porzione del payload relativa al security token presente nella richiesta, in formato base64; 
+
+- tokenModI<tokenType>DecodedHeader: contenuto decodificato dell'header presente nel security token; 
+
+- tokenModI<tokenType>DecodedPayload: contenuto decodificato del payload presente nel security token; 
+
+- tokenModI<tokenType>HeaderClaim(nomeClaim): valore del claim indicato come parametro e presente nell'header del security token;
+
+- tokenModI<tokenType>PayloadClaim(nomeClaim): valore del claim indicato come parametro e presente nel payload del security token;
+	
+- tokenModI<tokenType>HeaderClaims(): claims (nome=valore) presenti nell'header del security token;
+	
+- tokenModI<tokenType>HeaderClaims(claimSeparator, nameValueSeparator): simile alla precedente opzione, consente di indicare i separatori utilizzati;
+
+- tokenModI<tokenType>PayloadClaims(): claims (nome=valore) presenti nel payload del security token;
+	
+- tokenModI<tokenType>PayloadClaims(claimSeparator, nameValueSeparator): simile alla precedente opzione, consente di indicare i separatori utilizzati;
+
+
 **Messaggi**
 
 - duplicateRequest: numero di volte in cui una richiesta con stesso 'requestId' è stata ricevuta dal gateway;
@@ -389,3 +505,12 @@ I tipi di messaggi disponibili sono:
             ...
 	
 
+**Ambiente**
+
+- hostAddress(): InetAddress.getLocalHost().getHostAddress();
+
+- hostName(): InetAddress.getLocalHost().getHostName();
+
+- systemProperty(nomeProprietà): valore della proprietà di sistema indicata come parametro;
+
+- javaProperty(nomeProprietà): valore della proprietà java indicata come parametro.

@@ -286,6 +286,11 @@ Scenario: isTest('doppi-header-idar03-security-token-trasformazione-authorizatio
     * match getRequestHeader("Authorization") == ('Bearer ' + getRequestHeader("X-Verifica-Req-Authorization"))
     * call checkToken ({token: getRequestHeader("X-Verifica-Req-Authorization"), match_to: client_token_match, kind: 'AGID' })
     
+    * match getRequestHeader("X-Verifica-Req-Authorization-CertCN") == 'ExampleClient1'
+    * match getRequestHeader("X-Verifica-Req-Authorization-CertO") == 'Example'
+    * match getRequestHeader("X-Verifica-Req-Authorization-HeaderClaim") == 'RS256'
+    * match getRequestHeader("X-Verifica-Req-Authorization-PayloadClaim") == 'testsuite'
+
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
@@ -380,6 +385,11 @@ Scenario: isTest('doppi-header-idar03-security-token-trasformazione-integrity-to
 
     * match getRequestHeader("Agid-JWT-Signature") == getRequestHeader("X-Verifica-Req-Integrity")
     * call checkToken ({token: getRequestHeader("X-Verifica-Req-Integrity"), match_to: client_token_integrity_match, kind: 'AGID' })
+    
+    * match getRequestHeader("X-Verifica-Req-Integrity-CertCN") == 'ExampleClient1'
+    * match getRequestHeader("X-Verifica-Req-Integrity-CertO") == 'Example'
+    * match getRequestHeader("X-Verifica-Req-Integrity-HeaderClaim") == 'RS256'
+    * match getRequestHeader("X-Verifica-Req-Integrity-PayloadClaim") == 'testsuite'
 
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')

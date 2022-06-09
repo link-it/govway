@@ -396,7 +396,8 @@ public class Utils {
 						if(!TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI.equals(tipoRisorsa) &&
 								!TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE.equals(tipoRisorsa) &&
 								!TipoRisorsaPolicyAttiva.NUMERO_FAULT_APPLICATIVI.equals(tipoRisorsa) &&
-								!TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO.equals(tipoRisorsa)) {
+								!TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO.equals(tipoRisorsa) &&
+								!TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE.equals(tipoRisorsa)) {
 							throw t;
 						}
 						else {

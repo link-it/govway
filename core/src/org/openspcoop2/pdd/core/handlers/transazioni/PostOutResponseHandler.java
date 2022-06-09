@@ -64,6 +64,8 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceConfig;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceManager;
 import org.openspcoop2.protocol.engine.RequestInfo;
+import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
+import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
@@ -372,6 +374,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 		InformazioniToken informazioniToken = null;
 		InformazioniAttributi informazioniAttributi = null;
 		InformazioniNegoziazioneToken informazioniNegoziazioneToken = null;
+		SecurityToken securityToken = null;
 		if(transaction!=null) {
 			informazioniToken = transaction.getInformazioniToken();
 			informazioniNegoziazioneToken = transaction.getInformazioniNegoziazioneToken();
@@ -381,6 +384,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 			if(oInformazioniAttributiNormalizzati!=null && oInformazioniAttributiNormalizzati instanceof InformazioniAttributi) {
 				informazioniAttributi = (InformazioniAttributi) oInformazioniAttributiNormalizzati;
 			}
+			securityToken = SecurityTokenUtilities.readSecurityToken(context.getPddContext());
 		}
 		
 		/* ---- Verifica Esito della Transazione per registrazione nello storico ----- */
@@ -650,6 +654,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 							informazioniToken,
 							informazioniAttributi,
 							informazioniNegoziazioneToken,
+							securityToken,
 							context,
 							idTransazione); // anche qua vi e' un try catch con Throwable
 				}
@@ -1162,6 +1167,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 			InformazioniToken informazioniToken,
 			InformazioniAttributi informazioniAttributi,
 			InformazioniNegoziazioneToken informazioniNegoziazioneToken,
+			SecurityToken securityToken,
 			PostOutResponseContext context,
 			String idTransazione) {
 		FileTraceManager fileTraceManager = null;
@@ -1176,6 +1182,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 					informazioniToken,
 					informazioniAttributi,
 					informazioniNegoziazioneToken,
+					securityToken,
 					context.getPddContext());
 			fileTraceManager.invoke(context.getTipoPorta(), context.getPddContext());
 		}catch (Throwable e) {

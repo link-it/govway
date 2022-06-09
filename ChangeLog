@@ -1,3 +1,9 @@
+2022-06-09 Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1366
+	Il certificato con cui viene validato l'access token e il certificato TLS è sempre adesso consultabile tramite la keyword 'securityToken'.	
+
 2022-06-07 Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

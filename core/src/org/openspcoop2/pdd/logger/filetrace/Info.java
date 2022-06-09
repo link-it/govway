@@ -44,6 +44,7 @@ import org.openspcoop2.pdd.logger.info.InfoEsitoTransazioneFormatUtils;
 import org.openspcoop2.pdd.logger.info.InfoMittenteFormatUtils;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
@@ -54,6 +55,7 @@ import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.openspcoop2.utils.xml.XMLUtils;
 import org.slf4j.Logger;
 
 /**     
@@ -71,6 +73,7 @@ public class Info {
 	private InformazioniToken informazioniToken;
 	private InformazioniAttributi informazioniAttributi;
 	private InformazioniNegoziazioneToken informazioniNegoziazioneToken;
+	private SecurityToken securityToken;
 	
 	private Traccia tracciaRichiesta;
 	private Traccia tracciaRisposta;
@@ -108,6 +111,7 @@ public class Info {
 			InformazioniToken informazioniToken,
 			InformazioniAttributi informazioniAttributi,
 			InformazioniNegoziazioneToken informazioniNegoziazioneToken,
+			SecurityToken securityToken,
 			Traccia tracciaRichiesta, Traccia tracciaRisposta,
 			List<MsgDiagnostico> msgDiagnostici,
 			Messaggio richiestaIngresso, Messaggio richiestaUscita,
@@ -122,6 +126,7 @@ public class Info {
 		this.informazioniToken = informazioniToken;
 		this.informazioniAttributi = informazioniAttributi;
 		this.informazioniNegoziazioneToken = informazioniNegoziazioneToken;
+		this.securityToken = securityToken;
 		this.tracciaRichiesta = tracciaRichiesta;
 		this.tracciaRisposta = tracciaRisposta;
 		this.msgDiagnostici = msgDiagnostici;
@@ -1262,6 +1267,84 @@ public class Info {
 		return correctValue(this.credenzialiMittente!=null && this.credenzialiMittente.getTrasporto()!=null ? this.credenzialiMittente.getTrasporto().getCredenziale() : null, defaultValue);
 	}
 	
+	public java.lang.String getClientCertificateSubjectDN() {
+		return getClientCertificateSubjectDN(null);
+	}
+	public java.lang.String getClientCertificateSubjectDN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getChannel()!=null && this.securityToken.getChannel().getCertificate()!=null) {
+			if(this.securityToken.getChannel().getCertificate().getSubject()!=null) {
+				v = this.securityToken.getChannel().getCertificate().getSubject().toString();
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getClientCertificateSubjectCN() {
+		return getClientCertificateSubjectCN(null);
+	}
+	public java.lang.String getClientCertificateSubjectCN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getChannel()!=null && this.securityToken.getChannel().getCertificate()!=null) {
+			if(this.securityToken.getChannel().getCertificate().getSubject()!=null) {
+				v = this.securityToken.getChannel().getCertificate().getSubject().getCN();
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getClientCertificateSubjectDNInfo(String oid) {
+		return getClientCertificateSubjectDNInfo(oid, null);
+	}
+	public java.lang.String getClientCertificateSubjectDNInfo(String oid, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getChannel()!=null && this.securityToken.getChannel().getCertificate()!=null) {
+			if(this.securityToken.getChannel().getCertificate().getSubject()!=null) {
+				v = this.securityToken.getChannel().getCertificate().getSubject().getInfo(oid);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getClientCertificateIssuerDN() {
+		return getClientCertificateIssuerDN(null);
+	}
+	public java.lang.String getClientCertificateIssuerDN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getChannel()!=null && this.securityToken.getChannel().getCertificate()!=null) {
+			if(this.securityToken.getChannel().getCertificate().getIssuer()!=null) {
+				v = this.securityToken.getChannel().getCertificate().getIssuer().toString();
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getClientCertificateIssuerCN() {
+		return getClientCertificateIssuerCN(null);
+	}
+	public java.lang.String getClientCertificateIssuerCN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getChannel()!=null && this.securityToken.getChannel().getCertificate()!=null) {
+			if(this.securityToken.getChannel().getCertificate().getIssuer()!=null) {
+				v = this.securityToken.getChannel().getCertificate().getIssuer().getCN();
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getClientCertificateIssuerDNInfo(String oid) {
+		return getClientCertificateIssuerDNInfo(oid, null);
+	}
+	public java.lang.String getClientCertificateIssuerDNInfo(String oid, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getChannel()!=null && this.securityToken.getChannel().getCertificate()!=null) {
+			if(this.securityToken.getChannel().getCertificate().getIssuer()!=null) {
+				v = this.securityToken.getChannel().getCertificate().getIssuer().getInfo(oid);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
 	public java.lang.String getToken() {
 		return getToken(null);
 	}
@@ -1321,6 +1404,202 @@ public class Info {
 		}	
 		return correctValue(v, defaultValue);
 	}
+	
+	public java.lang.String getTokenRaw() {
+		return getTokenRaw(null);
+	}
+	public java.lang.String getTokenRaw(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null) {
+			v = this.securityToken.getAccessToken().getToken();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenHeaderRaw() {
+		return getTokenHeaderRaw(null);
+	}
+	public java.lang.String getTokenHeaderRaw(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null) {
+			v = this.securityToken.getAccessToken().getHeader();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenDecodedHeader() {
+		return getTokenDecodedHeader(null);
+	}
+	public java.lang.String getTokenDecodedHeader(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null) {
+			v = this.securityToken.getAccessToken().getDecodedHeader();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenHeaderClaim(String tokenClaim) {
+		return getTokenHeaderClaim(tokenClaim, null);
+	}
+	public java.lang.String getTokenHeaderClaim(String tokenClaim, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null) {
+			try {
+				v = this.securityToken.getAccessToken().getHeaderClaim(tokenClaim);
+			}catch(Throwable t) {
+				this.log.error("getTokenHeaderClaim("+tokenClaim+") failed: "+t.getMessage(),t);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenHeaderClaims() {
+		return getTokenHeaderClaims(",", "=", null);
+	}
+	public java.lang.String getTokenHeaderClaims(String claimSeparator, String nameValueSeparator, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null) {
+			try {
+				Map<String, String> map = this.securityToken.getAccessToken().getHeaderClaims();
+				v = formatTokenClaims(map, claimSeparator, nameValueSeparator);
+			}catch(Throwable t) {
+				this.log.error("getTokenHeaderClaims("+claimSeparator+","+nameValueSeparator+") failed: "+t.getMessage(),t);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenPayloadRaw() {
+		return getTokenPayloadRaw(null);
+	}
+	public java.lang.String getTokenPayloadRaw(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null) {
+			v = this.securityToken.getAccessToken().getPayload();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenDecodedPayload() {
+		return getTokenDecodedPayload(null);
+	}
+	public java.lang.String getTokenDecodedPayload(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null) {
+			v = this.securityToken.getAccessToken().getDecodedPayload();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenPayloadClaim(String tokenClaim) {
+		return getTokenPayloadClaim(tokenClaim, null);
+	}
+	public java.lang.String getTokenPayloadClaim(String tokenClaim, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null) {
+			try {
+				v = this.securityToken.getAccessToken().getPayloadClaim(tokenClaim);
+			}catch(Throwable t) {
+				this.log.error("getTokenPayloadClaim("+tokenClaim+") failed: "+t.getMessage(),t);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenPayloadClaims() {
+		return getTokenPayloadClaims(",", "=", null);
+	}
+	public java.lang.String getTokenPayloadClaims(String claimSeparator, String nameValueSeparator, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null) {
+			try {
+				Map<String, String> map = this.securityToken.getAccessToken().getPayloadClaims();
+				v = formatTokenClaims(map, claimSeparator, nameValueSeparator);
+			}catch(Throwable t) {
+				this.log.error("getTokenPayloadClaims("+claimSeparator+","+nameValueSeparator+") failed: "+t.getMessage(),t);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenCertificateSubjectDN() {
+		return getTokenCertificateSubjectDN(null);
+	}
+	public java.lang.String getTokenCertificateSubjectDN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null && this.securityToken.getAccessToken().getCertificate()!=null) {
+			if(this.securityToken.getAccessToken().getCertificate().getSubject()!=null) {
+				v = this.securityToken.getAccessToken().getCertificate().getSubject().toString();
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenCertificateSubjectCN() {
+		return getTokenCertificateSubjectCN(null);
+	}
+	public java.lang.String getTokenCertificateSubjectCN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null && this.securityToken.getAccessToken().getCertificate()!=null) {
+			if(this.securityToken.getAccessToken().getCertificate().getSubject()!=null) {
+				v = this.securityToken.getAccessToken().getCertificate().getSubject().getCN();
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenCertificateSubjectDNInfo(String oid) {
+		return getTokenCertificateSubjectDNInfo(oid, null);
+	}
+	public java.lang.String getTokenCertificateSubjectDNInfo(String oid, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null && this.securityToken.getAccessToken().getCertificate()!=null) {
+			if(this.securityToken.getAccessToken().getCertificate().getSubject()!=null) {
+				v = this.securityToken.getAccessToken().getCertificate().getSubject().getInfo(oid);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenCertificateIssuerDN() {
+		return getTokenCertificateIssuerDN(null);
+	}
+	public java.lang.String getTokenCertificateIssuerDN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null && this.securityToken.getAccessToken().getCertificate()!=null) {
+			if(this.securityToken.getAccessToken().getCertificate().getIssuer()!=null) {
+				v = this.securityToken.getAccessToken().getCertificate().getIssuer().toString();
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenCertificateIssuerCN() {
+		return getTokenCertificateIssuerCN(null);
+	}
+	public java.lang.String getTokenCertificateIssuerCN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null && this.securityToken.getAccessToken().getCertificate()!=null) {
+			if(this.securityToken.getAccessToken().getCertificate().getIssuer()!=null) {
+				v = this.securityToken.getAccessToken().getCertificate().getIssuer().getCN();
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenCertificateIssuerDNInfo(String oid) {
+		return getTokenCertificateIssuerDNInfo(oid, null);
+	}
+	public java.lang.String getTokenCertificateIssuerDNInfo(String oid, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAccessToken()!=null && this.securityToken.getAccessToken().getCertificate()!=null) {
+			if(this.securityToken.getAccessToken().getCertificate().getIssuer()!=null) {
+				v = this.securityToken.getAccessToken().getCertificate().getIssuer().getInfo(oid);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
 	
 	public java.lang.String getAttribute(String attributeName) {
 		return getAttribute(attributeName, null);
@@ -1964,6 +2243,38 @@ public class Info {
 	
 	// traccia
 	
+	private java.lang.String _getPropertiesKeys(String [] p, String separator, String defaultValue){
+		String v = null;
+		if(p!=null && p.length>0) {
+			StringBuilder sb = new StringBuilder();
+			for (String key : p) {
+				if(sb.length()>0) {
+					sb.append(separator);
+				}
+				sb.append(key);
+			}
+			v = sb.toString();
+		}
+		return correctValue(v,defaultValue);
+	}
+	private java.lang.String _getProperties(String [] pNames, String [] pValues, String propertySeparator, String valueSeparator, String defaultValue){
+		String v = null;
+		if(pNames!=null && pNames.length>0) {
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < pNames.length; i++) {
+				String key = pNames[i];
+				if(sb.length()>0) {
+					sb.append(propertySeparator);
+				}
+				sb.append(key);
+				sb.append(valueSeparator);
+				sb.append(pValues[i]);
+			}
+			return sb.toString();
+		}
+		return correctValue(v,defaultValue);
+	}
+	
 	public java.lang.String getRequestProperty(String name) {
 		return getRequestProperty(name, null);
 	}
@@ -1973,6 +2284,30 @@ public class Info {
 			s = this.tracciaRichiesta.getBusta().getProperty(name);
 		}
 		return correctValue(s, defaultValue);
+	}
+	public java.lang.String getRequestPropertiesKeys(){
+		return getRequestPropertiesKeys(null);
+	}
+	public java.lang.String getRequestPropertiesKeys(String defaultValue){
+		return getRequestPropertiesKeys(InfoConfigurazione.KEYS_SEPARATOR,defaultValue);
+	}
+	public java.lang.String getRequestPropertiesKeys(String separator, String defaultValue){
+		String [] p = this.tracciaRichiesta.getPropertiesNames();
+		return _getPropertiesKeys(p, separator, defaultValue);
+	}
+	public java.lang.String getRequestProperties(){
+		return getRequestProperties(null);
+	}
+	public java.lang.String getRequestProperties(String defaultValue){
+		return getRequestProperties(InfoConfigurazione.PROPERTY_SEPARATOR,InfoConfigurazione.VALUE_SEPARATOR,defaultValue);
+	}
+	public java.lang.String getRequestProperties(String propertySeparator, String valueSeparator){
+		return getRequestProperties(propertySeparator, valueSeparator, null);
+	}
+	public java.lang.String getRequestProperties(String propertySeparator, String valueSeparator, String defaultValue){
+		String [] pNames = this.tracciaRichiesta.getPropertiesNames();
+		String [] pValues = this.tracciaRichiesta.getPropertiesValues();
+		return _getProperties(pNames, pValues, propertySeparator, valueSeparator, defaultValue);
 	}
 	
 	public java.lang.String getResponseProperty(String name) {
@@ -1985,6 +2320,526 @@ public class Info {
 		}
 		return correctValue(s, defaultValue);
 	}
+	public java.lang.String getResponsePropertiesKeys(){
+		return getResponsePropertiesKeys(null);
+	}
+	public java.lang.String getResponsePropertiesKeys(String defaultValue){
+		return getResponsePropertiesKeys(InfoConfigurazione.KEYS_SEPARATOR,defaultValue);
+	}
+	public java.lang.String getResponsePropertiesKeys(String separator, String defaultValue){
+		String [] p = this.tracciaRichiesta.getPropertiesNames();
+		return _getPropertiesKeys(p, separator, defaultValue);
+	}
+	public java.lang.String getResponseProperties(){
+		return getResponseProperties(null);
+	}
+	public java.lang.String getResponseProperties(String defaultValue){
+		return getResponseProperties(InfoConfigurazione.PROPERTY_SEPARATOR,InfoConfigurazione.VALUE_SEPARATOR,defaultValue);
+	}
+	public java.lang.String getResponseProperties(String propertySeparator, String valueSeparator){
+		return getResponseProperties(propertySeparator, valueSeparator, null);
+	}
+	public java.lang.String getResponseProperties(String propertySeparator, String valueSeparator, String defaultValue){
+		String [] pNames = this.tracciaRichiesta.getPropertiesNames();
+		String [] pValues = this.tracciaRichiesta.getPropertiesValues();
+		return _getProperties(pNames, pValues, propertySeparator, valueSeparator, defaultValue);
+	}
+	
+	
+	// modi (Authorization)
+	
+	public java.lang.String getTokenModIAuthorizationRaw() {
+		return getTokenModIAuthorizationRaw(null);
+	}
+	public java.lang.String getTokenModIAuthorizationRaw(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null) {
+			v = this.securityToken.getAuthorization().getToken();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuthorizationHeaderRaw() {
+		return getTokenModIAuthorizationHeaderRaw(null);
+	}
+	public java.lang.String getTokenModIAuthorizationHeaderRaw(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null) {
+			v = this.securityToken.getAuthorization().getHeader();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuthorizationDecodedHeader() {
+		return getTokenModIAuthorizationDecodedHeader(null);
+	}
+	public java.lang.String getTokenModIAuthorizationDecodedHeader(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null) {
+			v = this.securityToken.getAuthorization().getDecodedHeader();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuthorizationHeaderClaim(String tokenClaim) {
+		return getTokenModIAuthorizationHeaderClaim(tokenClaim, null);
+	}
+	public java.lang.String getTokenModIAuthorizationHeaderClaim(String tokenClaim, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null) {
+			try {
+				v = this.securityToken.getAuthorization().getHeaderClaim(tokenClaim);
+			}catch(Throwable t) {
+				this.log.error("getTokenModIAuthorizationHeaderClaim("+tokenClaim+") failed: "+t.getMessage(),t);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuthorizationHeaderClaims() {
+		return getTokenModIAuthorizationHeaderClaims(",", "=", null);
+	}
+	public java.lang.String getTokenModIAuthorizationHeaderClaims(String claimSeparator, String nameValueSeparator, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null) {
+			try {
+				Map<String, String> map = this.securityToken.getAuthorization().getHeaderClaims();
+				v = formatTokenClaims(map, claimSeparator, nameValueSeparator);
+			}catch(Throwable t) {
+				this.log.error("getTokenModIAuthorizationHeaderClaims("+claimSeparator+","+nameValueSeparator+") failed: "+t.getMessage(),t);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuthorizationPayloadRaw() {
+		return getTokenModIAuthorizationPayloadRaw(null);
+	}
+	public java.lang.String getTokenModIAuthorizationPayloadRaw(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null) {
+			v = this.securityToken.getAuthorization().getPayload();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuthorizationDecodedPayload() {
+		return getTokenModIAuthorizationDecodedPayload(null);
+	}
+	public java.lang.String getTokenModIAuthorizationDecodedPayload(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null) {
+			v = this.securityToken.getAuthorization().getDecodedPayload();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuthorizationPayloadClaim(String tokenClaim) {
+		return getTokenModIAuthorizationPayloadClaim(tokenClaim, null);
+	}
+	public java.lang.String getTokenModIAuthorizationPayloadClaim(String tokenClaim, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null) {
+			try {
+				v = this.securityToken.getAuthorization().getPayloadClaim(tokenClaim);
+			}catch(Throwable t) {
+				this.log.error("getTokenModIAuthorizationPayloadClaim("+tokenClaim+") failed: "+t.getMessage(),t);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuthorizationPayloadClaims() {
+		return getTokenModIAuthorizationPayloadClaims(",", "=", null);
+	}
+	public java.lang.String getTokenModIAuthorizationPayloadClaims(String claimSeparator, String nameValueSeparator, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null) {
+			try {
+				Map<String, String> map = this.securityToken.getAuthorization().getPayloadClaims();
+				v = formatTokenClaims(map, claimSeparator, nameValueSeparator);
+			}catch(Throwable t) {
+				this.log.error("getTokenModIAuthorizationPayloadClaims("+claimSeparator+","+nameValueSeparator+") failed: "+t.getMessage(),t);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuthorizationCertificateSubjectDN() {
+		return getTokenModIAuthorizationCertificateSubjectDN(null);
+	}
+	public java.lang.String getTokenModIAuthorizationCertificateSubjectDN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null && this.securityToken.getAuthorization().getCertificate()!=null) {
+			if(this.securityToken.getAuthorization().getCertificate().getSubject()!=null) {
+				v = this.securityToken.getAuthorization().getCertificate().getSubject().toString();
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuthorizationCertificateSubjectCN() {
+		return getTokenModIAuthorizationCertificateSubjectCN(null);
+	}
+	public java.lang.String getTokenModIAuthorizationCertificateSubjectCN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null && this.securityToken.getAuthorization().getCertificate()!=null) {
+			if(this.securityToken.getAuthorization().getCertificate().getSubject()!=null) {
+				v = this.securityToken.getAuthorization().getCertificate().getSubject().getCN();
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuthorizationCertificateSubjectDNInfo(String oid) {
+		return getTokenModIAuthorizationCertificateSubjectDNInfo(oid, null);
+	}
+	public java.lang.String getTokenModIAuthorizationCertificateSubjectDNInfo(String oid, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null && this.securityToken.getAuthorization().getCertificate()!=null) {
+			if(this.securityToken.getAuthorization().getCertificate().getSubject()!=null) {
+				v = this.securityToken.getAuthorization().getCertificate().getSubject().getInfo(oid);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuthorizationCertificateIssuerDN() {
+		return getTokenModIAuthorizationCertificateIssuerDN(null);
+	}
+	public java.lang.String getTokenModIAuthorizationCertificateIssuerDN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null && this.securityToken.getAuthorization().getCertificate()!=null) {
+			if(this.securityToken.getAuthorization().getCertificate().getIssuer()!=null) {
+				v = this.securityToken.getAuthorization().getCertificate().getIssuer().toString();
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuthorizationCertificateIssuerCN() {
+		return getTokenModIAuthorizationCertificateIssuerCN(null);
+	}
+	public java.lang.String getTokenModIAuthorizationCertificateIssuerCN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null && this.securityToken.getAuthorization().getCertificate()!=null) {
+			if(this.securityToken.getAuthorization().getCertificate().getIssuer()!=null) {
+				v = this.securityToken.getAuthorization().getCertificate().getIssuer().getCN();
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIAuthorizationCertificateIssuerDNInfo(String oid) {
+		return getTokenModIAuthorizationCertificateIssuerDNInfo(oid, null);
+	}
+	public java.lang.String getTokenModIAuthorizationCertificateIssuerDNInfo(String oid, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getAuthorization()!=null && this.securityToken.getAuthorization().getCertificate()!=null) {
+			if(this.securityToken.getAuthorization().getCertificate().getIssuer()!=null) {
+				v = this.securityToken.getAuthorization().getCertificate().getIssuer().getInfo(oid);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	
+	
+	// modi (Integrity)
+	
+	public java.lang.String getTokenModIIntegrityRaw() {
+		return getTokenModIIntegrityRaw(null);
+	}
+	public java.lang.String getTokenModIIntegrityRaw(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null) {
+			v = this.securityToken.getIntegrity().getToken();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIIntegrityHeaderRaw() {
+		return getTokenModIIntegrityHeaderRaw(null);
+	}
+	public java.lang.String getTokenModIIntegrityHeaderRaw(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null) {
+			v = this.securityToken.getIntegrity().getHeader();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIIntegrityDecodedHeader() {
+		return getTokenModIIntegrityDecodedHeader(null);
+	}
+	public java.lang.String getTokenModIIntegrityDecodedHeader(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null) {
+			v = this.securityToken.getIntegrity().getDecodedHeader();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIIntegrityHeaderClaim(String tokenClaim) {
+		return getTokenModIIntegrityHeaderClaim(tokenClaim, null);
+	}
+	public java.lang.String getTokenModIIntegrityHeaderClaim(String tokenClaim, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null) {
+			try {
+				v = this.securityToken.getIntegrity().getHeaderClaim(tokenClaim);
+			}catch(Throwable t) {
+				this.log.error("getTokenModIIntegrityHeaderClaim("+tokenClaim+") failed: "+t.getMessage(),t);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIIntegrityHeaderClaims() {
+		return getTokenModIIntegrityHeaderClaims(",", "=", null);
+	}
+	public java.lang.String getTokenModIIntegrityHeaderClaims(String claimSeparator, String nameValueSeparator, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null) {
+			try {
+				Map<String, String> map = this.securityToken.getIntegrity().getHeaderClaims();
+				v = formatTokenClaims(map, claimSeparator, nameValueSeparator);
+			}catch(Throwable t) {
+				this.log.error("getTokenModIIntegrityHeaderClaims("+claimSeparator+","+nameValueSeparator+") failed: "+t.getMessage(),t);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIIntegrityPayloadRaw() {
+		return getTokenModIIntegrityPayloadRaw(null);
+	}
+	public java.lang.String getTokenModIIntegrityPayloadRaw(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null) {
+			v = this.securityToken.getIntegrity().getPayload();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIIntegrityDecodedPayload() {
+		return getTokenModIIntegrityDecodedPayload(null);
+	}
+	public java.lang.String getTokenModIIntegrityDecodedPayload(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null) {
+			v = this.securityToken.getIntegrity().getDecodedPayload();
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIIntegrityPayloadClaim(String tokenClaim) {
+		return getTokenModIIntegrityPayloadClaim(tokenClaim, null);
+	}
+	public java.lang.String getTokenModIIntegrityPayloadClaim(String tokenClaim, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null) {
+			try {
+				v = this.securityToken.getIntegrity().getPayloadClaim(tokenClaim);
+			}catch(Throwable t) {
+				this.log.error("getTokenModIIntegrityPayloadClaim("+tokenClaim+") failed: "+t.getMessage(),t);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIIntegrityPayloadClaims() {
+		return getTokenModIIntegrityPayloadClaims(",", "=", null);
+	}
+	public java.lang.String getTokenModIIntegrityPayloadClaims(String claimSeparator, String nameValueSeparator, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null) {
+			try {
+				Map<String, String> map = this.securityToken.getIntegrity().getPayloadClaims();
+				v = formatTokenClaims(map, claimSeparator, nameValueSeparator);
+			}catch(Throwable t) {
+				this.log.error("getTokenModIIntegrityPayloadClaims("+claimSeparator+","+nameValueSeparator+") failed: "+t.getMessage(),t);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIIntegrityCertificateSubjectDN() {
+		return getTokenModIIntegrityCertificateSubjectDN(null);
+	}
+	public java.lang.String getTokenModIIntegrityCertificateSubjectDN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null && this.securityToken.getIntegrity().getCertificate()!=null) {
+			if(this.securityToken.getIntegrity().getCertificate().getSubject()!=null) {
+				v = this.securityToken.getIntegrity().getCertificate().getSubject().toString();
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIIntegrityCertificateSubjectCN() {
+		return getTokenModIIntegrityCertificateSubjectCN(null);
+	}
+	public java.lang.String getTokenModIIntegrityCertificateSubjectCN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null && this.securityToken.getIntegrity().getCertificate()!=null) {
+			if(this.securityToken.getIntegrity().getCertificate().getSubject()!=null) {
+				v = this.securityToken.getIntegrity().getCertificate().getSubject().getCN();
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIIntegrityCertificateSubjectDNInfo(String oid) {
+		return getTokenModIIntegrityCertificateSubjectDNInfo(oid, null);
+	}
+	public java.lang.String getTokenModIIntegrityCertificateSubjectDNInfo(String oid, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null && this.securityToken.getIntegrity().getCertificate()!=null) {
+			if(this.securityToken.getIntegrity().getCertificate().getSubject()!=null) {
+				v = this.securityToken.getIntegrity().getCertificate().getSubject().getInfo(oid);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIIntegrityCertificateIssuerDN() {
+		return getTokenModIIntegrityCertificateIssuerDN(null);
+	}
+	public java.lang.String getTokenModIIntegrityCertificateIssuerDN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null && this.securityToken.getIntegrity().getCertificate()!=null) {
+			if(this.securityToken.getIntegrity().getCertificate().getIssuer()!=null) {
+				v = this.securityToken.getIntegrity().getCertificate().getIssuer().toString();
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIIntegrityCertificateIssuerCN() {
+		return getTokenModIIntegrityCertificateIssuerCN(null);
+	}
+	public java.lang.String getTokenModIIntegrityCertificateIssuerCN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null && this.securityToken.getIntegrity().getCertificate()!=null) {
+			if(this.securityToken.getIntegrity().getCertificate().getIssuer()!=null) {
+				v = this.securityToken.getIntegrity().getCertificate().getIssuer().getCN();
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModIIntegrityCertificateIssuerDNInfo(String oid) {
+		return getTokenModIIntegrityCertificateIssuerDNInfo(oid, null);
+	}
+	public java.lang.String getTokenModIIntegrityCertificateIssuerDNInfo(String oid, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getIntegrity()!=null && this.securityToken.getIntegrity().getCertificate()!=null) {
+			if(this.securityToken.getIntegrity().getCertificate().getIssuer()!=null) {
+				v = this.securityToken.getIntegrity().getCertificate().getIssuer().getInfo(oid);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	
+	
+	// modi (Soap)
+	
+	public java.lang.String getTokenModISoapRaw() {
+		return getTokenModISoapRaw(null);
+	}
+	public java.lang.String getTokenModISoapRaw(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getEnvelope()!=null) {
+			try {
+				XMLUtils xmlUtils = XMLUtils.getInstance();
+				v = xmlUtils.toString(this.securityToken.getEnvelope().getToken(),true);
+			}catch(Throwable t) {
+				this.log.error("getTokenModISoapRaw failed: "+t.getMessage(),t);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModISoapCertificateSubjectDN() {
+		return getTokenModISoapCertificateSubjectDN(null);
+	}
+	public java.lang.String getTokenModISoapCertificateSubjectDN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getEnvelope()!=null && this.securityToken.getEnvelope().getCertificate()!=null) {
+			if(this.securityToken.getEnvelope().getCertificate().getSubject()!=null) {
+				v = this.securityToken.getEnvelope().getCertificate().getSubject().toString();
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModISoapCertificateSubjectCN() {
+		return getTokenModISoapCertificateSubjectCN(null);
+	}
+	public java.lang.String getTokenModISoapCertificateSubjectCN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getEnvelope()!=null && this.securityToken.getEnvelope().getCertificate()!=null) {
+			if(this.securityToken.getEnvelope().getCertificate().getSubject()!=null) {
+				v = this.securityToken.getEnvelope().getCertificate().getSubject().getCN();
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModISoapCertificateSubjectDNInfo(String oid) {
+		return getTokenModISoapCertificateSubjectDNInfo(oid, null);
+	}
+	public java.lang.String getTokenModISoapCertificateSubjectDNInfo(String oid, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getEnvelope()!=null && this.securityToken.getEnvelope().getCertificate()!=null) {
+			if(this.securityToken.getEnvelope().getCertificate().getSubject()!=null) {
+				v = this.securityToken.getEnvelope().getCertificate().getSubject().getInfo(oid);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModISoapCertificateIssuerDN() {
+		return getTokenModISoapCertificateIssuerDN(null);
+	}
+	public java.lang.String getTokenModISoapCertificateIssuerDN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getEnvelope()!=null && this.securityToken.getEnvelope().getCertificate()!=null) {
+			if(this.securityToken.getEnvelope().getCertificate().getIssuer()!=null) {
+				v = this.securityToken.getEnvelope().getCertificate().getIssuer().toString();
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModISoapCertificateIssuerCN() {
+		return getTokenModISoapCertificateIssuerCN(null);
+	}
+	public java.lang.String getTokenModISoapCertificateIssuerCN(String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getEnvelope()!=null && this.securityToken.getEnvelope().getCertificate()!=null) {
+			if(this.securityToken.getEnvelope().getCertificate().getIssuer()!=null) {
+				v = this.securityToken.getEnvelope().getCertificate().getIssuer().getCN();
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getTokenModISoapCertificateIssuerDNInfo(String oid) {
+		return getTokenModISoapCertificateIssuerDNInfo(oid, null);
+	}
+	public java.lang.String getTokenModISoapCertificateIssuerDNInfo(String oid, String defaultValue) {
+		String v = null;
+		if(this.securityToken!=null && this.securityToken.getEnvelope()!=null && this.securityToken.getEnvelope().getCertificate()!=null) {
+			if(this.securityToken.getEnvelope().getCertificate().getIssuer()!=null) {
+				v = this.securityToken.getEnvelope().getCertificate().getIssuer().getInfo(oid);
+			}
+		}
+		return correctValue(v, defaultValue);
+	}
+	
 	
 	
 	// address
@@ -2277,6 +3132,24 @@ public class Info {
 					sb.append(separator);
 				}
 				sb.append(value);
+			}
+			s = sb.toString();
+		}
+		return s;
+	}
+	
+	private String formatTokenClaims(Map<String, String> map, String claimSeparator, String nameValueSeparator) {
+		String s = null;
+		if(map!=null && !map.isEmpty()) {
+			StringBuilder sb = new StringBuilder();
+			for (String key : map.keySet()) {
+				String value = map.get(key);
+				if(sb.length()>0) {
+					sb.append(claimSeparator);
+				}
+				sb.append(key);
+				sb.append(nameValueSeparator);
+				sb.append(value!=null ? value : "");
 			}
 			s = sb.toString();
 		}

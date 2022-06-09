@@ -29,9 +29,8 @@ package org.openspcoop2.protocol.sdk;
 public class SecurityToken {
 
 	private ChannelSecurityToken channel;
-	private RestMessageSecurityToken authorization;
-	private RestMessageSecurityToken integrity;
-	private SoapMessageSecurityToken envelope;
+	private RestMessageSecurityToken accessToken;
+	private SecurityTokenModI modI;
 	
 	public ChannelSecurityToken getChannel() {
 		return this.channel;
@@ -39,22 +38,50 @@ public class SecurityToken {
 	public void setChannel(ChannelSecurityToken channel) {
 		this.channel = channel;
 	}
+	public RestMessageSecurityToken getAccessToken() {
+		return this.accessToken;
+	}
+	public void setAccessToken(RestMessageSecurityToken accessToken) {
+		this.accessToken = accessToken;
+	}
+	
+	public SecurityTokenModI getModI() {
+		return this.modI;
+	}
+	public SecurityTokenModI getModi() {
+		return this.modI;
+	}
+	public void setModI(SecurityTokenModI modI) {
+		this.modI = modI;
+	}
+	
+	// -- shortcut
 	public RestMessageSecurityToken getAuthorization() {
-		return this.authorization;
+		return this.modI!=null ? this.modI.getAuthorization() : null;
 	}
 	public void setAuthorization(RestMessageSecurityToken authorization) {
-		this.authorization = authorization;
+		if(this.modI==null) {
+			this.modI = new SecurityTokenModI();
+		}
+		this.modI.setAuthorization(authorization);
 	}
 	public RestMessageSecurityToken getIntegrity() {
-		return this.integrity;
+		return this.modI!=null ? this.modI.getIntegrity() : null;
 	}
 	public void setIntegrity(RestMessageSecurityToken integrity) {
-		this.integrity = integrity;
+		if(this.modI==null) {
+			this.modI = new SecurityTokenModI();
+		}
+		this.modI.setIntegrity(integrity);
 	}
 	public SoapMessageSecurityToken getEnvelope() {
-		return this.envelope;
+		return this.modI!=null ? this.modI.getEnvelope() : null;
 	}
 	public void setEnvelope(SoapMessageSecurityToken envelope) {
-		this.envelope = envelope;
+		if(this.modI==null) {
+			this.modI = new SecurityTokenModI();
+		}
+		this.modI.setEnvelope(envelope);
 	}
+
 }

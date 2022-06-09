@@ -109,7 +109,7 @@ public class DynamicHelperCostanti {
 	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_TOKEN_INFO = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_TOKEN_INFO+"</b>: permette di accedere ai claims di un token ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_TOKEN_INFO+")"); 
 	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_ATTRIBUTES = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ATTRIBUTES+"</b>: permette di accedere agli attributi recuperati tramite Attribute Authority ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ATTRIBUTES+")"); 
 	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_TRANSPORT_CONTEXT = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT+"</b>: permette di accedere ai dati della richiesta http ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_URL_PROTOCOL_CONTEXT_OBJECT+")");
-	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_SECURITY_TOKEN = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SECURITY_TOKEN+"</b>: permette di accedere ai security token presenti nella richiesta ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_SECURITY_TOKEN+")");
+	public final static String LABEL_CONFIGURAZIONE_INFO_OBJECT_SECURITY_TOKEN = StringEscapeUtils.escapeHtml("<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SECURITY_TOKEN+"</b>: permette di accedere alle informazioni relative ai certificati ed ai security token presenti nella richiesta ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_SECURITY_TOKEN+")");
 	public static final String LABEL_CONFIGURAZIONE_INFO_OBJECT_API_IMPL_PROPERTY_CONFIG = "<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_API_IMPL_CONFIG_PROPERTY+"</b>: permette di accedere alle proprietà configurate per l'API ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_API_IMPL_CONFIG_PROPERTY_HTML_ESCAPED+")";
 	public static final String LABEL_CONFIGURAZIONE_INFO_OBJECT_APPLICATIVO_PROPERTY_CONFIG = "<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_APPLICATIVO_CONFIG_PROPERTY+"</b>: permette di accedere alle proprietà configurate nell'applicativo client ("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_APPLICATIVO_CONFIG_PROPERTY_HTML_ESCAPED+")";
 	public static final String LABEL_CONFIGURAZIONE_INFO_OBJECT_SOGGETTO_FRUITORE_PROPERTY_CONFIG = "<b>"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SOGGETTO_FRUITORE_CONFIG_PROPERTY+"</b>: permette di accedere alle proprietà configurate nel soggetto fruitore("+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_SOGGETTO_FRUITORE_CONFIG_PROPERTY_HTML_ESCAPED+")";
@@ -184,7 +184,8 @@ public class DynamicHelperCostanti {
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_NEW_INSTANCE_FREEMARKER);
 	}
 	public static List<String> getLABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER(boolean modi, boolean fruizione, boolean forceNoSecToken) {
-		if(forceNoSecToken || !modi || fruizione) {
+		//if(forceNoSecToken || !modi || fruizione) {
+		if(forceNoSecToken) {
 			List<String> l = new ArrayList<String>();
 			l.addAll(LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER);
 			deleteField(l, LABEL_CONFIGURAZIONE_INFO_OBJECT_SECURITY_TOKEN);
@@ -202,7 +203,8 @@ public class DynamicHelperCostanti {
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_NEW_INSTANCE_FREEMARKER);
 	}
 	public static List<String> getLABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER(boolean modi, boolean fruizione, boolean forceNoSecToken) {
-		if(forceNoSecToken || !modi || fruizione) {
+		//if(forceNoSecToken || !modi || fruizione) {
+		if(forceNoSecToken) {
 			List<String> l = new ArrayList<String>();
 			l.addAll(LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER);
 			deleteField(l, LABEL_CONFIGURAZIONE_INFO_OBJECT_SECURITY_TOKEN);
@@ -220,7 +222,8 @@ public class DynamicHelperCostanti {
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_NEW_INSTANCE_VELOCITY);
 	}
 	public static List<String> getLABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY(boolean modi, boolean fruizione, boolean forceNoSecToken) {
-		if(forceNoSecToken || !modi || fruizione) {
+		//if(forceNoSecToken || !modi || fruizione) {
+		if(forceNoSecToken) {
 			List<String> l = new ArrayList<String>();
 			l.addAll(LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY);
 			deleteField(l, LABEL_CONFIGURAZIONE_INFO_OBJECT_SECURITY_TOKEN);
@@ -238,7 +241,8 @@ public class DynamicHelperCostanti {
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_NEW_INSTANCE_VELOCITY);
 	}
 	public static List<String> getLABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY(boolean modi, boolean fruizione, boolean forceNoSecToken) {
-		if(forceNoSecToken || !modi || fruizione) {
+		//if(forceNoSecToken || !modi || fruizione) {
+		if(forceNoSecToken) {
 			List<String> l = new ArrayList<String>();
 			l.addAll(LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY);
 			deleteField(l, LABEL_CONFIGURAZIONE_INFO_OBJECT_SECURITY_TOKEN);
@@ -309,7 +313,8 @@ public class DynamicHelperCostanti {
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE_FREEMARKER.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_NEW_INSTANCE_FREEMARKER);
 	}
 	public static List<String> getLABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE_FREEMARKER(boolean modi, boolean fruizione, boolean forceNoSecToken) {
-		if(forceNoSecToken || !modi || fruizione) {
+		//if(forceNoSecToken || !modi || fruizione) {
+		if(forceNoSecToken) {
 			List<String> l = new ArrayList<String>();
 			l.addAll(LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE_FREEMARKER);
 			deleteField(l, LABEL_CONFIGURAZIONE_INFO_OBJECT_SECURITY_TOKEN);
@@ -327,7 +332,8 @@ public class DynamicHelperCostanti {
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE_FREEMARKER.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_NEW_INSTANCE_FREEMARKER);
 	}
 	public static List<String> getLABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE_FREEMARKER(boolean modi, boolean fruizione, boolean forceNoSecToken) {
-		if(forceNoSecToken || !modi || fruizione) {
+		//if(forceNoSecToken || !modi || fruizione) {
+		if(forceNoSecToken) {
 			List<String> l = new ArrayList<String>();
 			l.addAll(LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE_FREEMARKER);
 			deleteField(l, LABEL_CONFIGURAZIONE_INFO_OBJECT_SECURITY_TOKEN);
@@ -345,7 +351,8 @@ public class DynamicHelperCostanti {
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE_VELOCITY.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_NEW_INSTANCE_VELOCITY);
 	}
 	public static List<String> getLABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE_VELOCITY(boolean modi, boolean fruizione, boolean forceNoSecToken) {
-		if(forceNoSecToken || !modi || fruizione) {
+		//if(forceNoSecToken || !modi || fruizione) {
+		if(forceNoSecToken) {
 			List<String> l = new ArrayList<String>();
 			l.addAll(LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_CON_RISPOSTE_VELOCITY);
 			deleteField(l, LABEL_CONFIGURAZIONE_INFO_OBJECT_SECURITY_TOKEN);
@@ -363,7 +370,8 @@ public class DynamicHelperCostanti {
 		LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE_VELOCITY.add(LABEL_CONFIGURAZIONE_INFO_OBJECT_NEW_INSTANCE_VELOCITY);
 	}
 	public static List<String> getLABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE_VELOCITY(boolean modi, boolean fruizione, boolean forceNoSecToken) {
-		if(forceNoSecToken || !modi || fruizione) {
+		//if(forceNoSecToken || !modi || fruizione) {
+		if(forceNoSecToken) {
 			List<String> l = new ArrayList<String>();
 			l.addAll(LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_CON_RISPOSTE_VELOCITY);
 			deleteField(l, LABEL_CONFIGURAZIONE_INFO_OBJECT_SECURITY_TOKEN);
@@ -402,7 +410,7 @@ public class DynamicHelperCostanti {
 	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_TOKEN_INFO = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_TOKEN_INFO+":FIELD}</b>: permette di accedere ai claim di un token; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_TOKEN_INFO+"' (es. per ottenere il valore del claim 'sub' usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_TOKEN_INFO+":sub})";
 	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_ATTRIBUTES = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ATTRIBUTES+":FIELD}</b>: permette di accedere agli attributi recuperati tramite Attribute Authority; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_ATTRIBUTES+"' (es. per ottenere il valore dell'attributo 'attr1' usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ATTRIBUTES+":attributes[attr1]}, se configurata solamente 1 A.A., altrimenti usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_ATTRIBUTES+":attributes[nomeAttributeAuthority][attr1]} )";
 	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_CONTEXT = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT+":FIELD}</b>: permette di accedere ai dati della richiesta http; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_URL_PROTOCOL_CONTEXT_OBJECT+"' (es. per il principal usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT+":credential.principal})";
-	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SECURITY_TOKEN = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SECURITY_TOKEN+":FIELD}</b>: permette di accedere ai security token presenti nella richiesta; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_SECURITY_TOKEN+"' (es. per accedere al CN del certificato presente nel token 'Authorization' usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SECURITY_TOKEN+":authorization.certificate.subject.info(CN)})";
+	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SECURITY_TOKEN = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SECURITY_TOKEN+":FIELD}</b>: permette di accedere alle informazioni relative ai certificati ed ai security token presenti nella richiesta; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_SECURITY_TOKEN+"' (es. per accedere al CN del certificato presente nel token ModI 'Authorization' usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SECURITY_TOKEN+":authorization.certificate.subject.info(CN)})";
 	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_API_IMPL_PROPERTY_CONFIG = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_API_IMPL_CONFIG_PROPERTY+":NAME}</b>: permette di accedere alla proprietà, configurata nell'API, con nome 'NAME'";
 	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_APPLICATIVO_PROPERTY_CONFIG = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_APPLICATIVO_CONFIG_PROPERTY+":NAME}</b>: permette di accedere alla proprietà, configurata nell'applicativo, con nome 'NAME'";
 	public final static String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SOGGETTO_FRUITORE_PROPERTY_CONFIG = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SOGGETTO_FRUITORE_CONFIG_PROPERTY+":NAME}</b>: permette di accedere alla proprietà, configurata nel soggetto fruitore, con nome 'NAME'";
@@ -455,7 +463,8 @@ public class DynamicHelperCostanti {
 		deleteField(LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI,LABEL_CONFIGURAZIONE_INFO_TRASPORTO_XPATH_SOAP); // elimino xpath su soap
 	}
 	public static List<String> getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI(boolean modi, boolean fruizione, boolean forceNoSecToken) {
-		if(forceNoSecToken || !modi || fruizione) {
+		//if(forceNoSecToken || !modi || fruizione) {
+		if(forceNoSecToken) {
 			List<String> l = new ArrayList<String>();
 			l.addAll(LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI);
 			deleteField(l, LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SECURITY_TOKEN);
@@ -474,7 +483,8 @@ public class DynamicHelperCostanti {
 		deleteField(LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI,LABEL_CONFIGURAZIONE_INFO_TRASPORTO_JSONPATH); // elimino json path
 	}
 	public static List<String> getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI(boolean modi, boolean fruizione, boolean forceNoSecToken) {
-		if(forceNoSecToken || !modi || fruizione) {
+		//if(forceNoSecToken || !modi || fruizione) {
+		if(forceNoSecToken) {
 			List<String> l = new ArrayList<String>();
 			l.addAll(LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI);
 			deleteField(l, LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SECURITY_TOKEN);
@@ -498,7 +508,8 @@ public class DynamicHelperCostanti {
 		deleteField(LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI,LABEL_CONFIGURAZIONE_INFO_TRASPORTO_FORM_VALUES); // elimino form values
 	}
 	public static List<String> getLABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI(boolean modi, boolean fruizione, boolean forceNoSecToken) {
-		if(forceNoSecToken || !modi || fruizione) {
+		//if(forceNoSecToken || !modi || fruizione) {
+		if(forceNoSecToken) {
 			List<String> l = new ArrayList<String>();
 			l.addAll(LABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI);
 			deleteField(l, LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SECURITY_TOKEN);
@@ -551,7 +562,8 @@ public class DynamicHelperCostanti {
 		deleteField(LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE,LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_XPATH_SOAP); // elimino xpath su soap per la risposta
 	}
 	public static List<String> getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE(boolean modi, boolean fruizione, boolean forceNoSecToken) {
-		if(forceNoSecToken || !modi || fruizione) {
+		//if(forceNoSecToken || !modi || fruizione) {
+		if(forceNoSecToken) {
 			List<String> l = new ArrayList<String>();
 			l.addAll(LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE);
 			deleteField(l, LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SECURITY_TOKEN);
@@ -571,7 +583,8 @@ public class DynamicHelperCostanti {
 		deleteField(LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE,LABEL_CONFIGURAZIONE_INFO_TRASPORTO_RESPONSE_JSONPATH); // elimino json path per la risposta
 	}
 	public static List<String> getLABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE(boolean modi, boolean fruizione, boolean forceNoSecToken) {
-		if(forceNoSecToken || !modi || fruizione) {
+		///if(forceNoSecToken || !modi || fruizione) {
+		if(forceNoSecToken) {
 			List<String> l = new ArrayList<String>();
 			l.addAll(LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE);
 			deleteField(l, LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SECURITY_TOKEN);
@@ -683,7 +696,7 @@ public class DynamicHelperCostanti {
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_TRASPORTO_CONTEXT = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT+":FIELD}</b>: permette di accedere ai dati della richiesta http; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_URL_PROTOCOL_CONTEXT_OBJECT+"' (es. per il principal usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT+":credential.principal})";
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_BUSTA = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_BUSTA_OBJECT+":FIELD}</b>: permette di utilizzare informazioni generiche del profilo; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_BUSTA_OBJECT+"' (es. per il mittente usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_BUSTA_OBJECT+":mittente})";
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_PROPERTY_BUSTA = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_BUSTA_PROPERTY+":NAME}</b>: permette di riferire informazioni specifiche del profilo presenti nella traccia (es. identificativo SDI). Il valore 'NAME' indica il nome della proprietà da utilizzare";
-	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SECURITY_TOKEN = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SECURITY_TOKEN+":FIELD}</b>: permette di accedere ai security token presenti nella richiesta; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_SECURITY_TOKEN+"' (es. per accedere al CN del certificato presente nel token 'Authorization' usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SECURITY_TOKEN+":authorization.certificate.subject.info(CN)})";
+	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SECURITY_TOKEN = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SECURITY_TOKEN+":FIELD}</b>: permette di accedere alle informazioni relative ai certificati ed ai security token presenti nella richiesta; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_SECURITY_TOKEN+"' (es. per accedere al CN del certificato presente nel token ModI 'Authorization' usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SECURITY_TOKEN+":authorization.certificate.subject.info(CN)})";
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_API_IMPL_PROPERTY_CONFIG = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_API_IMPL_CONFIG_PROPERTY+":NAME}</b>: permette di accedere alla proprietà, configurata nell'API, con nome 'NAME'";
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_APPLICATIVO_PROPERTY_CONFIG = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_APPLICATIVO_CONFIG_PROPERTY+":NAME}</b>: permette di accedere alla proprietà, configurata nell'applicativo, con nome 'NAME'";
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SOGGETTO_FRUITORE_PROPERTY_CONFIG = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SOGGETTO_FRUITORE_CONFIG_PROPERTY+":NAME}</b>: permette di accedere alla proprietà, configurata nel soggetto fruitore, con nome 'NAME'";
@@ -722,7 +735,7 @@ public class DynamicHelperCostanti {
 			if(fruizione) {
 				deleteField(l, LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_PROPERTY_BUSTA);
 			}
-			deleteField(l, LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SECURITY_TOKEN);
+			//deleteField(l, LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SECURITY_TOKEN);
 			return l;
 		}
 		else {
@@ -759,7 +772,7 @@ public class DynamicHelperCostanti {
 			if(fruizione) {
 				deleteField(l, LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_PROPERTY_BUSTA);
 			}
-			deleteField(l, LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SECURITY_TOKEN);
+			//deleteField(l, LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SECURITY_TOKEN);
 			return l;
 		}
 		else {
@@ -801,7 +814,7 @@ public class DynamicHelperCostanti {
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_TRASPORTO_CONTEXT = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT+":FIELD}</b>: permette di accedere ai dati della richiesta http; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_URL_PROTOCOL_CONTEXT_OBJECT+"' (es. per il principal usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_URL_PROTOCOL_CONTEXT_OBJECT+":credential.principal})";
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_BUSTA = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_BUSTA_OBJECT+":FIELD}</b>: permette di utilizzare informazioni generiche del profilo; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_BUSTA_OBJECT+"' (es. per il mittente usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_BUSTA_OBJECT+":mittente})";
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_PROPERTY_BUSTA = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_BUSTA_PROPERTY+":NAME}</b>: permette di riferire informazioni specifiche del profilo presenti nella traccia (es. identificativo SDI). Il valore 'NAME' indica il nome della proprietà da utilizzare";
-	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SECURITY_TOKEN = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SECURITY_TOKEN+":FIELD}</b>: permette di accedere ai security token presenti nella richiesta; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_SECURITY_TOKEN+"' (es. per accedere al CN del certificato presente nel token 'Authorization' usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SECURITY_TOKEN+":authorization.certificate.subject.info(CN)})";
+	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SECURITY_TOKEN = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SECURITY_TOKEN+":FIELD}</b>: permette di accedere alle informazioni relative ai certificati ed ai security token presenti nella richiesta; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe '"+org.openspcoop2.pdd.core.dynamic.Costanti.TYPE_MAP_SECURITY_TOKEN+"' (es. per accedere al CN del certificato presente nel token ModI 'Authorization' usare ${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SECURITY_TOKEN+":authorization.certificate.subject.info(CN)})";
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_API_IMPL_PROPERTY_CONFIG = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_API_IMPL_CONFIG_PROPERTY+":NAME}</b>: permette di accedere alla proprietà, configurata nell'API, con nome 'NAME'";
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_APPLICATIVO_PROPERTY_CONFIG = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_APPLICATIVO_CONFIG_PROPERTY+":NAME}</b>: permette di accedere alla proprietà, configurata nell'applicativo, con nome 'NAME'";
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SOGGETTO_FRUITORE_PROPERTY_CONFIG = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_SOGGETTO_FRUITORE_CONFIG_PROPERTY+":NAME}</b>: permette di accedere alla proprietà, configurata nel soggetto fruitore, con nome 'NAME'";
@@ -842,7 +855,7 @@ public class DynamicHelperCostanti {
 			if(fruizione) {
 				deleteField(l, LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_PROPERTY_BUSTA);
 			}
-			deleteField(l, LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SECURITY_TOKEN);
+			//deleteField(l, LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SECURITY_TOKEN);
 			return l;
 		}
 		else {
@@ -881,7 +894,7 @@ public class DynamicHelperCostanti {
 			if(fruizione) {
 				deleteField(l, LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_PROPERTY_BUSTA);
 			}
-			deleteField(l, LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SECURITY_TOKEN);
+			//deleteField(l, LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_SECURITY_TOKEN);
 			return l;
 		}
 		else {

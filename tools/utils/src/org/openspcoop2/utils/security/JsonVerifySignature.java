@@ -542,6 +542,12 @@ public class JsonVerifySignature {
 				throw new Exception("Non è stato trovato alcun header che consentisse di recuperare il certificato per effettuare la validazione"+notPermitted);
 			}
 		}
+		else {
+			if(this.x509Certificate==null && provider instanceof org.apache.cxf.rs.security.jose.jws.PublicKeyJwsSignatureVerifier) {
+				org.apache.cxf.rs.security.jose.jws.PublicKeyJwsSignatureVerifier certVer = (org.apache.cxf.rs.security.jose.jws.PublicKeyJwsSignatureVerifier) provider;
+				this.x509Certificate = certVer.getX509Certificate();
+			}
+		}
 		
 		return provider;
 	}

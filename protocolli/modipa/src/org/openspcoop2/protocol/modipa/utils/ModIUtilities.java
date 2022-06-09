@@ -54,12 +54,11 @@ import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
-import org.openspcoop2.protocol.engine.RequestInfo;
+import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.Busta;
-import org.openspcoop2.protocol.sdk.ChannelSecurityToken;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.SecurityToken;
@@ -706,26 +705,6 @@ public class ModIUtilities {
 	}
 	
 	public static SecurityToken newSecurityToken(Context context) {
-		SecurityToken securityTokenForContext = null;
-		if(context.containsKey(org.openspcoop2.core.constants.Costanti.SECURITY_TOKEN)) {
-			securityTokenForContext = (SecurityToken) context.getObject(org.openspcoop2.core.constants.Costanti.SECURITY_TOKEN);
-		}
-		else {
-			securityTokenForContext = new SecurityToken();
-			context.addObject(org.openspcoop2.core.constants.Costanti.SECURITY_TOKEN, securityTokenForContext);
-			
-			if(context.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
-				RequestInfo requestInfo = (RequestInfo) context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
-				if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getCredential()!=null && 
-						requestInfo.getProtocolContext().getCredential().getCertificate()!=null &&
-						requestInfo.getProtocolContext().getCredential().getCertificate().getCertificate()!=null) {
-					ChannelSecurityToken channelSecurityToken = new ChannelSecurityToken();
-					channelSecurityToken.setCertificate(requestInfo.getProtocolContext().getCredential().getCertificate().getCertificate());
-					securityTokenForContext.setChannel(channelSecurityToken);
-				}
-			}
-		}
-		
-		return securityTokenForContext;
+		return SecurityTokenUtilities.newSecurityToken(context);
 	}
 }

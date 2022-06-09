@@ -50,7 +50,7 @@ public class CertificateTest {
 	private final static String ALIAS_2 = "govway_test_2";
 	private final static String ALIAS_3 = "govway_test_3";
 	private final static String PASSWORD = "123456";
-	private final static String PREFIX = "/org/openspcoop2/utils/certificate/test/";
+	public final static String PREFIX = "/org/openspcoop2/utils/certificate/test/";
 	private final static boolean STRICT = true;
 
 	public static void main(String[] args) throws Exception {

@@ -35,6 +35,7 @@ import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.utils.DynamicStringReplace;
 import org.openspcoop2.utils.UtilsException;
@@ -66,6 +67,7 @@ public class FileTraceManager {
 			InformazioniToken informazioniToken,
 			InformazioniAttributi informazioniAttributi,
 			InformazioniNegoziazioneToken informazioniNegoziazioneToken,
+			SecurityToken securityToken,
 			Context context) throws ProtocolException {
 		
 		Messaggio richiestaIngresso = null;
@@ -105,6 +107,7 @@ public class FileTraceManager {
 				informazioniToken,
 				informazioniAttributi,
 				informazioniNegoziazioneToken,
+				securityToken,
 				transaction.getTracciaRichiesta(), transaction.getTracciaRisposta(),
 				transaction.getMsgDiagnostici(),
 				richiestaIngresso, richiestaUscita,
@@ -115,6 +118,7 @@ public class FileTraceManager {
 				informazioniToken,
 				informazioniAttributi,
 				informazioniNegoziazioneToken,
+				securityToken,
 				transaction.getTracciaRichiesta(), transaction.getTracciaRisposta(),
 				transaction.getMsgDiagnostici(),
 				richiestaIngresso, richiestaUscita,

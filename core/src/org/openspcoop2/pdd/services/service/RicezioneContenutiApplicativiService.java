@@ -86,6 +86,7 @@ import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativiContext;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
 import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
 import org.openspcoop2.protocol.engine.RequestInfo;
+import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -708,6 +709,16 @@ public class RicezioneContenutiApplicativiService {
 					}
 				}
 				
+				/* --------------- SecurityToken --------------- */
+				try {
+					if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getCredential()!=null && 
+							requestInfo.getProtocolContext().getCredential().getCertificate()!=null &&
+							requestInfo.getProtocolContext().getCredential().getCertificate().getCertificate()!=null) {
+						SecurityTokenUtilities.newSecurityToken(pddContext);
+					}
+				}catch(Exception e){
+					logCore.error("Costruzione SecurityToken non riuscito: "+e.getMessage(),e);
+				}
 							
 				/* ------------  Elaborazione ------------- */
 			

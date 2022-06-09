@@ -95,9 +95,12 @@ import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.engine.RequestInfo;
+import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
+import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.security.keystore.JWKSetStore;
 import org.openspcoop2.security.keystore.MerlinKeystore;
@@ -106,6 +109,7 @@ import org.openspcoop2.security.message.jose.JOSEUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
@@ -740,7 +744,7 @@ public class GestoreToken {
 		EsitoGestioneToken esitoGestioneToken = null;
 		
 		if(GestoreToken.cacheToken==null){
-			esitoGestioneToken = _validazioneJWTToken(log, datiInvocazione, token, portaDelegata);
+			esitoGestioneToken = _validazioneJWTToken(log, datiInvocazione, token, portaDelegata, pddContext);
 		}
     	else{
     		String funzione = VALIDAZIONE_JWT_FUNCTION;
@@ -787,7 +791,7 @@ public class GestoreToken {
 					if(esitoGestioneToken==null) {
 						// Effettuo la query
 						GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
-						esitoGestioneToken = _validazioneJWTToken(log, datiInvocazione, token, portaDelegata);
+						esitoGestioneToken = _validazioneJWTToken(log, datiInvocazione, token, portaDelegata, pddContext);
 							
 						// Aggiungo la risposta in cache (se esiste una cache)	
 						// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -824,7 +828,7 @@ public class GestoreToken {
 		return esitoGestioneToken;
 	}
 	
-	private static EsitoGestioneToken _validazioneJWTToken(Logger log, AbstractDatiInvocazione datiInvocazione, String token, boolean portaDelegata) {
+	private static EsitoGestioneToken _validazioneJWTToken(Logger log, AbstractDatiInvocazione datiInvocazione, String token, boolean portaDelegata, PdDContext pddContext) {
 		EsitoGestioneToken esitoGestioneToken = null;
 		if(portaDelegata) {
 			esitoGestioneToken = new EsitoGestioneTokenPortaDelegata();
@@ -856,6 +860,13 @@ public class GestoreToken {
     				jsonCompactVerify = new JsonVerifySignature(p, options);
     				if(jsonCompactVerify.verify(token)) {
     					informazioniToken = new InformazioniToken(SorgenteInformazioniToken.JWT,jsonCompactVerify.getDecodedPayload(),tokenParser);
+    					if(jsonCompactVerify.getX509Certificate()!=null && pddContext!=null) {
+    						SecurityToken securityToken = SecurityTokenUtilities.newSecurityToken(pddContext);
+    						RestMessageSecurityToken restSecurityToken = new RestMessageSecurityToken();
+    						restSecurityToken.setCertificate(new CertificateInfo(jsonCompactVerify.getX509Certificate(), "access_token"));
+    						restSecurityToken.setToken(token);	
+    						securityToken.setAccessToken(restSecurityToken);
+    					}
     				}
     				else {
     					detailsError = "Token non valido";

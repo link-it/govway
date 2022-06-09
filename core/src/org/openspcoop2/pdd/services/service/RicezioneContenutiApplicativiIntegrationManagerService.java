@@ -80,6 +80,7 @@ import org.openspcoop2.pdd.services.skeleton.IntegrationManagerUtility;
 import org.openspcoop2.pdd.services.skeleton.ProtocolHeaderInfo;
 import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
 import org.openspcoop2.protocol.engine.RequestInfo;
+import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.constants.IDService;
@@ -777,6 +778,18 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			context.setProprietaErroreAppl(generatoreErrore.getProprietaErroreAppl());
 			if(context.getMsgDiagnostico()==null) {
 				context.setMsgDiagnostico(msgDiag);
+			}
+			
+			
+			/* --------------- SecurityToken --------------- */
+			try {
+				if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getCredential()!=null && 
+						requestInfo.getProtocolContext().getCredential().getCertificate()!=null &&
+						requestInfo.getProtocolContext().getCredential().getCertificate().getCertificate()!=null) {
+					SecurityTokenUtilities.newSecurityToken(context.getPddContext());
+				}
+			}catch(Exception e){
+				logCore.error("Costruzione SecurityToken non riuscito: "+e.getMessage(),e);
 			}
 			
 			// Log elaborazione dati completata
