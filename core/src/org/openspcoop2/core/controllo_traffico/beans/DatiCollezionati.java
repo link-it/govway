@@ -77,7 +77,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	private TipoFinestra policyDateWindowInterval = null;
 	protected Boolean policyRealtime  = null;
 	// dati dinamici
-	private Date policyDate = null;
+	protected Date policyDate = null;
 	private Long policyRequestCounter = null;
 	private Long policyCounter = null; // utilizzato per tempi o banda
 	private Long policyDenyRequestCounter = null;
@@ -1327,7 +1327,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		return latenza;
 	}
 	
-	private long getBanda(TipoBanda tipoBanda, MisurazioniTransazione dati){
+	protected long getBanda(TipoBanda tipoBanda, MisurazioniTransazione dati){
 		
 		long bandaInterna = 0;
 		long bandaEsterna = 0;

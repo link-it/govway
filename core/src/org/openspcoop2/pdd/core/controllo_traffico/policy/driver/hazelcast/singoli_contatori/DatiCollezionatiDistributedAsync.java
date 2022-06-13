@@ -1,4 +1,4 @@
-package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast;
+package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.singoli_contatori;
 
 import java.util.Date;
 
@@ -26,7 +26,7 @@ public class DatiCollezionatiDistributedAsync extends DatiCollezionatiDistribute
 	}
 
 	// TODO: Anche questo può sballare?
-	@Override
+	/*@Override
 	protected void initDatiIniziali(ActivePolicy activePolicy){
 		super.initDatiIniziali(activePolicy);
 		
@@ -222,6 +222,6 @@ public class DatiCollezionatiDistributedAsync extends DatiCollezionatiDistribute
 	public Long getPolicyDegradoPrestazionaleCounter() {
 		return this.policyDegradoPrestazionaleCounter.get();
 	}
-
+*/
 
 }

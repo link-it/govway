@@ -190,6 +190,8 @@ public class Constants {
 	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE = "local-cache";
 	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC = "remote-sync";
 	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC = "remote-async";
+	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_SINGOLI= "contatori-singoli";
+
 	
 	public final static String VALUE_MODALITA_TIPOLOGIA_REDIS_REDDISSON = "redisson-map";
 	

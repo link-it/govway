@@ -76,6 +76,11 @@ public class RestGestorePolicyTest extends ConfigLoader {
 		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP);
 	}
 	
+	@Test
+	public void richiestePerMinutoDefaultErogazione_hazelcast_contatoriSingoli() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_PUNTUALE_NOLOCK);
+	}
+	
 	
 	
 	

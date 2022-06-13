@@ -1,4 +1,4 @@
-package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast;
+package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.singoli_contatori;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -14,6 +14,7 @@ import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreadsInMemory;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.TipoDatiCollezionati;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
@@ -244,6 +245,10 @@ public class PolicyGroupByActiveThreadsDistributedPuntuale  implements Serializa
 					bf.append("Criterio di Collezionamento dei Dati\n");
 					bf.append(datiGroupBy.toString(true));
 					bf.append("\n");
+					// Sincronizzo i contatori in ram.
+					// DatiCollezionatiDistributed dati = (DatiCollezionatiDistributed) this.mapActiveThreads.get(datiGroupBy);
+					// dati.synchCounters();
+					
 					this.mapActiveThreads.get(datiGroupBy).checkDate(log, this.activePolicy); // imposta correttamente gli intervalli
 					bf.append(this.mapActiveThreads.get(datiGroupBy).toString());
 					bf.append("\n");
