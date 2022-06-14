@@ -11,8 +11,10 @@ import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupBy;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
+import org.openspcoop2.core.controllo_traffico.driver.CostantiControlloTraffico;
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreadsInMemory;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.TipoDatiCollezionati;
 import org.openspcoop2.protocol.utils.EsitiProperties;
@@ -242,6 +244,8 @@ public class PolicyGroupByActiveThreadsDistributedPuntuale  implements Serializa
 				for (IDUnivocoGroupByPolicy datiGroupBy : this.mapActiveThreads.keySet()) {
 					bf.append(separatorGroups);
 					bf.append("\n");
+					bf.append(CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE).append(" ").append(PolicyGroupByActiveThreadsType.HAZELCAST_PUNTUALE.toLabel());
+					bf.append("\n");
 					bf.append("Criterio di Collezionamento dei Dati\n");
 					bf.append(datiGroupBy.toString(true));
 					bf.append("\n");
@@ -272,7 +276,7 @@ public class PolicyGroupByActiveThreadsDistributedPuntuale  implements Serializa
 
 		try {
 			for (var e : this.mapActiveThreads.entrySet()) {
-				DatiCollezionatiDistributed dati = (DatiCollezionatiDistributed) e.getValue();
+				IDatiCollezionatiDistributed dati = (IDatiCollezionatiDistributed) e.getValue();
 				dati.destroyDatiDistribuiti();
 			}
 		} 	finally {

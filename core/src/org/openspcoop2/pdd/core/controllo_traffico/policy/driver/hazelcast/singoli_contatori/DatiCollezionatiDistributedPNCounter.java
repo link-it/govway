@@ -31,7 +31,7 @@ import com.hazelcast.crdt.pncounter.PNCounter;
  * 	- Altre inconsistenze non ne vedo 
  *
  */
-public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati {
+public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati implements IDatiCollezionatiDistributed {
 
 	
 	private static final long serialVersionUID = 1L;
@@ -160,7 +160,7 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati {
 		Long curDate = super.getPolicyDate() == null ? 0 : super.getPolicyDate().getTime();
 		
 		if (this.distributedPolicyDate.compareAndSet(curDate, date.getTime())) {
-			finalDate = super.getPolicyDate().getTime();
+			finalDate = date.getTime();
 		} else {
 			finalDate = this.distributedPolicyDate.get();
 		}
@@ -453,6 +453,19 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati {
 			this.distributedPolicyDegradoPrestazionaleCounter.subtractAndGet(this.distributedPolicyDegradoPrestazionaleCounter.get());
 		}
 		
+	}
+	
+	
+	@Override
+	public void destroyDatiDistribuiti() {
+		this.distributedUpdatePolicyDate.destroy();
+		
+		this.distributedPolicyRequestCounter.destroy();	
+		this.distributedPolicyCounter.destroy();
+		
+		this.distributedPolicyDegradoPrestazionaleDate.destroy();	
+		this.distributedPolicyDegradoPrestazionaleRequestCounter.destroy();
+		this.distributedPolicyDegradoPrestazionaleCounter.destroy();
 	}
 	
 	

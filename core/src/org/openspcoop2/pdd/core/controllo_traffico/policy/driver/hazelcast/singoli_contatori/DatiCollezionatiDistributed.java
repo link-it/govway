@@ -26,7 +26,7 @@ import com.hazelcast.cp.IAtomicLong;
  * @author Francesco Scarlato
  *
  */
-public class DatiCollezionatiDistributed extends DatiCollezionati {
+public class DatiCollezionatiDistributed extends DatiCollezionati implements IDatiCollezionatiDistributed{
 
 	private static final long serialVersionUID = 1L;
 	
@@ -181,7 +181,7 @@ public class DatiCollezionatiDistributed extends DatiCollezionati {
 		// this.updatePolicyDate = activePolicy.getInstanceConfiguration().getUpdateTime();
 	}
 	
-	
+	@Override
 	public void destroyDatiDistribuiti() {
 		this.distributedUpdatePolicyDate.destroy();
 		
