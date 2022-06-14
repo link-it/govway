@@ -51,7 +51,7 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati {
 	protected PNCounter distributedPolicyDegradoPrestazionaleCounter;
 	
 	private String getDistributedName(String name) {
-		return "pncounter-"+name+"-rl";
+		return "pncounter-"+this.uniquePrefixId+name+"-rl";
 	}
 	
 	public DatiCollezionatiDistributedPNCounter(Date updatePolicyDate, HazelcastInstance hazelcast, String uniquePrefixId) {
@@ -156,38 +156,53 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati {
 	@Override
 	protected void resetPolicyCounterForDate(Date date) {
 		
-		this.distributedPolicyDate.set(date.getTime());
+		Long finalDate;
+		Long curDate = super.getPolicyDate() == null ? 0 : super.getPolicyDate().getTime();
+		
+		if (this.distributedPolicyDate.compareAndSet(curDate, date.getTime())) {
+			finalDate = super.getPolicyDate().getTime();
+		} else {
+			finalDate = this.distributedPolicyDate.get();
+		}
 		
 		// Prendo i nuovi contatori
 		if(this.policyRealtime!=null && this.policyRealtime){
 			this.distributedPolicyRequestCounter = this.hazelcast.getPNCounter(this.getDistributedName(
-					"policyRequestCounter"+date.getTime()));
+					"policyRequestCounter"+finalDate));
 			
 			if(this.tipoRisorsa==null || !isRisorsaContaNumeroRichieste(this.tipoRisorsa)){
 				this.distributedPolicyCounter = this.hazelcast.getPNCounter(this.getDistributedName(
-						"policyCounter"+date.getTime()));
+						"policyCounter"+finalDate));
 			}
 		}
 				
 		
-		super.resetPolicyCounterForDate(date);
+		super.resetPolicyCounterForDate(new Date(finalDate));
 	}
 	
 	
 	@Override
 	protected void resetPolicyCounterForDateDegradoPrestazionale(Date date) {
 		
-		this.distributedPolicyDegradoPrestazionaleDate.set(date.getTime());
+		Long finalDate;
+		Long curDate = super.getPolicyDegradoPrestazionaleDate() == null ? 0 : super.getPolicyDegradoPrestazionaleDate().getTime();
+
+		
+		if (this.distributedPolicyDegradoPrestazionaleDate.compareAndSet(curDate, date.getTime())) {
+			finalDate = date.getTime();
+		} else {
+			finalDate = this.distributedPolicyDegradoPrestazionaleDate.get();
+		}
 		
 		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
 			this.distributedPolicyDegradoPrestazionaleCounter = this.hazelcast.getPNCounter(this.getDistributedName(
-					"distributedPolicyDegradoPrestazionaleCounter"+date.getTime()));
+					"distributedPolicyDegradoPrestazionaleCounter"+finalDate));
 			
 			this.distributedPolicyDegradoPrestazionaleRequestCounter = this.hazelcast.getPNCounter(this.getDistributedName(
-					"distributedPolicyDegradoPrestazionaleRequestCounter"+date.getTime()));
+					"distributedPolicyDegradoPrestazionaleRequestCounter"+finalDate));
 		}
 		
-		super.resetPolicyCounterForDateDegradoPrestazionale(date);
+		super.resetPolicyCounterForDateDegradoPrestazionale(new Date(finalDate));
 	}
 	
 	
@@ -421,11 +436,22 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati {
 			this.distributedUpdatePolicyDate.set(updatePolicyDate.getTime());
 		}
 		
-		this.distributedPolicyRequestCounter.subtractAndGet(this.distributedPolicyRequestCounter.get());
-		this.distributedPolicyCounter.subtractAndGet(this.distributedPolicyCounter.get());
 		
-		this.distributedPolicyDegradoPrestazionaleRequestCounter.subtractAndGet(this.distributedPolicyDegradoPrestazionaleRequestCounter.get());
-		this.distributedPolicyDegradoPrestazionaleCounter.subtractAndGet(this.distributedPolicyDegradoPrestazionaleCounter.get());
+		if (this.distributedPolicyRequestCounter != null)  {
+			this.distributedPolicyRequestCounter.subtractAndGet(this.distributedPolicyRequestCounter.get());
+		}
+		
+		if (this.distributedPolicyCounter != null) {
+			this.distributedPolicyCounter.subtractAndGet(this.distributedPolicyCounter.get());
+		}
+		
+		if (this.distributedPolicyDegradoPrestazionaleRequestCounter != null) {
+				this.distributedPolicyDegradoPrestazionaleRequestCounter.subtractAndGet(this.distributedPolicyDegradoPrestazionaleRequestCounter.get());
+		}
+		
+		if (this.distributedPolicyDegradoPrestazionaleCounter != null) {
+			this.distributedPolicyDegradoPrestazionaleCounter.subtractAndGet(this.distributedPolicyDegradoPrestazionaleCounter.get());
+		}
 		
 	}
 	
