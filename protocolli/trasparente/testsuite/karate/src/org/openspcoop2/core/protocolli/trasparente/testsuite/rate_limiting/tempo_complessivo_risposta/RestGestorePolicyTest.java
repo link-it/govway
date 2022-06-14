@@ -75,6 +75,10 @@ public class RestGestorePolicyTest extends ConfigLoader {
 	public void perMinutoErogazione_hazelcast_nearCache_putAsync() throws Exception {
 		this.restTest.perMinutoErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP);
 	}
+	@Test
+	public void perMinutoDefaultErogazione_hazelcast_contatoriSingoli() throws Exception {
+		this.restTest.perMinutoErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_PUNTUALE);
+	}
 	
 	
 	
@@ -111,5 +115,10 @@ public class RestGestorePolicyTest extends ConfigLoader {
 	public void perMinutoFruizione_hazelcast_nearCache_putAsync() throws Exception {
 		this.restTest.perMinutoFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP);
 	}
+	@Test
+	public void perMinutoDefaultFruizione_hazelcast_contatoriSingoli() throws Exception {
+		this.restTest.perMinutoFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_PUNTUALE);
+	}
+	
 	
 }

@@ -61,7 +61,6 @@ import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.Polic
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedNoCache;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.TipoDatiCollezionati;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.singoli_contatori.PolicyGroupByActiveThreadsDistributedPuntuale;
-import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.singoli_contatori.PolicyGroupByActiveThreadsDistributedPuntualeNoLock;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.PolicyGroupByActiveThreadsDistributedRedis;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.RedissonManager;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
@@ -135,7 +134,6 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 		case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
 		case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
 		case HAZELCAST_PUNTUALE:
-		case HAZELCAST_PUNTUALE_NOLOCK:
 			HazelcastManager.getInstance(this.type);
 			break;
 		case HAZELCAST_LOCAL_CACHE:
@@ -774,11 +772,6 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
               TipoDatiCollezionati tipoDati = OpenSPCoop2Properties.getInstance().getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeTipoDatiCollezionati();
               return new PolicyGroupByActiveThreadsDistributedPuntuale(activePolicy, uniqueIdMap, HazelcastManager.getInstance(this.type), tipoDati);
       }
-      case HAZELCAST_PUNTUALE_NOLOCK: {
-              TipoDatiCollezionati tipoDati = OpenSPCoop2Properties.getInstance().getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeTipoDatiCollezionati();
-              return new PolicyGroupByActiveThreadsDistributedPuntualeNoLock(activePolicy, uniqueIdMap, HazelcastManager.getInstance(this.type), tipoDati);
-      }
-
 		case REDISSON:
 			return new PolicyGroupByActiveThreadsDistributedRedis(activePolicy, uniqueIdMap, RedissonManager.getRedissonClient());
 		}

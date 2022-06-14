@@ -190,7 +190,6 @@ public class DbUtils {
     			case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
     			case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
     			case HAZELCAST_PUNTUALE:
-    			case HAZELCAST_PUNTUALE_NOLOCK:
     				map.put(Constants.MODALITA_IMPLEMENTAZIONE, Constants.VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST);
     				break;
     			case REDISSON:
@@ -223,9 +222,9 @@ public class DbUtils {
     				map.put(Constants.MODALITA_CONTATORI, Constants.VALUE_MODALITA_CONTATORI_APPROXIMATED);
     				map.put(Constants.MODALITA_TIPOLOGIA, Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC);
     				break;
-    			case HAZELCAST_PUNTUALE_NOLOCK:
+    			case HAZELCAST_PUNTUALE:
     				map.put(Constants.MODALITA_CONTATORI, Constants.VALUE_MODALITA_CONTATORI_EXACT);
-    				map.put(Constants.MODALITA_TIPOLOGIA, Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC);
+    				map.put(Constants.MODALITA_TIPOLOGIA, Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_SINGOLI);
     			default:
     				break;
     			}

@@ -75,10 +75,9 @@ public class RestGestorePolicyTest extends ConfigLoader {
 	public void richiestePerMinutoDefaultErogazione_hazelcast_nearCache_putAsync() throws Exception {
 		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP);
 	}
-	
 	@Test
 	public void richiestePerMinutoDefaultErogazione_hazelcast_contatoriSingoli() throws Exception {
-		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_PUNTUALE_NOLOCK);
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_PUNTUALE);
 	}
 	
 	
@@ -116,6 +115,11 @@ public class RestGestorePolicyTest extends ConfigLoader {
 	public void richiestePerMinutoDefaultFruizione_hazelcast_nearCache_putAsync() throws Exception {
 		this.restTest.richiestePerMinutoDefaultFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP);
 	}
+	@Test
+	public void richiestePerMinutoDefaultFruizione_hazelcast_contatoriSingoli() throws Exception {
+		this.restTest.richiestePerMinutoDefaultFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_PUNTUALE);
+	}
+	
 	
 	
 	
@@ -152,6 +156,10 @@ public class RestGestorePolicyTest extends ConfigLoader {
 	public void richiesteSimultaneeErogazione_hazelcast_nearCache_putAsync() throws Exception {
 		this.restTest.richiesteSimultaneeErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP);
 	}
+	@Test
+	public void richiesteSimultaneeErogazione_hazelcast_contatoriSingoli() throws Exception {
+		this.restTest.richiesteSimultaneeErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_PUNTUALE);
+	}
 	
 	
 	
@@ -187,5 +195,9 @@ public class RestGestorePolicyTest extends ConfigLoader {
 	@Test
 	public void richiesteSimultaneeFruizione_hazelcast_nearCache_putAsync() throws Exception {
 		this.restTest.richiesteSimultaneeFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP);
+	}
+	@Test
+	public void richiesteSimultaneeFruizione_hazelcast_contatoriSingoli() throws Exception {
+		this.restTest.richiesteSimultaneeFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_PUNTUALE);
 	}
 }

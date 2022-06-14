@@ -50,16 +50,19 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati {
 	protected  PNCounter distributedPolicyDegradoPrestazionaleRequestCounter;
 	protected PNCounter distributedPolicyDegradoPrestazionaleCounter;
 	
+	private String getDistributedName(String name) {
+		return "pncounter-"+name+"-rl";
+	}
 	
 	public DatiCollezionatiDistributedPNCounter(Date updatePolicyDate, HazelcastInstance hazelcast, String uniquePrefixId) {
 		super(updatePolicyDate);
 	
 		this.hazelcast = hazelcast;
-		this.uniquePrefixId = "pncounter-"+uniquePrefixId+"-rate-limiting";
+		this.uniquePrefixId = uniquePrefixId;
 		
-		this.distributedPolicyDate = hazelcast.getCPSubsystem().getAtomicLong(this.uniquePrefixId+"-distributedPolicyDate");
-		this.distributedUpdatePolicyDate = hazelcast.getCPSubsystem().getAtomicLong(this.uniquePrefixId+"-distributedUpdatePolicyDate");
-		this.distributedPolicyDegradoPrestazionaleDate = hazelcast.getCPSubsystem().getAtomicLong(this.uniquePrefixId+"-distributedPolicyDegradoPrestazionaleDate");
+		this.distributedPolicyDate = hazelcast.getCPSubsystem().getAtomicLong(this.getDistributedName("distributedPolicyDate"));
+		this.distributedUpdatePolicyDate = hazelcast.getCPSubsystem().getAtomicLong(this.getDistributedName("distributedUpdatePolicyDate"));
+		this.distributedPolicyDegradoPrestazionaleDate = hazelcast.getCPSubsystem().getAtomicLong(this.getDistributedName("distributedPolicyDegradoPrestazionaleDate"));
 	}
 	
 	
@@ -82,11 +85,11 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati {
 				// Se la data distribuita non era inizializzata e questo nodo l'ha settata, imposto i contatori come da immagine bin.
 				//	Faccio la addAndGet, in quanto tutti valori positivi, non entriamo in conflitto con gli altri nodi che stanno effettuando lo startup nello stesso momento
 				
-				this.distributedPolicyCounter = this.hazelcast.getPNCounter(
-						this.uniquePrefixId+"-distributedPolicyCounter"+super.getPolicyDate().getTime());
+				this.distributedPolicyCounter = this.hazelcast.getPNCounter(this.getDistributedName(
+						"distributedPolicyCounter"+super.getPolicyDate().getTime()));
 				
-				this.distributedPolicyRequestCounter = this.hazelcast.getPNCounter(
-						this.uniquePrefixId+"-distributedPolicyRequestCounter"+super.getPolicyDate().getTime());
+				this.distributedPolicyRequestCounter = this.hazelcast.getPNCounter(this.getDistributedName(
+						"distributedPolicyRequestCounter"+super.getPolicyDate().getTime())) ;
 				
 				if (super.getPolicyRequestCounter() != null) {
 					this.distributedPolicyRequestCounter.addAndGet(super.getPolicyRequestCounter());
@@ -98,11 +101,11 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati {
 								
 			} else {
 				Long polDate = this.distributedPolicyDate.get();
-				this.distributedPolicyCounter = this.hazelcast.getPNCounter(
-						this.uniquePrefixId+"-distributedPolicyCounter"+polDate);
+				this.distributedPolicyCounter = this.hazelcast.getPNCounter(this.getDistributedName(
+						"distributedPolicyCounter"+polDate));
 				
-				this.distributedPolicyRequestCounter = this.hazelcast.getPNCounter(
-						this.uniquePrefixId+"-distributedPolicyRequestCounter"+polDate);
+				this.distributedPolicyRequestCounter = this.hazelcast.getPNCounter(this.getDistributedName(
+						"distributedPolicyRequestCounter"+polDate));
 			}
 		}
 		
@@ -114,11 +117,11 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati {
 				
 				Long degradoPrestazionaleTime = super.getPolicyDegradoPrestazionaleDate().getTime();
 				
-				this.distributedPolicyDegradoPrestazionaleCounter = this.hazelcast.getPNCounter(
-						this.uniquePrefixId+"-distributedPolicyDegradoPrestazionaleCounter"+degradoPrestazionaleTime);
+				this.distributedPolicyDegradoPrestazionaleCounter = this.hazelcast.getPNCounter(this.getDistributedName(
+						"distributedPolicyDegradoPrestazionaleCounter"+degradoPrestazionaleTime));
 				
-				this.distributedPolicyDegradoPrestazionaleRequestCounter = this.hazelcast.getPNCounter(
-						this.uniquePrefixId+"-distributedPolicyDegradoPrestazionaleRequestCounter"+degradoPrestazionaleTime);
+				this.distributedPolicyDegradoPrestazionaleRequestCounter = this.hazelcast.getPNCounter(this.getDistributedName(
+						"distributedPolicyDegradoPrestazionaleRequestCounter"+degradoPrestazionaleTime));
 				
 				if (super.getPolicyDegradoPrestazionaleRequestCounter() != null) {
 					this.distributedPolicyDegradoPrestazionaleRequestCounter.addAndGet(super.getPolicyDegradoPrestazionaleRequestCounter());
@@ -129,11 +132,11 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati {
 				}
 			}  else {
 				Long degradoPrestazionaleTime = this.distributedPolicyDate.get();
-				this.distributedPolicyDegradoPrestazionaleCounter = this.hazelcast.getPNCounter(
-						this.uniquePrefixId+"-distributedPolicyDegradoPrestazionaleCounter"+degradoPrestazionaleTime);
+				this.distributedPolicyDegradoPrestazionaleCounter = this.hazelcast.getPNCounter(this.getDistributedName(
+						"distributedPolicyDegradoPrestazionaleCounter"+degradoPrestazionaleTime));
 				
-				this.distributedPolicyDegradoPrestazionaleRequestCounter = this.hazelcast.getPNCounter(
-						this.uniquePrefixId+"-distributedPolicyDegradoPrestazionaleRequestCounter"+degradoPrestazionaleTime);
+				this.distributedPolicyDegradoPrestazionaleRequestCounter = this.hazelcast.getPNCounter(this.getDistributedName(
+						"distributedPolicyDegradoPrestazionaleRequestCounter"+degradoPrestazionaleTime));
 			}
 		}
 		
@@ -157,12 +160,12 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati {
 		
 		// Prendo i nuovi contatori
 		if(this.policyRealtime!=null && this.policyRealtime){
-			this.distributedPolicyRequestCounter = this.hazelcast.getPNCounter(
-					this.uniquePrefixId+"-policyRequestCounter"+date.getTime());
+			this.distributedPolicyRequestCounter = this.hazelcast.getPNCounter(this.getDistributedName(
+					"policyRequestCounter"+date.getTime()));
 			
 			if(this.tipoRisorsa==null || !isRisorsaContaNumeroRichieste(this.tipoRisorsa)){
-				this.distributedPolicyCounter = this.hazelcast.getPNCounter(
-						this.uniquePrefixId+"-policyCounter"+date.getTime());
+				this.distributedPolicyCounter = this.hazelcast.getPNCounter(this.getDistributedName(
+						"policyCounter"+date.getTime()));
 			}
 		}
 				
@@ -177,11 +180,11 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati {
 		this.distributedPolicyDegradoPrestazionaleDate.set(date.getTime());
 		
 		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
-			this.distributedPolicyDegradoPrestazionaleCounter = this.hazelcast.getPNCounter(
-					this.uniquePrefixId+"-distributedPolicyDegradoPrestazionaleCounter"+date.getTime());
+			this.distributedPolicyDegradoPrestazionaleCounter = this.hazelcast.getPNCounter(this.getDistributedName(
+					"distributedPolicyDegradoPrestazionaleCounter"+date.getTime()));
 			
-			this.distributedPolicyDegradoPrestazionaleRequestCounter = this.hazelcast.getPNCounter(
-					this.uniquePrefixId+"-distributedPolicyDegradoPrestazionaleRequestCounter"+date.getTime());
+			this.distributedPolicyDegradoPrestazionaleRequestCounter = this.hazelcast.getPNCounter(this.getDistributedName(
+					"distributedPolicyDegradoPrestazionaleRequestCounter"+date.getTime()));
 		}
 		
 		super.resetPolicyCounterForDateDegradoPrestazionale(date);

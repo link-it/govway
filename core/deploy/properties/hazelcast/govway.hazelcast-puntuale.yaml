@@ -1,11 +1,6 @@
 hazelcast:
   cluster-name: dev
 
-  serialization:
-    serializers:
-      - type-class: org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy
-        class-name: org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.IDUnivocoGroupByPolicyStreamSerializer
-
   pn-counter:
-    "pncounter-*-rate-limiting":
+    "pncounter-*-rl":
       statistics-enabled: false

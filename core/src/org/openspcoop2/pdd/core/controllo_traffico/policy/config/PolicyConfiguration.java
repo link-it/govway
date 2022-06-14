@@ -240,6 +240,9 @@ public class PolicyConfiguration implements Serializable {
 						else if(Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE.equals(this.engineType)) {
 							this.type = PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE;
 						}
+						else if(Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_SINGOLI.equals(this.engineType)) {
+							this.type = PolicyGroupByActiveThreadsType.HAZELCAST_PUNTUALE;
+						}
 					}
 					else if(Constants.VALUE_MODALITA_CONTATORI_APPROXIMATED.equals(this.count)) {
 						if(Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC.equals(this.engineType)) {
@@ -295,6 +298,8 @@ public class PolicyConfiguration implements Serializable {
 			case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
 				break;
 			case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
+				break;
+			case HAZELCAST_PUNTUALE:
 				break;
 			case REDISSON:
 				break;
