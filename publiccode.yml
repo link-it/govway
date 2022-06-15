@@ -75,7 +75,10 @@ description:
       semplici dati binari su Http.
 
       - Conformità alle specifiche italiane per l'interoperabilità: supporto
-      delle nuove linee guida per l'interoperabilità di AGID (ModI).
+      delle nuove linee guida AGID di l'interoperabilità, sia per i profili
+      tecnici previsti dal nuovo modello di interoperabilità (ModI), sia per la
+      gestione dei token rilasciati dalla PDND (signed JWT, purposeId,
+      sessionInfo).
 
       - Conformità alle specifiche dell'interoperabilità europea: supporto
       del protocollo AS4, tramite integrazione con il Building Block
@@ -141,3 +144,4 @@ softwareVersion: 3.3.7
 url: 'https://github.com/link-it/govway'
 usedBy:
   - MISE - Ministero dello Sviluppo Economico
+  - CSI Piemonte
