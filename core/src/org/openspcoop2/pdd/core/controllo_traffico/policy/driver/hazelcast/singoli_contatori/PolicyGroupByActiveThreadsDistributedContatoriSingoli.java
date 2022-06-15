@@ -32,7 +32,7 @@ import com.hazelcast.core.HazelcastInstance;
  *
  */
 
-public class PolicyGroupByActiveThreadsDistributedPuntuale  implements Serializable,IPolicyGroupByActiveThreadsInMemory {
+public class PolicyGroupByActiveThreadsDistributedContatoriSingoli  implements Serializable,IPolicyGroupByActiveThreadsInMemory {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -48,7 +48,7 @@ public class PolicyGroupByActiveThreadsDistributedPuntuale  implements Serializa
 	private final ActivePolicy activePolicy;
 	private final TipoDatiCollezionati tipoDatiCollezionati;
 
-	public PolicyGroupByActiveThreadsDistributedPuntuale(ActivePolicy activePolicy, String uniqueMapId, HazelcastInstance hazelcast, TipoDatiCollezionati tipoDatiCollezionati) {
+	public PolicyGroupByActiveThreadsDistributedContatoriSingoli(ActivePolicy activePolicy, String uniqueMapId, HazelcastInstance hazelcast, TipoDatiCollezionati tipoDatiCollezionati) {
 		this.activePolicy = activePolicy;
 		this.hazelcast = hazelcast;
 		this.uniqueMapId = uniqueMapId;
@@ -244,7 +244,7 @@ public class PolicyGroupByActiveThreadsDistributedPuntuale  implements Serializa
 				for (IDUnivocoGroupByPolicy datiGroupBy : this.mapActiveThreads.keySet()) {
 					bf.append(separatorGroups);
 					bf.append("\n");
-					bf.append(CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE).append(" ").append(PolicyGroupByActiveThreadsType.HAZELCAST_PUNTUALE.toLabel());
+					bf.append(CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE).append(" ").append(PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER.toLabel());
 					bf.append("\n");
 					bf.append("Criterio di Collezionamento dei Dati\n");
 					bf.append(datiGroupBy.toString(true));

@@ -610,7 +610,10 @@ public class Utils {
 			{ PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE },
 			{ PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE },
 			{ PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP },
-			{ PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP }
+			{ PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP },
+			{ PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER },
+			{ PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG },
+			{ PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC },
 		});
 	}
 }

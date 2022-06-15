@@ -1,3 +1,24 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * https://govway.org
+ * 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
 package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.singoli_contatori;
 
 import java.util.ArrayList;
@@ -51,7 +72,7 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 	protected PNCounter distributedPolicyDegradoPrestazionaleCounter;
 	
 	private String getDistributedName(String name) {
-		return "pncounter-"+this.uniquePrefixId+name+"-rl";
+		return "pncounter-"+this.uniquePrefixId+"-"+name+"-rl";
 	}
 	
 	public DatiCollezionatiDistributedPNCounter(Date updatePolicyDate, HazelcastInstance hazelcast, String uniquePrefixId) {
@@ -157,7 +178,6 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 	 */
 	@Override
 	protected void resetPolicyCounterForDate(Date policyDate) {
-		System.out.println("Resetto contatori per data: " + policyDate);
 		Long policyTime = policyDate.getTime();
 
 		this.distributedPolicyDate.set(policyTime);
@@ -459,6 +479,9 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 		this.distributedPolicyDegradoPrestazionaleCounter.destroy();
 	}
 	
+	
+	// Utilizziamo i PNCounter con le repliche per ogni nodo, per cui il valore è sempre presente in locale.
+	// Dunque forniamo il valore più aggiornato per la finestra attuale.
 	
 	@Override
 	public Date getUpdatePolicyDate() {

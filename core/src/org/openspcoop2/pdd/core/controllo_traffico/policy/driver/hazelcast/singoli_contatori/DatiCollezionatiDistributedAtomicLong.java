@@ -1,3 +1,25 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * https://govway.org
+ * 
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+
 package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.singoli_contatori;
 
 import java.util.ArrayList;
@@ -26,7 +48,7 @@ import com.hazelcast.cp.IAtomicLong;
  * @author Francesco Scarlato
  *
  */
-public class DatiCollezionatiDistributed extends DatiCollezionati implements IDatiCollezionatiDistributed{
+public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati implements IDatiCollezionatiDistributed{
 
 	private static final long serialVersionUID = 1L;
 	
@@ -46,7 +68,7 @@ public class DatiCollezionatiDistributed extends DatiCollezionati implements IDa
 	
 	
 	// TODO: Gestire updatePolicyDate distribuita
-	public DatiCollezionatiDistributed(Date updatePolicyDate, HazelcastInstance hazelcast, String uniquePrefixId) {
+	public DatiCollezionatiDistributedAtomicLong(Date updatePolicyDate, HazelcastInstance hazelcast, String uniquePrefixId) {
 		super(updatePolicyDate);
 	
 		this.hazelcast = hazelcast;
@@ -57,7 +79,7 @@ public class DatiCollezionatiDistributed extends DatiCollezionati implements IDa
 	}
 	
 	
-	public DatiCollezionatiDistributed(DatiCollezionati dati, HazelcastInstance hazelcast, String uniquePrefixId) {
+	public DatiCollezionatiDistributedAtomicLong(DatiCollezionati dati, HazelcastInstance hazelcast, String uniquePrefixId) {
 		this(dati.getUpdatePolicyDate(), hazelcast, uniquePrefixId);
 		
 		// Inizializzo il padre con i valori in RAM, dopo uso 'super' per essere  sicuro di usare quelli
@@ -113,11 +135,11 @@ public class DatiCollezionatiDistributed extends DatiCollezionati implements IDa
 				this.distributedPolicyDegradoPrestazionaleRequestCounter = this.hazelcast.getCPSubsystem().getAtomicLong(
 						this.uniquePrefixId+"-distributedPolicyDegradoPrestazionaleRequestCounter"+degradoPrestazionaleTime);
 				
-				if (dati.getPolicyDegradoPrestazionaleRequestCounter() != null) {
+				if (super.getPolicyDegradoPrestazionaleRequestCounter() != null) {
 					this.distributedPolicyDegradoPrestazionaleRequestCounter.addAndGet(super.getPolicyDegradoPrestazionaleRequestCounter());
 				}
 				
-				if (dati.getPolicyDegradoPrestazionaleCounter() != null) {
+				if (super.getPolicyDegradoPrestazionaleCounter() != null) {
 					this.distributedPolicyDegradoPrestazionaleCounter.addAndGet(super.getPolicyDegradoPrestazionaleCounter());
 				}
 				
@@ -136,16 +158,18 @@ public class DatiCollezionatiDistributed extends DatiCollezionati implements IDa
 	@Override
 	protected void resetPolicyCounterForDate(Date date) {
 
-		this.distributedPolicyDate.set(date.getTime());
+		Long policyDate = date.getTime();
+		
+		this.distributedPolicyDate.set(policyDate);
 		
 		// Prendo i nuovi contatori
 		if(this.policyRealtime!=null && this.policyRealtime){
 			this.distributedPolicyRequestCounter = this.hazelcast.getCPSubsystem().getAtomicLong(
-					this.uniquePrefixId+"-policyRequestCounter"+date.getTime());
+					this.uniquePrefixId+"-policyRequestCounter");
 			
 			if(this.tipoRisorsa==null || !isRisorsaContaNumeroRichieste(this.tipoRisorsa)){
 				this.distributedPolicyCounter = this.hazelcast.getCPSubsystem().getAtomicLong(
-						this.uniquePrefixId+"-policyCounter"+date.getTime());
+						this.uniquePrefixId+"-policyCounter"+policyDate);
 			}
 		}
 		
@@ -180,24 +204,6 @@ public class DatiCollezionatiDistributed extends DatiCollezionati implements IDa
 		// data di registrazione policy
 		// this.updatePolicyDate = activePolicy.getInstanceConfiguration().getUpdateTime();
 	}
-	
-	@Override
-	public void destroyDatiDistribuiti() {
-		this.distributedUpdatePolicyDate.destroy();
-		
-		this.distributedPolicyRequestCounter.destroy();	
-		this.distributedPolicyCounter.destroy();
-		
-		this.distributedPolicyDegradoPrestazionaleDate.destroy();	
-		this.distributedPolicyDegradoPrestazionaleRequestCounter.destroy();
-		this.distributedPolicyDegradoPrestazionaleCounter.destroy();
-	}
-	
-
-	
-	
-	
-
 	
 	
 	/*@Override
@@ -442,11 +448,37 @@ public class DatiCollezionatiDistributed extends DatiCollezionati implements IDa
 			this.distributedUpdatePolicyDate.set(updatePolicyDate.getTime());
 		}
 		
-		this.distributedPolicyRequestCounter.set(0l);
-		this.distributedPolicyCounter.set(0l);
-		this.distributedPolicyDegradoPrestazionaleRequestCounter.set(0l);
-		this.distributedPolicyDegradoPrestazionaleCounter.set(0l);
+		if (this.distributedPolicyRequestCounter != null) {
+			this.distributedPolicyRequestCounter.set(0l);
+		}
+		
+		if (this.distributedPolicyCounter != null) {
+			this.distributedPolicyCounter.set(0l);
+		}
+
+		if (this.distributedPolicyDegradoPrestazionaleRequestCounter != null) {
+			this.distributedPolicyDegradoPrestazionaleRequestCounter.set(0l);
+		}
+		
+		if (this.distributedPolicyDegradoPrestazionaleCounter != null) {
+			this.distributedPolicyDegradoPrestazionaleCounter.set(0l);
+		}
 		
 	}
+
+	
+	
+	@Override
+	public void destroyDatiDistribuiti() {
+		this.distributedUpdatePolicyDate.destroy();
+		
+		this.distributedPolicyRequestCounter.destroy();	
+		this.distributedPolicyCounter.destroy();
+		
+		this.distributedPolicyDegradoPrestazionaleDate.destroy();	
+		this.distributedPolicyDegradoPrestazionaleRequestCounter.destroy();
+		this.distributedPolicyDegradoPrestazionaleCounter.destroy();
+	}
+	
 
 }

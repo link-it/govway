@@ -2026,7 +2026,9 @@ public class OpenSPCoop2Properties {
 						getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId();
 						isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy();
 						
-						getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeConfigPath();
+						getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPath();
+						getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPath();
+						getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPath();
 						getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeTipoDatiCollezionati();
 					}
 					
@@ -23722,7 +23724,7 @@ public class OpenSPCoop2Properties {
 			try{  
 				String value = this.reader.getValue_convertEnvProperties(pName); 
 				if(value==null){
-					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeTipoDatiCollezionati = TipoDatiCollezionati.DISTRIBUTED;
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeTipoDatiCollezionati = TipoDatiCollezionati.ATOMIC_LONG;
 					this.log.warn("Proprieta' 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.tipo' non impostata; viene usato il default: "+OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeTipoDatiCollezionati);
 				} else {
 					value = value.trim();
@@ -23742,22 +23744,22 @@ public class OpenSPCoop2Properties {
 	}
 	
 	
-	private static Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeConfigPath_read = null;
-	private static String getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeConfigPath = null;
-	public String getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeConfigPath() throws Exception {
+	private static Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPath_read = null;
+	private static String getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPath = null;
+	public String getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPath() throws Exception {
 		
-		if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeConfigPath_read==null){
-			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_PUNTUALE.config";
+		if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPath_read==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_PNCOUNTER.config";
 
 			try{  
 				String value = this.reader.getValue_convertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeConfigPath = value;
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPath = value;
 				}
 				
-				getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeConfigPath_read = true;
+				getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPath_read = true;
 				
 			}catch(java.lang.Exception e) {
 				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
@@ -23766,8 +23768,66 @@ public class OpenSPCoop2Properties {
 			}
 		}
 
-		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeConfigPath;		
+		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPath;		
 	}
+	
+	
+	private static Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPath_read = null;
+	private static String getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPath = null;
+	public String getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPath() throws Exception {
+		
+		if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPath_read==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_ATOMIC_LONG.config";
+
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPath = value;
+				}
+				
+				getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPath_read = true;
+				
+			}catch(java.lang.Exception e) {
+				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
+				this.log.error(msgError,e);
+				throw new Exception(msgError,e);
+			}
+		}
+
+		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPath;		
+	}
+	
+	
+	
+	private static Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPath_read = null;
+	private static String getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPath = null;
+	public String getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPath() throws Exception {
+		
+		if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPath_read==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_ATOMIC_LONG.config";
+
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPath = value;
+				}
+				
+				getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPath_read = true;
+				
+			}catch(java.lang.Exception e) {
+				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
+				this.log.error(msgError,e);
+				throw new Exception(msgError,e);
+			}
+		}
+
+		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPath;		
+	}
+	
 	
 		
 	private static Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath_read = null;

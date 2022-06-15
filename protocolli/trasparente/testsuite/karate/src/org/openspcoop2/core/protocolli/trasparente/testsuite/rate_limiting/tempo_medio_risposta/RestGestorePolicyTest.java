@@ -76,10 +76,17 @@ public class RestGestorePolicyTest extends ConfigLoader {
 		this.restTest.perMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP);
 	}
 	@Test
-	public void perMinutoDefaultErogazione_hazelcast_contatoriSingoli() throws Exception {
-		this.restTest.perMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_PUNTUALE);
+	public void perMinutoDefaultErogazione_hazelcast_contatoriSingoliPNCounter() throws Exception {
+		this.restTest.perMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER);
 	}
-	
+	@Test
+	public void perMinutoDefaultErogazione_hazelcast_contatoriSingoliAtomicLong() throws Exception {
+		this.restTest.perMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG);
+	}
+	@Test
+	public void perMinutoDefaultErogazione_hazelcast_contatoriSingoliAtomicLongAsync() throws Exception {
+		this.restTest.perMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC);
+	}
 	
 	
 	
@@ -118,9 +125,15 @@ public class RestGestorePolicyTest extends ConfigLoader {
 		this.restTest.perMinutoDefaultFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP);
 	}
 	@Test
-	public void perMinutoDefaultFruizione_hazelcast_contatoriSingoli() throws Exception {
-		this.restTest.perMinutoDefaultFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_PUNTUALE);
+	public void perMinutoDefaultFruizione_hazelcast_contatoriSingoliPNCounter() throws Exception {
+		this.restTest.perMinutoDefaultFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER);
 	}
-	
-	
+	@Test
+	public void perMinutoDefaultFruizione_hazelcast_contatoriSingoliAtomicLong() throws Exception {
+		this.restTest.perMinutoDefaultFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG);
+	}
+	@Test
+	public void perMinutoDefaultFruizione_hazelcast_contatoriSingoliAtomicLongAsync() throws Exception {
+		this.restTest.perMinutoDefaultFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC);
+	}
 }

@@ -111,8 +111,12 @@ public class HazelcastManager {
 						case HAZELCAST_LOCAL_CACHE:
 							name = "govway.hazelcast-local-cache.yaml";
 							break;
-						case HAZELCAST_PUNTUALE:
-							name = "govway.hazelcast-puntuale.yaml";
+						case HAZELCAST_PNCOUNTER:
+							name = "govway.hazelcast-pncounter.yaml";
+							break;
+						case HAZELCAST_ATOMIC_LONG:
+						case HAZELCAST_ATOMIC_LONG_ASYNC:
+							name = "govway.hazelcast-atomic-long.yaml";
 							break;
 						default:
 							throw new Exception("Hazelcast type '"+type+"' unsupported");
@@ -201,8 +205,14 @@ public class HazelcastManager {
 		case HAZELCAST_LOCAL_CACHE:
 			groupId = HazelcastManager.groupId+"-local-cache";
 			break;
-		case HAZELCAST_PUNTUALE:
-			groupId = HazelcastManager.groupId+"-puntuale";
+		case HAZELCAST_PNCOUNTER:
+			groupId = HazelcastManager.groupId+"-pncounter";
+			break;
+		case HAZELCAST_ATOMIC_LONG:
+			groupId = HazelcastManager.groupId+"-atomic-long";
+			break;
+		case HAZELCAST_ATOMIC_LONG_ASYNC:
+			groupId = HazelcastManager.groupId+"-atomic-long-async";
 			break;
 		default:
 			throw new PolicyException("Hazelcast type '"+type+"' unsupported");

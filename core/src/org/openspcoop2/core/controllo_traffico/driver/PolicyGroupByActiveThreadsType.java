@@ -41,17 +41,26 @@ public enum PolicyGroupByActiveThreadsType {
 	HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP,
 	HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP,
 	HAZELCAST_LOCAL_CACHE,
-	HAZELCAST_PUNTUALE,
+	HAZELCAST_PNCOUNTER,
+	HAZELCAST_ATOMIC_LONG,
+	HAZELCAST_ATOMIC_LONG_ASYNC,
 	REDISSON;
 	
+	private static List<PolicyGroupByActiveThreadsType> hazelcastTypes = List.of( 
+			HAZELCAST, 
+			HAZELCAST_NEAR_CACHE,
+			HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP,
+			HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP, 
+			HAZELCAST_LOCAL_CACHE, 
+			HAZELCAST_PNCOUNTER, 
+			HAZELCAST_ATOMIC_LONG, 
+			HAZELCAST_ATOMIC_LONG_ASYNC );
+	
+	
 	public boolean isHazelcast() {
-		return PolicyGroupByActiveThreadsType.HAZELCAST.equals(this) ||
-				PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE.equals(this) ||
-				PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(this) ||
-				PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(this) ||
-				PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE.equals(this) ||
-				PolicyGroupByActiveThreadsType.HAZELCAST_PUNTUALE.equals(this);
+		return hazelcastTypes.contains(this);
 	}
+	
 	
 	public String toLabel() {
 		switch (this) {
@@ -76,9 +85,15 @@ public enum PolicyGroupByActiveThreadsType {
 		case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
 			return CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA+" - "+CostantiControlloTraffico.LABEL_MODALITA_IMPLEMENTAZIONE_HAZELCAST +
 					" ("+CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC+")";
-		case HAZELCAST_PUNTUALE:
+		case HAZELCAST_PNCOUNTER:
 			return CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA+" - "+CostantiControlloTraffico.LABEL_MODALITA_IMPLEMENTAZIONE_HAZELCAST +
-					" ("+CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_PUNTUALE+")";
+					" ("+CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER+")";
+		case HAZELCAST_ATOMIC_LONG:
+				return CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA+" - "+CostantiControlloTraffico.LABEL_MODALITA_IMPLEMENTAZIONE_HAZELCAST +
+						" ("+CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG+")";
+		case HAZELCAST_ATOMIC_LONG_ASYNC:
+			return CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA+" - "+CostantiControlloTraffico.LABEL_MODALITA_IMPLEMENTAZIONE_HAZELCAST +
+					" ("+CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC+")"; 
 		case REDISSON:
 			return CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA+" - "+CostantiControlloTraffico.LABEL_MODALITA_IMPLEMENTAZIONE_REDIS +
 					" ("+CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_REDIS_REDDISSON+")";
@@ -102,7 +117,9 @@ public enum PolicyGroupByActiveThreadsType {
 		case DATABASE:
 			return list;
 		case HAZELCAST:
-		case HAZELCAST_PUNTUALE:
+		case HAZELCAST_PNCOUNTER:
+		case HAZELCAST_ATOMIC_LONG:
+		case HAZELCAST_ATOMIC_LONG_ASYNC:
 			return list;
 		case HAZELCAST_NEAR_CACHE:
 			list.remove(TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_SIMULTANEE);
@@ -118,6 +135,8 @@ public enum PolicyGroupByActiveThreadsType {
 		}
 		return null;
 	}
+	
+	
 	public boolean isSupportedResource(TipoRisorsaPolicyAttiva resource) {
 		return this.getSupportedResources().contains(resource);
 	}

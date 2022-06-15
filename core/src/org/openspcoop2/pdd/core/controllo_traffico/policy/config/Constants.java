@@ -112,11 +112,7 @@ public class Constants {
 			if(PolicyGroupByActiveThreadsType.DATABASE.equals(tipo)) {
 				database = true;
 			}
-			else if(PolicyGroupByActiveThreadsType.HAZELCAST.equals(tipo) ||
-					PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE.equals(tipo) ||
-					PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE.equals(tipo) ||
-					PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(tipo) ||
-					PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(tipo)) {
+			else if(tipo.isHazelcast()) {
 				hazelcast = true;
 			}
 			else if(PolicyGroupByActiveThreadsType.REDISSON.equals(tipo)) {
@@ -161,11 +157,14 @@ public class Constants {
 			for (PolicyGroupByActiveThreadsType tipo : tipiSupportati) {
 				if(PolicyGroupByActiveThreadsType.HAZELCAST.equals(tipo) ||
 						PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE.equals(tipo) ||
-						PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE.equals(tipo)) {
+						PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE.equals(tipo) || 
+						PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG.equals(tipo)) {
 					exact = true;
 				}
 				else if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(tipo) ||
-						PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(tipo)) {
+						PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(tipo) || 
+						PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER.equals(tipo) ||
+						PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC.equals(tipo)) {
 					approximated = true;
 				}
 			}
@@ -190,7 +189,9 @@ public class Constants {
 	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE = "local-cache";
 	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC = "remote-sync";
 	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC = "remote-async";
-	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_SINGOLI= "contatori-singoli";
+	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_SINGOLI_PNCOUNTER = "contatori-singoli-pncounter";
+	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_SINGOLI_ATOMIC_LONG = "contatori-singoli-atomic-long";
+	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_SINGOLI_ATOMIC_LONG_ASYNC = "contatori-singoli-atomic-long-async";
 
 	
 	public final static String VALUE_MODALITA_TIPOLOGIA_REDIS_REDDISSON = "redisson-map";
@@ -204,7 +205,9 @@ public class Constants {
 	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC;	
 	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE;	
 	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE;	
-	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_SINGOLI = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_PUNTUALE;	
+	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG;	
+	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC;
+	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER;
 	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC;	
 	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC;	
 
@@ -228,9 +231,11 @@ public class Constants {
 					else if(PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE.equals(tipo)) {
 						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE : LABEL_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE);
 					}
-					else if(PolicyGroupByActiveThreadsType.HAZELCAST_PUNTUALE.equals(tipo)) {
-						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_SINGOLI: LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_SINGOLI);
+					else if(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_SINGOLI_PNCOUNTER: LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG);
 					}
+					
+					
 				}
 				else if(VALUE_MODALITA_CONTATORI_APPROXIMATED.equals(counter)) {
 					if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(tipo)) {
@@ -238,6 +243,12 @@ public class Constants {
 					}
 					else if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(tipo)) {
 						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC : LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC);
+					}
+					else if(PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_SINGOLI_PNCOUNTER: LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER);
+					}
+					else if(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_SINGOLI_PNCOUNTER: LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC);
 					}
 				}
 			}

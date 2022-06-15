@@ -76,8 +76,16 @@ public class RestGestorePolicyTest extends ConfigLoader {
 		this.restTest.perMinutoErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP);
 	}
 	@Test
-	public void perMinutoDefaultErogazione_hazelcast_contatoriSingoli() throws Exception {
-		this.restTest.perMinutoErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_PUNTUALE);
+	public void perMinutoErogazione_hazelcast_contatoriSingoliPNCounter() throws Exception {
+		this.restTest.perMinutoErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER);
+	}
+	@Test
+	public void perMinutoErogazione_hazelcast_contatoriSingoliAtomicLong() throws Exception {
+		this.restTest.perMinutoErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG);
+	}
+	@Test
+	public void perMinutoErogazione_hazelcast_contatoriSingoliAtomicLongAsync() throws Exception {
+		this.restTest.perMinutoErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC);
 	}
 	
 	
@@ -108,17 +116,21 @@ public class RestGestorePolicyTest extends ConfigLoader {
 		this.restTest.perMinutoFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE);
 	}
 	@Test
-	public void perMinutoFruizione_hazelcast_nearCache_putSync() throws Exception {
-		this.restTest.perMinutoFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP);
+	public void perMinutoFruizione_hazelcast_contatoriSingoliPNCounter() throws Exception {
+		this.restTest.perMinutoFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER);
 	}
 	@Test
-	public void perMinutoFruizione_hazelcast_nearCache_putAsync() throws Exception {
-		this.restTest.perMinutoFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP);
+	public void perMinutoFruizione_hazelcast_contatoriSingoliAtomicLong() throws Exception {
+		this.restTest.perMinutoFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG);
 	}
 	@Test
-	public void perMinutoDefaultFruizione_hazelcast_contatoriSingoli() throws Exception {
-		this.restTest.perMinutoFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_PUNTUALE);
+	public void perMinutoFruizione_hazelcast_contatoriSingoliAtomicLongAsync() throws Exception {
+		this.restTest.perMinutoFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC);
 	}
 	
+	
+	
+	
+
 	
 }
