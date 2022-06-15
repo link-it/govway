@@ -73,7 +73,7 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 		dati.clone_impl(this);
 		
 		// Inizializzo la updatePolicyDate se necessario, ma questo devo  ancora gestirlo (TODO)
-		if (super.getUpdatePolicyDate() != null &&this.distributedUpdatePolicyDate.get() == 0) {
+		if (super.getUpdatePolicyDate() != null) {
 			this.distributedUpdatePolicyDate.compareAndSet(0,super.getUpdatePolicyDate().getTime());
 		}
 		
@@ -81,6 +81,8 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 		if (super.getPolicyDate() != null) {
 
 			// Se ci sono altri nodi che stanno andando, la distributedPolicyDate DEVE essere != 0 
+			// Se la policyDate è a zero vuol dire che questo è il primo nodo del cluster che sta inizializzando la policy per mezzo di un backup e che su tutto il cluster
+			// non sono ancora transitate richieste.
 			if (this.distributedPolicyDate.compareAndSet(0, super.getPolicyDate().getTime())) {
 				// Se la data distribuita non era inizializzata e questo nodo l'ha settata, imposto i contatori come da immagine bin.
 				//	Faccio la addAndGet, in quanto tutti valori positivi, non entriamo in conflitto con gli altri nodi che stanno effettuando lo startup nello stesso momento
@@ -154,55 +156,44 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 	 *  
 	 */
 	@Override
-	protected void resetPolicyCounterForDate(Date date) {
-		
-		Long finalDate;
-		Long curDate = super.getPolicyDate() == null ? 0 : super.getPolicyDate().getTime();
-		
-		if (this.distributedPolicyDate.compareAndSet(curDate, date.getTime())) {
-			finalDate = date.getTime();
-		} else {
-			finalDate = this.distributedPolicyDate.get();
-		}
+	protected void resetPolicyCounterForDate(Date policyDate) {
+		System.out.println("Resetto contatori per data: " + policyDate);
+		Long policyTime = policyDate.getTime();
+
+		this.distributedPolicyDate.set(policyTime);
 		
 		// Prendo i nuovi contatori
 		if(this.policyRealtime!=null && this.policyRealtime){
 			this.distributedPolicyRequestCounter = this.hazelcast.getPNCounter(this.getDistributedName(
-					"policyRequestCounter"+finalDate));
+					"policyRequestCounter"+policyTime));
 			
 			if(this.tipoRisorsa==null || !isRisorsaContaNumeroRichieste(this.tipoRisorsa)){
 				this.distributedPolicyCounter = this.hazelcast.getPNCounter(this.getDistributedName(
-						"policyCounter"+finalDate));
+						"policyCounter"+policyTime));
 			}
 		}
 				
 		
-		super.resetPolicyCounterForDate(new Date(finalDate));
+		super.resetPolicyCounterForDate(policyDate);
 	}
 	
 	
 	@Override
-	protected void resetPolicyCounterForDateDegradoPrestazionale(Date date) {
+	protected void resetPolicyCounterForDateDegradoPrestazionale(Date policyDate) {
+		Long policyTime = policyDate.getTime();
 		
-		Long finalDate;
-		Long curDate = super.getPolicyDegradoPrestazionaleDate() == null ? 0 : super.getPolicyDegradoPrestazionaleDate().getTime();
-
-		
-		if (this.distributedPolicyDegradoPrestazionaleDate.compareAndSet(curDate, date.getTime())) {
-			finalDate = date.getTime();
-		} else {
-			finalDate = this.distributedPolicyDegradoPrestazionaleDate.get();
-		}
+	
+		this.distributedPolicyDegradoPrestazionaleDate.set(policyDate.getTime());
 		
 		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
 			this.distributedPolicyDegradoPrestazionaleCounter = this.hazelcast.getPNCounter(this.getDistributedName(
-					"distributedPolicyDegradoPrestazionaleCounter"+finalDate));
+					"distributedPolicyDegradoPrestazionaleCounter"+policyTime));
 			
 			this.distributedPolicyDegradoPrestazionaleRequestCounter = this.hazelcast.getPNCounter(this.getDistributedName(
-					"distributedPolicyDegradoPrestazionaleRequestCounter"+finalDate));
+					"distributedPolicyDegradoPrestazionaleRequestCounter"+policyTime));
 		}
 		
-		super.resetPolicyCounterForDateDegradoPrestazionale(new Date(finalDate));
+		super.resetPolicyCounterForDateDegradoPrestazionale(policyDate);
 	}
 	
 	
