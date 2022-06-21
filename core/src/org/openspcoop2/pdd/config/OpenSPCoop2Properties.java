@@ -2018,6 +2018,8 @@ public class OpenSPCoop2Properties {
 						getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath();
 						//case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
 						getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath();
+						// case HAZELCAST_REPLICATED_MAP
+						getControlloTrafficoGestorePolicyInMemoryHazelCastReplicatedMapConfigPath();
 						//case HAZELCAST_LOCAL_CACHE:
 						getControlloTrafficoGestorePolicyInMemoryHazelCastLocalCacheConfigPath();
 						getControlloTrafficoGestorePolicyInMemoryHazelcastLocalCacheTimerUpdate();
@@ -23910,6 +23912,34 @@ public class OpenSPCoop2Properties {
 
 		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath;		
 	}
+	
+	private static Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastReplicatedMapConfigPath_read = null;
+	private static String getControlloTrafficoGestorePolicyInMemoryHazelCastReplicatedMapConfigPath = null;
+	public String getControlloTrafficoGestorePolicyInMemoryHazelCastReplicatedMapConfigPath() throws Exception {
+		
+		if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastReplicatedMapConfigPath_read==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_REPLICATED_MAP.config";
+
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastReplicatedMapConfigPath = value;
+				}
+
+				getControlloTrafficoGestorePolicyInMemoryHazelCastReplicatedMapConfigPath_read = true;
+				
+			}catch(java.lang.Exception e) {
+				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
+				this.log.error(msgError,e);
+				throw new Exception(msgError,e);
+			}
+		}
+
+		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastReplicatedMapConfigPath;		
+	}
+	
 	
 	private static Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastLocalConfigPath_read = null;
 	private static String getControlloTrafficoGestorePolicyInMemoryHazelCastLocalCacheConfigPath = null;

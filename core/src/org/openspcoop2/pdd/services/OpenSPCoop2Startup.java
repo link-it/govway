@@ -2461,6 +2461,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastLocalCacheConfigPath());
 						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath());
 						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath());
+						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_REPLICATED_MAP, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastReplicatedMapConfigPath());
 						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPath());
 						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPath());
 						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPath());

@@ -111,6 +111,9 @@ public class HazelcastManager {
 						case HAZELCAST_LOCAL_CACHE:
 							name = "govway.hazelcast-local-cache.yaml";
 							break;
+						case HAZELCAST_REPLICATED_MAP:
+							name= "govway.hazelcast-replicated-map.yaml";
+							break;
 						case HAZELCAST_PNCOUNTER:
 							name = "govway.hazelcast-pncounter.yaml";
 							break;
@@ -204,6 +207,9 @@ public class HazelcastManager {
 			break;
 		case HAZELCAST_LOCAL_CACHE:
 			groupId = HazelcastManager.groupId+"-local-cache";
+			break;
+		case HAZELCAST_REPLICATED_MAP:
+			groupId = HazelcastManager.groupId+"-replicated-map"; 
 			break;
 		case HAZELCAST_PNCOUNTER:
 			groupId = HazelcastManager.groupId+"-pncounter";

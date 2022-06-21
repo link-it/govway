@@ -1802,8 +1802,8 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		else
 			bf.append("-");
 		bf.append("\n");
-		if(dati.policyRequestCounter!=null)
-			bf.append(dati.policyRequestCounter);
+		if(dati.getPolicyRequestCounter()!=null)
+			bf.append(dati.getPolicyRequestCounter());
 		else
 			bf.append("-");
 		bf.append("\n");

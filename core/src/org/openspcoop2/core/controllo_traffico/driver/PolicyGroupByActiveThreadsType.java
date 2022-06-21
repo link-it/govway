@@ -21,6 +21,7 @@ package org.openspcoop2.core.controllo_traffico.driver;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 
@@ -44,23 +45,55 @@ public enum PolicyGroupByActiveThreadsType {
 	HAZELCAST_PNCOUNTER,
 	HAZELCAST_ATOMIC_LONG,
 	HAZELCAST_ATOMIC_LONG_ASYNC,
-	REDISSON;
+	HAZELCAST_REPLICATED_MAP,
+	REDISSON_ATOMIC_LONG,
+	REDISSON_LONGADDER,
+	REDISSON_MAP;
 	
 	private static List<PolicyGroupByActiveThreadsType> hazelcastTypes = List.of( 
 			HAZELCAST, 
 			HAZELCAST_NEAR_CACHE,
 			HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP,
 			HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP, 
-			HAZELCAST_LOCAL_CACHE, 
+			HAZELCAST_LOCAL_CACHE,
+			HAZELCAST_REPLICATED_MAP,
 			HAZELCAST_PNCOUNTER, 
 			HAZELCAST_ATOMIC_LONG, 
 			HAZELCAST_ATOMIC_LONG_ASYNC );
 	
+
+	private static Set<PolicyGroupByActiveThreadsType> exactModes = Set.of(
+			PolicyGroupByActiveThreadsType.HAZELCAST,
+			PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE,
+			PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE, 
+			PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG,
+			PolicyGroupByActiveThreadsType.REDISSON_ATOMIC_LONG,
+			PolicyGroupByActiveThreadsType.REDISSON_MAP
+		);
+	
+	
+	private static Set<PolicyGroupByActiveThreadsType> approxModes = Set.of(
+			PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP,
+			PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP,
+			PolicyGroupByActiveThreadsType.HAZELCAST_REPLICATED_MAP,
+			PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER,
+			PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC,
+			PolicyGroupByActiveThreadsType.REDISSON_LONGADDER
+		);
+			
+			
 	
 	public boolean isHazelcast() {
 		return hazelcastTypes.contains(this);
 	}
 	
+	public boolean isExact() {
+		return exactModes.contains(this);
+	}
+	
+	public boolean isApproximated() {
+		return approxModes.contains(this);
+	}
 	
 	public String toLabel() {
 		switch (this) {
@@ -93,8 +126,17 @@ public enum PolicyGroupByActiveThreadsType {
 						" ("+CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG+")";
 		case HAZELCAST_ATOMIC_LONG_ASYNC:
 			return CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA+" - "+CostantiControlloTraffico.LABEL_MODALITA_IMPLEMENTAZIONE_HAZELCAST +
-					" ("+CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC+")"; 
-		case REDISSON:
+					" ("+CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC+")";
+		case HAZELCAST_REPLICATED_MAP:
+			return CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA+" - "+CostantiControlloTraffico.LABEL_MODALITA_IMPLEMENTAZIONE_HAZELCAST +
+					" ("+CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REPLICATED_MAP+")";
+		case REDISSON_ATOMIC_LONG:
+			return CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA+" - "+CostantiControlloTraffico.LABEL_MODALITA_IMPLEMENTAZIONE_REDIS  +
+					" ("+CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_REDIS_CONTATORI_ATOMIC_LONG+")";
+	case REDISSON_LONGADDER:
+		return CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA+" - "+CostantiControlloTraffico.LABEL_MODALITA_IMPLEMENTAZIONE_REDIS +
+				" ("+CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_REDIS_CONTATORI_LONGADDER+")"; 
+	case REDISSON_MAP:
 			return CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA+" - "+CostantiControlloTraffico.LABEL_MODALITA_IMPLEMENTAZIONE_REDIS +
 					" ("+CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_REDIS_REDDISSON+")";
 		}
@@ -120,17 +162,20 @@ public enum PolicyGroupByActiveThreadsType {
 		case HAZELCAST_PNCOUNTER:
 		case HAZELCAST_ATOMIC_LONG:
 		case HAZELCAST_ATOMIC_LONG_ASYNC:
+		case REDISSON_ATOMIC_LONG:
+		case REDISSON_LONGADDER:
 			return list;
 		case HAZELCAST_NEAR_CACHE:
 			list.remove(TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_SIMULTANEE);
 			return list;
 		case HAZELCAST_LOCAL_CACHE:
+		case HAZELCAST_REPLICATED_MAP:
 			return list;
 		case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
 		case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
 			list.remove(TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_SIMULTANEE);
 			return list;
-		case REDISSON:
+		case REDISSON_MAP:
 			return list;
 		}
 		return null;

@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy.config;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.Proprieta;
@@ -217,50 +218,69 @@ public class PolicyConfiguration implements Serializable {
 		}
 	}
 	
+	
+	private static Map<String, PolicyGroupByActiveThreadsType> mappingCostantiToHazelcastExact = Map.of(
+			Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC, PolicyGroupByActiveThreadsType.HAZELCAST,
+			Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE, PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE,
+			Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE, PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE,
+			Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG, PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG,			
+			Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER,  PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER,
+			Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC, PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC			
+			);
+	
+	
+	private static Map<String, PolicyGroupByActiveThreadsType> mappingCostantiToHazelcastApprox = Map.of(	
+			Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC, PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP,
+			Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC, PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP,
+			Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REPLICATED_MAP, PolicyGroupByActiveThreadsType.HAZELCAST_REPLICATED_MAP
+		);
+	
+	
+	private static Map<String, PolicyGroupByActiveThreadsType> mappingCostantiToRedisExact = Map.of(
+			Constants.VALUE_MODALITA_TIPOLOGIA_REDIS_REDDISSON_MAP, PolicyGroupByActiveThreadsType.REDISSON_MAP,
+			Constants.VALUE_MODALITA_TIPOLOGIA_REDIS_CONTATORI_ATOMIC_LONG, PolicyGroupByActiveThreadsType.REDISSON_ATOMIC_LONG
+		);
+			
+	
+	private static Map<String, PolicyGroupByActiveThreadsType> mappingCostantiToRedisApprox= Map.of(
+			Constants.VALUE_MODALITA_TIPOLOGIA_REDIS_CONTATORI_LONGADDER, PolicyGroupByActiveThreadsType.REDISSON_LONGADDER
+			);
+			
+	
 	private void initRuntimeInfo(boolean all) throws Exception {
 		if(!Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DEFAULT.equals(this.syncMode)) {
 			if(Constants.VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE.equals(this.syncMode)) {
 				this.type = PolicyGroupByActiveThreadsType.LOCAL;
+				
 			}
 			else if(Constants.VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE_SUDDIVISA_TRA_NODI.equals(this.syncMode)) {
 				this.type = PolicyGroupByActiveThreadsType.LOCAL_DIVIDED_BY_NODES;
+				
 			}
 			else if(Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA.equals(this.syncMode)) {
 				if(Constants.VALUE_MODALITA_IMPLEMENTAZIONE_DATABASE.equals(this.impl)) {
 					this.type = PolicyGroupByActiveThreadsType.DATABASE;
+					
 				}
 				else if(Constants.VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST.equals(this.impl)) {
 					if(Constants.VALUE_MODALITA_CONTATORI_EXACT.equals(this.count)) {
-						if(Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC.equals(this.engineType)) {
-							this.type = PolicyGroupByActiveThreadsType.HAZELCAST;
-						}
-						else if(Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE.equals(this.engineType)) {
-							this.type = PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE;
-						}
-						else if(Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE.equals(this.engineType)) {
-							this.type = PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE;
-						}
-						else if(Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_SINGOLI_PNCOUNTER.equals(this.engineType)) {
-							this.type = PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER;
-						}
-						else if(Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_SINGOLI_ATOMIC_LONG.equals(this.engineType)) {
-							this.type = PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG;
-						}
-						else if(Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_SINGOLI_ATOMIC_LONG_ASYNC.equals(this.engineType)) {
-							this.type = PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC;
-						}
+						this.type = mappingCostantiToHazelcastExact.get(this.engineType);
+						
 					}
 					else if(Constants.VALUE_MODALITA_CONTATORI_APPROXIMATED.equals(this.count)) {
-						if(Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC.equals(this.engineType)) {
-							this.type = PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP;
-						}
-						else if(Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC.equals(this.engineType)) {
-							this.type = PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP;
-						}
+						this.type = mappingCostantiToHazelcastApprox.get(this.engineType);
+						
 					}
 				}
 				else if(Constants.VALUE_MODALITA_IMPLEMENTAZIONE_REDIS.equals(this.impl)) {
-					this.type = PolicyGroupByActiveThreadsType.REDISSON;
+					if(Constants.VALUE_MODALITA_CONTATORI_EXACT.equals(this.count)) {
+						this.type = mappingCostantiToRedisExact.get(this.engineType);
+						
+					}
+					else if(Constants.VALUE_MODALITA_CONTATORI_APPROXIMATED.equals(this.count)) {
+						this.type = mappingCostantiToRedisApprox.get(this.engineType);
+						
+					}
 				}
 			}
 		}
@@ -294,20 +314,18 @@ public class PolicyConfiguration implements Serializable {
 				}
 				break;
 			case DATABASE:
-				break;
 			case HAZELCAST:
-				break;
 			case HAZELCAST_NEAR_CACHE:
-				break;
 			case HAZELCAST_LOCAL_CACHE:
-				break;
 			case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
-				break;
 			case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
-				break;
+			case HAZELCAST_REPLICATED_MAP:
 			case HAZELCAST_PNCOUNTER:
-				break;
-			case REDISSON:
+			case REDISSON_MAP:
+			case HAZELCAST_ATOMIC_LONG:
+			case HAZELCAST_ATOMIC_LONG_ASYNC:
+			case REDISSON_ATOMIC_LONG:
+			case REDISSON_LONGADDER:
 				break;
 			}
 			

@@ -1,4 +1,4 @@
-package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.singoli_contatori;
+package org.openspcoop2.pdd.core.controllo_traffico.policy.driver;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -14,45 +14,30 @@ import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
 import org.openspcoop2.core.controllo_traffico.driver.CostantiControlloTraffico;
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreadsInMemory;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
-import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
-import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.TipoDatiCollezionati;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.singoli_contatori.BuilderDatiCollezionatiDistributed;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.singoli_contatori.IDatiCollezionatiDistributed;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
 
-import com.hazelcast.core.HazelcastInstance;
-
-/**
- * Questa implementazione segue di pari passo quella normale di PolicyGroupByActiveThreads.
- * Il lock viene sostituito con un lock distribuito.
- * I DatiCollezionati istanziati sono quelli distribuiti.
- * 
- * @author Francesco Scarlato
- *
- */
-
-public class PolicyGroupByActiveThreadsDistributedContatoriSingoli  implements Serializable,IPolicyGroupByActiveThreadsInMemory {
+public class PolicyGroupByActiveThreadsDistributedContatoriSingoli implements Serializable,IPolicyGroupByActiveThreadsInMemory {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private final org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("PolicyGroupByActiveThreadsDistributedPuntualeNoLock");
+	private final org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("PolicyGroupByActiveThreadsDistributedContatoriSingoli");
 
 	private final Map<IDUnivocoGroupByPolicy, DatiCollezionati> mapActiveThreads = new HashMap<IDUnivocoGroupByPolicy, DatiCollezionati>();
 	// TODO Ritornare alla ConcurrentHashMap nel caso riusciamo a togliere le lock locali.
 
-
-    private final HazelcastInstance hazelcast;
     private final String uniqueMapId;
-	
 	private final ActivePolicy activePolicy;
-	private final TipoDatiCollezionati tipoDatiCollezionati;
+	private final BuilderDatiCollezionatiDistributed builderDatiCollezionati;
 
-	public PolicyGroupByActiveThreadsDistributedContatoriSingoli(ActivePolicy activePolicy, String uniqueMapId, HazelcastInstance hazelcast, TipoDatiCollezionati tipoDatiCollezionati) {
+	public PolicyGroupByActiveThreadsDistributedContatoriSingoli(ActivePolicy activePolicy, String uniqueMapId, BuilderDatiCollezionatiDistributed builder) {
 		this.activePolicy = activePolicy;
-		this.hazelcast = hazelcast;
 		this.uniqueMapId = uniqueMapId;
-		this.tipoDatiCollezionati = tipoDatiCollezionati;
+		this.builderDatiCollezionati = builder;
 	}
 	
 	
@@ -77,7 +62,7 @@ public class PolicyGroupByActiveThreadsDistributedContatoriSingoli  implements S
 					for( var e : map.entrySet()) {
 						this.mapActiveThreads.put(
 								e.getKey(), 
-								BuilderDatiCollezionatiDistributed.build(this.tipoDatiCollezionati,e.getValue(), this.hazelcast, String.valueOf( (this.uniqueMapId+e.getKey()).hashCode())));
+								this.builderDatiCollezionati.build(e.getValue(),  String.valueOf( (this.uniqueMapId+e.getKey()).hashCode())));
 					}
 				}
 		}
@@ -114,10 +99,8 @@ public class PolicyGroupByActiveThreadsDistributedContatoriSingoli  implements S
 			datiCollezionati = this.mapActiveThreads.get(datiGroupBy);
 			
 			if (datiCollezionati == null){				
-				datiCollezionati = BuilderDatiCollezionatiDistributed.build(
-						this.tipoDatiCollezionati, 
+				datiCollezionati = this.builderDatiCollezionati.build( 
 						this.activePolicy.getInstanceConfiguration().getUpdateTime(), 
-						this.hazelcast, 
 						String.valueOf( (this.uniqueMapId+datiGroupBy).hashCode() ));
 				
 				this.mapActiveThreads.put(datiGroupBy, datiCollezionati); // registro nuova immagine
@@ -166,8 +149,6 @@ public class PolicyGroupByActiveThreadsDistributedContatoriSingoli  implements S
 	@Override
 	public void registerStopRequest(Logger log, String idTransazione,IDUnivocoGroupByPolicy datiGroupBy, MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata) throws PolicyException,PolicyNotFoundException{
 		
-		// TODO: Qui la lock locale invece non dovrebbe servire: non restituiamo dati e gli unici dati che modifichiamo sono quelli distribuiti,
-		//		quindi già sincronizzati.
 		this.lock.acquireThrowRuntime("registerStopRequest");
 		try {
 			DatiCollezionati datiCollezionati =  this.mapActiveThreads.get(datiGroupBy);
@@ -244,7 +225,8 @@ public class PolicyGroupByActiveThreadsDistributedContatoriSingoli  implements S
 				for (IDUnivocoGroupByPolicy datiGroupBy : this.mapActiveThreads.keySet()) {
 					bf.append(separatorGroups);
 					bf.append("\n");
-					bf.append(CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE).append(" ").append(PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER.toLabel());
+					// TODO: A seconda del vero tipo devo stampare AtomicLong AtomicLongAsync, RedisAtomicLong, RedisLongAdder
+					bf.append(CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE).append(" ").append(this.builderDatiCollezionati.tipoPolicy.toLabel());
 					bf.append("\n");
 					bf.append("Criterio di Collezionamento dei Dati\n");
 					bf.append(datiGroupBy.toString(true));
@@ -269,7 +251,6 @@ public class PolicyGroupByActiveThreadsDistributedContatoriSingoli  implements S
 	}
 
 
-	// TODO: Testa questo
 	@Override
 	public void remove() throws UtilsException {
 		this.lock.acquireThrowRuntime("remove");
@@ -280,7 +261,7 @@ public class PolicyGroupByActiveThreadsDistributedContatoriSingoli  implements S
 				dati.destroyDatiDistribuiti();
 			}
 		} 	finally {
-			this.lock.release("printInfos");
+			this.lock.release("remove");
 		}
 	}
 

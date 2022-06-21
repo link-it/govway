@@ -194,7 +194,7 @@ public class DbUtils {
     			case HAZELCAST_ATOMIC_LONG_ASYNC:
     				map.put(Constants.MODALITA_IMPLEMENTAZIONE, Constants.VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST);
     				break;
-    			case REDISSON:
+    			case REDISSON_MAP:
     				map.put(Constants.MODALITA_IMPLEMENTAZIONE, Constants.VALUE_MODALITA_IMPLEMENTAZIONE_REDIS);
     				break;
     			default:
@@ -226,7 +226,7 @@ public class DbUtils {
     				break;
     			case HAZELCAST_PNCOUNTER:
     				map.put(Constants.MODALITA_CONTATORI, Constants.VALUE_MODALITA_CONTATORI_EXACT);
-    				map.put(Constants.MODALITA_TIPOLOGIA, Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_SINGOLI_PNCOUNTER);
+    				map.put(Constants.MODALITA_TIPOLOGIA, Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER);
     			default:
     				break;
     			}

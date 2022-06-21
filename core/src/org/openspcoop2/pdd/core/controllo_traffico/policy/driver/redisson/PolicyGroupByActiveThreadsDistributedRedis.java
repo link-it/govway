@@ -81,7 +81,7 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(op2Properties.isControlloTrafficoDebug());
 		
-		this.type = PolicyGroupByActiveThreadsType.REDISSON;
+		this.type = PolicyGroupByActiveThreadsType.REDISSON_MAP;
 		
 		boolean oneMapForeachPolicy = OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryRedisOneMapForeachPolicy();
 		String mapName = "redis-";

@@ -482,8 +482,12 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 	
 	// Utilizziamo i PNCounter con le repliche per ogni nodo, per cui il valore è sempre presente in locale.
 	// Dunque forniamo il valore più aggiornato per la finestra attuale.
+	// NO (TODO: Rimuovi codice dopo aver fatto leggere la nota ad andrea)
+	// Potrebbe accadere che il PolicyVerifier faccia la get di questi contatori, contando anche le richieste arrivate
+	// su altri nodi, superando il limite e non consentendo nessuna richiesta su nessun nodo, per cui resto con la
+	// incrementAndGet
 	
-	@Override
+/*	@Override
 	public Date getUpdatePolicyDate() {
 		return new Date(this.distributedUpdatePolicyDate.get());
 	}
@@ -520,6 +524,6 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 	@Override
 	public Long getPolicyDegradoPrestazionaleCounter() {
 		return this.distributedPolicyDegradoPrestazionaleCounter.get();
-	}
+	}*/
 
 }

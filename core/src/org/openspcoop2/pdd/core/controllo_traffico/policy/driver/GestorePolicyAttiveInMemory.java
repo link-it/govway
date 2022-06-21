@@ -52,15 +52,14 @@ import org.openspcoop2.core.controllo_traffico.driver.PolicyShutdownException;
 import org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbDeserializer;
 import org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbSerializer;
 import org.openspcoop2.pdd.config.DynamicClusterManager;
-import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.HazelcastManager;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedLocalCache;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedNearCache;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedNearCacheWithoutEntryProcessorPutAsync;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedNearCacheWithoutEntryProcessorPutSync;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedNoCache;
-import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.TipoDatiCollezionati;
-import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.singoli_contatori.PolicyGroupByActiveThreadsDistributedContatoriSingoli;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedReplicatedMap;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.singoli_contatori.BuilderDatiCollezionatiDistributed;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.PolicyGroupByActiveThreadsDistributedRedis;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.RedissonManager;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
@@ -136,6 +135,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 		case HAZELCAST_PNCOUNTER:
 		case HAZELCAST_ATOMIC_LONG:
 		case HAZELCAST_ATOMIC_LONG_ASYNC:
+		case HAZELCAST_REPLICATED_MAP:
 			HazelcastManager.getInstance(this.type);
 			break;
 		case HAZELCAST_LOCAL_CACHE:
@@ -149,7 +149,9 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			}
 			break;
 
-		case REDISSON:
+		case REDISSON_MAP:
+		case REDISSON_ATOMIC_LONG:
+		case REDISSON_LONGADDER:
 			RedissonManager.getRedissonClient();
 			break;
 		}
@@ -770,13 +772,16 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			return new PolicyGroupByActiveThreadsDistributedNearCacheWithoutEntryProcessorPutAsync(activePolicy, uniqueIdMap, HazelcastManager.getInstance(this.type));
 		case HAZELCAST:
 			return new PolicyGroupByActiveThreadsDistributedNoCache(activePolicy, uniqueIdMap, HazelcastManager.getInstance(this.type));
-  	  	case HAZELCAST_PNCOUNTER: 
-              return new PolicyGroupByActiveThreadsDistributedContatoriSingoli(activePolicy, uniqueIdMap, HazelcastManager.getInstance(this.type), TipoDatiCollezionati.PNCOUNTER);
+		case HAZELCAST_REPLICATED_MAP:
+			return new PolicyGroupByActiveThreadsDistributedReplicatedMap(activePolicy, uniqueIdMap, HazelcastManager.getInstance(this.type));
+  	  	case HAZELCAST_PNCOUNTER:
   	  	case HAZELCAST_ATOMIC_LONG:
-  	  		return new PolicyGroupByActiveThreadsDistributedContatoriSingoli(activePolicy, uniqueIdMap, HazelcastManager.getInstance(this.type), TipoDatiCollezionati.ATOMIC_LONG);
   	  	case HAZELCAST_ATOMIC_LONG_ASYNC:
-	  		return new PolicyGroupByActiveThreadsDistributedContatoriSingoli(activePolicy, uniqueIdMap, HazelcastManager.getInstance(this.type), TipoDatiCollezionati.ATOMIC_LONG_ASYNC);     
-		case REDISSON:
+  	  	case REDISSON_ATOMIC_LONG:
+  	  	case REDISSON_LONGADDER:
+  	  		 BuilderDatiCollezionatiDistributed builder = BuilderDatiCollezionatiDistributed.getBuilder(this.type);
+             return new PolicyGroupByActiveThreadsDistributedContatoriSingoli(activePolicy, uniqueIdMap,  builder);
+		case REDISSON_MAP:
 			return new PolicyGroupByActiveThreadsDistributedRedis(activePolicy, uniqueIdMap, RedissonManager.getRedissonClient());
 		}
 		throw new PolicyException("Unsupported type '"+this.type+"'");
