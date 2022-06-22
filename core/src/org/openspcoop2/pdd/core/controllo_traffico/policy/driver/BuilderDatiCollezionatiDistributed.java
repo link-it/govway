@@ -18,17 +18,20 @@
  *
  */
 
-package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.singoli_contatori;
+package org.openspcoop2.pdd.core.controllo_traffico.policy.driver;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.HazelcastManager;
-import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.TipoDatiCollezionati;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.singoli_contatori.DatiCollezionatiDistributedAtomicLong;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.singoli_contatori.DatiCollezionatiDistributedAtomicLongAsync;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.singoli_contatori.DatiCollezionatiDistributedPNCounter;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.DatiCollezionatiDistributedLongAdder;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.DatiCollezionatiDistributedRedisAtomicLong;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.RedissonManager;
@@ -42,49 +45,6 @@ import com.hazelcast.core.HazelcastInstance;
  *
  */
 public class BuilderDatiCollezionatiDistributed {
-
-	@Deprecated
-	public static DatiCollezionati build(TipoDatiCollezionati tipoDatiCollezionati,DatiCollezionati dati, HazelcastInstance hazelcast, String uniquePrefixId) {
-		DatiCollezionati ret;
-		
-		switch (tipoDatiCollezionati) {
-		case ATOMIC_LONG:
-			ret = new DatiCollezionatiDistributedAtomicLong(dati, hazelcast, uniquePrefixId);
-			break;
-		case ATOMIC_LONG_ASYNC:
-			ret = new DatiCollezionatiDistributedAtomicLongAsync(dati, hazelcast, uniquePrefixId);
-			break;
-		case PNCOUNTER:
-			ret = new DatiCollezionatiDistributedPNCounter(dati, hazelcast, uniquePrefixId);
-			break;
-		default:
-			throw new RuntimeException("TipoDatiCollezionati sconosciuto: " + tipoDatiCollezionati);
-		}
-		
-		return ret;
-	}
-	
-	
-	@Deprecated
-	public static DatiCollezionati build(TipoDatiCollezionati tipoDatiCollezionati, Date updatePolicyDate, HazelcastInstance hazelcast, String uniquePrefixId) {
-		DatiCollezionati ret;
-		
-		switch (tipoDatiCollezionati) {
-		case ATOMIC_LONG:
-			ret = new DatiCollezionatiDistributedAtomicLong(updatePolicyDate, hazelcast, uniquePrefixId);
-			break;
-		case ATOMIC_LONG_ASYNC:
-			ret = new DatiCollezionatiDistributedAtomicLongAsync(updatePolicyDate, hazelcast, uniquePrefixId);
-			break;
-		case PNCOUNTER:
-			ret = new DatiCollezionatiDistributedPNCounter(updatePolicyDate, hazelcast, uniquePrefixId);
-			break;
-		default:
-			throw new RuntimeException("TipoDatiCollezionati sconosciuto: " + tipoDatiCollezionati);
-		}
-		
-		return ret;
-	}
 	
 	public final PolicyGroupByActiveThreadsType tipoPolicy;
 	private final HazelcastInstance hazelcast;
@@ -118,15 +78,15 @@ public class BuilderDatiCollezionatiDistributed {
 	}
 	
 	
-	public DatiCollezionati build(DatiCollezionati dati, String uniquePrefixId) {
+	public DatiCollezionati build(DatiCollezionati dati, String uniquePrefixId, ActivePolicy activePolicy) {
 		DatiCollezionati ret;
 		
 		switch (this.tipoPolicy) {
 		case HAZELCAST_ATOMIC_LONG:
-			ret = new DatiCollezionatiDistributedAtomicLong(dati, this.hazelcast, uniquePrefixId);
+			ret = new DatiCollezionatiDistributedAtomicLong(dati, this.hazelcast, uniquePrefixId, activePolicy);
 			break;
 		case HAZELCAST_ATOMIC_LONG_ASYNC:
-			ret = new DatiCollezionatiDistributedAtomicLongAsync(dati, this.hazelcast, uniquePrefixId);
+			ret = new DatiCollezionatiDistributedAtomicLongAsync(dati, this.hazelcast, uniquePrefixId, activePolicy);
 			break;
 		case HAZELCAST_PNCOUNTER:
 			ret = new DatiCollezionatiDistributedPNCounter(dati, this.hazelcast, uniquePrefixId);
@@ -145,15 +105,15 @@ public class BuilderDatiCollezionatiDistributed {
 	}
 	
 	
-	public DatiCollezionati build(Date updatePolicyDate, String uniquePrefixId) {
+	public DatiCollezionati build(Date updatePolicyDate, String uniquePrefixId, ActivePolicy activePolicy) {
 		DatiCollezionati ret;
 		
 		switch (this.tipoPolicy) {
 		case HAZELCAST_ATOMIC_LONG:
-			ret = new DatiCollezionatiDistributedAtomicLong(updatePolicyDate, this.hazelcast, uniquePrefixId);
+			ret = new DatiCollezionatiDistributedAtomicLong(updatePolicyDate, this.hazelcast, uniquePrefixId, activePolicy);
 			break;
 		case HAZELCAST_ATOMIC_LONG_ASYNC:
-			ret = new DatiCollezionatiDistributedAtomicLongAsync(updatePolicyDate, this.hazelcast, uniquePrefixId);
+			ret = new DatiCollezionatiDistributedAtomicLongAsync(updatePolicyDate, this.hazelcast, uniquePrefixId, activePolicy);
 			break;
 		case HAZELCAST_PNCOUNTER:
 			ret = new DatiCollezionatiDistributedPNCounter(updatePolicyDate, this.hazelcast, uniquePrefixId);

@@ -15,7 +15,6 @@ import org.openspcoop2.core.controllo_traffico.driver.CostantiControlloTraffico;
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreadsInMemory;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
-import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.singoli_contatori.BuilderDatiCollezionatiDistributed;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.singoli_contatori.IDatiCollezionatiDistributed;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
@@ -62,7 +61,7 @@ public class PolicyGroupByActiveThreadsDistributedContatoriSingoli implements Se
 					for( var e : map.entrySet()) {
 						this.mapActiveThreads.put(
 								e.getKey(), 
-								this.builderDatiCollezionati.build(e.getValue(),  String.valueOf( (this.uniqueMapId+e.getKey()).hashCode())));
+								this.builderDatiCollezionati.build(e.getValue(),  String.valueOf( (this.uniqueMapId+e.getKey()).hashCode()), this.activePolicy));
 					}
 				}
 		}
@@ -99,9 +98,12 @@ public class PolicyGroupByActiveThreadsDistributedContatoriSingoli implements Se
 			datiCollezionati = this.mapActiveThreads.get(datiGroupBy);
 			
 			if (datiCollezionati == null){				
+				
 				datiCollezionati = this.builderDatiCollezionati.build( 
 						this.activePolicy.getInstanceConfiguration().getUpdateTime(), 
-						String.valueOf( (this.uniqueMapId+datiGroupBy).hashCode() ));
+						String.valueOf( (this.uniqueMapId+datiGroupBy).hashCode()),
+						this.activePolicy
+					);
 				
 				this.mapActiveThreads.put(datiGroupBy, datiCollezionati); // registro nuova immagine
 			}
@@ -225,7 +227,6 @@ public class PolicyGroupByActiveThreadsDistributedContatoriSingoli implements Se
 				for (IDUnivocoGroupByPolicy datiGroupBy : this.mapActiveThreads.keySet()) {
 					bf.append(separatorGroups);
 					bf.append("\n");
-					// TODO: A seconda del vero tipo devo stampare AtomicLong AtomicLongAsync, RedisAtomicLong, RedisLongAdder
 					bf.append(CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE).append(" ").append(this.builderDatiCollezionati.tipoPolicy.toLabel());
 					bf.append("\n");
 					bf.append("Criterio di Collezionamento dei Dati\n");

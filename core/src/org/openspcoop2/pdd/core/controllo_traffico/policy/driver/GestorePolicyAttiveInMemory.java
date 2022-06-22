@@ -59,7 +59,6 @@ import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.Polic
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedNearCacheWithoutEntryProcessorPutSync;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedNoCache;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedReplicatedMap;
-import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.singoli_contatori.BuilderDatiCollezionatiDistributed;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.PolicyGroupByActiveThreadsDistributedRedis;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.RedissonManager;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;

@@ -173,15 +173,16 @@
 	<archive path="/op2_3.3.dev/lib/opensaml/java-support-7.5.0.jar"/>
 	<!-- redis -->
 	<archive path="/op2_3.3.dev/lib/redis/redisson-3.17.1.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/netty-resolver-4.1.77.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/netty-resolver-dns-4.1.77.Final.jar"/>
 	<archive path="/op2_3.3.dev/lib/redis/jboss-marshalling-2.0.12.Final.jar"/>
 	<archive path="/op2_3.3.dev/lib/redis/jboss-marshalling-river-2.0.12.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/netty-buffer-4.1.77.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/netty-common-4.1.77.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/netty-transport-4.1.77.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/netty-codec-4.1.77.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/netty-codec-dns-4.1.77.Final.jar"/>
+
+	<archive path="/op2_3.3.dev/lib/netty/netty-resolver-4.1.77.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/netty/netty-resolver-dns-4.1.77.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/netty/netty-buffer-4.1.77.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/netty/netty-common-4.1.77.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/netty/netty-transport-4.1.77.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/netty/netty-codec-4.1.77.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/netty/netty-codec-dns-4.1.77.Final.jar"/>
 	<!-- reports -->
 	<archive path="/op2_3.3.dev/lib/reports/dynamicreports-core-6.1.0.jar"/>
         <archive path="/op2_3.3.dev/lib/reports/itext-2.1.7.js7.jar"/>

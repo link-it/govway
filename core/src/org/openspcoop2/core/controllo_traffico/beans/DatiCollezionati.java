@@ -331,8 +331,8 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		if(this.policyCounter!=null){
 			dati.policyCounter = Long.valueOf(this.getPolicyCounter());
 		}
-		if(this.policyDenyRequestCounter!=null){
-			dati.policyDenyRequestCounter = Long.valueOf(this.policyDenyRequestCounter);
+		if(this.getPolicyDenyRequestCounter()!=null){
+			dati.policyDenyRequestCounter = Long.valueOf(this.getPolicyDenyRequestCounter());
 		}
 		if(this.oldPolicyDate!=null){
 			dati.oldPolicyDate = new Date(this.oldPolicyDate.getTime());
@@ -409,7 +409,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 			bf.append("\n");
 		}
 		bf.append("\tRichieste Attive: ");
-		bf.append(this.activeRequestCounter);
+		bf.append(this.getActiveRequestCounter());
 		
 		// data di creazione
 		bf.append("\n");
@@ -565,10 +565,10 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				bf.append(avg.longValue());	
 			}
 		}
-		if(this.policyDenyRequestCounter!=null){
+		if(this.getPolicyDenyRequestCounter()!=null){
 			bf.append("\n");
 			bf.append("\tNumero Richieste Bloccate: ");
-			bf.append(this.policyDenyRequestCounter);
+			bf.append(this.getPolicyDenyRequestCounter());
 		}
 		
 		if(leftPrecedente!=null && rightPrecedente!=null){
@@ -1389,7 +1389,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		return this.tipoRisorsa;
 	}
 	
-	public long getActiveRequestCounter() {
+	public Long getActiveRequestCounter() {
 		return this.activeRequestCounter;
 	}
 	public Date getCreationDate() {
@@ -1753,8 +1753,8 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		
 		
 		// threads
-		if(dati.activeRequestCounter!=null)
-			bf.append(dati.activeRequestCounter);
+		if(dati.getActiveRequestCounter() != null)
+			bf.append(dati.getActiveRequestCounter());
 		else
 			bf.append("-");
 		bf.append("\n");
@@ -1812,8 +1812,8 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		else
 			bf.append("-");
 		bf.append("\n");
-		if(dati.policyDenyRequestCounter!=null)
-			bf.append(dati.policyDenyRequestCounter);
+		if(dati.getPolicyDenyRequestCounter()!=null)
+			bf.append(dati.getPolicyDenyRequestCounter());
 		else
 			bf.append("-");
 		bf.append("\n");

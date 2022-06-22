@@ -33,6 +33,8 @@ import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
 import org.openspcoop2.core.controllo_traffico.constants.TipoFinestra;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
+import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.slf4j.Logger;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -46,7 +48,7 @@ import com.hazelcast.cp.IAtomicLong;
  * a fare richieste remote, ottenendo valori che non sono quelli che ci si aspettava dopo la richiesta.
  * 
  * @author Francesco Scarlato
- *
+ * 	
  */
 public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati implements IDatiCollezionatiDistributed{
 
@@ -66,9 +68,11 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	protected  IAtomicLong distributedPolicyDegradoPrestazionaleRequestCounter;
 	protected IAtomicLong distributedPolicyDegradoPrestazionaleCounter;
 	
-	
-	// TODO: Gestire updatePolicyDate distribuita
-	public DatiCollezionatiDistributedAtomicLong(Date updatePolicyDate, HazelcastInstance hazelcast, String uniquePrefixId) {
+	protected  final IAtomicLong distributedActiveRequestCounter;
+	protected  IAtomicLong distributedPolicyDenyRequestCounter;
+		
+
+	public DatiCollezionatiDistributedAtomicLong(Date updatePolicyDate, HazelcastInstance hazelcast, String uniquePrefixId, ActivePolicy activePolicy) {
 		super(updatePolicyDate);
 	
 		this.hazelcast = hazelcast;
@@ -76,19 +80,43 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 		this.distributedPolicyDate = hazelcast.getCPSubsystem().getAtomicLong(this.uniquePrefixId+"-distributedPolicyDate");
 		this.distributedUpdatePolicyDate = hazelcast.getCPSubsystem().getAtomicLong(this.uniquePrefixId+"-distributedUpdatePolicyDate");
 		this.distributedPolicyDegradoPrestazionaleDate = hazelcast.getCPSubsystem().getAtomicLong(this.uniquePrefixId+"-distributedPolicyDegradoPrestazionaleDate");
+		this.distributedActiveRequestCounter = this.hazelcast.getCPSubsystem().getAtomicLong(this.uniquePrefixId+"-distributedActiveRequestCounter"); 
+		
+		this.initDatiIniziali(activePolicy);
+		
+		Date curIntervalDate = DateUtils.convertToLeftInterval(DateManager.getDate(),this.getPolicyDateTypeInterval());
+		this.setPolicyDate(curIntervalDate);
+		this.setPolicyDegradoPrestazionaleDate(curIntervalDate);
+		
+		getPolicyCounters(curIntervalDate);
+		getPolicyCountersDegradoPrestazionale(curIntervalDate);
+		
+		
+		// Gestisco la updatePolicyDate qui, in questo modo risparmio un accesso in rete per ogni registerStartRequest.
+		// se updatePolicyDate è > this.distributedUpdatePolicyDate.get() allora resetto i contatori del cluster e setto la nuova data distribuita.
+		// Questo per via di come funziona l'aggiornamento delle policy: i datiCollezionati correnti per una map<IDUnivoco..., DatiCollezionati> vengono cancellati e reinizializzati.
+		// Per gli altri nodi in esecuzione, la updatePolicyDate locale resta sempre la stessa, ma non viene usata.
+		
+		
+		if (updatePolicyDate != null && this.distributedUpdatePolicyDate.get() < updatePolicyDate.getTime()) {
+			this.resetCounters(updatePolicyDate);
+		}
+		
 	}
 	
 	
-	public DatiCollezionatiDistributedAtomicLong(DatiCollezionati dati, HazelcastInstance hazelcast, String uniquePrefixId) {
-		this(dati.getUpdatePolicyDate(), hazelcast, uniquePrefixId);
+	public DatiCollezionatiDistributedAtomicLong(DatiCollezionati dati, HazelcastInstance hazelcast, String uniquePrefixId, ActivePolicy activePolicy) {
+		super(dati.getUpdatePolicyDate());
+		
+		this.hazelcast = hazelcast;
+		this.uniquePrefixId = uniquePrefixId;
+		this.distributedPolicyDate = hazelcast.getCPSubsystem().getAtomicLong(this.uniquePrefixId+"-distributedPolicyDate");
+		this.distributedUpdatePolicyDate = hazelcast.getCPSubsystem().getAtomicLong(this.uniquePrefixId+"-distributedUpdatePolicyDate");
+		this.distributedPolicyDegradoPrestazionaleDate = hazelcast.getCPSubsystem().getAtomicLong(this.uniquePrefixId+"-distributedPolicyDegradoPrestazionaleDate");
+		this.distributedActiveRequestCounter = this.hazelcast.getCPSubsystem().getAtomicLong(this.uniquePrefixId+"-distributedActiveRequestCounter"); 
 		
 		// Inizializzo il padre con i valori in RAM, dopo uso 'super' per essere  sicuro di usare quelli
 		dati.clone_impl(this);
-		
-		// Inizializzo la updatePolicyDate se necessario, ma questo devo farlo altrove.
-		if (super.getUpdatePolicyDate() != null &&this.distributedUpdatePolicyDate.get() == 0) {
-			this.distributedUpdatePolicyDate.compareAndSet(0,super.getUpdatePolicyDate().getTime());
-		}
 		
 		// Se non ho la policyDate, non considero il resto delle informazioni, che senza di essa non hanno senso.
 		if (super.getPolicyDate() != null) {
@@ -104,12 +132,23 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 				this.distributedPolicyRequestCounter = this.hazelcast.getCPSubsystem().getAtomicLong(
 						this.uniquePrefixId+"-distributedPolicyRequestCounter"+super.getPolicyDate().getTime());
 				
+				this.distributedPolicyDenyRequestCounter = this.hazelcast.getCPSubsystem().getAtomicLong(
+						this.uniquePrefixId+"-distributedPolicyDenyRequestCounter"+super.getPolicyDate().getTime());
+				
 				if (super.getPolicyRequestCounter() != null) {
 					this.distributedPolicyRequestCounter.addAndGet(super.getPolicyRequestCounter());
 				}
 				
 				if (super.getPolicyCounter() != null) {
 					this.distributedPolicyCounter.addAndGet(super.getPolicyCounter());
+				}
+				
+				if (super.getActiveRequestCounter() != 0) {
+					this.distributedActiveRequestCounter.set(super.getActiveRequestCounter());
+				}
+				
+				if (super.getPolicyDenyRequestCounter() != null) {
+					this.distributedPolicyDenyRequestCounter.set(super.getPolicyDenyRequestCounter());
 				}
 								
 			} else {
@@ -155,6 +194,35 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 		
 	}
 	
+	
+	protected void getPolicyCounters(Date date) {
+		
+		Long policyDate = date.getTime();
+
+		if(this.policyRealtime!=null && this.policyRealtime){
+			this.distributedPolicyRequestCounter = this.hazelcast.getCPSubsystem().getAtomicLong(
+					this.uniquePrefixId+"-policyRequestCounter"+policyDate);
+			
+			this.distributedPolicyDenyRequestCounter = this.hazelcast.getCPSubsystem().getAtomicLong(
+					this.uniquePrefixId+"-distributedPolicyDenyRequestCounter"+policyDate);
+			
+			if(this.tipoRisorsa==null || !isRisorsaContaNumeroRichieste(this.tipoRisorsa)){
+				this.distributedPolicyCounter = this.hazelcast.getCPSubsystem().getAtomicLong(
+						this.uniquePrefixId+"-policyCounter"+policyDate);
+			}
+		}
+	}
+	
+	protected void getPolicyCountersDegradoPrestazionale(Date date) {
+		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
+			this.distributedPolicyDegradoPrestazionaleCounter = this.hazelcast.getCPSubsystem().getAtomicLong(
+					this.uniquePrefixId+"-distributedPolicyDegradoPrestazionaleCounter"+date.getTime());
+			
+			this.distributedPolicyDegradoPrestazionaleRequestCounter = this.hazelcast.getCPSubsystem().getAtomicLong(
+					this.uniquePrefixId+"-distributedPolicyDegradoPrestazionaleRequestCounter"+date.getTime());
+		}	
+	}
+	
 	@Override
 	protected void resetPolicyCounterForDate(Date date) {
 
@@ -162,16 +230,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 		
 		this.distributedPolicyDate.set(policyDate);
 		
-		// Prendo i nuovi contatori
-		if(this.policyRealtime!=null && this.policyRealtime){
-			this.distributedPolicyRequestCounter = this.hazelcast.getCPSubsystem().getAtomicLong(
-					this.uniquePrefixId+"-policyRequestCounter"+policyDate);
-			
-			if(this.tipoRisorsa==null || !isRisorsaContaNumeroRichieste(this.tipoRisorsa)){
-				this.distributedPolicyCounter = this.hazelcast.getCPSubsystem().getAtomicLong(
-						this.uniquePrefixId+"-policyCounter"+policyDate);
-			}
-		}
+		getPolicyCounters(date);
 		
 		// Resetto le copie in RAM
 		super.resetPolicyCounterForDate(date);
@@ -183,38 +242,57 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 		
 		this.distributedPolicyDegradoPrestazionaleDate.set(date.getTime());
 		
-		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
-			this.distributedPolicyDegradoPrestazionaleCounter = this.hazelcast.getCPSubsystem().getAtomicLong(
-					this.uniquePrefixId+"-distributedPolicyDegradoPrestazionaleCounter"+date.getTime());
-			
-			this.distributedPolicyDegradoPrestazionaleRequestCounter = this.hazelcast.getCPSubsystem().getAtomicLong(
-					this.uniquePrefixId+"-distributedPolicyDegradoPrestazionaleRequestCounter"+date.getTime());
-		}
-		
+		getPolicyCountersDegradoPrestazionale(date);
+	
 		super.resetPolicyCounterForDateDegradoPrestazionale(date);
 	}
+	
+	
+	@Override
+	public void resetCounters(Date updatePolicyDate) {
+		super.resetCounters(updatePolicyDate);
+		
+		if(updatePolicyDate!=null) {
+			this.distributedUpdatePolicyDate.set(updatePolicyDate.getTime());
+		}
+		
+		if (this.distributedPolicyDenyRequestCounter != null) {
+			this.distributedPolicyDenyRequestCounter.set(0);
+		}
+		
+		if (this.distributedPolicyRequestCounter != null) {
+			this.distributedPolicyRequestCounter.set(0l);
+		}
+		
+		if (this.distributedPolicyCounter != null) {
+			this.distributedPolicyCounter.set(0l);
+		}
+
+		if (this.distributedPolicyDegradoPrestazionaleRequestCounter != null) {
+			this.distributedPolicyDegradoPrestazionaleRequestCounter.set(0l);
+		}
+		
+		if (this.distributedPolicyDegradoPrestazionaleCounter != null) {
+			this.distributedPolicyDegradoPrestazionaleCounter.set(0l);
+		}
+		
+	}
+
 
 	@Override
 	protected void initDatiIniziali(ActivePolicy activePolicy){
 		super.initDatiIniziali(activePolicy);
-		
-		// TODO: Se decido di distribuire anche questi due, l'inizializzazione va fatta qui 
-		// this.activeRequestCounter = 0l;
-		
-		// data di registrazione policy
-		// this.updatePolicyDate = activePolicy.getInstanceConfiguration().getUpdateTime();
 	}
 	
 	
-	/*@Override
+	@Override
 	public void registerStartRequest(Logger log, ActivePolicy activePolicy){
 		
 		if(super.getCreationDate() ==null){
 			this.initDatiIniziali(activePolicy);
 		}
 		
-		// TODO: Parla con andrea, Magari questi campi li possiamo distribuire con le  async?
-		//super.setActiveRequestCounter(.incrementAndGet());
+		this.distributedActiveRequestCounter.incrementAndGetAsync();
 		
 		if(this.getPolicyDateWindowInterval()!=null && 
 				TipoFinestra.SCORREVOLE.equals(this.getPolicyDateWindowInterval())==false){
@@ -234,7 +312,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 			// }
 		}
 		
-	}*/
+	}
 	
 	
 	@Override
@@ -244,8 +322,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 			return; // non inizializzato?
 		}
 		
-		//super.setActiveRequestCounter(this.activeRequestCounter.decrementAndGet());
-		super.setActiveRequestCounter(super.getActiveRequestCounter()-1);
+		this.distributedActiveRequestCounter.decrementAndGetAsync();
 				
 		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
 			
@@ -327,9 +404,8 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
             	}
             	if(isViolata) {
             		// Aumento solamente il contatore della policy la quale ha bloccato la transazione
-            		// TODO: chiedi ad andrea, distribuire?
-            		super.setPolicyDenyRequestCounter(super.getPolicyDenyRequestCounter()+1);
-            		//this.policyDenyRequestCounter++;
+            		this.distributedPolicyDenyRequestCounter.incrementAndGetAsync();
+            		//super.setPolicyDenyRequestCounter(super.getPolicyDenyRequestCounter()+1);
             	}
 				return; // non incremento alcun contatore.
 			}
@@ -433,41 +509,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 					
 	}
 	
-	
-	
-	// TODO: La resetCounters invece dovrebbe avvenire in maniera mutuamente esclusiva rispetto
-	//	alle altre operazioni del cluster. Immaginiamo di resettarli mentre un nodo deve  eseguire la
-	//	updateDatiEndRequestApplicabile, allora se azzeriamo adesso i contatori la super.setPolicyRequestCounter(this.distributedPolicyRequestCounter.decrementAndGet());
-	// porterà il contatore ad un valore negativo, ma questo vale anche per quanto abbiamo fatto con la versione con map distribuita, e la versione locale già esistente anche.
 
-	@Override
-	public void resetCounters(Date updatePolicyDate) {
-		super.resetCounters(updatePolicyDate);
-		
-		if(updatePolicyDate!=null) {
-			this.distributedUpdatePolicyDate.set(updatePolicyDate.getTime());
-		}
-		
-		if (this.distributedPolicyRequestCounter != null) {
-			this.distributedPolicyRequestCounter.set(0l);
-		}
-		
-		if (this.distributedPolicyCounter != null) {
-			this.distributedPolicyCounter.set(0l);
-		}
-
-		if (this.distributedPolicyDegradoPrestazionaleRequestCounter != null) {
-			this.distributedPolicyDegradoPrestazionaleRequestCounter.set(0l);
-		}
-		
-		if (this.distributedPolicyDegradoPrestazionaleCounter != null) {
-			this.distributedPolicyDegradoPrestazionaleCounter.set(0l);
-		}
-		
-	}
-
-	
-	
 	@Override
 	public void destroyDatiDistribuiti() {
 		this.distributedUpdatePolicyDate.destroy();
@@ -478,6 +520,11 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 		this.distributedPolicyDegradoPrestazionaleDate.destroy();	
 		this.distributedPolicyDegradoPrestazionaleRequestCounter.destroy();
 		this.distributedPolicyDegradoPrestazionaleCounter.destroy();
+	}
+	
+	@Override
+	public Long getActiveRequestCounter() {
+		return this.distributedActiveRequestCounter.get();
 	}
 	
 

@@ -31,7 +31,6 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoFinestra;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.singoli_contatori.IDatiCollezionatiDistributed;
-import org.redisson.Redisson;
 import org.redisson.api.RAtomicLong;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
@@ -67,7 +66,6 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 	private final RedissonClient redisson;
 	
 	
-	// TODO: Gestire updatePolicyDate distribuita
 	public DatiCollezionatiDistributedRedisAtomicLong(Date updatePolicyDate, RedissonClient redisson, String uniquePrefixId) {
 		super(updatePolicyDate);
 	
@@ -76,6 +74,15 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 		this.distributedPolicyDate = this.redisson.getAtomicLong(this.uniquePrefixId+"-distributedPolicyDate");
 		this.distributedUpdatePolicyDate = this.redisson.getAtomicLong(this.uniquePrefixId+"-distributedUpdatePolicyDate");
 		this.distributedPolicyDegradoPrestazionaleDate = this.redisson.getAtomicLong(this.uniquePrefixId+"-distributedPolicyDegradoPrestazionaleDate");
+		
+		// Gestisco la updatePolicyDate qui.
+		// se updatePolicyDate è > this.distributedUpdatePolicyDate.get() allora resetto i contatori del cluster e setto la nuova data distribuita.
+		// Questo per via di come funziona l'aggiornamento delle policy: i datiCollezionati correnti per una map<IDUnivoco..., DatiCollezionati> vengono cancellati e reinizializzati.
+		// Per gli altri nodi in esecuzione, la updatePolicyDate locale resta sempre la stessa, ma non viene usata.
+		
+		if (updatePolicyDate != null && this.distributedUpdatePolicyDate.get() < updatePolicyDate.getTime()) {
+			this.resetCounters(updatePolicyDate);
+		}
 	}
 	
 	
@@ -196,12 +203,6 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 	@Override
 	protected void initDatiIniziali(ActivePolicy activePolicy){
 		super.initDatiIniziali(activePolicy);
-		
-		// TODO: Se decido di distribuire anche questi due, l'inizializzazione va fatta qui 
-		// this.activeRequestCounter = 0l;
-		
-		// data di registrazione policy
-		// this.updatePolicyDate = activePolicy.getInstanceConfiguration().getUpdateTime();
 	}
 	
 	
@@ -212,7 +213,6 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 			this.initDatiIniziali(activePolicy);
 		}
 		
-		// TODO: Parla con andrea, Magari questi campi li possiamo distribuire con le  async?
 		//super.setActiveRequestCounter(.incrementAndGet());
 		
 		if(this.getPolicyDateWindowInterval()!=null && 
@@ -326,7 +326,6 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
             	}
             	if(isViolata) {
             		// Aumento solamente il contatore della policy la quale ha bloccato la transazione
-            		// TODO: chiedi ad andrea, distribuire?
             		super.setPolicyDenyRequestCounter(super.getPolicyDenyRequestCounter()+1);
             		//this.policyDenyRequestCounter++;
             	}
@@ -432,12 +431,6 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 					
 	}
 	
-	
-	
-	// TODO: La resetCounters invece dovrebbe avvenire in maniera mutuamente esclusiva rispetto
-	//	alle altre operazioni del cluster. Immaginiamo di resettarli mentre un nodo deve  eseguire la
-	//	updateDatiEndRequestApplicabile, allora se azzeriamo adesso i contatori la super.setPolicyRequestCounter(this.distributedPolicyRequestCounter.decrementAndGet());
-	// porterà il contatore ad un valore negativo, ma questo vale anche per quanto abbiamo fatto con la versione con map distribuita, e la versione locale già esistente anche.
 
 	@Override
 	public void resetCounters(Date updatePolicyDate) {

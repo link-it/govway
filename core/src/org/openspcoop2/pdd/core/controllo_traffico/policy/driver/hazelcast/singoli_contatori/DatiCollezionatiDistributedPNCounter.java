@@ -62,7 +62,6 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 
 	protected final IAtomicLong distributedUpdatePolicyDate;
 	protected final IAtomicLong distributedPolicyDate;	
-	
 
 	protected PNCounter distributedPolicyRequestCounter;	
 	protected PNCounter distributedPolicyCounter;						 // utilizzato per tempi o banda
@@ -84,6 +83,15 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 		this.distributedPolicyDate = hazelcast.getCPSubsystem().getAtomicLong(this.getDistributedName("distributedPolicyDate"));
 		this.distributedUpdatePolicyDate = hazelcast.getCPSubsystem().getAtomicLong(this.getDistributedName("distributedUpdatePolicyDate"));
 		this.distributedPolicyDegradoPrestazionaleDate = hazelcast.getCPSubsystem().getAtomicLong(this.getDistributedName("distributedPolicyDegradoPrestazionaleDate"));
+		
+		// Gestisco la updatePolicyDate qui.
+		// se updatePolicyDate è > this.distributedUpdatePolicyDate.get() allora resetto i contatori del cluster e setto la nuova data distribuita.
+		// Questo per via di come funziona l'aggiornamento delle policy: i datiCollezionati correnti per una map<IDUnivoco..., DatiCollezionati> vengono cancellati e reinizializzati.
+		// Per gli altri nodi in esecuzione, la updatePolicyDate locale resta sempre la stessa, ma non viene usata.
+		
+		if (updatePolicyDate != null && this.distributedUpdatePolicyDate.get() < updatePolicyDate.getTime()) {
+			this.resetCounters(updatePolicyDate);
+		}
 	}
 	
 	
@@ -93,7 +101,7 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 		// Inizializzo il padre
 		dati.clone_impl(this);
 		
-		// Inizializzo la updatePolicyDate se necessario, ma questo devo  ancora gestirlo (TODO)
+
 		if (super.getUpdatePolicyDate() != null) {
 			this.distributedUpdatePolicyDate.compareAndSet(0,super.getUpdatePolicyDate().getTime());
 		}
@@ -331,7 +339,6 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
             	}
             	if(isViolata) {
             		// Aumento solamente il contatore della policy la quale ha bloccato la transazione
-            		// TODO: chiedi ad andrea, distribuire?
             		super.setPolicyDenyRequestCounter(super.getPolicyDenyRequestCounter()+1);
             		//this.policyDenyRequestCounter++;
             	}
@@ -438,7 +445,6 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 	}
 	
 	
-	// TODO: Questa implementazione soffre dello stesso problema di DatiCollezionatiDistributed::resetCounters e DatiCollezionati::resetCounters
 	@Override
 	public void resetCounters(Date updatePolicyDate) {
 		super.resetCounters(updatePolicyDate);
@@ -480,50 +486,4 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 	}
 	
 	
-	// Utilizziamo i PNCounter con le repliche per ogni nodo, per cui il valore è sempre presente in locale.
-	// Dunque forniamo il valore più aggiornato per la finestra attuale.
-	// NO (TODO: Rimuovi codice dopo aver fatto leggere la nota ad andrea)
-	// Potrebbe accadere che il PolicyVerifier faccia la get di questi contatori, contando anche le richieste arrivate
-	// su altri nodi, superando il limite e non consentendo nessuna richiesta su nessun nodo, per cui resto con la
-	// incrementAndGet
-	
-/*	@Override
-	public Date getUpdatePolicyDate() {
-		return new Date(this.distributedUpdatePolicyDate.get());
-	}
-
-	
-	@Override
-	public Date getPolicyDate() {
-		return new Date(this.distributedPolicyDate.get());
-	}	
-	
-
-	@Override
-	public Long getPolicyRequestCounter() {
-		return this.distributedPolicyRequestCounter.get();
-	}
-
-
-	@Override
-	public Long getPolicyCounter() {
-		return this.distributedPolicyCounter.get();
-	}	
-
-	
-	@Override
-	public Date getPolicyDegradoPrestazionaleDate() {
-		return new Date(this.distributedPolicyDegradoPrestazionaleDate.get());
-	}
-	
-	@Override
-	public Long getPolicyDegradoPrestazionaleRequestCounter() {
-		return this.distributedPolicyDegradoPrestazionaleRequestCounter.get();
-	}
-
-	@Override
-	public Long getPolicyDegradoPrestazionaleCounter() {
-		return this.distributedPolicyDegradoPrestazionaleCounter.get();
-	}*/
-
 }

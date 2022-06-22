@@ -47,13 +47,13 @@ public class DatiCollezionatiDistributedAtomicLongAsync extends DatiCollezionati
 
 	private static final long serialVersionUID = 1L;
 
-	public DatiCollezionatiDistributedAtomicLongAsync(Date updatePolicyDate, HazelcastInstance hazelcast, String uniqueMapId) {
-		super(updatePolicyDate, hazelcast, uniqueMapId);
+	public DatiCollezionatiDistributedAtomicLongAsync(Date updatePolicyDate, HazelcastInstance hazelcast, String uniqueMapId, ActivePolicy activePolicy) {
+		super(updatePolicyDate, hazelcast, uniqueMapId, activePolicy);
 	}
 	
 	
-	public DatiCollezionatiDistributedAtomicLongAsync(DatiCollezionati dati, HazelcastInstance hazelcast, String uniqueMapId) {
-		super(dati, hazelcast, uniqueMapId);
+	public DatiCollezionatiDistributedAtomicLongAsync(DatiCollezionati dati, HazelcastInstance hazelcast, String uniqueMapId, ActivePolicy activePolicy) {
+		super(dati, hazelcast, uniqueMapId, activePolicy);
 	}
 
 	@Override
@@ -145,7 +145,6 @@ public class DatiCollezionatiDistributedAtomicLongAsync extends DatiCollezionati
             	}
             	if(isViolata) {
             		// Aumento solamente il contatore della policy la quale ha bloccato la transazione
-            		// TODO: chiedi ad andrea, distribuire?
             		super.setPolicyDenyRequestCounter(super.getPolicyDenyRequestCounter()+1);
             		//this.policyDenyRequestCounter++;
             	}

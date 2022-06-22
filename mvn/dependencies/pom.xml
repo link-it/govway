@@ -45,6 +45,7 @@
 		<module>openapi4j</module>
 		<module>opensaml</module>
 		<module>redis</module>
+		<module>netty</module>
 		<module>reports</module>
 		<module>saaj</module>
 		<module>security</module>

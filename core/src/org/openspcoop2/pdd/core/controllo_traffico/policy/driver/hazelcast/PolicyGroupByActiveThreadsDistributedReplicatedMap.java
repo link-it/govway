@@ -44,7 +44,6 @@ import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.map.IMap;
 import com.hazelcast.replicatedmap.ReplicatedMap;
 
 /**

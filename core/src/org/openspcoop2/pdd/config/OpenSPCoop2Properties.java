@@ -65,7 +65,6 @@ import org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazionePortaApplicativ
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.INotify;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.TipoGestorePolicy;
-import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.TipoDatiCollezionati;
 import org.openspcoop2.pdd.core.credenziali.IGestoreCredenziali;
 import org.openspcoop2.pdd.core.credenziali.IGestoreCredenzialiIM;
 import org.openspcoop2.pdd.core.handlers.ExitHandler;
@@ -2031,7 +2030,6 @@ public class OpenSPCoop2Properties {
 						getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPath();
 						getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPath();
 						getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPath();
-						getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeTipoDatiCollezionati();
 					}
 					
 					// case REDIS
@@ -23714,35 +23712,6 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastConfigPath;		
-	}
-	
-	private static Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeTipoDatiCollezionati_read = null;
-	private static TipoDatiCollezionati getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeTipoDatiCollezionati = null;
-	public TipoDatiCollezionati getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeTipoDatiCollezionati()  throws RuntimeException {
-		
-		if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeTipoDatiCollezionati_read==null){
-			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_PUNTUALE.tipoDatiCollezionati";
-
-			try{  
-				String value = this.reader.getValue_convertEnvProperties(pName); 
-				if(value==null){
-					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeTipoDatiCollezionati = TipoDatiCollezionati.ATOMIC_LONG;
-					this.log.warn("Proprieta' 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.tipo' non impostata; viene usato il default: "+OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeTipoDatiCollezionati);
-				} else {
-					value = value.trim();
-					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeTipoDatiCollezionati = TipoDatiCollezionati.valueOf(value);
-				}
-				
-				getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeTipoDatiCollezionati_read = true;
-				
-			}catch(java.lang.Exception e) {
-				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
-				this.log.error(msgError,e);
-				throw new RuntimeException(msgError,e);
-			}
-		}
-
-		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastPuntualeTipoDatiCollezionati;
 	}
 	
 	

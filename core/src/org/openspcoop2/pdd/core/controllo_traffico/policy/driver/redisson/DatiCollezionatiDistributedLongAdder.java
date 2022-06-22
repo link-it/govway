@@ -56,6 +56,17 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 		this.distributedPolicyDate = this.redisson.getAtomicLong(this.getDistributedName("distributedPolicyDate"));
 		this.distributedUpdatePolicyDate = this.redisson.getAtomicLong(this.getDistributedName("distributedUpdatePolicyDate"));
 		this.distributedPolicyDegradoPrestazionaleDate = this.redisson.getAtomicLong(this.getDistributedName("distributedPolicyDegradoPrestazionaleDate"));
+		
+		// Gestisco la updatePolicyDate qui.
+		// se updatePolicyDate è > this.distributedUpdatePolicyDate.get() allora resetto i contatori del cluster e setto la nuova data distribuita.
+		// Questo per via di come funziona l'aggiornamento delle policy: i datiCollezionati correnti per una map<IDUnivoco..., DatiCollezionati> vengono cancellati e reinizializzati.
+		// Per gli altri nodi in esecuzione, la updatePolicyDate locale resta sempre la stessa, ma non viene usata.
+		
+		
+		if (updatePolicyDate != null && this.distributedUpdatePolicyDate.get() < updatePolicyDate.getTime()) {
+			this.resetCounters(updatePolicyDate);
+		}
+		
 	}
 	
 	
@@ -65,7 +76,6 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 		// Inizializzo il padre
 		dati.clone_impl(this);
 		
-		// Inizializzo la updatePolicyDate se necessario, ma questo devo  ancora gestirlo (TODO)
 		if (super.getUpdatePolicyDate() != null) {
 			this.distributedUpdatePolicyDate.compareAndSet(0,super.getUpdatePolicyDate().getTime());
 		}
@@ -410,7 +420,6 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	}
 	
 	
-	// TODO: Questa implementazione soffre dello stesso problema di DatiCollezionatiDistributed::resetCounters e DatiCollezionati::resetCounters
 	@Override
 	public void resetCounters(Date updatePolicyDate) {
 		super.resetCounters(updatePolicyDate);
