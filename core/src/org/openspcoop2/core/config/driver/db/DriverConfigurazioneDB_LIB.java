@@ -11908,6 +11908,20 @@ public class DriverConfigurazioneDB_LIB {
 						}
 					}
 					
+					String applicabilita_connettori = null;
+					if(regola.getApplicabilita()!=null && regola.getApplicabilita().sizeConnettoreList()>0) {
+						StringBuilder bf = new StringBuilder();
+						for (int i = 0; i < regola.getApplicabilita().sizeConnettoreList(); i++) {
+							if(i>0) {
+								bf.append(",");
+							}
+							bf.append(regola.getApplicabilita().getConnettore(i));
+						}
+						if(bf.length()>0) {
+							applicabilita_connettori = bf.toString();
+						}
+					}
+					
 					List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
 					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("id_porta", idProprietario , InsertAndGeneratedKeyJDBCType.LONG) );
 					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome", regola.getNome() , InsertAndGeneratedKeyJDBCType.STRING) );
@@ -11916,6 +11930,7 @@ public class DriverConfigurazioneDB_LIB {
 					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_azioni", applicabilita_azioni , InsertAndGeneratedKeyJDBCType.STRING) );
 					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_ct", applicabilita_ct , InsertAndGeneratedKeyJDBCType.STRING) );
 					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_pattern", (regola.getApplicabilita()!=null ? regola.getApplicabilita().getPattern() : null) , InsertAndGeneratedKeyJDBCType.STRING) );
+					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_connettori", applicabilita_connettori , InsertAndGeneratedKeyJDBCType.STRING) );
 					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("req_conversione_enabled", ( regola.getRichiesta()!=null && regola.getRichiesta().getConversione()) ? CostantiDB.TRUE : CostantiDB.FALSE , InsertAndGeneratedKeyJDBCType.INT) );
 					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("req_conversione_tipo", (regola.getRichiesta()!=null ? regola.getRichiesta().getConversioneTipo() : null) , InsertAndGeneratedKeyJDBCType.STRING) );
 					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("req_content_type", (regola.getRichiesta()!=null ? regola.getRichiesta().getContentType() : null) , InsertAndGeneratedKeyJDBCType.STRING) );
@@ -12460,9 +12475,11 @@ public class DriverConfigurazioneDB_LIB {
 				String applicabilita_azioni = rs.getString("applicabilita_azioni");
 				String applicabilita_ct = rs.getString("applicabilita_ct");
 				String applicabilita_pattern = rs.getString("applicabilita_pattern");
+				String applicabilita_connettori = rs.getString("applicabilita_connettori");
 				if( (applicabilita_azioni!=null && !"".equals(applicabilita_azioni)) ||
 						(applicabilita_ct!=null && !"".equals(applicabilita_ct)) ||
-						(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)) 
+						(applicabilita_pattern!=null && !"".equals(applicabilita_pattern))  ||
+						(applicabilita_connettori!=null && !"".equals(applicabilita_connettori)) 
 						) {
 					TrasformazioneRegolaApplicabilitaRichiesta applicabilita = new TrasformazioneRegolaApplicabilitaRichiesta();
 					
@@ -12492,6 +12509,18 @@ public class DriverConfigurazioneDB_LIB {
 					
 					if(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)){
 						applicabilita.setPattern(applicabilita_pattern);
+					}
+					
+					if( (applicabilita_connettori!=null && !"".equals(applicabilita_connettori)) ) {
+						if(applicabilita_connettori.contains(",")) {
+							String [] tmp = applicabilita_connettori.split(",");
+							for (int i = 0; i < tmp.length; i++) {
+								applicabilita.addConnettore(tmp[i].trim());
+							}
+						}
+						else {
+							applicabilita.addConnettore(applicabilita_connettori);
+						}
 					}
 					
 					regola.setApplicabilita(applicabilita);

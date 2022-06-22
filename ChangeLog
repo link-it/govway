@@ -1,3 +1,13 @@
+2022-06-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1378
+	Nella funzionalità di consegna asincrona delle notifiche è adesso possibile anche consegnare la risposta o consegnare sia la richiesta e la risposta come un archivio zip.
+	È stata aggiunta inoltre la possibilità di attivare una trasformazione solamente per determinati connettori (tramite i criteri di applicabilità).
+	Inoltre nel contesto della trasformazione è possibile accedere sia alla richiesta che alla risposta se la configurazione del connettore lo prevede.
+	Infine nella maschera di configurazione iniziale di una regola di trasformazione è adesso immediatamente possibile comprendere se sono state attivate qualche modalità di trasformazione della richiesta,
+	grazie al link 'richiesta' che è stato decorato con l'informazione 'richiesta(abilita)' o 'richiesta(disabilitata)'.
+
 2022-06-11  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.7

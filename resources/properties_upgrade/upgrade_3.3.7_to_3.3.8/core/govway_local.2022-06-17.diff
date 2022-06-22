@@ -1,0 +1,14 @@
+diff --git a/ant/setup/deploy/resources/core/govway_local.properties b/ant/setup/deploy/resources/core/govway_local.properties
+index 7a745a2b2d..6e1fb95cdd 100644
+--- a/ant/setup/deploy/resources/core/govway_local.properties
++++ b/ant/setup/deploy/resources/core/govway_local.properties
+@@ -5,6 +5,9 @@
+ # Identificativo univoco numerico della macchina
+ # NOTA: indicare un numero nel seguente intervallo: 0>=NUMERO<=99
+ #org.openspcoop2.pdd.cluster_id.numeric=NUMERO
++
++# Identificativo del cluster dei nodi (hazelcast)
++#org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.group_id=govway
+ # ================================================
+ 
+ # ================================================

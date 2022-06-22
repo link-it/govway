@@ -1329,7 +1329,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 	}
 	
 	
-	public boolean existsTrasformazione(long idPorta, String azioni, String pattern, String contentType) throws DriverConfigurazioneException{
+	public boolean existsTrasformazione(long idPorta, String azioni, String pattern, String contentType, String connettori) throws DriverConfigurazioneException{
 		Connection con = null;
 		String nomeMetodo = "existsTrasformazione";
 		DriverControlStationDB driver = null;
@@ -1339,7 +1339,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
-			return driver.getDriverConfigurazioneDB().existsPortaApplicativaTrasformazione(idPorta, azioni, pattern, contentType);
+			return driver.getDriverConfigurazioneDB().existsPortaApplicativaTrasformazione(idPorta, azioni, pattern, contentType, connettori);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -1367,7 +1367,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 		}
 	}
 	
-	public TrasformazioneRegola getTrasformazione(long idPorta, String azioni, String pattern, String contentType,
+	public TrasformazioneRegola getTrasformazione(long idPorta, String azioni, String pattern, String contentType, String connettori,
 			List<TrasformazioneRegolaApplicabilitaSoggetto> soggetti,
 			List<TrasformazioneRegolaApplicabilitaServizioApplicativo> applicativi,
 			boolean interpretaNullList) throws DriverConfigurazioneException{
@@ -1380,7 +1380,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
-			return driver.getDriverConfigurazioneDB().getPortaApplicativaTrasformazione(idPorta, azioni, pattern, contentType, soggetti, applicativi, interpretaNullList);
+			return driver.getDriverConfigurazioneDB().getPortaApplicativaTrasformazione(idPorta, azioni, pattern, contentType, connettori, soggetti, applicativi, interpretaNullList);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);

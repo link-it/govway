@@ -23,6 +23,8 @@
 package org.openspcoop2.pdd.core.trasformazioni;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +61,9 @@ import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.utils.dch.InputStreamDataSource;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.io.ArchiveType;
+import org.openspcoop2.utils.io.CompressorUtilities;
+import org.openspcoop2.utils.io.Entry;
+import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
@@ -822,8 +827,12 @@ public class GestoreTrasformazioniUtilities {
 							if(MessageType.XML.equals(messageType)) {
 								
 								message.castAsRestXml().updateContent(XMLUtils.getInstance(messageFactory).newElement(risultato.getContenuto()));
-								
+																
 								addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
+								
+								if(contentTypeInput!=null) {
+									message.setContentType(contentTypeInput);
+								}
 								
 								if(ServiceBinding.REST.equals(message.getServiceBinding())) {
 									if(StringUtils.isNotEmpty(trasformazioneRest_method) || StringUtils.isNotEmpty(trasformazioneRest_path)) {
@@ -842,6 +851,10 @@ public class GestoreTrasformazioniUtilities {
 								message.castAsRestJson().updateContent(risultato.getContenutoAsString());
 								
 								addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
+								
+								if(contentTypeInput!=null) {
+									message.setContentType(contentTypeInput);
+								}
 								
 								if(ServiceBinding.REST.equals(message.getServiceBinding())) {
 									if(StringUtils.isNotEmpty(trasformazioneRest_method) || StringUtils.isNotEmpty(trasformazioneRest_path)) {
@@ -1043,5 +1056,120 @@ public class GestoreTrasformazioniUtilities {
 		}
 		return bf.toString();
 	}
+	
+	public static OpenSPCoop2Message buildRequestResponseArchive(Logger log, OpenSPCoop2Message request, OpenSPCoop2Message response, ArchiveType archiveType) throws GestoreTrasformazioniException{
+		
+		List<Entry> listEntries = new ArrayList<>();
+		
+		OpenSPCoop2MessageFactory msgFactory = null;
+		
+		if(request!=null) {
+			msgFactory = request.getFactory();
+			_buildEntryZipArchive(listEntries, request, true);
+		}
+		
+		if(response!=null) {
+			if(msgFactory==null) {
+				msgFactory = request.getFactory();
+			}
+			_buildEntryZipArchive(listEntries, response, false);
+		}
+		
+		if(msgFactory==null) {
+			throw new GestoreTrasformazioniException("MessageFactory undefined");
+		}
+		
+		byte [] archive = null;
+		try {
+			archive = CompressorUtilities.archive(listEntries, archiveType);
+		}catch(Throwable t) {
+			throw new GestoreTrasformazioniException("Generazione archive '"+archiveType+"' non riuscita: "+t.getMessage(),t);
+		}
+		
+		String mimeType = null;
+		try {
+			switch (archiveType) {
+			case ZIP:
+				mimeType = MimeTypes.getInstance().getMimeType("zip");
+				break;
+			case TAR:
+				mimeType = MimeTypes.getInstance().getMimeType("tar");
+				break;
+			case TGZ:
+				mimeType = MimeTypes.getInstance().getMimeType("tgz");
+				break;
+			}
+		}catch(Throwable t) {
+			throw new GestoreTrasformazioniException("Generazione mime-type for archive '"+archiveType+"' non riuscita: "+t.getMessage(),t);
+		}
+		
+		try {
+			TransportRequestContext requestContext = new TransportRequestContext(log);
+			requestContext.setHeaders(new HashMap<String, List<String>>());
+			TransportUtils.addHeader(requestContext.getHeaders(), HttpConstants.CONTENT_TYPE, mimeType);
+			OpenSPCoop2MessageParseResult msg = msgFactory.createMessage(MessageType.BINARY, requestContext, archive);
+			return msg.getMessage_throwParseThrowable();
+		}catch(Throwable t) {
+			throw new GestoreTrasformazioniException("Generazione OpenSPCoop2 Message from archive '"+archiveType+"' non riuscita: "+t.getMessage(),t);
+		}
+	}
+	private static void _buildEntryZipArchive(List<Entry> listEntries, OpenSPCoop2Message message, boolean request) throws GestoreTrasformazioniException{
+		
+		String name = request ? "request" : "response";
+		
+		try {
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			message.writeTo(bout, true);
+			bout.flush();
+			bout.close();
+			Entry payloadRequest = new Entry(name+".bin", bout.toByteArray());
+			listEntries.add(payloadRequest);
+			
+			Map<String, List<String>> hdr = null;
+			
+			if(request && message.getTransportRequestContext()!=null) {
+				if(message.getTransportRequestContext().getHeaders()!=null &&
+					!message.getTransportRequestContext().getHeaders().isEmpty()) {
+					hdr = message.getTransportRequestContext().getHeaders();
+				}
+			}
+			else if(!request && message.getTransportResponseContext()!=null) {
+				if(message.getTransportResponseContext().getHeaders()!=null &&
+						!message.getTransportResponseContext().getHeaders().isEmpty()) {
+					hdr = message.getTransportResponseContext().getHeaders();
+				}
+			}
+		
+			if(hdr!=null) {
+				StringBuilder sb = new StringBuilder();
+				for (String hdrName : hdr.keySet()) {
+					List<String> values = hdr.get(hdrName);
+					if(values!=null) {
+						for (String v : values) {
+							if(v==null) {
+								v="";
+							}
+							if(sb.length()>0) {
+								sb.append("\n");
+							}
+							sb.append(hdrName).append(": ").append(v);
+						}
+					}
+				}
+				if(sb.length()>0) {
+					bout = new ByteArrayOutputStream();
+					bout.write(sb.toString().getBytes());
+					bout.flush();
+					bout.close();
+					Entry payloadRequestHeaders = new Entry(name+"Headers.bin", bout.toByteArray());
+					listEntries.add(payloadRequestHeaders);
+				}	
+			}
+		}catch(Throwable t) {
+			throw new GestoreTrasformazioniException("Generazione entry '"+name+"' non riuscita: "+t.getMessage(),t);
+		}
+		
+	}
+	
 }
 

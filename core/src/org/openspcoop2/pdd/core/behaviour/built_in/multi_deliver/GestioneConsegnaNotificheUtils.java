@@ -282,7 +282,24 @@ public class GestioneConsegnaNotificheUtils  {
 	
 	public static String toString(ConfigurazioneGestioneConsegnaNotifiche config, boolean soap) throws BehaviourException {
 		
-		StringBuilder bf = new StringBuilder("Consegna completata con codice");
+		StringBuilder bf = new StringBuilder("Consegna ");
+		if(config.getMessaggioDaNotificare()!=null) {
+			switch (config.getMessaggioDaNotificare()) {
+			case RICHIESTA:
+				bf.append("della richiesta ");
+				break;
+			case RISPOSTA:
+				bf.append("della risposta ");
+				break;
+			case ENTRAMBI:
+				//bf.append("");
+				break;
+			}
+		}
+		else {
+			bf.append("della richiesta ");
+		}
+		bf.append("completata con codice");
 		
 		boolean first = true;
 		

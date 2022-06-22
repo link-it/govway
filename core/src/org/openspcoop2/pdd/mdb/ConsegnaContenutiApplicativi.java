@@ -39,6 +39,7 @@ import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
@@ -48,6 +49,7 @@ import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.ProprietaProtocolloValore;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
@@ -96,6 +98,8 @@ import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiException;
 import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiRest;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToConfiguration;
 import org.openspcoop2.pdd.core.behaviour.BehaviourLoadBalancer;
+import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneGestioneConsegnaNotifiche;
+import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MessaggioDaNotificare;
 import org.openspcoop2.pdd.core.connettori.ConnettoreBase;
 import org.openspcoop2.pdd.core.connettori.ConnettoreBaseHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
@@ -124,6 +128,7 @@ import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.core.trasformazioni.GestoreTrasformazioni;
 import org.openspcoop2.pdd.core.trasformazioni.GestoreTrasformazioniException;
+import org.openspcoop2.pdd.core.trasformazioni.GestoreTrasformazioniUtilities;
 import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -701,6 +706,81 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		}
 
 
+		// Recupero informazioni behaviour
+		TipoBehaviour behaviourType = null;
+		boolean salvaRispostaPerNotifiche = false;
+		String identificativoMessaggioDoveSalvareLaRisposta = null; 
+		MessaggioDaNotificare tipoMessaggioDaNotificare_notificaAsincrona = null;
+		HttpRequestMethod metodoHttpDaNotificare_notificaAsincrona = null;
+		String nomeConnettoreMultiplo = null;
+		String nomeServizioApplicativoErogatoreConnettoreMultiplo = null;
+		try{
+			if(pa!=null && pa.getBehaviour()!=null) {
+				
+				behaviourType = TipoBehaviour.toEnumConstant(pa.getBehaviour().getNome());
+				
+				// NomeConnettore
+				if(transazioneApplicativoServer!=null) {
+					for (PortaApplicativaServizioApplicativo pasa : pa.getServizioApplicativoList()) {
+						if(pasa!=null && pasa.getNome()!=null && pasa.getNome().equals(transazioneApplicativoServer.getServizioApplicativoErogatore())) {
+							nomeServizioApplicativoErogatoreConnettoreMultiplo = transazioneApplicativoServer.getServizioApplicativoErogatore();
+							nomeConnettoreMultiplo = pasa.getDatiConnettore()!= null ? pasa.getDatiConnettore().getNome() : null;
+							if(nomeConnettoreMultiplo==null) {
+								nomeConnettoreMultiplo=CostantiConfigurazione.NOME_CONNETTORE_DEFAULT;
+							}
+							pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_NOME_CONNETTORE, nomeConnettoreMultiplo);
+							break;
+						}
+					}
+				}
+				
+				if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType)) {
+					if(transazioneApplicativoServer==null) {
+						List<String> serviziApplicativiAbilitatiForwardTo = readServiziApplicativiAbilitatiForwardTo(pddContext);
+						if(serviziApplicativiAbilitatiForwardTo!=null && !serviziApplicativiAbilitatiForwardTo.isEmpty()) {
+							MessaggioDaNotificare tipiMessaggiNotificabili = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.readMessaggiNotificabili(pa, serviziApplicativiAbilitatiForwardTo, this.log);
+							if(tipiMessaggiNotificabili!=null && 
+									(
+											MessaggioDaNotificare.RISPOSTA.equals(tipiMessaggiNotificabili)
+											||
+											MessaggioDaNotificare.ENTRAMBI.equals(tipiMessaggiNotificabili)
+											)) {
+								salvaRispostaPerNotifiche = true;
+								identificativoMessaggioDoveSalvareLaRisposta = CostantiPdD.PREFIX_MESSAGGIO_CONNETTORE_MULTIPLO+0+CostantiPdD.SEPARATOR_MESSAGGIO_CONNETTORE_MULTIPLO+idMessaggioConsegna;
+							}
+						}
+					}
+					else {
+						for (PortaApplicativaServizioApplicativo pasa : pa.getServizioApplicativoList()) {
+							if(pasa!=null && pasa.getNome()!=null && pasa.getNome().equals(transazioneApplicativoServer.getServizioApplicativoErogatore())) {
+								ConfigurazioneGestioneConsegnaNotifiche config = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pasa, this.log);
+								if(config!=null) {
+									tipoMessaggioDaNotificare_notificaAsincrona = config.getMessaggioDaNotificare();
+									metodoHttpDaNotificare_notificaAsincrona = config.getHttpMethod();
+								}
+								if(tipoMessaggioDaNotificare_notificaAsincrona==null) {
+									tipoMessaggioDaNotificare_notificaAsincrona = MessaggioDaNotificare.RICHIESTA;
+								}
+								if(metodoHttpDaNotificare_notificaAsincrona==null &&
+										(
+												MessaggioDaNotificare.RISPOSTA.equals(tipoMessaggioDaNotificare_notificaAsincrona) || 
+												MessaggioDaNotificare.ENTRAMBI.equals(tipoMessaggioDaNotificare_notificaAsincrona)
+										)
+									) {
+									metodoHttpDaNotificare_notificaAsincrona = HttpRequestMethod.POST;
+								}
+								break;
+							}
+						}
+					}
+				}
+			}
+		}catch(Exception e){
+			msgDiag.logErroreGenerico(e, "ConfigurazioneBehaviour");
+			esito.setEsitoInvocazione(false); 
+			esito.setStatoInvocazioneErroreNonGestito(e);
+			return esito;
+		}
 
 		// Recupero anche pd in caso di local forward
 		if(localForward && pd==null){
@@ -1012,6 +1092,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		}
 		GestoreMessaggi msgRequest = new GestoreMessaggi(openspcoopstate, true, idMessaggioGestoreMessaggiRichiesta,Costanti.INBOX,msgDiag,pddContext);
 		OpenSPCoop2Message consegnaMessagePrimaTrasformazione = null;
+		OpenSPCoop2Message consegnaResponseMessagePrimaTrasformazione = null;
 		GestoreMessaggi msgResponse = null;
 		msgRequest.setPortaDiTipoStateless(portaDiTipoStateless);
 		
@@ -1020,7 +1101,23 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		if(requestInfo==null || idTransazione==null) {
 			// devo leggerlo dal messaggio
 			try {
-				consegnaMessagePrimaTrasformazione = msgRequest.getMessage(oraRegistrazione);
+				if(tipoMessaggioDaNotificare_notificaAsincrona!=null) {
+					switch (tipoMessaggioDaNotificare_notificaAsincrona) {
+					case RICHIESTA:
+						consegnaMessagePrimaTrasformazione = msgRequest.getMessage();
+						break;
+					case RISPOSTA:
+						consegnaMessagePrimaTrasformazione = msgRequest.getResponseMessage(true);
+						break;
+					case ENTRAMBI:
+						consegnaMessagePrimaTrasformazione = msgRequest.getMessage();
+						consegnaResponseMessagePrimaTrasformazione = msgRequest.getResponseMessage(false);
+						break;
+					}
+				}
+				else {
+					consegnaMessagePrimaTrasformazione = msgRequest.getMessage();
+				}
 				correctForwardPathNotifiche(transazioneApplicativoServer, consegnaMessagePrimaTrasformazione, protocolFactory);
 				if(requestInfo==null) {
 					Object o = consegnaMessagePrimaTrasformazione.getContextProperty(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
@@ -1411,7 +1508,23 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			try{
 				if(consegnaMessagePrimaTrasformazione==null) {
 					if(consegnaPerRiferimento==false){
-						consegnaMessagePrimaTrasformazione = msgRequest.getMessage();
+						if(tipoMessaggioDaNotificare_notificaAsincrona!=null) {
+							switch (tipoMessaggioDaNotificare_notificaAsincrona) {
+							case RICHIESTA:
+								consegnaMessagePrimaTrasformazione = msgRequest.getMessage();
+								break;
+							case RISPOSTA:
+								consegnaMessagePrimaTrasformazione = msgRequest.getResponseMessage(true);
+								break;
+							case ENTRAMBI:
+								consegnaMessagePrimaTrasformazione = msgRequest.getMessage();
+								consegnaResponseMessagePrimaTrasformazione = msgRequest.getResponseMessage(false);
+								break;
+							}
+						}
+						else {
+							consegnaMessagePrimaTrasformazione = msgRequest.getMessage();
+						}
 						correctForwardPathNotifiche(transazioneApplicativoServer, consegnaMessagePrimaTrasformazione, protocolFactory);
 					}else{
 						// consegnaMessage deve contenere il messaggio necessario all'invocazione del metodo pubblicaEvento
@@ -1574,12 +1687,25 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					gestoreTrasformazioni = new GestoreTrasformazioni(this.log, msgDiag, idServizio, soggettoFruitore, servizioApplicativoFruitore, 
 							trasformazioni, transactionNullable, pddContext, requestInfo, tipoPdD,
 							generatoreErrorePA);
-					consegnaMessageTrasformato = gestoreTrasformazioni.trasformazioneRichiesta(consegnaMessagePrimaTrasformazione, bustaRichiesta);
+					gestoreTrasformazioni.setNomeConnettore(nomeConnettoreMultiplo);
+					gestoreTrasformazioni.setNomeServizioApplicativoErogatore(nomeServizioApplicativoErogatoreConnettoreMultiplo);
+					if(tipoMessaggioDaNotificare_notificaAsincrona!=null) {
+						consegnaMessageTrasformato = gestoreTrasformazioni.trasformazioneNotifica(consegnaMessagePrimaTrasformazione, bustaRichiesta,
+								tipoMessaggioDaNotificare_notificaAsincrona, consegnaResponseMessagePrimaTrasformazione);
+						if(!gestoreTrasformazioni.isTrasformazioneContenutoRichiestaEffettuata() && consegnaResponseMessagePrimaTrasformazione!=null) {
+							// si entra in questo caso solo se è stato scelto ENTRAMBI e una trasformazione non ha modificato il messaggio
+							consegnaMessageTrasformato = GestoreTrasformazioniUtilities.buildRequestResponseArchive(this.log, consegnaMessagePrimaTrasformazione, consegnaResponseMessagePrimaTrasformazione, 
+									this.propertiesReader.getNotificaRichiestaRisposta_consegnaContenutiApplicativi_archiveType());
+						}
+					}
+					else {
+						consegnaMessageTrasformato = gestoreTrasformazioni.trasformazioneRichiesta(consegnaMessagePrimaTrasformazione, bustaRichiesta);
+					}
 				}
 				catch(GestoreTrasformazioniException e) {
 					
 					msgDiag.addKeywordErroreProcessamento(e);
-					msgDiag.logPersonalizzato("trasformazione.processamentoRichiestaInErrore");
+					msgDiag.logPersonalizzato( tipoMessaggioDaNotificare_notificaAsincrona!=null ? "trasformazione.processamentoNotificaInErrore" : "trasformazione.processamentoRichiestaInErrore");
 					
 					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_TRASFORMAZIONE_RICHIESTA, "true");
 					
@@ -1740,6 +1866,11 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				try{
 					if(connectorSender instanceof ConnettoreBaseHTTP){
 						ConnettoreBaseHTTP baseHttp = (ConnettoreBaseHTTP) connectorSender;
+						
+						if(metodoHttpDaNotificare_notificaAsincrona!=null) {
+							baseHttp.setForceHttpMethod(metodoHttpDaNotificare_notificaAsincrona);
+						}
+						
 						baseHttp.setHttpMethod(consegnaMessageTrasformato);
 						
 						if(ServiceBinding.REST.equals(consegnaMessageTrasformato.getServiceBinding())){
@@ -2116,7 +2247,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(profiloCollaborazione))
 							&& portaDiTipoStateless;
 				boolean oldGestioneConnessione = false;
-				if(gestioneAsincroniStateless){
+				if(gestioneAsincroniStateless || salvaRispostaPerNotifiche){
 					oldGestioneConnessione = ((OpenSPCoopStateless)openspcoopstate).isUseConnection();
 					((OpenSPCoopStateless)openspcoopstate).setUseConnection(true);
 				}
@@ -2299,6 +2430,78 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 
 
+			
+			
+			
+			if(salvaRispostaPerNotifiche) {
+				try {
+					msgDiag.mediumDebug("Conservazione della risposta per il gestore delle notifiche");
+					
+					// TODO in futuro valutare se poter salvare la risposta già trasformata
+					// Poichè il campo a disposizione è uno solo per la risposta, e l'impostazione di cosa salvare viene dedotta da quanto indicato su ogni connettore
+					// la console dovrà poi consentire di indicare solamente 1 opzione tra risposta originale e risposta trasformata tra tutti i connettori multipli
+					
+					List<String> contextInResponse = new ArrayList<String>();
+					Iterator<String> it = responseMessage.keysContextProperty();
+					while (it.hasNext()) {
+						String key = (String) it.next();
+						contextInResponse.add(key);
+					}
+					
+					if(consegnaMessageTrasformato!=null) {
+						it = consegnaMessageTrasformato.keysContextProperty();
+						while (it.hasNext()) {
+							String key = (String) it.next();
+							if(!contextInResponse.contains(key)) {
+								Object v = consegnaMessageTrasformato.getContextProperty(key);
+								//System.out.println("ADD ["+key+"] ["+v.getClass().getName()+"] ["+v+"]");
+								responseMessage.addContextProperty(key, v);
+							}
+						}
+						if(ServiceBinding.SOAP.equals(consegnaMessageTrasformato.getServiceBinding()) &&
+								ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())) {
+							String soapAction = null;
+							if(consegnaMessageTrasformato.getTransportRequestContext()!=null && consegnaMessageTrasformato.getTransportRequestContext().getHeaders()!=null) {
+								if(TransportUtils.containsKey(consegnaMessageTrasformato.getTransportRequestContext().getHeaders(), org.openspcoop2.message.constants.Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION)){
+									soapAction = TransportUtils.getFirstValue(consegnaMessageTrasformato.getTransportRequestContext().getHeaders(), org.openspcoop2.message.constants.Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION);
+								}
+							}
+							if(soapAction==null) {
+								soapAction = consegnaMessageTrasformato.castAsSoap().getSoapAction();
+							}
+							if(soapAction!=null) {
+								responseMessage.castAsSoap().setSoapAction(soapAction);
+							}
+						}
+					}
+					
+					msgRequest.registraRisposta_statelessEngine(identificativoMessaggioDoveSalvareLaRisposta, responseMessage, false);
+										
+				} catch (Exception e) {
+					msgDiag.addKeywordErroreProcessamento(e, "Conservazione risposta fallita");
+					msgDiag.logErroreGenerico(e,"ConservazioneRispostaConnettore");
+					String msgErrore = "Conservazione risposta del connettore ha provocato un errore: "+e.getMessage();
+					this.log.error(msgErrore,e);
+					if(existsModuloInAttesaRispostaApplicativa) {
+						
+						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
+								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO),
+								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
+								(connectorSender!=null && connectorSender.getResponse()!=null ? connectorSender.getResponse().getParseException() : null),
+								pddContext);
+						
+						esito.setEsitoInvocazione(true); 
+						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, msgErrore);
+					}else{
+						ejbUtils.rollbackMessage(msgErrore,servizioApplicativo, esito);
+						esito.setEsitoInvocazione(false); 
+						esito.setStatoInvocazioneErroreNonGestito(e);
+					}
+					openspcoopstate.releaseResource();
+					return esito;
+				}
+			}
 			
 			
 			
@@ -4181,8 +4384,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 	
 	private void correctForwardPathNotifiche(TransazioneApplicativoServer transazioneApplicativoServer, OpenSPCoop2Message msg, IProtocolFactory<?> pf) throws ProtocolException {
 		if(transazioneApplicativoServer!=null && ServiceBinding.REST.equals(msg.getServiceBinding())) {
-			// non deve essere effettuato il forward del contesto nel path
 			
+			// non deve essere effettuato il forward del contesto nel path
 			TransportRequestContext requestContext = msg.getTransportRequestContext();
 			if(requestContext!=null) {
 				String resourcePath = requestContext.getFunctionParameters();
@@ -4203,6 +4406,18 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					}
 				}
 			}
+			
+			// non deve essere effettuato il forward dei parametri
+			requestContext.getParameters().clear();
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<String> readServiziApplicativiAbilitatiForwardTo(PdDContext pddContext) {
+		List<String> serviziApplicativiAbilitatiForwardTo = null;
+		if(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_SA)) {
+			serviziApplicativiAbilitatiForwardTo = (List<String>) pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_SA);
+		}
+		return serviziApplicativiAbilitatiForwardTo;
 	}
 }

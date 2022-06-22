@@ -463,6 +463,7 @@ CREATE TABLE pd_transform
 	applicabilita_azioni VARCHAR(max),
 	applicabilita_ct VARCHAR(max),
 	applicabilita_pattern VARCHAR(max),
+	applicabilita_connettori VARCHAR(max),
 	req_conversione_enabled INT NOT NULL DEFAULT 0,
 	req_conversione_tipo VARCHAR(255),
 	req_conversione_template VARBINARY(MAX),

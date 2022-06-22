@@ -67,7 +67,10 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 		this.bt = bt;
 		this.state = state;
 	}
-	
+
+	public TipoBehaviour getBt() {
+		return this.bt;
+	}
 	
 	@Override
 	public Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta, 

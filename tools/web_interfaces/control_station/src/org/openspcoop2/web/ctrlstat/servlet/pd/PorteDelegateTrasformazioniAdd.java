@@ -237,6 +237,7 @@ public class PorteDelegateTrasformazioniAdd extends Action {
 				
 				dati = porteDelegateHelper.addTrasformazioneToDatiOpAdd(dati, portaDelegata, nome, 
 						stato, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
+						null, null, null,
 						apc.getServiceBinding(),true);
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, 
@@ -254,7 +255,8 @@ public class PorteDelegateTrasformazioniAdd extends Action {
 			String patternDBCheck = StringUtils.isNotEmpty(pattern) ? pattern : null;
 			String contentTypeDBCheck = StringUtils.isNotEmpty(contentType) ? contentType : null;
 			String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
-			TrasformazioneRegola trasformazioneDBCheck_criteri = porteDelegateCore.getTrasformazione(Long.parseLong(id), azioniDBCheck, patternDBCheck, contentTypeDBCheck, null);
+			TrasformazioneRegola trasformazioneDBCheck_criteri = porteDelegateCore.getTrasformazione(Long.parseLong(id), azioniDBCheck, patternDBCheck, contentTypeDBCheck, null, 
+					null);
 			TrasformazioneRegola trasformazioneDBCheck_nome = porteDelegateCore.getTrasformazione(Long.parseLong(id), nome);
 			
 			boolean isOk = porteDelegateHelper.trasformazioniCheckData(TipoOperazione.ADD, Long.parseLong(id), nome, trasformazioneDBCheck_criteri, trasformazioneDBCheck_nome, null,
@@ -268,6 +270,7 @@ public class PorteDelegateTrasformazioniAdd extends Action {
 				
 				dati = porteDelegateHelper.addTrasformazioneToDatiOpAdd(dati, portaDelegata, nome, 
 						stato, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
+						null, null, null,
 						apc.getServiceBinding(),true);
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, 

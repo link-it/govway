@@ -36,10 +36,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
 import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
 import org.openspcoop2.core.config.Trasformazioni;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB_LIB;
 import org.openspcoop2.core.id.IDServizio;
@@ -109,6 +111,7 @@ public class PorteApplicativeTrasformazioniAdd extends Action {
 			String [] azioni = porteApplicativeHelper.getParameterValues(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_AZIONI);
 			String pattern = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_PATTERN);
 			String contentType = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_CT);
+			String [] connettori = porteApplicativeHelper.getParameterValues(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_CONNETTORI);
 			
 			
 
@@ -178,6 +181,25 @@ public class PorteApplicativeTrasformazioniAdd extends Action {
 				}
 			}
 			
+			
+			String[] connettoriDisponibiliList = null;
+			String[] connettoriDisponibiliLabelList = null;
+			if(pa!=null && pa.getBehaviour()!=null && pa.sizeServizioApplicativoList()>0) {
+				connettoriDisponibiliList = new String[pa.sizeServizioApplicativoList()];
+				connettoriDisponibiliLabelList = new String[pa.sizeServizioApplicativoList()];
+				int index = 0;
+				for (PortaApplicativaServizioApplicativo pasa : pa.getServizioApplicativoList()) {
+					String nomeServizioApplicativoErogatoreConnettoreMultiplo = pasa.getNome();
+					String nomeConnettoreMultiplo = pasa.getDatiConnettore()!= null ? pasa.getDatiConnettore().getNome() : null;
+					if(nomeConnettoreMultiplo==null) {
+						nomeConnettoreMultiplo=CostantiConfigurazione.NOME_CONNETTORE_DEFAULT;
+					}
+					connettoriDisponibiliList[index] = nomeServizioApplicativoErogatoreConnettoreMultiplo;
+					connettoriDisponibiliLabelList[index] = nomeConnettoreMultiplo;
+					index++;
+				}
+			}
+			
 
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 
@@ -211,6 +233,7 @@ public class PorteApplicativeTrasformazioniAdd extends Action {
 				
 				dati = porteApplicativeHelper.addTrasformazioneToDatiOpAdd(dati, pa, nome, 
 						stato, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
+						connettoriDisponibiliList, connettoriDisponibiliLabelList, connettori,
 						apc.getServiceBinding(),false);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps,  dati);
@@ -224,10 +247,12 @@ public class PorteApplicativeTrasformazioniAdd extends Action {
 			
 			// quando un parametro viene inviato come vuoto, sul db viene messo null, gestisco il caso
 			String azioniAsString = azioni != null ? StringUtils.join(Arrays.asList(azioni), ",") : "";
+			String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
 			String patternDBCheck = StringUtils.isNotEmpty(pattern) ? pattern : null;
 			String contentTypeDBCheck = StringUtils.isNotEmpty(contentType) ? contentType : null;
-			String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
-			TrasformazioneRegola trasformazioneDBCheck_criteri = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), azioniDBCheck, patternDBCheck, contentTypeDBCheck, 
+			String connettoriAsString = connettori != null ? StringUtils.join(Arrays.asList(connettori), ",") : "";
+			String connettoriDBCheck = StringUtils.isNotEmpty(connettoriAsString) ? connettoriAsString : null;
+			TrasformazioneRegola trasformazioneDBCheck_criteri = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), azioniDBCheck, patternDBCheck, contentTypeDBCheck, connettoriDBCheck, 
 					null, null, true);
 			TrasformazioneRegola trasformazioneDBCheck_nome = porteApplicativeCore.getTrasformazione(Long.parseLong(idPorta), nome);
 			
@@ -242,6 +267,7 @@ public class PorteApplicativeTrasformazioniAdd extends Action {
 				
 				dati = porteApplicativeHelper.addTrasformazioneToDatiOpAdd(dati, pa, nome, 
 						stato, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
+						connettoriDisponibiliList, connettoriDisponibiliLabelList, connettori,
 						apc.getServiceBinding(),false);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps,  dati);
@@ -281,6 +307,12 @@ public class PorteApplicativeTrasformazioniAdd extends Action {
 			if(azioni != null && azioni.length > 0) {
 				for (String azione : azioni) {
 					applicabilita.addAzione(azione);
+				}
+			}
+			
+			if(connettori != null && connettori.length > 0) {
+				for (String connettore : connettori) {
+					applicabilita.addConnettore(connettore);
 				}
 			}
 			

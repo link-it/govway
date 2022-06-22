@@ -50,6 +50,7 @@ public abstract class OpenSPCoopState implements IOpenSPCoopState {
 	protected Logger logger = null;
 	
 	/* ---------- Connessione al database ---------------- */
+	protected OpenSPCoopStateDBManager dbManager = null;
 	/** DBManager */
 	protected DBManager dbManager_runtime= null;
 	/** DBManager */
@@ -89,6 +90,7 @@ public abstract class OpenSPCoopState implements IOpenSPCoopState {
 	public static OpenSPCoopStateless toStateless(OpenSPCoopStateful stateful,boolean useConnection){
 		OpenSPCoopStateless stateless = new OpenSPCoopStateless();
 		stateless.connectionDB = stateful.connectionDB;
+		stateless.dbManager = stateful.dbManager;
 		stateless.dbManager_runtime = stateful.dbManager_runtime;
 		stateless.dbManager_consegnePreseInCarico = stateful.dbManager_consegnePreseInCarico;
 		stateless.dbManager_consegneMessageBox = stateful.dbManager_consegneMessageBox;
@@ -136,20 +138,22 @@ public abstract class OpenSPCoopState implements IOpenSPCoopState {
 	@Override
 	public void initResource(IDSoggetto identitaPdD,String idModulo,String idTransazione, OpenSPCoopStateDBManager dbManager)throws OpenSPCoopStateException{
 		
+		this.dbManager = dbManager; // per update
+		
+		// Check parametri
+		if(identitaPdD==null){
+			throw new OpenSPCoopStateException("IdentitaPdD non presente");
+		}
+		this.identitaPdD = identitaPdD;
+		if(idModulo==null){
+			throw new OpenSPCoopStateException("IDModulo non presente");
+		}
+		this.idModulo = idModulo;
+		
+		// Logger
+		this.logger = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
+		
 		if(this.useConnection){
-			
-			// Check parametri
-			if(identitaPdD==null){
-				throw new OpenSPCoopStateException("IdentitaPdD non presente");
-			}
-			this.identitaPdD = identitaPdD;
-			if(idModulo==null){
-				throw new OpenSPCoopStateException("IDModulo non presente");
-			}
-			this.idModulo = idModulo;
-			
-			// Logger
-			this.logger = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 			
 			// Get Connessione
 			if(dbManager!=null) {
@@ -218,6 +222,36 @@ public abstract class OpenSPCoopState implements IOpenSPCoopState {
 	public void updateResource(String idTransazione) throws OpenSPCoopStateException{
 		if( this.useConnection ){
 			try{
+				if(this.dbManager!=null) {
+					switch (this.dbManager) {
+					case runtime:
+						if(this.dbManager_runtime==null) {
+							this.dbManager_runtime = DBManager.getInstance();
+						}
+						break;
+					case smistatoreMessaggiPresiInCarico:
+						if(this.dbManager_consegnePreseInCarico==null) {
+							this.dbManager_consegnePreseInCarico = DBConsegnePreseInCaricoManager.getInstanceSmistatore();
+						}
+						break;
+					case consegnePreseInCarico:
+						if(this.dbManager_consegnePreseInCarico==null) {
+							this.dbManager_consegnePreseInCarico = DBConsegnePreseInCaricoManager.getInstanceRuntime();
+						}
+						break;
+					case messageBox:
+						if(this.dbManager_consegneMessageBox==null) {
+							this.dbManager_consegneMessageBox = DBConsegneMessageBoxManager.getInstanceRuntime();
+						}
+						break;
+					}
+				}
+				else {
+					if(this.dbManager_runtime==null) {
+						this.dbManager_runtime = DBManager.getInstance();
+					}
+				}
+				
 				if(this.dbManager_runtime!=null) {
 					this.resourceDB = this.dbManager_runtime.getResource(this.identitaPdD,this.idModulo,idTransazione);
 				}

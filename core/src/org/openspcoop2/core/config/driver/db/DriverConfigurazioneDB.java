@@ -3306,9 +3306,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 						String applicabilita_azioni = rs.getString("applicabilita_azioni");
 						String applicabilita_ct = rs.getString("applicabilita_ct");
 						String applicabilita_pattern = rs.getString("applicabilita_pattern");
+						String applicabilita_connettori = rs.getString("applicabilita_connettori");
 						if( (applicabilita_azioni!=null && !"".equals(applicabilita_azioni)) ||
 								(applicabilita_ct!=null && !"".equals(applicabilita_ct)) ||
-								(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)) 
+								(applicabilita_pattern!=null && !"".equals(applicabilita_pattern))  ||
+								(applicabilita_connettori!=null && !"".equals(applicabilita_connettori)) 
 								) {
 							TrasformazioneRegolaApplicabilitaRichiesta applicabilita = new TrasformazioneRegolaApplicabilitaRichiesta();
 							
@@ -3338,6 +3340,18 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 							
 							if(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)){
 								applicabilita.setPattern(applicabilita_pattern);
+							}
+							
+							if( (applicabilita_connettori!=null && !"".equals(applicabilita_connettori)) ) {
+								if(applicabilita_connettori.contains(",")) {
+									String [] tmp = applicabilita_connettori.split(",");
+									for (int i = 0; i < tmp.length; i++) {
+										applicabilita.addConnettore(tmp[i].trim());
+									}
+								}
+								else {
+									applicabilita.addConnettore(applicabilita_connettori);
+								}
 							}
 							
 							regola.setApplicabilita(applicabilita);
@@ -3737,26 +3751,26 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	}
 	
 	
-	public TrasformazioneRegola getPortaApplicativaTrasformazione(long idPorta, String azioni, String pattern, String contentType,
+	public TrasformazioneRegola getPortaApplicativaTrasformazione(long idPorta, String azioni, String pattern, String contentType, String connettori,
 			List<TrasformazioneRegolaApplicabilitaSoggetto> soggetti,
 			List<TrasformazioneRegolaApplicabilitaServizioApplicativo> applicativi,
 			boolean interpretaNullList) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaApplicativaTrasformazione";
 		boolean delegata = false;
 		
-		return _getTrasformazione(idPorta, azioni, pattern, contentType, soggetti, applicativi, nomeMetodo, delegata, interpretaNullList);
+		return _getTrasformazione(idPorta, azioni, pattern, contentType, connettori, soggetti, applicativi, nomeMetodo, delegata, interpretaNullList);
 		
 	}
 	
-	public TrasformazioneRegola getPortaDelegataTrasformazione(long idPorta, String azioni, String pattern, String contentType,
+	public TrasformazioneRegola getPortaDelegataTrasformazione(long idPorta, String azioni, String pattern, String contentType, String connettori,
 			List<TrasformazioneRegolaApplicabilitaServizioApplicativo> applicativi) throws DriverConfigurazioneException {
 		String nomeMetodo = "getPortaDelegataTrasformazione";
 		boolean delegata = true;
-		return _getTrasformazione(idPorta, azioni, pattern, contentType, null, applicativi, nomeMetodo, delegata, 
+		return _getTrasformazione(idPorta, azioni, pattern, contentType, connettori, null, applicativi, nomeMetodo, delegata, 
 				true); // esiste solo una lista
 	}
 	
-	private TrasformazioneRegola _getTrasformazione(long idPorta, String azioni, String pattern, String contentType, 
+	private TrasformazioneRegola _getTrasformazione(long idPorta, String azioni, String pattern, String contentType, String connettori,
 			List<TrasformazioneRegolaApplicabilitaSoggetto> soggetti,
 			List<TrasformazioneRegolaApplicabilitaServizioApplicativo> applicativi,
 			String nomeMetodo, boolean portaDelegata, boolean interpretaNullList) throws DriverConfigurazioneException {
@@ -3791,6 +3805,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.setANDLogicOperator(true);
 			
 			sqlQueryObject.addWhereCondition("id_porta = ?");
+			
 			if(azioni != null) {
 				//sqlQueryObject.addWhereCondition("applicabilita_azioni = ?");
 				sqlQueryObject.addWhereLikeCondition("applicabilita_azioni", azioni, false, false);
@@ -3810,6 +3825,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addWhereLikeCondition("applicabilita_ct", contentType, false, false);
 			} else {
 				sqlQueryObject.addWhereIsNullCondition("applicabilita_ct");
+			}
+			
+			if(connettori != null) {
+				//sqlQueryObject.addWhereCondition("applicabilita_connettori = ?");
+				sqlQueryObject.addWhereLikeCondition("applicabilita_connettori", connettori, false, false);
+			} else {
+				sqlQueryObject.addWhereIsNullCondition("applicabilita_connettori");
 			}
 			
 			if(!portaDelegata) {
@@ -4046,9 +4068,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		String applicabilita_azioni = risultato.getString("applicabilita_azioni");
 		String applicabilita_ct = risultato.getString("applicabilita_ct");
 		String applicabilita_pattern = risultato.getString("applicabilita_pattern");
+		String applicabilita_connettori = risultato.getString("applicabilita_connettori");
 		if( (applicabilita_azioni!=null && !"".equals(applicabilita_azioni)) ||
 				(applicabilita_ct!=null && !"".equals(applicabilita_ct)) ||
-				(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)) 
+				(applicabilita_pattern!=null && !"".equals(applicabilita_pattern))  ||
+				(applicabilita_connettori!=null && !"".equals(applicabilita_connettori)) 
 				) {
 			TrasformazioneRegolaApplicabilitaRichiesta applicabilita = new TrasformazioneRegolaApplicabilitaRichiesta();
 			
@@ -4078,6 +4102,18 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			
 			if(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)){
 				applicabilita.setPattern(applicabilita_pattern);
+			}
+			
+			if( (applicabilita_connettori!=null && !"".equals(applicabilita_connettori)) ) {
+				if(applicabilita_connettori.contains(",")) {
+					String [] tmp = applicabilita_connettori.split(",");
+					for (int i = 0; i < tmp.length; i++) {
+						applicabilita.addConnettore(tmp[i].trim());
+					}
+				}
+				else {
+					applicabilita.addConnettore(applicabilita_connettori);
+				}
 			}
 			
 			regola.setApplicabilita(applicabilita);
@@ -4142,19 +4178,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 	}
 	
-	public boolean existsPortaApplicativaTrasformazione(long idPorta, String azioni, String pattern, String contentType) throws DriverConfigurazioneException {
+	public boolean existsPortaApplicativaTrasformazione(long idPorta, String azioni, String pattern, String contentType, String connettori) throws DriverConfigurazioneException {
 		String nomeMetodo = "existsPortaApplicativaTrasformazione";
 		boolean delegata = false;
-		return _existsTrasformazione(idPorta, azioni, pattern, contentType, nomeMetodo, delegata);
+		return _existsTrasformazione(idPorta, azioni, pattern, contentType, connettori, nomeMetodo, delegata);
 	}
 	
-	public boolean existsPortaDelegataTrasformazione(long idPorta, String azioni, String pattern, String contentType) throws DriverConfigurazioneException {
+	public boolean existsPortaDelegataTrasformazione(long idPorta, String azioni, String pattern, String contentType, String connettori) throws DriverConfigurazioneException {
 		String nomeMetodo = "existsPortaDelegataTrasformazione";
 		boolean delegata = true;
-		return _existsTrasformazione(idPorta, azioni, pattern, contentType, nomeMetodo, delegata);
+		return _existsTrasformazione(idPorta, azioni, pattern, contentType, connettori, nomeMetodo, delegata);
 	}
 	
-	private boolean _existsTrasformazione(long idPorta, String azioni, String pattern, String contentType, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
+	private boolean _existsTrasformazione(long idPorta, String azioni, String pattern, String contentType, String connettori, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
 		boolean error = false;
 		PreparedStatement stmt=null;
@@ -4185,6 +4221,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.setANDLogicOperator(true);
 			
 			sqlQueryObject.addWhereCondition("id_porta = ?");
+			
 			if(azioni != null) {
 				//sqlQueryObject.addWhereCondition("applicabilita_azioni = ?");
 				sqlQueryObject.addWhereLikeCondition("applicabilita_azioni", azioni, false, false);
@@ -4204,6 +4241,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addWhereLikeCondition("applicabilita_ct", contentType, false, false);
 			} else {
 				sqlQueryObject.addWhereIsNullCondition("applicabilita_ct");
+			}
+			
+			if(connettori != null) {
+				//sqlQueryObject.addWhereCondition("applicabilita_connettori = ?");
+				sqlQueryObject.addWhereLikeCondition("applicabilita_connettori", connettori, false, false);
+			} else {
+				sqlQueryObject.addWhereIsNullCondition("applicabilita_connettori");
 			}
 			
 			queryString = sqlQueryObject.createSQLQuery();

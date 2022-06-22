@@ -300,6 +300,7 @@ public class PorteDelegateTrasformazioniChange extends Action {
 
 				dati = porteDelegateHelper.addTrasformazioneToDati(TipoOperazione.CHANGE, dati, portaDelegata, idTrasformazioneS, nome, 
 						stato, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
+						null, null, null,
 						apc.getServiceBinding(),
 						servletTrasformazioniRichiesta, parametriInvocazioneServletTrasformazioniRichiesta, servletTrasformazioniRispostaList, parametriInvocazioneServletTrasformazioniRisposta, numeroTrasformazioniRisposte,
 						true,
@@ -321,7 +322,8 @@ public class PorteDelegateTrasformazioniChange extends Action {
 			String patternDBCheck = StringUtils.isNotEmpty(pattern) ? pattern : null;
 			String contentTypeDBCheck = StringUtils.isNotEmpty(contentType) ? contentType : null;
 			String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
-			TrasformazioneRegola trasformazioneDBCheck_criteri = porteDelegateCore.getTrasformazione(Long.parseLong(id), azioniDBCheck, patternDBCheck, contentTypeDBCheck, applicabilitaApplicativi);
+			TrasformazioneRegola trasformazioneDBCheck_criteri = porteDelegateCore.getTrasformazione(Long.parseLong(id), azioniDBCheck, patternDBCheck, contentTypeDBCheck, null,
+					applicabilitaApplicativi);
 			TrasformazioneRegola trasformazioneDBCheck_nome = porteDelegateCore.getTrasformazione(Long.parseLong(id), nome);
 			
 			boolean isOk = porteDelegateHelper.trasformazioniCheckData(TipoOperazione.CHANGE, Long.parseLong(id), nome, trasformazioneDBCheck_criteri, trasformazioneDBCheck_nome, oldRegola,
@@ -335,6 +337,7 @@ public class PorteDelegateTrasformazioniChange extends Action {
 				
 				dati = porteDelegateHelper.addTrasformazioneToDati(TipoOperazione.CHANGE, dati, portaDelegata, idTrasformazioneS, nome, 
 						stato, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType,
+						null, null, null,
 						apc.getServiceBinding(),
 						servletTrasformazioniRichiesta, parametriInvocazioneServletTrasformazioniRichiesta, servletTrasformazioniRispostaList, parametriInvocazioneServletTrasformazioniRisposta, numeroTrasformazioniRisposte,
 						true,

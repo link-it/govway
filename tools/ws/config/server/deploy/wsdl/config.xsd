@@ -608,6 +608,7 @@
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="azione" type="xsd:string"/>
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="content-type" type="xsd:string"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="pattern" type="xsd:string"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="connettore" type="xsd:string"/>
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="soggetto" type="trasformazione-regola-applicabilita-soggetto"/>
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="servizio-applicativo" type="trasformazione-regola-applicabilita-servizio-applicativo"/>
 		</xsd:sequence>	

@@ -79,6 +79,8 @@ public class SavedMessage implements java.io.Serializable {
 	
 	private static final String MSG_BYTES = "_bytes.bin";
 	private static final String MSG_CONTEXT = "_context.bin";
+	private static final String MSG_RESPONSE_BYTES = "_response_bytes.bin";
+	private static final String MSG_RESPONSE_CONTEXT = "_response_context.bin";
 
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
@@ -93,6 +95,11 @@ public class SavedMessage implements java.io.Serializable {
 	private String keyMsgBytes;
 	/** Identificativo del MessaggeContext passato sotto una funziona HASH */
 	private String keyMsgContext;
+	/** Indica la directory dove effettuare salvataggi */
+	/** Identificativo del Messaggio passato sotto una funziona HASH */
+	private String keyMsgResponseBytes;
+	/** Identificativo del MessaggeContext passato sotto una funziona HASH */
+	private String keyMsgResponseContext;
 	/** Indica la directory dove effettuare salvataggi */
 	private String workDir;
 	/** AdapterJDBC */
@@ -157,17 +164,19 @@ public class SavedMessage implements java.io.Serializable {
 		}
 		try{
 
-			this.keyMsgBytes = this.hash(idMsg);
-			if(this.keyMsgBytes == null){
+			String hashKeyMsgBytes = this.hash(idMsg);
+			if(hashKeyMsgBytes == null){
 				throw new Exception("Codifica hash non riuscita: keyMsgBytes is null");
 			}
-			this.keyMsgBytes = this.keyMsgBytes + MSG_BYTES;
+			this.keyMsgBytes = hashKeyMsgBytes + MSG_BYTES;
+			this.keyMsgResponseBytes = hashKeyMsgBytes + MSG_RESPONSE_BYTES;
 
-			this.keyMsgContext = this.hash(idMsg);
-			if(this.keyMsgContext == null){
+			String hashKeyMsgContext = this.hash(idMsg);
+			if(hashKeyMsgContext == null){
 				throw new Exception("Codifica hash non riuscita: keyMsgContext is null");
 			}
-			this.keyMsgContext = this.keyMsgContext + MSG_CONTEXT;
+			this.keyMsgContext = hashKeyMsgContext + MSG_CONTEXT;
+			this.keyMsgResponseContext = hashKeyMsgContext + MSG_RESPONSE_CONTEXT;
 
 		}catch(Exception e){
 			String errorMsg = "SOAP_MESSAGE, costructor error (CodificaHash): "+box+"/"+idMsg+": "+e.getMessage();		
@@ -330,11 +339,11 @@ public class SavedMessage implements java.io.Serializable {
 					
 					// Save bytes message
 					String pathBytes = saveDir + this.keyMsgBytes;
-					this.saveMessageBytes(pathBytes,msg, consumeMessage);
+					this.saveMessageBytes(pathBytes,msg, consumeMessage,false);
 					
 					// Save message context
 					String pathContext = saveDir + this.keyMsgContext;
-					this.saveMessageContext(pathContext,msg);
+					this.saveMessageContext(pathContext,msg,false);
 					
 				}else{
 					// SAVE IN DB
@@ -404,14 +413,21 @@ public class SavedMessage implements java.io.Serializable {
 		}
 
 	}     
-	private void saveMessageBytes(String path,OpenSPCoop2Message msg, boolean consumeMessage) throws UtilsException{
+	private void saveMessageBytes(String path,OpenSPCoop2Message msg, boolean consumeMessage, boolean overwrite) throws UtilsException{
 
 		FileOutputStream fos = null;
 		try{
 
 			File fileMsg = new File(path);
 			if(fileMsg.exists() == true){
-				throw new UtilsException("L'identificativo del Messaggio risulta gia' registrato: "+path);
+				if(overwrite) {
+					if(!fileMsg.delete()) {
+						throw new UtilsException("L'identificativo del Messaggio risulta già registrato e non eliminabile: "+path);
+					}
+				}
+				else {
+					throw new UtilsException("L'identificativo del Messaggio risulta già registrato: "+path);
+				}
 			}	
 
 			fos = new FileOutputStream(path);
@@ -427,14 +443,21 @@ public class SavedMessage implements java.io.Serializable {
 			throw new UtilsException("Utilities.saveMessage error "+e.getMessage(),e);
 		}
 	}
-	private void saveMessageContext(String path,OpenSPCoop2Message msg) throws UtilsException{
+	private void saveMessageContext(String path,OpenSPCoop2Message msg, boolean overwrite) throws UtilsException{
 
 		FileOutputStream fos = null;
 		try{
 
 			File fileMsg = new File(path);
 			if(fileMsg.exists() == true){
-				throw new UtilsException("L'identificativo del Messaggio risulta gia' registrato: "+path);
+				if(overwrite) {
+					if(!fileMsg.delete()) {
+						throw new UtilsException("L'identificativo del Messaggio risulta già registrato e non eliminabile: "+path);
+					}
+				}
+				else {
+					throw new UtilsException("L'identificativo del Messaggio risulta gia' registrato: "+path);
+				}
 			}	
 
 			fos = new FileOutputStream(path);
@@ -451,6 +474,112 @@ public class SavedMessage implements java.io.Serializable {
 		}
 	}
 
+	
+	public void updateResponse(OpenSPCoop2Message msg, boolean consumeMessage) throws UtilsException{
+
+		StateMessage stateMsg = (StateMessage)this.openspcoopstate.getStatoRisposta();
+		Connection connectionDB = stateMsg.getConnectionDB();
+
+		PreparedStatement pstmt = null;
+		try{
+			// Save proprieta' msg
+			StringBuilder query = new StringBuilder();
+			query.append("UPDATE ");
+			query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI);
+			query.append(" SET ");
+			query.append(" RESPONSE_CONTENT_TYPE=? ");
+			if(!this.saveOnFS) {
+				query.append(" , RESPONSE_MSG_BYTES=? ");
+				query.append(" , RESPONSE_MSG_CONTEXT=? ");
+			}
+			query.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
+
+
+			pstmt = connectionDB.prepareStatement(query.toString());
+			int index = 1;
+			
+			// Set del contentType nella query
+			String contentType = msg.getContentType();
+			if(contentType==null || "".equals(contentType)){
+				if(ServiceBinding.REST.equals(msg.getServiceBinding())){
+					if(MessageType.BINARY.equals(msg.getMessageType())) {
+						if(msg.castAsRest().hasContent()) {
+							throw new Exception("Rilevata una richiesta "+msg.getServiceBinding()+" "+msg.getMessageType()+" con payload per la quale non è stato fornito un ContentType"); // sul DB e' required la colonna
+						}
+						else {
+							contentType = REST_CONTENT_TYPE_EMPTY;
+						}
+					}
+					else {
+						throw new Exception("Rilevata una richiesta "+msg.getServiceBinding()+" "+msg.getMessageType()+" per la quale non è stato fornito un ContentType"); // sul DB e' required la colonna
+					}
+				}
+				else {
+					throw new Exception("Rilevata una richiesta "+msg.getServiceBinding()+" per la quale non è stato fornito un ContentType"); // sul DB e' required la colonna
+				}
+			}
+			pstmt.setString(index++,contentType);
+			
+			if(this.saveOnFS){
+				// SAVE IN FILE SYSTEM
+				
+				String saveDir = getBaseDir();
+				if(saveDir==null){
+					String errorMsg = "WorkDir non correttamente inizializzata";		
+					throw new UtilsException(errorMsg);
+				}
+				
+				// Save bytes message
+				String pathBytes = saveDir + this.keyMsgResponseBytes;
+				this.saveMessageBytes(pathBytes,msg, consumeMessage, false);
+				
+				// Save message context
+				String pathContext = saveDir + this.keyMsgResponseContext;
+				this.saveMessageContext(pathContext,msg, false);
+				
+			}else{
+				// SAVE IN DB
+				
+				// Save bytes message
+				java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
+				msg.writeTo(bout,consumeMessage);
+				bout.flush();
+				bout.close();
+				//System.out.println("---------SALVO RISPOSTA: "+msgByte.toString());
+				this.adapter.setBinaryData(pstmt,index++,bout.toByteArray());
+				
+				// Save message context
+				bout = new java.io.ByteArrayOutputStream();
+				msg.serializeResourcesTo(bout);
+				bout.flush();
+				bout.close();
+				//System.out.println("---------SALVO CONTEXT: "+msgByte.toString());
+				this.adapter.setBinaryData(pstmt,index++,bout.toByteArray());
+			}
+			
+			pstmt.setString(index++,this.idMessaggio);
+			if(Costanti.INBOX.equals(this.box))
+				pstmt.setString(index++,Costanti.INBOX);
+			else
+				pstmt.setString(index++,Costanti.OUTBOX);		
+
+
+			// Add PreparedStatement
+			stateMsg.getPreparedStatement().put("UPDATE (RESPONSE) saveMessage["+this.idMessaggio+","+this.box+"]",pstmt);
+	
+		}catch(Exception e){
+			try{
+				if( pstmt != null )
+					pstmt.close();
+			} catch(Exception err) {}
+			String errorMsg = "SOAP_MESSAGE, update response : "+this.box+"/"+this.idMessaggio+": "+e.getMessage();		
+			this.log.error(errorMsg,e);
+			throw new UtilsException(errorMsg,e);
+		}
+
+	}     
+	
+	
 
 
 
@@ -463,6 +592,12 @@ public class SavedMessage implements java.io.Serializable {
 	 * 
 	 */
 	public OpenSPCoop2Message read(boolean isRichiesta, boolean portaDiTipoStateless, Date oraRegistrazione) throws UtilsException {
+		 return _read(isRichiesta, portaDiTipoStateless, oraRegistrazione, false);
+	}
+	public OpenSPCoop2Message readResponse(Date oraRegistrazione) throws UtilsException {
+		 return _read(false, false, oraRegistrazione, true);
+	}
+	public OpenSPCoop2Message _read(boolean isRichiesta, boolean portaDiTipoStateless, Date oraRegistrazione, boolean readResponseField) throws UtilsException {
 
 		if( !portaDiTipoStateless ) {
 
@@ -478,12 +613,16 @@ public class SavedMessage implements java.io.Serializable {
 			ResultSet rs = null;
 			try{
 
+				String columnContentType = readResponseField ? "RESPONSE_CONTENT_TYPE" : "CONTENT_TYPE";
+				String columnMsgBytes = readResponseField ? "RESPONSE_MSG_BYTES" : "MSG_BYTES";
+				String columnMsgContext = readResponseField ? "RESPONSE_MSG_CONTEXT" : "MSG_CONTEXT";
+				
 				// Leggo proprieta' messaggio
 				StringBuilder query = new StringBuilder();
 				if(this.saveOnFS)
-					query.append("select CONTENT_TYPE ");
+					query.append("select "+columnContentType+" ");
 				else
-					query.append("select CONTENT_TYPE,MSG_BYTES,MSG_CONTEXT ");
+					query.append("select "+columnContentType+","+columnMsgBytes+","+columnMsgContext+" ");
 				query.append("from ");
 				query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI);
 				query.append(" WHERE ");
@@ -533,7 +672,7 @@ public class SavedMessage implements java.io.Serializable {
 				// Lettura Message Context
 				if(this.saveOnFS){
 					// READ FROM FILE SYSTEM
-					String pathContext = saveDir + this.keyMsgContext;
+					String pathContext = saveDir + (readResponseField ? this.keyMsgResponseContext : this.keyMsgContext);
 					File fileCheckContext = new File(pathContext);
 					if(fileCheckContext.exists() == false){
 						String errorMsg = "Il messaggio (contesto) non risulta gia' registrato ("+pathContext+").";		
@@ -566,7 +705,7 @@ public class SavedMessage implements java.io.Serializable {
 				}
 				
 				// ContentType
-				String contentType = rs.getString("CONTENT_TYPE");
+				String contentType = rs.getString(columnContentType);
 				if(MessageType.BINARY.equals(mt)) {
 					if(REST_CONTENT_TYPE_EMPTY.equals(contentType)) {
 						contentType = null;
@@ -577,7 +716,7 @@ public class SavedMessage implements java.io.Serializable {
 				if(contentType!=null && !"".equals(contentType)) {
 					if(this.saveOnFS){
 						// READ FROM FILE SYSTEM
-						String pathBytes = saveDir + this.keyMsgBytes;
+						String pathBytes = saveDir + (readResponseField ? this.keyMsgResponseBytes : this.keyMsgBytes);
 						File fileCheckBytes = new File(pathBytes);
 						if(fileCheckBytes.exists() == false){
 							String errorMsg = "Il messaggio non risulta gia' registrato ("+pathBytes+").";		
@@ -746,11 +885,23 @@ public class SavedMessage implements java.io.Serializable {
 				if(fileDeleteBytes.exists()){
 					fileDeleteBytes.delete();
 				}	
-				
+								
 				String pathContext = saveDir + this.keyMsgContext;
 				File fileDeleteContext = new File(pathContext);
 				if(fileDeleteContext.exists()){
 					fileDeleteContext.delete();
+				}
+				
+				String pathResponseBytes = saveDir + this.keyMsgResponseBytes;
+				File fileDeleteResponseBytes = new File(pathResponseBytes);
+				if(fileDeleteResponseBytes.exists()){
+					fileDeleteResponseBytes.delete();
+				}
+				
+				String pathResponseContext = saveDir + this.keyMsgResponseContext;
+				File fileDeleteResponseContext = new File(pathResponseContext);
+				if(fileDeleteResponseContext.exists()){
+					fileDeleteResponseContext.delete();
 				}
 			}
 

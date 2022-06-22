@@ -73,22 +73,32 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
     }
 	
 	/** httpMethod */
+    private HttpRequestMethod forceHttpMethod = null;
+    public void setForceHttpMethod(HttpRequestMethod forceHttpMethod) {
+		this.forceHttpMethod = forceHttpMethod;
+	}
+
 	protected HttpRequestMethod httpMethod = null;
 	public HttpRequestMethod getHttpMethod() {
 		return this.httpMethod;
 	}
 	public void setHttpMethod(OpenSPCoop2Message msg) throws ConnettoreException {
 		// HttpMethod
-		if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
-			this.httpMethod = HttpRequestMethod.POST;
+		if(this.forceHttpMethod!=null) {
+			this.httpMethod = this.forceHttpMethod;
 		}
-		else{
-			if(msg.getTransportRequestContext()==null || msg.getTransportRequestContext().getRequestType()==null){
-				throw new ConnettoreException("HttpRequestMethod non definito");
+		else {
+			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
+				this.httpMethod = HttpRequestMethod.POST;
 			}
-			this.httpMethod = HttpRequestMethod.valueOf(msg.getTransportRequestContext().getRequestType().toUpperCase());
-			if(this.httpMethod==null){
-				throw new ConnettoreException("HttpRequestMethod sconosciuto ("+this.httpMethod+")");
+			else{
+				if(msg.getTransportRequestContext()==null || msg.getTransportRequestContext().getRequestType()==null){
+					throw new ConnettoreException("HttpRequestMethod non definito");
+				}
+				this.httpMethod = HttpRequestMethod.valueOf(msg.getTransportRequestContext().getRequestType().toUpperCase());
+				if(this.httpMethod==null){
+					throw new ConnettoreException("HttpRequestMethod sconosciuto ("+this.httpMethod+")");
+				}
 			}
 		}
 	}

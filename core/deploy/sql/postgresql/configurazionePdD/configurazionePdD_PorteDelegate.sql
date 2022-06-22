@@ -492,6 +492,7 @@ CREATE TABLE pd_transform
 	applicabilita_azioni TEXT,
 	applicabilita_ct TEXT,
 	applicabilita_pattern TEXT,
+	applicabilita_connettori TEXT,
 	req_conversione_enabled INT NOT NULL DEFAULT 0,
 	req_conversione_tipo VARCHAR(255),
 	req_conversione_template BYTEA,

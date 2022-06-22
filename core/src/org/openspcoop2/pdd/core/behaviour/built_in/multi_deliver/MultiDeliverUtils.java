@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
@@ -27,6 +29,7 @@ import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourPropertiesUtils;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
 /**
@@ -244,6 +247,28 @@ public class MultiDeliverUtils  {
 					config.setFaultMessage(valore);
 				}
 				
+				else if(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_TIPO_MESSAGGIO_DA_NOTIFICARE.equals(nome)) {
+					if(valore!=null) {
+						MessaggioDaNotificare tipo = MessaggioDaNotificare.toEnumConstant(valore, false);
+						if(tipo!=null) {
+							config.setMessaggioDaNotificare(tipo);
+						}
+					}
+				}
+				else if(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_TIPO_HTTP_NOTIFICA.equals(nome)) {
+					if(valore!=null) {
+						HttpRequestMethod tipoHttp = null;
+						if(valore!=null && !Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_TIPO_HTTP_NOTIFICA_USA_QUELLO_DELLA_RICHIESTA.equals(valore)) {
+							try {
+								tipoHttp = HttpRequestMethod.valueOf(valore.toUpperCase());
+							}catch(Throwable t) {}
+						}
+						if(tipoHttp!=null) {
+							config.setHttpMethod(tipoHttp);
+						}
+					}
+				}
+				
 			}catch(Exception e) {
 				throw new BehaviourException("Configurazione condizionale non corretta (proprietà:"+p.getNome()+" valore:'"+p.getValore()+"'): "+e.getMessage(),e);
 			}
@@ -459,7 +484,67 @@ public class MultiDeliverUtils  {
 				break;
 			}
 		}
+		
+		if(configurazione.getMessaggioDaNotificare()!=null) {
+			BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_TIPO_MESSAGGIO_DA_NOTIFICARE, configurazione.getMessaggioDaNotificare().getValue());
+		}else {
+			BehaviourPropertiesUtils.removeProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_TIPO_MESSAGGIO_DA_NOTIFICARE);
+		}
+		
+		if(configurazione.getHttpMethod()!=null) {
+			BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_TIPO_HTTP_NOTIFICA, configurazione.getHttpMethod().name());
+		}else {
+			BehaviourPropertiesUtils.removeProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_TIPO_HTTP_NOTIFICA);
+		}
 	}
 	
 
+	
+	public static MessaggioDaNotificare readMessaggiNotificabili(PortaApplicativa pa, List<String> serviziApplicativiAbilitatiForwardTo, Logger log) throws BehaviourException {
+		boolean richiesta = false;
+		boolean risposta = false;
+		if(serviziApplicativiAbilitatiForwardTo!=null && !serviziApplicativiAbilitatiForwardTo.isEmpty()) {
+			for (PortaApplicativaServizioApplicativo pasa : pa.getServizioApplicativoList()) {
+				if(serviziApplicativiAbilitatiForwardTo.contains(pasa.getNome())) {
+					ConfigurazioneGestioneConsegnaNotifiche config = MultiDeliverUtils.read(pasa, log);
+					if(config!=null) {
+						MessaggioDaNotificare check = config.getMessaggioDaNotificare();
+						if(check!=null) {
+							switch (check) {
+							case RICHIESTA:
+								richiesta = true;
+								break;
+							case RISPOSTA:
+								risposta = true;
+								break;
+							case ENTRAMBI:
+								richiesta = true;
+								risposta = true;
+								break;
+							}
+							if(richiesta && risposta) {
+								// trovati entrambi, e' inutile che continuo ad analizzare
+								break;
+							}
+						}
+						else {
+							// default: richiesta
+							richiesta=true;
+						}
+					}
+				}
+			}
+		}
+		MessaggioDaNotificare tipiMessaggiNotificabili = null;
+		if(richiesta && risposta) {
+			tipiMessaggiNotificabili = MessaggioDaNotificare.ENTRAMBI;
+		}
+		else if(risposta) {
+			tipiMessaggiNotificabili = MessaggioDaNotificare.RISPOSTA;
+		}
+		else if(richiesta) {
+			tipiMessaggiNotificabili = MessaggioDaNotificare.RICHIESTA;
+		}
+		return tipiMessaggiNotificabili;
+	}
 }

@@ -106,6 +106,7 @@ import org.openspcoop2.utils.semaphore.SemaphoreMapping;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.threads.RunnableLogger;
+import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.slf4j.Logger;
 
 
@@ -1291,6 +1292,31 @@ public class GestoreMessaggi  {
 				msgSoap.save(message, this.isRichiesta, false, consumeMessage, oraRegistrazioneT);
 			} catch (Exception e) {
 				String errorMsg = "GESTORE_MESSAGGI, Errore di registrazione (SoapMessage) " + this.tipo + "/" + this.idBusta + ": " + e.getMessage();
+				if (msgSoap != null) {
+					stato.closePreparedStatement(); // Chiude le PreparedStatement aperte(e non eseguite) per il salvataggio del Msg
+				}
+				this.log.error(errorMsg, e);
+				throw new GestoreMessaggiException(errorMsg, e);
+			}
+		}
+	}
+	
+	public void registraRisposta_statelessEngine(String identificativo, OpenSPCoop2Message message, boolean consumeMessage) throws GestoreMessaggiException {
+		// Salvo contenuto messaggio 
+		if (message != null) {
+
+			String id = identificativo!=null ? identificativo : this.idBusta;
+			
+			// stato
+			StateMessage stato = (this.isRichiesta) ? ((StateMessage)this.openspcoopstate.getStatoRichiesta()) : ((StateMessage)this.openspcoopstate.getStatoRisposta()) ;
+
+
+			SavedMessage msgSoap = null;
+			try {
+				msgSoap = new SavedMessage(id, this.openspcoopstate, this.tipo, this.workDir, GestoreMessaggi.adapter, this.log);
+				msgSoap.updateResponse(message, consumeMessage);
+			} catch (Exception e) {
+				String errorMsg = "GESTORE_MESSAGGI, Errore di aggiornamento (SoapMessage) " + this.tipo + "/" + id + ": " + e.getMessage();
 				if (msgSoap != null) {
 					stato.closePreparedStatement(); // Chiude le PreparedStatement aperte(e non eseguite) per il salvataggio del Msg
 				}
@@ -2488,6 +2514,77 @@ public class GestoreMessaggi  {
 		return msg;
 	}
 
+	
+	public OpenSPCoop2Message getResponseMessage(boolean updateTransportRequest) throws GestoreMessaggiException{
+		return getResponseMessage(null, updateTransportRequest);
+	}
+	public OpenSPCoop2Message getResponseMessage(Date oraRegistrazione, boolean updateTransportRequest) throws GestoreMessaggiException{
+
+		//		if (openspcoopstate instanceof OpenSPCoopStateless) {
+		//			if (isRichiesta) return ((OpenSPCoopStateless)openspcoopstate).getRichiestaMsg() ;
+		//			else return ((OpenSPCoopStateless)openspcoopstate).getRispostaMsg() ;
+		//		}
+
+		OpenSPCoop2Message msg = null;
+
+		// Se devo cercare per riferimentoMessaggio, prima cerco un messaggio registrato, che possiede
+		// come riferimento Messaggio l'ID del gestore.
+		// In caso di esistenza uso l'ID del messaggio trovato e non quello del gestore
+		String idBustaSearch = this.idBusta;
+		
+		SavedMessage soapMsg = null;
+		try{
+			soapMsg = new SavedMessage(idBustaSearch, this.openspcoopstate, this.tipo,this.workDir,GestoreMessaggi.adapter,this.log);
+			msg = soapMsg.readResponse(oraRegistrazione);
+		}catch(Exception e){
+			String errorMsg = "GESTORE_MESSAGGI, getMessage "+this.tipo+"/"+this.idBusta+": "+e.getMessage();
+			this.log.error(errorMsg,e);
+			throw new GestoreMessaggiException(errorMsg,e);
+		}
+		
+		try{
+			if(updateTransportRequest) {
+				if(msg.getTransportResponseContext()!=null &&
+						msg.getTransportResponseContext().getHeaders()!=null &&
+						!msg.getTransportResponseContext().getHeaders().isEmpty()) {
+					if(msg.getTransportRequestContext()==null) {
+						msg.setTransportRequestContext(new TransportRequestContext());
+					}
+					if(msg.getTransportRequestContext().getHeaders()==null) {
+						msg.getTransportRequestContext().setHeaders(msg.getTransportResponseContext().getHeaders());
+					}
+					else if(msg.getTransportRequestContext().getHeaders().isEmpty()) {
+						msg.getTransportRequestContext().getHeaders().putAll(msg.getTransportResponseContext().getHeaders());
+					}
+					else {
+						for (String hdr : msg.getTransportResponseContext().getHeaders().keySet()) {
+							List<String> vResponse = msg.getTransportResponseContext().getHeaderValues(hdr);
+							if(vResponse!=null && !vResponse.isEmpty()){
+								List<String> vRequest = msg.getTransportRequestContext().getHeaderValues(hdr);
+								if(vRequest==null || vRequest.isEmpty()) {
+									msg.getTransportRequestContext().getHeaders().put(hdr, vResponse);
+								}
+								else{
+									for (String v : vResponse) {
+										if(!vRequest.contains(v)) {
+											vRequest.add(v);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}catch(Exception e){
+			String errorMsg = "GESTORE_MESSAGGI, getMessage "+this.tipo+"/"+this.idBusta+" (fixTransportRequest): "+e.getMessage();
+			this.log.error(errorMsg,e);
+			throw new GestoreMessaggiException(errorMsg,e);
+		}
+		
+		return msg;
+	}
+	
 
 	/**
 	 * Ritorna l'idBusta di un messaggio che possiede come riferimento messaggio l'ID del gestore. 

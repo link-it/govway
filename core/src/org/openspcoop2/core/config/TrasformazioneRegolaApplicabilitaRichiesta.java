@@ -40,6 +40,7 @@ import java.util.List;
  * 			&lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="pattern" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="connettore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="soggetto" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-applicabilita-soggetto" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-applicabilita-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 		&lt;/sequence&gt;
@@ -58,6 +59,7 @@ import java.util.List;
   	"azione",
   	"contentType",
   	"pattern",
+  	"connettore",
   	"soggetto",
   	"servizioApplicativo"
   }
@@ -137,6 +139,30 @@ public class TrasformazioneRegolaApplicabilitaRichiesta extends org.openspcoop2.
 
   public void setPattern(java.lang.String pattern) {
     this.pattern = pattern;
+  }
+
+  public void addConnettore(java.lang.String connettore) {
+    this.connettore.add(connettore);
+  }
+
+  public java.lang.String getConnettore(int index) {
+    return this.connettore.get( index );
+  }
+
+  public java.lang.String removeConnettore(int index) {
+    return this.connettore.remove( index );
+  }
+
+  public List<java.lang.String> getConnettoreList() {
+    return this.connettore;
+  }
+
+  public void setConnettoreList(List<java.lang.String> connettore) {
+    this.connettore=connettore;
+  }
+
+  public int sizeConnettoreList() {
+    return this.connettore.size();
   }
 
   public void addSoggetto(TrasformazioneRegolaApplicabilitaSoggetto soggetto) {
@@ -259,6 +285,37 @@ public class TrasformazioneRegolaApplicabilitaRichiesta extends org.openspcoop2.
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="pattern",required=false,nillable=false)
   protected java.lang.String pattern;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="connettore",required=true,nillable=false)
+  protected List<java.lang.String> connettore = new ArrayList<java.lang.String>();
+
+  /**
+   * @deprecated Use method getConnettoreList
+   * @return List&lt;java.lang.String&gt;
+  */
+  @Deprecated
+  public List<java.lang.String> getConnettore() {
+  	return this.connettore;
+  }
+
+  /**
+   * @deprecated Use method setConnettoreList
+   * @param connettore List&lt;java.lang.String&gt;
+  */
+  @Deprecated
+  public void setConnettore(List<java.lang.String> connettore) {
+  	this.connettore=connettore;
+  }
+
+  /**
+   * @deprecated Use method sizeConnettoreList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeConnettore() {
+  	return this.connettore.size();
+  }
 
   @XmlElement(name="soggetto",required=true,nillable=false)
   protected List<TrasformazioneRegolaApplicabilitaSoggetto> soggetto = new ArrayList<TrasformazioneRegolaApplicabilitaSoggetto>();

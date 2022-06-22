@@ -111,6 +111,19 @@ public class DynamicUtils {
 			MessageContent messageContent,
 			Busta busta, Map<String, List<String>> trasporto,
 			ErrorHandler errorHandler) {
+		fillDynamicMapResponse(log, dynamicMap, dynamicMapRequest, pddContext,
+				message,
+				messageContent,
+				busta, trasporto,
+				errorHandler,
+				false);
+	}
+	public static void fillDynamicMapResponse(Logger log, Map<String, Object> dynamicMap, Map<String, Object> dynamicMapRequest, Context pddContext,
+			OpenSPCoop2Message message,
+			MessageContent messageContent,
+			Busta busta, Map<String, List<String>> trasporto,
+			ErrorHandler errorHandler,
+			boolean preserveRequest) {
 		Map<String, Object> dynamicMapResponse = new HashMap<>();
 		_fillDynamicMap(log, dynamicMapResponse, pddContext, null, 
 				message,
@@ -148,7 +161,8 @@ public class DynamicUtils {
 				String key = (String) it.next();
 				if(Costanti.MAP_ERROR_HANDLER_OBJECT.toLowerCase().equals(key.toLowerCase())
 						|| 
-					Costanti.MAP_REQUEST.toLowerCase().equals(key.toLowerCase())){
+					(Costanti.MAP_REQUEST.toLowerCase().equals(key.toLowerCase()) && !preserveRequest)
+						){
 					continue; // error handler viene usato quello istanziato per la risposta; mentre la richiesta è già stata consumata.
 				}
 				Object o = dynamicMapRequest.get(key);

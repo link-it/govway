@@ -134,6 +134,9 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 			String faultActor = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_ACTOR); 
 			String faultMessage = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_MESSAGE); 
 
+			String connettoreTipoMessaggioDaNotificare = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TIPO_MESSAGGIO_DA_NOTIFICARE);
+			String httpMethodDaNotificare = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TIPO_HTTP_NOTIFICA);
+			
 			boolean accessoDaListaAPS = false;
 			String accessoDaAPSParametro = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
 			if(Costanti.CHECK_BOX_ENABLED_TRUE.equals(accessoDaAPSParametro)) {
@@ -217,6 +220,10 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 					faultCode = "";
 					faultActor = "";
 					faultMessage = "";
+				}
+				
+				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_TIPO_MESSAGGIO_DA_NOTIFICARE)) {
+					httpMethodDaNotificare = null;
 				}
 			}
 			
@@ -324,6 +331,30 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 			// dati
 			if (porteApplicativeHelper.isEditModeInProgress()) {
 
+				if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) && !consegnaSincrona) {
+					if(connettoreTipoMessaggioDaNotificare==null) {
+						if(oldConfigurazioneGestioneConsegnaNotifiche!=null && oldConfigurazioneGestioneConsegnaNotifiche.getMessaggioDaNotificare()!=null) {
+							connettoreTipoMessaggioDaNotificare = oldConfigurazioneGestioneConsegnaNotifiche.getMessaggioDaNotificare().getValue(); 
+						}
+						if(connettoreTipoMessaggioDaNotificare==null) {
+							connettoreTipoMessaggioDaNotificare = PorteApplicativeCostanti.VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_DA_NOTIFICARE_RICHIESTA;
+						}
+					}
+					if(httpMethodDaNotificare==null) {
+						if(oldConfigurazioneGestioneConsegnaNotifiche!=null && oldConfigurazioneGestioneConsegnaNotifiche.getHttpMethod()!=null) {
+							httpMethodDaNotificare = oldConfigurazioneGestioneConsegnaNotifiche.getHttpMethod().name(); 
+						}
+						if(httpMethodDaNotificare==null) {
+							if(PorteApplicativeCostanti.VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_DA_NOTIFICARE_RICHIESTA.equals(connettoreTipoMessaggioDaNotificare)) {
+								httpMethodDaNotificare = PorteApplicativeCostanti.VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_DEFAULT_RICHIESTA;
+							}
+							else {
+								httpMethodDaNotificare = PorteApplicativeCostanti.VALORE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_MESSAGGIO_HTTP_NOTIFICA_DEFAULT;
+							}
+						}
+					}
+				}
+				
 				if(coda==null) {
 					if(oldPaSA!=null && oldPaSA.getDatiConnettore()!=null) {
 						coda = oldPaSA.getDatiConnettore().getCoda();
@@ -525,7 +556,8 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 						codiceRisposta5xx, codiceRisposta5xxValueMin, codiceRisposta5xxValueMax, codiceRisposta5xxValue, 
 						gestioneFault, faultCode, faultActor, faultMessage,
 						consegnaSincrona,
-						coda, priorita, prioritaMax);
+						coda, priorita, prioritaMax,
+						connettoreTipoMessaggioDaNotificare, httpMethodDaNotificare);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta,idAsps, dati);
 
@@ -562,7 +594,8 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 						codiceRisposta5xx, codiceRisposta5xxValueMin, codiceRisposta5xxValueMax, codiceRisposta5xxValue, 
 						gestioneFault, faultCode, faultActor, faultMessage,
 						consegnaSincrona,
-						coda, priorita, prioritaMax);
+						coda, priorita, prioritaMax,
+						connettoreTipoMessaggioDaNotificare, httpMethodDaNotificare);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta, idAsps, dati);
 
@@ -605,12 +638,14 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 			
 			paSA.setDatiConnettore(datiConnettore);
 			
-			ConfigurazioneGestioneConsegnaNotifiche nuovaConfigurazioneGestioneConsegnaNotifiche  = porteApplicativeHelper.getConfigurazioneGestioneConsegnaNotifiche(serviceBinding, cadenzaRispedizione,
+			ConfigurazioneGestioneConsegnaNotifiche nuovaConfigurazioneGestioneConsegnaNotifiche  = porteApplicativeHelper.getConfigurazioneGestioneConsegnaNotifiche(beaBehaviourType, serviceBinding, cadenzaRispedizione,
 					codiceRisposta2xx, codiceRisposta2xxValueMin, codiceRisposta2xxValueMax, codiceRisposta2xxValue,
 					codiceRisposta3xx, codiceRisposta3xxValueMin, codiceRisposta3xxValueMax, codiceRisposta3xxValue,
 					codiceRisposta4xx, codiceRisposta4xxValueMin, codiceRisposta4xxValueMax, codiceRisposta4xxValue, 
 					codiceRisposta5xx, codiceRisposta5xxValueMin, codiceRisposta5xxValueMax, codiceRisposta5xxValue,
-					gestioneFault, faultCode, faultActor, faultMessage);
+					gestioneFault, faultCode, faultActor, faultMessage,
+					consegnaSincrona,
+					connettoreTipoMessaggioDaNotificare, httpMethodDaNotificare);
 			
 			org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(paSA, nuovaConfigurazioneGestioneConsegnaNotifiche);
 
@@ -832,7 +867,8 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 						codiceRisposta5xx, codiceRisposta5xxValueMin, codiceRisposta5xxValueMax, codiceRisposta5xxValue, 
 						gestioneFault, faultCode, faultActor, faultMessage,
 						consegnaSincrona,
-						coda, priorita, prioritaMax);
+						coda, priorita, prioritaMax,
+						connettoreTipoMessaggioDaNotificare, httpMethodDaNotificare);
 	
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta, idAsps, dati);
 	

@@ -141,6 +141,7 @@ import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.date.IDate;
 import org.openspcoop2.utils.digest.IDigestReader;
 import org.openspcoop2.utils.id.IUniqueIdentifierGenerator;
+import org.openspcoop2.utils.io.ArchiveType;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
 import org.openspcoop2.utils.json.JsonSchemaValidatorConfig.ADDITIONAL;
@@ -747,6 +748,8 @@ public class OpenSPCoop2Properties {
 			this.isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneContenutiApplicativi();
 			this.getGestioneCORS_returnCode_ricezioneBuste();
 			this.isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneBuste();
+			
+			this. getNotificaRichiestaRisposta_consegnaContenutiApplicativi_archiveType();
 			
 			
 
@@ -13662,6 +13665,30 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneBuste;
+	}
+	
+	
+	private static ArchiveType getNotificaRichiestaRisposta_consegnaContenutiApplicativi_archiveType = null;
+	public ArchiveType getNotificaRichiestaRisposta_consegnaContenutiApplicativi_archiveType() {	
+		if(OpenSPCoop2Properties.getNotificaRichiestaRisposta_consegnaContenutiApplicativi_archiveType==null){
+			String pName = "org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.notificaRichiestaRisposta.archiveType";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getNotificaRichiestaRisposta_consegnaContenutiApplicativi_archiveType = ArchiveType.valueOf(name.toUpperCase());
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+ArchiveType.ZIP);
+					OpenSPCoop2Properties.getNotificaRichiestaRisposta_consegnaContenutiApplicativi_archiveType = ArchiveType.ZIP;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+ArchiveType.ZIP+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getNotificaRichiestaRisposta_consegnaContenutiApplicativi_archiveType = ArchiveType.ZIP;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getNotificaRichiestaRisposta_consegnaContenutiApplicativi_archiveType;
 	}
 	
 

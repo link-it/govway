@@ -540,6 +540,7 @@ CREATE TABLE pd_transform
 	applicabilita_azioni VARCHAR(65535),
 	applicabilita_ct VARCHAR(65535),
 	applicabilita_pattern VARCHAR(65535),
+	applicabilita_connettori VARCHAR(65535),
 	req_conversione_enabled INT NOT NULL,
 	req_conversione_tipo VARCHAR(255),
 	-- In hsql 2.x usare il tipo BLOB al posto di VARBINARY

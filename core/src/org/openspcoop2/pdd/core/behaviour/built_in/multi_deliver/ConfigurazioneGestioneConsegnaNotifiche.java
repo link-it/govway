@@ -22,6 +22,8 @@ package org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
+
 /**
  * ConfigurazioneGestoneErrori
  *
@@ -57,7 +59,9 @@ public class ConfigurazioneGestioneConsegnaNotifiche  {
 	private String faultCode;
 	private String faultActor;
 	private String faultMessage;
-	
+
+	private MessaggioDaNotificare messaggioDaNotificare;
+	private HttpRequestMethod httpMethod;
 
 	public Integer getCadenzaRispedizione() {
 		return this.cadenzaRispedizione;
@@ -184,5 +188,19 @@ public class ConfigurazioneGestioneConsegnaNotifiche  {
 	}
 	public void setFaultMessage(String faultMessage) {
 		this.faultMessage = faultMessage;
+	}
+	
+	public MessaggioDaNotificare getMessaggioDaNotificare() {
+		return this.messaggioDaNotificare;
+	}
+	public void setMessaggioDaNotificare(MessaggioDaNotificare messaggioDaNotificare) {
+		this.messaggioDaNotificare = messaggioDaNotificare;
+	}
+	
+	public HttpRequestMethod getHttpMethod() {
+		return this.httpMethod;
+	}
+	public void setHttpMethod(HttpRequestMethod httpMethod) {
+		this.httpMethod = httpMethod;
 	}
 }

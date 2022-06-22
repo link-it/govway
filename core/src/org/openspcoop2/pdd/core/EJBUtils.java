@@ -39,6 +39,7 @@ import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.TipoPdD;
@@ -74,6 +75,8 @@ import org.openspcoop2.pdd.core.behaviour.IBehaviour;
 import org.openspcoop2.pdd.core.behaviour.StatoFunzionalita;
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneGestioneConsegnaNotifiche;
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.GestioneConsegnaNotificheUtils;
+import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MessaggioDaNotificare;
+import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverBehaviour;
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.node.INodeSender;
@@ -1511,16 +1514,18 @@ public class EJBUtils {
 			BehaviourForwardToFilter singleFilterBehaviour = null;
 			boolean behaviourResponseTo = false;
 			IDServizioApplicativo behaviour_idSA_SyncResponder = null;
+			MessaggioDaNotificare tipiMessaggiNotificabili = null;
+			IBehaviour behaviourImpl = null;
 			// pa is null nel caso di soggetto virtuale
 			if(pa!=null && pa.getBehaviour()!=null && pa.getBehaviour().getNome()!=null && !"".equals(pa.getBehaviour().getNome())){
 				
-				IBehaviour behaviourImpl = BehaviourLoader.newInstance(pa.getBehaviour(), this.msgDiag,
+				behaviourImpl = BehaviourLoader.newInstance(pa.getBehaviour(), this.msgDiag,
 						this.pddContext, this.protocolFactory,
 						this.openSPCoopState!=null ? this.openSPCoopState.getStatoRichiesta() : null);
 				
 				gestoreMessaggi.setPortaDiTipoStateless(stateless);
 				behaviour = behaviourImpl.behaviour(gestoreMessaggi, busta, pa, requestInfo);
-				
+								
 				behaviourResponseTo = behaviour!=null && behaviour.isResponseTo();
 				
 				if(behaviour!=null) {
@@ -1847,7 +1852,17 @@ public class EJBUtils {
 						this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_ID, serviziApplicativiAbilitatiForwardToNormalizedById);
 					}
 					this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI, serviziApplicativiAbilitatiForwardTo.size());
+					if(serviziApplicativiAbilitatiForwardTo!=null && !serviziApplicativiAbilitatiForwardTo.isEmpty()) {
+						this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_SA, serviziApplicativiAbilitatiForwardTo);
+					}
 										
+					if(behaviourImpl instanceof MultiDeliverBehaviour) {
+						MultiDeliverBehaviour multi = (MultiDeliverBehaviour) behaviourImpl;
+						if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(multi.getBt())) {
+							tipiMessaggiNotificabili = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.readMessaggiNotificabili(pa, serviziApplicativiAbilitatiForwardTo, this.log);
+						}
+					}
+					
 					String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 					OpenSPCoopStateless stateBehaviour_newConnection = null;
 					OpenSPCoopStateless stateBehaviour_onlyUseConnectionFalse = null;
@@ -1896,8 +1911,15 @@ public class EJBUtils {
 						GestoreMessaggi gestoreNewMessaggio = new GestoreMessaggi(stateNuoviMessaggi,true, bustaNewMessaggio.getID(),
 								Costanti.INBOX,this.msgDiag,this.pddContext);
 						RepositoryBuste repositoryBusteNewMessaggio = new RepositoryBuste(stateNuoviMessaggi.getStatoRichiesta(),true, this.protocolFactory);
+						
+						OpenSPCoop2Message messaggioDaNotificare = behaviourForwardTo.getMessage();
+						if(tipiMessaggiNotificabili!=null && MessaggioDaNotificare.RISPOSTA.equals(tipiMessaggiNotificabili)) {
+							// verrà salvata dopo, la richiesta salvata deve essere un messaggio trascurabile
+							messaggioDaNotificare = messaggioDaNotificare.getFactory().createEmptyMessage(MessageType.BINARY, MessageRole.NONE);
+						}
+						
 						Timestamp oraRegistrazione = _forceSaveMessage(this.propertiesReader, gestoreNewMessaggio, null, bustaNewMessaggio, richiestaApplicativa, repositoryBusteNewMessaggio,
-								behaviourForwardTo.getMessage(),stateNuoviMessaggi,
+								messaggioDaNotificare,stateNuoviMessaggi,
 								this.pddContext, this.identitaPdD); // per eventuale thread riconsegna in caso di errore
 	//					if(stateless){
 	//						((OpenSPCoopStateless)this.openSPCoopState).setRichiestaMsg(behaviourForwardTo.getMessage());

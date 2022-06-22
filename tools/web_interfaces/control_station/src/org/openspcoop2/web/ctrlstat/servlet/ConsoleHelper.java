@@ -16269,15 +16269,18 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	public Vector<DataElement> addTrasformazioneToDatiOpAdd(Vector<DataElement> dati, Object oggetto, String nome, 
 			String stato, boolean azioniAll, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String[] azioni, String pattern, String contentType,
+			String [] connettoriDisponibiliList, String [] connettoriDisponibiliLabelList, String [] connettori,
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding, boolean isPortaDelegata) throws Exception {
 		return addTrasformazioneToDati(TipoOperazione.ADD, dati, oggetto, null, nome, 
 				stato, azioniAll, azioniDisponibiliList, azioniDisponibiliLabelList, azioni, pattern, contentType, 
+				connettoriDisponibiliList, connettoriDisponibiliLabelList, connettori,
 				serviceBinding,
 				null, null, null, null, 0, isPortaDelegata, null,null,0,null,null,0);
 	}
 	
 	public Vector<DataElement> addTrasformazioneToDati(TipoOperazione tipoOP, Vector<DataElement> dati, Object oggetto, String idTrasformazione, String nome, 
-			String stato, boolean azioniAll, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String[] azioni, String pattern, String contentType,
+			String stato, boolean azioniAll, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String[] azioni, String pattern, String contentType, 
+			String [] connettoriDisponibiliList, String [] connettoriDisponibiliLabelList, String [] connettori,
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding,
 			String servletTrasformazioniRichiesta, List<Parameter> parametriInvocazioneServletTrasformazioniRichiesta, String servletTrasformazioniRispostaList, List<Parameter> parametriInvocazioneServletTrasformazioniRisposta,
 			int numeroTrasformazioniRisposte, boolean isPortaDelegata, String servletTrasformazioniAutorizzazioneAutenticati,  List<Parameter> parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati , int numAutenticati,
@@ -16404,6 +16407,18 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setInfo(dInfoPattern);
 		dati.addElement(de);
 		
+		if(connettoriDisponibiliList!=null && connettoriDisponibiliList.length>0) {
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_CONNETTORI);
+			de.setValues(connettoriDisponibiliList);
+			de.setLabels(connettoriDisponibiliLabelList);
+			de.setSelezionati(connettori);
+			de.setType(DataElementType.MULTI_SELECT);
+			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_APPLICABILITA_CONNETTORI);
+			de.setRows(10);
+	//		de.setRequired(true); 
+			dati.addElement(de);
+		}
 						
 		// in edit faccio vedere i link per configurare la richiesta e le risposte
 		if(tipoOP.equals(TipoOperazione.CHANGE)) {
@@ -16413,6 +16428,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String protocollo = null;
 			boolean isSupportatoAutenticazione;
 			
+			TrasformazioneRegola tr = null;
 			if(isPortaDelegata){
 				PortaDelegata pd = (PortaDelegata) oggetto;
 				autenticazione = !TipoAutenticazione.DISABILITATO.equals(pd.getAutenticazione());
@@ -16420,14 +16436,29 @@ public class ConsoleHelper implements IConsoleHelper {
 				if(pd!=null && pd.getServizio()!=null && pd.getServizio().getTipo()!=null) {
 					protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pd.getServizio().getTipo());
 				}
-			}
-			else {
+				if(pd!=null && pd.getTrasformazioni()!=null && pd.getTrasformazioni().sizeRegolaList()>0) {
+					for (TrasformazioneRegola trCheck : pd.getTrasformazioni().getRegolaList()){
+						if(trCheck.getNome().equals(nome)) {
+							tr = trCheck;
+							break;
+						}
+					}
+				}
+			}else {
 				PortaApplicativa pa = (PortaApplicativa) oggetto;
 				autenticazione = !TipoAutenticazione.DISABILITATO.equals(pa.getAutenticazione());
 				if(pa!=null && pa.getServizio()!=null && pa.getServizio().getTipo()!=null) {
 					protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pa.getServizio().getTipo());
 				}
 				isSupportatoAutenticazione = this.soggettiCore.isSupportatoAutenticazioneApplicativiErogazione(protocollo);
+				if(pa!=null && pa.getTrasformazioni()!=null && pa.getTrasformazioni().sizeRegolaList()>0) {
+					for (TrasformazioneRegola trCheck : pa.getTrasformazioni().getRegolaList()){
+						if(trCheck.getNome().equals(nome)) {
+							tr = trCheck;
+							break;
+						}
+					}
+				}
 			}
 			
 			
@@ -16484,7 +16515,54 @@ public class ConsoleHelper implements IConsoleHelper {
 			// Richiesta
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
-			de.setValue(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA);
+			StringBuilder sb = new StringBuilder();
+			if(tr!=null && tr.getRichiesta()!=null) {
+				if(tr.getRichiesta().sizeHeaderList()>0 
+						|| 
+						tr.getRichiesta().sizeParametroUrlList()>0 
+						|| 
+						(
+								org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding) && tr.getRichiesta().getTrasformazioneRest()!=null 
+								&&
+								(
+									(tr.getRichiesta().getTrasformazioneRest().getMetodo()!=null && StringUtils.isNotEmpty(tr.getRichiesta().getTrasformazioneRest().getMetodo()))
+									||
+									(tr.getRichiesta().getTrasformazioneRest().getPath()!=null && StringUtils.isNotEmpty(tr.getRichiesta().getTrasformazioneRest().getPath()))
+								)
+						)
+					){
+					if(sb.length()>0) {
+						sb.append(", ");
+					}
+					sb.append(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_TRASPORTO.toLowerCase());
+				}
+				if(tr.getRichiesta().getConversioneTemplate()!=null) {
+					if(sb.length()>0) {
+						sb.append(", ");
+					}
+					sb.append(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_CONTENUTO.toLowerCase());
+				}
+				if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding) && tr.getRichiesta().getTrasformazioneSoap()!=null) {
+					if(sb.length()>0) {
+						sb.append(", ");
+					}
+					sb.append(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_SOAP.toLowerCase());
+				}
+				if(org.openspcoop2.core.registry.constants.ServiceBinding.SOAP.equals(serviceBinding) && tr.getRichiesta().getTrasformazioneRest()!=null) {
+					if(sb.length()>0) {
+						sb.append(", ");
+					}
+					sb.append(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_REST.toLowerCase());
+				}
+			}
+			if(sb.length()>0) {
+				//de.setValue(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA+" (" + sb.toString()+ ")");
+				de.setValue(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA+" (" + CostantiConfigurazione.ABILITATO.getValue().toLowerCase()+ ")");
+			}
+			else {
+				//de.setValue(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA);
+				de.setValue(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA+" (" + CostantiConfigurazione.DISABILITATO.getValue().toLowerCase()+ ")");
+			}
 			de.setUrl(servletTrasformazioniRichiesta, parametriInvocazioneServletTrasformazioniRichiesta.toArray(new Parameter[parametriInvocazioneServletTrasformazioniRichiesta.size()]));
 			dati.addElement(de);
 			

@@ -137,7 +137,7 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 			
 				connettoreUtilizzatiConfig = porteApplicativeHelper. isConnettoreMultiploInUso(numeroElementiDaControllare, nome, pa, asps, apc, serviceBinding, messaggiSezioniConnettore);
 			} // end for elementi selezionati
-
+			
 			StringBuilder sbErrore = new StringBuilder();
 			if(connettoreUtilizzatiConfig) {
 				if(idsToRemove.size() > 1) {
@@ -151,6 +151,24 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 				}
 
 				eseguiOperazione = false;
+			}
+			else {
+				connettoreUtilizzatiConfig = porteApplicativeHelper.isConnettoreMultiploInUsoCriteriApplicabilitaTrasformazioni(numeroElementiDaControllare, nome,
+							pa, serviceBinding, messaggiSezioniConnettore);
+				
+				if(connettoreUtilizzatiConfig) {
+					if(idsToRemove.size() > 1) {
+						sbErrore.append(PorteApplicativeCostanti.MESSAGGIO_IMPOSSIBILE_ELIMINARE_I_CONNETTORI_UTILIZZATI_IN_ALTRE_CONFIGURAZIONI);
+					} else {
+						sbErrore.append(PorteApplicativeCostanti.MESSAGGIO_IMPOSSIBILE_ELIMINARE_IL_CONNETTORE_UTILIZZATI_IN_ALTRE_CONFIGURAZIONI);
+					}
+					sbErrore.append(":").append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+					for (String s : messaggiSezioniConnettore) {
+						sbErrore.append(s);
+					}
+	
+					eseguiOperazione = false;
+				}
 			}
 
 			// se non devo visualizzare il messaggio di errore procedo ai controlli successivi 

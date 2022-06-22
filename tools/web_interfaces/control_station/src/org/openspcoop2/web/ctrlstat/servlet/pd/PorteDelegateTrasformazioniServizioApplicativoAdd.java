@@ -272,7 +272,10 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 				String contentTypeDBCheck = StringUtils.isNotEmpty(contentTypeAsString) ? contentTypeAsString : null;
 				String azioniAsString = (regola.getApplicabilita() != null && regola.getApplicabilita().getAzioneList() != null) ? StringUtils.join(regola.getApplicabilita().getAzioneList(), ",") : "";
 				String azioniDBCheck = StringUtils.isNotEmpty(azioniAsString) ? azioniAsString : null;
-				TrasformazioneRegola trasformazioneDBCheck_criteri = porteDelegateCore.getTrasformazione(Long.parseLong(idPorta), azioniDBCheck, patternDBCheck, contentTypeDBCheck, sacheckList);
+				String connettoriAsString = (regola.getApplicabilita() != null && regola.getApplicabilita().getConnettoreList() != null) ? StringUtils.join(regola.getApplicabilita().getConnettoreList(), ",") : "";
+				String connettoriDBCheck = StringUtils.isNotEmpty(connettoriAsString) ? connettoriAsString : null;
+				TrasformazioneRegola trasformazioneDBCheck_criteri = porteDelegateCore.getTrasformazione(Long.parseLong(idPorta), azioniDBCheck, patternDBCheck, contentTypeDBCheck, connettoriDBCheck,
+						sacheckList);
 				if(trasformazioneDBCheck_criteri!=null) {
 					isOk = false;
 					pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_REGOLA_TRASFORMAZIONE_APPLICABILITA_DUPLICATA_APPLICATIVO);

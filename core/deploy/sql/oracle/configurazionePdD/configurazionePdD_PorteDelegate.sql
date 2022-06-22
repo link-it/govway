@@ -686,6 +686,7 @@ CREATE TABLE pd_transform
 	applicabilita_azioni CLOB,
 	applicabilita_ct CLOB,
 	applicabilita_pattern CLOB,
+	applicabilita_connettori CLOB,
 	req_conversione_enabled NUMBER NOT NULL,
 	req_conversione_tipo VARCHAR2(255),
 	req_conversione_template BLOB,

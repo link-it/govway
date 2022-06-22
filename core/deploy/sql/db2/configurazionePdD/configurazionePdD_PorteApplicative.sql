@@ -539,6 +539,7 @@ CREATE TABLE pa_transform
 	applicabilita_azioni CLOB,
 	applicabilita_ct CLOB,
 	applicabilita_pattern CLOB,
+	applicabilita_connettori CLOB,
 	req_conversione_enabled INT NOT NULL DEFAULT 0,
 	req_conversione_tipo VARCHAR(255),
 	req_conversione_template BLOB,

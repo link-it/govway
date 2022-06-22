@@ -48,6 +48,8 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MessaggioDaNotificare;
+import org.openspcoop2.pdd.core.dynamic.Costanti;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.dynamic.MessageContent;
@@ -101,7 +103,14 @@ public class GestoreTrasformazioni {
 	private Map<String, Object> dynamicMapRequest = null;
 	private OpenSPCoop2Message messageRequest = null;
 	
+	@SuppressWarnings("unused")
+	private String nomeConnettore; 
+	private String nomeServizioApplicativoErogatore; 
 	
+	
+
+
+
 	/* ********  C O S T R U T T O R E  ******** */
 	/**
 	 * Costruttore. 
@@ -139,13 +148,26 @@ public class GestoreTrasformazioni {
 
 	
 	
-	
+	public OpenSPCoop2Message trasformazioneNotifica(OpenSPCoop2Message message, Busta busta,
+			MessaggioDaNotificare messageTypeForNotifier, OpenSPCoop2Message responseMessageForNotifier) throws GestoreTrasformazioniException{
+		if(this.transaction!=null) {
+			this.transaction.getTempiElaborazione().startTrasformazioneRichiesta();
+		}
+		try {
+			return this._trasformazioneRichiesta(message, busta, messageTypeForNotifier, responseMessageForNotifier);
+		}
+		finally {
+			if(this.transaction!=null) {
+				this.transaction.getTempiElaborazione().endTrasformazioneRichiesta();
+			}
+		}
+	}
 	public OpenSPCoop2Message trasformazioneRichiesta(OpenSPCoop2Message message, Busta busta) throws GestoreTrasformazioniException{
 		if(this.transaction!=null) {
 			this.transaction.getTempiElaborazione().startTrasformazioneRichiesta();
 		}
 		try {
-			return this._trasformazioneRichiesta(message, busta);
+			return this._trasformazioneRichiesta(message, busta, null, null);
 		}
 		finally {
 			if(this.transaction!=null) {
@@ -171,16 +193,27 @@ public class GestoreTrasformazioni {
 		return this.errore;
 	}
 	
+	public void setNomeConnettore(String nomeConnettore) {
+		this.nomeConnettore = nomeConnettore;
+	}
+	public void setNomeServizioApplicativoErogatore(String nomeServizioApplicativoErogatore) {
+		this.nomeServizioApplicativoErogatore = nomeServizioApplicativoErogatore;
+	}
 	
 	
 	private TrasformazioneRegola regolaTrasformazione; // viene valorizzata durante la gestione della richiesta
+	private boolean trasformazioneContenutoRichiestaEffettuata = false;
+	public boolean isTrasformazioneContenutoRichiestaEffettuata() {
+		return this.trasformazioneContenutoRichiestaEffettuata;
+	}
 	
-	private OpenSPCoop2Message _trasformazioneRichiesta(OpenSPCoop2Message message, Busta busta) throws GestoreTrasformazioniException{
+	private OpenSPCoop2Message _trasformazioneRichiesta(OpenSPCoop2Message messageP, Busta busta,
+			MessaggioDaNotificare messageTypeForNotifier, OpenSPCoop2Message responseMessageForNotifier) throws GestoreTrasformazioniException{
 
 		if(this.trasformazioni==null || this.trasformazioni.sizeRegolaList()<=0) {
-			this.msgDiag.logPersonalizzato("trasformazione.processamentoRichiestaDisabilitato");
+			this.msgDiag.logPersonalizzato(messageTypeForNotifier!=null ? "trasformazione.processamentoNotificaDisabilitato" : "trasformazione.processamentoRichiestaDisabilitato");
 			this.log.debug("Non esistono regole di trasformazione");
-			return message;
+			return messageP;
 		}
 		boolean existsRuleEnabled = false;
 		for (int i = 0; i < this.trasformazioni.sizeRegolaList(); i++) {
@@ -193,9 +226,9 @@ public class GestoreTrasformazioni {
 			break;
 		}
 		if(!existsRuleEnabled) {
-			this.msgDiag.logPersonalizzato("trasformazione.processamentoRichiestaDisabilitato");
+			this.msgDiag.logPersonalizzato(messageTypeForNotifier!=null ? "trasformazione.processamentoNotificaDisabilitato" : "trasformazione.processamentoRichiestaDisabilitato");
 			this.log.debug("Non esistono regole di trasformazione abilitate");
-			return message;
+			return messageP;
 		}
 				
 		
@@ -211,21 +244,21 @@ public class GestoreTrasformazioni {
 		
 		try{
 			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
-			if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
-				OpenSPCoop2SoapMessage soapMessage = message.castAsSoap();
+			if(ServiceBinding.SOAP.equals(messageP.getServiceBinding())){
+				OpenSPCoop2SoapMessage soapMessage = messageP.castAsSoap();
 				messageContent = new MessageContent(soapMessage, bufferMessage_readOnly, this.pddContext);
 			}
 			else{
-				if(MessageType.XML.equals(message.getMessageType()) && message.castAsRest().hasContent()){
-					OpenSPCoop2RestXmlMessage xml = message.castAsRestXml();
+				if(MessageType.XML.equals(messageP.getMessageType()) && messageP.castAsRest().hasContent()){
+					OpenSPCoop2RestXmlMessage xml = messageP.castAsRestXml();
 					messageContent = new MessageContent(xml, bufferMessage_readOnly, this.pddContext);
 				}
-				else if(MessageType.JSON.equals(message.getMessageType()) && message.castAsRest().hasContent()){
-					OpenSPCoop2RestJsonMessage json = message.castAsRestJson();
+				else if(MessageType.JSON.equals(messageP.getMessageType()) && messageP.castAsRest().hasContent()){
+					OpenSPCoop2RestJsonMessage json = messageP.castAsRestJson();
 					messageContent = new MessageContent(json, bufferMessage_readOnly, this.pddContext);
 				}
-				else if(MessageType.MIME_MULTIPART.equals(message.getMessageType()) && message.castAsRest().hasContent()){
-					OpenSPCoop2RestMimeMultipartMessage mime = message.castAsRestMimeMultipart();
+				else if(MessageType.MIME_MULTIPART.equals(messageP.getMessageType()) && messageP.castAsRest().hasContent()){
+					OpenSPCoop2RestMimeMultipartMessage mime = messageP.castAsRestMimeMultipart();
 					messageContent = new MessageContent(mime, bufferMessage_readOnly, this.pddContext);
 				}
 				else {
@@ -233,29 +266,29 @@ public class GestoreTrasformazioni {
 				}
 			}
 			
-
-			if(message.getTransportRequestContext()!=null) {
+			
+			if(messageP.getTransportRequestContext()!=null) {
 				
-				if(message.getTransportRequestContext().getHeaders()!=null &&
-					!message.getTransportRequestContext().getHeaders().isEmpty()) {
-					parametriTrasporto = message.getTransportRequestContext().getHeaders();
+				if(messageP.getTransportRequestContext().getHeaders()!=null &&
+					!messageP.getTransportRequestContext().getHeaders().isEmpty()) {
+					parametriTrasporto = messageP.getTransportRequestContext().getHeaders();
 				}
 				else {
 					parametriTrasporto = new HashMap<String, List<String>>();
-					message.getTransportRequestContext().setHeaders(parametriTrasporto);
+					messageP.getTransportRequestContext().setHeaders(parametriTrasporto);
 				}
 				
-				if(message.getTransportRequestContext().getParameters()!=null &&
-						!message.getTransportRequestContext().getParameters().isEmpty()) {
-					parametriUrl = message.getTransportRequestContext().getParameters();
+				if(messageP.getTransportRequestContext().getParameters()!=null &&
+						!messageP.getTransportRequestContext().getParameters().isEmpty()) {
+					parametriUrl = messageP.getTransportRequestContext().getParameters();
 				}
 				else {
 					parametriUrl = new HashMap<String, List<String>>();
-					message.getTransportRequestContext().setParameters(parametriUrl);
+					messageP.getTransportRequestContext().setParameters(parametriUrl);
 				}
 				
-				if(message.getTransportRequestContext() instanceof HttpServletTransportRequestContext) {
-					HttpServletTransportRequestContext httpServletContext = (HttpServletTransportRequestContext) message.getTransportRequestContext();
+				if(messageP.getTransportRequestContext() instanceof HttpServletTransportRequestContext) {
+					HttpServletTransportRequestContext httpServletContext = (HttpServletTransportRequestContext) messageP.getTransportRequestContext();
 					HttpServletRequest httpServletRequest = httpServletContext.getHttpServletRequest();
 					if(httpServletRequest!=null && httpServletRequest instanceof FormUrlEncodedHttpServletRequest) {
 						FormUrlEncodedHttpServletRequest formServlet = (FormUrlEncodedHttpServletRequest) httpServletRequest;
@@ -266,7 +299,7 @@ public class GestoreTrasformazioni {
 					}
 				}
 				
-				urlInvocazione = message.getTransportRequestContext().getUrlInvocazione_formBased();
+				urlInvocazione = messageP.getTransportRequestContext().getUrlInvocazione_formBased();
 			}
 			else {
 				throw new Exception("Transport Request Context non disponibile");
@@ -277,6 +310,78 @@ public class GestoreTrasformazioni {
 			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(e, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
 			String msgErrore = "Lettura contenuto della richiesta non riuscita: "+e.getMessage();
+			this.log.error(msgErrore, e);
+			throw new GestoreTrasformazioniException(msgErrore,e);
+		}
+		
+		
+		
+		
+		MessageContent messageResponseContent = null;
+		Map<String, List<String>> parametriTrasportoRisposta = null;
+		// *** Lettura Contenuto Risposta (per notifiche) ****
+		try{
+			if(messageTypeForNotifier!=null && MessaggioDaNotificare.ENTRAMBI.equals(messageTypeForNotifier) && responseMessageForNotifier!=null) {
+			
+				boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
+				if(ServiceBinding.SOAP.equals(responseMessageForNotifier.getServiceBinding())){
+					OpenSPCoop2SoapMessage soapMessage = responseMessageForNotifier.castAsSoap();
+					messageResponseContent = new MessageContent(soapMessage, bufferMessage_readOnly, this.pddContext);
+				}
+				else{
+					if(MessageType.XML.equals(responseMessageForNotifier.getMessageType()) && responseMessageForNotifier.castAsRest().hasContent()){
+						OpenSPCoop2RestXmlMessage xml = responseMessageForNotifier.castAsRestXml();
+						messageResponseContent = new MessageContent(xml, bufferMessage_readOnly, this.pddContext);
+					}
+					else if(MessageType.JSON.equals(responseMessageForNotifier.getMessageType()) && responseMessageForNotifier.castAsRest().hasContent()){
+						OpenSPCoop2RestJsonMessage json = responseMessageForNotifier.castAsRestJson();
+						messageResponseContent = new MessageContent(json, bufferMessage_readOnly, this.pddContext);
+					}
+					else if(MessageType.MIME_MULTIPART.equals(responseMessageForNotifier.getMessageType()) && responseMessageForNotifier.castAsRest().hasContent()){
+						OpenSPCoop2RestMimeMultipartMessage mime = responseMessageForNotifier.castAsRestMimeMultipart();
+						messageResponseContent = new MessageContent(mime, bufferMessage_readOnly, this.pddContext);
+					}
+					else {
+						contenutoNonNavigabile = true;
+					}
+				}
+				
+				if(responseMessageForNotifier.getTransportResponseContext()!=null) {
+					if(responseMessageForNotifier.getTransportResponseContext().getHeaders()!=null &&
+						!responseMessageForNotifier.getTransportResponseContext().getHeaders().isEmpty()) {
+						parametriTrasportoRisposta = responseMessageForNotifier.getTransportResponseContext().getHeaders();
+					}
+					else {
+						parametriTrasportoRisposta = new HashMap<String, List<String>>();
+						responseMessageForNotifier.getTransportResponseContext().setHeaders(parametriTrasportoRisposta);
+					}
+				}
+				else {
+					throw new Exception("Transport Response Context non disponibile");
+				}
+				
+			}
+			else if(messageTypeForNotifier!=null && MessaggioDaNotificare.RISPOSTA.equals(messageTypeForNotifier)){
+				// Si usa sempre messageP in questo caso
+				if(messageP.getTransportResponseContext()!=null) {
+					if(messageP.getTransportResponseContext().getHeaders()!=null &&
+						!messageP.getTransportResponseContext().getHeaders().isEmpty()) {
+						parametriTrasportoRisposta = messageP.getTransportResponseContext().getHeaders();
+					}
+					else {
+						parametriTrasportoRisposta = new HashMap<String, List<String>>();
+						messageP.getTransportResponseContext().setHeaders(parametriTrasporto);
+					}
+				}
+				else {
+					throw new Exception("Transport Response Context non disponibile");
+				}
+			}
+		}catch(Throwable e){
+			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RICHIESTA, "N.D.");
+			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					get5XX_ErroreProcessamento(e, CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
+			String msgErrore = "Lettura contenuto della risposta (notifica) non riuscita: "+e.getMessage();
 			this.log.error(msgErrore, e);
 			throw new GestoreTrasformazioniException(msgErrore,e);
 		}
@@ -325,7 +430,7 @@ public class GestoreTrasformazioni {
 					// controllo contentType
 					this.log.debug(suffix+" check applicabilità tra i "+check.getApplicabilita().sizeContentTypeList()+" content types ");
 					if(check.getApplicabilita().sizeContentTypeList()>0) {
-						if(ContentTypeUtilities.isMatch(message.getContentType(), check.getApplicabilita().getContentTypeList())==false) {
+						if(ContentTypeUtilities.isMatch(messageP.getContentType(), check.getApplicabilita().getContentTypeList())==false) {
 							continue;
 						}
 					}
@@ -336,7 +441,7 @@ public class GestoreTrasformazioni {
 						this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+") ...");
 						
 						if(contenutoNonNavigabile) {
-							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), messaggio non conforme al match: "+message.getMessageType());
+							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), messaggio non conforme al match: "+messageP.getMessageType());
 							continue; // no match
 						}
 						
@@ -349,13 +454,13 @@ public class GestoreTrasformazioni {
 							element = messageContent.getElement();
 						}
 						if(element==null && elementJson==null){
-							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), messaggio ("+message.getMessageType()+") senza contenuto");
+							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), messaggio ("+messageP.getMessageType()+") senza contenuto");
 							continue; // no match
 						}
 						String valore = null;
 						try {
 							if(element!=null) {
-								AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(message.getFactory());
+								AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(messageP.getFactory());
 								valore = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, check.getApplicabilita().getPattern(), this.log);
 							}
 							else {
@@ -365,7 +470,22 @@ public class GestoreTrasformazioni {
 							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+") fallita: "+e.getMessage(),e);
 						}
 						if(valore==null) {
-							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), match fallito ("+message.getMessageType()+")");
+							this.log.debug(suffix+" check applicabilità content-based pattern("+check.getApplicabilita().getPattern()+"), match fallito ("+messageP.getMessageType()+")");
+							continue;
+						}
+					}
+					
+					// controllo connettore
+					this.log.debug(suffix+" check applicabilità tra le '"+check.getApplicabilita().sizeConnettoreList()+"' connettori ");
+					if(check.getApplicabilita().sizeConnettoreList()>0) {
+						boolean found = false;
+						for (String checkConnettore : check.getApplicabilita().getConnettoreList()) {
+							if(checkConnettore.equals(this.nomeServizioApplicativoErogatore)) {
+								found = true;
+								break;
+							}
+						}
+						if(!found) {
 							continue;
 						}
 					}
@@ -406,12 +526,12 @@ public class GestoreTrasformazioni {
 		
 		if(this.regolaTrasformazione==null) {
 			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RICHIESTA, "N.D.");
-			this.msgDiag.logPersonalizzato("trasformazione.processamentoRichiestaNessunMatch");
+			this.msgDiag.logPersonalizzato( messageTypeForNotifier!=null ? "trasformazione.processamentoNotificaNessunMatch" : "trasformazione.processamentoRichiestaNessunMatch");
 			this.log.debug("Nessuna regola di trasformazione trovata");
-			return message;
+			return messageP;
 		}
 		
-		this.messageRequest = message;
+		this.messageRequest = messageP;
 		
 		
 		
@@ -419,9 +539,9 @@ public class GestoreTrasformazioni {
 		// *** EmissioneDiagnostico ****
 		
 		TrasformazioneRegolaRichiesta richiesta = this.regolaTrasformazione.getRichiesta();
-		String labelTrasformazione = GestoreTrasformazioniUtilities.getLabelTipoTrasformazioneRichiesta(richiesta, message);
+		String labelTrasformazione = GestoreTrasformazioniUtilities.getLabelTipoTrasformazioneRichiesta(richiesta, messageP);
 		this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RICHIESTA, labelTrasformazione);
-		this.msgDiag.logPersonalizzato("trasformazione.processamentoRichiestaInCorso");
+		this.msgDiag.logPersonalizzato( messageTypeForNotifier!=null ? "trasformazione.processamentoNotificaInCorso" : "trasformazione.processamentoRichiestaInCorso");
 		if(this.pddContext!=null) {
 			this.pddContext.addObject(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RICHIESTA, labelTrasformazione);
 		}
@@ -436,7 +556,7 @@ public class GestoreTrasformazioni {
 		Map<String, Object> dynamicMap = new HashMap<String, Object>();
 		ErrorHandler errorHandler = new ErrorHandler(this.errorGenerator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, this.pddContext);
 		DynamicUtils.fillDynamicMapRequest(this.log, dynamicMap, this.pddContext, urlInvocazione,
-				message,
+				messageP,
 				messageContent,
 				busta, 
 				parametriTrasporto, 
@@ -444,6 +564,35 @@ public class GestoreTrasformazioni {
 				parametriForm,
 				errorHandler);
 		this.dynamicMapRequest = dynamicMap;
+		if(messageTypeForNotifier!=null && 
+				(
+						(MessaggioDaNotificare.ENTRAMBI.equals(messageTypeForNotifier) && responseMessageForNotifier!=null)
+						||
+						(MessaggioDaNotificare.RISPOSTA.equals(messageTypeForNotifier))
+				)
+			) {
+			Map<String, Object> dynamicMapWithResponse = new HashMap<String, Object>();
+			boolean preserveRequest = true;
+			if(MessaggioDaNotificare.RISPOSTA.equals(messageTypeForNotifier)) {
+				Object o = dynamicMap.remove(Costanti.MAP_RESPONSE); // essendo di ruolo response, viene scritto cosi
+				if(o!=null) {
+					dynamicMap.put(Costanti.MAP_REQUEST, o);
+				}
+				DynamicUtils.fillDynamicMapResponse(this.log, dynamicMapWithResponse, dynamicMap, this.pddContext, 
+						messageP,
+						messageContent, busta, parametriTrasportoRisposta,
+						errorHandler,
+						preserveRequest);
+			}
+			else {
+				DynamicUtils.fillDynamicMapResponse(this.log, dynamicMapWithResponse, dynamicMap, this.pddContext, 
+						responseMessageForNotifier,
+						messageResponseContent, busta, parametriTrasportoRisposta,
+						errorHandler,
+						preserveRequest);
+			}
+			dynamicMap = dynamicMapWithResponse;
+		}
 		this.log.debug("Costruzione dynamic map completata");
 		
 		
@@ -468,7 +617,7 @@ public class GestoreTrasformazioni {
 				risultato = 
 						GestoreTrasformazioniUtilities.trasformazioneContenuto(this.log, 
 								richiesta.getConversioneTipo(), richiesta.getConversioneTemplate(), "richiesta", 
-								dynamicMap, message, messageContent, this.pddContext, forceContentTypeRichiesta,
+								dynamicMap, messageP, messageContent, this.pddContext, forceContentTypeRichiesta,
 								this.op2Properties.isTrasformazioni_readCharsetFromContentType());
 				if (risultato != null && risultato.getTipoTrasformazione() != null && risultato.getTipoTrasformazione().isContextInjection()) {
 					trasformazioneContenuto = false;
@@ -516,12 +665,12 @@ public class GestoreTrasformazioni {
 						
 			// trasformazione contenuto non richiesta
 			if(!trasformazioneContenuto) {
-				GestoreTrasformazioniUtilities.addTransportInfo(forceAddTrasporto, forceAddUrl, null, message);
+				GestoreTrasformazioniUtilities.addTransportInfo(forceAddTrasporto, forceAddUrl, null, messageP);
 				
-				if(ServiceBinding.REST.equals(message.getServiceBinding())) {
+				if(ServiceBinding.REST.equals(messageP.getServiceBinding())) {
 					if(richiesta.getTrasformazioneRest()!=null) {
 						if(StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getMetodo()) || StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getPath())) {
-							GestoreTrasformazioniUtilities.injectNewRestParameter(message, 
+							GestoreTrasformazioniUtilities.injectNewRestParameter(messageP, 
 									richiesta.getTrasformazioneRest().getMetodo(), 
 									richiesta.getTrasformazioneRest().getPath(), 
 									dynamicMap, this.pddContext);
@@ -529,9 +678,9 @@ public class GestoreTrasformazioni {
 					}
 				}
 
-				this.msgDiag.logPersonalizzato("trasformazione.processamentoRichiestaEffettuato");
+				this.msgDiag.logPersonalizzato(messageTypeForNotifier!=null ? "trasformazione.processamentoNotificaEffettuato" : "trasformazione.processamentoRichiestaEffettuato");
 				
-				return message;
+				return messageP;
 			}
 			
 			// trasformazione contenuto
@@ -561,7 +710,7 @@ public class GestoreTrasformazioni {
 				trasformazioneSoap_templateConversione = richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate();
 			}
 			
-			OpenSPCoop2Message msg = GestoreTrasformazioniUtilities.trasformaMessaggio(this.log, message, messageContent, 
+			OpenSPCoop2Message msg = GestoreTrasformazioniUtilities.trasformaMessaggio(this.log, messageP, messageContent, 
 					this.requestInfo, dynamicMap, this.pddContext, this.op2Properties, 
 					trasporto, forceAddTrasporto,
 					url, forceAddUrl,
@@ -575,7 +724,9 @@ public class GestoreTrasformazioni {
 					trasformazioneSoap_envelope, trasformazioneSoap_envelopeAsAttachment, 
 					trasformazioneSoap_tipoConversione, trasformazioneSoap_templateConversione);
 
-			this.msgDiag.logPersonalizzato("trasformazione.processamentoRichiestaEffettuato");
+			this.trasformazioneContenutoRichiestaEffettuata = true;
+			
+			this.msgDiag.logPersonalizzato(messageTypeForNotifier!=null ? "trasformazione.processamentoNotificaEffettuato" : "trasformazione.processamentoRichiestaEffettuato");
 			
 			return msg;
 						
