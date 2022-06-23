@@ -108,6 +108,9 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	public DatiCollezionatiDistributedAtomicLong(DatiCollezionati dati, HazelcastInstance hazelcast, String uniquePrefixId, ActivePolicy activePolicy) {
 		super(dati.getUpdatePolicyDate());
 		
+		// Inizializzo il padre con i valori in RAM, dopo uso 'super' per essere  sicuro di usare quelli
+		dati.clone_impl(this);
+		
 		this.hazelcast = hazelcast;
 		this.uniquePrefixId = uniquePrefixId;
 		this.distributedPolicyDate = hazelcast.getCPSubsystem().getAtomicLong(this.uniquePrefixId+"-distributedPolicyDate");
@@ -115,8 +118,6 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 		this.distributedPolicyDegradoPrestazionaleDate = hazelcast.getCPSubsystem().getAtomicLong(this.uniquePrefixId+"-distributedPolicyDegradoPrestazionaleDate");
 		this.distributedActiveRequestCounter = this.hazelcast.getCPSubsystem().getAtomicLong(this.uniquePrefixId+"-distributedActiveRequestCounter"); 
 		
-		// Inizializzo il padre con i valori in RAM, dopo uso 'super' per essere  sicuro di usare quelli
-		dati.clone_impl(this);
 		
 		// Se non ho la policyDate, non considero il resto delle informazioni, che senza di essa non hanno senso.
 		if (super.getPolicyDate() != null) {
@@ -196,10 +197,12 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	
 	
 	protected void getPolicyCounters(Date date) {
+
 		
 		Long policyDate = date.getTime();
 
 		if(this.policyRealtime!=null && this.policyRealtime){
+			
 			this.distributedPolicyRequestCounter = this.hazelcast.getCPSubsystem().getAtomicLong(
 					this.uniquePrefixId+"-policyRequestCounter"+policyDate);
 			
@@ -214,6 +217,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	}
 	
 	protected void getPolicyCountersDegradoPrestazionale(Date date) {
+		
 		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
 			this.distributedPolicyDegradoPrestazionaleCounter = this.hazelcast.getCPSubsystem().getAtomicLong(
 					this.uniquePrefixId+"-distributedPolicyDegradoPrestazionaleCounter"+date.getTime());
@@ -278,13 +282,6 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 		
 	}
 
-
-	@Override
-	protected void initDatiIniziali(ActivePolicy activePolicy){
-		super.initDatiIniziali(activePolicy);
-	}
-	
-	
 	@Override
 	public void registerStartRequest(Logger log, ActivePolicy activePolicy){
 		
@@ -305,11 +302,6 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 			
 			this.checkPolicyCounterForDateDegradoPrestazionale(log,activePolicy);
 			
-			//if(this.policyDegradoPrestazionaleRealtime){
-			// Essendo il degrado un tempo medio anche il numero di richieste lo devo incrementare quando aggiungo anche la latenza, 
-			// senno poi la divisione (per l'avg) rispetto al numero di richieste è falsata
-			// poiche' tengo conto anche delle richieste in corso, nonostante per queste non disponga ancora nella latenza
-			// }
 		}
 		
 	}
@@ -405,7 +397,6 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
             	if(isViolata) {
             		// Aumento solamente il contatore della policy la quale ha bloccato la transazione
             		this.distributedPolicyDenyRequestCounter.incrementAndGetAsync();
-            		//super.setPolicyDenyRequestCounter(super.getPolicyDenyRequestCounter()+1);
             	}
 				return; // non incremento alcun contatore.
 			}

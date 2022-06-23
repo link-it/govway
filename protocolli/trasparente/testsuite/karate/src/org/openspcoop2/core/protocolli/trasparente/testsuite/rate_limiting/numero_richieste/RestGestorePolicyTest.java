@@ -80,13 +80,27 @@ public class RestGestorePolicyTest extends ConfigLoader {
 		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER);
 	}
 	@Test
-	public void richiestePerMinutoDefaultErogazione_hazelcast_contatoriSingoli_AtomicLongi() throws Exception {
+	public void richiestePerMinutoDefaultErogazione_hazelcast_contatoriSingoli_AtomicLong() throws Exception {
 		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG);
 	}
 	@Test
 	public void richiestePerMinutoDefaultErogazione_hazelcast_contatoriSingoli_AtomicLongAsync() throws Exception {
 		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC);
 	}
+	@Test
+	public void richiestePerMinutoDefaultErogazione_hazelcast_replicatedMap() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_REPLICATED_MAP);
+	}
+	@Test
+	public void richiestePerMinutoDefaultErogazione_redis_atomicLong() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.REDISSON_ATOMIC_LONG);
+	}
+	@Test
+	public void richiestePerMinutoDefaultErogazione_redis_longAdder() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.REDISSON_LONGADDER);
+	}
+	
+	
 	
 	
 	
@@ -134,6 +148,18 @@ public class RestGestorePolicyTest extends ConfigLoader {
 	@Test
 	public void richiestePerMinutoDefaultFruizione_hazelcast_contatoriSingoliAtomicLongAsync() throws Exception {
 		this.restTest.richiestePerMinutoDefaultFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC);
+	}
+	@Test
+	public void richiestePerMinutoDefaultFruizione_hazelcast_replicatedMap() throws Exception {
+		this.restTest.richiestePerMinutoDefaultFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_REPLICATED_MAP);
+	}
+	@Test
+	public void richiestePerMinutoDefaultFruizione_redis_atomicLong() throws Exception {
+		this.restTest.richiestePerMinutoDefaultFruizione(PolicyGroupByActiveThreadsType.REDISSON_ATOMIC_LONG);
+	}
+	@Test
+	public void richiestePerMinutoDefaultFruizione_redis_longAdder() throws Exception {
+		this.restTest.richiestePerMinutoDefaultFruizione(PolicyGroupByActiveThreadsType.REDISSON_LONGADDER);
 	}
 	
 	
@@ -184,7 +210,19 @@ public class RestGestorePolicyTest extends ConfigLoader {
 	public void richiesteSimultaneeErogazione_hazelcast_contatoriSingoliAtomicLongAsync() throws Exception {
 		this.restTest.richiesteSimultaneeErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC);
 	}
-	
+	@Test
+	public void richiesteSimultaneeErogazione_hazelcast_replicatedMap() throws Exception {
+		this.restTest.richiesteSimultaneeErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_REPLICATED_MAP);
+	}
+	@Test
+	public void richiesteSimultaneeErogazione_redis_contatoriSingoliAtomicLong() throws Exception {
+		this.restTest.richiesteSimultaneeErogazione(PolicyGroupByActiveThreadsType.REDISSON_ATOMIC_LONG);
+	}
+	@Test
+	public void richiesteSimultaneeErogazione_redis_contatoriSingoliLongAdder() throws Exception {
+		this.restTest.richiesteSimultaneeErogazione(PolicyGroupByActiveThreadsType.REDISSON_LONGADDER);
+	}	
+
 	
 	
 	
@@ -233,5 +271,18 @@ public class RestGestorePolicyTest extends ConfigLoader {
 	public void richiesteSimultaneeFruizione_hazelcast_contatoriSingoliAtomicLongAsync() throws Exception {
 		this.restTest.richiesteSimultaneeFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC);
 	}
+	@Test
+	public void richiesteSimultaneeFruizione_hazelcast_replicatedMap() throws Exception {
+		this.restTest.richiesteSimultaneeFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_REPLICATED_MAP);
+	}
+	@Test
+	public void richiesteSimultaneeFruizione_redis_contatoriSingoliAtomicLong() throws Exception {
+		this.restTest.richiesteSimultaneeFruizione(PolicyGroupByActiveThreadsType.REDISSON_ATOMIC_LONG);
+	}
+	@Test
+	public void richiesteSimultaneeFruizione_redis_contatoriSingoliLongAdder() throws Exception {
+		this.restTest.richiesteSimultaneeFruizione(PolicyGroupByActiveThreadsType.REDISSON_LONGADDER);
+	}	
+
 	
 }

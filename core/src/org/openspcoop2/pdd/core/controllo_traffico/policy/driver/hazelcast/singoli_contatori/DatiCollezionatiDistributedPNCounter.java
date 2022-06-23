@@ -173,11 +173,6 @@ public class DatiCollezionatiDistributedPNCounter extends DatiCollezionati imple
 		
 	}
 	
-	@Override
-	protected void initDatiIniziali(ActivePolicy activePolicy){
-		super.initDatiIniziali(activePolicy);
-	}
-	
 	
 	/*
 	 * Qui scegliamo lo stesso metodo di reset fatto per DatiCollezionatiDistribuiti, ovvero prendiamo dei nuovi contatori.

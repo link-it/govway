@@ -613,7 +613,10 @@ public class Utils {
 			{ PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP },
 			{ PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER },
 			{ PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG },
+			{ PolicyGroupByActiveThreadsType.HAZELCAST_REPLICATED_MAP },
 			{ PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC },
+			{ PolicyGroupByActiveThreadsType.REDISSON_ATOMIC_LONG },
+			{ PolicyGroupByActiveThreadsType.REDISSON_LONGADDER },
 		});
 	}
 }

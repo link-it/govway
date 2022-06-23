@@ -192,9 +192,12 @@ public class DbUtils {
     			case HAZELCAST_PNCOUNTER:
     			case HAZELCAST_ATOMIC_LONG:
     			case HAZELCAST_ATOMIC_LONG_ASYNC:
+    			case HAZELCAST_REPLICATED_MAP:
     				map.put(Constants.MODALITA_IMPLEMENTAZIONE, Constants.VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST);
     				break;
     			case REDISSON_MAP:
+    			case REDISSON_ATOMIC_LONG:
+    			case REDISSON_LONGADDER:
     				map.put(Constants.MODALITA_IMPLEMENTAZIONE, Constants.VALUE_MODALITA_IMPLEMENTAZIONE_REDIS);
     				break;
     			default:
