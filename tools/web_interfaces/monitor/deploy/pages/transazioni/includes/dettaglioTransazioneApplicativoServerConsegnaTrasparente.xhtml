@@ -80,7 +80,7 @@
 			</h:outputText>
 			
 			<h:outputLabel value="Bytes Uscita" styleClass="outputFieldLabel icon-compress"/>
-			<h:outputText value="#{empty dettagliTransazioneApplicativoServerBean.dettaglio.richiestaUscitaBytes ? 'n.d.' : dettagliTransazioneApplicativoServerBean.dettaglio.richiestaUscitaBytes}" converter="fileSizeConverter"/>										
+			<h:outputText value="#{(empty dettagliTransazioneApplicativoServerBean.dettaglio.richiestaUscitaBytes or dettagliTransazioneApplicativoServerBean.dettaglio.richiestaUscitaBytes lt 0) ? 'n.d.' : dettagliTransazioneApplicativoServerBean.dettaglio.richiestaUscitaBytes}" converter="fileSizeConverter"/>										
 				
 			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Contenuti" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpUltimaConsegnaRichiestaUscita or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoUltimaConsegnaRichiestaUscita}"/>
 			<h:panelGroup rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpUltimaConsegnaRichiestaUscita or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoUltimaConsegnaRichiestaUscita}">
@@ -172,7 +172,7 @@
 			</h:outputText>
 			
 			<h:outputLabel value="Bytes Ingresso" styleClass="outputFieldLabel icon-compress"/>
-			<h:outputText value="#{empty dettagliTransazioneApplicativoServerBean.dettaglio.rispostaIngressoBytes ? 'n.d.' : dettagliTransazioneApplicativoServerBean.dettaglio.rispostaIngressoBytes}" converter="fileSizeConverter"/>										
+			<h:outputText value="#{(empty dettagliTransazioneApplicativoServerBean.dettaglio.rispostaIngressoBytes or dettagliTransazioneApplicativoServerBean.dettaglio.rispostaIngressoBytes lt 0) ? 'n.d.' : dettagliTransazioneApplicativoServerBean.dettaglio.rispostaIngressoBytes}" converter="fileSizeConverter"/>										
 				
 			<h:outputText styleClass="outputFieldLabel" value="Errore"
 					rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaUltimoErrore}"/>

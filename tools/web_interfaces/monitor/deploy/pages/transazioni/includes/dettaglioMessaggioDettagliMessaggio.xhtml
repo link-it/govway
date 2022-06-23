@@ -37,10 +37,10 @@
 			</h:outputText>
 			
 			<h:outputLabel value="Bytes Ingresso" id="dimInR-iconLabel" styleClass="outputFieldLabel icon-compress"/>
-			<h:outputText value="#{empty dettagliBean.dettaglio.richiestaIngressoBytes ? 'n.d.' : dettagliBean.dettaglio.richiestaIngressoBytes}" converter="fileSizeConverter"/>
+			<h:outputText value="#{(empty dettagliBean.dettaglio.richiestaIngressoBytes or dettagliBean.dettaglio.richiestaIngressoBytes lt 0) ? 'n.d.' : dettagliBean.dettaglio.richiestaIngressoBytes}" converter="fileSizeConverter"/>
 			
 			<h:outputLabel value="Bytes Uscita" id="dimOutR-iconLabel" styleClass="outputFieldLabel icon-compress"/>
-			<h:outputText value="#{empty dettagliBean.dettaglio.richiestaUscitaBytes ? 'n.d.' : dettagliBean.dettaglio.richiestaUscitaBytes}" converter="fileSizeConverter"/>										
+			<h:outputText value="#{(empty dettagliBean.dettaglio.richiestaUscitaBytes or dettagliBean.dettaglio.richiestaUscitaBytes lt 0) ? 'n.d.' : dettagliBean.dettaglio.richiestaUscitaBytes}" converter="fileSizeConverter"/>										
 																			
 			<h:outputLabel id="req-iconLabel" styleClass="outputFieldLabel icon-show-traccia" value="Traccia" rendered="#{dettagliBean.existsTracciaRichiesta}"/>
 			<h:panelGroup id="panelGroupReq" rendered="#{dettagliBean.existsTracciaRichiesta}">
@@ -257,10 +257,10 @@
 			</h:outputText>
 			
 			<h:outputLabel value="Bytes Ingresso" id="dimInRes-iconLabel" styleClass="outputFieldLabel icon-compress"/>
-			<h:outputText value="#{empty dettagliBean.dettaglio.rispostaIngressoBytes ? 'n.d.' : dettagliBean.dettaglio.rispostaIngressoBytes}" converter="fileSizeConverter"/>
+			<h:outputText value="#{(empty dettagliBean.dettaglio.rispostaIngressoBytes or dettagliBean.dettaglio.rispostaIngressoBytes lt 0) ? 'n.d.' : dettagliBean.dettaglio.rispostaIngressoBytes}" converter="fileSizeConverter"/>
 			
 			<h:outputLabel value="Bytes Uscita" id="dimOutRes-iconLabel" styleClass="outputFieldLabel icon-compress"/>
-			<h:outputText value="#{empty dettagliBean.dettaglio.rispostaUscitaBytes ? 'n.d.' : dettagliBean.dettaglio.rispostaUscitaBytes}" converter="fileSizeConverter"/>
+			<h:outputText value="#{(empty dettagliBean.dettaglio.rispostaUscitaBytes or dettagliBean.dettaglio.rispostaUscitaBytes lt 0) ? 'n.d.' : dettagliBean.dettaglio.rispostaUscitaBytes}" converter="fileSizeConverter"/>
 			
 			<h:outputLabel id="risp-iconLabel" styleClass="outputFieldLabel icon-show-traccia" value="Traccia" rendered="#{dettagliBean.existsTracciaRisposta}"/>
 			<h:panelGroup id="panelGroupIdEgovRisp" rendered="#{dettagliBean.existsTracciaRisposta}">

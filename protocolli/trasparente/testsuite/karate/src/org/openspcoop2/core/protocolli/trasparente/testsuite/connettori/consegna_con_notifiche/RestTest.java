@@ -234,10 +234,10 @@ public class RestTest extends ConfigLoader{
 							fault 		 = CommonConsegnaMultipla.FAULT_REST;
 							formatoFault = CommonConsegnaMultipla.FORMATO_FAULT_REST;
 							ultimoErrore = "Consegna [http] con errore: errore applicativo, {\"type\":\"https://httpstatuses.com/500\",\"title\":\"Internal Server Error\",\"detail\":\"Problem ritornato dalla servlet di trace, esempio di OpenSPCoop\"}";
-							locationUltimoErrore = "http://localhost:8080/TestService/echo?returnCode="+requestExpectation.statusCodePrincipale+"&problem=true&replyPrefixQueryParameter=GovWay-TestSuite-&id_connettore="+connettore+"&replyQueryParameter=id_connettore";
+							locationUltimoErrore = "http://localhost:8080/TestService/echo?returnCode="+requestExpectation.statusCodePrincipale+"&problem=true&id_connettore="+connettore;
 						} else {
 							ultimoErrore =  "Consegna [http] con errore: errore HTTP " + requestExpectation.statusCodePrincipale;
-							locationUltimoErrore = "http://localhost:8080/TestService/echo?returnCode="+requestExpectation.statusCodePrincipale+"&replyPrefixQueryParameter=GovWay-TestSuite-&id_connettore="+connettore+"&replyQueryParameter=id_connettore";
+							locationUltimoErrore = "http://localhost:8080/TestService/echo?returnCode="+requestExpectation.statusCodePrincipale+"&id_connettore="+connettore;
 						}
 
 						query = "Select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ? and data_ultimo_errore > ? and dettaglio_esito_ultimo_errore = ? and codice_risposta_ultimo_errore = ? and ultimo_errore LIKE '"+ultimoErrore+"' and location_ultimo_errore LIKE '"+locationUltimoErrore+"'";
@@ -347,10 +347,10 @@ public class RestTest extends ConfigLoader{
 							fault 		 = CommonConsegnaMultipla.FAULT_REST;
 							formatoFault = CommonConsegnaMultipla.FORMATO_FAULT_REST;
 							ultimoErrore = "Consegna [http] con errore: errore applicativo, {\"type\":\"https://httpstatuses.com/500\",\"title\":\"Internal Server Error\",\"detail\":\"Problem ritornato dalla servlet di trace, esempio di OpenSPCoop\"}";
-							locationUltimoErrore = "http://localhost:8080/TestService/echo?returnCode="+requestExpectation.statusCodePrincipale+"&problem=true&replyPrefixQueryParameter=GovWay-TestSuite-&id_connettore="+connettore+"&replyQueryParameter=id_connettore";
+							locationUltimoErrore = "http://localhost:8080/TestService/echo?returnCode="+requestExpectation.statusCodePrincipale+"&problem=true&id_connettore="+connettore;
 						} else {
 							ultimoErrore =  "Consegna [http] con errore: errore HTTP " + requestExpectation.statusCodePrincipale;
-							locationUltimoErrore = "http://localhost:8080/TestService/echo?returnCode="+requestExpectation.statusCodePrincipale+"&replyPrefixQueryParameter=GovWay-TestSuite-&id_connettore="+connettore+"&replyQueryParameter=id_connettore";
+							locationUltimoErrore = "http://localhost:8080/TestService/echo?returnCode="+requestExpectation.statusCodePrincipale+"&id_connettore="+connettore;
 						}
 
 						query = "Select count(*) from transazioni_sa where id_transazione = ? and connettore_nome = ? and data_ultimo_errore > ? and dettaglio_esito_ultimo_errore = ? and codice_risposta_ultimo_errore = ? and ultimo_errore LIKE '"+ultimoErrore+"' and location_ultimo_errore LIKE '"+locationUltimoErrore+"'";

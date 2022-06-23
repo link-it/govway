@@ -1118,7 +1118,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				else {
 					consegnaMessagePrimaTrasformazione = msgRequest.getMessage();
 				}
-				correctForwardPathNotifiche(transazioneApplicativoServer, consegnaMessagePrimaTrasformazione, protocolFactory);
+				//Devo farlo dopo aver applicato la trasformazione
+				//correctForwardPathNotifiche(transazioneApplicativoServer, consegnaMessagePrimaTrasformazione, protocolFactory);
 				if(requestInfo==null) {
 					Object o = consegnaMessagePrimaTrasformazione.getContextProperty(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 					if(o==null) {
@@ -1525,7 +1526,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						else {
 							consegnaMessagePrimaTrasformazione = msgRequest.getMessage();
 						}
-						correctForwardPathNotifiche(transazioneApplicativoServer, consegnaMessagePrimaTrasformazione, protocolFactory);
+						//Devo farlo dopo aver applicato la trasformazione
+						//correctForwardPathNotifiche(transazioneApplicativoServer, consegnaMessagePrimaTrasformazione, protocolFactory);
 					}else{
 						// consegnaMessage deve contenere il messaggio necessario all'invocazione del metodo pubblicaEvento
 						consegnaMessagePrimaTrasformazione = 
@@ -1858,6 +1860,15 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					msgDiag.logErroreGenerico("ConnectorSender is null","IConnettore.newInstance(tipo:"+tipoConnector+" class:"+connectorClass+")");
 					invokerNonSupportato = true;
 				}
+			}
+			
+			// correggo eventuali contesti e parametri della url nel caso di consegna di una notifica
+			try {
+				correctForwardPathNotifiche(transazioneApplicativoServer, consegnaMessageTrasformato, protocolFactory);
+			}catch(Exception e){
+				msgDiag.logErroreGenerico(e,"ConnettoreBaseHTTP.correctForwardPathNotifiche");
+				invokerNonSupportato = true;
+				eInvokerNonSupportato = e;
 			}
 			
 			// Imposto tipo di richiesta
@@ -4408,7 +4419,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			}
 			
 			// non deve essere effettuato il forward dei parametri
-			requestContext.getParameters().clear();
+			if(requestContext!=null && requestContext.getParameters()!=null) {
+				requestContext.getParameters().clear();
+			}
 		}
 	}
 	

@@ -271,11 +271,13 @@ public class FileSystemUtilities {
 
         if (dir.isDirectory()) {
             String[] children = dir.list();
-            for (int i=0; i<children.length; i++) {
-                boolean success = FileSystemUtilities.deleteDir(new File(dir, children[i]));
-                if (!success) {
-                    return false;
-                }
+            if(children!=null && children.length>0) {
+            	for (int i=0; i<children.length; i++) {
+            		boolean success = FileSystemUtilities.deleteDir(new File(dir, children[i]));
+            		if (!success) {
+            			return false;
+            		}
+            	}
             }
         }
         
