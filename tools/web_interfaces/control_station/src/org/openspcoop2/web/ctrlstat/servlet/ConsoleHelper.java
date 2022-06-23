@@ -728,6 +728,9 @@ public class ConsoleHelper implements IConsoleHelper {
 
 				int suffixIndex = partName.indexOf(CostantiControlStation.SUFFIX_FILENAME);
 				partName = partName.substring(0,suffixIndex);
+				
+				// 20220621 IE invia l'intero path invece che il solo filename, bisogna estrarlo
+				partName = FilenameUtils.getName(partName);
 			}
 		}
 

@@ -1,3 +1,9 @@
+2022-06-23  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1385
+	Il caricamento di un allegato in una API utilizzando Internet Explorer comportava una errata registrazione dove il nome del documento conteneva il path assoluto.
+
 2022-06-22  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
