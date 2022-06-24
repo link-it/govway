@@ -24,7 +24,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -39,7 +38,6 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.pdd.core.CostantiPdD;
-import org.openspcoop2.utils.io.ZipUtilities;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -137,22 +135,22 @@ public class SoapNotificheRisposteTest extends ConfigLoader{
 	private static byte[] responseSoap12Xml = null;
 	private static File responseSoap12XmlFile = null;
 	
-	private static File cartellaFiles = null;
+	private static File _cartellaFiles = null;
 	
 	@BeforeClass
 	public static void Before() {
 		Common.fermaRiconsegne(dbUtils);
-		cartellaFiles = CommonConsegnaMultipla.connettoriFilePath.toFile();
-		if(!cartellaFiles.exists()) {
-			cartellaFiles.mkdir();
+		_cartellaFiles = CommonConsegnaMultipla.connettoriFilePath.toFile();
+		if(!_cartellaFiles.exists()) {
+			_cartellaFiles.mkdir();
 		}
-		if (!cartellaFiles.isDirectory()|| !cartellaFiles.canWrite()) {
+		if (!_cartellaFiles.isDirectory()|| !_cartellaFiles.canWrite()) {
 			throw new RuntimeException("E' necessario creare la cartella per scrivere le richieste dei connettori, indicata dalla poprietà: <connettori.consegna_multipla.connettore_file.path> ");
 		}
 		
 		try {
 			responseSoap11Xml = Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE, resId).getBytes();
-			responseSoap11XmlFile = File.createTempFile("responseSoap11_", "xml", cartellaFiles);
+			responseSoap11XmlFile = File.createTempFile("responseSoap11_", "xml", _cartellaFiles);
 			FileSystemUtilities.writeFile(responseSoap11XmlFile, responseSoap11Xml);
 		}catch(Exception e) {
 			throw new RuntimeException("Creazione risposta soap11 non riuscita");
@@ -160,7 +158,7 @@ public class SoapNotificheRisposteTest extends ConfigLoader{
 		
 		try {
 			responseSoap12Xml = Bodies.getSOAPEnvelope12(Bodies.SMALL_SIZE, resId).getBytes();
-			responseSoap12XmlFile = File.createTempFile("responseSoap12_", "xml", cartellaFiles);
+			responseSoap12XmlFile = File.createTempFile("responseSoap12_", "xml", _cartellaFiles);
 			FileSystemUtilities.writeFile(responseSoap12XmlFile, responseSoap12Xml);
 		}catch(Exception e) {
 			throw new RuntimeException("Creazione risposta soap12 non riuscita");
@@ -213,129 +211,8 @@ public class SoapNotificheRisposteTest extends ConfigLoader{
 		
 		return request;
 	}
-	
-	private static void checkFile(String govwayId, String nomeFileAtteso, String contentAtteso, String contentTypeAtteso) throws Exception {
-		// Check file attesi
-		File fDir = new File(cartellaFiles,govwayId);
-		if(!fDir.exists()) {
-			throw new IOException("Expected dir '"+fDir.getAbsolutePath()+"'");
-		}
-		if(!fDir.isDirectory()) {
-			throw new IOException("Expected as dir '"+fDir.getAbsolutePath()+"'");
-		}
-		
-		File fContent = new File(fDir,nomeFileAtteso+".bin");
-		if(!fContent.exists()) {
-			throw new IOException("Expected content '"+fContent.getAbsolutePath()+"'");
-		}
-		String c = FileSystemUtilities.readFile(fContent);
-		if(!c.equals(contentAtteso)) {
-			System.out.println("Contenuto diverso da quello atteso");
-			System.out.println("Atteso: ["+contentAtteso+"]");
-			System.out.println("Ricevuto: ["+c+"]");
-		}
-		assertEquals(contentAtteso, c);
-		
-		File fHdr = new File(fDir,nomeFileAtteso+".hdr");
-		if(!fHdr.exists()) {
-			throw new IOException("Expected header '"+fHdr.getAbsolutePath()+"'");
-		}
-		String hdr = FileSystemUtilities.readFile(fHdr);
 
-		String ctAtteso = HttpConstants.CONTENT_TYPE+"="+contentTypeAtteso;
-		if(!hdr.contains(ctAtteso)) {
-			throw new IOException("Expected header "+ctAtteso+" in '"+fHdr.getAbsolutePath()+"', found ["+hdr+"]");
-		}
-		
-	}
 	
-	private static void checkFileZip(String govwayId, String nomeFileAtteso, 
-			String contentRequestAtteso, String contentTypeRequestAtteso,
-			String contentResponseAtteso, String contentTypeResponseAtteso) throws Exception {
-		// Check file attesi
-		File fDir = new File(cartellaFiles,govwayId);
-		if(!fDir.exists()) {
-			throw new IOException("Expected dir '"+fDir.getAbsolutePath()+"'");
-		}
-		if(!fDir.isDirectory()) {
-			throw new IOException("Expected as dir '"+fDir.getAbsolutePath()+"'");
-		}
-		
-		File fContent = new File(fDir,nomeFileAtteso+".bin");
-		if(!fContent.exists()) {
-			throw new IOException("Expected content '"+fContent.getAbsolutePath()+"'");
-		}
-		
-		File fDirDestZip = new File(fDir,nomeFileAtteso+".zip");
-		ZipUtilities.unzipFile(fContent.getAbsolutePath(), fDirDestZip.getAbsolutePath());
-		File [] f = fDirDestZip.listFiles();
-		if(f==null) {
-			throw new IOException("Expected zip content '"+fContent.getAbsolutePath()+"' with 4 files");
-		}
-		if(f.length!=4) {
-			throw new IOException("Expected zip content '"+fContent.getAbsolutePath()+"' with 4 files (founded: "+f.length+")");
-		}
-		boolean findRequest = false;
-		boolean findRequestHdr = false;
-		boolean findResponse = false;
-		boolean findResponseHdr = false;
-		for (File file : f) {
-			if("request.bin".equals(file.getName())) {
-				findRequest = true;
-				String c = FileSystemUtilities.readFile(file);
-				if(!c.equals(contentRequestAtteso)) {
-					System.out.println("Contenuto richiesta diverso da quello atteso");
-					System.out.println("Atteso: ["+contentRequestAtteso+"]");
-					System.out.println("Ricevuto: ["+c+"]");
-				}
-				assertEquals(contentRequestAtteso, c);
-			}
-			else if("requestHeaders.bin".equals(file.getName())) {
-				findRequestHdr=true;
-				String hdr = FileSystemUtilities.readFile(file);
-		
-				String ctAtteso = HttpConstants.CONTENT_TYPE+": "+contentTypeRequestAtteso;
-				if(!hdr.contains(ctAtteso)) {
-					throw new IOException("Expected header "+ctAtteso+" in '"+file.getAbsolutePath()+"', found ["+hdr+"]");
-				}
-			}
-			else if("response.bin".equals(file.getName())) {
-				findResponse = true;
-				String c = FileSystemUtilities.readFile(file);
-				if(!c.equals(contentResponseAtteso)) {
-					System.out.println("Contenuto risposta diverso da quello atteso");
-					System.out.println("Atteso: ["+contentResponseAtteso+"]");
-					System.out.println("Ricevuto: ["+c+"]");
-				}
-				assertEquals(contentResponseAtteso, c);
-			}
-			else if("responseHeaders.bin".equals(file.getName())) {
-				findResponseHdr=true;
-				String hdr = FileSystemUtilities.readFile(file);
-		
-				String ctAtteso = HttpConstants.CONTENT_TYPE+": "+contentTypeResponseAtteso;
-				if(!hdr.contains(ctAtteso)) {
-					throw new IOException("Expected header "+ctAtteso+" in '"+file.getAbsolutePath()+"', found ["+hdr+"]");
-				}
-			}
-			else {
-				throw new IOException("Zip content '"+fContent.getAbsolutePath()+"' with unknown file '"+file.getName()+"'");
-			}
-		}
-		if(!findRequest) {
-			throw new IOException("Expected zip content '"+fContent.getAbsolutePath()+"' with 'request.bin' file");
-		}
-		if(!findRequestHdr) {
-			throw new IOException("Expected zip content '"+fContent.getAbsolutePath()+"' with 'requestHeaders.bin' file");
-		}
-		if(!findResponse) {
-			throw new IOException("Expected zip content '"+fContent.getAbsolutePath()+"' with 'response.bin' file");
-		}
-		if(!findResponseHdr) {
-			throw new IOException("Expected zip content '"+fContent.getAbsolutePath()+"' with 'responseHeaders.bin' file");
-		}
-		
-	}
 		
 	
 	@Test
@@ -401,7 +278,7 @@ public class SoapNotificheRisposteTest extends ConfigLoader{
 			contentAtteso = soap11 ? contentRichiestaTrasformataSoap11 : contentRichiestaTrasformataSoap12;
 		}
 		String contentTypeAtteso = request1.getContentType();
-		checkFile(govwayId, nomeFile, contentAtteso, contentTypeAtteso);
+		RestNotificheRisposteTest.checkFile(_cartellaFiles, govwayId, nomeFile, contentAtteso, contentTypeAtteso);
 		
 	}
 	
@@ -460,10 +337,10 @@ public class SoapNotificheRisposteTest extends ConfigLoader{
 		// Check file attesi
 		String contentAtteso = new String(request1.getContent());
 		String contentTypeAtteso = request1.getContentType();
-		checkFile(govwayId, "richiesta", contentAtteso, contentTypeAtteso);
+		RestNotificheRisposteTest.checkFile(_cartellaFiles, govwayId, "richiesta", contentAtteso, contentTypeAtteso);
 		
 		contentAtteso = soap11 ? contentRichiestaTrasformataSoap11 : contentRichiestaTrasformataSoap12;
-		checkFile(govwayId, "richiestaTrasformata", contentAtteso, contentTypeAtteso);
+		RestNotificheRisposteTest.checkFile(_cartellaFiles, govwayId, "richiestaTrasformata", contentAtteso, contentTypeAtteso);
 		
 	}
 	
@@ -537,7 +414,7 @@ public class SoapNotificheRisposteTest extends ConfigLoader{
 			contentAtteso = soap11 ? contentRispostaTrasformataSoap11 : contentRispostaTrasformataSoap12;
 		}
 		String contentTypeAtteso = contentTypeRisposta;
-		checkFile(govwayId, nomeFile, contentAtteso, contentTypeAtteso);
+		RestNotificheRisposteTest.checkFile(_cartellaFiles, govwayId, nomeFile, contentAtteso, contentTypeAtteso);
 		
 	}
 	
@@ -596,10 +473,10 @@ public class SoapNotificheRisposteTest extends ConfigLoader{
 		// Check file attesi
 		String contentAtteso = new String(soap11 ? responseSoap11Xml : responseSoap12Xml);
 		String contentTypeAtteso = contentTypeRisposta;
-		checkFile(govwayId, "risposta", contentAtteso, contentTypeAtteso);
+		RestNotificheRisposteTest.checkFile(_cartellaFiles, govwayId, "risposta", contentAtteso, contentTypeAtteso);
 		
 		contentAtteso = soap11 ? contentRispostaTrasformataSoap11 : contentRispostaTrasformataSoap12;
-		checkFile(govwayId, "rispostaTrasformata", contentAtteso, contentTypeAtteso);
+		RestNotificheRisposteTest.checkFile(_cartellaFiles, govwayId, "rispostaTrasformata", contentAtteso, contentTypeAtteso);
 		
 	}
 	
@@ -666,14 +543,14 @@ public class SoapNotificheRisposteTest extends ConfigLoader{
 			String nomeFile = "richiestaRispostaTrasformata";
 			String contentAtteso = soap11 ? contentRichiestaRispostaTrasformataSoap11 : contentRichiestaRispostaTrasformataSoap12;
 			String contentTypeAtteso = contentTypeRisposta;
-			checkFile(govwayId, nomeFile, contentAtteso, contentTypeAtteso);
+			RestNotificheRisposteTest.checkFile(_cartellaFiles, govwayId, nomeFile, contentAtteso, contentTypeAtteso);
 		}
 		else {
 			String nomeFile = "richiestaRisposta";
 			String contentRichiestaAtteso = new String(request1.getContent());
 			String contentRispostaAtteso = new String(soap11 ? responseSoap11Xml : responseSoap12Xml);
 			String contentRispostaTypeAtteso = contentTypeRisposta;
-			checkFileZip(govwayId, nomeFile, 
+			RestNotificheRisposteTest.checkFileZip(_cartellaFiles, govwayId, nomeFile, 
 					contentRichiestaAtteso,request1.getContentType(),
 					contentRispostaAtteso, contentRispostaTypeAtteso
 					);
@@ -804,13 +681,13 @@ public class SoapNotificheRisposteTest extends ConfigLoader{
 		String nomeFile = "richiestaRispostaTrasformata";
 		String contentAtteso = soap11 ? contentRichiestaRispostaTrasformataSoap11 : contentRichiestaRispostaTrasformataSoap12;
 		String contentTypeAtteso = contentTypeRisposta;
-		checkFile(govwayId, nomeFile, contentAtteso, contentTypeAtteso);
+		RestNotificheRisposteTest.checkFile(_cartellaFiles, govwayId, nomeFile, contentAtteso, contentTypeAtteso);
 
 		nomeFile = "richiestaRisposta";
 		String contentRichiestaAtteso = new String(request1.getContent());
 		String contentRispostaAtteso = new String(soap11 ? responseSoap11Xml : responseSoap12Xml);
 		String contentRispostaTypeAtteso = contentTypeRisposta;
-		checkFileZip(govwayId, nomeFile, 
+		RestNotificheRisposteTest.checkFileZip(_cartellaFiles, govwayId, nomeFile, 
 				contentRichiestaAtteso,request1.getContentType(),
 				contentRispostaAtteso, contentRispostaTypeAtteso
 				);		
@@ -878,32 +755,32 @@ public class SoapNotificheRisposteTest extends ConfigLoader{
 		// Check file attesi per Richiesta
 		String contentAtteso = new String(request1.getContent());
 		String contentTypeAtteso = request1.getContentType();
-		checkFile(govwayId, "richiesta", contentAtteso, contentTypeAtteso);
+		RestNotificheRisposteTest.checkFile(_cartellaFiles, govwayId, "richiesta", contentAtteso, contentTypeAtteso);
 		
 		contentAtteso = soap11 ? contentRichiestaTrasformataSoap11 : contentRichiestaTrasformataSoap12;
-		checkFile(govwayId, "richiestaTrasformata", contentAtteso, contentTypeAtteso);
+		RestNotificheRisposteTest.checkFile(_cartellaFiles, govwayId, "richiestaTrasformata", contentAtteso, contentTypeAtteso);
 		
 		
 		// Check file attesi per Risposta
 		contentAtteso = new String(soap11 ? responseSoap11Xml : responseSoap12Xml);
 		contentTypeAtteso = contentTypeRisposta;
-		checkFile(govwayId, "risposta", contentAtteso, contentTypeAtteso);
+		RestNotificheRisposteTest.checkFile(_cartellaFiles, govwayId, "risposta", contentAtteso, contentTypeAtteso);
 		
 		contentAtteso = soap11 ? contentRispostaTrasformataSoap11 : contentRispostaTrasformataSoap12;
-		checkFile(govwayId, "rispostaTrasformata", contentAtteso, contentTypeAtteso);
+		RestNotificheRisposteTest.checkFile(_cartellaFiles, govwayId, "rispostaTrasformata", contentAtteso, contentTypeAtteso);
 		
 		
 		// Check file attesi per RichiestaRisposta
 		String nomeFile = "richiestaRispostaTrasformata";
 		contentAtteso = soap11 ? contentRichiestaRispostaTrasformataSoap11 : contentRichiestaRispostaTrasformataSoap12;
 		contentTypeAtteso = contentTypeRisposta;
-		checkFile(govwayId, nomeFile, contentAtteso, contentTypeAtteso);
+		RestNotificheRisposteTest.checkFile(_cartellaFiles, govwayId, nomeFile, contentAtteso, contentTypeAtteso);
 
 		nomeFile = "richiestaRisposta";
 		String contentRichiestaAtteso = new String(request1.getContent());
 		String contentRispostaAtteso = new String(soap11 ? responseSoap11Xml : responseSoap12Xml);
 		String contentRispostaTypeAtteso = contentTypeRisposta;
-		checkFileZip(govwayId, nomeFile, 
+		RestNotificheRisposteTest.checkFileZip(_cartellaFiles, govwayId, nomeFile, 
 				contentRichiestaAtteso,request1.getContentType(),
 				contentRispostaAtteso, contentRispostaTypeAtteso
 				);	

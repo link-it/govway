@@ -39,6 +39,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.io.ZipUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -129,22 +130,22 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 	private static byte[] responseXml = null;
 	private static File responseXmlFile = null;
 	
-	private static File cartellaFiles = null;
+	private static File _cartellaFiles = null;
 	
 	@BeforeClass
 	public static void Before() {
 		Common.fermaRiconsegne(dbUtils);
-		cartellaFiles = CommonConsegnaMultipla.connettoriFilePath.toFile();
-		if(!cartellaFiles.exists()) {
-			cartellaFiles.mkdir();
+		_cartellaFiles = CommonConsegnaMultipla.connettoriFilePath.toFile();
+		if(!_cartellaFiles.exists()) {
+			_cartellaFiles.mkdir();
 		}
-		if (!cartellaFiles.isDirectory()|| !cartellaFiles.canWrite()) {
+		if (!_cartellaFiles.isDirectory()|| !_cartellaFiles.canWrite()) {
 			throw new RuntimeException("E' necessario creare la cartella per scrivere le richieste dei connettori, indicata dalla poprietà: <connettori.consegna_multipla.connettore_file.path> ");
 		}
 		
 		try {
 			responseXml = Bodies.getXML(Bodies.SMALL_SIZE).getBytes();
-			responseXmlFile = File.createTempFile("response_", "xml", cartellaFiles);
+			responseXmlFile = File.createTempFile("response_", "xml", _cartellaFiles);
 			FileSystemUtilities.writeFile(responseXmlFile, responseXml);
 		}catch(Exception e) {
 			throw new RuntimeException("Creazione risposta xml non riuscita");
@@ -172,22 +173,41 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 	}
 	
 	
+	private static String buildCondition(String nomeColonna, boolean isNull) {
+		TipiDatabase db = ConfigLoader.getDbUtils().tipoDatabase;
+		if(db!=null && TipiDatabase.ORACLE.equals(db)) {
+			if(isNull) {
+				return "("+nomeColonna+" IS NULL)";
+			}
+			else {
+				return "("+nomeColonna+" IS NOT NULL)";
+			}
+		}
+		else {
+			if(isNull) {
+				return "("+nomeColonna+" IS NULL OR "+nomeColonna+" = '')";
+			}
+			else {
+				return "("+nomeColonna+" IS NOT NULL AND "+nomeColonna+" != '')";
+			}
+		}
+	}
 	
 	public static void checkRuntime(String msgId, boolean expectedRequest, String expectedRequestContentType, 
 			boolean expectedResponse, String expectedResponseContentType) throws Exception {
 
 		String query = "select CONTENT_TYPE, RESPONSE_CONTENT_TYPE from DEFINIZIONE_MESSAGGI where ID_MESSAGGIO='"+msgId+"' AND TIPO='INBOX'";
 		if(expectedRequest) {
-			query+=" AND MSG_BYTES IS NOT NULL AND MSG_CONTEXT IS NOT NULL";
+			query+=" AND "+buildCondition("MSG_BYTES", false)+" AND "+buildCondition("MSG_CONTEXT", false)+"";
 		}
 		else {
-			query+=" AND MSG_BYTES IS NULL";
+			query+=" AND "+buildCondition("MSG_BYTES", true)+"";
 		}
 		if(expectedResponse) {
-			query+=" AND RESPONSE_MSG_BYTES IS NOT NULL AND RESPONSE_MSG_CONTEXT IS NOT NULL";
+			query+=" AND "+buildCondition("RESPONSE_MSG_BYTES", false)+" AND "+buildCondition("RESPONSE_MSG_CONTEXT", false)+"";
 		}
 		else {
-			query+=" AND RESPONSE_MSG_BYTES IS NULL AND RESPONSE_MSG_CONTEXT IS NULL";
+			query+=" AND "+buildCondition("RESPONSE_MSG_BYTES", true)+" AND "+buildCondition("RESPONSE_MSG_CONTEXT", true)+"";
 		}
 		ConfigLoader.getLoggerCore().info("Checking stato messaggi runtime:  " + msgId);
 		ConfigLoader.getLoggerCore().info("Query: " + query);
@@ -241,7 +261,7 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 		return request;
 	}
 	
-	private static void checkFile(String govwayId, String nomeFileAtteso, String contentAtteso, String contentTypeAtteso) throws Exception {
+	public static void checkFile(File cartellaFiles, String govwayId, String nomeFileAtteso, String contentAtteso, String contentTypeAtteso) throws Exception {
 		// Check file attesi
 		File fDir = new File(cartellaFiles,govwayId);
 		if(!fDir.exists()) {
@@ -270,13 +290,13 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 		String hdr = FileSystemUtilities.readFile(fHdr);
 
 		String ctAtteso = HttpConstants.CONTENT_TYPE+"="+contentTypeAtteso;
-		if(!hdr.contains(ctAtteso)) {
+		if(!hdr.contains(ctAtteso) && !hdr.contains(ctAtteso.toLowerCase())) {
 			throw new IOException("Expected header "+ctAtteso+" in '"+fHdr.getAbsolutePath()+"', found ["+hdr+"]");
 		}
 		
 	}
 	
-	private static void checkFileZip(String govwayId, String nomeFileAtteso, 
+	public static void checkFileZip(File cartellaFiles, String govwayId, String nomeFileAtteso, 
 			String contentRequestAtteso, String contentTypeRequestAtteso,
 			String contentResponseAtteso, String contentTypeResponseAtteso) throws Exception {
 		// Check file attesi
@@ -322,7 +342,7 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 				String hdr = FileSystemUtilities.readFile(file);
 		
 				String ctAtteso = HttpConstants.CONTENT_TYPE+": "+contentTypeRequestAtteso;
-				if(!hdr.contains(ctAtteso)) {
+				if(!hdr.contains(ctAtteso) && !hdr.contains(ctAtteso.toLowerCase())) {
 					throw new IOException("Expected header "+ctAtteso+" in '"+file.getAbsolutePath()+"', found ["+hdr+"]");
 				}
 			}
@@ -341,7 +361,7 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 				String hdr = FileSystemUtilities.readFile(file);
 		
 				String ctAtteso = HttpConstants.CONTENT_TYPE+": "+contentTypeResponseAtteso;
-				if(!hdr.contains(ctAtteso)) {
+				if(!hdr.contains(ctAtteso) && !hdr.contains(ctAtteso.toLowerCase())) {
 					throw new IOException("Expected header "+ctAtteso+" in '"+file.getAbsolutePath()+"', found ["+hdr+"]");
 				}
 			}
@@ -422,7 +442,7 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 			contentAtteso = contentRichiestaTrasformata;
 		}
 		String contentTypeAtteso = request1.getContentType();
-		checkFile(govwayId, nomeFile, contentAtteso, contentTypeAtteso);
+		checkFile(_cartellaFiles,govwayId, nomeFile, contentAtteso, contentTypeAtteso);
 		
 	}
 	
@@ -537,10 +557,10 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 		// Check file attesi
 		String contentAtteso = new String(request1.getContent());
 		String contentTypeAtteso = request1.getContentType();
-		checkFile(govwayId, "richiesta", contentAtteso, contentTypeAtteso);
+		checkFile(_cartellaFiles,govwayId, "richiesta", contentAtteso, contentTypeAtteso);
 		
 		contentAtteso = contentRichiestaTrasformata;
-		checkFile(govwayId, "richiestaTrasformata", contentAtteso, contentTypeAtteso);
+		checkFile(_cartellaFiles,govwayId, "richiestaTrasformata", contentAtteso, contentTypeAtteso);
 		
 	}
 	
@@ -607,7 +627,7 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 			contentAtteso = contentRispostaTrasformata;
 		}
 		String contentTypeAtteso = HttpConstants.CONTENT_TYPE_XML;
-		checkFile(govwayId, nomeFile, contentAtteso, contentTypeAtteso);
+		checkFile(_cartellaFiles,govwayId, nomeFile, contentAtteso, contentTypeAtteso);
 		
 	}
 	
@@ -725,10 +745,10 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 		// Check file attesi
 		String contentAtteso = new String(responseXml);
 		String contentTypeAtteso = HttpConstants.CONTENT_TYPE_XML;
-		checkFile(govwayId, "risposta", contentAtteso, contentTypeAtteso);
+		checkFile(_cartellaFiles,govwayId, "risposta", contentAtteso, contentTypeAtteso);
 		
 		contentAtteso = contentRispostaTrasformata;
-		checkFile(govwayId, "rispostaTrasformata", contentAtteso, contentTypeAtteso);
+		checkFile(_cartellaFiles,govwayId, "rispostaTrasformata", contentAtteso, contentTypeAtteso);
 		
 	}
 	
@@ -788,14 +808,14 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 			String nomeFile = "richiestaRispostaTrasformata";
 			String contentAtteso = contentRichiestaRispostaTrasformata;
 			String contentTypeAtteso = "application/json; charset=\"UTF-8\"";
-			checkFile(govwayId, nomeFile, contentAtteso, contentTypeAtteso);
+			checkFile(_cartellaFiles,govwayId, nomeFile, contentAtteso, contentTypeAtteso);
 		}
 		else {
 			String nomeFile = "richiestaRisposta";
 			String contentRichiestaAtteso = new String(request1.getContent());
 			String contentRispostaAtteso = new String(responseXml);
 			String contentRispostaTypeAtteso = HttpConstants.CONTENT_TYPE_XML;
-			checkFileZip(govwayId, nomeFile, 
+			checkFileZip(_cartellaFiles,govwayId, nomeFile, 
 					contentRichiestaAtteso,request1.getContentType(),
 					contentRispostaAtteso, contentRispostaTypeAtteso
 					);
@@ -920,13 +940,13 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 		String nomeFile = "richiestaRispostaTrasformata";
 		String contentAtteso = contentRichiestaRispostaTrasformata;
 		String contentTypeAtteso = "application/json; charset=\"UTF-8\"";
-		checkFile(govwayId, nomeFile, contentAtteso, contentTypeAtteso);
+		checkFile(_cartellaFiles,govwayId, nomeFile, contentAtteso, contentTypeAtteso);
 
 		nomeFile = "richiestaRisposta";
 		String contentRichiestaAtteso = new String(request1.getContent());
 		String contentRispostaAtteso = new String(responseXml);
 		String contentRispostaTypeAtteso = HttpConstants.CONTENT_TYPE_XML;
-		checkFileZip(govwayId, nomeFile, 
+		checkFileZip(_cartellaFiles,govwayId, nomeFile, 
 				contentRichiestaAtteso,request1.getContentType(),
 				contentRispostaAtteso, contentRispostaTypeAtteso
 				);
@@ -993,32 +1013,32 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 		// Check file attesi per Richiesta
 		String contentAtteso = new String(request1.getContent());
 		String contentTypeAtteso = request1.getContentType();
-		checkFile(govwayId, "richiesta", contentAtteso, contentTypeAtteso);
+		checkFile(_cartellaFiles,govwayId, "richiesta", contentAtteso, contentTypeAtteso);
 		
 		contentAtteso = contentRichiestaTrasformata;
-		checkFile(govwayId, "richiestaTrasformata", contentAtteso, contentTypeAtteso);
+		checkFile(_cartellaFiles,govwayId, "richiestaTrasformata", contentAtteso, contentTypeAtteso);
 		
 		
 		// Check file attesi per Risposta
 		contentAtteso = new String(responseXml);
 		contentTypeAtteso = HttpConstants.CONTENT_TYPE_XML;
-		checkFile(govwayId, "risposta", contentAtteso, contentTypeAtteso);
+		checkFile(_cartellaFiles,govwayId, "risposta", contentAtteso, contentTypeAtteso);
 		
 		contentAtteso = contentRispostaTrasformata;
-		checkFile(govwayId, "rispostaTrasformata", contentAtteso, contentTypeAtteso);
+		checkFile(_cartellaFiles,govwayId, "rispostaTrasformata", contentAtteso, contentTypeAtteso);
 		
 		
 		// Check file attesi per RichiestaRisposta
 		String nomeFile = "richiestaRispostaTrasformata";
 		contentAtteso = contentRichiestaRispostaTrasformata;
 		contentTypeAtteso = "application/json; charset=\"UTF-8\"";
-		checkFile(govwayId, nomeFile, contentAtteso, contentTypeAtteso);
+		checkFile(_cartellaFiles,govwayId, nomeFile, contentAtteso, contentTypeAtteso);
 
 		nomeFile = "richiestaRisposta";
 		String contentRichiestaAtteso = new String(request1.getContent());
 		String contentRispostaAtteso = new String(responseXml);
 		String contentRispostaTypeAtteso = HttpConstants.CONTENT_TYPE_XML;
-		checkFileZip(govwayId, nomeFile, 
+		checkFileZip(_cartellaFiles,govwayId, nomeFile, 
 				contentRichiestaAtteso,request1.getContentType(),
 				contentRispostaAtteso, contentRispostaTypeAtteso
 				);

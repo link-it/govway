@@ -104,12 +104,15 @@ public class ConfigLoader {
 	
 	@BeforeClass
 	public static void setupDbUtils() {
-		var dbConfig = Map.of(
-				"username", System.getProperty("db_username"),
-				"password", System.getProperty("db_password"),
-				"url", System.getProperty("db_url"),
-				"driverClassName", System.getProperty("db_driverClassName")
-			);
+		Map<String, String> dbConfig = new HashMap<String, String>();
+		dbConfig.put("username", System.getProperty("db_username"));
+		dbConfig.put("password", System.getProperty("db_password"));
+		dbConfig.put("url", System.getProperty("db_url"));
+		dbConfig.put("driverClassName", System.getProperty("db_driverClassName"));
+		String type = System.getProperty("db_type");
+		if(type!=null) {
+			dbConfig.put("dbType", type);
+		}
 		dbUtils = new DbUtils(dbConfig);
 	}
 

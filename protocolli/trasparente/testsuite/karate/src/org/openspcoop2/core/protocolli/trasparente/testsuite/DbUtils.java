@@ -33,6 +33,7 @@ import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants;
+import org.openspcoop2.utils.TipiDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -50,12 +51,21 @@ public class DbUtils {
     private static final Logger logger = LoggerFactory.getLogger(DbUtils.class);
 
     public final JdbcTemplate jdbc;
+    
+    public final TipiDatabase tipoDatabase;
 
     public DbUtils(Map<String, String> config) {
         String url = (String) config.get("url");
         String username = (String) config.get("username");
         String password = (String) config.get("password");
         String driver = (String) config.get("driverClassName");
+        String type = (String) config.get("dbType");
+        if(type!=null) {
+        	this.tipoDatabase = TipiDatabase.toEnumConstant(type );
+        }
+        else {
+        	this.tipoDatabase = TipiDatabase.DEFAULT;
+        }
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(driver);
         dataSource.setUrl(url);
