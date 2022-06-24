@@ -2208,6 +2208,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			// Libreria di validazione openapi4j
 			try {
 				org.openapi4j.schema.validator.v3.ValidationOptions.VALIDATE_BASE64_VALUES=propertiesReader.isValidazioneContenutiApplicativi_openApi_openapi4j_validateBase64Values();
+				org.openapi4j.parser.validation.v3.OpenApi3Validator.VALIDATE_URI_REFERENCE_AS_URL = propertiesReader.isValidazioneContenutiApplicativi_openApi_openapi4j_validateUriReferenceAsUrl();
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Configurazione libreria di validazione openapi4j");
 				return;

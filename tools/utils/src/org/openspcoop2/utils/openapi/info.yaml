@@ -1,0 +1,188 @@
+openapi: 3.0.1
+info:
+  title: Prova
+  description: |-
+    API test
+    Pattern Model applicati:
+    - [ID_AUTH_CHANNEL_02] Direct Trust Mutual Transport-Level Security
+    - [BLOCK_REST] Blocking REST
+    - [INTEGRITY_REST_01] Integrità del payload messaggio REST
+  termsOfService: ../../resources.html
+  contact:
+    name: TEST - Prova
+    email: Assistenza.test@Info.govway.org
+    url: ../../resources.html
+  license:
+    name: PROVA
+    url: ../../resources.html
+  version: 1.0.0
+externalDocs:
+  description: test
+  url: ../../resources.html
+servers:
+  - url: https://test/govway/rest/in/ENTE/test-prova/v1
+    description: Demo url
+  - url: ../../resources.html
+    description: Demo url
+tags:
+- name: tag1
+  description: Esempio 1 tag.
+- name: tag2
+  description: Esempio 2 tag.
+paths:
+  /receive:
+    post:
+      operationId: receive
+      tags:
+        - tag1
+      description: |-
+        Notifica demo.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Test'
+      security:
+        - bearerAuth: []
+          Agid-JWT-Signature: []
+      responses:
+        '200':
+          description: test
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Test'
+          headers:
+            Agid-JWT-Signature:
+              $ref: '#/components/headers/Agid-JWT-Signature'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503'
+
+components:
+  headers:
+    Agid-JWT-Signature:
+      description: |-
+       Modi [integrity_rest_01] Integrità del payload del messaggio REST
+      schema:
+        type: string
+        format: JWT
+        maxLength: 4096
+        example: eyJzd.aa.bb
+  responses:
+    Test:
+      description: Test.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Test'
+    '400':
+      description: BAD_REQUEST
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Errore'
+    '401':
+      description: UNAUTHORIZED
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Errore'
+    '403':
+      description: FORBIDDEN
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Errore'
+    '404':
+      description: NOT_FOUND
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Errore'
+    '500':
+      description: INTERNAL_SERVER_ERROR
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Errore'
+    '503':
+      description: SERVICE_UNAVAILABLE
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Errore'
+  schemas:
+    Test:
+      type: object
+      additionalProperties: false
+      description: |-
+        Esempio.
+        Test
+      required:
+        - a
+        - b
+      properties:
+        a:
+          type: string
+        b:
+          type: string
+
+    Errore:
+      required:
+        - status
+        - title
+      type: object
+      additionalProperties: false
+      description: Modello di risposta in caso di errore
+      properties:
+        status:
+          type: integer
+          format: int32
+          description: Codice di errore
+          example: 400
+          maximum: 600
+          minimum: 100
+        title:
+          type: string
+          description: Tipologia di errore
+          example: BAD_REQUEST
+          enum:
+            - BAD_REQUEST
+            - UNAUTHORIZED
+            - FORBIDDEN
+            - NOT_FOUND
+            - INTERNAL_SERVER_ERROR
+            - SERVICE_UNAVAILABLE
+        detail:
+          type: string
+          description: Descrizione di dettaglio dello specifico problema verificatosi
+          example: <detail_error>
+          maxLength: 1024
+            
+  securitySchemes:
+    bearerAuth:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+      description: |-
+        Implementazione conforme ad RFC8725.
+    Agid-JWT-Signature:
+      type: apiKey
+      in: header
+      name: Agid-JWT-Signature
+      description: |-
+        Vedi Modi [integrity_rest_01] Integrità del payload del messaggio REST
+    openIdConnect:
+      type: openIdConnect
+      openIdConnectUrl: ../test

@@ -38,6 +38,8 @@ tags:
     description: test su discriminator 
   - name: multipart
     description: test su multipart  
+  - name: format-string
+    description: test su vari format string 
     
 paths:
           
@@ -1821,6 +1823,27 @@ paths:
         default:
           $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+
+  /documenti/format-string:
+    post:
+      tags:
+        - format-string
+      description: Esempio di invio e ricezione di oggetti con format-string
+      operationId: TestFormatString
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RichiestaVariFormatString'
+      responses:
+        "200":
+          description: Risposta contenente format-string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RichiestaVariFormatString'
+
+
 components:
 
   parameters:
@@ -2819,6 +2842,58 @@ components:
 
     DocJson:
        $ref: '#/components/schemas/Pet2'
+
+
+    # https://swagger.io/docs/specification/data-models/data-types/
+    # However, format is an open value, so you can use any formats, even not those defined by the OpenAPI Specification, such as:
+    # email
+    # uuid
+    # uri
+    # hostname
+    # ipv4
+    # ipv6
+    # and others
+    # Tools can use the format to validate the input or to map the value to a specific type in the chosen programming language. Tools that do not support a specific format may default back to the type alone, as if the format is not specified.
+    RichiestaVariFormatString:
+      type: object
+      required:
+        - email
+        - uuid
+        - uri
+        - hostname
+        - ipv4
+        - ipv6
+      properties:
+        email:
+          type: array
+          items:
+            type: string
+            format: email
+        uuid:
+          type: array
+          items:
+            type: string
+            format: uuid
+        uri:
+          type: array
+          items:
+            type: string
+            format: uri
+        hostname:
+          type: array
+          items:
+            type: string
+            format: hostname
+        ipv4:
+          type: array
+          items:
+            type: string
+            format: ipv4
+        ipv6:
+          type: array
+          items:
+            type: string
+            format: ipv6
 
 
     ProblemInLineOriginaleTeamDigitale:

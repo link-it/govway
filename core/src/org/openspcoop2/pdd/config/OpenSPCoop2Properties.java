@@ -1836,6 +1836,7 @@ public class OpenSPCoop2Properties {
 			this.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_injectingAdditionalPropertiesFalse();
 			this.isValidazioneContenutiApplicativi_openApi_swaggerRequestValidator_resolveFullyApiSpec();
 			this.isValidazioneContenutiApplicativi_openApi_openapi4j_validateBase64Values();
+			this.isValidazioneContenutiApplicativi_openApi_openapi4j_validateUriReferenceAsUrl();
 			
 			// XPath Json Path
 			this.isJsonPathCacheEnabled();
@@ -19372,6 +19373,32 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_openapi4j_validateBase64Values;
+	}
+	
+	private static Boolean isValidazioneContenutiApplicativi_openApi_openapi4j_validateUriReferenceAsUrl = null;
+	public boolean isValidazioneContenutiApplicativi_openApi_openapi4j_validateUriReferenceAsUrl(){
+
+		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.openapi4j.validateUriReferenceAsUrl";
+		
+		if(OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_openapi4j_validateUriReferenceAsUrl==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_openapi4j_validateUriReferenceAsUrl = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_openapi4j_validateUriReferenceAsUrl = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_openapi4j_validateUriReferenceAsUrl = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_openapi4j_validateUriReferenceAsUrl;
 	}
 	
 	

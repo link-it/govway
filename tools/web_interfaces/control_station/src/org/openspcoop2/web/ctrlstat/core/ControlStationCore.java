@@ -907,6 +907,7 @@ public class ControlStationCore {
 	private boolean isApiResourcePathValidatorEnabled;
 	private boolean isApiResourceHttpMethodAndPathQualsiasiEnabled;
 	private List<String> getApiResourcePathQualsiasiSpecialChar;
+	private boolean isApiOpenAPIValidateUriReferenceAsUrl;
 	public boolean isApiResourcePathValidatorEnabled() {
 		return this.isApiResourcePathValidatorEnabled;
 	}
@@ -915,6 +916,9 @@ public class ControlStationCore {
 	}
 	public List<String> getGetApiResourcePathQualsiasiSpecialChar() {
 		return this.getApiResourcePathQualsiasiSpecialChar;
+	}
+	public boolean isApiOpenAPIValidateUriReferenceAsUrl() {
+		return this.isApiOpenAPIValidateUriReferenceAsUrl;
 	}
 	
 	/** Accordi di Cooperazione */
@@ -2370,6 +2374,7 @@ public class ControlStationCore {
 		this.isApiResourcePathValidatorEnabled = core.isApiResourcePathValidatorEnabled;
 		this.isApiResourceHttpMethodAndPathQualsiasiEnabled = core.isApiResourceHttpMethodAndPathQualsiasiEnabled;
 		this.getApiResourcePathQualsiasiSpecialChar = core.getApiResourcePathQualsiasiSpecialChar;
+		this.isApiOpenAPIValidateUriReferenceAsUrl = core.isApiOpenAPIValidateUriReferenceAsUrl;
 		
 		/** Accordi di Cooperazione */
 		this.isAccordiCooperazioneEnabled = core.isAccordiCooperazioneEnabled;
@@ -2805,6 +2810,7 @@ public class ControlStationCore {
 			this.isApiResourcePathValidatorEnabled = consoleProperties.isApiResourcePathValidatorEnabled();
 			this.isApiResourceHttpMethodAndPathQualsiasiEnabled = consoleProperties.isApiResourceHttpMethodAndPathQualsiasiEnabled();
 			this.getApiResourcePathQualsiasiSpecialChar = consoleProperties.getApiResourcePathQualsiasiSpecialChar();
+			this.isApiOpenAPIValidateUriReferenceAsUrl = consoleProperties.isApiOpenAPIValidateUriReferenceAsUrl();
 			this.isAccordiCooperazioneEnabled = consoleProperties.isAccordiCooperazioneEnabled();
 			this.isErogazioniVerificaCertificati = consoleProperties.isErogazioniVerificaCertificati();
 			this.isFruizioniVerificaCertificati = consoleProperties.isFruizioniVerificaCertificati();

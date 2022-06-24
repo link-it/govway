@@ -43,6 +43,7 @@ import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiReaderConfig;
 import org.openspcoop2.utils.rest.IApiReader;
 import org.openspcoop2.utils.rest.IApiValidator;
+import org.openspcoop2.utils.rest.ParseWarningException;
 import org.openspcoop2.utils.rest.ProcessingException;
 import org.openspcoop2.utils.rest.ValidatorException;
 import org.openspcoop2.utils.rest.api.Api;
@@ -267,6 +268,38 @@ public class TestOpenApi3Extended {
 			}
 			
 			System.out.println("Test Schema#4 (default.yaml) [Valori default non coerenti con il tipo] ok");
+			
+			
+			System.out.println("Test Schema#5 (info.yaml) [Elementi Info] ...");
+			
+			if( openAPILibrary == OpenAPILibrary.openapi4j ){
+			
+				org.openapi4j.parser.validation.v3.OpenApi3Validator.VALIDATE_URI_REFERENCE_AS_URL = false;
+				
+				url = TestOpenApi3Extended.class.getResource("/org/openspcoop2/utils/openapi/info.yaml");
+				
+				apiReaderOpenApi = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+				configOpenApi = new ApiReaderConfig();
+				configOpenApi.setProcessInclude(false);
+				apiReaderOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi);
+				apiOpenApi = apiReaderOpenApi.read();
+				
+				try {
+					apiOpenApi.validate();
+				}catch(ProcessingException pe) {
+					pe.printStackTrace(System.out);
+					throw new Exception(" Documento contenente errori: "+pe.getMessage(), pe);
+				}catch(ParseWarningException warning) {
+					//warning.printStackTrace(System.out);
+					System.out.println("Documento contenente anomalie: "+warning.getMessage());
+				}
+				
+				apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+				apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi, configO);
+				
+			}
+									
+			System.out.println("Test Schema#5 (info.yaml) [Elementi Info] ok");
 			
 		} 
 			
@@ -3447,7 +3480,15 @@ public class TestOpenApi3Extended {
 		}
 		System.out.println("Test #25 openapi che usano multipart request completato\n\n");
 		
+	
 		
+		// ** Test per validazione con openapi che usano format string ... **
+		
+		System.out.println("Test #26 openapi che usano format string ...");
+		
+		testFormatString(openAPILibrary, mergeSpec);
+		
+		System.out.println("Test #26 openapi che usano format string completato\n\n");
 	}
 
 	
@@ -4996,6 +5037,336 @@ public class TestOpenApi3Extended {
 		}
 
 		System.out.println("TEST Verifica Multipart Request as array completato (stream:"+stream+" multipartOptimization:"+multipartOptimization+")!");
+
+	}
+	
+	
+	
+	private static void testFormatString(OpenAPILibrary openAPILibrary, boolean mergeSpec)
+			throws UtilsException, ProcessingException, URISyntaxException, Exception {
+		System.out.println("#### Verifica Format String ####");
+		
+		URL url = TestOpenApi3Extended.class.getResource("/org/openspcoop2/utils/openapi/allegati.yaml");
+					
+		ApiSchema apiSchemaYaml = new ApiSchema("teamdigitale-openapi_definitions.yaml", 
+				Utilities.getAsByteArray(TestOpenApi3Extended.class.getResourceAsStream("/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml")), ApiSchemaType.YAML);
+					
+		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
+		configOpenApi4j.setProcessInclude(false);
+		apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi4j, apiSchemaYaml);
+		
+		Api apiOpenApi4j = apiReaderOpenApi4j.read();
+								
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
+		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
+		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
+		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
+		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi4j, configO);
+		
+		String emailCorrette = "\"info@govway.org\", \"Info@GovWay.org\", \"InfoTest@TEST.govway.org\"";
+		String uuidCorretti = "\"843bdd09-f3ad-11ec-8c78-5254003636a4\", \"000bdd09-f3ad-11ec-8c78-0004003636a4\"";
+		String uriCorrette = "\"http://govway.org/test\",\"https://TEST.GovWay.org/test?prova=1\",\"https://TEST.GovWay.org/test?prova=2&prova=3\","+
+				"\"urn:prova@govway.info\",\"type:id\","+
+				"\"file://c:/test\",\"file:///tmp/test\",\"file://../../relative\","+
+				"\"foo://example.com:8042/over/there?name=ferret#nose\","+ // https://datatracker.ietf.org/doc/html/rfc3986#section-3
+				"\"urn:example:animal:ferret:nose\","+
+				"\"https://datatracker.ietf.org/doc/html/rfc3986#section-3\"";
+		String hostnameCorretti = "\"prova1\",\"govway-test.prova.org\",\"AltroHostname.TEST-PROVA2\",\"EsempioDiTestcon123\"";
+		String ipCorretti = "\"127.0.0.1\",\"10.220.22.0\"";
+		String ip6Corretti = "\"2001:0db8:85a3:0000:0000:8a2e:0370:7334\"";
+		
+		String jsonCorretto = "{ \"email\": ["+emailCorrette+"], \"uuid\": ["+uuidCorretti+"], \"uri\":["+uriCorrette+"], \"hostname\":["+hostnameCorretti+"], \"ipv4\":["+ipCorretti+"], \"ipv6\":["+ip6Corretti+"] }";
+		
+		
+
+		
+
+		List<String> tipoTest = new ArrayList<String>();
+		List<String> messagggioTest = new ArrayList<String>();
+		List<Boolean> erroreAttesoTest = new ArrayList<Boolean>();
+		List<String> msgErroreAttesoTest_request_openapi4j = new ArrayList<String>();
+		List<String> msgErroreAttesoTest_response_openapi4j = new ArrayList<String>();
+		List<String> msgErroreAttesoTest_request_swagger_request= new ArrayList<String>();
+		List<String> msgErroreAttesoTest_response_swagger_request = new ArrayList<String>();
+		List<String> msgErroreAttesoTest_request_json_schema= new ArrayList<String>();
+		List<String> msgErroreAttesoTest_response_json_schema = new ArrayList<String>();
+		
+		
+		// *** Test1: corretto ***
+		
+		tipoTest.add("OK-1");
+		messagggioTest.add(jsonCorretto);
+		erroreAttesoTest.add(false);
+		msgErroreAttesoTest_request_openapi4j.add(null);
+		msgErroreAttesoTest_response_openapi4j.add(null);
+		msgErroreAttesoTest_request_swagger_request.add(null);
+		msgErroreAttesoTest_response_swagger_request.add(null);
+		msgErroreAttesoTest_request_json_schema.add(null);
+		msgErroreAttesoTest_response_json_schema.add(null);
+		
+		
+		// *** Test2: email errata ***
+		
+		String emailErrata1 = "\"info.it\"";
+		String jsonErrateMail1 = "{ \"email\": ["+emailErrata1+"], \"uuid\": ["+uuidCorretti+"], \"uri\":["+uriCorrette+"], \"hostname\":["+hostnameCorretti+"], \"ipv4\":["+ipCorretti+"], \"ipv6\":["+ip6Corretti+"] }";
+		tipoTest.add("ERROR-MAIL-1");
+		messagggioTest.add(jsonErrateMail1);
+		erroreAttesoTest.add(true);
+		msgErroreAttesoTest_request_openapi4j.add("body.email.0: Value 'info.it' does not match format 'email'. (code: 1007)");
+		msgErroreAttesoTest_response_openapi4j.add("body.email.0: Value 'info.it' does not match format 'email'. (code: 1007)");
+		msgErroreAttesoTest_request_swagger_request.add("[ERROR][REQUEST][POST /documenti/format-string @body] [Path '/email/0'] String \"info.it\" is not a valid email address");
+		msgErroreAttesoTest_response_swagger_request.add("[ERROR][RESPONSE][] [Path '/email/0'] String \"info.it\" is not a valid email address");
+		msgErroreAttesoTest_request_json_schema.add("1034 $.email[0]: info.it is an invalid email");
+		msgErroreAttesoTest_response_json_schema.add("1034 $.email[0]: info.it is an invalid email");
+		
+		String emailErrata2 = "\"Info\"";
+		String jsonErrateMail2 = "{ \"email\": ["+emailErrata2+"], \"uuid\": ["+uuidCorretti+"], \"uri\":["+uriCorrette+"], \"hostname\":["+hostnameCorretti+"], \"ipv4\":["+ipCorretti+"], \"ipv6\":["+ip6Corretti+"] }";
+		tipoTest.add("ERROR-MAIL-2");
+		messagggioTest.add(jsonErrateMail2);
+		erroreAttesoTest.add(true);
+		msgErroreAttesoTest_request_openapi4j.add("body.email.0: Value 'Info' does not match format 'email'. (code: 1007)");
+		msgErroreAttesoTest_response_openapi4j.add("body.email.0: Value 'Info' does not match format 'email'. (code: 1007)");
+		msgErroreAttesoTest_request_swagger_request.add("[ERROR][REQUEST][POST /documenti/format-string @body] [Path '/email/0'] String \"Info\" is not a valid email address");
+		msgErroreAttesoTest_response_swagger_request.add("[ERROR][RESPONSE][] [Path '/email/0'] String \"Info\" is not a valid email address");
+		msgErroreAttesoTest_request_json_schema.add("1034 $.email[0]: Info is an invalid email");
+		msgErroreAttesoTest_response_json_schema.add("1034 $.email[0]: Info is an invalid email");
+		
+
+		
+		// *** Test3: uuid errata ***
+		
+		String uuidErrata1 = "\"43bdd09-f3ad-11ec-8c78-5254003636a4\""; // manca un numero all'inizio
+		String jsonErrateUuid1 = "{ \"email\": ["+emailCorrette+"], \"uuid\": ["+uuidErrata1+"], \"uri\":["+uriCorrette+"], \"hostname\":["+hostnameCorretti+"], \"ipv4\":["+ipCorretti+"], \"ipv6\":["+ip6Corretti+"] }";
+		tipoTest.add("ERROR-UUID-1");
+		messagggioTest.add(jsonErrateUuid1);
+		erroreAttesoTest.add(true);
+		msgErroreAttesoTest_request_openapi4j.add("body.uuid.0: Value '43bdd09-f3ad-11ec-8c78-5254003636a4' does not match format 'uuid'. (code: 1007)");
+		msgErroreAttesoTest_response_openapi4j.add("body.uuid.0: Value '43bdd09-f3ad-11ec-8c78-5254003636a4' does not match format 'uuid'. (code: 1007)");
+		msgErroreAttesoTest_request_swagger_request.add("SKIP");
+		msgErroreAttesoTest_response_swagger_request.add("SKIP");
+		msgErroreAttesoTest_request_json_schema.add("1034 $.uuid[0]: 43bdd09-f3ad-11ec-8c78-5254003636a4 is an invalid uuid");
+		msgErroreAttesoTest_response_json_schema.add("1034 $.uuid[0]: 43bdd09-f3ad-11ec-8c78-5254003636a4 is an invalid uuid");
+		
+		String uuidErrata2 = "\"843bdd09-f3ad-11ec-8c78-5254003636a\""; // manca un numero alla fine
+		String jsonErrateUuid2 = "{ \"email\": ["+emailCorrette+"], \"uuid\": ["+uuidErrata2+"], \"uri\":["+uriCorrette+"], \"hostname\":["+hostnameCorretti+"], \"ipv4\":["+ipCorretti+"], \"ipv6\":["+ip6Corretti+"] }";
+		tipoTest.add("ERROR-UUID-2");
+		messagggioTest.add(jsonErrateUuid2);
+		erroreAttesoTest.add(true);
+		msgErroreAttesoTest_request_openapi4j.add("body.uuid.0: Value '843bdd09-f3ad-11ec-8c78-5254003636a' does not match format 'uuid'. (code: 1007)");
+		msgErroreAttesoTest_response_openapi4j.add("body.uuid.0: Value '843bdd09-f3ad-11ec-8c78-5254003636a' does not match format 'uuid'. (code: 1007)");
+		msgErroreAttesoTest_request_swagger_request.add("SKIP");
+		msgErroreAttesoTest_response_swagger_request.add("SKIP");
+		msgErroreAttesoTest_request_json_schema.add("1034 $.uuid[0]: 843bdd09-f3ad-11ec-8c78-5254003636a is an invalid uuid");
+		msgErroreAttesoTest_response_json_schema.add("1034 $.uuid[0]: 843bdd09-f3ad-11ec-8c78-5254003636a is an invalid uuid");
+		
+		String uuidErrata3 = "\"843bdd09f3ad11ec8c785254003636a4\""; // manca i trattini
+		String jsonErrateUuid3 = "{ \"email\": ["+emailCorrette+"], \"uuid\": ["+uuidErrata3+"], \"uri\":["+uriCorrette+"], \"hostname\":["+hostnameCorretti+"], \"ipv4\":["+ipCorretti+"], \"ipv6\":["+ip6Corretti+"] }";
+		tipoTest.add("ERROR-UUID-3");
+		messagggioTest.add(jsonErrateUuid3);
+		erroreAttesoTest.add(true);
+		msgErroreAttesoTest_request_openapi4j.add("body.uuid.0: Value '843bdd09f3ad11ec8c785254003636a4' does not match format 'uuid'. (code: 1007)");
+		msgErroreAttesoTest_response_openapi4j.add("body.uuid.0: Value '843bdd09f3ad11ec8c785254003636a4' does not match format 'uuid'. (code: 1007)");
+		msgErroreAttesoTest_request_swagger_request.add("[ERROR][REQUEST][POST /documenti/format-string @body] [Path '/uuid/0'] Input string \"843bdd09f3ad11ec8c785254003636a4\" is not a valid UUID");
+		msgErroreAttesoTest_response_swagger_request.add("[ERROR][RESPONSE][] [Path '/uuid/0'] Input string \"843bdd09f3ad11ec8c785254003636a4\" is not a valid UUID");
+		msgErroreAttesoTest_request_json_schema.add("1034 $.uuid[0]: 843bdd09f3ad11ec8c785254003636a4 is an invalid uuid");
+		msgErroreAttesoTest_response_json_schema.add("1034 $.uuid[0]: 843bdd09f3ad11ec8c785254003636a4 is an invalid uuid");
+		
+		
+		
+		// *** Test4: uri errata ***
+		
+		// https://datatracker.ietf.org/doc/html/rfc3986#section-3
+		/*	 The generic URI syntax consists of a hierarchical sequence of
+		   components referred to as the scheme, authority, path, query, and
+		   fragment.
+
+		      URI         = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+		      hier-part   = "//" authority path-abempty
+		                  / path-absolute
+		                  / path-rootless
+		                  / path-empty
+		 */
+		
+		String uriErrata1 = "\"govway.org\""; // manca lo scheme 
+		String jsonErrateUri1 = "{ \"email\": ["+emailCorrette+"], \"uuid\": ["+uuidCorretti+"], \"uri\":["+uriErrata1+"], \"hostname\":["+hostnameCorretti+"], \"ipv4\":["+ipCorretti+"], \"ipv6\":["+ip6Corretti+"] }";
+		tipoTest.add("ERROR-URI-1");
+		messagggioTest.add(jsonErrateUri1);
+		erroreAttesoTest.add(true);
+		msgErroreAttesoTest_request_openapi4j.add("body.uri.0: Value 'govway.org' does not match format 'uri'. (code: 1007)");
+		msgErroreAttesoTest_response_openapi4j.add("body.uri.0: Value 'govway.org' does not match format 'uri'. (code: 1007)");
+		msgErroreAttesoTest_request_swagger_request.add("SKIP");
+		msgErroreAttesoTest_response_swagger_request.add("SKIP");
+		msgErroreAttesoTest_request_json_schema.add("1009 $.uri[0]: does not match the uri pattern");
+		msgErroreAttesoTest_response_json_schema.add("1009 $.uri[0]: does not match the uri pattern");
+		
+		// Nessuna libreria lo rileva
+//		String uriErrata2 = "\"http:\""; // manca lo hier part 
+//		String jsonErrateUri2 = "{ \"email\": ["+emailCorrette+"], \"uuid\": ["+uuidCorretti+"], \"uri\":["+uriErrata2+"], \"hostname\":["+hostnameCorretti+"], \"ipv4\":["+ipCorretti+"], \"ipv6\":["+ip6Corretti+"] }";
+//		tipoTest.add("ERROR-URI-2");
+//		messagggioTest.add(jsonErrateUri2);
+//		erroreAttesoTest.add(true);
+
+		
+		
+		
+		// *** Test5: hostname errata ***
+		
+		String hostnameErrata1 = "\"test_con_underscore\"";
+		String jsonErrateHostname1 = "{ \"email\": ["+emailCorrette+"], \"uuid\": ["+uuidCorretti+"], \"uri\":["+uriCorrette+"], \"hostname\":["+hostnameErrata1+"], \"ipv4\":["+ipCorretti+"], \"ipv6\":["+ip6Corretti+"] }";
+		tipoTest.add("ERROR-HOSTNAME-1");
+		messagggioTest.add(jsonErrateHostname1);
+		erroreAttesoTest.add(true);
+		msgErroreAttesoTest_request_openapi4j.add("body.hostname.0: Value 'test_con_underscore' does not match format 'hostname'. (code: 1007)");
+		msgErroreAttesoTest_response_openapi4j.add("body.hostname.0: Value 'test_con_underscore' does not match format 'hostname'. (code: 1007)");
+		msgErroreAttesoTest_request_swagger_request.add("SKIP");
+		msgErroreAttesoTest_response_swagger_request.add("SKIP");
+		msgErroreAttesoTest_request_json_schema.add("1009 $.hostname[0]: does not match the hostname pattern"); // ^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])(\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9]))*$");
+		msgErroreAttesoTest_response_json_schema.add("1009 $.hostname[0]: does not match the hostname pattern");
+		
+		
+		
+		// *** Test6: ip errata ***
+		
+		String ipErrata1 = "\"indirizzoSenzaNumeri\"";
+		String jsonErrateIp1 = "{ \"email\": ["+emailCorrette+"], \"uuid\": ["+uuidCorretti+"], \"uri\":["+uriCorrette+"], \"hostname\":["+hostnameCorretti+"], \"ipv4\":["+ipErrata1+"], \"ipv6\":["+ip6Corretti+"] }";
+		tipoTest.add("ERROR-IPv4-1");
+		messagggioTest.add(jsonErrateIp1);
+		erroreAttesoTest.add(true);
+		msgErroreAttesoTest_request_openapi4j.add("body.ipv4.0: Value 'indirizzoSenzaNumeri' does not match format 'ipv4'. (code: 1007)");
+		msgErroreAttesoTest_response_openapi4j.add("body.ipv4.0: Value 'indirizzoSenzaNumeri' does not match format 'ipv4'. (code: 1007)");
+		msgErroreAttesoTest_request_swagger_request.add("[ERROR][REQUEST][POST /documenti/format-string @body] [Path '/ipv4/0'] String \"indirizzoSenzaNumeri\" is not a valid IPv4 address");
+		msgErroreAttesoTest_response_swagger_request.add("[ERROR][RESPONSE][] [Path '/ipv4/0'] String \"indirizzoSenzaNumeri\" is not a valid IPv4 address");
+		msgErroreAttesoTest_request_json_schema.add("1009 $.ipv4[0]: does not match the ipv4 pattern");// ^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"); 
+		msgErroreAttesoTest_response_json_schema.add("1009 $.ipv4[0]: does not match the ipv4 pattern");
+		
+		
+		
+		// *** Test7: ipv6 errata ***
+		
+		String ipv6Errata1 = "\"indirizzoSenzaNumeri\"";
+		String jsonErrateIpv61 = "{ \"email\": ["+emailCorrette+"], \"uuid\": ["+uuidCorretti+"], \"uri\":["+uriCorrette+"], \"hostname\":["+hostnameCorretti+"], \"ipv4\":["+ipCorretti+"], \"ipv6\":["+ipv6Errata1+"] }";
+		tipoTest.add("ERROR-IPv6-1");
+		messagggioTest.add(jsonErrateIpv61);
+		erroreAttesoTest.add(true);
+		msgErroreAttesoTest_request_openapi4j.add("body.ipv6.0: Value 'indirizzoSenzaNumeri' does not match format 'ipv6'. (code: 1007)");
+		msgErroreAttesoTest_response_openapi4j.add("body.ipv6.0: Value 'indirizzoSenzaNumeri' does not match format 'ipv6'. (code: 1007)");
+		msgErroreAttesoTest_request_swagger_request.add("[ERROR][REQUEST][POST /documenti/format-string @body] [Path '/ipv6/0'] String \"indirizzoSenzaNumeri\" is not a valid IPv6 address");
+		msgErroreAttesoTest_response_swagger_request.add("[ERROR][RESPONSE][] [Path '/ipv6/0'] String \"indirizzoSenzaNumeri\" is not a valid IPv6 address");
+		msgErroreAttesoTest_request_json_schema.add("1009 $.ipv6[0]: does not match the ipv6 pattern");// ^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$"); 
+		msgErroreAttesoTest_response_json_schema.add("1009 $.ipv6[0]: does not match the ipv6 pattern");
+		
+		
+		
+		
+				
+		// Esecuzione test
+		
+		
+		for (int i = 0; i < tipoTest.size(); i++) {
+		
+			String tipo = tipoTest.get(i);
+			
+			boolean erroreAtteso = erroreAttesoTest.get(i);
+			String content = messagggioTest.get(i);
+			String msgErroreAttesoRichiesta = null;
+			String msgErroreAttesoRisposta = null;
+			switch (openAPILibrary) {
+			case openapi4j:
+				msgErroreAttesoRichiesta = msgErroreAttesoTest_request_openapi4j.get(i);
+				msgErroreAttesoRisposta =msgErroreAttesoTest_response_openapi4j.get(i);
+				break;
+			case swagger_request_validator:
+				msgErroreAttesoRichiesta = msgErroreAttesoTest_request_swagger_request.get(i);
+				msgErroreAttesoRisposta =msgErroreAttesoTest_response_swagger_request.get(i);
+				break;
+			case json_schema:
+				msgErroreAttesoRichiesta = msgErroreAttesoTest_request_json_schema.get(i);
+				msgErroreAttesoRisposta =msgErroreAttesoTest_response_json_schema.get(i);
+				break;
+			default:
+				break;
+			}
+
+			
+			String path = "/documenti/format-string";
+			HttpRequestMethod method = HttpRequestMethod.POST;
+			String contentType = HttpConstants.CONTENT_TYPE_JSON;
+
+			
+			System.out.println("\tTest Richiesta ["+tipo+"] path:"+path+" ...");
+			
+			HttpBaseRequestEntity<?> request = new TextHttpRequestEntity();
+			request.setUrl(path);	
+			request.setMethod(method);
+			((TextHttpRequestEntity)request).setContent(content);
+			Map<String, List<String>> parametersTrasporto = new HashMap<>();
+			TransportUtils.addHeader(parametersTrasporto,HttpConstants.CONTENT_TYPE, contentType);
+			request.setHeaders(parametersTrasporto);
+			request.setContentType(contentType);
+								
+			try {				
+				apiValidatorOpenApi4j.validate(request);
+				if(erroreAtteso) {
+					if("SKIP".equals(msgErroreAttesoRichiesta)) {
+						System.out.println("WARN Libreria non supporta ancora correttamente la validazione, si attendeva un errore");
+					}
+					else {
+						throw new Exception("Atteso errore ("+tipo+") '"+msgErroreAttesoRichiesta+"' non rilevato");
+					}
+				}
+			} catch (ValidatorException e) {
+				if(erroreAtteso && e.getMessage()!=null && e.getMessage().contains(msgErroreAttesoRichiesta)) {
+					System.out.println("Errore atteso: "+e.getMessage());
+				}
+				else {
+					throw new Exception("Errore non atteso ("+tipo+"): "+e.getMessage());
+				}
+			}
+			
+			System.out.println("\tTest Richiesta ["+tipo+"] path:"+path+" superato");
+		
+			
+			System.out.println("\tTest Risposta ["+tipo+"] path:"+path+" ...");
+			
+			HttpBaseResponseEntity<?> response = new TextHttpResponseEntity();
+			((TextHttpResponseEntity)response).setContent(content);
+			
+			response.setStatus(200);		
+			response.setMethod(method);
+			response.setUrl(path);	
+			Map<String, List<String>> responseHeaders = new HashMap<>();
+			TransportUtils.setHeader(responseHeaders,HttpConstants.CONTENT_TYPE, contentType);
+			response.setHeaders(responseHeaders);
+			response.setContentType(contentType);
+		
+			try {				
+				apiValidatorOpenApi4j.validate(response);
+				if(erroreAtteso) {
+					if("SKIP".equals(msgErroreAttesoRisposta)) {
+						System.out.println("WARN Libreria non supporta ancora correttamente la validazione, si attendeva un errore");
+					}
+					else {
+						throw new Exception("Atteso errore ("+tipo+") '"+msgErroreAttesoRisposta+"' non rilevato");
+					}
+				}
+			} catch (ValidatorException e) {
+				if(erroreAtteso && e.getMessage()!=null && e.getMessage().contains(msgErroreAttesoRisposta)) {
+					System.out.println("Errore atteso: "+e.getMessage());
+				}
+				else {
+					throw new Exception("Errore non atteso ("+tipo+"): "+e.getMessage());
+				}
+			}
+			
+			System.out.println("\tTest Risposta ["+tipo+"] path:"+path+" superato");
+		}
+			
+			
+		System.out.println("TEST Verifica Format String completato!");
 
 	}
 }

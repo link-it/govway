@@ -1,3 +1,11 @@
+2022-06-24  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1387
+	La validazione di un'interfaccia OpenAPI era troppo stringente per quanto concerne i valori definiti nella sezione 'info' riguardanti:
+	- indirizzo email dei contatti (info.contact.email)
+	- url dei contatti e della licenza (info.contact.url e info.license.url)
+
 2022-06-23  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]

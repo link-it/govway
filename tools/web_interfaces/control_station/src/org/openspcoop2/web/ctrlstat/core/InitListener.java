@@ -393,6 +393,17 @@ public class InitListener implements ServletContextListener {
 				throw new RuntimeException(msgErrore,e);
 			}
 			
+			// inizializzo OpenAPIValidator
+			try {
+				org.openapi4j.parser.validation.v3.OpenApi3Validator.VALIDATE_URI_REFERENCE_AS_URL = consoleProperties.isApiOpenAPIValidateUriReferenceAsUrl();
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'inizializzazione del validatore OpenAPI: " + e.getMessage();
+				InitListener.log.error(
+						//					throw new ServletException(
+						msgErrore,e);
+				throw new RuntimeException(msgErrore,e);
+			}
+			
 			InitListener.initialized = true;
 		}
 	}
