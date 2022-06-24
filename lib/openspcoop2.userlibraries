@@ -159,10 +159,10 @@
 	<archive path="/op2_3.4.dev/lib/lucene/lucene-queries-9.1.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/lucene/lucene-suggest-9.1.0.jar"/>
 	<!-- openapi4j -->
-	<archive path="/op2_3.4.dev/lib/openapi4j/openapi-core-1.0.7-gov4j-4.jar"/>
-	<archive path="/op2_3.4.dev/lib/openapi4j/openapi-parser-1.0.7-gov4j-4.jar"/>
-	<archive path="/op2_3.4.dev/lib/openapi4j/openapi-schema-validator-1.0.7-gov4j-4.jar"/>
-	<archive path="/op2_3.4.dev/lib/openapi4j/openapi-operation-validator-1.0.7-gov4j-4.jar"/>
+	<archive path="/op2_3.4.dev/lib/openapi4j/openapi-core-1.0.7-gov4j-5.jar"/>
+	<archive path="/op2_3.4.dev/lib/openapi4j/openapi-parser-1.0.7-gov4j-5.jar"/>
+	<archive path="/op2_3.4.dev/lib/openapi4j/openapi-schema-validator-1.0.7-gov4j-5.jar"/>
+	<archive path="/op2_3.4.dev/lib/openapi4j/openapi-operation-validator-1.0.7-gov4j-5.jar"/>
 	<!-- opensaml -->
         <archive path="/op2_3.4.dev/lib/opensaml/opensaml-core-3.4.6.jar"/>
         <archive path="/op2_3.4.dev/lib/opensaml/opensaml-messaging-api-3.4.6.jar"/>
