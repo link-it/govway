@@ -123,7 +123,7 @@ public final class AccordiServizioParteComuneAllegatiView extends Action {
 			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 			apcHelper.addAccordiAllegatiToDati(dati,TipoOperazione.OTHER,idAccordo,
-					null,null,null,null,tipoAccordo,
+					null,null,null,null,tipoAccordo,null,
 					idAllegato,doc,as,errore,contenutoAllegato,null);
 						
 			pd.setDati(dati);

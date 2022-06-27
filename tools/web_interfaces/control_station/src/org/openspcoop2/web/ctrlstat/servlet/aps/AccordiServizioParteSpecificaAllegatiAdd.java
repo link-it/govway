@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -157,6 +158,19 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 
 				}
 			}
+			
+			boolean find = false;
+			if(tipoFile!=null && StringUtils.isNotEmpty(tipoFile) && tipiAmmessi!=null && tipiAmmessi.length>0) {
+				for (String t : tipiAmmessi) {
+					if(tipoFile.equals(t)) {
+						find = true;
+						break;
+					}
+				}
+			}
+			if(!find) {
+				tipoFile = null;
+			}
 
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
@@ -222,7 +236,7 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idServizio, null, null, null, null, tipoSoggettoFruitore, nomeSoggettoFruitore, dati);
 
 				dati = apsHelper. addTipiAllegatiToDati(TipoOperazione.ADD, idServizio, ruolo, ruoli, tipiAmmessi,
-						tipiAmmessiLabel, dati, modificaAPI, binaryParameterDocumenti);
+						tipiAmmessiLabel, tipoFile, dati, modificaAPI, binaryParameterDocumenti);
 
 				pd.setDati(dati);
 
@@ -246,7 +260,7 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idServizio, null, null, dati);
 
 				dati = apsHelper. addTipiAllegatiToDati(TipoOperazione.ADD, idServizio, ruolo, ruoli, tipiAmmessi,
-						tipiAmmessiLabel, dati, modificaAPI, binaryParameterDocumenti);
+						tipiAmmessiLabel, tipoFile, dati, modificaAPI, binaryParameterDocumenti);
 
 				pd.setDati(dati);
 

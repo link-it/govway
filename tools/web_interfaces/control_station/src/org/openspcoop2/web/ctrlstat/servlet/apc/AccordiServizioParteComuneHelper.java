@@ -584,7 +584,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 
 	public Vector<Object> addAccordiAllegatiToDati(Vector<Object> dati,TipoOperazione tipoOperazione,String idAccordo,
-			String ruolo,String [] ruoli,String []tipiAmmessi,String []tipiAmmessiLabel,String tipoAccordo,
+			String ruolo,String [] ruoli,String []tipiAmmessi,String []tipiAmmessiLabel,String tipoAccordo,String tipoFile,
 			String idAllegato, Documento doc, AccordoServizioParteComune as, String errore,StringBuilder contenutoAllegato, List<BinaryParameter> binaryParameterDocumenti) throws Exception {
 		try{
 
@@ -615,6 +615,15 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_ALLEGATO);
 			dati.addElement(de);
 			
+			boolean stato = this.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(as.getStatoPackage());
+			
+			if(!stato && TipoOperazione.CHANGE.equals(tipoOperazione)) {
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_WSDL_ATTUALE);
+				de.setType(DataElementType.SUBTITLE);
+				dati.addElement(de);
+			}
+			
 			de = new DataElement();
 			if(TipoOperazione.ADD.equals(tipoOperazione)){
 				de.setValue(idAccordo);
@@ -641,6 +650,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				de.setValues(tipiAmmessi);
 				de.setLabels(tipiAmmessiLabel);
 				de.setSize(this.getSize());
+				de.setSelected(tipoFile);
 				dati.addElement(de);
 			}
 
@@ -689,6 +699,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					this.pd.disableEditMode();
 				}
 				else{
+					
+					de = new DataElement();
+					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_WSDL_NUOVO);
+					de.setType(DataElementType.SUBTITLE);
+					dati.addElement(de);
+					
 					de = new DataElement();
 					de.setType(DataElementType.FILE);
 					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ALLEGATI_DOCUMENTO);

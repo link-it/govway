@@ -146,7 +146,7 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				apcHelper.addAccordiAllegatiToDati(dati,TipoOperazione.CHANGE,idAccordo,
-						null,null,null,null,tipoAccordo,
+						null,null,null,null,tipoAccordo,tipoFile,
 						idAllegato,doc,as,null,null,null);
 							
 				pd.setDati(dati);
@@ -188,7 +188,7 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				apcHelper.addAccordiAllegatiToDati(dati,TipoOperazione.CHANGE,idAccordo,
-						null,null,null,null,tipoAccordo,
+						null,null,null,null,tipoAccordo,tipoFile,
 						idAllegato,doc,as,null,null,null);
 								
 				pd.setDati(dati);

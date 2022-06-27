@@ -9097,7 +9097,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	}
 
 	public Vector<DataElement>  addTipiAllegatiToDati(TipoOperazione tipoOp, String idServizio, String ruolo,
-			String[] ruoli, String[] tipiAmmessi, String[] tipiAmmessiLabel,
+			String[] ruoli, String[] tipiAmmessi, String[] tipiAmmessiLabel, String tipoFile,
 			Vector<DataElement> dati, String modificaAPI, List<BinaryParameter> binaryParameterDocumenti) {
 		
 		DataElement de = new DataElement();
@@ -9123,6 +9123,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_FILE);
 			de.setValues(tipiAmmessi);
 			de.setLabels(tipiAmmessiLabel);
+			de.setSelected(tipoFile);
 			de.setSize( getSize());
 			dati.addElement(de);
 		}
@@ -9162,15 +9163,26 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	public Vector<DataElement>  addInfoAllegatiToDati(TipoOperazione tipoOp,    String idAllegato,
 			AccordoServizioParteSpecifica asps, Documento doc,
 			Vector<DataElement> dati, String modificaAPI) throws Exception {
+
 		DataElement de = new DataElement();
-
-
+		de.setType(DataElementType.TITLE);
+		de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATO);
+		dati.addElement(de);
+		
 		de = new DataElement();
 		de.setValue(idAllegato);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_ALLEGATO);
 		dati.addElement(de);
 
+		boolean stato = this.isEditModeInProgress() && this.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(asps.getStatoPackage());
+		
+		if(!stato) {
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_NOME_ATTUALE);
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
+		}
 
 		de = new DataElement();
 		de.setValue(doc.getRuolo());
@@ -9196,10 +9208,16 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		de.setSize( getSize());
 		dati.addElement(de);
 
-		if(this.isEditModeInProgress() && this.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(asps.getStatoPackage())){
+		if(stato){
 			this.pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
 		}
 		else{	
+			
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_NOME_NUOVO);
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
+			
 			de = new DataElement();
 			de.setType(DataElementType.FILE);
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_THE_FILE);

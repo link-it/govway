@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -150,6 +151,19 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 				}
 			}
 			
+			boolean find = false;
+			if(tipoFile!=null && StringUtils.isNotEmpty(tipoFile) && tipiAmmessi!=null && tipiAmmessi.length>0) {
+				for (String t : tipiAmmessi) {
+					if(tipoFile.equals(t)) {
+						find = true;
+						break;
+					}
+				}
+			}
+			if(!find) {
+				tipoFile = null;
+			}
+			
 			IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 			String uri = idAccordoFactory.getUriFromAccordo(as);
 			Parameter pTipoAccordo = AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo);
@@ -178,7 +192,7 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				apcHelper.addAccordiAllegatiToDati(dati,TipoOperazione.ADD,idAccordo,
-						ruolo,ruoli,tipiAmmessi,tipiAmmessiLabel,tipoAccordo,
+						ruolo,ruoli,tipiAmmessi,tipiAmmessiLabel,tipoAccordo,tipoFile,
 						null,null,as,null,null, binaryParameterDocumenti);
 				
 				pd.setDati(dati);
@@ -201,7 +215,7 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				apcHelper.addAccordiAllegatiToDati(dati,TipoOperazione.ADD,idAccordo,
-						ruolo,ruoli,tipiAmmessi,tipiAmmessiLabel,tipoAccordo,
+						ruolo,ruoli,tipiAmmessi,tipiAmmessiLabel,tipoAccordo,tipoFile,
 						null,null,as,null,null, binaryParameterDocumenti);
 				
 				pd.setDati(dati);

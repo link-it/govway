@@ -1,5 +1,12 @@
 2022-06-27  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Risolto Bug OP-1391
+	Durante il caricamento di un allegato di una API, il tipo di specifica semiformale selezionato non veniva preservato quando si caricava un file
+	e viene riproposto il tipo UML. Lo stesso problema era presente nel caricamento degli allegati di una erogazione o fruizione.
+
+2022-06-27  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Risolto Bug OP-1389
 	Durante gli stress test, alcune comunicazioni andavano in errore per via dell'errore: "Cannot assign requested address".
