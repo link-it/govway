@@ -1,3 +1,11 @@
+2022-06-27  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1389
+	Durante gli stress test, alcune comunicazioni andavano in errore per via dell'errore: "Cannot assign requested address".
+	Il fix consiste nell'aumentare il numero di connessione http 'keep-alive' mantenute aperte per una stessa destinazione,
+        tramite la registrazione di una proprietà di sistema 'http.maxConnections' impostata per default al valore '200'.
+
 2022-06-24  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

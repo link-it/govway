@@ -1,7 +1,7 @@
-.. _maxRequests:
+.. _maxRequests_policy:
 
-Numero Complessivo Richieste Simultanee
--------------------------------------------------------
+Policy che limita il Numero Complessivo Richieste Simultanee
+------------------------------------------------------------
 
 GovWay consente di fissare un numero limite complessivo, indipendente
 dalle singole APIs, riguardo alle richieste gestibili simultaneamente
@@ -12,7 +12,7 @@ Per modificare la configurazione sul numero limite di richieste
 simultanee accedere alla voce *'Configurazione - Controllo Traffico'*
 del menù, sezione *'Limitazione Numero di Richieste Complessive'*.
 
-    .. figure:: ../../_figure_installazione/govwayConsole_maxThreads.png
+    .. figure:: ../../../_figure_installazione/govwayConsole_maxThreads.png
         :scale: 100%
         :align: center
 	:name: inst_maxThreadsFig

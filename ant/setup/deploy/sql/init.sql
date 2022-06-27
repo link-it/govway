@@ -92,6 +92,9 @@ UPDATE configurazione set validazione_profilo='abilitato';
 -- Disabilito per default la validazione con schema xsd dei protocolli
 UPDATE configurazione set validazione_controllo='normale';
 
+-- MaxConnections di default
+INSERT INTO pdd_sys_props (nome, valore) VALUES ('http.maxConnections','200');
+
 -- Configurazione ControlloTraffico
 UPDATE ct_config set max_threads_tipo_errore='http429';
 UPDATE ct_config set rt_tipo_errore='http429';

@@ -1,3 +1,7 @@
+2022-06-27  Andrea Poli <apoli@link.it>
+
+	Registrata proprietà di sistema 'http.maxConnections' impostata per default al valore '200'.
+
 2022-06-17  Andrea Poli <apoli@link.it>
 
 	Aggiunte colonne per gestire l'applicabilità di una trasformazione in base ai connettori

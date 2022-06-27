@@ -14,6 +14,6 @@ Sempre a livello globale, GovWay limita la dimensione massima accettata di una r
 .. toctree::
         :maxdepth: 2
 
-	maxRequests
+	maxRequests/index
 	dimensioneMassimaMessaggi
         hazelcast
