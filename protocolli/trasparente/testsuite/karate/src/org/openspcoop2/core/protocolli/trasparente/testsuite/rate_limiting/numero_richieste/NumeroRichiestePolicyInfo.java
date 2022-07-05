@@ -36,7 +36,7 @@ public class NumeroRichiestePolicyInfo {
 	public Integer richiesteBloccate = null;
 	public String sincronizzazione = null;
 	
-	public NumeroRichiestePolicyInfo(String jmxPolicyInfo) {		
+	public NumeroRichiestePolicyInfo(String jmxPolicyInfo) {	
 		String[] lines = jmxPolicyInfo.split(System.lineSeparator());
 		for (String l : lines) {
 			l = l.strip();

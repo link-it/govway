@@ -1,0 +1,54 @@
+Documentazione cluster redis, utile da conoscere per sysadmin e devops:
+
+- https://github.com/redisson/redisson/wiki/2.-Configuration/#24-cluster-mode
+- https://redis.io/docs/reference/cluster-spec/
+		
+In quest'ultimo link si trovano i comandi per avviare un cluster REDIS da riga di comando.
+- https://redis.io/docs/manual/scaling/#creating-and-using-a-redis-cluster
+
+Di seguito si indica un procedimento per l'avvio di un cluster redis utilizzato dai test.
+Si rimanda alla documentazione redis per una installazione da produzione.
+
+		yum install redis.x86_64
+
+		; Creare un file redis.conf con il seguente contenuto 
+			port 7000
+			cluster-enabled yes
+			cluster-config-file nodes.conf
+			cluster-node-timeout 5000
+			appendonly yes
+                        protected-mode no
+			
+		mkdir cluster-test
+		cd cluster-test
+		mkdir 7000 7001 7002 7003 7004 7005
+
+		E mettere in ciascuna cartella il file redis.conf di sopra, cambiando la porta secondo il nome della cartella.
+
+		: Inizializzare ciascuno dei nodi con 
+
+			cd 7000
+			redis-server ./redis.conf
+
+		e ripetere con tutte le cartelle.
+
+		; Dopo creare il cluster con redis-cli --cluster create 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005 --cluster-replicas 1
+			L'opzione per le repliche si può evitare, dipende da se le vogliamo o meno.
+                  NOTA: in versioni di redis inferiori alla 5 (come jenkins) usare il seguente comando (dopo aver installato anche il pacchetto con 'yum install redis-trib'):
+                         redis-trib create --replicas 1 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005
+
+		; Nel govway.properties utilizzare la proprietà
+			org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.REDIS.connectionUrl=redis://127.0.0.1:7000
+			E' sufficiente infatti contattare un solo nodo e il client verrà a conoscenza di tutti.
+
+Per accedere al db usare:
+-  redis-cli -c -p 7000
+Una volta collegati per vedere i contatori:
+-  KEYS *
+Per vedere un contatore:
+- GET <KEY>
+
+Per fare lo shutdown del cluster collegarsi via redis-cli e indicare il comando:
+- shutdown
+Per poi fermare le varie istanze:
+- killall -15 redis-server

@@ -22,6 +22,7 @@
 package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
@@ -52,11 +53,13 @@ public class EndRequestProcessor implements EntryProcessor<IDUnivocoGroupByPolic
 	private final ActivePolicy activePolicy;
 	
 	private final MisurazioniTransazione dati;
+	private final Map<String, Object> ctx;
 	private final boolean isApplicabile;
 	private final boolean isViolata;
 
-	public EndRequestProcessor(ActivePolicy policy, MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata) {
+	public EndRequestProcessor(ActivePolicy policy, Map<String, Object> ctx, MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata) {
 		this.activePolicy = policy;
+		this.ctx = ctx;
 		this.dati = dati;
 		this.isApplicabile = isApplicabile;
 		this.isViolata = isViolata;
@@ -75,7 +78,7 @@ public class EndRequestProcessor implements EntryProcessor<IDUnivocoGroupByPolic
 
 		
 		if(this.isApplicabile) {
-			datiCollezionati.registerEndRequest(log, this.activePolicy, this.dati);
+			datiCollezionati.registerEndRequest(log, this.activePolicy, this.ctx, this.dati);
 			List<Integer> esitiCodeOk = null;
 			List<Integer> esitiCodeKo_senzaFaultApplicativo = null;
 			List<Integer> esitiCodeFaultApplicativo = null;
@@ -86,7 +89,7 @@ public class EndRequestProcessor implements EntryProcessor<IDUnivocoGroupByPolic
 				esitiCodeFaultApplicativo = EsitiProperties.getInstance(log,this.dati.getProtocollo()).getEsitiCodeFaultApplicativo();
 				datiCollezionati.updateDatiEndRequestApplicabile(
 						log, 	// logger
-						this.activePolicy, this.dati,
+						this.activePolicy, this.ctx, this.dati,
 						esitiCodeOk,esitiCodeKo_senzaFaultApplicativo, esitiCodeFaultApplicativo, 
 						this.isViolata);
 			}catch(Exception e) {
@@ -97,7 +100,7 @@ public class EndRequestProcessor implements EntryProcessor<IDUnivocoGroupByPolic
 			
 			entry.setValue(datiCollezionati);
 		} else {
-			datiCollezionati.registerEndRequest(null, this.activePolicy, this.dati);
+			datiCollezionati.registerEndRequest(null, this.activePolicy, this.ctx, this.dati);
 			entry.setValue(datiCollezionati);
 		}
 		

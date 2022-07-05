@@ -20,6 +20,8 @@
 
 package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast;
 
+import java.util.Map;
+
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
@@ -43,27 +45,27 @@ public class PolicyGroupByActiveThreadsDistributedNoCache extends AbstractPolicy
 		
 	
 	public PolicyGroupByActiveThreadsDistributedNoCache(ActivePolicy policy, String uniqueIdMap, HazelcastInstance hazelcast) throws PolicyException {
-		super(policy, uniqueIdMap, PolicyGroupByActiveThreadsType.HAZELCAST, hazelcast);		 
+		super(policy, uniqueIdMap, PolicyGroupByActiveThreadsType.HAZELCAST_MAP, hazelcast);		 
 	}
 
 	
 	@Override
-	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy)
+	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx)
 			throws PolicyException {
 		
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
 		
-		return this.distributedMap.executeOnKey(datiGroupBy, this.startRequestProcessor);
+		return this.distributedMap.executeOnKey(datiGroupBy, new StartRequestProcessor(this.activePolicy,ctx));
 	}
 	
 	
 	@Override
 	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione,
-			IDUnivocoGroupByPolicy datiGroupBy) throws PolicyException, PolicyNotFoundException {
+			IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx) throws PolicyException, PolicyNotFoundException {
 		
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
 
-		DatiCollezionati datiCollezionati = this.distributedMap.executeOnKey(datiGroupBy, this.updateDatiRequestProcessor);
+		DatiCollezionati datiCollezionati = this.distributedMap.executeOnKey(datiGroupBy, new UpdateDatiRequestProcessor(this.activePolicy, ctx));
 		//if (datiCollezionati != null) {
 		//	throw new PolicyNotFoundException("Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+datiGroupBy.toString()+"]");
 		//}
@@ -72,13 +74,14 @@ public class PolicyGroupByActiveThreadsDistributedNoCache extends AbstractPolicy
 	
 	
 	@Override
-	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata)
+	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx, 
+			MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata)
 			throws PolicyException, PolicyNotFoundException {
 
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
 
 		// Lavoro sulla copia remota
-		this.distributedMap.executeOnKey(datiGroupBy, new EndRequestProcessor(this.activePolicy, dati, isApplicabile, isViolata));			
+		this.distributedMap.executeOnKey(datiGroupBy, new EndRequestProcessor(this.activePolicy, ctx, dati, isApplicabile, isViolata));			
 	}
 
 

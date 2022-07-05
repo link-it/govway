@@ -858,8 +858,8 @@
 		<!-- HAZELCAST CONFIG -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.config"/>
-			<param name="value" value="${work_dir}/govway.hazelcast.yaml"/>
+			<param name="token" value="org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_MAP.config"/>
+			<param name="value" value="${work_dir}/govway.hazelcast-map.yaml"/>
 		</antcall>
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
@@ -880,6 +880,26 @@
 		    <param name="file" value="${file}"/>
 			<param name="token" value="org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.config"/>
 			<param name="value" value="${work_dir}/govway.hazelcast-near-cache-unsafe-async-map.yaml"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_REPLICATED_MAP.config"/>
+			<param name="value" value="${work_dir}/govway.hazelcast-replicated-map.yaml"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_PNCOUNTER.config"/>
+			<param name="value" value="${work_dir}/govway.hazelcast-pn-counters.yaml"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_ATOMIC_LONG.config"/>
+			<param name="value" value="${work_dir}/govway.hazelcast-atomic-long-counters.yaml"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_ATOMIC_LONG_ASYNC.config"/>
+			<param name="value" value="${work_dir}/govway.hazelcast-atomic-long-async-counters.yaml"/>
 		</antcall>
 
 		<!-- OTHER -->

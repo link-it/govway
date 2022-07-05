@@ -229,7 +229,7 @@
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="controlloTraffico.policyRateLimiting.tipiGestori"/>
-			<param name="value" value="LOCAL,LOCAL_DIVIDED_BY_NODES,HAZELCAST,HAZELCAST_NEAR_CACHE,HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP,HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP,HAZELCAST_LOCAL_CACHE"/>
+			<param name="value" value="LOCAL,LOCAL_DIVIDED_BY_NODES,HAZELCAST_ATOMIC_LONG,HAZELCAST_PNCOUNTER,REDISSON_ATOMIC_LONG,DATABASE"/>
 		</antcall>
 
 		<!-- OTHER -->

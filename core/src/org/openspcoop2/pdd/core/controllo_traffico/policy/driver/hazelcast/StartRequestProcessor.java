@@ -20,12 +20,15 @@
 
 package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast;
 
+import java.util.Date;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.PolicyDateUtils;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.slf4j.Logger;
 
@@ -54,9 +57,11 @@ public class StartRequestProcessor implements EntryProcessor<IDUnivocoGroupByPol
 	
 	private static final long serialVersionUID = 1L;
 	private final ActivePolicy activePolicy;
+	private final Map<String, Object> ctx;
 
-	public StartRequestProcessor(ActivePolicy policy) {
+	public StartRequestProcessor(ActivePolicy policy, Map<String, Object> ctx) {
 		this.activePolicy = policy;
+		this.ctx = ctx;
 	}
 	
 	@Override
@@ -66,7 +71,8 @@ public class StartRequestProcessor implements EntryProcessor<IDUnivocoGroupByPol
 		Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(op2Properties.isControlloTrafficoDebug());
 
 		if (entry.getValue() == null) {
-			entry.setValue(new DatiCollezionati(this.activePolicy.getInstanceConfiguration().getUpdateTime()));
+			Date gestorePolicyConfigDate = PolicyDateUtils.readGestorePolicyConfigDateIntoContext(this.ctx);
+			entry.setValue(new DatiCollezionati(this.activePolicy.getInstanceConfiguration().getUpdateTime(), gestorePolicyConfigDate));
 		}
         else {
         	if(entry.getValue().getUpdatePolicyDate()!=null) {
@@ -77,7 +83,7 @@ public class StartRequestProcessor implements EntryProcessor<IDUnivocoGroupByPol
             }
         }
 
-		entry.getValue().registerStartRequest(log, this.activePolicy);
+		entry.getValue().registerStartRequest(log, this.activePolicy, this.ctx);
 		
 		// mi salvo l'attuale stato
 		DatiCollezionati datiCollezionatiReaded = (DatiCollezionati) entry.getValue().clone(); 

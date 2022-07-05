@@ -21,4 +21,4 @@ hazelcast:
   network:
     port:
       auto-increment: false
-      port: 5702
+      port: 5709

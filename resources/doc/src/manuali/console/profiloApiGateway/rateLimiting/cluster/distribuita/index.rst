@@ -5,7 +5,8 @@ Sincronizzazione Distribuita
 
 Questa modalità consente di implementare qualunque politica di rate limiting in maniera effettivamente distribuita tra i nodi del cluster, indipendentemente dalle modalità previste per il bilanciamento del carico.
 
-Il conteggio delle metriche viene effettuato tramite un archivio dati distribuito implementato tramite Hazelcast (https://github.com/hazelcast/).
+Il conteggio delle metriche viene effettuato tramite un archivio dati distribuito. 
+
 
 *Vantaggi*
 
@@ -21,66 +22,24 @@ Il principale problema con un archivio dati centralizzato è dovuto alla concorr
 
 Per mitigare il problema, è possibile utilizzare modalità asincrone di aggiornamento dei dati tra i nodi del cluster. Con questo approccio il dato 'master' risulta sempre consistente mentre la copia locale di ogni nodo viene aggiornata con sincronizzazioni periodiche, con la controindicazione che la precisione dei conteggi soffre delle finestre di risincronizzazione.
 
-Un'altra possibilità è quella di utilizzare un approccio "get and set", in cui si recupera il valore corrente, lo si incrementa e quindi lo si rispedisce al datastore senza utilizzare le tecniche di incremento atomico fornite dal gestore stesso. In questo modo il dato 'master' perderà di precisione poichè potrà capitare che richieste simultanee gestite su nodi differenti prelevino la stessa informazione e la modifichino senza tenere conto delle altre analoghe operazioni in corso, ottenendo così che il conteggio risulti approssimato per difetto. Per migliorare ulteriormente le prestazioni, anche l'operazione di 'set' può essere resa asincrona. 
+*Soluzioni*
 
-Di seguito vengono fornite le varie modalità di sincronizzazione distribuita configurabili su GovWay, presentate in ordine, dalla modalità di 'Misurazione Esatta' che garantisce il rispetto puntuale delle politiche previste, fino alla modalità con "get and set asincrono", che è quella che garantisce le prestazioni migliori ma con una maggiore perdita di precisione dei conteggi.
+GovWay consente di avere un conteggio delle metriche effettuato tramite una delle seguenti tipologie di archivio dati distribuito:
 
-- *Misurazione Esatta*: attivabile impostando la sincronizzazione '*Distribuita*' e scegliendo le voci '*Misurazione esatta*' e '*Algoritmo full-sync*' (:numref:`configurazioneSincronizzazioneRateLimitingHazelcastFullSync`). Con questa modalità sia il dato 'master' che quelli locali al nodo risultano essere sempre aggiornati.
+- :ref:`headerGWRateLimitingCluster_distribuita_hazelcast` (https://github.com/hazelcast/): soluzione fornita built-in con GovWay, che consente di implementare l'archivio dati distribuito tra i nodi del cluster;
 
-  .. figure:: ../../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingHazelcastFullSync.png
-    :scale: 100%
-    :align: center
-    :name: configurazioneSincronizzazioneRateLimitingHazelcastFullSync
+- :ref:`headerGWRateLimitingCluster_distribuita_redis` (https://redis.io/); soluzione alternativa alla precedente, dove GovWay deve essere configurato per accedere ad un database redis; 
 
-    Sincronizzazione Distribuita con misurazione delle metriche esatta
+- :ref:`headerGWRateLimitingCluster_distribuita_embedded`; implementazione built-in, in cui il dato 'master' viene gestito sul database di GovWay. La soluzione viene fornita per ambienti di test in cui si desidera provare le funzionalità di rate limiting distribuito.
 
-- *Near Cache*: attivabile impostando la sincronizzazione '*Distribuita*' e scegliendo le voci '*Misurazione esatta*' e '*Algoritmo near-cache*' (:numref:`configurazioneSincronizzazioneRateLimitingHazelcastNearCache`). Con questa modalità l'incremento del dato 'master' viene effettuato sempre in maniera atomica, ma la sua esecuzione avviene in maniera asincrona senza bloccare il nodo che ha effettuato l'operazione che utilizza una "NearCache" per consultare i dati locali al nodo. La "NearCache" è una struttura dati fornita da Hazelcast che viene risincronizzata rispetto ai dati remoti con sincronizzazioni periodiche. Maggiori dettagli vengono forniti nella documentazione del prodotto: https://docs.hazelcast.com/imdg/latest/performance/near-cache
+   .. note::
+       La soluzione 'embedded' non è utilizzabile su ambienti di produzione.
 
-  .. figure:: ../../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingHazelcastNearCache.png
-    :scale: 100%
-    :align: center
-    :name: configurazioneSincronizzazioneRateLimitingHazelcastNearCache
-
-    Sincronizzazione Distribuita con misurazione delle metriche esatta in remoto ed utilizzo di una "NearCache" in locale
-
-- *Local Cache*: attivabile impostando la sincronizzazione '*Distribuita*' e scegliendo le voci '*Misurazione esatta*' e '*Algoritmo local-cache*' (:numref:`configurazioneSincronizzazioneRateLimitingHazelcastLocalCache`). Questa modalità è analoga alla precedente, ma i nodi del gateway, anzichè utilizzare la "NearCache" di Hazelcast, utilizzano una propria copia locale del dato che viene risincronizzata ogni 5 secondi. L'intervallo di risincronizzazione può essere modificato agendo sul file *<directory-lavoro>/govway_local.properties* tramite la seguente proprietà:
-
-   ::
-
-      # Intervallo di aggiornamento della cache in secondi
-      org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_LOCAL_CACHE.updateInterval=5
-
-  .. figure:: ../../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingHazelcastLocalCache.png
-    :scale: 100%
-    :align: center
-    :name: configurazioneSincronizzazioneRateLimitingHazelcastLocalCache
-
-    Sincronizzazione Distribuita con misurazione delle metriche esatta in remoto ed utilizzo di una cache locale
-
-- *Misurazione approssimata con "get and set sincrono"*: attivabile impostando la sincronizzazione '*Distribuita*' e scegliendo le voci '*Misurazione approssimata*' e '*Algoritmo remote-sync*' (:numref:`configurazioneSincronizzazioneRateLimitingHazelcastRemoteSync`). Con questa modalità l'incremento viene effettuato utilizzando un approccio "get and set" senza atomicità in cui la modifica del 'dato master' avviene tramite un'operazione sincrona.
-
-  .. figure:: ../../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingHazelcastRemoteSync.png
-    :scale: 100%
-    :align: center
-    :name: configurazioneSincronizzazioneRateLimitingHazelcastRemoteSync
-
-    Sincronizzazione Distribuita con misurazione delle metriche approssimata tramite algoritmo "get and set" con pubblicazione sincrona
-
-- *Misurazione approssimata con "get and set asincrono"*: attivabile impostando la sincronizzazione '*Distribuita*' e scegliendo le voci '*Misurazione approssimata*' e '*Algoritmo remote-async*' (:numref:`configurazioneSincronizzazioneRateLimitingHazelcastRemoteAsync`). Come nella precedente modalità l'incremento viene effettuato utilizzando un approccio "get and set" senza atomicità in cui la modifica del 'dato master' avviene tramite un'operazione asincrona.
-
-  .. figure:: ../../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingHazelcastRemoteAsync.png
-    :scale: 100%
-    :align: center
-    :name: configurazioneSincronizzazioneRateLimitingHazelcastRemoteAsync
-
-    Sincronizzazione Distribuita con misurazione delle metriche approssimata tramite algoritmo "get and set" con pubblicazione asincrona
-
-
-Nella sezione :ref:`headerGWRateLimitingCluster_distribuita_hazelcastConfig` vengono fornite informazioni sul tipo di configurazione utilizzata su Hazelcast, mentre nella sezione :ref:`headerGWRateLimitingCluster_distribuita_hazelcastLog` viene indicato dove è possibile reperire i log emessi da Hazelcast.
 
 .. toctree::
    :maxdepth: 2
 
-   configurazioneHazelcast
-   logHazelcast
+   hazelcast/index
+   redis
+   embedded
 

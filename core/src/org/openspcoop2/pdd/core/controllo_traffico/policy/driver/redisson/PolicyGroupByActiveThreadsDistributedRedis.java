@@ -37,6 +37,7 @@ import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.PolicyDateUtils;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
@@ -81,7 +82,7 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(op2Properties.isControlloTrafficoDebug());
 		
-		this.type = PolicyGroupByActiveThreadsType.REDISSON;
+		this.type = PolicyGroupByActiveThreadsType.REDISSON_MAP;
 		
 		boolean oneMapForeachPolicy = OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryRedisOneMapForeachPolicy();
 		String mapName = "redis-";
@@ -98,7 +99,7 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 
 	
 	@Override
-	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy)
+	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx)
 			throws PolicyException {
 		
 		RTransaction transaction = this.redisson.createTransaction(TransactionOptions.defaults());
@@ -106,7 +107,8 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 		
 		DatiCollezionati datiCollezionati = map.get(datiGroupBy);
 		if (datiCollezionati == null) {
-			datiCollezionati = new DatiCollezionati(this.activePolicy.getInstanceConfiguration().getUpdateTime());
+			Date gestorePolicyConfigDate = PolicyDateUtils.readGestorePolicyConfigDateIntoContext(ctx);
+			datiCollezionati = new DatiCollezionati(this.activePolicy.getInstanceConfiguration().getUpdateTime(), gestorePolicyConfigDate);
 		}
 		else {
 			if(datiCollezionati.getUpdatePolicyDate()!=null) {
@@ -117,7 +119,11 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 			}
 		}
 		
-		datiCollezionati.registerStartRequest(log, this.activePolicy);
+		datiCollezionati.registerStartRequest(log, this.activePolicy, ctx);
+		
+		// mi salvo l'attuale stato
+		DatiCollezionati datiCollezionatiReaded = (DatiCollezionati) datiCollezionati.clone(); 
+		
 		map.fastPut(datiGroupBy, datiCollezionati);
 		
 		try {
@@ -127,13 +133,13 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 			throw new PolicyException("Errore durante la transazione registerStartRequest di Redis", e);
 		}
 		
-		return datiCollezionati;
+		return datiCollezionatiReaded;
 	}
 
 	
 	@Override
 	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione,
-			IDUnivocoGroupByPolicy datiGroupBy) throws PolicyException, PolicyNotFoundException {
+			IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx) throws PolicyException, PolicyNotFoundException {
 		
 		RTransaction transaction = this.redisson.createTransaction(TransactionOptions.defaults());
 		RMap<IDUnivocoGroupByPolicy, DatiCollezionati> map = transaction.getMap(this.mapId);
@@ -143,7 +149,11 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 			throw new PolicyNotFoundException("Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+datiGroupBy.toString()+"]");
 		}		
 		
-		datiCollezionati.updateDatiStartRequestApplicabile(log, this.activePolicy);
+		datiCollezionati.updateDatiStartRequestApplicabile(log, this.activePolicy, ctx);
+		
+		// mi salvo l'attuale stato
+		DatiCollezionati datiCollezionatiReaded = (DatiCollezionati) datiCollezionati.clone(); 
+		
 		map.fastPut(datiGroupBy, datiCollezionati);
 		
 		try {
@@ -153,11 +163,11 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 			throw new PolicyException("Errore durante la transazione registerStartRequest di Redis", e);
 		}
 		
-		return datiCollezionati;
+		return datiCollezionatiReaded;
 	}
 
 	@Override
-	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy,
+	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx,
 			MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata)
 			throws PolicyException, PolicyNotFoundException {
 		
@@ -170,7 +180,7 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 		}	
 		
 		if(isApplicabile) {
-			datiCollezionati.registerEndRequest(log, this.activePolicy, dati);
+			datiCollezionati.registerEndRequest(log, this.activePolicy, ctx, dati);
 			List<Integer> esitiCodeOk = null;
 			List<Integer> esitiCodeKo_senzaFaultApplicativo = null;
 			List<Integer> esitiCodeFaultApplicativo = null;
@@ -181,7 +191,7 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 				esitiCodeFaultApplicativo = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeFaultApplicativo();
 				datiCollezionati.updateDatiEndRequestApplicabile(
 						log, 	// logger
-						this.activePolicy, dati,
+						this.activePolicy, ctx, dati,
 						esitiCodeOk,esitiCodeKo_senzaFaultApplicativo, esitiCodeFaultApplicativo, 
 						isViolata);
 			}catch(Exception e) {
@@ -189,7 +199,7 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 			}
 			map.fastPut(datiGroupBy, datiCollezionati);
 		} else {
-			datiCollezionati.registerEndRequest(null, this.activePolicy, dati);
+			datiCollezionati.registerEndRequest(null, this.activePolicy, ctx, dati);
 			map.fastPut(datiGroupBy, datiCollezionati);
 		}
 		

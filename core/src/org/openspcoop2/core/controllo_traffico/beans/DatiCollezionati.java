@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.constants.TipoBanda;
@@ -52,35 +53,42 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public DatiCollezionati(Date updatePolicyDate) {
+	public DatiCollezionati(Date updatePolicyDate, Date gestorePolicyConfigDate) {
 		this.updatePolicyDate = updatePolicyDate;
+		this.gestorePolicyConfigDate = gestorePolicyConfigDate;
 	}
 
 	// data di lettura delle informazioni
 	private Date cloneDate = null; // non deve essere gestita. Viene solamente inizializzata ad ogni clone
 	
 	// tipo di risorsa
-	private TipoRisorsa tipoRisorsa = null;
+	protected TipoRisorsa tipoRisorsa = null;
 	
 	// threads
-	private Long activeRequestCounter = null; // tiene traccia del numero di richieste attive sempre. Utile in jmx
+	protected Long activeRequestCounter = null; // tiene traccia del numero di richieste attive sempre. Utile in jmx
 	
 	// data di creazione
-	private Date creationDate = null;
+	protected Date creationDate = null;
 	// data di registrazione/aggiornamento policy
 	private Date updatePolicyDate = null;
+	// dati impostazione gestore della policy
+	protected Date gestorePolicyConfigDate = null;
+	
+	// dati di attuazione manuale di un reset dei contatori
+	private Long manuallyResetPolicyTimeMillis = null;
+	private final static String MANUALLY_RESET_POLICY_TIME_MILLIS = "MANUALLY_RESET_POLICY_TIME_MS";
 	
 	// dati iniziali
 	private UnitaTemporale policyDateTypeInterval = null;
 	private Integer policyDateInterval = null;
 	private Boolean policyDateCurrentInterval  = null;
 	private TipoFinestra policyDateWindowInterval = null;
-	private Boolean policyRealtime  = null;
+	protected Boolean policyRealtime  = null;
 	// dati dinamici
-	private Date policyDate = null;
-	private Long policyRequestCounter = null;
-	private Long policyCounter = null; // utilizzato per tempi o banda
-	private Long policyDenyRequestCounter = null;
+	protected Date policyDate = null;
+	protected Long policyRequestCounter = null;
+	protected Long policyCounter = null; // utilizzato per tempi o banda
+	protected Long policyDenyRequestCounter = null;
 	private Date oldPolicyDate = null;
 	private Long oldPolicyRequestCounter = null;
 	private Long oldPolicyCounter = null; // utilizzato per tempi o banda
@@ -90,18 +98,18 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	private Integer policyDegradoPrestazionaleDateInterval  = null;
 	private Boolean policyDegradoPrestazionaleDateCurrentInterval = null;
 	private TipoFinestra policyDegradoPrestazionaleDateWindowInterval = null;
-	private Boolean policyDegradoPrestazionaleRealtime  = null;
+	protected  Boolean policyDegradoPrestazionaleRealtime  = null;
 	// dati dinamici degrado prestazionale
-	private Date policyDegradoPrestazionaleDate = null;
-	private Long policyDegradoPrestazionaleRequestCounter = null;
-	private Long policyDegradoPrestazionaleCounter = null;
+	protected Date policyDegradoPrestazionaleDate = null;
+	protected Long policyDegradoPrestazionaleRequestCounter = null;
+	protected Long policyDegradoPrestazionaleCounter= null;
 	private Date oldPolicyDegradoPrestazionaleDate = null;
 	private Long oldPolicyDegradoPrestazionaleRequestCounter = null;
 	private Long oldPolicyDegradoPrestazionaleCounter = null; // utilizzato per tempi o banda
 	
 		
 
-	private void initDatiIniziali(ActivePolicy activePolicy){
+	public void initDatiIniziali(ActivePolicy activePolicy){
 		
 		// tipo di risorsa
 		this.tipoRisorsa = activePolicy.getTipoRisorsaPolicy();
@@ -276,15 +284,25 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		}
 	}
 	
-
-
 	@Override
-	public Object clone(){
+	public Object clone() {
+		return clone(false); // se servissse avere una immagine con i dati remoti, usare la clone con il boolean.
+	}
+	public DatiCollezionati clone(boolean readRemoteInfo) {
+		Date updatePolicyDate = new Date(this.updatePolicyDate.getTime());
+		Date gestorePolicyConfigDate = null;
+		if(this.gestorePolicyConfigDate!=null) {
+			gestorePolicyConfigDate = new Date(this.gestorePolicyConfigDate.getTime());
+		}
+		
+		DatiCollezionati dati = new DatiCollezionati(updatePolicyDate, gestorePolicyConfigDate);
+		
+		return setValuesIn(dati, readRemoteInfo);
+	}
+
+	public DatiCollezionati setValuesIn(DatiCollezionati dati, boolean readRemoteInfo){
 		
 		// data di registrazione/aggiornamento policy
-		Date updatePolicyDate = new Date(this.updatePolicyDate.getTime());
-		
-		DatiCollezionati dati = new DatiCollezionati(updatePolicyDate);
 		
 		dati.cloneDate = DateManager.getDate();
 		
@@ -294,10 +312,15 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		}
 		
 		// threads
-		dati.activeRequestCounter = Long.valueOf(this.activeRequestCounter);
+		Long getActiveRequestCounter = this.getActiveRequestCounter(readRemoteInfo);
+		if(getActiveRequestCounter!=null) {
+			dati.activeRequestCounter = Long.valueOf(getActiveRequestCounter);
+		}
 		
 		// data di creazione
-		dati.creationDate = new Date(this.creationDate.getTime());
+		if(this.creationDate!=null) {
+			dati.creationDate = new Date(this.creationDate.getTime());
+		}
 		
 		// dati iniziali
 		if(this.policyDateTypeInterval!=null){
@@ -320,14 +343,17 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		if(this.policyDate!=null){
 			dati.policyDate = new Date(this.policyDate.getTime());
 		}	
-		if(this.policyRequestCounter!=null){
-			dati.policyRequestCounter = Long.valueOf(this.policyRequestCounter);
+		Long getPolicyRequestCounter = this.getPolicyRequestCounter(readRemoteInfo);
+		if(getPolicyRequestCounter!=null){
+			dati.policyRequestCounter = Long.valueOf(getPolicyRequestCounter);
 		}
-		if(this.policyCounter!=null){
-			dati.policyCounter = Long.valueOf(this.policyCounter);
+		Long getPolicyCounter = this.getPolicyCounter(readRemoteInfo);
+		if(getPolicyCounter!=null){
+			dati.policyCounter = Long.valueOf(getPolicyCounter);
 		}
-		if(this.policyDenyRequestCounter!=null){
-			dati.policyDenyRequestCounter = Long.valueOf(this.policyDenyRequestCounter);
+		Long getPolicyDenyRequestCounter = this.getPolicyDenyRequestCounter(readRemoteInfo);
+		if(getPolicyDenyRequestCounter!=null){
+			dati.policyDenyRequestCounter = Long.valueOf(getPolicyDenyRequestCounter);
 		}
 		if(this.oldPolicyDate!=null){
 			dati.oldPolicyDate = new Date(this.oldPolicyDate.getTime());
@@ -360,11 +386,13 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		if(this.policyDegradoPrestazionaleDate!=null){
 			dati.policyDegradoPrestazionaleDate = new Date(this.policyDegradoPrestazionaleDate.getTime());
 		}	
-		if(this.policyDegradoPrestazionaleRequestCounter!=null){
-			dati.policyDegradoPrestazionaleRequestCounter = Long.valueOf(this.policyDegradoPrestazionaleRequestCounter);
+		Long getPolicyDegradoPrestazionaleRequestCounter = this.getPolicyDegradoPrestazionaleRequestCounter(readRemoteInfo);
+		if(getPolicyDegradoPrestazionaleRequestCounter!=null){
+			dati.policyDegradoPrestazionaleRequestCounter = Long.valueOf(getPolicyDegradoPrestazionaleRequestCounter);
 		}
-		if(this.policyDegradoPrestazionaleCounter!=null){
-			dati.policyDegradoPrestazionaleCounter = Long.valueOf(this.policyDegradoPrestazionaleCounter);
+		Long getPolicyDegradoPrestazionaleCounter = this.getPolicyDegradoPrestazionaleCounter(readRemoteInfo);
+		if(getPolicyDegradoPrestazionaleCounter!=null){
+			dati.policyDegradoPrestazionaleCounter = Long.valueOf(getPolicyDegradoPrestazionaleCounter);
 		}
 		if(this.oldPolicyDegradoPrestazionaleDate!=null){
 			dati.oldPolicyDegradoPrestazionaleDate = new Date(this.oldPolicyDegradoPrestazionaleDate.getTime());
@@ -404,7 +432,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 			bf.append("\n");
 		}
 		bf.append("\tRichieste Attive: ");
-		bf.append(this.activeRequestCounter);
+		bf.append(this.getActiveRequestCounter(true));
 		
 		// data di creazione
 		bf.append("\n");
@@ -415,6 +443,13 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		bf.append("\n");
 		bf.append("\tData Registrazione/Aggiornamento Policy: ");
 		bf.append(dateformat.format(this.updatePolicyDate));
+		
+		// data di registrazione/aggiornamento policy
+		if(this.gestorePolicyConfigDate!=null) {
+			bf.append("\n");
+			bf.append("\tData Configurazione Gestore Policy: ");
+			bf.append(dateformat.format(this.gestorePolicyConfigDate));
+		}
 		
 		// Data now
 		Date now = null;
@@ -484,12 +519,14 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 			}
 		}
 					
-		if(this.policyRequestCounter!=null){
+		Long getPolicyRequestCounter = this.getPolicyRequestCounter(true);
+		if(getPolicyRequestCounter!=null){
 			bf.append("\n");
 			bf.append("\tNumero Richieste Conteggiate: ");
-			bf.append(this.policyRequestCounter);
+			bf.append(getPolicyRequestCounter);
 		}
-		if(this.policyCounter!=null){
+		Long getPolicyCounter = this.getPolicyCounter(true);
+		if(getPolicyCounter!=null){
 			bf.append("\n");
 			bf.append("\tContatore: ");
 			if(this.tipoRisorsa!=null){
@@ -500,31 +537,31 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				case NUMERO_FAULT_APPLICATIVI:
 				case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
 				case DIMENSIONE_MASSIMA_MESSAGGIO: // non viene usata
-					bf.append(this.policyCounter);
+					bf.append(getPolicyCounter);
 					break;
 				case OCCUPAZIONE_BANDA:
-					bf.append(DatiCollezionati.translateToKb(this.policyCounter));
+					bf.append(DatiCollezionati.translateToKb(getPolicyCounter));
 					bf.append(" kb (");
-					bf.append(this.policyCounter);
+					bf.append(getPolicyCounter);
 					bf.append(" bytes)");
 					break;
 				case TEMPO_COMPLESSIVO_RISPOSTA:
-					bf.append(DatiCollezionati.translateToSeconds(this.policyCounter));
+					bf.append(DatiCollezionati.translateToSeconds(getPolicyCounter));
 					bf.append(" secondi (");
-					bf.append(this.policyCounter);
+					bf.append(getPolicyCounter);
 					bf.append(" ms)");
 					break;
 				case TEMPO_MEDIO_RISPOSTA:
-					bf.append(this.policyCounter);
+					bf.append(getPolicyCounter);
 					bf.append(" ms");
 					break;
 				}
 			}
 			else{
-				bf.append(this.policyCounter);
+				bf.append(getPolicyCounter);
 			}
 		}
-		Double avg = this.getPolicyAvgValue();
+		Double avg = this.getPolicyAvgValue(true);
 		if(avg!=null){
 			bf.append("\n");
 			bf.append("\tValore Medio: ");
@@ -560,10 +597,11 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				bf.append(avg.longValue());	
 			}
 		}
-		if(this.policyDenyRequestCounter!=null){
+		Long getPolicyDenyRequestCounter = this.getPolicyDenyRequestCounter(true);
+		if(getPolicyDenyRequestCounter!=null){
 			bf.append("\n");
 			bf.append("\tNumero Richieste Bloccate: ");
-			bf.append(this.policyDenyRequestCounter);
+			bf.append(getPolicyDenyRequestCounter);
 		}
 		
 		if(leftPrecedente!=null && rightPrecedente!=null){
@@ -732,18 +770,20 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 			}
 		}
 				
-		if(this.policyDegradoPrestazionaleRequestCounter!=null){
+		Long getPolicyDegradoPrestazionaleRequestCounter = this.getPolicyDegradoPrestazionaleRequestCounter(true);
+		if(getPolicyDegradoPrestazionaleRequestCounter!=null){
 			bf.append("\n");
 			bf.append("\tNumeroRichieste: ");
-			bf.append(this.policyDegradoPrestazionaleRequestCounter);
+			bf.append(getPolicyDegradoPrestazionaleRequestCounter);
 		}
-		if(this.policyDegradoPrestazionaleCounter!=null){
+		Long getPolicyDegradoPrestazionaleCounter = this.getPolicyDegradoPrestazionaleCounter(true);
+		if(getPolicyDegradoPrestazionaleCounter!=null){
 			bf.append("\n");
 			bf.append("\tContatore: ");
-			bf.append(this.policyDegradoPrestazionaleCounter);
+			bf.append(getPolicyDegradoPrestazionaleCounter);
 			bf.append(" ms");
 		}
-		Double avgDegradoPrestazionale = this.getPolicyDegradoPrestazionaleAvgValue();
+		Double avgDegradoPrestazionale = this.getPolicyDegradoPrestazionaleAvgValue(true);
 		if(avgDegradoPrestazionale!=null){
 			bf.append("\n");
 			bf.append("\tValore Medio: ");
@@ -799,7 +839,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	
 	
 
-	private boolean isRisorsaContaNumeroRichieste(TipoRisorsa tipoRisorsa) {
+	protected boolean isRisorsaContaNumeroRichieste(TipoRisorsa tipoRisorsa) {
 		switch (tipoRisorsa) {
 		case NUMERO_RICHIESTE:
 		case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
@@ -815,7 +855,9 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		}
 		return false;
 	}
-	private boolean isRisorsaContaNumeroRichiesteDipendentiEsito(TipoRisorsa tipoRisorsa) {
+	
+	
+	protected boolean isRisorsaContaNumeroRichiesteDipendentiEsito(TipoRisorsa tipoRisorsa) {
 		switch (tipoRisorsa) {
 		case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
 		case NUMERO_RICHIESTE_FALLITE:
@@ -833,19 +875,35 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	}
 	
 
-	private void checkPolicyCounterForDate(Logger log, ActivePolicy activePolicy){
+	protected void resetPolicyCounterForDate(Date d) {
+		this.policyDate = d;
+		if(this.policyRealtime!=null && this.policyRealtime){
+			this.policyRequestCounter = 0l;
+			this.policyDenyRequestCounter = 0l;
+			if(this.tipoRisorsa==null || !isRisorsaContaNumeroRichieste(this.tipoRisorsa)){
+				//SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
+				//System.out.println("Resetto policy counter a zero per intervallo d["+dateformat.format(d)+"]");
+				this.policyCounter = 0l;
+			}
+		}
+	}
+	
+	
+	protected void resetPolicyCounterForDateDegradoPrestazionale(Date d) {
+		this.policyDegradoPrestazionaleDate = d;
+		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
+			this.policyDegradoPrestazionaleRequestCounter = 0l;
+			this.policyDegradoPrestazionaleCounter = 0l;
+		}
+		
+	}
+	
+
+	protected void checkPolicyCounterForDate(Logger log, ActivePolicy activePolicy){
 		
 		if(this.policyDate==null){
-			
 			// first-init
-			this.policyDate = DateUtils.convertToLeftInterval(DateManager.getDate(),this.policyDateTypeInterval);
-			if(this.policyRealtime!=null && this.policyRealtime){
-				this.policyRequestCounter = 0l;
-				this.policyDenyRequestCounter = 0l;
-				if(this.tipoRisorsa==null || !isRisorsaContaNumeroRichieste(this.tipoRisorsa)){
-					this.policyCounter = 0l;
-				}
-			}
+			resetPolicyCounterForDate(DateUtils.convertToLeftInterval(DateManager.getDate(),this.policyDateTypeInterval));
 			
 			if(this.policyRealtime!=null && !this.policyRealtime){
 				// statistico. Serve subito anche l'intervallo precedente
@@ -895,7 +953,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 					
 					// la nuova richiesta non riguarda l'intervallo+1 rispetto al precedente, ma intervalli successivi.
 					// Devo resettare anche i vecchi contatori
-					if(TipoFinestra.PRECEDENTE.equals(this.getPolicyDegradoPrestazionaleDateWindowInterval())){				
+					if(TipoFinestra.PRECEDENTE.equals(this.getPolicyDateWindowInterval())){				
 						// Salvo old
 						this.oldPolicyDate = d;
 						if(this.policyRealtime!=null && this.policyRealtime){
@@ -920,16 +978,8 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 								dateformat.format(now)+"]: "+before);
 					}
 				}
-				this.policyDate = d;
-				if(this.policyRealtime!=null && this.policyRealtime){
-					this.policyRequestCounter = 0l;
-					this.policyDenyRequestCounter = 0l;
-					if(this.tipoRisorsa==null || !isRisorsaContaNumeroRichieste(this.tipoRisorsa)){
-						//SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
-						//System.out.println("Resetto policy counter a zero per intervallo d["+dateformat.format(d)+"]");
-						this.policyCounter = 0l;
-					}
-				}
+				
+				resetPolicyCounterForDate(d);
 				
 			} 
 			
@@ -937,17 +987,13 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				
 	}
 	
-	
-	private void checkPolicyCounterForDateDegradoPrestazionale(Logger log, ActivePolicy activePolicy){
+
+	protected void checkPolicyCounterForDateDegradoPrestazionale(Logger log, ActivePolicy activePolicy){
 		
 		if(this.policyDegradoPrestazionaleDate==null){
 			
 			// first-init
-			this.policyDegradoPrestazionaleDate = DateUtils.convertToLeftInterval(DateManager.getDate(),this.policyDegradoPrestazionaleDateTypeInterval);
-			if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
-				this.policyDegradoPrestazionaleRequestCounter = 0l;
-				this.policyDegradoPrestazionaleCounter = 0l;
-			}
+			resetPolicyCounterForDateDegradoPrestazionale(DateUtils.convertToLeftInterval(DateManager.getDate(),this.policyDegradoPrestazionaleDateTypeInterval));
 			
 			if(this.policyDegradoPrestazionaleRealtime!=null && !this.policyDegradoPrestazionaleRealtime){
 				// statistico. Serve subito anche l'intervallo precedente
@@ -1011,21 +1057,22 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 								dateformat.format(now)+"]: "+before);
 					}
 				}
-				this.policyDegradoPrestazionaleDate = d;
-				if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
-					this.policyDegradoPrestazionaleRequestCounter = 0l;
-					this.policyDegradoPrestazionaleCounter = 0l;
-				}
-				
+				resetPolicyCounterForDateDegradoPrestazionale(d);
 			} 
 			
 		}
 				
 	}
 	
+	// Questo metodo viene chiamato dai metodi 'resetCounters' degli oggetti PolicyGroupByActiveThreads che a sua volta sono invocabili solamente via Jmx/Console
 	public void resetCounters(){
 		this.resetCounters(null);
+		
+		this.manuallyResetPolicyTimeMillis = DateManager.getTimeMillis();
 	}
+	// Questo metodo viene invocato quando viene rilevata una modifica ai valori di soglia di una policy e quindi viene aggiornata l'updatePolicyDate
+	// In questo metodo non serve registrare il manuallyResetPolicyTimeMillis poichè il metodo viene invocato sempre prima di una 'registerStartRequest' mentre la funzione del manuallyResetPolicyTimeMillis
+	// serve ad ignorare la gestione successiva ad un reset counter per le transazioni in corso.
 	public void resetCounters(Date updatePolicyDate){
 		
 		if(updatePolicyDate!=null) {
@@ -1062,6 +1109,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		if(this.oldPolicyDegradoPrestazionaleCounter!=null){
 			this.oldPolicyDegradoPrestazionaleCounter = 0l;
 		}
+		
 	}
 	
 	public void checkDate(Logger log, ActivePolicy activePolicy){
@@ -1086,13 +1134,43 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		
 	}
 	
-	public void registerStartRequest(Logger log, ActivePolicy activePolicy){
+	
+	private boolean skipBecauseManuallyResetAfterStartRequest(String source, Map<String, Object> ctx) {
+		if(this.manuallyResetPolicyTimeMillis!=null && ctx!=null) {
+			Object o = ctx.get(MANUALLY_RESET_POLICY_TIME_MILLIS);
+			if(o==null) {
+				// transazione gestita precedentemente al reset dei contatori
+				//System.out.println("@"+source+" RILEVATO RESET '"+this.manuallyResetPolicyTimeMillis+"', trovato in ctx 'NULL'");
+				return true;
+			}
+			Long l = (Long) o;
+			if(l.longValue() != this.manuallyResetPolicyTimeMillis.longValue()) {
+				// transazione gestita precedentemente al reset dei contatori
+				//System.out.println("@"+source+" RILEVATO RESET '"+this.manuallyResetPolicyTimeMillis+"', trovato in ctx '"+l+"'");
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	
+	protected void _registerStartRequest_incrementActiveRequestCounter(DatiCollezionati datiCollezionatiPerPolicyVerifier) {
+		this.activeRequestCounter++;
+		if(datiCollezionatiPerPolicyVerifier!=null) {
+			datiCollezionatiPerPolicyVerifier.activeRequestCounter = this.activeRequestCounter;
+		}
+	}
+	public void registerStartRequest(Logger log, ActivePolicy activePolicy, Map<String, Object> ctx){
+		registerStartRequest(log, activePolicy, ctx, null);
+	}
+	public void registerStartRequest(Logger log, ActivePolicy activePolicy, Map<String, Object> ctx, DatiCollezionati datiCollezionatiPerPolicyVerifier){
 		
 		if(this.creationDate==null){
 			this.initDatiIniziali(activePolicy);
 		}
 		
-		this.activeRequestCounter++;
+		_registerStartRequest_incrementActiveRequestCounter(datiCollezionatiPerPolicyVerifier);
 		
 		if(this.getPolicyDateWindowInterval()!=null && 
 				TipoFinestra.SCORREVOLE.equals(this.getPolicyDateWindowInterval())==false){
@@ -1113,9 +1191,25 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 			// }
 		}
 		
+		if(this.manuallyResetPolicyTimeMillis!=null && ctx!=null) {
+			ctx.put(MANUALLY_RESET_POLICY_TIME_MILLIS, this.manuallyResetPolicyTimeMillis);
+		}
 	}
 	
-	public boolean updateDatiStartRequestApplicabile(Logger log, ActivePolicy activePolicy){
+	protected void _updateDatiStartRequestApplicabile_incrementRequestCounter(DatiCollezionati datiCollezionatiPerPolicyVerifier) {
+		this.policyRequestCounter++;
+		if(datiCollezionatiPerPolicyVerifier!=null) {
+			datiCollezionatiPerPolicyVerifier.policyRequestCounter = this.policyRequestCounter;
+		}
+	}
+	public boolean updateDatiStartRequestApplicabile(Logger log, ActivePolicy activePolicy, Map<String, Object> ctx){
+		return updateDatiStartRequestApplicabile(log, activePolicy, ctx, null);
+	}
+	public boolean updateDatiStartRequestApplicabile(Logger log, ActivePolicy activePolicy, Map<String, Object> ctx, DatiCollezionati datiCollezionatiPerPolicyVerifier){
+		
+		if(skipBecauseManuallyResetAfterStartRequest("updateDatiStartRequestApplicabile", ctx)) {
+			return false;
+		}
 		
 		if(this.getPolicyDateWindowInterval()!=null && 
 				TipoFinestra.SCORREVOLE.equals(this.getPolicyDateWindowInterval())==false){
@@ -1127,7 +1221,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				// Lo stesso per le richieste che dipendono dall'esito devo incrementarle solo quando conosco l'esito della transazione
 				if( (TipoRisorsa.TEMPO_MEDIO_RISPOSTA.equals(activePolicy.getTipoRisorsaPolicy()) == false) &&
 						isRisorsaContaNumeroRichiesteDipendentiEsito(activePolicy.getTipoRisorsaPolicy())==false){
-					this.policyRequestCounter++; 
+					_updateDatiStartRequestApplicabile_incrementRequestCounter(datiCollezionatiPerPolicyVerifier);
 					return true;
 				}
 			}
@@ -1138,14 +1232,28 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 
 	}
 	
-	public void registerEndRequest(Logger log, ActivePolicy activePolicy, MisurazioniTransazione dati){
+	protected void _registerEndRequest_decrementActiveRequestCounter() {
+		this.activeRequestCounter--;
+	}
+	protected void _registerEndRequest_incrementDegradoPrestazionaleRequestCounter() {
+		this.policyDegradoPrestazionaleRequestCounter++;
+	}
+	protected void _registerEndRequest_incrementDegradoPrestazionaleCounter(long latenza) {
+		this.policyDegradoPrestazionaleCounter = this.policyDegradoPrestazionaleCounter + latenza;
+	}
+	public void registerEndRequest(Logger log, ActivePolicy activePolicy, Map<String, Object> ctx, MisurazioniTransazione dati){
 		
 		if(this.creationDate==null){
 			return; // non inizializzato?
 		}
 		
-		this.activeRequestCounter--;
+		_registerEndRequest_decrementActiveRequestCounter();
 				
+		// Il decrement delle richieste attive deve comunque essere attuato poichè il reset dei contatori non insiste sul numero di richieste attive
+		if(skipBecauseManuallyResetAfterStartRequest("registerEndRequest", ctx)) {
+			return;
+		}
+		
 		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
 			
 			long latenza = 0;
@@ -1168,17 +1276,33 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 			}
 			
 			if(found){
-				this.policyDegradoPrestazionaleRequestCounter++;
-				this.policyDegradoPrestazionaleCounter = this.policyDegradoPrestazionaleCounter + latenza;
+				_registerEndRequest_incrementDegradoPrestazionaleRequestCounter();
+				_registerEndRequest_incrementDegradoPrestazionaleCounter(latenza);
 			}
 			
 		}
 	}
 	
-	public void updateDatiEndRequestApplicabile(Logger log, ActivePolicy activePolicy,
+	protected void _updateDatiEndRequestApplicabile_incrementRequestCounter() {
+		this.policyRequestCounter++;
+	}
+	protected void _updateDatiEndRequestApplicabile_decrementRequestCounter() {
+		this.policyRequestCounter--;
+	}
+	protected void _updateDatiEndRequestApplicabile_incrementDenyRequestCounter() {
+		this.policyDenyRequestCounter++;
+	}
+	protected void _updateDatiEndRequestApplicabile_incrementCounter(long v) {
+		this.policyCounter = this.policyCounter + v;
+	}
+	public void updateDatiEndRequestApplicabile(Logger log, ActivePolicy activePolicy, Map<String, Object> ctx,
 			MisurazioniTransazione dati,
 			List<Integer> esitiCodeOk, List<Integer> esitiCodeKo_senzaFaultApplicativo, List<Integer> esitiCodeFaultApplicativo, 
 			boolean isViolata) throws PolicyException{
+		
+		if(skipBecauseManuallyResetAfterStartRequest("updateDatiEndRequestApplicabile", ctx)) {
+			return;
+		}
 		
 		if(this.policyRealtime!=null && this.policyRealtime){
 		
@@ -1194,11 +1318,11 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
             if(foundEsitoDeny){
             	if( (TipoRisorsa.TEMPO_MEDIO_RISPOSTA.equals(activePolicy.getTipoRisorsaPolicy()) == false) &&
 						isRisorsaContaNumeroRichiesteDipendentiEsito(activePolicy.getTipoRisorsaPolicy())==false){          		
-            		this.policyRequestCounter--; // l'avevo incrementato nello start
+            		_updateDatiEndRequestApplicabile_decrementRequestCounter(); // l'avevo incrementato nello start
             	}
             	if(isViolata) {
             		// Aumento solamente il contatore della policy la quale ha bloccato la transazione
-            		this.policyDenyRequestCounter++;
+            		_updateDatiEndRequestApplicabile_incrementDenyRequestCounter();
             	}
 				return; // non incremento alcun contatore.
 			}
@@ -1248,7 +1372,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				}
 				for (int esitoAppartenenteGruppo : esitiAppartenentiGruppo) {
 					if(dati.getEsitoTransazione() == esitoAppartenenteGruppo){
-						this.policyRequestCounter++; 
+						_updateDatiEndRequestApplicabile_incrementRequestCounter();
 						break;
 					}
 				}
@@ -1258,7 +1382,8 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				
 				// viene misurata la banda "generata" dalle applicazioni
 				//System.out.println("Incremento banda da "+this.policyCounter);
-				this.policyCounter = this.policyCounter + this.getBanda(activePolicy.getConfigurazionePolicy().getValoreTipoBanda(), dati);
+				long banda = this.getBanda(activePolicy.getConfigurazionePolicy().getValoreTipoBanda(), dati);
+				_updateDatiEndRequestApplicabile_incrementCounter(banda);
 				//System.out.println("Incremento banda a "+this.policyCounter);
 								
 				break;
@@ -1280,7 +1405,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 					if(dati.getEsitoTransazione() == esitoValido){
 						long latenza = this.getLatenza(activePolicy.getConfigurazionePolicy().getValoreTipoLatenza(), dati);
 						//System.out.println("Incremento tempo da "+this.policyCounter);
-						this.policyCounter = this.policyCounter + latenza;
+						_updateDatiEndRequestApplicabile_incrementCounter(latenza);
 						//System.out.println("Incremento tempo a "+this.policyCounter);
 						found = true;
 						break;
@@ -1288,7 +1413,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				}
 			
 				if(found && TipoRisorsa.TEMPO_MEDIO_RISPOSTA.equals(activePolicy.getTipoRisorsaPolicy())){
-					this.policyRequestCounter++; 
+					_updateDatiEndRequestApplicabile_incrementRequestCounter(); 
 				}
 				
 				break;
@@ -1298,7 +1423,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 					
 	}
 	
-	private long getLatenza(TipoLatenza tipoLatenza, MisurazioniTransazione dati){
+	protected long getLatenza(TipoLatenza tipoLatenza, MisurazioniTransazione dati){
 		long latenza = 0;
 		switch (tipoLatenza) {
 		case TOTALE:
@@ -1323,7 +1448,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		return latenza;
 	}
 	
-	private long getBanda(TipoBanda tipoBanda, MisurazioniTransazione dati){
+	protected long getBanda(TipoBanda tipoBanda, MisurazioniTransazione dati){
 		
 		long bandaInterna = 0;
 		long bandaEsterna = 0;
@@ -1385,7 +1510,10 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		return this.tipoRisorsa;
 	}
 	
-	public long getActiveRequestCounter() {
+	public Long getActiveRequestCounter() {
+		return getActiveRequestCounter(false);
+	}
+	protected Long getActiveRequestCounter(boolean readRemoteInfo) {
 		return this.activeRequestCounter;
 	}
 	public Date getCreationDate() {
@@ -1394,26 +1522,40 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	public Date getUpdatePolicyDate() {
 		return this.updatePolicyDate;
 	}
+	public Date getGestorePolicyConfigDate() {
+		return this.gestorePolicyConfigDate;
+	}
 
 	public Date getPolicyDate() {
 		return this.policyDate;
 	}	
 	public Long getPolicyRequestCounter() {
+		return getPolicyRequestCounter(false);
+	}
+	protected Long getPolicyRequestCounter(boolean readRemoteInfo) {
 		return this.policyRequestCounter;
 	}
 	public Long getPolicyCounter() {
+		return getPolicyCounter(false);
+	}
+	protected Long getPolicyCounter(boolean readRemoteInfo) {
 		return this.policyCounter;
 	}
 	public Double getPolicyAvgValue(){
+		return getPolicyAvgValue(false);
+	}
+	protected Double getPolicyAvgValue(boolean readRemoteInfo){
 		Double doubleValue = null;
-		if(this.policyCounter!=null && this.policyRequestCounter!=null){
-			double c = this.policyCounter.doubleValue();
-			double n = this.policyRequestCounter.doubleValue();
+		Long getPolicyCounter = getPolicyCounter(readRemoteInfo);
+		Long getPolicyRequestCounter = getPolicyRequestCounter(readRemoteInfo);
+		if(getPolicyCounter!=null && getPolicyRequestCounter!=null){
+			double c = getPolicyCounter.doubleValue();
+			double n = getPolicyRequestCounter.doubleValue();
 			doubleValue = c/n;
 		}
 		return doubleValue;
 	}
-	public Long getPolicyDenyRequestCounter() {
+	protected Long getPolicyDenyRequestCounter(boolean readRemoteInfo) {
 		return this.policyDenyRequestCounter;
 	}
 	public Date getLeftDateWindowCurrentInterval() {
@@ -1501,17 +1643,22 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	public Date getPolicyDegradoPrestazionaleDate() {
 		return this.policyDegradoPrestazionaleDate;
 	}
-	public Long getPolicyDegradoPrestazionaleRequestCounter() {
+	protected Long getPolicyDegradoPrestazionaleRequestCounter(boolean readRemoteInfo) {
 		return this.policyDegradoPrestazionaleRequestCounter;
 	}
-	public Long getPolicyDegradoPrestazionaleCounter() {
+	protected Long getPolicyDegradoPrestazionaleCounter(boolean readRemoteInfo) {
 		return this.policyDegradoPrestazionaleCounter;
 	}
 	public Double getPolicyDegradoPrestazionaleAvgValue(){
+		return getPolicyDegradoPrestazionaleAvgValue(false);
+	}
+	protected Double getPolicyDegradoPrestazionaleAvgValue(boolean readRemoteInfo){
 		Double doubleValue = null;
-		if(this.policyDegradoPrestazionaleCounter!=null && this.policyDegradoPrestazionaleRequestCounter!=null){
-			double c = this.policyDegradoPrestazionaleCounter.doubleValue();
-			double n = this.policyDegradoPrestazionaleRequestCounter.doubleValue();
+		Long getPolicyDegradoPrestazionaleRequestCounter = getPolicyDegradoPrestazionaleRequestCounter(readRemoteInfo);
+		Long getPolicyDegradoPrestazionaleCounter = getPolicyDegradoPrestazionaleCounter(readRemoteInfo);
+		if(getPolicyDegradoPrestazionaleCounter!=null && getPolicyDegradoPrestazionaleRequestCounter!=null){
+			double c = getPolicyDegradoPrestazionaleCounter.doubleValue();
+			double n = getPolicyDegradoPrestazionaleRequestCounter.doubleValue();
 			doubleValue = c/n;
 		}
 		return doubleValue;
@@ -1616,6 +1763,10 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	public void setActiveRequestCounter(long activeRequestCounter) {
 		this.activeRequestCounter = activeRequestCounter;
 	}
+	public long setAndGetActiveRequestCounter(long activeRequestCounter) {
+		this.activeRequestCounter = activeRequestCounter;
+		return this.activeRequestCounter;
+	}
 	@Deprecated
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
@@ -1652,6 +1803,10 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	@Deprecated
 	public void setPolicyRequestCounter(Long policyRequestCounter) {
 		this.policyRequestCounter = policyRequestCounter;
+	}
+	public Long setAndGetPolicyRequestCounter(Long policyRequestCounter) {
+		this.policyRequestCounter = policyRequestCounter;
+		return this.policyRequestCounter;
 	}
 	@Deprecated
 	public void setPolicyCounter(Long policyCounter) {
@@ -1749,8 +1904,9 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		
 		
 		// threads
-		if(dati.activeRequestCounter!=null)
-			bf.append(dati.activeRequestCounter);
+		Long getActiveRequestCounter = dati.getActiveRequestCounter(true);
+		if(getActiveRequestCounter != null)
+			bf.append(getActiveRequestCounter);
 		else
 			bf.append("-");
 		bf.append("\n");
@@ -1798,18 +1954,21 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		else
 			bf.append("-");
 		bf.append("\n");
-		if(dati.policyRequestCounter!=null)
-			bf.append(dati.policyRequestCounter);
+		Long getPolicyRequestCounter = dati.getPolicyRequestCounter(true);
+		if(getPolicyRequestCounter!=null)
+			bf.append(getPolicyRequestCounter);
 		else
 			bf.append("-");
 		bf.append("\n");
-		if(dati.policyCounter!=null)
-			bf.append(dati.policyCounter);
+		Long getPolicyCounter = dati.getPolicyCounter(true);
+		if(getPolicyCounter!=null)
+			bf.append(getPolicyCounter);
 		else
 			bf.append("-");
 		bf.append("\n");
-		if(dati.policyDenyRequestCounter!=null)
-			bf.append(dati.policyDenyRequestCounter);
+		Long getPolicyDenyRequestCounter = dati.getPolicyDenyRequestCounter(true);
+		if(getPolicyDenyRequestCounter!=null)
+			bf.append(getPolicyDenyRequestCounter);
 		else
 			bf.append("-");
 		bf.append("\n");
@@ -1864,13 +2023,15 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		else
 			bf.append("-");
 		bf.append("\n");
-		if(dati.policyDegradoPrestazionaleRequestCounter!=null)
-			bf.append(dati.policyDegradoPrestazionaleRequestCounter);
+		Long getPolicyDegradoPrestazionaleRequestCounter = dati.getPolicyDegradoPrestazionaleRequestCounter(true);
+		if(getPolicyDegradoPrestazionaleRequestCounter!=null)
+			bf.append(getPolicyDegradoPrestazionaleRequestCounter);
 		else
 			bf.append("-");
 		bf.append("\n");
-		if(dati.policyDegradoPrestazionaleCounter!=null)
-			bf.append(dati.policyDegradoPrestazionaleCounter);
+		Long getPolicyDegradoPrestazionaleCounter = dati.getPolicyDegradoPrestazionaleCounter(true);
+		if(getPolicyDegradoPrestazionaleCounter!=null)
+			bf.append(getPolicyDegradoPrestazionaleCounter);
 		else
 			bf.append("-");
 		bf.append("\n");
@@ -1897,19 +2058,27 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		else
 			bf.append("-");
 		
+		// data di configurazione gestore policy
+		bf.append("\n");
+		if(dati.gestorePolicyConfigDate!=null)
+			bf.append(dati.gestorePolicyConfigDate.getTime());
+		else
+			bf.append("-");
+		
 		
 		return bf.toString();
 	}
 	
 	public static DatiCollezionati deserialize(String s) throws Exception{
-		DatiCollezionati dati = new DatiCollezionati(null);
+		DatiCollezionati dati = new DatiCollezionati(null, null);
 		String [] tmp = s.split("\n");
 		if(tmp==null){
 			throw new Exception("Wrong Format");
 		}
 		int oldLength = 27;
 		int dataPolicyLength = oldLength +1;
-		if(tmp.length!=oldLength && tmp.length!=dataPolicyLength){
+		int dataConfigPolicyLength = dataPolicyLength +1;
+		if(tmp.length!=oldLength && tmp.length!=dataPolicyLength && tmp.length!=dataConfigPolicyLength){
 			throw new Exception("Wrong Format (size: "+tmp.length+")");
 		}
 		for (int i = 0; i < tmp.length; i++) {
@@ -2098,6 +2267,14 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				String tmpValue = tmp[i].trim();
 				if(tmpValue!=null && !"-".equals(tmpValue)){
 					dati.updatePolicyDate = new Date(Long.parseLong(tmpValue));
+				}
+			}
+			
+			// data di configurazione gestore policy
+			else if(i==28){
+				String tmpValue = tmp[i].trim();
+				if(tmpValue!=null && !"-".equals(tmpValue)){
+					dati.gestorePolicyConfigDate = new Date(Long.parseLong(tmpValue));
 				}
 			}
 		}

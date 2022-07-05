@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy.config;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.Proprieta;
@@ -66,6 +67,7 @@ public class PolicyConfiguration implements Serializable {
 	private String impl = null;
 	private String count = null;
 	private String engineType = null;
+	private Long gestorePolicyConfigDate = null;
 	
 	private String httpMode = Constants.VALUE_HTTP_HEADER_DEFAULT;
 	private String httpMode_limit = null; 
@@ -73,7 +75,7 @@ public class PolicyConfiguration implements Serializable {
 	private String httpMode_reset = null;
 	private String httpMode_retry_after = null;
 	private String httpMode_retry_after_backoff = null; 
-	
+		
 	public PolicyConfiguration(){
 		// usato da console
 	}
@@ -98,6 +100,11 @@ public class PolicyConfiguration implements Serializable {
 				}
 			}
 			
+			String gestorePolicyConfigDate = getValue(p, Constants.GESTORE_CONFIG_DATE, null);
+			if(gestorePolicyConfigDate!=null) {
+				this.gestorePolicyConfigDate = Long.valueOf(gestorePolicyConfigDate);
+			}
+			
 			this.syncMode = getValue(p, Constants.MODALITA_SINCRONIZZAZIONE, Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DEFAULT);
 			if(!Constants.getVALUES_MODALITA_SINCRONIZZAZIONE(tipiSupportati).contains(this.syncMode)) {
 				throw new Exception("Value '"+this.syncMode+"' unsupported for property '"+Constants.MODALITA_SINCRONIZZAZIONE+"'");
@@ -118,7 +125,8 @@ public class PolicyConfiguration implements Serializable {
 					throw new Exception("Value '"+this.impl+"' unsupported for property '"+Constants.MODALITA_IMPLEMENTAZIONE+"'");
 				}
 				
-				if(Constants.VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST.equals(this.impl)) {
+				if(Constants.VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST.equals(this.impl) ||
+						Constants.VALUE_MODALITA_IMPLEMENTAZIONE_REDIS.equals(this.impl)) {
 					
 					this.count = getValue(p, Constants.MODALITA_CONTATORI, null);
 					if(this.count==null) {
@@ -217,6 +225,38 @@ public class PolicyConfiguration implements Serializable {
 		}
 	}
 	
+	
+	private static Map<String, PolicyGroupByActiveThreadsType> mappingCostantiToHazelcastExact = Map.of(
+			Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG, PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG,
+			Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC, PolicyGroupByActiveThreadsType.HAZELCAST_MAP
+			);
+	
+	
+	private static Map<String, PolicyGroupByActiveThreadsType> mappingCostantiToHazelcastApprox = Map.of(	
+			Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER,  PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER,
+			Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC, PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC,
+			Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE, PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE,
+			Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE, PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE
+		);
+	
+	private static Map<String, PolicyGroupByActiveThreadsType> mappingCostantiToHazelcastInconsistent = Map.of(	
+			Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC, PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP,
+			Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC, PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP,
+			Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REPLICATED_MAP, PolicyGroupByActiveThreadsType.HAZELCAST_REPLICATED_MAP
+		);
+	
+	
+	private static Map<String, PolicyGroupByActiveThreadsType> mappingCostantiToRedisExact = Map.of(
+			Constants.VALUE_MODALITA_TIPOLOGIA_REDIS_CONTATORI_ATOMIC_LONG, PolicyGroupByActiveThreadsType.REDISSON_ATOMIC_LONG,
+			Constants.VALUE_MODALITA_TIPOLOGIA_REDIS_REDDISSON_MAP, PolicyGroupByActiveThreadsType.REDISSON_MAP
+		);
+			
+	
+	private static Map<String, PolicyGroupByActiveThreadsType> mappingCostantiToRedisInconsistent= Map.of(
+			Constants.VALUE_MODALITA_TIPOLOGIA_REDIS_CONTATORI_LONGADDER, PolicyGroupByActiveThreadsType.REDISSON_LONGADDER
+			);
+			
+	
 	private void initRuntimeInfo(boolean all) throws Exception {
 		if(!Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DEFAULT.equals(this.syncMode)) {
 			if(Constants.VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE.equals(this.syncMode)) {
@@ -231,27 +271,25 @@ public class PolicyConfiguration implements Serializable {
 				}
 				else if(Constants.VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST.equals(this.impl)) {
 					if(Constants.VALUE_MODALITA_CONTATORI_EXACT.equals(this.count)) {
-						if(Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC.equals(this.engineType)) {
-							this.type = PolicyGroupByActiveThreadsType.HAZELCAST;
-						}
-						else if(Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE.equals(this.engineType)) {
-							this.type = PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE;
-						}
-						else if(Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE.equals(this.engineType)) {
-							this.type = PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE;
-						}
+						this.type = mappingCostantiToHazelcastExact.get(this.engineType);
 					}
 					else if(Constants.VALUE_MODALITA_CONTATORI_APPROXIMATED.equals(this.count)) {
-						if(Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC.equals(this.engineType)) {
-							this.type = PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP;
-						}
-						else if(Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC.equals(this.engineType)) {
-							this.type = PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP;
-						}
+						this.type = mappingCostantiToHazelcastApprox.get(this.engineType);	
+					}
+					else if(Constants.VALUE_MODALITA_CONTATORI_INCONSISTENT.equals(this.count)) {
+						this.type = mappingCostantiToHazelcastInconsistent.get(this.engineType);	
 					}
 				}
 				else if(Constants.VALUE_MODALITA_IMPLEMENTAZIONE_REDIS.equals(this.impl)) {
-					this.type = PolicyGroupByActiveThreadsType.REDISSON;
+					if(Constants.VALUE_MODALITA_CONTATORI_EXACT.equals(this.count)) {
+						this.type = mappingCostantiToRedisExact.get(this.engineType);
+					}
+//					else if(Constants.VALUE_MODALITA_CONTATORI_APPROXIMATED.equals(this.count)) {
+//						this.type = mappingCostantiToRedisApprox.get(this.engineType);	
+//					}
+					else if(Constants.VALUE_MODALITA_CONTATORI_INCONSISTENT.equals(this.count)) {
+						this.type = mappingCostantiToRedisInconsistent.get(this.engineType);	
+					}
 				}
 			}
 		}
@@ -285,18 +323,18 @@ public class PolicyConfiguration implements Serializable {
 				}
 				break;
 			case DATABASE:
-				break;
-			case HAZELCAST:
-				break;
+			case HAZELCAST_MAP:
 			case HAZELCAST_NEAR_CACHE:
-				break;
 			case HAZELCAST_LOCAL_CACHE:
-				break;
 			case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
-				break;
 			case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
-				break;
-			case REDISSON:
+			case HAZELCAST_REPLICATED_MAP:
+			case HAZELCAST_PNCOUNTER:
+			case REDISSON_MAP:
+			case HAZELCAST_ATOMIC_LONG:
+			case HAZELCAST_ATOMIC_LONG_ASYNC:
+			case REDISSON_ATOMIC_LONG:
+			case REDISSON_LONGADDER:
 				break;
 			}
 			
@@ -348,6 +386,9 @@ public class PolicyConfiguration implements Serializable {
 		if(this.type!=null) {
 			list.add(newProprieta(Constants.GESTORE, this.type.name()));
 		}
+		if(this.gestorePolicyConfigDate!=null) {
+			list.add(newProprieta(Constants.GESTORE_CONFIG_DATE, this.gestorePolicyConfigDate.longValue()+""));
+		}
 		list.add(newProprieta(Constants.MODALITA_SINCRONIZZAZIONE, this.syncMode));
 		if(this.impl!=null && StringUtils.isNotEmpty(this.impl)) {
 			list.add(newProprieta(Constants.MODALITA_IMPLEMENTAZIONE, this.impl));
@@ -383,6 +424,12 @@ public class PolicyConfiguration implements Serializable {
 		return p;
 	}
 	
+	public Long getGestorePolicyConfigDate() {
+		return this.gestorePolicyConfigDate;
+	}
+	public void setGestorePolicyConfigDate(Long gestorePolicyConfigDate) {
+		this.gestorePolicyConfigDate = gestorePolicyConfigDate;
+	}
 	public String getSyncMode() {
 		return this.syncMode;
 	}

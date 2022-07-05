@@ -52,8 +52,6 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributed implements I
 	
 	protected final HazelcastInstance hazelcast;
 	protected final IMap<IDUnivocoGroupByPolicy, DatiCollezionati> distributedMap;
-	protected final StartRequestProcessor startRequestProcessor;
-	protected final UpdateDatiRequestProcessor updateDatiRequestProcessor;
 	protected final ActivePolicy activePolicy;
 	
 	protected PolicyGroupByActiveThreadsType type;
@@ -78,7 +76,7 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributed implements I
 		this.type = type;
 		String mapName = "hazelcast-";
 		switch (type) {
-		case HAZELCAST:
+		case HAZELCAST_MAP:
 			mapName = "hazelcast-";
 			break;
 		case HAZELCAST_NEAR_CACHE:
@@ -110,9 +108,6 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributed implements I
 			this.distributedMap = this.hazelcast.getMap(mapName+"rate-limiting");
 			log.info("Hazelcast: Utilizzo Una Distributed Map globale.");
 		}
-		 
-		this.startRequestProcessor = new StartRequestProcessor(policy);
-		this.updateDatiRequestProcessor = new UpdateDatiRequestProcessor(policy);
 		
 		// dummy get per inizializzare la map
 		this.distributedMap.get(new IDUnivocoGroupByPolicy());

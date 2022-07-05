@@ -24,8 +24,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -374,8 +372,7 @@ public class Utils {
 				
 				NumeroRichiestePolicyInfo polInfo = new NumeroRichiestePolicyInfo(jmxPolicyInfo);
 			
-				if(!PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(policyType) && 
-						!PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(policyType)) {
+				if(!policyType.isInconsistent()) {
 					try {
 						assertEquals(attive, polInfo.richiesteAttive);
 					}catch(Throwable t) {
@@ -388,8 +385,7 @@ public class Utils {
 					}
 				}
 				
-				if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(policyType) ||
-						PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(policyType)) {
+				if(policyType.isInconsistent()) {
 					try {
 						assertTrue("PolicyConteggiate["+polInfo.richiesteConteggiate+"]<=attese["+conteggiate+"]", polInfo.richiesteConteggiate<=conteggiate);
 					}catch(Throwable t) {
@@ -407,6 +403,8 @@ public class Utils {
 					assertTrue("PolicyRichiesteBloccate["+polInfo.richiesteBloccate+"]<=attese["+bloccate+"]", polInfo.richiesteBloccate<=bloccate);
 				}
 				else {
+					logRateLimiting.debug("["+policyType+"]  ("+tipoRisorsa+") attese:"+conteggiate+" conteggiate:"+polInfo.richiesteConteggiate+"  ");
+					logRateLimiting.debug("["+policyType+"]  ("+tipoRisorsa+") attese:"+bloccate+" bloccate:"+polInfo.richiesteBloccate+"  ");
 					assertEquals(conteggiate, polInfo.richiesteConteggiate);
 					assertEquals(bloccate, polInfo.richiesteBloccate);
 				}
@@ -436,8 +434,7 @@ public class Utils {
 		int remainingChecks = Integer.valueOf(System.getProperty("rl_check_policy_conditions_retry"));
 		int delay = Integer.valueOf(System.getProperty("rl_check_policy_conditions_delay"));
 
-		if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(policyType) ||
-				PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(policyType)) {
+		if(policyType.isInconsistent()) {
 			// aspetto un solo tempo di delay
 			org.openspcoop2.utils.Utilities.sleep(delay);
 			return;
@@ -620,17 +617,4 @@ public class Utils {
 		assertTrue("Verifico return code 429: '"+returnCode+"'", (equalsWithReason || equalsWithoutReason));
 	}
 	
-	public static Collection<Object[]> getPolicyGroupByActiveThreadsTypeAsArray() {
-		return Arrays.asList(new Object[][] {
-			{ null }, 
-			{ PolicyGroupByActiveThreadsType.LOCAL },
-			{ PolicyGroupByActiveThreadsType.LOCAL_DIVIDED_BY_NODES },
-			{ PolicyGroupByActiveThreadsType.DATABASE },
-			{ PolicyGroupByActiveThreadsType.HAZELCAST },
-			{ PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE },
-			{ PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE },
-			{ PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP },
-			{ PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP }
-		});
-	}
 }

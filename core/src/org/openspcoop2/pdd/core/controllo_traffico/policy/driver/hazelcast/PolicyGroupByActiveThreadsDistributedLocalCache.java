@@ -57,42 +57,42 @@ public class PolicyGroupByActiveThreadsDistributedLocalCache  extends AbstractPo
 	
 
 	@Override
-	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy)
+	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx)
 			throws PolicyException {
 		
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
 		
 		// Lavoro in asincrono sui contatori della copia remota
-		this.distributedMap.submitToKey(datiGroupBy, this.startRequestProcessor);
+		this.distributedMap.submitToKey(datiGroupBy, new StartRequestProcessor(this.activePolicy,ctx));
 		
-		return this.localPolicy.registerStartRequest(log, idTransazione, datiGroupBy);
+		return this.localPolicy.registerStartRequest(log, idTransazione, datiGroupBy, ctx);
 	}
 
 
 	@Override
 	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione,
-			IDUnivocoGroupByPolicy datiGroupBy) throws PolicyException, PolicyNotFoundException {
+			IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx) throws PolicyException, PolicyNotFoundException {
 
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
 		
 		// Lavoro sulla copia remota
-		this.distributedMap.submitToKey(datiGroupBy, this.updateDatiRequestProcessor);
+		this.distributedMap.submitToKey(datiGroupBy, new UpdateDatiRequestProcessor(this.activePolicy, ctx));
 		
-		return this.localPolicy.updateDatiStartRequestApplicabile(log, idTransazione, datiGroupBy);
+		return this.localPolicy.updateDatiStartRequestApplicabile(log, idTransazione, datiGroupBy, ctx);
 	}
 
 	
 	@Override
-	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy,
+	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx,
 			MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata)
 			throws PolicyException, PolicyNotFoundException {
 		
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
 		
 		// Lavoro sulla copia remota
-		this.distributedMap.submitToKey(datiGroupBy, new EndRequestProcessor(this.activePolicy, dati, isApplicabile, isViolata));			
+		this.distributedMap.submitToKey(datiGroupBy, new EndRequestProcessor(this.activePolicy, ctx, dati, isApplicabile, isViolata));			
 		
-		this.localPolicy.registerStopRequest(log, idTransazione, datiGroupBy, dati, isApplicabile, isViolata);
+		this.localPolicy.registerStopRequest(log, idTransazione, datiGroupBy, ctx, dati, isApplicabile, isViolata);
 	}
 
 

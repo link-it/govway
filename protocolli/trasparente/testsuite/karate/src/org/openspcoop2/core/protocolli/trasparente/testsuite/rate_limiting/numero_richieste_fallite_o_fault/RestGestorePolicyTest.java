@@ -57,7 +57,7 @@ public class RestGestorePolicyTest extends ConfigLoader {
 	}
 	@Test
 	public void perMinutoDefaultErogazione_hazelcast() throws Exception {
-		this.restTest.perMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST);
+		this.restTest.perMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_MAP);
 	}
 	@Test
 	public void perMinutoDefaultErogazione_hazelcast_nearCache() throws Exception {
@@ -75,6 +75,34 @@ public class RestGestorePolicyTest extends ConfigLoader {
 	public void perMinutoDefaultErogazione_hazelcast_nearCache_putAsync() throws Exception {
 		this.restTest.perMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP);
 	}
+	@Test
+	public void perMinutoDefaultErogazione_hazelcast_contatoriSingoliPNCounter() throws Exception {
+		this.restTest.perMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER);
+	}
+	@Test
+	public void perMinutoDefaultErogazione_hazelcast_contatoriSingoliAtomicLong() throws Exception {
+		this.restTest.perMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG);
+	}
+	@Test
+	public void perMinutoDefaultErogazione_hazelcast_contatoriSingoliAtomicLongAsync() throws Exception {
+		this.restTest.perMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC);
+	}
+//	@Test
+//	public void perMinutoDefaultErogazione_hazelcast_replicatedMap() throws Exception {
+//		this.restTest.perMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_REPLICATED_MAP);
+//	}
+	@Test
+	public void perMinutoDefaultErogazione_redis_atomicLong() throws Exception {
+		this.restTest.perMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.REDISSON_ATOMIC_LONG);
+	}
+//	@Test
+//	public void perMinutoDefaultErogazione_redis_longAdder() throws Exception {
+//		this.restTest.perMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.REDISSON_LONGADDER);
+//	}
+	
+	
+	
+	
 	
 	
 	
@@ -93,7 +121,7 @@ public class RestGestorePolicyTest extends ConfigLoader {
 	}
 	@Test
 	public void perMinutoDefaultFruizione_hazelcast() throws Exception {
-		this.restTest.perMinutoDefaultFruizione(PolicyGroupByActiveThreadsType.HAZELCAST);
+		this.restTest.perMinutoDefaultFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_MAP);
 	}
 	@Test
 	public void perMinutoDefaultFruizione_hazelcast_nearCache() throws Exception {
@@ -111,6 +139,30 @@ public class RestGestorePolicyTest extends ConfigLoader {
 	public void perMinutoDefaultFruizione_hazelcast_nearCache_putAsync() throws Exception {
 		this.restTest.perMinutoDefaultFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP);
 	}
+	@Test
+	public void perMinutoDefaultFruizione_hazelcast_contatoriSingoliPNCounter() throws Exception {
+		this.restTest.perMinutoDefaultFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER);
+	}
+	@Test
+	public void perMinutoDefaultFruizione_hazelcast_contatoriSingoliAtomicLong() throws Exception {
+		this.restTest.perMinutoDefaultFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG);
+	}
+	@Test
+	public void perMinutoDefaultFruizione_hazelcast_contatoriSingoliAtomicLongAsync() throws Exception {
+		this.restTest.perMinutoDefaultFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC);
+	}
+//	@Test
+//	public void perMinutoDefaultFruizione_hazelcast_replicatedMap() throws Exception {
+//		this.restTest.perMinutoDefaultFruizione(PolicyGroupByActiveThreadsType.HAZELCAST_REPLICATED_MAP);
+//	}
+	@Test
+	public void perMinutoDefaultFruizione_redis_atomicLong() throws Exception {
+		this.restTest.perMinutoDefaultFruizione(PolicyGroupByActiveThreadsType.REDISSON_ATOMIC_LONG);
+	}
+//	@Test
+//	public void perMinutoDefaultFruizione_redis_longAdder() throws Exception {
+//		this.restTest.perMinutoDefaultFruizione(PolicyGroupByActiveThreadsType.REDISSON_LONGADDER);
+//	}
 	
 	
 }

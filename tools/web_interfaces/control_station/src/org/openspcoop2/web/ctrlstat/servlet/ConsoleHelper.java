@@ -9497,7 +9497,12 @@ public class ConsoleHelper implements IConsoleHelper {
 							bfTooltips.append(Constants.LABEL_MODALITA_SINCRONIZZAZIONE_LOCALE_SUDDIVISA_TRA_NODI);
 						}
 						else if(Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA.equals(config.getSyncMode())){
-							bfTooltips.append(Constants.LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA);
+							if(config.getType()!=null) {
+								bfTooltips.append(config.getType().toLabel());
+							}
+							else {
+								bfTooltips.append(Constants.LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA);
+							}
 						}
 						
 						if(!Constants.VALUE_HTTP_HEADER_DEFAULT.equals(config.getHttpMode())){
@@ -19289,7 +19294,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setValue(ctContatori);
 		if(nascondiSezioneOpzioniAvanzate || 
 				!org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA.equals(ctModalitaSincronizzazione) ||
-				!org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST.equals(ctImplementazione)){
+				(!org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST.equals(ctImplementazione) &&
+						!org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_MODALITA_IMPLEMENTAZIONE_REDIS.equals(ctImplementazione))){
 			de.setType(DataElementType.HIDDEN);
 		} else {
 			List<String> values = org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getVALUES_MODALITA_CONTATORI(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(),ctImplementazione);
@@ -19300,6 +19306,24 @@ public class ConsoleHelper implements IConsoleHelper {
 				ctContatori = values.get(0);
 				de.setValue(ctContatori);
 				de.setType(DataElementType.HIDDEN);
+				
+				List<String> labels = org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getLABELS_MODALITA_CONTATORI(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(),ctImplementazione);
+				String label = ctContatori;
+				if(ctContatori!=null) {
+					if(label!=null && !label.isEmpty() && values.size()==labels.size()) {
+						for (int i = 0; i < values.size(); i++) {
+							if(ctContatori.equals(values.get(i))){
+								label = labels.get(i);
+							}
+						}
+					}
+				}
+				DataElement deLABEL = new DataElement();
+				deLABEL.setName(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_CONTATORI+"__LABEL");
+				deLABEL.setLabel(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_CONTATORI);
+				deLABEL.setValue(label);
+				deLABEL.setType(DataElementType.TEXT);
+				dati.addElement(deLABEL);
 			}
 			else {
 				de.setValues(values);
@@ -19330,7 +19354,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			else if(values.size()==1){
 				ctTipologia = values.get(0);
 				de.setValue(ctTipologia);
-				de.setType(DataElementType.HIDDEN);
+				de.setType(DataElementType.TEXT);
 			}
 			else {
 				de.setValues(values);

@@ -272,8 +272,7 @@ public class RestTest extends ConfigLoader {
 	}
 	private void checkAssertions(Vector<HttpResponse> responses, int maxSeconds, int windowSize, PolicyGroupByActiveThreadsType policyType) throws Exception {
 				
-		if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(policyType) ||
-				PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(policyType)) {
+		if(policyType.isInconsistent()) {
 			// numero troppo casuali
 			return;
 		}

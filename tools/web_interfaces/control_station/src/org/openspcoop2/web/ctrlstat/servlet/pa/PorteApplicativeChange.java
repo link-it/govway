@@ -75,6 +75,7 @@ import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
 import org.openspcoop2.pdd.core.integrazione.TipoIntegrazione;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -1471,7 +1472,22 @@ public final class PorteApplicativeChange extends Action {
 			}
 			
 			if(datiAltroPorta) {
+				PolicyConfiguration oldPolicyConfig = new PolicyConfiguration(pa.getProprietaRateLimitingList(), porteApplicativeCore.getControlloTrafficoPolicyRateLimitingTipiGestori(), false);
+				boolean changeImpl = false;
+				if(oldPolicyConfig.getEngineType()!=null) {
+					changeImpl=!oldPolicyConfig.getEngineType().equals(ctTipologia);
+				}
+				else if(ctContatori!=null) {
+					changeImpl=true;
+				}
+				
 				PolicyConfiguration policyConfig = new PolicyConfiguration();
+				if(changeImpl) {
+					policyConfig.setGestorePolicyConfigDate(DateManager.getTimeMillis());
+				}
+				else {
+					policyConfig.setGestorePolicyConfigDate(oldPolicyConfig.getGestorePolicyConfigDate());
+				}
 				policyConfig.setSyncMode(ctModalitaSincronizzazione);
 				policyConfig.setImpl(ctImplementazione);
 				policyConfig.setCount(ctContatori);

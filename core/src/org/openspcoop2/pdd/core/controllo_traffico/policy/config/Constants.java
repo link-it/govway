@@ -36,6 +36,9 @@ import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreads
 public class Constants {
 
 	public final static String GESTORE = "ctGestore";
+	public final static String GESTORE_HAZELCAST_MAP_BACKWARD_COMPATIBILITY = "HAZELCAST";
+	
+	public final static String GESTORE_CONFIG_DATE = "ctGestoreConfigDate";
 	
 	public final static String MODALITA_SINCRONIZZAZIONE = "ctSyncMode";
 	
@@ -112,14 +115,10 @@ public class Constants {
 			if(PolicyGroupByActiveThreadsType.DATABASE.equals(tipo)) {
 				database = true;
 			}
-			else if(PolicyGroupByActiveThreadsType.HAZELCAST.equals(tipo) ||
-					PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE.equals(tipo) ||
-					PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE.equals(tipo) ||
-					PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(tipo) ||
-					PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(tipo)) {
+			else if(tipo.isHazelcast()) {
 				hazelcast = true;
 			}
-			else if(PolicyGroupByActiveThreadsType.REDISSON.equals(tipo)) {
+			else if(tipo.isRedis()) {
 				redis = true;
 			}
 		}
@@ -142,6 +141,7 @@ public class Constants {
 	
 	public final static String VALUE_MODALITA_CONTATORI_EXACT = "exact";
 	public final static String VALUE_MODALITA_CONTATORI_APPROXIMATED = "approximated";
+	public final static String VALUE_MODALITA_CONTATORI_INCONSISTENT = "inconsistent";
 	public final static List<String> getVALUES_MODALITA_CONTATORI(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl){
 		return _getMODALITA_CONTATORI(tipiSupportati, impl, true);
 	}
@@ -150,6 +150,7 @@ public class Constants {
 	
 	public final static String LABEL_MODALITA_CONTATORI_EXACT = CostantiControlloTraffico.LABEL_MODALITA_CONTATORI_EXACT;	
 	public final static String LABEL_MODALITA_CONTATORI_APPROXIMATED = CostantiControlloTraffico.LABEL_MODALITA_CONTATORI_APPROXIMATED;	
+	public final static String LABEL_MODALITA_CONTATORI_INCONSISTENT = CostantiControlloTraffico.LABEL_MODALITA_CONTATORI_INCONSISTENT;	
 	public final static List<String> getLABELS_MODALITA_CONTATORI(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl){
 		return _getMODALITA_CONTATORI(tipiSupportati, impl, false);
 	}
@@ -157,16 +158,38 @@ public class Constants {
 	private final static List<String> _getMODALITA_CONTATORI(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, boolean values){
 		boolean exact = false;
 		boolean approximated = false;
+		boolean inconsistent = false;
 		if(VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST.equals(impl)) {
 			for (PolicyGroupByActiveThreadsType tipo : tipiSupportati) {
-				if(PolicyGroupByActiveThreadsType.HAZELCAST.equals(tipo) ||
-						PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE.equals(tipo) ||
-						PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE.equals(tipo)) {
+				if(!tipo.isHazelcast()) {
+					continue;
+				}
+				
+				if(tipo.isExact()) {
 					exact = true;
 				}
-				else if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(tipo) ||
-						PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(tipo)) {
+				else if(tipo.isApproximated()) {
 					approximated = true;
+				}
+				else if(tipo.isInconsistent()) {
+					inconsistent = true;
+				}
+			}
+		}
+		else if(VALUE_MODALITA_IMPLEMENTAZIONE_REDIS.equals(impl)) {
+			for (PolicyGroupByActiveThreadsType tipo : tipiSupportati) {
+				if(!tipo.isRedis()) {
+					continue;
+				}
+				
+				if(tipo.isExact()) {
+					exact = true;
+				}
+				else if(tipo.isApproximated()) {
+					approximated = true;
+				}
+				else if(tipo.isInconsistent()) {
+					inconsistent = true;
 				}
 			}
 		}
@@ -176,6 +199,9 @@ public class Constants {
 		}
 		if(approximated) {
 			l.add(values ? VALUE_MODALITA_CONTATORI_APPROXIMATED : LABEL_MODALITA_CONTATORI_APPROXIMATED);
+		}
+		if(inconsistent) {
+			l.add(values ? VALUE_MODALITA_CONTATORI_INCONSISTENT : LABEL_MODALITA_CONTATORI_INCONSISTENT);
 		}
 		return l;
 	}
@@ -190,8 +216,14 @@ public class Constants {
 	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE = "local-cache";
 	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC = "remote-sync";
 	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC = "remote-async";
+	public static final String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REPLICATED_MAP = "replicated-map";
+	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG = "atomic-long-counters";
+	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC = "atomic-long-async-counters";
+	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER = "pn-counters";	
 	
-	public final static String VALUE_MODALITA_TIPOLOGIA_REDIS_REDDISSON = "redisson-map";
+	public final static String VALUE_MODALITA_TIPOLOGIA_REDIS_REDDISSON_MAP = "redisson-map";
+	public static final String VALUE_MODALITA_TIPOLOGIA_REDIS_CONTATORI_ATOMIC_LONG = "atomic-long-counters";
+	public static final String VALUE_MODALITA_TIPOLOGIA_REDIS_CONTATORI_LONGADDER = "longadder-counters";
 	
 	public final static List<String> getVALUES_MODALITA_TIPOLOGIA(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, String counter){
 		return _getMODALITA_TIPOLOGIA(tipiSupportati, impl, counter, true);
@@ -204,8 +236,15 @@ public class Constants {
 	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE;	
 	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC;	
 	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC;	
-
+	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REPLICATED_MAP = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REPLICATED_MAP;
+	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG;	
+	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC;
+	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER;
+		
 	public final static String LABEL_MODALITA_TIPOLOGIA_REDIS_REDDISSON = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_REDIS_REDDISSON;
+	public static final String LABEL_MODALITA_TIPOLOGIA_REDIS_CONTATORI_ATOMIC_LONG = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_REDIS_CONTATORI_ATOMIC_LONG;
+	public static final String LABEL_MODALITA_TIPOLOGIA_REDIS_CONTATORI_LONGADDER = CostantiControlloTraffico.LABEL_MODALITA_TIPOLOGIA_REDIS_CONTATORI_LONGADDER;
+
 
 	public final static List<String> getLABELS_MODALITA_TIPOLOGIA(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, String counter){
 		return _getMODALITA_TIPOLOGIA(tipiSupportati, impl, counter, false);
@@ -216,8 +255,19 @@ public class Constants {
 		if(VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST.equals(impl)) {
 			for (PolicyGroupByActiveThreadsType tipo : tipiSupportati) {
 				if(VALUE_MODALITA_CONTATORI_EXACT.equals(counter)) {
-					if(PolicyGroupByActiveThreadsType.HAZELCAST.equals(tipo)) {
+					if(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG: LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG);
+					}
+					else if(PolicyGroupByActiveThreadsType.HAZELCAST_MAP.equals(tipo)) {
 						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC : LABEL_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC);
+					} 
+				}
+				else if(VALUE_MODALITA_CONTATORI_APPROXIMATED.equals(counter)) {
+					if(PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER: LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER);
+					}
+					else if(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC: LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC);
 					}
 					else if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE.equals(tipo)) {
 						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE : LABEL_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE);
@@ -226,20 +276,38 @@ public class Constants {
 						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE : LABEL_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE);
 					}
 				}
-				else if(VALUE_MODALITA_CONTATORI_APPROXIMATED.equals(counter)) {
+				else if(VALUE_MODALITA_CONTATORI_INCONSISTENT.equals(counter)) {
 					if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(tipo)) {
 						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC : LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC);
 					}
 					else if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(tipo)) {
 						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC : LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC);
 					}
+					else if(PolicyGroupByActiveThreadsType.HAZELCAST_REPLICATED_MAP.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REPLICATED_MAP : LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REPLICATED_MAP);
+					}
 				}
 			}
 		}
 		else if(VALUE_MODALITA_IMPLEMENTAZIONE_REDIS.equals(impl)) {
 			for (PolicyGroupByActiveThreadsType tipo : tipiSupportati) {
-				if(PolicyGroupByActiveThreadsType.REDISSON.equals(tipo)) {
-					l.add(values ? VALUE_MODALITA_TIPOLOGIA_REDIS_REDDISSON : LABEL_MODALITA_TIPOLOGIA_REDIS_REDDISSON);
+				if(VALUE_MODALITA_CONTATORI_EXACT.equals(counter)) {
+					if(PolicyGroupByActiveThreadsType.REDISSON_ATOMIC_LONG.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_REDIS_CONTATORI_ATOMIC_LONG : LABEL_MODALITA_TIPOLOGIA_REDIS_CONTATORI_ATOMIC_LONG);
+					}
+					else if(PolicyGroupByActiveThreadsType.REDISSON_MAP.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_REDIS_REDDISSON_MAP : LABEL_MODALITA_TIPOLOGIA_REDIS_REDDISSON);
+					}
+				}
+				else if(VALUE_MODALITA_CONTATORI_INCONSISTENT.equals(counter)) {
+					/*
+					 * Si potrebbe pensare che debba finire in approximatedModes come per il PNCounter 
+					 * Non è così poichè per il PNCounter abbiamo le versioni incrementAndGet e addAndGet e in questo caso invece no, si fa prima l'increment e poi si ottiene il valore tramite sum(). 
+					 * Una volta che lo si recupera tramite la 'sum()' potrebbero essere tornati anche risultati derivanti da altre richieste in corso.
+					 **/
+					if(PolicyGroupByActiveThreadsType.REDISSON_LONGADDER.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_REDIS_CONTATORI_LONGADDER: LABEL_MODALITA_TIPOLOGIA_REDIS_CONTATORI_LONGADDER);
+					}
 				}
 			}
 		}

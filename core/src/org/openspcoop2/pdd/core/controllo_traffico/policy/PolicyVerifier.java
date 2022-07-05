@@ -101,9 +101,13 @@ public class PolicyVerifier {
 		boolean policyGlobale = !policyAPI;
 		
 		// Registro Threads (NOTA: non i contatori, quelli vegono aggiornati )
+		if(pddContext!=null && policyConfiguration!=null) {
+			PolicyDateUtils.setGestorePolicyConfigDateIntoContext(pddContext.getContext(), policyConfiguration.getGestorePolicyConfigDate());
+		}
 		DatiCollezionati datiCollezionatiReaded = gestorePolicyAttive.getActiveThreadsPolicy(activePolicy,datiTransazione, state).
-				registerStartRequest(logCC,datiTransazione.getIdTransazione(),datiGroupBy);
-		
+				registerStartRequest(logCC,datiTransazione.getIdTransazione(),datiGroupBy,pddContext.getContext());
+
+			
 		// check fatto solamente nel minuto precedente alla creazione dei nuovi Dati 
 		Date check = new Date(DateManager.getTimeMillis()-(1000*60));
 		if(datiCollezionatiReaded.getCreationDate().after(check)) {
@@ -304,7 +308,8 @@ public class PolicyVerifier {
 			// aggiorno contatori
 			if(isApplicabile || !activePolicy.getConfigurazioneControlloTraffico().isElaborazioneRealtime_incrementaSoloPolicyApplicabile()){
 			
-				DatiCollezionati datiCollezionatiUpdated = gestorePolicyAttive.getActiveThreadsPolicy(activePolicy,datiTransazione, state).updateDatiStartRequestApplicabile(logCC, datiTransazione.getIdTransazione(), datiGroupBy);
+				DatiCollezionati datiCollezionatiUpdated = gestorePolicyAttive.getActiveThreadsPolicy(activePolicy,datiTransazione, state).
+						updateDatiStartRequestApplicabile(logCC, datiTransazione.getIdTransazione(), datiGroupBy,pddContext.getContext());
 				if(datiCollezionatiUpdated!=null) {
 					datiCollezionatiReaded = datiCollezionatiUpdated; 
 					now = datiCollezionatiReaded.getCloneDate(); // Data in cui sono stati prelevati gli intervalli.
@@ -873,6 +878,10 @@ public class PolicyVerifier {
 			return risultatoVerificaPolicy;
 				
 		}finally{
+			
+			if(pddContext!=null) {
+				PolicyDateUtils.removeGestorePolicyConfigDateIntoContext(pddContext.getContext());
+			}
 			
 			// L'obiettivo è di generare un evento differente per ogni raggruppamento violato di una stessa policy
 			// All'interno di una stessa policy ci possono essere gruppi che non sono violati ed altri che lo sono

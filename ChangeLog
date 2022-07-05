@@ -1,3 +1,10 @@
+2022-07-05  Francesco Scarlato <scarlato@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1365
+	Aggiunti gestori delle policy di RateLimiting utilizzabili su scenari distribuiti che utilizzano contatori 'atomic-long', sia su 'Hazelcast' che su 'Redis'.
+	Per 'Hazelcast' è inoltre stata aggiunta una tecnica di sincronizzazione basata sui 'PN Counters'.
+
 2022-06-27  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

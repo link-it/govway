@@ -21,6 +21,8 @@
 
 package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast;
 
+import java.util.Date;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
@@ -30,6 +32,7 @@ import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.PolicyDateUtils;
 import org.slf4j.Logger;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -52,17 +55,20 @@ public class PolicyGroupByActiveThreadsDistributedNearCache extends AbstractPoli
 	}
 
 	@Override
-	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy)
+	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx)
 			throws PolicyException {
 		
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
 		
 		// Lavoro in asincrono sui contatori della copia remota
-		this.distributedMap.submitToKey(datiGroupBy, this.startRequestProcessor);
+		this.distributedMap.submitToKey(datiGroupBy, new StartRequestProcessor(this.activePolicy,ctx));
 		
 		DatiCollezionati datiCollezionati = this.distributedMap.get(datiGroupBy);
+		boolean newDati = false;
 		if (datiCollezionati == null) {
-			datiCollezionati = new DatiCollezionati(this.activePolicy.getInstanceConfiguration().getUpdateTime());
+			Date gestorePolicyConfigDate = PolicyDateUtils.readGestorePolicyConfigDateIntoContext(ctx);
+			datiCollezionati = new DatiCollezionati(this.activePolicy.getInstanceConfiguration().getUpdateTime(), gestorePolicyConfigDate);
+			newDati = true;
 		}
 		else {
 			if(datiCollezionati.getUpdatePolicyDate()!=null) {
@@ -72,22 +78,27 @@ public class PolicyGroupByActiveThreadsDistributedNearCache extends AbstractPoli
 				}
 			}
 		}
+		DatiCollezionati datiCollezionatiPerPolicyVerifier = (DatiCollezionati) datiCollezionati.clone(); // i valori utilizzati dal policy verifier verranno impostati con il valore impostato nell'operazione chiamata
+		if(newDati) {
+			datiCollezionatiPerPolicyVerifier.initDatiIniziali(this.activePolicy);
+			datiCollezionatiPerPolicyVerifier.checkDate(log, this.activePolicy); // inizializza le date se ci sono
+		}
 		
 		// Lavoro anche sulla copia locale
-		datiCollezionati.registerStartRequest(log, this.activePolicy);
+		datiCollezionati.registerStartRequest(log, this.activePolicy, ctx, datiCollezionatiPerPolicyVerifier);
 		
-		return datiCollezionati;
+		return datiCollezionatiPerPolicyVerifier;
 	}
 	
 	
 	@Override
 	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione,
-			IDUnivocoGroupByPolicy datiGroupBy) throws PolicyException, PolicyNotFoundException {
+			IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx) throws PolicyException, PolicyNotFoundException {
 		
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
 
 		// Lavoro sulla copia remota
-		this.distributedMap.submitToKey(datiGroupBy, this.updateDatiRequestProcessor);
+		this.distributedMap.submitToKey(datiGroupBy, new UpdateDatiRequestProcessor(this.activePolicy, ctx));
 
 		// Opero sulla copia locale
 		// per adesso se la policy non è ancora arrivata nella near cache, agisco in locale come se fosse la prima richiesta.
@@ -95,23 +106,31 @@ public class PolicyGroupByActiveThreadsDistributedNearCache extends AbstractPoli
 		if(datiCollezionati == null) {
 			log.debug("(idTransazione:"+idTransazione+") Policy non ancora in Near Cache. Conto come fosse la prima richiesta; dati identificativi ["+datiGroupBy.toString()+"]");
 			
-			datiCollezionati = new DatiCollezionati(this.activePolicy.getInstanceConfiguration().getUpdateTime());
-			datiCollezionati.registerStartRequest(log, this.activePolicy);
+			Date gestorePolicyConfigDate = PolicyDateUtils.readGestorePolicyConfigDateIntoContext(ctx);
+			datiCollezionati = new DatiCollezionati(this.activePolicy.getInstanceConfiguration().getUpdateTime(), gestorePolicyConfigDate);
+			datiCollezionati.registerStartRequest(log, this.activePolicy, null);
 			return datiCollezionati;
 		} else {
-			datiCollezionati.updateDatiStartRequestApplicabile(log, this.activePolicy);									
-			return datiCollezionati;
+			DatiCollezionati datiCollezionatiPerPolicyVerifier = (DatiCollezionati) datiCollezionati.clone(); // i valori utilizzati dal policy verifier verranno impostati con il valore impostato nell'operazione chiamata
+			
+			boolean update = datiCollezionati.updateDatiStartRequestApplicabile(log, this.activePolicy, ctx, datiCollezionatiPerPolicyVerifier);
+			if(update) {
+				return datiCollezionatiPerPolicyVerifier;
+			}
+			
+			return null;
 		}
 	}
 	
 	@Override
-	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata)
+	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx, 
+			MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata)
 			throws PolicyException, PolicyNotFoundException {
 		
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
 
 		// Lavoro sulla copia remota
-		this.distributedMap.submitToKey(datiGroupBy, new EndRequestProcessor(this.activePolicy, dati, isApplicabile, isViolata));			
+		this.distributedMap.submitToKey(datiGroupBy, new EndRequestProcessor(this.activePolicy, ctx, dati, isApplicabile, isViolata));			
 		
 		// Non ho nulla da restituire e non gestisco direttamente la near cache quindi l'ultima richiesta la faccio solo in remoto
 	}

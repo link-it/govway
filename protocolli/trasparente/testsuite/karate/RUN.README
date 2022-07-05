@@ -131,8 +131,10 @@
 
 - Impostare in <console_local.properties>:
 	# Gestore Policy
-	controlloTraffico.policyRateLimiting.tipiGestori=LOCAL,LOCAL_DIVIDED_BY_NODES,HAZELCAST,HAZELCAST_NEAR_CACHE,HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP,HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP,HAZELCAST_LOCAL_CACHE,DATABASE
-   In modo che la console consenta di impostare il gestore 'DATABASE'
+	controlloTraffico.policyRateLimiting.tipiGestori=LOCAL,LOCAL_DIVIDED_BY_NODES,DATABASE,HAZELCAST_ATOMIC_LONG,HAZELCAST_PNCOUNTER,HAZELCAST_ATOMIC_LONG_ASYNC,HAZELCAST_MAP,HAZELCAST_NEAR_CACHE,HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP,HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP,HAZELCAST_LOCAL_CACHE,HAZELCAST_REPLICATED_MAP,REDISSON_ATOMIC_LONG,REDISSON_LONGADDER,REDISSON_MAP
+   In modo che la console consenta di impostare i vari gestore che per default non sono utilizzabili.
+
+- Installare REDIS come indicato in REDIS.README
 
 - Impostare in govway_local.properties la seguente proprietà per poter effettuare il test sul claim iat
 	

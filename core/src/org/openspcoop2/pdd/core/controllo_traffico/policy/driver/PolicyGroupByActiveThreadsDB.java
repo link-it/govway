@@ -48,6 +48,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.PolicyDateUtils;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
@@ -245,7 +246,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 	}
 	
 	@Override
-	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy) throws PolicyException{
+	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx) throws PolicyException{
 		
 		PolicyConnessioneRuntime resource = null;
 		DatiCollezionati datiCollezionatiReaded = null;
@@ -255,7 +256,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 			checkMap(resource.con);
 			
 			// mi salvo fuori dal synchronized l'attuale stato
-			datiCollezionatiReaded = _registerStartRequest(resource.con, log, idTransazione, datiGroupBy); 
+			datiCollezionatiReaded = _registerStartRequest(resource.con, log, idTransazione, datiGroupBy, ctx); 
 			
 		}finally {
 			if(resource!=null) {
@@ -272,7 +273,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 	}
 	
 	@Override
-	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy) throws PolicyException,PolicyNotFoundException{
+	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx) throws PolicyException,PolicyNotFoundException{
 		
 		PolicyConnessioneRuntime resource = null;
 		DatiCollezionati datiCollezionatiReaded = null;
@@ -282,7 +283,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 			//checkMap(resource.con);
 			
 			// mi salvo fuori dal synchronized l'attuale stato
-			datiCollezionatiReaded = _updateDatiStartRequestApplicabile(resource.con, log, idTransazione, datiGroupBy);
+			datiCollezionatiReaded = _updateDatiStartRequestApplicabile(resource.con, log, idTransazione, datiGroupBy, ctx);
 			
 		}finally {
 			if(resource!=null) {
@@ -299,7 +300,8 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 	}
 	
 	@Override
-	public void registerStopRequest(Logger log, String idTransazione,IDUnivocoGroupByPolicy datiGroupBy, MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata) throws PolicyException,PolicyNotFoundException{
+	public void registerStopRequest(Logger log, String idTransazione,IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx, 
+			MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata) throws PolicyException,PolicyNotFoundException{
 		
 		PolicyConnessioneRuntime resource = null;
 		try {
@@ -307,7 +309,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 			
 			//checkMap(resource.con);
 			
-			_registerStopRequest(resource.con, log, idTransazione,datiGroupBy, 
+			_registerStopRequest(resource.con, log, idTransazione,datiGroupBy, ctx,
 					dati, isApplicabile, isViolata);
 			
 		}finally {
@@ -684,7 +686,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 	private Map<IDUnivocoGroupByPolicy, DatiCollezionati> _getMapActiveThreads(Connection con){
 		try {
 			return _updateMap(con, OperationType.getMapActiveThreads,
-					this.log, this.idTransazione, null,
+					this.log, this.idTransazione, null, null,
 					null, false, false,
 					null,
 					null).map;
@@ -697,7 +699,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 		try {
 			if(map!=null && map.size()>0){
 				_updateMap(con, OperationType.initMap,
-						this.log, this.idTransazione, null,
+						this.log, this.idTransazione, null, null,
 						null, false, false,
 						null,
 						map);
@@ -706,10 +708,10 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 			throw new RuntimeException(e.getMessage(),e);
 		}
 	}
-	private DatiCollezionati _registerStartRequest(Connection con,Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy) throws PolicyException {
+	private DatiCollezionati _registerStartRequest(Connection con,Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx) throws PolicyException {
 		try {
 			return _updateMap(con, OperationType.registerStartRequest,
-					log, idTransazione, datiGroupBy,
+					log, idTransazione, datiGroupBy, ctx,
 					null, false, false,
 					null,
 					null).datiCollezionatiReaded;
@@ -717,16 +719,17 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 			throw new PolicyException(e.getMessage(),e);
 		}
 	}
-	private DatiCollezionati _updateDatiStartRequestApplicabile(Connection con,Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy) throws PolicyException,PolicyNotFoundException{
+	private DatiCollezionati _updateDatiStartRequestApplicabile(Connection con,Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx) throws PolicyException,PolicyNotFoundException{
 		return _updateMap(con, OperationType.updateDatiStartRequestApplicabile,
-				log, idTransazione, datiGroupBy,
+				log, idTransazione, datiGroupBy, ctx,
 				null, false, false,
 				null,
 				null).datiCollezionatiReaded;
 	}
-	private void _registerStopRequest(Connection con,Logger log, String idTransazione,IDUnivocoGroupByPolicy datiGroupBy, MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata) throws PolicyException,PolicyNotFoundException{
+	private void _registerStopRequest(Connection con,Logger log, String idTransazione,IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx, 
+			MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata) throws PolicyException,PolicyNotFoundException{
 		_updateMap(con, OperationType.registerStopRequest,
-				log, idTransazione, datiGroupBy,
+				log, idTransazione, datiGroupBy, ctx,
 				dati, isApplicabile, isViolata,
 				null,
 				null);
@@ -734,7 +737,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 	private void _resetCounters(Connection con){
 		try {
 			_updateMap(con, OperationType.resetCounters,
-					this.log, this.idTransazione, null,
+					this.log, this.idTransazione, null, null,
 					null, false, false,
 					null,
 					null);
@@ -745,7 +748,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 	private void _remove(Connection con){
 		try {
 			_updateMap(con, OperationType.remove,
-					this.log, this.idTransazione, null,
+					this.log, this.idTransazione, null, null,
 					null, false, false,
 					null,
 					null);
@@ -756,7 +759,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 	private long _getActiveThreads(Connection con,IDUnivocoGroupByPolicy filtro){
 		try {
 			return _updateMap(con, OperationType.getActiveThreads,
-					this.log, this.idTransazione, filtro,
+					this.log, this.idTransazione, filtro, null,
 					null, false, false,
 					null,
 					null).counter;
@@ -767,7 +770,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 	private String _printInfos(Connection con,Logger log, String separatorGroups) throws UtilsException{
 		try {
 			return _updateMap(con, OperationType.printInfos,
-					log, this.idTransazione, null,
+					log, this.idTransazione, null, null,
 					null, false, false,
 					separatorGroups,
 					null).info;
@@ -777,7 +780,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 	}
 	@SuppressWarnings({ "unchecked"})
 	private UpdateResult _updateMap(Connection con, OperationType opType,
-			Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy,
+			Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx,
 			MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata,
 			String separatorGroups,
 			Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) throws PolicyException, PolicyNotFoundException {
@@ -933,14 +936,15 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 							}
 							else{
 								//System.out.println("<"+idTransazione+">registerStartRequest CHECK CONTAINS ["+datiGroupBy+"]=false");
-								datiCollezionati = new DatiCollezionati(this.activePolicy.getInstanceConfiguration().getUpdateTime());
+								Date gestorePolicyConfigDate = PolicyDateUtils.readGestorePolicyConfigDateIntoContext(ctx);
+								datiCollezionati = new DatiCollezionati(this.activePolicy.getInstanceConfiguration().getUpdateTime(), gestorePolicyConfigDate);
 								//System.out.println("<"+idTransazione+">registerStartRequest PUT");
 								mapActiveThreads.put(datiGroupBy, datiCollezionati); // registro nuova immagine
 							}
 							
 							// incremento il numero di thread
 							//System.out.println("<"+idTransazione+">registerStartRequest in datiCollezionati ...");
-							datiCollezionati.registerStartRequest(log, this.activePolicy);
+							datiCollezionati.registerStartRequest(log, this.activePolicy, ctx);
 							//System.out.println("<"+idTransazione+">registerStartRequest in datiCollezionati ok: "+datiCollezionati.getActiveRequestCounter());
 							
 							updateMap = true;
@@ -968,7 +972,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 							
 								// incremento il numero dei contatori
 								//System.out.println("<"+idTransazione+">updateDatiStartRequestApplicabile updateDatiStartRequestApplicabile ...");
-								boolean updated = datiCollezionati.updateDatiStartRequestApplicabile(log, this.activePolicy);
+								boolean updated = datiCollezionati.updateDatiStartRequestApplicabile(log, this.activePolicy, ctx);
 								//System.out.println("<"+idTransazione+">updateDatiStartRequestApplicabile updateDatiStartRequestApplicabile ok");
 														
 								if(updated) {
@@ -998,14 +1002,14 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 								//System.out.println("<"+idTransazione+">registerStopRequest get ...");
 								datiCollezionati = mapActiveThreads.get(datiGroupBy);	
 								//System.out.println("<"+idTransazione+">registerStopRequest registerEndRequest ...");
-								datiCollezionati.registerEndRequest(log, this.activePolicy, dati);
+								datiCollezionati.registerEndRequest(log, this.activePolicy, ctx, dati);
 								//System.out.println("<"+idTransazione+">registerStopRequest registerEndRequest ok");
 								if(isApplicabile){
 									//System.out.println("<"+idTransazione+">registerStopRequest updateDatiEndRequestApplicabile ...");
 									List<Integer> esitiCodeOk = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeOk_senzaFaultApplicativo();
 									List<Integer> esitiCodeKo_senzaFaultApplicativo = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeKo_senzaFaultApplicativo();
 									List<Integer> esitiCodeFaultApplicativo = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeFaultApplicativo();
-									datiCollezionati.updateDatiEndRequestApplicabile(log, this.activePolicy, dati,
+									datiCollezionati.updateDatiEndRequestApplicabile(log, this.activePolicy, ctx, dati,
 											esitiCodeOk,esitiCodeKo_senzaFaultApplicativo, esitiCodeFaultApplicativo, isViolata);
 									//System.out.println("<"+idTransazione+">registerStopRequest updateDatiEndRequestApplicabile ok");
 								}

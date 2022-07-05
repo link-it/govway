@@ -283,20 +283,34 @@ public class RestTest extends ConfigLoader {
 			Utils.makeParallelRequests(toFailRequest, 1);
 			Utils.makeParallelRequests(toFaultRequest, 1);
 			
+			Utils.waitForPolicy(policy);
+			
 			String idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", erogazione, policy);
 			Utils.resetCounters(idPolicy);
 			
 			idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", erogazione, policy);
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0, policyType, TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI);
 					
-			Utils.waitForPolicy(policy);
-			
 			int toFail = maxRequests/2;
 			int toFault = maxRequests-toFail;
 						
-			Vector<HttpResponse> responses = Utils.makeParallelRequests(toFailRequest, toFail);
+			Vector<HttpResponse> responses = null;
+			if(policyType.isHazelcastCounters() || policyType.isRedisCounters()) {
+				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
+				responses = Utils.makeSequentialRequests(toFailRequest, toFail);
+			}
+			else {
+				responses = Utils.makeParallelRequests(toFailRequest, toFail);
+			}
 			
-			Vector<HttpResponse> faultedResponses = Utils.makeParallelRequests(toFaultRequest, toFault); 
+			Vector<HttpResponse> faultedResponses = null;
+			if(policyType.isHazelcastCounters() || policyType.isRedisCounters()) {
+				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
+				faultedResponses = Utils.makeSequentialRequests(toFaultRequest, toFault);
+			}
+			else {
+				faultedResponses = Utils.makeParallelRequests(toFaultRequest, toFault); 
+			}
 			
 			for (var r : faultedResponses) {
 				JSONObject jsonResp = JsonPathExpressionEngine.getJSONObject(new String(r.getContent()));
@@ -307,8 +321,15 @@ public class RestTest extends ConfigLoader {
 	
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0, policyType, TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI);
 			
-			Vector<HttpResponse>  blockedResponses = Utils.makeParallelRequests(toFailRequest, toFailRequests);
-	
+			Vector<HttpResponse>  blockedResponses = null;
+			if(policyType.isHazelcastCounters() || policyType.isRedisCounters()) {
+				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
+				blockedResponses = Utils.makeSequentialRequests(toFailRequest, toFailRequests);
+			}
+			else {
+				blockedResponses = Utils.makeParallelRequests(toFailRequest, toFailRequests);
+			}
+				
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, toFailRequests, policyType, TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI);
 			
 			checkOkRequests(responses, windowSize, maxRequests, policyType);
@@ -393,20 +414,34 @@ public class RestTest extends ConfigLoader {
 			Utils.makeParallelRequests(toFailRequest, 1);
 			Utils.makeParallelRequests(toFaultRequest, 1);
 			
+			Utils.waitForPolicy(policy);
+			
 			String idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policy);
 			Utils.resetCounters(idPolicy);
 			
 			idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policy);
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0, policyType, TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI);
 					
-			Utils.waitForPolicy(policy);
-			
 			int toFail = maxRequests/2;
 			int toFault = maxRequests-toFail;
-							
-			Vector<HttpResponse> responses = Utils.makeParallelRequests(toFailRequest, toFail);
 			
-			Vector<HttpResponse> faultedResponses = Utils.makeParallelRequests(toFaultRequest, toFault); 
+			Vector<HttpResponse> responses = null;
+			if(policyType.isHazelcastCounters() || policyType.isRedisCounters()) {
+				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
+				responses = Utils.makeSequentialRequests(toFailRequest, toFail);
+			}
+			else {
+				responses = Utils.makeParallelRequests(toFailRequest, toFail);
+			}
+			
+			Vector<HttpResponse> faultedResponses = null;
+			if(policyType.isHazelcastCounters() || policyType.isRedisCounters()) {
+				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
+				faultedResponses = Utils.makeSequentialRequests(toFaultRequest, toFault);
+			}
+			else {
+				faultedResponses = Utils.makeParallelRequests(toFaultRequest, toFault); 
+			}
 			
 			for (var r : faultedResponses) {
 				JSONObject jsonResp = JsonPathExpressionEngine.getJSONObject(new String(r.getContent()));
@@ -417,8 +452,15 @@ public class RestTest extends ConfigLoader {
 	
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0, policyType, TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI);
 			
-			Vector<HttpResponse>  blockedResponses = Utils.makeParallelRequests(toFailRequest, toFailRequests);
-	
+			Vector<HttpResponse>  blockedResponses = null;
+			if(policyType.isHazelcastCounters() || policyType.isRedisCounters()) {
+				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
+				blockedResponses = Utils.makeSequentialRequests(toFailRequest, toFailRequests);
+			}
+			else {
+				blockedResponses = Utils.makeParallelRequests(toFailRequest, toFailRequests);
+			}
+			
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, toFailRequests, policyType, TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI);
 			
 			checkOkRequests(responses, windowSize, maxRequests, policyType);
@@ -494,8 +536,7 @@ public class RestTest extends ConfigLoader {
 	}
 	private void checkFailedRequests(Vector<HttpResponse> responses, int windowSize, int maxRequests, PolicyGroupByActiveThreadsType policyType) throws Exception {
 		
-		if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(policyType) ||
-				PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(policyType)) {
+		if(policyType.isInconsistent()) {
 			// numero troppo casuali
 			return;
 		}

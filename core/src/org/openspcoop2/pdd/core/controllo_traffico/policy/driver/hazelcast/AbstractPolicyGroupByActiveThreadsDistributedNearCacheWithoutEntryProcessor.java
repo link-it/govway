@@ -21,6 +21,7 @@
 
 package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,7 @@ import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.PolicyDateUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.slf4j.Logger;
 
@@ -54,14 +56,17 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributedNearCacheWith
 	}
 
 	@Override
-	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy)
+	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx)
 			throws PolicyException {
 		
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
 		
 		DatiCollezionati datiCollezionati = this.distributedMap.get(datiGroupBy);
+		boolean newDati = false;
 		if (datiCollezionati == null) {
-			datiCollezionati = new DatiCollezionati(this.activePolicy.getInstanceConfiguration().getUpdateTime());
+			Date gestorePolicyConfigDate = PolicyDateUtils.readGestorePolicyConfigDateIntoContext(ctx);
+			datiCollezionati = new DatiCollezionati(this.activePolicy.getInstanceConfiguration().getUpdateTime(), gestorePolicyConfigDate);
+			newDati = true;
 		}
 		else {
 			if(datiCollezionati.getUpdatePolicyDate()!=null) {
@@ -71,8 +76,13 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributedNearCacheWith
 				}
 			}
 		}
+		DatiCollezionati datiCollezionatiPerPolicyVerifier = (DatiCollezionati) datiCollezionati.clone(); // i valori utilizzati dal policy verifier verranno impostati con il valore impostato nell'operazione chiamata
+		if(newDati) {
+			datiCollezionatiPerPolicyVerifier.initDatiIniziali(this.activePolicy);
+			datiCollezionatiPerPolicyVerifier.checkDate(log, this.activePolicy); // inizializza le date se ci sono
+		}
 		
-		datiCollezionati.registerStartRequest(log, this.activePolicy);
+		datiCollezionati.registerStartRequest(log, this.activePolicy, ctx, datiCollezionatiPerPolicyVerifier);
 		
 		if(this.putAsync) {
 			this.distributedMap.putAsync(datiGroupBy, datiCollezionati);
@@ -81,13 +91,13 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributedNearCacheWith
 			this.distributedMap.put(datiGroupBy, datiCollezionati);
 		}
 		
-		return datiCollezionati;
+		return datiCollezionatiPerPolicyVerifier;
 	}
 	
 	
 	@Override
 	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione,
-			IDUnivocoGroupByPolicy datiGroupBy) throws PolicyException, PolicyNotFoundException {
+			IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx) throws PolicyException, PolicyNotFoundException {
 		
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
 
@@ -95,7 +105,9 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributedNearCacheWith
 		if(datiCollezionati == null) {
 			throw new PolicyNotFoundException("Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+datiGroupBy.toString()+"]");
 		} else {
-			boolean updated = datiCollezionati.updateDatiStartRequestApplicabile(log, this.activePolicy);	
+			DatiCollezionati datiCollezionatiPerPolicyVerifier = (DatiCollezionati) datiCollezionati.clone(); // i valori utilizzati dal policy verifier verranno impostati con il valore impostato nell'operazione chiamata
+			
+			boolean updated = datiCollezionati.updateDatiStartRequestApplicabile(log, this.activePolicy, ctx, datiCollezionatiPerPolicyVerifier);	
 			if(updated) {
 				if(this.putAsync) {
 					this.distributedMap.putAsync(datiGroupBy, datiCollezionati);
@@ -103,14 +115,16 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributedNearCacheWith
 				else {
 					this.distributedMap.put(datiGroupBy, datiCollezionati);
 				}
+				return datiCollezionatiPerPolicyVerifier;
 			}
 			
-			return datiCollezionati;
+			return null;
 		}
 	}
 	
 	@Override
-	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata)
+	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx, 
+			MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata)
 			throws PolicyException, PolicyNotFoundException {
 		
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
@@ -120,7 +134,7 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributedNearCacheWith
 			throw new PolicyNotFoundException("Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+datiGroupBy.toString()+"]");
 		} else {
 			//System.out.println("<"+idTransazione+">registerStopRequest registerEndRequest ...");
-			datiCollezionati.registerEndRequest(log, this.activePolicy, dati);
+			datiCollezionati.registerEndRequest(log, this.activePolicy, ctx, dati);
 			//System.out.println("<"+idTransazione+">registerStopRequest registerEndRequest ok");
 			if(isApplicabile){
 				//System.out.println("<"+idTransazione+">registerStopRequest updateDatiEndRequestApplicabile ...");
@@ -134,7 +148,7 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributedNearCacheWith
 				}catch(Exception e) {
 					throw new PolicyException(e.getMessage(),e);
 				}
-				datiCollezionati.updateDatiEndRequestApplicabile(log, this.activePolicy, dati,
+				datiCollezionati.updateDatiEndRequestApplicabile(log, this.activePolicy, ctx, dati,
 						esitiCodeOk,esitiCodeKo_senzaFaultApplicativo, esitiCodeFaultApplicativo, isViolata);
 				//System.out.println("<"+idTransazione+">registerStopRequest updateDatiEndRequestApplicabile ok");
 				if(this.putAsync) {

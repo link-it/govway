@@ -96,8 +96,8 @@ public class HazelcastManager {
 						// default
 						String name = "";
 						switch (type) {
-						case HAZELCAST:
-							name = "govway.hazelcast.yaml";
+						case HAZELCAST_MAP:
+							name = "govway.hazelcast-map.yaml";
 							break;
 						case HAZELCAST_NEAR_CACHE:
 							name = "govway.hazelcast-near-cache.yaml";
@@ -110,6 +110,18 @@ public class HazelcastManager {
 							break;
 						case HAZELCAST_LOCAL_CACHE:
 							name = "govway.hazelcast-local-cache.yaml";
+							break;
+						case HAZELCAST_REPLICATED_MAP:
+							name= "govway.hazelcast-replicated-map.yaml";
+							break;
+						case HAZELCAST_ATOMIC_LONG:
+							name = "govway.hazelcast-atomic-long-counters.yaml";
+							break;
+						case HAZELCAST_ATOMIC_LONG_ASYNC:
+							name = "govway.hazelcast-atomic-long-async-counters.yaml";
+							break;
+						case HAZELCAST_PNCOUNTER:
+							name = "govway.hazelcast-pn-counters.yaml";
 							break;
 						default:
 							throw new Exception("Hazelcast type '"+type+"' unsupported");
@@ -183,8 +195,8 @@ public class HazelcastManager {
 		
 		String groupId = null;
 		switch (type) {
-		case HAZELCAST:
-			groupId = HazelcastManager.groupId;
+		case HAZELCAST_MAP:
+			groupId = HazelcastManager.groupId+"-map";
 			break;
 		case HAZELCAST_NEAR_CACHE:
 			groupId = HazelcastManager.groupId+"-near-cache";
@@ -197,6 +209,18 @@ public class HazelcastManager {
 			break;
 		case HAZELCAST_LOCAL_CACHE:
 			groupId = HazelcastManager.groupId+"-local-cache";
+			break;
+		case HAZELCAST_REPLICATED_MAP:
+			groupId = HazelcastManager.groupId+"-replicated-map"; 
+			break;
+		case HAZELCAST_PNCOUNTER:
+			groupId = HazelcastManager.groupId+"-pncounter";
+			break;
+		case HAZELCAST_ATOMIC_LONG:
+			groupId = HazelcastManager.groupId+"-atomic-long";
+			break;
+		case HAZELCAST_ATOMIC_LONG_ASYNC:
+			groupId = HazelcastManager.groupId+"-atomic-long-async";
 			break;
 		default:
 			throw new PolicyException("Hazelcast type '"+type+"' unsupported");
@@ -231,4 +255,5 @@ public class HazelcastManager {
 		}
 	}
 	
+
 }

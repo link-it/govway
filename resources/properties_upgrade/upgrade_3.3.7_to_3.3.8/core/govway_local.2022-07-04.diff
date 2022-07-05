@@ -1,0 +1,28 @@
+diff --git ant/setup/deploy/resources/core/govway_local.properties ant/setup/deploy/resources/core/govway_local.properties
+index 6e1fb95cdd..a37d235648 100644
+--- ant/setup/deploy/resources/core/govway_local.properties
++++ ant/setup/deploy/resources/core/govway_local.properties
+@@ -171,3 +168,23 @@ org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.connettore.enabled=true
+ org.openspcoop2.pdd.transazioni.fileTrace.config=govway.fileTrace.properties
+ # ================================================
+ 
++# ================================================
++# RateLimiting 
++#
++# -- Sincronizzazione Locale con quota divisa tra i nodi --
++# Quota effettiva
++org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.LOCAL_DIVIDED_BY_NODES.limit.roundingDown=true
++# Quota normalizzata
++org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.LOCAL_DIVIDED_BY_NODES.limit.normalizedQuota=false
++# Remaining zeroValue
++org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.LOCAL_DIVIDED_BY_NODES.remaining.zeroValue=false
++#
++# -- Hazelcast --
++# Identificativo del cluster
++org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.group_id=govway
++#
++# -- Redis --
++# Connection Url (possono essere fornite più url separate da virgola)
++# usare rediss:// per TLS (con due s)
++org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.REDIS.connectionUrl=redis://127.0.0.1:7000
++# ================================================

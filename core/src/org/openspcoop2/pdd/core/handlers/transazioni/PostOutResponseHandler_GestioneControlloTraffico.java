@@ -21,6 +21,7 @@ package org.openspcoop2.pdd.core.handlers.transazioni;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
@@ -189,8 +190,14 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 											timeStart = DateManager.getTimeMillis();
 										}
 										
+										Map<String, Object> mapContext = null;
+										if(context!=null && context.getPddContext()!=null) {
+											mapContext = context.getPddContext().getContext();
+										}
+										
 										policyGroupByActiveThreads.
-											registerStopRequest(logControlloTraffico, idTransazione, groupByPolicies.get(i), misurazioniTransazione, 
+											registerStopRequest(logControlloTraffico, idTransazione, groupByPolicies.get(i),mapContext, 
+													misurazioniTransazione, 
 													incrementCounter_policyApplicabile.get(i),
 													incrementCounter_policyViolata.get(i));
 										

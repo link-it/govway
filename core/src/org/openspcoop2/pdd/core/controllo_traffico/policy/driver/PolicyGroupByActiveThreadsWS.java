@@ -55,7 +55,7 @@ public class PolicyGroupByActiveThreadsWS implements IPolicyGroupByActiveThreads
 	}
 	
 	@Override
-	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy)
+	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx)
 			throws PolicyException {
 		try{
 			Map<String, List<String>> p = new HashMap<String, List<String>>();
@@ -80,7 +80,7 @@ public class PolicyGroupByActiveThreadsWS implements IPolicyGroupByActiveThreads
 	}
 
 	@Override
-	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy)
+	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx)
 			throws PolicyException, PolicyNotFoundException {
 		try{
 			Map<String, List<String>> p = new HashMap<String, List<String>>();
@@ -105,7 +105,7 @@ public class PolicyGroupByActiveThreadsWS implements IPolicyGroupByActiveThreads
 	}
 
 	@Override
-	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, MisurazioniTransazione dati,
+	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx, MisurazioniTransazione dati,
 			boolean isApplicabile, boolean isViolata) throws PolicyException, PolicyNotFoundException {
 		try{
 			Map<String, List<String>> p = new HashMap<String, List<String>>();

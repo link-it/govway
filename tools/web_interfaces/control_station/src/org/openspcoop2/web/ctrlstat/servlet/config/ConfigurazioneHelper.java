@@ -186,6 +186,7 @@ import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
@@ -7822,7 +7823,30 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		String ctHeaderHttp_retryAfterBackoff = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS);
 		
 		if(ctModalitaSincronizzazione!=null && !"".equals(ctModalitaSincronizzazione)) {
+			List<Proprieta> oldList= new ArrayList<Proprieta>();
+			if(rateLimiting.getProprietaList()!=null && !rateLimiting.getProprietaList().isEmpty()) {
+				for (ConfigurazioneRateLimitingProprieta rt : rateLimiting.getProprietaList()) {
+					Proprieta proprieta = new Proprieta();
+					proprieta.setNome(rt.getNome());
+					proprieta.setValore(rt.getValore());
+				}
+			}
+			PolicyConfiguration oldPolicyConfig = new PolicyConfiguration(oldList, this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(), false);
+			boolean changeImpl = false;
+			if(oldPolicyConfig.getEngineType()!=null) {
+				changeImpl=!oldPolicyConfig.getEngineType().equals(ctTipologia);
+			}
+			else if(ctContatori!=null) {
+				changeImpl=true;
+			}
+			
 			PolicyConfiguration policyConfig = new PolicyConfiguration();
+			if(changeImpl) {
+				policyConfig.setGestorePolicyConfigDate(DateManager.getTimeMillis());
+			}
+			else {
+				policyConfig.setGestorePolicyConfigDate(oldPolicyConfig.getGestorePolicyConfigDate());
+			}
 			policyConfig.setSyncMode(ctModalitaSincronizzazione);
 			policyConfig.setImpl(ctImplementazione);
 			policyConfig.setCount(ctContatori);

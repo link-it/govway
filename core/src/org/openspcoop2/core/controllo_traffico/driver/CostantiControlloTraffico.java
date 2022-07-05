@@ -37,7 +37,7 @@ public class CostantiControlloTraffico {
 		
 	public final static String LABEL_MODALITA_IMPLEMENTAZIONE = "Implementazione";
 	
-	public final static String LABEL_MODALITA_IMPLEMENTAZIONE_DATABASE = "database";
+	public final static String LABEL_MODALITA_IMPLEMENTAZIONE_DATABASE = "embedded";
 	public final static String LABEL_MODALITA_IMPLEMENTAZIONE_HAZELCAST = "hazelcast";
 	public final static String LABEL_MODALITA_IMPLEMENTAZIONE_REDIS = "redis";
 		
@@ -46,15 +46,23 @@ public class CostantiControlloTraffico {
 	
 	public final static String LABEL_MODALITA_CONTATORI_EXACT = "esatta";
 	public final static String LABEL_MODALITA_CONTATORI_APPROXIMATED = "approssimata";
+	public final static String LABEL_MODALITA_CONTATORI_INCONSISTENT = "inconsistente";
 	
 	public final static String LABEL_MODALITA_TIPOLOGIA = "Algoritmo";
 	
-	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC = "full-sync";
+	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC = "map";
 	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE = "near-cache";
 	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE = "local-cache";
 	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC = "remote-sync";
 	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC = "remote-async";
+	public static final String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REPLICATED_MAP = "replicated-map";
+	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG = "atomic-long-counters";
+	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC = "atomic-long-async-counters";
+	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER = "pn-counters";
 	
-	public final static String LABEL_MODALITA_TIPOLOGIA_REDIS_REDDISSON = "redisson-map";
+	public final static String LABEL_MODALITA_TIPOLOGIA_REDIS_REDDISSON = "map";
+	public static final String LABEL_MODALITA_TIPOLOGIA_REDIS_CONTATORI_ATOMIC_LONG = "atomic-long-counters";
+	public static final String LABEL_MODALITA_TIPOLOGIA_REDIS_CONTATORI_LONGADDER = "longadder-counters";
+	 
 
 }

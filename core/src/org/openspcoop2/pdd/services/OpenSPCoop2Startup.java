@@ -2457,11 +2457,15 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				if(propertiesReader.isHazelcastEngineEnabled()) {
 					try{
 						Map<PolicyGroupByActiveThreadsType,String> config = new HashMap<PolicyGroupByActiveThreadsType, String>();
-						config.put(PolicyGroupByActiveThreadsType.HAZELCAST, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastConfigPath());
+						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_MAP, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastMapConfigPath());
 						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath());
 						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastLocalCacheConfigPath());
 						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath());
 						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath());
+						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_REPLICATED_MAP, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastReplicatedMapConfigPath());
+						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPath());
+						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPath());
+						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPath());
 						HazelcastManager.initialize(log, logControlloTraffico, config, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId());
 					}catch(Exception e){
 						msgDiag.logStartupError(e,"Inizializzazione HazelcastManager");
@@ -2482,10 +2486,22 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				// Gestore RateLimiting
 				List<PolicyGroupByActiveThreadsType> listGestorePolicyRT = null;
 				try{
-					List<PolicyGroupByActiveThreadsType> list = configurazionePdDManager.getTipiGestoreRateLimiting();
+					List<PolicyGroupByActiveThreadsType> listConfig = configurazionePdDManager.getTipiGestoreRateLimiting();
+					List<PolicyGroupByActiveThreadsType> listStartup = null;
+					if(listConfig!=null && !listConfig.isEmpty()) {
+						listStartup = new ArrayList<PolicyGroupByActiveThreadsType>();
+						for (PolicyGroupByActiveThreadsType type : listConfig) {
+							if(propertiesReader.isControlloTrafficoGestorePolicyInMemoryTypeLazyInitialization(type)) {
+								log.debug("Gestore Policy di RateLimiting '"+type+"' trovato nella configurazione non inizializzato (lazy); verrà attivato alla prima richiesta.");	
+							}
+							else {
+								listStartup.add(type);
+							}
+						}
+					}
 					GestorePolicyAttive.initialize(log, logControlloTraffico, propertiesReader.getControlloTrafficoGestorePolicyTipo(),
 							propertiesReader.getControlloTrafficoGestorePolicyWSUrl(),
-							list);
+							listStartup);
 					listGestorePolicyRT = GestorePolicyAttive.getTipiGestoriAttivi();
 				}catch(Exception e){
 					msgDiag.logStartupError(e,"Inizializzazione Gestori Policy di Rate Limiting");

@@ -7588,7 +7588,14 @@ public class ConfigurazionePdDReader {
 			List<String> listPA =  driver.porteApplicativeRateLimitingValoriUnivoci(Constants.GESTORE);
 			if(listPA!=null && !listPA.isEmpty()) {
 				for (String type : listPA) {
-					PolicyGroupByActiveThreadsType typeE = PolicyGroupByActiveThreadsType.valueOf(type);
+					PolicyGroupByActiveThreadsType typeE = null;
+					// per backward
+					if(Constants.GESTORE_HAZELCAST_MAP_BACKWARD_COMPATIBILITY.equalsIgnoreCase(type)) {
+						typeE = PolicyGroupByActiveThreadsType.HAZELCAST_MAP;
+					}
+					else {
+						typeE = PolicyGroupByActiveThreadsType.valueOf(type);
+					}
 					if(!list.contains(typeE)) {
 						list.add(typeE);
 					}

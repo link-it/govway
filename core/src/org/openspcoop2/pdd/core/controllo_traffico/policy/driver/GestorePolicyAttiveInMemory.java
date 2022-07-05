@@ -52,12 +52,14 @@ import org.openspcoop2.core.controllo_traffico.driver.PolicyShutdownException;
 import org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbDeserializer;
 import org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbSerializer;
 import org.openspcoop2.pdd.config.DynamicClusterManager;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.HazelcastManager;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedLocalCache;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedNearCache;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedNearCacheWithoutEntryProcessorPutAsync;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedNearCacheWithoutEntryProcessorPutSync;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedNoCache;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.PolicyGroupByActiveThreadsDistributedReplicatedMap;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.PolicyGroupByActiveThreadsDistributedRedis;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.RedissonManager;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
@@ -92,6 +94,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	
 	private Logger log;
 	private PolicyGroupByActiveThreadsType type;
+	private boolean useCountersWithLock = false;
 	@Override
 	public void initialize(Logger log, PolicyGroupByActiveThreadsType type, Object ... params) throws PolicyException{
 		this.log = log;
@@ -126,10 +129,14 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 		case DATABASE:
 			break;
 		
-		case HAZELCAST:
+		case HAZELCAST_MAP:
 		case HAZELCAST_NEAR_CACHE:
 		case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
 		case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
+		case HAZELCAST_PNCOUNTER:
+		case HAZELCAST_ATOMIC_LONG:
+		case HAZELCAST_ATOMIC_LONG_ASYNC:
+		case HAZELCAST_REPLICATED_MAP:
 			HazelcastManager.getInstance(this.type);
 			break;
 		case HAZELCAST_LOCAL_CACHE:
@@ -143,9 +150,15 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			}
 			break;
 
-		case REDISSON:
+		case REDISSON_MAP:
+		case REDISSON_ATOMIC_LONG:
+		case REDISSON_LONGADDER:
 			RedissonManager.getRedissonClient();
 			break;
+		}
+		
+		if(this.type.isHazelcastCounters() || this.type.isRedisCounters()) {
+			this.useCountersWithLock=OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryRemoteCountersUseLocalLock();
 		}
 	}
 	
@@ -436,18 +449,43 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 						ActivePolicy activePolicy = active.getActivePolicy();
 						JaxbSerializer serializer = new JaxbSerializer();
 						
+						byte[] cPolicy = null;
+						if(activePolicy.getConfigurazionePolicy()!=null){
+							try {
+								cPolicy = serializer.toByteArray(activePolicy.getConfigurazionePolicy());
+							}catch(Throwable t) {
+								this.log.error("["+this.type+"] Serializzazione configurazione policy '"+activePolicy.getConfigurazionePolicy().getIdPolicy()+"' fallita: "+t.getMessage(),t);
+							}
+							if(cPolicy==null) {
+								continue;
+							}
+						}
+						
+						byte[] aPolicy = null;
+						if(activePolicy.getInstanceConfiguration()!=null){
+							try {
+								aPolicy = serializer.toByteArray(activePolicy.getInstanceConfiguration());
+							}catch(Throwable t) {
+								this.log.error("["+this.type+"] Serializzazione attivazione policy '"+activePolicy.getInstanceConfiguration().getAlias()+"' ("+activePolicy.getInstanceConfiguration().getIdActivePolicy()+") fallita: "+t.getMessage(),t);
+							}
+							if(aPolicy==null) {
+								continue;
+							}
+						}
+						
+						
 						// ConfigurazionePolicy
 						if(activePolicy.getConfigurazionePolicy()!=null){
 							nomeFile = idFileActivePolicy+File.separatorChar+ZIP_POLICY_CONFIGURAZIONE_POLICY_SUFFIX;
 							zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
-							zipOut.write(serializer.toByteArray(activePolicy.getConfigurazionePolicy()));
+							zipOut.write(cPolicy);
 						}
 						
 						// AttivazionePolicy
 						if(activePolicy.getInstanceConfiguration()!=null){
 							nomeFile = idFileActivePolicy+File.separatorChar+ZIP_POLICY_ATTIVAZIONE_POLICY_SUFFIX;
 							zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
-							zipOut.write(serializer.toByteArray(activePolicy.getInstanceConfiguration()));
+							zipOut.write(aPolicy);
 						}
 						
 						Map<IDUnivocoGroupByPolicy, DatiCollezionati> map = active.getMapActiveThreads();
@@ -462,17 +500,37 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 								// Id Raggruppamento
 								String idFileRaggruppamento = idFileActivePolicy+File.separatorChar+"groupBy"+File.separatorChar+"groupBy-"+indexDatoCollezionato;
 								
+								String id = null;
+								try {
+									id = IDUnivocoGroupByPolicy.serialize(idUnivocoGroupByPolicy);
+								}catch(Throwable t) {
+									this.log.error("["+this.type+"] Serializzazione idUnivocoGroupByPolicy ("+idUnivocoGroupByPolicy+") della policy '"+activePolicy.getInstanceConfiguration().getAlias()+"' ("+activePolicy.getInstanceConfiguration().getIdActivePolicy()+") fallita: "+t.getMessage(),t);
+								}
+								if(id==null) {
+									continue;
+								}
+								
+								DatiCollezionati datiCollezionati = map.get(idUnivocoGroupByPolicy);
+								String dati = null;
+								try {
+									dati = DatiCollezionati.serialize(datiCollezionati);
+								}catch(Throwable t) {
+									this.log.error("["+this.type+"] Serializzazione dati per idUnivocoGroupByPolicy ("+idUnivocoGroupByPolicy+") della policy '"+activePolicy.getInstanceConfiguration().getAlias()+"' ("+activePolicy.getInstanceConfiguration().getIdActivePolicy()+") fallita: "+t.getMessage(),t);
+								}
+								if(dati==null) {
+									continue;
+								}
+								
 								// File contenente l'identificativo del raggruppamento
 								nomeFile = idFileRaggruppamento+ZIP_POLICY_ID_DATI_COLLEZIONATI_POLICY_SUFFIX;
 								zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
-								zipOut.write(IDUnivocoGroupByPolicy.serialize(idUnivocoGroupByPolicy).getBytes());
+								zipOut.write(id.getBytes());
 								
 								// DatiCollezionati
 								// NOTA: l'ulteriore directory serve a garantire il corretto ordine di ricostruzione
-								DatiCollezionati datiCollezionati = map.get(idUnivocoGroupByPolicy);
 								nomeFile = idFileRaggruppamento+File.separatorChar+"dati"+ZIP_POLICY_DATI_COLLEZIONATI_POLICY_SUFFIX;
 								zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
-								zipOut.write(DatiCollezionati.serialize(datiCollezionati).getBytes());
+								zipOut.write(dati.getBytes());
 								
 								// increment
 								indexDatoCollezionato++;
@@ -762,9 +820,23 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			return new PolicyGroupByActiveThreadsDistributedNearCacheWithoutEntryProcessorPutSync(activePolicy, uniqueIdMap, HazelcastManager.getInstance(this.type));
 		case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
 			return new PolicyGroupByActiveThreadsDistributedNearCacheWithoutEntryProcessorPutAsync(activePolicy, uniqueIdMap, HazelcastManager.getInstance(this.type));
-		case HAZELCAST:
+		case HAZELCAST_MAP:
 			return new PolicyGroupByActiveThreadsDistributedNoCache(activePolicy, uniqueIdMap, HazelcastManager.getInstance(this.type));
-		case REDISSON:
+		case HAZELCAST_REPLICATED_MAP:
+			return new PolicyGroupByActiveThreadsDistributedReplicatedMap(activePolicy, uniqueIdMap, HazelcastManager.getInstance(this.type));
+  	  	case HAZELCAST_PNCOUNTER:
+  	  	case HAZELCAST_ATOMIC_LONG:
+  	  	case HAZELCAST_ATOMIC_LONG_ASYNC:
+  	  	case REDISSON_ATOMIC_LONG:
+  	  	case REDISSON_LONGADDER:
+  	  		 BuilderDatiCollezionatiDistributed builder = BuilderDatiCollezionatiDistributed.getBuilder(this.type);
+  	  		 if(this.useCountersWithLock) {
+  	  			 return new PolicyGroupByActiveThreadsDistributedCountersWithLock(activePolicy, uniqueIdMap,  builder);
+  	  		 }
+  	  		 else {
+  	  			 return new PolicyGroupByActiveThreadsDistributedCounters(activePolicy, uniqueIdMap,  builder);
+  	  		 }
+		case REDISSON_MAP:
 			return new PolicyGroupByActiveThreadsDistributedRedis(activePolicy, uniqueIdMap, RedissonManager.getRedissonClient());
 		}
 		throw new PolicyException("Unsupported type '"+this.type+"'");

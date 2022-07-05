@@ -1,0 +1,14 @@
+hazelcast:
+  cluster-name: govway
+
+  pn-counter:
+    "pncounter-*-rl":
+      # Lasciare abilitata la statistica altrimenti si ha il seguente bug nel govway_hazelcast.log:
+      # java.lang.NullPointerException: null
+      #  at com.hazelcast.internal.crdt.pncounter.PNCounterService.merge(PNCounterService.java:207) ~[hazelcast-all-4.2.5.jar:4.2.5]
+      statistics-enabled: true
+
+  network:
+    port:
+      auto-increment: false
+      port: 5702

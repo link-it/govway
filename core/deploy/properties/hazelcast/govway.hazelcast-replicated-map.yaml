@@ -1,0 +1,17 @@
+hazelcast:
+  cluster-name: govway
+  replicatedmap:
+    default:
+      in-memory-format: BINARY
+      async-fillup: false
+      statistics-enabled: false
+      
+  serialization:
+    serializers:
+      - type-class: org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy
+        class-name: org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.IDUnivocoGroupByPolicyStreamSerializer
+
+  network:
+    port:
+      auto-increment: false
+      port: 5706

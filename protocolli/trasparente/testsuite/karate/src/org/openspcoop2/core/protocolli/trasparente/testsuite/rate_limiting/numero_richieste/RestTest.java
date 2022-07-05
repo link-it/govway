@@ -283,7 +283,7 @@ public class RestTest extends ConfigLoader {
 			logRateLimiting.warn("Test numeroRichiesteFalliteFruizione con policy type '"+policyType+"' non effettuato poichè non supportato dal gestore");
 			return;
 		}
-		
+				
 		try {
 		
 			logRateLimiting.info("Test richieste per minuto fruizione");
@@ -633,8 +633,7 @@ public class RestTest extends ConfigLoader {
 	}
 	private void checkAssertionsNumeroRichieste(Vector<HttpResponse> responses, int maxRequests, int windowSize, boolean disclosure, PolicyGroupByActiveThreadsType policyType) throws Exception {
 
-		if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(policyType) ||
-				PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(policyType)) {
+		if(policyType.isInconsistent()) {
 			// numero troppo casuali
 			return;
 		}
@@ -692,12 +691,12 @@ public class RestTest extends ConfigLoader {
 		// i valori possibili da 0 a maxRequests-1
 		List<Integer> counters = responses.stream()
 				.map(resp -> Integer.parseInt(resp.getHeaderFirstValue(Headers.RateLimitRemaining))).collect(Collectors.toList());
-		//System.out.println("HEADER SIZE ("+policyType+"): ["+counters.size()+"] ["+counters+"]");
-		if(!PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE.equals(policyType)) {
+		logRateLimiting.debug("HEADER SIZE ("+policyType+"): ["+(counters!=null ? counters.size() : -1)+"] ["+counters+"]");
+		if(policyType.isExact()) {
 			assertTrue(IntStream.range(0, maxRequests).allMatch(v -> counters.contains(v)));
 		}
 		else {
-			// andando in parallelo le richieste si sovrappongono con una near cache e i numeri non si riescono a stabilire a priori
+			// andando in parallelo le richieste si sovrappongono e i numeri non si riescono a stabilire a priori
 			List<Integer> find = new ArrayList<Integer>();
 			for (Integer v : counters) {
 				if(counters.contains(v) && !find.contains(v)) {

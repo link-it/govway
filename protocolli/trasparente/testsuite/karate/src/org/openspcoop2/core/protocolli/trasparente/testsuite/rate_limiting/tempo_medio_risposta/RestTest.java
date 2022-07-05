@@ -35,6 +35,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Heade
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils.PolicyAlias;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -128,20 +129,21 @@ public class RestTest extends ConfigLoader {
 			// attivo nuovo motore
 			Utils.makeParallelRequests(request, 1);
 			
+			Utils.waitForPolicy(policy);
+			
 			String idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", erogazione, policy);
 			Utils.resetCounters(idPolicy);
 			
 			idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", erogazione, policy);
 			Commons.checkPreConditionsTempoMedioRisposta(idPolicy, policyType);
 			
-			Utils.waitForPolicy(policy);
 			
 			// Faccio prima 3 richieste che passano
 						
 			Vector<HttpResponse> notBlockedResponses = Utils.makeParallelRequests(request, small_delay_count);
 			
 			// Poi faccio una richiesta che fa scattare la policy
-			
+						
 			request.setContentType("application/json");
 			request.setMethod(HttpRequestMethod.GET);
 			request.setUrl( System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?sleep="+big_delay );
@@ -152,6 +154,10 @@ public class RestTest extends ConfigLoader {
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, small_delay_count+1, 0, policyType, TipoRisorsaPolicyAttiva.TEMPO_MEDIO_RISPOSTA);
 			
 			// Poi faccio n richieste che non passano
+			
+			if(policyType.isApproximated()) {
+				Utilities.sleep(2000); // aspetto che le precedenti richieste vengano registrate, non essendoci un lock globale
+			}
 			
 			request.setContentType("application/json");
 			request.setMethod(HttpRequestMethod.GET);
@@ -206,14 +212,15 @@ public class RestTest extends ConfigLoader {
 			// attivo nuovo motore
 			Utils.makeParallelRequests(request, 1);
 			
+			Utils.waitForPolicy(policy);
+			
 			String idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policy);
 			Utils.resetCounters(idPolicy);
 			
 			idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policy);
 			Commons.checkPreConditionsTempoMedioRisposta(idPolicy, policyType);
 			
-			Utils.waitForPolicy(policy);
-	
+			
 			
 			// Faccio prima richieste che passano
 
@@ -230,6 +237,10 @@ public class RestTest extends ConfigLoader {
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, small_delay_count+1, 0, policyType, TipoRisorsaPolicyAttiva.TEMPO_MEDIO_RISPOSTA);
 			
 			// Poi faccio n richieste che non passano
+			
+			if(policyType.isApproximated()) {
+				Utilities.sleep(2000); // aspetto che le precedenti richieste vengano registrate, non essendoci un lock globale
+			}
 			
 			request.setContentType("application/json");
 			request.setMethod(HttpRequestMethod.GET);
@@ -256,8 +267,7 @@ public class RestTest extends ConfigLoader {
 	
 	private void checkPassedRequests(Vector<HttpResponse> responses, int windowSize, int soglia, PolicyGroupByActiveThreadsType policyType) {
 		
-		if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(policyType) ||
-				PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(policyType)) {
+		if(policyType.isInconsistent()) {
 			// numero troppo casuali
 			return;
 		}
@@ -279,8 +289,7 @@ public class RestTest extends ConfigLoader {
 	
 	private void checkBlockedRequests(Vector<HttpResponse> responses, int windowSize, int soglia, PolicyGroupByActiveThreadsType policyType) throws Exception {
 		
-		if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(policyType) ||
-				PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(policyType)) {
+		if(policyType.isInconsistent()) {
 			// numero troppo casuali
 			return;
 		}

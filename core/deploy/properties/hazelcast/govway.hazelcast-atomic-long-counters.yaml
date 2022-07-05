@@ -1,0 +1,7 @@
+hazelcast:
+  cluster-name: govway
+
+  network:
+    port:
+      auto-increment: false
+      port: 5701
