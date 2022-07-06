@@ -159,6 +159,9 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 		// Se non ho la policyDate, non considero il resto delle informazioni, che senza di essa non hanno senso.
 		if (super.getPolicyDate() != null) {
 
+			// Non serve: essendo già persistente, si va a sommare un dato gia' esistente
+			/*
+			
 			// Se ci sono altri nodi che stanno andando, la distributedPolicyDate DEVE essere != 0 
 			if (this.distributedPolicyDate.compareAndSet(0, super.getPolicyDate().getTime())) {
 				// Se la data distribuita non era inizializzata e questo nodo l'ha settata, imposto i contatori come da immagine bin.
@@ -195,17 +198,19 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 				}
 										
 			} else {
-				
+			*/
 				Long polDate = this.distributedPolicyDate.get();
 				initPolicyCounters(polDate);
 				
-			}
+			//}
 		}
 		
 		// Se non ho la policyDegradoPrestazionaleDate, non considero il resto delle informazioni, che senza di essa non hanno senso.
 		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
 			if (super.getPolicyDegradoPrestazionaleDate() != null) {
 				
+				// Non serve: essendo già persistente, si va a sommare un dato gia' esistente
+				/*
 				// Imposto i contatori distribuiti solo se nel frattempo non l'ha fatto un altro thread del cluster.
 				if (this.distributedPolicyDegradoPrestazionaleDate.compareAndSet(0, super.getPolicyDegradoPrestazionaleDate().getTime())) {
 					
@@ -223,11 +228,11 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 					}
 					
 				}  else {
-					
+				*/	
 					Long degradoPrestazionaleTime = this.distributedPolicyDegradoPrestazionaleDate.get();
 					initPolicyCountersDegradoPrestazionale(degradoPrestazionaleTime);
 					
-				}
+				//}
 			}
 		}
 		

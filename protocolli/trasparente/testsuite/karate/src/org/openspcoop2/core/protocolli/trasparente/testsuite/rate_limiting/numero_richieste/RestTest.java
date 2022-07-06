@@ -595,7 +595,15 @@ public class RestTest extends ConfigLoader {
 	private void checkAssertionsRichiesteSimultanee(Vector<HttpResponse> responses, int maxConcurrentRequests, PolicyGroupByActiveThreadsType policyType) throws Exception {
 		// Tutte le richieste tranne 1 devono restituire 200
 		
-		assertEquals(maxConcurrentRequests, responses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
+		long numeroRichieste = responses.stream().filter(r -> r.getResultHTTPOperation() == 200).count();
+		logRateLimiting.debug("["+policyType+"] attese:"+maxConcurrentRequests+" conteggiate:"+numeroRichieste+"  ");
+		if(policyType!=null && (policyType.isInconsistent() || policyType.isApproximated())) {
+			assertTrue("RichiesteAttiveConteggiate200["+numeroRichieste+"] = (attese["+maxConcurrentRequests+"] OR attese-1["+(maxConcurrentRequests-1)+"])", 
+					( (numeroRichieste==maxConcurrentRequests) || (numeroRichieste==(maxConcurrentRequests-1)) ));
+		}
+		else {
+			assertEquals(maxConcurrentRequests, numeroRichieste);
+		}
 
 		// Tutte le richieste devono avere lo header GovWay-RateLimit-ConcurrentRequest-Limit=10
 		// Tutte le richieste devono avere lo header ConcurrentRequestsRemaining impostato ad un numero positivo		
@@ -633,7 +641,7 @@ public class RestTest extends ConfigLoader {
 	}
 	private void checkAssertionsNumeroRichieste(Vector<HttpResponse> responses, int maxRequests, int windowSize, boolean disclosure, PolicyGroupByActiveThreadsType policyType) throws Exception {
 
-		if(policyType.isInconsistent()) {
+		if(policyType!=null && policyType.isInconsistent()) {
 			// numero troppo casuali
 			return;
 		}
@@ -692,7 +700,7 @@ public class RestTest extends ConfigLoader {
 		List<Integer> counters = responses.stream()
 				.map(resp -> Integer.parseInt(resp.getHeaderFirstValue(Headers.RateLimitRemaining))).collect(Collectors.toList());
 		logRateLimiting.debug("HEADER SIZE ("+policyType+"): ["+(counters!=null ? counters.size() : -1)+"] ["+counters+"]");
-		if(policyType.isExact()) {
+		if(policyType!=null && policyType.isExact()) {
 			assertTrue(IntStream.range(0, maxRequests).allMatch(v -> counters.contains(v)));
 		}
 		else {

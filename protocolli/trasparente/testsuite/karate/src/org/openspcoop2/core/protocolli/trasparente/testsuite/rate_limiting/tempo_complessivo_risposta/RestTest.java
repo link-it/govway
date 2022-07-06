@@ -80,6 +80,8 @@ public class RestTest extends ConfigLoader {
 			// attivo nuovo motore
 			Utils.makeParallelRequests(request, 1);
 
+			Utils.waitForNewMinute();
+			
 			String idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", "TempoComplessivoRisposta", PolicyAlias.MINUTO);
 			Utils.resetCounters(idPolicy);
 			
@@ -88,8 +90,6 @@ public class RestTest extends ConfigLoader {
 			
 			// Aspetto lo scoccare del minuto
 			
-			Utils.waitForNewMinute();
-		
 			Vector<HttpResponse> responses = makeRequests(url, idPolicy);
 			
 			checkAssertions(responses, 1, 60, policyType);
@@ -174,14 +174,14 @@ public class RestTest extends ConfigLoader {
 			// attivo nuovo motore
 			Utils.makeParallelRequests(request, 1);
 			
+			Utils.waitForNewMinute();
+			
 			String idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "TempoComplessivoRisposta", PolicyAlias.MINUTO);
 			Utils.resetCounters(idPolicy);
 			
 			idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "TempoComplessivoRisposta", PolicyAlias.MINUTO);
 			Commons.checkPreConditionsTempoComplessivoRisposta(idPolicy, policyType); 
 					
-			Utils.waitForNewMinute();
-		
 			Vector<HttpResponse> responses = makeRequests(url,idPolicy);
 			
 			checkAssertions(responses, 1, 60, policyType);
@@ -272,7 +272,7 @@ public class RestTest extends ConfigLoader {
 	}
 	private void checkAssertions(Vector<HttpResponse> responses, int maxSeconds, int windowSize, PolicyGroupByActiveThreadsType policyType) throws Exception {
 				
-		if(policyType.isInconsistent()) {
+		if(policyType!=null && policyType.isInconsistent()) {
 			// numero troppo casuali
 			return;
 		}

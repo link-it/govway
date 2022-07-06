@@ -34,6 +34,7 @@ import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreads
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,35 +78,85 @@ public class DbUtils {
     }
 
     public Object readValue(String query) {
-        return this.jdbc.queryForObject(query, Object.class);
+        try {
+        	return this.jdbc.queryForObject(query, Object.class);
+        }catch(org.springframework.jdbc.CannotGetJdbcConnectionException getExc) {
+    		// riprovo dopo 1 secondo
+    		Utilities.sleep(1000);
+    		return this.jdbc.queryForObject(query, Object.class);
+    	}
     }
     public <T> T readValue(String query, Class<T> classObject) {
-        return this.jdbc.queryForObject(query, classObject);
+    	 try {
+         	return this.jdbc.queryForObject(query, classObject);
+    	 }catch(org.springframework.jdbc.CannotGetJdbcConnectionException getExc) {
+     		// riprovo dopo 1 secondo
+     		Utilities.sleep(1000);
+     		return this.jdbc.queryForObject(query, classObject);
+     	}
     }
     public Object readValue(String query, Object... args) {
-        return this.jdbc.queryForObject(query, Object.class, args);
+    	 try {
+         	 return this.jdbc.queryForObject(query, Object.class, args);
+    	 }catch(org.springframework.jdbc.CannotGetJdbcConnectionException getExc) {
+     		// riprovo dopo 1 secondo
+     		Utilities.sleep(1000);
+     		return this.jdbc.queryForObject(query, Object.class, args);
+     	}
     }
     public <T> T readValue(String query, Class<T> classObject, Object... args) {
-        return this.jdbc.queryForObject(query, classObject, args);
+    	 try {
+         	 return this.jdbc.queryForObject(query, classObject, args);
+    	 }catch(org.springframework.jdbc.CannotGetJdbcConnectionException getExc) {
+     		// riprovo dopo 1 secondo
+     		Utilities.sleep(1000);
+     		return this.jdbc.queryForObject(query, classObject, args);
+     	}
     }
     
     public <T> T readValueArray(String query, Class<T> classObject, Object[] args) {
-        return this.jdbc.queryForObject(query, classObject, args);
+    	 try {
+         	return this.jdbc.queryForObject(query, classObject, args);
+    	 }catch(org.springframework.jdbc.CannotGetJdbcConnectionException getExc) {
+     		// riprovo dopo 1 secondo
+     		Utilities.sleep(1000);
+     		return this.jdbc.queryForObject(query, classObject, args);
+     	}
     }
     
     /*public <T> T readValue(String query, Class<T> classObject, Object[] args) {
-        return this.jdbc.queryForObject(query, classObject, args);
+         try {
+        	return this.jdbc.queryForObject(query, classObject, args);
+        }catch(org.springframework.jdbc.CannotGetJdbcConnectionException getExc) {
+    		// riprovo dopo 1 secondo
+    		Utilities.sleep(1000);
+    		return this.jdbc.queryForObject(query, classObject, args);
+    	}
     }*/
     
     
 
     public Map<String, Object> readRow(String query) {
-    	Map<String, Object> mapReaded = this.jdbc.queryForMap(query);
+    	Map<String, Object> mapReaded = null;
+    	try {
+    		mapReaded = this.jdbc.queryForMap(query);
+    	}catch(org.springframework.jdbc.CannotGetJdbcConnectionException getExc) {
+    		// riprovo dopo 1 secondo
+    		Utilities.sleep(1000);
+    		mapReaded = this.jdbc.queryForMap(query);
+    	}
     	return this.formatResult(mapReaded);
     }
 
     public List<Map<String, Object>> readRows(String query, Object... args) {
-    	List<Map<String, Object>> listReaded = this.jdbc.queryForList(query, args);
+    	List<Map<String, Object>> listReaded = null;
+    	try {
+    		listReaded = this.jdbc.queryForList(query, args);
+    	}catch(org.springframework.jdbc.CannotGetJdbcConnectionException getExc) {
+    		// riprovo dopo 1 secondo
+    		Utilities.sleep(1000);
+    		listReaded = this.jdbc.queryForList(query, args);
+    	}
     	if(listReaded!=null && !listReaded.isEmpty()) {
     		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
     		for (Map<String, Object> mapReaded : listReaded) {

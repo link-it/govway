@@ -76,7 +76,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	
 	// dati di attuazione manuale di un reset dei contatori
 	private Long manuallyResetPolicyTimeMillis = null;
-	private final static String MANUALLY_RESET_POLICY_TIME_MILLIS = "MANUALLY_RESET_POLICY_TIME_MS";
+	private final static String START_PROCESS_REQUEST_TIME_MS = "START_PROCESS_REQUEST_TIME_MS";
 	
 	// dati iniziali
 	private UnitaTemporale policyDateTypeInterval = null;
@@ -1069,6 +1069,8 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		this.resetCounters(null);
 		
 		this.manuallyResetPolicyTimeMillis = DateManager.getTimeMillis();
+		//System.out.println("IMPOSTO RESET MANUALE ("+this.manuallyResetPolicyTimeMillis+") IN ["+this.toString()+"]");
+		
 	}
 	// Questo metodo viene invocato quando viene rilevata una modifica ai valori di soglia di una policy e quindi viene aggiornata l'updatePolicyDate
 	// In questo metodo non serve registrare il manuallyResetPolicyTimeMillis poichè il metodo viene invocato sempre prima di una 'registerStartRequest' mentre la funzione del manuallyResetPolicyTimeMillis
@@ -1137,16 +1139,16 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	
 	private boolean skipBecauseManuallyResetAfterStartRequest(String source, Map<String, Object> ctx) {
 		if(this.manuallyResetPolicyTimeMillis!=null && ctx!=null) {
-			Object o = ctx.get(MANUALLY_RESET_POLICY_TIME_MILLIS);
+			Object o = ctx.get(START_PROCESS_REQUEST_TIME_MS);
 			if(o==null) {
 				// transazione gestita precedentemente al reset dei contatori
 				//System.out.println("@"+source+" RILEVATO RESET '"+this.manuallyResetPolicyTimeMillis+"', trovato in ctx 'NULL'");
 				return true;
 			}
 			Long l = (Long) o;
-			if(l.longValue() != this.manuallyResetPolicyTimeMillis.longValue()) {
+			if(l.longValue() < this.manuallyResetPolicyTimeMillis.longValue()) {
 				// transazione gestita precedentemente al reset dei contatori
-				//System.out.println("@"+source+" RILEVATO RESET '"+this.manuallyResetPolicyTimeMillis+"', trovato in ctx '"+l+"'");
+				//System.out.println("@"+source+" RILEVATO RESET '"+this.manuallyResetPolicyTimeMillis+"', trovato in ctx una data minore '"+l+"'");
 				return true;
 			}
 		}
@@ -1192,7 +1194,8 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		}
 		
 		if(this.manuallyResetPolicyTimeMillis!=null && ctx!=null) {
-			ctx.put(MANUALLY_RESET_POLICY_TIME_MILLIS, this.manuallyResetPolicyTimeMillis);
+			ctx.put(START_PROCESS_REQUEST_TIME_MS, DateManager.getTimeMillis());
+			//System.out.println("IMPOSTATO IN CONTESTO: '"+DateManager.getTimeMillis()+"'");
 		}
 	}
 	

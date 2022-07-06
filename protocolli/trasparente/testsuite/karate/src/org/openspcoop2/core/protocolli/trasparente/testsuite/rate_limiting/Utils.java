@@ -372,7 +372,7 @@ public class Utils {
 				
 				NumeroRichiestePolicyInfo polInfo = new NumeroRichiestePolicyInfo(jmxPolicyInfo);
 			
-				if(!policyType.isInconsistent()) {
+				if(policyType==null || !policyType.isInconsistent()) {
 					try {
 						assertEquals(attive, polInfo.richiesteAttive);
 					}catch(Throwable t) {
@@ -385,7 +385,9 @@ public class Utils {
 					}
 				}
 				
-				if(policyType.isInconsistent()) {
+				logRateLimiting.debug("["+policyType+"]  ("+tipoRisorsa+") attese:"+conteggiate+" conteggiate:"+polInfo.richiesteConteggiate+"  ");
+				logRateLimiting.debug("["+policyType+"]  ("+tipoRisorsa+") attese:"+bloccate+" bloccate:"+polInfo.richiesteBloccate+"  ");
+				if(policyType!=null && policyType.isInconsistent()) {
 					try {
 						assertTrue("PolicyConteggiate["+polInfo.richiesteConteggiate+"]<=attese["+conteggiate+"]", polInfo.richiesteConteggiate<=conteggiate);
 					}catch(Throwable t) {
@@ -402,11 +404,14 @@ public class Utils {
 					}
 					assertTrue("PolicyRichiesteBloccate["+polInfo.richiesteBloccate+"]<=attese["+bloccate+"]", polInfo.richiesteBloccate<=bloccate);
 				}
+				else if(policyType!=null && policyType.isApproximated()) {
+					assertTrue("PolicyConteggiate["+polInfo.richiesteConteggiate+"] = (attese["+conteggiate+"] OR attese-1["+(conteggiate-1)+"])", 
+							( (polInfo.richiesteConteggiate==conteggiate) || (polInfo.richiesteConteggiate==(conteggiate-1)) ));
+					assertTrue("PolicyRichiesteBloccate["+polInfo.richiesteBloccate+"]<=attese["+bloccate+"]", polInfo.richiesteBloccate<=bloccate);
+				}
 				else {
-					logRateLimiting.debug("["+policyType+"]  ("+tipoRisorsa+") attese:"+conteggiate+" conteggiate:"+polInfo.richiesteConteggiate+"  ");
-					logRateLimiting.debug("["+policyType+"]  ("+tipoRisorsa+") attese:"+bloccate+" bloccate:"+polInfo.richiesteBloccate+"  ");
-					assertEquals(conteggiate, polInfo.richiesteConteggiate);
-					assertEquals(bloccate, polInfo.richiesteBloccate);
+					assertEquals("PolicyConteggiate["+polInfo.richiesteConteggiate+"]=attese["+conteggiate+"]",conteggiate, polInfo.richiesteConteggiate);
+					assertEquals("PolicyRichiesteBloccate["+polInfo.richiesteBloccate+"]=attese["+bloccate+"]", bloccate, polInfo.richiesteBloccate);
 				}
 				
 				if(policyType!=null) {
@@ -434,7 +439,7 @@ public class Utils {
 		int remainingChecks = Integer.valueOf(System.getProperty("rl_check_policy_conditions_retry"));
 		int delay = Integer.valueOf(System.getProperty("rl_check_policy_conditions_delay"));
 
-		if(policyType.isInconsistent()) {
+		if(policyType!=null && policyType.isInconsistent()) {
 			// aspetto un solo tempo di delay
 			org.openspcoop2.utils.Utilities.sleep(delay);
 			return;

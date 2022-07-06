@@ -139,25 +139,32 @@ public class RestTest extends ConfigLoader {
 			
 			
 			// Faccio prima 3 richieste che passano
-						
-			Vector<HttpResponse> notBlockedResponses = Utils.makeParallelRequests(request, small_delay_count);
+				
+			Vector<HttpResponse> notBlockedResponses = null;
+			if(policyType!=null && (policyType.isHazelcastCounters() || policyType.isRedisCounters() || PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE.equals(policyType))) {
+				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
+				notBlockedResponses = Utils.makeSequentialRequests(request, small_delay_count);
+			}
+			else {
+				notBlockedResponses = Utils.makeParallelRequests(request, small_delay_count);
+			}
 			
 			// Poi faccio una richiesta che fa scattare la policy
-						
+			Utilities.sleep(1000);
+					
 			request.setContentType("application/json");
 			request.setMethod(HttpRequestMethod.GET);
 			request.setUrl( System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?sleep="+big_delay );
 			
 			notBlockedResponses.addAll(Utils.makeParallelRequests(request, 1));
 			
+			Utilities.sleep(1000);
 			
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, small_delay_count+1, 0, policyType, TipoRisorsaPolicyAttiva.TEMPO_MEDIO_RISPOSTA);
 			
 			// Poi faccio n richieste che non passano
 			
-			if(policyType.isApproximated()) {
-				Utilities.sleep(2000); // aspetto che le precedenti richieste vengano registrate, non essendoci un lock globale
-			}
+			Utilities.sleep(2000); // aspetto che le precedenti richieste vengano registrate
 			
 			request.setContentType("application/json");
 			request.setMethod(HttpRequestMethod.GET);
@@ -223,24 +230,31 @@ public class RestTest extends ConfigLoader {
 			
 			
 			// Faccio prima richieste che passano
-
-			Vector<HttpResponse> notBlockedResponses = Utils.makeParallelRequests(request, small_delay_count);
+			Vector<HttpResponse> notBlockedResponses = null;
+			if(policyType!=null && (policyType.isHazelcastCounters() || policyType.isRedisCounters() || PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE.equals(policyType))) {
+				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
+				notBlockedResponses = Utils.makeSequentialRequests(request, small_delay_count);
+			}
+			else {
+				notBlockedResponses = Utils.makeParallelRequests(request, small_delay_count);
+			}
 			
 			// Poi faccio una richiesta che fa scattare la policy
+			Utilities.sleep(1000);
 			
 			request.setContentType("application/json");
 			request.setMethod(HttpRequestMethod.GET);
 			request.setUrl( System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1/"+path+"?sleep="+big_delay );
 			
-			notBlockedResponses.add(Utils.makeRequest(request));
+			notBlockedResponses.addAll(Utils.makeParallelRequests(request, 1));
+			
+			Utilities.sleep(1000);
 			
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, small_delay_count+1, 0, policyType, TipoRisorsaPolicyAttiva.TEMPO_MEDIO_RISPOSTA);
 			
 			// Poi faccio n richieste che non passano
 			
-			if(policyType.isApproximated()) {
-				Utilities.sleep(2000); // aspetto che le precedenti richieste vengano registrate, non essendoci un lock globale
-			}
+			Utilities.sleep(2000); // aspetto che le precedenti richieste vengano registrate
 			
 			request.setContentType("application/json");
 			request.setMethod(HttpRequestMethod.GET);
@@ -267,7 +281,7 @@ public class RestTest extends ConfigLoader {
 	
 	private void checkPassedRequests(Vector<HttpResponse> responses, int windowSize, int soglia, PolicyGroupByActiveThreadsType policyType) {
 		
-		if(policyType.isInconsistent()) {
+		if(policyType!=null && policyType.isInconsistent()) {
 			// numero troppo casuali
 			return;
 		}
@@ -289,7 +303,7 @@ public class RestTest extends ConfigLoader {
 	
 	private void checkBlockedRequests(Vector<HttpResponse> responses, int windowSize, int soglia, PolicyGroupByActiveThreadsType policyType) throws Exception {
 		
-		if(policyType.isInconsistent()) {
+		if(policyType!=null && policyType.isInconsistent()) {
 			// numero troppo casuali
 			return;
 		}

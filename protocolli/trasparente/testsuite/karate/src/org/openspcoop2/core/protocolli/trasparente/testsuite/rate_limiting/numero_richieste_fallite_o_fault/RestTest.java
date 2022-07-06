@@ -295,7 +295,7 @@ public class RestTest extends ConfigLoader {
 			int toFault = maxRequests-toFail;
 						
 			Vector<HttpResponse> responses = null;
-			if(policyType.isHazelcastCounters() || policyType.isRedisCounters()) {
+			if(policyType!=null && (policyType.isHazelcastCounters() || policyType.isRedisCounters())) {
 				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
 				responses = Utils.makeSequentialRequests(toFailRequest, toFail);
 			}
@@ -304,7 +304,7 @@ public class RestTest extends ConfigLoader {
 			}
 			
 			Vector<HttpResponse> faultedResponses = null;
-			if(policyType.isHazelcastCounters() || policyType.isRedisCounters()) {
+			if(policyType!=null && (policyType.isHazelcastCounters() || policyType.isRedisCounters())) {
 				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
 				faultedResponses = Utils.makeSequentialRequests(toFaultRequest, toFault);
 			}
@@ -322,7 +322,7 @@ public class RestTest extends ConfigLoader {
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0, policyType, TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI);
 			
 			Vector<HttpResponse>  blockedResponses = null;
-			if(policyType.isHazelcastCounters() || policyType.isRedisCounters()) {
+			if(policyType!=null && (policyType.isHazelcastCounters() || policyType.isRedisCounters())) {
 				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
 				blockedResponses = Utils.makeSequentialRequests(toFailRequest, toFailRequests);
 			}
@@ -426,7 +426,7 @@ public class RestTest extends ConfigLoader {
 			int toFault = maxRequests-toFail;
 			
 			Vector<HttpResponse> responses = null;
-			if(policyType.isHazelcastCounters() || policyType.isRedisCounters()) {
+			if(policyType!=null && (policyType.isHazelcastCounters() || policyType.isRedisCounters())) {
 				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
 				responses = Utils.makeSequentialRequests(toFailRequest, toFail);
 			}
@@ -435,7 +435,7 @@ public class RestTest extends ConfigLoader {
 			}
 			
 			Vector<HttpResponse> faultedResponses = null;
-			if(policyType.isHazelcastCounters() || policyType.isRedisCounters()) {
+			if(policyType!=null && (policyType.isHazelcastCounters() || policyType.isRedisCounters())) {
 				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
 				faultedResponses = Utils.makeSequentialRequests(toFaultRequest, toFault);
 			}
@@ -453,7 +453,7 @@ public class RestTest extends ConfigLoader {
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0, policyType, TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI);
 			
 			Vector<HttpResponse>  blockedResponses = null;
-			if(policyType.isHazelcastCounters() || policyType.isRedisCounters()) {
+			if(policyType!=null && (policyType.isHazelcastCounters() || policyType.isRedisCounters())) {
 				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
 				blockedResponses = Utils.makeSequentialRequests(toFailRequest, toFailRequests);
 			}
@@ -536,7 +536,7 @@ public class RestTest extends ConfigLoader {
 	}
 	private void checkFailedRequests(Vector<HttpResponse> responses, int windowSize, int maxRequests, PolicyGroupByActiveThreadsType policyType) throws Exception {
 		
-		if(policyType.isInconsistent()) {
+		if(policyType!=null && policyType.isInconsistent()) {
 			// numero troppo casuali
 			return;
 		}

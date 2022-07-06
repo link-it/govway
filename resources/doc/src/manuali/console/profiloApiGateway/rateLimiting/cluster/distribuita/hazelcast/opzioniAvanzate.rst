@@ -123,10 +123,8 @@ Ad ogni tipo di gestore viene associata una istanza di Hazelcast dedicata che vi
             backup-count: 0
             async-backup-count: 1
       
-            near-cache:
-              hazelcast-near-cache:
-                in-memory-format: BINARY
-                serialize-keys: false
+          near-cache:
+            in-memory-format: BINARY
 
         serialization:
           serializers:
@@ -172,10 +170,8 @@ Ad ogni tipo di gestore viene associata una istanza di Hazelcast dedicata che vi
             backup-count: 0
             async-backup-count: 1
       
-            near-cache:
-              hazelcast-near-cache:
-                in-memory-format: BINARY
-                serialize-keys: false
+          near-cache:
+            in-memory-format: BINARY
 
         serialization:
           serializers:
@@ -199,10 +195,8 @@ Ad ogni tipo di gestore viene associata una istanza di Hazelcast dedicata che vi
             backup-count: 0
             async-backup-count: 1
       
-            near-cache:
-              hazelcast-near-cache:
-                in-memory-format: BINARY
-                serialize-keys: false
+          near-cache:
+            in-memory-format: BINARY
 
         serialization:
           serializers:

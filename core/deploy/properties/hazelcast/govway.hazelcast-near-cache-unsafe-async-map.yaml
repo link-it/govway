@@ -7,11 +7,9 @@ hazelcast:
       backup-count: 0
       async-backup-count: 1
 
-      near-cache:
-        hazelcast-near-cache-unsafe-async-map:
-          in-memory-format: BINARY
-          #in-memory-format: OBJECT
-          serialize-keys: false
+    near-cache:
+      in-memory-format: BINARY
+      #in-memory-format: OBJECT
 
   serialization:
     serializers:

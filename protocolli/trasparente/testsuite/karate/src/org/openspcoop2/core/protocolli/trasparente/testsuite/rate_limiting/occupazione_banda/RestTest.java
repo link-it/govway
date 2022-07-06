@@ -35,6 +35,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Heade
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils.PolicyAlias;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -116,6 +117,7 @@ public class RestTest extends ConfigLoader {
 			// attivo nuovo motore
 			Utils.makeParallelRequests(request, 1);
 			
+			Utils.waitForNewMinute();
 			
 			String idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", "OccupazioneBandaRest",
 					PolicyAlias.MINUTODEFAULT);
@@ -124,14 +126,21 @@ public class RestTest extends ConfigLoader {
 			idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", "OccupazioneBandaRest", PolicyAlias.MINUTODEFAULT);
 			Commons.checkPreConditionsOccupazioneBanda(idPolicy, policyType);
 			
-			Utils.waitForNewMinute();
-			
 			// Faccio n-1 richieste parallele per testare eventuali race conditions sui contatori,
 			// alla fine faccio l'ultima che fa scattare la policy
 	
-			Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
+			Vector<HttpResponse> responses = null;
+			if(policyType!=null && (policyType.isHazelcastCounters() || policyType.isRedisCounters())) {
+				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
+				responses = Utils.makeSequentialRequests(request, 3);
+			}
+			else {
+				responses = Utils.makeParallelRequests(request, 3);
+			}
 			
 			Utils.waitForZeroActiveRequests(idPolicy, 3, policyType);
+			
+			Utilities.sleep(1000); // aspetto che tutte le richieste siano stato processate anche nel ramo end
 			
 			responses.addAll(Utils.makeSequentialRequests(request, 1));
 	
@@ -260,16 +269,27 @@ public class RestTest extends ConfigLoader {
 			// attivo nuovo motore
 			Utils.makeParallelRequests(request, 1);
 			
+			Utils.waitForNewMinute();
+			
 			String idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "OccupazioneBandaRest", PolicyAlias.MINUTODEFAULT);
 			Utils.resetCounters(idPolicy);
 	
 			idPolicy = dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", "OccupazioneBandaRest", PolicyAlias.MINUTODEFAULT);
 			Commons.checkPreConditionsOccupazioneBanda(idPolicy, policyType);
 			
-			Utils.waitForNewMinute();
-	
-			Vector<HttpResponse> responses = Utils.makeParallelRequests(request, 3);
+			Vector<HttpResponse> responses = null;
+			if(policyType!=null && (policyType.isHazelcastCounters() || policyType.isRedisCounters())) {
+				 // altrimenti a volte non funziona per via del parallelismo e del controllo che avviene una volta processata la risposta
+				responses = Utils.makeSequentialRequests(request, 3);
+			}
+			else {
+				responses = Utils.makeParallelRequests(request, 3);
+			}
+			
 			Utils.waitForZeroActiveRequests(idPolicy, 3, policyType);
+			
+			Utilities.sleep(1000); // aspetto che tutte le richieste siano stato processate anche nel ramo end
+			
 			responses.addAll(Utils.makeSequentialRequests(request, 1));
 	
 			checkAssertions(responses, 1024, 60, policyType);
@@ -347,7 +367,7 @@ public class RestTest extends ConfigLoader {
 	}
 	private void checkAssertions(Vector<HttpResponse> responses, int maxKb, int windowSize, PolicyGroupByActiveThreadsType policyType) throws Exception {
 		
-		if(policyType.isInconsistent()) {
+		if(policyType!=null && policyType.isInconsistent()) {
 			// numero troppo casuali
 			return;
 		}

@@ -164,7 +164,7 @@
 										<h:outputText value="Tempo Risposta Servizio: " rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
 										<h:outputText value="#{item.latenzaServizio}" converter="latenzaConverter" rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
 										<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
-										<h:outputText value="Latenza Porta: "/>
+										<h:outputText value="Latenza Gateway: "/>
 										<h:outputText value="#{item.latenzaPorta}" converter="latenzaConverter"/>
 									</rich:toolTip>
 							</a4j:outputPanel>
@@ -253,7 +253,7 @@
 										<h:outputText value="Tempo Risposta Servizio: " rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
 										<h:outputText value="#{item.latenzaServizio}" converter="latenzaConverter" rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
 										<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
-										<h:outputText value="Latenza Porta: "/>
+										<h:outputText value="Latenza Gateway: "/>
 										<h:outputText value="#{item.latenzaPorta}" converter="latenzaConverter"/>
 									</rich:toolTip>
 								</a4j:outputPanel>

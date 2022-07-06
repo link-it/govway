@@ -82,14 +82,13 @@ public class RestTest extends ConfigLoader {
 
 										
 		Utils.resetCounters(idPolicy);
-		Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0);
-		
-		
 		Utils.resetCounters(idPolicy2);
+		
+		Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0);
 		Utils.checkConditionsNumeroRichieste(idPolicy2, 0, 0, 0);
 		
-		Utils.waitForPolicy(policy2);
 		Utils.waitForPolicy(policy);
+		Utils.waitForPolicy(policy2);
 		
 		HttpRequest request = new HttpRequest();
 		request.setContentType("application/json");

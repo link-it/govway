@@ -172,16 +172,16 @@
         <archive path="/op2_3.3.dev/lib/opensaml/opensaml-xmlsec-impl-3.4.3.jar"/>
 	<archive path="/op2_3.3.dev/lib/opensaml/java-support-7.5.0.jar"/>
 	<!-- redis -->
-	<archive path="/op2_3.3.dev/lib/redis/redisson-3.17.1.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/netty-resolver-4.1.77.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/netty-resolver-dns-4.1.77.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/jboss-marshalling-2.0.12.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/jboss-marshalling-river-2.0.12.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/netty-buffer-4.1.77.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/netty-common-4.1.77.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/netty-transport-4.1.77.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/netty-codec-4.1.77.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/redis/netty-codec-dns-4.1.77.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/redis/redisson-3.17.4.jar"/>
+	<archive path="/op2_3.3.dev/lib/redis/netty-resolver-4.1.78.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/redis/netty-resolver-dns-4.1.78.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/redis/jboss-marshalling-2.1.0.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/redis/jboss-marshalling-river-2.1.0.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/redis/netty-buffer-4.1.78.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/redis/netty-common-4.1.78.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/redis/netty-transport-4.1.78.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/redis/netty-codec-4.1.78.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/redis/netty-codec-dns-4.1.78.Final.jar"/>
 	<!-- reports -->
 	<archive path="/op2_3.3.dev/lib/reports/dynamicreports-core-6.1.0.jar"/>
         <archive path="/op2_3.3.dev/lib/reports/itext-2.1.7.js7.jar"/>
@@ -236,8 +236,8 @@
 	<archive path="/op2_3.3.dev/lib/shared/reflections-0.9.12.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/javassist-3.12.1.GA.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/rhino-1.7.13.jar"/>
-	<archive path="/op2_3.3.dev/lib/shared/hibernate-core-6.0.1.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/shared/hazelcast-all-4.2.5.jar"/>        
+	<archive path="/op2_3.3.dev/lib/shared/hibernate-core-6.1.1.Final.jar"/>
+	<archive path="/op2_3.3.dev/lib/shared/hazelcast-5.1.2.jar"/>        
 	<!-- soapbox -->
         <archive path="/op2_3.3.dev/lib/soapbox/ultraesb-core-1.7.1.jar"/>
         <archive path="/op2_3.3.dev/lib/soapbox/ultraesb-api-1.7.1.jar"/>
