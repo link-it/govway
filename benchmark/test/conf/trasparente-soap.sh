@@ -5,9 +5,9 @@ elencoTestTrasparenteSoap="soap_proxy_no-trace soap_proxy_db-trace
 			soap_proxy_no-trace_rate-limiting soap_proxy_db-trace_rate-limiting
 			soap_proxy_no-trace_rate-limiting_groupby-requester soap_proxy_db-trace_rate-limiting_groupby-requester
 			soap_proxy_no-trace_rate-limiting_too-many-requests soap_proxy_db-trace_rate-limiting_too-many-requests soap_proxy_db-partial-trace_rate-limiting_too-many-requests
-			soap_proxy_db-trace_rate-limiting_quota-divisa-nodi soap_proxy_db-trace_rate-limiting_hazelcast-full-sync 
-			soap_proxy_db-trace_rate-limiting_hazelcast-near-cache soap_proxy_db-trace_rate-limiting_hazelcast-local-cache
-			soap_proxy_db-trace_rate-limiting_hazelcast-remote-sync soap_proxy_db-trace_rate-limiting_hazelcast-remote-async"
+			soap_proxy_db-trace_rate-limiting_quota-divisa-nodi soap_proxy_db-trace_rate-limiting_redis-atomic-long
+			soap_proxy_db-trace_rate-limiting_hazelcast-atomic-long soap_proxy_db-trace_rate-limiting_hazelcast-pn-counters
+			soap_proxy_db-trace_rate-limiting_hazelcast-map soap_proxy_db-trace_rate-limiting_hazelcast-near-cache soap_proxy_db-trace_rate-limiting_hazelcast-local-cache"
 
 tests["soap_proxy_db-trace"]="soap_proxy_DBTrace"
 tests["soap_proxy_no-trace"]="soap_proxy_NoTrace"
@@ -25,11 +25,12 @@ tests["soap_proxy_no-trace_rate-limiting_too-many-requests"]="soap_proxy_NoTrace
 tests["soap_proxy_db-trace_rate-limiting_too-many-requests"]="soap_proxy_DBTrace_RateLimiting_TooManyRequests"
 tests["soap_proxy_db-partial-trace_rate-limiting_too-many-requests"]="soap_proxy_DBPartialTrace_RateLimiting_TooManyRequests"
 tests["soap_proxy_db-trace_rate-limiting_quota-divisa-nodi"]="soap_proxy_DBTrace_RateLimiting_QuotaDivisaNodi"
-tests["soap_proxy_db-trace_rate-limiting_hazelcast-full-sync"]="soap_proxy_DBTrace_RateLimiting_HazelcastFullSync"
+tests["soap_proxy_db-trace_rate-limiting_redis-atomic-long"]="soap_proxy_DBTrace_RateLimiting_RedisAtomicLong"
+tests["soap_proxy_db-trace_rate-limiting_hazelcast-atomic-long"]="soap_proxy_DBTrace_RateLimiting_HazelcastAtomicLong"
+tests["soap_proxy_db-trace_rate-limiting_hazelcast-pn-counters"]="soap_proxy_DBTrace_RateLimiting_HazelcastPNCounters"
+tests["soap_proxy_db-trace_rate-limiting_hazelcast-map"]="soap_proxy_DBTrace_RateLimiting_HazelcastMap"
 tests["soap_proxy_db-trace_rate-limiting_hazelcast-near-cache"]="soap_proxy_DBTrace_RateLimiting_HazelcastNearCache"
 tests["soap_proxy_db-trace_rate-limiting_hazelcast-local-cache"]="soap_proxy_DBTrace_RateLimiting_HazelcastLocalCache"
-tests["soap_proxy_db-trace_rate-limiting_hazelcast-remote-sync"]="soap_proxy_DBTrace_RateLimiting_HazelcastRemoteSync"
-tests["soap_proxy_db-trace_rate-limiting_hazelcast-remote-async"]="soap_proxy_DBTrace_RateLimiting_HazelcastRemoteAsync"
 
 function soap_proxy_DBTrace() {
 	jmeterTestFile=${jmeterSoapTestFile}
@@ -221,7 +222,40 @@ function soap_proxy_DBTrace_RateLimiting_QuotaDivisaNodi() {
 	description="Test policy rate limiting complessiva e per richiedente (quota divisa sui nodi)"
 }
 
-function soap_proxy_DBTrace_RateLimiting_HazelcastFullSync() {
+function soap_proxy_DBTrace_RateLimiting_RedisAtomicLong() {
+	jmeterTestFile=${jmeterSoapTestFile}
+	profiloSicurezza=azione7
+	protocollo=api
+	tipiTest=RateLimitingDistribuito
+	azione=test7
+	contentType=text/xml; charset=UTF-8
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="Test policy rate limiting complessiva e per richiedente (redis atomic long)"
+}
+
+function soap_proxy_DBTrace_RateLimiting_HazelcastAtomicLong() {
+	jmeterTestFile=${jmeterSoapTestFile}
+	profiloSicurezza=azione5
+	protocollo=api
+	tipiTest=RateLimitingDistribuito
+	azione=test5
+	contentType=text/xml; charset=UTF-8
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="Test policy rate limiting complessiva e per richiedente (hazelcast atomic long)"
+}
+
+function soap_proxy_DBTrace_RateLimiting_HazelcastPNCounters() {
+	jmeterTestFile=${jmeterSoapTestFile}
+	profiloSicurezza=azione6
+	protocollo=api
+	tipiTest=RateLimitingDistribuito
+	azione=test6
+	contentType=text/xml; charset=UTF-8
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="Test policy rate limiting complessiva e per richiedente (hazelcast pn counters)"
+}
+
+function soap_proxy_DBTrace_RateLimiting_HazelcastMap() {
 	jmeterTestFile=${jmeterSoapTestFile}
 	profiloSicurezza=azione2
 	protocollo=api
@@ -229,7 +263,7 @@ function soap_proxy_DBTrace_RateLimiting_HazelcastFullSync() {
 	azione=test2
 	contentType=text/xml; charset=UTF-8
 	outputDir=${resultDir}/${FUNCNAME[0]}
-	description="Test policy rate limiting complessiva e per richiedente (hazelcast full sync)"
+	description="Test policy rate limiting complessiva e per richiedente (hazelcast map)"
 }
 
 function soap_proxy_DBTrace_RateLimiting_HazelcastNearCache() {
@@ -254,24 +288,3 @@ function soap_proxy_DBTrace_RateLimiting_HazelcastLocalCache() {
 	description="Test policy rate limiting complessiva e per richiedente (hazelcast local cache)"
 }
 
-function soap_proxy_DBTrace_RateLimiting_HazelcastRemoteSync() {
-	jmeterTestFile=${jmeterSoapTestFile}
-	profiloSicurezza=azione5
-	protocollo=api
-	tipiTest=RateLimitingDistribuito
-	azione=test5
-	contentType=text/xml; charset=UTF-8
-	outputDir=${resultDir}/${FUNCNAME[0]}
-	description="Test policy rate limiting complessiva e per richiedente (hazelcast remote sync)"
-}
-
-function soap_proxy_DBTrace_RateLimiting_HazelcastRemoteAsync() {
-	jmeterTestFile=${jmeterSoapTestFile}
-	profiloSicurezza=azione6
-	protocollo=api
-	tipiTest=RateLimitingDistribuito
-	azione=test6
-	contentType=text/xml; charset=UTF-8
-	outputDir=${resultDir}/${FUNCNAME[0]}
-	description="Test policy rate limiting complessiva e per richiedente (hazelcast remote async)"
-}

@@ -3,9 +3,9 @@ elencoTestTrasparenteRest="rest_proxy_no-trace rest_proxy_db-trace rest_proxy_fi
 			rest_proxy_no-trace_rate-limiting rest_proxy_db-trace_rate-limiting
 			rest_proxy_no-trace_rate-limiting_groupby-requester rest_proxy_db-trace_rate-limiting_groupby-requester
 			rest_proxy_no-trace_rate-limiting_too-many-requests rest_proxy_db-trace_rate-limiting_too-many-requests rest_proxy_db-partial-trace_rate-limiting_too-many-requests
-			rest_proxy_db-trace_rate-limiting_quota-divisa-nodi rest_proxy_db-trace_rate-limiting_hazelcast-full-sync 
-			rest_proxy_db-trace_rate-limiting_hazelcast-near-cache rest_proxy_db-trace_rate-limiting_hazelcast-local-cache
-			rest_proxy_db-trace_rate-limiting_hazelcast-remote-sync rest_proxy_db-trace_rate-limiting_hazelcast-remote-async
+			rest_proxy_db-trace_rate-limiting_quota-divisa-nodi rest_proxy_db-trace_rate-limiting_redis-atomic-long
+			rest_proxy_db-trace_rate-limiting_hazelcast-atomic-long rest_proxy_db-trace_rate-limiting_hazelcast-pn-counters
+			rest_proxy_db-trace_rate-limiting_hazelcast-map rest_proxy_db-trace_rate-limiting_hazelcast-near-cache rest_proxy_db-trace_rate-limiting_hazelcast-local-cache
 			rest_proxy_no-trace_multipart rest_proxy_db-trace_multipart rest_proxy_no-trace_multipart_validation rest_proxy_db-trace_multipart_validation"
 
 tests["rest_proxy_db-trace"]="rest_proxy_DBTrace"
@@ -22,11 +22,12 @@ tests["rest_proxy_no-trace_rate-limiting_too-many-requests"]="rest_proxy_NoTrace
 tests["rest_proxy_db-trace_rate-limiting_too-many-requests"]="rest_proxy_DBTrace_RateLimiting_TooManyRequests"
 tests["rest_proxy_db-partial-trace_rate-limiting_too-many-requests"]="rest_proxy_DBPartialTrace_RateLimiting_TooManyRequests"
 tests["rest_proxy_db-trace_rate-limiting_quota-divisa-nodi"]="rest_proxy_DBTrace_RateLimiting_QuotaDivisaNodi"
-tests["rest_proxy_db-trace_rate-limiting_hazelcast-full-sync"]="rest_proxy_DBTrace_RateLimiting_HazelcastFullSync"
+tests["rest_proxy_db-trace_rate-limiting_redis-atomic-long"]="rest_proxy_DBTrace_RateLimiting_RedisAtomicLong"
+tests["rest_proxy_db-trace_rate-limiting_hazelcast-atomic-long"]="rest_proxy_DBTrace_RateLimiting_HazelcastAtomicLong"
+tests["rest_proxy_db-trace_rate-limiting_hazelcast-pn-counters"]="rest_proxy_DBTrace_RateLimiting_HazelcastPNCounters"
+tests["rest_proxy_db-trace_rate-limiting_hazelcast-map"]="rest_proxy_DBTrace_RateLimiting_HazelcastMap"
 tests["rest_proxy_db-trace_rate-limiting_hazelcast-near-cache"]="rest_proxy_DBTrace_RateLimiting_HazelcastNearCache"
 tests["rest_proxy_db-trace_rate-limiting_hazelcast-local-cache"]="rest_proxy_DBTrace_RateLimiting_HazelcastLocalCache"
-tests["rest_proxy_db-trace_rate-limiting_hazelcast-remote-sync"]="rest_proxy_DBTrace_RateLimiting_HazelcastRemoteSync"
-tests["rest_proxy_db-trace_rate-limiting_hazelcast-remote-async"]="rest_proxy_DBTrace_RateLimiting_HazelcastRemoteAsync"
 tests["rest_proxy_db-trace_multipart"]="rest_proxy_DBTrace_Multipart"
 tests["rest_proxy_no-trace_multipart"]="rest_proxy_NoTrace_Multipart"
 tests["rest_proxy_db-trace_multipart_validation"]="rest_proxy_DBTrace_Multipart_Validazione"
@@ -215,7 +216,43 @@ function rest_proxy_DBTrace_RateLimiting_QuotaDivisaNodi() {
 	description="Test policy rate limiting complessiva e per richiedente (quota divisa sui nodi)"
 }
 
-function rest_proxy_DBTrace_RateLimiting_HazelcastFullSync() {
+function rest_proxy_DBTrace_RateLimiting_RedisAtomicLong() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=none
+	profiloMessaggi=none
+	protocollo=api
+	tipiTest=RateLimitingDistribuito
+	azione=test7
+	contentType=application/json
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="Test policy rate limiting complessiva e per richiedente (redis atomic long)"
+}
+
+function rest_proxy_DBTrace_RateLimiting_HazelcastAtomicLong() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=none
+	profiloMessaggi=none
+	protocollo=api
+	tipiTest=RateLimitingDistribuito
+	azione=test5
+	contentType=application/json
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="Test policy rate limiting complessiva e per richiedente (hazelcast atomic long)"
+}
+
+function rest_proxy_DBTrace_RateLimiting_HazelcastPNCounters() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=none
+	profiloMessaggi=none
+	protocollo=api
+	tipiTest=RateLimitingDistribuito
+	azione=test6
+	contentType=application/json
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="Test policy rate limiting complessiva e per richiedente (hazelcast pn counters)"
+}
+
+function rest_proxy_DBTrace_RateLimiting_HazelcastMap() {
 	jmeterTestFile=${jmeterRestTestFile}
 	profiloSicurezza=none
 	profiloMessaggi=none
@@ -224,7 +261,7 @@ function rest_proxy_DBTrace_RateLimiting_HazelcastFullSync() {
 	azione=test2
 	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
-	description="Test policy rate limiting complessiva e per richiedente (hazelcast full sync)"
+	description="Test policy rate limiting complessiva e per richiedente (hazelcast map)"
 }
 
 function rest_proxy_DBTrace_RateLimiting_HazelcastNearCache() {
@@ -249,30 +286,6 @@ function rest_proxy_DBTrace_RateLimiting_HazelcastLocalCache() {
 	contentType=application/json
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="Test policy rate limiting complessiva e per richiedente (hazelcast local cache)"
-}
-
-function rest_proxy_DBTrace_RateLimiting_HazelcastRemoteSync() {
-	jmeterTestFile=${jmeterRestTestFile}
-	profiloSicurezza=none
-	profiloMessaggi=none
-	protocollo=api
-	tipiTest=RateLimitingDistribuito
-	azione=test5
-	contentType=application/json
-	outputDir=${resultDir}/${FUNCNAME[0]}
-	description="Test policy rate limiting complessiva e per richiedente (hazelcast remote sync)"
-}
-
-function rest_proxy_DBTrace_RateLimiting_HazelcastRemoteAsync() {
-	jmeterTestFile=${jmeterRestTestFile}
-	profiloSicurezza=none
-	profiloMessaggi=none
-	protocollo=api
-	tipiTest=RateLimitingDistribuito
-	azione=test6
-	contentType=application/json
-	outputDir=${resultDir}/${FUNCNAME[0]}
-	description="Test policy rate limiting complessiva e per richiedente (hazelcast remote async)"
 }
 
 
