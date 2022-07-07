@@ -1,0 +1,11 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+			<soapenv:Body>
+			<prova>${jsonpath.read("$.Year")}</prova>
+			<prova2>${jsonPath.read("$.Acronym")}</prova2>
+			#set ( $x = ${jsonPath.readList("$.List")} )
+			#foreach( $value in $x )
+			<list>${value}</list>
+			#end
+		</soapenv:Body>
+</soapenv:Envelope>

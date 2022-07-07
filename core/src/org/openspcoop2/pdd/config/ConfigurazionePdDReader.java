@@ -96,6 +96,8 @@ import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.Transazioni;
+import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
+import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -162,6 +164,7 @@ import org.openspcoop2.pdd.core.controllo_traffico.SoglieDimensioneMessaggi;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.InterceptorPolicyUtilities;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
+import org.openspcoop2.pdd.core.dynamic.Template;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
@@ -2679,6 +2682,23 @@ public class ConfigurazionePdDReader {
 		return pd.getExtendedInfoList();
 	}
 
+	protected Template getTemplateTrasformazioneRichiesta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateTrasformazioneRichiesta(connectionPdD, idPD, nomeTrasformazione, richiesta);
+	}
+	protected Template getTemplateTrasformazioneSoapRichiesta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateTrasformazioneSoapRichiesta(connectionPdD, idPD, nomeTrasformazione, richiesta);
+	}
+	protected Template getTemplateTrasformazioneRisposta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateTrasformazioneRisposta(connectionPdD, idPD, nomeTrasformazione, risposta);
+	}
+	protected Template getTemplateTrasformazioneSoapRisposta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateTrasformazioneSoapRisposta(connectionPdD, idPD, nomeTrasformazione, risposta);
+	}
+	
+	protected Template getTemplateIntegrazione(Connection connectionPdD,IDPortaDelegata idPD, File file) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateIntegrazione(connectionPdD, idPD, file);
+	}
+
 
 
 
@@ -3796,7 +3816,31 @@ public class ConfigurazionePdDReader {
 		return pa.getExtendedInfoList();
 	}
 
-
+	protected Template getTemplateTrasformazioneRichiesta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateTrasformazioneRichiesta(connectionPdD, idPA, nomeTrasformazione, richiesta);
+	}
+	protected Template getTemplateTrasformazioneSoapRichiesta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateTrasformazioneSoapRichiesta(connectionPdD, idPA, nomeTrasformazione, richiesta);
+	}
+	protected Template getTemplateTrasformazioneRisposta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateTrasformazioneRisposta(connectionPdD, idPA, nomeTrasformazione, risposta);
+	}
+	protected Template getTemplateTrasformazioneSoapRisposta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateTrasformazioneSoapRisposta(connectionPdD, idPA, nomeTrasformazione, risposta);
+	}
+	
+	protected Template getTemplateConnettoreMultiploSticky(Connection connectionPdD,IDPortaApplicativa idPA, byte[] template) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateConnettoreMultiploSticky(connectionPdD, idPA, template);
+	}
+	protected Template getTemplateConnettoreMultiploCondizionale(Connection connectionPdD,IDPortaApplicativa idPA, byte[] template) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateConnettoreMultiploCondizionale(connectionPdD, idPA, template);
+	}
+	
+	protected Template getTemplateIntegrazione(Connection connectionPdD,IDPortaApplicativa idPA, File file) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateIntegrazione(connectionPdD, idPA, file);
+	}
+	
+	
 
 
 
@@ -7823,6 +7867,13 @@ public class ConfigurazionePdDReader {
 		}
 	}
 
+	protected Template getTemplateAttributeAuthorityRequest(Connection connectionPdD, String attributeAuthorityName, byte[] template) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateAttributeAuthorityRequest(connectionPdD, attributeAuthorityName, template);
+	}
+	
+	protected Template getTemplateIntegrazione(Connection connectionPdD,File file) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateIntegrazione(connectionPdD, file);
+	}
 
 
 

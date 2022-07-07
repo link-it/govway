@@ -54,6 +54,8 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.StatoServiziPdd;
 import org.openspcoop2.core.config.SystemProperties;
+import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
+import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.PluginCostanti;
@@ -97,6 +99,9 @@ import org.openspcoop2.monitor.sdk.alarm.AlarmStatus;
 import org.openspcoop2.monitor.sdk.alarm.IAlarm;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
+import org.openspcoop2.pdd.core.dynamic.Template;
+import org.openspcoop2.pdd.core.dynamic.TemplateSource;
+import org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -2484,6 +2489,207 @@ public class ConfigurazionePdD  {
 		}
 	}
 	
+	private static org.openspcoop2.utils.Semaphore semaphore_getTemplateTrasformazionePD = new org.openspcoop2.utils.Semaphore("ConfigurazionePdD_TemplateTrasformazionePD");
+	protected static String getKey_getPortaDelegataTemplate(IDPortaDelegata idPD, TemplateSource source, String identificativo){
+		String prefixPD = _getKey_getPortaDelegata(idPD);
+		return prefixPD+"_getTemplate_"+source.name()+"_"+identificativo;
+	}
+	public Template getTemplateTrasformazioneRichiesta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		TipoTrasformazione tipoTrasformazione = null;
+		if(richiesta.getConversioneTipo()!=null) {
+			tipoTrasformazione = TipoTrasformazione.toEnumConstant(richiesta.getConversioneTipo());
+		}
+		if(tipoTrasformazione==null || (!tipoTrasformazione.isTemplateFreemarker() && !tipoTrasformazione.isTemplateVelocity())) {
+			return new Template(nomeTrasformazione, richiesta.getConversioneTemplate());
+		}
+		return _getTemplate(connectionPdD, idPD, "getTemplateTrasformazioneRichiesta", TemplateSource.TRASFORMAZIONE_RICHIESTA, nomeTrasformazione, richiesta.getConversioneTemplate());
+	}
+	public Template getTemplateTrasformazioneSoapRichiesta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		TipoTrasformazione tipoTrasformazione = null;
+		if(richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo()!=null) {
+			tipoTrasformazione = TipoTrasformazione.toEnumConstant(richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo());
+		}
+		if(tipoTrasformazione==null || (!tipoTrasformazione.isTemplateFreemarker() && !tipoTrasformazione.isTemplateVelocity())) {
+			return new Template(nomeTrasformazione, richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate());
+		}
+		return _getTemplate(connectionPdD, idPD, "getTemplateTrasformazioneSoapRichiesta", TemplateSource.TRASFORMAZIONE_SOAP_RICHIESTA, nomeTrasformazione, richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate());
+	}
+	public Template getTemplateTrasformazioneRisposta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		TipoTrasformazione tipoTrasformazione = null;
+		if(risposta.getConversioneTipo()!=null) {
+			tipoTrasformazione = TipoTrasformazione.toEnumConstant(risposta.getConversioneTipo());
+		}
+		if(tipoTrasformazione==null || (!tipoTrasformazione.isTemplateFreemarker() && !tipoTrasformazione.isTemplateVelocity())) {
+			return new Template(nomeTrasformazione, risposta.getConversioneTemplate());
+		}
+		return _getTemplate(connectionPdD, idPD, "getTemplateTrasformazioneRisposta", TemplateSource.TRASFORMAZIONE_RISPOSTA, nomeTrasformazione+"@@"+risposta.getNome(), risposta.getConversioneTemplate());
+	}
+	public Template getTemplateTrasformazioneSoapRisposta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		TipoTrasformazione tipoTrasformazione = null;
+		if(risposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo()!=null) {
+			tipoTrasformazione = TipoTrasformazione.toEnumConstant(risposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo());
+		}
+		if(tipoTrasformazione==null || (!tipoTrasformazione.isTemplateFreemarker() && !tipoTrasformazione.isTemplateVelocity())) {
+			return new Template(nomeTrasformazione, risposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate());
+		}
+		return _getTemplate(connectionPdD, idPD, "getTemplateTrasformazioneSoapRisposta", TemplateSource.TRASFORMAZIONE_SOAP_RISPOSTA, nomeTrasformazione+"@@"+risposta.getNome(), risposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate());
+	}
+
+	private Template _getTemplate(Connection connectionPdD,IDPortaDelegata idPD, String nomeMetodo, TemplateSource templateSource, String identificativo, byte[] templateBytes) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		// Raccolta dati
+		if(idPD == null)
+			throw new DriverConfigurazioneException("["+nomeMetodo+"]: Parametro non definito (idPD is null)");
+		if(idPD.getNome()==null)
+			throw new DriverConfigurazioneException("["+nomeMetodo+"]: Parametro non definito (idPD.getNome() is null)");
+
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null) {
+			key = getKey_getPortaDelegataTemplate(idPD, templateSource, identificativo);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					Template template = (Template) response.getObject();
+					if(template!=null){
+						return template;
+					}
+				}
+			}
+		}
+
+		Template template = null;
+		
+		semaphore_getTemplateTrasformazionePD.acquireThrowRuntime(nomeMetodo);
+		try {
+			
+			if(this.cache!=null) {
+				org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+				if(response != null){
+					if(response.getException()!=null){
+						if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+							throw (DriverConfigurazioneNotFound) response.getException();
+						else
+							throw (DriverConfigurazioneException) response.getException();
+					}else{
+						template = (Template) response.getObject();
+						if(template!=null){
+							return template;
+						}
+					}
+				}
+			}
+			
+			template = new Template(key, templateBytes);
+			
+			// Aggiungo la risposta in cache (se esiste una cache)	
+			// Se ho una eccezione aggiungo in cache solo una not found
+			if( this.cache!=null ){ 	
+				this.log.info("Aggiungo oggetto ["+key+"] in cache");
+				try{	
+					org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+					responseCache.setObject((java.io.Serializable)template);
+					this.cache.put(key,responseCache);
+				}catch(UtilsException e){
+					this.log.error("Errore durante l'inserimento in cache ["+key+"]: "+e.getMessage());
+				}
+			}
+			
+		}finally {
+			semaphore_getTemplateTrasformazionePD.release(nomeMetodo);
+		}
+
+		return template;
+
+	}  
+	
+	
+	public Template getTemplateIntegrazione(Connection connectionPdD,IDPortaDelegata idPD, File file) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return _getTemplate(connectionPdD, idPD, "getTemplateIntegrazione", TemplateSource.INTEGRAZIONE, file);
+	}
+	private Template _getTemplate(Connection connectionPdD,IDPortaDelegata idPD, String nomeMetodo, TemplateSource templateSource, File file) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null) {
+			key = getKey_getPortaDelegataTemplate(idPD, templateSource, file.getAbsolutePath());
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					Template template = (Template) response.getObject();
+					if(template!=null){
+						return template;
+					}
+				}
+			}
+		}
+
+		Template template = null;
+		
+		semaphore_getTemplateTrasformazionePD.acquireThrowRuntime(nomeMetodo);
+		try {
+			
+			if(this.cache!=null) {
+				org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+				if(response != null){
+					if(response.getException()!=null){
+						if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+							throw (DriverConfigurazioneNotFound) response.getException();
+						else
+							throw (DriverConfigurazioneException) response.getException();
+					}else{
+						template = (Template) response.getObject();
+						if(template!=null){
+							return template;
+						}
+					}
+				}
+			}
+			
+			ContentFile cf = getContentFileEngine(file);
+			if(cf.isExists()) {
+				template = new Template(key, cf.getContent());
+			}
+			else {
+				throw new DriverConfigurazioneException("File '"+file.getAbsolutePath()+"' cannot exists");
+			}
+			
+			// Aggiungo la risposta in cache (se esiste una cache)	
+			// Se ho una eccezione aggiungo in cache solo una not found
+			if( this.cache!=null ){ 	
+				this.log.info("Aggiungo oggetto ["+key+"] in cache");
+				try{	
+					org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+					responseCache.setObject((java.io.Serializable)template);
+					this.cache.put(key,responseCache);
+				}catch(UtilsException e){
+					this.log.error("Errore durante l'inserimento in cache ["+key+"]: "+e.getMessage());
+				}
+			}
+			
+		}finally {
+			semaphore_getTemplateTrasformazionePD.release(nomeMetodo);
+		}
+
+		return template;
+
+	} 
+	
+	
 	
 	
 	// PORTA APPLICATIVA
@@ -3057,7 +3263,213 @@ public class ConfigurazionePdD  {
 			return true;
 	}
  
-	 
+	private static org.openspcoop2.utils.Semaphore semaphore_getTemplateTrasformazionePA = new org.openspcoop2.utils.Semaphore("ConfigurazionePdD_TemplateTrasformazionePA");
+	protected static String getKey_getPortaApplicativaTemplate(IDPortaApplicativa idPA, TemplateSource source, String identificativo){
+		String prefixPA = _getKey_getPortaApplicativa(idPA);
+		return prefixPA+"_getTemplate_"+source.name()+"_"+identificativo;
+	}
+	public Template getTemplateTrasformazioneRichiesta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		TipoTrasformazione tipoTrasformazione = null;
+		if(richiesta.getConversioneTipo()!=null) {
+			tipoTrasformazione = TipoTrasformazione.toEnumConstant(richiesta.getConversioneTipo());
+		}
+		if(tipoTrasformazione==null || (!tipoTrasformazione.isTemplateFreemarker() && !tipoTrasformazione.isTemplateVelocity())) {
+			return new Template(nomeTrasformazione, richiesta.getConversioneTemplate());
+		}
+		return _getTemplate(connectionPdD, idPA, "getTemplateTrasformazioneRichiesta", TemplateSource.TRASFORMAZIONE_RICHIESTA, nomeTrasformazione, richiesta.getConversioneTemplate());
+	}
+	public Template getTemplateTrasformazioneSoapRichiesta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		TipoTrasformazione tipoTrasformazione = null;
+		if(richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo()!=null) {
+			tipoTrasformazione = TipoTrasformazione.toEnumConstant(richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo());
+		}
+		if(tipoTrasformazione==null || (!tipoTrasformazione.isTemplateFreemarker() && !tipoTrasformazione.isTemplateVelocity())) {
+			return new Template(nomeTrasformazione, richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate());
+		}
+		return _getTemplate(connectionPdD, idPA, "getTemplateTrasformazioneSoapRichiesta", TemplateSource.TRASFORMAZIONE_SOAP_RICHIESTA, nomeTrasformazione, richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate());
+	}
+	public Template getTemplateTrasformazioneRisposta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		TipoTrasformazione tipoTrasformazione = null;
+		if(risposta.getConversioneTipo()!=null) {
+			tipoTrasformazione = TipoTrasformazione.toEnumConstant(risposta.getConversioneTipo());
+		}
+		if(tipoTrasformazione==null || (!tipoTrasformazione.isTemplateFreemarker() && !tipoTrasformazione.isTemplateVelocity())) {
+			return new Template(nomeTrasformazione, risposta.getConversioneTemplate());
+		}
+		return _getTemplate(connectionPdD, idPA, "getTemplateTrasformazioneRisposta", TemplateSource.TRASFORMAZIONE_RISPOSTA, nomeTrasformazione+"@@"+risposta.getNome(), risposta.getConversioneTemplate());
+	}
+	public Template getTemplateTrasformazioneSoapRisposta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		TipoTrasformazione tipoTrasformazione = null;
+		if(risposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo()!=null) {
+			tipoTrasformazione = TipoTrasformazione.toEnumConstant(risposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo());
+		}
+		if(tipoTrasformazione==null || (!tipoTrasformazione.isTemplateFreemarker() && !tipoTrasformazione.isTemplateVelocity())) {
+			return new Template(nomeTrasformazione, risposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate());
+		}
+		return _getTemplate(connectionPdD, idPA, "getTemplateTrasformazioneSoapRisposta", TemplateSource.TRASFORMAZIONE_SOAP_RISPOSTA, nomeTrasformazione+"@@"+risposta.getNome(), risposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate());
+	}
+	
+	public Template getTemplateConnettoreMultiploSticky(Connection connectionPdD,IDPortaApplicativa idPA, byte[] template) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return _getTemplate(connectionPdD, idPA, "getTemplateConnettoreMultiploSticky", TemplateSource.CONNETTORI_MULTIPLI_STICKY, "sticky", template);
+	}
+	public Template getTemplateConnettoreMultiploCondizionale(Connection connectionPdD,IDPortaApplicativa idPA, byte[] template) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return _getTemplate(connectionPdD, idPA, "getTemplateConnettoreMultiploCondizionale", TemplateSource.CONNETTORI_MULTIPLI_CONSEGNA_CONDIZIONALE, "conditional", template);
+	}
+	
+	private Template _getTemplate(Connection connectionPdD,IDPortaApplicativa idPA, String nomeMetodo, TemplateSource templateSource, String identificativo, byte[] templateBytes) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		// Raccolta dati
+		if(idPA == null)
+			throw new DriverConfigurazioneException("["+nomeMetodo+"]: Parametro non definito (idPA is null)");
+		if(idPA.getNome()==null)
+			throw new DriverConfigurazioneException("["+nomeMetodo+"]: Parametro non definito (idPA.getNome() is null)");
+
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null) {
+			key = getKey_getPortaApplicativaTemplate(idPA, templateSource, identificativo);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					Template template = (Template) response.getObject();
+					if(template!=null){
+						return template;
+					}
+				}
+			}
+		}
+
+		Template template = null;
+		
+		semaphore_getTemplateTrasformazionePA.acquireThrowRuntime(nomeMetodo);
+		try {
+			
+			if(this.cache!=null) {
+				org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+				if(response != null){
+					if(response.getException()!=null){
+						if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+							throw (DriverConfigurazioneNotFound) response.getException();
+						else
+							throw (DriverConfigurazioneException) response.getException();
+					}else{
+						template = (Template) response.getObject();
+						if(template!=null){
+							return template;
+						}
+					}
+				}
+			}
+			
+			template = new Template(key, templateBytes);
+			
+			// Aggiungo la risposta in cache (se esiste una cache)	
+			// Se ho una eccezione aggiungo in cache solo una not found
+			if( this.cache!=null ){ 	
+				this.log.info("Aggiungo oggetto ["+key+"] in cache");
+				try{	
+					org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+					responseCache.setObject((java.io.Serializable)template);
+					this.cache.put(key,responseCache);
+				}catch(UtilsException e){
+					this.log.error("Errore durante l'inserimento in cache ["+key+"]: "+e.getMessage());
+				}
+			}
+			
+		}finally {
+			semaphore_getTemplateTrasformazionePA.release(nomeMetodo);
+		}
+
+		return template;
+
+	}  
+	
+	public Template getTemplateIntegrazione(Connection connectionPdD,IDPortaApplicativa idPA, File file) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return _getTemplate(connectionPdD, idPA, "getTemplateIntegrazione", TemplateSource.INTEGRAZIONE, file);
+	}
+	private Template _getTemplate(Connection connectionPdD,IDPortaApplicativa idPA, String nomeMetodo, TemplateSource templateSource, File file) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null) {
+			key = getKey_getPortaApplicativaTemplate(idPA, templateSource, file.getAbsolutePath());
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					Template template = (Template) response.getObject();
+					if(template!=null){
+						return template;
+					}
+				}
+			}
+		}
+
+		Template template = null;
+		
+		semaphore_getTemplateTrasformazionePA.acquireThrowRuntime(nomeMetodo);
+		try {
+			
+			if(this.cache!=null) {
+				org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+				if(response != null){
+					if(response.getException()!=null){
+						if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+							throw (DriverConfigurazioneNotFound) response.getException();
+						else
+							throw (DriverConfigurazioneException) response.getException();
+					}else{
+						template = (Template) response.getObject();
+						if(template!=null){
+							return template;
+						}
+					}
+				}
+			}
+			
+			ContentFile cf = getContentFileEngine(file);
+			if(cf.isExists()) {
+				template = new Template(key, cf.getContent());
+			}
+			else {
+				throw new DriverConfigurazioneException("File '"+file.getAbsolutePath()+"' cannot exists");
+			}
+			
+			// Aggiungo la risposta in cache (se esiste una cache)	
+			// Se ho una eccezione aggiungo in cache solo una not found
+			if( this.cache!=null ){ 	
+				this.log.info("Aggiungo oggetto ["+key+"] in cache");
+				try{	
+					org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+					responseCache.setObject((java.io.Serializable)template);
+					this.cache.put(key,responseCache);
+				}catch(UtilsException e){
+					this.log.error("Errore durante l'inserimento in cache ["+key+"]: "+e.getMessage());
+				}
+			}
+			
+		}finally {
+			semaphore_getTemplateTrasformazionePA.release(nomeMetodo);
+		}
+
+		return template;
+
+	} 
+	
+	
 	 
 	
 	
@@ -4142,6 +4554,161 @@ public class ConfigurazionePdD  {
 
 	}
 
+	private static org.openspcoop2.utils.Semaphore semaphore_getTemplateTrasformazione = new org.openspcoop2.utils.Semaphore("ConfigurazionePdD_TemplateTrasformazioneConfig");
+	protected static String getKey_getTemplate(TemplateSource source, String identificativo){
+		return "configurazioneGW_getTemplate_"+source.name()+"_"+identificativo;
+	}
+	
+	public Template getTemplateAttributeAuthorityRequest(Connection connectionPdD, String attributeAuthorityName, byte[] template) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return _getTemplate(connectionPdD, "getTemplateAttributeAuthorityRequest", TemplateSource.ATTRIBUTE_AUTHORITY_REQUEST, attributeAuthorityName, template);
+	}
+	
+	private Template _getTemplate(Connection connectionPdD, String nomeMetodo, TemplateSource templateSource, String identificativo, byte[] templateBytes) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null) {
+			key = getKey_getTemplate(templateSource, identificativo);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					Template template = (Template) response.getObject();
+					if(template!=null){
+						return template;
+					}
+				}
+			}
+		}
+
+		Template template = null;
+		
+		semaphore_getTemplateTrasformazione.acquireThrowRuntime(nomeMetodo);
+		try {
+			
+			if(this.cache!=null) {
+				org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+				if(response != null){
+					if(response.getException()!=null){
+						if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+							throw (DriverConfigurazioneNotFound) response.getException();
+						else
+							throw (DriverConfigurazioneException) response.getException();
+					}else{
+						template = (Template) response.getObject();
+						if(template!=null){
+							return template;
+						}
+					}
+				}
+			}
+			
+			template = new Template(key, templateBytes);
+			
+			// Aggiungo la risposta in cache (se esiste una cache)	
+			// Se ho una eccezione aggiungo in cache solo una not found
+			if( this.cache!=null ){ 	
+				this.log.info("Aggiungo oggetto ["+key+"] in cache");
+				try{	
+					org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+					responseCache.setObject((java.io.Serializable)template);
+					this.cache.put(key,responseCache);
+				}catch(UtilsException e){
+					this.log.error("Errore durante l'inserimento in cache ["+key+"]: "+e.getMessage());
+				}
+			}
+			
+		}finally {
+			semaphore_getTemplateTrasformazione.release(nomeMetodo);
+		}
+
+		return template;
+
+	}  
+	
+	public Template getTemplateIntegrazione(Connection connectionPdD,File file) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return _getTemplate(connectionPdD, "getTemplateIntegrazione", TemplateSource.INTEGRAZIONE, file);
+	}
+	private Template _getTemplate(Connection connectionPdD,String nomeMetodo, TemplateSource templateSource, File file) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null) {
+			key = getKey_getTemplate(templateSource, file.getAbsolutePath());
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					Template template = (Template) response.getObject();
+					if(template!=null){
+						return template;
+					}
+				}
+			}
+		}
+
+		Template template = null;
+		
+		semaphore_getTemplateTrasformazione.acquireThrowRuntime(nomeMetodo);
+		try {
+			
+			if(this.cache!=null) {
+				org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+				if(response != null){
+					if(response.getException()!=null){
+						if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+							throw (DriverConfigurazioneNotFound) response.getException();
+						else
+							throw (DriverConfigurazioneException) response.getException();
+					}else{
+						template = (Template) response.getObject();
+						if(template!=null){
+							return template;
+						}
+					}
+				}
+			}
+			
+			ContentFile cf = getContentFileEngine(file);
+			if(cf.isExists()) {
+				template = new Template(key, cf.getContent());
+			}
+			else {
+				throw new DriverConfigurazioneException("File '"+file.getAbsolutePath()+"' cannot exists");
+			}
+			
+			// Aggiungo la risposta in cache (se esiste una cache)	
+			// Se ho una eccezione aggiungo in cache solo una not found
+			if( this.cache!=null ){ 	
+				this.log.info("Aggiungo oggetto ["+key+"] in cache");
+				try{	
+					org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+					responseCache.setObject((java.io.Serializable)template);
+					this.cache.put(key,responseCache);
+				}catch(UtilsException e){
+					this.log.error("Errore durante l'inserimento in cache ["+key+"]: "+e.getMessage());
+				}
+			}
+			
+		}finally {
+			semaphore_getTemplateTrasformazione.release(nomeMetodo);
+		}
+
+		return template;
+
+	} 
 	
 	
 	

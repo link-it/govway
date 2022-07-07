@@ -24,17 +24,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.StringReader;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.RuntimeServices;
-import org.apache.velocity.runtime.RuntimeSingleton;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.RuntimeInstance;
 import org.apache.velocity.runtime.parser.ParseException;
-import org.apache.velocity.runtime.parser.node.SimpleNode;
 
 
 
@@ -78,9 +77,39 @@ public class VelocityTemplateUtils {
 	}
 	
 	public static Template buildTemplate(String name,byte[] bytes) throws IOException, ParseException{
-		return buildTemplate(name, bytes, Charset.UTF_8.getValue());
+		return buildTemplate(name, bytes, Charset.UTF_8.getValue(), null);
 	}
 	public static Template buildTemplate(String name,byte[] bytes, String encoding) throws IOException, ParseException{
+		return buildTemplate(name, bytes, encoding,
+				null);
+	}
+	
+	public static Template buildTemplate(String name,byte[] bytes,
+			Map<String, byte[]> templateIncludes) throws IOException, ParseException{
+		return buildTemplate(name, bytes, Charset.UTF_8.getValue(), 
+				templateIncludes);
+	}
+	public static Template buildTemplate(String name,byte[] bytes, String encoding,
+			Map<String, byte[]> templateIncludes) throws IOException, ParseException{
+		
+		RuntimeInstance instance = new RuntimeInstance();
+		
+		String defaultTemplate = "_____DEFAULT_TEMPLATE___";
+		
+		if(templateIncludes==null) {
+			templateIncludes= new HashMap<String, byte[]>();
+		}
+		VelocityTemplateLoader loader = new VelocityTemplateLoader(templateIncludes);
+		templateIncludes.put(defaultTemplate, bytes);
+		instance.setProperty(RuntimeConstants.RESOURCE_LOADER, "govway_rl" );
+		instance.setProperty("govway_rl."+RuntimeConstants.RESOURCE_LOADER+"."+RuntimeConstants.RESOURCE_LOADER_INSTANCE, loader);
+
+        instance.init();
+
+        Template template = instance.getTemplate(defaultTemplate, encoding);
+        
+		/*
+		Metodo che non consentiva la risoluzione dei template interni
 		Template template = new Template();
 		template.setName(name);
 		template.setEncoding(encoding);
@@ -90,6 +119,7 @@ public class VelocityTemplateUtils {
 		template.setRuntimeServices(runtimeServices);
 		template.setData(node);
 		template.initDocument();
+		*/
 		return template;
 	}
 	

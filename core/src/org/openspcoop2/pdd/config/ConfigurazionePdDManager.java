@@ -61,6 +61,8 @@ import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.Transazioni;
+import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
+import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.RuoloContesto;
@@ -110,6 +112,7 @@ import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfigura
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.dynamic.MessageContent;
+import org.openspcoop2.pdd.core.dynamic.Template;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
@@ -635,7 +638,25 @@ public class ConfigurazionePdDManager {
 	public List<Object> getExtendedInfo(PortaDelegata pd)throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getExtendedInfo(pd);
 	}
+	
+	public Template getTemplateTrasformazioneRichiesta(IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getTemplateTrasformazioneRichiesta(this.getConnection(), idPD, nomeTrasformazione, richiesta);
+	}
+	public Template getTemplateTrasformazioneSoapRichiesta(IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getTemplateTrasformazioneSoapRichiesta(this.getConnection(), idPD, nomeTrasformazione, richiesta);
+	}
+	public Template getTemplateTrasformazioneRisposta(IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getTemplateTrasformazioneRisposta(this.getConnection(), idPD, nomeTrasformazione, risposta);
+	}
+	public Template getTemplateTrasformazioneSoapRisposta(IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getTemplateTrasformazioneSoapRisposta(this.getConnection(), idPD, nomeTrasformazione, risposta);
+	}
+	
+	public Template getTemplateIntegrazione(IDPortaDelegata idPD, File file) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getTemplateIntegrazione(this.getConnection(), idPD, file);
+	}
 
+	
 
 
 	/* ********  PORTE APPLICATIVE  (Interfaccia) ******** */
@@ -928,6 +949,30 @@ public class ConfigurazionePdDManager {
 	
 	public List<Object> getExtendedInfo(PortaApplicativa pa)throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getExtendedInfo(pa);
+	}
+	
+	public Template getTemplateTrasformazioneRichiesta(IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getTemplateTrasformazioneRichiesta(this.getConnection(), idPA, nomeTrasformazione, richiesta);
+	}
+	public Template getTemplateTrasformazioneSoapRichiesta(IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getTemplateTrasformazioneSoapRichiesta(this.getConnection(), idPA, nomeTrasformazione, richiesta);
+	}
+	public Template getTemplateTrasformazioneRisposta(IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getTemplateTrasformazioneRisposta(this.getConnection(), idPA, nomeTrasformazione, risposta);
+	}
+	public Template getTemplateTrasformazioneSoapRisposta(IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getTemplateTrasformazioneSoapRisposta(this.getConnection(), idPA, nomeTrasformazione, risposta);
+	}
+	
+	public Template getTemplateConnettoreMultiploSticky(IDPortaApplicativa idPA, byte[] template) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getTemplateConnettoreMultiploSticky(this.getConnection(), idPA, template);
+	}
+	public Template getTemplateConnettoreMultiploCondizionale(IDPortaApplicativa idPA, byte[] template) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getTemplateConnettoreMultiploCondizionale(this.getConnection(), idPA, template);
+	}
+	
+	public Template getTemplateIntegrazione(IDPortaApplicativa idPA, File file) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getTemplateIntegrazione(this.getConnection(), idPA, file);
 	}
 
 
@@ -1499,6 +1544,14 @@ public class ConfigurazionePdDManager {
 
 	public Object getSingleExtendedInfoConfigurazioneFromCache(String id) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		return this.configurazionePdDReader.getSingleExtendedInfoConfigurazioneFromCache(id, this.getConnection());
+	}
+	
+	public Template getTemplateAttributeAuthorityRequest(String attributeAuthorityName, byte[] template) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getTemplateAttributeAuthorityRequest(this.getConnection(), attributeAuthorityName, template);
+	}
+	
+	public Template getTemplateIntegrazione(File file) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getTemplateIntegrazione(this.getConnection(), file);
 	}
 
 

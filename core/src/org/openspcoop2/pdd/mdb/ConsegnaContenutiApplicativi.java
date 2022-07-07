@@ -1686,9 +1686,20 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			consegnaMessageTrasformato = consegnaMessagePrimaTrasformazione;
 			if(trasformazioni!=null) {
 				try {
-					gestoreTrasformazioni = new GestoreTrasformazioni(this.log, msgDiag, idServizio, soggettoFruitore, servizioApplicativoFruitore, 
-							trasformazioni, transactionNullable, pddContext, requestInfo, tipoPdD,
-							generatoreErrorePA);
+					if(richiestaApplicativa!=null && !localForward){
+						gestoreTrasformazioni = new GestoreTrasformazioni(this.log, msgDiag, idServizio, soggettoFruitore, servizioApplicativoFruitore, 
+								trasformazioni, transactionNullable, pddContext, requestInfo, tipoPdD,
+								generatoreErrorePA,
+								configurazionePdDManager,
+								idPA);
+					}
+					else {
+						gestoreTrasformazioni = new GestoreTrasformazioni(this.log, msgDiag, idServizio, soggettoFruitore, servizioApplicativoFruitore, 
+								trasformazioni, transactionNullable, pddContext, requestInfo, tipoPdD,
+								generatoreErrorePA,
+								configurazionePdDManager,
+								idPD);
+					}
 					gestoreTrasformazioni.setNomeConnettore(nomeConnettoreMultiplo);
 					gestoreTrasformazioni.setNomeServizioApplicativoErogatore(nomeServizioApplicativoErogatoreConnettoreMultiplo);
 					if(tipoMessaggioDaNotificare_notificaAsincrona!=null) {

@@ -57,6 +57,7 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.dynamic.DynamicException;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.MessageContent;
+import org.openspcoop2.pdd.core.dynamic.Template;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.utils.dch.InputStreamDataSource;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
@@ -234,7 +235,7 @@ public class GestoreTrasformazioniUtilities {
 	}
 	
 	public static RisultatoTrasformazioneContenuto trasformazioneContenuto(Logger log, String tipoConversioneContenuto, 
-			byte[] contenuto, String oggetto, Map<String, Object> dynamicMap, OpenSPCoop2Message msg, MessageContent messageContent, PdDContext pddContext,
+			Template template, String oggetto, Map<String, Object> dynamicMap, OpenSPCoop2Message msg, MessageContent messageContent, PdDContext pddContext,
 			String forceContentType, boolean readCharset) throws Exception {
 		TipoTrasformazione tipoTrasformazione = null;
 		if(tipoConversioneContenuto!=null) {
@@ -268,13 +269,13 @@ public class GestoreTrasformazioniUtilities {
 			break;
 			
 		case TEMPLATE:
-			if(contenuto==null) {
+			if(template==null || template.getTemplate()==null) {
 				throw new Exception("Template "+oggetto+" non definito");
 			}
 						
 			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], lettura template ...");
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			bout.write(contenuto);
+			bout.write(template.getTemplate());
 			bout.flush();
 			bout.close();
 			
@@ -293,17 +294,17 @@ public class GestoreTrasformazioniUtilities {
 		case FREEMARKER_TEMPLATE:
 		case CONTEXT_FREEMARKER_TEMPLATE:
 	    case FREEMARKER_TEMPLATE_ZIP:
-			if(contenuto==null) {
+	    	if(template==null || template.getTemplate()==null) {
 				throw new Exception("Template "+oggetto+" non definito");
 			}
 						
 			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template ...");
 			bout = new ByteArrayOutputStream();
 			if(TipoTrasformazione.FREEMARKER_TEMPLATE.equals(tipoTrasformazione) || TipoTrasformazione.CONTEXT_FREEMARKER_TEMPLATE.equals(tipoTrasformazione)) {
-				DynamicUtils.convertFreeMarkerTemplate("template.ftl", contenuto, dynamicMap, bout, charset);
+				DynamicUtils.convertFreeMarkerTemplate(template, dynamicMap, bout, charset);
 			}
 			else {
-				DynamicUtils.convertZipFreeMarkerTemplate("template.ftl.zip", contenuto, dynamicMap, bout, charset);
+				DynamicUtils.convertZipFreeMarkerTemplate(template.getZipTemplate(), dynamicMap, bout, charset);
 			}
 			bout.flush();
 			bout.close();
@@ -321,17 +322,17 @@ public class GestoreTrasformazioniUtilities {
 		case VELOCITY_TEMPLATE:
 		case CONTEXT_VELOCITY_TEMPLATE:
 	    case VELOCITY_TEMPLATE_ZIP:
-			if(contenuto==null) {
+	    	if(template==null || template.getTemplate()==null) {
 				throw new Exception("Template "+oggetto+" non definito");
 			}
 						
 			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template ...");
 			bout = new ByteArrayOutputStream();
 			if(TipoTrasformazione.VELOCITY_TEMPLATE.equals(tipoTrasformazione) || TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE.equals(tipoTrasformazione)) {
-				DynamicUtils.convertVelocityTemplate("template.vm", contenuto, dynamicMap, bout, charset);
+				DynamicUtils.convertVelocityTemplate(template, dynamicMap, bout, charset);
 			}
 			else {
-				DynamicUtils.convertZipVelocityTemplate("template.vm.zip", contenuto, dynamicMap, bout, charset);	
+				DynamicUtils.convertZipVelocityTemplate(template.getZipTemplate(), dynamicMap, bout, charset);	
 			}
 			bout.flush();
 			bout.close();
@@ -347,7 +348,7 @@ public class GestoreTrasformazioniUtilities {
 			break;
 			
 		case XSLT:
-			if(contenuto==null) {
+			if(template==null || template.getTemplate()==null) {
 				throw new Exception("Template "+oggetto+" non definito");
 			}
 			Element element = null;
@@ -367,7 +368,7 @@ public class GestoreTrasformazioniUtilities {
 						
 			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template ...");
 			bout = new ByteArrayOutputStream();
-			DynamicUtils.convertXSLTTemplate("template", contenuto, element, bout);
+			DynamicUtils.convertXSLTTemplate("template", template.getTemplate(), element, bout);
 			bout.flush();
 			bout.close();
 			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template completata");
@@ -384,14 +385,14 @@ public class GestoreTrasformazioniUtilities {
 		case ZIP:
 		case TGZ:
 		case TAR:
-			if(contenuto==null) {
+			if(template==null || template.getTemplate()==null) {
 				throw new Exception("Template "+oggetto+" non definito");
 			}
 		
 			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template ...");
 			bout = new ByteArrayOutputStream();
 			ArchiveType archiveType = ArchiveType.valueOf(tipoTrasformazione.name()); 
-			DynamicUtils.convertCompressorTemplate("template", contenuto, dynamicMap, pddContext, archiveType, bout);
+			DynamicUtils.convertCompressorTemplate("template", template.getTemplate(), dynamicMap, pddContext, archiveType, bout);
 			bout.flush();
 			bout.close();
 			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template completata");
@@ -423,7 +424,7 @@ public class GestoreTrasformazioniUtilities {
 			boolean trasformazioneSoap, 
 			VersioneSOAP trasformazioneSoap_versione, String trasformazioneSoap_soapAction, 
 			boolean trasformazioneSoap_envelope, boolean trasformazioneSoap_envelopeAsAttachment,
-			String trasformazioneSoap_tipoConversione, byte[] trasformazioneSoap_templateConversione) throws Throwable {
+			String trasformazioneSoap_tipoConversione, Template trasformazioneSoap_templateConversione) throws Throwable {
 		
 		try {
 		

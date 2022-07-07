@@ -30,9 +30,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -44,11 +46,13 @@ import org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.dynamic.MessageContent;
+import org.openspcoop2.pdd.core.dynamic.Template;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -68,7 +72,8 @@ public class StickyUtils  {
 	
 	public static StickyResult getStickyResult(PortaApplicativa pa, OpenSPCoop2Message message, Busta busta, 
 			RequestInfo requestInfo, PdDContext pddContext, 
-			MsgDiagnostico msgDiag, Logger log) throws BehaviourException, BehaviourEmitDiagnosticException {
+			MsgDiagnostico msgDiag, Logger log,
+			IState state) throws BehaviourException, BehaviourEmitDiagnosticException {
 		
 		if(isConfigurazioneSticky(pa, log)==false) {
 			return null; // non vi è da fare alcun filtro condizionale
@@ -267,7 +272,11 @@ public class StickyUtils  {
 						pForm,
 						errorHandler);
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
-				DynamicUtils.convertFreeMarkerTemplate("ConditionalConfig.ftl", patternSelettore.getBytes(), dynamicMap, bout);
+				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+				IDPortaApplicativa idPA = new IDPortaApplicativa();
+				idPA.setNome(pa.getNome());
+				Template template = configurazionePdDManager.getTemplateConnettoreMultiploSticky(idPA, patternSelettore.getBytes());
+				DynamicUtils.convertFreeMarkerTemplate(template, dynamicMap, bout);
 				bout.flush();
 				bout.close();
 				condition = bout.toString();
@@ -295,7 +304,11 @@ public class StickyUtils  {
 						pForm,
 						errorHandler);
 				bout = new ByteArrayOutputStream();
-				DynamicUtils.convertVelocityTemplate("ConditionalConfig.vm", patternSelettore.getBytes(), dynamicMap, bout);
+				configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+				idPA = new IDPortaApplicativa();
+				idPA.setNome(pa.getNome());
+				template = configurazionePdDManager.getTemplateConnettoreMultiploSticky(idPA, patternSelettore.getBytes());
+				DynamicUtils.convertVelocityTemplate(template, dynamicMap, bout);
 				bout.flush();
 				bout.close();
 				condition = bout.toString();

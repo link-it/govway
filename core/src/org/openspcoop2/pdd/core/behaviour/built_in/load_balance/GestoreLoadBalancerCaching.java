@@ -420,7 +420,8 @@ public class GestoreLoadBalancerCaching {
 		else {
 			stickyResult = getStickyInfo(pa, message, busta, 
 					requestInfo, pddContext, 
-					msgDiag, log);
+					msgDiag, log,
+					state);
 		}
 		
 		if(stickyResult!=null && stickyResult.isFound()) {
@@ -440,10 +441,11 @@ public class GestoreLoadBalancerCaching {
 	
 	private static StickyResult getStickyInfo(PortaApplicativa pa, OpenSPCoop2Message message, Busta busta, 
 			RequestInfo requestInfo, PdDContext pddContext, 
-			MsgDiagnostico msgDiag, Logger log) throws BehaviourException, BehaviourEmitDiagnosticException{
+			MsgDiagnostico msgDiag, Logger log,
+			IState state) throws BehaviourException, BehaviourEmitDiagnosticException{
 		
 		if(StickyUtils.isConfigurazioneSticky(pa, log)) {
-			return StickyUtils.getStickyResult(pa, message, busta, requestInfo, pddContext, msgDiag, log);
+			return StickyUtils.getStickyResult(pa, message, busta, requestInfo, pddContext, msgDiag, log, state);
 		}
 		
 		return null;

@@ -26,11 +26,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
-import org.openspcoop2.pdd.config.ContentFile;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.core.dynamic.Template;
 import org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
@@ -51,18 +53,25 @@ public class UtilitiesTemplate {
 	private Busta busta;
 	private Logger log;
 	private TipoTrasformazione tipoTrasformazione;
-	private byte[] template;
+	private Template template;
 	
 	public UtilitiesTemplate(String tipoHeaderIntegrazione, HeaderIntegrazione integrazione,
 			OutRequestPDMessage inRequestPDMessage, Context context, Logger log) throws HeaderIntegrazioneException {
 		try {
 			init(tipoHeaderIntegrazione, inRequestPDMessage.getMessage(), context, inRequestPDMessage.getBustaRichiesta(), log);
 			
+			IDPortaDelegata idPD = null;
+			if(inRequestPDMessage.getPortaDelegata()!=null) {
+				idPD = new IDPortaDelegata();
+				idPD.setNome(inRequestPDMessage.getPortaDelegata().getNome());
+			}
+			
 			List<Proprieta> proprieta = null;
 			if(inRequestPDMessage.getPortaDelegata()!=null && inRequestPDMessage.getPortaDelegata().getProprietaList()!=null) {
 				proprieta = inRequestPDMessage.getPortaDelegata().getProprietaList();
 			}
-			init(proprieta, true, true);
+			init(proprieta, true, true,
+					null, idPD);
 			
 		}catch(Exception e) {
 			throw new HeaderIntegrazioneException(e.getMessage(),e);
@@ -73,11 +82,18 @@ public class UtilitiesTemplate {
 		try {
 			init(tipoHeaderIntegrazione, inResponsePDMessage.getMessage(), context, inResponsePDMessage.getBustaRichiesta(), log);
 			
+			IDPortaDelegata idPD = null;
+			if(inResponsePDMessage.getPortaDelegata()!=null) {
+				idPD = new IDPortaDelegata();
+				idPD.setNome(inResponsePDMessage.getPortaDelegata().getNome());
+			}
+			
 			List<Proprieta> proprieta = null;
 			if(inResponsePDMessage.getPortaDelegata()!=null && inResponsePDMessage.getPortaDelegata().getProprietaList()!=null) {
 				proprieta = inResponsePDMessage.getPortaDelegata().getProprietaList();
 			}
-			init(proprieta, true, false);
+			init(proprieta, true, false,
+					null, idPD);
 			
 		}catch(Exception e) {
 			throw new HeaderIntegrazioneException(e.getMessage(),e);
@@ -88,11 +104,18 @@ public class UtilitiesTemplate {
 		try {
 			init(tipoHeaderIntegrazione, inRequestPAMessage.getMessage(), context, inRequestPAMessage.getBustaRichiesta(), log);
 			
+			IDPortaApplicativa idPA = null;
+			if(inRequestPAMessage.getPortaApplicativa()!=null) {
+				idPA = new IDPortaApplicativa();
+				idPA.setNome(inRequestPAMessage.getPortaApplicativa().getNome());
+			}
+			
 			List<Proprieta> proprieta = null;
 			if(inRequestPAMessage.getPortaApplicativa()!=null && inRequestPAMessage.getPortaApplicativa().getProprietaList()!=null) {
 				proprieta = inRequestPAMessage.getPortaApplicativa().getProprietaList();
 			}
-			init(proprieta, false, true);
+			init(proprieta, false, true,
+					idPA, null);
 			
 		}catch(Exception e) {
 			throw new HeaderIntegrazioneException(e.getMessage(),e);
@@ -103,11 +126,18 @@ public class UtilitiesTemplate {
 		try {
 			init(tipoHeaderIntegrazione, inResponsePAMessage.getMessage(), context, inResponsePAMessage.getBustaRichiesta(), log);
 			
+			IDPortaApplicativa idPA = null;
+			if(inResponsePAMessage.getPortaApplicativa()!=null) {
+				idPA = new IDPortaApplicativa();
+				idPA.setNome(inResponsePAMessage.getPortaApplicativa().getNome());
+			}
+			
 			List<Proprieta> proprieta = null;
 			if(inResponsePAMessage.getPortaApplicativa()!=null && inResponsePAMessage.getPortaApplicativa().getProprietaList()!=null) {
 				proprieta = inResponsePAMessage.getPortaApplicativa().getProprietaList();
 			}
-			init(proprieta, false, false);
+			init(proprieta, false, false,
+					idPA, null);
 			
 		}catch(Exception e) {
 			throw new HeaderIntegrazioneException(e.getMessage(),e);
@@ -121,7 +151,8 @@ public class UtilitiesTemplate {
 		this.busta = busta;
 		this.log = log;
 	}
-	private void init(List<Proprieta> proprieta, boolean portaDelegata, boolean request) throws HeaderIntegrazioneException {
+	private void init(List<Proprieta> proprieta, boolean portaDelegata, boolean request,
+			IDPortaApplicativa idPA, IDPortaDelegata idPD) throws HeaderIntegrazioneException {
 		try {
 			OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
 			TipoTrasformazione tipoTrasformazione = null;
@@ -147,6 +178,8 @@ public class UtilitiesTemplate {
 				}
 			}
 			
+			boolean fileDefinedInPorta = false;
+			
 			if(proprieta!=null && !proprieta.isEmpty()) {
 				
 				String tipoTrasformazionePropertyName = request ? properties.getIntegrazioneTemplateRequestPropertyTipo() : properties.getIntegrazioneTemplateResponsePropertyTipo();
@@ -158,6 +191,7 @@ public class UtilitiesTemplate {
 					}
 					if(fileTrasformazionePropertyName.equalsIgnoreCase(p.getNome())) {
 						file = p.getValore();
+						fileDefinedInPorta = true;
 					}
 				}
 			}
@@ -171,13 +205,28 @@ public class UtilitiesTemplate {
 				throw new Exception("Template file non definito");
 			}
 			File fFile = new File(file);
+			/*
 			ContentFile cFile = ConfigurazionePdDManager.getInstance().getContentFile(fFile);
 			if(!cFile.isExists()) {
 				throw new Exception("Template file '"+fFile.getAbsolutePath()+"' not exists");
 			}
-			this.template = cFile.getContent();
-			if(this.template==null || this.template.length<=0) {
+			byte [] template = cFile.getContent();
+			if(template==null || template.length<=0) {
 				throw new Exception("Template '"+fFile.getAbsolutePath()+"' is empty");
+			}
+			*/
+			
+			ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance();
+			if(fileDefinedInPorta) {
+				if(portaDelegata) {
+					this.template = configurazionePdDManager.getTemplateIntegrazione(idPD, fFile);
+				}
+				else {
+					this.template = configurazionePdDManager.getTemplateIntegrazione(idPA, fFile);
+				}
+			}
+			else {
+				this.template = configurazionePdDManager.getTemplateIntegrazione(fFile);
 			}
 			
 		}catch(Exception e) {
@@ -232,10 +281,10 @@ public class UtilitiesTemplate {
 				this.log.debug("trasformazione '"+this.tipoHeaderIntegrazione+"' ["+this.tipoTrasformazione+"], risoluzione template ...");
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
 				if(TipoTrasformazione.FREEMARKER_TEMPLATE.equals(this.tipoTrasformazione) || TipoTrasformazione.CONTEXT_FREEMARKER_TEMPLATE.equals(this.tipoTrasformazione)) {
-					DynamicUtils.convertFreeMarkerTemplate("template.ftl", this.template, dynamicMap, bout);
+					DynamicUtils.convertFreeMarkerTemplate(this.template, dynamicMap, bout);
 				}
 				else {
-					DynamicUtils.convertZipFreeMarkerTemplate("template.ftl.zip", this.template, dynamicMap, bout);
+					DynamicUtils.convertZipFreeMarkerTemplate(this.template.getZipTemplate(), dynamicMap, bout);
 				}
 				bout.flush();
 				bout.close();
@@ -252,10 +301,10 @@ public class UtilitiesTemplate {
 		    	this.log.debug("trasformazione '"+this.tipoHeaderIntegrazione+"' ["+this.tipoTrasformazione+"], risoluzione template ...");
 				bout = new ByteArrayOutputStream();
 				if(TipoTrasformazione.VELOCITY_TEMPLATE.equals(this.tipoTrasformazione) || TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE.equals(this.tipoTrasformazione)) {
-					DynamicUtils.convertVelocityTemplate("template.vm", this.template, dynamicMap, bout);
+					DynamicUtils.convertVelocityTemplate(this.template, dynamicMap, bout);
 				}
 				else {
-					DynamicUtils.convertZipVelocityTemplate("template.vm.zip", this.template, dynamicMap, bout);	
+					DynamicUtils.convertZipVelocityTemplate(this.template.getZipTemplate(), dynamicMap, bout);	
 				}
 				bout.flush();
 				bout.close();

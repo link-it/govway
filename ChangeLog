@@ -1,3 +1,10 @@
+2022-07-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1381
+	Risolto degrado delle performance che avveniva quando si utilizzava una trasformazione Freemarker o Velocity.
+	Adesso l'oggetto template istanziato viene salvato in cache e riusato nelle successive richieste.
+
 2022-07-05  Francesco Scarlato <scarlato@link.it>
 
 	* [GovWayCore, GovWayConsole]

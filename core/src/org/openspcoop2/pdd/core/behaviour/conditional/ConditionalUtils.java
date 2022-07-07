@@ -34,12 +34,14 @@ import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoBehaviour;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -50,6 +52,7 @@ import org.openspcoop2.pdd.core.behaviour.BehaviourPropertiesUtils;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.dynamic.MessageContent;
+import org.openspcoop2.pdd.core.dynamic.Template;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
@@ -306,7 +309,11 @@ public class ConditionalUtils  {
 							pForm,
 							errorHandler);
 					ByteArrayOutputStream bout = new ByteArrayOutputStream();
-					DynamicUtils.convertFreeMarkerTemplate("ConditionalConfig.ftl", patternSelettore.getBytes(), dynamicMap, bout);
+					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+					IDPortaApplicativa idPA = new IDPortaApplicativa();
+					idPA.setNome(pa.getNome());
+					Template template = configurazionePdDManager.getTemplateConnettoreMultiploCondizionale(idPA, patternSelettore.getBytes());
+					DynamicUtils.convertFreeMarkerTemplate(template, dynamicMap, bout);
 					bout.flush();
 					bout.close();
 					condition = bout.toString();
@@ -334,7 +341,11 @@ public class ConditionalUtils  {
 							pForm,
 							errorHandler);
 					bout = new ByteArrayOutputStream();
-					DynamicUtils.convertVelocityTemplate("ConditionalConfig.vm", patternSelettore.getBytes(), dynamicMap, bout);
+					configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+					idPA = new IDPortaApplicativa();
+					idPA.setNome(pa.getNome());
+					template = configurazionePdDManager.getTemplateConnettoreMultiploCondizionale(idPA, patternSelettore.getBytes());
+					DynamicUtils.convertVelocityTemplate(template, dynamicMap, bout);
 					bout.flush();
 					bout.close();
 					condition = bout.toString();

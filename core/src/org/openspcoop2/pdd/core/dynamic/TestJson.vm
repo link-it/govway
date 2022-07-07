@@ -1,0 +1,10 @@
+{
+    "SortAs": "${xpath.read("//prova/text()")}",
+    "GlossTerm": "Standard Generalized Markup Language",
+    "Acronym": "${xPath.read("//{http://schemas.xmlsoap.org/soap/envelope/}:Envelope/{http://schemas.xmlsoap.org/soap/envelope/}:Body/prova2/text()")}",
+    "Abbrev": "ISO 8879:1986",
+    "Enabled": true,
+    "Year": 2018,
+    "Quote": 1.45,
+    "List": [ #set ( $x = ${xpath.readList("//list/text()")} )#foreach( $value in $x )"${value}" #if( $foreach.hasNext ),#end#end ]
+}

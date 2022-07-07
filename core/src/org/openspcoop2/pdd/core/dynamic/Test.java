@@ -23,9 +23,12 @@ package org.openspcoop2.pdd.core.dynamic;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
@@ -41,6 +44,7 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -380,9 +384,12 @@ public class Test {
 		}
 		
 		if(prefix.equals("$")) {
+			
+			// ** freemarker **
 			byte[]template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJson.ftl")).toByteArray();
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			DynamicUtils.convertFreeMarkerTemplate("xml2jsonFTL", template, dynamicMap, bout);
+			Template templateObject = new Template("xml2jsonFTL", template);
+			DynamicUtils.convertFreeMarkerTemplate(templateObject, dynamicMap, bout);
 			bout.flush();
 			bout.close();
 			value = bout.toString();
@@ -391,9 +398,25 @@ public class Test {
 			if(!expected.equals(value)) {
 				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
 			}
+			
+			// ** velocity **
+			template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJson.vm")).toByteArray();
+			bout = new ByteArrayOutputStream();
+			templateObject = new Template("xml2jsonVelocity", template);
+			DynamicUtils.convertVelocityTemplate(templateObject, dynamicMap, bout);
+			bout.flush();
+			bout.close();
+			value = bout.toString();
+			System.out.println("Test conversione xml2json via velocity: \n"+value);
+			expected = EXPECTED_JSON_2;
+			if(!expected.equals(value)) {
+				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+			}
 		}
 		
 		if(prefix.equals("$")) {
+			
+			// ** freemarker **
 			byte[]template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude.ftl")).toByteArray();
 			byte[]prova1 = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude_1.ftl")).toByteArray();
 			byte[]prova2 = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude_2.ftl")).toByteArray();
@@ -401,7 +424,8 @@ public class Test {
 			Map<String, byte[]> templateIncludes = new HashMap<>();
 			templateIncludes.put("TestJsonInclude_1.ftl", prova1);
 			templateIncludes.put("lib/TestJsonInclude_2.ftl", prova2);
-			DynamicUtils.convertFreeMarkerTemplate("xml2jsonFTL_INCLUDE_MANUALE", template, templateIncludes, dynamicMap, bout);
+			Template templateObject = new Template("xml2jsonFTL_INCLUDE_MANUALE", template, templateIncludes);
+			DynamicUtils.convertFreeMarkerTemplate(templateObject, dynamicMap, bout);
 			bout.flush();
 			bout.close();
 			value = bout.toString();
@@ -410,12 +434,35 @@ public class Test {
 			if(!expected.equals(value)) {
 				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
 			}
+			
+			// ** velocity **
+			template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude.vm")).toByteArray();
+			prova1 = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude_1.vm")).toByteArray();
+			prova2 = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude_2.vm")).toByteArray();
+			bout = new ByteArrayOutputStream();
+			templateIncludes = new HashMap<>();
+			templateIncludes.put("TestJsonInclude_1.vm", prova1);
+			templateIncludes.put("lib/TestJsonInclude_2.vm", prova2);
+			templateObject = new Template("xml2jsonVelocity_INCLUDE_MANUALE", template, templateIncludes);
+			DynamicUtils.convertVelocityTemplate(templateObject, dynamicMap, bout);
+			bout.flush();
+			bout.close();
+			value = bout.toString();
+			System.out.println("Test conversione xml2json via velocity (con include): \n"+value);
+			expected = EXPECTED_JSON_3;
+			if(!expected.equals(value)) {
+				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+			}
+			
 		}
 		
 		if(prefix.equals("$")) {
+			
+			// ** freemarker **
 			byte[]zip = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude.ftl.zip")).toByteArray();
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			DynamicUtils.convertZipFreeMarkerTemplate("xml2jsonFTL_INCLUDE_ZIP", zip, dynamicMap, bout);
+			ZipTemplate zipTemplateObject = new ZipTemplate("xml2jsonFTL_INCLUDE_ZIP", zip);
+			DynamicUtils.convertZipFreeMarkerTemplate(zipTemplateObject, dynamicMap, bout);
 			bout.flush();
 			bout.close();
 			value = bout.toString();
@@ -424,12 +471,60 @@ public class Test {
 			if(!expected.equals(value)) {
 				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
 			}
+			
+			// Riprovo passando da template
+			zip = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude.ftl.zip")).toByteArray();
+			bout = new ByteArrayOutputStream();
+			Template templateObject = new Template("xml2jsonFTL_INCLUDE_ZIP", zip);
+			zipTemplateObject = templateObject.getZipTemplate();
+			DynamicUtils.convertZipFreeMarkerTemplate(zipTemplateObject, dynamicMap, bout);
+			bout.flush();
+			bout.close();
+			value = bout.toString();
+			System.out.println("Test conversione xml2json via freemarker (2) (con include in archivio zip): \n"+value);
+			expected = EXPECTED_JSON_3+"\n";
+			if(!expected.equals(value)) {
+				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+			}
+			
+			
+			// ** velocity **
+			zip = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude.vm.zip")).toByteArray();
+			bout = new ByteArrayOutputStream();
+			zipTemplateObject = new ZipTemplate("xml2jsonVelocity_INCLUDE_ZIP", zip);
+			DynamicUtils.convertZipVelocityTemplate(zipTemplateObject, dynamicMap, bout);
+			bout.flush();
+			bout.close();
+			value = bout.toString();
+			System.out.println("Test conversione xml2json via velocity (con include in archivio zip): \n"+value);
+			expected = EXPECTED_JSON_3+"\n";
+			if(!expected.equals(value)) {
+				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+			}
+			
+			// Riprovo passando da template
+			zip = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude.vm.zip")).toByteArray();
+			bout = new ByteArrayOutputStream();
+			templateObject = new Template("xml2jsonVelocity_INCLUDE_ZIP", zip);
+			zipTemplateObject = templateObject.getZipTemplate();
+			DynamicUtils.convertZipVelocityTemplate(zipTemplateObject, dynamicMap, bout);
+			bout.flush();
+			bout.close();
+			value = bout.toString();
+			System.out.println("Test conversione xml2json via velocity (2) (con include in archivio zip): \n"+value);
+			expected = EXPECTED_JSON_3+"\n";
+			if(!expected.equals(value)) {
+				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+			}
 		}
 		
 		if(prefix.equals("$")) {
+			
+			// ** freemarker **
 			byte[]zip = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude2.ftl.zip")).toByteArray();
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			DynamicUtils.convertZipFreeMarkerTemplate("xml2jsonFTL_INCLUDE_ZIP2", zip, dynamicMap, bout);
+			ZipTemplate zipTemplateObject = new ZipTemplate("xml2jsonFTL_INCLUDE_ZIP2", zip);
+			DynamicUtils.convertZipFreeMarkerTemplate(zipTemplateObject, dynamicMap, bout);
 			bout.flush();
 			bout.close();
 			value = bout.toString();
@@ -438,7 +533,181 @@ public class Test {
 			if(!expected.equals(value)) {
 				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
 			}
+			
+			// Riprovo passando da template
+			zip = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude2.ftl.zip")).toByteArray();
+			bout = new ByteArrayOutputStream();
+			Template templateObject = new Template("xml2jsonFTL_INCLUDE_ZIP2", zip);
+			zipTemplateObject = templateObject.getZipTemplate();
+			DynamicUtils.convertZipFreeMarkerTemplate(zipTemplateObject, dynamicMap, bout);
+			bout.flush();
+			bout.close();
+			value = bout.toString();
+			System.out.println("Test conversione xml2json via freemarker (2) (con include in archivio zip test2): \n"+value);
+			expected = EXPECTED_JSON_3+"\n";
+			if(!expected.equals(value)) {
+				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+			}
+			
+			
+			// ** velocity **
+			zip = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude2.vm.zip")).toByteArray();
+			bout = new ByteArrayOutputStream();
+			zipTemplateObject = new ZipTemplate("xml2jsonVelocity_INCLUDE_ZIP2", zip);
+			DynamicUtils.convertZipVelocityTemplate(zipTemplateObject, dynamicMap, bout);
+			bout.flush();
+			bout.close();
+			value = bout.toString();
+			System.out.println("Test conversione xml2json via velocity (con include in archivio zip test2): \n"+value);
+			expected = EXPECTED_JSON_3+"\n";
+			if(!expected.equals(value)) {
+				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+			}
+			
+			// Riprovo passando da template
+			zip = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestJsonInclude2.vm.zip")).toByteArray();
+			bout = new ByteArrayOutputStream();
+			templateObject = new Template("xml2jsonVelocity_INCLUDE_ZIP2", zip);
+			zipTemplateObject = templateObject.getZipTemplate();
+			DynamicUtils.convertZipVelocityTemplate(zipTemplateObject, dynamicMap, bout);
+			bout.flush();
+			bout.close();
+			value = bout.toString();
+			System.out.println("Test conversione xml2json via velocity (2) (con include in archivio zip test2): \n"+value);
+			expected = EXPECTED_JSON_3+"\n";
+			if(!expected.equals(value)) {
+				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+			}
 		}
+		
+		if(prefix.equals("$")) {
+			
+			// ** freemarker **
+			Date inizio = DateManager.getDate();
+			boolean debug = false;
+			int threadsNum = 100;
+			ExecutorService threadsPool = Executors.newFixedThreadPool(threadsNum);
+			Map<String, ClientTestThread> threads = new HashMap<String, ClientTestThread>();
+			
+			byte[]template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestDynamic.ftl")).toByteArray();
+			Template templateObject = new Template("xml2jsonDynamicFTL", template);
+			// verifico thread safe template
+			
+			boolean error = false;
+			Exception exception = null;
+			try {
+			
+				for (int i = 0; i < threadsNum; i++) {
+					String threadName = "Thread-"+i;
+					ClientTestThread c = new ClientTestThread(threadName,templateObject, true);
+					threadsPool.execute(c);
+					threads.put(threadName, c);
+				}
+			
+				boolean terminated = false;
+				while(terminated == false){
+					if(debug)
+						System.out.println("Attendo terminazione ...");
+					boolean tmpTerminated = true;
+					for (int i = 0; i < threadsNum; i++) {
+						
+						String threadName = "Thread-"+i;
+						ClientTestThread c = threads.get(threadName);
+						if(c.isError()){
+							error = true;
+							exception = c.getException();
+						}
+						if(c.isFinished()==false){
+							tmpTerminated = false;
+							break;
+						}
+					}
+					if(tmpTerminated==false){
+						Utilities.sleep(250);
+					}
+					else{
+						terminated = true;
+					}
+				}
+				
+			} finally{
+				threadsPool.shutdown(); 
+			}
+			
+			
+			Date fine = DateManager.getDate();
+			long diff = fine.getTime() - inizio.getTime();
+			System.out.println("Tempo impiegato: "+Utilities.convertSystemTimeIntoString_millisecondi(diff, true));
+			
+			if(error){
+				throw new Exception("Error occurs in threads: "+exception.getMessage(),exception);
+			}
+		}
+		
+		if(prefix.equals("$")) {
+			
+			// ** velocity **
+			Date inizio = DateManager.getDate();
+			boolean debug = false;
+			int threadsNum = 100;
+			ExecutorService threadsPool = Executors.newFixedThreadPool(threadsNum);
+			Map<String, ClientTestThread> threads = new HashMap<String, ClientTestThread>();
+			
+			byte[]template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestDynamic.vm")).toByteArray();
+			Template templateObject = new Template("xml2jsonDynamicVelocity", template);
+			// verifico thread safe template
+			
+			boolean error = false;
+			Exception exception = null;
+			try {
+			
+				for (int i = 0; i < threadsNum; i++) {
+					String threadName = "Thread-"+i;
+					ClientTestThread c = new ClientTestThread(threadName,templateObject, false);
+					threadsPool.execute(c);
+					threads.put(threadName, c);
+				}
+			
+				boolean terminated = false;
+				while(terminated == false){
+					if(debug)
+						System.out.println("Attendo terminazione ...");
+					boolean tmpTerminated = true;
+					for (int i = 0; i < threadsNum; i++) {
+						
+						String threadName = "Thread-"+i;
+						ClientTestThread c = threads.get(threadName);
+						if(c.isError()){
+							error = true;
+							exception = c.getException();
+						}
+						if(c.isFinished()==false){
+							tmpTerminated = false;
+							break;
+						}
+					}
+					if(tmpTerminated==false){
+						Utilities.sleep(250);
+					}
+					else{
+						terminated = true;
+					}
+				}
+				
+			} finally{
+				threadsPool.shutdown(); 
+			}
+			
+			
+			Date fine = DateManager.getDate();
+			long diff = fine.getTime() - inizio.getTime();
+			System.out.println("Tempo impiegato: "+Utilities.convertSystemTimeIntoString_millisecondi(diff, true));
+			
+			if(error){
+				throw new Exception("Error occurs in threads: "+exception.getMessage(),exception);
+			}
+		}
+		
 		
 		dynamicMap = new HashMap<>();
 		dInfo = new DynamicInfo(connettoreMsg, pddContext);
@@ -526,13 +795,30 @@ public class Test {
 		}
 		
 		if(prefix.equals("$")) {
+			
+			// freemarker
 			byte[]template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestXml.ftl")).toByteArray();
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			DynamicUtils.convertFreeMarkerTemplate("json2xmlFTL", template,  dynamicMap, bout);
+			Template templateObject = new Template("json2xmlFTL", template);
+			DynamicUtils.convertFreeMarkerTemplate(templateObject,  dynamicMap, bout);
 			bout.flush();
 			bout.close();
 			value = bout.toString();
 			System.out.println("Test conversione json2xml via freemarker: \n"+value);
+			expected = EXPECTED_XML_2;
+			if(!expected.equals(value)) {
+				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+			}
+			
+			// velocity
+			template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestXml.vm")).toByteArray();
+			bout = new ByteArrayOutputStream();
+			templateObject = new Template("json2xmlVelocity", template);
+			DynamicUtils.convertVelocityTemplate(templateObject,  dynamicMap, bout);
+			bout.flush();
+			bout.close();
+			value = bout.toString();
+			System.out.println("Test conversione json2xml via velocity: \n"+value);
 			expected = EXPECTED_XML_2;
 			if(!expected.equals(value)) {
 				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
@@ -581,9 +867,12 @@ public class Test {
 		}
 		
 		if(prefix.equals("$")) {
+			
+			// freemarker
 			byte[]template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestUrl.ftl")).toByteArray();
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			DynamicUtils.convertFreeMarkerTemplate("testUrlFTL", template, dynamicMap, bout);
+			Template templateObject = new Template("testUrlFTL", template);
+			DynamicUtils.convertFreeMarkerTemplate(templateObject, dynamicMap, bout);
 			bout.flush();
 			bout.close();
 			value = bout.toString();
@@ -592,6 +881,21 @@ public class Test {
 			if(!expected.equals(value)) {
 				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
 			}
+			
+			// velocity
+			template = Utilities.getAsByteArrayOuputStream(Test.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/TestUrl.vm")).toByteArray();
+			bout = new ByteArrayOutputStream();
+			templateObject = new Template("testUrlVelocity", template);
+			DynamicUtils.convertVelocityTemplate(templateObject, dynamicMap, bout);
+			bout.flush();
+			bout.close();
+			value = bout.toString();
+			System.out.println("Test conversione via velocity: \n"+value);
+			expected = EXPECTED_XML_3;
+			if(!expected.equals(value)) {
+				throw new Exception("Expected value '"+expected+"', found '"+value+"'");
+			}
+						
 		}
 		
 		
@@ -753,3 +1057,81 @@ public class Test {
 	
 }
 
+class ClientTestThread implements Runnable{
+
+	private static final String EXPECTED_JSON_TH_NAME = "THREADNAME"; 
+	private static final String EXPECTED_JSON = 
+			"{\n"+
+			"    \"Thread\": \""+EXPECTED_JSON_TH_NAME+"\",\n"+
+			"    \"Prova\": \"TEST\"\n"+
+			"}";
+	
+	private Template template;
+	private Map<String, Object> dynamicMap;
+	private String threadName;
+	private boolean freemarker;
+	
+	ClientTestThread(String threadName, Template template, boolean freemarker){
+		this.threadName = threadName;
+		this.template = template;
+		
+		this.dynamicMap = new HashMap<>();
+		
+		ConnettoreMsg connettoreMsg = new ConnettoreMsg();
+		PdDContext pddContext = new PdDContext();
+		pddContext.addObject("thread-name", this.threadName);
+		DynamicInfo dInfo = new DynamicInfo(connettoreMsg, pddContext);
+		Logger log = LoggerWrapperFactory.getLogger(Test.class);
+		DynamicUtils.fillDynamicMap(log, this.dynamicMap, dInfo);
+		this.freemarker = freemarker;
+	}
+	
+	private boolean finished = false;
+	private boolean error = false;
+	
+	private Exception exception = null;
+	public Exception getException() {
+		return this.exception;
+	}
+
+	public boolean isError() {
+		return this.error;
+	}
+
+	public boolean isFinished() {
+		return this.finished;
+	}
+
+	@Override
+	public void run() {
+		
+		try{
+		
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			if(this.freemarker) {
+				DynamicUtils.convertFreeMarkerTemplate(this.template, this.dynamicMap, bout);
+			}
+			else {
+				DynamicUtils.convertVelocityTemplate(this.template, this.dynamicMap, bout);
+			}
+			bout.flush();
+			bout.close();
+			String value = bout.toString();
+			System.out.println("["+this.threadName+"] Test conversione xml2json via "+(this.freemarker ? "freemarker" : "velocity")+": \n"+value);
+			String expected = EXPECTED_JSON.replace(EXPECTED_JSON_TH_NAME, this.threadName);
+			if(!expected.equals(value)) {
+				throw new Exception("("+this.threadName+") Expected value '"+expected+"', found '"+value+"'");
+			}
+			
+		}catch(Exception e){
+			this.error = true;
+			this.exception = e;
+			// Se si lancia l'eccezione, nell'output viene loggato e si sporcano i test. Comunque lo stato errore viene rilevato.
+			//throw new RuntimeException(e.getMessage(),e);
+		}
+		finally{
+			this.finished = true;
+		}
+	}
+	
+}

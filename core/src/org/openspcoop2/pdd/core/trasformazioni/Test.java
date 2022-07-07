@@ -46,6 +46,7 @@ import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.dynamic.MessageContent;
 import org.openspcoop2.pdd.core.dynamic.PatternExtractor;
+import org.openspcoop2.pdd.core.dynamic.Template;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
@@ -180,11 +181,13 @@ public class Test {
 	private static final String PATH1_VALORE = "elementoPathValore1";
 	private static final String PATH2 = "elementoPath2";
 	private static final String PATH2_VALORE = "elementoPathValore2";
+	private static final String PATH1_VALORE_PRESO_DALLA_LISTA = "LISTAelementoPathValore1LISTA";
 	
 	private static final String PATH1_RISPOSTA = "responseElementoPath1";
 	private static final String PATH1_VALORE_RISPOSTA = "responseElementoPathValore1";
 	private static final String PATH2_RISPOSTA = "responseElementoPath2";
 	private static final String PATH2_VALORE_RISPOSTA = "responseElementoPathValore2";
+	private static final String PATH1_VALORE_RISPOSTA_PRESO_DALLA_LISTA = "LISTAresponseElementoPathValore1LISTA";
 	
 	private static final String TRANSACTION_ID = "TRANSACTION_ID";
 	
@@ -352,7 +355,7 @@ public class Test {
             "\""+PATH2+"\": \"${xPath.read(\"//"+PATH2+"/text()\")}\",\n"+
             "\""+PATH1+"boolean\": \"${xpath.match(\"//"+PATH1+"/text()\")?string('yes', 'no')}\",\n"+
             "\""+PATH2+"boolean\": \"${xPath.match(\"//"+PATH2+"/text()\")?string('yes', 'no')}\",\n"+
-            "<#list xpath.readList(\"//"+PATH1+"/text()\") as item>${item}</#list>\n"+
+            "\""+PATH1+"list\": \"<#list xpath.readList(\"//"+PATH1+"/text()\") as item>LISTA${item}LISTA</#list>\"\n"+
             "\"GlossTerm\": \"Standard Generalized Markup Language\",\n"+
             "\""+caratteri_element_name+"\": \"${xpath.read(\"//"+caratteri_element_name+"/text()\")}\",\n"+
             "\"Acronym\": \"${xPath.read(\"//{http://schemas.xmlsoap.org/soap/envelope/}:Envelope/{http://schemas.xmlsoap.org/soap/envelope/}:Body/prova2/text()\")}\",\n"+
@@ -379,7 +382,7 @@ public class Test {
             "\""+PATH2_RISPOSTA+"\": \"${xPathResponse.read(\"//"+PATH2_RISPOSTA+"/text()\")}\",\n"+
             "\""+PATH1_RISPOSTA+"boolean\": \"${xpathResponse.match(\"//"+PATH1_RISPOSTA+"/text()\")?string('yes', 'no')}\",\n"+
             "\""+PATH2_RISPOSTA+"boolean\": \"${xPathResponse.match(\"//"+PATH2_RISPOSTA+"/text()\")?string('yes', 'no')}\"\n"+
-            "<#list xpathResponse.readList(\"//"+PATH1_RISPOSTA+"/text()\") as item>${item}</#list>";
+            "\""+PATH1_RISPOSTA+"list\": \"<#list xpathResponse.readList(\"//"+PATH1_RISPOSTA+"/text()\") as item>LISTA${item}LISTA</#list>\"";
 	private static final String JSON_TEMPLATE_FREEMARKER_REQUEST= 
 			"{\n"+	   
 					JSON_TEMPLATE_FREEMARKER_BODY+
@@ -427,7 +430,7 @@ public class Test {
 			"<"+PATH2+">"+"${jsonPath.read(\"$."+PATH2+"\")}"+"</"+PATH2+">\n"+
 			"<"+PATH1+"boolean>"+"${jsonpath.match(\"$."+PATH1+"\")?string('yes', 'no')}"+"</"+PATH1+"boolean>\n"+
 			"<"+PATH2+"boolean>"+"${jsonPath.match(\"$."+PATH2+"\")?string('yes', 'no')}"+"</"+PATH2+"boolean>\n"+
-			"<#list jsonPath.readList(\"$."+PATH1+"\") as item>${item}</#list>\n"+
+			"<"+PATH1+"list>"+"<#list jsonPath.readList(\"$."+PATH1+"\") as item>LISTA${item}LISTA</#list>"+"</"+PATH1+"list>\n"+
 			"<"+TRANSACTION_ID+">"+"${transactionId}"+"</"+TRANSACTION_ID+">\n"+
 			"<"+QUERY3+">"+"${urlRegExp.read(\".+"+QUERY3+"=([^&]*).*\")}"+"</"+QUERY3+">\n"+
 			"<"+QUERY4+">"+"${urlregexp.read(\".+"+QUERY4+"=([^&]*).*\")}"+"</"+QUERY4+">\n"+
@@ -450,7 +453,7 @@ public class Test {
 			"<"+PATH2_RISPOSTA+">"+"${jsonPathResponse.read(\"$."+PATH2_RISPOSTA+"\")}"+"</"+PATH2_RISPOSTA+">\n"+
 			"<"+PATH1_RISPOSTA+"boolean>"+"${jsonpathResponse.match(\"$."+PATH1_RISPOSTA+"\")?string('yes', 'no')}"+"</"+PATH1_RISPOSTA+"boolean>\n"+
 			"<"+PATH2_RISPOSTA+"boolean>"+"${jsonPathResponse.match(\"$."+PATH2_RISPOSTA+"\")?string('yes', 'no')}"+"</"+PATH2_RISPOSTA+"boolean>\n"+
-			"<#list jsonPathResponse.readList(\"$."+PATH1_RISPOSTA+"\") as item>${item}</#list>\n";
+			"<"+PATH1_RISPOSTA+"list>"+"<#list jsonPathResponse.readList(\"$."+PATH1_RISPOSTA+"\") as item>LISTA${item}LISTA</#list>"+"</"+PATH1_RISPOSTA+"list>\n";
 	private static final String XML_TEMPLATE_FREEMARKER_REQUEST = 
 			XML_PREFIX + 
 			XML_TEMPLATE_FREEMARKER_BODY + 
@@ -510,7 +513,7 @@ public class Test {
             "\""+PATH2+"\": \"${xPath.read(\"//"+PATH2+"/text()\")}\",\n"+
             "\""+PATH1+"boolean\": \"${xpath.match(\"//"+PATH1+"/text()\")}\",\n"+
             "\""+PATH2+"boolean\": \"${xPath.match(\"//"+PATH2+"/text()\")}\",\n"+
-            "<#list xpath.readList(\"//"+PATH1+"/text()\") as item>${item}</#list>\n"+
+            "\""+PATH1+"list\": \"#set ( $x = ${xpath.readList(\"//"+PATH1+"/text()\")} )#foreach( $item in $x )LISTA${item}LISTA#end\",\n"+
             "\"GlossTerm\": \"Standard Generalized Markup Language\",\n"+
             "\""+caratteri_element_name+"\": \"${xpath.read(\"//"+caratteri_element_name+"/text()\")}\",\n"+
             "\"Acronym\": \"${xPath.read(\"//{http://schemas.xmlsoap.org/soap/envelope/}:Envelope/{http://schemas.xmlsoap.org/soap/envelope/}:Body/prova2/text()\")}\",\n"+
@@ -537,7 +540,7 @@ public class Test {
             "\""+PATH2_RISPOSTA+"\": \"${xPathResponse.read(\"//"+PATH2_RISPOSTA+"/text()\")}\",\n"+
             "\""+PATH1_RISPOSTA+"boolean\": \"${xpathResponse.match(\"//"+PATH1_RISPOSTA+"/text()\")}\",\n"+
             "\""+PATH2_RISPOSTA+"boolean\": \"${xPathResponse.match(\"//"+PATH2_RISPOSTA+"/text()\")}\"\n"+
-            "<#list xpathResponse.readList(\"//"+PATH1_RISPOSTA+"/text()\") as item>${item}</#list>";
+            "\""+PATH1_RISPOSTA+"list\": \"#set ( $x = ${xpathResponse.readList(\"//"+PATH1_RISPOSTA+"/text()\")} )#foreach( $item in $x )LISTA${item}LISTA#end\"";
 	private static final String JSON_TEMPLATE_VELOCITY_REQUEST= 
 			"{\n"+	   
 					JSON_TEMPLATE_VELOCITY_BODY+
@@ -549,8 +552,8 @@ public class Test {
 			"\n}";
 	private static final String JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_1_PATH = "lib/json/TestInclude_1.vm"; 
 	private static final String JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_2_PATH = "lib/json/TestInclude_2.vm";
-	private static final String JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_1 = "<#include \""+JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_1_PATH+"\">\n"; 
-	private static final String JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_2 = "<#include \""+JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_2_PATH+"\">\n";
+	private static final String JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_1 = "#parse(\""+JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_1_PATH+"\")\n"; 
+	private static final String JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_2 = "#parse(\""+JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_2_PATH+"\")\n";
 	private static final String JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_CONTENT_1 = 	   
 			"\""+DATA_INCLUDE_1+"\": \"$date\"\n";
 	private static final String JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_CONTENT_2 = 	   
@@ -584,8 +587,8 @@ public class Test {
 			"<"+PATH2+">"+"${jsonPath.read(\"$."+PATH2+"\")}"+"</"+PATH2+">\n"+
 			"<"+PATH1+"boolean>"+"${jsonpath.match(\"$."+PATH1+"\")}"+"</"+PATH1+"boolean>\n"+
 			"<"+PATH2+"boolean>"+"${jsonPath.match(\"$."+PATH2+"\")}"+"</"+PATH2+"boolean>\n"+
-			"<#list jsonPath.readList(\"$."+PATH1+"\") as item>${item}</#list>\n"+
-			"<"+TRANSACTION_ID+">"+"${transactionId}"+"</"+TRANSACTION_ID+">\n"+
+			"<"+PATH1+"list>"+"#set ( $x = ${jsonPath.readList(\"$."+PATH1+"\")} )#foreach( $item in $x )LISTA${item}LISTA#end"+"</"+PATH1+"list>\n"+
+            "<"+TRANSACTION_ID+">"+"${transactionId}"+"</"+TRANSACTION_ID+">\n"+
 			"<"+QUERY3+">"+"${urlRegExp.read(\".+"+QUERY3+"=([^&]*).*\")}"+"</"+QUERY3+">\n"+
 			"<"+QUERY4+">"+"${urlregexp.read(\".+"+QUERY4+"=([^&]*).*\")}"+"</"+QUERY4+">\n"+
 			"<"+BUSTA+">"+"${busta.getMittente()}"+"</"+BUSTA+">\n"+
@@ -607,7 +610,7 @@ public class Test {
 			"<"+PATH2_RISPOSTA+">"+"${jsonPathResponse.read(\"$."+PATH2_RISPOSTA+"\")}"+"</"+PATH2_RISPOSTA+">\n"+
 			"<"+PATH1_RISPOSTA+"boolean>"+"${jsonpathResponse.match(\"$."+PATH1_RISPOSTA+"\")}"+"</"+PATH1_RISPOSTA+"boolean>\n"+
 			"<"+PATH2_RISPOSTA+"boolean>"+"${jsonPathResponse.match(\"$."+PATH2_RISPOSTA+"\")}"+"</"+PATH2_RISPOSTA+"boolean>\n"+
-			"<#list jsonPathResponse.readList(\"$."+PATH1_RISPOSTA+"\") as item>${item}</#list>\n";
+			"<"+PATH1_RISPOSTA+"list>"+"#set ( $x = ${jsonPathResponse.readList(\"$."+PATH1_RISPOSTA+"\")} )#foreach( $item in $x )LISTA${item}LISTA#end"+"</"+PATH1_RISPOSTA+"list>";
 	private static final String XML_TEMPLATE_VELOCITY_REQUEST = 
 			XML_PREFIX + 
 			XML_TEMPLATE_VELOCITY_BODY + 
@@ -619,8 +622,8 @@ public class Test {
 			XML_END;
 	private static final String XML_TEMPLATE_VELOCITY_BODY_INCLUDE_1_PATH = "lib/xml/TestInclude_1.vm"; 
 	private static final String XML_TEMPLATE_VELOCITY_BODY_INCLUDE_2_PATH = "lib/xml/TestInclude_2.vm";
-	private static final String XML_TEMPLATE_VELOCITY_BODY_INCLUDE_1 = "<#include \""+XML_TEMPLATE_VELOCITY_BODY_INCLUDE_1_PATH+"\">\n"; 
-	private static final String XML_TEMPLATE_VELOCITY_BODY_INCLUDE_2 = "<#include \""+XML_TEMPLATE_VELOCITY_BODY_INCLUDE_2_PATH+"\">\n";
+	private static final String XML_TEMPLATE_VELOCITY_BODY_INCLUDE_1 = "#parse(\""+XML_TEMPLATE_VELOCITY_BODY_INCLUDE_1_PATH+"\")\n"; 
+	private static final String XML_TEMPLATE_VELOCITY_BODY_INCLUDE_2 = "#parse(\""+XML_TEMPLATE_VELOCITY_BODY_INCLUDE_2_PATH+"\")\n";
 	private static final String XML_TEMPLATE_VELOCITY_BODY_INCLUDE_CONTENT_1 = 	   
 			"<"+DATA_INCLUDE_1+">"+"$date"+"</"+DATA+">\n";
 	private static final String XML_TEMPLATE_VELOCITY_BODY_INCLUDE_CONTENT_2 = 	   
@@ -1203,8 +1206,9 @@ public class Test {
 		System.out.println("\trequest ...");
 		RisultatoTrasformazioneContenuto risultato = null;
 		try {
+			Template templateObject = new Template(tipoTest.getValue(), templateRequest);
 			risultato = GestoreTrasformazioniUtilities.trasformazioneContenuto(log, 
-					tipoTest.getValue(), templateRequest, "richiesta", dynamicMapRequest, null, messageContentRequest, pddContext, contentType, readCharset);
+					tipoTest.getValue(), templateObject, "richiesta", dynamicMapRequest, null, messageContentRequest, pddContext, contentType, readCharset);
 		}catch(Throwable e) {
 			System.out.println("\tTemplate:\n "+new String(templateRequest));
 			Utilities.sleep(1000);
@@ -1214,9 +1218,10 @@ public class Test {
 		if(TipoTrasformazione.TEMPLATE.equals(tipoTest) ||
 				TipoTrasformazione.FREEMARKER_TEMPLATE.equals(tipoTest)  ||
 				TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP.equals(tipoTest) ||
-				TipoTrasformazione.VELOCITY_TEMPLATE.equals(tipoTest) ) {
+				TipoTrasformazione.VELOCITY_TEMPLATE.equals(tipoTest) ||
+				TipoTrasformazione.VELOCITY_TEMPLATE_ZIP.equals(tipoTest) ) {
 			try {
-				checkRequest(contenuto, pddContext, prefix);
+				checkRequest(contenuto, pddContext, prefix, tipoTest);
 				if(TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP.equals(tipoTest) ||
 						TipoTrasformazione.VELOCITY_TEMPLATE_ZIP.equals(tipoTest)) {
 					checkInclude(contenuto, pddContext);
@@ -1346,8 +1351,9 @@ public class Test {
 		System.out.println("\tresponse ...");
 		risultato = null;
 		try {
+			Template templateObject = new Template(tipoTest.getValue(), templateResponse);
 			risultato = GestoreTrasformazioniUtilities.trasformazioneContenuto(log, 
-					tipoTest.getValue(), templateResponse, "risposta", dynamicMapResponse, null, messageContentResponse, pddContext, contentType, readCharset);
+					tipoTest.getValue(), templateObject, "risposta", dynamicMapResponse, null, messageContentResponse, pddContext, contentType, readCharset);
 		}catch(Throwable e) {
 			System.out.println("\tTemplate:\n "+new String(templateResponse));
 			Utilities.sleep(1000);
@@ -1357,10 +1363,11 @@ public class Test {
 		if(TipoTrasformazione.TEMPLATE.equals(tipoTest) ||
 				TipoTrasformazione.FREEMARKER_TEMPLATE.equals(tipoTest)  ||
 				TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP.equals(tipoTest) ||
-				TipoTrasformazione.VELOCITY_TEMPLATE.equals(tipoTest)) {
+				TipoTrasformazione.VELOCITY_TEMPLATE.equals(tipoTest) ||
+				TipoTrasformazione.VELOCITY_TEMPLATE_ZIP.equals(tipoTest)) {
 			try{
-				checkRequest(contenuto, pddContext, prefix);
-				checkResponse(contenuto, prefix);
+				checkRequest(contenuto, pddContext, prefix, tipoTest);
+				checkResponse(contenuto, prefix, tipoTest);
 				if(TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP.equals(tipoTest) ||
 						TipoTrasformazione.VELOCITY_TEMPLATE_ZIP.equals(tipoTest)) {
 					checkInclude(contenuto, pddContext);
@@ -1497,7 +1504,11 @@ public class Test {
 		System.out.println("Test ["+tipoTest+"-"+prefix+"] (charset: "+charset+") completato con successo");
 	}
 	
-	private static void checkRequest(String contenuto, PdDContext pddContext, String prefix) throws Exception {
+	private static void checkRequest(String contenuto, PdDContext pddContext, String prefix,
+			TipoTrasformazione tipoTest) throws Exception {
+		
+		//System.out.println("\tTemplate :\n "+contenuto);
+			
 		// verifiche
 		if(!contenuto.contains(DATA)) {
 			throw new Exception("Nome '"+DATA+"' non trovato");
@@ -1584,6 +1595,15 @@ public class Test {
 			throw new Exception("Valore '"+PATH2_VALORE+"' per field '"+PATH2+"' non trovato");
 		}
 		
+		if(	TipoTrasformazione.FREEMARKER_TEMPLATE.equals(tipoTest)  ||
+				TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP.equals(tipoTest) ||
+				TipoTrasformazione.VELOCITY_TEMPLATE.equals(tipoTest) ||
+				TipoTrasformazione.VELOCITY_TEMPLATE_ZIP.equals(tipoTest) ) {
+			if(!contenuto.contains(PATH1_VALORE_PRESO_DALLA_LISTA)) {
+				throw new Exception("Valore '"+PATH1_VALORE_PRESO_DALLA_LISTA+"' per espressione dinamica calcolata sulla lista, e ottenuta da patter, non trovato");
+			}	
+		}
+		
 		if(!contenuto.contains(BUSTA)) {
 			throw new Exception("Nome '"+BUSTA+"' non trovato");
 		}
@@ -1663,7 +1683,8 @@ public class Test {
 		
 	}
 	
-	private static void checkResponse(String contenuto, String prefix) throws Exception {
+	private static void checkResponse(String contenuto, String prefix,
+			TipoTrasformazione tipoTest) throws Exception {
 		// verifiche
 		if(!contenuto.contains(DATA_RISPOSTA)) {
 			throw new Exception("Nome '"+DATA_RISPOSTA+"' non trovato");
@@ -1698,6 +1719,15 @@ public class Test {
 			throw new Exception("Valore '"+PATH2_VALORE_RISPOSTA+"' per field '"+PATH2_RISPOSTA+"' non trovato");
 		}
 		
+		if(	TipoTrasformazione.FREEMARKER_TEMPLATE.equals(tipoTest)  ||
+				TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP.equals(tipoTest) ||
+				TipoTrasformazione.VELOCITY_TEMPLATE.equals(tipoTest) ||
+				TipoTrasformazione.VELOCITY_TEMPLATE_ZIP.equals(tipoTest) ) {
+			if(!contenuto.contains(PATH1_VALORE_RISPOSTA_PRESO_DALLA_LISTA)) {
+				throw new Exception("Valore '"+PATH1_VALORE_RISPOSTA_PRESO_DALLA_LISTA+"' per espressione dinamica calcolata sulla lista, e ottenuta da patter, non trovato");
+			}
+		}
+		
 		if("xml".equals(prefix)) { 
 			if(!contenuto.contains(caratteriNonUTF_XML_VALUE)) {
 				throw new Exception("Valore '"+caratteriNonUTF_XML_VALUE+"' per field '"+caratteri_element_name+"' non trovato");
@@ -1712,6 +1742,9 @@ public class Test {
 	
 	private static void checkInclude(String contenuto, PdDContext pddContext) throws Exception {
 		// verifiche
+		
+		//System.out.println("\tTemplate :\n "+contenuto);
+		
 		if(!contenuto.contains(DATA_INCLUDE_1)) {
 			throw new Exception("Nome '"+DATA_INCLUDE_1+"' non trovato");
 		}

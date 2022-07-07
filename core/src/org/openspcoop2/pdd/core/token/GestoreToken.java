@@ -72,6 +72,7 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.dynamic.MessageContent;
+import org.openspcoop2.pdd.core.dynamic.Template;
 import org.openspcoop2.pdd.core.token.attribute_authority.AttributeAuthorityDynamicParameters;
 import org.openspcoop2.pdd.core.token.attribute_authority.AttributeAuthorityProvider;
 import org.openspcoop2.pdd.core.token.attribute_authority.BasicRetrieveAttributeAuthorityResponseParser;
@@ -3733,10 +3734,12 @@ public class GestoreToken {
 				policyAttributeAuthority.getName(), datiInvocazione);
 		AttributeAuthorityDynamicParameters dynamicParameters = new AttributeAuthorityDynamicParameters(dynamicMap, pddContext, policyAttributeAuthority);
 		
+		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(datiInvocazione.getState());
+		
 		if(GestoreToken.cacheToken==null){
 						
 			boolean addIdAndDate = true;
-			String request = buildDynamicAARequest(message, busta, requestInfo, log, policyAttributeAuthority, dynamicParameters, addIdAndDate);
+			String request = buildDynamicAARequest(configurazionePdDManager, message, busta, requestInfo, log, policyAttributeAuthority, dynamicParameters, addIdAndDate);
 			
 			esitoRecuperoAttributi = _readAttributes(log, policyAttributeAuthority, 
 					protocolFactory,
@@ -3760,7 +3763,7 @@ public class GestoreToken {
     		boolean addIdAndDate = true;
     		
     		// Aggiungo anche la richiesta poichè può venire costruita con freemarker o template e quindi può essere dinamica a sua volta (non considero però le date)
-    		String requestKeyCache = buildDynamicAARequest(message, busta, requestInfo, log, policyAttributeAuthority, dynamicParameters, !addIdAndDate);
+    		String requestKeyCache = buildDynamicAARequest(configurazionePdDManager, message, busta, requestInfo, log, policyAttributeAuthority, dynamicParameters, !addIdAndDate);
     		
     		String keyCache = buildCacheKeyRecuperoAttributi(policyAttributeAuthority.getName(), funzione, portaDelegata, dynamicParameters, requestKeyCache);
 
@@ -3811,7 +3814,7 @@ public class GestoreToken {
 						String request = null;
 						if(policyAttributeAuthority.isRequestDynamicPayloadJwt()) {
 							// ricostruisco per considerare le date
-							request = buildDynamicAARequest(message, busta, requestInfo, log, policyAttributeAuthority, dynamicParameters, addIdAndDate);
+							request = buildDynamicAARequest(configurazionePdDManager, message, busta, requestInfo, log, policyAttributeAuthority, dynamicParameters, addIdAndDate);
 						}
 						else {
 							request = requestKeyCache;
@@ -4174,7 +4177,8 @@ public class GestoreToken {
 		return dynamicMap;
 	}
 	
-	private static String buildDynamicAARequest(OpenSPCoop2Message message, Busta busta, 
+	private static String buildDynamicAARequest(ConfigurazionePdDManager configurazionePdDManager,
+			OpenSPCoop2Message message, Busta busta, 
 			RequestInfo requestInfo, Logger log, 
 			PolicyAttributeAuthority policyAttributeAuthority,
 			AttributeAuthorityDynamicParameters dynamicParameters,
@@ -4193,7 +4197,8 @@ public class GestoreToken {
 		}
 		else if(policyAttributeAuthority.isRequestDynamicPayloadFreemarkerTemplate()) {
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			DynamicUtils.convertFreeMarkerTemplate("AADynamicRequest.ftl", dynamicContent.getBytes(), dynamicParameters.getDynamicMap(), bout);
+			Template template = configurazionePdDManager.getTemplateAttributeAuthorityRequest(policyAttributeAuthority.getName(), dynamicContent.getBytes());
+			DynamicUtils.convertFreeMarkerTemplate(template, dynamicParameters.getDynamicMap(), bout);
 			bout.flush();
 			bout.close();
 			request = bout.toString();
@@ -4204,7 +4209,8 @@ public class GestoreToken {
 		}
 		else if(policyAttributeAuthority.isRequestDynamicPayloadVelocityTemplate()) {
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			DynamicUtils.convertVelocityTemplate("AADynamicRequest.vm", dynamicContent.getBytes(), dynamicParameters.getDynamicMap(), bout);
+			Template template = configurazionePdDManager.getTemplateAttributeAuthorityRequest(policyAttributeAuthority.getName(), dynamicContent.getBytes());
+			DynamicUtils.convertVelocityTemplate(template, dynamicParameters.getDynamicMap(), bout);
 			bout.flush();
 			bout.close();
 			request = bout.toString();

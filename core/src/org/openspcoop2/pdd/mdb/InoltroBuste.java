@@ -1291,7 +1291,9 @@ public class InoltroBuste extends GenericLib{
 				try {
 					gestoreTrasformazioni = new GestoreTrasformazioni(this.log, msgDiag, idServizio, soggettoFruitore, servizioApplicativoFruitore, 
 							trasformazioni, transactionNullable, pddContext, requestInfo, tipoPdD,
-							this.generatoreErrore);
+							this.generatoreErrore,
+							configurazionePdDManager,
+							idPD);
 					requestMessageTrasformato = gestoreTrasformazioni.trasformazioneRichiesta(requestMessagePrimaTrasformazione, bustaRichiesta);
 				}
 				catch(GestoreTrasformazioniException e) {
