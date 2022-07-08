@@ -500,4 +500,44 @@ public class TokenUtilities {
 			}
 		}
 	}
+	
+	public static String deleteSignature(String token) {
+		// verifico che sia un JWT
+		if(token.contains(".")) {
+			String [] tmp = token.split("\\.");
+			if(tmp!=null && tmp.length==3) {
+				if(tmp[2]!=null) {
+					if(tmp[0]!=null && tmp[1]!=null) {
+						return tmp[0]+"."+tmp[1]+".==SIGNATURE==";
+					}
+					else if(tmp[0]==null && tmp[1]!=null) {
+						return "."+tmp[1]+".==SIGNATURE==";
+					}
+					else if(tmp[0]!=null && tmp[1]==null) {
+						return tmp[0]+"..==SIGNATURE==";
+					}
+					else {
+						return "..==SIGNATURE==";
+					}
+				}
+			}
+		}
+		return token;
+	}
+	public static void replaceTokenInMap(Map<String, Object> claims, String originale, String newToken) {
+		if(claims!=null && !claims.isEmpty()) {
+			List<String> keyDaSostituire = new ArrayList<String>();
+			for (String key : claims.keySet()) {
+				Object o = claims.get(key);
+				if(o !=null && o instanceof String && originale.equals(o)) {
+					keyDaSostituire.add(key);
+				}
+			}
+			while(keyDaSostituire.size()>0) {
+				String key = keyDaSostituire.remove(0);
+				claims.remove(key);
+				claims.put(key, newToken);
+			}
+		}
+	}
 }

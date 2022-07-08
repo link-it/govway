@@ -574,6 +574,8 @@ public class NegoziazioneTest extends ConfigLoader {
 	@Test
 	public void signedJWT() throws Exception {
 		
+		// AccessToken ritornato è opaco (nel test signedJWT3 sarà un JWT)
+		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 	
 		// Test HDR
@@ -675,6 +677,8 @@ public class NegoziazioneTest extends ConfigLoader {
 	
 	@Test
 	public void signedJWT2() throws Exception {
+	
+		// AccessToken ritornato è opaco (nel test signedJWT3 sarà un JWT)
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 	
@@ -787,6 +791,8 @@ public class NegoziazioneTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 	
 		// Test HDR
+		
+		// AccessToken ritornato è un JWT
 		
 		Map<String, String> headers_0 = new HashMap<String, String>();
 		headers_0.put("test-azione", "signedJWT3");

@@ -1885,9 +1885,11 @@ public class OpenSPCoop2Properties {
 			this.isGestioneRetrieveToken_refreshToken_grantType_rfc7523_x509();
 			this.isGestioneRetrieveToken_refreshToken_grantType_rfc7523_clientSecret();
 			this.isGestioneRetrieveToken_saveAsTokenInfo();
+			this.isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature();
 			this.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest();
 			this.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest_date();
 			this.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_transazioniRegistrazioneInformazioniNormalizzate();
+			this.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature();
 			this.initGestioneRetrieveToken_cacheKey();
 						
 			// Gestione AttributeAuthority
@@ -20508,6 +20510,31 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isGestioneRetrieveToken_saveAsTokenInfo;
 	}
 	
+	private static Boolean isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature = null;
+	public boolean isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature(){
+
+		String pName = "org.openspcoop2.pdd.retrieveToken.saveAsTokenInfo.excludeJwtSignature";
+		if(OpenSPCoop2Properties.isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature;
+	}
+	
 	private static Boolean isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest = null;
 	public boolean isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest(){
 
@@ -20581,6 +20608,31 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_transazioniRegistrazioneInformazioniNormalizzate;
+	}
+	
+	private static Boolean isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature = null;
+	public boolean isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature(){
+
+		String pName = "org.openspcoop2.pdd.retrieveToken.grantType_rfc7523.saveClientAssertionJWTInfo.excludeJwtSignature";
+		if(OpenSPCoop2Properties.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature;
 	}
 
 	private static Map<String, Boolean> gestioneRetrieveToken_cacheKey = null;

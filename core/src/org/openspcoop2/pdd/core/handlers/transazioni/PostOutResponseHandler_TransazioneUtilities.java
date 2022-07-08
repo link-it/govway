@@ -66,6 +66,7 @@ import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.core.token.InformazioniNegoziazioneToken;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
+import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.core.transazioni.DateUtility;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
@@ -1193,6 +1194,34 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			InformazioniNegoziazioneToken informazioniNegoziazioneToken = null;
 			if(this.transazioniRegistrazioneRetrieveToken_saveAsTokenInfo) {
 				informazioniNegoziazioneToken = transaction.getInformazioniNegoziazioneToken();
+				
+				if(informazioniNegoziazioneToken!=null) {
+					if(op2Properties.isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature()) {
+						if(informazioniNegoziazioneToken.getAccessToken()!=null) {
+							String originale = informazioniNegoziazioneToken.getAccessToken();
+							String senzaSignature = TokenUtilities.deleteSignature(informazioniNegoziazioneToken.getAccessToken());
+							informazioniNegoziazioneToken.setAccessToken(senzaSignature);
+							TokenUtilities.replaceTokenInMap(informazioniNegoziazioneToken.getClaims(), originale, senzaSignature);
+							informazioniNegoziazioneToken.replaceInRawResponse(originale, senzaSignature);
+						}
+						if(informazioniNegoziazioneToken.getRefreshToken()!=null) {
+							String originale = informazioniNegoziazioneToken.getRefreshToken();
+							String senzaSignature = TokenUtilities.deleteSignature(informazioniNegoziazioneToken.getRefreshToken());
+							informazioniNegoziazioneToken.setRefreshToken(senzaSignature);
+							TokenUtilities.replaceTokenInMap(informazioniNegoziazioneToken.getClaims(), originale, senzaSignature);
+							informazioniNegoziazioneToken.replaceInRawResponse(originale, senzaSignature);
+						}
+					}
+					
+					if(informazioniNegoziazioneToken.getRequest()!=null) {
+						if(informazioniNegoziazioneToken.getRequest().getJwtClientAssertion()!=null && 
+								informazioniNegoziazioneToken.getRequest().getJwtClientAssertion().getToken()!=null) {
+							if(op2Properties.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature()) {
+								informazioniNegoziazioneToken.getRequest().getJwtClientAssertion().setToken(TokenUtilities.deleteSignature(informazioniNegoziazioneToken.getRequest().getJwtClientAssertion().getToken()));
+							}
+						}
+					}
+				}
 			}
 									
 			// token info

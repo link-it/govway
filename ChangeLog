@@ -1,5 +1,13 @@
 2022-07-08  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, GovWayMonitor]
+	Aggiunta funzionalità OP-1394
+	Tra le informazioni disponibili nella sezione 'Token Info', riguardanti i criteri di negoziazione, 
+	se l'access token o il refresh token è nel formato JWT viene adesso salvata per default senza la parte relativa alla signature.
+	Lo stesso criterio di salvataggio nella traccia viene applicato per default all'asserzione JWT generata in una negoziazione token di tipo rfc 7523.
+
+2022-07-08  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, ProtocolloModIPA]
 	Aggiunta funzionalità OP-1383
 	Aggiunto controllo che verifica che la data indicata nel claim 'iat' in un token OAuth o in un token ModI (API di tipo REST) non rappresenti una data futura.

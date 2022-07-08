@@ -233,5 +233,10 @@ public class InformazioniNegoziazioneToken extends org.openspcoop2.utils.beans.B
 	public String getRawResponse() {
 		return this.rawResponse;
 	}
+	public void replaceInRawResponse(String original, String newS) {
+		if(this.rawResponse!=null) {
+			this.rawResponse = this.rawResponse.replace(original, newS);
+		}
+	}
 	
 }
