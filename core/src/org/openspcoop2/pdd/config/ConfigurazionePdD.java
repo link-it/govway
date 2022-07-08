@@ -3312,8 +3312,8 @@ public class ConfigurazionePdD  {
 	public Template getTemplateConnettoreMultiploSticky(Connection connectionPdD,IDPortaApplicativa idPA, byte[] template) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return _getTemplate(connectionPdD, idPA, "getTemplateConnettoreMultiploSticky", TemplateSource.CONNETTORI_MULTIPLI_STICKY, "sticky", template);
 	}
-	public Template getTemplateConnettoreMultiploCondizionale(Connection connectionPdD,IDPortaApplicativa idPA, byte[] template) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return _getTemplate(connectionPdD, idPA, "getTemplateConnettoreMultiploCondizionale", TemplateSource.CONNETTORI_MULTIPLI_CONSEGNA_CONDIZIONALE, "conditional", template);
+	public Template getTemplateConnettoreMultiploCondizionale(Connection connectionPdD,IDPortaApplicativa idPA, String nomeRegola, byte[] template) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return _getTemplate(connectionPdD, idPA, "getTemplateConnettoreMultiploCondizionale", TemplateSource.CONNETTORI_MULTIPLI_CONSEGNA_CONDIZIONALE, (nomeRegola!=null ? nomeRegola : "___default___"), template);
 	}
 	
 	private Template _getTemplate(Connection connectionPdD,IDPortaApplicativa idPA, String nomeMetodo, TemplateSource templateSource, String identificativo, byte[] templateBytes) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{

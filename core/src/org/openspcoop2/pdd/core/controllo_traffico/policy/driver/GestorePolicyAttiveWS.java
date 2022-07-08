@@ -59,7 +59,7 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 	private PolicyGroupByActiveThreadsType type;
 	private String uriService;
 	@Override
-	public void initialize(Logger log, PolicyGroupByActiveThreadsType type, Object ... params) throws PolicyException{
+	public void initialize(Logger log, boolean isStartupGovWay, PolicyGroupByActiveThreadsType type, Object ... params) throws PolicyException{
 		this.log = log;
 		this.type = type;
 		if(this.type==null) {

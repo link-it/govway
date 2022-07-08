@@ -52,28 +52,40 @@ public class RedissonManager {
 	}
 	
 	private static RedissonClient redisson = null;
-	private static synchronized void initRedissonClient() {
+	private static synchronized void initRedissonClient(boolean throwInitializingException) throws Exception {
 		if(redisson==null) {
 			
 			RedissonManager.logStartup.info("Inizializzazione RedissonClient ...");
 			RedissonManager.log.info("Inizializzazione RedissonClient ...");
 			
-			Config redisConf = new Config();
-			redisConf.useClusterServers()
-				.addNodeAddress(RedissonManager.connectionUrl.toArray(new String[1]))
-				.setReadMode(ReadMode.MASTER_SLAVE);
-			redisson = Redisson.create(redisConf);
+			try {
+				Config redisConf = new Config();
+				redisConf.useClusterServers()
+					.addNodeAddress(RedissonManager.connectionUrl.toArray(new String[1]))
+					.setReadMode(ReadMode.MASTER_SLAVE);
+				redisson = Redisson.create(redisConf);
+				RedissonManager.logStartup.info("Inizializzazione RedissonClient effettuata con successo");
+				RedissonManager.log.info("Inizializzazione RedissonClient effettuata con successo");
+			}catch(Throwable t) {
+				if(throwInitializingException) {
+					throw new Exception("Inizializzazione RedissonClient fallita: "+t.getMessage(),t);
+				}
+				else {
+					RedissonManager.logStartup.error("Inizializzazione RedissonClient fallita: "+t.getMessage(),t);
+					RedissonManager.log.error("Inizializzazione RedissonClient fallita: "+t.getMessage(),t);
+				}
+			}
 			
-			RedissonManager.logStartup.info("Inizializzazione RedissonClient effettuata con successo");
-			RedissonManager.log.info("Inizializzazione RedissonClient effettuata con successo");
 		}
 	}
-	public static RedissonClient getRedissonClient() {
+	public static RedissonClient getRedissonClient(boolean throwInitializingException) throws Exception {
 		if(redisson==null) {
-			initRedissonClient();
+			initRedissonClient(throwInitializingException);
 		}
 		return RedissonManager.redisson;
 	}
-	
+	public static boolean isRedissonClientInitialized() {
+		return RedissonManager.redisson!=null;
+	}
 
 }

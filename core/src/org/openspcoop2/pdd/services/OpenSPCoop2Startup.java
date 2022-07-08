@@ -2509,6 +2509,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}
 				if(listGestorePolicyRT!=null && !listGestorePolicyRT.isEmpty()) {
 					for (PolicyGroupByActiveThreadsType type : listGestorePolicyRT) {
+						
+						if(type.isRedis() && !RedissonManager.isRedissonClientInitialized()) {
+							// se arrivo qua, significa che nella proprietà di openspcoop ho accettato questa condizione.
+							// chiamarente se Redis server non e' disponibile, non posso neanche inizializzarlo
+							continue;
+						}
+						
 						File fDati = null;
 						try{
 							File fRepository = propertiesReader.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository();

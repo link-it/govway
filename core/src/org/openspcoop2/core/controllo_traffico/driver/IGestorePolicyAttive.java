@@ -36,7 +36,7 @@ import org.slf4j.Logger;
  */
 public interface IGestorePolicyAttive {
 
-	public void initialize(Logger log, PolicyGroupByActiveThreadsType type, Object ... params) throws PolicyException;
+	public void initialize(Logger log, boolean isStartupGovWay, PolicyGroupByActiveThreadsType type, Object ... params) throws PolicyException;
 	
 	public PolicyGroupByActiveThreadsType getType();
 	

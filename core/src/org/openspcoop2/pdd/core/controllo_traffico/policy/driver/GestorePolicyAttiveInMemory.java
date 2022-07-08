@@ -68,6 +68,7 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.ZipUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 
 /**     
@@ -96,7 +97,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	private PolicyGroupByActiveThreadsType type;
 	private boolean useCountersWithLock = false;
 	@Override
-	public void initialize(Logger log, PolicyGroupByActiveThreadsType type, Object ... params) throws PolicyException{
+	public void initialize(Logger log, boolean isStartupGovWay, PolicyGroupByActiveThreadsType type, Object ... params) throws PolicyException{
 		this.log = log;
 		this.type = type;
 		if(this.type==null) {
@@ -153,7 +154,17 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 		case REDISSON_MAP:
 		case REDISSON_ATOMIC_LONG:
 		case REDISSON_LONGADDER:
-			RedissonManager.getRedissonClient();
+			
+			boolean throwInitializingException = true;
+			if(isStartupGovWay) {
+				throwInitializingException = OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryRedis_throwExceptionIfRedisNotReady();
+			}
+			
+			try {
+				RedissonManager.getRedissonClient(throwInitializingException);
+			}catch(Exception e) {
+				throw new PolicyException(e.getMessage(),e);
+			}
 			break;
 		}
 		
@@ -837,7 +848,16 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
   	  			 return new PolicyGroupByActiveThreadsDistributedCounters(activePolicy, uniqueIdMap,  builder);
   	  		 }
 		case REDISSON_MAP:
-			return new PolicyGroupByActiveThreadsDistributedRedis(activePolicy, uniqueIdMap, RedissonManager.getRedissonClient());
+			
+			boolean throwInitializingException = true;
+			RedissonClient redissonClient = null;
+			try {
+				redissonClient = RedissonManager.getRedissonClient(throwInitializingException);
+			}catch(Exception e) {
+				throw new PolicyException(e.getMessage(),e);
+			}
+			
+			return new PolicyGroupByActiveThreadsDistributedRedis(activePolicy, uniqueIdMap, redissonClient);
 		}
 		throw new PolicyException("Unsupported type '"+this.type+"'");
 	}

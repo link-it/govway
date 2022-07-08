@@ -2047,6 +2047,7 @@ public class OpenSPCoop2Properties {
 					if(isRedisEngineEnabled()) {
 						getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrl();
 						isControlloTrafficoGestorePolicyInMemoryRedisOneMapForeachPolicy();
+						isControlloTrafficoGestorePolicyInMemoryRedis_throwExceptionIfRedisNotReady();
 					}
 					
 					if(isHazelcastEngineEnabled() || isRedisEngineEnabled()) {
@@ -24356,6 +24357,31 @@ public class OpenSPCoop2Properties {
 		}
 		
 		return OpenSPCoop2Properties.isControlloTrafficoGestorePolicyInMemoryRedisOneMapForeachPolicy;
+	}
+	
+	private static Boolean isControlloTrafficoGestorePolicyInMemoryRedis_throwExceptionIfRedisNotReady = null;
+	public Boolean isControlloTrafficoGestorePolicyInMemoryRedis_throwExceptionIfRedisNotReady() {
+		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.REDIS.startupGovWay.throwExceptionIfRedisNotReady";
+		
+		if(OpenSPCoop2Properties.isControlloTrafficoGestorePolicyInMemoryRedis_throwExceptionIfRedisNotReady==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isControlloTrafficoGestorePolicyInMemoryRedis_throwExceptionIfRedisNotReady = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isControlloTrafficoGestorePolicyInMemoryRedis_throwExceptionIfRedisNotReady = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isControlloTrafficoGestorePolicyInMemoryRedis_throwExceptionIfRedisNotReady = false;
+			}
+		}
+		
+		return OpenSPCoop2Properties.isControlloTrafficoGestorePolicyInMemoryRedis_throwExceptionIfRedisNotReady;
 	}
 	
 	

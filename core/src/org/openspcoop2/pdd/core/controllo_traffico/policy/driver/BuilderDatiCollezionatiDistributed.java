@@ -100,7 +100,12 @@ public class BuilderDatiCollezionatiDistributed {
 			this.hazelcast = HazelcastManager.getInstance(this.tipoPolicy);
 			this.redisson  = null;
 		} else {
-			this.redisson = RedissonManager.getRedissonClient();
+			boolean throwInitializingException = true;
+			try {
+				this.redisson = RedissonManager.getRedissonClient(throwInitializingException);
+			}catch(Exception e) {
+				throw new PolicyException(e.getMessage(),e);
+			}
 			this.hazelcast = null;
 		}
 	}

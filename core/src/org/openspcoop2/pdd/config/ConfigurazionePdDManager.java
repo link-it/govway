@@ -967,8 +967,8 @@ public class ConfigurazionePdDManager {
 	public Template getTemplateConnettoreMultiploSticky(IDPortaApplicativa idPA, byte[] template) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdDReader.getTemplateConnettoreMultiploSticky(this.getConnection(), idPA, template);
 	}
-	public Template getTemplateConnettoreMultiploCondizionale(IDPortaApplicativa idPA, byte[] template) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdDReader.getTemplateConnettoreMultiploCondizionale(this.getConnection(), idPA, template);
+	public Template getTemplateConnettoreMultiploCondizionale(IDPortaApplicativa idPA, String nomeRegola, byte[] template) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getTemplateConnettoreMultiploCondizionale(this.getConnection(), idPA, nomeRegola, template);
 	}
 	
 	public Template getTemplateIntegrazione(IDPortaApplicativa idPA, File file) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{

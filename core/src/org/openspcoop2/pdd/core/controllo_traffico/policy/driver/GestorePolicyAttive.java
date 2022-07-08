@@ -46,7 +46,7 @@ public class GestorePolicyAttive {
 	private static Logger logStartup;
 	private static Logger log;
 	
-	private static synchronized void initialize(PolicyGroupByActiveThreadsType type) throws PolicyException{
+	private static synchronized void initialize(boolean isStartupGovWay, PolicyGroupByActiveThreadsType type) throws PolicyException{
 		if(!GestorePolicyAttive.staticMapInstance.containsKey(type)) {
 			
 			GestorePolicyAttive.logStartup.info("Inizializzazione Gestore Policy '"+type+"' ...");
@@ -55,11 +55,11 @@ public class GestorePolicyAttive {
 			IGestorePolicyAttive gestore = null;
 			if(TipoGestorePolicy.IN_MEMORY.equals(GestorePolicyAttive.tipo)){
 				gestore = new GestorePolicyAttiveInMemory();
-				gestore.initialize(GestorePolicyAttive.log, type);
+				gestore.initialize(GestorePolicyAttive.log, isStartupGovWay, type);
 			}
 			else if(TipoGestorePolicy.WS.equals(GestorePolicyAttive.tipo)){
 				gestore = new GestorePolicyAttiveWS();
-				gestore.initialize(GestorePolicyAttive.log,type,GestorePolicyAttive.urlService);
+				gestore.initialize(GestorePolicyAttive.log, isStartupGovWay, type, GestorePolicyAttive.urlService);
 			}
 			else{
 				throw new PolicyException("Tipo GestorePolicyAttive ["+GestorePolicyAttive.tipo+"] non supportato");
@@ -88,7 +88,7 @@ public class GestorePolicyAttive {
 			GestorePolicyAttive.urlService = urlService;
 			
 			for (PolicyGroupByActiveThreadsType type : inMemoryTypes) {
-				initialize(type);
+				initialize(true, type);
 			}
 		}
 	}
@@ -115,7 +115,7 @@ public class GestorePolicyAttive {
 		}
 		IGestorePolicyAttive gestore = staticMapInstance.get(type);
 		if(gestore==null) {
-			GestorePolicyAttive.initialize(type);
+			GestorePolicyAttive.initialize(false, type);
 			gestore = staticMapInstance.get(type);
 		}
 		if(gestore==null) {

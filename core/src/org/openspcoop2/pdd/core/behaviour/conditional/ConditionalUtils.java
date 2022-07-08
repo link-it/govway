@@ -92,6 +92,7 @@ public class ConditionalUtils  {
 		ConfigurazioneCondizionale config = read(pa, log);
 		
 		
+		String nomeRegola = null;
 		TipoSelettore tipoSelettore = null;
 		String patternSelettore = null;
 		String prefixSelettore = null;
@@ -122,6 +123,7 @@ public class ConditionalUtils  {
 				throw new BehaviourException(e.getMessage(),e);
 			}
 			if(regola!=null) {
+				nomeRegola = regola.getRegola();
 				tipoSelettore = regola.getTipoSelettore();
 				patternSelettore = regola.getPattern();
 				prefixSelettore = regola.getPrefix();
@@ -131,6 +133,7 @@ public class ConditionalUtils  {
 			}
 		}
 		if(tipoSelettore==null) {
+			nomeRegola = null;
 			ConfigurazioneSelettoreCondizione c = config.getDefaultConfig();
 			tipoSelettore = c.getTipoSelettore();
 			patternSelettore = c.getPattern();
@@ -312,7 +315,7 @@ public class ConditionalUtils  {
 					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setNome(pa.getNome());
-					Template template = configurazionePdDManager.getTemplateConnettoreMultiploCondizionale(idPA, patternSelettore.getBytes());
+					Template template = configurazionePdDManager.getTemplateConnettoreMultiploCondizionale(idPA, nomeRegola, patternSelettore.getBytes());
 					DynamicUtils.convertFreeMarkerTemplate(template, dynamicMap, bout);
 					bout.flush();
 					bout.close();
@@ -344,7 +347,7 @@ public class ConditionalUtils  {
 					configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
 					idPA = new IDPortaApplicativa();
 					idPA.setNome(pa.getNome());
-					template = configurazionePdDManager.getTemplateConnettoreMultiploCondizionale(idPA, patternSelettore.getBytes());
+					template = configurazionePdDManager.getTemplateConnettoreMultiploCondizionale(idPA, nomeRegola, patternSelettore.getBytes());
 					DynamicUtils.convertVelocityTemplate(template, dynamicMap, bout);
 					bout.flush();
 					bout.close();

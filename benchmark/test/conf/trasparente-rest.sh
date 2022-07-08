@@ -6,7 +6,8 @@ elencoTestTrasparenteRest="rest_proxy_no-trace rest_proxy_db-trace rest_proxy_fi
 			rest_proxy_db-trace_rate-limiting_quota-divisa-nodi rest_proxy_db-trace_rate-limiting_redis-atomic-long
 			rest_proxy_db-trace_rate-limiting_hazelcast-atomic-long rest_proxy_db-trace_rate-limiting_hazelcast-pn-counters
 			rest_proxy_db-trace_rate-limiting_hazelcast-map rest_proxy_db-trace_rate-limiting_hazelcast-near-cache rest_proxy_db-trace_rate-limiting_hazelcast-local-cache
-			rest_proxy_no-trace_multipart rest_proxy_db-trace_multipart rest_proxy_no-trace_multipart_validation rest_proxy_db-trace_multipart_validation"
+			rest_proxy_no-trace_multipart rest_proxy_db-trace_multipart rest_proxy_no-trace_multipart_validation rest_proxy_db-trace_multipart_validation
+			rest_proxy_db-trace_trasformazioni_freemarker rest_proxy_db-trace_trasformazioni_velocity"
 
 tests["rest_proxy_db-trace"]="rest_proxy_DBTrace"
 tests["rest_proxy_no-trace"]="rest_proxy_NoTrace"
@@ -32,6 +33,8 @@ tests["rest_proxy_db-trace_multipart"]="rest_proxy_DBTrace_Multipart"
 tests["rest_proxy_no-trace_multipart"]="rest_proxy_NoTrace_Multipart"
 tests["rest_proxy_db-trace_multipart_validation"]="rest_proxy_DBTrace_Multipart_Validazione"
 tests["rest_proxy_no-trace_multipart_validation"]="rest_proxy_NoTrace_Multipart_Validazione"
+tests["rest_proxy_db-trace_trasformazioni_freemarker"]="rest_proxy_DBTrace_Trasformazioni_Freemarker"
+tests["rest_proxy_db-trace_trasformazioni_velocity"]="rest_proxy_DBTrace_Trasformazioni_Velocity"
 
 function rest_proxy_DBTrace() {
 	jmeterTestFile=${jmeterRestTestFile}
@@ -339,3 +342,28 @@ function rest_proxy_NoTrace_Multipart_Validazione() {
 	outputDir=${resultDir}/${FUNCNAME[0]}
 	description="Non vengono registrate le transazioni; viene attuata la validazione dei contenuti"
 }
+
+function rest_proxy_DBTrace_Trasformazioni_Freemarker() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=none
+	profiloMessaggi=none
+	protocollo=api
+	tipiTest=Trasformazioni
+	azione=test
+	contentType=application/json
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="Vengono registrate le transazioni; viene attuata una trasformazione freemarker"
+}
+
+function rest_proxy_DBTrace_Trasformazioni_Velocity() {
+	jmeterTestFile=${jmeterRestTestFile}
+	profiloSicurezza=none
+	profiloMessaggi=none
+	protocollo=api
+	tipiTest=Trasformazioni
+	azione=test2
+	contentType=application/json
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="Vengono registrate le transazioni; viene attuata una trasformazione velocity"
+}
+

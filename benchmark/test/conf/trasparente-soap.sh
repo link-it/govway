@@ -7,7 +7,8 @@ elencoTestTrasparenteSoap="soap_proxy_no-trace soap_proxy_db-trace
 			soap_proxy_no-trace_rate-limiting_too-many-requests soap_proxy_db-trace_rate-limiting_too-many-requests soap_proxy_db-partial-trace_rate-limiting_too-many-requests
 			soap_proxy_db-trace_rate-limiting_quota-divisa-nodi soap_proxy_db-trace_rate-limiting_redis-atomic-long
 			soap_proxy_db-trace_rate-limiting_hazelcast-atomic-long soap_proxy_db-trace_rate-limiting_hazelcast-pn-counters
-			soap_proxy_db-trace_rate-limiting_hazelcast-map soap_proxy_db-trace_rate-limiting_hazelcast-near-cache soap_proxy_db-trace_rate-limiting_hazelcast-local-cache"
+			soap_proxy_db-trace_rate-limiting_hazelcast-map soap_proxy_db-trace_rate-limiting_hazelcast-near-cache soap_proxy_db-trace_rate-limiting_hazelcast-local-cache
+			soap_proxy_db-trace_trasformazioni_freemarker soap_proxy_db-trace_trasformazioni_velocity"
 
 tests["soap_proxy_db-trace"]="soap_proxy_DBTrace"
 tests["soap_proxy_no-trace"]="soap_proxy_NoTrace"
@@ -31,6 +32,8 @@ tests["soap_proxy_db-trace_rate-limiting_hazelcast-pn-counters"]="soap_proxy_DBT
 tests["soap_proxy_db-trace_rate-limiting_hazelcast-map"]="soap_proxy_DBTrace_RateLimiting_HazelcastMap"
 tests["soap_proxy_db-trace_rate-limiting_hazelcast-near-cache"]="soap_proxy_DBTrace_RateLimiting_HazelcastNearCache"
 tests["soap_proxy_db-trace_rate-limiting_hazelcast-local-cache"]="soap_proxy_DBTrace_RateLimiting_HazelcastLocalCache"
+tests["soap_proxy_db-trace_trasformazioni_freemarker"]="soap_proxy_DBTrace_Trasformazioni_Freemarker"
+tests["soap_proxy_db-trace_trasformazioni_velocity"]="soap_proxy_DBTrace_Trasformazioni_Velocity"
 
 function soap_proxy_DBTrace() {
 	jmeterTestFile=${jmeterSoapTestFile}
@@ -288,3 +291,25 @@ function soap_proxy_DBTrace_RateLimiting_HazelcastLocalCache() {
 	description="Test policy rate limiting complessiva e per richiedente (hazelcast local cache)"
 }
 
+
+function soap_proxy_DBTrace_Trasformazioni_Freemarker() {
+	jmeterTestFile=${jmeterSoapTestFile}
+	profiloSicurezza=none
+	protocollo=api
+	tipiTest=Trasformazioni
+	azione=test
+	contentType=text/xml; charset=UTF-8
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="Vengono registrate le transazioni; viene attuata una trasformazione freemarker"
+}
+
+function soap_proxy_DBTrace_Trasformazioni_Velocity() {
+	jmeterTestFile=${jmeterSoapTestFile}
+	profiloSicurezza=azione2
+	protocollo=api
+	tipiTest=Trasformazioni
+	azione=test2
+	contentType=text/xml; charset=UTF-8
+	outputDir=${resultDir}/${FUNCNAME[0]}
+	description="Vengono registrate le transazioni; viene attuata una trasformazione velocity"
+}
