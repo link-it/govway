@@ -38,7 +38,7 @@ Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trust
 	isTest('doppi-header-audience-risposta-diversi-valori-statici') || isTest('doppi-header-audience-risposta-diversi-valori-statici-authorization-non-valido') || isTest('doppi-header-audience-risposta-diversi-valori-statici-agid-jwt-signature-non-valido') ||
   isTest('doppi-header-audience-richiesta-stesso-valore') ||
   isTest('doppi-header-audience-richiesta-differente-valore') ||
-	isTest('low-ttl-erogazione') || isTest('low-iat-ttl-erogazione') || 
+	isTest('low-ttl-erogazione') || isTest('low-iat-ttl-erogazione') || isTest('iat-future-response') || 
 	isTest('custom-claims') || isTest('custom-claims-sub-iss-clientid-empty') || 
 	isTest('manomissione-token-risposta') || 
 	isTest('connettivita-base-idar02') || isTest('riutilizzo-token') || 

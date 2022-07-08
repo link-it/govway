@@ -1,3 +1,12 @@
+2022-07-08  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, ProtocolloModIPA]
+	Aggiunta funzionalità OP-1383
+	Aggiunto controllo che verifica che la data indicata nel claim 'iat' in un token OAuth o in un token ModI (API di tipo REST) non rappresenti una data futura.
+	Lo stesso controllo viene attuato sull'element 'Created' relativo al Timestamp presente nel token di sicurezza ModI per una API di tipo SOAP.
+	Per default viene attuato un intervallo di tolleranza di 5 secondi.
+	Il controllo è disabilitabile agendo a livello di configurazione generale del prodotto nei file govway_local.properties e modipa_local.properties.
+
 2022-07-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

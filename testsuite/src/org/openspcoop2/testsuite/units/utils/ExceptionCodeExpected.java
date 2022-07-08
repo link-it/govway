@@ -83,6 +83,7 @@ public class ExceptionCodeExpected {
 		case TOKEN_INVALID:
 		case TOKEN_EXPIRED:
 		case TOKEN_NOT_USABLE_BEFORE:
+		case TOKEN_IN_THE_FUTURE:
 		case TOKEN_REQUIRED_CLAIMS_NOT_FOUND:
 		case AUTHENTICATION:
 			return 401;

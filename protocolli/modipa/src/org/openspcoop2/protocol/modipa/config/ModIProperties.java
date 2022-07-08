@@ -208,6 +208,7 @@ public class ModIProperties {
 			getRestSecurityTokenClaimRequestDigest();
 			getRestSecurityTokenSignedHeaders();
 			getRestSecurityTokenClaimsIatTimeCheck_milliseconds();
+			getRestSecurityTokenClaimsIatTimeCheck_futureToleranceMilliseconds();
 			getRestSecurityTokenDigestDefaultEncoding();
 			isRestSecurityTokenDigestEncodingChoice();
 			getRestSecurityTokenDigestEncodingAccepted();
@@ -248,7 +249,7 @@ public class ModIProperties {
 			isSoapSecurityTokenMustUnderstand();
 			getSoapSecurityTokenActor();
 			getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds();
-			getSoapSecurityTokenTimestampCreatedFutureTimeCheck_milliseconds();
+			getSoapSecurityTokenTimestampCreatedTimeCheck_futureToleranceMilliseconds();
 			isSoapSecurityTokenFaultProcessEnabled();
 			
 			isSoapWSAddressingMustUnderstand();
@@ -1261,13 +1262,50 @@ public class ModIProperties {
 		return bf.toString();
 	}
 	
+	private static Boolean getRestSecurityTokenClaimsIatTimeCheck_futureToleranceMilliseconds_read = null;
+	private static Long getRestSecurityTokenClaimsIatTimeCheck_futureToleranceMilliseconds = null;
+	public Long getRestSecurityTokenClaimsIatTimeCheck_futureToleranceMilliseconds() throws Exception{
+
+		if(ModIProperties.getRestSecurityTokenClaimsIatTimeCheck_futureToleranceMilliseconds_read==null){
+			
+			String name = "org.openspcoop2.protocol.modipa.rest.securityToken.claims.iat.minutes";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(name); 
+
+				if (value != null){
+					value = value.trim();
+					long tmp = Long.valueOf(value); // minuti
+					if(tmp>0) {
+						long maxLongValue = Long.MAX_VALUE;
+						if(tmp>maxLongValue) {
+							this.log.warn("Valore '"+value+"' indicato nella proprietà '"+name+"' superiore al massimo consentito '"+maxLongValue+"'; il controllo viene disabilitato");
+						}
+						else {
+							ModIProperties.getRestSecurityTokenClaimsIatTimeCheck_futureToleranceMilliseconds = tmp * 60 * 1000;
+						}
+					}
+					else {
+						this.log.warn("Verifica gestita tramite la proprietà '"+name+"' disabilitata.");
+					}
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprietà '"+name+"' non impostata, errore:"+e.getMessage(),e);
+				throw e;
+			}
+			
+			ModIProperties.getRestSecurityTokenClaimsIatTimeCheck_futureToleranceMilliseconds_read = true;
+		}
+
+		return ModIProperties.getRestSecurityTokenClaimsIatTimeCheck_futureToleranceMilliseconds;
+	}
+	
 	private static Boolean getRestSecurityTokenClaimsIatTimeCheck_milliseconds_read = null;
 	private static Long getRestSecurityTokenClaimsIatTimeCheck_milliseconds = null;
 	public Long getRestSecurityTokenClaimsIatTimeCheck_milliseconds() throws Exception{
 
 		if(ModIProperties.getRestSecurityTokenClaimsIatTimeCheck_milliseconds_read==null){
 			
-			String name = "org.openspcoop2.protocol.modipa.rest.securityToken.claims.iat.minutes";
+			String name = "org.openspcoop2.protocol.modipa.rest.securityToken.claims.iat.future.toleranceMilliseconds";
 			try{  
 				String value = this.reader.getValue_convertEnvProperties(name); 
 
@@ -2315,30 +2353,41 @@ public class ModIProperties {
 		return ModIProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_milliseconds;
 	}
 	
-	private static Boolean getSoapSecurityTokenTimestampCreatedFutureTimeCheck_milliseconds_read = null;
-	private static Integer getSoapSecurityTokenTimestampCreatedFutureTimeCheck_milliseconds = null;
-	public Integer getSoapSecurityTokenTimestampCreatedFutureTimeCheck_milliseconds() throws Exception{
+	private static Boolean getSoapSecurityTokenTimestampCreatedTimeCheck_futureToleranceMilliseconds_read = null;
+	private static Long getSoapSecurityTokenTimestampCreatedTimeCheck_futureToleranceMilliseconds = null;
+	public Long getSoapSecurityTokenTimestampCreatedTimeCheck_futureToleranceMilliseconds() throws Exception{
 
-		if(ModIProperties.getSoapSecurityTokenTimestampCreatedFutureTimeCheck_milliseconds_read==null){
+		if(ModIProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_futureToleranceMilliseconds_read==null){
 			
-			String name = "org.openspcoop2.protocol.modipa.soap.securityToken.timestamp.created.futureTimeToLive.minutes";
+			String name = "org.openspcoop2.protocol.modipa.soap.securityToken.timestamp.created.future.toleranceMilliseconds";
 			try{  
 				String value = this.reader.getValue_convertEnvProperties(name); 
 
 				if (value != null){
 					value = value.trim();
-					ModIProperties.getSoapSecurityTokenTimestampCreatedFutureTimeCheck_milliseconds = Integer.valueOf(value); // minuti
-					ModIProperties.getSoapSecurityTokenTimestampCreatedFutureTimeCheck_milliseconds = ModIProperties.getSoapSecurityTokenTimestampCreatedFutureTimeCheck_milliseconds * 60 * 1000;
+					long tmp = Long.valueOf(value); // già in millisecondi
+					if(tmp>0) {
+						long maxLongValue = Long.MAX_VALUE;
+						if(tmp>maxLongValue) {
+							this.log.warn("Valore '"+value+"' indicato nella proprietà '"+name+"' superiore al massimo consentito '"+maxLongValue+"'; il controllo viene disabilitato");
+						}
+						else {
+							ModIProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_futureToleranceMilliseconds = tmp;
+						}
+					}
+					else {
+						this.log.warn("Verifica gestita tramite la proprietà '"+name+"' disabilitata.");
+					}
 				}
 			}catch(java.lang.Exception e) {
 				this.log.error("Proprietà '"+name+"' non impostata, errore:"+e.getMessage(),e);
 				throw e;
 			}
 			
-			ModIProperties.getSoapSecurityTokenTimestampCreatedFutureTimeCheck_milliseconds_read = true;
+			ModIProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_futureToleranceMilliseconds_read = true;
 		}
 
-		return ModIProperties.getSoapSecurityTokenTimestampCreatedFutureTimeCheck_milliseconds;
+		return ModIProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_futureToleranceMilliseconds;
 	}
 	
 	private static Boolean getSoapSecurityTokenFaultProcessEnabled_read= null;

@@ -18,5 +18,6 @@ Rientrano in questa casistica gli errori avenuti durante le fasi di autenticazio
 	TokenAuthenticationFailed
 	TokenExpired
 	TokenNotBefore
+	TokenInTheFuture
 	TokenRequiredClaimsNotFound
 	Authentication

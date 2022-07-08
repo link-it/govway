@@ -68,6 +68,7 @@ public enum IntegrationFunctionError implements Serializable {
 	TOKEN_INVALID(true),
 	TOKEN_EXPIRED(true),
 	TOKEN_NOT_USABLE_BEFORE(true),
+	TOKEN_IN_THE_FUTURE(true),
 	TOKEN_REQUIRED_CLAIMS_NOT_FOUND(true),
 	AUTHENTICATION(true),
 	

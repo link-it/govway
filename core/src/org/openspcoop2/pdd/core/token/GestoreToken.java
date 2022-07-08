@@ -2177,14 +2177,35 @@ public class GestoreToken {
    				 *   The iat Claim can be used to reject tokens that were issued too far away from the current time, 
    				 *   limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is Client specific. 
 				 **/
-				Integer old = OpenSPCoop2Properties.getInstance().getGestioneToken_iatTimeCheck_milliseconds();
+				Long old = OpenSPCoop2Properties.getInstance().getGestioneToken_iatTimeCheck_milliseconds();
 				if(old!=null) {
-					Date oldMax = new Date((DateManager.getTimeMillis() - old.intValue()));
+					Date oldMax = new Date((DateManager.getTimeMillis() - old.longValue()));
 					if(esitoGestioneToken.getInformazioniToken().getIat().before(oldMax)) {
 						esitoGestioneToken.setTokenScaduto();
 						esitoGestioneToken.setDateValide(false);
 						SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter(format);
 						esitoGestioneToken.setDetails("Token expired; iat time '"+sdf.format(esitoGestioneToken.getInformazioniToken().getIat())+"' too old");
+						if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
+							esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+			    					false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
+			    					esitoGestioneToken.getDetails()));  
+						}
+		    			else {
+		    				esitoGestioneToken.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildHeaderValue(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+		    						false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
+		    						esitoGestioneToken.getDetails()));
+		    			} 
+					}
+				}
+				
+				Long future = OpenSPCoop2Properties.getInstance().getGestioneToken_iatTimeCheck_futureTolerance_milliseconds();
+				if(future!=null) {
+					Date futureMax = new Date((DateManager.getTimeMillis() + future.longValue()));
+					if(esitoGestioneToken.getInformazioniToken().getIat().after(futureMax)) {
+						esitoGestioneToken.setTokenInTheFuture();
+						esitoGestioneToken.setDateValide(false);
+						SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter(format);
+						esitoGestioneToken.setDetails("Token valid in the future; iat time '"+sdf.format(esitoGestioneToken.getInformazioniToken().getIat())+"' is in the future");
 						if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
 							esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
 			    					false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
@@ -4340,7 +4361,7 @@ public class GestoreToken {
 				if(!now.before(esitoRecuperoAttributi.getInformazioniAttributi().getExp())){
 					esitoRecuperoAttributi.setTokenScaduto();
 					esitoRecuperoAttributi.setDateValide(false);
-					esitoRecuperoAttributi.setDetails("Attributes response expired");	
+					esitoRecuperoAttributi.setDetails("Response attributes expired");	
 				}
 			}
 			
@@ -4355,7 +4376,7 @@ public class GestoreToken {
 					esitoRecuperoAttributi.setTokenNotUsableBefore();
 					esitoRecuperoAttributi.setDateValide(false);
 					SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter(format);
-					esitoRecuperoAttributi.setDetails("Attributes response not usable before "+sdf.format(esitoRecuperoAttributi.getInformazioniAttributi().getNbf()));
+					esitoRecuperoAttributi.setDetails("Response attributes not usable before "+sdf.format(esitoRecuperoAttributi.getInformazioniAttributi().getNbf()));
 				}
 			}
 		}
@@ -4367,14 +4388,24 @@ public class GestoreToken {
    				 *   The iat Claim can be used to reject tokens that were issued too far away from the current time, 
    				 *   limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is Client specific. 
 				 **/
-				Integer old = OpenSPCoop2Properties.getInstance().getGestioneToken_iatTimeCheck_milliseconds();
+				Long old = OpenSPCoop2Properties.getInstance().getGestioneToken_iatTimeCheck_milliseconds();
 				if(old!=null) {
-					Date oldMax = new Date((DateManager.getTimeMillis() - old.intValue()));
+					Date oldMax = new Date((DateManager.getTimeMillis() - old.longValue()));
 					if(esitoRecuperoAttributi.getInformazioniAttributi().getIat().before(oldMax)) {
 						esitoRecuperoAttributi.setTokenScaduto();
 						esitoRecuperoAttributi.setDateValide(false);
 						SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter(format);
-						esitoRecuperoAttributi.setDetails("Attributes response expired; iat time '"+sdf.format(esitoRecuperoAttributi.getInformazioniAttributi().getIat())+"' too old");
+						esitoRecuperoAttributi.setDetails("Response attributes expired; iat time '"+sdf.format(esitoRecuperoAttributi.getInformazioniAttributi().getIat())+"' too old");
+					}
+				}
+				Long future = OpenSPCoop2Properties.getInstance().getGestioneToken_iatTimeCheck_futureTolerance_milliseconds();
+				if(future!=null) {
+					Date futureMax = new Date((DateManager.getTimeMillis() + future.longValue()));
+					if(esitoRecuperoAttributi.getInformazioniAttributi().getIat().after(futureMax)) {
+						esitoRecuperoAttributi.setTokenInTheFuture();
+						esitoRecuperoAttributi.setDateValide(false);
+						SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter(format);
+						esitoRecuperoAttributi.setDetails("Response attributes valid in the future; iat time '"+sdf.format(esitoRecuperoAttributi.getInformazioniAttributi().getIat())+"' is in the future");
 					}
 				}
 			}

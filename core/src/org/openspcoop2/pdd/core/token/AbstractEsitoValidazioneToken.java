@@ -72,6 +72,10 @@ public abstract class AbstractEsitoValidazioneToken extends EsitoToken implement
 		this.valido = false;
 		this.integrationFunctionError = IntegrationFunctionError.TOKEN_NOT_USABLE_BEFORE;
 	}
+	public void setTokenInTheFuture() {
+		this.valido = false;
+		this.integrationFunctionError = IntegrationFunctionError.TOKEN_IN_THE_FUTURE;
+	}
 	
 	public boolean isInCache() {
 		return this.inCache;

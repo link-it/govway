@@ -360,13 +360,16 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 				secProperties.put(SecurityConstants.TIMESTAMP_TTL, 315360000+"");
 			}
 			
-			Integer futureTimeToLive = this.modiProperties.getSoapSecurityTokenTimestampCreatedFutureTimeCheck_milliseconds();
+			Long futureTimeToLive = this.modiProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_futureToleranceMilliseconds();
 			if(futureTimeToLive!=null) {
-				int value = futureTimeToLive.intValue();
+				// Non imposto il valore qua, in modo che la libreria non effettui il controllo, che invece avviene nella validazione semantica
+				/*
+				long value = futureTimeToLive.longValue();
 				if(value>=1000) {
-					value = value / 1000; // riporto in secondi
+					value = value / 1000l; // riporto in secondi
 					secProperties.put(SecurityConstants.TIMESTAMP_FUTURE_TTL, value+"");
 				}
+				*/
 			}
 			
 			// disabilito qua la validazione, in modo da implementarla sulla validazione semantica

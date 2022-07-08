@@ -1850,6 +1850,7 @@ public class OpenSPCoop2Properties {
 			this.isGestioneToken_introspection_debug();
 			this.isGestioneToken_userInfo_debug();
 			this.getGestioneToken_iatTimeCheck_milliseconds();
+			this.getGestioneToken_iatTimeCheck_futureTolerance_milliseconds();
 			this.isGestioneToken_saveSourceTokenInfo();
 			this.getGestioneTokenFormatDate();
 			this.getGestioneTokenHeaderTrasportoJSON();
@@ -19576,20 +19577,21 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getGestioneToken_iatTimeCheck_milliseconds_read = null;
-	private static Integer getGestioneToken_iatTimeCheck_milliseconds = null;
-	public Integer getGestioneToken_iatTimeCheck_milliseconds() throws Exception{
+	private static Long getGestioneToken_iatTimeCheck_milliseconds = null;
+	public Long getGestioneToken_iatTimeCheck_milliseconds() throws Exception{
 
+		String pName = "org.openspcoop2.pdd.gestioneToken.iat";
 		if(OpenSPCoop2Properties.getGestioneToken_iatTimeCheck_milliseconds_read==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.iat"); 
+				String value = this.reader.getValue_convertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					OpenSPCoop2Properties.getGestioneToken_iatTimeCheck_milliseconds = Integer.valueOf(value); // minuti
-					OpenSPCoop2Properties.getGestioneToken_iatTimeCheck_milliseconds = OpenSPCoop2Properties.getGestioneToken_iatTimeCheck_milliseconds * 60 * 1000;
+					long minuti = Long.valueOf(value); // minuti
+					OpenSPCoop2Properties.getGestioneToken_iatTimeCheck_milliseconds = minuti * 60l * 1000l;
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.gestioneToken.iat' non impostata, errore:"+e.getMessage(),e);
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 				throw e;
 			}
 			
@@ -19597,6 +19599,34 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.getGestioneToken_iatTimeCheck_milliseconds;
+	}
+	
+	private static Boolean getGestioneToken_iatTimeCheck_futureTolerance_milliseconds_read = null;
+	private static Long getGestioneToken_iatTimeCheck_futureTolerance_milliseconds = null;
+	public Long getGestioneToken_iatTimeCheck_futureTolerance_milliseconds() throws Exception{
+
+		String pName = "org.openspcoop2.pdd.gestioneToken.iat.future.toleranceMilliseconds";
+		if(OpenSPCoop2Properties.getGestioneToken_iatTimeCheck_futureTolerance_milliseconds_read==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.getGestioneToken_iatTimeCheck_futureTolerance_milliseconds = Long.valueOf(value); // gia' millisecondi
+					if(OpenSPCoop2Properties.getGestioneToken_iatTimeCheck_futureTolerance_milliseconds<=0) {
+						// disabilito il controllo
+						OpenSPCoop2Properties.getGestioneToken_iatTimeCheck_futureTolerance_milliseconds=null;
+					}
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				throw e;
+			}
+			
+			OpenSPCoop2Properties.getGestioneToken_iatTimeCheck_futureTolerance_milliseconds_read = true;
+		}
+
+		return OpenSPCoop2Properties.getGestioneToken_iatTimeCheck_futureTolerance_milliseconds;
 	}
 	
 	private static Boolean isGestioneToken_saveSourceTokenInfo = null;

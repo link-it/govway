@@ -308,9 +308,26 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		if(old!=null) {
 			Date oldMax = new Date((DateManager.getTimeMillis() - old.longValue()));
 			if(dateIat.before(oldMax)) {
-				this.log.error(prefix+"Token creato da troppo tempo (data creazione: '"+iat+"' minima data consentita: '"+DateUtils.getSimpleDateFormatMs().format(oldMax)+"' configurazione ms: '"+old.longValue()+"')");
+				this.log.error(prefix+"Token creato da troppo tempo (data creazione: '"+iat+"', data più vecchia consentita: '"+DateUtils.getSimpleDateFormatMs().format(oldMax)+"', configurazione ms: '"+old.longValue()+"')");
 				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MESSAGGIO_SCADUTO, 
 						prefix+"Token creato da troppo tempo (data creazione: '"+iat+"')"));
+			}
+		}
+		
+		
+		Long future = null;
+		if(rest) {
+			future = this.modiProperties.getRestSecurityTokenClaimsIatTimeCheck_futureToleranceMilliseconds();
+		}
+		else {
+			future = this.modiProperties.getSoapSecurityTokenTimestampCreatedTimeCheck_futureToleranceMilliseconds();
+		}
+		if(future!=null) {
+			Date futureMax = new Date((DateManager.getTimeMillis() + future.longValue()));
+			if(dateIat.after(futureMax)) {
+				this.log.error(prefix+"Token creato nel futuro (data creazione: '"+iat+"', data massima futura consentita: '"+DateUtils.getSimpleDateFormatMs().format(futureMax)+"', configurazione ms: '"+future.longValue()+"')");
+				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.ORA_REGISTRAZIONE_NON_VALIDA, 
+						prefix+"Token creato nel futuro (data creazione: '"+iat+"')"));
 			}
 		}
 	}

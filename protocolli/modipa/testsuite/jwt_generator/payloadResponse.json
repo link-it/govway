@@ -1,0 +1,10 @@
+{
+  "iat": 8657289597,
+  "nbf": 1657289597,
+  "exp": 8657289897,
+  "jti": "1ce078eb-fec8-11ec-8447-0242c7eae486",
+  "aud": "DemoSoggettoFruitore/ApplicativoBlockingIDA01",
+  "client_id": "RestBlockingIDAR01LowIAT/v1",
+  "iss": "DemoSoggettoErogatore",
+  "sub": "RestBlockingIDAR01LowIAT/v1"
+}

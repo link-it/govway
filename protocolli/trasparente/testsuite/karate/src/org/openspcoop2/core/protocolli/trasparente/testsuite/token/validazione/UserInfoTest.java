@@ -82,7 +82,7 @@ public class UserInfoTest extends ConfigLoader {
 		List<String> mapExpectedTokenInfo = new ArrayList<String>();
 		Map<String, String> headers = new HashMap<String, String>();
 		Map<String, String> query = new HashMap<String, String>();
-		query.put("test-userinfo", buildJWT_dates(false, false, false,  // tutte buone, elimino la risposta introspection dopo 
+		query.put("test-userinfo", buildJWT_dates(false, false, false, false,  // tutte buone, elimino la risposta introspection dopo 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
 		
@@ -104,7 +104,7 @@ public class UserInfoTest extends ConfigLoader {
 		List<String> mapExpectedTokenInfo = new ArrayList<String>();
 		Map<String, String> headers = new HashMap<String, String>();
 		Map<String, String> query = new HashMap<String, String>();
-		query.put("test-userinfo", buildJWT_dates(true, false, false, 
+		query.put("test-userinfo", buildJWT_dates(true, false, false, false, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
 		
@@ -112,6 +112,25 @@ public class UserInfoTest extends ConfigLoader {
 				"Token expired; iat time '%' too old",
 				mapExpectedTokenInfo);
 	}
+	
+	@Test
+	public void iatInTheFuture() throws Exception {
+				
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> query = new HashMap<String, String>();
+		query.put("test-userinfo", buildJWT_dates(false, true, false, false, 
+				mapExpectedTokenInfo));
+		headers.put("test-username", Utilities.username);
+		
+		Utilities._test(logCore, validazione, "success", headers,  query,
+				"Token valid in the future; iat time '%' is in the future",
+				mapExpectedTokenInfo);
+	}
+	
 	
 	@Test
 	public void nbfInvalid() throws Exception {
@@ -122,7 +141,7 @@ public class UserInfoTest extends ConfigLoader {
 		List<String> mapExpectedTokenInfo = new ArrayList<String>();
 		Map<String, String> headers = new HashMap<String, String>();
 		Map<String, String> query = new HashMap<String, String>();
-		query.put("test-userinfo", buildJWT_dates(false, true, false, 
+		query.put("test-userinfo", buildJWT_dates(false, false, true, false, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
 		
@@ -140,7 +159,7 @@ public class UserInfoTest extends ConfigLoader {
 		List<String> mapExpectedTokenInfo = new ArrayList<String>();
 		Map<String, String> headers = new HashMap<String, String>();
 		Map<String, String> query = new HashMap<String, String>();
-		query.put("test-userinfo", buildJWT_dates(false, false, true, 
+		query.put("test-userinfo", buildJWT_dates(false, false, false, true, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
 		
@@ -558,7 +577,7 @@ public class UserInfoTest extends ConfigLoader {
 				true, true, true,
 				true, true, true,
 				false,
-				false, false, false,
+				false, false, false, false,
 				false, false, false, false,
 				mapExpectedTokenInfo);
 	}
@@ -569,7 +588,7 @@ public class UserInfoTest extends ConfigLoader {
 				scope1, scope2, scope3,
 				true, true, true,
 				false,
-				false, false, false,
+				false, false, false, false,
 				false, false, false, false,
 				mapExpectedTokenInfo);
 	}
@@ -580,18 +599,18 @@ public class UserInfoTest extends ConfigLoader {
 				true, true, true,
 				role1, role2, role3,
 				false,
-				false, false, false,
+				false, false, false, false,
 				false, false, false, false,
 				mapExpectedTokenInfo);
 	}
-	private static String buildJWT_dates(boolean invalidIat, boolean invalidNbf, boolean invalidExp,
+	private static String buildJWT_dates(boolean invalidIat, boolean futureIat, boolean invalidNbf, boolean invalidExp,
 			List<String> mapExpectedTokenInfo) throws Exception {
 		return buildJWT(true,
 				true, true, true, true, true,
 				true, true, true,
 				true, true, true,
 				false,
-				invalidIat, invalidNbf, invalidExp,
+				invalidIat, futureIat, invalidNbf, invalidExp,
 				false, false, false, false,
 				mapExpectedTokenInfo);
 	}	
@@ -602,7 +621,7 @@ public class UserInfoTest extends ConfigLoader {
 				true, true, true,
 				true, true, true,
 				false,
-				false, false, false,
+				false, false, false, false,
 				invalidClientId, invalidAudience, invalidUsername, invalidClaimCheNonDeveEsistere,
 				mapExpectedTokenInfo);
 	}			
@@ -612,7 +631,7 @@ public class UserInfoTest extends ConfigLoader {
 			boolean scope1, boolean scope2, boolean scope3,
 			boolean role1, boolean role2, boolean role3,
 			boolean signWithSoggetto1,
-			boolean invalidIat, boolean invalidNbf, boolean invalidExp,
+			boolean invalidIat, boolean futureIat, boolean invalidNbf, boolean invalidExp,
 			boolean invalidClientId, boolean invalidAudience, boolean invalidUsername, boolean invalidClaimCheNonDeveEsistere,
 			List<String> mapExpectedTokenInfo) throws Exception {
 		
@@ -621,7 +640,7 @@ public class UserInfoTest extends ConfigLoader {
 				requiredClaims_username, requiredClaims_eMail, 
 				scope1, scope2, scope3, 
 				role1, role2, role3, 
-				invalidIat, invalidNbf, invalidExp, 
+				invalidIat, futureIat, invalidNbf, invalidExp, 
 				invalidClientId, invalidAudience, invalidUsername, invalidClaimCheNonDeveEsistere, 
 				mapExpectedTokenInfo,
 				""); 

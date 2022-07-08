@@ -447,7 +447,7 @@ And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRespons
 
 
 @low-iat-ttl-fruizione
-Scenario: Il claim iat del token della fruizione (richiesta) è troppo vecchio per l'erogazione la quale si arrabbia
+Scenario: Il claim create del token della fruizione (richiesta) è troppo vecchio per l'erogazione la quale si arrabbia
 
 * def soap_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SoapBlockingIDAS01LowIAT/v1'
 
@@ -461,8 +461,9 @@ When method post
 Then status 500
 And match response == read('error-bodies/iat-scaduto-in-request.xml')
 
+
 @low-iat-ttl-erogazione
-Scenario: Il claim iat del token dell'erogazione (risposta) è troppo vecchio per la fruizione la quale si arrabbia
+Scenario: Il claim create del token dell'erogazione (risposta) è troppo vecchio per la fruizione la quale si arrabbia
 
 * def soap_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SoapBlockingIDAS01LowIAT/v1'
 
@@ -475,6 +476,8 @@ And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', p
 When method post
 Then status 500
 And match response == read('error-bodies/iat-scaduto-in-response.xml')
+And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
+
 
 
 @applicativo-non-autorizzato

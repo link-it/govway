@@ -151,6 +151,12 @@ public class Utilities extends ConfigLoader {
 				error = "TokenNotBefore";
 				msg = "Invalid 'notBefore' token claim";
 			}
+			else if(msgError.contains("Token valid in the future")) {
+				esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_TOKEN);
+				code = 401;
+				error = "TokenInTheFuture";
+				msg = "'iat' token claim is in the future";
+			}
 			verifyKo(response, error, code, msg, true);
 		
 		}
@@ -218,7 +224,7 @@ public class Utilities extends ConfigLoader {
 			boolean requiredClaims_username, boolean requiredClaims_eMail,
 			boolean scope1, boolean scope2, boolean scope3,
 			boolean role1, boolean role2, boolean role3,
-			boolean invalidIat, boolean invalidNbf, boolean invalidExp,
+			boolean invalidIat, boolean futureIat, boolean invalidNbf, boolean invalidExp,
 			boolean invalidClientId, boolean invalidAudience, boolean invalidUsername, boolean invalidClaimCheNonDeveEsistere,
 			List<String> mapExpectedTokenInfo,
 			String prefix) throws Exception {
@@ -239,7 +245,18 @@ public class Utilities extends ConfigLoader {
 		String jti = "33aa1676-1f9e-34e2-8515-0cfca111a188";
 		Date now = DateManager.getDate();
 		Date campione = new Date( (now.getTime()/1000)*1000);
-		Date iat = invalidIat ? new Date(campione.getTime() - (1000*60*121)) : new Date(campione.getTime());
+		Date iat = null;
+		if(invalidIat) {
+			iat = new Date(campione.getTime() - (1000*60*121));
+		}
+		else if(futureIat) {
+			// default 5 secondi
+			// incremento di 10 per dare il tempo di arrivare al controllo in condizioni di carico della macchina
+			iat = new Date(campione.getTime() + (10000));
+		}
+		else {
+			iat = new Date(campione.getTime());
+		}
 		Date nbf = invalidNbf ? new Date(campione.getTime() + (1000*60)) : new Date(campione.getTime() - (1000*20));
 		Date exp = invalidExp ? new Date(campione.getTime() - (1000*20)) : new Date(campione.getTime() + (1000*60));
 		String fullName = "Mario Bianchi Rossi";

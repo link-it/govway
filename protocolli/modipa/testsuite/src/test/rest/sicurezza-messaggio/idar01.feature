@@ -385,7 +385,7 @@ And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRespons
 
 
 @low-iat-ttl-fruizione
-Scenario: L'elemento Created del token della fruizione (richiesta) è troppo vecchio per l'erogazione la quale si arrabbia
+Scenario: L'elemento iat del token della fruizione (richiesta) è troppo vecchio per l'erogazione la quale si arrabbia
 
 Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01LowIAT/v1'
 And path 'resources', 1, 'M'
@@ -394,10 +394,10 @@ And header GovWay-TestSuite-Test-ID = 'low-iat-ttl-fruizione'
 And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
 When method post
 Then status 400
-
+And match response == read('error-bodies/iat-scaduto-in-request.json')
 
 @low-iat-ttl-erogazione
-Scenario: L'elemento Created del token dell'erogazione (risposta) è troppo vecchio per la fruizione la quale si arrabbia
+Scenario: L'elemento iat del token dell'erogazione (risposta) è troppo vecchio per la fruizione la quale si arrabbia
 
 Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01LowIAT/v1'
 And path 'resources', 1, 'M'
@@ -407,6 +407,34 @@ And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', p
 When method post
 Then status 502
 And match response == read('error-bodies/iat-scaduto-in-response.json')
+And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
+
+
+@iat-future-request
+Scenario: L'elemento iat del token della fruizione (richiesta) contiene una data futura e l'erogazione si arrabbia. Il token sotto indicato viene generato tramite il tool jwt_generator
+
+Given url govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR01LowIAT/v1'
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'low-iat-future-request'
+And header Authorization =  'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkV4YW1wbGVDbGllbnQxIiwieDVjIjpbIk1JSURYakNDQWthZ0F3SUJBZ0lCQWpBTkJna3Foa2lHOXcwQkFRc0ZBREJTTVFzd0NRWURWUVFHRXdKSlZERU9NQXdHQTFVRUNCTUZTWFJoYkhreERUQUxCZ05WQkFjVEJGQnBjMkV4RURBT0JnTlZCQW9UQjBWNFlXMXdiR1V4RWpBUUJnTlZCQU1UQ1VWNFlXMXdiR1ZEUVRBZUZ3MHhPVEEzTURreE1ESTJNREJhRncwME1EQTNNekF4TURJMk1EQmFNRmN4Q3pBSkJnTlZCQVlUQWtsVU1RNHdEQVlEVlFRSUV3VkpkR0ZzZVRFTk1Bc0dBMVVFQnhNRVVHbHpZVEVRTUE0R0ExVUVDaE1IUlhoaGJYQnNaVEVYTUJVR0ExVUVBeE1PUlhoaGJYQnNaVU5zYVdWdWRERXdnZ0VpTUEwR0NTcUdTSWIzRFFFQkFRVUFBNElCRHdBd2dnRUtBb0lCQVFEd2hpZXNoNWpLNElKbEFtOTJURXZsc1BuNi80dlp2QUNDTFBoa3drK3BhcUZ1Q3dhYWQ3Sm9kQWdvdjZLR0lwR0JzTlBUWWNnT1V0NG1ucTVjTEZHN294aFVSZVNtNGpVcTE3YkdxVWJQRFlYNVlBczJTZ1dCcGQ0aXNUQWk2Q1BsNTZLcW9GdDUxbDFBK3Z0aVpjZUprNUxPMVd4Qko3SkZNYUVoOHkyK3VvcFJyeEhoVGFBVUNubkNqWnlBSlRZT1RXQW44SGFhaWpHQzk3Q0xZUnJaSks2NDRBbE9HOEFUQUNUVnpGZkJsekZXbzRDUE9CNHA3dVErenYxV0FLbWNhNmkyMnVHcVV1MVBTRSttS1BaUFZMK3ZZUTFtdEQxN0hpR1FVWHlyWVNuR3E5NHB3WGx1Wk5vMUxWN09Nb0syRW1PYXJYTzc3TVFzc1VESGh0ai9BZ01CQUFHak9qQTRNQWtHQTFVZEV3UUNNQUF3SFFZRFZSME9CQllFRkZmS0k3VUdoSlpyckRqNktVZCtJclc3OHoxdk1Bd0dBMVVkRHdRRkF3TUgvNEF3RFFZSktvWklodmNOQVFFTEJRQURnZ0VCQUZaR1lrcjlDNVNqM3JRT0k1a2dueDdxTFZrOGhqKyt1TUJJRXVoQW50ZTlielo0cEcxQmFsUjRvUG5JakV4Z3p1WmxQeE05MEdPT0VEUTdKOWliS051aTkwQUFTbzJUQ2VKOTUvN3J3SzNUbnJ5TDZ5Q1orVUdORU95OElDeEo2Q3NkMlBhYzgvdnJaQjMwTnpibk5HajRBSHRwR0VvdzBvc2NZdzVORWU4TzlWeUMzdGZaTlBZSFo0ZmFsQTcvMFN1Z215WThIUjAvUjJWeXZvTWk3b3k3c2w2V2N3UjZuNWNHMXh1Y0RUaDFWb2NpVTlickt2WlhHOGhvdkJMblJidzlSWDRCOENYZWk4c1o2aWlEMTREWkQ5RVF4S2IyM3lXUUJscG5GWGU1UFVNVE5wTEpXNGlnbktJMm9Ja0dQeEJ5TWVJSUg4TEtQKzc3OUJNNFNPST0iXX0.ewogICJpYXQiOiA3NjU3Mjg3Mjk3LAogICJuYmYiOiAxNjU3Mjg3Mjk3LAogICJleHAiOiA3NjU3Mjg3NTk3LAogICJqdGkiOiAiYzI1ZDU2M2QtZmVjMi0xMWVjLTk1ZmQtMDI0MmM3ZWFlNDg2IiwKICAiYXVkIjogInRlc3RzdWl0ZSIsCiAgImNsaWVudF9pZCI6ICJEZW1vU29nZ2V0dG9GcnVpdG9yZS9BcHBsaWNhdGl2b0Jsb2NraW5nSURBMDEiLAogICJpc3MiOiAiRGVtb1NvZ2dldHRvRnJ1aXRvcmUiLAogICJzdWIiOiAiQXBwbGljYXRpdm9CbG9ja2luZ0lEQTAxIgp9Cg.qk9_xcsci2vKfo_oO9eoP7XpzBU5RKZF9GbWW_CBV9smmt8ZcSmJaOfEsqlW39-O0mBrxxULI5OzixFLECso54WsXJBKzx0IvalNUfBiMHB5KBw9cYWUut9bsVqvWDVy69-WKl_dsLSqYtotE34wflTiOG2RlHlx-kWqF7Adh-E3lvZqkvJl3lAkr6KkMtSyMsxlI2EZmK8UygC8klbqdvHaQUXzfGNJJBrxEAYjB0sJKNi53bevEFY5P4cAOf0UDgCeczOKPRUdOsCwTtrcsTJcDr_DxJ9B2A-3gBtqeAibYa8XTaEMasaP51fPFNyVNf6vqa9ZgA-6t2sAqrTMew'
+When method post
+Then status 400
+And match response == read('error-bodies/iat-in-the-future-request.json')
+And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidRequest'
+
+
+@iat-future-response
+Scenario: L'elemento iat del token dell'erogazione (risposta) contiene una data futura e la fruizione si arrabbia. Il token utilizzato dal proxy server viene generato tramite il tool jwt_generator
+
+Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01LowIAT/v1'
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'iat-future-response'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 502
+And match response == read('error-bodies/iat-in-the-future-response.json')
 And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
 
 

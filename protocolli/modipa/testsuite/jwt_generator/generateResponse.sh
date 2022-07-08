@@ -1,0 +1,1 @@
+java -classpath ../build/:../../../../core/dist/*:../../../../lib/cxf/* org.openspcoop2.core.protocolli.modipa.testsuite.JWTGenerator  payloadResponse.json /etc/govway/keys/xca/ExampleServer.p12 123456 ExampleServer RS256
