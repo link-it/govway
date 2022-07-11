@@ -132,35 +132,69 @@ public class GestoreAutorizzazioneContenutiBuiltIn {
 							expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.toLowerCase())
 							||
 							expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX.toLowerCase())
+							||
+							expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_NOT_MATCH_PREFIX.toLowerCase())
+							||
+							expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_NOT_FIND_PREFIX.toLowerCase())
 					) 
 					&&
 					expectedValue.toLowerCase().endsWith(CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.toLowerCase())) {
 				
 				/** REGULAR EXPRESSION MATCH/FIND */
 				
-				boolean match = expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.toLowerCase());
+				boolean match = expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.toLowerCase())
+						||
+						expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_NOT_MATCH_PREFIX.toLowerCase());
+				boolean not = expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_NOT_MATCH_PREFIX.toLowerCase())
+						||
+						expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_NOT_FIND_PREFIX.toLowerCase());
 				String regexpPattern = null;
 				if(match) {
-					if(expectedValue.length()<= (CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.length()+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()) ) {
+					int length = -1;
+					if(expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.toLowerCase())) {
+						length = CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.length();
+					}
+					else {
+						length = CostantiAutorizzazione.AUTHZ_REGEXP_NOT_MATCH_PREFIX.length();
+					}
+					if(expectedValue.length()<= (length+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()) ) {
 						throw new Exception("Resource '"+risorsa+"' configuration without expected regexp match");
 					}
-					regexpPattern = expectedValue.substring(CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.length(), (expectedValue.length()-CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()));
+					regexpPattern = expectedValue.substring(length, (expectedValue.length()-CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()));
 				}
 				else {
-					if(expectedValue.length()<= (CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX.length()+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()) ) {
+					int length = -1;
+					if(expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX.toLowerCase())) {
+						length = CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX.length();
+					}
+					else {
+						length = CostantiAutorizzazione.AUTHZ_REGEXP_NOT_FIND_PREFIX.length();
+					}
+					if(expectedValue.length()<= (length+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()) ) {
 						throw new Exception("Resource '"+risorsa+"' configuration without expected regexp find");
 					}
-					regexpPattern = expectedValue.substring(CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX.length(), (expectedValue.length()-CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()));
+					regexpPattern = expectedValue.substring(length, (expectedValue.length()-CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()));
 				}
 				regexpPattern = regexpPattern.trim();
 				log.debug("Verifico valore dela risorsa '"+risorsa+"' tramite espressione regolare (match:"+match+") '"+regexpPattern+"' ...");
 				
 				// basta che un valore abbia match
-				if( ! (match ? RegularExpressionEngine.isMatch(valoreRisorsa, regexpPattern) : RegularExpressionEngine.isFind(valoreRisorsa, regexpPattern)) ) {
-					String tipo = match ? "match" : "find";
-					this.autorizzato = false;
-					this.errorMessage = "Resource '"+risorsa+"' with unexpected value '"+valoreRisorsa+"' (regExpr "+tipo+" failed)";
-					break;
+				boolean ok = match ? RegularExpressionEngine.isMatch(valoreRisorsa, regexpPattern) : RegularExpressionEngine.isFind(valoreRisorsa, regexpPattern);
+				if(not) {
+					if(ok) {
+						String tipo = match ? "match" : "find";
+						this.autorizzato = false;
+						this.errorMessage = "Resource '"+risorsa+"' with unexpected value '"+valoreRisorsa+"' (regExpr not "+tipo+" failed)";
+						break;
+					}
+				}
+				else {
+					if(!ok) {
+						String tipo = match ? "match" : "find";
+						this.autorizzato = false;
+						this.errorMessage = "Resource '"+risorsa+"' with unexpected value '"+valoreRisorsa+"' (regExpr "+tipo+" failed)";
+						break;
+					}
 				}
 				
 			}
@@ -168,6 +202,18 @@ public class GestoreAutorizzazioneContenutiBuiltIn {
 			
 				/** VALUE (con PLACEHOLDERS) */
 				
+				boolean not = false;
+				if(
+						expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_NOT_PREFIX.toLowerCase())
+						&&
+						expectedValue.toLowerCase().endsWith(CostantiAutorizzazione.AUTHZ_NOT_SUFFIX.toLowerCase())) {
+					not = true;
+					if(expectedValue.length()<= (CostantiAutorizzazione.AUTHZ_NOT_PREFIX.length()+CostantiAutorizzazione.AUTHZ_NOT_SUFFIX.length()) ) {
+						throw new Exception("Resource '"+risorsa+"' configuration without value in not condition");
+					}
+					expectedValue = expectedValue.substring(CostantiAutorizzazione.AUTHZ_NOT_PREFIX.length(), (expectedValue.length()-CostantiAutorizzazione.AUTHZ_NOT_SUFFIX.length()));
+				}
+								
 				try {
 					expectedValue = DynamicUtils.convertDynamicPropertyValue(risorsa, expectedValue, dynamicMap, pddContext, true);
 				}catch(Exception e) {
@@ -180,9 +226,9 @@ public class GestoreAutorizzazioneContenutiBuiltIn {
 				}
 				
 				if(expectedValue!=null) {
+					boolean ok = false;
 					if(expectedValue.contains(",")) {
 						String [] values = expectedValue.split(",");
-						boolean ok = false;
 						for (int i = 0; i < values.length; i++) {
 							String v = values[i].trim();
 							if(v!=null) {
@@ -192,14 +238,20 @@ public class GestoreAutorizzazioneContenutiBuiltIn {
 								}
 							}
 						}
-						if(!ok) {
+					}
+					else {
+						ok = expectedValue.equals(valoreRisorsa);
+					}
+					
+					if(not) {
+						if(ok) {
 							this.autorizzato = false;
-							this.errorMessage = "Resource '"+risorsa+"' with unexpected value '"+valoreRisorsa+"'";
+							this.errorMessage = "Resource '"+risorsa+"' with unauthorized value '"+valoreRisorsa+"'";
 							break;
 						}
 					}
 					else {
-						if(expectedValue.equals(valoreRisorsa)==false) {
+						if(!ok) {
 							this.autorizzato = false;
 							this.errorMessage = "Resource '"+risorsa+"' with unexpected value '"+valoreRisorsa+"'";
 							break;

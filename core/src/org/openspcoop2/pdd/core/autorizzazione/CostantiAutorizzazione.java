@@ -37,5 +37,9 @@ public class CostantiAutorizzazione {
 	public static final String AUTHZ_UNDEFINED = "${undefined}";
 	public static final String AUTHZ_REGEXP_MATCH_PREFIX = "${regExpMatch:";
 	public static final String AUTHZ_REGEXP_FIND_PREFIX = "${regExpFind:";
+	public static final String AUTHZ_REGEXP_NOT_MATCH_PREFIX = "${regExpNotMatch:";
+	public static final String AUTHZ_REGEXP_NOT_FIND_PREFIX = "${regExpNotFind:";
 	public static final String AUTHZ_REGEXP_SUFFIX = "}";
+	public static final String AUTHZ_NOT_PREFIX = "${not:";
+	public static final String AUTHZ_NOT_SUFFIX = "}";
 }

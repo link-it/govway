@@ -534,6 +534,136 @@ public class IntrospectionTest extends ConfigLoader {
 	
 	
 	
+	
+	@Test
+	public void not_success() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test-username", Utilities.username);
+		headers.put("test-not-aud", "7777.apps.invalid");
+		headers.put("test-not-iss", "testAuthEnte.invalid");
+		headers.put("test-introspection", buildJWT_roles(false,true,false, 
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazione, "not", headers,  null,
+				null,
+				mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void not_clientIdInvalid() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test-username", Utilities.username);
+		headers.put("test-not-aud", "7777.apps.invalid");
+		headers.put("test-not-iss", "testAuthEnte.invalid");
+		headers.put("test-introspection",
+				buildJWT(true,
+						true, true, true, true, true,
+						true, true, true,
+						false,true,false,
+						false,
+						false, false, false, false,
+						true, false, false, false,
+						mapExpectedTokenInfo));
+		Utilities._test(logCore, validazione, "not", headers,  null,
+				"(Token claim 'TESTclient_id' with unauthorized value) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
+				mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void not_audienceInvalid() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test-username", Utilities.username);
+		headers.put("test-not-aud", "7777.apps");
+		headers.put("test-not-iss", "testAuthEnte.invalid");
+		headers.put("test-introspection", buildJWT_roles(false,true,false, 
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazione, "not", headers,  null,
+				"(Token claim 'TESTaud' with unauthorized value) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
+				mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void not_issInvalid() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test-username", Utilities.username);
+		headers.put("test-not-aud", "7777.apps.invalid");
+		headers.put("test-not-iss", "testAuthEnte");
+		headers.put("test-introspection", buildJWT_roles(false,true,false, 
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazione, "not", headers,  null,
+				"(Token claim 'TESTiss' with unauthorized value) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
+				mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void not_roleInvalid() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test-username", Utilities.username);
+		headers.put("test-not-aud", "7777.apps.invalid");
+		headers.put("test-not-iss", "testAuthEnte.invalid");
+		headers.put("test-introspection", buildJWT_roles(true,true,false, 
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazione, "not", headers,  null,
+				"(Token claim 'TESTrole' with unexpected value (regExpr not match failed)) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
+				mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void not_usernameInvalid() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test-username", Utilities.username);
+		headers.put("test-not-aud", "7777.apps.invalid");
+		headers.put("test-not-iss", "testAuthEnte.invalid");
+		headers.put("test-introspection", 
+				buildJWT(true,
+				true, true, true, true, true,
+				true, true, true,
+				false,true,false,
+				false,
+				false, false, false, false,
+				false, false, true, false,
+				mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazione, "not", headers,  null,
+				"(Token claim 'TESTusername' with unexpected value (regExpr not find failed)) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
+				mapExpectedTokenInfo);
+	}
+	
+	
+	
 	private static String buildJWT(boolean requiredClaims,
 			List<String> mapExpectedTokenInfo) throws Exception {
 		return buildJWT(requiredClaims,

@@ -1120,25 +1120,48 @@ public class GestoreAutorizzazione {
 										expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.toLowerCase())
 										||
 										expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX.toLowerCase())
+										||
+										expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_NOT_MATCH_PREFIX.toLowerCase())
+										||
+										expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_NOT_FIND_PREFIX.toLowerCase())
 								) 
 								&&
 								expectedValue.toLowerCase().endsWith(CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.toLowerCase())) {
 							
 							/** REGULAR EXPRESSION MATCH/FIND */
 							
-							boolean match = expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.toLowerCase());
+							boolean match = expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.toLowerCase())
+									||
+									expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_NOT_MATCH_PREFIX.toLowerCase());
+							boolean not = expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_NOT_MATCH_PREFIX.toLowerCase())
+									||
+									expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_NOT_FIND_PREFIX.toLowerCase());
 							String regexpPattern = null;
 							if(match) {
-								if(expectedValue.length()<= (CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.length()+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()) ) {
+								int length = -1;
+								if(expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.toLowerCase())) {
+									length = CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.length();
+								}
+								else {
+									length = CostantiAutorizzazione.AUTHZ_REGEXP_NOT_MATCH_PREFIX.length();
+								}
+								if(expectedValue.length()<= (length+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()) ) {
 									throw new Exception(object+" '"+nomeClaimAttribute+"' without expected regexp match");
 								}
-								regexpPattern = expectedValue.substring(CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX.length(), (expectedValue.length()-CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()));
+								regexpPattern = expectedValue.substring(length, (expectedValue.length()-CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()));
 							}
 							else {
-								if(expectedValue.length()<= (CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX.length()+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()) ) {
+								int length = -1;
+								if(expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX.toLowerCase())) {
+									length = CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX.length();
+								}
+								else {
+									length = CostantiAutorizzazione.AUTHZ_REGEXP_NOT_FIND_PREFIX.length();
+								}
+								if(expectedValue.length()<= (length+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()) ) {
 									throw new Exception(object+" '"+nomeClaimAttribute+"' without expected regexp find");
 								}
-								regexpPattern = expectedValue.substring(CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX.length(), (expectedValue.length()-CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()));
+								regexpPattern = expectedValue.substring(length, (expectedValue.length()-CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX.length()));
 							}
 							regexpPattern = regexpPattern.trim();
 							log.debug("Verifico valore del "+object.toLowerCase()+" '"+nomeClaimAttribute+"' tramite espressione regolare (match:"+match+") '"+regexpPattern+"' ...");
@@ -1151,17 +1174,39 @@ public class GestoreAutorizzazione {
 									break;
 								}
 							}
-							if(!ok) {
-								autorizzato = false;
-								String tipo = match ? "match" : "find";
-								errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' with unexpected value (regExpr "+tipo+" failed)";
-								break;
+							if(not) {
+								if(ok) {
+									autorizzato = false;
+									String tipo = match ? "match" : "find";
+									errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' with unexpected value (regExpr not "+tipo+" failed)";
+									break;
+								}
+							}
+							else {
+								if(!ok) {
+									autorizzato = false;
+									String tipo = match ? "match" : "find";
+									errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' with unexpected value (regExpr "+tipo+" failed)";
+									break;
+								}
 							}
 							
 						}
 						else {
 						
 							/** VALUE (con PLACEHOLDERS) */
+							
+							boolean not = false;
+							if(
+									expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_NOT_PREFIX.toLowerCase())
+									&&
+									expectedValue.toLowerCase().endsWith(CostantiAutorizzazione.AUTHZ_NOT_SUFFIX.toLowerCase())) {
+								not = true;
+								if(expectedValue.length()<= (CostantiAutorizzazione.AUTHZ_NOT_PREFIX.length()+CostantiAutorizzazione.AUTHZ_NOT_SUFFIX.length()) ) {
+									throw new Exception(object+" '"+nomeClaimAttribute+"' without value in not condition");
+								}
+								expectedValue = expectedValue.substring(CostantiAutorizzazione.AUTHZ_NOT_PREFIX.length(), (expectedValue.length()-CostantiAutorizzazione.AUTHZ_NOT_SUFFIX.length()));
+							}
 							
 							try {
 								expectedValue = DynamicUtils.convertDynamicPropertyValue(key, expectedValue, dynamicMap, pddContext, true);
@@ -1174,9 +1219,10 @@ public class GestoreAutorizzazione {
 								break;
 							}
 							
+							boolean ok = false;
 							if(expectedValue.contains(",")) {
 								String [] values = expectedValue.split(",");
-								boolean ok = false;
+								ok = false;
 								for (int i = 0; i < values.length; i++) {
 									String v = values[i].trim();
 									if(lClaimValues.contains(v)) {
@@ -1184,20 +1230,25 @@ public class GestoreAutorizzazione {
 										break;
 									}
 								}
+							}
+							else {
+								ok = lClaimValues.contains(expectedValue);
+							}
+							
+							if(not) {
+								if(ok) {
+									autorizzato = false;
+									errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' with unauthorized value";
+									break;
+								}
+							}
+							else {
 								if(!ok) {
 									autorizzato = false;
 									errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' with unexpected value";
 									break;
 								}
 							}
-							else {
-								if(lClaimValues.contains(expectedValue)==false) {
-									autorizzato = false;
-									errorMessage = "Token "+object.toLowerCase()+" '"+nomeClaimAttribute+"' with unexpected value";
-									break;
-								}
-							}
-							
 						}
 					}
 	    		}

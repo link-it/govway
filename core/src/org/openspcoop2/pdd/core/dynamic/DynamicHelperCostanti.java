@@ -666,14 +666,15 @@ public class DynamicHelperCostanti {
 	
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SUFFIX =
 			"Ogni valore può essere fornito in una delle seguenti modalità:<br/>"+
-			"- <b>"+CostantiAutorizzazione.AUTHZ_ANY_VALUE+"</b> : indica qualsiasi valore non nullo<br/>"+
-			"- <b>"+CostantiAutorizzazione.AUTHZ_UNDEFINED+"</b> : la risorsa indicata non deve esistere o non deve essere valorizzata<br/>"+
-			"- <b>"+CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX+"EXPR"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+"</b> : la regola è soddisfatta se l'intero valore del claim ha un match rispetto all'espressione regolare EXPR indicata<br/>"+
-			"- <b>"+CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX+"EXPR"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+"</b> : simile alla precedente regola, il match dell'espressione regolare può avvenire anche su una sottostringa del valore del claim<br/>"+
-			"- <b>valore</b> : indica esattamente il valore (case sensitive) che deve possedere il claim; il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway descritte di seguito<br/>"+
-			"- <b>valore1,..,valoreN</b> : è possibile elencare differenti valori ammissibili; come per la precedente opzione il valore può contenere parti dinamiche<br/>"+
-			"<br/>Le espressioni utilizzabili come parti dinamiche, risolte a runtime dal gateway, sono:";
-		
+			"- <b>"+CostantiAutorizzazione.AUTHZ_ANY_VALUE+"</b> : indica qualsiasi valore non nullo.<br/>"+
+			"- <b>"+CostantiAutorizzazione.AUTHZ_UNDEFINED+"</b> : la risorsa indicata non deve esistere o non deve essere valorizzata.<br/>"+
+			"- <b>"+CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX+"EXPR"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+"</b> : la regola è soddisfatta se l'intero valore del claim ha un match rispetto all'espressione regolare EXPR indicata. È possibile utilizzare anche la versione "+CostantiAutorizzazione.AUTHZ_REGEXP_NOT_MATCH_PREFIX+"EXPR"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+" che consente di attuare una negazione della condizione.<br/>"+
+			"- <b>"+CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX+"EXPR"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+"</b> : simile alla precedente regola, il match dell'espressione regolare può avvenire anche su una sottostringa del valore del claim. Come per la precedente esiste anche la versione "+CostantiAutorizzazione.AUTHZ_REGEXP_NOT_FIND_PREFIX+"EXPR"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+".<br/>"+
+			"- <b>valore</b> : indica esattamente il valore (case sensitive) che deve possedere il claim; il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway descritte di seguito.<br/>"+
+			"- <b>valore1,..,valoreN</b> : è possibile elencare differenti valori ammissibili; come per la precedente opzione il valore può contenere parti dinamiche.<br/>"+
+			"- <b>"+CostantiAutorizzazione.AUTHZ_NOT_PREFIX+"valore"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+" o "+CostantiAutorizzazione.AUTHZ_NOT_PREFIX+"valore1,...,valoreN"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+"</b> : simile alle precedenti regole consente di indicare esattamente i valori (case sensitive) che <b>non</b> deve possedere il claim.<br/>"+
+			"<br/>Le espressioni utilizzabili come parti dinamiche, risolte a runtime dal gateway, sono:";	
+	
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_NO_ATTRIBUTE_AUTHORITY = LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_PREFIX + 
 			LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SUFFIX;
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_SINGLE_ATTRIBUTE_AUTHORITY = LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN_CLAIMS_PREFIX+
@@ -791,12 +792,13 @@ public class DynamicHelperCostanti {
 			"Una risorsa identifica un header, una parte dell'url o del messaggio, un claim del token o un principal etc.<br/>"+
 			"Per identificare una risorsa sono utilizzabili le espressioni dinamiche descritte nell'ultima parte di questo box informazioni.<br/><br/>"+
 			"Ogni valore può essere fornito in una delle seguenti modalità:<br/>"+
-			"- <b>"+CostantiAutorizzazione.AUTHZ_ANY_VALUE+"</b> : indica qualsiasi valore non nullo<br/>"+
-			"- <b>"+CostantiAutorizzazione.AUTHZ_UNDEFINED+"</b> : la risorsa indicata non deve esistere o non deve essere valorizzata<br/>"+
-			"- <b>"+CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX+"EXPR"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+"</b> : la regola è soddisfatta se il valore della risorsa ha un match completo rispetto all'espressione regolare EXPR indicata<br/>"+
-			"- <b>"+CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX+"EXPR"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+"</b> : simile alla precedente regola, il match dell'espressione regolare può avvenire anche su una sottostringa del valore della risorsa<br/>"+
+			"- <b>"+CostantiAutorizzazione.AUTHZ_ANY_VALUE+"</b> : indica qualsiasi valore non nullo.<br/>"+
+			"- <b>"+CostantiAutorizzazione.AUTHZ_UNDEFINED+"</b> : la risorsa indicata non deve esistere o non deve essere valorizzata.<br/>"+
+			"- <b>"+CostantiAutorizzazione.AUTHZ_REGEXP_MATCH_PREFIX+"EXPR"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+"</b> : la regola è soddisfatta se il valore della risorsa ha un match completo rispetto all'espressione regolare EXPR indicata. È possibile utilizzare anche la versione "+CostantiAutorizzazione.AUTHZ_REGEXP_NOT_MATCH_PREFIX+"EXPR"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+" che consente di attuare una negazione della condizione.<br/>"+
+			"- <b>"+CostantiAutorizzazione.AUTHZ_REGEXP_FIND_PREFIX+"EXPR"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+"</b> : simile alla precedente regola, il match dell'espressione regolare può avvenire anche su una sottostringa del valore della risorsa. Come per la precedente esiste anche la versione "+CostantiAutorizzazione.AUTHZ_REGEXP_NOT_FIND_PREFIX+"EXPR"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+".<br/>"+
 			"- <b>valore</b> : indica esattamente il valore (case sensitive) che deve possedere la risorsa; il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway descritte di seguito<br/>"+
 			"- <b>valore1,..,valoreN</b> : è possibile elencare differenti valori ammissibili; come per la precedente opzione il valore può contenere parti dinamiche<br/>"+
+			"- <b>"+CostantiAutorizzazione.AUTHZ_NOT_PREFIX+"valore"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+" o "+CostantiAutorizzazione.AUTHZ_NOT_PREFIX+"valore1,...,valoreN"+CostantiAutorizzazione.AUTHZ_REGEXP_SUFFIX+"</b> : simile alle precedenti regole consente di indicare esattamente i valori (case sensitive) che <b>non</b> deve possedere la risorsa.<br/>"+
 			"<br/><b>Identificazione delle risorse tramite espressioni dinamiche</b><br/><br/>Le espressioni utilizzabili, risolte a runtime dal gateway, sono:";
 	
 	public final static String LABEL_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI_HEADER = "<b>${"+org.openspcoop2.pdd.core.dynamic.Costanti.MAP_HEADER+":NAME}</b>: valore presente nell'header http che possiede il nome 'NAME'";

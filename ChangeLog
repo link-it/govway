@@ -1,6 +1,14 @@
 2022-07-11  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1398
+	Sia nell'autorizzazione per Token Claims che nell'autorizzazione per contenuti è adesso possibile definire anche delle condizioni 'not' 
+	in cui si indicano i valori che non devono essere posseduti da un claim o da una risorsa.
+	Inoltre la negazione è attuabile anche sulle verifiche effettuate tramite espressioni regolari.
+
+2022-07-11  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
 	Aggiunta funzionalità OP-1396
 	Aggiunto supporto per il parametro 'resource' richiesto nella v4.1 della PDND per la negoziazione del token.
 
