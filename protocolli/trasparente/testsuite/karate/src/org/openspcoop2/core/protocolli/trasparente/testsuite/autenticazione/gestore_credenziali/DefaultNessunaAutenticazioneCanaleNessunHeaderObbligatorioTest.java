@@ -206,6 +206,21 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				"Ottenute credenziali di accesso ( SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali' ) fornite da WebServerErogazioniDefault");
 	}
 	@Test
+	public void erogazione_autenticazioneHttps_certs_non_inserito_truststore() throws Exception {
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("X-Erogazione-SSL-Cert",Utilities.getCertificate2(false));
+		Utilities._test(TipoServizio.EROGAZIONE,
+				"SoggettoInternoTest",
+				"https",
+				headers,
+				null,
+				null,
+				null,
+				"mTLS realm=\"GovWay\", error=\"invalid_request\", error_description=\"The request is missing a required client certificate\"",
+				Utilities.CREDENZIALI_PROXY_FORNITE_NON_CONFORMI,
+				"Certificato presente nell'header 'X-Erogazione-SSL-Cert' non è verificabile rispetto alle CA conosciute");
+	}
+	@Test
 	public void erogazione_autenticazioneHttps_errate() throws Exception {
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put("X-Erogazione-SSL-Subject", "l=Pisa, st=Italy, ou=Test, o=Test, c=IT, cn=ExampleClient1HSM, Altro=errato");
@@ -308,6 +323,23 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				null,
 				"Ottenute credenziali di accesso ( SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali' ) fornite da WebServerFruizioniDefault");
 	}
+	
+	@Test
+	public void fruizione_autenticazioneHttps_certs2_non_in_truststore_ma_truststore_non_attivato() throws Exception {
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("X-Fruizione-SSL-Cert", Utilities.getCertificate2(true));
+		Utilities._test(TipoServizio.FRUIZIONE,
+				"SoggettoInternoTestFruitore",
+				"https",
+				headers,
+				"SoggettoInternoTestFruitore",
+				"ApplicativoTestGestoreCredenzialiCertificato2",
+				"@@GatewayCredenziali@@WebServerFruizioniDefault@@SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali2'\nSSL-Issuer 'C=IT, O=test, CN=example.gestoreCredenziali2'\nSSL-ClientCert-SerialNumber '464440956505565963808339808380319088904980969620'",
+				null,
+				null,
+				"Ottenute credenziali di accesso ( SSL-Subject 'C=IT, O=test, CN=example.gestoreCredenziali2' ) fornite da WebServerFruizioniDefault");
+	}
+	
 	@Test
 	public void fruizione_autenticazioneHttps_errate() throws Exception {
 		Map<String, String> headers = new HashMap<String, String>();

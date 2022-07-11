@@ -1,5 +1,10 @@
 2022-07-11  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Il gestore delle credenziali è adesso configurabile per verificare nuovamente i certificati ricevuti dal FrontEnd tramite un truststore.
+
+2022-07-11  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, GovWayConsole]
 	Aggiunta funzionalità OP-1398
 	Sia nell'autorizzazione per Token Claims che nell'autorizzazione per contenuti è adesso possibile definire anche delle condizioni 'not' 

@@ -36,8 +36,10 @@ import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiConfigurationExcep
 import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateDecodeConfig;
 import org.openspcoop2.utils.certificate.CertificateUtils;
+import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.transport.TransportUtils;
 
@@ -232,6 +234,7 @@ public class GestoreCredenzialiEngine {
 		String headerNameSSLSubject = configurazione.getHeaderSslSubject();
 		String headerNameSSLIssuer = configurazione.getHeaderSslIssuer();
 		String headerNameSSLCertificate = configurazione.getHeaderSslCertificate();
+		KeyStore trustStoreCertificatiX509 = configurazione.getHeaderSslCertificateTrustStore();
 		boolean sslCertificate_urlDecode = false;
 		boolean sslCertificate_base64Decode = false;
 		boolean sslCertificate_enrich_BEGIN_END = false;
@@ -461,8 +464,10 @@ public class GestoreCredenzialiEngine {
 					}
 				}
 
+				Certificate cer = null;
 				try{
-					c.setCertificate(CertificateUtils.readCertificate(config, certificate));
+					cer = CertificateUtils.readCertificate(config, certificate);					
+					c.setCertificate(cer);
 					
 					String subject = c.getCertificate().getCertificate().getSubject().toString();
 					String issuer = c.getCertificate().getCertificate().getIssuer().toString();
@@ -470,9 +475,16 @@ public class GestoreCredenzialiEngine {
 					c.setIssuer(issuer);
 					
 				}catch(Exception e){
-					throw new GestoreCredenzialiException("Certificate fornito nell'header del trasporto "+headerNameSSLCertificate+" non valido: "+e.getMessage(),e);
+					throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
+							buildWWWAuthSSL(),
+							"Certificate fornito nell'header del trasporto "+headerNameSSLCertificate+" non valido: "+e.getMessage(), e);
 				}
 				
+				if(cer!=null && trustStoreCertificatiX509!=null && cer.getCertificate().isVerified(trustStoreCertificatiX509, true)==false) {
+					throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
+							buildWWWAuthSSL(),
+							"Certificato presente nell'header '"+headerNameSSLCertificate+"' non è verificabile rispetto alle CA conosciute");
+				}
 			}
 		}
 		

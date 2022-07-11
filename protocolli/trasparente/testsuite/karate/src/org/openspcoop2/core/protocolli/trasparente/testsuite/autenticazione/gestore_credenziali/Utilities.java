@@ -283,11 +283,17 @@ public class Utilities extends ConfigLoader {
 	}
 	
 	public static String getCertificate(boolean der) throws Exception {
+		return getCertificate(der, "applicativoCertExample.pem");
+	}
+	public static String getCertificate2(boolean der) throws Exception {
+		return getCertificate(der, "applicativoCertExample2.pem");
+	}
+	public static String getCertificate(boolean der, String fileName) throws Exception {
 		
 		// Certificato generato con il comando: 'openssl req -x509 -newkey rsa:4096 -keyout applicativoCertExample.key -out applicativoCertExample.pem -sha256 -days 36500 -subj '/CN=example.gestoreCredenziali/O=test/C=IT/'
 		// password: 123456
 		
-		String path = "src/org/openspcoop2/core/protocolli/trasparente/testsuite/autenticazione/gestore_credenziali/applicativoCertExample.pem";
+		String path = "src/org/openspcoop2/core/protocolli/trasparente/testsuite/autenticazione/gestore_credenziali/"+fileName;
 		byte [] certBytes = FileSystemUtilities.readBytesFromFile(path);
 		
 		if(der) {

@@ -9,12 +9,13 @@ L'autorizzazione per token claims permette di effettuare dei semplici controlli 
 
 La configurazione viene effettuata inserendo nel campo di testo un claim da verificare per ogni riga, facendo seguire dopo l'uguale un valore fornito in una delle seguenti modalità:
 
-- ${anyValue} : indica qualsiasi valore non nullo
-- ${undefined} : la risorsa indicata non deve esistere o non deve essere valorizzata
-- ${regExpMatch:EXPR} : la regola è soddisfatta se l'intero valore del claim ha un match rispetto all'espressione regolare EXPR indicata
-- ${regExpFind:EXPR} : simile alla precedente regola, il match dell'espressione regolare può avvenire anche su una sottostringa del valore del claim
-- valore : indica esattamente il valore (case sensitive) che deve possedere il claim; il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway descritte di seguito
-- valore1,..,valoreN : è possibile elencare differenti valori ammissibili; come per la precedente opzione il valore può contenere parti dinamiche
+- ${anyValue} : indica qualsiasi valore non nullo.
+- ${undefined} : la risorsa indicata non deve esistere o non deve essere valorizzata.
+- ${regExpMatch:EXPR} : la regola è soddisfatta se l'intero valore del claim ha un match rispetto all'espressione regolare EXPR indicata. È possibile utilizzare anche la versione ${regExpNotMatch:EXPR} che consente di attuare una negazione della condizione.
+- ${regExpFind:EXPR} : simile alla precedente regola, il match dell'espressione regolare può avvenire anche su una sottostringa del valore del claim. Come per la precedente esiste anche la versione ${regExpNotFind:EXPR}.
+- valore : indica esattamente il valore (case sensitive) che deve possedere il claim; il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway descritte di seguito.
+- valore1,..,valoreN : è possibile elencare differenti valori ammissibili; come per la precedente opzione il valore può contenere parti dinamiche.
+- ${not:valore} o ${not:valore1,...,valoreN} : simile alle precedenti regole consente però di indicare esattamente i valori (case sensitive) che non deve possedere il claim.
 
 Le espressioni utilizzabili come parti dinamiche, risolte a runtime dal gateway, sono:
 
@@ -38,10 +39,14 @@ Le espressioni utilizzabili come parti dinamiche, risolte a runtime dal gateway,
 Di seguito alcuni esempi:
 
 - client_id=3 : viene verificato che il claim 'client_id' possieda il valore 3
+- client_id=${not:3} : viene verificato che il claim 'client_id' non possieda il valore 3
 - client_id=3,5,6 : viene verificato che il claim 'client_id' possieda il valore 3 o 5 o 6
+- client_id=${not:3,5,6} : viene verificato che il claim 'client_id' non possieda nessuno dei valori indicati: 3, 5 e 6
 - client_id=${anyValue} : viene verificato che il claim 'client_id' possieda un valore (not null e not empty)
 - client_id=${regExpMatch:[0-9]} : viene verificato che il claim 'client_id' possieda esattamente una cifra decimale attraverso la verifica di un match con l'espressione regolare '[0-9]'
+- client_id=${regExpNotMatch:[0-9]} : viene verificato che il claim 'client_id' non sia composto da una cifra decimale (l'espressione regolare '[0-9]' non deve essere soddisfatta)
 - client_id=${regExpFind:[0-9]} : viene verificato che il claim 'client_id' contenga una cifra decimale attraverso l'espressione regolare '[0-9]'
+- client_id=${regExpNotFind:[0-9]} : viene verificato che il claim 'client_id' non contenga una cifra decimale (l'espressione regolare '[0-9]' non deve essere soddisfatta)
 - client_id=${header:X-Prova} : viene verificato che il claim 'client_id' possieda lo stesso valore presente nell'header http 'X-Prova' presente nella richiesta
 - client_id=cl-${header:X-Prova} : viene verificato che il claim 'client_id' possieda il valore presente nell'header http 'X-Prova' arricchito del prefisso 'cl-'
 - client_id=${query:prova} : viene verificato che il claim 'client_id' possieda lo stesso valore presente nel parametro 'prova' della url di invocazione

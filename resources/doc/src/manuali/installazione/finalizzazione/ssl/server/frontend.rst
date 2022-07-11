@@ -53,6 +53,15 @@ Per abilitare il processamento degli header inoltrati dal frontend è necessario
                                       
    inserendo al posto di #CLIENT-CERT_HEADER-NAME# il nome dell'header http utilizzato per propagare il certificato x.509 (es. 'SSL_CLIENT_CERT'). Il certificato inserito nell'header http dal frontend può essere stato codificato in base64 e/o tramite url encoding. È possibile effettuare la decodifica abilitando la proprietà 'org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.base64_decode' e/o la proprietà org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.url_decode.
 
+   Con questa modalità è possibile definire un truststore per verificare nuovamente i certificati ricevuti dal FrontEnd tramite la seguente configurazione:
+
+   ::
+
+      # TrustStore per verificare i certificati ricevuti
+      header.ssl.certificate.truststore.path=PATH_ASSOLUTO_FILE_SYSTEM
+      # Password del TrustStore
+      header.ssl.certificate.truststore.password=changeme
+
 #. Se il frontend inserisce in un header http il principal dell'identità relativa al chiamante, deve essere indicato il nome di tale header tramite la seguente configurazione:
 
    ::

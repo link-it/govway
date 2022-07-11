@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.pdd.core.credenziali.engine;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -28,6 +29,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiException;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.utils.certificate.KeyStore;
 
 /**     
  * GestoreCredenzialiConfigurazione
@@ -110,7 +112,8 @@ public class GestoreCredenzialiConfigurazione {
 	private boolean headerSslCertificateReplaceCharacters;
 	private String headerSslCertificateReplaceCharacters_source;
 	private String headerSslCertificateReplaceCharacters_dest;
-	
+	private KeyStore headerSslCertificateTrustStore;
+
 	private String headerPrincipal;
 	
 	
@@ -271,6 +274,26 @@ public class GestoreCredenzialiConfigurazione {
 					else {
 						this.headerSslCertificateReplaceCharacters_dest = null;
 					}
+				}
+			}
+			
+			String t = getProperty(p, "header.ssl.certificate.truststore.path", protocollo, idSoggetto);
+			if(t!=null && StringUtils.isNotEmpty(t)) {
+				File fTrustStore = new File(t);
+				if(!fTrustStore.exists()) {
+					throw new GestoreCredenzialiException("Il truststore dei certificati ssl indicato ["+fTrustStore.getAbsolutePath()+"] non esiste");
+				}
+				if(!fTrustStore.canRead()) {
+					throw new GestoreCredenzialiException("Il truststore dei certificati ssl indicato ["+fTrustStore.getAbsolutePath()+"] non è accessibile in lettura");
+				}
+				String password = getProperty(p, "header.ssl.certificate.truststore.password", protocollo, idSoggetto);
+				if(password==null) {
+					throw new GestoreCredenzialiException("Non è stata indicata una password per il truststore dei certificati ssl indicato ["+fTrustStore.getAbsolutePath()+"]");
+				}
+				try {
+					this.headerSslCertificateTrustStore = new KeyStore(fTrustStore, password);
+				}catch(Throwable e) {
+					throw new GestoreCredenzialiException("Errore durante l'accesso al truststore dei certificati ssl indicato ["+fTrustStore.getAbsolutePath()+"]: "+e.getMessage(),e);
 				}
 			}
 		}
@@ -461,6 +484,9 @@ public class GestoreCredenzialiConfigurazione {
 	}
 	public String getHeaderSslCertificateReplaceCharacters_dest() {
 		return this.headerSslCertificateReplaceCharacters_dest;
+	}
+	public KeyStore getHeaderSslCertificateTrustStore() {
+		return this.headerSslCertificateTrustStore;
 	}
 	
 	public String getHeaderPrincipal() {
