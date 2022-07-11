@@ -27,12 +27,14 @@ import javax.net.ssl.TrustManagerFactory;
 
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
+import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 
 /**
@@ -337,7 +339,8 @@ public class ConnettoreHTTPSUtils {
 			String httpsKeyAlias, String httpsTrustStoreCRLs,
 			String stato,
 			ControlStationCore core,ConsoleHelper consoleHelper, int pageSize, boolean addUrlParameter,
-			String prefix, boolean forceHttpsClient) {
+			String prefix, boolean forceHttpsClient,
+			boolean modi, boolean fruizione, boolean forceNoSec) {
 		
 		// default
 		if(httpsalgoritmo==null || "".equals(httpsalgoritmo)){
@@ -357,6 +360,11 @@ public class ConnettoreHTTPSUtils {
 			if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setRequired(true);	
+				
+				DataElementInfo dInfoPatternFileName = new DataElementInfo(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_URL);
+				dInfoPatternFileName.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+				dInfoPatternFileName.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI(modi, fruizione, forceNoSec));
+				de.setInfo(dInfoPatternFileName);
 			}else{
 				de.setType(DataElementType.TEXT);
 			}

@@ -62,6 +62,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.core.autenticazione.ApiKeyUtilities;
 import org.openspcoop2.pdd.core.connettori.ConnettoreFILE;
 import org.openspcoop2.pdd.core.connettori.ConnettoreFile_outputConfig;
+import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
@@ -2163,6 +2164,29 @@ public class ConnettoriHelper extends ConsoleHelper {
 			tipologiaConnettori = TipologiaConnettori.TIPOLOGIA_CONNETTORI_ALL;
 		}
 
+		boolean modi = this.isProfiloModIPA(protocollo);
+		
+		boolean fruizione = false;
+		boolean forceNoSec = false;
+		if(servletChiamante!=null) {
+			if (servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE)) {
+				fruizione = false;
+				forceNoSec = true;
+			}
+			else if (servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE)) {
+				fruizione = true;
+			}
+			else if (servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT) ||
+					servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA) ||
+					servletChiamante.equals(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE)) {
+				fruizione = false;
+			}
+			else if(servletChiamante.equals(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT)) {
+				fruizione = false;
+				forceNoSec = true;
+			}
+		}
+		
 		// override tipologiaconnettori :
 		// se standard allora la tipologia connettori e' sempre http
 		// indipendentemente
@@ -2358,6 +2382,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 					if ( !this.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)) {
 						de.setType(DataElementType.TEXT_AREA);
 						de.setRequired(true);
+						
+						DataElementInfo dInfoPatternFileName = new DataElementInfo(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
+						dInfoPatternFileName.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+						dInfoPatternFileName.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI(modi, fruizione, forceNoSec));
+						de.setInfo(dInfoPatternFileName);
 					} else {
 						de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 					}
@@ -2493,7 +2522,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 							httpsKeyAlias, httpsTrustStoreCRLs,
 							stato, 
 							this.core, this, this.getSize(), false, prefix,
-							forceHttpsClient);
+							forceHttpsClient,
+							modi, fruizione, forceNoSec);
 				}
 				
 				// Proxy
@@ -2622,6 +2652,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 					if (!this.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)) {
 						de.setType(DataElementType.TEXT_AREA);
 						de.setRequired(true);
+						
+						DataElementInfo dInfoPatternFileName = new DataElementInfo(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
+						dInfoPatternFileName.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+						dInfoPatternFileName.setListBody(DynamicHelperCostanti.getLABEL_CONFIGURAZIONE_INFO_CONNETTORE_VALORI(modi, fruizione, forceNoSec));
+						de.setInfo(dInfoPatternFileName);
 					} else {
 						de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 					}
@@ -2962,7 +2997,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 							httpsKeyAlias, httpsTrustStoreCRLs,
 							stato,
 							this.core, this, this.getSize(), false, prefix,
-							forceHttpsClient);
+							forceHttpsClient,
+							modi, fruizione, forceNoSec);
 				}
 	
 				// Jms
@@ -2974,31 +3010,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				// FileSystem
 				if (endpointtype.equals(TipiConnettore.FILE.toString())) {
-					boolean fruizione = false;
-					boolean forceNoSec = false;
-					if(servletChiamante!=null) {
-						if (servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE)) {
-							fruizione = false;
-							forceNoSec = true;
-						}
-						else if (servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE)) {
-							fruizione = true;
-						}
-						else if (servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT) ||
-								servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA) ||
-								servletChiamante.equals(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE)) {
-							fruizione = false;
-						}
-						else if(servletChiamante.equals(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT)) {
-							fruizione = false;
-							forceNoSec = true;
-						}
-					}
 					ConnettoreFileUtils.addFileDati(dati, this.getSize(),this,
 							requestOutputFileName, requestOutputFileName_permissions, requestOutputFileNameHeaders, requestOutputFileNameHeaders_permissions,
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-							this.isProfiloModIPA(protocollo), fruizione, forceNoSec
+							modi, fruizione, forceNoSec
 							);
 				}
 				

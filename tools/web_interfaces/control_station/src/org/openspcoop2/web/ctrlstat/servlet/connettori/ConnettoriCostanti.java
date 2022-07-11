@@ -301,7 +301,7 @@ public class ConnettoriCostanti {
 	public final static String LABEL_PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY = "Connection Factory";
 	public final static String LABEL_PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS = "Send As";
 	
-	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_URL = "Endpoint";
+	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_URL = LABEL_PARAMETRO_CONNETTORE_URL;
 	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_CLIENT_AUTH = "Client-Auth";
 	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE = "Tipologia";
 	public final static String LABEL_PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY = CostantiLabel.LABEL_CONNETTORE_HTTPS_HOST_VERIFY;
