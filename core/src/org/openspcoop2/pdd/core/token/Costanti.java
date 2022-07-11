@@ -242,6 +242,7 @@ public class Costanti {
 	public final static String POLICY_RETRIEVE_TOKEN_SCOPES = "policy.retrieveToken.scope";
 	public final static String POLICY_RETRIEVE_TOKEN_AUDIENCE = "policy.retrieveToken.audience";
 	public final static String POLICY_RETRIEVE_TOKEN_FORM_CLIENT_ID = "policy.retrieveToken.formClientId";
+	public final static String POLICY_RETRIEVE_TOKEN_FORM_RESOURCE = "policy.retrieveToken.formResource";
 	public final static String POLICY_RETRIEVE_TOKEN_FORM_PARAMETERS = "policy.retrieveToken.formParameters";
 	public final static String POLICY_RETRIEVE_TOKEN_SAVE_ERROR_IN_CACHE = "policy.retrieveToken.saveErrorInCache";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_ID= "policy.retrieveToken.jwt.clientId";
@@ -296,6 +297,7 @@ public class Costanti {
 	public final static String PDND_SESSION_INFO = "sessionInfo";
 	
 	public final static String PDND_OAUTH2_RFC_6749_REQUEST_CLIENT_ID = "client_id";
+	public final static String PDND_OAUTH2_RFC_6749_REQUEST_RESOURCE = "resource";
 	
 	
 	// STANDARD
@@ -321,6 +323,7 @@ public class Costanti {
 	public final static String ID_RETRIEVE_SCOPE = "scope";
 	public final static String ID_RETRIEVE_AUDIENCE = "audience";
 	public final static String ID_RETRIEVE_FORM_CLIENT_ID = "formClientId";
+	public final static String ID_RETRIEVE_FORM_RESOURCE = "formResource";
 	public final static String ID_RETRIEVE_FORM_PARAMETERS = "formParameters";
 	
 	

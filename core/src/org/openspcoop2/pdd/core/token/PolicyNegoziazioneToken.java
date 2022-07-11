@@ -162,6 +162,9 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 	public String getFormClientId() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORM_CLIENT_ID);
 	}
+	public String getFormResource() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORM_RESOURCE);
+	}
 	public String getFormParameters() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORM_PARAMETERS);
 	}

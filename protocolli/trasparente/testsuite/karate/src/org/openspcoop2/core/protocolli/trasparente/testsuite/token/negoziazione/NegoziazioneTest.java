@@ -1016,6 +1016,140 @@ public class NegoziazioneTest extends ConfigLoader {
 	}
 	
 	
+	
+	
+	
+	
+	@Test
+	public void signedJWT_PDNDv41() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+	
+		// Test HDR
+		
+		Map<String, String> headers_0 = new HashMap<String, String>();
+		headers_0.put("test-azione", "signedJWT-PDNDv41");
+		
+		headers_0.put("test-kid", "PDND");
+		
+		headers_0.put("test-issuer", "DYNAMIC");
+		headers_0.put("test-subject", "DYNAMIC");
+		headers_0.put("test-clientId", "DYNAMIC");
+		headers_0.put("test-aud", "DYNAMIC");
+		headers_0.put("test-jti", "DYNAMIC");
+		headers_0.put("test-purposeId", "DYNAMIC");
+		headers_0.put("test-sessionInfo", "DYNAMIC");
+		headers_0.put("test-claim", "DYNAMIC");
+		
+		headers_0.put("test-scope", "DYNAMIC");
+		headers_0.put("test-formClientId", "DYNAMIC");
+		headers_0.put("test-formResource", "DYNAMIC");
+		headers_0.put("test-p2", "testNegoziazioneP2");
+				
+		headers_0.put("test-suffix", "DYNAMIC");
+		headers_0.put("test-decode-position", "0");
+		
+		HttpResponse response = _test(logCore, api_negoziazione, "signedJWT-PDNDv41", headers_0,
+				false,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_x509\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT-PDNDv41\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWT-PDNDv41\"");
+		String idRichiestaOriginale_0 = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		
+		// serviva prima di implementare i parametri dinamici all'interno della chiave della cache.
+		//org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		
+		// Test PAYLOAD
+		
+		Map<String, String> headers_1 = new HashMap<String, String>();
+		headers_1.put("test-azione", "signedJWT-PDNDv41");
+		
+		headers_1.put("test-kid", "PDND");
+		
+		headers_1.put("test-issuer", "DYNAMIC");
+		headers_1.put("test-subject", "DYNAMIC");
+		headers_1.put("test-clientId", "DYNAMIC");
+		headers_1.put("test-aud", "DYNAMIC");
+		headers_1.put("test-jti", "DYNAMIC");
+		headers_1.put("test-purposeId", "DYNAMIC");
+		headers_1.put("test-sessionInfo", "DYNAMIC");
+		headers_1.put("test-claim", "DYNAMIC");
+		
+		headers_1.put("test-scope", "DYNAMIC");
+		headers_1.put("test-formClientId", "DYNAMIC");
+		headers_1.put("test-formResource", "DYNAMIC");
+		headers_1.put("test-p2", "testNegoziazioneP2");
+		
+		headers_1.put("test-suffix", "DYNAMIC");
+		headers_1.put("test-decode-position", "1");
+		
+		response = _test(logCore, api_negoziazione, "signedJWT-PDNDv41", headers_1,
+				false,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_x509\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT-PDNDv41\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWT-PDNDv41\"");
+		String idRichiestaOriginale_1 = response.getHeaderFirstValue("GovWay-Transaction-ID");
+		
+		
+		
+		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
+		
+		headers_0.put("test-azione", "signedJWT-PDNDv41ERRATA");
+		_test(logCore, api_negoziazione, "signedJWT-PDNDv41", headers_0,
+				true,
+				"Connessione terminata con errore (codice trasporto: 404)%UndefinedOperation");
+		headers_0.put("test-azione", "signedJWT-PDNDv41");
+		
+		headers_1.put("test-azione", "signedJWT-PDNDv41ERRATA");
+		_test(logCore, api_negoziazione, "signedJWT-PDNDv41", headers_1,
+				true,
+				"Connessione terminata con errore (codice trasporto: 404)%UndefinedOperation");
+		headers_1.put("test-azione", "signedJWT-PDNDv41");
+		
+		
+		
+		// effettuo un altro test verificando che viene utilizzato il token salvato in cache
+		
+		_test(logCore, api_negoziazione, "signedJWT-PDNDv41", headers_0,
+				false,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_x509\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT-PDNDv41\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWT-PDNDv41\"",
+				"\"transactionId\":\""+idRichiestaOriginale_0+"\""
+				);
+		
+		_test(logCore, api_negoziazione, "signedJWT-PDNDv41", headers_1,
+				false,
+				"\"type\":\"retrieved_token\"",
+				"\"grantType\":\"rfc7523_x509\"",
+				"\"jwtClientAssertion\":{\"token\":\"",
+				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT-PDNDv41\"",
+				"\"accessToken\":\"",
+				"\"expiresIn\":",
+				"\"policy\":\"TestNegoziazioneSignedJWT-PDNDv41\"",
+				"\"transactionId\":\""+idRichiestaOriginale_1+"\""
+				);
+		
+	}
+	
+	
+	
+	
+	
+	
+	
 	protected static HttpResponse _test(Logger logCore, String api, String operazione,
 			Map<String, String> headers, 
 			boolean error, String diagnostico,

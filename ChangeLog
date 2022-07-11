@@ -1,3 +1,9 @@
+2022-07-11  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-1396
+	Aggiunto supporto per il parametro 'resource' richiesto nella v4.1 della PDND per la negoziazione del token.
+
 2022-07-08  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayMonitor]

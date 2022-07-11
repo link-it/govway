@@ -3338,6 +3338,11 @@ public class GestoreToken {
 			if(formClientId!=null && !"".equals(formClientId) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(formClientId)) {
 				TransportUtils.setParameter(pContent,Costanti.PDND_OAUTH2_RFC_6749_REQUEST_CLIENT_ID, formClientId);
 			}
+			
+			String formResource = dynamicParameters.getFormResource();
+			if(formResource!=null && !"".equals(formResource) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(formResource)) {
+				TransportUtils.setParameter(pContent,Costanti.PDND_OAUTH2_RFC_6749_REQUEST_RESOURCE, formResource);
+			}
 		}
 		
 		String parameters = dynamicParameters.getParameters();

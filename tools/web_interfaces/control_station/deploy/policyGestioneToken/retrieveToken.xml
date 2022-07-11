@@ -392,6 +392,15 @@
 				<property name="policy.retrieveToken.formClientId" />
 			</item>
 
+			<item type="text" name="formResource" label="Resource" required="false">
+				<conditions>
+					<condition and="false">
+						<selected name="jwtPDND"/>
+					</condition>	
+				</conditions>
+				<property name="policy.retrieveToken.formResource" />
+			</item>
+
 			<item type="textarea" name="formParameters" label="Parametri" required="false"
 				note="Indicare per riga gli ulteriori parametri (nome=valore)">
 				<property name="policy.retrieveToken.formParameters" />

@@ -60,6 +60,7 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	private String scope;
 	private String audience;
 	private String formClientId;
+	private String formResource;
 	private String parameters;
 	
 	
@@ -80,6 +81,7 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	private static boolean scope_cacheKey;
 	private static boolean audience_cacheKey;
 	private static boolean formClientId_cacheKey;
+	private static boolean formResource_cacheKey;
 	private static boolean parameters_cacheKey; 
 	
 	private static Boolean init_cacheKey = null;
@@ -102,6 +104,7 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			scope_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_SCOPE);
 			audience_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_AUDIENCE);
 			formClientId_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_CLIENT_ID);
+			formResource_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_RESOURCE);
 			parameters_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_PARAMETERS); 
 			
 			init_cacheKey = true;
@@ -221,6 +224,11 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			}
 			if(this.formClientId!=null && !"".equals(this.formClientId) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(this.formClientId)) {
 				this.formClientId = DynamicUtils.convertDynamicPropertyValue("formClientId.gwt", this.formClientId, dynamicMap, pddContext, true);	
+			}
+			
+			this.formResource = policyNegoziazioneToken.getFormResource();
+			if(this.formResource!=null && !"".equals(this.formResource) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(this.formResource)) {
+				this.formResource = DynamicUtils.convertDynamicPropertyValue("formResource.gwt", this.formResource, dynamicMap, pddContext, true);	
 			}
 		}
 		
@@ -351,6 +359,12 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			}
 			sb.append("formClientId:").append(this.formClientId);
 		}
+		if(StringUtils.isNotEmpty(this.formResource) && (!cacheKey || formResource_cacheKey)) {
+			if(sb.length()>0) {
+				sb.append(separator);
+			}
+			sb.append("formResource:").append(this.formResource);
+		}
 		if(StringUtils.isNotEmpty(this.parameters) && (!cacheKey || parameters_cacheKey)) {
 			if(sb.length()>0) {
 				sb.append(separator);
@@ -427,6 +441,10 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 
 	public String getFormClientId() {
 		return this.formClientId;
+	}
+	
+	public String getFormResource() {
+		return this.formResource;
 	}
 
 	public String getParameters() {

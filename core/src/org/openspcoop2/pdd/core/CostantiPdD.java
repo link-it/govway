@@ -250,6 +250,7 @@ public class CostantiPdD {
     public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_SCOPE = "form.scope";
     public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_AUDIENCE = "form.audience";
     public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_CLIENT_ID = "form.clientId";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_RESOURCE = "form.resource";
     public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_PARAMETERS = "form.parameters";
     
     /** Attesa attiva di default effettuata per ottenere un lock, in millisecondi */
