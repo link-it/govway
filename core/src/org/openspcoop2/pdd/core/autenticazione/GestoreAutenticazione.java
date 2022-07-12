@@ -25,7 +25,9 @@ package org.openspcoop2.pdd.core.autenticazione;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
@@ -108,8 +110,60 @@ public class GestoreAutenticazione {
 	//private static final Boolean semaphoreAutenticazionePD = true;
 	//private static final Boolean semaphoreAutenticazionePA = true;
 	//private static final Boolean semaphoreCredenzialiMittente = true;
-	private static final org.openspcoop2.utils.Semaphore lockAutenticazionePD = new org.openspcoop2.utils.Semaphore("GestoreAutenticazioneFruizioni");
-	private static final org.openspcoop2.utils.Semaphore lockAutenticazionePA = new org.openspcoop2.utils.Semaphore("GestoreAutenticazioneErogazioni");
+	
+	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockAutenticazionePD = new HashMap<String, org.openspcoop2.utils.Semaphore>(); 
+	private static synchronized org.openspcoop2.utils.Semaphore initLockAutenticazionePD(String tipoAutenticazione){
+		org.openspcoop2.utils.Semaphore s = _lockAutenticazionePD.get(tipoAutenticazione);
+		if(s==null) {
+			Integer permits = OpenSPCoop2Properties.getInstance().getAutenticazione_lock_permits(tipoAutenticazione);
+			if(permits==null) {
+				permits = OpenSPCoop2Properties.getInstance().getAutenticazione_lock_permits();
+			}
+			if(permits!=null && permits.intValue()>1) {
+				s = new org.openspcoop2.utils.Semaphore("GestoreAutenticazioneFruizioni_"+tipoAutenticazione, permits);
+			}
+			else {
+				s = new org.openspcoop2.utils.Semaphore("GestoreAutenticazioneFruizioni_"+tipoAutenticazione);
+			}
+			_lockAutenticazionePD.put(tipoAutenticazione, s);
+		}
+		return s;
+	}
+	private static org.openspcoop2.utils.Semaphore getLockAutenticazionePD(String tipoAutenticazione){
+		org.openspcoop2.utils.Semaphore s = _lockAutenticazionePD.get(tipoAutenticazione);
+		if(s==null) {
+			s = initLockAutenticazionePD(tipoAutenticazione);
+		}
+		return s;
+	}
+	
+	
+	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockAutenticazionePA = new HashMap<String, org.openspcoop2.utils.Semaphore>(); 
+	private static synchronized org.openspcoop2.utils.Semaphore initLockAutenticazionePA(String tipoAutenticazione){
+		org.openspcoop2.utils.Semaphore s = _lockAutenticazionePA.get(tipoAutenticazione);
+		if(s==null) {
+			Integer permits = OpenSPCoop2Properties.getInstance().getAutenticazione_lock_permits(tipoAutenticazione);
+			if(permits==null) {
+				permits = OpenSPCoop2Properties.getInstance().getAutenticazione_lock_permits();
+			}
+			if(permits!=null && permits.intValue()>1) {
+				s = new org.openspcoop2.utils.Semaphore("GestoreAutenticazioneErogazioni_"+tipoAutenticazione, permits);
+			}
+			else {
+				s = new org.openspcoop2.utils.Semaphore("GestoreAutenticazioneErogazioni_"+tipoAutenticazione);
+			}
+			_lockAutenticazionePA.put(tipoAutenticazione, s);
+		}
+		return s;
+	}
+	private static org.openspcoop2.utils.Semaphore getLockAutenticazionePA(String tipoAutenticazione){
+		org.openspcoop2.utils.Semaphore s = _lockAutenticazionePA.get(tipoAutenticazione);
+		if(s==null) {
+			s = initLockAutenticazionePA(tipoAutenticazione);
+		}
+		return s;
+	}
+	
 	private static final org.openspcoop2.utils.Semaphore lockCredenzialiMittente = new org.openspcoop2.utils.Semaphore("GestoreCredenziali");
 	private static final org.openspcoop2.utils.Semaphore lockCredenzialiMittenteCreazione = new org.openspcoop2.utils.Semaphore("GestoreCredenziali-Creazione");
 	private static final org.openspcoop2.utils.Semaphore lockCredenzialiMittenteAggiornamento = new org.openspcoop2.utils.Semaphore("GestoreCredenziali-Aggiornamento");
@@ -539,7 +593,8 @@ public class GestoreAutenticazione {
 	    		
 				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 				//synchronized (GestoreAutenticazione.semaphoreAutenticazionePD) {
-				GestoreAutenticazione.lockAutenticazionePD.acquire("verificaAutenticazionePortaDelegata", idTransazione);
+				org.openspcoop2.utils.Semaphore lockAutenticazionePD = getLockAutenticazionePD(tipoAutenticazione);
+				lockAutenticazionePD.acquire("verificaAutenticazionePortaDelegata", idTransazione);
 				try {
 					
 					response = 
@@ -582,7 +637,7 @@ public class GestoreAutenticazione {
 						throw new AutenticazioneException("Metodo (GestoreAutenticazione.autenticazionePortaDelegata.process) ha ritornato un valore di esito null");
 					}
 				}finally{
-					GestoreAutenticazione.lockAutenticazionePD.release("verificaAutenticazionePortaDelegata", idTransazione);
+					lockAutenticazionePD.release("verificaAutenticazionePortaDelegata", idTransazione);
 				}
 	    	}
     	}finally {
@@ -627,7 +682,8 @@ public class GestoreAutenticazione {
 	    		
 				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 				//synchronized (GestoreAutenticazione.semaphoreAutenticazionePA) {
-				GestoreAutenticazione.lockAutenticazionePA.acquire("verificaAutenticazionePortaApplicativa", idTransazione);
+				org.openspcoop2.utils.Semaphore lockAutenticazionePA = getLockAutenticazionePA(tipoAutenticazione);
+				lockAutenticazionePA.acquire("verificaAutenticazionePortaApplicativa", idTransazione);
 				try {
 					
 					response = 
@@ -670,7 +726,7 @@ public class GestoreAutenticazione {
 						throw new AutenticazioneException("Metodo (GestoreAutenticazione.autenticazionePortaApplicativa.process) ha ritornato un valore di esito null");
 					}
 				}finally {
-					GestoreAutenticazione.lockAutenticazionePA.release("verificaAutenticazionePortaApplicativa", idTransazione);
+					lockAutenticazionePA.release("verificaAutenticazionePortaApplicativa", idTransazione);
 				}
 	    	}
     	}finally {

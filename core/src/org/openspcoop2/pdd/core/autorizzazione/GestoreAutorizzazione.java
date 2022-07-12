@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.core.autorizzazione;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -89,10 +90,111 @@ public class GestoreAutorizzazione {
 	//private static final Boolean semaphoreAutorizzazionePA = true;
 	//private static final Boolean semaphoreAutorizzazioneContenutiPD = true;
 	//private static final Boolean semaphoreAutorizzazioneContenutiPA = true;
-	private static final org.openspcoop2.utils.Semaphore lockAutorizzazionePD = new org.openspcoop2.utils.Semaphore("GestoreAutorizzazioneFruizioni");
-	private static final org.openspcoop2.utils.Semaphore lockAutorizzazionePA = new org.openspcoop2.utils.Semaphore("GestoreAutorizzazioneErogazioni");
-	private static final org.openspcoop2.utils.Semaphore lockAutorizzazioneContenutiPD = new org.openspcoop2.utils.Semaphore("GestoreAutorizzazioneContenutiFruizioni");
-	private static final org.openspcoop2.utils.Semaphore lockAutorizzazioneContenutiPA = new org.openspcoop2.utils.Semaphore("GestoreAutorizzazioneContenutiFruizioni");
+	
+	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockAutorizzazionePD = new HashMap<String, org.openspcoop2.utils.Semaphore>(); 
+	private static synchronized org.openspcoop2.utils.Semaphore initLockAutorizzazionePD(String tipoAutorizzazione){
+		org.openspcoop2.utils.Semaphore s = _lockAutorizzazionePD.get(tipoAutorizzazione);
+		if(s==null) {
+			Integer permits = OpenSPCoop2Properties.getInstance().getAutorizzazione_lock_permits(tipoAutorizzazione);
+			if(permits==null) {
+				permits = OpenSPCoop2Properties.getInstance().getAutorizzazione_lock_permits();
+			}
+			if(permits!=null && permits.intValue()>1) {
+				s = new org.openspcoop2.utils.Semaphore("GestoreAutorizzazioneFruizioni_"+tipoAutorizzazione, permits);
+			}
+			else {
+				s = new org.openspcoop2.utils.Semaphore("GestoreAutorizzazioneFruizioni_"+tipoAutorizzazione);
+			}
+			_lockAutorizzazionePD.put(tipoAutorizzazione, s);
+		}
+		return s;
+	}
+	private static org.openspcoop2.utils.Semaphore getLockAutorizzazionePD(String tipoAutorizzazione){
+		org.openspcoop2.utils.Semaphore s = _lockAutorizzazionePD.get(tipoAutorizzazione);
+		if(s==null) {
+			s = initLockAutorizzazionePD(tipoAutorizzazione);
+		}
+		return s;
+	}
+	
+	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockAutorizzazionePA = new HashMap<String, org.openspcoop2.utils.Semaphore>(); 
+	private static synchronized org.openspcoop2.utils.Semaphore initLockAutorizzazionePA(String tipoAutorizzazione){
+		org.openspcoop2.utils.Semaphore s = _lockAutorizzazionePA.get(tipoAutorizzazione);
+		if(s==null) {
+			Integer permits = OpenSPCoop2Properties.getInstance().getAutorizzazione_lock_permits(tipoAutorizzazione);
+			if(permits==null) {
+				permits = OpenSPCoop2Properties.getInstance().getAutorizzazione_lock_permits();
+			}
+			if(permits!=null && permits.intValue()>1) {
+				s = new org.openspcoop2.utils.Semaphore("GestoreAutorizzazioneErogazioni_"+tipoAutorizzazione, permits);
+			}
+			else {
+				s = new org.openspcoop2.utils.Semaphore("GestoreAutorizzazioneErogazioni_"+tipoAutorizzazione);
+			}
+			_lockAutorizzazionePA.put(tipoAutorizzazione, s);
+		}
+		return s;
+	}
+	private static org.openspcoop2.utils.Semaphore getLockAutorizzazionePA(String tipoAutorizzazione){
+		org.openspcoop2.utils.Semaphore s = _lockAutorizzazionePA.get(tipoAutorizzazione);
+		if(s==null) {
+			s = initLockAutorizzazionePA(tipoAutorizzazione);
+		}
+		return s;
+	}
+	
+	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockAutorizzazioneContenutiPD = new HashMap<String, org.openspcoop2.utils.Semaphore>(); 
+	private static synchronized org.openspcoop2.utils.Semaphore initLockAutorizzazioneContenutiPD(String tipoAutorizzazioneContenuti){
+		org.openspcoop2.utils.Semaphore s = _lockAutorizzazioneContenutiPD.get(tipoAutorizzazioneContenuti);
+		if(s==null) {
+			Integer permits = OpenSPCoop2Properties.getInstance().getAutorizzazioneContenuti_lock_permits(tipoAutorizzazioneContenuti);
+			if(permits==null) {
+				permits = OpenSPCoop2Properties.getInstance().getAutorizzazioneContenuti_lock_permits();
+			}
+			if(permits!=null && permits.intValue()>1) {
+				s = new org.openspcoop2.utils.Semaphore("GestoreAutorizzazioneContenutiFruizioni_"+tipoAutorizzazioneContenuti, permits);
+			}
+			else {
+				s = new org.openspcoop2.utils.Semaphore("GestoreAutorizzazioneContenutiFruizioni_"+tipoAutorizzazioneContenuti);
+			}
+			_lockAutorizzazioneContenutiPD.put(tipoAutorizzazioneContenuti, s);
+		}
+		return s;
+	}
+	private static org.openspcoop2.utils.Semaphore getLockAutorizzazioneContenutiPD(String tipoAutorizzazioneContenuti){
+		org.openspcoop2.utils.Semaphore s = _lockAutorizzazioneContenutiPD.get(tipoAutorizzazioneContenuti);
+		if(s==null) {
+			s = initLockAutorizzazioneContenutiPD(tipoAutorizzazioneContenuti);
+		}
+		return s;
+	}
+	
+	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockAutorizzazioneContenutiPA = new HashMap<String, org.openspcoop2.utils.Semaphore>(); 
+	private static synchronized org.openspcoop2.utils.Semaphore initLockAutorizzazioneContenutiPA(String tipoAutorizzazioneContenuti){
+		org.openspcoop2.utils.Semaphore s = _lockAutorizzazioneContenutiPA.get(tipoAutorizzazioneContenuti);
+		if(s==null) {
+			Integer permits = OpenSPCoop2Properties.getInstance().getAutorizzazioneContenuti_lock_permits(tipoAutorizzazioneContenuti);
+			if(permits==null) {
+				permits = OpenSPCoop2Properties.getInstance().getAutorizzazioneContenuti_lock_permits();
+			}
+			if(permits!=null && permits.intValue()>1) {
+				s = new org.openspcoop2.utils.Semaphore("GestoreAutorizzazioneContenutiErogazioni_"+tipoAutorizzazioneContenuti, permits);
+			}
+			else {
+				s = new org.openspcoop2.utils.Semaphore("GestoreAutorizzazioneContenutiErogazioni_"+tipoAutorizzazioneContenuti);
+			}
+			_lockAutorizzazioneContenutiPA.put(tipoAutorizzazioneContenuti, s);
+		}
+		return s;
+	}
+	private static org.openspcoop2.utils.Semaphore getLockAutorizzazioneContenutiPA(String tipoAutorizzazioneContenuti){
+		org.openspcoop2.utils.Semaphore s = _lockAutorizzazioneContenutiPA.get(tipoAutorizzazioneContenuti);
+		if(s==null) {
+			s = initLockAutorizzazioneContenutiPA(tipoAutorizzazioneContenuti);
+		}
+		return s;
+	}
+	
 	/** Logger log */
 	private static Logger logger = null;
 	private static Logger logConsole = OpenSPCoop2Logger.getLoggerOpenSPCoopConsole();
@@ -525,7 +627,8 @@ public class GestoreAutorizzazione {
     		
 				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 				//synchronized (GestoreAutorizzazione.semaphoreAutorizzazionePD) {
-				GestoreAutorizzazione.lockAutorizzazionePD.acquire("verificaAutorizzazionePortaDelegata", idTransazione);
+				org.openspcoop2.utils.Semaphore lockAutorizzazionePD = getLockAutorizzazionePD(tipoAutorizzazione);
+				lockAutorizzazionePD.acquire("verificaAutorizzazionePortaDelegata", idTransazione);
 				try {
 					
 					response = 
@@ -568,7 +671,7 @@ public class GestoreAutorizzazione {
 						throw new AutorizzazioneException("Metodo (GestoreAutorizzazione.autorizzazionePortaDelegata.process) ha ritornato un valore di esito null");
 					}
 				}finally {
-					GestoreAutorizzazione.lockAutorizzazionePD.release("verificaAutorizzazionePortaDelegata", idTransazione);
+					lockAutorizzazionePD.release("verificaAutorizzazionePortaDelegata", idTransazione);
 				}
 	    	}
     	}finally {
@@ -665,7 +768,8 @@ public class GestoreAutorizzazione {
 	    		
 				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 				//synchronized (GestoreAutorizzazione.semaphoreAutorizzazionePA) {
-				GestoreAutorizzazione.lockAutorizzazionePA.acquire("verificaAutorizzazionePortaApplicativa", idTransazione);
+				org.openspcoop2.utils.Semaphore lockAutorizzazionePA = getLockAutorizzazionePA(tipoAutorizzazione);
+				lockAutorizzazionePA.acquire("verificaAutorizzazionePortaApplicativa", idTransazione);
 				try {
 					
 					response = 
@@ -708,7 +812,7 @@ public class GestoreAutorizzazione {
 						throw new AutorizzazioneException("Metodo (GestoreAutorizzazione.autorizzazionePortaApplicativa.process) ha ritornato un valore di esito null");
 					}
 				}finally {
-					GestoreAutorizzazione.lockAutorizzazionePA.release("verificaAutorizzazionePortaApplicativa", idTransazione);
+					lockAutorizzazionePA.release("verificaAutorizzazionePortaApplicativa", idTransazione);
 				}
 	    	}
     	}finally {
@@ -1349,7 +1453,8 @@ public class GestoreAutorizzazione {
 	    			    		
 				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 				//synchronized (GestoreAutorizzazione.semaphoreAutorizzazioneContenutiPD) {
-				GestoreAutorizzazione.lockAutorizzazioneContenutiPD.acquire("verificaAutorizzazioneContenutoPortaDelegata", idTransazione);
+				org.openspcoop2.utils.Semaphore lockAutorizzazioneContenutiPD = getLockAutorizzazioneContenutiPD(tipoAutorizzazione);
+				lockAutorizzazioneContenutiPD.acquire("verificaAutorizzazioneContenutoPortaDelegata", idTransazione);
 				try {
 					
 					response = 
@@ -1392,7 +1497,7 @@ public class GestoreAutorizzazione {
 						throw new AutorizzazioneException("Metodo (GestoreAutorizzazione.autorizzazionePortaDelegata.process) ha ritornato un valore di esito null");
 					}
 				}finally {
-					GestoreAutorizzazione.lockAutorizzazioneContenutiPD.release("verificaAutorizzazioneContenutoPortaDelegata", idTransazione);
+					lockAutorizzazioneContenutiPD.release("verificaAutorizzazioneContenutoPortaDelegata", idTransazione);
 				}
 	    	}
     	}finally {
@@ -1446,7 +1551,8 @@ public class GestoreAutorizzazione {
 	    		
 				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 				//synchronized (GestoreAutorizzazione.semaphoreAutorizzazioneContenutiPA) {
-				GestoreAutorizzazione.lockAutorizzazioneContenutiPA.acquire("verificaAutorizzazioneContenutoPortaApplicativa", idTransazione);
+				org.openspcoop2.utils.Semaphore lockAutorizzazioneContenutiPA = getLockAutorizzazioneContenutiPA(tipoAutorizzazione);
+				lockAutorizzazioneContenutiPA.acquire("verificaAutorizzazioneContenutoPortaApplicativa", idTransazione);
 				try {
 					
 					response = 
@@ -1489,7 +1595,7 @@ public class GestoreAutorizzazione {
 						throw new AutorizzazioneException("Metodo (GestoreAutorizzazione.autorizzazionePortaApplicativa.process) ha ritornato un valore di esito null");
 					}
 				}finally {
-					GestoreAutorizzazione.lockAutorizzazioneContenutiPA.release("verificaAutorizzazioneContenutoPortaApplicativa", idTransazione);
+					lockAutorizzazioneContenutiPA.release("verificaAutorizzazioneContenutoPortaApplicativa", idTransazione);
 				}
 	    	}
     	}finally {

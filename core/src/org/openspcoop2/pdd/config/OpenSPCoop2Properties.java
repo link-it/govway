@@ -1140,6 +1140,8 @@ public class OpenSPCoop2Properties {
 			this.processHeaderIntegrazionePARequest(false);
 
 			//	TipoAutorizzazioneBuste
+			getAutorizzazione_lock_permits();
+			getAutorizzazione_lock_permits("tipoNonEsistente");
 			if( this.getTipoAutorizzazioneBuste()==null ){
 				return false;
 			}else{
@@ -1159,6 +1161,10 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}
+			
+			//	TipoAutorizzazioneContenuti
+			getAutorizzazioneContenuti_lock_permits();
+			getAutorizzazioneContenuti_lock_permits("tipoNonEsistente");
 
 			// GestoreRepositoryBuste
 			if( this.getGestoreRepositoryBuste() == null  ){
@@ -1356,6 +1362,8 @@ public class OpenSPCoop2Properties {
 			this.isBypassFilterMustUnderstandEnabledForAllHeaders();
 
 			// Autenticazione
+			this.getAutenticazione_lock_permits();
+			this.getAutenticazione_lock_permits("tipoNonEsistente");
 			if(this.getCryptConfigAutenticazioneApplicativi()==null) {
 				return false;
 			}
@@ -1849,6 +1857,9 @@ public class OpenSPCoop2Properties {
 			// Gestione Token
 			this.isGestioneToken_introspection_debug();
 			this.isGestioneToken_userInfo_debug();
+			this.getGestioneToken_validazioneJWT_lock_permits();
+			this.getGestioneToken_introspection_lock_permits();
+			this.getGestioneToken_userInfo_lock_permits();
 			this.getGestioneToken_iatTimeCheck_milliseconds();
 			this.getGestioneToken_iatTimeCheck_futureTolerance_milliseconds();
 			this.isGestioneToken_saveSourceTokenInfo();
@@ -1877,6 +1888,7 @@ public class OpenSPCoop2Properties {
 			
 			// Gestione RetrieveToken
 			this.getGestioneRetrieveToken_debug();
+			this.getGestioneRetrieveToken_lock_permits();
 			if(!this.validateGestioneRetrieveToken_refreshTokenBeforeExpire()) {
 				return false;
 			}
@@ -1894,6 +1906,7 @@ public class OpenSPCoop2Properties {
 						
 			// Gestione AttributeAuthority
 			this.isGestioneAttributeAuthority_debug();
+			this.getGestioneAttributeAuthority_lock_permits();
 			this.isGestioneAttributeAuthority_saveSourceAttributeResponseInfo();
 			this.isGestioneAttributeAuthority_transazioniRegistrazioneAttributiInformazioniNormalizzate();
 			
@@ -8052,8 +8065,72 @@ public class OpenSPCoop2Properties {
 
 
 
-	/************ AUTORIZZAZIONE BUSTE *******************/
+	/************ AUTORIZZAZIONE *******************/
 
+	private static Boolean getAutorizzazione_lock_permits_read = null;
+	private static Integer getAutorizzazione_lock_permits = null;
+	public Integer getAutorizzazione_lock_permits() {
+
+		String pName = "org.openspcoop2.pdd.core.autorizzazione.lock.permits";
+		if(OpenSPCoop2Properties.getAutorizzazione_lock_permits_read==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					int permits = Integer.valueOf(value); 
+					if(permits>1) {
+						// altrimenti è un normale semaphore binario
+						OpenSPCoop2Properties.getAutorizzazione_lock_permits = permits;
+					}
+				}
+				
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+			
+			OpenSPCoop2Properties.getAutorizzazione_lock_permits_read = true;
+		}
+
+		return OpenSPCoop2Properties.getAutorizzazione_lock_permits;
+	}
+	
+	private static Map<String, Integer> getTipoAutorizzazione_lock_permits = null;
+	public Integer getAutorizzazione_lock_permits(String tipoAutorizzazione) { 
+
+		String pName = "org.openspcoop2.pdd.core.autorizzazione.lock.permits.";
+		if(OpenSPCoop2Properties.getTipoAutorizzazione_lock_permits==null){
+			
+			getTipoAutorizzazione_lock_permits = new HashMap<String, Integer>();
+			
+			try{  
+				Properties p = this.reader.readProperties_convertEnvProperties(pName);
+				if(p!=null && !p.isEmpty()) {
+					for (Object oKey : p.keySet()) {
+						if(oKey!=null) {
+							String key = (String) oKey;
+							String value = p.getProperty(key);
+							if(value!=null) {
+								int permits = Integer.valueOf(value);
+								if(permits>1) {
+									// altrimenti è un normale semaphore binario
+									getTipoAutorizzazione_lock_permits.put(key, permits);
+								}
+							}
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+			
+		}
+
+		return OpenSPCoop2Properties.getTipoAutorizzazione_lock_permits.get(tipoAutorizzazione);
+	}
+	
 	/**
 	 * Restituisce il tipo di autorizzazione delle buste effettuato dalla porta di dominio
 	 *
@@ -8083,6 +8160,76 @@ public class OpenSPCoop2Properties {
 
 
 
+	
+	/************ AUTORIZZAZIONE CONTENUTI *******************/
+
+	private static Boolean getAutorizzazioneContenuti_lock_permits_read = null;
+	private static Integer getAutorizzazioneContenuti_lock_permits = null;
+	public Integer getAutorizzazioneContenuti_lock_permits() {
+
+		String pName = "org.openspcoop2.pdd.core.autorizzazioneContenuti.lock.permits";
+		if(OpenSPCoop2Properties.getAutorizzazioneContenuti_lock_permits_read==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					int permits = Integer.valueOf(value); 
+					if(permits>1) {
+						// altrimenti è un normale semaphore binario
+						OpenSPCoop2Properties.getAutorizzazioneContenuti_lock_permits = permits;
+					}
+				}
+				
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+			
+			OpenSPCoop2Properties.getAutorizzazioneContenuti_lock_permits_read = true;
+		}
+
+		return OpenSPCoop2Properties.getAutorizzazioneContenuti_lock_permits;
+	}
+	
+	private static Map<String, Integer> getTipoAutorizzazioneContenuti_lock_permits = null;
+	public Integer getAutorizzazioneContenuti_lock_permits(String tipoAutorizzazioneContenuti) { 
+
+		String pName = "org.openspcoop2.pdd.core.autorizzazioneContenuti.lock.permits.";
+		if(OpenSPCoop2Properties.getTipoAutorizzazioneContenuti_lock_permits==null){
+			
+			getTipoAutorizzazioneContenuti_lock_permits = new HashMap<String, Integer>();
+			
+			try{  
+				Properties p = this.reader.readProperties_convertEnvProperties(pName);
+				if(p!=null && !p.isEmpty()) {
+					for (Object oKey : p.keySet()) {
+						if(oKey!=null) {
+							String key = (String) oKey;
+							String value = p.getProperty(key);
+							if(value!=null) {
+								int permits = Integer.valueOf(value);
+								if(permits>1) {
+									// altrimenti è un normale semaphore binario
+									getTipoAutorizzazioneContenuti_lock_permits.put(key, permits);
+								}
+							}
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+			
+		}
+
+		return OpenSPCoop2Properties.getTipoAutorizzazioneContenuti_lock_permits.get(tipoAutorizzazioneContenuti);
+	}
+	
+	
+	
+	
 
 
 
@@ -16167,6 +16314,70 @@ public class OpenSPCoop2Properties {
 	
 	/* ********  Gestore Credenziali  ******** */
 
+	private static Boolean getAutenticazione_lock_permits_read = null;
+	private static Integer getAutenticazione_lock_permits = null;
+	public Integer getAutenticazione_lock_permits() {
+
+		String pName = "org.openspcoop2.pdd.core.autenticazione.lock.permits";
+		if(OpenSPCoop2Properties.getAutenticazione_lock_permits_read==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					int permits = Integer.valueOf(value); 
+					if(permits>1) {
+						// altrimenti è un normale semaphore binario
+						OpenSPCoop2Properties.getAutenticazione_lock_permits = permits;
+					}
+				}
+				
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+			
+			OpenSPCoop2Properties.getAutenticazione_lock_permits_read = true;
+		}
+
+		return OpenSPCoop2Properties.getAutenticazione_lock_permits;
+	}
+	
+	private static Map<String, Integer> getTipoAutenticazione_lock_permits = null;
+	public Integer getAutenticazione_lock_permits(String tipoAutenticazione) { 
+
+		String pName = "org.openspcoop2.pdd.core.autenticazione.lock.permits.";
+		if(OpenSPCoop2Properties.getTipoAutenticazione_lock_permits==null){
+			
+			getTipoAutenticazione_lock_permits = new HashMap<String, Integer>();
+			
+			try{  
+				Properties p = this.reader.readProperties_convertEnvProperties(pName);
+				if(p!=null && !p.isEmpty()) {
+					for (Object oKey : p.keySet()) {
+						if(oKey!=null) {
+							String key = (String) oKey;
+							String value = p.getProperty(key);
+							if(value!=null) {
+								int permits = Integer.valueOf(value);
+								if(permits>1) {
+									// altrimenti è un normale semaphore binario
+									getTipoAutenticazione_lock_permits.put(key, permits);
+								}
+							}
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+			
+		}
+
+		return OpenSPCoop2Properties.getTipoAutenticazione_lock_permits.get(tipoAutenticazione);
+	}
+	
 	private static CryptConfig getCryptConfigAutenticazioneApplicativi = null;
 	public CryptConfig getCryptConfigAutenticazioneApplicativi() {
 		if(OpenSPCoop2Properties.getCryptConfigAutenticazioneApplicativi == null){
@@ -19578,6 +19789,93 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isGestioneToken_userInfo_debug;
 	}
 	
+	private static Boolean getGestioneToken_validazioneJWT_lock_permits_read = null;
+	private static Integer getGestioneToken_validazioneJWT_lock_permits = null;
+	public Integer getGestioneToken_validazioneJWT_lock_permits() {
+
+		String pName = "org.openspcoop2.pdd.gestioneToken.validazioneJWT.lock.permits";
+		if(OpenSPCoop2Properties.getGestioneToken_validazioneJWT_lock_permits_read==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					int permits = Integer.valueOf(value); 
+					if(permits>1) {
+						// altrimenti è un normale semaphore binario
+						OpenSPCoop2Properties.getGestioneToken_validazioneJWT_lock_permits = permits;
+					}
+				}
+				
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+			
+			OpenSPCoop2Properties.getGestioneToken_validazioneJWT_lock_permits_read = true;
+		}
+
+		return OpenSPCoop2Properties.getGestioneToken_validazioneJWT_lock_permits;
+	}
+	
+	private static Boolean getGestioneToken_introspection_lock_permits_read = null;
+	private static Integer getGestioneToken_introspection_lock_permits = null;
+	public Integer getGestioneToken_introspection_lock_permits() {
+
+		String pName = "org.openspcoop2.pdd.gestioneToken.introspection.lock.permits";
+		if(OpenSPCoop2Properties.getGestioneToken_introspection_lock_permits_read==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					int permits = Integer.valueOf(value); 
+					if(permits>1) {
+						// altrimenti è un normale semaphore binario
+						OpenSPCoop2Properties.getGestioneToken_introspection_lock_permits = permits;
+					}
+				}
+				
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+			
+			OpenSPCoop2Properties.getGestioneToken_introspection_lock_permits_read = true;
+		}
+
+		return OpenSPCoop2Properties.getGestioneToken_introspection_lock_permits;
+	}
+	
+	private static Boolean getGestioneToken_userInfo_lock_permits_read = null;
+	private static Integer getGestioneToken_userInfo_lock_permits = null;
+	public Integer getGestioneToken_userInfo_lock_permits() {
+
+		String pName = "org.openspcoop2.pdd.gestioneToken.userInfo.lock.permits";
+		if(OpenSPCoop2Properties.getGestioneToken_userInfo_lock_permits_read==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					int permits = Integer.valueOf(value); 
+					if(permits>1) {
+						// altrimenti è un normale semaphore binario
+						OpenSPCoop2Properties.getGestioneToken_userInfo_lock_permits = permits;
+					}
+				}
+				
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+			
+			OpenSPCoop2Properties.getGestioneToken_userInfo_lock_permits_read = true;
+		}
+
+		return OpenSPCoop2Properties.getGestioneToken_userInfo_lock_permits;
+	}
+	
 	private static Boolean getGestioneToken_iatTimeCheck_milliseconds_read = null;
 	private static Long getGestioneToken_iatTimeCheck_milliseconds = null;
 	public Long getGestioneToken_iatTimeCheck_milliseconds() throws Exception{
@@ -20317,6 +20615,35 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isGestioneRetrieveToken_debug;
 	}
 	
+	private static Boolean getGestioneRetrieveToken_lock_permits_read = null;
+	private static Integer getGestioneRetrieveToken_lock_permits = null;
+	public Integer getGestioneRetrieveToken_lock_permits() {
+
+		String pName = "org.openspcoop2.pdd.retrieveToken.lock.permits";
+		if(OpenSPCoop2Properties.getGestioneRetrieveToken_lock_permits_read==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					int permits = Integer.valueOf(value); 
+					if(permits>1) {
+						// altrimenti è un normale semaphore binario
+						OpenSPCoop2Properties.getGestioneRetrieveToken_lock_permits = permits;
+					}
+				}
+				
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+			
+			OpenSPCoop2Properties.getGestioneRetrieveToken_lock_permits_read = true;
+		}
+
+		return OpenSPCoop2Properties.getGestioneRetrieveToken_lock_permits;
+	}
+	
 	private static Integer isGestioneRetrieveToken_refreshTokenBeforeExpire_percent = null;
 	private static Boolean isGestioneRetrieveToken_refreshTokenBeforeExpire_percent_read = null;
 	private static String isGestioneRetrieveToken_refreshTokenBeforeExpire_percent_pName = "org.openspcoop2.pdd.retrieveToken.refreshTokenBeforeExpire.percent";
@@ -20694,6 +21021,35 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isGestioneAttributeAuthority_debug;
+	}
+	
+	private static Boolean getGestioneAttributeAuthority_lock_permits_read = null;
+	private static Integer getGestioneAttributeAuthority_lock_permits = null;
+	public Integer getGestioneAttributeAuthority_lock_permits() {
+
+		String pName = "org.openspcoop2.pdd.gestioneAttributeAuthority.lock.permits";
+		if(OpenSPCoop2Properties.getGestioneAttributeAuthority_lock_permits_read==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					int permits = Integer.valueOf(value); 
+					if(permits>1) {
+						// altrimenti è un normale semaphore binario
+						OpenSPCoop2Properties.getGestioneAttributeAuthority_lock_permits = permits;
+					}
+				}
+				
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+			
+			OpenSPCoop2Properties.getGestioneAttributeAuthority_lock_permits_read = true;
+		}
+
+		return OpenSPCoop2Properties.getGestioneAttributeAuthority_lock_permits;
 	}
 	
 	private static Boolean isGestioneAttributeAuthority_saveSourceAttributeResponseInfo = null;

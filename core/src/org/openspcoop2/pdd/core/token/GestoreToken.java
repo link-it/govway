@@ -160,11 +160,123 @@ public class GestoreToken {
 //	private static final Boolean semaphoreUserInfo = true;
 //	private static final Boolean semaphoreNegoziazione = true;
 //	private static final Boolean semaphoreAttributeAuthority = true;
-	private static final org.openspcoop2.utils.Semaphore lockJWT = new org.openspcoop2.utils.Semaphore("GestoreTokenValidazioneJWT");
-	private static final org.openspcoop2.utils.Semaphore lockIntrospection = new org.openspcoop2.utils.Semaphore("GestoreTokenIntrospection");
-	private static final org.openspcoop2.utils.Semaphore lockUserInfo = new org.openspcoop2.utils.Semaphore("GestoreTokenUserInfo");
-	private static final org.openspcoop2.utils.Semaphore lockNegoziazione = new org.openspcoop2.utils.Semaphore("GestoreTokenNegoziazione");
-	private static final org.openspcoop2.utils.Semaphore lockAttributeAuthority = new org.openspcoop2.utils.Semaphore("GestoreTokenAttributeAuthority");
+	
+	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockJWT = new HashMap<String, org.openspcoop2.utils.Semaphore>();
+	private static synchronized org.openspcoop2.utils.Semaphore initLockJWT(String nomePolicy){
+		org.openspcoop2.utils.Semaphore s = _lockJWT.get(nomePolicy);
+		if(s==null) {
+			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneToken_validazioneJWT_lock_permits();
+			if(permits!=null && permits.intValue()>1) {
+				s = new org.openspcoop2.utils.Semaphore("GestoreTokenValidazioneJWT_"+nomePolicy, permits);
+			}
+			else {
+				s = new org.openspcoop2.utils.Semaphore("GestoreTokenValidazioneJWT_"+nomePolicy);
+			}
+			_lockJWT.put(nomePolicy, s);
+		}
+		return s;
+	}
+	private static org.openspcoop2.utils.Semaphore getLockJWT(String nomePolicy){
+		org.openspcoop2.utils.Semaphore s = _lockJWT.get(nomePolicy);
+		if(s==null) {
+			s = initLockJWT(nomePolicy);
+		}
+		return s;
+	}
+	
+	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockIntrospection = new HashMap<String, org.openspcoop2.utils.Semaphore>();
+	private static synchronized org.openspcoop2.utils.Semaphore initLockIntrospection(String nomePolicy){
+		org.openspcoop2.utils.Semaphore s = _lockIntrospection.get(nomePolicy);
+		if(s==null) {
+			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneToken_introspection_lock_permits();
+			if(permits!=null && permits.intValue()>1) {
+				s = new org.openspcoop2.utils.Semaphore("GestoreTokenIntrospection_"+nomePolicy, permits);
+			}
+			else {
+				s = new org.openspcoop2.utils.Semaphore("GestoreTokenIntrospection_"+nomePolicy);
+			}
+			_lockIntrospection.put(nomePolicy, s);
+		}
+		return s;
+	}
+	private static org.openspcoop2.utils.Semaphore getLockIntrospection(String nomePolicy){
+		org.openspcoop2.utils.Semaphore s = _lockIntrospection.get(nomePolicy);
+		if(s==null) {
+			s = initLockIntrospection(nomePolicy);
+		}
+		return s;
+	} 
+	
+	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockUserInfo = new HashMap<String, org.openspcoop2.utils.Semaphore>();
+	private static synchronized org.openspcoop2.utils.Semaphore initLockUserInfo(String nomePolicy){
+		org.openspcoop2.utils.Semaphore s = _lockUserInfo.get(nomePolicy);
+		if(s==null) {
+			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneToken_userInfo_lock_permits();
+			if(permits!=null && permits.intValue()>1) {
+				s = new org.openspcoop2.utils.Semaphore("GestoreTokenUserInfo_"+nomePolicy, permits);
+			}
+			else {
+				s = new org.openspcoop2.utils.Semaphore("GestoreTokenUserInfo_"+nomePolicy);
+			}
+			_lockUserInfo.put(nomePolicy, s);
+		}
+		return s;
+	}
+	private static org.openspcoop2.utils.Semaphore getLockUserInfo(String nomePolicy){
+		org.openspcoop2.utils.Semaphore s = _lockUserInfo.get(nomePolicy);
+		if(s==null) {
+			s = initLockUserInfo(nomePolicy);
+		}
+		return s;
+	} 
+	
+	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockNegoziazione = new HashMap<String, org.openspcoop2.utils.Semaphore>();
+	private static synchronized org.openspcoop2.utils.Semaphore initLockNegoziazione(String nomePolicy){
+		org.openspcoop2.utils.Semaphore s = _lockNegoziazione.get(nomePolicy);
+		if(s==null) {
+			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneRetrieveToken_lock_permits();
+			if(permits!=null && permits.intValue()>1) {
+				s = new org.openspcoop2.utils.Semaphore("GestoreTokenNegoziazione_"+nomePolicy, permits);
+			}
+			else {
+				s = new org.openspcoop2.utils.Semaphore("GestoreTokenNegoziazione_"+nomePolicy);
+			}
+			_lockNegoziazione.put(nomePolicy, s);
+		}
+		return s;
+	}
+	private static org.openspcoop2.utils.Semaphore getLockNegoziazione(String nomePolicy){
+		org.openspcoop2.utils.Semaphore s = _lockNegoziazione.get(nomePolicy);
+		if(s==null) {
+			s = initLockNegoziazione(nomePolicy);
+		}
+		return s;
+	} 
+	
+	private static final Map<String, org.openspcoop2.utils.Semaphore> _lockAttributeAuthority = new HashMap<String, org.openspcoop2.utils.Semaphore>();
+	private static synchronized org.openspcoop2.utils.Semaphore initLockAttributeAuthority(String nomePolicy){
+		org.openspcoop2.utils.Semaphore s = _lockAttributeAuthority.get(nomePolicy);
+		if(s==null) {
+			Integer permits = OpenSPCoop2Properties.getInstance().getGestioneAttributeAuthority_lock_permits();
+			if(permits!=null && permits.intValue()>1) {
+				s = new org.openspcoop2.utils.Semaphore("GestoreTokenAttributeAuthority_"+nomePolicy, permits);
+			}
+			else {
+				s = new org.openspcoop2.utils.Semaphore("GestoreTokenAttributeAuthority_"+nomePolicy);
+			}
+			_lockAttributeAuthority.put(nomePolicy, s);
+		}
+		return s;
+	}
+	private static org.openspcoop2.utils.Semaphore getLockAttributeAuthority(String nomePolicy){
+		org.openspcoop2.utils.Semaphore s = _lockAttributeAuthority.get(nomePolicy);
+		if(s==null) {
+			s = initLockAttributeAuthority(nomePolicy);
+		}
+		return s;
+	} 
+
+
 	/** Logger log */
 	private static Logger logger = null;
 	private static Logger logConsole = OpenSPCoop2Logger.getLoggerOpenSPCoopConsole();
@@ -748,8 +860,9 @@ public class GestoreToken {
 			esitoGestioneToken = _validazioneJWTToken(log, datiInvocazione, token, portaDelegata, pddContext);
 		}
     	else{
+    		String policyName = datiInvocazione.getPolicyGestioneToken().getName();
     		String funzione = VALIDAZIONE_JWT_FUNCTION;
-    		String keyCache = buildCacheKeyValidazione(datiInvocazione.getPolicyGestioneToken().getName(), funzione, portaDelegata, token);
+    		String keyCache = buildCacheKeyValidazione(policyName, funzione, portaDelegata, token);
 
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
@@ -771,7 +884,8 @@ public class GestoreToken {
 			if(esitoGestioneToken==null) {
 				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 				//synchronized (GestoreToken.semaphoreJWT) {
-				GestoreToken.lockJWT.acquire("validazioneJWTToken", idTransazione);
+				org.openspcoop2.utils.Semaphore lockJWT = getLockJWT(policyName);
+				lockJWT.acquire("validazioneJWTToken", idTransazione);
 				try {
 					
 					response = 
@@ -815,7 +929,7 @@ public class GestoreToken {
 						}
 					}
 				}finally {
-					GestoreToken.lockJWT.release("validazioneJWTToken", idTransazione);
+					lockJWT.release("validazioneJWTToken", idTransazione);
 				}
 			}
     	}
@@ -956,8 +1070,9 @@ public class GestoreToken {
 					idDominio, idServizio);
 		}
     	else{
+    		String policyName = datiInvocazione.getPolicyGestioneToken().getName();
     		String funzione = INTROSPECTION_FUNCTION;
-    		String keyCache = buildCacheKeyValidazione(datiInvocazione.getPolicyGestioneToken().getName(), funzione, portaDelegata, token);
+    		String keyCache = buildCacheKeyValidazione(policyName, funzione, portaDelegata, token);
 
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
@@ -980,7 +1095,8 @@ public class GestoreToken {
 				
 				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 				//synchronized (GestoreToken.semaphoreIntrospection) {
-				GestoreToken.lockIntrospection.acquire("introspectionToken", idTransazione);
+				org.openspcoop2.utils.Semaphore lockIntrospection = getLockIntrospection(policyName);
+				lockIntrospection.acquire("introspectionToken", idTransazione);
 				try {
 					
 					response = 
@@ -1027,7 +1143,7 @@ public class GestoreToken {
 						}
 					}
 				}finally {
-					GestoreToken.lockIntrospection.release("introspectionToken", idTransazione);
+					lockIntrospection.release("introspectionToken", idTransazione);
 				}
 			}
     	}
@@ -1150,8 +1266,9 @@ public class GestoreToken {
 					idDominio, idServizio);
 		}
     	else{
+    		String policyName = datiInvocazione.getPolicyGestioneToken().getName();
     		String funzione = USERINFO_FUNCTION;
-    		String keyCache = buildCacheKeyValidazione(datiInvocazione.getPolicyGestioneToken().getName(), funzione, portaDelegata, token);
+    		String keyCache = buildCacheKeyValidazione(policyName, funzione, portaDelegata, token);
 
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
@@ -1173,7 +1290,8 @@ public class GestoreToken {
 			if(esitoGestioneToken==null) {
 				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 				//synchronized (GestoreToken.semaphoreUserInfo) {
-				GestoreToken.lockUserInfo.acquire("userInfoToken", idTransazione);
+				org.openspcoop2.utils.Semaphore lockUserInfo = getLockUserInfo(policyName);
+				lockUserInfo.acquire("userInfoToken", idTransazione);
 				try {
 					
 					response = 
@@ -1220,7 +1338,7 @@ public class GestoreToken {
 						}
 					}
 				}finally {
-					GestoreToken.lockUserInfo.release("userInfoToken", idTransazione);
+					lockUserInfo.release("userInfoToken", idTransazione);
 				}
 			}
     	}
@@ -2653,8 +2771,9 @@ public class GestoreToken {
 			
 		}
     	else{
+    		String policyName = policyNegoziazioneToken.getName();
     		String funzione = RETRIEVE_FUNCTION;
-    		String keyCache = buildCacheKeyNegoziazione(policyNegoziazioneToken.getName(), funzione, delegata, dynamicParameters);
+    		String keyCache = buildCacheKeyNegoziazione(policyName, funzione, delegata, dynamicParameters);
 
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
@@ -2675,7 +2794,8 @@ public class GestoreToken {
     		
 			if(esitoNegoziazioneToken==null) {
 				//synchronized (GestoreToken.semaphoreNegoziazione) {
-				GestoreToken.lockNegoziazione.acquire("endpointToken", idTransazione);
+				org.openspcoop2.utils.Semaphore lockNegoziazione = getLockNegoziazione(policyName);
+				lockNegoziazione.acquire("endpointToken", idTransazione);
 				try {
 					
 					response = 
@@ -2752,7 +2872,7 @@ public class GestoreToken {
 					
 				}finally {
 					// fine synchronized
-					GestoreToken.lockNegoziazione.release("endpointToken", idTransazione);
+					lockNegoziazione.release("endpointToken", idTransazione);
 				}
 			}
 			else {
@@ -2766,7 +2886,8 @@ public class GestoreToken {
 							policyNegoziazioneToken.isSaveErrorInCache());
 					if(!esitoNegoziazioneToken.isValido() && !esitoNegoziazioneToken.isDateValide()) {
 						
-						GestoreToken.lockNegoziazione.acquire("removeToken", idTransazione);
+						org.openspcoop2.utils.Semaphore lockNegoziazione = getLockNegoziazione(policyName);
+						lockNegoziazione.acquire("removeToken", idTransazione);
 						try {
 							// DEVO riavviare la negoziazione poichè è scaduto
 							GestoreToken.cacheToken.remove(keyCache);
@@ -2774,7 +2895,7 @@ public class GestoreToken {
 							//System.out.println("Riavvia negoziazione");
 						}finally {
 							// fine synchronized
-							GestoreToken.lockNegoziazione.release("removeToken", idTransazione);
+							lockNegoziazione.release("removeToken", idTransazione);
 						}
 					}
 				}
@@ -3791,7 +3912,8 @@ public class GestoreToken {
     		// Aggiungo anche la richiesta poichè può venire costruita con freemarker o template e quindi può essere dinamica a sua volta (non considero però le date)
     		String requestKeyCache = buildDynamicAARequest(configurazionePdDManager, message, busta, requestInfo, log, policyAttributeAuthority, dynamicParameters, !addIdAndDate);
     		
-    		String keyCache = buildCacheKeyRecuperoAttributi(policyAttributeAuthority.getName(), funzione, portaDelegata, dynamicParameters, requestKeyCache);
+    		String aaName = policyAttributeAuthority.getName();
+    		String keyCache = buildCacheKeyRecuperoAttributi(aaName, funzione, portaDelegata, dynamicParameters, requestKeyCache);
 
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
     		
@@ -3815,7 +3937,8 @@ public class GestoreToken {
 			if(esitoRecuperoAttributi==null) {
 			
 				//synchronized (GestoreToken.semaphoreAttributeAuthority) {
-				GestoreToken.lockAttributeAuthority.acquire("readAttributes", idTransazione);
+				org.openspcoop2.utils.Semaphore lockAttributeAuthority = getLockAttributeAuthority(aaName);
+				lockAttributeAuthority.acquire("readAttributes", idTransazione);
 				try {
 					
 					response = 
@@ -3902,7 +4025,7 @@ public class GestoreToken {
 					
 				} finally{
 					// fine synchronized
-					GestoreToken.lockAttributeAuthority.release("readAttributes", idTransazione);
+					lockAttributeAuthority.release("readAttributes", idTransazione);
 				}
 			}
 			else {
@@ -3916,14 +4039,15 @@ public class GestoreToken {
 							protocolFactory,
 							dynamicParameters);
 					if(!esitoRecuperoAttributi.isValido() && !esitoRecuperoAttributi.isDateValide()) {
-						GestoreToken.lockAttributeAuthority.acquire("removeAttributes", idTransazione);
+						org.openspcoop2.utils.Semaphore lockAttributeAuthority = getLockAttributeAuthority(aaName);
+						lockAttributeAuthority.acquire("removeAttributes", idTransazione);
 						try {
 							// DEVO riavviare la negoziazione poichè è scaduto
 							GestoreToken.cacheToken.remove(keyCache);
 							riavviaNegoziazione = true;
 						} finally{
 							// fine synchronized
-							GestoreToken.lockAttributeAuthority.release("removeAttributes", idTransazione);
+							lockAttributeAuthority.release("removeAttributes", idTransazione);
 						}
 					}
 				}

@@ -20,10 +20,10 @@
 			<property name="policy.endpoint.url" />
 		</item>
 
-		<item type="number" name="endpointConnectionTimeout" label="Connection Timeout" required="true" default="10000" min="1">
+		<item type="number" name="endpointConnectionTimeout" label="Connection Timeout" required="true" default="5000" min="1">
 			<property name="connectionTimeout" properties="endpointConfig" />
 		</item>
-		<item type="number" name="endpointReadTimeout" label="Read Timeout" required="true" default="120000" min="1">
+		<item type="number" name="endpointReadTimeout" label="Read Timeout" required="true" default="10000" min="1">
 			<property name="readConnectionTimeout" properties="endpointConfig" />
 		</item>
 	

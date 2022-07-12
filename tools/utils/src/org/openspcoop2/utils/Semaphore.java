@@ -68,6 +68,7 @@ public class Semaphore {
 	private final java.util.concurrent.Semaphore semaphore;
 	private final java.util.concurrent.locks.ReentrantLock reentrantLock;
 	private String semaphoreName = null;
+	private int permits = -1;
 	
 	public Semaphore(String name) {
 		this(name, Semaphore.semaphoreType, Semaphore.fair);
@@ -90,6 +91,17 @@ public class Semaphore {
 			this.reentrantLock = null;
 			this.semaphore = null;
 		}
+		this.permits = 1;
+	}
+	
+	public Semaphore(String name, int permits) {
+		this(name, permits, Semaphore.fair);
+	}
+	public Semaphore(String name, int permits, boolean fair) {
+		this.semaphoreName = name;
+		this.semaphore = new java.util.concurrent.Semaphore(permits, fair);
+		this.reentrantLock = null;
+		this.permits = permits;
 	}
 	
 	public boolean hasQueuedThreads() {
@@ -106,6 +118,14 @@ public class Semaphore {
 		}
 		else {
 			return !this.reentrantLock.isLocked();
+		}
+	}
+	public int availablePermits() {
+		if(this.semaphore!=null) {
+			return this.semaphore.availablePermits();
+		}
+		else {
+			return -1;
 		}
 	}
 	
@@ -181,7 +201,9 @@ public class Semaphore {
 			System.out.println(getPrefix(methodName, idTransazione)+" release ...");
 		}
 		if(this.semaphore!=null) {
-			this.semaphore.release();
+			if(this.semaphore.availablePermits()<this.permits) {
+				this.semaphore.release(); // altrimenti ogni release utilizzato male fa incrementare i permessi
+			}
 		}
 		else {
 			this.reentrantLock.unlock();

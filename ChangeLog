@@ -1,5 +1,20 @@
 2022-07-12  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Risolto Bug OP-1402
+	Le richieste che richiedevano la validazione/negoziazione di un token, il recupero di attributi da un AttributeAuthority o 
+	l'invocazione di meccanismi di autenticazione/autorizzazione esterni acceduti via http (implementati tramite plugin) potevano far scaturire il seguente errore:
+	"Could not acquire semaphore after 30000ms".
+	L'errore avveniva quando il servizio http esterno contattato (es. Authorization Server) non rispondeva mandando la richiesta in read timeout e
+	nel frattempo continuavano ad accumularsi richieste che necessitano dell'invocazione del servizio esterno poichè l'informazione richiesta non era in cache.
+	L'errore si amplificava poichè per stessa funzionalità (es. Token Policy di Negoziazione) non vi era un lock dedicato alla singola policy ma un lock condiviso tra tutte le policy.
+	La problematica è stata risolta:
+	- dedicando un lock ad ogni Token Policy, AttributeAuthority o tipo di autenticazione/autorizzazione;
+	- abbassando i tempi di read-timeout di default a 10 secondi;
+	- consentendo un numero di richieste parallele verso il servizio esterno quando le informazioni non sono in cache (default 10), in modo da non rendere seriale l'inizializzazione della cache.
+
+2022-07-12  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole]
 	Risolto Bug OP-1400
 	Nei campi textarea dove devono essere indicati path su file system, url, audience e altri valori che rappresentano un identificativo, 
