@@ -19,6 +19,17 @@ description:
     apiDocumentation: 'https://govway.org/documentazione/api/index.html'
     documentation: 'https://govway.org/documentazione/'
     features:
+      - PNRR
+      - PNRR/Misura/1.1.3
+      - PNRR/Beneficiari/Comuni
+      - PNRR/Beneficiari/Scuole
+      - PNRR/Beneficiari/ASL
+      - PNRR/Beneficiari/Enti Regionali
+      - PNRR/Beneficiari/Università
+      - PNRR/Beneficiari/PA Centrali
+      - PNRR/Beneficiari/Province
+      - PNRR/Beneficiari/Istituti di ricerca e AFAM
+      - PNRR/Beneficiari/Altri enti
       - >-
         Conformità alle nuove linee guida AGID per l'interoperabilità (profilo
         ModI)
