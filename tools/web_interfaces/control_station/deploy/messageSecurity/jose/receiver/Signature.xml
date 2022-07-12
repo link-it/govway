@@ -1,5 +1,5 @@
 <config id="messageSecurity.jose.receiver.signature" label="JWS Verifier Signature" xmlns="http://www.openspcoop2.org/core/mvc/properties"
-	provider="org.openspcoop2.security.message.jose.TrustStoreSecurityProvider">
+	provider="org.openspcoop2.security.message.jose.SignatureReceiverProvider">
 
 	<compatibility not="false" and="false">
         <tags and="true">

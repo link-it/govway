@@ -1,3 +1,10 @@
+2022-07-12  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1400
+	Nei campi textarea dove devono essere indicati path su file system, url, audience e altri valori che rappresentano un identificativo, 
+	non veniva segnalata l'eventuale presenza errata di new-line o tab nel valore fornito.
+	
 2022-07-11  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

@@ -1,5 +1,5 @@
 <config id="messageSecurity.xml.sender.encrypt" label="XML Encrypt" xmlns="http://www.openspcoop2.org/core/mvc/properties"
-	provider="org.openspcoop2.security.message.xml.TrustStoreSecurityProvider">
+	provider="org.openspcoop2.security.message.xml.EncryptSenderProvider">
 
 	 <compatibility not="false" and="false">
          <tags and="true">

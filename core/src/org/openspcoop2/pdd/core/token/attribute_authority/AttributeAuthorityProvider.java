@@ -30,6 +30,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.mvc.properties.Item;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
+import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderInfo;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
@@ -94,12 +95,7 @@ public class AttributeAuthorityProvider implements IProvider {
 			
 			if(!trustAll) {
 				String location = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
-				if(location==null || "".equals(location)) {
-					throw new ProviderValidationException("Indicare un path del TrustStore per l'autenticazione server");
-				}
-				if(location.contains(" ")) {
-					throw new ProviderValidationException("Non indicare spazi nel path del TrustStore per l'autenticazione server");
-				}
+				InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Server - File (TrustStore per l'autenticazione server)");
 				
 				String algo = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM);
 				if(algo==null || "".equals(algo)) {
@@ -108,16 +104,16 @@ public class AttributeAuthorityProvider implements IProvider {
 				if(algo.contains(" ")) {
 					throw new ProviderValidationException("Non indicare spazi nell'algoritmo per l'autenticazione server");
 				}
+				
+				String location_crl = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+				if(location_crl!=null && !"".equals(location_crl)) {
+					InputValidationUtils.validateTextAreaInput(location_crl, "Https - Autenticazione Server - CRL File(s)");
+				}
 			}
 		}
 		
 		String url = pDefault.getProperty(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_URL);
-		if(url==null || "".equals(url)) {
-			throw new ProviderValidationException("Non e' stata fornita la url dell'Attribute Authority");
-		}
-		if(url.contains(" ")) {
-			throw new ProviderValidationException("Non indicare spazi nella url");
-		}
+		InputValidationUtils.validateTextAreaInput(url, "Endpoint - URL");
 		try{
 			org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(url);
 		}catch(Exception e){
@@ -146,12 +142,7 @@ public class AttributeAuthorityProvider implements IProvider {
 		boolean bearer = TokenUtilities.isEnabled(pDefault, org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_AUTH_BEARER_STATO);
 		if(bearer) {
 			String token = pDefault.getProperty(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_AUTH_BEARER_TOKEN);
-			if(token==null || "".equals(token)) {
-				throw new ProviderValidationException("Nonostante sia richiesta una autenticazione 'Authorization Bearer', non è stato fornito un token di autenticazione da inoltrare al servizio");
-			}
-			if(token.contains(" ")) {
-				throw new ProviderValidationException("Non indicare spazi nel token di autenticazione da inoltrare al servizio");
-			}
+			InputValidationUtils.validateTextAreaInput(token, "Endpoint - Autenticazione Client - Token");
 		}
 		
 		if(ssl) {
@@ -162,8 +153,8 @@ public class AttributeAuthorityProvider implements IProvider {
 			
 			String location = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION);
 			if(location!=null && !"".equals(location)) {
-				if(location.contains(" ")) {
-					throw new ProviderValidationException("Non indicare spazi nel path del KeyStore per l'autenticazione client");
+				if(location!=null && !"".equals(location)) {
+					InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Client - File (KeyStore per l'autenticazione client)");
 				}
 			}
 			
@@ -219,6 +210,28 @@ public class AttributeAuthorityProvider implements IProvider {
 			deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED);
 			deny.add(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID);
 			TokenUtilities.checkClaims("claim", convertTextToProperties, "Claims", deny, false);
+		}
+		
+		String jwtKeystore = pDefault.getProperty(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_REQUEST_JWT_SIGN_KEYSTORE_FILE);
+		if(jwtKeystore!=null && StringUtils.isNotEmpty(jwtKeystore)) {
+			InputValidationUtils.validateTextAreaInput(jwtKeystore, "Richiesta - JWS KeyStore - File");
+		}
+		
+		String requestX5U = pDefault.getProperty(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_REQUEST_JWT_SIGN_INCLUDE_X509_URL);
+		if(requestX5U!=null && StringUtils.isNotEmpty(requestX5U)) {
+			InputValidationUtils.validateTextAreaInput(requestX5U, "Richiesta - JWS Header - URL");
+		}
+		
+		String mode = pDefault.getProperty(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_RESPONSE_TYPE);
+		
+		if(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.AA_RESPONSE_TYPE_VALUE_JWS.equals(mode) ) {
+			Properties p = mapProperties.get(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID);
+			if(p==null || p.size()<=0) {
+				throw new ProviderValidationException("La validazione di una risposta JWS richiede una configurazione del TrustStore; configurazione non riscontrata");
+			}
+			
+			String file = p.getProperty("rs.security.keystore.file");
+			InputValidationUtils.validateTextAreaInput(file, "Risposta - TrustStore - File");
 		}
 	}
 

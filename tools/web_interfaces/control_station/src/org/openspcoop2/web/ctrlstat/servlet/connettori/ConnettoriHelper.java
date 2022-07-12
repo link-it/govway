@@ -52,6 +52,7 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
@@ -3893,6 +3894,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 					if(this.checkLength4000(url, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL)==false) {
 						return false;
 					}
+					try {
+						InputValidationUtils.validateTextAreaInput(url, 
+								ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
+					}catch(Exception e){
+						this.pd.setMessage(e.getMessage());
+						return false;
+					}
 					if(this.isProfiloModIPA(protocollo) && !servizioApplicativo && this.connettoriCore.isModipaFruizioniConnettoreCheckHttps()) {
 						if(!httpsurl.toLowerCase().trim().startsWith("https://")) {
 							this.pd.setMessage("Il profilo richiede una url con prefisso https://");
@@ -3978,6 +3986,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 					if(this.checkLength4000(httpsurl, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_URL)==false) {
 						return false;
 					}
+					try {
+						InputValidationUtils.validateTextAreaInput(httpsurl, 
+								ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_URL);
+					}catch(Exception e){
+						this.pd.setMessage(e.getMessage());
+						return false;
+					}
 					
 					if(!httpsurl.toLowerCase().trim().startsWith("https://")) {
 						if(this.isProfiloModIPA(protocollo) && this.connettoriCore.isModipaFruizioniConnettoreCheckHttps()) {
@@ -4006,6 +4021,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 						if(this.checkLength4000(httpspath, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION)==false) {
 							return false;
 						}
+						try {
+							InputValidationUtils.validateTextAreaInput(httpspath, 
+									ConnettoriCostanti.LABEL_CONNETTORE_AUTENTICAZIONE_SERVER + " - " + ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
+						}catch(Exception e){
+							this.pd.setMessage(e.getMessage());
+							return false;
+						}
 						
 						if ("".equals(httpspwd)) {
 							this.pd.setMessage("La password del TrustStore è necessaria per l'Autenticazione Server");
@@ -4026,6 +4048,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 						if(httpsTrustStoreCRLs!=null && !"".equals(httpsTrustStoreCRLs)) {
 							
 							if(this.checkLength4000(httpsTrustStoreCRLs, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL)==false) {
+								return false;
+							}
+							
+							try {
+								InputValidationUtils.validateTextAreaInput(httpsTrustStoreCRLs, 
+										ConnettoriCostanti.LABEL_CONNETTORE_AUTENTICAZIONE_SERVER + " - " + ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL);
+							}catch(Exception e){
+								this.pd.setMessage(e.getMessage());
 								return false;
 							}
 							
@@ -4080,6 +4110,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 							if(this.checkLength4000(httpspathkey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION)==false) {
 								return false;
 							}
+							try {
+								InputValidationUtils.validateTextAreaInput(httpspathkey, 
+										ConnettoriCostanti.LABEL_CONNETTORE_AUTENTICAZIONE_CLIENT + " - " + ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
+							}catch(Exception e){
+								this.pd.setMessage(e.getMessage());
+								return false;
+							}
 							
 							if ("".equals(httpspwdkey)) {
 								this.pd.setMessage("La password del KeyStore è necessaria per l'Autenticazione Client, in caso di dati di accesso al KeyStore ridefiniti");
@@ -4127,6 +4164,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 					if(this.checkLength4000(requestOutputFileName, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME)==false) {
 						return false;
 					}
+					try {
+						InputValidationUtils.validateTextAreaInput(requestOutputFileName, 
+								ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME+"' ("+
+										ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT+")");
+					}catch(Exception e){
+						this.pd.setMessage(e.getMessage());
+						return false;
+					}
 					
 					if(StringUtils.isNotEmpty(requestOutputFileName_permissions)) {
 						try {
@@ -4152,7 +4197,15 @@ public class ConnettoriHelper extends ConsoleHelper {
 						}
 						if(this.checkLength4000(requestOutputFileNameHeaders, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS)==false) {
 							return false;
-						}						
+						}		
+						try {
+							InputValidationUtils.validateTextAreaInput(requestOutputFileNameHeaders, 
+									ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS+"' ("+
+											ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT+")");
+						}catch(Exception e){
+							this.pd.setMessage(e.getMessage());
+							return false;
+						}
 					}
 					
 					if(StringUtils.isNotEmpty(requestOutputFileNameHeaders_permissions)) {
@@ -4194,6 +4247,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 						if(this.checkLength4000(responseInputFileName, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME)==false) {
 							return false;
 						}
+						try {
+							InputValidationUtils.validateTextAreaInput(responseInputFileName, 
+									ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME+"' ("+
+											ConnettoriCostanti.LABEL_CONNETTORE_RESPONSE_INPUT+")");
+						}catch(Exception e){
+							this.pd.setMessage(e.getMessage());
+							return false;
+						}
 						
 						if(responseInputFileNameHeaders!=null && !"".equals(responseInputFileNameHeaders)){
 							try{
@@ -4204,6 +4265,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 								return false;
 							}
 							if(this.checkLength4000(responseInputFileNameHeaders, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS)==false) {
+								return false;
+							}
+							try {
+								InputValidationUtils.validateTextAreaInput(responseInputFileNameHeaders, 
+										ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS+"' ("+
+												ConnettoriCostanti.LABEL_CONNETTORE_RESPONSE_INPUT+")");
+							}catch(Exception e){
+								this.pd.setMessage(e.getMessage());
 								return false;
 							}
 						}

@@ -1,5 +1,5 @@
 <config id="messageSecurity.wss4j.sender.signature" label="WS-Security Signature" xmlns="http://www.openspcoop2.org/core/mvc/properties"
-	provider="org.openspcoop2.security.message.wss4j.KeyStoreSecurityProvider">
+	provider="org.openspcoop2.security.message.wss4j.SignatureSenderProvider">
 
     <compatibility not="false" and="false">
             <tags and="true">

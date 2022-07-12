@@ -1,5 +1,5 @@
 <config id="messageSecurity.jose.sender.encrypt" label="JWE Encrypt" xmlns="http://www.openspcoop2.org/core/mvc/properties"
-	provider="org.openspcoop2.security.message.jose.TrustStoreSecurityProvider">
+	provider="org.openspcoop2.security.message.jose.EncryptSenderProvider">
 
 	<compatibility not="false" and="false">
         <tags and="true">

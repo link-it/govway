@@ -1,5 +1,5 @@
 <config id="messageSecurity.xml.receiver.signature" label="XML Verifier Signature" xmlns="http://www.openspcoop2.org/core/mvc/properties"
-	provider="org.openspcoop2.security.message.xml.TrustStoreSecurityProvider">
+	provider="org.openspcoop2.security.message.xml.SignatureReceiverProvider">
 
 	<compatibility not="false" and="false">
         <tags and="true">

@@ -26,8 +26,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.mvc.properties.Item;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
+import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.pdd.core.token.parser.TipologiaClaims;
@@ -118,12 +121,18 @@ public class TokenProvider implements IProvider {
 				if(p==null || p.size()<=0) {
 					throw new ProviderValidationException("Non è stata fornita una configurazione per effettuare la validazione JWS");
 				}
+				
+				String file = p.getProperty("rs.security.keystore.file");
+				InputValidationUtils.validateTextAreaInput(file, "Validazione JWT - TrustStore - File");
 			}
 			else if(Costanti.POLICY_TOKEN_TYPE_JWE.equals(tokenType)) {
 				Properties p = mapProperties.get(Costanti.POLICY_VALIDAZIONE_JWE_DECRYPT_PROP_REF_ID);
 				if(p==null || p.size()<=0) {
 					throw new ProviderValidationException("Non è stata fornita una configurazione per effettuare la validazione JWE");
 				}
+				
+				String file = p.getProperty("rs.security.keystore.file");
+				InputValidationUtils.validateTextAreaInput(file, "Validazione JWT - KeyStore - File");
 			}
 			
 			String parserType = pDefault.getProperty(Costanti.POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE);
@@ -156,17 +165,36 @@ public class TokenProvider implements IProvider {
 			if(p==null || p.size()<=0) {
 				throw new ProviderValidationException("Nonostante sia stato indicato un endpoint 'https', non è stata fornita una configurazione dei parametri ssl da utilizzare");
 			}
+			
+			String trustAllCerts = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_ALL_CERTS);
+			boolean trustAll = false;
+			if(trustAllCerts!=null && StringUtils.isNotEmpty(trustAllCerts)) {
+				trustAll = Boolean.valueOf(trustAllCerts);
+			}
+			
+			if(!trustAll) {
+				String location = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
+				InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Server - File (TrustStore per l'autenticazione server)");
+				
+				String algo = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM);
+				if(algo==null || "".equals(algo)) {
+					throw new ProviderValidationException("Indicare un algoritmo per l'autenticazione server");
+				}
+				if(algo.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nell'algoritmo per l'autenticazione server");
+				}
+				
+				String location_crl = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+				if(location_crl!=null && !"".equals(location_crl)) {
+					InputValidationUtils.validateTextAreaInput(location_crl, "Https - Autenticazione Server - CRL File(s)");
+				}
+			}
 		}
 		
 		if(introspection) {
 			
 			String url = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_URL);
-			if(url==null || "".equals(url)) {
-				throw new ProviderValidationException("Non è stata fornita la url del servizio 'Introspection'");
-			}
-			if(url.contains(" ")) {
-				throw new ProviderValidationException("Non indicare spazi nella url del servizio 'Introspection'");
-			}
+			InputValidationUtils.validateTextAreaInput(url, "Token Introspection - URL");
 			try{
 				org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(url);
 			}catch(Exception e){
@@ -292,12 +320,7 @@ public class TokenProvider implements IProvider {
 			boolean bearer = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_INTROSPECTION_AUTH_BEARER_STATO);
 			if(bearer) {
 				String token = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_AUTH_BEARER_TOKEN);
-				if(token==null || "".equals(token)) {
-					throw new ProviderValidationException("Nonostante sia richiesta una autenticazione 'Authorization Bearer', non è stato fornito un token di autenticazione da inoltrare al servizio di Introspection");
-				}
-				if(token.contains(" ")) {
-					throw new ProviderValidationException("Non indicare spazi nel token di autenticazione da inoltrare al servizio di Introspection");
-				}
+				InputValidationUtils.validateTextAreaInput(token, "Token Introspection - Autenticazione Bearer - Token");
 			}
 			
 			boolean ssl = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_INTROSPECTION_AUTH_SSL_STATO);
@@ -306,17 +329,25 @@ public class TokenProvider implements IProvider {
 				if(p==null || p.size()<=0) {
 					throw new ProviderValidationException("Nonostante sia richiesta una autenticazione 'Https', non sono stati forniti i parametri di connessione ssl client da utilizzare verso il servizio di Introspection");
 				}
+				
+				String location = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION);
+				if(location!=null && !"".equals(location)) {
+					InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Client - File (KeyStore per l'autenticazione client)");
+				}
+				
+				String algo = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITHM);
+				if(algo==null || "".equals(algo)) {
+					throw new ProviderValidationException("Indicare un algoritmo per l'autenticazione client");
+				}
+				if(algo.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nell'algoritmo per l'autenticazione client");
+				}
 			}
 		}
 		
 		if(userInfo) {
 			String url = pDefault.getProperty(Costanti.POLICY_USER_INFO_URL);
-			if(url==null || "".equals(url)) {
-				throw new ProviderValidationException("Non è stata fornita la url del servizio 'OIDC UserInfo'");
-			}
-			if(url.contains(" ")) {
-				throw new ProviderValidationException("Non indicare spazi nella url del servizio 'OIDC UserInfo'");
-			}
+			InputValidationUtils.validateTextAreaInput(url, "OIDC - UserInfo - URL");
 			try{
 				org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(pDefault.getProperty(Costanti.POLICY_USER_INFO_URL));
 			}catch(Exception e){
@@ -442,12 +473,7 @@ public class TokenProvider implements IProvider {
 			boolean bearer = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_USER_INFO_AUTH_BEARER_STATO);
 			if(bearer) {
 				String token = pDefault.getProperty(Costanti.POLICY_USER_INFO_AUTH_BEARER_TOKEN);
-				if(token==null || "".equals(token)) {
-					throw new ProviderValidationException("Nonostante sia richiesta una autenticazione 'Authorization Bearer', non è stato fornito un token di autenticazione da inoltrare al servizio di UserInfo");
-				}
-				if(token.contains(" ")) {
-					throw new ProviderValidationException("Non indicare spazi nel token di autenticazione da inoltrare al servizio di UserInfo");
-				}
+				InputValidationUtils.validateTextAreaInput(token, "OIDC - UserInfo - Autenticazione Bearer - Token");
 			}
 			
 			boolean ssl = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_USER_INFO_AUTH_SSL_STATO);
@@ -455,6 +481,19 @@ public class TokenProvider implements IProvider {
 				Properties p = mapProperties.get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
 				if(p==null || p.size()<=0) {
 					throw new ProviderValidationException("Nonostante sia richiesta una autenticazione 'Https', non sono stati forniti i parametri di connessione ssl client da utilizzare verso il servizio di UserInfo");
+				}
+				
+				String location = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION);
+				if(location!=null && !"".equals(location)) {
+					InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Client - File (KeyStore per l'autenticazione client)");
+				}
+				
+				String algo = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITHM);
+				if(algo==null || "".equals(algo)) {
+					throw new ProviderValidationException("Indicare un algoritmo per l'autenticazione client");
+				}
+				if(algo.contains(" ")) {
+					throw new ProviderValidationException("Non indicare spazi nell'algoritmo per l'autenticazione client");
 				}
 			}
 		}
@@ -631,6 +670,9 @@ public class TokenProvider implements IProvider {
 					if(p==null || p.size()<=0) {
 						throw new ProviderValidationException("La modalità di forward, delle informazioni raccolte, selezionata richiede una configurazione per poter attuare la firma JWS; configurazione non riscontrata");
 					}
+					
+					String file = p.getProperty("rs.security.keystore.file");
+					InputValidationUtils.validateTextAreaInput(file, "Token Forward - JWS KeyStore - File");
 				}
 				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE.equals(mode) 
 							) {
@@ -638,6 +680,9 @@ public class TokenProvider implements IProvider {
 					if(p==null || p.size()<=0) {
 						throw new ProviderValidationException("La modalità di forward, delle informazioni raccolte, selezionata richiede una configurazione per poter attuare la cifratura JWE; configurazione non riscontrata");
 					}
+					
+					String file = p.getProperty("rs.security.keystore.file");
+					InputValidationUtils.validateTextAreaInput(file, "Token Forward - JWE KeyStore - File");
 				}
 				
 			}

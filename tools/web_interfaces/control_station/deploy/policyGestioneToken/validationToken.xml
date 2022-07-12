@@ -1239,7 +1239,7 @@
 						<selected name="endpointHttpsTrustAllCerts"/>
 					</condition>	
 				</conditions>
-				<property name="trustStoreCRLs" />
+				<property name="trustStoreCRLs" properties="sslConfig" />
 			</item>
 			
 		</subsection>

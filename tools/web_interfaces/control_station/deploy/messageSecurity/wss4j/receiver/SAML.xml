@@ -1,5 +1,5 @@
 <config id="messageSecurity.wss4j.receiver.saml" label="WS-Security SAML Token" sortLabel="Z_SamlToken" xmlns="http://www.openspcoop2.org/core/mvc/properties"
-provider="org.openspcoop2.security.message.wss4j.TrustStoreSecurityProvider">
+provider="org.openspcoop2.security.message.wss4j.SAMLReceiverProvider">
 
     <compatibility not="false" and="false">
             <tags and="true">

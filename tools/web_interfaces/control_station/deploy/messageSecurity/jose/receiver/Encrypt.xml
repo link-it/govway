@@ -1,5 +1,5 @@
 <config id="messageSecurity.jose.receiver.encrypt" label="JWE Decrypt" xmlns="http://www.openspcoop2.org/core/mvc/properties"
-	provider="org.openspcoop2.security.message.jose.KeyStoreWithSecretKeySecurityProvider">
+	provider="org.openspcoop2.security.message.jose.DecryptReceiverProvider">
 
 	<compatibility not="false" and="false">
         <tags and="true">

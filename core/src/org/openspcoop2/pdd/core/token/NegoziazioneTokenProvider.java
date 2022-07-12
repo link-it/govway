@@ -30,6 +30,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.mvc.properties.Item;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
+import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderInfo;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
@@ -73,12 +74,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 			
 			if(!trustAll) {
 				String location = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
-				if(location==null || "".equals(location)) {
-					throw new ProviderValidationException("Indicare un path del TrustStore per l'autenticazione server");
-				}
-				if(location.contains(" ")) {
-					throw new ProviderValidationException("Non indicare spazi nel path del TrustStore per l'autenticazione server");
-				}
+				InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Server - File (TrustStore per l'autenticazione server)");
 				
 				String algo = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITHM);
 				if(algo==null || "".equals(algo)) {
@@ -87,16 +83,16 @@ public class NegoziazioneTokenProvider implements IProvider {
 				if(algo.contains(" ")) {
 					throw new ProviderValidationException("Non indicare spazi nell'algoritmo per l'autenticazione server");
 				}
+				
+				String location_crl = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_CRLs);
+				if(location_crl!=null && !"".equals(location_crl)) {
+					InputValidationUtils.validateTextAreaInput(location_crl, "Https - Autenticazione Server - CRL File(s)");
+				}
 			}
 		}
 		
 		String url = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_URL);
-		if(url==null || "".equals(url)) {
-			throw new ProviderValidationException("Non e' stata fornita la url dove reperire il token");
-		}
-		if(url.contains(" ")) {
-			throw new ProviderValidationException("Non indicare spazi nella url");
-		}
+		InputValidationUtils.validateTextAreaInput(url, "Token Endpoint - URL");
 		try{
 			org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(url);
 		}catch(Exception e){
@@ -145,12 +141,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 		boolean bearer = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BEARER_STATO);
 		if(bearer) {
 			String token = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AUTH_BEARER_TOKEN);
-			if(token==null || "".equals(token)) {
-				throw new ProviderValidationException("Nonostante sia richiesta una autenticazione 'Authorization Bearer', non è stato fornito un token di autenticazione da inoltrare al servizio");
-			}
-			if(token.contains(" ")) {
-				throw new ProviderValidationException("Non indicare spazi nel token di autenticazione da inoltrare al servizio");
-			}
+			InputValidationUtils.validateTextAreaInput(token, "Token Endpoint - Autenticazione Client - Token");
 		}
 		
 		if(ssl) {
@@ -161,9 +152,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 			
 			String location = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION);
 			if(location!=null && !"".equals(location)) {
-				if(location.contains(" ")) {
-					throw new ProviderValidationException("Non indicare spazi nel path del KeyStore per l'autenticazione client");
-				}
+				InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Client - File (KeyStore per l'autenticazione client)");
 			}
 			
 			String algo = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITHM);
@@ -212,9 +201,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 			if(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509.equals(retMode)) {
 			
 				String file = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_FILE);
-				if(file!=null && file.contains(" ")) {
-					throw new ProviderValidationException("Non indicare spazi nel campo 'JWT KeyStore - File'");
-				}
+				InputValidationUtils.validateTextAreaInput(file, "Token Endpoint - JWT KeyStore - File");
 				
 				// NOTA: i controlli seguenti di inizio e fine, vengono fatti gia' in automatico dal framework
 				String p = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_PASSWORD);
@@ -276,6 +263,11 @@ public class NegoziazioneTokenProvider implements IProvider {
 			String type = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_JOSE_TYPE);
 			if(type!=null && type.contains(" ")) {
 				throw new ProviderValidationException("Non indicare spazi nel campo 'JWT Header - Type (typ)'");
+			}
+			
+			String x5u = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_URL);
+			if(x5u!=null && !"".equals(x5u)) {
+				InputValidationUtils.validateTextAreaInput(x5u, "Token Endpoint - JWT Header - URL");
 			}
 						
 			String clientId = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLIENT_ID);

@@ -1732,6 +1732,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			if(isOk){
 				try{
 					idAps = apsHelper.getIDServizioFromValues(this.tiposervizio, this.nomeservizio, this.provider, this.versione);
+					idAps.setUriAccordoServizioParteComune(uriAccordo);
 					//validazione campi dinamici
 					if(gestioneFruitori) {
 						this.consoleDynamicConfiguration.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, apsHelper, this.protocolProperties,  
