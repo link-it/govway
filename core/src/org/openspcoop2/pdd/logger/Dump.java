@@ -127,6 +127,8 @@ public class Dump {
 	private List<String> tipoDumpOpenSPCoopAppender = null; 
 	
 	private DumpConfigurazione dumpConfigurazione;
+	private List<String> dumpHeaderWhiteList;
+	private List<String> dumpHeaderBlackList;
 	
 	private IProtocolFactory<?> protocolFactory = null;
 	private String idTransazione = null;
@@ -188,7 +190,12 @@ public class Dump {
 		this.properties = OpenSPCoop2Properties.getInstance();
 		this.statoRichiesta = statoRichiesta;
 		this.statoRisposta = statoRisposta;
+		
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		
 		this.dumpConfigurazione = dumpConfigurazione;
+		this.dumpHeaderWhiteList = op2Properties.getDumpHeaderWhiteList();
+		this.dumpHeaderBlackList = op2Properties.getDumpHeaderBlackList();
 		
 		this.msgDiagErroreDump = MsgDiagnostico.newInstance(this.tipoPdD,dominio,modulo,nomePorta,this.statoRichiesta,this.statoRisposta);
 		this.msgDiagErroreDump.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO);
@@ -205,7 +212,7 @@ public class Dump {
 			throw new DumpException("Errore durante l'inizializzazione del ProtocolFactoryManager...",e);
 		}
 		if(this.dominio==null){
-			this.dominio=OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocol);
+			this.dominio=op2Properties.getIdentitaPortaDefault(protocol);
 		}
 		
 		try{
@@ -676,12 +683,51 @@ public class Dump {
 		}
 		if(dumpHeaders || onlyLogFileTrace_headers) {
 			if(transportHeader!=null && transportHeader.size()>0){
+				
+				List<String> filterList = null;
+				boolean white = false;
+				if(this.dumpHeaderWhiteList!=null && !this.dumpHeaderWhiteList.isEmpty()) {
+					filterList = this.dumpHeaderWhiteList;
+					white = true;
+				}
+				else if(this.dumpHeaderBlackList!=null && !this.dumpHeaderBlackList.isEmpty()) {
+					filterList = this.dumpHeaderBlackList;
+					white = false;
+				}
+				
 				Iterator<String> keys = transportHeader.keySet().iterator();
 				while (keys.hasNext()) {
-					String key = (String) keys.next();
+					String key = (String) keys.next();					
 					if(key!=null){
-						List<String> values = transportHeader.get(key);
-						messaggio.getHeaders().put(key, values);
+						
+						boolean add = false;
+						if(filterList!=null) {
+							boolean find = false;
+							for (String filterHdr : filterList) {
+								if(filterHdr.toLowerCase().equals(key.toLowerCase())) {
+									find = true;
+									break;
+								}
+							}
+							if(white) {
+								if(find) {
+									add = true;
+								}
+							}
+							else {
+								if(!find) {
+									add = true;
+								}
+							}
+						}
+						else {
+							add = true;
+						}
+						
+						if(add) {
+							List<String> values = transportHeader.get(key);
+							messaggio.getHeaders().put(key, values);
+						}
 					}
 				}
 			}

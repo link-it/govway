@@ -1543,6 +1543,8 @@ public class OpenSPCoop2Properties {
 			this.isDumpAllAttachments();
 			this.isDumpFallito_BloccaCooperazioneInCorso();
 			this.isDumpFallito_BloccoServiziPdD();
+			this.getDumpHeaderWhiteList();
+			this.getDumpHeaderBlackList();
 			
 			// DumpBinario
 			this.isDumpBinario_registrazioneDatabase();
@@ -17111,7 +17113,79 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isDumpFallito_BloccoServiziPdD;
 	}
 
+	private static List<String> getDumpHeaderWhiteList = null;
+	public List<String> getDumpHeaderWhiteList(){
+
+		if(OpenSPCoop2Properties.getDumpHeaderWhiteList==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.header.whiteList";
+			try{
+				OpenSPCoop2Properties.getDumpHeaderWhiteList = new ArrayList<String>();
+				
+				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				if(tmp!=null && !"".equals(tmp.trim())) {
+					tmp = tmp.trim();
+					if(tmp.contains(",")) {
+						String [] split = tmp.split(",");
+						if(split!=null && split.length>0) {
+							for (String s : split) {
+								if(s!=null) {
+									s = s.trim();
+									if(!"".equals(s)) {
+										OpenSPCoop2Properties.getDumpHeaderWhiteList.add(s);
+									}
+								}
+							}
+						}
+					}
+					else {
+						OpenSPCoop2Properties.getDumpHeaderWhiteList.add(tmp);
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+		}
+
+		return OpenSPCoop2Properties.getDumpHeaderWhiteList;
+	}
 	
+	private static List<String> getDumpHeaderBlackList = null;
+	public List<String> getDumpHeaderBlackList(){
+
+		if(OpenSPCoop2Properties.getDumpHeaderBlackList==null){
+			String pName = "org.openspcoop2.pdd.logger.dump.header.blackList";
+			try{
+				OpenSPCoop2Properties.getDumpHeaderBlackList = new ArrayList<String>();
+				
+				String tmp = this.reader.getValue_convertEnvProperties(pName); 
+				if(tmp!=null && !"".equals(tmp.trim())) {
+					tmp = tmp.trim();
+					if(tmp.contains(",")) {
+						String [] split = tmp.split(",");
+						if(split!=null && split.length>0) {
+							for (String s : split) {
+								if(s!=null) {
+									s = s.trim();
+									if(!"".equals(s)) {
+										OpenSPCoop2Properties.getDumpHeaderBlackList.add(s);
+									}
+								}
+							}
+						}
+					}
+					else {
+						OpenSPCoop2Properties.getDumpHeaderBlackList.add(tmp);
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}
+		}
+
+		return OpenSPCoop2Properties.getDumpHeaderBlackList;
+	}
 	
 	
 	/* ----------- Dump (Binario) --------------------- */

@@ -1,3 +1,13 @@
+2022-07-13  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1404
+	È adesso possibile configurare una 'DenyList' o una 'WhiteList' che consente di personalizzare gli header HTTP che devono essere registrati su database tramite la funzionalità di registrazione messaggi.
+	Una configurazione analoga è disponibile per la funzionalità 'file trace' che consente di registrare gli header HTTP su file attraverso la chiamate delle primitive: 
+	'getInRequestHeaders', 'getOutRequestHeaders', 'getInResponseHeaders', 'getOutResponseHeaders'.
+	Per quanto concerne la funzionalità 'file trace' è infine stato corretto un bug presente sulle primitive indicate precedentemente quando venivano invocate con l'istruzione '${logBase64:xx}': 
+	il valore codificato in base64 restituito dalle primitive conteneva una lista di header in cui a sua volta i nomi e i valori erano nuovamente codificati in base64.
+
 2022-07-12  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

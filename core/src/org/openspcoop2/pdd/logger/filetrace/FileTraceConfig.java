@@ -130,6 +130,8 @@ public class FileTraceConfig {
 	private String headerSeparator = "=";
 	private String headerPrefix = "";
 	private String headerSuffix = "";
+	private List<String> headerBlackList;
+	private List<String> headerWhiteList;
 	
 	private String headerMultiValueSeparator = ","; // per singolo header
 	
@@ -421,6 +423,50 @@ public class FileTraceConfig {
 		if(tmp!=null) {
 			this.headerMultiValueSeparator = tmp;
 		}
+		
+		tmp = getProperty(reader, "format.header.whiteList", false);
+		if(tmp!=null && !"".equals(tmp.trim())) {
+			tmp = tmp.trim();
+			this.headerWhiteList = new ArrayList<String>();
+			if(tmp.contains(",")) {
+				String [] split = tmp.split(",");
+				if(split!=null && split.length>0) {
+					for (String s : split) {
+						if(s!=null) {
+							s = s.trim();
+							if(!"".equals(s)) {
+								this.headerWhiteList.add(s);
+							}
+						}
+					}
+				}
+			}
+			else {
+				this.headerWhiteList.add(tmp);
+			}
+		}
+		
+		tmp = getProperty(reader, "format.header.blackList", false);
+		if(tmp!=null && !"".equals(tmp.trim())) {
+			tmp = tmp.trim();
+			this.headerBlackList = new ArrayList<String>();
+			if(tmp.contains(",")) {
+				String [] split = tmp.split(",");
+				if(split!=null && split.length>0) {
+					for (String s : split) {
+						if(s!=null) {
+							s = s.trim();
+							if(!"".equals(s)) {
+								this.headerBlackList.add(s);
+							}
+						}
+					}
+				}
+			}
+			else {
+				this.headerBlackList.add(tmp);
+			}
+		}
 	}
 	
 	private String getProperty(PropertiesReader reader, String key, boolean required) throws UtilsException {
@@ -456,6 +502,12 @@ public class FileTraceConfig {
 	}
 	public String getHeaderSuffix() {
 		return this.headerSuffix;
+	}
+	public List<String> getHeaderBlackList() {
+		return this.headerBlackList;
+	}
+	public List<String> getHeaderWhiteList() {
+		return this.headerWhiteList;
 	}
 	
 	public String getHeaderMultiValueSeparator() {
