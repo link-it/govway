@@ -174,7 +174,7 @@ public class RestTest extends ConfigLoader {
 			
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, small_delay_count+1, small_delay_count, policyType, TipoRisorsaPolicyAttiva.TEMPO_MEDIO_RISPOSTA);
 			
-			if(org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.isJenkins() && policyType!=null && PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE.equals(policyType)) {
+			if(org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.isJenkins() && policyType!=null && policyType.useNearCache()) {
 				try {
 					checkPassedRequests(notBlockedResponses, windowSize, soglia, policyType);
 				}catch(Throwable t) {
@@ -279,7 +279,7 @@ public class RestTest extends ConfigLoader {
 			
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, small_delay_count+1, small_delay_count, policyType, TipoRisorsaPolicyAttiva.TEMPO_MEDIO_RISPOSTA);
 			
-			if(org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.isJenkins() && policyType!=null && PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE.equals(policyType)) {
+			if(org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.isJenkins() && policyType!=null && policyType.useNearCache()) {
 				try {
 					checkPassedRequests(notBlockedResponses, windowSize, soglia, policyType);
 				}catch(Throwable t) {

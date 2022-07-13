@@ -110,6 +110,11 @@ public enum PolicyGroupByActiveThreadsType {
 			PolicyGroupByActiveThreadsType.REDISSON_LONGADDER
 		);
 			
+	private static Set<PolicyGroupByActiveThreadsType> nearCacheModes = Set.of(
+			PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE,
+			PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP,
+			PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP
+		);
 		
 	
 
@@ -143,6 +148,10 @@ public enum PolicyGroupByActiveThreadsType {
 	}
 	public boolean isInconsistent() {
 		return inconsistentModes.contains(this);
+	}
+	
+	public boolean useNearCache() {
+		return nearCacheModes.contains(this);
 	}
 	
 	public String toLabel() {

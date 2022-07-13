@@ -183,6 +183,12 @@ public class EventiUtils {
 		
 		log.debug("======== VERIFICA findEventRLViolato ========");
 		
+		if(events==null) 
+		{
+			log.debug("Eventi null");
+			return false;
+		}
+		
 		return events.stream()
 		.anyMatch( ev -> {
 			Object tipo = ev.get("tipo");
