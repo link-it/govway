@@ -1,16 +1,16 @@
 /*
  * AdroitLogic UltraESB Enterprise Service Bus
  *
- * Copyright (c) 2010 AdroitLogic Private Ltd. (http://adroitlogic.org). All Rights Reserved.
+ * Copyright (c) 2010-2012 AdroitLogic Private Ltd. (http://adroitlogic.org). All Rights Reserved.
  *
  * GNU Affero General Public License Usage
  *
- * This program is free software:  you can redistribute it and/or modify it under the terms of the GNU Affero General
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General
  * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option)
  * any later version.
  *
- * This program is distributed  in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE .  See the GNU Affero General Public License for
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for
  * more details.
  *
  * You should have received a copy of the GNU Affero General Public License along with this program (See LICENSE-AGPL.TXT).
@@ -26,28 +26,13 @@
  * please contact AdroitLogic at info@adroitlogic.com
  */
 /*
- * Modificato per supportare le seguenti funzionalita':
+ * Modificato da Link.it (https://link.it) per supportare le seguenti funzionalità:
  * - firma e cifratura degli attachments
  * - cifratura con chiave simmetrica
  * - supporto CRL 
  * 
- * GovWay - A customizable API Gateway 
- * https://govway.org
+ * Copyright (c) 2011-2022 Link.it srl (https://link.it). 
  * 
- * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3, as published by
- * the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 package org.openspcoop2.security.message.soapbox;
 
@@ -83,6 +68,10 @@ import org.w3c.dom.NodeList;
 /**
  * SignPartialMessageProcessor
  *
+ * Author of the original AdroitLogic code:
+ * @author asankha
+ *
+ * Authors of the Link.it modification to the code:
  * @author Andrea Poli (apoli@link.it)
  * @author Giovanni Bussu (bussu@link.it)
  * @author $Author$
