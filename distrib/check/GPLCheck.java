@@ -129,18 +129,54 @@ public class GPLCheck {
 
 						for(int i=0; i<GPL_CHECK.length; i++){
 
-							int indexFound = byteInputBuffer.toString().indexOf(GPL_CHECK[i]);
+							String checkGPLString = GPL_CHECK[i];
+
+							if( f.getAbsolutePath().endsWith("tools/utils/src/org/openspcoop2/utils/id/apache/AbstractStringIdentifierGenerator.java") ||
+							    	f.getAbsolutePath().endsWith("tools/utils/src/org/openspcoop2/utils/id/apache/AbstractLongIdentifierGenerator.java") ||
+								f.getAbsolutePath().endsWith("tools/utils/src/org/openspcoop2/utils/id/apache/IdentifierGenerator.java") ||
+								f.getAbsolutePath().endsWith("tools/utils/src/org/openspcoop2/utils/id/apache/StringIdentifierGenerator.java") ||
+								f.getAbsolutePath().endsWith("tools/utils/src/org/openspcoop2/utils/id/apache/serial/NumericGenerator.java") ||
+								f.getAbsolutePath().endsWith("tools/utils/src/org/openspcoop2/utils/id/apache/serial/AlphanumericGenerator.java") ||
+								f.getAbsolutePath().endsWith("tools/utils/src/org/openspcoop2/utils/id/apache/serial/TimeBasedAlphanumericIdentifierGenerator.java") ||
+								f.getAbsolutePath().endsWith("tools/utils/src/org/openspcoop2/utils/id/apache/serial/PrefixedLeftPaddedNumericGenerator.java") ||
+								f.getAbsolutePath().endsWith("tools/utils/src/org/openspcoop2/utils/id/apache/serial/LongGenerator.java") ||
+								f.getAbsolutePath().endsWith("tools/utils/src/org/openspcoop2/utils/id/apache/serial/PrefixedAlphanumericGenerator.java") ||
+								f.getAbsolutePath().endsWith("tools/utils/src/org/openspcoop2/utils/id/apache/serial/PrefixedNumericGenerator.java") ||
+								f.getAbsolutePath().endsWith("tools/utils/src/org/openspcoop2/utils/id/apache/LongIdentifierGenerator.java")
+							){
+								if(i!=2){
+									// verifico solo Copyright (c) 2005-2*
+									continue;
+								}
+							}
+							else if( 
+								f.getAbsolutePath().endsWith("core/src/org/openspcoop2/security/message/soapbox/ProcessTimestampedMessage.java") ||
+								f.getAbsolutePath().endsWith("core/src/org/openspcoop2/security/message/soapbox/ProcessPartialEncryptedMessage.java") ||
+								f.getAbsolutePath().endsWith("core/src/org/openspcoop2/security/message/soapbox/ProcessSignedMessage.java") ||
+								f.getAbsolutePath().endsWith("core/src/org/openspcoop2/security/message/soapbox/SecurityConfig.java") ||
+								f.getAbsolutePath().endsWith("core/src/org/openspcoop2/security/message/soapbox/TimestampMessageProcessor.java") ||
+								f.getAbsolutePath().endsWith("core/src/org/openspcoop2/security/message/soapbox/EncryptPartialMessageProcessor.java") ||
+								f.getAbsolutePath().endsWith("core/src/org/openspcoop2/security/message/soapbox/SignPartialMessageProcessor.java")
+							){
+								if(i!=2){
+									// verifico solo Copyright (c) 2011-2*
+									continue;
+								}
+								checkGPLString = GPL_CHECK[i].replace("2005","2011");
+							}
+
+							int indexFound = byteInputBuffer.toString().indexOf(checkGPLString);
 							if(indexFound==-1){
 
 								fileNonValidi.add(f.getAbsolutePath());
-								dichiarazioneAssente.add(GPL_CHECK[i]);		
+								dichiarazioneAssente.add(checkGPLString);		
 								break;
 							}
-							if("https://govway.org".equals(GPL_CHECK[i])==false){
-								if(byteInputBuffer.toString().indexOf(GPL_CHECK[i],(indexFound+GPL_CHECK[i].length())) != -1){
+							if("https://govway.org".equals(checkGPLString)==false){
+								if(byteInputBuffer.toString().indexOf(checkGPLString,(indexFound+checkGPLString.length())) != -1){
 									if(f.getAbsolutePath().endsWith("tools/utils/src/org/openspcoop2/utils/Costanti.java")==false){
 										fileNonValidi.add(f.getAbsolutePath());
-										dichiarazioneAssente.add("doppia presenza della dichiarazione ["+GPL_CHECK[i]+"]");		
+										dichiarazioneAssente.add("doppia presenza della dichiarazione ["+checkGPLString+"]");		
 										break;
 									}
 								}

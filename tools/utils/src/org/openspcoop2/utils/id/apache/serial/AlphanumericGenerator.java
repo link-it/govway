@@ -15,28 +15,12 @@
  * limitations under the License.
  */
 /*
- * Modificato per supportare le seguenti funzionalita':
+ * Modificato da Link.it (https://link.it) per supportare le seguenti funzionalità:
  * - Generazione ID all'interno delle interfacce di OpenSPCoop2
  * - Gestione caratteri massimi per numeri e cifre
- * - Possibilita' di utilizzare lowerCase e/o upperCase
- * 
- * GovWay - A customizable API Gateway 
- * https://govway.org
+ * - Possibilità di utilizzare lowerCase e/o upperCase
  * 
  * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3, as published by
- * the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 package org.openspcoop2.utils.id.apache.serial;
 
@@ -57,14 +41,13 @@ import java.io.Serializable;
  * <p>The <code>wrap</code> property determines whether or not the sequence wraps
  * when it reaches the largest value that can be represented in <code>size</code>
  * base 36 digits. If <code>wrap</code> is false and the the maximum representable
- * value is exceeded, an IllegalStateException is thrown</p>
+ * value is exceeded, an IllegalStateException is thrown</p>.
  *
+ * Author of the original commons apache code:
  * @author Commons-Id team
  * @version $Id$
- */
-/**
- * OpenSPCoop2
  *
+ * Authors of the Link.it modification to the code:
  * @author $Author$
  * @version $Rev$, $Date$
  */
