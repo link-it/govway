@@ -14519,30 +14519,55 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							list = new ArrayList<>();
 						}
 						
-						// aggiungo soggetti operativi per poi poter selezionare un applicativo
-						if(multitenant) {
+						// soggetti esterni
+						boolean isSupportatoAutenticazioneApplicativiEsterni = false;
+						if(protocolloSelezionatoValue!=null && !"".equals(protocolloSelezionatoValue)) {
+							isSupportatoAutenticazioneApplicativiEsterni = this.saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocolloSelezionatoValue);
+						} 
+						
+						// multitenant: aggiungo soggetti operativi per poi poter selezionare un applicativo
+						// isSupportatoAutenticazioneApplicativiEsterni: aggiungo i soggettti che possiedono applicativi esterno
+						if(isSupportatoAutenticazioneApplicativiEsterni || multitenant) {
 							List<IDSoggetto> listSoggettiPreFilterMultitenant = this.confCore.getSoggetti(protocolloSelezionatoValue, protocolliValue);
 							for (IDSoggetto idSoggetto : listSoggettiPreFilterMultitenant) {
 								Soggetto s = this.soggettiCore.getSoggettoRegistro(idSoggetto);
 								boolean isPddEsterna = this.pddCore.isPddEsterna(s.getPortaDominio());
-								if(!isPddEsterna) {
-									boolean found = false;
+								
+								boolean found = false;
+								if( (multitenant && !isPddEsterna)
+										||
+									(isSupportatoAutenticazioneApplicativiEsterni && isPddEsterna)) {
 									for (IDSoggettoDB sogg : list) {
 										if(sogg.getTipo().equals(s.getTipo()) && sogg.getNome().equals(s.getNome())) {
 											found = true;
 											break;
 										}
+									}									
+								}
+								
+								if(!found && multitenant && !isPddEsterna) {
+									List<IDServizioApplicativoDB> listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazioneConfig, appId, 
+											CostantiConfigurazione.CLIENT);
+									if(listServiziApplicativiTmp!=null && !listServiziApplicativiTmp.isEmpty()) {
+										IDSoggettoDB idSoggettoDB = new IDSoggettoDB();
+										idSoggettoDB.setTipo(s.getTipo());
+										idSoggettoDB.setNome(s.getNome());
+										idSoggettoDB.setCodicePorta(s.getIdentificativoPorta());
+										idSoggettoDB.setId(s.getId());
+										list.add(idSoggettoDB);
 									}
-									if(!found) {
-										List<IDServizioApplicativoDB> listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazioneConfig, appId);
-										if(listServiziApplicativiTmp!=null && !listServiziApplicativiTmp.isEmpty()) {
-											IDSoggettoDB idSoggettoDB = new IDSoggettoDB();
-											idSoggettoDB.setTipo(s.getTipo());
-											idSoggettoDB.setNome(s.getNome());
-											idSoggettoDB.setCodicePorta(s.getIdentificativoPorta());
-											idSoggettoDB.setId(s.getId());
-											list.add(idSoggettoDB);
-										}
+								}
+								
+								if(!found && isSupportatoAutenticazioneApplicativiEsterni && isPddEsterna) {
+									List<IDServizioApplicativoDB> listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazioneConfig, appId,
+											CostantiConfigurazione.CLIENT);
+									if(listServiziApplicativiTmp!=null && !listServiziApplicativiTmp.isEmpty()) {
+										IDSoggettoDB idSoggettoDB = new IDSoggettoDB();
+										idSoggettoDB.setTipo(s.getTipo());
+										idSoggettoDB.setNome(s.getNome());
+										idSoggettoDB.setCodicePorta(s.getIdentificativoPorta());
+										idSoggettoDB.setId(s.getId());
+										list.add(idSoggettoDB);
 									}
 								}
 							}
@@ -14622,9 +14647,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						User user = ServletUtils.getUserFromSession(this.session);
 						String userLogin = user.getLogin();
 						
+						// soggetti esterni
+						boolean isSupportatoAutenticazioneApplicativiEsterni = false;
+						if(protocolloSelezionatoValue!=null && !"".equals(protocolloSelezionatoValue)) {
+							isSupportatoAutenticazioneApplicativiEsterni = this.saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocolloSelezionatoValue);
+						} 
+												
 						List<IDServizioApplicativoDB> listServiziApplicativiTmp = null;
 						if(delegata || !multitenant) {
-							listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggettoProprietario,userLogin,tipoAutenticazioneConfig,appId);
+							listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggettoProprietario,userLogin,tipoAutenticazioneConfig,appId,
+									CostantiConfigurazione.CLIENT);
 						}
 						else {
 							// sull'applicativa con multitenant deve essere stata selezionato un soggetto operativo.
@@ -14632,9 +14664,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								IDSoggetto idSoggettoSelezionato = new IDSoggetto(policy.getFiltro().getTipoFruitore(), policy.getFiltro().getNomeFruitore());
 								Soggetto s = this.soggettiCore.getSoggettoRegistro(idSoggettoSelezionato);
 								boolean isPddEsterna = this.pddCore.isPddEsterna(s.getPortaDominio());
-								if(!isPddEsterna) {
-									listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggettoSelezionato,userLogin,tipoAutenticazioneConfig,appId);
-								}									
+								if(!isPddEsterna || isSupportatoAutenticazioneApplicativiEsterni) {
+									listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggettoSelezionato,userLogin,tipoAutenticazioneConfig,appId,
+											CostantiConfigurazione.CLIENT);
+								}							
 							}
 						}
 						
@@ -21808,32 +21841,59 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							list = new ArrayList<>();
 						}
 						
-						// aggiungo soggetti operativi per poi poter selezionare un applicativo
-						if(multitenant) {
+						// soggetti esterni
+						boolean isSupportatoAutenticazioneApplicativiEsterni = false;
+						if(protocolloSelezionatoValue!=null && !"".equals(protocolloSelezionatoValue)) {
+							isSupportatoAutenticazioneApplicativiEsterni = this.saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocolloSelezionatoValue);
+						} 
+						                                               
+						// multitenant: aggiungo soggetti operativi per poi poter selezionare un applicativo
+						// isSupportatoAutenticazioneApplicativiEsterni: aggiungo i soggettti che possiedono applicativi esterno
+						if(isSupportatoAutenticazioneApplicativiEsterni || multitenant) {
+
 							List<IDSoggetto> listSoggettiPreFilterMultitenant = this.confCore.getSoggetti(protocolloSelezionatoValue, protocolliValue);
 							for (IDSoggetto idSoggetto : listSoggettiPreFilterMultitenant) {
 								Soggetto s = this.soggettiCore.getSoggettoRegistro(idSoggetto);
 								boolean isPddEsterna = this.pddCore.isPddEsterna(s.getPortaDominio());
-								if(!isPddEsterna) {
-									boolean found = false;
+								
+								boolean found = false;
+								if( (multitenant && !isPddEsterna)
+										||
+									(isSupportatoAutenticazioneApplicativiEsterni && isPddEsterna)) {
 									for (IDSoggettoDB sogg : list) {
 										if(sogg.getTipo().equals(s.getTipo()) && sogg.getNome().equals(s.getNome())) {
 											found = true;
 											break;
 										}
-									}
-									if(!found) {
-										List<IDServizioApplicativoDB> listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazioneConfig, appId);
-										if(listServiziApplicativiTmp!=null && !listServiziApplicativiTmp.isEmpty()) {
-											IDSoggettoDB idSoggettoDB = new IDSoggettoDB();
-											idSoggettoDB.setTipo(s.getTipo());
-											idSoggettoDB.setNome(s.getNome());
-											idSoggettoDB.setCodicePorta(s.getIdentificativoPorta());
-											idSoggettoDB.setId(s.getId());
-											list.add(idSoggettoDB);
-										}
+									}									
+								}
+								
+								if(!found && multitenant && !isPddEsterna) {
+									List<IDServizioApplicativoDB> listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazioneConfig, appId, 
+											CostantiConfigurazione.CLIENT);
+									if(listServiziApplicativiTmp!=null && !listServiziApplicativiTmp.isEmpty()) {
+										IDSoggettoDB idSoggettoDB = new IDSoggettoDB();
+										idSoggettoDB.setTipo(s.getTipo());
+										idSoggettoDB.setNome(s.getNome());
+										idSoggettoDB.setCodicePorta(s.getIdentificativoPorta());
+										idSoggettoDB.setId(s.getId());
+										list.add(idSoggettoDB);
 									}
 								}
+								
+								if(!found && isSupportatoAutenticazioneApplicativiEsterni && isPddEsterna) {
+									List<IDServizioApplicativoDB> listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazioneConfig, appId,
+											CostantiConfigurazione.CLIENT);
+									if(listServiziApplicativiTmp!=null && !listServiziApplicativiTmp.isEmpty()) {
+										IDSoggettoDB idSoggettoDB = new IDSoggettoDB();
+										idSoggettoDB.setTipo(s.getTipo());
+										idSoggettoDB.setNome(s.getNome());
+										idSoggettoDB.setCodicePorta(s.getIdentificativoPorta());
+										idSoggettoDB.setId(s.getId());
+										list.add(idSoggettoDB);
+									}
+								}
+								
 							}
 						}
 						
@@ -21911,9 +21971,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						User user = ServletUtils.getUserFromSession(this.session);
 						String userLogin = user.getLogin();
 						
+						// soggetti esterni
+						boolean isSupportatoAutenticazioneApplicativiEsterni = false;
+						if(protocolloSelezionatoValue!=null && !"".equals(protocolloSelezionatoValue)) {
+							isSupportatoAutenticazioneApplicativiEsterni = this.saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocolloSelezionatoValue);
+						}
+						
 						List<IDServizioApplicativoDB> listServiziApplicativiTmp = null;
 						if(delegata || !multitenant) {
-							listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggettoProprietario,userLogin,tipoAutenticazioneConfig,appId);
+							listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggettoProprietario,userLogin,tipoAutenticazioneConfig,appId,
+									CostantiConfigurazione.CLIENT);
 						}
 						else {
 							// sull'applicativa con multitenant deve essere stata selezionato un soggetto operativo.
@@ -21921,8 +21988,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								IDSoggetto idSoggettoSelezionato = new IDSoggetto(allarme.getFiltro().getTipoFruitore(), allarme.getFiltro().getNomeFruitore());
 								Soggetto s = this.soggettiCore.getSoggettoRegistro(idSoggettoSelezionato);
 								boolean isPddEsterna = this.pddCore.isPddEsterna(s.getPortaDominio());
-								if(!isPddEsterna) {
-									listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggettoSelezionato,userLogin,tipoAutenticazioneConfig,appId);
+								if(!isPddEsterna || isSupportatoAutenticazioneApplicativiEsterni) {
+									listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggettoSelezionato,userLogin,tipoAutenticazioneConfig,appId,
+											CostantiConfigurazione.CLIENT);
 								}									
 							}
 						}

@@ -696,7 +696,7 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 							List<String> protocolli = saCore.getProtocolli(session,false);
 							if(protocolli!=null && protocolli.size()==1) { // dovrebbe essere l'unico caso in cui un soggetto multitenant è selezionato
 								String protocollo = protocolli.get(0);
-								filtroSoggetto = !saHelper.isProfiloModIPA(protocollo);  // in modipa devono essere fatti vedere anche quelli
+								filtroSoggetto = !saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocollo);  // devono essere fatti vedere anche quelli
 							}
 						}
 						if(filtroSoggetto) {

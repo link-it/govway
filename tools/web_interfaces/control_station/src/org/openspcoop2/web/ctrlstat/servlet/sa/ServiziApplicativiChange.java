@@ -497,7 +497,8 @@ public final class ServiziApplicativiChange extends Action {
 			}
 
 			if(dominio==null) {
-				if(saHelper.isProfiloModIPA(nomeProtocollo)) {
+				boolean isSupportatoAutenticazioneApplicativiEsterni = saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(nomeProtocollo);
+				if(isSupportatoAutenticazioneApplicativiEsterni) {
 					PddCore pddCore = new PddCore(saCore);
 					dominio = pddCore.isPddEsterna(nomePdd) ? SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE : SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE;
 				}
@@ -730,7 +731,7 @@ public final class ServiziApplicativiChange extends Action {
 							List<String> protocolli = saCore.getProtocolli(session,false);
 							if(protocolli!=null && protocolli.size()==1) { // dovrebbe essere l'unico caso in cui un soggetto multitenant è selezionato
 								String protocollo = protocolli.get(0);
-								filtroSoggetto = !saHelper.isProfiloModIPA(protocollo);  // in modipa devono essere fatti vedere anche quelli
+								filtroSoggetto = !saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocollo);  // devono essere fatti vedere anche quelli
 							}
 						}
 						if(filtroSoggetto) {
@@ -2015,7 +2016,7 @@ public final class ServiziApplicativiChange extends Action {
 					List<String> protocolli = saCore.getProtocolli(session,false);
 					if(protocolli!=null && protocolli.size()==1) { // dovrebbe essere l'unico caso in cui un soggetto multitenant è selezionato
 						String protocollo = protocolli.get(0);
-						filtroSoggetto = !saHelper.isProfiloModIPA(protocollo);  // in modipa devono essere fatti vedere anche quelli
+						filtroSoggetto = !saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocollo);  // devono essere fatti vedere anche quelli
 					}
 				}
 				if(filtroSoggetto) {

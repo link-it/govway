@@ -148,7 +148,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			String dominio = null;
 
 			if(!env.isDominioInterno(idSoggetto)) {
-				if(profilo != null && !(profilo.equals(ProfiloEnum.MODI) || profilo.equals(ProfiloEnum.MODIPA))) {
+				if(profilo != null && !(profilo.equals(ProfiloEnum.APIGATEWAY) || profilo.equals(ProfiloEnum.MODI) || profilo.equals(ProfiloEnum.MODIPA))) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile creare un applicativo per un soggetto esterno col profilo ["+profilo+"]");
 				}
 				dominio = "esterno";

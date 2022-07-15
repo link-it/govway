@@ -19,5 +19,8 @@ done
 
 echo $query_params
 
-curl --user amministratore:123456 -i -H "Content-Type: application/json" -X DELETE "http://127.0.0.1:8080/govwayAPIConfig/$path?$query_params"
+#url="http://127.0.0.1:8080/govwayAPIConfig/$path?$query_params"
+url="http://127.0.0.1:8080/govway/ENTE/api-config/v1/$path?$query_params"
+
+curl --user amministratore:123456 -i -X DELETE "${url}"
 

@@ -147,6 +147,7 @@ import org.openspcoop2.web.ctrlstat.servlet.ConsoleUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 /**
  * FruizioniConfigurazioneApiServiceImpl
@@ -206,7 +207,8 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 				appId = apiKeyState.appIdSelected;
 			}
 			
-			List<IDServizioApplicativoDB> saCompatibili = env.saCore.soggettiServizioApplicativoList(env.idSoggetto.toIDSoggetto(),env.userLogin,tipoAutenticazione, appId);
+			List<IDServizioApplicativoDB> saCompatibili = env.saCore.soggettiServizioApplicativoList(env.idSoggetto.toIDSoggetto(),env.userLogin,tipoAutenticazione, appId,
+					ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT);
 			if (!BaseHelper.findFirst(saCompatibili, s -> s.getId().equals(sa.getId())).isPresent()) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il tipo di credenziali dell'Applicativo non sono compatibili con l'autenticazione impostata nella fruizione selezionata");
 			}

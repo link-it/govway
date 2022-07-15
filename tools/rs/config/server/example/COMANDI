@@ -17,6 +17,9 @@ ESEMPIO:
 ./add applicativi bodies/applicativo_apikey.json
 ./add applicativi bodies/applicativo_multipleApikey.json
 
+#./add soggetti bodies/soggetto_esterno.json
+./add applicativi bodies/applicativo_esterno.json soggetto=SoggettoEsternoJson
+
 	+ FIND:
 ./get applicativi	
 
@@ -33,6 +36,8 @@ ESEMPIO:
 ./update applicativi/ApplicativoJsonApiKeyAddId bodies/applicativo_multipleApikey_update.json
 ./update applicativi/ApplicativoJsonApiKeyAddId bodies/applicativo_disableMultipleApikey_update.json  // DA ERRORE!
 
+./update applicativi/ApplicativoEsternoJson bodies/applicativo_esterno.json soggetto=SoggettoEsternoJson
+
 	+ UPDATE CREDENZIALI:
 ./update applicativi/ApplicativoJson/credenziali bodies/credenziali_httpBasic_noPassword.json   // DA ERRORE!
 ./update applicativi/ApplicativoJson/credenziali bodies/credenziali_httpBasic.json
@@ -40,11 +45,14 @@ ESEMPIO:
 ./update applicativi/ApplicativoJson/credenziali bodies/credenziali_apikey.json
 ./update applicativi/ApplicativoJson/credenziali bodies/credenziali_multipleApikey.json
 
+./update applicativi/ApplicativoEsternoJson/credenziali bodies/credenziali_httpBasic.json soggetto=SoggettoEsternoJson
+
 ./update applicativi/ApplicativoJsonApiKey/credenziali bodies/credenziali_multipleApikey.json
 ./update applicativi/ApplicativoJsonApiKeyAddId/credenziali bodies/credenziali_apikey.json
 
 	+ DELETE: 		
 ./rem applicativi/ApplicativoJson	
+./rem applicativi/ApplicativoEsternoJson soggetto=SoggettoEsternoJson
 	
 
 
@@ -106,6 +114,8 @@ ESEMPIO:
 ./add soggetti bodies/soggetto2_certificato.json
 ./add soggetti bodies/soggetto_apikey.json
 ./add soggetti bodies/soggetto_multipleApikey.json
+
+./add soggetti bodies/soggetto_esterno.json
 
 	+ FIND:
 ./get soggetti

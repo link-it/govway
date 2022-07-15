@@ -28,6 +28,9 @@ import java.util.Map;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServiziApplicativi;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
+import org.openspcoop2.core.config.TrasformazioneRegola;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.driver.FiltroRicercaProtocolProperty;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
@@ -59,11 +62,37 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 	public Map<String,List<IDServizioApplicativoDB>> listServiziApplicativi = new HashMap<>();
 	public String idSoggettoToAdd = null;
 	public int saSize;
-	public PortaApplicativaAutorizzazioneServiziApplicativi saList;
+	public PortaApplicativaAutorizzazioneServiziApplicativi saAutorizzatiList;
+	public TrasformazioneRegolaApplicabilitaRichiesta saTrasformazioniList;
 	
 	public void buildList(PortaApplicativa pa, boolean modipa, String protocollo, boolean escludiSoggettoErogatore,
 			String idSoggettoToAdd,
-			PorteApplicativeCore paCore, ConsoleHelper porteApplicativeHelper, boolean escludiSAServer) throws Exception {
+			PorteApplicativeCore paCore, ConsoleHelper porteApplicativeHelper, boolean escludiSAServer,
+			boolean isSupportatoAutenticazioneApplicativiEsterni) throws Exception {
+		buildList(pa, modipa, protocollo, escludiSoggettoErogatore,
+				idSoggettoToAdd,
+				paCore, porteApplicativeHelper, escludiSAServer,
+				isSupportatoAutenticazioneApplicativiEsterni,
+				null);
+	}
+	
+	public void buildListTrasformazioni(PortaApplicativa pa, boolean modipa, String protocollo, boolean escludiSoggettoErogatore,
+			String idSoggettoToAdd,
+			PorteApplicativeCore paCore, ConsoleHelper porteApplicativeHelper, boolean escludiSAServer,
+			boolean isSupportatoAutenticazioneApplicativiEsterni,
+			TrasformazioneRegola regola) throws Exception {
+		buildList(pa, modipa, protocollo, escludiSoggettoErogatore,
+				idSoggettoToAdd,
+				paCore, porteApplicativeHelper, escludiSAServer,
+				isSupportatoAutenticazioneApplicativiEsterni,
+				regola);
+	}
+	
+	private void buildList(PortaApplicativa pa, boolean modipa, String protocollo, boolean escludiSoggettoErogatore,
+			String idSoggettoToAdd,
+			PorteApplicativeCore paCore, ConsoleHelper porteApplicativeHelper, boolean escludiSAServer,
+			boolean isSupportatoAutenticazioneApplicativiEsterni,
+			TrasformazioneRegola regola) throws Exception {
 		
 		this.idSoggettoToAdd = idSoggettoToAdd;
 		
@@ -81,7 +110,7 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 		String userLogin = ServletUtils.getUserLoginFromSession(porteApplicativeHelper.getSession());	
 		
 		List<org.openspcoop2.core.registry.Soggetto> listSoggetti = null; 
-		if(modipa) {
+		if(isSupportatoAutenticazioneApplicativiEsterni) {
 			listSoggetti = soggettiCore.getSoggetti(protocollo);
 		}
 		else {
@@ -97,8 +126,15 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 			}
 		}
 		
-		this.saList = pa.getServiziApplicativiAutorizzati();
-		this.saSize = this.saList!=null ? this.saList.sizeServizioApplicativoList() : 0;
+		if(regola!=null) {
+			this.saTrasformazioniList = regola.getApplicabilita();
+			this.saSize = this.saTrasformazioniList!=null ? this.saTrasformazioniList.sizeServizioApplicativoList() : 0;
+		}
+		else {
+			this.saAutorizzatiList = pa.getServiziApplicativiAutorizzati();
+			this.saSize = this.saAutorizzatiList!=null ? this.saAutorizzatiList.sizeServizioApplicativoList() : 0;
+		}
+
 		this.listServiziApplicativi = new HashMap<>();
 		
 		String filtroTipoSA = escludiSAServer ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT : null;
@@ -139,13 +175,27 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 				if(listServiziApplicativiTmp!=null && listServiziApplicativiTmp.size()>0) {
 					for (IDServizioApplicativoDB sa : listServiziApplicativiTmp) {
 						boolean found = false;
-						if(this.saList!=null && this.saList.sizeServizioApplicativoList()>0) {
-							for (PortaApplicativaAutorizzazioneServizioApplicativo saAssociatoPA : this.saList.getServizioApplicativoList()) { 
-								if(saAssociatoPA.getNome().equals(sa.getNome()) && 
-										saAssociatoPA.getTipoSoggettoProprietario().equals(soggetto.getTipo()) && 
-										saAssociatoPA.getNomeSoggettoProprietario().equals(soggetto.getNome())) {
-									found = true;
-									break;
+						if(regola!=null) {
+							if(this.saTrasformazioniList!=null && this.saTrasformazioniList.sizeServizioApplicativoList()>0) {
+								for (TrasformazioneRegolaApplicabilitaServizioApplicativo saAssociatoPA : this.saTrasformazioniList.getServizioApplicativoList()) { 
+									if(saAssociatoPA.getNome().equals(sa.getNome()) && 
+											saAssociatoPA.getTipoSoggettoProprietario().equals(soggetto.getTipo()) && 
+											saAssociatoPA.getNomeSoggettoProprietario().equals(soggetto.getNome())) {
+										found = true;
+										break;
+									}
+								}
+							}
+						}
+						else {
+							if(this.saAutorizzatiList!=null && this.saAutorizzatiList.sizeServizioApplicativoList()>0) {
+								for (PortaApplicativaAutorizzazioneServizioApplicativo saAssociatoPA : this.saAutorizzatiList.getServizioApplicativoList()) { 
+									if(saAssociatoPA.getNome().equals(sa.getNome()) && 
+											saAssociatoPA.getTipoSoggettoProprietario().equals(soggetto.getTipo()) && 
+											saAssociatoPA.getNomeSoggettoProprietario().equals(soggetto.getNome())) {
+										found = true;
+										break;
+									}
 								}
 							}
 						}

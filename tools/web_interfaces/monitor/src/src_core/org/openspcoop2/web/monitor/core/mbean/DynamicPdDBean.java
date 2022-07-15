@@ -608,7 +608,10 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		if(TipologiaRicerca.ingresso.equals(this.search.getTipologiaRicercaEnum()) && 
 				StringUtils.isNotEmpty(this.search.getRiconoscimento()) && 
 				this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
-				return _getSoggetti(true, false, false, null);
+			
+			boolean isSupportataAutenticazioneApplicativiEsterni = this.dynamicUtils.isSupportataAutenticazioneApplicativiEsterniErogazione(this.search.getProtocollo());
+						
+			return _getSoggetti(true, isSupportataAutenticazioneApplicativiEsterni, false, null);
 		}
 		
 		ConfigurazioneSoggettiVisualizzatiSearchForm config = Utility.getMultitenantAbilitato_soggettiConfig(this.search!=null ? this.search.getTipologiaRicercaEnum() : null);

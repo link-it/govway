@@ -1103,6 +1103,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			
 			
 			// ServiziApplicativi
+			
+			boolean escludiSAServer = saCore.isApplicativiServerEnabled(apsHelper);
+			String filtroTipoSA = escludiSAServer ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT : null;
+						
 			List<String> saFruitoriList = new ArrayList<String>();
 			saFruitoriList.add("-");
 			IDSoggetto idSoggettoFruitoreSelected = null;
@@ -1126,11 +1130,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					List<IDServizioApplicativoDB> oldSilList = null;
 					if(apsCore.isVisioneOggettiGlobale(userLogin)){
 						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitoreSelected,null,
-								tipoAutenticazione, appId);
+								tipoAutenticazione, appId, filtroTipoSA);
 					}
 					else {
 						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitoreSelected,userLogin,
-								tipoAutenticazione, appId);
+								tipoAutenticazione, appId, filtroTipoSA);
 					}
 					if(oldSilList!=null && oldSilList.size()>0){
 						for (int i = 0; i < oldSilList.size(); i++) {

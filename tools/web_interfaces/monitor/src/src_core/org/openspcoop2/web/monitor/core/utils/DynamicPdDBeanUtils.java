@@ -246,6 +246,21 @@ public class DynamicPdDBeanUtils implements Serializable {
 		return true;
 	}
 
+	public boolean isSupportataAutenticazioneApplicativiEsterniErogazione(String tipoProtocollo)  throws Exception{
+
+		// se uno dei due non e' impostato allora sono compatibili
+		if(tipoProtocollo==null || "".equals(tipoProtocollo) || StringUtils.isBlank(tipoProtocollo))
+			return false;
+
+		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
+
+		if(protocolFactory == null || !protocolFactory.getProtocol().equals(tipoProtocollo)) {
+			return false;
+		}
+
+		return protocolFactory.createProtocolConfiguration().isSupportoAutenticazioneApplicativiEsterniErogazioni();
+	}
+	
 	public List<Object> findElencoServiziApplicativiFromSoggettoLocale(String tipoProtocollo,String tipoSoggetto,String nomeSoggetto){
 		List<Object> list = new ArrayList<Object>();
 		Soggetto erogatore = this.dynamicUtilsService.findSoggettoByTipoNome(tipoSoggetto, nomeSoggetto);

@@ -2033,8 +2033,8 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 
 				// Controllo mittente
 
-				String nomeFruitore= Utility.parseTipoSoggetto(this.getTipoNomeMittente());
-				String tipoFruitore = Utility.parseNomeSoggetto(this.getTipoNomeMittente());
+				String tipoFruitore= Utility.parseTipoSoggetto(this.getTipoNomeMittente());
+				String nomeFruitore = Utility.parseNomeSoggetto(this.getTipoNomeMittente());
 				if(nomeFruitore!= null)
 					if(!DynamicPdDBeanUtils.getInstance(BaseSearchForm.log).isTipoSoggettoCompatibileConProtocollo(tipoFruitore, tipoProt)){
 						this.setTipoNomeMittente(null);
@@ -2069,7 +2069,13 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 						this.setLabelNomeServizio(null);
 						this.servizioSelected(ae);
 					}
-
+				
+				// controllo servizio applicativo
+				if(this.getTipologiaRicercaEnum()!=null && TipologiaRicerca.ingresso.equals(this.getTipologiaRicercaEnum()) && 
+						StringUtils.isNotEmpty(this.getRiconoscimento()) && 
+						this.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+					this.setServizioApplicativo(null);
+				}
 			}
 
 		}catch(Exception e){

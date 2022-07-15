@@ -27,6 +27,9 @@ Background:
 * def applicativo_proprieta = read('classpath:bodies/applicativo_proprieta.json') 
 * eval randomize(applicativo_proprieta, ["nome", "credenziali.userid" ])
 
+* def applicativo_esterno = read('classpath:bodies/applicativo_esterno.json') 
+* eval randomize(applicativo_esterno, ["nome", "credenziali.userid" ])
+
 @Create204
 Scenario: Applicativi Creazione 204 OK
 
@@ -83,4 +86,21 @@ Scenario: Applicativi Creazione 204 OK (credenziali multipleApikey)
 Scenario: Applicativi Creazione 204 OK (presenza di proprieta')
     
     * call create_201 { resourcePath: 'applicativi', body: '#(applicativo_proprieta)', key: '#(applicativo_proprieta.nome)' }
+
+@Create204_esterno
+Scenario: Applicativi Creazione 204 OK (dominio esterno)
+    
+    * def soggetto_esterno = read('soggetto_esterno.json')
+    * eval randomize (soggetto_esterno, ["nome", "credenziali.certificato.subject"])
+    * soggetto_esterno.credenziali.certificato.subject = "cn=" + soggetto_esterno.credenziali.certificato.subject 
+		
+    * def query_param_applicativi = {'soggetto' : '#(soggetto_esterno.nome)'}
+
+    * call create ({ resourcePath: 'soggetti', body: soggetto_esterno })
+
+    * call create_201 { resourcePath: 'applicativi', body: '#(applicativo_esterno)', key: '#(applicativo_esterno.nome)', query_params: '#(query_param_applicativi)' }
+
+    * call delete ({ resourcePath: 'soggetti/' + soggetto_esterno.nome})
+
+
 

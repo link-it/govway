@@ -507,8 +507,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			dati.addElement(de);
 		}
 		
-		boolean dominioEsternoProfiloModIPA = false;
-		if(this.isProfiloModIPA(nomeProtocollo)) {
+		boolean dominioEsterno = false;
+		boolean isSupportatoAutenticazioneApplicativiEsterni = this.saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(nomeProtocollo);
+		if(isSupportatoAutenticazioneApplicativiEsterni) {
 			de = new DataElement();
 			de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO);
 			de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO);
@@ -538,7 +539,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de.setPostBack(true);
 			}
 			
-			dominioEsternoProfiloModIPA = SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE.equals(dominio);
+			dominioEsterno = SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE.equals(dominio);
 			
 			dati.addElement(de);
 		}
@@ -586,7 +587,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			if(multitenant && !this.isSoggettoMultitenantSelezionato()) {
 				de.setType(DataElementType.TEXT);
 			}
-			else if(this.isProfiloModIPA(nomeProtocollo)) {
+			else if(isSupportatoAutenticazioneApplicativiEsterni) {
 				de.setType(DataElementType.TEXT);
 			}
 			else {
@@ -621,14 +622,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			// Aggiunta di un servizio applicativo passando dal menu' 
 			if(!useIdSogg){
 				
-				boolean visualizzaPerProfiloModIPA = this.isProfiloModIPA(tipoProtocollo);
-				if(visualizzaPerProfiloModIPA) {
-					if(!dominioEsternoProfiloModIPA) {
-						visualizzaPerProfiloModIPA = soggettiList!=null && soggettiList.length>1;
+				boolean visualizzaSoggetto = isSupportatoAutenticazioneApplicativiEsterni;
+				if(visualizzaSoggetto) {
+					if(!dominioEsterno) {
+						visualizzaSoggetto = soggettiList!=null && soggettiList.length>1;
 					}
 				}
 				
-				if((multitenant && !this.isSoggettoMultitenantSelezionato()) || visualizzaPerProfiloModIPA) {
+				if((multitenant && !this.isSoggettoMultitenantSelezionato()) || visualizzaSoggetto) {
 					de.setType(DataElementType.SELECT);
 					de.setPostBack(true);
 				
@@ -691,7 +692,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		de.setSize(this.getSize());
 		
 		boolean applicativoServerSelezionabile = true;
-		if(this.isProfiloModIPA(nomeProtocollo)) {
+		if(isSupportatoAutenticazioneApplicativiEsterni) {
 			if(PddTipologia.ESTERNO.toString().equals(dominio)){
 				applicativoServerSelezionabile = false;
 				tipoSA = ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT;
@@ -982,6 +983,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			boolean visualizzaTipoAutenticazione = true;
 			String titleConfigSslCredenziali = null;
 			String subtitleConfigSslCredenziali = null;
+			boolean dominioEsternoProfiloModIPA = dominioEsterno && this.isProfiloModIPA(nomeProtocollo);
 			if(dominioEsternoProfiloModIPA) {
 				
 				visualizzaTipoAutenticazione = false;
@@ -1795,7 +1797,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 					//String tipoNomeSoggetto = null;
 
-					if(this.core.isRegistroServiziLocale()){
+					if(!this.core.isSinglePdD()){
 
 						// bugfix #66
 						// controllo se soggetto appartiene a nal diversi, in tal
@@ -1857,7 +1859,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 					//String tipoNomeSoggetto = null;
 
-					if(this.core.isRegistroServiziLocale()){
+					if(!this.core.isSinglePdD()){
 
 						// bugfix #66
 						// controllo se soggetto appartiene a nal diversi, in tal
@@ -2015,7 +2017,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 					//String tipoNomeSoggetto = null;
 
-					if(this.core.isRegistroServiziLocale()){
+					if(!this.core.isSinglePdD()){
 
 						// bugfix #66
 						// controllo se soggetto appartiene a nal diversi, in tal
@@ -2193,7 +2195,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String filterProtocollo = null;
 			String filterSoggetto = null;
 			boolean profiloSelezionato = false;
-			boolean modipa = false;
+			boolean supportatoAutenticazioneApplicativiEsterni = false;
 			String protocolloS = null;
 			if(!useIdSogg) {
 				filterProtocollo = addFilterProtocol(ricerca, idLista, true);
@@ -2206,7 +2208,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						protocolloS = protocolli.get(0);
 					}
 				}
-				modipa = isProfiloModIPA(protocolloS);  // in modipa devono essere fatti vedere tutti i soggetti, anche quelli esterni.
+				if(protocolloS!=null && ! "".equals(protocolloS)) {
+					supportatoAutenticazioneApplicativiEsterni = this.saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocolloS); // devono essere fatti vedere tutti i soggetti, anche quelli esterni.
+				}
 				
 				if( (filterProtocollo!=null && !"".equals(filterProtocollo) &&
 						!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo))
@@ -2217,10 +2221,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}
 				
 				if( profiloSelezionato && 
-						(!this.isSoggettoMultitenantSelezionato() || modipa)) {
+						(!this.isSoggettoMultitenantSelezionato() || supportatoAutenticazioneApplicativiEsterni)) {
 					
 					boolean soloSoggettiOperativi = true;
-					if(modipa) {
+					if(supportatoAutenticazioneApplicativiEsterni) {
 						soloSoggettiOperativi = false;
 					}
 					filterSoggetto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SOGGETTO);
@@ -2232,7 +2236,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 			
 			String filterDominio = null;
-			if(this.core.isGestionePddAbilitata(this)==false && multitenant && modipa) {
+			if(this.core.isGestionePddAbilitata(this)==false && multitenant && supportatoAutenticazioneApplicativiEsterni) {
 				filterDominio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_DOMINIO);
 				addFilterDominio(filterDominio, true);
 			}
@@ -2459,27 +2463,21 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
 			
-			boolean profiloModIPAusato = false;
-			List<String> protocolli = this.core.getProtocolli(this.session);
-			if(protocolli!=null && protocolli.size()==1) {
-				profiloModIPAusato = this.isProfiloModIPA(protocolli.get(0));
-			}
-			else {
-				if (lista != null) {
-					Iterator<ServizioApplicativo> it = lista.iterator();
-					while (it.hasNext()) {
-						ServizioApplicativo sa = it.next();
-						String protocolloCheck = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario());
-						if(this.isProfiloModIPA(protocolloCheck)) {
-							profiloModIPAusato = true;
-							break;
-						}
+			supportatoAutenticazioneApplicativiEsterni = false;
+			if (lista != null) {
+				Iterator<ServizioApplicativo> it = lista.iterator();
+				while (it.hasNext()) {
+					ServizioApplicativo sa = it.next();
+					String protocolloCheck = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario());
+					if(this.saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocolloCheck)) {
+						supportatoAutenticazioneApplicativiEsterni = true;
+						break;
 					}
 				}
 			}
 			
 			// setto le label delle colonne
-			this.setLabelColonne(modalitaCompleta, useIdSogg, multitenant, profiloModIPAusato, showProtocolli, supportAsincroni);
+			this.setLabelColonne(modalitaCompleta, useIdSogg, multitenant, supportatoAutenticazioneApplicativiEsterni, showProtocolli, supportAsincroni);
 
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
@@ -2489,9 +2487,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				while (it.hasNext()) {
 					Vector<DataElement> e = (!modalitaCompleta && !useIdSogg) ? 
 							
-							this.creaEntryCustom(multitenant, useIdSogg, showProtocolli, profiloModIPAusato, applicativiServerEnabled, it) :
+							this.creaEntryCustom(multitenant, useIdSogg, showProtocolli, supportatoAutenticazioneApplicativiEsterni, applicativiServerEnabled, it) :
 							
-							this.creaEntry(modalitaCompleta, multitenant, useIdSogg, contaListe, supportAsincroni, showProtocolli, profiloModIPAusato, applicativiServerEnabled, it);
+							this.creaEntry(modalitaCompleta, multitenant, useIdSogg, contaListe, supportAsincroni, showProtocolli, supportatoAutenticazioneApplicativiEsterni, applicativiServerEnabled, it);
 
 					dati.addElement(e);
 				}
@@ -2532,7 +2530,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}
 	}
 	private Vector<DataElement> creaEntry(boolean modalitaCompleta, boolean multitenant, Boolean useIdSogg,
-			Boolean contaListe, boolean supportAsincroni, boolean showProtocolli, boolean profiloModIPAusato, boolean applicativiServerEnabled,
+			Boolean contaListe, boolean supportAsincroni, boolean showProtocolli, boolean supportatoAutenticazioneApplicativiEsterni, boolean applicativiServerEnabled,
 			Iterator<ServizioApplicativo> it) throws DriverRegistroServiziNotFound, DriverRegistroServiziException,
 			DriverControlStationException, DriverControlStationNotFound, Exception, DriverConfigurazioneException {
 		ServizioApplicativo sa = it.next();
@@ -2562,7 +2560,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		if(!useIdSogg && (
 				(multitenant && !this.isSoggettoMultitenantSelezionato())
 				||
-				(profiloModIPAusato)
+				(supportatoAutenticazioneApplicativiEsterni)
 				)) {
 			de = new DataElement();
 			if(modalitaCompleta) {
@@ -2727,7 +2725,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}
 		return e;
 	}
-	private Vector<DataElement> creaEntryCustom(boolean multitenant, Boolean useIdSogg, boolean showProtocolli, boolean profiloModIPAusato,
+	private Vector<DataElement> creaEntryCustom(boolean multitenant, Boolean useIdSogg, boolean showProtocolli, boolean supportatoAutenticazioneApplicativiEsterni,
 			boolean applicativiServerEnabled, Iterator<ServizioApplicativo> it) throws DriverRegistroServiziNotFound, DriverRegistroServiziException,
 		DriverControlStationException, DriverControlStationNotFound, Exception, DriverConfigurazioneException {
 			ServizioApplicativo sa = it.next();
@@ -2756,7 +2754,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		de.setIdToRemove(sa.getId().toString());
 		de.setType(DataElementType.TITLE);
 		
-		if(!useIdSogg && ((multitenant && !this.isSoggettoMultitenantSelezionato()) || (profiloModIPAusato))) {
+		if(!useIdSogg && ((multitenant && !this.isSoggettoMultitenantSelezionato()) || (supportatoAutenticazioneApplicativiEsterni))) {
 			nome = nome + "@" + this.getLabelNomeSoggetto(protocollo, sa.getTipoSoggettoProprietario() , sa.getNomeSoggettoProprietario());
 		}
 		de.setValue(nome);
@@ -2888,7 +2886,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		return e;
 	}
 	
-	private void setLabelColonne(boolean modalitaCompleta, boolean useIdSogg, boolean multitenant, boolean profiloModIPAusato, boolean showProtocolli, boolean supportAsincroni) {
+	private void setLabelColonne(boolean modalitaCompleta, boolean useIdSogg, boolean multitenant, boolean supportatoAutenticazioneApplicativiEsterni, boolean showProtocolli, boolean supportAsincroni) {
 		if(!modalitaCompleta && !useIdSogg) {
 			List<String> labels = new ArrayList<String>();
 			//			labels.add("");//ServiziApplicativiCostanti.LABEL_SA_STATO); // colonna info
@@ -2901,7 +2899,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			if(!useIdSogg && (
 					(multitenant && !this.isSoggettoMultitenantSelezionato())
 					||
-					(profiloModIPAusato)
+					(supportatoAutenticazioneApplicativiEsterni)
 					)) {
 				labels.add(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			}

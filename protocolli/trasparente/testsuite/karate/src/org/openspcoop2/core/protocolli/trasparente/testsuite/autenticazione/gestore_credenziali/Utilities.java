@@ -114,9 +114,33 @@ public class Utilities extends ConfigLoader {
 			String wwwAuthenticateMessage,
 			String tipoErrore,
 			String ... msgErrori) throws Exception {
-
 		String api = "TestGestoreCredenziali";
-		
+		return _test(api,
+				requestParam,
+				tipoServizio,
+				soggetto,
+				operazione,
+				headers,
+				identitaSoggetto,
+				identitaServizioApplicativo,
+				credenziali,
+				wwwAuthenticateMessage,
+				tipoErrore,
+				msgErrori);
+	}
+	public static HttpResponse _test(String api,
+			HttpRequest requestParam,
+			TipoServizio tipoServizio,
+			String soggetto,
+			String operazione,
+			Map<String, String> headers,
+			String identitaSoggetto,
+			String identitaServizioApplicativo,
+			String credenziali,
+			String wwwAuthenticateMessage,
+			String tipoErrore,
+			String ... msgErrori) throws Exception {
+
 		//Date now = DateManager.getDate();
 		
 		String url = tipoServizio == TipoServizio.EROGAZIONE

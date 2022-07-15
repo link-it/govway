@@ -126,6 +126,18 @@ public class ServiziApplicativiCore extends ControlStationCore {
 		}
 	}
 	
+	public boolean isSupportatoAutenticazioneApplicativiEsterniErogazione(String protocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		String nomeMetodo = "isSupportatoAutenticazioneApplicativiEsterniErogazione";
+		try{
+			
+			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportoAutenticazioneApplicativiEsterniErogazioni();
+			
+		}catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}
+	}
+	
 	public long getIdServizioApplicativo(IDSoggetto idSoggetto, String nomeServizioApplicativo) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getIdServizioApplicativo";
@@ -460,9 +472,9 @@ public class ServiziApplicativiCore extends ControlStationCore {
 		}
 	}
 
-	public List<IDServizioApplicativoDB> soggettiServizioApplicativoList(IDSoggetto idSoggetto,String superuser,CredenzialeTipo credenziale, Boolean appId) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		return this.soggettiServizioApplicativoList(idSoggetto, superuser, credenziale, appId, null);
-	}
+//	public List<IDServizioApplicativoDB> soggettiServizioApplicativoList(IDSoggetto idSoggetto,String superuser,CredenzialeTipo credenziale, Boolean appId) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+//		return this.soggettiServizioApplicativoList(idSoggetto, superuser, credenziale, appId, null);
+//	}
 	
 	public List<IDServizioApplicativoDB> soggettiServizioApplicativoList(IDSoggetto idSoggetto,String superuser,CredenzialeTipo credenziale, Boolean appId, String tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;

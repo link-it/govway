@@ -2871,7 +2871,8 @@ public class ConsoleHelper implements IConsoleHelper {
 	public Vector<DataElement> addPorteServizioApplicativoAutorizzatiToDati(TipoOperazione tipoOp, Vector<DataElement> dati, 
 			String[] soggettiLabelList, String[] soggettiList, String soggetto, int sizeAttuale, 
 			Map<String,List<IDServizioApplicativoDB>> listServiziApplicativi, String sa,
-			boolean addMsgApplicativiNonDisponibili, boolean showTitle, boolean modipa) {
+			boolean addMsgApplicativiNonDisponibili, boolean showTitle, boolean modipa,
+			boolean isSupportatoAutenticazioneApplicativiEsterni) {
 			
 		if(modipa) {
 			DataElement	de = new DataElement();
@@ -2894,7 +2895,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SOGGETTO);
 			de.setName(CostantiControlStation.PARAMETRO_SOGGETTO);
 			de.setValue(soggetto);
-			if(this.core.isMultitenant() || modipa) {
+			if(this.core.isMultitenant() || isSupportatoAutenticazioneApplicativiEsterni) {
 				de.setType(DataElementType.SELECT);
 				de.setLabels(soggettiLabelList);
 				de.setValues(soggettiList);
@@ -5451,6 +5452,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		boolean profiloModi = this.isProfiloModIPA(protocollo);
 		
+		boolean isSupportatoAutenticazioneApplicativiEsterni = this.saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocollo);
+		
 		if(mostraSezione) {
 			
 			if(!tipoOperazione.equals(TipoOperazione.ADD) && attributeAuthorityValues!=null && attributeAuthorityValues.length>0){
@@ -6196,7 +6199,8 @@ public class ConsoleHelper implements IConsoleHelper {
 					boolean escludiSoggettoErogatore = false;
 					utilities.buildList(pa, profiloModi, protocollo, escludiSoggettoErogatore,
 							idSoggettoToAdd,
-							this.porteApplicativeCore, this, escludiSAServer);
+							this.porteApplicativeCore, this, escludiSAServer,
+							isSupportatoAutenticazioneApplicativiEsterni);
 					
 					String[] soggettiList = utilities.soggettiList;
 					String[] soggettiListLabel = utilities.soggettiListLabel;
@@ -6205,7 +6209,8 @@ public class ConsoleHelper implements IConsoleHelper {
 					int saSize = utilities.saSize;
 					
 					dati = this.addPorteServizioApplicativoAutorizzatiToDati(TipoOperazione.ADD, dati, soggettiListLabel, soggettiList, idSoggettoToAdd, saSize, 
-							listServiziApplicativi, idSAToAdd, true, false, profiloModi);
+							listServiziApplicativi, idSAToAdd, true, false, profiloModi,
+							isSupportatoAutenticazioneApplicativiEsterni);
 					
 				}
 				else {

@@ -54,6 +54,7 @@ import org.openspcoop2.core.config.Scope;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
@@ -222,7 +223,8 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				ApiKeyState apiKeyState =  new ApiKeyState(env.paCore.getParametroAutenticazione(pa.getAutenticazione(), pa.getProprietaAutenticazioneList()));
 				appId = apiKeyState.appIdSelected;
 			}
-			List<IDServizioApplicativoDB> saCompatibili = env.saCore.soggettiServizioApplicativoList(idSoggettoProprietarioSA.toIDSoggetto(),env.userLogin,tipoAutenticazione, appId);
+			List<IDServizioApplicativoDB> saCompatibili = env.saCore.soggettiServizioApplicativoList(idSoggettoProprietarioSA.toIDSoggetto(),env.userLogin,tipoAutenticazione, appId,
+					CostantiConfigurazione.CLIENT);
 			if(env.protocolFactory.createProtocolConfiguration().isSupportoAutenticazioneApplicativiErogazioni()) {
 				if (!BaseHelper.findFirst(saCompatibili, s -> s.getId().equals(sa.getId())).isPresent()) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il tipo di credenziali dell'Applicativo non sono compatibili con l'autenticazione impostata nell'erogazione selezionata");

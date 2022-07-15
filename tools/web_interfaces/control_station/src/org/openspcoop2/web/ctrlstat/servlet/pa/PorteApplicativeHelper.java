@@ -3451,7 +3451,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			String idPorta = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			String idsogg = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
 			String modipa = this.request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA);
-			boolean modipaEnabled = "true".equalsIgnoreCase(modipa);
+			//boolean modipaEnabled = "true".equalsIgnoreCase(modipa);
 			
 			List<Parameter> listP = new ArrayList<>();
 			listP.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
@@ -3482,6 +3482,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(mySogg.getTipo());
 			}
 
+			boolean isSupportatoAutenticazioneApplicativiEsterni = this.saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocollo);
+			
 			PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 			String idporta = myPA.getNome();
 
@@ -3531,7 +3533,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto le label delle colonne
 			List<String> labels = new ArrayList<>();
-			if(this.porteApplicativeCore.isMultitenant() || modipaEnabled) {
+			if(this.porteApplicativeCore.isMultitenant() || isSupportatoAutenticazioneApplicativiEsterni) {
 				labels.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO);
 			}
 			labels.add(CostantiControlStation.LABEL_PARAMETRO_APPLICATIVO);
@@ -3547,7 +3549,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 					Vector<DataElement> e = new Vector<DataElement>();
 
-					if(this.porteApplicativeCore.isMultitenant() || modipaEnabled) {
+					if(this.porteApplicativeCore.isMultitenant() || isSupportatoAutenticazioneApplicativiEsterni) {
 						Long idSoggetto =this.soggettiCore.getIdSoggetto(sa.getNomeSoggettoProprietario(), sa.getTipoSoggettoProprietario());	
 						DataElement de = new DataElement();
 						if(this.isModalitaCompleta()) {

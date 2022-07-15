@@ -44,6 +44,7 @@ public class OrganizationModel extends AbstractModel<Organization> {
 		this.AUTHENTICATION = new Field("authentication",boolean.class,"Organization",Organization.class);
 		this.INBOUND_APPLICATIVE_AUTHENTICATION = new Field("inboundApplicativeAuthentication",boolean.class,"Organization",Organization.class);
 		this.INBOUND_ORGANIZATION_AUTHORIZATION_WITHOUT_AUTHENTICATION = new Field("inboundOrganizationAuthorizationWithoutAuthentication",boolean.class,"Organization",Organization.class);
+		this.INBOUND_EXTERNAL_APPLICATION_AUTHENTICATION = new Field("inboundExternalApplicationAuthentication",boolean.class,"Organization",Organization.class);
 		this.CODE_DOMAIN = new Field("codeDomain",boolean.class,"Organization",Organization.class);
 		this.CODE_IPA = new Field("codeIPA",boolean.class,"Organization",Organization.class);
 		this.REPLY_TO_ADDRESS = new Field("replyToAddress",boolean.class,"Organization",Organization.class);
@@ -58,6 +59,7 @@ public class OrganizationModel extends AbstractModel<Organization> {
 		this.AUTHENTICATION = new ComplexField(father,"authentication",boolean.class,"Organization",Organization.class);
 		this.INBOUND_APPLICATIVE_AUTHENTICATION = new ComplexField(father,"inboundApplicativeAuthentication",boolean.class,"Organization",Organization.class);
 		this.INBOUND_ORGANIZATION_AUTHORIZATION_WITHOUT_AUTHENTICATION = new ComplexField(father,"inboundOrganizationAuthorizationWithoutAuthentication",boolean.class,"Organization",Organization.class);
+		this.INBOUND_EXTERNAL_APPLICATION_AUTHENTICATION = new ComplexField(father,"inboundExternalApplicationAuthentication",boolean.class,"Organization",Organization.class);
 		this.CODE_DOMAIN = new ComplexField(father,"codeDomain",boolean.class,"Organization",Organization.class);
 		this.CODE_IPA = new ComplexField(father,"codeIPA",boolean.class,"Organization",Organization.class);
 		this.REPLY_TO_ADDRESS = new ComplexField(father,"replyToAddress",boolean.class,"Organization",Organization.class);
@@ -73,6 +75,8 @@ public class OrganizationModel extends AbstractModel<Organization> {
 	public IField INBOUND_APPLICATIVE_AUTHENTICATION = null;
 	 
 	public IField INBOUND_ORGANIZATION_AUTHORIZATION_WITHOUT_AUTHENTICATION = null;
+	 
+	public IField INBOUND_EXTERNAL_APPLICATION_AUTHENTICATION = null;
 	 
 	public IField CODE_DOMAIN = null;
 	 

@@ -230,7 +230,8 @@ public final class ServiziApplicativiCredenzialiChange extends Action {
 			}
 
 			if(dominio==null) {
-				if(saHelper.isProfiloModIPA(nomeProtocollo)) {
+				boolean isSupportatoAutenticazioneApplicativiEsterni = saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(nomeProtocollo);
+				if(isSupportatoAutenticazioneApplicativiEsterni) {
 					PddCore pddCore = new PddCore(saCore);
 					dominio = pddCore.isPddEsterna(nomePdd) ? SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE : SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE;
 				}

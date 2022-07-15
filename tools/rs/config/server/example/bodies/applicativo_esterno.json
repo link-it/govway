@@ -1,0 +1,8 @@
+{
+ 	"nome": "ApplicativoEsternoJson",
+   	"credenziali": {
+			"modalita_accesso": "http-basic",
+       		"username": "usernameEsterno",
+       		"password": "password"     
+	}
+}

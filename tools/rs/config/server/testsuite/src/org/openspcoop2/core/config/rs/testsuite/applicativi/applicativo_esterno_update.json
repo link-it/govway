@@ -1,0 +1,8 @@
+{
+ 	"nome": "TestSuiteApplicativoEsterno",
+   	"credenziali": {
+       	"modalita_accesso": "principal",
+		"userid": "principalIdApplicativoEsternoNew"   
+	},
+	"ruoli": [ ]
+}

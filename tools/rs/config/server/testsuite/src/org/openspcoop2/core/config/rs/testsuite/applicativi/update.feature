@@ -35,6 +35,12 @@ Background:
     * def applicativo_proprieta = read('classpath:bodies/applicativo_proprieta.json') 
     * eval randomize(applicativo_proprieta, ["nome", "credenziali.userid" ])
 
+    * def applicativo_esterno = read('classpath:bodies/applicativo_esterno.json') 
+    * eval randomize(applicativo_esterno, ["nome", "credenziali.userid" ])
+
+    * def applicativo_esterno_update = read('applicativo_esterno_update.json') 
+    * eval applicativo_esterno_update.nome = applicativo_esterno.nome
+
 @Update204
 Scenario: Applicativi Aggiornamento 204 OK
 
@@ -266,3 +272,57 @@ Scenario: Applicativi Aggiornamento Proprieta
     And match response contains { 'proprieta': '#notpresent' }
 
     * call delete ( { resourcePath: 'applicativi/' + applicativo_proprieta.nome } )
+
+
+@UpdateEsterno204
+Scenario: Applicativi Esterno Aggiornamento 204 OK
+
+    * def soggetto_esterno = read('soggetto_esterno.json')
+    * eval randomize (soggetto_esterno, ["nome", "credenziali.certificato.subject"])
+    * soggetto_esterno.credenziali.certificato.subject = "cn=" + soggetto_esterno.credenziali.certificato.subject 
+		
+    * def query_param_applicativi = {'soggetto' : '#(soggetto_esterno.nome)'}
+
+    * call create ({ resourcePath: 'soggetti', body: soggetto_esterno })
+
+    * call update_204 { resourcePath: 'applicativi',  body: '#(applicativo_esterno)',  body_update: '#(applicativo_esterno_update)',  key: '#(applicativo_esterno.nome)',  delete_key: '#(applicativo_esterno_update.nome)', query_params: '#(query_param_applicativi)' }
+
+    * call delete ({ resourcePath: 'soggetti/' + soggetto_esterno.nome})
+
+@UpdateCredenzialiApplicativoEsterno
+Scenario: Applicativi Aggiornamento Credenziali per un applicativo esterno
+
+    * def soggetto_esterno = read('soggetto_esterno.json')
+    * eval randomize (soggetto_esterno, ["nome", "credenziali.certificato.subject"])
+    * soggetto_esterno.credenziali.certificato.subject = "cn=" + soggetto_esterno.credenziali.certificato.subject 
+		
+    * def query_param_applicativi = {'soggetto' : '#(soggetto_esterno.nome)'}
+
+    * call create ({ resourcePath: 'soggetti', body: soggetto_esterno })
+
+    * def options = { modalita_accesso: 'http-basic', username: '#(credenziali_httpBasic.credenziali.username)' }
+
+    * call create { resourcePath: 'applicativi', body: '#(applicativo_esterno)', query_params: '#(query_param_applicativi)' }
+
+    Given url configUrl
+    And path 'applicativi/' + applicativo_esterno.nome + '/credenziali'
+    And header Authorization = govwayConfAuth
+    And params query_param_applicativi
+    And request credenziali_httpBasic
+    When method put
+    Then status 204
+    And match responseHeaders contains { 'X-Api-Key': '#notpresent' }
+    And match responseHeaders contains { 'X-App-Id': '#notpresent' }
+
+    Given url configUrl
+    And path 'applicativi' , applicativo_esterno.nome
+    And header Authorization = govwayConfAuth
+    And params query_param_applicativi
+    When method get
+    Then status 200
+    And match response.credenziali contains options
+    And match response.credenziali.password == '#notpresent'
+
+    * call delete ( { resourcePath: 'applicativi/' + applicativo_esterno.nome, query_params: query_param_applicativi } )
+
+    * call delete ({ resourcePath: 'soggetti/' + soggetto_esterno.nome})

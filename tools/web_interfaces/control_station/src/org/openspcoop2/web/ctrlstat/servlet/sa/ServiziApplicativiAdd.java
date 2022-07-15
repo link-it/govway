@@ -576,11 +576,12 @@ public final class ServiziApplicativiAdd extends Action {
 			IDSoggetto idSoggetto = generalInfo.getIdSoggetto();
 			provider = generalInfo.getProvider();
 
-			boolean dominioEsternoProfiloModIPA = false;
-			if(saHelper.isProfiloModIPA(tipoProtocollo)) {
-				dominioEsternoProfiloModIPA = SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE.equals(dominio);
+			boolean isSupportatoAutenticazioneApplicativiEsterni = saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(tipoProtocollo);
+			boolean dominioEsterno = false;
+			if(isSupportatoAutenticazioneApplicativiEsterni) {
+				dominioEsterno = SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE.equals(dominio);
 			}
-			if(dominioEsternoProfiloModIPA) {
+			if(dominioEsterno) {
 				if(soggettiList==null || soggettiList.length<=0) {
 					pd.setMessage("Non risultano registrati soggetti di dominio esterno", MessageType.ERROR);
 					pd.disableEditMode();
@@ -886,11 +887,11 @@ public final class ServiziApplicativiAdd extends Action {
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
 				
-				dominioEsternoProfiloModIPA = false;
-				if(saHelper.isProfiloModIPA(tipoProtocollo)) {
-					dominioEsternoProfiloModIPA = SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE.equals(dominio);
+				dominioEsterno = false;
+				if(isSupportatoAutenticazioneApplicativiEsterni) {
+					dominioEsterno = SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE.equals(dominio);
 				}
-				if(dominioEsternoProfiloModIPA) {
+				if(dominioEsterno) {
 					if(soggettiList==null || soggettiList.length<=0) {
 						pd.setMessage("Non risultano registrati soggetti di dominio esterno", MessageType.ERROR);
 					}
@@ -1307,7 +1308,7 @@ public final class ServiziApplicativiAdd extends Action {
 					List<String> protocolli = saCore.getProtocolli(session,false);
 					if(protocolli!=null && protocolli.size()==1) { // dovrebbe essere l'unico caso in cui un soggetto multitenant è selezionato
 						String protocollo = protocolli.get(0);
-						filtroSoggetto = !saHelper.isProfiloModIPA(protocollo);  // in modipa devono essere fatti vedere anche quelli
+						filtroSoggetto = !saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocollo);  // devono essere fatti vedere anche quelli
 					}
 				}
 				if(filtroSoggetto) {

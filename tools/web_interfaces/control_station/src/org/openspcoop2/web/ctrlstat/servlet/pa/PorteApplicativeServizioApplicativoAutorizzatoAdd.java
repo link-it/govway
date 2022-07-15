@@ -122,6 +122,8 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoAdd extends Act
 				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(soggInt);
 				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
 			}
+			
+			boolean isSupportatoAutenticazioneApplicativiEsterni = saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocollo);
 
 			//decodifica soggetto scelto
 			String tipoSoggettoScelto = null;
@@ -158,14 +160,15 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoAdd extends Act
 			PorteApplicativeServizioApplicativoAutorizzatoUtilities utilities = new PorteApplicativeServizioApplicativoAutorizzatoUtilities();
 			utilities.buildList(pa, modipa, protocollo, escludiSoggettoErogatore,
 					idSoggettoToAdd,
-					porteApplicativeCore, porteApplicativeHelper, escludiSAServer);
+					porteApplicativeCore, porteApplicativeHelper, escludiSAServer,
+					isSupportatoAutenticazioneApplicativiEsterni);
 			
 			String[] soggettiList = utilities.soggettiList;
 			String[] soggettiListLabel = utilities.soggettiListLabel;
 			Map<String,List<IDServizioApplicativoDB>> listServiziApplicativi = utilities.listServiziApplicativi;
 			idSoggettoToAdd = utilities.idSoggettoToAdd;
 			int saSize = utilities.saSize;
-			PortaApplicativaAutorizzazioneServiziApplicativi saList = utilities.saList;
+			PortaApplicativaAutorizzazioneServiziApplicativi saList = utilities.saAutorizzatiList;
 			
 			
 			
@@ -209,7 +212,8 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoAdd extends Act
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addPorteServizioApplicativoAutorizzatiToDati(TipoOperazione.ADD, dati, soggettiListLabel, soggettiList, idSoggettoToAdd, saSize, 
-						listServiziApplicativi, idSAToAdd, true, true, modipa);
+						listServiziApplicativi, idSAToAdd, true, true, modipa,
+						isSupportatoAutenticazioneApplicativiEsterni);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps,dati);
 
@@ -233,7 +237,8 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoAdd extends Act
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addPorteServizioApplicativoAutorizzatiToDati(TipoOperazione.ADD, dati, soggettiListLabel, soggettiList, idSoggettoToAdd, saSize, 
-						listServiziApplicativi, idSAToAdd, true, true, modipa);
+						listServiziApplicativi, idSAToAdd, true, true, modipa,
+						isSupportatoAutenticazioneApplicativiEsterni);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, dati);
 

@@ -136,7 +136,8 @@ public class ServiziApplicativiUtilities {
 			}
 		
 			boolean filtraSoggettiEsterni = false;
-			if(saHelper.isProfiloModIPA(tipoProtocollo)) {
+			boolean isSupportatoAutenticazioneApplicativiEsterni = saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(tipoProtocollo);
+			if(isSupportatoAutenticazioneApplicativiEsterni) {
 				filtraSoggettiEsterni = SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE.equals(dominio);
 			}
 				

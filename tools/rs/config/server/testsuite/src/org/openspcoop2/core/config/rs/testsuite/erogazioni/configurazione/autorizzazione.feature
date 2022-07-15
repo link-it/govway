@@ -191,3 +191,95 @@ Scenario: Controllo accessi autorizzazione applicativi puntuale per le erogazion
 
     * call delete ({ resourcePath: erogazione_petstore_path })
     * call delete ({ resourcePath: api_petstore_path })
+
+@AutorizzazioneApplicativiEsterniPuntuale
+Scenario: Controllo accessi autorizzazione applicativi esterni puntuale per le erogazioni
+ 
+    * def autorizzazione_disabilitata = ({ autorizzazione: { tipo: 'disabilitato' } })
+    * def autorizzazione = read('classpath:bodies/controllo-accessi-autorizzazione-puntuale.json')
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
+
+    # Abilito l'autenticazione http
+    * def autenticazione = read('classpath:bodies/controllo-accessi-autenticazione-http-no-token.json')
+    * def servizio_path = erogazione_petstore_path
+    
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
+    And header Authorization = govwayConfAuth
+    And request autenticazione
+    And params query_params
+    When method put
+    Then status 204
+
+    # Imposto l'autorizzazione in modo che supporti l'autorizzazione puntuale
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione'
+    And header Authorization = govwayConfAuth
+    And request autorizzazione
+    And params query_params
+    When method put
+    Then status 204
+
+    * def soggetto_esterno = read('soggetto_esterno.json')
+    * eval randomize (soggetto_esterno, ["nome", "credenziali.certificato.subject"])
+    * soggetto_esterno.credenziali.certificato.subject = "cn=" + soggetto_esterno.credenziali.certificato.subject 
+		
+    * def query_param_applicativi = {'soggetto' : '#(soggetto_esterno.nome)'}
+
+    * call create ({ resourcePath: 'soggetti', body: soggetto_esterno })
+
+    * def applicativo = read('classpath:bodies/applicativo_http.json')
+    * eval randomize(applicativo, ["nome", "credenziali.username"])
+
+    * def applicativo_puntuale = ({ soggetto: soggetto_esterno.nome , applicativo: applicativo.nome })
+
+    # Creo l'applicativo nel registro
+    Given url configUrl
+    And path 'applicativi'
+    And header Authorization = govwayConfAuth
+    And request applicativo
+    And params query_param_applicativi
+    When method post
+    Then status 201
+
+    # Aggiungo l'applicativo all'autorizzazione
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione', 'applicativi'
+    And header Authorization = govwayConfAuth
+    And request applicativo_puntuale
+    And params query_params
+    When method post
+    Then status 201
+
+    # Recupero l'applicativo appena aggiunto per mezzo della findall
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione', 'applicativi'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    And match response.applicativi contains ([{ applicativo: applicativo_puntuale.applicativo, soggetto: soggetto_esterno.nome } ])
+
+    # Rimuovo l'applicativo dall'autorizzazione
+    * def query_param_applicativi_remove_authz = {'soggetto_applicativo' : '#(soggetto_esterno.nome)'}
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione', 'applicativi', applicativo_puntuale.applicativo
+    And header Authorization = govwayConfAuth
+    And params query_param_applicativi_remove_authz
+    When method delete
+    Then status 204
+
+    # Rimuovo l'applicativo dal registro
+    Given url configUrl
+    And path 'applicativi', applicativo.nome
+    And header Authorization = govwayConfAuth
+    And params query_param_applicativi
+    When method delete
+    Then status 204
+
+    * call delete ({ resourcePath: 'soggetti/' + soggetto_esterno.nome})
+
+    * call delete ({ resourcePath: erogazione_petstore_path })
+    * call delete ({ resourcePath: api_petstore_path })

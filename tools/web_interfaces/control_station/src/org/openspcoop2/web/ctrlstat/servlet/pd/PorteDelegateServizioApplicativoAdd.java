@@ -234,7 +234,7 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 				// Prendo la lista di servizioApplicativo (tranne quelli già
 				// usati) e la metto in un array
 				Vector<String> silV = new Vector<String>();
-				List<IDServizioApplicativoDB> oldSilList = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione, appId);
+				List<IDServizioApplicativoDB> oldSilList = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione, appId, filtroTipoSA);
 				for (int i = 0; i < oldSilList.size(); i++) {
 					IDServizioApplicativoDB singleSA = oldSilList.get(i);
 					String tmpNome = singleSA.getNome();

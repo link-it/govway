@@ -50,6 +50,7 @@ import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -122,6 +123,9 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
 			SoggettiCore soggettiCore = new SoggettiCore(porteDelegateCore);
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(porteDelegateCore);
+			
+			boolean escludiSAServer = saCore.isApplicativiServerEnabled(porteDelegateHelper);
+			String filtroTipoSA = escludiSAServer ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT : null;
 			
 			IDSoggetto idSoggetto = null;
 			if(porteDelegateCore.isRegistroServiziLocale()){
@@ -216,7 +220,8 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 				// Prendo la lista di servizioApplicativo associati al soggetto
 				// e la metto in un array
 				Vector<String> silV = new Vector<String>();
-				List<IDServizioApplicativoDB> oldSilList = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione,appId);
+				List<IDServizioApplicativoDB> oldSilList = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione,appId,
+						filtroTipoSA);
 				for (int i = 0; i < oldSilList.size(); i++) {
 					IDServizioApplicativoDB singleSA = oldSilList.get(i);
 					String tmpNome = singleSA.getNome();
@@ -295,7 +300,8 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 				// Prendo la lista di servizioApplicativo (tranne quelli già
 				// usati) e la metto in un array
 				Vector<String> silV = new Vector<String>();
-				List<IDServizioApplicativoDB> oldSilList = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione,appId);
+				List<IDServizioApplicativoDB> oldSilList = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione,appId,
+						filtroTipoSA);
 				for (int i = 0; i < oldSilList.size(); i++) {
 					IDServizioApplicativoDB singleSA = oldSilList.get(i);
 					String tmpNome = singleSA.getNome();

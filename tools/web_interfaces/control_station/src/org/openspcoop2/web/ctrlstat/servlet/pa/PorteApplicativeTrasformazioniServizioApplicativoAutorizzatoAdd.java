@@ -22,7 +22,6 @@
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -45,8 +44,6 @@ import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioAppl
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
-import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -123,6 +120,9 @@ public final class PorteApplicativeTrasformazioniServizioApplicativoAutorizzatoA
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
+			boolean escludiSAServer = saCore.isApplicativiServerEnabled(porteApplicativeHelper);
+			
+			
 			// Prendo nome, tipo e pdd del soggetto
 			String protocollo = null;
 			if(porteApplicativeCore.isRegistroServiziLocale()){
@@ -133,6 +133,8 @@ public final class PorteApplicativeTrasformazioniServizioApplicativoAutorizzatoA
 				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(soggInt);
 				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
 			}
+			
+			boolean isSupportatoAutenticazioneApplicativiEsterni = saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocollo);
 
 			//decodifica soggetto scelto
 			String tipoSoggettoScelto = null;
@@ -163,26 +165,13 @@ public final class PorteApplicativeTrasformazioniServizioApplicativoAutorizzatoA
 			PortaApplicativa portaApplicativa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String nomePorta = portaApplicativa.getNome();
 			CredenzialeTipo tipoAutenticazione = CredenzialeTipo.toEnumConstant(portaApplicativa.getAutenticazione());
+			@SuppressWarnings("unused")
 			Boolean appId = null;
 			if(CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
 				ApiKeyState apiKeyState =  new ApiKeyState(porteApplicativeCore.getParametroAutenticazione(portaApplicativa.getAutenticazione(), portaApplicativa.getProprietaAutenticazioneList()));
 				appId = apiKeyState.appIdSelected;
 			}
-
-			// lista soggetti disponibili
-			String[] soggettiList = null;
-			String[] soggettiListLabel = null;
-			List<org.openspcoop2.core.registry.Soggetto> listSoggetti = soggettiCore.getSoggettiOperativi(protocollo);
-			if(listSoggetti!=null && !listSoggetti.isEmpty() && escludiSoggettoErogatore) {
-				for (int i = 0; i < listSoggetti.size(); i++) {
-					Soggetto soggettoCheck = listSoggetti.get(i);
-					if(soggettoCheck.getTipo().equals(portaApplicativa.getTipoSoggettoProprietario()) && soggettoCheck.getNome().equals(portaApplicativa.getNomeSoggettoProprietario())) {
-						listSoggetti.remove(i);
-						break;
-					}
-				}
-			}
-			
+					
 			Trasformazioni trasformazioni = portaApplicativa.getTrasformazioni();
 			TrasformazioneRegola regola = null;
 			for (int j = 0; j < trasformazioni.sizeRegolaList(); j++) {
@@ -199,53 +188,21 @@ public final class PorteApplicativeTrasformazioniServizioApplicativoAutorizzatoA
 			
 			List<TrasformazioneRegolaApplicabilitaServizioApplicativo> saList = applicabilita != null ? applicabilita.getServizioApplicativoList() : null;
 			int saSize = saList!=null ? saList.size() : 0;
-			Map<String,List<IDServizioApplicativoDB>> listServiziApplicativi = new HashMap<>();
-			if(listSoggetti!=null && !listSoggetti.isEmpty()) {
-				List<String> soggettiListBuild = new ArrayList<>();
-				List<String> soggettiLabelListBuild = new ArrayList<>();
-				
-				for (org.openspcoop2.core.registry.Soggetto soggetto : listSoggetti) {
-					IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(), soggetto.getNome());
-					List<IDServizioApplicativoDB> listServiziApplicativiTmp = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione,appId);
-					List<IDServizioApplicativoDB> listServiziApplicativiTmpUnique = new ArrayList<>();
-					
-					// scarto i sa già associati
-					if(listServiziApplicativiTmp!=null && listServiziApplicativiTmp.size()>0) {
-						for (IDServizioApplicativoDB sa : listServiziApplicativiTmp) {
-							boolean found = false;
-							if(saList!=null && saList.size()>0) {
-								for (TrasformazioneRegolaApplicabilitaServizioApplicativo saAssociatoPA : saList) { 
-									if(saAssociatoPA.getNome().equals(sa.getNome()) && 
-											saAssociatoPA.getTipoSoggettoProprietario().equals(soggetto.getTipo()) && 
-											saAssociatoPA.getNomeSoggettoProprietario().equals(soggetto.getNome())) {
-										found = true;
-										break;
-									}
-								}
-							}
-							if(!found) {
-								listServiziApplicativiTmpUnique.add(sa);
-							}
-						}
-					}
 
-					if(listServiziApplicativiTmpUnique!=null && listServiziApplicativiTmpUnique.size()>0) {
-						String id = soggetto.getId().toString();
-						soggettiListBuild.add(id);
-						soggettiLabelListBuild.add(porteApplicativeHelper.getLabelNomeSoggetto(protocollo, soggetto.getTipo() , soggetto.getNome()));
-						listServiziApplicativi.put(id, listServiziApplicativiTmpUnique);
-						if(idSoggettoToAdd==null || "".equals(idSoggettoToAdd)) {
-							idSoggettoToAdd = id;
-						}
-					}
-				}
-				
-				if(soggettiListBuild!=null && soggettiListBuild.size()>0) {
-					soggettiList = soggettiListBuild.toArray(new String[1]);
-					soggettiListLabel = soggettiLabelListBuild.toArray(new String[1]);
-				}
-			}
-
+			// Calcolo liste
+			PorteApplicativeServizioApplicativoAutorizzatoUtilities utilities = new PorteApplicativeServizioApplicativoAutorizzatoUtilities();
+			utilities.buildListTrasformazioni(portaApplicativa, false, protocollo, escludiSoggettoErogatore,
+					idSoggettoToAdd,
+					porteApplicativeCore, porteApplicativeHelper, escludiSAServer,
+					isSupportatoAutenticazioneApplicativiEsterni,
+					regola);
+			
+			String[] soggettiList = utilities.soggettiList;
+			String[] soggettiListLabel = utilities.soggettiListLabel;
+			idSoggettoToAdd = utilities.idSoggettoToAdd;
+			
+			Map<String,List<IDServizioApplicativoDB>> listServiziApplicativi = utilities.listServiziApplicativi;
+			
 		
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 

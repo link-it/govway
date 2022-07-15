@@ -427,7 +427,7 @@
 
     <registry>
 
-        <organization>
+        <organization inboundExternalApplicationAuthentication="true">
             <types>
             	<type name="gw"/>
             </types>

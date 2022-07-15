@@ -211,6 +211,13 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	public boolean isSupportatoAutorizzazioneRichiedenteSenzaAutenticazioneErogazioni();
 	
 	/**
+	 * Ritorna l'indicazione se l'autenticazione degli applicativi esterni sulle erogazioni viene supportato dal protocollo
+	 * 
+	 * @return True se l'autenticazione degli applicativi esterni sulle erogazioni viene supportato dal protocollo
+	 */
+	public boolean isSupportoAutenticazioneApplicativiEsterniErogazioni();
+	
+	/**
 	 * Ritorna l'indicazione se il codice IPA viene supportato dal protocollo
 	 * 
 	 * @return True se il codice IPA viene supportato dal protocollo

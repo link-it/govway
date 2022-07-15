@@ -96,6 +96,7 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -529,6 +530,9 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 
 			// ServiziApplicativi
+			boolean escludiSAServer = saCore.isApplicativiServerEnabled(apsHelper);
+			String filtroTipoSA = escludiSAServer ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT : null;
+			
 			List<String> saList = new ArrayList<String>();
 			saList.add("-");
 			if(idSoggettoSelected!=null){
@@ -546,11 +550,11 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					List<IDServizioApplicativoDB> oldSilList = null;
 					if(apsCore.isVisioneOggettiGlobale(superUser)){
 						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoSelected,null,
-								credenziale, appId);
+								credenziale, appId, filtroTipoSA);
 					}
 					else {
 						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoSelected,superUser,
-								credenziale, appId);
+								credenziale, appId, filtroTipoSA);
 					}
 					if(oldSilList!=null && oldSilList.size()>0){
 						for (int i = 0; i < oldSilList.size(); i++) {
