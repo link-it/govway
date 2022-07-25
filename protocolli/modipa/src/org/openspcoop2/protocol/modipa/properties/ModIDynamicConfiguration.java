@@ -700,7 +700,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		AccordoServizioParteComune aspc = null;
 		if(ConsoleOperationType.CHANGE.equals(consoleOperationType) && id!=null) {
 			try {
-				aspc = registryReader.getAccordoServizioParteComune(id, false);
+				aspc = registryReader.getAccordoServizioParteComune(id, false, false);
 			}catch(RegistryNotFound notFound) {}
 			catch(Exception e) {
 				throw new ProtocolException(e.getMessage(),e);
@@ -927,7 +927,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		try {
 			if(id!=null && id.getUriAccordoServizioParteComune()!=null) {
 				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(id.getUriAccordoServizioParteComune());
-				api = registryReader.getAccordoServizioParteComune(idAccordo, false);
+				api = registryReader.getAccordoServizioParteComune(idAccordo, false, false);
 			}
 			
 			portType = consoleHelper.getParameter(Costanti.CONSOLE_PARAMETRO_APS_PORT_TYPE);
@@ -986,7 +986,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		try {
 			if(id!=null && id.getUriAccordoServizioParteComune()!=null) {
 				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(id.getUriAccordoServizioParteComune());
-				api = registryReader.getAccordoServizioParteComune(idAccordo, false);
+				api = registryReader.getAccordoServizioParteComune(idAccordo, false, false);
 			}
 			
 			portType = consoleHelper.getParameter(Costanti.CONSOLE_PARAMETRO_APS_PORT_TYPE);
@@ -1035,7 +1035,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		try {
 			if(id!=null && id.getUriAccordoServizioParteComune()!=null) {
 				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(id.getUriAccordoServizioParteComune());
-				api = registryReader.getAccordoServizioParteComune(idAccordo, false);
+				api = registryReader.getAccordoServizioParteComune(idAccordo, false, false);
 			}
 			
 			portType = consoleHelper.getParameter(Costanti.CONSOLE_PARAMETRO_APS_PORT_TYPE);
@@ -1888,7 +1888,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 							asps.setNomeSoggettoErogatore(idAccordoSelected.getSoggettoReferente().getNome());
 							asps.setNome(idAccordoSelected.getNome());
 							asps.setVersione(idAccordoSelected.getVersione());
-							AccordoServizioParteComune aspcNormale = registryReader.getAccordoServizioParteComune(idAccordoSelected,false);
+							AccordoServizioParteComune aspcNormale = registryReader.getAccordoServizioParteComune(idAccordoSelected,false,false);
 							AccordoServizioParteComuneSintetico aspcSelected = new AccordoServizioParteComuneSintetico(aspcNormale);
 							boolean addTrattinoSelezioneNonEffettuata = true;
 							boolean throwException = true;
@@ -1998,7 +1998,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 						asps.setNome(idAccordo.getNome());
 						asps.setVersione(idAccordo.getVersione());
 						asps.setPortType(idPortType);
-						AccordoServizioParteComune aspcNormale = registryReader.getAccordoServizioParteComune(idAccordo,false);
+						AccordoServizioParteComune aspcNormale = registryReader.getAccordoServizioParteComune(idAccordo,false,false);
 						AccordoServizioParteComuneSintetico aspc = new AccordoServizioParteComuneSintetico(aspcNormale);
 						boolean addTrattinoSelezioneNonEffettuata = true;
 						boolean throwException = true;

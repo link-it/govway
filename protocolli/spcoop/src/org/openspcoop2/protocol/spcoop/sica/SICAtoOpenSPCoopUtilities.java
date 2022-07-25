@@ -414,7 +414,7 @@ public class SICAtoOpenSPCoopUtilities {
 		// Recupero property del nome Accordo
 		String nomeAccordo = null;
 		try{
-			AccordoServizioParteComune aspc = registryReader.getAccordoServizioParteComune(idAccordo, false);
+			AccordoServizioParteComune aspc = registryReader.getAccordoServizioParteComune(idAccordo, false, false);
 //			if(aspc.sizeProtocolPropertyList()<=0){
 //				throw new Exception("Nome dell'accordo da utilizzare non trovato: non esistono proprieta' di protocollo all'interno dell'accordo di servizio");
 //			}
@@ -443,7 +443,7 @@ public class SICAtoOpenSPCoopUtilities {
 		// Recupero property del nome Accordo
 		String nomeAccordo = null;
 		try{
-			AccordoServizioParteComune aspc = registryReader.getAccordoServizioParteComune(idAccordo, false);
+			AccordoServizioParteComune aspc = registryReader.getAccordoServizioParteComune(idAccordo, false, false);
 //			if(aspc.sizeProtocolPropertyList()<=0){
 //				throw new Exception("Nome dell'accordo da utilizzare non trovato: non esistono proprieta' di protocollo all'interno dell'accordo di servizio");
 //			}

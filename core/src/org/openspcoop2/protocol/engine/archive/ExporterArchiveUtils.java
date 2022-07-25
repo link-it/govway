@@ -1662,7 +1662,7 @@ public class ExporterArchiveUtils {
 				if(cascadeConfig.isCascadeAccordoServizioParteComune() || ArchiveType.ACCORDO_SERVIZIO_PARTE_COMUNE.equals(provenienza)){
 				
 					// add
-					org.openspcoop2.core.registry.AccordoServizioParteComune as = this.archiveEngine.getAccordoServizioParteComune(idAccordoServizio,true);
+					org.openspcoop2.core.registry.AccordoServizioParteComune as = this.archiveEngine.getAccordoServizioParteComune(idAccordoServizio,true,true);
 					ArchiveAccordoServizioParteComune archiveAs = new ArchiveAccordoServizioParteComune(as, this.idCorrelazione);
 					archive.getAccordiServizioParteComune().add(archiveAs);
 					
@@ -1732,7 +1732,7 @@ public class ExporterArchiveUtils {
 				if(cascadeConfig.isCascadeAccordoServizioComposto() || ArchiveType.ACCORDO_SERVIZIO_COMPOSTO.equals(provenienza)){
 				
 					// add
-					as = this.archiveEngine.getAccordoServizioParteComune(idAccordoServizio,true);
+					as = this.archiveEngine.getAccordoServizioParteComune(idAccordoServizio,true,true);
 					ArchiveAccordoServizioComposto archiveAs = new ArchiveAccordoServizioComposto(as, this.idCorrelazione);
 					archive.getAccordiServizioComposto().add(archiveAs);
 				
@@ -1742,7 +1742,7 @@ public class ExporterArchiveUtils {
 					
 				}
 				else{
-					as = this.archiveEngine.getAccordoServizioParteComune(idAccordoServizio,false);
+					as = this.archiveEngine.getAccordoServizioParteComune(idAccordoServizio,false,true);
 				}	
 			}catch(Exception e){
 				throw new ProtocolException("(AccordoServizioComposto "+IDAccordoFactory.getInstance().getUriFromIDAccordo(idAccordoServizio)+") "+e.getMessage(),e);

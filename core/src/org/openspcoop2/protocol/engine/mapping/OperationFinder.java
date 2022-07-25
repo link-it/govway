@@ -200,7 +200,7 @@ public class OperationFinder {
 							
 							// Provo a fare la traduzione tramite soapAction registrata nell'accordo
 							if(azioneNonRipulita!=null || azione!=null) {
-								org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper wrapper = registroServiziManager.getWsdlAccordoServizio(idServizio,InformationApiSource.SAFE_SPECIFIC_REGISTRY,false);
+								org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper wrapper = registroServiziManager.getWsdlAccordoServizio(idServizio,InformationApiSource.SAFE_SPECIFIC_REGISTRY,false,false);
 								if(wrapper!=null){
 									for (int i = 0; i < wrapper.sizePortTypeList(); i++) {
 										PortType pt = wrapper.getPortType(i);
@@ -340,7 +340,7 @@ public class OperationFinder {
 //		return searchOperationByWsdl(false, msg, registroServiziReader, idServizio, log);
 //	}
 	private static String searchOperationByWsdl(boolean isRichiesta,OpenSPCoop2Message msg, OpenSPCoop2MessageSoapStreamReader soapStreamReaderParam, RegistroServiziManager registroServiziReader,IDServizio idServizio,Logger log) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper wrapper = registroServiziReader.getWsdlAccordoServizio(idServizio,InformationApiSource.SAFE_SPECIFIC_REGISTRY,false);
+		org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper wrapper = registroServiziReader.getWsdlAccordoServizio(idServizio,InformationApiSource.SAFE_SPECIFIC_REGISTRY,false,false);
 		org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities wrapperUtilities = 
 				new org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities(log,wrapper);
 		return wrapperUtilities.searchOperationName(isRichiesta, wrapper.getNomePortType(), msg, soapStreamReaderParam);
@@ -367,7 +367,7 @@ public class OperationFinder {
 		HttpRequestMethod httpMethod = HttpRequestMethod.valueOf(transportContext.getRequestType());
 		
 		try {
-			org.openspcoop2.core.registry.rest.AccordoServizioWrapper wrapper = registroServiziReader.getRestAccordoServizio(idServizio,InformationApiSource.SAFE_SPECIFIC_REGISTRY,false,false);
+			org.openspcoop2.core.registry.rest.AccordoServizioWrapper wrapper = registroServiziReader.getRestAccordoServizio(idServizio,InformationApiSource.SAFE_SPECIFIC_REGISTRY,false,false,false);
 			ApiOperation op = wrapper.getApi().findOperation(httpMethod, path);
 			if(op!=null) {
 				// Il path nella 'ApiOperation è normalizzato come sul registro

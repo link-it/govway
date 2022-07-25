@@ -770,23 +770,24 @@ public class RegistroServizi  {
 					}
 					
 					try{
-						this.cache.remove(_getKey_getAccordoServizioParteComune(this.idAccordoFactory, idAccordo, null));
+						this.cache.remove(_getKey_getAccordoServizioParteComune(this.idAccordoFactory, idAccordo, null, null));
 						this.getAccordoServizioParteComune(connectionPdD, nomeRegistro, idAccordo);
 					}
 					catch(DriverRegistroServiziNotFound notFound){}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
-					try{
-						this.cache.remove(_getKey_getAccordoServizioParteComune(this.idAccordoFactory, idAccordo, false));
-						this.getAccordoServizioParteComune(connectionPdD, nomeRegistro, idAccordo, false);
-					}
-					catch(DriverRegistroServiziNotFound notFound){}
-					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+					// uguale a quello sopra
+//					try{
+//						this.cache.remove(_getKey_getAccordoServizioParteComune(this.idAccordoFactory, idAccordo, false, false));
+//						this.getAccordoServizioParteComune(connectionPdD, nomeRegistro, idAccordo, false, false);
+//					}
+//					catch(DriverRegistroServiziNotFound notFound){}
+//					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
 					AccordoServizioParteComune as = null;
 					try{
-						this.cache.remove(_getKey_getAccordoServizioParteComune(this.idAccordoFactory, idAccordo, true));
-						as = this.getAccordoServizioParteComune(connectionPdD, nomeRegistro, idAccordo, true);
+						this.cache.remove(_getKey_getAccordoServizioParteComune(this.idAccordoFactory, idAccordo, true, true));
+						as = this.getAccordoServizioParteComune(connectionPdD, nomeRegistro, idAccordo, true, true);
 					}
 					catch(DriverRegistroServiziNotFound notFound){}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
@@ -1409,7 +1410,12 @@ public class RegistroServizi  {
 			classArgoments = new Class<?>[instances.length];
 			values = new Object[instances.length];
 			for (int i = 0; i < instances.length; i++) {
-				classArgoments[i] = instances[i].getClass();
+				if("getAccordoServizioParteComune".equals(methodName) && i==1) {
+					classArgoments[i] = boolean.class; // readDatiRegistro
+				}
+				else {
+					classArgoments[i] = instances[i].getClass();
+				}
 				values[i] = instances[i];
 			}
 		}
@@ -1517,7 +1523,12 @@ public class RegistroServizi  {
 			classArgoments = new Class<?>[instances.length];
 			values = new Object[instances.length];
 			for (int i = 0; i < instances.length; i++) {
-				classArgoments[i] = instances[i].getClass();
+				if("getAccordoServizioParteComune".equals(methodName) && i==1) {
+					classArgoments[i] = boolean.class; // readDatiRegistro
+				}
+				else {
+					classArgoments[i] = instances[i].getClass();
+				}
 				values[i] = instances[i];
 			}
 		}
@@ -1866,18 +1877,21 @@ public class RegistroServizi  {
 
 	/* ********  R I C E R C A    S E R V I Z I  (utilizzo dei driver) ******** */ 
 	
-	protected static String _getKey_getAccordoServizioParteComune(IDAccordoFactory idAccordoFactory, IDAccordo idAccordo,Boolean readContenutiAllegati) throws DriverRegistroServiziException{
+	protected static String _getKey_getAccordoServizioParteComune(IDAccordoFactory idAccordoFactory, IDAccordo idAccordo,Boolean readContenutiAllegati,Boolean readDatiRegistro) throws DriverRegistroServiziException{
 		String uriAccordoServizio = idAccordoFactory.getUriFromIDAccordo(idAccordo);
 		String key = "getAccordoServizio_" + uriAccordoServizio;
-		if(readContenutiAllegati!=null){
+		if(readContenutiAllegati!=null && readContenutiAllegati){
 			key = key + "_READ-ALLEGATI("+readContenutiAllegati.booleanValue()+")";
+		}
+		if(readDatiRegistro!=null && readDatiRegistro){
+			key = key + "_READ-DATI-REGISTRO("+readDatiRegistro.booleanValue()+")";
 		}
 		return key;
 	}
 	public AccordoServizioParteComune getAccordoServizioParteComune(Connection connectionPdD,String nomeRegistro,IDAccordo idAccordo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return getAccordoServizioParteComune(connectionPdD, nomeRegistro, idAccordo, null);
+		return getAccordoServizioParteComune(connectionPdD, nomeRegistro, idAccordo, null, null);
 	}
-	public AccordoServizioParteComune getAccordoServizioParteComune(Connection connectionPdD,String nomeRegistro,IDAccordo idAccordo,Boolean readContenutiAllegati) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	public AccordoServizioParteComune getAccordoServizioParteComune(Connection connectionPdD,String nomeRegistro,IDAccordo idAccordo,Boolean readContenutiAllegati,Boolean readDatiRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 		// Raccolta dati
 		if(idAccordo == null)
@@ -1888,7 +1902,7 @@ public class RegistroServizi  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = _getKey_getAccordoServizioParteComune(this.idAccordoFactory, idAccordo, readContenutiAllegati);
+			key = _getKey_getAccordoServizioParteComune(this.idAccordoFactory, idAccordo, readContenutiAllegati, readDatiRegistro);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1907,9 +1921,18 @@ public class RegistroServizi  {
 		// Algoritmo CACHE
 		AccordoServizioParteComune as = null;
 		if(this.cache!=null){
-			as = (AccordoServizioParteComune) this.getObjectCache(key,"getAccordoServizioParteComune",nomeRegistro,readContenutiAllegati,connectionPdD,idAccordo);
+			if(readDatiRegistro!=null) {
+				as = (AccordoServizioParteComune) this.getObjectCache(key,"getAccordoServizioParteComune",nomeRegistro,readContenutiAllegati,connectionPdD,idAccordo,readDatiRegistro);
+			}else {
+				as = (AccordoServizioParteComune) this.getObjectCache(key,"getAccordoServizioParteComune",nomeRegistro,readContenutiAllegati,connectionPdD,idAccordo);
+			}
 		}else{
-			as = (AccordoServizioParteComune) this.getObject("getAccordoServizioParteComune",nomeRegistro,readContenutiAllegati,connectionPdD,idAccordo);
+			if(readDatiRegistro!=null) {
+				as = (AccordoServizioParteComune) this.getObject("getAccordoServizioParteComune",nomeRegistro,readContenutiAllegati,connectionPdD,idAccordo,readDatiRegistro);
+			}
+			else {
+				as = (AccordoServizioParteComune) this.getObject("getAccordoServizioParteComune",nomeRegistro,readContenutiAllegati,connectionPdD,idAccordo);
+			}
 		}
 
 		if(as!=null)
@@ -2904,7 +2927,7 @@ public class RegistroServizi  {
 	 *         null altrimenti.
 	 */
 	public org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getWsdlAccordoServizio(Connection connectionPdD,String nomeRegistro,
-			IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD)
+			IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD, boolean readDatiRegistro)
 	throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 		// Raccolta dati
@@ -2925,7 +2948,8 @@ public class RegistroServizi  {
 		if(this.cache!=null){
 			key = _toKey_getWsdlAccordoServizioPrefix()+infoWsdlSource.name()+
 					_toKey_getWsdlAccordoServizioService(idService)+
-					"schema_"+buildSchemaXSD;
+					"schema_"+buildSchemaXSD+
+					"readDatiRegistro_"+readDatiRegistro;
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -2943,9 +2967,9 @@ public class RegistroServizi  {
 		// Algoritmo CACHE
 		org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper wsdlAS = null;
 		if(this.cache!=null){
-			wsdlAS = this.getAccordoServizioSoapCache(key, idService, infoWsdlSource, nomeRegistro, connectionPdD,buildSchemaXSD);
+			wsdlAS = this.getAccordoServizioSoapCache(key, idService, infoWsdlSource, nomeRegistro, connectionPdD,buildSchemaXSD, readDatiRegistro);
 		}else{
-			wsdlAS = this.getAccordoServizioSoapEngine(idService, infoWsdlSource, nomeRegistro, connectionPdD,buildSchemaXSD);
+			wsdlAS = this.getAccordoServizioSoapEngine(idService, infoWsdlSource, nomeRegistro, connectionPdD,buildSchemaXSD, readDatiRegistro);
 		}
 
 		if(wsdlAS!=null)
@@ -2967,7 +2991,7 @@ public class RegistroServizi  {
 	 */
 	private static org.openspcoop2.utils.Semaphore semaphore_getAccordoServizioSoapCache = new org.openspcoop2.utils.Semaphore("RegistroServizi_AccordoServizioSoap");
 	private org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getAccordoServizioSoapCache(String keyCache,IDServizio idService,
-			InformationApiSource infoWsdlSource,String nomeRegistro,Connection connectionPdD,boolean buildSchemaXSD) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+			InformationApiSource infoWsdlSource,String nomeRegistro,Connection connectionPdD,boolean buildSchemaXSD,boolean readDatiRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 		semaphore_getAccordoServizioSoapCache.acquireThrowRuntime("getAccordoServizioSoapCache");
 		DriverRegistroServiziNotFound dNotFound = null;
@@ -3001,7 +3025,7 @@ public class RegistroServizi  {
 			// Effettuo le query nella mia gerarchia di registri.
 			this.log.debug("oggetto con chiave ["+keyCache+"] (method:WSDLAccordoServizio) nel registro["+nomeRegistro+"] non in cache, ricerco nel registro...");
 			try{
-				obj = getAccordoServizioSoapEngine(idService, infoWsdlSource,nomeRegistro,connectionPdD,buildSchemaXSD);
+				obj = getAccordoServizioSoapEngine(idService, infoWsdlSource,nomeRegistro,connectionPdD,buildSchemaXSD,readDatiRegistro);
 			}catch(DriverRegistroServiziNotFound e){
 				dNotFound = e;
 			}
@@ -3059,9 +3083,9 @@ public class RegistroServizi  {
 	 * 
 	 */
 	private org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getAccordoServizioSoapEngine(IDServizio idService,InformationApiSource infoWsdlSource,
-			String nomeRegistro,Connection connectionPdD,boolean buildSchemaXSD) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+			String nomeRegistro,Connection connectionPdD,boolean buildSchemaXSD,boolean readDatiRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
-		_ASWrapperDati asWrapper = this.buildASWrapperDati(nomeRegistro, idService, connectionPdD);
+		_ASWrapperDati asWrapper = this.buildASWrapperDati(nomeRegistro, idService, connectionPdD, readDatiRegistro);
 		
 		// Effettuo le query nella mia gerarchia di registri.
 		org.openspcoop2.core.registry.AccordoServizioParteSpecifica servizio = asWrapper.servizio;
@@ -3291,7 +3315,7 @@ public class RegistroServizi  {
 	 *         null altrimenti.
 	 */
 	public org.openspcoop2.core.registry.rest.AccordoServizioWrapper getRestAccordoServizio(Connection connectionPdD,String nomeRegistro,
-			IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD, boolean processIncludeForOpenApi)
+			IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD, boolean processIncludeForOpenApi, boolean readDatiRegistro)
 	throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 		// Raccolta dati
@@ -3313,7 +3337,8 @@ public class RegistroServizi  {
 			key = _toKey_getRestAccordoServizioPrefix()+infoWsdlSource.name()+
 			_toKey_getRestAccordoServizioService(idService)
 			+"schema_"+buildSchemaXSD
-			+"_processInclude_"+processIncludeForOpenApi;
+			+"_processInclude_"+processIncludeForOpenApi
+			+"_readDatiRegistro_"+readDatiRegistro;
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -3331,9 +3356,9 @@ public class RegistroServizi  {
 		// Algoritmo CACHE
 		org.openspcoop2.core.registry.rest.AccordoServizioWrapper restAS = null;
 		if(this.cache!=null){
-			restAS = this.getAccordoServizioRestCache(key, idService, infoWsdlSource, nomeRegistro, connectionPdD,buildSchemaXSD, processIncludeForOpenApi);
+			restAS = this.getAccordoServizioRestCache(key, idService, infoWsdlSource, nomeRegistro, connectionPdD,buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro);
 		}else{
-			restAS = this.getAccordoServizioRestEngine(idService, infoWsdlSource, nomeRegistro, connectionPdD,buildSchemaXSD, processIncludeForOpenApi);
+			restAS = this.getAccordoServizioRestEngine(idService, infoWsdlSource, nomeRegistro, connectionPdD,buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro);
 		}
 
 		if(restAS!=null)
@@ -3355,7 +3380,7 @@ public class RegistroServizi  {
 	 */
 	private static org.openspcoop2.utils.Semaphore semaphore_getAccordoServizioRestCache = new org.openspcoop2.utils.Semaphore("RegistroServizi_AccordoServizioRest");
 	private org.openspcoop2.core.registry.rest.AccordoServizioWrapper getAccordoServizioRestCache(String keyCache,IDServizio idService,
-			InformationApiSource infoWsdlSource,String nomeRegistro,Connection connectionPdD,boolean buildSchemaXSD, boolean processIncludeForOpenApi) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+			InformationApiSource infoWsdlSource,String nomeRegistro,Connection connectionPdD,boolean buildSchemaXSD, boolean processIncludeForOpenApi, boolean readDatiRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 		semaphore_getAccordoServizioRestCache.acquireThrowRuntime("getAccordoServizioRestCache");
 		DriverRegistroServiziNotFound dNotFound = null;
@@ -3389,7 +3414,7 @@ public class RegistroServizi  {
 			// Effettuo le query nella mia gerarchia di registri.
 			this.log.debug("oggetto con chiave ["+keyCache+"] (method:getRestAccordoServizio) nel registro["+nomeRegistro+"] non in cache, ricerco nel registro...");
 			try{
-				obj = getAccordoServizioRestEngine(idService, infoWsdlSource,nomeRegistro,connectionPdD,buildSchemaXSD, processIncludeForOpenApi);
+				obj = getAccordoServizioRestEngine(idService, infoWsdlSource,nomeRegistro,connectionPdD,buildSchemaXSD, processIncludeForOpenApi,readDatiRegistro);
 			}catch(DriverRegistroServiziNotFound e){
 				dNotFound = e;
 			}
@@ -3446,10 +3471,12 @@ public class RegistroServizi  {
 	 * 
 	 */
 	private org.openspcoop2.core.registry.rest.AccordoServizioWrapper getAccordoServizioRestEngine(IDServizio idService,InformationApiSource infoWsdlSource,
-			String nomeRegistro,Connection connectionPdD,boolean buildSchemi,boolean processIncludeForOpenApi) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+			String nomeRegistro,Connection connectionPdD,boolean buildSchemi,boolean processIncludeForOpenApi,
+			boolean readDatiRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 
-		_ASWrapperDati asWrapper = this.buildASWrapperDati(nomeRegistro, idService, connectionPdD);
+		_ASWrapperDati asWrapper = this.buildASWrapperDati(nomeRegistro, idService, connectionPdD,
+				readDatiRegistro);
 		
 		// Effettuo le query nella mia gerarchia di registri.
 		org.openspcoop2.core.registry.AccordoServizioParteSpecifica servizio = asWrapper.servizio;
@@ -3829,7 +3856,7 @@ public class RegistroServizi  {
 	}
 	
 	private org.openspcoop2.core.registry.constants.ServiceBinding getServiceBindingEngine(IDServizio idService, String nomeRegistro,Connection connectionPdD) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		_ASWrapperDati asWrapper = this.buildASWrapperDati(nomeRegistro, idService, connectionPdD);
+		_ASWrapperDati asWrapper = this.buildASWrapperDati(nomeRegistro, idService, connectionPdD,false);
 		return asWrapper.as.getServiceBinding();
 	}
 	
@@ -3838,7 +3865,7 @@ public class RegistroServizi  {
 	
 	
 	
-	private _ASWrapperDati buildASWrapperDati(String nomeRegistro, IDServizio idService, Connection connectionPdD) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	private _ASWrapperDati buildASWrapperDati(String nomeRegistro, IDServizio idService, Connection connectionPdD, boolean readDatiRegistro) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 			// Logger log, IDServizio idService, Connection connectionPdD, IDAccordoFactory idAccordoFactory) {
 		
 		_ASWrapperDati asWrapper = new _ASWrapperDati();
@@ -3864,7 +3891,7 @@ public class RegistroServizi  {
 				IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromUri(asWrapper.servizio.getAccordoServizioParteComune());
 				this.log.debug("invocazione metodo getWSDLAccordoServizio (search accordo)...");
 				if(driver instanceof DriverRegistroServiziDB)
-					asWrapper.as = ((DriverRegistroServiziDB)driver).getAccordoServizioParteComune(idAccordo,true); // leggo contenuto allegati
+					asWrapper.as = ((DriverRegistroServiziDB)driver).getAccordoServizioParteComune(idAccordo,true, readDatiRegistro); // leggo contenuto allegati
 				else
 					asWrapper.as = driver.getAccordoServizioParteComune(idAccordo);
 				if (asWrapper.as == null){
@@ -3924,7 +3951,7 @@ public class RegistroServizi  {
 					IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromUri(asWrapper.servizio.getAccordoServizioParteComune());
 					this.log.debug("invocazione metodo getWSDLAccordoServizio (search accordo) nel registro["+nomeRegInLista+"]...");
 					if(driver instanceof DriverRegistroServiziDB)
-						asWrapper.as = ((DriverRegistroServiziDB)driver).getAccordoServizioParteComune(idAccordo,true); // leggo contenuto allegati
+						asWrapper.as = ((DriverRegistroServiziDB)driver).getAccordoServizioParteComune(idAccordo,true,readDatiRegistro); // leggo contenuto allegati
 					else
 						asWrapper.as = driver.getAccordoServizioParteComune(idAccordo);
 					if (asWrapper.as == null){

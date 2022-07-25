@@ -2160,7 +2160,9 @@ public class MsgDiagnostico {
 					//System.out.println("@@@@@REPOSITORY@@@@@ LOG MSG DIAG ID TRANSAZIONE ["+idTransazione+"] ADD");
 					RepositoryGestioneStateful.addMsgDiagnostico(msgDiag.getIdTransazione(), msgDiag);
 				}catch(Exception e){
-					if(!IntegrationManager.ID_MODULO.equals(this.idModulo)) {
+					if(!IntegrationManager.ID_MODULO.equals(this.idModulo) &&
+							!("["+org.openspcoop2.pdd.core.handlers.transazioni.PostOutResponseHandler.class.getName()+"] invocazione terminata").equals(msgDiag.getMessaggio())
+						) { //
 						exc = e;
 					}
 				}

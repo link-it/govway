@@ -651,7 +651,7 @@ public class ServicesUtils {
 				if(asps!=null) {
 					try {
 						IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
-						aspc = serviceIdentificationReader.getRegistryReader().getAccordoServizioParteComune(idAccordo, true);
+						aspc = serviceIdentificationReader.getRegistryReader().getAccordoServizioParteComune(idAccordo, true, true);
 					}catch(RegistryNotFound notFound) {}
 				}
 				if(aspc!=null) {

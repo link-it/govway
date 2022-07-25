@@ -398,6 +398,10 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "api.openApi.openapi4j.validateUriReferenceAsUrl");
 	}
 	
+	public boolean isApiRestResourceRepresentationMessageTypeOverride() throws UtilsException{
+		return this.readBooleanProperty(true, "api.resource.representation.messageTypeOverride");
+	}
+	
 	public boolean isAccordiCooperazioneEnabled() throws UtilsException{
 		return this.readBooleanProperty(true, "accordiCooperazione.enabled");
 	}

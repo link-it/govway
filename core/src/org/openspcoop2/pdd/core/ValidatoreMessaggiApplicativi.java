@@ -182,9 +182,9 @@ public class ValidatoreMessaggiApplicativi {
 		
 		try{
 			if(readWSDLAccordoServizio){
-				this.accordoServizioWrapper = this.registroServiziManager.getWsdlAccordoServizio(idServizio,InformationApiSource.SPECIFIC,true);
+				this.accordoServizioWrapper = this.registroServiziManager.getWsdlAccordoServizio(idServizio,InformationApiSource.SPECIFIC,true,false);
 			}else{
-				this.accordoServizioWrapper = this.registroServiziManager.getWsdlAccordoServizio(idServizio,InformationApiSource.REGISTRY,true);
+				this.accordoServizioWrapper = this.registroServiziManager.getWsdlAccordoServizio(idServizio,InformationApiSource.REGISTRY,true,true);
 			}
 		}catch(DriverRegistroServiziNotFound e){
 			this.logger.error("Riscontrato errore durante la ricerca dei wsdl/xsd che definiscono l'accordo di servizio: "+e.getMessage(),e);

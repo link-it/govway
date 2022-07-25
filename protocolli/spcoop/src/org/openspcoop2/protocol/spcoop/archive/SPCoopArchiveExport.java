@@ -377,7 +377,7 @@ public class SPCoopArchiveExport {
 			AccordoServizioParteComune as = null;
 			AccordoServizioParteComune asIncludereWSDLParteSpecifica = null;
             if(sicaContext.isWSDL_XSD_accordiParteSpecifica_gestioneParteComune()){
-            	as = registryReader.getAccordoServizioParteComune(idAccordoServizioParteComune,true);
+            	as = registryReader.getAccordoServizioParteComune(idAccordoServizioParteComune,true, true);
             	asIncludereWSDLParteSpecifica = as;
             }else{
             	as = registryReader.getAccordoServizioParteComune(idAccordoServizioParteComune);

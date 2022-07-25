@@ -190,7 +190,8 @@ public class ServiceBindingConfigurationReader  {
 				if(asps!=null) {
 					try {
 						IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
-						aspc = registryReader.getAccordoServizioParteComune(idAccordo, false);
+						aspc = registryReader.getAccordoServizioParteComune(idAccordo, false, 
+								false); // non si legge i dati di request e response per API REST. L'override del MessageType e' stato eliminato per default dalla console
 					}catch(RegistryNotFound notFound) {}
 				}
 				

@@ -368,6 +368,8 @@ public class PostOutResponseHandler_TransazioneUtilities {
 
 			// ** Tempi di latenza **
 
+			boolean valorizzataDataIngressoConDataAccettazione = op2Properties.isTransazioniValorizzaDataIngressoConDataAccettazione();
+			
 			// Se data_accettazione_richiesta è null viene impostata a CURRENT_TIMESTAMP
 			if (transaction.getDataAccettazioneRichiesta()!=null){
 				transactionDTO.setDataAccettazioneRichiesta(transaction.getDataAccettazioneRichiesta());
@@ -385,18 +387,23 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			}
 			
 			// Se data_ingresso_richiesta è null viene impostata a CURRENT_TIMESTAMP
-			if (transaction.getDataIngressoRichiesta()!=null){
-				transactionDTO.setDataIngressoRichiesta(transaction.getDataIngressoRichiesta());
-			}else{
-				Object o = context.getPddContext().getObject(CostantiPdD.DATA_INGRESSO_RICHIESTA);
-				if(o!=null && o instanceof Date){
-					transactionDTO.setDataIngressoRichiesta((Date) o);
-				}
-				else if(context.getDataElaborazioneMessaggio()!=null){
-					transactionDTO.setDataIngressoRichiesta(context.getDataElaborazioneMessaggio());
-				}
-				else{
-					transactionDTO.setDataIngressoRichiesta(DateManager.getDate());
+			if(valorizzataDataIngressoConDataAccettazione) {
+				transactionDTO.setDataIngressoRichiesta(transactionDTO.getDataAccettazioneRichiesta());
+			}
+			else {
+				if (transaction.getDataIngressoRichiesta()!=null){
+					transactionDTO.setDataIngressoRichiesta(transaction.getDataIngressoRichiesta());
+				}else{
+					Object o = context.getPddContext().getObject(CostantiPdD.DATA_INGRESSO_RICHIESTA);
+					if(o!=null && o instanceof Date){
+						transactionDTO.setDataIngressoRichiesta((Date) o);
+					}
+					else if(context.getDataElaborazioneMessaggio()!=null){
+						transactionDTO.setDataIngressoRichiesta(context.getDataElaborazioneMessaggio());
+					}
+					else{
+						transactionDTO.setDataIngressoRichiesta(DateManager.getDate());
+					}
 				}
 			}
 			
@@ -418,8 +425,13 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			// Nel PddMonitor, invece, la data deve essere visualizzata solo se la dimensione e' diverso da 0 e cioe' se c'e' un messaggio di risposta.
 			//if (transaction.getDimensioneIngressoRispostaBytes()!=null && transaction.getDimensioneIngressoRispostaBytes()>0){
 			// L'INFORMAZIONE DEVE INVECE ESSERE SALVATA PER LA SIMULAZIONE DEI MESSAGGI DIAGNOSTICI
-			if (transaction.getDataIngressoRisposta()!=null){
-				transactionDTO.setDataIngressoRisposta(transaction.getDataIngressoRisposta());
+			if(valorizzataDataIngressoConDataAccettazione && transactionDTO.getDataAccettazioneRisposta()!=null) {
+				transactionDTO.setDataIngressoRisposta(transactionDTO.getDataAccettazioneRisposta());
+			}
+			else {
+				if (transaction.getDataIngressoRisposta()!=null){
+					transactionDTO.setDataIngressoRisposta(transaction.getDataIngressoRisposta());
+				}
 			}
 
 			// data_uscita_risposta
@@ -773,7 +785,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			
 			if(idAccordo!=null) {
 				try {
-					AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(idAccordo, null, false);
+					AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(idAccordo, null, false, false);
 					if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(aspc.getServiceBinding())) {
 						transactionDTO.setTipoApi(TipoAPI.REST.getValoreAsInt());
 					}

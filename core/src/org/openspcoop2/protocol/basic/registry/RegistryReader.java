@@ -412,10 +412,10 @@ public class RegistryReader implements IRegistryReader {
 
 	@Override
 	public AccordoServizioParteComune getAccordoServizioParteComune(
-			IDAccordo idAccordo, boolean readAllegati) throws RegistryNotFound,RegistryException {
+			IDAccordo idAccordo, boolean readAllegati,boolean readDatiRegistro) throws RegistryNotFound,RegistryException {
 		try{
 			if(this.driverRegistroServiziGET instanceof DriverRegistroServiziDB){
-				return ((DriverRegistroServiziDB)this.driverRegistroServiziGET).getAccordoServizioParteComune(idAccordo,readAllegati);
+				return ((DriverRegistroServiziDB)this.driverRegistroServiziGET).getAccordoServizioParteComune(idAccordo,readAllegati,readDatiRegistro);
 			}
 			else{
 				return this.getAccordoServizioParteComune(idAccordo);
@@ -471,10 +471,10 @@ public class RegistryReader implements IRegistryReader {
 	}
 	
 	@Override
-	public org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getAccordoServizioParteComuneSoap(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchema) throws RegistryNotFound,RegistryException{
+	public org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getAccordoServizioParteComuneSoap(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchema, boolean readDatiRegistro) throws RegistryNotFound,RegistryException{
 		try {
 			 RegistroServizi registro = getRegistroServiziWithoutCache();
-			 return registro.getWsdlAccordoServizio(null, null, idService, infoWsdlSource, buildSchema);
+			 return registro.getWsdlAccordoServizio(null, null, idService, infoWsdlSource, buildSchema, readDatiRegistro);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -483,10 +483,10 @@ public class RegistryReader implements IRegistryReader {
 	}
 	
 	@Override
-	public org.openspcoop2.core.registry.rest.AccordoServizioWrapper getAccordoServizioParteComuneRest(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchema, boolean processIncludeForOpenApi) throws RegistryNotFound,RegistryException{
+	public org.openspcoop2.core.registry.rest.AccordoServizioWrapper getAccordoServizioParteComuneRest(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchema, boolean processIncludeForOpenApi, boolean readDatiRegistro) throws RegistryNotFound,RegistryException{
 		try {
 			 RegistroServizi registro = getRegistroServiziWithoutCache();
-			 return registro.getRestAccordoServizio(null, null, idService, infoWsdlSource, buildSchema, processIncludeForOpenApi);
+			 return registro.getRestAccordoServizio(null, null, idService, infoWsdlSource, buildSchema, processIncludeForOpenApi, readDatiRegistro);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){

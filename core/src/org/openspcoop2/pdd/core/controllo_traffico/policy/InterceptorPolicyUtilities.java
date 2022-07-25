@@ -302,7 +302,7 @@ public class InterceptorPolicyUtilities {
 		}
 		if(datiTransazione.getIdAccordoServizioParteComune()!=null) {
 			try {
-				AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(datiTransazione.getIdAccordoServizioParteComune(), null, false);
+				AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(datiTransazione.getIdAccordoServizioParteComune(), null, false, false);
 				if(aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
 					List<String> tags = new ArrayList<String>();
 					for (GruppoAccordo gruppoAccordo : aspc.getGruppi().getGruppoList()) {

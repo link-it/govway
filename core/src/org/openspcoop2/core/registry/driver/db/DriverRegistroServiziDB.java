@@ -1865,9 +1865,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 */
 	@Override
 	public org.openspcoop2.core.registry.AccordoServizioParteComune getAccordoServizioParteComune(IDAccordo idAccordo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
-		return getAccordoServizioParteComune(idAccordo,false);
+		return getAccordoServizioParteComune(idAccordo,false,false);
 	}
-	public org.openspcoop2.core.registry.AccordoServizioParteComune getAccordoServizioParteComune(IDAccordo idAccordo,boolean readContenutoAllegati) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+	public org.openspcoop2.core.registry.AccordoServizioParteComune getAccordoServizioParteComune(IDAccordo idAccordo,boolean readContenutoAllegati,boolean readDatiRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		// conrollo consistenza
 		if (idAccordo == null)
 			throw new DriverRegistroServiziException("[getAccordoServizioParteComune] Parametro idAccordo is null");
@@ -2144,7 +2144,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				this.readPortTypes(accordoServizio,con);
 				
 				// read resources
-				this.readResources(accordoServizio,con);
+				this.readResources(accordoServizio,con,readDatiRegistro);
 				
 				// read gruppi
 				this.readAccordiGruppi(accordoServizio,con);
@@ -2627,7 +2627,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 	
-	private void readResources(AccordoServizioParteComune as,Connection conParam) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	private void readResources(AccordoServizioParteComune as,Connection conParam, boolean readDatiRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		// Aggiungo resource
 
 		Connection con = null;
@@ -2723,11 +2723,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 				long idResource = rs.getLong("id");
 				resource.setId(idResource);
 
-				// Aggiungo dettagli della richiesta
-				this.readResourcesDetails(resource,true,con);
-				
-				// Aggiungo dettagli della risposta
-				this.readResourcesDetails(resource,false,con);
+				if(readDatiRegistro) {
+					// Aggiungo dettagli della richiesta
+					this.readResourcesDetails(resource,true,con);
+					
+					// Aggiungo dettagli della risposta
+					this.readResourcesDetails(resource,false,con);
+				}
 
 				// Protocol Properties
 				try{

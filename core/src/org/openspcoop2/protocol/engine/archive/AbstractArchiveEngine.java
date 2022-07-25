@@ -630,8 +630,8 @@ public abstract class AbstractArchiveEngine {
 		return this.driverRegistroServizi.getAccordoServizioParteComune(idAccordoServizioParteComune);
 	}
 	
-	public AccordoServizioParteComune getAccordoServizioParteComune(IDAccordo idAccordoServizioParteComune, boolean readContenutoAllegati) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
-		return this.driverRegistroServizi.getAccordoServizioParteComune(idAccordoServizioParteComune, readContenutoAllegati);
+	public AccordoServizioParteComune getAccordoServizioParteComune(IDAccordo idAccordoServizioParteComune, boolean readContenutoAllegati,boolean readDatiRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+		return this.driverRegistroServizi.getAccordoServizioParteComune(idAccordoServizioParteComune, readContenutoAllegati, readDatiRegistro);
 	}
 	
 	public boolean existsAccordoServizioParteComune(IDAccordo idAccordoServizioParteComune) throws DriverRegistroServiziException {

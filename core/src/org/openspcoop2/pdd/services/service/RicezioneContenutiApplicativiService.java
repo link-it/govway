@@ -295,11 +295,22 @@ public class RicezioneContenutiApplicativiService {
 			msgDiag.setPddContext(context.getPddContext(), protocolFactory);
 		}
 		
+		try{
+			msgDiag.logPersonalizzato("ricezioneRichiesta.firstLog");
+		}catch(Exception e){
+			logCore.error("Errore generazione diagnostico di ingresso",e);
+		}
+		
 		// emitDiagnostic preAccept handler
 		GestoreHandlers.emitDiagnostic(msgDiag, preInAcceptRequestContext, context!=null ? context.getPddContext() : null, 
 				logCore, logCore);
 		
 		// Aggiorno RequestInfo
+		try{
+			msgDiag.mediumDebug("Accesso configurazione della richiesta in corso...");
+		}catch(Exception e){
+			logCore.error("Errore generazione diagnostico",e);
+		}
 		ConnectorDispatcherInfo cInfo = RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, req, res,
 				this.generatoreErrore, serviceIdentificationReader, msgDiag, 
 				context!=null ? context.getPddContext(): null);
@@ -312,6 +323,11 @@ public class RicezioneContenutiApplicativiService {
 		// Timeout, DimensioneMessaggi e DumpRaw
 		DumpRaw dumpRaw = null;
 		try{
+			try{
+				msgDiag.mediumDebug("Lettura configurazione dump binario ...");
+			}catch(Exception e){
+				logCore.error("Errore generazione diagnostico",e);
+			}
 			boolean dumpBinario = configPdDManager.dumpBinarioPD();
 			PortaDelegata pd = null;
 			if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
@@ -321,6 +337,11 @@ public class RicezioneContenutiApplicativiService {
 			}
 
 			// Limited
+			try{
+				msgDiag.mediumDebug("Lettura configurazione dimensione massima della richiesta ...");
+			}catch(Exception e){
+				logCore.error("Errore generazione diagnostico",e);
+			}
 			String azione = (requestInfo!=null && requestInfo.getIdServizio()!=null) ? requestInfo.getIdServizio().getAzione() : null;
 			SoglieDimensioneMessaggi limitedInputStream = configPdDManager.getSoglieLimitedInputStream(pd, azione, idModulo,
 					(context!=null && context.getPddContext()!=null) ? context.getPddContext() : null, 
@@ -339,6 +360,11 @@ public class RicezioneContenutiApplicativiService {
 			}
 			
 			// Timeout
+			try{
+				msgDiag.mediumDebug("Lettura configurazione timeout per la lettura della richiesta ...");
+			}catch(Exception e){
+				logCore.error("Errore generazione diagnostico",e);
+			}
 			boolean useTimeoutInputStream = configPdDManager.isConnettoriUseTimeoutInputStream(pd);
 			if(useTimeoutInputStream) {
 				int timeout = configPdDManager.getRequestReadTimeout(pd);
@@ -354,6 +380,11 @@ public class RicezioneContenutiApplicativiService {
 			}
 			
 			// DumpRaw
+			try{
+				msgDiag.mediumDebug("Lettura configurazione dump ...");
+			}catch(Exception e){
+				logCore.error("Errore generazione diagnostico",e);
+			}
 			DumpConfigurazione dumpConfigurazione = configPdDManager.getDumpConfigurazione(pd);
 			boolean fileTrace = configPdDManager.isTransazioniFileTraceEnabled(pd) && configPdDManager.isTransazioniFileTraceDumpBinarioEnabled(pd);
 			dumpRaw = new DumpRaw(logCore,requestInfo.getIdentitaPdD(), idModulo, TipoPdD.DELEGATA, 
@@ -444,6 +475,12 @@ public class RicezioneContenutiApplicativiService {
 			
 			/* --------------- Creo il context che genera l'id univoco ----------------------- */
 			
+			try{
+				msgDiag.mediumDebug("Creazione contesto ...");
+			}catch(Exception e){
+				logCore.error("Errore generazione diagnostico",e);
+			}
+			
 			if(protocolFactory==null) {
 				protocolFactory = req.getProtocolFactory();
 			}
@@ -487,9 +524,9 @@ public class RicezioneContenutiApplicativiService {
 			}
 			
 			try{
-				msgDiag.logPersonalizzato("ricezioneRichiesta.firstLog");
+				msgDiag.logPersonalizzato("ricezioneRichiesta.firstAccessRequestStream");
 			}catch(Exception e){
-				logCore.error("Errore generazione diagnostico di ingresso",e);
+				logCore.error("Errore generazione diagnostico di ingresso (stream access)",e);
 			}
 			
 			if(dumpRaw!=null && dumpRaw.isActiveDump()){

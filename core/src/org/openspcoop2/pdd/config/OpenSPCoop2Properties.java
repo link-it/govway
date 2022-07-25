@@ -1951,6 +1951,7 @@ public class OpenSPCoop2Properties {
 				this.isTransazioniSaveTracceInUniqueTransaction();
 				this.isTransazioniSaveDiagnosticiInUniqueTransaction();
 				this.isTransazioniSaveDumpInUniqueTransaction();
+				this.isTransazioniValorizzaDataIngressoConDataAccettazione();
 				this.isTransazioniFaultPrettyPrint();
 				
 				this._isTransazioniFiltroDuplicatiSaveDateEnabled();
@@ -22773,6 +22774,28 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isTransazioniSaveDumpInUniqueTransaction;
+	}
+	
+	private static Boolean isTransazioniValorizzaDataIngressoConDataAccettazione = null;
+	public boolean isTransazioniValorizzaDataIngressoConDataAccettazione() {	
+		String pName = "org.openspcoop2.pdd.transazioni.dataIngresso.valorizzaConDataAccettazione";
+		if(OpenSPCoop2Properties.isTransazioniValorizzaDataIngressoConDataAccettazione==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniValorizzaDataIngressoConDataAccettazione = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isTransazioniValorizzaDataIngressoConDataAccettazione = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniValorizzaDataIngressoConDataAccettazione;
 	}
 	
 	private static Boolean isTransazioniFaultPrettyPrint = null;

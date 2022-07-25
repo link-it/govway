@@ -187,7 +187,7 @@ public class ModIImbustamento {
 						IDAccordo idApiCorrelata = IDAccordoFactory.getInstance().getIDAccordoFromUri(asyncInteractionRequestApi);
 						String labelApi = NamingUtils.getLabelAccordoServizioParteComune(idApiCorrelata);
 						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA, labelApi);
-						apiContenenteRisorsa = registryReader.getAccordoServizioParteComune(idApiCorrelata, false);
+						apiContenenteRisorsa = registryReader.getAccordoServizioParteComune(idApiCorrelata, false, false);
 					}
 					else {
 						apiContenenteRisorsa = aspc;

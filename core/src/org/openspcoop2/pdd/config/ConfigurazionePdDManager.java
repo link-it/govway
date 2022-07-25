@@ -1460,7 +1460,7 @@ public class ConfigurazionePdDManager {
 			IDAccordo idAccordo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		AccordoServizioParteComune aspc = null;
 		try {
-			aspc = this.registroServiziManager.getAccordoServizioParteComune(idAccordo, null, false);
+			aspc = this.registroServiziManager.getAccordoServizioParteComune(idAccordo, null, false, false);
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}

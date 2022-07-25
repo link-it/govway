@@ -1,6 +1,13 @@
 2022-07-25  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Risolto Bug OP-1408
+	Durante la gestione di una prima richiesta non ancora in cache, su API Rest contenenti molte risorse (es. 500), la latenza introdotta da GovWay erano nell'ordine dei secondi (5,7 secondi).
+	Sono stati ottimizzati i dati acceduti in modo da ridurre il costo anche al primo accesso per portare la latenze nell'ordine dei millisecondi.
+
+2022-07-25  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
 	Aggiunta possibilità di definire una token policy di validazione che utilizza per validare il token il certificato portato negli header x5c e x5t.	
 
 2022-07-15  Andrea Poli <apoli@link.it>

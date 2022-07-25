@@ -373,7 +373,7 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 			return;
 		}
 		IDAccordo idAccordo = listAccordi.get(0);
-		AccordoServizioParteComune aspc = registryReader.getAccordoServizioParteComune(idAccordo,false);
+		AccordoServizioParteComune aspc = registryReader.getAccordoServizioParteComune(idAccordo,false,false);
 		FiltroRicercaServizi filtroServizi = new FiltroRicercaServizi();
 		filtroServizi.setIdAccordoServizioParteComune(idAccordo);
 		filtroServizi.setSoggettoErogatore(idDestinatario);
@@ -672,7 +672,7 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 						}
 						if(listAccordi!=null && listAccordi.size()>0) {
 							idAccordo = listAccordi.get(0);
-							aspc = registryReader.getAccordoServizioParteComune(idAccordo,false);
+							aspc = registryReader.getAccordoServizioParteComune(idAccordo,false,false);
 							FiltroRicercaServizi filtroServizi = new FiltroRicercaServizi();
 							filtroServizi.setIdAccordoServizioParteComune(idAccordo);
 							filtroServizi.setSoggettoErogatore(idDestinatario);

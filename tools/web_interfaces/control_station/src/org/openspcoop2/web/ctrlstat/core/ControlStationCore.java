@@ -908,6 +908,7 @@ public class ControlStationCore {
 	private boolean isApiResourceHttpMethodAndPathQualsiasiEnabled;
 	private List<String> getApiResourcePathQualsiasiSpecialChar;
 	private boolean isApiOpenAPIValidateUriReferenceAsUrl;
+	private boolean isApiRestResourceRepresentationMessageTypeOverride;
 	public boolean isApiResourcePathValidatorEnabled() {
 		return this.isApiResourcePathValidatorEnabled;
 	}
@@ -919,6 +920,9 @@ public class ControlStationCore {
 	}
 	public boolean isApiOpenAPIValidateUriReferenceAsUrl() {
 		return this.isApiOpenAPIValidateUriReferenceAsUrl;
+	}
+	public boolean isApiRestResourceRepresentationMessageTypeOverride() {
+		return this.isApiRestResourceRepresentationMessageTypeOverride;
 	}
 	
 	/** Accordi di Cooperazione */
@@ -2375,6 +2379,7 @@ public class ControlStationCore {
 		this.isApiResourceHttpMethodAndPathQualsiasiEnabled = core.isApiResourceHttpMethodAndPathQualsiasiEnabled;
 		this.getApiResourcePathQualsiasiSpecialChar = core.getApiResourcePathQualsiasiSpecialChar;
 		this.isApiOpenAPIValidateUriReferenceAsUrl = core.isApiOpenAPIValidateUriReferenceAsUrl;
+		this.isApiRestResourceRepresentationMessageTypeOverride = core.isApiRestResourceRepresentationMessageTypeOverride;
 		
 		/** Accordi di Cooperazione */
 		this.isAccordiCooperazioneEnabled = core.isAccordiCooperazioneEnabled;
@@ -2811,6 +2816,7 @@ public class ControlStationCore {
 			this.isApiResourceHttpMethodAndPathQualsiasiEnabled = consoleProperties.isApiResourceHttpMethodAndPathQualsiasiEnabled();
 			this.getApiResourcePathQualsiasiSpecialChar = consoleProperties.getApiResourcePathQualsiasiSpecialChar();
 			this.isApiOpenAPIValidateUriReferenceAsUrl = consoleProperties.isApiOpenAPIValidateUriReferenceAsUrl();
+			this.isApiRestResourceRepresentationMessageTypeOverride = consoleProperties.isApiRestResourceRepresentationMessageTypeOverride();
 			this.isAccordiCooperazioneEnabled = consoleProperties.isAccordiCooperazioneEnabled();
 			this.isErogazioniVerificaCertificati = consoleProperties.isErogazioniVerificaCertificati();
 			this.isFruizioniVerificaCertificati = consoleProperties.isFruizioniVerificaCertificati();

@@ -405,7 +405,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverRegistroServiziDB().getAccordoServizioParteComune(idAccordo,deepRead);
+			return driver.getDriverRegistroServiziDB().getAccordoServizioParteComune(idAccordo,deepRead,deepRead);
 		} catch (DriverRegistroServiziNotFound e) {
 			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw e;

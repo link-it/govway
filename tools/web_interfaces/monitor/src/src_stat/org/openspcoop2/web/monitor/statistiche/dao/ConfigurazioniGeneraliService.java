@@ -1210,7 +1210,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				}
 				
 				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
-				org.openspcoop2.core.registry.AccordoServizioParteComune aspc = this.driverRegistroDB.getAccordoServizioParteComune(idAccordo, false);
+				org.openspcoop2.core.registry.AccordoServizioParteComune aspc = this.driverRegistroDB.getAccordoServizioParteComune(idAccordo, false, false);
 				Map<String, String> map = ModIUtils.configToMap(aspc, asps, urlInvocazione, fruitore, urlConnettoreFruitoreModI);
 				if(map!=null && !map.isEmpty()) {
 					List<String> keys = new ArrayList<String>();
@@ -1500,7 +1500,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			}
 			else {
 				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
-				org.openspcoop2.core.registry.AccordoServizioParteComune aspc = this.driverRegistroDB.getAccordoServizioParteComune(idAccordo, false);
+				org.openspcoop2.core.registry.AccordoServizioParteComune aspc = this.driverRegistroDB.getAccordoServizioParteComune(idAccordo, false, false);
 				Map<String, String> map = ModIUtils.configToMap(aspc, asps, urlInvocazione, null, null);
 				if(map!=null && !map.isEmpty()) {
 					List<String> keys = new ArrayList<String>();

@@ -197,7 +197,7 @@ public class ForwardProxy implements Serializable {
 			RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance();
 			AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false);
 			IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
-			AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(idAccordo, null, false);
+			AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(idAccordo, null, false, false);
 			if(aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
 				for (GruppoAccordo gruppo : aspc.getGruppi().getGruppoList()) {
 					// prima per specifica fruizione/erogazione

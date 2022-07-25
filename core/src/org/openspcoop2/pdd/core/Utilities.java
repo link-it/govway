@@ -238,7 +238,7 @@ public class Utilities {
 				AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false);
 				if(asps.getAccordoServizioParteComune()!=null && !"".equals(asps.getAccordoServizioParteComune())) {
 					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
-					AccordoServizioParteComune as = registroServiziManager.getAccordoServizioParteComune(idAccordo, null, false);
+					AccordoServizioParteComune as = registroServiziManager.getAccordoServizioParteComune(idAccordo, null, false, false);
 					for (Resource resourceCheck : as.getResourceList()) {
 						if(resourceCheck.getNome().equals(idServizio.getAzione())){
 							return resourceCheck;

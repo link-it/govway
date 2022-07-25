@@ -724,7 +724,7 @@ public class ModiApiApiHelper {
 		asps.setNome(idAccordoFromAccordo.getNome());
 		asps.setVersione(idAccordoFromAccordo.getVersione());
 		asps.setPortType(servizio);
-		AccordoServizioParteComune as = registryReader.getAccordoServizioParteComune(idAccordoFromAccordo,false);
+		AccordoServizioParteComune as = registryReader.getAccordoServizioParteComune(idAccordoFromAccordo,false,false);
 
 		AccordoServizioParteComuneSintetico aspc = new AccordoServizioParteComuneSintetico(as);
 

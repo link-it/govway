@@ -226,14 +226,14 @@ public class RegistroServiziManager {
 		return this.registroServiziReader.getSpecificaLivelloServizio(this.getConnection(), idASPS, tipo, nome);
 	}
 	
-	public org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getWsdlAccordoServizio(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD)
+	public org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getWsdlAccordoServizio(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD, boolean readDatiRegistro)
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getWsdlAccordoServizio(this.getConnection(), idService, infoWsdlSource,buildSchemaXSD);
+		return this.registroServiziReader.getWsdlAccordoServizio(this.getConnection(), idService, infoWsdlSource,buildSchemaXSD, readDatiRegistro);
 	}
 	
-	public org.openspcoop2.core.registry.rest.AccordoServizioWrapper getRestAccordoServizio(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD, boolean processIncludeForOpenApi)
+	public org.openspcoop2.core.registry.rest.AccordoServizioWrapper getRestAccordoServizio(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD, boolean processIncludeForOpenApi, boolean readDatiRegistro)
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getRestAccordoServizio(this.getConnection(), idService, infoWsdlSource,buildSchemaXSD, processIncludeForOpenApi);
+		return this.registroServiziReader.getRestAccordoServizio(this.getConnection(), idService, infoWsdlSource,buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro);
 	}
 	
 	public org.openspcoop2.core.registry.constants.ServiceBinding getServiceBinding(IDServizio idService)
@@ -397,8 +397,8 @@ public class RegistroServiziManager {
 		return this.registroServiziReader.getSoggetto(this.getConnection(), idSoggetto, nomeRegistro);
 	}
 	
-	public AccordoServizioParteComune getAccordoServizioParteComune(IDAccordo idAccordo,String nomeRegistro,Boolean readContenutiAllegati) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getAccordoServizioParteComune(this.getConnection(), idAccordo, readContenutiAllegati, nomeRegistro);
+	public AccordoServizioParteComune getAccordoServizioParteComune(IDAccordo idAccordo,String nomeRegistro,Boolean readContenutiAllegati,Boolean readDatiRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getAccordoServizioParteComune(this.getConnection(), idAccordo, readContenutiAllegati, readDatiRegistro, nomeRegistro);
 	}
 	
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDServizio idServizio,String nomeRegistro,Boolean readContenutiAllegati) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{

@@ -235,6 +235,12 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			msgDiag.setPddContext(context.getPddContext(), protocolFactory);
 		}
 		
+		try{
+			msgDiag.logPersonalizzato("ricezioneRichiesta.firstLog");
+		}catch(Exception e){
+			logCore.error("Errore generazione diagnostico di ingresso",e);
+		}
+		
 		// emitDiagnostic preAccept handler
 		GestoreHandlers.emitDiagnostic(msgDiag, preInAcceptRequestContext, context!=null ? context.getPddContext() : null, 
 				logCore, logCore);
@@ -253,6 +259,11 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		}
 		
 		// Aggiorno RequestInfo
+		try{
+			msgDiag.mediumDebug("Accesso configurazione della richiesta in corso...");
+		}catch(Exception e){
+			logCore.error("Errore generazione diagnostico",e);
+		}
 		ConnectorDispatcherInfo cInfo = null;
 		try{
 			cInfo = RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, null, null,
@@ -289,12 +300,22 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		// DumpRaw
 		DumpRaw dumpRaw = null;
 		try{
+			try{
+				msgDiag.mediumDebug("Lettura configurazione dump binario ...");
+			}catch(Exception e){
+				logCore.error("Errore generazione diagnostico",e);
+			}
 			boolean dumpBinario = configPdDManager.dumpBinarioPD();
 			PortaDelegata pd = null;
 			if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
 				IDPortaDelegata idPD = new IDPortaDelegata();
 				idPD.setNome(requestInfo.getProtocolContext().getInterfaceName());
 				pd = configPdDManager.getPortaDelegata_SafeMethod(idPD);
+			}
+			try{
+				msgDiag.mediumDebug("Lettura configurazione dump ...");
+			}catch(Exception e){
+				logCore.error("Errore generazione diagnostico",e);
 			}
 			DumpConfigurazione dumpConfigurazione = configPdDManager.getDumpConfigurazione(pd);
 			boolean fileTrace = configPdDManager.isTransazioniFileTraceEnabled(pd) && configPdDManager.isTransazioniFileTraceDumpBinarioEnabled(pd);
@@ -325,6 +346,11 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		OpenSPCoopStateful stato = null;
 		
 		try{
+			try{
+				msgDiag.mediumDebug("Creazione contesto ...");
+			}catch(Exception e){
+				logCore.error("Errore generazione diagnostico",e);
+			}
 			// viene generato l'UUID
 			if(context==null) {
 				context = new RicezioneContenutiApplicativiContext(IDService.PORTA_DELEGATA_INTEGRATION_MANAGER, dataAccettazioneRichiesta,requestInfo);
@@ -370,9 +396,9 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		}
 		
 		try{
-			msgDiag.logPersonalizzato("ricezioneRichiesta.firstLog");
+			msgDiag.logPersonalizzato("ricezioneRichiesta.firstAccessRequestStream");
 		}catch(Exception e){
-			logCore.error("Errore generazione diagnostico di ingresso",e);
+			logCore.error("Errore generazione diagnostico di ingresso (stream access)",e);
 		}
 		
 		if(dumpRaw!=null && dumpRaw.isActiveDump()){

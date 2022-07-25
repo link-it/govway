@@ -8061,7 +8061,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setSize(this.getSize());
 			dati.addElement(de);
 
-			dati.addElement(this.getMessageTypeDataElement(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_MESSAGE_TYPE,protocolFactory, serviceBinding, messageType));
+			de = this.getMessageTypeDataElement(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_REPRESENTATION_MESSAGE_TYPE,protocolFactory, serviceBinding, messageType, 
+					!this.core.isApiRestResourceRepresentationMessageTypeOverride());
+			dati.addElement(de);
+				
 			
 			if (TipoOperazione.CHANGE.equals(tipoOperazione) || this.isModalitaAvanzata()) {
 				

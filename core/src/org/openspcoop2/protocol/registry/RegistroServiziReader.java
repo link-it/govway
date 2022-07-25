@@ -351,8 +351,17 @@ public class RegistroServiziReader {
 				else if(i==2) {
 					readContenutiAllegati = false;
 				}
-				String keyIdAccordo = RegistroServizi._getKey_getAccordoServizioParteComune(IDAccordoFactory.getInstance(), idAccordo,readContenutiAllegati);
-				RegistroServiziReader.removeObjectCache(keyIdAccordo);
+				Boolean readDatiRegistro = null;
+				for (int j = 0; j < 3; j++) {
+					if(i==1) {
+						readDatiRegistro = true;
+					}
+					else if(i==2) {
+						readDatiRegistro = false;
+					}
+					String keyIdAccordo = RegistroServizi._getKey_getAccordoServizioParteComune(IDAccordoFactory.getInstance(), idAccordo,readContenutiAllegati,readDatiRegistro);
+					RegistroServiziReader.removeObjectCache(keyIdAccordo);
+				}
 			}
 
 			List<IDServizio> serviziImplementati = null;
@@ -1099,7 +1108,7 @@ public class RegistroServiziReader {
 		return r;
 	}
 	
-	public AccordoServizioParteComune getAccordoServizioParteComune_noCache(IDAccordo idAccordo,String nomeRegistro,Boolean readContenutiAllegati) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	public AccordoServizioParteComune getAccordoServizioParteComune_noCache(IDAccordo idAccordo,String nomeRegistro,Boolean readContenutiAllegati, Boolean readDatiRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		AccordoServizioParteComune r = null;
 		for (String nomeRegInLista : this.registroServizi.getDriverRegistroServizi().keySet()) {
 			if(nomeRegistro!=null && !nomeRegistro.equals(nomeRegInLista)){
@@ -1108,7 +1117,7 @@ public class RegistroServiziReader {
 			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
 			try{
 				if(driver instanceof DriverRegistroServiziDB){
-					r = ((DriverRegistroServiziDB)driver).getAccordoServizioParteComune(idAccordo,readContenutiAllegati);
+					r = ((DriverRegistroServiziDB)driver).getAccordoServizioParteComune(idAccordo,readContenutiAllegati,readDatiRegistro);
 				}
 				else{
 					r = driver.getAccordoServizioParteComune(idAccordo);
@@ -2357,7 +2366,7 @@ public class RegistroServiziReader {
 		allegati.setSpecificheSicurezzaASParteSpecifica(asps.getSpecificaSicurezzaList());
 		allegati.setSpecificheLivelloServizioASParteSpecifica(asps.getSpecificaLivelloServizioList());
 		
-		AccordoServizioParteComune aspc = this.registroServizi.getAccordoServizioParteComune(connectionPdD, null, this.idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()),true);
+		AccordoServizioParteComune aspc = this.registroServizi.getAccordoServizioParteComune(connectionPdD, null, this.idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()),true, false);
 		allegati.setAllegatiASParteComune(aspc.getAllegatoList());
 		allegati.setSpecificheSemiformaliASParteComune(aspc.getSpecificaSemiformaleList());
 		
@@ -2399,10 +2408,10 @@ public class RegistroServiziReader {
 	 * @return l'oggetto di tipo {@link org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper} se la ricerca nel registro ha successo,
 	 *         null altrimenti.
 	 */
-	protected org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getWsdlAccordoServizio(Connection connectionPdD,IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD)
+	protected org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getWsdlAccordoServizio(Connection connectionPdD,IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD, boolean readDatiRegistro)
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
-		return this.registroServizi.getWsdlAccordoServizio(connectionPdD, null, idService,infoWsdlSource,buildSchemaXSD);
+		return this.registroServizi.getWsdlAccordoServizio(connectionPdD, null, idService,infoWsdlSource,buildSchemaXSD, readDatiRegistro);
 	}
 	
 	/**
@@ -2412,10 +2421,10 @@ public class RegistroServiziReader {
 	 * @return l'oggetto di tipo {@link org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper} se la ricerca nel registro ha successo,
 	 *         null altrimenti.
 	 */
-	protected org.openspcoop2.core.registry.rest.AccordoServizioWrapper getRestAccordoServizio(Connection connectionPdD,IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD, boolean processIncludeForOpenApi)
+	protected org.openspcoop2.core.registry.rest.AccordoServizioWrapper getRestAccordoServizio(Connection connectionPdD,IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD, boolean processIncludeForOpenApi, boolean readDatiRegistro)
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
-		return this.registroServizi.getRestAccordoServizio(connectionPdD, null, idService,infoWsdlSource,buildSchemaXSD, processIncludeForOpenApi);
+		return this.registroServizi.getRestAccordoServizio(connectionPdD, null, idService,infoWsdlSource,buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro);
 	}
 	
 	/**
@@ -3641,8 +3650,8 @@ public class RegistroServiziReader {
 		return this.registroServizi.getSoggetto(connectionPdD, nomeRegistro, idSoggetto);
 	}
 	
-	public AccordoServizioParteComune getAccordoServizioParteComune(Connection connectionPdD,IDAccordo idAccordo,Boolean readContenutiAllegati,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServizi.getAccordoServizioParteComune(connectionPdD, nomeRegistro, idAccordo, readContenutiAllegati);
+	public AccordoServizioParteComune getAccordoServizioParteComune(Connection connectionPdD,IDAccordo idAccordo,Boolean readContenutiAllegati,Boolean readDatiRegistro,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getAccordoServizioParteComune(connectionPdD, nomeRegistro, idAccordo, readContenutiAllegati, readDatiRegistro);
 	}
 	
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(Connection connectionPdD,IDServizio idServizio,Boolean readContenutiAllegati,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{

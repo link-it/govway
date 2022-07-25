@@ -316,7 +316,7 @@ public class AS4Sbustamento {
 				
 				if(azione!=null) {
 					if(nomePortType!=null) {
-						org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper asWrapper = registryReader.getAccordoServizioParteComuneSoap(idServizio, InformationApiSource.SAFE_SPECIFIC_REGISTRY, false);
+						org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper asWrapper = registryReader.getAccordoServizioParteComuneSoap(idServizio, InformationApiSource.SAFE_SPECIFIC_REGISTRY, false, false);
 						if(asWrapper!=null) {
 							PortType pt = asWrapper.getPortType(asps.getPortType());
 							if(pt!=null) {
