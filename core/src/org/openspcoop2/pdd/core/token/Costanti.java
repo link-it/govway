@@ -131,6 +131,10 @@ public class Costanti {
 	public final static String POLICY_VALIDAZIONE_JWE_DECRYPT_PROP_REF_ID = SecurityConstants.DECRYPTION_PROPERTY_REF_ID;
 	public final static String POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE = "policy.validazioneJWT.claimsParser";
 	public final static String POLICY_VALIDAZIONE_CLAIMS_PARSER_CLASS_NAME = "policy.validazioneJWT.claimsParser.className";
+	
+	public final static String POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5C = "##useX5C##";
+	public final static String POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5T = "##useX5T##";
+	public final static String POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5C_X5T = "##useX5C-X5T##";
 
 	public final static String POLICY_REQUEST_TOKEN_POSITION_AUTHORIZATION = "authorization";
 	public final static String POLICY_REQUEST_TOKEN_POSITION_HEADER = "header";
