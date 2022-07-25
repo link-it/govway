@@ -1,3 +1,8 @@
+2022-07-25  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta possibilità di definire una token policy di validazione che utilizza per validare il token il certificato portato negli header x5c e x5t.	
+
 2022-07-15  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, ApiRsConfigurazione]

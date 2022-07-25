@@ -5097,9 +5097,22 @@ public class ConfigurazionePdDReader {
 						throw new DriverConfigurazioneException("Nella configurazione della policy "+gp.getNome()+" la funzionalità di validazione JWT utilizza un keystore jwk non compatibile con il criterio di validazione dei certificati");
 					}
 					
+					String alias = truststoreParams.getKeyAlias();
+					if(alias!=null && 
+							(
+									alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5C)
+									||
+									alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5T)
+									||
+									alias.equals(Costanti.POLICY_VALIDAZIONE_SPECIAL_CASE_USE_X5C_X5T)
+							)
+						) {
+						alias=null; // special case, valido tutti i certificati nel truststore con cui validero' il certificato presente in x5c o x5t
+					}
+					
 					check = CertificateUtils.checkTrustStore(truststoreParams.getPath(), classpathSupported, truststoreParams.getType(), 
 							truststoreParams.getPassword(), truststoreParams.getCrls(),
-							truststoreParams.getKeyAlias(),
+							alias,
 							sogliaWarningGiorni, 
 							false, //addCertificateDetails, 
 							separator, newLine,
