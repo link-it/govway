@@ -40,12 +40,13 @@ public class GestoreCredenzialiPA implements IGestoreCredenziali {
 
 	private GestoreCredenzialiEngine gestore = null;
 	public GestoreCredenzialiPA(){
-		this.gestore = new GestoreCredenzialiEngine(true);
+		
 	}
 	
 	@Override
 	public void init(PdDContext pddContext, IProtocolFactory<?> protocolFactory,
 			Object... args) {
+		this.gestore = new GestoreCredenzialiEngine(true, pddContext);
 	}
 	
 	@Override

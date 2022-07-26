@@ -35,6 +35,10 @@ import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiConfigurationException;
 import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
+import org.openspcoop2.protocol.sdk.ChannelSecurityToken;
+import org.openspcoop2.protocol.sdk.Context;
+import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateDecodeConfig;
@@ -88,8 +92,10 @@ public class GestoreCredenzialiEngine {
 	
 	private String identita = null;
 	private boolean portaApplicativa = false;
-	public GestoreCredenzialiEngine(boolean portaApplicativa){
+	private Context context;
+	public GestoreCredenzialiEngine(boolean portaApplicativa, Context context){
 		this.portaApplicativa = portaApplicativa;
+		this.context = context;
 	}
 
 	
@@ -484,6 +490,18 @@ public class GestoreCredenzialiEngine {
 					throw new GestoreCredenzialiConfigurationException(IntegrationFunctionError.PROXY_AUTHENTICATION_FORWARDED_CREDENTIALS_NOT_FOUND, 
 							buildWWWAuthSSL(),
 							"Certificato presente nell'header '"+headerNameSSLCertificate+"' non è verificabile rispetto alle CA conosciute");
+				}
+				
+				/* --------------- SecurityToken --------------- */
+				try {
+					if(cer!=null && this.context!=null) {
+						SecurityToken securityToken = SecurityTokenUtilities.newSecurityToken(this.context);
+						ChannelSecurityToken channelSecurityToken = new ChannelSecurityToken();
+						channelSecurityToken.setCertificate(cer.getCertificate());
+						securityToken.setChannel(channelSecurityToken); // sovrascrivo eventuali esistente
+					}
+				}catch(Exception e){
+					throw new GestoreCredenzialiException("Costruzione SecurityToken non riuscita: "+e.getMessage(),e);
 				}
 			}
 		}

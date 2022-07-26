@@ -1,3 +1,10 @@
+2022-07-26  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug 
+	Il certificato ottenuto tramite la funzionalita' 'gestoreCredenziali' è adesso disponibile nel contesto per essere acceduto tramite la keyword 'securityToken.channel'.
+	Tramite la keyword 'securityToken.accessToken' era invece possibile accedere al certificato utilizzato nell'access token solamente alla prima invocazione.
+
 2022-07-25  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

@@ -941,6 +941,11 @@ public class GestoreToken {
 					datiInvocazione.getPolicyGestioneToken().isValidazioneJWT_saveErrorInCache());
 		}
 		
+		if(esitoGestioneToken.isValido() && esitoGestioneToken.getRestSecurityToken()!=null) {
+			SecurityToken securityToken = SecurityTokenUtilities.newSecurityToken(pddContext);
+			securityToken.setAccessToken(esitoGestioneToken.getRestSecurityToken());
+		}
+		
 		return esitoGestioneToken;
 	}
 	
@@ -963,6 +968,7 @@ public class GestoreToken {
     		String detailsError = null;
 			InformazioniToken informazioniToken = null;
 			Exception eProcess = null;
+			RestMessageSecurityToken restSecurityToken = null;
 			
 			ITokenParser tokenParser = policyGestioneToken.getValidazioneJWT_TokenParser();
 			
@@ -1002,11 +1008,9 @@ public class GestoreToken {
     				if(jsonCompactVerify.verify(token)) {
     					informazioniToken = new InformazioniToken(SorgenteInformazioniToken.JWT,jsonCompactVerify.getDecodedPayload(),tokenParser);
     					if(jsonCompactVerify.getX509Certificate()!=null && pddContext!=null) {
-    						SecurityToken securityToken = SecurityTokenUtilities.newSecurityToken(pddContext);
-    						RestMessageSecurityToken restSecurityToken = new RestMessageSecurityToken();
+    						restSecurityToken = new RestMessageSecurityToken();
     						restSecurityToken.setCertificate(new CertificateInfo(jsonCompactVerify.getX509Certificate(), "access_token"));
-    						restSecurityToken.setToken(token);	
-    						securityToken.setAccessToken(restSecurityToken);
+    						restSecurityToken.setToken(token);
     					}
     				}
     				else {
@@ -1039,6 +1043,7 @@ public class GestoreToken {
     			esitoGestioneToken.setTokenValido();
     			esitoGestioneToken.setInformazioniToken(informazioniToken);
     			esitoGestioneToken.setNoCache(false);
+    			esitoGestioneToken.setRestSecurityToken(restSecurityToken);
 			}
     		else {
     			esitoGestioneToken.setTokenValidazioneFallita();

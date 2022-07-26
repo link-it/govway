@@ -22,6 +22,8 @@
 
 package org.openspcoop2.pdd.core.token;
 
+import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
+
 /**
  * Esito di un processo di gestione token.
  *
@@ -39,13 +41,19 @@ public abstract class EsitoGestioneToken extends AbstractEsitoValidazioneToken i
 
 	/** Informazioni sul token */
 	private InformazioniToken informazioniToken;
-		
+	private RestMessageSecurityToken restSecurityToken;
 	
 	public InformazioniToken getInformazioniToken() {
 		return this.informazioniToken;
 	}
 	public void setInformazioniToken(InformazioniToken informazioniToken) {
 		this.informazioniToken = informazioniToken;
+	}
+	public RestMessageSecurityToken getRestSecurityToken() {
+		return this.restSecurityToken;
+	}
+	public void setRestSecurityToken(RestMessageSecurityToken restSecurityToken) {
+		this.restSecurityToken = restSecurityToken;
 	}
 	
 	@Override
