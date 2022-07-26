@@ -656,7 +656,7 @@ Scenario: Ricerca Lista Eventi ed evento singolo
     """
     {
         data_inizio: '2012-07-21T17:32:28Z',
-        data_fine: '2022-07-21T17:32:28Z',
+        data_fine: '2042-07-21T17:32:28Z',
         severita: 'info',
         tipo: 'StatoGateway',
         codice: 'Start'

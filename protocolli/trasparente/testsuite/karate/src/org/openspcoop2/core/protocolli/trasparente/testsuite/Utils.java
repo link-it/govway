@@ -25,6 +25,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -525,5 +526,36 @@ public class Utils {
 			throw new RuntimeException(e);
 		}
 		//HttpUtilities.check(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password"));
+	}
+	
+	public static void resetAllCache(Logger log) {
+		
+		List<String> resource = new ArrayList<String>();
+		resource.add("AccessoRegistroServizi");
+		resource.add("ConfigurazionePdD");
+		resource.add("DatiAutorizzazione");
+		resource.add("DatiAutenticazione");
+		resource.add("GestioneToken");
+		resource.add("Keystore");
+		resource.add("ResponseCaching");
+		// disabilitata resource.add("ControlloTraffico");
+		resource.add("LoadBalancer");
+		for (String r : resource) {
+			Map<String,String> queryParams = Map.of(
+					"resourceName", r,
+					"methodName", "resetCache"
+				);
+			String jmxUrl = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.buildUrl(queryParams, System.getProperty("govway_base_path") + "/check");
+			log.info("Resetto la cache "+r+" sulla url: " + jmxUrl );
+			
+			try {
+				String resp = new String(HttpUtilities.getHTTPResponse(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password")).getContent());
+				log.info(resp);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			//HttpUtilities.check(jmxUrl, System.getProperty("jmx_username"), System.getProperty("jmx_password"));
+		}
+		
 	}
 }

@@ -354,6 +354,9 @@ Di seguito vengono descritti i test del package 'integrazione':
 
 Di seguito vengono descritti i test del package 'autenticazione':
 
+- 'applicativi_esterni', verifica l'autenticazione degli applicativi di dominio esterno
+   ant run_test -Ddelete=false -Dload=false -Dpackage=autenticazione.applicativi_esterni
+
 - 'gestore_credenziali', verifica la gestione di credenziali inoltrate da un frontend che si occupa del processo di autenticazione tramite header HTTP.
    ant run_test -Ddelete=false -Dload=false -Dpackage=autenticazione.gestore_credenziali
 
@@ -370,3 +373,9 @@ eseguire lo script in pkcs11
 
 - 'x509', verifica l'utilizzo di chiavi private e certificati presenti in HSM
    ant run_test -Ddelete=false -Dload=false -Dpackage=pkcs11.x509
+
+Di seguito vengono descritti i test del package 'other':
+
+- 'api_grandi', verifica l'utilizzo di API REST con un numero elevato di risorse
+   ant run_test -Ddelete=false -Dload=true -Dpackage=other.api_grandi -Dtest=RestTest
+
