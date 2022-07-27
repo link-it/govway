@@ -1,0 +1,254 @@
+openapi: 3.0.1
+info:
+  title: Qualsiasi metodo
+  description: Qualsiasi metodo
+  version: "1"
+servers:
+- url: http://localhost:8080/test
+  description: Qualsiasi metodo
+paths:
+  /test/{iter}/test:
+    get:
+      summary: GET example
+      operationId: get
+      parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+      - name: iter
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EsempioDTO'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+    head:
+      summary: HEAD example
+      operationId: head
+      parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+      - name: iter
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EsempioDTO'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+    post:
+      summary: POST example
+      operationId: post
+      parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+      - name: iter
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EsempioDTO'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EsempioDTO'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+    put:
+      summary: PUT example
+      operationId: put
+      parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+      - name: iter
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EsempioDTO'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EsempioDTO'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+    delete:
+      summary: DELETE example
+      operationId: delete
+      parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+      - name: iter
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+        
+    options:
+      summary: OPTIONS example
+      operationId: options
+      parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+      - name: iter
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+                
+    trace:
+      summary: TRACE example
+      operationId: trace
+      parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+      - name: iter
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EsempioDTO'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+                
+    patch:
+      summary: PATCH example
+      operationId: patch
+      parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+      - name: iter
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EsempioDTO'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EsempioDTO'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+                
+components:
+  schemas:
+    ErrorInfo:
+      type: object
+      properties:
+        message:
+          type: string
+        uri:
+          type: string
+    EsempioDTO:
+      type: object
+      properties:
+        esempio:
+          type: string

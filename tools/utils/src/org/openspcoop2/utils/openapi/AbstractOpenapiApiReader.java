@@ -329,6 +329,10 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 						ApiOperation operation = getOperation(path.getGet(), path.getParameters(), HttpRequestMethod.GET, pathK, api);
 						api.addOperation(operation);
 					}
+					if(path.getHead() != null) {
+						ApiOperation operation = getOperation(path.getHead(), path.getParameters(), HttpRequestMethod.HEAD, pathK, api);
+						api.addOperation(operation);
+					}
 					if(path.getPost() != null) {
 						ApiOperation operation = getOperation(path.getPost(), path.getParameters(), HttpRequestMethod.POST, pathK, api);
 						api.addOperation(operation);
@@ -341,12 +345,16 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 						ApiOperation operation = getOperation(path.getDelete(), path.getParameters(), HttpRequestMethod.DELETE, pathK, api);
 						api.addOperation(operation);
 					}
-					if(path.getPatch() != null) {
-						ApiOperation operation = getOperation(path.getPatch(), path.getParameters(), HttpRequestMethod.PATCH, pathK, api);
-						api.addOperation(operation);
-					}
 					if(path.getOptions() != null) {
 						ApiOperation operation = getOperation(path.getOptions(), path.getParameters(), HttpRequestMethod.OPTIONS, pathK, api);
+						api.addOperation(operation);
+					}
+					if(path.getTrace() != null) {
+						ApiOperation operation = getOperation(path.getTrace(), path.getParameters(), HttpRequestMethod.TRACE, pathK, api);
+						api.addOperation(operation);
+					}
+					if(path.getPatch() != null) {
+						ApiOperation operation = getOperation(path.getPatch(), path.getParameters(), HttpRequestMethod.PATCH, pathK, api);
 						api.addOperation(operation);
 					}
 				}

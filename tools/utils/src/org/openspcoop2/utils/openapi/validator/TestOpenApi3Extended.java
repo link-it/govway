@@ -47,6 +47,7 @@ import org.openspcoop2.utils.rest.ParseWarningException;
 import org.openspcoop2.utils.rest.ProcessingException;
 import org.openspcoop2.utils.rest.ValidatorException;
 import org.openspcoop2.utils.rest.api.Api;
+import org.openspcoop2.utils.rest.api.ApiOperation;
 import org.openspcoop2.utils.rest.api.ApiSchema;
 import org.openspcoop2.utils.rest.api.ApiSchemaType;
 import org.openspcoop2.utils.rest.entity.BinaryHttpRequestEntity;
@@ -300,6 +301,49 @@ public class TestOpenApi3Extended {
 			}
 									
 			System.out.println("Test Schema#5 (info.yaml) [Elementi Info] ok");
+			
+			
+			System.out.println("Test Schema#6 (openapi_all_methods.yaml) [Verifica che tutti i metodi HTTP siano caricati] ...");
+			
+			url = TestOpenApi3Extended.class.getResource("/org/openspcoop2/utils/openapi/openapi_all_methods.yaml");
+				
+			apiReaderOpenApi = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+			configOpenApi = new ApiReaderConfig();
+			configOpenApi.setProcessInclude(false);
+			apiReaderOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi);
+			apiOpenApi = apiReaderOpenApi.read();
+				
+			try {
+				apiOpenApi.validate();
+			}catch(ProcessingException pe) {
+				pe.printStackTrace(System.out);
+				throw new Exception(" Documento contenente errori: "+pe.getMessage(), pe);
+			}catch(ParseWarningException warning) {
+				//warning.printStackTrace(System.out);
+				System.out.println("Documento contenente anomalie: "+warning.getMessage());
+			}
+				
+			apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+			apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi, configO);
+					
+			List<HttpRequestMethod> metodiHttpd = new ArrayList<HttpRequestMethod>();
+			for (ApiOperation op : apiOpenApi.getOperations()) {
+				metodiHttpd.add(op.getHttpMethod());
+			}
+			System.out.println("Metodi: "+metodiHttpd);
+			for (HttpRequestMethod httpRequestMethod : HttpRequestMethod.values()) {
+				if(HttpRequestMethod.LINK.equals(httpRequestMethod)
+						||
+						HttpRequestMethod.UNLINK.equals(httpRequestMethod)) 
+				{
+					continue; // non supportato da openapi
+				}
+				if(!metodiHttpd.contains(httpRequestMethod)) {
+					throw new Exception("Metodo '"+httpRequestMethod+"' non rilevato");
+				}
+			}
+			
+			System.out.println("Test Schema#6 (openapi_all_methods.yaml) [Verifica che tutti i metodi HTTP siano caricati] ok");
 			
 		} 
 			
