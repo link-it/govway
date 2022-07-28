@@ -682,6 +682,17 @@ public class TransportUtils {
 	}
 	
 	
+	
+	public static List<String> getValues(Map<String, List<String>> map, String key) {
+		if(map!=null && !map.isEmpty()) {
+			List<String> l = getRawObject(map, key); 
+			if(l!=null && !l.isEmpty()) {
+				return l;
+			}
+		}
+		return null;
+	}
+	
 	public static String getFirstValue(Map<String, List<String>> map, String key) {
 		if(map!=null && !map.isEmpty()) {
 			List<String> l = getRawObject(map, key); 

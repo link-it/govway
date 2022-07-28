@@ -78,10 +78,11 @@
   Questo perchè di base govway controlla i tempi medi risposta sulla finestra di tempo precedente per evitare di bloccare il sistema quando
 	una sola richiesta ha fatto superare il tempo medio risposta.
 
-- Modificare le properties del config_loader in modo che vengano caricate le policy utente.
+- Modificare le properties del config_loader in modo che vengano caricate le policy utente e le regole di proxy pass.
 	Impostare in <.../distrib/properties/config_loader.cli.properties>
 
 		policy.enable=true
+		configurazioneGenerale.enable=true
 
 - Per variare il ritardo con cui vengono scritti gli eventi sul database:
 	In <govway_local.properties>:
@@ -323,6 +324,9 @@ Di seguito vengono descritti i test del package 'connettori':
 
 - 'consegna_con_notifiche', verifica la funzionalità dei connettori multipli con tipo 'Consegna con Notifiche'
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.consegna_con_notifiche
+
+- 'proxy_pass', verifica le regole di proxy pass
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.proxy_pass
 
 Di seguito vengono descritti i test del package 'token':
 

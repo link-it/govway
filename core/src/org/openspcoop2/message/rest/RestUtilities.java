@@ -166,7 +166,7 @@ public class RestUtilities {
 		
 	}
 	
-	public static String buildPassReverseUrl(TransportRequestContext transportRequestContext, String baseUrl, String redirectLocationUrl, String prefixGatewayUrl,
+	public static String buildPassReverseUrl(TransportRequestContext transportRequestContext, String baseUrl, String redirectLocationUrlParam, String prefixGatewayUrl,
 			String interfaceName) throws MalformedURLException {
                
 		String r = baseUrl;
@@ -176,6 +176,42 @@ public class RestUtilities {
          
 		URL uri = new URL(r);
 		String rRelative= uri.getPath();
+		
+		String redirectLocationUrl = null;
+		String redirectLocationUrlParameters = null;
+		if(redirectLocationUrlParam.contains("?")) {
+			String [] tmp = redirectLocationUrlParam.split("\\?");
+			redirectLocationUrl = tmp[0];
+			if(tmp.length>1) {
+				StringBuilder sbc = new StringBuilder();
+				for (int i = 1; i < tmp.length; i++) {
+					if(sbc.length()>0) {
+						sbc.append("?");
+					}
+					sbc.append(tmp[i]);
+				}
+				redirectLocationUrlParameters = sbc.toString();
+			}
+		}
+		else {
+			redirectLocationUrl = redirectLocationUrlParam;
+		}
+		if(redirectLocationUrl.endsWith("/")) {
+			if(!r.endsWith("/")) {
+				r = r + "/";
+			}
+			if(!rRelative.endsWith("/")) {
+				rRelative = rRelative + "/";
+			}
+		}
+		else {
+			if(r.endsWith("/")) {
+				r = r.length()<=1 ? "" : r.substring(0,r.length()-1);
+			}
+			if(rRelative.endsWith("/")) {
+				rRelative = rRelative.length()<=1 ? "" : rRelative.substring(0,rRelative.length()-1);
+			}
+		}
 		
 		if(redirectLocationUrl.startsWith(r) || redirectLocationUrl.startsWith(rRelative)) {
 			
@@ -268,19 +304,40 @@ public class RestUtilities {
 				}
 			}
 			
-			if(suffix.startsWith("/")==false) {
-				bf.append("/");
+			
+			if(suffix.equals("")) {
+				if(redirectLocationUrl.endsWith("/")) {
+					if(!bf.toString().endsWith("/")) {
+						bf.append("/");
+					}
+				}
 			}
-			bf.append(suffix);
+			else {
+				if(suffix.startsWith("/")==false) {
+					bf.append("/");
+				}
+				bf.append(suffix);
+			}
 			
 //			if(redirectLocationUrl.startsWith(r)) {
 //				System.out.println("AbsoluteURL new["+bf.toString()+"]");
 //			}
 //			else {
 //				System.out.println("RelativeURL new["+bf.toString()+"]");
-//			}
-				
-			return bf.toString();
+//			}		
+			
+			String url = bf.toString();
+			if(redirectLocationUrlParameters!=null && !"".equals(redirectLocationUrlParameters)) {
+				if(url.contains("?")) {
+					url = url + "&";
+				}
+				else {
+					url = url + "?";
+				}
+				url = url + redirectLocationUrlParameters;
+			}
+			
+			return url;
 			
 		}
 		else {
@@ -291,4 +348,144 @@ public class RestUtilities {
 		}
 	}
 
+	public static String buildCookiePassReversePath(TransportRequestContext transportRequestContext, String baseUrl, String cookiePathParam, String prefixGatewayUrl,
+			String interfaceName) throws MalformedURLException {
+        
+		String r = baseUrl;
+		if(r.contains("?")) {
+			r = baseUrl.split("\\?")[0];
+		}
+         
+		URL uri = new URL(r);
+		String rRelative= uri.getPath();
+		
+		String cookiePath = null;
+		String cookieParameters = null;
+		if(cookiePathParam.contains("?")) {
+			String [] tmp = cookiePathParam.split("\\?");
+			cookiePath = tmp[0];
+			if(tmp.length>1) {
+				StringBuilder sbc = new StringBuilder();
+				for (int i = 1; i < tmp.length; i++) {
+					if(sbc.length()>0) {
+						sbc.append("?");
+					}
+					sbc.append(tmp[i]);
+				}
+				cookieParameters = sbc.toString();
+			}
+		}
+		else {
+			cookiePath = cookiePathParam;
+		}
+		if(cookiePath.endsWith("/")) {
+			if(!rRelative.endsWith("/")) {
+				rRelative = rRelative + "/";
+			}
+		}
+		else {
+			if(rRelative.endsWith("/")) {
+				rRelative = rRelative.length()<=1 ? "" : rRelative.substring(0,rRelative.length()-1);
+			}
+		}
+		
+		if(cookiePath.startsWith(rRelative)) {
+			
+			//System.out.println("Cookie - RelativeURL redirect["+cookiePath+"]");
+			
+			String contextPath = null;
+			if(prefixGatewayUrl==null) {
+				// Context path rappresenta il prefisso della richiesta contenente il contesto dell'applicazione (es. /openspcoop2),
+				// il protocollo e il servizio. Ad esempio /govway/spcoop/out
+				contextPath = transportRequestContext.getWebContext();
+				if(contextPath.endsWith("/")==false) {
+					contextPath = contextPath + "/";
+				}
+				String protocollo = transportRequestContext.getProtocolWebContext();
+				if(Costanti.CONTEXT_EMPTY.equals(protocollo)==false) {
+					contextPath = contextPath + protocollo + "/";
+				}
+				contextPath = contextPath + transportRequestContext.getFunction();
+			}
+			
+			// Il suffisso contiene la parte della url ritornata dalla redirect senza la parte iniziale rappresentata dalla base url del servizio
+			String suffix = "";
+			if(cookiePath.equals(rRelative)==false) {
+				suffix=cookiePath.substring(rRelative.length());
+			}
+			
+			// Viene costruita una nuova url contenente la richiesta iniziale e il nuovo suffisso,
+			// in modo che la url ritornata tramite la redirect possa contenere una nuova url che viene veicolata nuovamente sulla PdD
+			StringBuilder bf = new StringBuilder();
+			// relative
+			if(prefixGatewayUrl!=null) {
+				URL urlPrefixGatewayUrl = new URL(prefixGatewayUrl);
+				String urlPrefixGatewayUrlAsString = urlPrefixGatewayUrl.getPath();
+				bf.append(urlPrefixGatewayUrlAsString);
+				if(urlPrefixGatewayUrlAsString.endsWith("/")==false) {
+					bf.append("/");
+				}
+			}
+			else {
+				bf.append(contextPath);
+				if(contextPath.endsWith("/")==false) {
+					bf.append("/");
+				}
+			}
+
+			String interfaceNameTmp = null;
+			if(interfaceName!=null) {
+				interfaceNameTmp = interfaceName;
+			}
+			else {
+				interfaceNameTmp = transportRequestContext.getInterfaceName();
+			}
+			if(interfaceNameTmp!=null) {
+				if(interfaceNameTmp.startsWith("/")) {
+					if(interfaceNameTmp.length()>1) {
+						bf.append(interfaceNameTmp.substring(1));
+					}
+				}
+				else {
+					bf.append(interfaceNameTmp);
+				}
+			}
+			
+			if(suffix.equals("")) {
+				if(cookiePath.endsWith("/")) {
+					if(!bf.toString().endsWith("/")) {
+						bf.append("/");
+					}
+				}
+			}
+			else {
+				if(suffix.startsWith("/")==false) {
+					bf.append("/");
+				}
+				bf.append(suffix);
+			}
+			
+			//System.out.println("Cookie relativeURL new["+bf.toString()+"]");
+				
+			String url = bf.toString();
+			if(cookieParameters!=null && !"".equals(cookieParameters)) {
+				if(url.contains("?")) {
+					url = url + "&";
+				}
+				else {
+					url = url + "?";
+				}
+				url = url + cookieParameters;
+			}
+			
+			return url;
+			
+		}
+		else {
+			
+//			System.out.println("ProxyPass nop redirect["+redirectLocationUrl+"] relative["+rRelative+"] absolute["+r+"]");
+			
+			return cookiePath;
+		}
+	}
 }

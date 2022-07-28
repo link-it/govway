@@ -1939,6 +1939,8 @@ public class OpenSPCoop2Properties {
 			this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix();
 			this.getRESTServices_inoltroBuste_proxyPassReverse_headers();
 			this.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_headers();
+			this.getRESTServices_inoltroBuste_proxyPassReverse_setCookie_headers();
+			this.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers();
 						
 			// Transazioni
 			if(this.isTransazioniEnabled()) {
@@ -22535,21 +22537,23 @@ public class OpenSPCoop2Properties {
 	public List<String> getRESTServices_inoltroBuste_proxyPassReverse_headers() throws Exception {	
 		if(OpenSPCoop2Properties.getRESTServices_inoltroBuste_proxyPassReverse_headers==null){
 			try{ 
+				OpenSPCoop2Properties.getRESTServices_inoltroBuste_proxyPassReverse_headers = new ArrayList<String>();
+				
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.headers");
-				if(name==null){
-					throw new Exception("non presente");
+				if(name!=null){
+					name = name.trim();
 				}
-				name = name.trim();
-				OpenSPCoop2Properties.getRESTServices_inoltroBuste_proxyPassReverse_headers = new ArrayList<String>();
-				if(name.contains(",")) {
-					String [] tmp = name.split(",");
-					for (int i = 0; i < tmp.length; i++) {
-						OpenSPCoop2Properties.getRESTServices_inoltroBuste_proxyPassReverse_headers.add(tmp[i].trim());
+				if(name!=null && !"".equals(name)) {
+					if(name.contains(",")) {
+						String [] tmp = name.split(",");
+						for (int i = 0; i < tmp.length; i++) {
+							OpenSPCoop2Properties.getRESTServices_inoltroBuste_proxyPassReverse_headers.add(tmp[i].trim());
+						}
 					}
-				}
-				else {
-					OpenSPCoop2Properties.getRESTServices_inoltroBuste_proxyPassReverse_headers.add(name);
+					else {
+						OpenSPCoop2Properties.getRESTServices_inoltroBuste_proxyPassReverse_headers.add(name);
+					}
 				}
 			} catch(java.lang.Exception e) {
 				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.headers': "+e.getMessage();
@@ -22565,21 +22569,23 @@ public class OpenSPCoop2Properties {
 	public List<String> getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_headers() throws Exception {	
 		if(OpenSPCoop2Properties.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_headers==null){
 			try{ 
+				OpenSPCoop2Properties.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_headers = new ArrayList<String>();
+				
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.headers");
-				if(name==null){
-					throw new Exception("non presente");
+				if(name!=null){
+					name = name.trim();
 				}
-				name = name.trim();
-				OpenSPCoop2Properties.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_headers = new ArrayList<String>();
-				if(name.contains(",")) {
-					String [] tmp = name.split(",");
-					for (int i = 0; i < tmp.length; i++) {
-						OpenSPCoop2Properties.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_headers.add(tmp[i].trim());
+				if(name!=null && !"".equals(name)) {
+					if(name.contains(",")) {
+						String [] tmp = name.split(",");
+						for (int i = 0; i < tmp.length; i++) {
+							OpenSPCoop2Properties.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_headers.add(tmp[i].trim());
+						}
 					}
-				}
-				else {
-					OpenSPCoop2Properties.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_headers.add(name);
+					else {
+						OpenSPCoop2Properties.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_headers.add(name);
+					}
 				}
 			} catch(java.lang.Exception e) {
 				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.headers': "+e.getMessage();
@@ -22589,6 +22595,70 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_headers;
+	}
+	
+	private static List<String> getRESTServices_inoltroBuste_proxyPassReverse_setCookie_headers = null;
+	public List<String> getRESTServices_inoltroBuste_proxyPassReverse_setCookie_headers() throws Exception {	
+		if(OpenSPCoop2Properties.getRESTServices_inoltroBuste_proxyPassReverse_setCookie_headers==null){
+			try{ 
+				OpenSPCoop2Properties.getRESTServices_inoltroBuste_proxyPassReverse_setCookie_headers = new ArrayList<String>();
+				
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.setCookie.headers");
+				if(name!=null){
+					name = name.trim();
+				}
+				if(name!=null && !"".equals(name)) {
+					if(name.contains(",")) {
+						String [] tmp = name.split(",");
+						for (int i = 0; i < tmp.length; i++) {
+							OpenSPCoop2Properties.getRESTServices_inoltroBuste_proxyPassReverse_setCookie_headers.add(tmp[i].trim());
+						}
+					}
+					else {
+						OpenSPCoop2Properties.getRESTServices_inoltroBuste_proxyPassReverse_setCookie_headers.add(name);
+					}
+				}
+			} catch(java.lang.Exception e) {
+				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.setCookie.headers': "+e.getMessage();
+				this.log.error(error,e);
+				throw new Exception(error);
+			}    
+		}
+
+		return OpenSPCoop2Properties.getRESTServices_inoltroBuste_proxyPassReverse_setCookie_headers;
+	}
+	
+	private static List<String> getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers = null;
+	public List<String> getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers() throws Exception {	
+		if(OpenSPCoop2Properties.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers==null){
+			try{ 
+				OpenSPCoop2Properties.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers = new ArrayList<String>();
+				
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.setCookie.headers");
+				if(name!=null){
+					name = name.trim();
+				}
+				if(name!=null && !"".equals(name)) {
+					if(name.contains(",")) {
+						String [] tmp = name.split(",");
+						for (int i = 0; i < tmp.length; i++) {
+							OpenSPCoop2Properties.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers.add(tmp[i].trim());
+						}
+					}
+					else {
+						OpenSPCoop2Properties.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers.add(name);
+					}
+				}
+			} catch(java.lang.Exception e) {
+				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.setCookie.headers': "+e.getMessage();
+				this.log.error(error,e);
+				throw new Exception(error);
+			}    
+		}
+
+		return OpenSPCoop2Properties.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers;
 	}
 
 	

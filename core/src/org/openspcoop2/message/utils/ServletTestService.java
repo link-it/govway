@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -518,6 +519,52 @@ public class ServletTestService extends HttpServlet {
 				newCookie.setMaxAge(5 * 60); // 5 minuti
 				res.addCookie(newCookie);
 			}
+			
+			
+			
+			
+			
+			// SetCookie
+			// Imposta come SetCookie il valore degli header indicati nella richiesta
+			String setCookie = getParameter_checkWhiteList(req, this.whitePropertiesList, "setCookie");
+			if(setCookie!=null) {
+				setCookie = setCookie.trim();
+				List<String> hdr = new ArrayList<String>();
+				if(setCookie.contains(",")==false) {
+					hdr.add(setCookie);
+				}
+				else {
+					String [] split = setCookie.split(",");
+					if(split==null){
+						throw new ServletException("Ricevuta una richiesta di set cookie non conforme (split null)");
+					}
+					for (String header : split) {
+						hdr.add(header.trim());
+					}
+				}
+				
+				if(!hdr.isEmpty()) {
+					for (String h : hdr) {
+						String value = TransportUtils.getHeaderFirstValue(req, h);
+						List<HttpCookie> l = java.net.HttpCookie.parse(value);
+						for (HttpCookie httpCookie : l) {
+							Cookie newCookie = new Cookie(httpCookie.getName(),httpCookie.getValue());
+							if(httpCookie.getComment()!=null)
+								newCookie.setComment(httpCookie.getComment());
+							if(httpCookie.getDomain()!=null)
+								newCookie.setDomain(httpCookie.getDomain());
+							newCookie.setHttpOnly(httpCookie.isHttpOnly());
+							newCookie.setMaxAge((int)httpCookie.getMaxAge());
+							if(httpCookie.getPath()!=null)
+								newCookie.setPath(httpCookie.getPath());
+							newCookie.setSecure(httpCookie.getSecure());
+							newCookie.setVersion(httpCookie.getVersion());
+							res.addCookie(newCookie);
+						}
+					}
+				}
+			}
+			
 			
 			
 			

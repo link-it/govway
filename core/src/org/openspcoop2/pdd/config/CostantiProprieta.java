@@ -22,6 +22,7 @@
 package org.openspcoop2.pdd.config;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -152,6 +153,50 @@ public class CostantiProprieta {
 	public static int getConnettoriRequestTimeout(List<Proprieta> proprieta, int defaultValue) throws Exception {
 		return readIntValueWithDefault(proprieta, CONNETTORE_TIMEOUT_INPUT_STREAM_REQUEST_TIMEOUT, defaultValue);
 	}
+	
+	
+	
+	// ****  CONNETTORI PROXY PASS *****
+	
+	public static final String CONNETTORE_PROXY_PASS_VALUE_ENABLED = VALUE_ENABLED;
+	public static final String CONNETTORE_PROXY_PASS_VALUE_DISABLED = VALUE_DISABLED;
+		
+	private static final String CONNETTORE_PROXY_PASS_REVERSE_ENABLED = "connettori.proxyPassReverse.enabled";
+	private static final String CONNETTORE_PROXY_PASS_REVERSE_USE_PROTOCOL_PREFIX = "connettori.proxyPassReverse.useProtocolPrefix";
+	private static final String CONNETTORE_PROXY_PASS_REVERSE_HEADERS = "connettori.proxyPassReverse.headers";
+	private static final String CONNETTORE_PROXY_PASS_REVERSE_SETCOOKIE_HEADERS = "connettori.proxyPassReverse.setCookie.headers";
+	
+	public static boolean isConnettoriProxyPassReverseEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		return readBooleanValueWithDefault(proprieta, CONNETTORE_PROXY_PASS_REVERSE_ENABLED, defaultValue, CONNETTORE_PROXY_PASS_VALUE_ENABLED, CONNETTORE_PROXY_PASS_VALUE_DISABLED);
+	}
+	public static boolean isConnettoriProxyPassReverseUseProtocolPrefix(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		return readBooleanValueWithDefault(proprieta, CONNETTORE_PROXY_PASS_REVERSE_USE_PROTOCOL_PREFIX, defaultValue, CONNETTORE_PROXY_PASS_VALUE_ENABLED, CONNETTORE_PROXY_PASS_VALUE_DISABLED);
+	}
+	public static List<String> getConnettoriProxyPassReverseHeaders(List<Proprieta> proprieta, List<String> defaultValue) throws Exception {
+		return _getConnettoriProxyPassReverseHeaders(CONNETTORE_PROXY_PASS_REVERSE_HEADERS, proprieta, defaultValue);
+	}
+	public static List<String> getConnettoriProxyPassReverseSetCookieHeaders(List<Proprieta> proprieta, List<String> defaultValue) throws Exception {
+		return _getConnettoriProxyPassReverseHeaders(CONNETTORE_PROXY_PASS_REVERSE_SETCOOKIE_HEADERS, proprieta, defaultValue);
+	}
+	private static List<String> _getConnettoriProxyPassReverseHeaders(String pName, List<Proprieta> proprieta, List<String> defaultValue) throws Exception {
+		String v = readValue(proprieta, pName);
+		if(v==null || StringUtils.isEmpty(v)) {
+			return defaultValue;
+		}
+		List<String> l = new ArrayList<String>();
+		if(v.contains(",")) {
+			String [] tmp = v.split(",");
+			for (int i = 0; i < tmp.length; i++) {
+				l.add(tmp[i].trim());
+			}
+		}
+		else {
+			l.add(v);
+		}
+		return l;
+	}
+	
+	
 	
 	
 	// ****  FILE TRACE *****

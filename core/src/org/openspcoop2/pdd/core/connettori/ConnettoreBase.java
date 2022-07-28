@@ -33,6 +33,7 @@ import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneControl;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
@@ -223,6 +224,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	protected boolean useLimitedInputStream = false;
 	protected SogliaDimensioneMessaggio limitBytes = null;
 	
+	protected List<Proprieta> proprietaPorta;
+	
 	protected ConnettoreBase(){
 		this.creationDate = DateManager.getDate();
 	}
@@ -352,6 +355,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 							this.useTimeoutInputStream = configurazionePdDManager.isConnettoriUseTimeoutInputStream(pa);
 							dumpConfigurazione = configurazionePdDManager.getDumpConfigurazione(pa);
 							this.logFileTrace = configurazionePdDManager.isTransazioniFileTraceEnabled(pa) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettoreEnabled(pa);
+							this.proprietaPorta = pa.getProprietaList();
 						}
 					}
 					
@@ -372,6 +376,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 							this.useTimeoutInputStream = configurazionePdDManager.isConnettoriUseTimeoutInputStream(pd);
 							dumpConfigurazione = configurazionePdDManager.getDumpConfigurazione(pd);
 							this.logFileTrace = configurazionePdDManager.isTransazioniFileTraceEnabled(pd) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettoreEnabled(pd);
+							this.proprietaPorta = pd.getProprietaList();
 						}
 					}
 					

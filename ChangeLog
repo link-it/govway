@@ -1,3 +1,10 @@
+2022-07-28  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1412
+	Nella gestione del proxy pass reverse è stata aggiunta la gestione dei path presenti negli header Set-Cookie delle risposte.
+	È stata inoltre aggiunta la possibilità di abilitare o disabilitare la funzionalità sulla singola erogazione o fruizione.
+
 2022-07-27  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

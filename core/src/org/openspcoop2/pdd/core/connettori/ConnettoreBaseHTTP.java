@@ -21,6 +21,8 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import java.io.ByteArrayOutputStream;
+import java.net.HttpCookie;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.rest.RestUtilities;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.ForwardProxyConfigurazione;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -121,6 +124,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	protected boolean rest_proxyPassReverse = false;
 	protected boolean rest_proxyPassReverse_usePrefixProtocol = false;
 	protected List<String> rest_proxyPassReverse_headers = null;
+	protected List<String> rest_proxyPassReverse_setCookie_headers = null;
 	private boolean forceDisable_rest_proxyPassReverse = false;
 	public void setForceDisable_rest_proxyPassReverse(boolean forceDisable_rest_proxyPassReverse) {
 		this.forceDisable_rest_proxyPassReverse = forceDisable_rest_proxyPassReverse;
@@ -163,6 +167,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 				this.rest_proxyPassReverse_usePrefixProtocol = this.openspcoopProperties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix();
 				try {
 					this.rest_proxyPassReverse_headers = this.openspcoopProperties.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_headers();
+					this.rest_proxyPassReverse_setCookie_headers = this.openspcoopProperties.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers();
 				}catch(Exception e) {
 					this.errore = e.getMessage();
 					return false;
@@ -174,6 +179,22 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 				this.rest_proxyPassReverse_usePrefixProtocol = this.openspcoopProperties.isRESTServices_inoltroBuste_proxyPassReverse_useProtocolPrefix();
 				try {
 					this.rest_proxyPassReverse_headers = this.openspcoopProperties.getRESTServices_inoltroBuste_proxyPassReverse_headers();
+					this.rest_proxyPassReverse_setCookie_headers = this.openspcoopProperties.getRESTServices_inoltroBuste_proxyPassReverse_setCookie_headers();
+				}catch(Exception e) {
+					this.errore = e.getMessage();
+					return false;
+				}
+			}
+			
+			// check proprieta' specifiche
+			if(this.proprietaPorta!=null && !this.proprietaPorta.isEmpty()) {
+				try {
+					this.rest_proxyPassReverse = CostantiProprieta.isConnettoriProxyPassReverseEnabled(this.proprietaPorta, this.rest_proxyPassReverse);
+					if(this.rest_proxyPassReverse) {
+						this.rest_proxyPassReverse_usePrefixProtocol = CostantiProprieta.isConnettoriProxyPassReverseUseProtocolPrefix(this.proprietaPorta, this.rest_proxyPassReverse_usePrefixProtocol);
+						this.rest_proxyPassReverse_headers = CostantiProprieta.getConnettoriProxyPassReverseHeaders(this.proprietaPorta, this.rest_proxyPassReverse_headers);
+						this.rest_proxyPassReverse_setCookie_headers = CostantiProprieta.getConnettoriProxyPassReverseHeaders(this.proprietaPorta, this.rest_proxyPassReverse_setCookie_headers);
+					}
 				}catch(Exception e) {
 					this.errore = e.getMessage();
 					return false;
@@ -422,63 +443,179 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 			try {
 				if(this.debug)
 					this.logger.debug("gestione REST - proxyPassReverse:"+this.rest_proxyPassReverse+" ...");
-				                                 
-				if(this.rest_proxyPassReverse && this.rest_proxyPassReverse_headers!=null) {
+			
+				if(this.rest_proxyPassReverse &&
+						(
+								(this.rest_proxyPassReverse_headers!=null && !this.rest_proxyPassReverse_headers.isEmpty())
+								||
+								(this.rest_proxyPassReverse_setCookie_headers!=null && !this.rest_proxyPassReverse_setCookie_headers.isEmpty())
+						)
+					) {
+					
+					// Raccolgo informazioni
+					String baseUrl = null;
+					String prefixGatewayUrl = null;
+					String contesto = null;
+					try {
+						baseUrl = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);
+						if(baseUrl==null) {
+							throw new Exception("BaseURL undefined");
+						}
+						if(this.debug)
+							this.logger.debug("Base URL: ["+baseUrl+"] ...");
+						 
+						String interfaceName = null;
+						if(this.requestMsg!=null) {
+							Object porta = this.requestMsg.getContextProperty(CostantiPdD.NOME_PORTA_INVOCATA);
+							if(porta!=null && porta instanceof String) {
+								interfaceName = (String) porta;
+							}
+							if(interfaceName==null) {
+								if(this.requestMsg.getTransportRequestContext()!=null) {
+									interfaceName = this.requestMsg.getTransportRequestContext().getInterfaceName();
+								}
+							}
+						}
+						 
+						if(this.rest_proxyPassReverse_usePrefixProtocol) {
+							UrlInvocazioneAPI urlInvocazioneApi = ConfigurazionePdDManager.getInstance().getConfigurazioneUrlInvocazione(this.getProtocolFactory(), 
+									ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo) ? RuoloContesto.PORTA_APPLICATIVA : RuoloContesto.PORTA_DELEGATA,
+									this.requestMsg!=null ? this.requestMsg.getServiceBinding() : null,
+								    interfaceName,
+								    this.requestInfo!=null ? this.requestInfo.getIdentitaPdD() : null,
+								    this.getIdAccordo());		 
+							prefixGatewayUrl = urlInvocazioneApi.getBaseUrl();
+							contesto = urlInvocazioneApi.getContext();
+						}
+						 
+					}catch(Exception e) {
+						throw new Exception("Errore durante la raccolta delle informazioni necessarie alla funzione di proxy pass reverse: "+e.getMessage(),e);
+					}
+	
+					if(this.rest_proxyPassReverse_headers!=null && !this.rest_proxyPassReverse_headers.isEmpty()) {
 					 
-					 for (String header : this.rest_proxyPassReverse_headers) {
-						 String redirectLocation = TransportUtils.getFirstValue(this.propertiesTrasportoRisposta, header); 
-						 if(redirectLocation!=null) {
-							 if(this.debug)
-								 this.logger.debug("Trovato Header '"+header+"':["+redirectLocation+"] ...");
-			                   
-							 // Aggiorno url
-							 try {
-								 String baseUrl = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);
-								 if(baseUrl==null) {
-									 throw new Exception("BaseURL undefined");
-								 }
-								 if(this.debug)
-									 this.logger.debug("Base URL: ["+baseUrl+"] ...");
-								 
-								 String interfaceName = null;
-								 if(this.requestMsg!=null) {
-									 Object porta = this.requestMsg.getContextProperty(CostantiPdD.NOME_PORTA_INVOCATA);
-									 if(porta!=null && porta instanceof String) {
-										 interfaceName = (String) porta;
-									 }
-									 if(interfaceName==null) {
-										 if(this.requestMsg.getTransportRequestContext()!=null) {
-											 interfaceName = this.requestMsg.getTransportRequestContext().getInterfaceName();
-										 }
-									 }
-								 }
-								 
-								 String prefixGatewayUrl = null;
-								 String contesto = null;
-								 if(this.rest_proxyPassReverse_usePrefixProtocol) {
-									 UrlInvocazioneAPI urlInvocazioneApi = ConfigurazionePdDManager.getInstance().getConfigurazioneUrlInvocazione(this.getProtocolFactory(), 
-											 ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo) ? RuoloContesto.PORTA_APPLICATIVA : RuoloContesto.PORTA_DELEGATA,
-										     this.requestMsg!=null ? this.requestMsg.getServiceBinding() : null,
-										     interfaceName,
-										     this.requestInfo!=null ? this.requestInfo.getIdentitaPdD() : null,
-										     this.getIdAccordo());		 
-									 prefixGatewayUrl = urlInvocazioneApi.getBaseUrl();
-									 contesto = urlInvocazioneApi.getContext();
-								 }
-								 
-								 String newRedirectLocation = RestUtilities.buildPassReverseUrl(this.requestMsg.getTransportRequestContext(), baseUrl, redirectLocation, prefixGatewayUrl, contesto);
-								 if(this.debug)
-									 this.logger.debug("Nuovo Header '"+header+"':["+newRedirectLocation+"] ...");
-			               
-								 TransportUtils.removeObject(this.propertiesTrasportoRisposta, header);
-								 TransportUtils.addHeader(this.propertiesTrasportoRisposta,header, newRedirectLocation);
-							 }catch(Exception e) {
-								 throw new Exception("Errore durante l'aggiornamento dell'header '"+header+
-										 "' attraverso la funzione di proxy pass reverse: "+e.getMessage(),e);
-							 }
-						 }
-					 }
-				 }
+						for (String header : this.rest_proxyPassReverse_headers) {
+							String redirectLocation = TransportUtils.getFirstValue(this.propertiesTrasportoRisposta, header); 
+							if(redirectLocation!=null) {
+								if(this.debug)
+									this.logger.debug("Trovato Header '"+header+"':["+redirectLocation+"] ...");
+								
+								try {
+									String newRedirectLocation = RestUtilities.buildPassReverseUrl(this.requestMsg.getTransportRequestContext(), baseUrl, redirectLocation, prefixGatewayUrl, contesto);
+									if(this.debug)
+										this.logger.debug("Nuovo Header '"+header+"':["+newRedirectLocation+"] ...");
+				               
+									if(!redirectLocation.equals(newRedirectLocation)) {
+										TransportUtils.removeObject(this.propertiesTrasportoRisposta, header);
+										TransportUtils.addHeader(this.propertiesTrasportoRisposta,header, newRedirectLocation);
+									}
+								}catch(Exception e) {
+									throw new Exception("Errore durante l'aggiornamento dell'header '"+header+
+											"' attraverso la funzione di proxy pass reverse: "+e.getMessage(),e);
+								}
+							}
+						}
+					}
+				
+					if(this.rest_proxyPassReverse_setCookie_headers!=null && !this.rest_proxyPassReverse_setCookie_headers.isEmpty()) {
+					 
+						for (String header : this.rest_proxyPassReverse_setCookie_headers) {
+							List<String> cookieValues = TransportUtils.getValues(this.propertiesTrasportoRisposta, header);
+							List<String> newCookieValues = null; 
+							boolean modify = false;
+							if(cookieValues!=null && !cookieValues.isEmpty()) {
+								
+								newCookieValues = new ArrayList<String>();
+								
+								for (String cookieValue : cookieValues) {
+									if(cookieValue!=null) {
+										if(this.debug)
+											this.logger.debug("Trovato CookieHeader '"+header+"':["+cookieValue+"] ...");
+											
+										List<String> cookieNames = new ArrayList<String>();
+										List<String> cookiePaths = new ArrayList<String>();
+										try {
+											List<HttpCookie> l = java.net.HttpCookie.parse(cookieValue);
+											for (HttpCookie httpCookie : l) {
+												//System.out.println("cookie ["+httpCookie.getName()+"] ["+httpCookie.getPath()+"]");
+												if(httpCookie.getPath()!=null) {
+													cookieNames.add(httpCookie.getName());
+													cookiePaths.add(httpCookie.getPath());
+												}
+											}
+										}catch(Throwable e) {
+											this.logger.error("Errore durante il parsing del valore dell'header '"+header+"' (gestione cookie): "+e.getMessage(),e);
+										}
+										
+										if(!cookieNames.isEmpty()) {
+											for (int i = 0; i < cookieNames.size(); i++) {
+												String cName = cookieNames.get(i);
+												String cPath = cookiePaths.get(i);
+												try {
+													if(cPath!=null) {
+														String newPath = RestUtilities.buildCookiePassReversePath(this.requestMsg.getTransportRequestContext(), baseUrl, cPath, prefixGatewayUrl, contesto);
+														if(this.debug)
+															this.logger.debug("Nuovo Path '"+cName+"' (header:"+header+"):["+newPath+"] ...");
+									               
+														if(!cPath.equals(newPath)) {
+															String newValue = cookieValue.replace(cPath, newPath);
+															/*
+															String newValue = cookieValue.replace("path="+cPath, "path="+newPath);
+															newValue = newValue.replace("path ="+cPath, "path ="+newPath);
+															newValue = newValue.replace("path= "+cPath, "path= "+newPath);
+															newValue = newValue.replace("path = "+cPath, "path = "+newPath);
+															
+															newValue = newValue.replace("Path="+cPath, "Path="+newPath);
+															newValue = newValue.replace("Path ="+cPath, "Path ="+newPath);
+															newValue = newValue.replace("Path= "+cPath, "Path= "+newPath);
+															newValue = newValue.replace("Path = "+cPath, "Path = "+newPath);
+															
+															newValue = newValue.replace("PATH="+cPath, "PATH="+newPath);
+															newValue = newValue.replace("PATH ="+cPath, "PATH ="+newPath);
+															newValue = newValue.replace("PATH= "+cPath, "PATH= "+newPath);
+															newValue = newValue.replace("PATH = "+cPath, "PATH = "+newPath);
+															
+															newValue + newValue.replace("path=\""+cPath, "path=\""+newPath);
+															newValue = newValue.replace("path =\""+cPath, "path =\""+newPath);
+															newValue = newValue.replace("path= \""+cPath, "path= \""+newPath);
+															newValue = newValue.replace("path = \""+cPath, "path = \""+newPath);
+															
+															newValue = newValue.replace("Path=\""+cPath, "Path=\""+newPath);
+															newValue = newValue.replace("Path =\""+cPath, "Path =\""+newPath);
+															newValue = newValue.replace("Path= \""+cPath, "Path= \""+newPath);
+															newValue = newValue.replace("Path = \""+cPath, "Path = \""+newPath);
+															
+															newValue = newValue.replace("PATH=\""+cPath, "PATH=\""+newPath);
+															newValue = newValue.replace("PATH =\""+cPath, "PATH =\""+newPath);
+															newValue = newValue.replace("PATH= \""+cPath, "PATH= \""+newPath);
+															newValue = newValue.replace("PATH = \""+cPath, "PATH = \""+newPath);*/
+															
+															newCookieValues.add(newValue);
+															modify=true;
+														}
+														else {
+															newCookieValues.add(cookieValue);
+														}
+													}
+												}catch(Exception e) {
+													throw new Exception("Errore durante l'aggiornamento del cookie '"+cName+
+															"' (header:"+header+") attraverso la funzione di proxy pass reverse: "+e.getMessage(),e);
+												}		
+											}
+										}
+									}
+								}
+							}
+							
+							if(modify) {
+								TransportUtils.removeObject(this.propertiesTrasportoRisposta, header);
+								this.propertiesTrasportoRisposta.put(header, newCookieValues);
+							}
+						}
+					}
+				 
+				}
+				
 			}finally {
 				this.proxyPassReverseDone = true;
 			}
