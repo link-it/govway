@@ -2569,7 +2569,7 @@ public class GestoreToken {
 			}
 		}
 		
-		connettore.setForceDisable_rest_proxyPassReverse(true);
+		connettore.setForceDisable_proxyPassReverse(true);
 		connettore.init(pddContext, protocolFactory);
 		connettore.setRegisterSendIntoContext(false);
 		
@@ -3376,7 +3376,7 @@ public class GestoreToken {
 			connettoreMsg.setForwardProxy(forwardProxy);
 		}
 		
-		connettore.setForceDisable_rest_proxyPassReverse(true);
+		connettore.setForceDisable_proxyPassReverse(true);
 		connettore.init(dynamicParameters.getPddContext(), protocolFactory);
 		connettore.setRegisterSendIntoContext(false);
 		
@@ -4689,7 +4689,7 @@ public class GestoreToken {
 			connettoreMsg.setForwardProxy(forwardProxy);
 		}
 		
-		connettore.setForceDisable_rest_proxyPassReverse(true);
+		connettore.setForceDisable_proxyPassReverse(true);
 		connettore.init(dynamicParameters.getPddContext(), protocolFactory);
 		connettore.setRegisterSendIntoContext(false);
 		

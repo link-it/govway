@@ -128,6 +128,13 @@ public class GestoreTrasformazioniUtilities {
 		
 	}
 	
+	public static final String TRASFORMAZIONE_HEADER_HTTP_RICHIESTA = "RequestHeader";
+	public static final String TRASFORMAZIONE_QUERY_PARAMETER = "QueryParameter";
+	public static final String TRASFORMAZIONE_HEADER_HTTP_RISPOSTA = "ResponseHeader";
+	
+	public static final String TRASFORMAZIONE_SET_COOKIE = "${headerResponse:Set-Cookie}";
+
+	
 	public static void trasformazione(Logger log, List<TrasformazioneRegolaParametro> list, Map<String, List<String>> properties, Map<String, List<String>> forceAddProperties, String oggetto,
 			Map<String, Object> dynamicMap, PdDContext pddContext) throws Exception {
 		if(list!=null && list.size()>0) {
@@ -143,6 +150,16 @@ public class GestoreTrasformazioniUtilities {
 				if(tipo==null) {
 					throw new Exception("["+oggetto+"] Tipo di operazione da effettuare non indicata per '"+nome+"'");
 				}
+				
+				boolean casoSpecialeForwardSetCookie = false; 
+				if(valore!=null &&
+						TRASFORMAZIONE_HEADER_HTTP_RISPOSTA.equals(oggetto) &&
+						TrasformazioneRegolaParametroTipoAzione.UPDATE.equals(tipo) &&
+						HttpConstants.SET_COOKIE.toLowerCase().equals(nome.toLowerCase()) &&
+						TRASFORMAZIONE_SET_COOKIE.toLowerCase().equals(valore.trim().toLowerCase())) {
+					casoSpecialeForwardSetCookie = true;
+				}
+				
 				if(valore!=null) {
 					try {
 						valore = DynamicUtils.convertDynamicPropertyValue(oggetto+"-"+nome, valore, dynamicMap, pddContext, true);
@@ -157,6 +174,7 @@ public class GestoreTrasformazioniUtilities {
 						}
 					}
 				}
+				
 				switch (tipo) {
 				case ADD:
 					if(valore==null) {
@@ -189,11 +207,17 @@ public class GestoreTrasformazioniUtilities {
 					if(properties!=null) {
 						v = TransportUtils.removeRawObject(properties, nome);
 						if(v!=null && !v.isEmpty()) {
-							if(valore==null) {
-								throw new Exception("["+oggetto+"] Valore del parametro '"+nome+"' non indicato");
+							if(casoSpecialeForwardSetCookie) {
+								properties.put(nome, v);
+								forceAddProperties.put(nome, v);
 							}
-							TransportUtils.put(properties, nome, valore, false);
-							TransportUtils.put(forceAddProperties, nome, valore, false);
+							else {
+								if(valore==null) {
+									throw new Exception("["+oggetto+"] Valore del parametro '"+nome+"' non indicato");
+								}
+								TransportUtils.put(properties, nome, valore, false);
+								TransportUtils.put(forceAddProperties, nome, valore, false);
+							}
 						}
 					}
 					break;

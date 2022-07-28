@@ -1,3 +1,5 @@
+.. _trasformazioniRisposta:
+
 Regole di Trasformazione della Risposta
 ***************************************
 

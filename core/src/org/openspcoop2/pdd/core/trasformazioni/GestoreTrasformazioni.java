@@ -719,7 +719,7 @@ public class GestoreTrasformazioni {
 			// conversione header
 			Map<String, List<String>> trasporto = parametriTrasporto;
 			Map<String, List<String>> forceAddTrasporto = new HashMap<String, List<String>>();
-			GestoreTrasformazioniUtilities.trasformazione(this.log, richiesta.getHeaderList(), trasporto, forceAddTrasporto, "Header", dynamicMap, this.pddContext);
+			GestoreTrasformazioniUtilities.trasformazione(this.log, richiesta.getHeaderList(), trasporto, forceAddTrasporto, GestoreTrasformazioniUtilities.TRASFORMAZIONE_HEADER_HTTP_RICHIESTA, dynamicMap, this.pddContext);
 			if(forceContentTypeRichiesta!=null && StringUtils.isNotEmpty(forceContentTypeRichiesta)) {
 				TransportUtils.removeRawObject(trasporto, HttpConstants.CONTENT_TYPE);
 				TransportUtils.setHeader(trasporto,HttpConstants.CONTENT_TYPE, forceContentTypeRichiesta);
@@ -728,7 +728,7 @@ public class GestoreTrasformazioni {
 			// conversione url
 			Map<String, List<String>> url = parametriUrl;
 			Map<String, List<String>> forceAddUrl = new HashMap<String, List<String>>();
-			GestoreTrasformazioniUtilities.trasformazione(this.log, richiesta.getParametroUrlList(), url, forceAddUrl, "QueryParameter", dynamicMap, this.pddContext);
+			GestoreTrasformazioniUtilities.trasformazione(this.log, richiesta.getParametroUrlList(), url, forceAddUrl, GestoreTrasformazioniUtilities.TRASFORMAZIONE_QUERY_PARAMETER, dynamicMap, this.pddContext);
 						
 			// trasformazione contenuto non richiesta
 			if(!trasformazioneContenuto) {
@@ -1083,7 +1083,7 @@ public class GestoreTrasformazioni {
 			// conversione header
 			Map<String, List<String>> trasporto = parametriTrasporto!=null ? parametriTrasporto : new HashMap<String, List<String>>();
 			Map<String, List<String>> forceAddTrasporto = new HashMap<String, List<String>>();
-			GestoreTrasformazioniUtilities.trasformazione(this.log, trasformazioneRisposta.getHeaderList(), trasporto, forceAddTrasporto, "Header", dynamicMap, this.pddContext);
+			GestoreTrasformazioniUtilities.trasformazione(this.log, trasformazioneRisposta.getHeaderList(), trasporto, forceAddTrasporto, GestoreTrasformazioniUtilities.TRASFORMAZIONE_HEADER_HTTP_RISPOSTA, dynamicMap, this.pddContext);
 			if(forceContentTypeRisposta!=null && StringUtils.isNotEmpty(forceContentTypeRisposta)) {
 				TransportUtils.removeRawObject(trasporto, HttpConstants.CONTENT_TYPE);
 				TransportUtils.setHeader(trasporto,HttpConstants.CONTENT_TYPE, forceContentTypeRisposta);

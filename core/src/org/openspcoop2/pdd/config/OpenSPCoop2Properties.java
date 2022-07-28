@@ -1929,6 +1929,15 @@ public class OpenSPCoop2Properties {
 			this.getSOAPServicesHeadersForwardConfig(true);
 			this.getSOAPServicesHeadersForwardConfig(false);
 			
+			this.isSOAPServices_inoltroBuste_proxyPassReverse();
+			this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse();
+			this.isSOAPServices_inoltroBuste_proxyPassReverse_useProtocolPrefix();
+			this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix();
+			this.getSOAPServices_inoltroBuste_proxyPassReverse_headers();
+			this.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_headers();
+			this.getSOAPServices_inoltroBuste_proxyPassReverse_setCookie_headers();
+			this.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers();
+			
 			this.getRESTServicesUrlParametersForwardConfig();
 			this.getRESTServicesHeadersForwardConfig(true);
 			this.getRESTServicesHeadersForwardConfig(false);
@@ -22003,6 +22012,222 @@ public class OpenSPCoop2Properties {
 		return f;
 	}
 
+	
+	/* ------------- SOAP (Trasporto - Headers - Proxy Pass Reverse) ---------------------*/
+	
+	private static Boolean isSOAPServices_inoltroBuste_proxyPassReverse = null;
+	public boolean isSOAPServices_inoltroBuste_proxyPassReverse() {	
+		if(OpenSPCoop2Properties.isSOAPServices_inoltroBuste_proxyPassReverse==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isSOAPServices_inoltroBuste_proxyPassReverse = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse': "+e.getMessage(),e);
+				OpenSPCoop2Properties.isSOAPServices_inoltroBuste_proxyPassReverse = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isSOAPServices_inoltroBuste_proxyPassReverse;
+	}
+	
+	private static Boolean isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse = null;
+	public boolean isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse() {	
+		if(OpenSPCoop2Properties.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse': "+e.getMessage(),e);
+				OpenSPCoop2Properties.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse;
+	}
+	
+	private static Boolean isSOAPServices_inoltroBuste_proxyPassReverse_useProtocolPrefix = null;
+	public boolean isSOAPServices_inoltroBuste_proxyPassReverse_useProtocolPrefix() {	
+		if(OpenSPCoop2Properties.isSOAPServices_inoltroBuste_proxyPassReverse_useProtocolPrefix==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isSOAPServices_inoltroBuste_proxyPassReverse_useProtocolPrefix = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix': "+e.getMessage(),e);
+				OpenSPCoop2Properties.isSOAPServices_inoltroBuste_proxyPassReverse_useProtocolPrefix = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isSOAPServices_inoltroBuste_proxyPassReverse_useProtocolPrefix;
+	}
+	
+	private static Boolean isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix = null;
+	public boolean isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix() {	
+		if(OpenSPCoop2Properties.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix': "+e.getMessage(),e);
+				OpenSPCoop2Properties.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix;
+	}
+	
+	private static List<String> getSOAPServices_inoltroBuste_proxyPassReverse_headers = null;
+	public List<String> getSOAPServices_inoltroBuste_proxyPassReverse_headers() throws Exception {	
+		if(OpenSPCoop2Properties.getSOAPServices_inoltroBuste_proxyPassReverse_headers==null){
+			try{ 
+				OpenSPCoop2Properties.getSOAPServices_inoltroBuste_proxyPassReverse_headers = new ArrayList<String>();
+				
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.headers");
+				if(name!=null){
+					name = name.trim();
+				}
+				if(name!=null && !"".equals(name)) {
+					if(name.contains(",")) {
+						String [] tmp = name.split(",");
+						for (int i = 0; i < tmp.length; i++) {
+							OpenSPCoop2Properties.getSOAPServices_inoltroBuste_proxyPassReverse_headers.add(tmp[i].trim());
+						}
+					}
+					else {
+						OpenSPCoop2Properties.getSOAPServices_inoltroBuste_proxyPassReverse_headers.add(name);
+					}
+				}
+			} catch(java.lang.Exception e) {
+				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.headers': "+e.getMessage();
+				this.log.error(error,e);
+				throw new Exception(error);
+			}    
+		}
+
+		return OpenSPCoop2Properties.getSOAPServices_inoltroBuste_proxyPassReverse_headers;
+	}
+	
+	private static List<String> getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_headers = null;
+	public List<String> getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_headers() throws Exception {	
+		if(OpenSPCoop2Properties.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_headers==null){
+			try{ 
+				OpenSPCoop2Properties.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_headers = new ArrayList<String>();
+				
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.headers");
+				if(name!=null){
+					name = name.trim();
+				}
+				if(name!=null && !"".equals(name)) {
+					if(name.contains(",")) {
+						String [] tmp = name.split(",");
+						for (int i = 0; i < tmp.length; i++) {
+							OpenSPCoop2Properties.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_headers.add(tmp[i].trim());
+						}
+					}
+					else {
+						OpenSPCoop2Properties.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_headers.add(name);
+					}
+				}
+			} catch(java.lang.Exception e) {
+				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.headers': "+e.getMessage();
+				this.log.error(error,e);
+				throw new Exception(error);
+			}    
+		}
+
+		return OpenSPCoop2Properties.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_headers;
+	}
+	
+	private static List<String> getSOAPServices_inoltroBuste_proxyPassReverse_setCookie_headers = null;
+	public List<String> getSOAPServices_inoltroBuste_proxyPassReverse_setCookie_headers() throws Exception {	
+		if(OpenSPCoop2Properties.getSOAPServices_inoltroBuste_proxyPassReverse_setCookie_headers==null){
+			try{ 
+				OpenSPCoop2Properties.getSOAPServices_inoltroBuste_proxyPassReverse_setCookie_headers = new ArrayList<String>();
+				
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.setCookie.headers");
+				if(name!=null){
+					name = name.trim();
+				}
+				if(name!=null && !"".equals(name)) {
+					if(name.contains(",")) {
+						String [] tmp = name.split(",");
+						for (int i = 0; i < tmp.length; i++) {
+							OpenSPCoop2Properties.getSOAPServices_inoltroBuste_proxyPassReverse_setCookie_headers.add(tmp[i].trim());
+						}
+					}
+					else {
+						OpenSPCoop2Properties.getSOAPServices_inoltroBuste_proxyPassReverse_setCookie_headers.add(name);
+					}
+				}
+			} catch(java.lang.Exception e) {
+				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.setCookie.headers': "+e.getMessage();
+				this.log.error(error,e);
+				throw new Exception(error);
+			}    
+		}
+
+		return OpenSPCoop2Properties.getSOAPServices_inoltroBuste_proxyPassReverse_setCookie_headers;
+	}
+	
+	private static List<String> getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers = null;
+	public List<String> getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers() throws Exception {	
+		if(OpenSPCoop2Properties.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers==null){
+			try{ 
+				OpenSPCoop2Properties.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers = new ArrayList<String>();
+				
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.setCookie.headers");
+				if(name!=null){
+					name = name.trim();
+				}
+				if(name!=null && !"".equals(name)) {
+					if(name.contains(",")) {
+						String [] tmp = name.split(",");
+						for (int i = 0; i < tmp.length; i++) {
+							OpenSPCoop2Properties.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers.add(tmp[i].trim());
+						}
+					}
+					else {
+						OpenSPCoop2Properties.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers.add(name);
+					}
+				}
+			} catch(java.lang.Exception e) {
+				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.setCookie.headers': "+e.getMessage();
+				this.log.error(error,e);
+				throw new Exception(error);
+			}    
+		}
+
+		return OpenSPCoop2Properties.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers;
+	}
+	
+	
 	
 	
 	

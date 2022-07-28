@@ -46,51 +46,51 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 */
 public class RestTest extends ConfigLoader {
 
-	private static String NOME_COOKIE = "JSESSIONID";
+	protected static String NOME_COOKIE = "JSESSIONID";
 	
-	private static String esempio_cookie_altro_contesto = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; Path=/esempio/office-ex; HttpOnly";
+	protected static String esempio_cookie_altro_contesto = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; Path=/esempio/office-ex; HttpOnly";
 	
-	private static String WEB_CONTEXT="/TestService/echo";
+	protected static String WEB_CONTEXT="/TestService/echo";
 	
-	private static String esempio_cookie_contesto_test_without_slash = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; path="+WEB_CONTEXT+"; HttpOnly";
-	private static String esempio_cookie_contesto_test_with_slash = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; Path ="+WEB_CONTEXT+"/; HttpOnly";
-	private static String esempio_cookie_contesto_test_without_slash_url_parameter = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; Path= "+WEB_CONTEXT+"?p1=a1; HttpOnly";
-	private static String esempio_cookie_contesto_test_with_slash_url_parameter = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; Path = "+WEB_CONTEXT+"/?p1=a1; HttpOnly";
-	private static String esempio_cookie_contesto_test_without_slash_url_parameters = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; path = "+WEB_CONTEXT+"?p1=a1&p2=a2; HttpOnly";
-	private static String esempio_cookie_contesto_test_with_slash_url_parameters = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; PATH="+WEB_CONTEXT+"/?p1=a1&p2=a2; HttpOnly";
+	protected static String esempio_cookie_contesto_test_without_slash = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; path="+WEB_CONTEXT+"; HttpOnly";
+	protected static String esempio_cookie_contesto_test_with_slash = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; Path ="+WEB_CONTEXT+"/; HttpOnly";
+	protected static String esempio_cookie_contesto_test_without_slash_url_parameter = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; Path= "+WEB_CONTEXT+"?p1=a1; HttpOnly";
+	protected static String esempio_cookie_contesto_test_with_slash_url_parameter = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; Path = "+WEB_CONTEXT+"/?p1=a1; HttpOnly";
+	protected static String esempio_cookie_contesto_test_without_slash_url_parameters = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; path = "+WEB_CONTEXT+"?p1=a1&p2=a2; HttpOnly";
+	protected static String esempio_cookie_contesto_test_with_slash_url_parameters = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; PATH="+WEB_CONTEXT+"/?p1=a1&p2=a2; HttpOnly";
 	
-	private static String esempio_cookie_contesto_test_with_context_without_slash = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; Domain=\"link.it\"; Path=\""+WEB_CONTEXT+"/altro/contesto/params\"";
-	private static String esempio_cookie_contesto_test_with_context_with_slash = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; Domain=\"link.it\"; path = \""+WEB_CONTEXT+"/altro/contesto/params/\"";
-	private static String esempio_cookie_contesto_test_with_context_without_slash_url_parameter = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; Domain=\"link.it\"; PATH= \""+WEB_CONTEXT+"/altro/contesto/params?p1=a1\"";
-	private static String esempio_cookie_contesto_test_with_context_with_slash_url_parameter = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; Domain=\"link.it\"; Path=\""+WEB_CONTEXT+"/altro/contesto/params/?p1=a1\";";
-	private static String esempio_cookie_contesto_test_with_context_without_slash_url_parameters = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; Domain=\"link.it\"; Path=\""+WEB_CONTEXT+"/altro/contesto/params?p1=a1&p2=a2\";";
-	private static String esempio_cookie_contesto_test_with_context_with_slash_url_parameters = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; Domain=\"link.it\"; Path=\""+WEB_CONTEXT+"/altro/contesto/params/?p1=a1&p2=a2\"";
+	protected static String esempio_cookie_contesto_test_with_context_without_slash = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; Domain=\"link.it\"; Path=\""+WEB_CONTEXT+"/altro/contesto/params\"";
+	protected static String esempio_cookie_contesto_test_with_context_with_slash = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; Domain=\"link.it\"; path = \""+WEB_CONTEXT+"/altro/contesto/params/\"";
+	protected static String esempio_cookie_contesto_test_with_context_without_slash_url_parameter = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; Domain=\"link.it\"; PATH= \""+WEB_CONTEXT+"/altro/contesto/params?p1=a1\"";
+	protected static String esempio_cookie_contesto_test_with_context_with_slash_url_parameter = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; Domain=\"link.it\"; Path=\""+WEB_CONTEXT+"/altro/contesto/params/?p1=a1\";";
+	protected static String esempio_cookie_contesto_test_with_context_without_slash_url_parameters = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; Domain=\"link.it\"; Path=\""+WEB_CONTEXT+"/altro/contesto/params?p1=a1&p2=a2\";";
+	protected static String esempio_cookie_contesto_test_with_context_with_slash_url_parameters = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; Domain=\"link.it\"; Path=\""+WEB_CONTEXT+"/altro/contesto/params/?p1=a1&p2=a2\"";
 	
 	@SuppressWarnings("unused")
-	private static String HEADER_HTTP_CUSTOM_SET_COOKIE = "X-Custom-Set-Cookie";
+	protected static String HEADER_HTTP_CUSTOM_SET_COOKIE = "X-Custom-Set-Cookie";
 	
-	private static String REQUEST_URI="http://127.0.0.1:8080";
-	private static String REQUEST_URI_2="http://127.0.0.2:8080";
-	private static String REQUEST_URI_3="http://127.0.0.1:8083";
-	private static String REQUEST_URI_4="https://127.0.0.1:8080";
+	protected static String REQUEST_URI="http://127.0.0.1:8080";
+	protected static String REQUEST_URI_2="http://127.0.0.2:8080";
+	protected static String REQUEST_URI_3="http://127.0.0.1:8083";
+	protected static String REQUEST_URI_4="https://127.0.0.1:8080";
 	
-	private static String esempio_location_altro_contesto = "/esempio/office-ex";
+	protected static String esempio_location_altro_contesto = "/esempio/office-ex";
 	
-	private static String esempio_location_contesto_test_without_slash = WEB_CONTEXT;
-	private static String esempio_location_contesto_test_with_slash = WEB_CONTEXT+"/";
-	private static String esempio_location_contesto_test_without_slash_url_parameter = WEB_CONTEXT+"?p1=a1";
-	private static String esempio_location_contesto_test_with_slash_url_parameter = WEB_CONTEXT+"/?p1=a1";
-	private static String esempio_location_contesto_test_without_slash_url_parameters = WEB_CONTEXT+"?p1=a1&p2=a2";
-	private static String esempio_location_contesto_test_with_slash_url_parameters = WEB_CONTEXT+"/?p1=a1&p2=a2";
+	protected static String esempio_location_contesto_test_without_slash = WEB_CONTEXT;
+	protected static String esempio_location_contesto_test_with_slash = WEB_CONTEXT+"/";
+	protected static String esempio_location_contesto_test_without_slash_url_parameter = WEB_CONTEXT+"?p1=a1";
+	protected static String esempio_location_contesto_test_with_slash_url_parameter = WEB_CONTEXT+"/?p1=a1";
+	protected static String esempio_location_contesto_test_without_slash_url_parameters = WEB_CONTEXT+"?p1=a1&p2=a2";
+	protected static String esempio_location_contesto_test_with_slash_url_parameters = WEB_CONTEXT+"/?p1=a1&p2=a2";
 	
-	private static String esempio_location_contesto_test_with_context_without_slash = WEB_CONTEXT+"/altro/contesto/params";
-	private static String esempio_location_contesto_test_with_context_with_slash = WEB_CONTEXT+"/altro/contesto/params/";
-	private static String esempio_location_contesto_test_with_context_without_slash_url_parameter = WEB_CONTEXT+"/altro/contesto/params?p1=a1";
-	private static String esempio_location_contesto_test_with_context_with_slash_url_parameter = WEB_CONTEXT+"/altro/contesto/params/?p1=a1";
-	private static String esempio_location_contesto_test_with_context_without_slash_url_parameters = WEB_CONTEXT+"/altro/contesto/params?p1=a1&p2=a2";
-	private static String esempio_location_contesto_test_with_context_with_slash_url_parameters = WEB_CONTEXT+"/altro/contesto/params/?p1=a1&p2=a2";
+	protected static String esempio_location_contesto_test_with_context_without_slash = WEB_CONTEXT+"/altro/contesto/params";
+	protected static String esempio_location_contesto_test_with_context_with_slash = WEB_CONTEXT+"/altro/contesto/params/";
+	protected static String esempio_location_contesto_test_with_context_without_slash_url_parameter = WEB_CONTEXT+"/altro/contesto/params?p1=a1";
+	protected static String esempio_location_contesto_test_with_context_with_slash_url_parameter = WEB_CONTEXT+"/altro/contesto/params/?p1=a1";
+	protected static String esempio_location_contesto_test_with_context_without_slash_url_parameters = WEB_CONTEXT+"/altro/contesto/params?p1=a1&p2=a2";
+	protected static String esempio_location_contesto_test_with_context_with_slash_url_parameters = WEB_CONTEXT+"/altro/contesto/params/?p1=a1&p2=a2";
 	
-	private static String HEADER_HTTP_CUSTOM_LOCATION = "X-Custom-Location";
+	protected static String HEADER_HTTP_CUSTOM_LOCATION = "X-Custom-Location";
 	
 	
 	
@@ -98,20 +98,20 @@ public class RestTest extends ConfigLoader {
 	
 	@Test
 	public void erogazione_setCookie() throws Exception {
-		_setCookie(TipoServizio.EROGAZIONE, "end-without-slash");
+		_setCookie(true, TipoServizio.EROGAZIONE, "end-without-slash");
 	}
 	@Test
 	public void fruizione_setCookie() throws Exception {
-		_setCookie(TipoServizio.FRUIZIONE, "end-without-slash");
+		_setCookie(true, TipoServizio.FRUIZIONE, "end-without-slash");
 	}
 
 	@Test
 	public void erogazione_setCookie_endWithSlashConnettore() throws Exception {
-		_setCookie(TipoServizio.EROGAZIONE, "end-with-slash");
+		_setCookie(true, TipoServizio.EROGAZIONE, "end-with-slash");
 	}
 	@Test
 	public void fruizione_setCookie_endWithSlashConnettore() throws Exception {
-		_setCookie(TipoServizio.FRUIZIONE, "end-with-slash");
+		_setCookie(true, TipoServizio.FRUIZIONE, "end-with-slash");
 	}
 	
 	
@@ -119,31 +119,11 @@ public class RestTest extends ConfigLoader {
 	
 	@Test
 	public void erogazione_setCookie_gestioneProxyPassDisabilitata() throws Exception {
-		// Caso non tradotto
-		HttpRequest request = new HttpRequest();
-		request.addHeader("C1", esempio_cookie_contesto_test_without_slash);
-		HttpResponse response = _test(request, TipoServizio.EROGAZIONE, "disabled", "setCookie=C1");
-		List<String> setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
-		assertNotNull(setValues);
-		assertEquals(setValues.size(),1);
-		String setValue = setValues.get(0);
-		String atteso = esempio_cookie_contesto_test_without_slash; // non tradotto
-		String msg = "[C1 esempio_cookie_contesto_test_without_slash] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
-		isEquals(msg, atteso, setValue);
+		_setCookie_nonTradotto(true, TipoServizio.EROGAZIONE, "disabled");
 	}
 	@Test
 	public void fruizione_setCookie_gestioneProxyPassDisabilitata() throws Exception {
-		// Caso non tradotto
-		HttpRequest request = new HttpRequest();
-		request.addHeader("C1", esempio_cookie_contesto_test_without_slash);
-		HttpResponse response = _test(request, TipoServizio.FRUIZIONE, "disabled", "setCookie=C1");
-		List<String> setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
-		assertNotNull(setValues);
-		assertEquals(setValues.size(),1);
-		String setValue = setValues.get(0);
-		String atteso = esempio_cookie_contesto_test_without_slash; // non tradotto
-		String msg = "[C1 esempio_cookie_contesto_test_without_slash] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
-		isEquals(msg, atteso, setValue);
+		_setCookie_nonTradotto(true, TipoServizio.FRUIZIONE, "disabled");
 	}
 
 	
@@ -151,31 +131,11 @@ public class RestTest extends ConfigLoader {
 	
 	@Test
 	public void erogazione_setCookie_gestioneProxyPassCustom() throws Exception {
-		// Caso non tradotto
-		HttpRequest request = new HttpRequest();
-		request.addHeader("C1", esempio_cookie_contesto_test_without_slash);
-		HttpResponse response = _test(request, TipoServizio.EROGAZIONE, "custom", "setCookie=C1");
-		List<String> setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
-		assertNotNull(setValues);
-		assertEquals(setValues.size(),1);
-		String setValue = setValues.get(0);
-		String atteso = esempio_cookie_contesto_test_without_slash; // non tradotto
-		String msg = "[C1 esempio_cookie_contesto_test_without_slash] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
-		isEquals(msg, atteso, setValue);
+		_setCookie_nonTradotto(true, TipoServizio.EROGAZIONE, "custom");
 	}
 	@Test
 	public void fruizione_setCookie_gestioneProxyPassCustom() throws Exception {
-		// Caso non tradotto
-		HttpRequest request = new HttpRequest();
-		request.addHeader("C1", esempio_cookie_contesto_test_without_slash);
-		HttpResponse response = _test(request, TipoServizio.FRUIZIONE, "custom", "setCookie=C1");
-		List<String> setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
-		assertNotNull(setValues);
-		assertEquals(setValues.size(),1);
-		String setValue = setValues.get(0);
-		String atteso = esempio_cookie_contesto_test_without_slash; // non tradotto
-		String msg = "[C1 esempio_cookie_contesto_test_without_slash] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
-		isEquals(msg, atteso, setValue);
+		_setCookie_nonTradotto(true, TipoServizio.FRUIZIONE, "custom");
 	}
 	
 	
@@ -184,38 +144,38 @@ public class RestTest extends ConfigLoader {
 	
 	@Test
 	public void erogazione_relative_location() throws Exception {
-		_location(TipoServizio.EROGAZIONE,"end-without-slash","",HttpConstants.REDIRECT_LOCATION);
+		_location(true, TipoServizio.EROGAZIONE,"end-without-slash","",HttpConstants.REDIRECT_LOCATION);
 	}
 	@Test
 	public void fruizione_relative_location() throws Exception {
-		_location(TipoServizio.FRUIZIONE,"end-without-slash","",HttpConstants.REDIRECT_LOCATION);
+		_location(true, TipoServizio.FRUIZIONE,"end-without-slash","",HttpConstants.REDIRECT_LOCATION);
 	}
 	
 	@Test
 	public void erogazione_relative_contentLocation() throws Exception {
-		_location(TipoServizio.EROGAZIONE,"end-without-slash","",HttpConstants.CONTENT_LOCATION);
+		_location(true, TipoServizio.EROGAZIONE,"end-without-slash","",HttpConstants.CONTENT_LOCATION);
 	}
 	@Test
 	public void fruizione_relative_contentLocation() throws Exception {
-		_location(TipoServizio.FRUIZIONE,"end-without-slash","",HttpConstants.CONTENT_LOCATION);
+		_location(true, TipoServizio.FRUIZIONE,"end-without-slash","",HttpConstants.CONTENT_LOCATION);
 	}
 	
 	@Test
 	public void erogazione_relative_location_endWithSlashConnettore() throws Exception {
-		_location(TipoServizio.EROGAZIONE,"end-with-slash","",HttpConstants.REDIRECT_LOCATION);
+		_location(true, TipoServizio.EROGAZIONE,"end-with-slash","",HttpConstants.REDIRECT_LOCATION);
 	}
 	@Test
 	public void fruizione_relative_location_endWithSlashConnettore() throws Exception {
-		_location(TipoServizio.FRUIZIONE,"end-with-slash","",HttpConstants.REDIRECT_LOCATION);
+		_location(true, TipoServizio.FRUIZIONE,"end-with-slash","",HttpConstants.REDIRECT_LOCATION);
 	}
 	
 	@Test
 	public void erogazione_relative_contentLocation_endWithSlashConnettore() throws Exception {
-		_location(TipoServizio.EROGAZIONE,"end-with-slash","",HttpConstants.CONTENT_LOCATION);
+		_location(true, TipoServizio.EROGAZIONE,"end-with-slash","",HttpConstants.CONTENT_LOCATION);
 	}
 	@Test
 	public void fruizione_relative_contentLocation_endWithSlashConnettore() throws Exception {
-		_location(TipoServizio.FRUIZIONE,"end-with-slash","",HttpConstants.CONTENT_LOCATION);
+		_location(true, TipoServizio.FRUIZIONE,"end-with-slash","",HttpConstants.CONTENT_LOCATION);
 	}
 	
 	
@@ -223,39 +183,39 @@ public class RestTest extends ConfigLoader {
 	
 	@Test
 	public void erogazione_relative_location_gestioneProxyPassDisabilitata() throws Exception {
-		_location_nonTradotta(TipoServizio.EROGAZIONE,"disabled","",HttpConstants.REDIRECT_LOCATION);
+		_location_nonTradotta(true, TipoServizio.EROGAZIONE,"disabled","",HttpConstants.REDIRECT_LOCATION);
 	}
 	@Test
 	public void fruizione_relative_location_gestioneProxyPassDisabilitata() throws Exception {
-		_location_nonTradotta(TipoServizio.FRUIZIONE,"disabled","",HttpConstants.REDIRECT_LOCATION);
+		_location_nonTradotta(true, TipoServizio.FRUIZIONE,"disabled","",HttpConstants.REDIRECT_LOCATION);
 	}
 	
 	@Test
 	public void erogazione_relative_contentLocation_gestioneProxyPassDisabilitata() throws Exception {
-		_location_nonTradotta(TipoServizio.EROGAZIONE,"disabled","",HttpConstants.CONTENT_LOCATION);
+		_location_nonTradotta(true, TipoServizio.EROGAZIONE,"disabled","",HttpConstants.CONTENT_LOCATION);
 	}
 	@Test
 	public void fruizione_relative_contentLocation_gestioneProxyPassDisabilitata() throws Exception {
-		_location_nonTradotta(TipoServizio.FRUIZIONE,"disabled","",HttpConstants.CONTENT_LOCATION);
+		_location_nonTradotta(true, TipoServizio.FRUIZIONE,"disabled","",HttpConstants.CONTENT_LOCATION);
 	}
 	
 	// relative location (custom)
 	
 	@Test
 	public void erogazione_relative_location_gestioneProxyPassCustom() throws Exception {
-		_location_custom(TipoServizio.EROGAZIONE,"custom","",HttpConstants.REDIRECT_LOCATION, false);
+		_location_custom(true, TipoServizio.EROGAZIONE,"custom","",HttpConstants.REDIRECT_LOCATION, false);
 		
-		_location_custom(TipoServizio.EROGAZIONE,"custom","",HttpConstants.CONTENT_LOCATION, false);
+		_location_custom(true, TipoServizio.EROGAZIONE,"custom","",HttpConstants.CONTENT_LOCATION, false);
 		
-		_location_custom(TipoServizio.EROGAZIONE,"custom","",HEADER_HTTP_CUSTOM_LOCATION, true);
+		_location_custom(true, TipoServizio.EROGAZIONE,"custom","",HEADER_HTTP_CUSTOM_LOCATION, true);
 	}
 	@Test
 	public void fruizione_relative_location_gestioneProxyPassCustom() throws Exception {
-		_location_custom(TipoServizio.FRUIZIONE,"custom","",HttpConstants.REDIRECT_LOCATION, false);
+		_location_custom(true, TipoServizio.FRUIZIONE,"custom","",HttpConstants.REDIRECT_LOCATION, false);
 		
-		_location_custom(TipoServizio.FRUIZIONE,"custom","",HttpConstants.CONTENT_LOCATION, false);
+		_location_custom(true, TipoServizio.FRUIZIONE,"custom","",HttpConstants.CONTENT_LOCATION, false);
 		
-		_location_custom(TipoServizio.FRUIZIONE,"custom","",HEADER_HTTP_CUSTOM_LOCATION, true);
+		_location_custom(true, TipoServizio.FRUIZIONE,"custom","",HEADER_HTTP_CUSTOM_LOCATION, true);
 	}
 	
 
@@ -266,38 +226,38 @@ public class RestTest extends ConfigLoader {
 	
 	@Test
 	public void erogazione_absolute_location() throws Exception {
-		_location(TipoServizio.EROGAZIONE,"end-without-slash",REQUEST_URI,HttpConstants.REDIRECT_LOCATION);
+		_location(true, TipoServizio.EROGAZIONE,"end-without-slash",REQUEST_URI,HttpConstants.REDIRECT_LOCATION);
 	}
 	@Test
 	public void fruizione_absolute_location() throws Exception {
-		_location(TipoServizio.FRUIZIONE,"end-without-slash",REQUEST_URI,HttpConstants.REDIRECT_LOCATION);
+		_location(true, TipoServizio.FRUIZIONE,"end-without-slash",REQUEST_URI,HttpConstants.REDIRECT_LOCATION);
 	}
 	
 	@Test
 	public void erogazione_absolute_contentLocation() throws Exception {
-		_location(TipoServizio.EROGAZIONE,"end-without-slash",REQUEST_URI,HttpConstants.CONTENT_LOCATION);
+		_location(true, TipoServizio.EROGAZIONE,"end-without-slash",REQUEST_URI,HttpConstants.CONTENT_LOCATION);
 	}
 	@Test
 	public void fruizione_absolute_contentLocation() throws Exception {
-		_location(TipoServizio.FRUIZIONE,"end-without-slash",REQUEST_URI,HttpConstants.CONTENT_LOCATION);
+		_location(true, TipoServizio.FRUIZIONE,"end-without-slash",REQUEST_URI,HttpConstants.CONTENT_LOCATION);
 	}
 	
 	@Test
 	public void erogazione_absolute_location_endWithSlashConnettore() throws Exception {
-		_location(TipoServizio.EROGAZIONE,"end-with-slash",REQUEST_URI,HttpConstants.REDIRECT_LOCATION);
+		_location(true, TipoServizio.EROGAZIONE,"end-with-slash",REQUEST_URI,HttpConstants.REDIRECT_LOCATION);
 	}
 	@Test
 	public void fruizione_absolute_location_endWithSlashConnettore() throws Exception {
-		_location(TipoServizio.FRUIZIONE,"end-with-slash",REQUEST_URI,HttpConstants.REDIRECT_LOCATION);
+		_location(true, TipoServizio.FRUIZIONE,"end-with-slash",REQUEST_URI,HttpConstants.REDIRECT_LOCATION);
 	}
 	
 	@Test
 	public void erogazione_absolute_contentLocation_endWithSlashConnettore() throws Exception {
-		_location(TipoServizio.EROGAZIONE,"end-with-slash",REQUEST_URI,HttpConstants.CONTENT_LOCATION);
+		_location(true, TipoServizio.EROGAZIONE,"end-with-slash",REQUEST_URI,HttpConstants.CONTENT_LOCATION);
 	}
 	@Test
 	public void fruizione_absolute_contentLocation_endWithSlashConnettore() throws Exception {
-		_location(TipoServizio.FRUIZIONE,"end-with-slash",REQUEST_URI,HttpConstants.CONTENT_LOCATION);
+		_location(true, TipoServizio.FRUIZIONE,"end-with-slash",REQUEST_URI,HttpConstants.CONTENT_LOCATION);
 	}
 	
 	
@@ -306,36 +266,36 @@ public class RestTest extends ConfigLoader {
 	
 	@Test
 	public void erogazione_absolute_location_noMatchRequestUri() throws Exception {
-		_location_nonTradotta(TipoServizio.EROGAZIONE,"end-without-slash",REQUEST_URI_2,HttpConstants.REDIRECT_LOCATION);
+		_location_nonTradotta(true, TipoServizio.EROGAZIONE,"end-without-slash",REQUEST_URI_2,HttpConstants.REDIRECT_LOCATION);
 		
-		_location_nonTradotta(TipoServizio.EROGAZIONE,"end-without-slash",REQUEST_URI_3,HttpConstants.REDIRECT_LOCATION);
+		_location_nonTradotta(true, TipoServizio.EROGAZIONE,"end-without-slash",REQUEST_URI_3,HttpConstants.REDIRECT_LOCATION);
 		
-		_location_nonTradotta(TipoServizio.EROGAZIONE,"end-without-slash",REQUEST_URI_4,HttpConstants.REDIRECT_LOCATION);
+		_location_nonTradotta(true, TipoServizio.EROGAZIONE,"end-without-slash",REQUEST_URI_4,HttpConstants.REDIRECT_LOCATION);
 	}
 	@Test
 	public void fruizione_absolute_location_noMatchRequestUri() throws Exception {
-		_location_nonTradotta(TipoServizio.FRUIZIONE,"end-without-slash",REQUEST_URI_2,HttpConstants.REDIRECT_LOCATION);
+		_location_nonTradotta(true, TipoServizio.FRUIZIONE,"end-without-slash",REQUEST_URI_2,HttpConstants.REDIRECT_LOCATION);
 		
-		_location_nonTradotta(TipoServizio.FRUIZIONE,"end-without-slash",REQUEST_URI_3,HttpConstants.REDIRECT_LOCATION);
+		_location_nonTradotta(true, TipoServizio.FRUIZIONE,"end-without-slash",REQUEST_URI_3,HttpConstants.REDIRECT_LOCATION);
 		
-		_location_nonTradotta(TipoServizio.FRUIZIONE,"end-without-slash",REQUEST_URI_4,HttpConstants.REDIRECT_LOCATION);
+		_location_nonTradotta(true, TipoServizio.FRUIZIONE,"end-without-slash",REQUEST_URI_4,HttpConstants.REDIRECT_LOCATION);
 	}
 	
 	@Test
 	public void erogazione_absolute_contentLocation_noMatchRequestUri() throws Exception {
-		_location_nonTradotta(TipoServizio.EROGAZIONE,"end-without-slash",REQUEST_URI_2,HttpConstants.CONTENT_LOCATION);
+		_location_nonTradotta(true, TipoServizio.EROGAZIONE,"end-without-slash",REQUEST_URI_2,HttpConstants.CONTENT_LOCATION);
 		
-		_location_nonTradotta(TipoServizio.EROGAZIONE,"end-without-slash",REQUEST_URI_3,HttpConstants.CONTENT_LOCATION);
+		_location_nonTradotta(true, TipoServizio.EROGAZIONE,"end-without-slash",REQUEST_URI_3,HttpConstants.CONTENT_LOCATION);
 		
-		_location_nonTradotta(TipoServizio.EROGAZIONE,"end-without-slash",REQUEST_URI_4,HttpConstants.CONTENT_LOCATION);
+		_location_nonTradotta(true, TipoServizio.EROGAZIONE,"end-without-slash",REQUEST_URI_4,HttpConstants.CONTENT_LOCATION);
 	}
 	@Test
 	public void fruizione_absolute_contentLocation_noMatchRequestUri() throws Exception {
-		_location_nonTradotta(TipoServizio.FRUIZIONE,"end-without-slash",REQUEST_URI_2,HttpConstants.CONTENT_LOCATION);
+		_location_nonTradotta(true, TipoServizio.FRUIZIONE,"end-without-slash",REQUEST_URI_2,HttpConstants.CONTENT_LOCATION);
 		
-		_location_nonTradotta(TipoServizio.FRUIZIONE,"end-without-slash",REQUEST_URI_3,HttpConstants.CONTENT_LOCATION);
+		_location_nonTradotta(true, TipoServizio.FRUIZIONE,"end-without-slash",REQUEST_URI_3,HttpConstants.CONTENT_LOCATION);
 		
-		_location_nonTradotta(TipoServizio.FRUIZIONE,"end-without-slash",REQUEST_URI_4,HttpConstants.CONTENT_LOCATION);
+		_location_nonTradotta(true, TipoServizio.FRUIZIONE,"end-without-slash",REQUEST_URI_4,HttpConstants.CONTENT_LOCATION);
 	}
 
 	
@@ -344,20 +304,20 @@ public class RestTest extends ConfigLoader {
 	
 	@Test
 	public void erogazione_absolute_location_gestioneProxyPassDisabilitata() throws Exception {
-		_location_nonTradotta(TipoServizio.EROGAZIONE,"disabled",REQUEST_URI,HttpConstants.REDIRECT_LOCATION);
+		_location_nonTradotta(true, TipoServizio.EROGAZIONE,"disabled",REQUEST_URI,HttpConstants.REDIRECT_LOCATION);
 	}
 	@Test
 	public void fruizione_absolute_location_gestioneProxyPassDisabilitata() throws Exception {
-		_location_nonTradotta(TipoServizio.FRUIZIONE,"disabled",REQUEST_URI,HttpConstants.REDIRECT_LOCATION);
+		_location_nonTradotta(true, TipoServizio.FRUIZIONE,"disabled",REQUEST_URI,HttpConstants.REDIRECT_LOCATION);
 	}
 	
 	@Test
 	public void erogazione_absolute_contentLocation_gestioneProxyPassDisabilitata() throws Exception {
-		_location_nonTradotta(TipoServizio.EROGAZIONE,"disabled",REQUEST_URI,HttpConstants.CONTENT_LOCATION);
+		_location_nonTradotta(true, TipoServizio.EROGAZIONE,"disabled",REQUEST_URI,HttpConstants.CONTENT_LOCATION);
 	}
 	@Test
 	public void fruizione_absolute_contentLocation_gestioneProxyPassDisabilitata() throws Exception {
-		_location_nonTradotta(TipoServizio.FRUIZIONE,"disabled",REQUEST_URI,HttpConstants.CONTENT_LOCATION);
+		_location_nonTradotta(true, TipoServizio.FRUIZIONE,"disabled",REQUEST_URI,HttpConstants.CONTENT_LOCATION);
 	}
 	
 	
@@ -365,67 +325,69 @@ public class RestTest extends ConfigLoader {
 	
 	@Test
 	public void erogazione_absolute_location_gestioneProxyPassCustom() throws Exception {
-		_location_custom(TipoServizio.EROGAZIONE,"custom",REQUEST_URI,HttpConstants.REDIRECT_LOCATION, false);
+		_location_custom(true, TipoServizio.EROGAZIONE,"custom",REQUEST_URI,HttpConstants.REDIRECT_LOCATION, false);
 		
-		_location_custom(TipoServizio.EROGAZIONE,"custom",REQUEST_URI,HttpConstants.CONTENT_LOCATION, false);
+		_location_custom(true, TipoServizio.EROGAZIONE,"custom",REQUEST_URI,HttpConstants.CONTENT_LOCATION, false);
 		
-		_location_custom(TipoServizio.EROGAZIONE,"custom",REQUEST_URI,HEADER_HTTP_CUSTOM_LOCATION, true);
+		_location_custom(true, TipoServizio.EROGAZIONE,"custom",REQUEST_URI,HEADER_HTTP_CUSTOM_LOCATION, true);
 	}
 	@Test
 	public void fruizione_absolute_location_gestioneProxyPassCustom() throws Exception {
-		_location_custom(TipoServizio.FRUIZIONE,"custom",REQUEST_URI,HttpConstants.REDIRECT_LOCATION, false);
+		_location_custom(true, TipoServizio.FRUIZIONE,"custom",REQUEST_URI,HttpConstants.REDIRECT_LOCATION, false);
 		
-		_location_custom(TipoServizio.FRUIZIONE,"custom",REQUEST_URI,HttpConstants.CONTENT_LOCATION, false);
+		_location_custom(true, TipoServizio.FRUIZIONE,"custom",REQUEST_URI,HttpConstants.CONTENT_LOCATION, false);
 		
-		_location_custom(TipoServizio.FRUIZIONE,"custom",REQUEST_URI,HEADER_HTTP_CUSTOM_LOCATION, true);
+		_location_custom(true, TipoServizio.FRUIZIONE,"custom",REQUEST_URI,HEADER_HTTP_CUSTOM_LOCATION, true);
 	}
 	
 	
 	
 	
-	private void _setCookie(TipoServizio tipoServizio,String operazione) throws Exception {
+	protected static void _setCookie(boolean rest,TipoServizio tipoServizio,String operazione) throws Exception {
+		
+		String tipologia = rest ? "Rest" : "Soap";
 		
 		String servizio = tipoServizio == TipoServizio.EROGAZIONE
-				? "/nuovoContesto/ModificaTestProxyPassRest-v1"
-				: "/govway/out/SoggettoInternoTestFruitore/SoggettoInternoTest/TestProxyPassRest/v1";
+				? "/nuovoContesto/ModificaTestProxyPass"+tipologia+"-v1"
+				: "/govway/out/SoggettoInternoTestFruitore/SoggettoInternoTest/TestProxyPass"+tipologia+"/v1";
 		
 		// Caso non tradotto
 		HttpRequest request = new HttpRequest();
-		request.addHeader("C1", esempio_cookie_altro_contesto);
-		HttpResponse response = _test(request, tipoServizio, operazione, "setCookie=C1");
+		request.addHeader("testcookie1", esempio_cookie_altro_contesto);
+		HttpResponse response = _test(rest, request, tipoServizio, operazione, "setCookie=testcookie1");
 		List<String> setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
 		assertNotNull(setValues);
-		assertEquals(setValues.size(),1);
+		assertEquals(1,setValues.size());
 		String setValue = setValues.get(0);
 		String atteso = esempio_cookie_altro_contesto;
-		String msg = "[C1 esempio_cookie_altro_contesto] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
+		String msg = "[testcookie1 esempio_cookie_altro_contesto] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
 		isEquals(msg, atteso, setValue);
 		
 		// Caso tradotto
 		request = new HttpRequest();
-		request.addHeader("C1", esempio_cookie_contesto_test_without_slash);
-		response = _test(request, tipoServizio, operazione, "setCookie=C1");
+		request.addHeader("testcookie1", esempio_cookie_contesto_test_without_slash);
+		response = _test(rest, request, tipoServizio, operazione, "setCookie=testcookie1");
 		setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
 		assertNotNull(setValues);
-		assertEquals(setValues.size(),1);
+		assertEquals(1,setValues.size());
 		setValue = setValues.get(0);
 		atteso = esempio_cookie_contesto_test_without_slash.replace(WEB_CONTEXT, servizio);
-		msg = "[C1 esempio_cookie_contesto_test_without_slash] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
+		msg = "[testcookie1 esempio_cookie_contesto_test_without_slash] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
 		isEquals(msg, atteso, setValue);
 		
 		// Caso tradotto solo un header
 		request = new HttpRequest();
-		request.addHeader("C1", esempio_cookie_altro_contesto);
+		request.addHeader("testcookie1", esempio_cookie_altro_contesto);
 		String c2 = esempio_cookie_contesto_test_without_slash.replace(NOME_COOKIE, "ALTRODICOOKIE");
-		request.addHeader("C2", c2);
-		response = _test(request, tipoServizio, operazione, "setCookie=C1,C2");
+		request.addHeader("testcookie2", c2);
+		response = _test(rest, request, tipoServizio, operazione, "setCookie=testcookie1,testcookie2");
 		setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
 		assertNotNull(setValues);
-		assertEquals(setValues.size(),2);
+		assertEquals(2,setValues.size());
 		String setValue0 = setValues.get(0);
 		String setValue1 = setValues.get(1);
 		atteso = esempio_cookie_altro_contesto;
-		msg = "[C1-C2 esempio_cookie_altro_contesto] Ricevuto0 '"+setValue0+"' Ricevuto1 '"+setValue1+"' - Atteso '"+atteso+"'";
+		msg = "[testcookie1-testcookie2 esempio_cookie_altro_contesto] Ricevuto0 '"+setValue0+"' Ricevuto1 '"+setValue1+"' - Atteso '"+atteso+"'";
 		boolean find1 = false;
 		try {
 			isEquals(msg, atteso, setValue0);
@@ -435,26 +397,26 @@ public class RestTest extends ConfigLoader {
 		}
 		atteso = c2.replace(WEB_CONTEXT, servizio);
 		if(find1) {
-			msg = "[C1-C2 esempio_cookie_contesto_test_without_slash] Ricevuto '"+setValue0+"' - Atteso '"+atteso+"'";
+			msg = "[testcookie1-testcookie2 esempio_cookie_contesto_test_without_slash] Ricevuto '"+setValue0+"' - Atteso '"+atteso+"'";
 			isEquals(msg, atteso, setValue0);
 		}
 		else {
-			msg = "[C1-C2 esempio_cookie_contesto_test_without_slash] Ricevuto '"+setValue1+"' - Atteso '"+atteso+"'";
+			msg = "[testcookie1-testcookie2 esempio_cookie_contesto_test_without_slash] Ricevuto '"+setValue1+"' - Atteso '"+atteso+"'";
 			isEquals(msg, atteso, setValue1);
 		}
 		
 		// Caso tradotto entrammbi gli header
 		request = new HttpRequest();
-		request.addHeader("C1", esempio_cookie_contesto_test_without_slash);
-		request.addHeader("C2", c2);
-		response = _test(request, tipoServizio, operazione, "setCookie=C1,C2");
+		request.addHeader("testcookie1", esempio_cookie_contesto_test_without_slash);
+		request.addHeader("testcookie2", c2);
+		response = _test(rest, request, tipoServizio, operazione, "setCookie=testcookie1,testcookie2");
 		setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
 		assertNotNull(setValues);
-		assertEquals(setValues.size(),2);
+		assertEquals(2,setValues.size());
 		setValue0 = setValues.get(0);
 		setValue1 = setValues.get(1);
 		atteso = esempio_cookie_contesto_test_without_slash.replace(WEB_CONTEXT, servizio);
-		msg = "[C1-C2 esempio_cookie_altro_contesto] Ricevuto0 '"+setValue0+"' Ricevuto1 '"+setValue1+"' - Atteso '"+atteso+"'";
+		msg = "[testcookie1-testcookie2 esempio_cookie_altro_contesto] Ricevuto0 '"+setValue0+"' Ricevuto1 '"+setValue1+"' - Atteso '"+atteso+"'";
 		find1 = false;
 		try {
 			isEquals(msg, atteso, setValue0);
@@ -464,149 +426,164 @@ public class RestTest extends ConfigLoader {
 		}
 		atteso = c2.replace(WEB_CONTEXT, servizio);
 		if(find1) {
-			msg = "[C1-C2 esempio_cookie_contesto_test_without_slash] Ricevuto '"+setValue0+"' - Atteso '"+atteso+"'";
+			msg = "[testcookie1-testcookie2 esempio_cookie_contesto_test_without_slash] Ricevuto '"+setValue0+"' - Atteso '"+atteso+"'";
 			isEquals(msg, atteso, setValue0);
 		}
 		else {
-			msg = "[C1-C2 esempio_cookie_contesto_test_without_slash] Ricevuto '"+setValue1+"' - Atteso '"+atteso+"'";
+			msg = "[testcookie1-testcookie2 esempio_cookie_contesto_test_without_slash] Ricevuto '"+setValue1+"' - Atteso '"+atteso+"'";
 			isEquals(msg, atteso, setValue1);
 		}
 		
 		// Caso tradotto esempio_cookie_contesto_test_with_slash
 		request = new HttpRequest();
-		request.addHeader("C1", esempio_cookie_contesto_test_with_slash);
-		response = _test(request, tipoServizio, operazione, "setCookie=C1");
+		request.addHeader("testcookie1", esempio_cookie_contesto_test_with_slash);
+		response = _test(rest, request, tipoServizio, operazione, "setCookie=testcookie1");
 		setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
 		assertNotNull(setValues);
-		assertEquals(setValues.size(),1);
+		assertEquals(1,setValues.size());
 		setValue = setValues.get(0);
 		atteso = esempio_cookie_contesto_test_with_slash.replace(WEB_CONTEXT, servizio);
-		msg = "[C1 esempio_cookie_contesto_test_with_slash] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
+		msg = "[testcookie1 esempio_cookie_contesto_test_with_slash] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
 		isEquals(msg, atteso, setValue);
 		
 		// Caso tradotto esempio_cookie_contesto_test_without_slash_url_parameter
 		request = new HttpRequest();
-		request.addHeader("C1", esempio_cookie_contesto_test_without_slash_url_parameter);
-		response = _test(request, tipoServizio, operazione, "setCookie=C1");
+		request.addHeader("testcookie1", esempio_cookie_contesto_test_without_slash_url_parameter);
+		response = _test(rest, request, tipoServizio, operazione, "setCookie=testcookie1");
 		setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
 		assertNotNull(setValues);
-		assertEquals(setValues.size(),1);
+		assertEquals(1,setValues.size());
 		setValue = setValues.get(0);
 		atteso = esempio_cookie_contesto_test_without_slash_url_parameter.replace(WEB_CONTEXT, servizio);
-		msg = "[C1 esempio_cookie_contesto_test_without_slash_url_parameter] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
+		msg = "[testcookie1 esempio_cookie_contesto_test_without_slash_url_parameter] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
 		isEquals(msg, atteso, setValue);
 		
 		// Caso tradotto esempio_cookie_contesto_test_with_slash_url_parameter
 		request = new HttpRequest();
-		request.addHeader("C1", esempio_cookie_contesto_test_with_slash_url_parameter);
-		response = _test(request, tipoServizio, operazione, "setCookie=C1");
+		request.addHeader("testcookie1", esempio_cookie_contesto_test_with_slash_url_parameter);
+		response = _test(rest, request, tipoServizio, operazione, "setCookie=testcookie1");
 		setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
 		assertNotNull(setValues);
-		assertEquals(setValues.size(),1);
+		assertEquals(1,setValues.size());
 		setValue = setValues.get(0);
 		atteso = esempio_cookie_contesto_test_with_slash_url_parameter.replace(WEB_CONTEXT, servizio);
-		msg = "[C1 esempio_cookie_contesto_test_with_slash_url_parameter] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
+		msg = "[testcookie1 esempio_cookie_contesto_test_with_slash_url_parameter] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
 		isEquals(msg, atteso, setValue);
 		
 		// Caso tradotto esempio_cookie_contesto_test_without_slash_url_parameters
 		request = new HttpRequest();
-		request.addHeader("C1", esempio_cookie_contesto_test_without_slash_url_parameters);
-		response = _test(request, tipoServizio, operazione, "setCookie=C1");
+		request.addHeader("testcookie1", esempio_cookie_contesto_test_without_slash_url_parameters);
+		response = _test(rest, request, tipoServizio, operazione, "setCookie=testcookie1");
 		setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
 		assertNotNull(setValues);
-		assertEquals(setValues.size(),1);
+		assertEquals(1,setValues.size());
 		setValue = setValues.get(0);
 		atteso = esempio_cookie_contesto_test_without_slash_url_parameters.replace(WEB_CONTEXT, servizio);
-		msg = "[C1 esempio_cookie_contesto_test_without_slash_url_parameters] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
+		msg = "[testcookie1 esempio_cookie_contesto_test_without_slash_url_parameters] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
 		isEquals(msg, atteso, setValue);
 		
 		// Caso tradotto esempio_cookie_contesto_test_with_slash_url_parameters
 		request = new HttpRequest();
-		request.addHeader("C1", esempio_cookie_contesto_test_with_slash_url_parameters);
-		response = _test(request, tipoServizio, operazione, "setCookie=C1");
+		request.addHeader("testcookie1", esempio_cookie_contesto_test_with_slash_url_parameters);
+		response = _test(rest, request, tipoServizio, operazione, "setCookie=testcookie1");
 		setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
 		assertNotNull(setValues);
-		assertEquals(setValues.size(),1);
+		assertEquals(1,setValues.size());
 		setValue = setValues.get(0);
 		atteso = esempio_cookie_contesto_test_with_slash_url_parameters.replace(WEB_CONTEXT, servizio);
-		msg = "[C1 esempio_cookie_contesto_test_with_slash_url_parameters] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
+		msg = "[testcookie1 esempio_cookie_contesto_test_with_slash_url_parameters] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
 		isEquals(msg, atteso, setValue);
 		
 		
 		// Caso tradotto esempio_cookie_contesto_test_with_context_without_slash
 		request = new HttpRequest();
-		request.addHeader("C1", esempio_cookie_contesto_test_with_context_without_slash);
-		response = _test(request, tipoServizio, operazione, "setCookie=C1");
+		request.addHeader("testcookie1", esempio_cookie_contesto_test_with_context_without_slash);
+		response = _test(rest, request, tipoServizio, operazione, "setCookie=testcookie1");
 		setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
 		assertNotNull(setValues);
-		assertEquals(setValues.size(),1);
+		assertEquals(1,setValues.size());
 		setValue = setValues.get(0);
 		atteso = esempio_cookie_contesto_test_with_context_without_slash.replace(WEB_CONTEXT, servizio);
-		msg = "[C1 esempio_cookie_contesto_test_with_context_without_slash] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
+		msg = "[testcookie1 esempio_cookie_contesto_test_with_context_without_slash] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
 		isEquals(msg, atteso, setValue);
 		
 		// Caso tradotto esempio_cookie_contesto_test_with_context_with_slash
 		request = new HttpRequest();
-		request.addHeader("C1", esempio_cookie_contesto_test_with_context_with_slash);
-		response = _test(request, tipoServizio, operazione, "setCookie=C1");
+		request.addHeader("testcookie1", esempio_cookie_contesto_test_with_context_with_slash);
+		response = _test(rest, request, tipoServizio, operazione, "setCookie=testcookie1");
 		setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
 		assertNotNull(setValues);
-		assertEquals(setValues.size(),1);
+		assertEquals(1,setValues.size());
 		setValue = setValues.get(0);
 		atteso = esempio_cookie_contesto_test_with_context_with_slash.replace(WEB_CONTEXT, servizio);
-		msg = "[C1 esempio_cookie_contesto_test_with_context_with_slash] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
+		msg = "[testcookie1 esempio_cookie_contesto_test_with_context_with_slash] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
 		isEquals(msg, atteso, setValue);
 		
 		// Caso tradotto esempio_cookie_contesto_test_with_context_without_slash_url_parameter
 		request = new HttpRequest();
-		request.addHeader("C1", esempio_cookie_contesto_test_with_context_without_slash_url_parameter);
-		response = _test(request, tipoServizio, operazione, "setCookie=C1");
+		request.addHeader("testcookie1", esempio_cookie_contesto_test_with_context_without_slash_url_parameter);
+		response = _test(rest, request, tipoServizio, operazione, "setCookie=testcookie1");
 		setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
 		assertNotNull(setValues);
-		assertEquals(setValues.size(),1);
+		assertEquals(1,setValues.size());
 		setValue = setValues.get(0);
 		atteso = esempio_cookie_contesto_test_with_context_without_slash_url_parameter.replace(WEB_CONTEXT, servizio);
-		msg = "[C1 esempio_cookie_contesto_test_with_context_without_slash_url_parameter] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
+		msg = "[testcookie1 esempio_cookie_contesto_test_with_context_without_slash_url_parameter] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
 		isEquals(msg, atteso, setValue);
 		
 		// Caso tradotto esempio_cookie_contesto_test_with_context_with_slash_url_parameter
 		request = new HttpRequest();
-		request.addHeader("C1", esempio_cookie_contesto_test_with_context_with_slash_url_parameter);
-		response = _test(request, tipoServizio, operazione, "setCookie=C1");
+		request.addHeader("testcookie1", esempio_cookie_contesto_test_with_context_with_slash_url_parameter);
+		response = _test(rest, request, tipoServizio, operazione, "setCookie=testcookie1");
 		setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
 		assertNotNull(setValues);
-		assertEquals(setValues.size(),1);
+		assertEquals(1,setValues.size());
 		setValue = setValues.get(0);
 		atteso = esempio_cookie_contesto_test_with_context_with_slash_url_parameter.replace(WEB_CONTEXT, servizio);
-		msg = "[C1 esempio_cookie_contesto_test_with_context_with_slash_url_parameter] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
+		msg = "[testcookie1 esempio_cookie_contesto_test_with_context_with_slash_url_parameter] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
 		isEquals(msg, atteso, setValue);
 		
 		// Caso tradotto esempio_cookie_contesto_test_with_context_without_slash_url_parameters
 		request = new HttpRequest();
-		request.addHeader("C1", esempio_cookie_contesto_test_with_context_without_slash_url_parameters);
-		response = _test(request, tipoServizio, operazione, "setCookie=C1");
+		request.addHeader("testcookie1", esempio_cookie_contesto_test_with_context_without_slash_url_parameters);
+		response = _test(rest, request, tipoServizio, operazione, "setCookie=testcookie1");
 		setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
 		assertNotNull(setValues);
-		assertEquals(setValues.size(),1);
+		assertEquals(1,setValues.size());
 		setValue = setValues.get(0);
 		atteso = esempio_cookie_contesto_test_with_context_without_slash_url_parameters.replace(WEB_CONTEXT, servizio);
-		msg = "[C1 esempio_cookie_contesto_test_with_context_without_slash_url_parameters] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
+		msg = "[testcookie1 esempio_cookie_contesto_test_with_context_without_slash_url_parameters] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
 		isEquals(msg, atteso, setValue);
 		
 		// Caso tradotto esempio_cookie_contesto_test_with_context_with_slash_url_parameters
 		request = new HttpRequest();
-		request.addHeader("C1", esempio_cookie_contesto_test_with_context_with_slash_url_parameters);
-		response = _test(request, tipoServizio, operazione, "setCookie=C1");
+		request.addHeader("testcookie1", esempio_cookie_contesto_test_with_context_with_slash_url_parameters);
+		response = _test(rest, request, tipoServizio, operazione, "setCookie=testcookie1");
 		setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
 		assertNotNull(setValues);
-		assertEquals(setValues.size(),1);
+		assertEquals(1,setValues.size());
 		setValue = setValues.get(0);
 		atteso = esempio_cookie_contesto_test_with_context_with_slash_url_parameters.replace(WEB_CONTEXT, servizio);
-		msg = "[C1 esempio_cookie_contesto_test_with_context_with_slash_url_parameters] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
+		msg = "[testcookie1 esempio_cookie_contesto_test_with_context_with_slash_url_parameters] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
 		isEquals(msg, atteso, setValue);
 	}
 	
-	private void isEquals(String msg, String setCookie1, String setCookie2) {
+	
+	protected static void _setCookie_nonTradotto(boolean rest,TipoServizio tipoServizio,String operazione) throws Exception {
+		// Caso non tradotto
+		HttpRequest request = new HttpRequest();
+		request.addHeader("testcookie1", esempio_cookie_contesto_test_without_slash);
+		HttpResponse response = _test(rest, request, tipoServizio, operazione, "setCookie=testcookie1");
+		List<String> setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
+		assertNotNull(setValues);
+		assertEquals(1,setValues.size());
+		String setValue = setValues.get(0);
+		String atteso = esempio_cookie_contesto_test_without_slash; // non tradotto
+		String msg = "[testcookie1 esempio_cookie_contesto_test_without_slash] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
+		isEquals(msg, atteso, setValue);
+	}
+	
+	protected static void isEquals(String msg, String setCookie1, String setCookie2) {
 		List<HttpCookie> l1 = java.net.HttpCookie.parse(setCookie1);
 		List<HttpCookie> l2 = java.net.HttpCookie.parse(setCookie2);
 		assertEquals(msg, l1.size(), l2.size());
@@ -653,11 +630,13 @@ public class RestTest extends ConfigLoader {
 	}
 	
 	
-	private void _location(TipoServizio tipoServizio,String operazione,String prefix, String header) throws Exception {
+	protected static void _location(boolean rest,TipoServizio tipoServizio,String operazione,String prefix, String header) throws Exception {
+		
+		String tipologia = rest ? "Rest" : "Soap";
 		
 		String servizio = tipoServizio == TipoServizio.EROGAZIONE
-				? "/nuovoContesto/ModificaTestProxyPassRest-v1"
-				: "/govway/out/SoggettoInternoTestFruitore/SoggettoInternoTest/TestProxyPassRest/v1";
+				? "/nuovoContesto/ModificaTestProxyPass"+tipologia+"-v1"
+				: "/govway/out/SoggettoInternoTestFruitore/SoggettoInternoTest/TestProxyPass"+tipologia+"/v1";
 		
 		String reqPrefix = tipoServizio == TipoServizio.EROGAZIONE
 				? "http://provaModificaHostEContesto"
@@ -666,10 +645,10 @@ public class RestTest extends ConfigLoader {
 		// Caso non tradotto
 		HttpRequest request = new HttpRequest();
 		String parametroCodificare = TransportUtils.urlEncodeParam(header+":"+prefix+esempio_location_altro_contesto,Charset.UTF_8.getValue());
-		HttpResponse response = _test(request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
+		HttpResponse response = _test(rest, request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
 		List<String> locationValues = TransportUtils.getValues(response.getHeadersValues(),header);
 		assertNotNull(locationValues);
-		assertEquals(locationValues.size(),1);
+		assertEquals(1,locationValues.size());
 		String locationValue = locationValues.get(0);
 		String atteso = prefix+esempio_location_altro_contesto;
 		String msg = "[esempio_location_altro_contesto] Ricevuto '"+locationValue+"' - Atteso '"+atteso+"'";
@@ -678,10 +657,10 @@ public class RestTest extends ConfigLoader {
 		// esempio_location_contesto_test_without_slash
 		request = new HttpRequest();
 		parametroCodificare = TransportUtils.urlEncodeParam(header+":"+prefix+esempio_location_contesto_test_without_slash,Charset.UTF_8.getValue());
-		response = _test(request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
+		response = _test(rest, request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
 		locationValues = TransportUtils.getValues(response.getHeadersValues(),header);
 		assertNotNull(locationValues);
-		assertEquals(locationValues.size(),1);
+		assertEquals(1,locationValues.size());
 		locationValue = locationValues.get(0);
 		atteso = prefix.replace(REQUEST_URI, reqPrefix)
 				+
@@ -692,10 +671,10 @@ public class RestTest extends ConfigLoader {
 		// esempio_location_contesto_test_with_slash
 		request = new HttpRequest();
 		parametroCodificare = TransportUtils.urlEncodeParam(header+":"+prefix+esempio_location_contesto_test_with_slash,Charset.UTF_8.getValue());
-		response = _test(request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
+		response = _test(rest, request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
 		locationValues = TransportUtils.getValues(response.getHeadersValues(),header);
 		assertNotNull(locationValues);
-		assertEquals(locationValues.size(),1);
+		assertEquals(1,locationValues.size());
 		locationValue = locationValues.get(0);
 		atteso = prefix.replace(REQUEST_URI, reqPrefix)
 				+
@@ -706,10 +685,10 @@ public class RestTest extends ConfigLoader {
 		// esempio_location_contesto_test_without_slash_url_parameter
 		request = new HttpRequest();
 		parametroCodificare = TransportUtils.urlEncodeParam(header+":"+prefix+esempio_location_contesto_test_without_slash_url_parameter,Charset.UTF_8.getValue());
-		response = _test(request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
+		response = _test(rest, request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
 		locationValues = TransportUtils.getValues(response.getHeadersValues(),header);
 		assertNotNull(locationValues);
-		assertEquals(locationValues.size(),1);
+		assertEquals(1,locationValues.size());
 		locationValue = locationValues.get(0);
 		atteso = prefix.replace(REQUEST_URI, reqPrefix)
 				+
@@ -720,10 +699,10 @@ public class RestTest extends ConfigLoader {
 		// esempio_location_contesto_test_with_slash_url_parameter
 		request = new HttpRequest();
 		parametroCodificare = TransportUtils.urlEncodeParam(header+":"+prefix+esempio_location_contesto_test_with_slash_url_parameter,Charset.UTF_8.getValue());
-		response = _test(request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
+		response = _test(rest, request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
 		locationValues = TransportUtils.getValues(response.getHeadersValues(),header);
 		assertNotNull(locationValues);
-		assertEquals(locationValues.size(),1);
+		assertEquals(1,locationValues.size());
 		locationValue = locationValues.get(0);
 		atteso = prefix.replace(REQUEST_URI, reqPrefix)
 				+
@@ -734,10 +713,10 @@ public class RestTest extends ConfigLoader {
 		// esempio_location_contesto_test_without_slash_url_parameters
 		request = new HttpRequest();
 		parametroCodificare = TransportUtils.urlEncodeParam(header+":"+prefix+esempio_location_contesto_test_without_slash_url_parameters,Charset.UTF_8.getValue());
-		response = _test(request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
+		response = _test(rest, request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
 		locationValues = TransportUtils.getValues(response.getHeadersValues(),header);
 		assertNotNull(locationValues);
-		assertEquals(locationValues.size(),1);
+		assertEquals(1,locationValues.size());
 		locationValue = locationValues.get(0);
 		atteso = prefix.replace(REQUEST_URI, reqPrefix)
 				+
@@ -748,10 +727,10 @@ public class RestTest extends ConfigLoader {
 		// esempio_location_contesto_test_with_slash_url_parameters
 		request = new HttpRequest();
 		parametroCodificare = TransportUtils.urlEncodeParam(header+":"+prefix+esempio_location_contesto_test_with_slash_url_parameters,Charset.UTF_8.getValue());
-		response = _test(request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
+		response = _test(rest, request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
 		locationValues = TransportUtils.getValues(response.getHeadersValues(),header);
 		assertNotNull(locationValues);
-		assertEquals(locationValues.size(),1);
+		assertEquals(1,locationValues.size());
 		locationValue = locationValues.get(0);
 		atteso = prefix.replace(REQUEST_URI, reqPrefix)
 				+
@@ -763,10 +742,10 @@ public class RestTest extends ConfigLoader {
 		// esempio_location_contesto_test_with_context_without_slash
 		request = new HttpRequest();
 		parametroCodificare = TransportUtils.urlEncodeParam(header+":"+prefix+esempio_location_contesto_test_with_context_without_slash,Charset.UTF_8.getValue());
-		response = _test(request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
+		response = _test(rest, request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
 		locationValues = TransportUtils.getValues(response.getHeadersValues(),header);
 		assertNotNull(locationValues);
-		assertEquals(locationValues.size(),1);
+		assertEquals(1,locationValues.size());
 		locationValue = locationValues.get(0);
 		atteso = prefix.replace(REQUEST_URI, reqPrefix)
 				+
@@ -777,10 +756,10 @@ public class RestTest extends ConfigLoader {
 		// esempio_location_contesto_test_with_context_with_slash
 		request = new HttpRequest();
 		parametroCodificare = TransportUtils.urlEncodeParam(header+":"+prefix+esempio_location_contesto_test_with_context_with_slash,Charset.UTF_8.getValue());
-		response = _test(request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
+		response = _test(rest, request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
 		locationValues = TransportUtils.getValues(response.getHeadersValues(),header);
 		assertNotNull(locationValues);
-		assertEquals(locationValues.size(),1);
+		assertEquals(1,locationValues.size());
 		locationValue = locationValues.get(0);
 		atteso = prefix.replace(REQUEST_URI, reqPrefix)
 				+
@@ -791,10 +770,10 @@ public class RestTest extends ConfigLoader {
 		// esempio_location_contesto_test_with_context_without_slash_url_parameter
 		request = new HttpRequest();
 		parametroCodificare = TransportUtils.urlEncodeParam(header+":"+prefix+esempio_location_contesto_test_with_context_without_slash_url_parameter,Charset.UTF_8.getValue());
-		response = _test(request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
+		response = _test(rest, request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
 		locationValues = TransportUtils.getValues(response.getHeadersValues(),header);
 		assertNotNull(locationValues);
-		assertEquals(locationValues.size(),1);
+		assertEquals(1,locationValues.size());
 		locationValue = locationValues.get(0);
 		atteso = prefix.replace(REQUEST_URI, reqPrefix)
 				+
@@ -805,10 +784,10 @@ public class RestTest extends ConfigLoader {
 		// esempio_location_contesto_test_with_context_with_slash_url_parameter
 		request = new HttpRequest();
 		parametroCodificare = TransportUtils.urlEncodeParam(header+":"+prefix+esempio_location_contesto_test_with_context_with_slash_url_parameter,Charset.UTF_8.getValue());
-		response = _test(request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
+		response = _test(rest, request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
 		locationValues = TransportUtils.getValues(response.getHeadersValues(),header);
 		assertNotNull(locationValues);
-		assertEquals(locationValues.size(),1);
+		assertEquals(1,locationValues.size());
 		locationValue = locationValues.get(0);
 		atteso = prefix.replace(REQUEST_URI, reqPrefix)
 				+
@@ -819,10 +798,10 @@ public class RestTest extends ConfigLoader {
 		// esempio_location_contesto_test_with_context_without_slash_url_parameters
 		request = new HttpRequest();
 		parametroCodificare = TransportUtils.urlEncodeParam(header+":"+prefix+esempio_location_contesto_test_with_context_without_slash_url_parameters,Charset.UTF_8.getValue());
-		response = _test(request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
+		response = _test(rest, request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
 		locationValues = TransportUtils.getValues(response.getHeadersValues(),header);
 		assertNotNull(locationValues);
-		assertEquals(locationValues.size(),1);
+		assertEquals(1,locationValues.size());
 		locationValue = locationValues.get(0);
 		atteso = prefix.replace(REQUEST_URI, reqPrefix)
 				+
@@ -833,10 +812,10 @@ public class RestTest extends ConfigLoader {
 		// esempio_location_contesto_test_with_context_with_slash_url_parameters
 		request = new HttpRequest();
 		parametroCodificare = TransportUtils.urlEncodeParam(header+":"+prefix+esempio_location_contesto_test_with_context_with_slash_url_parameters,Charset.UTF_8.getValue());
-		response = _test(request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
+		response = _test(rest, request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
 		locationValues = TransportUtils.getValues(response.getHeadersValues(),header);
 		assertNotNull(locationValues);
-		assertEquals(locationValues.size(),1);
+		assertEquals(1,locationValues.size());
 		locationValue = locationValues.get(0);
 		atteso = prefix.replace(REQUEST_URI, reqPrefix)
 				+
@@ -846,14 +825,14 @@ public class RestTest extends ConfigLoader {
 		
 	}
 	
-	private void _location_nonTradotta(TipoServizio tipoServizio,String operazione, String prefix, String header) throws Exception {
+	protected static void _location_nonTradotta(boolean rest, TipoServizio tipoServizio,String operazione, String prefix, String header) throws Exception {
 		
 		HttpRequest request = new HttpRequest();
 		String parametroCodificare = TransportUtils.urlEncodeParam(header+":"+prefix+esempio_location_contesto_test_without_slash,Charset.UTF_8.getValue());
-		HttpResponse response = _test(request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
+		HttpResponse response = _test(rest, request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
 		List<String> locationValues = TransportUtils.getValues(response.getHeadersValues(),header);
 		assertNotNull(locationValues);
-		assertEquals(locationValues.size(),1);
+		assertEquals(1,locationValues.size());
 		String locationValue = locationValues.get(0);
 		String atteso = prefix
 				+
@@ -863,11 +842,13 @@ public class RestTest extends ConfigLoader {
 		
 	}
 	
-	private void _location_custom(TipoServizio tipoServizio,String operazione, String prefix, String header, boolean attesaTraduzione) throws Exception {
+	protected static void _location_custom(boolean rest,TipoServizio tipoServizio,String operazione, String prefix, String header, boolean attesaTraduzione) throws Exception {
+		
+		String tipologia = rest ? "Rest" : "Soap";
 		
 		String servizio = tipoServizio == TipoServizio.EROGAZIONE
-				? "/nuovoContesto/ModificaTestProxyPassRest-v1"
-				: "/govway/out/SoggettoInternoTestFruitore/SoggettoInternoTest/TestProxyPassRest/v1";
+				? "/nuovoContesto/ModificaTestProxyPass"+tipologia+"-v1"
+				: "/govway/out/SoggettoInternoTestFruitore/SoggettoInternoTest/TestProxyPass"+tipologia+"/v1";
 		
 		String reqPrefix = tipoServizio == TipoServizio.EROGAZIONE
 				? "http://provaModificaHostEContesto"
@@ -875,10 +856,10 @@ public class RestTest extends ConfigLoader {
 		
 		HttpRequest request = new HttpRequest();
 		String parametroCodificare = TransportUtils.urlEncodeParam(header+":"+prefix+esempio_location_contesto_test_without_slash,Charset.UTF_8.getValue());
-		HttpResponse response = _test(request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
+		HttpResponse response = _test(rest, request, tipoServizio, operazione, "returnHttpHeader="+parametroCodificare);
 		List<String> locationValues = TransportUtils.getValues(response.getHeadersValues(),header);
 		assertNotNull(locationValues);
-		assertEquals(locationValues.size(),1);
+		assertEquals(1,locationValues.size());
 		String locationValue = locationValues.get(0);
 		String atteso = null;
 		if(attesaTraduzione) {
@@ -896,20 +877,26 @@ public class RestTest extends ConfigLoader {
 		
 	}
 		
-	private static HttpResponse _test(HttpRequest request, TipoServizio tipoServizio, String operazione,
+	protected static HttpResponse _test(boolean rest,HttpRequest request, TipoServizio tipoServizio, String operazione,
 			String parametri) throws Exception {
+		
+		String tipologia = rest ? "Rest" : "Soap";
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetAllCache(logCore);
 
 		String url = tipoServizio == TipoServizio.EROGAZIONE
-				? System.getProperty("govway_base_path") + "/SoggettoInternoTest/TestProxyPassRest/v1/"+operazione
-				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/TestProxyPassRest/v1/"+operazione;
+				? System.getProperty("govway_base_path") + "/SoggettoInternoTest/TestProxyPass"+tipologia+"/v1/"+operazione
+				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/TestProxyPass"+tipologia+"/v1/"+operazione;
 		if(parametri!=null) {
 			url = url + "?" + parametri;
 		}
 		
-		String contentType= HttpConstants.CONTENT_TYPE_JSON;
-		byte[]content=Bodies.getJson(Bodies.SMALL_SIZE).getBytes();
+		String contentType= rest ? HttpConstants.CONTENT_TYPE_JSON : HttpConstants.CONTENT_TYPE_SOAP_1_1;
+		byte[]content=rest ?  Bodies.getJson(Bodies.SMALL_SIZE).getBytes() : Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes();
+		
+		if(!rest) {
+			request.addHeader(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "test");
+		}
 		
 		request.setMethod(HttpRequestMethod.POST);
 		request.setContentType(contentType);
@@ -924,7 +911,7 @@ public class RestTest extends ConfigLoader {
 		assertNotNull(idTransazione);
 			
 		assertEquals(200, response.getResultHTTPOperation());
-		assertEquals(HttpConstants.CONTENT_TYPE_JSON, response.getContentType());
+		assertEquals(contentType, response.getContentType());
 
 		return response;
 		
