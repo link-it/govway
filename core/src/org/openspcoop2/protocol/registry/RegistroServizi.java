@@ -1571,8 +1571,14 @@ public class RegistroServizi  {
 				}else if(classArgoments.length==2){
 					Method method =  null;
 					if((driver instanceof DriverRegistroServiziDB) && (readContenutoAllegati!=null) ){
-						method = driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1],boolean.class);
-						obj = method.invoke(driver,values[0],values[1],readContenutoAllegati.booleanValue());
+						if("getAccordoServizioParteComune".equals(methodName)) {
+							method = driver.getClass().getMethod(methodName,classArgoments[0],boolean.class,classArgoments[1]);
+							obj = method.invoke(driver,values[0],readContenutoAllegati.booleanValue(),values[1]);
+						}
+						else {
+							method = driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1],boolean.class);
+							obj = method.invoke(driver,values[0],values[1],readContenutoAllegati.booleanValue());
+						}
 					}else{
 						method = driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1]);
 						obj = method.invoke(driver,values[0],values[1]);
@@ -1706,8 +1712,14 @@ public class RegistroServizi  {
 					}else if(classArgoments.length==2){
 						Method method =  null;
 						if((driver instanceof DriverRegistroServiziDB) && (readContenutoAllegati!=null) ){
-							method = driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1],boolean.class);
-							obj = method.invoke(driver,values[0],values[1],readContenutoAllegati.booleanValue());
+							if("getAccordoServizioParteComune".equals(methodName)) {
+								method = driver.getClass().getMethod(methodName,classArgoments[0],boolean.class,classArgoments[1]);
+								obj = method.invoke(driver,values[0],readContenutoAllegati.booleanValue(),values[1]);
+							}
+							else {
+								method = driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1],boolean.class);
+								obj = method.invoke(driver,values[0],values[1],readContenutoAllegati.booleanValue());
+							}
 						}else{
 							method = driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1]);
 							obj = method.invoke(driver,values[0],values[1]);
