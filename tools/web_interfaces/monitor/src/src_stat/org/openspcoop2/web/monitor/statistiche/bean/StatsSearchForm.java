@@ -412,6 +412,9 @@ public class StatsSearchForm extends BaseSearchForm{
 				}
 				//System.out.println("PERIODO LISTENER: "+this.modalitaTemporale);
 			}
+			else {
+				this.modalitaTemporale = StatisticType.ORARIA;
+			}
 		}
 		
 		

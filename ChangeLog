@@ -1,3 +1,11 @@
+2022-07-29  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1414
+	Risolta anomalia presente in tutte le distribuzioni statistiche eccetto quella temporale e per esiti.
+	Quando si selezionava un periodo 'personalizzato', se la scelta precedente del periodo era 'ultime 12 ore' l'impostazione personalizzata delle ore funzionava, 
+	altrimenti le date venivano resettate automaticamente dopo l'impostazione dell'ora all'intervallo inferiore o superiore a seconda della data iniziale o finale.
+
 2022-07-28  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
