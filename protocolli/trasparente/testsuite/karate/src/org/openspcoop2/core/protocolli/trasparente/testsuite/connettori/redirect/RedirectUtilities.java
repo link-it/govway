@@ -131,17 +131,17 @@ public class RedirectUtilities {
 			if(api.contains("SOAP")) {
 				esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_INVOCAZIONE);
 				verifyKo(response, 500, contentTypeError, "APIUnavailable");
-				diagnostico = "Gestione redirect (code:"+httpRedirectStatus+" Location:http://localhost:8080/govway/SoggettoInternoTest/BackendRedirect/v1/%) non attiva";
+				diagnostico = "Gestione redirect (code:"+httpRedirectStatus+" Location:http://localhost:8080/govway/SoggettoInternoTest/BackendRedirect/v1%) non attiva";
 				if(relative) {
-					diagnostico = "Gestione redirect (code:"+httpRedirectStatus+" Location:/govway/SoggettoInternoTest/BackendRedirect/v1/%) non attiva";
+					diagnostico = "Gestione redirect (code:"+httpRedirectStatus+" Location:/govway/SoggettoInternoTest/BackendRedirect/v1%) non attiva";
 				}
 			}
 			else {
 				esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.HTTP_3xx);
 				verifyOk(response, httpRedirectStatus, contentType, contentS, logCore); // il codice http e' gia' stato impostato
-				diagnostico = " [redirect-location: http://localhost:8080/govway/SoggettoInternoTest/BackendRedirect/v1/";
+				diagnostico = " [redirect-location: http://localhost:8080/govway/SoggettoInternoTest/BackendRedirect/v1";
 				if(relative) {
-					diagnostico = " [redirect-location: /govway/SoggettoInternoTest/BackendRedirect/v1/";
+					diagnostico = " [redirect-location: /govway/SoggettoInternoTest/BackendRedirect/v1";
 				}
 			}
 		}

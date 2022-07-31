@@ -28,6 +28,7 @@ import java.util.List;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.Utils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -597,7 +598,7 @@ public class RestTest extends ConfigLoader {
 			if(c1.getCommentURL()!=null) {
 				assertEquals(msg+" (getCommentURL)", c1.getCommentURL(), c2.getCommentURL());
 			}
-			if(c1.getPath().contains("?")){
+			if(c1.getPath().contains("?") && !Utils.isJenkins()){
 				assertEquals(msg+" (getDiscard)", true, c2.getDiscard());
 			}
 			else {
