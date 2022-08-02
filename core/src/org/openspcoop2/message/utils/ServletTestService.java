@@ -546,6 +546,9 @@ public class ServletTestService extends HttpServlet {
 				if(!hdr.isEmpty()) {
 					for (String h : hdr) {
 						String value = TransportUtils.getHeaderFirstValue(req, h);
+						if(value==null || "".equals(value)) {
+							throw new ServletException("Ricevuta una richiesta di set cookie il cui valore è da prendere da un header http non esistente: '"+h+"'");
+						}
 						List<HttpCookie> l = java.net.HttpCookie.parse(value);
 						for (HttpCookie httpCookie : l) {
 							Cookie newCookie = new Cookie(httpCookie.getName(),httpCookie.getValue());

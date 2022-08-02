@@ -29,6 +29,7 @@ import java.util.Map;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 import org.slf4j.Logger;
 
 /**
@@ -483,9 +484,61 @@ public class RestUtilities {
 		}
 		else {
 			
-//			System.out.println("ProxyPass nop redirect["+redirectLocationUrl+"] relative["+rRelative+"] absolute["+r+"]");
+//			System.out.println("ProxyPass nop cookiePath["+cookiePath+"] relative["+rRelative+"] absolute["+r+"]");
 			
 			return cookiePath;
+		}
+	}
+	
+	public static String buildCookiePassReverseDomain(TransportRequestContext transportRequestContext, String baseUrl, String cookieDomain, String prefixGatewayUrl) throws MalformedURLException {
+               
+		String r = baseUrl;
+		if(r.contains("?")) {
+			r = baseUrl.split("\\?")[0];
+		}
+         
+		URL uri = new URL(r);
+		String rDomain= uri.getHost();
+		
+		if(cookieDomain!=null && cookieDomain.equalsIgnoreCase(rDomain)) {
+			
+			//System.out.println("CookieDomain cookieDomain["+cookieDomain+"]");
+			
+			String newDomain = null;
+			if(prefixGatewayUrl==null) {
+				if(transportRequestContext!=null && transportRequestContext instanceof HttpServletTransportRequestContext) {
+					HttpServletTransportRequestContext http = (HttpServletTransportRequestContext) transportRequestContext;
+					if(http.getHttpServletRequest()!=null) {
+						String requestUrl = http.getHttpServletRequest().getRequestURL().toString();
+						URL uriRequestUrl = new URL(requestUrl);
+						newDomain = uriRequestUrl.getHost();
+					}
+				}
+			}
+			else {
+				URL uriRequestUrl = new URL(prefixGatewayUrl);
+				newDomain = uriRequestUrl.getHost();
+			}
+
+			if(newDomain!=null) {
+				
+				//System.out.println("ProxyPass cookieDomain["+cookieDomain+"] newCookieDomain["+newDomain+"]");
+				
+				return newDomain;
+			}
+			else {
+				
+//				System.out.println("ProxyPass nop cookieDomain["+cookieDomain+"]");
+			
+				return cookieDomain;
+			}
+			
+		}
+		else {
+			
+//			System.out.println("ProxyPass nop cookieDomain["+cookieDomain+"]");
+			
+			return cookieDomain;
 		}
 	}
 }

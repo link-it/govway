@@ -573,6 +573,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 											
 										List<String> cookieNames = new ArrayList<String>();
 										List<String> cookiePaths = new ArrayList<String>();
+										List<String> cookieDomains = new ArrayList<String>();
 										try {
 											List<HttpCookie> l = java.net.HttpCookie.parse(cookieValue);
 											for (HttpCookie httpCookie : l) {
@@ -580,6 +581,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 												if(httpCookie.getPath()!=null) {
 													cookieNames.add(httpCookie.getName());
 													cookiePaths.add(httpCookie.getPath());
+													cookieDomains.add(httpCookie.getDomain());
 												}
 											}
 										}catch(Throwable e) {
@@ -590,6 +592,10 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 											for (int i = 0; i < cookieNames.size(); i++) {
 												String cName = cookieNames.get(i);
 												String cPath = cookiePaths.get(i);
+												String cDomain = cookieDomains.get(i);
+												
+												String newValue = cookieValue;
+												
 												try {
 													if(cPath!=null) {
 														String newPath = RestUtilities.buildCookiePassReversePath(this.requestMsg.getTransportRequestContext(), baseUrl, cPath, prefixGatewayUrl, contesto);
@@ -597,9 +603,9 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 															this.logger.debug("Nuovo Path '"+cName+"' (header:"+header+"):["+newPath+"] ...");
 									               
 														if(!cPath.equals(newPath)) {
-															String newValue = cookieValue.replace(cPath, newPath);
+															newValue = newValue.replace(cPath, newPath);
 															/*
-															String newValue = cookieValue.replace("path="+cPath, "path="+newPath);
+															String newValue = newValue.replace("path="+cPath, "path="+newPath);
 															newValue = newValue.replace("path ="+cPath, "path ="+newPath);
 															newValue = newValue.replace("path= "+cPath, "path= "+newPath);
 															newValue = newValue.replace("path = "+cPath, "path = "+newPath);
@@ -629,22 +635,68 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 															newValue = newValue.replace("PATH= \""+cPath, "PATH= \""+newPath);
 															newValue = newValue.replace("PATH = \""+cPath, "PATH = \""+newPath);*/
 															
-															newCookieValues.add(newValue);
 															modify=true;
-														}
-														else {
-															newCookieValues.add(cookieValue);
 														}
 													}
 												}catch(Exception e) {
 													throw new Exception("Errore durante l'aggiornamento del cookie '"+cName+
 															"' (header:"+header+") attraverso la funzione di proxy pass reverse: "+e.getMessage(),e);
 												}		
-											}
-										}
-									}
-								}
-							}
+												
+												try {
+													if(cDomain!=null) {
+														String newDomain = RestUtilities.buildCookiePassReverseDomain(this.requestMsg.getTransportRequestContext(), baseUrl, cDomain, prefixGatewayUrl);
+														if(this.debug)
+															this.logger.debug("Nuovo Domain '"+cDomain+"' (header:"+header+"):["+newDomain+"] ...");
+									               
+														if(!cDomain.equals(newDomain)) {
+															newValue = newValue.replace(cDomain, newDomain);
+															/*
+															String newValue = newValue.replace("domain="+cDomain, "domain="+newDomain);
+															newValue = newValue.replace("domain ="+cDomain, "domain ="+newDomain);
+															newValue = newValue.replace("domain= "+cDomain, "domain= "+newDomain);
+															newValue = newValue.replace("domain = "+cDomain, "domain = "+newDomain);
+															
+															newValue = newValue.replace("Domain="+cDomain, "Domain="+newDomain);
+															newValue = newValue.replace("Domain ="+cDomain, "Domain ="+newDomain);
+															newValue = newValue.replace("Domain= "+cDomain, "Domain= "+newDomain);
+															newValue = newValue.replace("Domain = "+cDomain, "Domain = "+newDomain);
+															
+															newValue = newValue.replace("DOMAIN="+cDomain, "DOMAIN="+newDomain);
+															newValue = newValue.replace("DOMAIN ="+cDomain, "DOMAIN ="+newDomain);
+															newValue = newValue.replace("DOMAIN= "+cDomain, "DOMAIN= "+newDomain);
+															newValue = newValue.replace("DOMAIN = "+cDomain, "DOMAIN = "+newDomain);
+															
+															newValue + newValue.replace("domain=\""+cDomain, "domain=\""+newDomain);
+															newValue = newValue.replace("domain =\""+cDomain, "domain =\""+newDomain);
+															newValue = newValue.replace("domain= \""+cDomain, "domain= \""+newDomain);
+															newValue = newValue.replace("domain = \""+cDomain, "domain = \""+newDomain);
+															
+															newValue = newValue.replace("Domain=\""+cDomain, "Domain=\""+newDomain);
+															newValue = newValue.replace("Domain =\""+cDomain, "Domain =\""+newDomain);
+															newValue = newValue.replace("Domain= \""+cDomain, "Domain= \""+newDomain);
+															newValue = newValue.replace("Domain = \""+cDomain, "Domain = \""+newDomain);
+															
+															newValue = newValue.replace("DOMAIN=\""+cDomain, "DOMAIN=\""+newDomain);
+															newValue = newValue.replace("DOMAIN =\""+cDomain, "DOMAIN =\""+newDomain);
+															newValue = newValue.replace("DOMAIN= \""+cDomain, "DOMAIN= \""+newDomain);
+															newValue = newValue.replace("DOMAIN = \""+cDomain, "DOMAIN = \""+newDomain);*/
+															
+															modify=true;
+														}
+													}
+												}catch(Exception e) {
+													throw new Exception("Errore durante l'aggiornamento del cookie '"+cName+
+															"' (header:"+header+") attraverso la funzione di proxy pass reverse: "+e.getMessage(),e);
+												}
+												
+												newCookieValues.add(newValue);
+											
+											} // end for (int i = 0; i < cookieNames.size(); i++) {
+										} // end !cookieNames.isEmpty()
+									} // end cookieValue!=null
+								} // end for (String cookieValue : cookieValues) {
+							} //end if(cookieValues!=null && !cookieValues.isEmpty()) {
 							
 							if(modify) {
 								TransportUtils.removeObject(this.propertiesTrasportoRisposta, header);

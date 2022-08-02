@@ -3,7 +3,7 @@
 ProxyPassReverse per Header HTTP Location e Set-Cookie
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-La funzionalità di 'ProxyPassReverse' modifica la URL presente negli header HTTP 'Location' e 'Content-Location' sulle risposte di reindirizzamento HTTP e il path presente negli header HTTP 'Set-Cookie' sostituendo il backend server (se presente come url assoluta) e il context path con l'indirizzo di esposizione dell'API Su GovWay.
+La funzionalità di 'ProxyPassReverse' modifica la URL presente negli header HTTP 'Location' e 'Content-Location' sulle risposte di reindirizzamento HTTP e il path/domain presente negli header HTTP 'Set-Cookie' sostituendo il backend server (se presente come url assoluta) e il context path con l'indirizzo di esposizione dell'API Su GovWay.
 
 .. note::
    L'indirizzo di esposizione di una API su GovWay è configurabile e personalizzabile come descritto nella sezione :ref:`configGenerale_urlInvocazione`.

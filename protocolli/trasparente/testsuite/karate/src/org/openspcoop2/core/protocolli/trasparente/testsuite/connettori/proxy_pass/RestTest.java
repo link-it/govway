@@ -67,6 +67,11 @@ public class RestTest extends ConfigLoader {
 	protected static String esempio_cookie_contesto_test_with_context_without_slash_url_parameters = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; Domain=\"link.it\"; Path=\""+WEB_CONTEXT+"/altro/contesto/params?p1=a1&p2=a2\";";
 	protected static String esempio_cookie_contesto_test_with_context_with_slash_url_parameters = NOME_COOKIE+"=36A06E750B31E8223B60D4FFA54D2E57; Domain=\"link.it\"; Path=\""+WEB_CONTEXT+"/altro/contesto/params/?p1=a1&p2=a2\"";
 	
+	protected static String DOMAIN="127.0.0.1";
+	protected static String esempio_cookie_domain_tradotto_1 = NOME_COOKIE+"-C1"+"=36A06E750B31E8223B60D4FFA54D2E57; Domain="+DOMAIN+"; Path=/esempio/cambio/domain";
+	protected static String esempio_cookie_domain_tradotto_2 = NOME_COOKIE+"-C2"+"=36A06E750B31E8223B60D4FFA54D2E57; Domain=\""+DOMAIN+"\"; Path=/esempio/cambio/domain";
+	protected static String esempio_cookie_domain_non_tradotto = NOME_COOKIE+"-CNONTRADOTTO"+"=36A06E750B31E8223B60D4FFA54D2E57; Domain=NonTradotto; Path=/esempio/cambio/domain";
+	
 	@SuppressWarnings("unused")
 	protected static String HEADER_HTTP_CUSTOM_SET_COOKIE = "X-Custom-Set-Cookie";
 	
@@ -352,6 +357,10 @@ public class RestTest extends ConfigLoader {
 				? "/nuovoContesto/ModificaTestProxyPass"+tipologia+"-v1"
 				: "/govway/out/SoggettoInternoTestFruitore/SoggettoInternoTest/TestProxyPass"+tipologia+"/v1";
 		
+		String domain = tipoServizio == TipoServizio.EROGAZIONE
+				? "provaModificaHostEContesto"
+				: "localhost";
+		
 		// Caso non tradotto
 		HttpRequest request = new HttpRequest();
 		request.addHeader("testcookie1", esempio_cookie_altro_contesto);
@@ -567,6 +576,81 @@ public class RestTest extends ConfigLoader {
 		atteso = esempio_cookie_contesto_test_with_context_with_slash_url_parameters.replace(WEB_CONTEXT, servizio);
 		msg = "[testcookie1 esempio_cookie_contesto_test_with_context_with_slash_url_parameters] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
 		isEquals(msg, atteso, setValue);
+		
+		
+		// Caso tradotto domain
+		request = new HttpRequest();
+		request.addHeader("testcookie1", esempio_cookie_domain_tradotto_1);
+		response = _test(rest, request, tipoServizio, operazione, "setCookie=testcookie1");
+		setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
+		assertNotNull(setValues);
+		assertEquals(1,setValues.size());
+		setValue = setValues.get(0);
+		atteso = esempio_cookie_domain_tradotto_1.replace(DOMAIN, domain);
+		msg = "[testcookie1 esempio_cookie_domain_tradotto_1] Ricevuto '"+setValue+"' - Atteso '"+atteso+"'";
+		isEquals(msg, atteso, setValue);
+		
+		// Caso tradotto solo un domain
+		request = new HttpRequest();
+		request.addHeader("testcookie1", esempio_cookie_domain_non_tradotto);
+		c2 = esempio_cookie_domain_tradotto_1;
+		request.addHeader("testcookie2", c2);
+		response = _test(rest, request, tipoServizio, operazione, "setCookie=testcookie1,testcookie2");
+		setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
+		assertNotNull(setValues);
+		assertEquals(2,setValues.size());
+		setValue0 = setValues.get(0);
+		setValue1 = setValues.get(1);
+		atteso = esempio_cookie_domain_non_tradotto;
+		msg = "[testcookie1-testcookie2 esempio_cookie_domain_non_tradotto] Ricevuto0 '"+setValue0+"' Ricevuto1 '"+setValue1+"' - Atteso '"+atteso+"'";
+		find1 = false;
+		try {
+			isEquals(msg, atteso, setValue0);
+		}catch(Throwable t) {
+			isEquals(msg, atteso, setValue1);
+			find1 = true;
+		}
+		atteso = c2.replace(DOMAIN, domain);
+		if(find1) {
+			msg = "[testcookie1-testcookie2 esempio_cookie_domain_tradotto_1] Ricevuto '"+setValue0+"' - Atteso '"+atteso+"'";
+			isEquals(msg, atteso, setValue0);
+		}
+		else {
+			msg = "[testcookie1-testcookie2 esempio_cookie_domain_tradotto_1] Ricevuto '"+setValue1+"' - Atteso '"+atteso+"'";
+			isEquals(msg, atteso, setValue1);
+		}
+		
+		// Caso tradotto entrammbi gli header
+		request = new HttpRequest();
+		String c1 = esempio_cookie_domain_tradotto_1;
+		request.addHeader("testcookie1", c1);
+		c2 = esempio_cookie_domain_tradotto_2;
+		request.addHeader("testcookie2", c2);
+		response = _test(rest, request, tipoServizio, operazione, "setCookie=testcookie1,testcookie2");
+		setValues = TransportUtils.getValues(response.getHeadersValues(),HttpConstants.SET_COOKIE);
+		assertNotNull(setValues);
+		assertEquals(2,setValues.size());
+		setValue0 = setValues.get(0);
+		setValue1 = setValues.get(1);
+		atteso = c1.replace(DOMAIN, domain);
+		msg = "[testcookie1-testcookie2 esempio_cookie_domain_tradotto_1] Ricevuto0 '"+setValue0+"' Ricevuto1 '"+setValue1+"' - Atteso '"+atteso+"'";
+		find1 = false;
+		try {
+			isEquals(msg, atteso, setValue0);
+		}catch(Throwable t) {
+			isEquals(msg, atteso, setValue1);
+			find1 = true;
+		}
+		atteso = c2.replace(DOMAIN, domain);
+		if(find1) {
+			msg = "[testcookie1-testcookie2 esempio_cookie_domain_tradotto_2] Ricevuto '"+setValue0+"' - Atteso '"+atteso+"'";
+			isEquals(msg, atteso, setValue0);
+		}
+		else {
+			msg = "[testcookie1-testcookie2 esempio_cookie_domain_tradotto_2] Ricevuto '"+setValue1+"' - Atteso '"+atteso+"'";
+			isEquals(msg, atteso, setValue1);
+		}
+		
 	}
 	
 	
