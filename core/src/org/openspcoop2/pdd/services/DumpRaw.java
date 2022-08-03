@@ -91,7 +91,7 @@ public class DumpRaw {
 	public DumpRaw(Logger log,IDSoggetto dominio,String modulo,TipoPdD tipoPdD, 
 			boolean dumpBinario, 
 			DumpConfigurazione dumpConfigurazione,
-			boolean fileTrace) throws ConnectorException{
+			boolean fileTraceHeaders, boolean fileTraceBody) throws ConnectorException{
 		this.log = log;
 		
 		switch (tipoPdD) {
@@ -139,16 +139,16 @@ public class DumpRaw {
 		}
 		
 		if(!this.dumpDatabaseRichiestaIngressoHeaders && (!dumpBinario || !this.dumpBinario_registrazioneDatabase) ) {
-			this.onlyLogFileTraceRichiestaIngressoHeaders = fileTrace;
+			this.onlyLogFileTraceRichiestaIngressoHeaders = fileTraceHeaders;
 		}
 		if(!this.dumpDatabaseRichiestaIngressoPayload && (!dumpBinario || !this.dumpBinario_registrazioneDatabase) ) {
-			this.onlyLogFileTraceRichiestaIngressoPayload = fileTrace;
+			this.onlyLogFileTraceRichiestaIngressoPayload = fileTraceBody;
 		}
 		if(!this.dumpDatabaseRispostaUscitaHeaders && (!dumpBinario || !this.dumpBinario_registrazioneDatabase) ) {
-			this.onlyLogFileTraceRispostaUscitaHeaders = fileTrace;
+			this.onlyLogFileTraceRispostaUscitaHeaders = fileTraceHeaders;
 		}
 		if(!this.dumpDatabaseRispostaUscitaPayload && (!dumpBinario || !this.dumpBinario_registrazioneDatabase) ) {
-			this.onlyLogFileTraceRispostaUscitaPayload = fileTrace;
+			this.onlyLogFileTraceRispostaUscitaPayload = fileTraceBody;
 		}
 		
 		if(this.dumpBinario) {

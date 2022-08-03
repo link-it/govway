@@ -202,7 +202,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     }
     
     protected DumpRaw dumpRaw = null;
-    protected boolean logFileTrace = false;
+    protected boolean logFileTrace_headers = false;
+    protected boolean logFileTrace_payload = false;
 	
     private boolean registerSendIntoContext = true;
     public void setRegisterSendIntoContext(boolean registerSendIntoContext) {
@@ -347,14 +348,20 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 						idPA.setNome(nomePorta);
 					}
 					
-					this.logFileTrace = this.openspcoopProperties.isTransazioniFileTraceEnabled() && this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled();
+					this.logFileTrace_headers = this.openspcoopProperties.isTransazioniFileTraceEnabled() && 
+							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled() && 
+							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPAConnettoreHeadersEnabled();
+					this.logFileTrace_payload = this.openspcoopProperties.isTransazioniFileTraceEnabled() && 
+							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled() && 
+							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPAConnettorePayloadEnabled();
 					
 					if(idPA!=null) {
 						PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA);
 						if(pa!=null) {
 							this.useTimeoutInputStream = configurazionePdDManager.isConnettoriUseTimeoutInputStream(pa);
 							dumpConfigurazione = configurazionePdDManager.getDumpConfigurazione(pa);
-							this.logFileTrace = configurazionePdDManager.isTransazioniFileTraceEnabled(pa) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettoreEnabled(pa);
+							this.logFileTrace_headers = configurazionePdDManager.isTransazioniFileTraceEnabled(pa) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettoreHeadersEnabled(pa);
+							this.logFileTrace_payload = configurazionePdDManager.isTransazioniFileTraceEnabled(pa) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled(pa);
 							this.proprietaPorta = pa.getProprietaList();
 						}
 					}
@@ -368,14 +375,20 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 						idPD.setNome(nomePorta);
 					}
 					
-					this.logFileTrace = this.openspcoopProperties.isTransazioniFileTraceEnabled() && this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled();
+					this.logFileTrace_headers = this.openspcoopProperties.isTransazioniFileTraceEnabled() && 
+							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled() &&
+							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPDConnettoreHeadersEnabled();
+					this.logFileTrace_payload = this.openspcoopProperties.isTransazioniFileTraceEnabled() && 
+							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled() &&
+							this.openspcoopProperties.isTransazioniFileTraceDumpBinarioPDConnettorePayloadEnabled();
 					
 					if(idPD!=null) {
 						PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD);
 						if(pd!=null) {
 							this.useTimeoutInputStream = configurazionePdDManager.isConnettoriUseTimeoutInputStream(pd);
 							dumpConfigurazione = configurazionePdDManager.getDumpConfigurazione(pd);
-							this.logFileTrace = configurazionePdDManager.isTransazioniFileTraceEnabled(pd) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettoreEnabled(pd);
+							this.logFileTrace_headers = configurazionePdDManager.isTransazioniFileTraceEnabled(pd) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettoreHeadersEnabled(pd);
+							this.logFileTrace_payload = configurazionePdDManager.isTransazioniFileTraceEnabled(pd) && configurazionePdDManager.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled(pd);
 							this.proprietaPorta = pd.getProprietaList();
 						}
 					}
@@ -383,13 +396,14 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 				}
 			
 				if(request.getTransazioneApplicativoServer()!=null) {
-					this.logFileTrace = false;
+					this.logFileTrace_headers = false;
+					this.logFileTrace_payload = false;
 				}
 				
 				this.dumpRaw = new DumpRaw(this.logger,dominio,this.idModulo,this.outRequestContext.getTipoPorta(), 
 						dumpBinario, 
 						dumpConfigurazione,
-						this.logFileTrace);
+						this.logFileTrace_headers, this.logFileTrace_payload);
 				if(this.dumpRaw.isActiveDumpDatabase()) {
 					if(request.getTransazioneApplicativoServer()!=null) {
 						this.dumpRaw.initDump(nomePorta, this.outRequestContext.getPddContext(),

@@ -205,20 +205,76 @@ public class CostantiProprieta {
 	public static final String FILE_TRACE_VALUE_DISABLED = VALUE_DISABLED;
 	
 	private static final String FILE_TRACE_ENABLED = "fileTrace.enabled";
+	
 	private static final String FILE_TRACE_DUMP_BINARIO_ENABLED = "fileTrace.dumpBinario.enabled";
+	private static final String FILE_TRACE_DUMP_BINARIO_PAYLOAD_ENABLED = "fileTrace.dumpBinario.payload.enabled";
+	private static final String FILE_TRACE_DUMP_BINARIO_HEADERS_ENABLED = "fileTrace.dumpBinario.headers.enabled";
+	
 	private static final String FILE_TRACE_DUMP_BINARIO_CONNETTORE_ENABLED = "fileTrace.dumpBinario.connettore.enabled";
+	private static final String FILE_TRACE_DUMP_BINARIO_CONNETTORE_PAYLOAD_ENABLED = "fileTrace.dumpBinario.connettore.payload.enabled";
+	private static final String FILE_TRACE_DUMP_BINARIO_CONNETTORE_HEADERS_ENABLED = "fileTrace.dumpBinario.connettore.headers.enabled";
+
 	
 	private static final String FILE_TRACE_CONFIG = "fileTrace.config";
 	
 	public static boolean isFileTraceEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
 		return readBooleanValueWithDefault(proprieta, FILE_TRACE_ENABLED, defaultValue, FILE_TRACE_VALUE_ENABLED, FILE_TRACE_VALUE_DISABLED);
 	}
-	public static boolean isFileTraceDumpBinarioEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
-		return readBooleanValueWithDefault(proprieta, FILE_TRACE_DUMP_BINARIO_ENABLED, defaultValue, FILE_TRACE_VALUE_ENABLED, FILE_TRACE_VALUE_DISABLED);
+	
+	public static boolean isFileTraceDumpBinarioPayloadEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		String fileTraceEnabled = readValue(proprieta, FILE_TRACE_DUMP_BINARIO_ENABLED);
+		if(fileTraceEnabled!=null && !"".equals(fileTraceEnabled)) {
+			boolean enabled = FILE_TRACE_VALUE_ENABLED.equals(fileTraceEnabled.trim());
+			if(enabled) {
+				return readBooleanValueWithDefault(proprieta, FILE_TRACE_DUMP_BINARIO_PAYLOAD_ENABLED, enabled, FILE_TRACE_VALUE_ENABLED, FILE_TRACE_VALUE_DISABLED);
+			}
+			else {
+				return (FILE_TRACE_VALUE_DISABLED.equals(fileTraceEnabled.trim())) ? false : defaultValue; 
+			}
+		}
+		return defaultValue;
 	}
-	public static boolean isFileTraceDumpBinarioConnettoreEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
-		return readBooleanValueWithDefault(proprieta, FILE_TRACE_DUMP_BINARIO_CONNETTORE_ENABLED, defaultValue, FILE_TRACE_VALUE_ENABLED, FILE_TRACE_VALUE_DISABLED);
+	public static boolean isFileTraceDumpBinarioHeadersEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		String fileTraceEnabled = readValue(proprieta, FILE_TRACE_DUMP_BINARIO_ENABLED);
+		if(fileTraceEnabled!=null && !"".equals(fileTraceEnabled)) {
+			boolean enabled = FILE_TRACE_VALUE_ENABLED.equals(fileTraceEnabled.trim());
+			if(enabled) {
+				return readBooleanValueWithDefault(proprieta, FILE_TRACE_DUMP_BINARIO_HEADERS_ENABLED, enabled, FILE_TRACE_VALUE_ENABLED, FILE_TRACE_VALUE_DISABLED);
+			}
+			else {
+				return (FILE_TRACE_VALUE_DISABLED.equals(fileTraceEnabled.trim())) ? false : defaultValue; 
+			}
+		}
+		return defaultValue;
 	}
+	
+	public static boolean isFileTraceDumpBinarioConnettorePayloadEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		String fileTraceEnabled = readValue(proprieta, FILE_TRACE_DUMP_BINARIO_CONNETTORE_ENABLED);
+		if(fileTraceEnabled!=null && !"".equals(fileTraceEnabled)) {
+			boolean enabled = FILE_TRACE_VALUE_ENABLED.equals(fileTraceEnabled.trim());
+			if(enabled) {
+				return readBooleanValueWithDefault(proprieta, FILE_TRACE_DUMP_BINARIO_CONNETTORE_PAYLOAD_ENABLED, enabled, FILE_TRACE_VALUE_ENABLED, FILE_TRACE_VALUE_DISABLED);
+			}
+			else {
+				return (FILE_TRACE_VALUE_DISABLED.equals(fileTraceEnabled.trim())) ? false : defaultValue; 
+			}
+		}
+		return defaultValue;
+	}
+	public static boolean isFileTraceDumpBinarioConnettoreHeadersEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		String fileTraceEnabled = readValue(proprieta, FILE_TRACE_DUMP_BINARIO_CONNETTORE_ENABLED);
+		if(fileTraceEnabled!=null && !"".equals(fileTraceEnabled)) {
+			boolean enabled = FILE_TRACE_VALUE_ENABLED.equals(fileTraceEnabled.trim());
+			if(enabled) {
+				return readBooleanValueWithDefault(proprieta, FILE_TRACE_DUMP_BINARIO_CONNETTORE_HEADERS_ENABLED, enabled, FILE_TRACE_VALUE_ENABLED, FILE_TRACE_VALUE_DISABLED);
+			}
+			else {
+				return (FILE_TRACE_VALUE_DISABLED.equals(fileTraceEnabled.trim())) ? false : defaultValue; 
+			}
+		}
+		return defaultValue;
+	}
+	
 	
 	public static File getFileTraceConfig(List<Proprieta> proprieta, File defaultValue) throws Exception {
 		String v = readValue(proprieta, FILE_TRACE_CONFIG);

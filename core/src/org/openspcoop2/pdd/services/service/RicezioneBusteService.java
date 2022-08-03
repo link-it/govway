@@ -383,11 +383,12 @@ public class RicezioneBusteService  {
 				logCore.error("Errore generazione diagnostico",e);
 			}
 			DumpConfigurazione dumpConfigurazione = configPdDManager.getDumpConfigurazione(pa);
-			boolean fileTrace =  configPdDManager.isTransazioniFileTraceEnabled(pa) && configPdDManager.isTransazioniFileTraceDumpBinarioEnabled(pa);
+			boolean fileTrace_headers = configPdDManager.isTransazioniFileTraceEnabled(pa) && configPdDManager.isTransazioniFileTraceDumpBinarioHeadersEnabled(pa);
+			boolean fileTrace_payload = configPdDManager.isTransazioniFileTraceEnabled(pa) && configPdDManager.isTransazioniFileTraceDumpBinarioPayloadEnabled(pa);
 			dumpRaw = new DumpRaw(logCore, requestInfo.getIdentitaPdD(), idModulo, TipoPdD.APPLICATIVA, 
 					dumpBinario, 
 					dumpConfigurazione,
-					fileTrace);
+					fileTrace_headers, fileTrace_payload);
 			if(dumpRaw.isActiveDumpRichiesta()) {
 				req = new DumpRawConnectorInMessage(logCore, req, 
 						(context!=null ? context.getPddContext(): null), 

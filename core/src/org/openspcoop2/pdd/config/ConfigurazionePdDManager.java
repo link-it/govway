@@ -578,11 +578,17 @@ public class ConfigurazionePdDManager {
 	public boolean isTransazioniFileTraceEnabled(PortaDelegata pd) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.isTransazioniFileTraceEnabled(this.getConnection(), pd);
 	}
-	public boolean isTransazioniFileTraceDumpBinarioEnabled(PortaDelegata pd) throws DriverConfigurazioneException{
-		return this.configurazionePdDReader.isTransazioniFileTraceDumpBinarioEnabled(this.getConnection(), pd);
+	public boolean isTransazioniFileTraceDumpBinarioHeadersEnabled(PortaDelegata pd) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.isTransazioniFileTraceDumpBinarioHeadersEnabled(this.getConnection(), pd);
 	}
-	public boolean isTransazioniFileTraceDumpBinarioConnettoreEnabled(PortaDelegata pd) throws DriverConfigurazioneException{
-		return this.configurazionePdDReader.isTransazioniFileTraceDumpBinarioConnettoreEnabled(this.getConnection(), pd);
+	public boolean isTransazioniFileTraceDumpBinarioPayloadEnabled(PortaDelegata pd) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.isTransazioniFileTraceDumpBinarioPayloadEnabled(this.getConnection(), pd);
+	}
+	public boolean isTransazioniFileTraceDumpBinarioConnettoreHeadersEnabled(PortaDelegata pd) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.isTransazioniFileTraceDumpBinarioConnettoreHeadersEnabled(this.getConnection(), pd);
+	}
+	public boolean isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled(PortaDelegata pd) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled(this.getConnection(), pd);
 	}
 	public File getFileTraceConfig(PortaDelegata pd) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getFileTraceConfig(this.getConnection(), pd);
@@ -890,11 +896,17 @@ public class ConfigurazionePdDManager {
 	public boolean isTransazioniFileTraceEnabled(PortaApplicativa pa) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.isTransazioniFileTraceEnabled(this.getConnection(), pa);
 	}
-	public boolean isTransazioniFileTraceDumpBinarioEnabled(PortaApplicativa pa) throws DriverConfigurazioneException{
-		return this.configurazionePdDReader.isTransazioniFileTraceDumpBinarioEnabled(this.getConnection(), pa);
+	public boolean isTransazioniFileTraceDumpBinarioHeadersEnabled(PortaApplicativa pa) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.isTransazioniFileTraceDumpBinarioHeadersEnabled(this.getConnection(), pa);
 	}
-	public boolean isTransazioniFileTraceDumpBinarioConnettoreEnabled(PortaApplicativa pa) throws DriverConfigurazioneException{
-		return this.configurazionePdDReader.isTransazioniFileTraceDumpBinarioConnettoreEnabled(this.getConnection(), pa);
+	public boolean isTransazioniFileTraceDumpBinarioPayloadEnabled(PortaApplicativa pa) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.isTransazioniFileTraceDumpBinarioPayloadEnabled(this.getConnection(), pa);
+	}
+	public boolean isTransazioniFileTraceDumpBinarioConnettoreHeadersEnabled(PortaApplicativa pa) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.isTransazioniFileTraceDumpBinarioConnettoreHeadersEnabled(this.getConnection(), pa);
+	}
+	public boolean isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled(PortaApplicativa pa) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled(this.getConnection(), pa);
 	}
 	public File getFileTraceConfig(PortaApplicativa pa) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getFileTraceConfig(this.getConnection(), pa);

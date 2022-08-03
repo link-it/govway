@@ -1998,10 +1998,22 @@ public class OpenSPCoop2Properties {
 				}
 
 				if(this.isTransazioniFileTraceEnabled()) {
-					this.isTransazioniFileTraceDumpBinarioPDEnabled();
-					this.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled();
-					this.isTransazioniFileTraceDumpBinarioPAEnabled();
-					this.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled();
+					if(this.isTransazioniFileTraceDumpBinarioPDEnabled()) {
+						this.isTransazioniFileTraceDumpBinarioPDHeadersEnabled();
+						this.isTransazioniFileTraceDumpBinarioPDPayloadEnabled();
+					}
+					if(this.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled()) {
+						this.isTransazioniFileTraceDumpBinarioPDConnettoreHeadersEnabled();
+						this.isTransazioniFileTraceDumpBinarioPDConnettorePayloadEnabled();
+					}
+					if(this.isTransazioniFileTraceDumpBinarioPAEnabled()) {
+						this.isTransazioniFileTraceDumpBinarioPAHeadersEnabled();
+						this.isTransazioniFileTraceDumpBinarioPAPayloadEnabled();
+					}
+					if(this.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled()) {
+						this.isTransazioniFileTraceDumpBinarioPAConnettoreHeadersEnabled();
+						this.isTransazioniFileTraceDumpBinarioPAConnettorePayloadEnabled();
+					}
 					this.getTransazioniFileTraceConfig();
 				}
 			}
@@ -23728,6 +23740,48 @@ public class OpenSPCoop2Properties {
 
 		return OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPDEnabled;
 	}
+	private static Boolean isTransazioniFileTraceDumpBinarioPDPayloadEnabled = null;
+	public boolean isTransazioniFileTraceDumpBinarioPDPayloadEnabled() {	
+		if(OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPDPayloadEnabled==null){
+			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.payload.enabled";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null || "".equals(name)){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDEnabled());
+					name=""+isTransazioniFileTraceDumpBinarioPDEnabled();
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPDPayloadEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDEnabled()+" : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPDPayloadEnabled = isTransazioniFileTraceDumpBinarioPDEnabled();
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPDPayloadEnabled;
+	}
+	private static Boolean isTransazioniFileTraceDumpBinarioPDHeadersEnabled = null;
+	public boolean isTransazioniFileTraceDumpBinarioPDHeadersEnabled() {	
+		if(OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPDHeadersEnabled==null){
+			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.headers.enabled";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null || "".equals(name)){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDEnabled());
+					name=""+isTransazioniFileTraceDumpBinarioPDEnabled();
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPDHeadersEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDEnabled()+" : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPDHeadersEnabled = isTransazioniFileTraceDumpBinarioPDEnabled();
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPDHeadersEnabled;
+	}
 	
 	private static Boolean isTransazioniFileTraceDumpBinarioPDConnettoreEnabled = null;
 	public boolean isTransazioniFileTraceDumpBinarioPDConnettoreEnabled() {	
@@ -23749,6 +23803,48 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled;
+	}
+	private static Boolean isTransazioniFileTraceDumpBinarioPDConnettorePayloadEnabled = null;
+	public boolean isTransazioniFileTraceDumpBinarioPDConnettorePayloadEnabled() {	
+		if(OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPDConnettorePayloadEnabled==null){
+			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.connettore.payload.enabled";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null || "".equals(name)){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDConnettoreEnabled());
+					name=""+isTransazioniFileTraceDumpBinarioPDConnettoreEnabled();
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPDConnettorePayloadEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDConnettoreEnabled()+" : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPDConnettorePayloadEnabled = isTransazioniFileTraceDumpBinarioPDConnettoreEnabled();
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPDConnettorePayloadEnabled;
+	}
+	private static Boolean isTransazioniFileTraceDumpBinarioPDConnettoreHeadersEnabled = null;
+	public boolean isTransazioniFileTraceDumpBinarioPDConnettoreHeadersEnabled() {	
+		if(OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPDConnettoreHeadersEnabled==null){
+			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.connettore.headers.enabled";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null || "".equals(name)){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDConnettoreEnabled());
+					name=""+isTransazioniFileTraceDumpBinarioPDConnettoreEnabled();
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPDConnettoreHeadersEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDConnettoreEnabled()+" : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPDConnettoreHeadersEnabled = isTransazioniFileTraceDumpBinarioPDConnettoreEnabled();
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPDConnettoreHeadersEnabled;
 	}
 	
 	private static Boolean isTransazioniFileTraceDumpBinarioPAEnabled = null;
@@ -23772,6 +23868,49 @@ public class OpenSPCoop2Properties {
 
 		return OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPAEnabled;
 	}
+	private static Boolean isTransazioniFileTraceDumpBinarioPAPayloadEnabled = null;
+	public boolean isTransazioniFileTraceDumpBinarioPAPayloadEnabled() {	
+		if(OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPAPayloadEnabled==null){
+			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.payload.enabled";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null || "".equals(name)){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAEnabled());
+					name=""+isTransazioniFileTraceDumpBinarioPAEnabled();
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPAPayloadEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAEnabled()+" : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPAPayloadEnabled = isTransazioniFileTraceDumpBinarioPAEnabled();
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPAPayloadEnabled;
+	}
+	private static Boolean isTransazioniFileTraceDumpBinarioPAHeadersEnabled = null;
+	public boolean isTransazioniFileTraceDumpBinarioPAHeadersEnabled() {	
+		if(OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPAHeadersEnabled==null){
+			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.headers.enabled";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null || "".equals(name)){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAEnabled());
+					name=""+isTransazioniFileTraceDumpBinarioPAEnabled();
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPAHeadersEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAEnabled()+" : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPAHeadersEnabled = isTransazioniFileTraceDumpBinarioPAEnabled();
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPAHeadersEnabled;
+	}
+
 	
 	private static Boolean isTransazioniFileTraceDumpBinarioPAConnettoreEnabled = null;
 	public boolean isTransazioniFileTraceDumpBinarioPAConnettoreEnabled() {	
@@ -23793,6 +23932,48 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled;
+	}
+	private static Boolean isTransazioniFileTraceDumpBinarioPAConnettorePayloadEnabled = null;
+	public boolean isTransazioniFileTraceDumpBinarioPAConnettorePayloadEnabled() {	
+		if(OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPAConnettorePayloadEnabled==null){
+			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.connettore.payload.enabled";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null || "".equals(name)){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAConnettoreEnabled());
+					name=""+isTransazioniFileTraceDumpBinarioPAConnettoreEnabled();
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPAConnettorePayloadEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAConnettoreEnabled()+" : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPAConnettorePayloadEnabled = isTransazioniFileTraceDumpBinarioPAConnettoreEnabled();
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPAConnettorePayloadEnabled;
+	}
+	private static Boolean isTransazioniFileTraceDumpBinarioPAConnettoreHeadersEnabled = null;
+	public boolean isTransazioniFileTraceDumpBinarioPAConnettoreHeadersEnabled() {	
+		if(OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPAConnettoreHeadersEnabled==null){
+			String pName = "org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.connettore.headers.enabled";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null || "".equals(name)){
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAConnettoreEnabled());
+					name=""+isTransazioniFileTraceDumpBinarioPAConnettoreEnabled();
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPAConnettoreHeadersEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAConnettoreEnabled()+" : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPAConnettoreHeadersEnabled = isTransazioniFileTraceDumpBinarioPAConnettoreEnabled();
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniFileTraceDumpBinarioPAConnettoreHeadersEnabled;
 	}
 
 	private static File getTransazioniFileTraceConfig = null;
@@ -23843,9 +24024,28 @@ public class OpenSPCoop2Properties {
 				state.setPath("ERROR: "+e.getMessage());
 			}
 			state.setEnabledInErogazione(this.isTransazioniFileTraceDumpBinarioPAEnabled());
+			if(this.isTransazioniFileTraceDumpBinarioPAEnabled()) {
+				state.setEnabledInErogazione_headers(this.isTransazioniFileTraceDumpBinarioPAHeadersEnabled());
+				state.setEnabledInErogazione_payload(this.isTransazioniFileTraceDumpBinarioPAPayloadEnabled());
+			}
+			
 			state.setEnabledOutErogazione(this.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled());
+			if(this.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled()) {
+				state.setEnabledOutErogazione_headers(this.isTransazioniFileTraceDumpBinarioPAConnettoreHeadersEnabled());
+				state.setEnabledOutErogazione_payload(this.isTransazioniFileTraceDumpBinarioPAConnettorePayloadEnabled());
+			}
+			
 			state.setEnabledInFruizione(this.isTransazioniFileTraceDumpBinarioPDEnabled());
+			if(this.isTransazioniFileTraceDumpBinarioPDEnabled()) {
+				state.setEnabledInFruizione_headers(this.isTransazioniFileTraceDumpBinarioPDHeadersEnabled());
+				state.setEnabledInFruizione_payload(this.isTransazioniFileTraceDumpBinarioPDPayloadEnabled());
+			}
+			
 			state.setEnabledOutFruizione(this.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled());
+			if(this.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled()) {
+				state.setEnabledOutFruizione_headers(this.isTransazioniFileTraceDumpBinarioPDConnettoreHeadersEnabled());
+				state.setEnabledOutFruizione_payload(this.isTransazioniFileTraceDumpBinarioPDConnettorePayloadEnabled());
+			}
 		}
 		return state;
 	}

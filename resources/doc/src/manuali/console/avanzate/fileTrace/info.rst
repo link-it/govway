@@ -495,13 +495,21 @@ I tipi di messaggi disponibili sono:
             # -- Fruizioni --
             # inRequest/outResponse
             org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.enabled=true
+            #org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.payload.enabled=true
+            #org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.headers.enabled=true
             # outRequest/inResponse
             org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.connettore.enabled=true
+            #org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.connettore.payload.enabled=true
+            #org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPD.connettore.headers.enabled=true
             # -- Erogazioni --
             # inRequest/outResponse
             org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.enabled=true
+            #org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.payload.enabled=true
+            #org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.headers.enabled=true
             # outRequest/inResponse
             org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.connettore.enabled=true
+            #org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.connettore.payload.enabled=true
+            #org.openspcoop2.pdd.transazioni.fileTrace.dumpBinarioPA.connettore.headers.enabled=true
             ...
 	
 

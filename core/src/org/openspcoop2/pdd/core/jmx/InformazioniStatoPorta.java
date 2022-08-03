@@ -184,10 +184,38 @@ public class InformazioniStatoPorta {
 			if(fileTraceGovWayStateObject.isEnabled()) {
 				format(bf, fileTraceGovWayStateObject.getPath(), "FileTrace path");
 				format(bf, fileTraceGovWayStateObject.getLastModified(), "FileTrace lastModified");
-				format(bf, fileTraceGovWayStateObject.isEnabledInErogazione() ? "abilitato" : "disabilitato", "FileTrace inPAContent");
-				format(bf, fileTraceGovWayStateObject.isEnabledOutErogazione() ? "abilitato" : "disabilitato", "FileTrace outPAContent");
-				format(bf, fileTraceGovWayStateObject.isEnabledInFruizione() ? "abilitato" : "disabilitato", "FileTrace inPDContent");
-				format(bf, fileTraceGovWayStateObject.isEnabledOutFruizione() ? "abilitato" : "disabilitato", "FileTrace outPDContent");
+				
+				if(fileTraceGovWayStateObject.isEnabledInErogazione() && (!fileTraceGovWayStateObject.isEnabledInErogazione_headers() || !fileTraceGovWayStateObject.isEnabledInErogazione_payload()) ) {
+					format(bf, fileTraceGovWayStateObject.isEnabledInErogazione_headers() ? "abilitato" : "disabilitato", "FileTrace inPAContent Headers");
+					format(bf, fileTraceGovWayStateObject.isEnabledInErogazione_payload() ? "abilitato" : "disabilitato", "FileTrace inPAContent Payload");
+				}
+				else {
+					format(bf, fileTraceGovWayStateObject.isEnabledInErogazione() ? "abilitato" : "disabilitato", "FileTrace inPAContent");
+				}
+				
+				if(fileTraceGovWayStateObject.isEnabledOutErogazione() && (!fileTraceGovWayStateObject.isEnabledOutErogazione_headers() || !fileTraceGovWayStateObject.isEnabledOutErogazione_payload()) ) {
+					format(bf, fileTraceGovWayStateObject.isEnabledOutErogazione_headers() ? "abilitato" : "disabilitato", "FileTrace outPAContent Headers");
+					format(bf, fileTraceGovWayStateObject.isEnabledOutErogazione_payload() ? "abilitato" : "disabilitato", "FileTrace outPAContent Payload");
+				}
+				else {
+					format(bf, fileTraceGovWayStateObject.isEnabledOutErogazione() ? "abilitato" : "disabilitato", "FileTrace outPAContent");
+				}
+				
+				if(fileTraceGovWayStateObject.isEnabledInFruizione() && (!fileTraceGovWayStateObject.isEnabledInFruizione_headers() || !fileTraceGovWayStateObject.isEnabledInFruizione_payload()) ) {
+					format(bf, fileTraceGovWayStateObject.isEnabledInFruizione_headers() ? "abilitato" : "disabilitato", "FileTrace inPDContent Headers");
+					format(bf, fileTraceGovWayStateObject.isEnabledInFruizione_payload() ? "abilitato" : "disabilitato", "FileTrace inPDContent Payload");
+				}
+				else {
+					format(bf, fileTraceGovWayStateObject.isEnabledInFruizione() ? "abilitato" : "disabilitato", "FileTrace inPDContent");
+				}
+				
+				if(fileTraceGovWayStateObject.isEnabledOutFruizione() && (!fileTraceGovWayStateObject.isEnabledOutFruizione_headers() || !fileTraceGovWayStateObject.isEnabledOutFruizione_payload()) ) {
+					format(bf, fileTraceGovWayStateObject.isEnabledOutFruizione_headers() ? "abilitato" : "disabilitato", "FileTrace outPDContent Headers");
+					format(bf, fileTraceGovWayStateObject.isEnabledOutFruizione_payload() ? "abilitato" : "disabilitato", "FileTrace outPDContent Payload");
+				}
+				else {
+					format(bf, fileTraceGovWayStateObject.isEnabledOutFruizione() ? "abilitato" : "disabilitato", "FileTrace outPDContent");
+				}
 			}
 		}
 		bf.append("\n");

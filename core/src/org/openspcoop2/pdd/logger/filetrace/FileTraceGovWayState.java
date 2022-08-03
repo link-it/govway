@@ -37,10 +37,22 @@ public class FileTraceGovWayState {
 	private boolean enabled = false;
 	private String path;
 	private String lastModified;
+	
 	private boolean enabledInErogazione = false;
+	private boolean enabledInErogazione_headers = false;
+	private boolean enabledInErogazione_payload = false;
+	
 	private boolean enabledOutErogazione = false;
+	private boolean enabledOutErogazione_headers = false;
+	private boolean enabledOutErogazione_payload = false;
+	
 	private boolean enabledInFruizione = false;
+	private boolean enabledInFruizione_headers = false;
+	private boolean enabledInFruizione_payload = false;
+	
 	private boolean enabledOutFruizione = false;
+	private boolean enabledOutFruizione_headers = false;
+	private boolean enabledOutFruizione_payload = false;
 	
 	public boolean isEnabled() {
 		return this.enabled;
@@ -88,6 +100,55 @@ public class FileTraceGovWayState {
 		this.enabledOutFruizione = enabledOutFruizione;
 	}
 	
+	public boolean isEnabledInErogazione_headers() {
+		return this.enabledInErogazione_headers;
+	}
+	public void setEnabledInErogazione_headers(boolean enabledInErogazione_headers) {
+		this.enabledInErogazione_headers = enabledInErogazione_headers;
+	}
+	public boolean isEnabledInErogazione_payload() {
+		return this.enabledInErogazione_payload;
+	}
+	public void setEnabledInErogazione_payload(boolean enabledInErogazione_payload) {
+		this.enabledInErogazione_payload = enabledInErogazione_payload;
+	}
+	public boolean isEnabledOutErogazione_headers() {
+		return this.enabledOutErogazione_headers;
+	}
+	public void setEnabledOutErogazione_headers(boolean enabledOutErogazione_headers) {
+		this.enabledOutErogazione_headers = enabledOutErogazione_headers;
+	}
+	public boolean isEnabledOutErogazione_payload() {
+		return this.enabledOutErogazione_payload;
+	}
+	public void setEnabledOutErogazione_payload(boolean enabledOutErogazione_payload) {
+		this.enabledOutErogazione_payload = enabledOutErogazione_payload;
+	}
+	public boolean isEnabledInFruizione_headers() {
+		return this.enabledInFruizione_headers;
+	}
+	public void setEnabledInFruizione_headers(boolean enabledInFruizione_headers) {
+		this.enabledInFruizione_headers = enabledInFruizione_headers;
+	}
+	public boolean isEnabledInFruizione_payload() {
+		return this.enabledInFruizione_payload;
+	}
+	public void setEnabledInFruizione_payload(boolean enabledInFruizione_payload) {
+		this.enabledInFruizione_payload = enabledInFruizione_payload;
+	}
+	public boolean isEnabledOutFruizione_headers() {
+		return this.enabledOutFruizione_headers;
+	}
+	public void setEnabledOutFruizione_headers(boolean enabledOutFruizione_headers) {
+		this.enabledOutFruizione_headers = enabledOutFruizione_headers;
+	}
+	public boolean isEnabledOutFruizione_payload() {
+		return this.enabledOutFruizione_payload;
+	}
+	public void setEnabledOutFruizione_payload(boolean enabledOutFruizione_payload) {
+		this.enabledOutFruizione_payload = enabledOutFruizione_payload;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -96,9 +157,25 @@ public class FileTraceGovWayState {
 			sb.append("\nPath: ").append(this.path);
 			sb.append("\nLastModified: ").append(this.lastModified);
 			sb.append("\nInErogazione: ").append(this.enabledInErogazione);
+			if(this.enabledInErogazione) {
+				sb.append("\nInErogazione (headers): ").append(this.enabledInErogazione_headers);
+				sb.append("\nInErogazione (payload): ").append(this.enabledInErogazione_payload);
+			}
 			sb.append("\nOutErogazione: ").append(this.enabledOutErogazione);
+			if(this.enabledOutErogazione) {
+				sb.append("\nOutErogazione (headers): ").append(this.enabledOutErogazione_headers);
+				sb.append("\nOutErogazione (payload): ").append(this.enabledOutErogazione_payload);
+			}
 			sb.append("\nInFruizione: ").append(this.enabledInFruizione);
+			if(this.enabledInFruizione) {
+				sb.append("\nInFruizione (headers): ").append(this.enabledInFruizione_headers);
+				sb.append("\nInFruizione (payload): ").append(this.enabledInFruizione_payload);
+			}
 			sb.append("\nOutFruizione: ").append(this.enabledOutFruizione);
+			if(this.enabledOutFruizione) {
+				sb.append("\nOutFruizione (headers): ").append(this.enabledOutFruizione_headers);
+				sb.append("\nOutFruizione (payload): ").append(this.enabledOutFruizione_payload);
+			}
 		}
 		return sb.toString();
 	}
@@ -121,17 +198,45 @@ public class FileTraceGovWayState {
 							else if("LastModified".equals(nome)) {
 								state.lastModified = valore;
 							}
+							
 							else if("InErogazione".equals(nome)) {
 								state.enabledInErogazione = Boolean.valueOf(valore);
 							}
+							else if("InErogazione (headers)".equals(nome)) {
+								state.enabledInErogazione_headers = Boolean.valueOf(valore);
+							}
+							else if("InErogazione (payload)".equals(nome)) {
+								state.enabledInErogazione_payload = Boolean.valueOf(valore);
+							}
+							
 							else if("OutErogazione".equals(nome)) {
 								state.enabledOutErogazione = Boolean.valueOf(valore);
 							}
+							else if("OutErogazione (headers)".equals(nome)) {
+								state.enabledOutErogazione_headers = Boolean.valueOf(valore);
+							}
+							else if("OutErogazione (payload)".equals(nome)) {
+								state.enabledOutErogazione_payload = Boolean.valueOf(valore);
+							}
+							
 							else if("InFruizione".equals(nome)) {
 								state.enabledInFruizione = Boolean.valueOf(valore);
 							}
+							else if("InFruizione (headers)".equals(nome)) {
+								state.enabledInFruizione_headers = Boolean.valueOf(valore);
+							}
+							else if("InFruizione (payload)".equals(nome)) {
+								state.enabledInFruizione_payload = Boolean.valueOf(valore);
+							}
+							
 							else if("OutFruizione".equals(nome)) {
 								state.enabledOutFruizione = Boolean.valueOf(valore);
+							}
+							else if("OutFruizione (headers)".equals(nome)) {
+								state.enabledOutFruizione_headers = Boolean.valueOf(valore);
+							}
+							else if("OutFruizione (payload)".equals(nome)) {
+								state.enabledOutFruizione_payload = Boolean.valueOf(valore);
 							}
 						}
 					}
