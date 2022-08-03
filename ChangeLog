@@ -1,6 +1,15 @@
 2022-08-03  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Risolto Bug OP-1419
+	Se in una API SOAP veniva configurata una trasformazione della richiesta (o della risposta) in cui:
+	- il contenuto veniva ridefinito tramite una envelope soap di una versione differente da quello della richiesta originale (es. soap1.1 -> soap 1.2) 
+	- veniva definito il nuovo Content Type conforme alla nuova versione dell'envelope (es. application/soap+xml) 
+	l'applicazione della trasformazione a runtime produceva il seguente errore: "Trasformazione richiesta fallita: Cannot add fragments which contain elements which are in the SOAP namespace"
+
+2022-08-03  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
 	Aggiunta funzionalità OP-1417
 	Nella funzionalità filetrace è adesso possibile abilitare il dump binario solamente per gli headers o per il payload dei messaggi scambiati.
 

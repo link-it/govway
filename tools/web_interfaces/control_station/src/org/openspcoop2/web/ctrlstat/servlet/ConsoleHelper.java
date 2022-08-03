@@ -15746,7 +15746,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE);
 					de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE);
 					de.setType(DataElementType.TEXT_EDIT);
-					de.setValue(trasformazioneContenutoRispostaContentType);
+					de.setValue(StringEscapeUtils.escapeHtml(trasformazioneContenutoRispostaContentType));
 					if(trasformazioneRichiestaRestAbilitato) { // devo restituire un soap e il ct e' deciso dall'engine 
 						de.setType(DataElementType.HIDDEN);
 						de.setValue("");
