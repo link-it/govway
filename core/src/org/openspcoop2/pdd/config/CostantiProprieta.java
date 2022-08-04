@@ -162,22 +162,55 @@ public class CostantiProprieta {
 	public static final String CONNETTORE_PROXY_PASS_VALUE_DISABLED = VALUE_DISABLED;
 		
 	private static final String CONNETTORE_PROXY_PASS_REVERSE_ENABLED = "connettori.proxyPassReverse.enabled";
-	private static final String CONNETTORE_PROXY_PASS_REVERSE_USE_PROTOCOL_PREFIX = "connettori.proxyPassReverse.useProtocolPrefix";
 	private static final String CONNETTORE_PROXY_PASS_REVERSE_HEADERS = "connettori.proxyPassReverse.headers";
+	
+	private static final String CONNETTORE_PROXY_PASS_REVERSE_SETCOOKIE_ENABLED = "connettori.proxyPassReverse.setCookie.enabled";
+	private static final String CONNETTORE_PROXY_PASS_REVERSE_SETCOOKIE_PATH_ENABLED = "connettori.proxyPassReverse.setCookie.path.enabled";
+	private static final String CONNETTORE_PROXY_PASS_REVERSE_SETCOOKIE_DOMAIN_ENABLED = "connettori.proxyPassReverse.setCookie.domain.enabled";
 	private static final String CONNETTORE_PROXY_PASS_REVERSE_SETCOOKIE_HEADERS = "connettori.proxyPassReverse.setCookie.headers";
+	
+	private static final String CONNETTORE_PROXY_PASS_REVERSE_USE_PROTOCOL_PREFIX = "connettori.proxyPassReverse.useProtocolPrefix";
+	
 	
 	public static boolean isConnettoriProxyPassReverseEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
 		return readBooleanValueWithDefault(proprieta, CONNETTORE_PROXY_PASS_REVERSE_ENABLED, defaultValue, CONNETTORE_PROXY_PASS_VALUE_ENABLED, CONNETTORE_PROXY_PASS_VALUE_DISABLED);
 	}
-	public static boolean isConnettoriProxyPassReverseUseProtocolPrefix(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
-		return readBooleanValueWithDefault(proprieta, CONNETTORE_PROXY_PASS_REVERSE_USE_PROTOCOL_PREFIX, defaultValue, CONNETTORE_PROXY_PASS_VALUE_ENABLED, CONNETTORE_PROXY_PASS_VALUE_DISABLED);
-	}
 	public static List<String> getConnettoriProxyPassReverseHeaders(List<Proprieta> proprieta, List<String> defaultValue) throws Exception {
 		return _getConnettoriProxyPassReverseHeaders(CONNETTORE_PROXY_PASS_REVERSE_HEADERS, proprieta, defaultValue);
+	}
+	
+	public static boolean isConnettoriProxyPassReverseSetCookiePathEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		String setCookieEnabled = readValue(proprieta, CONNETTORE_PROXY_PASS_REVERSE_SETCOOKIE_PATH_ENABLED);
+		if(setCookieEnabled!=null && !"".equals(setCookieEnabled)) {
+			if(CONNETTORE_PROXY_PASS_VALUE_ENABLED.equals(setCookieEnabled.trim())) {
+				return true;
+			}
+			else if(CONNETTORE_PROXY_PASS_VALUE_DISABLED.equals(setCookieEnabled.trim())) {
+				return false;
+			}
+		}
+		return readBooleanValueWithDefault(proprieta, CONNETTORE_PROXY_PASS_REVERSE_SETCOOKIE_ENABLED, defaultValue, CONNETTORE_PROXY_PASS_VALUE_ENABLED, CONNETTORE_PROXY_PASS_VALUE_DISABLED);
+	}
+	public static boolean isConnettoriProxyPassReverseSetCookieDomainEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		String setCookieEnabled = readValue(proprieta, CONNETTORE_PROXY_PASS_REVERSE_SETCOOKIE_DOMAIN_ENABLED);
+		if(setCookieEnabled!=null && !"".equals(setCookieEnabled)) {
+			if(CONNETTORE_PROXY_PASS_VALUE_ENABLED.equals(setCookieEnabled.trim())) {
+				return true;
+			}
+			else if(CONNETTORE_PROXY_PASS_VALUE_DISABLED.equals(setCookieEnabled.trim())) {
+				return false;
+			}
+		}
+		return readBooleanValueWithDefault(proprieta, CONNETTORE_PROXY_PASS_REVERSE_SETCOOKIE_ENABLED, defaultValue, CONNETTORE_PROXY_PASS_VALUE_ENABLED, CONNETTORE_PROXY_PASS_VALUE_DISABLED);
 	}
 	public static List<String> getConnettoriProxyPassReverseSetCookieHeaders(List<Proprieta> proprieta, List<String> defaultValue) throws Exception {
 		return _getConnettoriProxyPassReverseHeaders(CONNETTORE_PROXY_PASS_REVERSE_SETCOOKIE_HEADERS, proprieta, defaultValue);
 	}
+	
+	public static boolean isConnettoriProxyPassReverseUseProtocolPrefix(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		return readBooleanValueWithDefault(proprieta, CONNETTORE_PROXY_PASS_REVERSE_USE_PROTOCOL_PREFIX, defaultValue, CONNETTORE_PROXY_PASS_VALUE_ENABLED, CONNETTORE_PROXY_PASS_VALUE_DISABLED);
+	}
+	
 	private static List<String> _getConnettoriProxyPassReverseHeaders(String pName, List<Proprieta> proprieta, List<String> defaultValue) throws Exception {
 		String v = readValue(proprieta, pName);
 		if(v==null || StringUtils.isEmpty(v)) {
@@ -222,57 +255,53 @@ public class CostantiProprieta {
 	}
 	
 	public static boolean isFileTraceDumpBinarioPayloadEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
-		String fileTraceEnabled = readValue(proprieta, FILE_TRACE_DUMP_BINARIO_ENABLED);
+		String fileTraceEnabled = readValue(proprieta, FILE_TRACE_DUMP_BINARIO_PAYLOAD_ENABLED);
 		if(fileTraceEnabled!=null && !"".equals(fileTraceEnabled)) {
-			boolean enabled = FILE_TRACE_VALUE_ENABLED.equals(fileTraceEnabled.trim());
-			if(enabled) {
-				return readBooleanValueWithDefault(proprieta, FILE_TRACE_DUMP_BINARIO_PAYLOAD_ENABLED, enabled, FILE_TRACE_VALUE_ENABLED, FILE_TRACE_VALUE_DISABLED);
+			if(FILE_TRACE_VALUE_ENABLED.equals(fileTraceEnabled.trim())) {
+				return true;
 			}
-			else {
-				return (FILE_TRACE_VALUE_DISABLED.equals(fileTraceEnabled.trim())) ? false : defaultValue; 
+			else if(FILE_TRACE_VALUE_DISABLED.equals(fileTraceEnabled.trim())) {
+				return false;
 			}
 		}
-		return defaultValue;
+		return readBooleanValueWithDefault(proprieta, FILE_TRACE_DUMP_BINARIO_ENABLED, defaultValue, FILE_TRACE_VALUE_ENABLED, FILE_TRACE_VALUE_DISABLED);
 	}
 	public static boolean isFileTraceDumpBinarioHeadersEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
-		String fileTraceEnabled = readValue(proprieta, FILE_TRACE_DUMP_BINARIO_ENABLED);
+		String fileTraceEnabled = readValue(proprieta, FILE_TRACE_DUMP_BINARIO_HEADERS_ENABLED);
 		if(fileTraceEnabled!=null && !"".equals(fileTraceEnabled)) {
-			boolean enabled = FILE_TRACE_VALUE_ENABLED.equals(fileTraceEnabled.trim());
-			if(enabled) {
-				return readBooleanValueWithDefault(proprieta, FILE_TRACE_DUMP_BINARIO_HEADERS_ENABLED, enabled, FILE_TRACE_VALUE_ENABLED, FILE_TRACE_VALUE_DISABLED);
+			if(FILE_TRACE_VALUE_ENABLED.equals(fileTraceEnabled.trim())) {
+				return true;
 			}
-			else {
-				return (FILE_TRACE_VALUE_DISABLED.equals(fileTraceEnabled.trim())) ? false : defaultValue; 
+			else if(FILE_TRACE_VALUE_DISABLED.equals(fileTraceEnabled.trim())) {
+				return false;
 			}
 		}
-		return defaultValue;
+		return readBooleanValueWithDefault(proprieta, FILE_TRACE_DUMP_BINARIO_ENABLED, defaultValue, FILE_TRACE_VALUE_ENABLED, FILE_TRACE_VALUE_DISABLED);
 	}
 	
 	public static boolean isFileTraceDumpBinarioConnettorePayloadEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
-		String fileTraceEnabled = readValue(proprieta, FILE_TRACE_DUMP_BINARIO_CONNETTORE_ENABLED);
+		String fileTraceEnabled = readValue(proprieta, FILE_TRACE_DUMP_BINARIO_CONNETTORE_PAYLOAD_ENABLED);
 		if(fileTraceEnabled!=null && !"".equals(fileTraceEnabled)) {
-			boolean enabled = FILE_TRACE_VALUE_ENABLED.equals(fileTraceEnabled.trim());
-			if(enabled) {
-				return readBooleanValueWithDefault(proprieta, FILE_TRACE_DUMP_BINARIO_CONNETTORE_PAYLOAD_ENABLED, enabled, FILE_TRACE_VALUE_ENABLED, FILE_TRACE_VALUE_DISABLED);
+			if(FILE_TRACE_VALUE_ENABLED.equals(fileTraceEnabled.trim())) {
+				return true;
 			}
-			else {
-				return (FILE_TRACE_VALUE_DISABLED.equals(fileTraceEnabled.trim())) ? false : defaultValue; 
+			else if(FILE_TRACE_VALUE_DISABLED.equals(fileTraceEnabled.trim())) {
+				return false;
 			}
 		}
-		return defaultValue;
+		return readBooleanValueWithDefault(proprieta, FILE_TRACE_DUMP_BINARIO_CONNETTORE_ENABLED, defaultValue, FILE_TRACE_VALUE_ENABLED, FILE_TRACE_VALUE_DISABLED);
 	}
 	public static boolean isFileTraceDumpBinarioConnettoreHeadersEnabled(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
-		String fileTraceEnabled = readValue(proprieta, FILE_TRACE_DUMP_BINARIO_CONNETTORE_ENABLED);
+		String fileTraceEnabled = readValue(proprieta, FILE_TRACE_DUMP_BINARIO_CONNETTORE_HEADERS_ENABLED);
 		if(fileTraceEnabled!=null && !"".equals(fileTraceEnabled)) {
-			boolean enabled = FILE_TRACE_VALUE_ENABLED.equals(fileTraceEnabled.trim());
-			if(enabled) {
-				return readBooleanValueWithDefault(proprieta, FILE_TRACE_DUMP_BINARIO_CONNETTORE_HEADERS_ENABLED, enabled, FILE_TRACE_VALUE_ENABLED, FILE_TRACE_VALUE_DISABLED);
+			if(FILE_TRACE_VALUE_ENABLED.equals(fileTraceEnabled.trim())) {
+				return true;
 			}
-			else {
-				return (FILE_TRACE_VALUE_DISABLED.equals(fileTraceEnabled.trim())) ? false : defaultValue; 
+			else if(FILE_TRACE_VALUE_DISABLED.equals(fileTraceEnabled.trim())) {
+				return false;
 			}
 		}
-		return defaultValue;
+		return readBooleanValueWithDefault(proprieta, FILE_TRACE_DUMP_BINARIO_CONNETTORE_ENABLED, defaultValue, FILE_TRACE_VALUE_ENABLED, FILE_TRACE_VALUE_DISABLED);
 	}
 	
 	

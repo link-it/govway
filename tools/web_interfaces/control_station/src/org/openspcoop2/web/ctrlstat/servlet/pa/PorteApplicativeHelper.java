@@ -2658,6 +2658,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
 					de.setValue(ssp.getNome());
 					de.setIdToRemove(ssp.getNome());
+					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
 					e.addElement(de);
 
 					de = new DataElement();
@@ -6198,6 +6199,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					DataElement de = new DataElement();
 					de.setValue(proprieta.getNome());
 					de.setIdToRemove(proprieta.getId() + "");
+					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
 					e.addElement(de);
 					
 					de = new DataElement();
@@ -6377,6 +6379,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					DataElement de = new DataElement();
 					de.setValue(proprieta.getNome());
 					de.setIdToRemove(proprieta.getId() + "");
+					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
 					e.addElement(de);
 					
 					de = new DataElement();
@@ -6555,6 +6558,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					DataElement de = new DataElement();
 					de.setValue(proprieta.getNome());
 					de.setIdToRemove(proprieta.getId() + "");
+					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
 					e.addElement(de);
 					
 					de = new DataElement();
@@ -9831,6 +9835,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					DataElement de = new DataElement();
 					de.setValue(proprieta.getNome());
 					de.setIdToRemove(proprieta.getId() + "");
+					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
 					e.addElement(de);
 					
 					de = new DataElement();

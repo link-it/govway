@@ -3846,6 +3846,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO_CHANGE, pId,pIdSoggetto, pIdAsps, pIdFruizione, new Parameter( PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, ssp.getNome()));
 					de.setValue(ssp.getNome());
 					de.setIdToRemove(ssp.getNome());
+					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
 					e.addElement(de);
 
 					de = new DataElement();
@@ -5465,6 +5466,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					DataElement de = new DataElement();
 					de.setValue(ssp.getNome());
 					de.setIdToRemove(ssp.getId()+"");
+					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
 					e.addElement(de);
 
 					de = new DataElement();
@@ -5657,6 +5659,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					DataElement de = new DataElement();
 					de.setValue(ssp.getNome());
 					de.setIdToRemove(ssp.getId()+"");
+					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
 					e.addElement(de);
 
 					de = new DataElement();
@@ -5849,6 +5852,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					DataElement de = new DataElement();
 					de.setValue(ssp.getNome());
 					de.setIdToRemove(ssp.getId()+"");
+					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
 					e.addElement(de);
 
 					de = new DataElement();

@@ -1,3 +1,10 @@
+2022-08-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1412
+	Nella gestione del proxy pass reverse la traduzione degli attributi path e domain presenti negli header Set-Cookie delle risposte è disabilitata per default.
+	È possibile abilitare la traduzione di entrambi gli attributi o solamente di uno dei due agendo sulla configurazione della singola erogazione o fruizione.
+
 2022-08-03  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

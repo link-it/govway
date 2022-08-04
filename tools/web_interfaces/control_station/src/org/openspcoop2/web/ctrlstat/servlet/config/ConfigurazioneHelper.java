@@ -1519,6 +1519,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SYSTEM_PROPERTIES_CHANGE, pIdProp);
 					de.setValue(sp.getNome());
 					de.setIdToRemove(sp.getNome());
+					de.setSize(CostantiControlStation.NOME_PROPRIETA_VISUALIZZATA);
 					e.addElement(de);
 
 					de = new DataElement();

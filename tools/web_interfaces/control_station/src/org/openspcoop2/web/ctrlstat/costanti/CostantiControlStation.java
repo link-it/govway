@@ -104,6 +104,9 @@ public class CostantiControlStation {
 	/** Sleep per receive */
 	public static final int INTERVALLO_RECEIVE = 10000;
 	
+	/** Dimensione max nome proprieta visualizzata */
+	public static final int NOME_PROPRIETA_VISUALIZZATA = 100;
+	
 	/** PERFORM OPERATION */
 	public static final int PERFORM_OPERATION_CREATE = 0;
 	public static final int PERFORM_OPERATION_UPDATE = 1;
