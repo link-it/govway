@@ -173,6 +173,7 @@ import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.driver.IDBuilder;
 import org.openspcoop2.web.ctrlstat.gestori.GestorePdDInitThread;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
@@ -5060,7 +5061,18 @@ public class ControlStationCore {
 					// Attivazione Policy
 					if(oggetto instanceof AttivazionePolicy) {
 						AttivazionePolicy policy = (AttivazionePolicy) oggetto;
-						driver.deleteAttivazionePolicy(policy); 
+						// Il file importato potrebbe avere un identificativo diverso da quello effettivamente salvato
+						if(policy.getAlias()==null) {
+							driver.deleteAttivazionePolicy(policy); 
+						}
+						else {
+							try {
+								AttivazionePolicy att = driver.getPolicyByAlias(policy.getAlias(),
+										(policy.getFiltro()!=null) ? policy.getFiltro().getRuoloPorta() : null,
+										(policy.getFiltro()!=null) ? policy.getFiltro().getNomePorta() : null);
+								driver.deleteAttivazionePolicy(att); 
+							}catch(DriverControlStationNotFound notFound) {}
+						}
 						doSetDati = false;
 					}
 					
@@ -5104,7 +5116,18 @@ public class ControlStationCore {
 					// Allarmi
 					if(oggetto instanceof Allarme) {
 						Allarme allarme = (Allarme) oggetto;
-						driver.deleteAllarme(allarme);
+						// Il file importato potrebbe avere un identificativo diverso da quello effettivamente salvato
+						if(allarme.getAlias()==null) {
+							driver.deleteAllarme(allarme);
+						}
+						else {
+							try {
+								Allarme all = driver.getAllarmeByAlias(allarme.getAlias(),
+										(allarme.getFiltro()!=null) ? allarme.getFiltro().getRuoloPorta() : null,
+										(allarme.getFiltro()!=null) ? allarme.getFiltro().getNomePorta() : null);
+								driver.deleteAllarme(all); 
+							}catch(DriverControlStationNotFound notFound) {}
+						}
 						doSetDati = false;
 					}
 					

@@ -297,6 +297,37 @@ public class AllarmiDriverUtils {
 		}
 	}
 	
+	public static Allarme getAllarmeByAlias(String alias,
+			RuoloPorta ruoloPorta, String nomePorta, Connection con, Logger log, String tipoDB) throws ServiceException,NotFoundException{
+		String nomeMetodo = "getAllarmeByAlias"; 
+		
+		try{
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(tipoDB);
+			properties.setShowSql(true);
+			JDBCServiceManager serviceManager = new JDBCServiceManager(con, properties, log);
+			IExpression expression = serviceManager.getAllarmeServiceSearch().newExpression();
+			
+			expression.and();
+			expression.ilike(Allarme.model().ALIAS, alias, LikeMode.EXACT);
+			
+			if(ruoloPorta!=null && nomePorta!=null) {
+				expression.equals(Allarme.model().FILTRO.ENABLED, true);
+				expression.equals(Allarme.model().FILTRO.RUOLO_PORTA, ruoloPorta);
+				expression.equals(Allarme.model().FILTRO.NOME_PORTA, nomePorta);
+			}
+			else {
+				expression.isNull(Allarme.model().FILTRO.NOME_PORTA);
+			}
+		
+			return serviceManager.getAllarmeServiceSearch().find(expression);
+		}catch (NotFoundException e) {
+			throw new NotFoundException("[" + nomeMetodo + "] Allarme non presente.");
+		} catch (Exception qe) {
+			throw new ServiceException("[" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} 
+	}
+	
 	public static boolean existsAllarmi(TipoAllarme tipoAllarme, Connection con, Logger log, String tipoDB) throws ServiceException {
 		String nomeMetodo = "existsAllarmi";
 		

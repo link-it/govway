@@ -1623,7 +1623,30 @@ public abstract class AbstractArchiveEngine {
 	
 	public void deleteControlloTraffico_activePolicy(AttivazionePolicy policy) throws DriverConfigurazioneException {
 		try {
-			this.serviceManagerControlloTraffico.getAttivazionePolicyService().delete(policy);
+			// Il file importato potrebbe avere un identificativo diverso da quello effettivamente salvato
+			if(policy.getAlias()==null) {
+				this.serviceManagerControlloTraffico.getAttivazionePolicyService().delete(policy);
+			}
+			else {
+				IExpression expr = this.serviceManagerControlloTraffico.getAttivazionePolicyServiceSearch().newExpression();
+				
+				expr.and();
+				
+				if(policy.getFiltro()!=null && policy.getFiltro().getRuoloPorta()!=null && policy.getFiltro().getNomePorta()!=null) {
+					expr.equals(AttivazionePolicy.model().FILTRO.RUOLO_PORTA, policy.getFiltro().getRuoloPorta());
+					expr.equals(AttivazionePolicy.model().FILTRO.NOME_PORTA, policy.getFiltro().getNomePorta());
+				}
+				else {
+					expr.isNull(AttivazionePolicy.model().FILTRO.NOME_PORTA);
+				}
+				
+				expr.equals(AttivazionePolicy.model().ALIAS, policy.getAlias());
+				
+				try {
+					AttivazionePolicy att = this.serviceManagerControlloTraffico.getAttivazionePolicyServiceSearch().find(expr);
+					this.serviceManagerControlloTraffico.getAttivazionePolicyService().delete(att);
+				}catch(NotFoundException notFound) {}
+			}
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
@@ -1828,7 +1851,30 @@ public abstract class AbstractArchiveEngine {
 	
 	public void deleteAllarme(Allarme policy, Logger log) throws DriverConfigurazioneException {
 		try {
-			this.serviceManagerAllarmi.getAllarmeService().delete(policy);
+			// Il file importato potrebbe avere un identificativo diverso da quello effettivamente salvato
+			if(policy.getAlias()==null) {
+				this.serviceManagerAllarmi.getAllarmeService().delete(policy);
+			}
+			else {
+				IExpression expr = this.serviceManagerAllarmi.getAllarmeService().newExpression();
+				
+				expr.and();
+				
+				if(policy.getFiltro()!=null && policy.getFiltro().getRuoloPorta()!=null && policy.getFiltro().getNomePorta()!=null) {
+					expr.equals(AttivazionePolicy.model().FILTRO.RUOLO_PORTA, policy.getFiltro().getRuoloPorta());
+					expr.equals(AttivazionePolicy.model().FILTRO.NOME_PORTA, policy.getFiltro().getNomePorta());
+				}
+				else {
+					expr.isNull(AttivazionePolicy.model().FILTRO.NOME_PORTA);
+				}
+				
+				expr.equals(AttivazionePolicy.model().ALIAS, policy.getAlias());
+				
+				try {
+					Allarme all = this.serviceManagerAllarmi.getAllarmeService().find(expr);
+					this.serviceManagerAllarmi.getAllarmeService().delete(all);
+				}catch(NotFoundException notFound) {}
+			}
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}

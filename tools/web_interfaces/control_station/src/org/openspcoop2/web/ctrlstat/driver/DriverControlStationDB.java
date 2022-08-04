@@ -5097,6 +5097,44 @@ public class DriverControlStationDB  {
 		}
 	}
 	
+	public Allarme getAllarmeByAlias(String alias,
+			RuoloPorta ruoloPorta, String nomePorta) throws DriverControlStationNotFound, DriverConfigurazioneException {
+		String nomeMetodo = "getAllarmeByAlias";
+		Connection con = null;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			return AllarmiDriverUtils.getAllarmeByAlias(alias,
+					ruoloPorta, nomePorta, con, this.log, this.tipoDB);
+		}catch (NotFoundException e) {
+			throw new DriverControlStationNotFound("[DriverControlStationDB::" + nomeMetodo + "] Allarme non presente.");
+		}  catch (Exception qe) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
 	public List<ConfigurazioneAllarmeHistoryBean> allarmiHistoryList(Search ricerca, Long idAllarme) throws DriverConfigurazioneException {
 		String nomeMetodo = "allarmiHistoryList";
 				

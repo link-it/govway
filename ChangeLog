@@ -1,6 +1,12 @@
 2022-08-04  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
+	Risolto Bug OP-1425
+	L'eliminazione di archivi contenenti Policy di Rate Limiting completavano con successo, ma l'eliminazione lasciava policy 'zombie' sulla base dati.
+
+2022-08-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
 	Risolto Bug OP-1423
 	Caricando un openapi in cui gli header venivano definiti erroneamente senza schema:
 	  headers:
