@@ -1,5 +1,17 @@
 2022-08-04  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Risolto Bug OP-1423
+	Caricando un openapi in cui gli header venivano definiti erroneamente senza schema:
+	  headers:
+            NomeHeader:
+              description: esempio
+              style: simple
+        La console riportava un errore non corretto: "[Interfaccia OpenAPI 3] Documento non valido: java.lang.NullPointerException".
+	La validazione è stata migliorata per riportare l'esatta motivazione dell'errore: "[Interfaccia OpenAPI 3] Documento non valido: java.lang.RuntimeException: Parametro 'NomeHeader' non corretto: schema non definito" 
+
+2022-08-04  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Aggiunta funzionalità OP-1412
 	Nella gestione del proxy pass reverse la traduzione degli attributi path e domain presenti negli header Set-Cookie delle risposte è disabilitata per default.

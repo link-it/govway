@@ -799,6 +799,10 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 						
 		}
 
+		if(schema==null) {
+			throw new RuntimeException("Parametro '"+name+"' non corretto: schema non definito");
+		}
+		
 		if(schema.get$ref() != null) {
 			return getParameterType(schema, schema.get$ref(), name, api);
 		}
