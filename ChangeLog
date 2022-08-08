@@ -1,3 +1,10 @@
+2022-08-08  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Risolto Bug OP-1428
+	L'utilizzo dei metodi getJSONObject(...) e getJSONArray(...) dell'utility JsonPathExpressionEngine, 
+	creava in presenza di richieste parallele dei messaggi inconsistenti per via di un utilizzo statico del parser JSONParser che non è risultato essere thread safe.
+
 2022-08-04  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

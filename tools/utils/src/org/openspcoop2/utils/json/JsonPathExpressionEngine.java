@@ -143,17 +143,19 @@ public class JsonPathExpressionEngine {
 	}
 
 
-	private static JSONParser jsonParser;
-	public static synchronized void initJSONParser() {
-		if(jsonParser == null) {
-			jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE); 
-		}
-	}
+	// Bug: JSONParser is not thread safe!
+//	private static JSONParser jsonParser;
+//	public static synchronized void initJSONParser() {
+//		if(jsonParser == null) {
+//			jsonParser = new JSONParser(JSONParser.MODE_PERMISSIVE); 
+//		}
+//	}
 	public static JSONParser getJSONParser() {
-		if(jsonParser == null) {
-			initJSONParser();
-		}
-		return jsonParser; 
+//		if(jsonParser == null) {
+//			initJSONParser();
+//		}
+//		return jsonParser;
+		return new JSONParser(JSONParser.MODE_PERMISSIVE); 
 	}
 
 	/* ---------- METODI RITORNANO STRINGHE -------------- */
