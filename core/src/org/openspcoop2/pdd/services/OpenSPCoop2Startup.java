@@ -124,6 +124,7 @@ import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.GestorePolicyAt
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.GestorePolicyAttiveInMemory;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.HazelcastManager;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.RedissonManager;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.eventi.GestoreEventi;
 import org.openspcoop2.pdd.core.handlers.ExitContext;
 import org.openspcoop2.pdd.core.handlers.GeneratoreCasualeDate;
@@ -214,6 +215,7 @@ import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.semaphore.Semaphore;
 import org.openspcoop2.utils.semaphore.SemaphoreConfiguration;
 import org.openspcoop2.utils.semaphore.SemaphoreMapping;
+import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.slf4j.Logger;
 
 import com.sun.xml.messaging.saaj.soap.MessageImpl;
@@ -879,6 +881,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}
 					}
 				}
+				
+				AbstractXMLUtils.DISABLE_DTDs = !propertiesReader.isXmlFactoryDTDsEnabled();
+				OpenSPCoop2Startup.log.info("XMLUtils - DISABLE_DTDs: "+AbstractXMLUtils.DISABLE_DTDs);
+				
+				DynamicUtils.XSLT_PROCESS_AS_DOMSOURCE = propertiesReader.isXsltProcessAsDOMSource();
+				OpenSPCoop2Startup.log.info("DynamicUtils - XSLT_PROCESS_AS_DOMSOURCE: "+DynamicUtils.XSLT_PROCESS_AS_DOMSOURCE);
 				
 				for (int l = 0; l < tipiMessageFactory.size(); l++) {
 					String tipo = tipiMessageFactory.get(l);

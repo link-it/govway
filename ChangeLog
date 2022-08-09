@@ -1,3 +1,11 @@
+2022-08-09  Andrea Poli <apoli@link.it>
+
+	* [Utils, GovWayCore]
+	Risolto Bug OP-1430
+	L'invocazione di API REST con contenuti XML permettevano di sfruttare la vulnerabilità XXE descritta in:
+	- https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
+	- https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing
+
 2022-08-08  Andrea Poli <apoli@link.it>
 
 	* [Utils]

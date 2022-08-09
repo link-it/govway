@@ -95,7 +95,7 @@ public class SoapUtils {
 		}
 		
 		// cerco TransformerException che contiene SAX Parser perchè almeno c'è anche l'indicazione sulla posizione dell'errore (riga e colonna)
-		if(Utilities.existsInnerInstanceException(t, javax.xml.transform.TransformerException.class)) {
+		if(msgSAXParser!=null && Utilities.existsInnerInstanceException(t, javax.xml.transform.TransformerException.class)) {
 			Throwable tExists = Utilities.getInnerInstanceException(t, javax.xml.transform.TransformerException.class, false);
 			if(tExists!=null && tExists.getMessage()!=null && tExists.getMessage().contains(msgSAXParser)) {
 				return new MessageException(prefix+tExists.getMessage(),t);
@@ -104,6 +104,29 @@ public class SoapUtils {
 		
 		if(meSAXParser!=null) {
 			return meSAXParser;
+		}
+		
+		// Altrimenti cerco org.xml.sax.SAXException
+		MessageException meSAXException = null;
+		String msgSAXException = null;
+		if(Utilities.existsInnerInstanceException(t, org.xml.sax.SAXException.class)) {
+			Throwable tExists = Utilities.getInnerInstanceException(t, org.xml.sax.SAXException.class, false);
+			if(tExists!=null) {
+				msgSAXException = tExists.getMessage();
+				meSAXException = new MessageException(prefix+tExists.getMessage(),t);
+			}
+		}
+		
+		// cerco TransformerException che contiene SAX Exception perchè almeno c'è anche l'indicazione sulla posizione dell'errore (riga e colonna)
+		if(msgSAXException!=null && Utilities.existsInnerInstanceException(t, javax.xml.transform.TransformerException.class)) {
+			Throwable tExists = Utilities.getInnerInstanceException(t, javax.xml.transform.TransformerException.class, false);
+			if(tExists!=null && tExists.getMessage()!=null && tExists.getMessage().contains(msgSAXException)) {
+				return new MessageException(prefix+tExists.getMessage(),t);
+			}
+		}
+		
+		if(meSAXException!=null) {
+			return meSAXException;
 		}
 		
 		return new MessageException(t.getMessage(),t);

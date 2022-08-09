@@ -348,6 +348,11 @@ Di seguito vengono descritti i test del package 'encoding':
    che se trattate come contenuto SAAJ fanno salire il carico per il lavoro richiesto al GC (G1 Humongous Allocation).
    ant run_test -Ddelete=false -Dload=false -Dpackage=encoding.entity_reference
 
+- 'dtd', verifica che non sia presente la vulnerabilità XXE descritta in:
+  - https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
+  - https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing
+  ant run_test -Ddelete=false -Dload=false -Dpackage=encoding.dtd
+
 Di seguito vengono descritti i test del package 'integrazione':
 
 - 'autenticazione', verifica  l'integrazione 'autenticazione' che consente di generare Header HTTP utilizzabili dal backend per autenticare l'API Gateway.

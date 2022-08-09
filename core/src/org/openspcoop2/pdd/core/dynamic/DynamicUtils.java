@@ -1074,9 +1074,17 @@ public class DynamicUtils {
 	
 	// *** XSLT ***
 	
+	public static boolean XSLT_PROCESS_AS_DOMSOURCE = true;
+	
 	public static void convertXSLTTemplate(String name, byte[] template, Element element, OutputStream out) throws DynamicException {
 		try {
-			Source xsltSource = new StreamSource(new ByteArrayInputStream(template));
+			Source xsltSource = null;
+			if(XSLT_PROCESS_AS_DOMSOURCE) {
+				xsltSource = new DOMSource(org.openspcoop2.utils.xml.XMLUtils.getInstance().newElement(template)); 	
+			}
+			else {
+				xsltSource = new StreamSource(new ByteArrayInputStream(template));
+			}
 			Source xmlSource = new DOMSource(element);
 			Transformer trans = XMLUtils.DEFAULT.getTransformerFactory().newTransformer(xsltSource);
 			trans.transform(xmlSource, new StreamResult(out));

@@ -88,7 +88,6 @@ public abstract class AbstractXMLUtils {
 	protected abstract TransformerFactory newTransformerFactory() throws XMLException;
 	protected abstract XPathFactory newXPathFactory() throws XMLException;
 	
-	
 	// XERCES
 	private DocumentBuilderFactory documentFactory = null;
 	private DatatypeFactory datatypeFactory = null;
@@ -104,6 +103,14 @@ public abstract class AbstractXMLUtils {
 	private GregorianCalendar gregorianCalendar = null;
 	
 	
+	// The safest way to prevent XXE is always to disable DTDs (External Entities) completely
+	public static boolean DISABLE_DTDs = true;
+	protected String getFeatures_disallow_doctype_decl() {
+		return "http://apache.org/xml/features/disallow-doctype-decl";
+	}
+	public boolean isDisabledDTDs() {
+		return DISABLE_DTDs;
+	}
 	
 	// INIT - XERCES
 	
@@ -111,6 +118,9 @@ public abstract class AbstractXMLUtils {
 		if(this.documentFactory==null){
 			try {
 				this.documentFactory = newDocumentBuilderFactory();
+				if(DISABLE_DTDs) {
+					this.documentFactory.setFeature(getFeatures_disallow_doctype_decl(), true);
+				}
 			} catch (Exception e) {
 				throw new XMLException(e.getMessage(),e);
 			}
@@ -132,6 +142,9 @@ public abstract class AbstractXMLUtils {
 		if(this.saxParserFactory==null){
 			try {
 				this.saxParserFactory = newSAXParserFactory();
+				if(DISABLE_DTDs) {
+					this.saxParserFactory.setFeature(getFeatures_disallow_doctype_decl(), true);
+				}
 			} catch (Exception e) {
 				throw new XMLException(e.getMessage(),e);
 			}
@@ -152,6 +165,9 @@ public abstract class AbstractXMLUtils {
 		if(this.schemaFactory==null){
 			try {
 				this.schemaFactory = newSchemaFactory();
+				if(DISABLE_DTDs) {
+					this.schemaFactory.setFeature(getFeatures_disallow_doctype_decl(), true);
+				}
 			} catch (Exception e) {
 				throw new XMLException(e.getMessage(),e);
 			}

@@ -1848,6 +1848,10 @@ public class OpenSPCoop2Properties {
 			this.isValidazioneContenutiApplicativi_openApi_openapi4j_validateBase64Values();
 			this.isValidazioneContenutiApplicativi_openApi_openapi4j_validateUriReferenceAsUrl();
 			
+			// XML
+			this.isXmlFactoryDTDsEnabled();
+			this.isXsltProcessAsDOMSource();
+			
 			// XPath Json Path
 			this.isJsonPathCacheEnabled();
 			this.isReadByPathBufferEnabled();
@@ -19742,6 +19746,63 @@ public class OpenSPCoop2Properties {
 
 		return OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_openapi4j_validateUriReferenceAsUrl;
 	}
+	
+	
+	
+	/* ------------- XML ---------------------*/
+	
+	private static Boolean isXmlFactoryDTDsEnabled = null;
+	public boolean isXmlFactoryDTDsEnabled(){
+
+		String pName = "org.openspcoop2.pdd.xmlFactory.DTDs.enabled";
+		
+		if(OpenSPCoop2Properties.isXmlFactoryDTDsEnabled==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isXmlFactoryDTDsEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isXmlFactoryDTDsEnabled = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isXmlFactoryDTDsEnabled = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isXmlFactoryDTDsEnabled;
+	}
+	
+	private static Boolean isXsltProcessAsDOMSource = null;
+	public boolean isXsltProcessAsDOMSource(){
+
+		String pName = "org.openspcoop2.pdd.xslt.processAsDOMSource";
+		
+		if(OpenSPCoop2Properties.isXsltProcessAsDOMSource==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isXsltProcessAsDOMSource = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isXsltProcessAsDOMSource = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isXsltProcessAsDOMSource = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isXsltProcessAsDOMSource;
+	}
+	
 	
 	
 	/* ------------- XPath e JSON Path ---------------------*/

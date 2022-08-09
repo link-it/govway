@@ -439,6 +439,9 @@ public abstract class AbstractValidatoreXSD {
 			if(schemaFactory!=null && !AbstractValidatoreXSD.FACTORY_DEFAULT.equals(schemaFactory)){
 				factory =  SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI,
 						schemaFactory, this.getClass().getClassLoader());
+				if(this.getXMLUtils().isDisabledDTDs()) {
+					factory.setFeature(this.getXMLUtils().getFeatures_disallow_doctype_decl(), true);
+				}
 			}
 			else{
 				factory = this.getXMLUtils().getSchemaFactory();
@@ -457,6 +460,9 @@ public abstract class AbstractValidatoreXSD {
 //				System.setProperty(propertySystem, schemaFactory);
 //			}
 //			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+//			if(this.getXMLUtils().isDisabledDTDs()) {
+//				factory.setFeature(this.getXMLUtils().getFeatures_disallow_doctype_decl(), true);
+//			}
 			log.info("SchemaFactory["+factory.getClass().getName()+"]");
 			if(lsResourceResolver!=null){
 				factory.setResourceResolver(lsResourceResolver);
@@ -485,6 +491,9 @@ public abstract class AbstractValidatoreXSD {
 			if(schemaFactory!=null && !AbstractValidatoreXSD.FACTORY_DEFAULT.equals(schemaFactory)){
 				factory =  SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI,
 						schemaFactory, this.getClass().getClassLoader());
+				if(this.getXMLUtils().isDisabledDTDs()) {
+					factory.setFeature(this.getXMLUtils().getFeatures_disallow_doctype_decl(), true);
+				}
 			}
 			else{
 				factory = this.getXMLUtils().getSchemaFactory();
@@ -503,6 +512,9 @@ public abstract class AbstractValidatoreXSD {
 //				System.setProperty(propertySystem, schemaFactory);
 //			}
 //			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+//			if(this.getXMLUtils().isDisabledDTDs()) {
+//				factory.setFeature(this.getXMLUtils().getFeatures_disallow_doctype_decl(), true);
+//			}
 			log.info("SchemaFactory["+factory.getClass().getName()+"]");
 			if(lsResourceResolver!=null){
 				factory.setResourceResolver(lsResourceResolver);
