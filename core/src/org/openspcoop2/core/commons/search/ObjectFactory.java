@@ -283,6 +283,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ServizioApplicativoProprietaProtocollo }
+     */
+    public ServizioApplicativoProprietaProtocollo createServizioApplicativoProprietaProtocollo() {
+        return new ServizioApplicativoProprietaProtocollo();
+    }
+
+    /**
      * Create an instance of {@link IdPortaApplicativa }
      */
     public IdPortaApplicativa createIdPortaApplicativa() {

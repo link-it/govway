@@ -47,7 +47,9 @@ import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServiziApplicat
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
+import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneToken;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.ProtocolProperty;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.Scope;
@@ -55,6 +57,7 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
@@ -142,6 +145,8 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
+import org.openspcoop2.protocol.modipa.constants.ModICostanti;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
@@ -195,8 +200,32 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 
-			if ( !TipoAutorizzazione.isAuthenticationRequired(pa.getAutorizzazione()) ) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione per richiedente non è abilitata");
+			boolean isProfiloModi = env.isProfiloModi();
+			
+			boolean tokenAbilitato = pa.getGestioneToken()!=null && pa.getGestioneToken().getPolicy()!=null;
+			
+			boolean modiSicurezzaMessaggio = false;
+			if(isProfiloModi) {
+				final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio , nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+				ProtocolProperties protocolProperties = ErogazioniApiHelper.getProtocolProperties(asps, env);
+				if(protocolProperties!=null && protocolProperties.sizeProperties()>0) {
+					modiSicurezzaMessaggio = true;
+				}
+			}
+			
+			if(isProfiloModi) {
+				boolean enabled = pa.getServiziApplicativiAutorizzati()!=null && pa.sizeServizioApplicativoList()>0; // retrocompatibilita
+				if(!enabled) {
+					enabled = pa.getAutorizzazioneToken()!=null && StatoFunzionalita.ABILITATO.equals(pa.getAutorizzazioneToken().getAutorizzazioneApplicativi());
+				}
+				if(!enabled) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione messaggio per richiedente non è abilitata");
+				}
+			}
+			else {
+				if ( !TipoAutorizzazione.isAuthenticationRequired(pa.getAutorizzazione()) ) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione trasporto per richiedente non è abilitata");
+				}
 			}
 			
 			IdSoggetto idSoggettoProprietarioSA = (IdSoggetto) env.idSoggetto.clone();
@@ -217,17 +246,82 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				);
 					
 			
-			final org.openspcoop2.core.config.constants.CredenzialeTipo tipoAutenticazione = org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(pa.getAutenticazione());	
-			Boolean appId = null;
-			if(org.openspcoop2.core.config.constants.CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
-				ApiKeyState apiKeyState =  new ApiKeyState(env.paCore.getParametroAutenticazione(pa.getAutenticazione(), pa.getProprietaAutenticazioneList()));
-				appId = apiKeyState.appIdSelected;
+			org.openspcoop2.core.config.constants.CredenzialeTipo tipoAutenticazione = null;
+			boolean check = true;
+			boolean bothSslAndToken = false;
+			if(isProfiloModi) {
+				
+				if(!tokenAbilitato && !modiSicurezzaMessaggio) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è possibile registrare alcun applicativo: non è stata riscontrato alcun criterio di sicurezza (messaggio o token)");
+				}
+				
+				bothSslAndToken = tokenAbilitato && modiSicurezzaMessaggio;
+				
+				boolean dominioInterno = env.isDominioInterno(idSA.getIdSoggettoProprietario());
+				if(dominioInterno) {
+					boolean sicurezzaMessaggio = false;
+					boolean sicurezzaToken = false;
+					if(sa.sizeProtocolPropertyList()>0) {
+						for (ProtocolProperty pp : sa.getProtocolPropertyList()) {
+							if(ModICostanti.MODIPA_SICUREZZA_MESSAGGIO.equals(pp.getName())) {
+								sicurezzaMessaggio = pp.getBooleanValue()!=null && pp.getBooleanValue();
+							}
+							else if(ModICostanti.MODIPA_SICUREZZA_TOKEN.equals(pp.getName())) {
+								sicurezzaToken = pp.getBooleanValue()!=null && pp.getBooleanValue();
+							}
+						}
+					}
+					check = false;
+					
+					if(bothSslAndToken) {
+						if(!sicurezzaToken) {
+							throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'applicativo, di dominio interno, indicato non possiede una configurazione per la sicurezza token richiesta per essere autorizzati ad invocare l'erogazione con profilo ModI indicata");
+						}
+						if(!sicurezzaMessaggio) {
+							throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'applicativo, di dominio interno, indicato non possiede una configurazione per la sicurezza messaggio richiesta per essere autorizzati ad invocare l'erogazione con profilo ModI indicata");
+						}
+					}
+					else if(tokenAbilitato) {
+						if(!sicurezzaToken) {
+							throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'applicativo, di dominio interno, indicato non possiede una configurazione per la sicurezza token richiesta per essere autorizzati ad invocare l'erogazione con profilo ModI indicata");
+						}
+					}
+					else { //if(modiSicurezzaMessaggio) {
+						if(!sicurezzaMessaggio) {
+							throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'applicativo, di dominio interno, indicato non possiede una configurazione per la sicurezza messaggio richiesta per essere autorizzati ad invocare l'erogazione con profilo ModI indicata");
+						}
+					}
+				}
+				else {
+					if(tokenAbilitato) {
+						tipoAutenticazione = org.openspcoop2.core.config.constants.CredenzialeTipo.TOKEN;
+					}
+					else {
+						tipoAutenticazione = org.openspcoop2.core.config.constants.CredenzialeTipo.SSL;
+					}
+				}
 			}
-			List<IDServizioApplicativoDB> saCompatibili = env.saCore.soggettiServizioApplicativoList(idSoggettoProprietarioSA.toIDSoggetto(),env.userLogin,tipoAutenticazione, appId,
-					CostantiConfigurazione.CLIENT);
-			if(env.protocolFactory.createProtocolConfiguration().isSupportoAutenticazioneApplicativiErogazioni()) {
-				if (!BaseHelper.findFirst(saCompatibili, s -> s.getId().equals(sa.getId())).isPresent()) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il tipo di credenziali dell'Applicativo non sono compatibili con l'autenticazione impostata nell'erogazione selezionata");
+			else {
+				tipoAutenticazione = org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(pa.getAutenticazione());
+				
+				if(tipoAutenticazione==null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non risulta abilitato un tipo di autenticazione trasporto nell'erogazione selezionata");
+				}
+				
+			}
+			if(check) {
+				Boolean appId = null;
+				if(org.openspcoop2.core.config.constants.CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
+					ApiKeyState apiKeyState =  new ApiKeyState(env.paCore.getParametroAutenticazione(pa.getAutenticazione(), pa.getProprietaAutenticazioneList()));
+					appId = apiKeyState.appIdSelected;
+				}
+				List<IDServizioApplicativoDB> saCompatibili = env.saCore.soggettiServizioApplicativoList(idSoggettoProprietarioSA.toIDSoggetto(),env.userLogin,tipoAutenticazione, appId,
+						CostantiConfigurazione.CLIENT,
+						bothSslAndToken, pa.getGestioneToken()!=null ? pa.getGestioneToken().getPolicy() : null);
+				if(env.protocolFactory.createProtocolConfiguration().isSupportoAutenticazioneApplicativiErogazioni()) {
+					if (!BaseHelper.findFirst(saCompatibili, s -> s.getId().equals(sa.getId())).isPresent()) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il tipo di credenziali dell'Applicativo non sono compatibili con l'autenticazione impostata nell'erogazione selezionata");
+					}
 				}
 			}
 			
@@ -294,10 +388,17 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
-			if ( !TipoAutorizzazione.isAuthenticationRequired(pa.getAutorizzazione())) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione per richiedente per soggetti non è abilitata");
-			}
+			boolean isProfiloModi = env.isProfiloModi();
 			
+			if ( !TipoAutorizzazione.isAuthenticationRequired(pa.getAutorizzazione())) {
+				if(isProfiloModi) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione canale per richiedente non è abilitata");
+				}
+				else {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione trasporto per richiedente non è abilitata");
+				}
+			}
+						
 			final IDSoggetto daAutenticareID = new IDSoggetto(env.tipo_soggetto, body.getSoggetto());
 			final Soggetto daAutenticare = BaseHelper.supplyOrNonValida( 
 					() -> env.soggettiCore.getSoggetto(daAutenticareID),
@@ -305,20 +406,27 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				);
 			
 			final CredenzialeTipo tipoAutenticazione = CredenzialeTipo.toEnumConstant(pa.getAutenticazione());	
-			Boolean appId = null;
-			if(CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
-				ApiKeyState apiKeyState =  new ApiKeyState(env.paCore.getParametroAutenticazione(pa.getAutenticazione(), pa.getProprietaAutenticazioneList()));
-				appId = apiKeyState.appIdSelected;
+			if(tipoAutenticazione==null) {
+				if(!env.protocolFactory.createProtocolConfiguration().isSupportatoAutorizzazioneRichiedenteSenzaAutenticazioneErogazioni()) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non risulta abilitato un tipo di autenticazione trasporto nell'erogazione selezionata");
+				}
 			}
-			final List<String> tipiSoggettiGestitiProtocollo = env.soggettiCore.getTipiSoggettiGestitiProtocollo(env.tipo_protocollo);
-			
-			// L'ultimo parametro è da configurare quando utilizzeremo il multitenant 
-			final List<IDSoggettoDB> soggettiCompatibili = env.soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, appId, null);
-			if(env.protocolFactory.createProtocolConfiguration().isSupportoAutenticazioneSoggetti()) {
-				if (!BaseHelper.findFirst(soggettiCompatibili, s -> { 
-						return (daAutenticare.getTipo().equals(s.getTipo()) && daAutenticare.getNome().equals(s.getNome()) ); 
-					}).isPresent()) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il tipo di credenziali del Soggetto non sono compatibili con l'autenticazione impostata nell'erogazione selezionata");
+			else {
+				Boolean appId = null;
+				if(CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
+					ApiKeyState apiKeyState =  new ApiKeyState(env.paCore.getParametroAutenticazione(pa.getAutenticazione(), pa.getProprietaAutenticazioneList()));
+					appId = apiKeyState.appIdSelected;
+				}
+				final List<String> tipiSoggettiGestitiProtocollo = env.soggettiCore.getTipiSoggettiGestitiProtocollo(env.tipo_protocollo);
+				
+				// L'ultimo parametro è da configurare quando utilizzeremo il multitenant 
+				final List<IDSoggettoDB> soggettiCompatibili = env.soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, appId, null);
+				if(env.protocolFactory.createProtocolConfiguration().isSupportoAutenticazioneSoggetti()) {
+					if (!BaseHelper.findFirst(soggettiCompatibili, s -> { 
+							return (daAutenticare.getTipo().equals(s.getTipo()) && daAutenticare.getNome().equals(s.getNome()) ); 
+						}).isPresent()) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il tipo di credenziali del Soggetto non sono compatibili con l'autenticazione impostata nell'erogazione selezionata");
+					}
 				}
 			}
 			
@@ -362,7 +470,209 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 		}
     }
 	
-	
+    /**
+     * Aggiunta di applicativi token all'elenco degli applicativi autorizzati
+     *
+     * Questa operazione consente di aggiungere applicativi token all'elenco degli applicativi autorizzati
+     *
+     */
+	@Override
+    public void addErogazioneControlloAccessiAutorizzazioneApplicativiToken(ControlloAccessiErogazioneAutorizzazioneApplicativo body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			BaseHelper.throwIfNull(body);
+			
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+
+			boolean isProfiloModi = env.isProfiloModi();
+			
+			boolean tokenAbilitato = pa.getGestioneToken()!=null && pa.getGestioneToken().getPolicy()!=null;
+			
+			boolean modiSicurezzaMessaggio = false;
+			if(isProfiloModi) {
+				final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio , nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+				ProtocolProperties protocolProperties = ErogazioniApiHelper.getProtocolProperties(asps, env);
+				if(protocolProperties!=null && protocolProperties.sizeProperties()>0) {
+					modiSicurezzaMessaggio = true;
+				}
+			}
+			
+			if(isProfiloModi) {
+				boolean enabled = pa.getServiziApplicativiAutorizzati()!=null && pa.sizeServizioApplicativoList()>0; // retrocompatibilita
+				if(!enabled) {
+					enabled = pa.getAutorizzazioneToken()!=null && StatoFunzionalita.ABILITATO.equals(pa.getAutorizzazioneToken().getAutorizzazioneApplicativi());
+				}
+				if(!enabled) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione messaggio per richiedente non è abilitata");
+				}
+			}
+			else {
+				if(pa.getGestioneToken()==null || pa.getGestioneToken().getPolicy()==null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione token per richiedente non è utilizzabile, non risulta abilitata una token policy di validazione");
+				}
+				if(pa.getAutorizzazioneToken()==null || !StatoFunzionalita.ABILITATO.equals(pa.getAutorizzazioneToken().getAutorizzazioneApplicativi())) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione token per richiedente non è abilitata");
+				}
+			}
+			String tokenPolicy = (pa.getGestioneToken()!=null) ? pa.getGestioneToken().getPolicy() : null;
+			
+			IdSoggetto idSoggettoProprietarioSA = (IdSoggetto) env.idSoggetto.clone();
+			if(org.apache.commons.lang.StringUtils.isNotEmpty(body.getSoggetto())) {
+				idSoggettoProprietarioSA.setNome(body.getSoggetto());
+				try {
+					idSoggettoProprietarioSA.setId(env.soggettiCore.getIdSoggetto(body.getSoggetto(),env.tipo_soggetto));
+				} catch (Exception e) {}
+			}
+			
+			final IDServizioApplicativo idSA = new IDServizioApplicativo();
+			idSA.setIdSoggettoProprietario(idSoggettoProprietarioSA.toIDSoggetto());
+			idSA.setNome(body.getApplicativo());
+			
+			final ServizioApplicativo sa = BaseHelper.supplyOrNonValida( 
+					() -> env.saCore.getServizioApplicativo(idSA),
+					"Servizio Applicativo " + idSA.toString()
+				);
+					
+			
+			org.openspcoop2.core.config.constants.CredenzialeTipo tipoAutenticazione = null;
+			boolean check = true;
+			boolean bothSslAndToken = false;
+			if(isProfiloModi) {
+				
+				if(!tokenAbilitato && !modiSicurezzaMessaggio) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è possibile registrare alcun applicativo: non è stata riscontrato alcun criterio di sicurezza (messaggio o token)");
+				}
+				
+				bothSslAndToken = tokenAbilitato && modiSicurezzaMessaggio;
+				
+				boolean dominioInterno = env.isDominioInterno(idSA.getIdSoggettoProprietario());
+				if(dominioInterno) {
+					boolean sicurezzaMessaggio = false;
+					boolean sicurezzaToken = false;
+					if(sa.sizeProtocolPropertyList()>0) {
+						for (ProtocolProperty pp : sa.getProtocolPropertyList()) {
+							if(ModICostanti.MODIPA_SICUREZZA_MESSAGGIO.equals(pp.getName())) {
+								sicurezzaMessaggio = pp.getBooleanValue()!=null && pp.getBooleanValue();
+							}
+							else if(ModICostanti.MODIPA_SICUREZZA_TOKEN.equals(pp.getName())) {
+								sicurezzaToken = pp.getBooleanValue()!=null && pp.getBooleanValue();
+							}
+						}
+					}
+					check = false;
+					
+					if(bothSslAndToken) {
+						if(!sicurezzaToken) {
+							throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'applicativo, di dominio interno, indicato non possiede una configurazione per la sicurezza token richiesta per essere autorizzati ad invocare l'erogazione con profilo ModI indicata");
+						}
+						if(!sicurezzaMessaggio) {
+							throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'applicativo, di dominio interno, indicato non possiede una configurazione per la sicurezza messaggio richiesta per essere autorizzati ad invocare l'erogazione con profilo ModI indicata");
+						}
+					}
+					else if(tokenAbilitato) {
+						if(!sicurezzaToken) {
+							throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'applicativo, di dominio interno, indicato non possiede una configurazione per la sicurezza token richiesta per essere autorizzati ad invocare l'erogazione con profilo ModI indicata");
+						}
+					}
+					else { //if(modiSicurezzaMessaggio) {
+						if(!sicurezzaMessaggio) {
+							throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'applicativo, di dominio interno, indicato non possiede una configurazione per la sicurezza messaggio richiesta per essere autorizzati ad invocare l'erogazione con profilo ModI indicata");
+						}
+					}
+				}
+				else {
+					if(tokenAbilitato) {
+						tipoAutenticazione = org.openspcoop2.core.config.constants.CredenzialeTipo.TOKEN;
+					}
+					else {
+						tipoAutenticazione = org.openspcoop2.core.config.constants.CredenzialeTipo.SSL;
+					}
+				}
+			}
+			else {
+				tipoAutenticazione = org.openspcoop2.core.config.constants.CredenzialeTipo.TOKEN;
+			}
+			if(check) {
+				Boolean appId = null;
+				List<IDServizioApplicativoDB> saCompatibili = env.saCore.soggettiServizioApplicativoList(idSoggettoProprietarioSA.toIDSoggetto(),env.userLogin,tipoAutenticazione, appId,
+						CostantiConfigurazione.CLIENT,
+						bothSslAndToken, tokenPolicy);
+				if(env.protocolFactory.createProtocolConfiguration().isSupportoAutenticazioneApplicativiErogazioni()) {
+					if (!BaseHelper.findFirst(saCompatibili, s -> s.getId().equals(sa.getId())).isPresent()) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il tipo di credenziali dell'Applicativo non sono compatibili con l'autenticazione impostata nell'erogazione selezionata");
+					}
+				}
+			}
+				
+			if(isProfiloModi) {
+				if (pa.getServiziApplicativiAutorizzati() == null)
+					pa.setServiziApplicativiAutorizzati(new PortaApplicativaAutorizzazioneServiziApplicativi());
+			}
+			else {
+				if(pa.getAutorizzazioneToken()==null) {
+					pa.setAutorizzazioneToken(new PortaApplicativaAutorizzazioneToken());
+				}
+				if(pa.getAutorizzazioneToken().getServiziApplicativi()==null) {
+					pa.getAutorizzazioneToken().setServiziApplicativi(new PortaApplicativaAutorizzazioneServiziApplicativi());
+				}	
+			}
+			
+			List<PortaApplicativaAutorizzazioneServizioApplicativo> lSA = null;
+			if(isProfiloModi) {
+				lSA = pa.getServiziApplicativiAutorizzati().getServizioApplicativoList();
+			}
+			else {
+				lSA = pa.getAutorizzazioneToken().getServiziApplicativi().getServizioApplicativoList();
+			}
+			
+			if ( BaseHelper.findFirst(
+					lSA,
+						s -> ( (sa.getNome().equals(s.getNome())) && (sa.getTipoSoggettoProprietario().equals(s.getTipoSoggettoProprietario())) && (sa.getNomeSoggettoProprietario().equals(s.getNomeSoggettoProprietario())) )
+						).isPresent()
+				) {
+				throw FaultCode.CONFLITTO.toException("Servizio Applicativo già associato");
+			}
+			
+			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, pa.getId().toString());
+			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SOGGETTO, idSoggettoProprietarioSA.getId().toString());
+			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO, sa.getId().toString());
+			if (!env.paHelper.porteAppServizioApplicativoAutorizzatiCheckData(TipoOperazione.ADD)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(  env.pd.getMessage() ));
+			}
+			
+			PortaApplicativaAutorizzazioneServizioApplicativo paSaAutorizzato = new PortaApplicativaAutorizzazioneServizioApplicativo();
+			paSaAutorizzato.setNome(sa.getNome());
+			paSaAutorizzato.setTipoSoggettoProprietario(idSoggettoProprietarioSA.getTipo());
+			paSaAutorizzato.setNomeSoggettoProprietario(idSoggettoProprietarioSA.getNome());
+
+			if(isProfiloModi) {
+				pa.getServiziApplicativiAutorizzati().addServizioApplicativo(paSaAutorizzato);		
+			}
+			else {
+				pa.getAutorizzazioneToken().getServiziApplicativi().addServizioApplicativo(paSaAutorizzato);
+			}
+			env.paCore.performUpdateOperation(env.userLogin, false, pa);
+			
+			context.getLogger().info("Invocazione completata con successo");
+        
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
     
     /**
      * Aggiunta di ruoli all'elenco dei ruoli autorizzati
@@ -384,8 +694,15 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
+			boolean isProfiloModi = env.isProfiloModi();
+			
 			if ( !TipoAutorizzazione.isRolesRequired(pa.getAutorizzazione()) ) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione per ruoli non è abilitata per il gruppo scelto");	
+				if(isProfiloModi) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione canale per ruoli non è abilitata per il gruppo scelto");
+				}
+				else {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione trasporto per ruoli non è abilitata per il gruppo scelto");
+				}
 			}
 			
 			final RuoliCore ruoliCore = new RuoliCore(env.stationCore);
@@ -445,6 +762,97 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 		}
     }
     
+   /**
+     * Aggiunta di ruoli all'elenco dei ruoli token autorizzati
+     *
+     * Questa operazione consente di aggiungere ruoli all'elenco dei ruoli token autorizzati
+     *
+     */
+	@Override
+    public void addErogazioneControlloAccessiAutorizzazioneRuoliToken(ControlloAccessiAutorizzazioneRuolo body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			BaseHelper.throwIfNull(body);
+			
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+			
+			boolean isProfiloModi = env.isProfiloModi();
+			
+			if(pa.getAutorizzazioneToken()==null || !StatoFunzionalita.ABILITATO.equals(pa.getAutorizzazioneToken().getAutorizzazioneRuoli())) {
+				if(isProfiloModi) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione messaggio per ruoli non è abilitata");
+				}
+				else {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione token per ruoli non è abilitata");
+				}
+			}
+			
+			final RuoliCore ruoliCore = new RuoliCore(env.stationCore);
+			BaseHelper.supplyOrNonValida( 
+					() -> ruoliCore.getRuolo(body.getRuolo())
+					, "Ruolo " + body.getRuolo()
+				);
+			
+			if(pa.getAutorizzazioneToken()==null) {
+				pa.setAutorizzazioneToken(new PortaApplicativaAutorizzazioneToken());
+			}
+			if(pa.getAutorizzazioneToken().getRuoli()==null) {
+				pa.getAutorizzazioneToken().setRuoli(new AutorizzazioneRuoli());
+			}
+			
+			FiltroRicercaRuoli filtroRuoli = new FiltroRicercaRuoli();
+			filtroRuoli.setContesto(RuoloContesto.PORTA_APPLICATIVA);
+			filtroRuoli.setTipologia(RuoloTipologia.QUALSIASI);
+			if(TipoAutorizzazione.isInternalRolesRequired(pa.getAutorizzazione()) ){
+				filtroRuoli.setTipologia(RuoloTipologia.INTERNO);
+			}
+			else if(TipoAutorizzazione.isExternalRolesRequired(pa.getAutorizzazione()) ){
+				filtroRuoli.setTipologia(RuoloTipologia.ESTERNO);
+			}
+			
+			List<String> ruoliAmmessi = env.stationCore.getAllRuoli(filtroRuoli);
+			
+			if ( !ruoliAmmessi.contains(body.getRuolo())) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il ruolo " + body.getRuolo() + "non è tra i ruoli ammissibili per il gruppo"); 
+			}
+			
+			final List<String> ruoliPresenti = pa.getAutorizzazioneToken().getRuoli().getRuoloList().stream().map( r -> r.getNome()).collect(Collectors.toList());
+			
+			if ( BaseHelper.findFirst( ruoliPresenti, r -> r.equals(body.getRuolo())).isPresent()) {
+				throw FaultCode.CONFLITTO.toException("Il ruolo " + body.getRuolo() + " è già associato al gruppo scelto");
+			}
+			
+			if (!env.paHelper.ruoloCheckData(TipoOperazione.ADD, body.getRuolo(), ruoliPresenti)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(  env.pd.getMessage() ));
+			}
+
+			Ruolo ruolo = new Ruolo();
+			ruolo.setNome(body.getRuolo());
+			pa.getAutorizzazioneToken().getRuoli().addRuolo(ruolo);
+
+			env.paCore.performUpdateOperation(env.userLogin, false, pa);
+
+			context.getLogger().info("Invocazione completata con successo");
+     
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
     /**
      * Aggiunta di una proprietà di configurazione
      *
@@ -812,7 +1220,8 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
-			if (pa.getServiziApplicativiAutorizzati() == null)	pa.setServiziApplicativiAutorizzati(new PortaApplicativaAutorizzazioneServiziApplicativi());
+			if (pa.getServiziApplicativiAutorizzati() == null)	
+				pa.setServiziApplicativiAutorizzati(new PortaApplicativaAutorizzazioneServiziApplicativi());
 			
 			IdSoggetto idSoggettoProprietarioSA = (IdSoggetto) env.idSoggetto.clone();
 			if(org.apache.commons.lang.StringUtils.isNotEmpty(soggettoApplicativo)) {
@@ -887,6 +1296,76 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 		}
     }
     
+   /**
+     * Elimina applicativi dall'elenco degli applicativi token autorizzati
+     *
+     * Questa operazione consente di eliminare applicativi token dall'elenco degli applicativi autorizzati
+     *
+     */
+	@Override
+    public void deleteErogazioneControlloAccessiAutorizzazioneApplicativiToken(String nome, Integer versione, String applicativoAutorizzato, ProfiloEnum profilo, String soggetto, String soggettoApplicativo, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+			
+			boolean isProfiloModi = env.isProfiloModi();
+			
+			if(isProfiloModi) {
+				if (pa.getServiziApplicativiAutorizzati() == null)	
+					pa.setServiziApplicativiAutorizzati(new PortaApplicativaAutorizzazioneServiziApplicativi());
+			}
+			else {
+				if(pa.getAutorizzazioneToken()==null) {
+					pa.setAutorizzazioneToken(new PortaApplicativaAutorizzazioneToken());
+				}
+				if(pa.getAutorizzazioneToken().getServiziApplicativi()==null) {
+					pa.getAutorizzazioneToken().setServiziApplicativi(new PortaApplicativaAutorizzazioneServiziApplicativi());
+				}
+			}
+			
+			IdSoggetto idSoggettoProprietarioSA = (IdSoggetto) env.idSoggetto.clone();
+			if(org.apache.commons.lang.StringUtils.isNotEmpty(soggettoApplicativo)) {
+				idSoggettoProprietarioSA.setNome(soggettoApplicativo);
+			}
+			
+			List<PortaApplicativaAutorizzazioneServizioApplicativo> lSA = null;
+			if(isProfiloModi) {
+				lSA = pa.getServiziApplicativiAutorizzati().getServizioApplicativoList();
+			}
+			else {
+				lSA = pa.getAutorizzazioneToken().getServiziApplicativi().getServizioApplicativoList(); 
+			}
+			
+			PortaApplicativaAutorizzazioneServizioApplicativo to_remove = BaseHelper.findAndRemoveFirst(lSA, sa -> 
+				(sa.getNome().equals(applicativoAutorizzato) && 
+				idSoggettoProprietarioSA.getNome().equals(sa.getNomeSoggettoProprietario()) && 
+				idSoggettoProprietarioSA.getTipo().equals(sa.getTipoSoggettoProprietario())));
+			
+			if (env.delete_404 && to_remove == null) {
+				throw FaultCode.NOT_FOUND.toException("Nessun Applicativo " + applicativoAutorizzato + " (soggetto: "+idSoggettoProprietarioSA.getNome()+") è associato al gruppo scelto");
+			} else if (to_remove != null) {
+				env.paCore.performUpdateOperation(env.userLogin, false, pa);
+			}
+
+        
+			context.getLogger().info("Invocazione completata con successo");     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
     /**
      * Elimina ruoli dall'elenco dei ruoli autorizzati
      *
@@ -929,6 +1408,52 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 		}
     }
     
+   /**
+     * Elimina ruoli dall'elenco dei ruoli token autorizzati
+     *
+     * Questa operazione consente di eliminare ruoli dall'elenco dei ruoli token autorizzati
+     *
+     */
+	@Override
+    public void deleteErogazioneControlloAccessiAutorizzazioneRuoliToken(String nome, Integer versione, String ruoloAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+			
+			if(pa.getAutorizzazioneToken()==null) {
+				pa.setAutorizzazioneToken(new PortaApplicativaAutorizzazioneToken());
+			}
+			if(pa.getAutorizzazioneToken().getRuoli()==null) {
+				pa.getAutorizzazioneToken().setRuoli(new AutorizzazioneRuoli());
+			}
+			
+			Ruolo to_remove = BaseHelper.findAndRemoveFirst(pa.getAutorizzazioneToken().getRuoli().getRuoloList(), r -> r.getNome().equals(ruoloAutorizzato));
+			
+			if (env.delete_404 && to_remove == null) {
+				throw FaultCode.NOT_FOUND.toException("Nessun Ruolo " + ruoloAutorizzato + " è associato al gruppo scelto"); 
+			} else if ( to_remove != null ) {
+			
+				env.paCore.performUpdateOperation(env.userLogin, false, pa);
+			}
+			context.getLogger().info("Invocazione completata con successo");
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
     /**
      * Elimina la proprietà di configurazione dall&#x27;elenco di quelle attivate
      *
@@ -1823,6 +2348,56 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 		}
     }
     
+   /**
+     * Restituisce l'elenco degli applicativi token autorizzati
+     *
+     * Questa operazione consente di ottenere l'elenco degli applicativi token autorizzati
+     *
+     */
+	@Override
+    public ControlloAccessiErogazioneAutorizzazioneApplicativi getErogazioneControlloAccessiAutorizzazioneApplicativiToken(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+			ControlloAccessiErogazioneAutorizzazioneApplicativi ret = new ControlloAccessiErogazioneAutorizzazioneApplicativi();
+			
+			boolean isProfiloModi = env.isProfiloModi();
+			
+			int idLista = isProfiloModi ? Liste.PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO : Liste.PORTE_APPLICATIVE_TOKEN_SERVIZIO_APPLICATIVO;
+			Search ricerca = Helper.setupRicercaPaginata("", -1, 0, idLista);
+			List<PortaApplicativaAutorizzazioneServizioApplicativo> lista = isProfiloModi ?
+					env.paCore.porteAppServiziApplicativiAutorizzatiList(pa.getId(), ricerca)
+					:
+					env.paCore.porteAppServiziApplicativiAutorizzatiTokenList(pa.getId(), ricerca);
+			
+			if(lista!=null && !lista.isEmpty()) {
+				for (PortaApplicativaAutorizzazioneServizioApplicativo portaApplicativaAutorizzazioneServizioApplicativo : lista) {
+					ControlloAccessiErogazioneAutorizzazioneApplicativo applicativiItem = new ControlloAccessiErogazioneAutorizzazioneApplicativo();
+					applicativiItem.setApplicativo(portaApplicativaAutorizzazioneServizioApplicativo.getNome());
+					applicativiItem.setSoggetto(portaApplicativaAutorizzazioneServizioApplicativo.getNomeSoggettoProprietario());
+					ret.addApplicativiItem(applicativiItem);
+				}
+			}
+			
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
     /**
      * Restituisce l'elenco dei ruoli autorizzati
      *
@@ -1842,7 +2417,9 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			final ControlloAccessiAutorizzazioneRuoli ret = new ControlloAccessiAutorizzazioneRuoli(); 
                         
-			ret.setRuoli(BaseHelper.evalnull( () -> pa.getRuoli().getRuoloList().stream().map(Ruolo::getNome).collect(Collectors.toList()) ));
+			if(pa.getRuoli()!=null && pa.getRuoli().sizeRuoloList()>0) {
+				ret.setRuoli(BaseHelper.evalnull( () -> pa.getRuoli().getRuoloList().stream().map(Ruolo::getNome).collect(Collectors.toList()) ));
+			}
         
 			context.getLogger().info("Invocazione completata con successo");
         	return ret;
@@ -1858,6 +2435,42 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 		}
     }
     
+   /**
+     * Restituisce l'elenco dei ruoli token autorizzati
+     *
+     * Questa operazione consente di ottenere l'elenco dei ruoli token autorizzati
+     *
+     */
+	@Override
+    public ControlloAccessiAutorizzazioneRuoli getErogazioneControlloAccessiAutorizzazioneRuoliToken(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
+			final ControlloAccessiAutorizzazioneRuoli ret = new ControlloAccessiAutorizzazioneRuoli(); 
+                        
+			if(pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getRuoli()!=null && pa.getAutorizzazioneToken().getRuoli().sizeRuoloList()>0) {
+				ret.setRuoli(BaseHelper.evalnull( () -> pa.getAutorizzazioneToken().getRuoli().getRuoloList().stream().map(Ruolo::getNome).collect(Collectors.toList()) ));
+			}
+        
+			context.getLogger().info("Invocazione completata con successo");
+        	return ret;
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
     /**
      * Restituisce l'elenco degli scope autorizzati
      *

@@ -21,10 +21,11 @@
 package org.openspcoop2.core.config.rs.server.api.impl.erogazioni;
 
 import org.openspcoop2.core.config.rs.server.model.Erogazione;
+import org.openspcoop2.core.config.rs.server.model.Fruizione;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 
 /**
- * EDeliveryErogazioniApiHelper
+ * EDeliveryErogazioniApiHelper	
  * 
  * @author $Author$
  * @version $Rev$, $Date$
@@ -33,6 +34,11 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 public class EDeliveryErogazioniApiHelper {
 
 	public static ProtocolProperties getProtocolProperties(Erogazione body) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public static ProtocolProperties getProtocolProperties(Fruizione body) {
 		// TODO Auto-generated method stub
 		return null;
 	}

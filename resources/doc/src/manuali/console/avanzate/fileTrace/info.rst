@@ -301,11 +301,21 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 
 - requester: rappresenta il richiedente della richiesta e assumerà la prima informazione valorizzata, trovata nella richiesta, nel seguente ordine:
 
-	- tokenUsername: username presente nel token
-	- tokenSubject[@tokenIssuer]: subject presente nel token; viene aggiunto anche un suffisso @tokenIssuer se è presente anche un issuer nel token
-	- application: identificativo dell'applicativo richiedente
-	- principal: identificato (credenziali) con cui l'applicativo è stato autenticato; se il tipo di autenticazione risulta essere 'ssl' viene ritornato il valore dell'attributo CN
-	- tokenClientId: clientId presente nel token
+	- tokenUsername: username presente nel token;
+	- tokenClient: identificativo dell'applicativo identificato tramite il clientId presente nel token;
+	- application: identificativo dell'applicativo richiedente identificato tramite l'autenticazione di trasporto;
+	- tokenClientId: clientId presente nel token nel caso di client credentials grant type (claims clientId e sub presentano lo stesso valore);
+	- tokenSubject[@tokenIssuer]: subject presente nel token; viene aggiunto anche un suffisso @tokenIssuer se è presente anche un issuer nel token;
+	- principal: identificativo (credenziali) con cui l'applicativo è stato autenticato; se il tipo di autenticazione di trasporto risulta essere 'ssl' viene ritornato il valore dell'attributo CN.
+
+   .. note::
+         Le informazioni sul richiedente seguono la seguente logica:
+
+         - l'utente descritto in forma umana in un token rappresenta l'informazione più significativa (username);
+
+	 - altrimenti prevale un eventuale applicativo identificato (registrato su GovWay) dando precedenza ad un applicativo token rispetto ad un applicativo di trasporto;
+
+         - infine prevalgono le informazioni di un eventuale token presente rispetto al trasporto; se si tratta di client credentials grant type prevale l'informazione sul clientId altrimenti quella sul subject.
 
 **Validazione Token**
 
@@ -317,6 +327,30 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 
 - tokenClientId: clientId presente nel token;
 	
+- tokenClientApplication: identificativo dell'applicativo identificato tramite il clientId presente nel token;
+
+- tokenClientApplicationPropertiesKeys: nomi delle proprietà definite sull'applicativo identificato tramite il clientId;
+
+- tokenClientApplicationProperties: proprietà (nome=valore) definite sull'applicativo separate da uno spazio;
+
+- tokenClientApplicationProperties(propertySeparator, valueSeparator): simile alla precedente opzione, consente di indicare i separatori utilizzati;
+
+- tokenClientApplicationProperty(nomeProprietà): valore della proprietà indicata come parametro;
+
+- tokenClientOrganizationId: identificativo del soggetto proprietario dell'applicativo identificato tramite il clientId, secondo il formato previsto dal profilo di interoperabilità;
+
+- tokenClientOrganization: nome del soggetto proprietario dell'applicativo identificato tramite il clientId;
+
+- tokenClientOrganizationType: tipo del soggetto proprietario dell'applicativo identificato tramite il clientId;
+
+- tokenClientOrganizationPropertiesKeys: nomi delle proprietà definite sul soggetto proprietario dell'applicativo identificato tramite il clientId;
+
+- tokenClientOrganizationProperties: proprietà (nome=valore) definite sul soggetto separate da uno spazio;
+
+- tokenClientOrganizationProperties(propertySeparator, valueSeparator): simile alla precedente opzione, consente di indicare i separatori utilizzati;
+
+- tokenClientOrganizationProperty(nomeProprietà): valore della proprietà indicata come parametro.
+
 - tokenUsername: username presente nel token;
 
 - tokenMail: eMail presente nel token;

@@ -30,8 +30,11 @@ public class ModIApplicativoInterno  implements OneOfApplicativoModi {
   @Schema(required = true, description = "")
   private DominioEnum dominio = null;
   
-  @Schema(required = true, description = "")
+  @Schema(description = "")
   private ModIApplicativoSicurezzaMessaggio sicurezzaMessaggio = null;
+  
+  @Schema(description = "")
+  private AuthenticationTokenBase token = null;
  /**
    * Get dominio
    * @return dominio
@@ -58,7 +61,6 @@ public class ModIApplicativoInterno  implements OneOfApplicativoModi {
    * @return sicurezzaMessaggio
   **/
   @JsonProperty("sicurezza_messaggio")
-  @NotNull
   @Valid
   public ModIApplicativoSicurezzaMessaggio getSicurezzaMessaggio() {
     return this.sicurezzaMessaggio;
@@ -73,6 +75,25 @@ public class ModIApplicativoInterno  implements OneOfApplicativoModi {
     return this;
   }
 
+ /**
+   * Get token
+   * @return token
+  **/
+  @JsonProperty("token")
+  @Valid
+  public AuthenticationTokenBase getToken() {
+    return this.token;
+  }
+
+  public void setToken(AuthenticationTokenBase token) {
+    this.token = token;
+  }
+
+  public ModIApplicativoInterno token(AuthenticationTokenBase token) {
+    this.token = token;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -81,6 +102,7 @@ public class ModIApplicativoInterno  implements OneOfApplicativoModi {
     
     sb.append("    dominio: ").append(ModIApplicativoInterno.toIndentedString(this.dominio)).append("\n");
     sb.append("    sicurezzaMessaggio: ").append(ModIApplicativoInterno.toIndentedString(this.sicurezzaMessaggio)).append("\n");
+    sb.append("    token: ").append(ModIApplicativoInterno.toIndentedString(this.token)).append("\n");
     sb.append("}");
     return sb.toString();
   }

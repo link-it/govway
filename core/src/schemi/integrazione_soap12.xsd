@@ -30,6 +30,9 @@
                         <!-- informazioni di integrazione -->
                         <xsd:attribute name="applicationMessageId" type="xsd:string" use="optional"/>
                         <xsd:attribute name="application" type="xsd:string" use="optional"/>
+			<xsd:attribute name="tokenSenderType" type="xsd:string" use="optional"/>
+                        <xsd:attribute name="tokenSender" type="xsd:string" use="optional"/>
+			<xsd:attribute name="tokenApplication" type="xsd:string" use="optional"/>
                         <!-- Id Transazione -->
                         <xsd:attribute name="transactionId" type="xsd:string" use="optional"/>
                         <!--Informazioni sulla versione -->

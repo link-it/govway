@@ -51,7 +51,7 @@ public abstract class AbstractSearchCredenziale {
 		return this.tipo.name();
 	}
 	
-	protected abstract String getExactValueDatabase(String credentialParam) throws UtilsException;
+	protected abstract String getExactValueDatabase(String credentialParam, boolean ricercaEsatta) throws UtilsException;
 	
 	public IPaginatedExpression createExpression(ICredenzialeMittenteService credenzialeMittentiService, String credentialParam, boolean ricercaEsatta, boolean caseSensitive) throws UtilsException {
 		
@@ -60,7 +60,7 @@ public abstract class AbstractSearchCredenziale {
 			IPaginatedExpression pagEpression = credenzialeMittentiService.newPaginatedExpression();
 			pagEpression.and();
 			
-			String credential = this.convertToDBValue ? this.getExactValueDatabase(credentialParam) : credentialParam;
+			String credential = this.convertToDBValue ? this.getExactValueDatabase(credentialParam, ricercaEsatta) : credentialParam;
 			
 			pagEpression.equals(CredenzialeMittente.model().TIPO, this.tipo.name());
 			

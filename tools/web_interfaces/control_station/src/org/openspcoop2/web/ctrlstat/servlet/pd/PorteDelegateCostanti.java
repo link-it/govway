@@ -431,6 +431,7 @@ public class PorteDelegateCostanti {
 	public final static String PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO = CostantiControlStation.PARAMETRO_ID_SOGGETTO;
 	public final static String PARAMETRO_PORTE_DELEGATE_ID_ASPS = CostantiControlStation.PARAMETRO_ID_ASPS;
 	public final static String PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE = CostantiControlStation.PARAMETRO_ID_FRUIZIONE;
+	public final static String PARAMETRO_PORTE_DELEGATE_TOKEN_AUTHORIZATION = CostantiControlStation.PARAMETRO_TOKEN_AUTHORIZATION;
 	public final static String PARAMETRO_PORTE_DELEGATE_PROVIDER = "provider";
 	public final static String PARAMETRO_PORTE_DELEGATE_ID_CORRELAZIONE = "idcorr";
 	public final static String PARAMETRO_PORTE_DELEGATE_TIPO_SOGGETTO = "tipoprov";

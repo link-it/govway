@@ -30,7 +30,7 @@ La modalità **Soggetto** consente di effettuare la ricerca di transazioni stabi
 
     Filtro ricerca "Soggetto"
 
-La modalità **Applicativo** consente di effettuare la ricerca di transazioni stabilendo l'applicativo interlocutore tra quelli appartenenti ad un dato soggetto (:numref:`mon_ricercaApplicativo_fig`).
+La modalità **Applicativo** consente di effettuare la ricerca di transazioni stabilendo l'applicativo interlocutore tra quelli appartenenti ad un dato soggetto (:numref:`mon_ricercaApplicativo_fig`). Deve essere selezionata anche la modalità di identificazione dell'applicativo se derivante da credenziali ottenute tramite autenticazione trasporto o token.
 
 .. figure:: ../../_figure_monitoraggio/RicercaApplicativo.png
     :scale: 100%

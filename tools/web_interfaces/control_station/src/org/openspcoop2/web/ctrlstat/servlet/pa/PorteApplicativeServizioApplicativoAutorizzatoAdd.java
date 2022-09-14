@@ -96,11 +96,14 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoAdd extends Act
 			
 			String idSAToAdd = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO);
 
-			String modipaGestioneSpeciale = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA);
-			boolean modipa = false;
-			if(modipaGestioneSpeciale!=null && "true".equalsIgnoreCase(modipaGestioneSpeciale)) {
-				modipa = true;
+			String autorizzazioneModi = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA);
+			boolean isAutorizzazioneModi = false;
+			if(autorizzazioneModi!=null && "true".equalsIgnoreCase(autorizzazioneModi)) {
+				isAutorizzazioneModi = true;
 			}
+			
+			String tokenList = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TOKEN_AUTHORIZATION);
+			boolean isToken = tokenList!=null && !"".equals(tokenList) && Boolean.valueOf(tokenList);
 			
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
@@ -122,7 +125,8 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoAdd extends Act
 				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(soggInt);
 				protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
 			}
-			
+			boolean modi = porteApplicativeCore.isProfiloModIPA(protocollo);
+						
 			boolean isSupportatoAutenticazioneApplicativiEsterni = saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocollo);
 
 			//decodifica soggetto scelto
@@ -158,10 +162,12 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoAdd extends Act
 
 			// Calcolo liste
 			PorteApplicativeServizioApplicativoAutorizzatoUtilities utilities = new PorteApplicativeServizioApplicativoAutorizzatoUtilities();
-			utilities.buildList(pa, modipa, protocollo, escludiSoggettoErogatore,
+			utilities.buildList(pa, modi, protocollo, escludiSoggettoErogatore,
 					idSoggettoToAdd,
 					porteApplicativeCore, porteApplicativeHelper, escludiSAServer,
-					isSupportatoAutenticazioneApplicativiEsterni);
+					isSupportatoAutenticazioneApplicativiEsterni,
+					isToken,
+					isAutorizzazioneModi);
 			
 			String[] soggettiList = utilities.soggettiList;
 			String[] soggettiListLabel = utilities.soggettiListLabel;
@@ -190,13 +196,25 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoAdd extends Act
 					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)));
 			
-			String labelPagLista = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_APPLICATIVI_CONFIG;
-			
+			String labelPagLista = 
+					(
+							(isToken && !modi) ? 
+							CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN :
+								modi ?
+										CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_MESSAGGIO
+										:
+										CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TRASPORTO
+					)
+					+ " - " +
+					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_APPLICATIVI_CONFIG;
+						
 			lstParam.add(new Parameter(labelPagLista,
 					PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO_LIST,
 					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
 					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
-					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)
+					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps),
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TOKEN_AUTHORIZATION, isToken+""),
+					new Parameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA, isAutorizzazioneModi+"")
 					));
 			lstParam.add(ServletUtils.getParameterAggiungi());
 			
@@ -212,8 +230,9 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoAdd extends Act
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addPorteServizioApplicativoAutorizzatiToDati(TipoOperazione.ADD, dati, soggettiListLabel, soggettiList, idSoggettoToAdd, saSize, 
-						listServiziApplicativi, idSAToAdd, true, true, modipa,
-						isSupportatoAutenticazioneApplicativiEsterni);
+						listServiziApplicativi, idSAToAdd, true, true, isAutorizzazioneModi,
+						isSupportatoAutenticazioneApplicativiEsterni,
+						isToken);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps,dati);
 
@@ -237,8 +256,9 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoAdd extends Act
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addPorteServizioApplicativoAutorizzatiToDati(TipoOperazione.ADD, dati, soggettiListLabel, soggettiList, idSoggettoToAdd, saSize, 
-						listServiziApplicativi, idSAToAdd, true, true, modipa,
-						isSupportatoAutenticazioneApplicativiEsterni);
+						listServiziApplicativi, idSAToAdd, true, true, isAutorizzazioneModi,
+						isSupportatoAutenticazioneApplicativiEsterni,
+						isToken);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, dati);
 
@@ -256,12 +276,21 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoAdd extends Act
 			paSaAutorizzato.setTipoSoggettoProprietario(tipoSoggettoScelto);
 			paSaAutorizzato.setNomeSoggettoProprietario(nomeSoggettoScelto);
 				
-			if(saList != null)
+			if(saList != null) {
 				saList.addServizioApplicativo(paSaAutorizzato);
+			}
 			else {
 				saList = new PortaApplicativaAutorizzazioneServiziApplicativi();
 				saList.addServizioApplicativo(paSaAutorizzato);
-				pa.setServiziApplicativiAutorizzati(saList);
+				if(isToken && !modi) {
+					if(pa.getAutorizzazioneToken().getServiziApplicativi()==null) {
+						pa.getAutorizzazioneToken().setServiziApplicativi(new PortaApplicativaAutorizzazioneServiziApplicativi());
+					}
+					pa.getAutorizzazioneToken().getServiziApplicativi().addServizioApplicativo(paSaAutorizzato);
+				}
+				else {
+					pa.setServiziApplicativiAutorizzati(saList);
+				}
 			}
 
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
@@ -270,10 +299,16 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoAdd extends Act
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
 			int idLista = Liste.PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO;
+			if(isToken && !modi) {
+				idLista = Liste.PORTE_APPLICATIVE_TOKEN_SERVIZIO_APPLICATIVO;
+			}
 
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 
-			List<PortaApplicativaAutorizzazioneServizioApplicativo> lista = porteApplicativeCore.porteAppServiziApplicativiAutorizzatiList(Integer.parseInt(idPorta), ricerca);
+			List<PortaApplicativaAutorizzazioneServizioApplicativo> lista = (isToken && !modi) ? 
+					porteApplicativeCore.porteAppServiziApplicativiAutorizzatiTokenList(Integer.parseInt(idPorta), ricerca)
+					:
+					porteApplicativeCore.porteAppServiziApplicativiAutorizzatiList(Integer.parseInt(idPorta), ricerca);
 
 			porteApplicativeHelper.preparePorteAppServizioApplicativoAutorizzatoList(nomePorta, ricerca, lista);
 

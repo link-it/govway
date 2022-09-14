@@ -20,6 +20,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.ruoli;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -105,11 +106,14 @@ public class RuoliUtilities {
 		
 		// Cerco se utilizzato in porte delegate
 		PorteDelegateCore pdCore = new PorteDelegateCore(ruoliCore);
+		
+		List<PortaDelegata> listPDdaAggiornare = new ArrayList<PortaDelegata>();
+		
 		FiltroRicercaPorteDelegate filtroRicercaPD = new FiltroRicercaPorteDelegate();
 		filtroRicercaPD.setIdRuolo(oldIdRuolo);
-		List<IDPortaDelegata> listPD = pdCore.getAllIdPorteDelegate(filtroRicercaPD);
-		if(listPD!=null && listPD.size()>0){
-			for (IDPortaDelegata idPD : listPD) {
+		List<IDPortaDelegata> _listPD = pdCore.getAllIdPorteDelegate(filtroRicercaPD);
+		if(_listPD!=null && _listPD.size()>0){
+			for (IDPortaDelegata idPD : _listPD) {
 				PortaDelegata portaDelegata = pdCore.getPortaDelegata(idPD);
 				if(portaDelegata.getRuoli()!=null){
 					for (org.openspcoop2.core.config.Ruolo ruoloConfig : portaDelegata.getRuoli().getRuoloList()) {
@@ -118,7 +122,55 @@ public class RuoliUtilities {
 						}
 					}
 				}
-				listOggettiDaAggiornare.add(portaDelegata);
+				if(portaDelegata.getAutorizzazioneToken()!=null && portaDelegata.getAutorizzazioneToken().getRuoli()!=null){
+					for (org.openspcoop2.core.config.Ruolo ruoloConfig : portaDelegata.getAutorizzazioneToken().getRuoli().getRuoloList()) {
+						if(ruoloConfig.getNome().equals(oldIdRuolo.getNome())){
+							ruoloConfig.setNome(ruoloNEW.getNome());
+						}
+					}
+				}
+				listPDdaAggiornare.add(portaDelegata);
+			}
+		}
+		
+		filtroRicercaPD = new FiltroRicercaPorteDelegate();
+		filtroRicercaPD.setIdRuoloToken(oldIdRuolo);
+		_listPD = pdCore.getAllIdPorteDelegate(filtroRicercaPD);
+		if(_listPD!=null && _listPD.size()>0){
+			for (IDPortaDelegata idPD : _listPD) {
+				boolean find = false;
+				if(listPDdaAggiornare!=null && !listPDdaAggiornare.isEmpty()) {
+					for (PortaDelegata pd : listPDdaAggiornare) {
+						if(pd.getNome().equals(idPD.getNome())) {
+							find = true;
+							break;
+						}
+					}
+				}
+				if(!find) {
+					PortaDelegata portaDelegata = pdCore.getPortaDelegata(idPD);
+					if(portaDelegata.getRuoli()!=null){
+						for (org.openspcoop2.core.config.Ruolo ruoloConfig : portaDelegata.getRuoli().getRuoloList()) {
+							if(ruoloConfig.getNome().equals(oldIdRuolo.getNome())){
+								ruoloConfig.setNome(ruoloNEW.getNome());
+							}
+						}
+					}
+					if(portaDelegata.getAutorizzazioneToken()!=null && portaDelegata.getAutorizzazioneToken().getRuoli()!=null){
+						for (org.openspcoop2.core.config.Ruolo ruoloConfig : portaDelegata.getAutorizzazioneToken().getRuoli().getRuoloList()) {
+							if(ruoloConfig.getNome().equals(oldIdRuolo.getNome())){
+								ruoloConfig.setNome(ruoloNEW.getNome());
+							}
+						}
+					}
+					listPDdaAggiornare.add(portaDelegata);
+				}
+			}
+		}
+		
+		if(listPDdaAggiornare!=null && !listPDdaAggiornare.isEmpty()) {
+			for (PortaDelegata pd : listPDdaAggiornare) {
+				listOggettiDaAggiornare.add(pd);
 			}
 		}
 		
@@ -126,11 +178,14 @@ public class RuoliUtilities {
 		
 		// Cerco se utilizzato in porte applicative
 		PorteApplicativeCore paCore = new PorteApplicativeCore(ruoliCore);
+		
+		List<PortaApplicativa> listPAdaAggiornare = new ArrayList<PortaApplicativa>();
+		
 		FiltroRicercaPorteApplicative filtroRicercaPA = new FiltroRicercaPorteApplicative();
 		filtroRicercaPA.setIdRuolo(oldIdRuolo);
-		List<IDPortaApplicativa> listPA = paCore.getAllIdPorteApplicative(filtroRicercaPA);
-		if(listPA!=null && listPA.size()>0){
-			for (IDPortaApplicativa idPA : listPA) {
+		List<IDPortaApplicativa> _listPA = paCore.getAllIdPorteApplicative(filtroRicercaPA);
+		if(_listPA!=null && _listPA.size()>0){
+			for (IDPortaApplicativa idPA : _listPA) {
 				PortaApplicativa portaApplicativa = paCore.getPortaApplicativa(idPA);
 				if(portaApplicativa.getRuoli()!=null){
 					for (org.openspcoop2.core.config.Ruolo ruoloConfig : portaApplicativa.getRuoli().getRuoloList()) {
@@ -139,7 +194,55 @@ public class RuoliUtilities {
 						}
 					}
 				}
-				listOggettiDaAggiornare.add(portaApplicativa);
+				if(portaApplicativa.getAutorizzazioneToken()!=null && portaApplicativa.getAutorizzazioneToken().getRuoli()!=null){
+					for (org.openspcoop2.core.config.Ruolo ruoloConfig : portaApplicativa.getAutorizzazioneToken().getRuoli().getRuoloList()) {
+						if(ruoloConfig.getNome().equals(oldIdRuolo.getNome())){
+							ruoloConfig.setNome(ruoloNEW.getNome());
+						}
+					}
+				}
+				listPAdaAggiornare.add(portaApplicativa);
+			}
+		}
+		
+		filtroRicercaPA = new FiltroRicercaPorteApplicative();
+		filtroRicercaPA.setIdRuoloToken(oldIdRuolo);
+		_listPA = paCore.getAllIdPorteApplicative(filtroRicercaPA);
+		if(_listPA!=null && _listPA.size()>0){
+			for (IDPortaApplicativa idPA : _listPA) {
+				boolean find = false;
+				if(listPAdaAggiornare!=null && !listPAdaAggiornare.isEmpty()) {
+					for (PortaApplicativa pa : listPAdaAggiornare) {
+						if(pa.getNome().equals(idPA.getNome())) {
+							find = true;
+							break;
+						}
+					}
+				}
+				if(!find) {
+					PortaApplicativa portaApplicativa = paCore.getPortaApplicativa(idPA);
+					if(portaApplicativa.getRuoli()!=null){
+						for (org.openspcoop2.core.config.Ruolo ruoloConfig : portaApplicativa.getRuoli().getRuoloList()) {
+							if(ruoloConfig.getNome().equals(oldIdRuolo.getNome())){
+								ruoloConfig.setNome(ruoloNEW.getNome());
+							}
+						}
+					}
+					if(portaApplicativa.getAutorizzazioneToken()!=null && portaApplicativa.getAutorizzazioneToken().getRuoli()!=null){
+						for (org.openspcoop2.core.config.Ruolo ruoloConfig : portaApplicativa.getAutorizzazioneToken().getRuoli().getRuoloList()) {
+							if(ruoloConfig.getNome().equals(oldIdRuolo.getNome())){
+								ruoloConfig.setNome(ruoloNEW.getNome());
+							}
+						}
+					}
+					listPAdaAggiornare.add(portaApplicativa);
+				}
+			}
+		}
+		
+		if(listPAdaAggiornare!=null && !listPAdaAggiornare.isEmpty()) {
+			for (PortaApplicativa pa : listPAdaAggiornare) {
+				listOggettiDaAggiornare.add(pa);
 			}
 		}
 		

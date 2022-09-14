@@ -264,7 +264,14 @@ public final class ServiziApplicativiAdd extends Action {
 			String multipleApiKey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_MULTIPLE_API_KEYS);
 			String appId = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
 			String apiKey = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
-						
+			
+			String tokenPolicySA = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY);
+			String tokenClientIdSA = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
+			boolean tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN.equals(tipoauthSA);
+			if(tokenWithHttpsEnabledByConfigSA) {
+				tipoauthSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL;
+			}
+			
 			String sbustamentoInformazioniProtocolloRisposta = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RISPOSTA);
 
 			
@@ -746,6 +753,12 @@ public final class ServiziApplicativiAdd extends Action {
 					this.registryReader, this.configRegistryReader, idSA);
 			this.protocolProperties = saHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 			
+			boolean tokenWithHttsSupportato = false;
+			if(tipoProtocollo!=null) {
+				ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+				tokenWithHttsSupportato = protocolFactoryManager.getProtocolFactoryByName(tipoProtocollo).createProtocolConfiguration().isSupportatoAutenticazioneApplicativiHttpsConToken();
+			}
+			
 			boolean multipleApiKeysEnabled = false;
 			boolean appIdModificabile = ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID_MODIFICABILE;
 			if(tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY)) {
@@ -882,7 +895,8 @@ public final class ServiziApplicativiAdd extends Action {
 						multipleApiKey, appId, apiKey,
 						autenticazioneToken,token_policy, tipoSA, useAsClient,
 						integrationManagerEnabled, 
-						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd);
+						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
+						tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA);
 
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
@@ -995,7 +1009,8 @@ public final class ServiziApplicativiAdd extends Action {
 						multipleApiKey, appId, apiKey,
 						autenticazioneToken,token_policy, tipoSA, useAsClient,
 						integrationManagerEnabled, 
-						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd);
+						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
+						tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA);
 
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
@@ -1032,12 +1047,20 @@ public final class ServiziApplicativiAdd extends Action {
 				if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {
 					subjectSA = "";
 					principalSA = "";
+					tokenPolicySA = null;
+					tokenClientIdSA = null;
 				}
 				if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY)) {
 					subjectSA = "";
 					principalSA = "";
+					tokenPolicySA = null;
+					tokenClientIdSA = null;
 				}
 				if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
+					if(!tokenWithHttsSupportato || !tokenWithHttpsEnabledByConfigSA) {
+						tokenPolicySA = null;
+						tokenClientIdSA = null;
+					}
 					utenteSA = "";
 					passwordSA = "";
 					principalSA = "";
@@ -1046,12 +1069,22 @@ public final class ServiziApplicativiAdd extends Action {
 					utenteSA = "";
 					passwordSA = "";
 					subjectSA = "";
+					tokenPolicySA = null;
+					tokenClientIdSA = null;
+				}
+				if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN)) {
+					utenteSA = "";
+					passwordSA = "";
+					subjectSA = "";
+					principalSA = "";
 				}
 				if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)) {
 					utenteSA = "";
 					passwordSA = "";
 					subjectSA = "";
 					principalSA = "";
+					tokenPolicySA = null;
+					tokenClientIdSA = null;
 				}
 
 				Soggetto soggettoRegistro = null;
@@ -1199,7 +1232,11 @@ public final class ServiziApplicativiAdd extends Action {
 				if(principalSA!=null && !"".equals(principalSA)){
 					credenziali.setUser(principalSA); // al posto di user
 				}
+				if(tokenClientIdSA!=null && !"".equals(tokenClientIdSA)){
+					credenziali.setUser(tokenClientIdSA); // al posto di user
+				}
 				credenziali.setPassword(passwordSA);
+				credenziali.setTokenPolicy(tokenPolicySA);
 				
 				ApiKey apiKeyGenerated = null;
 				if(tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY)) {

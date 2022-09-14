@@ -51,7 +51,7 @@ public class GestoreIntegrazionePDSoapWithRequestOut extends GestoreIntegrazione
 			}
 			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
 			
-			SOAPHeaderElement header = this.utilitiesResponse.buildHeader(integrazione, 
+			SOAPHeaderElement header = this.utilitiesRequest.buildHeader(integrazione, 
 					this.openspcoopProperties.getHeaderSoapNameIntegrazione(), // header name 
 					this.openspcoopProperties.getHeaderSoapPrefixIntegrazione(), // prefix
 					this.openspcoopProperties.getHeaderSoapActorIntegrazione(), // namespace

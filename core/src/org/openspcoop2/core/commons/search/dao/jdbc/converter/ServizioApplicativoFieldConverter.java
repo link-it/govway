@@ -102,6 +102,27 @@ public class ServizioApplicativoFieldConverter extends AbstractSQLFieldConverter
 				return "as_client";
 			}
 		}
+		if(field.equals(ServizioApplicativo.model().TIPOAUTH)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".tipoauth";
+			}else{
+				return "tipoauth";
+			}
+		}
+		if(field.equals(ServizioApplicativo.model().UTENTE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".utente";
+			}else{
+				return "utente";
+			}
+		}
+		if(field.equals(ServizioApplicativo.model().TOKEN_POLICY)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".token_policy";
+			}else{
+				return "token_policy";
+			}
+		}
 		if(field.equals(ServizioApplicativo.model().ID_SOGGETTO.TIPO)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".tipo_soggetto";
@@ -121,6 +142,34 @@ public class ServizioApplicativoFieldConverter extends AbstractSQLFieldConverter
 				return this.toAliasTable(field)+".ruolo";
 			}else{
 				return "ruolo";
+			}
+		}
+		if(field.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.NAME)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".name";
+			}else{
+				return "name";
+			}
+		}
+		if(field.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.VALUE_STRING)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".value_string";
+			}else{
+				return "value_string";
+			}
+		}
+		if(field.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.VALUE_NUMBER)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".value_number";
+			}else{
+				return "value_number";
+			}
+		}
+		if(field.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.VALUE_BOOLEAN)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".value_boolean";
+			}else{
+				return "value_boolean";
 			}
 		}
 
@@ -151,6 +200,15 @@ public class ServizioApplicativoFieldConverter extends AbstractSQLFieldConverter
 		if(field.equals(ServizioApplicativo.model().AS_CLIENT)){
 			return this.toTable(ServizioApplicativo.model(), returnAlias);
 		}
+		if(field.equals(ServizioApplicativo.model().TIPOAUTH)){
+			return this.toTable(ServizioApplicativo.model(), returnAlias);
+		}
+		if(field.equals(ServizioApplicativo.model().UTENTE)){
+			return this.toTable(ServizioApplicativo.model(), returnAlias);
+		}
+		if(field.equals(ServizioApplicativo.model().TOKEN_POLICY)){
+			return this.toTable(ServizioApplicativo.model(), returnAlias);
+		}
 		if(field.equals(ServizioApplicativo.model().ID_SOGGETTO.TIPO)){
 			return this.toTable(ServizioApplicativo.model().ID_SOGGETTO, returnAlias);
 		}
@@ -159,6 +217,18 @@ public class ServizioApplicativoFieldConverter extends AbstractSQLFieldConverter
 		}
 		if(field.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO.NOME)){
 			return this.toTable(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO, returnAlias);
+		}
+		if(field.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.NAME)){
+			return this.toTable(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO, returnAlias);
+		}
+		if(field.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.VALUE_STRING)){
+			return this.toTable(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO, returnAlias);
+		}
+		if(field.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.VALUE_NUMBER)){
+			return this.toTable(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO, returnAlias);
+		}
+		if(field.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.VALUE_BOOLEAN)){
+			return this.toTable(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO, returnAlias);
 		}
 
 
@@ -181,6 +251,9 @@ public class ServizioApplicativoFieldConverter extends AbstractSQLFieldConverter
 		}
 		if(model.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO)){
 			return CostantiDB.SERVIZI_APPLICATIVI_RUOLI;
+		}
+		if(model.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO)){
+			return CostantiDB.PROTOCOL_PROPERTIES;
 		}
 
 

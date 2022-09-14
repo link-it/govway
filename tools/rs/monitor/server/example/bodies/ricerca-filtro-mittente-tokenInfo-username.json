@@ -1,0 +1,15 @@
+{
+        "intervallo_temporale": {
+		"data_inizio": "2012-07-21T17:32:28Z",
+		"data_fine": "2032-07-21T17:32:28Z"
+	},
+	"tipo": "fruizione",
+	"mittente": {
+		"identificazione": "token_info",
+		"ricerca_esatta": true,
+		"case_sensitive": true,
+		"id": "username9f867c142bf444209bd4ba08",
+		"claim": "username"
+	}
+}
+

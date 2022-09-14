@@ -29,6 +29,7 @@ import java.util.Map;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 
 /**
@@ -69,9 +70,11 @@ public class DatiTransazione extends org.openspcoop2.utils.beans.BaseBean implem
 	private String tokenClientId;
 	private String tokenUsername;
 	private String tokenEMail; 
-	
+		
 	private Map<String, String> tokenClaims;
 	
+	private IDServizioApplicativo idServizioApplicativoToken;
+
 
 	
 	public String getServiziApplicativiErogatoreAsString(){
@@ -230,5 +233,13 @@ public class DatiTransazione extends org.openspcoop2.utils.beans.BaseBean implem
 				}
 			}
 		}
+	}
+	
+	public IDServizioApplicativo getIdServizioApplicativoToken() {
+		return this.idServizioApplicativoToken;
+	}
+
+	public void setIdServizioApplicativoToken(IDServizioApplicativo idServizioApplicativoToken) {
+		this.idServizioApplicativoToken = idServizioApplicativoToken;
 	}
 }

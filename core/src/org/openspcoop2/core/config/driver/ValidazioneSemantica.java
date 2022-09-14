@@ -2952,12 +2952,14 @@ public class ValidazioneSemantica {
 		if ( !tipo.equals(CostantiConfigurazione.CREDENZIALE_BASIC) && 
 				!tipo.equals(CostantiConfigurazione.CREDENZIALE_APIKEY) && 
 				!tipo.equals(CostantiConfigurazione.CREDENZIALE_SSL) && 
-				!tipo.equals(CostantiConfigurazione.CREDENZIALE_PRINCIPAL))
+				!tipo.equals(CostantiConfigurazione.CREDENZIALE_PRINCIPAL) &&
+				!tipo.equals(CostantiConfigurazione.CREDENZIALE_TOKEN)  )
 			this.errori.add("Il tipo delle credenziali del "+oggetto+" deve possedere i valori: "+
 				CostantiConfigurazione.CREDENZIALE_BASIC.toString()+" o "+
 				CostantiConfigurazione.CREDENZIALE_APIKEY.toString()+" o "+
 					CostantiConfigurazione.CREDENZIALE_SSL.toString()+" o "+
-					CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString());
+					CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString()+" o "+
+					CostantiConfigurazione.CREDENZIALE_TOKEN.toString());
 		
 		
 		if (c.getTipo().equals(CostantiConfigurazione.CREDENZIALE_BASIC)) {
@@ -2999,6 +3001,16 @@ public class ValidazioneSemantica {
 		if (c.getTipo().equals(CostantiConfigurazione.CREDENZIALE_PRINCIPAL)){
 			if ((c.getUser() == null) || (c.getUser().equals(""))){
 				this.errori.add("Le credenziali di tipo principal del "+oggetto+" devono avere user valorizzato");
+			}
+		}
+		
+		// Se il tipo e' token, user e token_policy e' OBBLIGATORIO
+		if (c.getTipo().equals(CostantiConfigurazione.CREDENZIALE_TOKEN)){
+			if ((c.getUser() == null) || (c.getUser().equals(""))){
+				this.errori.add("Le credenziali di tipo token del "+oggetto+" devono avere user valorizzato");
+			}
+			if ((c.getTokenPolicy() == null) || (c.getTokenPolicy().equals(""))){
+				this.errori.add("Le credenziali di tipo token del "+oggetto+" devono avere token-policy valorizzato");
 			}
 		}
 		

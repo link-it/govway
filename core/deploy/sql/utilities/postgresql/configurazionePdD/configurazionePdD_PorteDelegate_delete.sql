@@ -1,3 +1,5 @@
+DELETE FROM pd_token_ruoli;
+DELETE FROM pd_token_sa;
 DELETE FROM pd_aa;
 DELETE FROM pd_handlers;
 DELETE FROM pd_transform_risp_hdr;

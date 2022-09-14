@@ -17,6 +17,8 @@ Background:
 * eval randomize(api_petstore_rest_contemporaneita, ["nome"])
 * eval api_petstore_rest_contemporaneita.referente = soggettoDefault
 
+* def header_firmare_default = read('api_modi_header_firmare_default.json')
+
 * def getExpectedSOAP =
 """
 function(modi) {
@@ -37,13 +39,14 @@ return expected;
 
 * def getExpectedRest =
 """
-function(modi) {
+function(modi, httpHeaderDefault) {
 var expected = modi;
 
 expected.richiesta.sicurezza_messaggio.riferimento_x509 = expected.richiesta.sicurezza_messaggio.riferimento_x509 != null ? expected.richiesta.sicurezza_messaggio.riferimento_x509 : 'richiesta'
 expected.richiesta.sicurezza_messaggio.time_to_live = expected.richiesta.sicurezza_messaggio.time_to_live != null ? expected.richiesta.sicurezza_messaggio.time_to_live: 300
 expected.richiesta.sicurezza_messaggio.algoritmo = expected.richiesta.sicurezza_messaggio.algoritmo != null ? expected.richiesta.sicurezza_messaggio.algoritmo: 'RS256'
 expected.richiesta.sicurezza_messaggio.certificate_chain = expected.richiesta.sicurezza_messaggio.certificate_chain != null ? expected.richiesta.sicurezza_messaggio.certificate_chain: false
+expected.richiesta.sicurezza_messaggio.header_http_firmare = expected.richiesta.sicurezza_messaggio.header_http_firmare !=null ? expected.richiesta.sicurezza_messaggio.header_http_firmare : httpHeaderDefault.header_http_firmare
 
 expected.risposta.sicurezza_messaggio.riferimento_x509 = expected.risposta.sicurezza_messaggio.riferimento_x509 != null ? expected.risposta.sicurezza_messaggio.riferimento_x509 : 'richiesta'
 expected.risposta.sicurezza_messaggio.verifica_audience = expected.risposta.sicurezza_messaggio.verifica_audience != null ? expected.risposta.sicurezza_messaggio.verifica_audience : true
@@ -130,7 +133,7 @@ Scenario Outline: Fruizioni Creazione 204 REST <nome>
     * call create ({ resourcePath: 'soggetti', body: erogatore })
     * call create ( { resourcePath: 'fruizioni', body: fruizione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
 		* call get ( { resourcePath: 'fruizioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
-		* def expected = getExpectedRest(fruizione_petstore.modi)
+		* def expected = getExpectedRest(fruizione_petstore.modi, header_firmare_default)
     * match response.modi == expected
     * call delete ({ resourcePath: 'fruizioni/' + petstore_key, query_params: query_param_profilo_modi } )
     * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
@@ -180,7 +183,7 @@ Scenario Outline: Fruizioni Creazione 204 REST <nome> con configurazione contemp
     * call create ({ resourcePath: 'soggetti', body: erogatore })
     * call create ( { resourcePath: 'fruizioni', body: fruizione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
 		* call get ( { resourcePath: 'fruizioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
-		* def expected = getExpectedRest(fruizione_petstore.modi)
+		* def expected = getExpectedRest(fruizione_petstore.modi, header_firmare_default)
     * match response.modi == expected
     * call delete ({ resourcePath: 'fruizioni/' + petstore_key, query_params: query_param_profilo_modi } )
     * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })

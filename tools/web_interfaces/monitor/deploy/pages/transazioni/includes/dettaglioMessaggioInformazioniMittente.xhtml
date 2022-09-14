@@ -17,6 +17,9 @@
 				<h:outputText value="Informazioni Mittente" styleClass="subtitle-nopaddingleft-nomarginleft"/>
 			</h:panelGroup>
 
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelMittenteFruitore" value="Fruitore" rendered="#{not empty dettagliBean.dettaglio.soggettoFruitore}"/>
+			<h:outputText id="outMittenteFruitore" value="#{dettagliBean.dettaglio.soggettoFruitore}" rendered="#{not empty dettagliBean.dettaglio.soggettoFruitore}"/>
+
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelServizioApplicativoFruitore" value="Applicativo Fruitore" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoFruitore}"/>
 			<h:outputText id="outServizioApplicativoFruitore" value="#{dettagliBean.dettaglio.servizioApplicativoFruitore}" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoFruitore}"/>
 			
@@ -62,10 +65,7 @@
 	
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTokenIssuer" value="Issuer" rendered="#{not empty dettagliBean.dettaglio.tokenIssuer}"/>
 			<h:outputText id="outTokenIssuer" value="#{dettagliBean.dettaglio.tokenIssuerLabel}" rendered="#{not empty dettagliBean.dettaglio.tokenIssuer}"/>
-			
-			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTokenClientId" value="Client ID" rendered="#{not empty dettagliBean.dettaglio.tokenClientId}"/>
-			<h:outputText id="outTokenClientId" value="#{dettagliBean.dettaglio.tokenClientIdLabel}" rendered="#{not empty dettagliBean.dettaglio.tokenClientId}"/>
-			
+						
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTokenSubject" value="Subject" rendered="#{not empty dettagliBean.dettaglio.tokenSubject}"/>
 			<h:outputText id="outTokenSubject" value="#{dettagliBean.dettaglio.tokenSubjectLabel}" rendered="#{not empty dettagliBean.dettaglio.tokenSubject}"/>
 			
@@ -74,6 +74,12 @@
 			
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTokenEmail" value="eMail" rendered="#{not empty dettagliBean.dettaglio.tokenMail}"/>
 			<h:outputText id="outTokenEmail" value="#{dettagliBean.dettaglio.tokenMailLabel}" rendered="#{not empty dettagliBean.dettaglio.tokenMail}"/>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTokenClientId" value="Client ID" rendered="#{not empty dettagliBean.dettaglio.tokenClientId}"/>
+			<h:outputText id="outTokenClientId" value="#{dettagliBean.dettaglio.tokenClientIdLabel}" rendered="#{not empty dettagliBean.dettaglio.tokenClientId}"/>
+						
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTokenClientApplicativoFruitore" value="Applicativo Client" rendered="#{not empty dettagliBean.dettaglio.tokenClientWithOrganizationNameLabel and not empty dettagliBean.dettaglio.tokenClientWithOrganizationNameLabel}"/>
+			<h:outputText id="outTokenClientApplicativoFruitore" value="#{dettagliBean.dettaglio.tokenClientWithOrganizationNameLabel}" rendered="#{not empty dettagliBean.dettaglio.tokenClientWithOrganizationNameLabel and not empty dettagliBean.dettaglio.tokenClientWithOrganizationNameLabel}"/>
 			
 			<h:outputLabel id="outLabelTokenInfo" styleClass="outputFieldLabel" value="#{msg['commons.tokenInfo.label']}" 
 				rendered="#{not empty dettagliBean.dettaglio.tokenInfo and not dettagliBean.attributeInfo}"/>

@@ -106,11 +106,14 @@ public class CostantiConfigurazione {
     public final static CredenzialeTipo CREDENZIALE_SSL = CredenzialeTipo.SSL;
     /** tipo di porta autenticazione: principal */
     public final static CredenzialeTipo CREDENZIALE_PRINCIPAL = CredenzialeTipo.PRINCIPAL;
+    /** tipo di porta autenticazione: token */
+    public final static CredenzialeTipo CREDENZIALE_TOKEN = CredenzialeTipo.TOKEN;
     
 	public final static String LABEL_CREDENZIALE_BASIC = "http-basic";
 	public final static String LABEL_CREDENZIALE_APIKEY = "api-key";
 	public final static String LABEL_CREDENZIALE_SSL = "https";
 	public final static String LABEL_CREDENZIALE_PRINCIPAL = "principal";
+	public final static String LABEL_CREDENZIALE_TOKEN = "token";
 	public final static String LABEL_CREDENZIALE_DISABILITATO = "disabilitato";
 	
 	public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_CONTAINER = ModalitaIdentificazione.CONTAINER_BASED.getLabel();
@@ -128,6 +131,7 @@ public class CostantiConfigurazione {
     public final static String AUTENTICAZIONE_APIKEY = "apikey";
     public final static String AUTENTICAZIONE_SSL = "ssl";
     public final static String AUTENTICAZIONE_PRINCIPAL = "principal";
+    public final static String AUTENTICAZIONE_TOKEN = "token";
 //    public final static String AUTENTICAZIONE_PRINCIPAL_SSL_BASIC = "principalOrSslOrBasic";
 //    public final static String AUTENTICAZIONE_PRINCIPAL_BASIC = "principalOrBasic";
 //    public final static String AUTENTICAZIONE_PRINCIPAL_SSL = "principalOrSsl";

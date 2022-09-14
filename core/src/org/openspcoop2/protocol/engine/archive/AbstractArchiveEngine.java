@@ -96,7 +96,9 @@ import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.archive.Archive;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
@@ -560,6 +562,27 @@ public abstract class AbstractArchiveEngine {
 	}
 	public org.openspcoop2.core.config.ServizioApplicativo getServizioApplicativoCredenzialiPrincipal(String principal) throws DriverConfigurazioneException{
 		List<org.openspcoop2.core.config.ServizioApplicativo> l = this.driverConfigurazione.servizioApplicativoWithCredenzialiPrincipalList(principal);
+		if(l!=null && !l.isEmpty()) {
+			return l.get(0);
+		}
+		return null;
+	}
+	public org.openspcoop2.core.config.ServizioApplicativo getServizioApplicativoCredenzialiToken(String tokenPolicy, String tokenClientId) throws DriverConfigurazioneException{
+		
+		boolean tokenWithHttpsEnabled = false;
+		try {
+			// basta un protocollo che lo supporta per doverli cercare anche con la funzionalita' abilitata
+			for(IProtocolFactory<?> protocolFactory: ProtocolFactoryManager.getInstance().getProtocolFactories().values()) {
+				if(protocolFactory.createProtocolConfiguration().isSupportatoAutenticazioneApplicativiHttpsConToken()) {
+					tokenWithHttpsEnabled = true;
+					break;
+				}
+			}
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		
+		List<org.openspcoop2.core.config.ServizioApplicativo> l = this.driverConfigurazione.servizioApplicativoWithCredenzialiTokenList(tokenPolicy, tokenClientId, tokenWithHttpsEnabled);
 		if(l!=null && !l.isEmpty()) {
 			return l.get(0);
 		}

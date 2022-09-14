@@ -28,6 +28,7 @@ import org.joda.time.DateTime;
 import org.openspcoop2.core.eventi.constants.TipoSeverita;
 import org.openspcoop2.core.eventi.utils.SeveritaConverter;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.monitor.rs.server.config.ServerProperties;
 import org.openspcoop2.core.monitor.rs.server.config.SoggettiConfig;
 import org.openspcoop2.core.monitor.rs.server.model.DetailTransazione;
@@ -41,6 +42,7 @@ import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeTokenClient;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -346,7 +348,19 @@ public class Converter {
 		}
 		if(transazioneDB.getTokenClientIdLabel()!=null) {
 			CredenzialeMittente credenziale = new CredenzialeMittente();
-			credenziale.setCredenziale(transazioneDB.getTokenClientIdLabel());
+			String clientId = transazioneDB.getTokenClientIdLabel();
+			IDServizioApplicativo idSA = transazioneDB.getTokenClient();
+			if(idSA!=null) {
+				CredenzialeTokenClient credToken = new CredenzialeTokenClient(clientId, idSA);
+				try {
+					credenziale.setCredenziale(credToken.getCredenziale());
+				}catch(Throwable t) {
+					credenziale.setCredenziale(clientId);
+				}
+			}
+			else {
+				credenziale.setCredenziale(clientId);
+			}
 			credenzialiMittente.setToken_clientId(credenziale);
 		}
 		if(transazioneDB.getTokenUsernameLabel()!=null) {

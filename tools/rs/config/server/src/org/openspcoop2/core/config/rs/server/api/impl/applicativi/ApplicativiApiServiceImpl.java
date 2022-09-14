@@ -146,14 +146,17 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			
 			
 			String dominio = null;
-
-			if(!env.isDominioInterno(idSoggetto)) {
+			boolean dominioInterno = env.isDominioInterno(idSoggetto);
+			if(!dominioInterno) {
 				if(profilo != null && !(profilo.equals(ProfiloEnum.APIGATEWAY) || profilo.equals(ProfiloEnum.MODI) || profilo.equals(ProfiloEnum.MODIPA))) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile creare un applicativo per un soggetto esterno col profilo ["+profilo+"]");
 				}
 				dominio = "esterno";
 			}
 
+			ApplicativiApiHelper.validateCredentials(applicativo.getCredenziali(), dominioInterno, 
+					profilo!=null && (profilo.equals(ProfiloEnum.MODI) || profilo.equals(ProfiloEnum.MODIPA)));
+			
 			ServiziApplicativiGeneralInfo generalInfo = ServiziApplicativiUtilities.getGeneralInfo(false, env.idSoggetto.getId().toString(), listaTipiProtocollo, 
 					env.saCore, env.saHelper, env.userLogin, true, 
 					soggettoMultitenantSelezionato.toString(), dominio);
@@ -172,7 +175,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 				
-			ApplicativiApiHelper.validateProperties(env, protocolProperties, sa);
+			ApplicativiApiHelper.validateProperties(env, protocolProperties, sa, ConsoleOperationType.ADD);
 
 			env.saCore.performCreateOperation(env.userLogin, false, sa);
 			
@@ -469,6 +472,10 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			
 			newSa.setOldIDServizioApplicativoForUpdate(oldID);
 			
+			boolean dominioInternoNewSoggetto = env.isDominioInterno(new IDSoggetto(newSa.getTipoSoggettoProprietario(), newSa.getNomeSoggettoProprietario()));
+			ApplicativiApiHelper.validateCredentials(applicativo.getCredenziali(), dominioInternoNewSoggetto, 
+					profilo!=null && (profilo.equals(ProfiloEnum.MODI) || profilo.equals(ProfiloEnum.MODIPA)));
+			
 			List<ExtendedConnettore> listExtendedConnettore = null;	// connettori extended non supportati via API
 			
 			ApplicativiApiHelper.overrideSAParameters(env.requestWrapper, env.saHelper, newSa, applicativo, keyInfo, updateKey);
@@ -485,7 +492,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
-			ApplicativiApiHelper.validateProperties(env, protocolProperties, newSa);
+			ApplicativiApiHelper.validateProperties(env, protocolProperties, newSa, ConsoleOperationType.CHANGE);
 
 			// eseguo l'aggiornamento
 			List<Object> listOggettiDaAggiornare = ServiziApplicativiUtilities.getOggettiDaAggiornare(env.saCore, oldID, newSa);
@@ -551,6 +558,10 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			
 			oldSa.setOldIDServizioApplicativoForUpdate(oldID);
 				
+			boolean dominioInterno = env.isDominioInterno(oldID.getIdSoggettoProprietario());
+			ApplicativiApiHelper.validateCredentials(body.getCredenziali(), dominioInterno, 
+					profilo!=null && (profilo.equals(ProfiloEnum.MODI) || profilo.equals(ProfiloEnum.MODIPA)));
+			
 			List<ExtendedConnettore> listExtendedConnettore = null;	// Non serve alla checkData perchè da Api, gli applicativi sono sempre fruitori
 			
 			ApplicativiApiHelper.overrideSAParameters(env.requestWrapper, env.saHelper, oldSa, credenziali, keyInfo, updateKey);

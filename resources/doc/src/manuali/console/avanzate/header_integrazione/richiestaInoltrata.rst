@@ -27,9 +27,9 @@ riguardanti la transazione gestita sul gateway descritte nella :numref:`headerGw
    :widths: auto
    :name: headerGw2SrvErogTab
 
-   =========================================  ==============================================
+   =========================================  ==============================================================================================================
    Header                                     Descrizione                                                                       
-   =========================================  ==============================================
+   =========================================  ==============================================================================================================
    GovWay-Sender-Type                         Codice che identifica il tipo del mittente
    GovWay-Sender                              Identificativo del mittente
    GovWay-Provider-Type                       Codice che identifica il tipo del destinatario
@@ -40,4 +40,7 @@ riguardanti la transazione gestita sul gateway descritte nella :numref:`headerGw
    GovWay-Action                              Identificativo dell'azione
    GovWay-Application-Message-ID              Identificativo del messaggio assegnato dall'applicativo
    GovWay-Application                         Identificativo dell'applicativo
-   =========================================  ==============================================
+   GovWay-Token-Sender-Type                   Codice che identifica il tipo del dominio mittente dell'applicativo identificato tramite autenticazione token
+   GovWay-Token-Sender                        Identificativo del dominio mittente dell'applicativo identificato tramite autenticazione token
+   GovWay-Token-Application                   Identificativo dell'applicativo identificato tramite autenticazione token
+   =========================================  ==============================================================================================================

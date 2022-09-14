@@ -569,13 +569,13 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 		}
 
 		// gestione di tracce e diagnostici
-		if(this.esportazioniSelezionate.contains(CostantiExport.ESPORTAZIONI_VALUE_TRACCE)){
+		if(this.exportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti && this.esportazioniSelezionate.contains(CostantiExport.ESPORTAZIONI_VALUE_TRACCE)){
 			colonneSelezionate.addAll(ColonnaExportManager.getInstance().getKeysColonneTracce());
 		} else {
 			colonneSelezionate.removeAll(ColonnaExportManager.getInstance().getKeysColonneTracce());
 		}
 
-		if(this.esportazioniSelezionate.contains(CostantiExport.ESPORTAZIONI_VALUE_DIAGNOSTICI)){
+		if(this.exportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti && this.esportazioniSelezionate.contains(CostantiExport.ESPORTAZIONI_VALUE_DIAGNOSTICI)){
 			colonneSelezionate.addAll(ColonnaExportManager.getInstance().getKeysColonneDiagnostici());
 		} else {
 			colonneSelezionate.removeAll(ColonnaExportManager.getInstance().getKeysColonneDiagnostici());

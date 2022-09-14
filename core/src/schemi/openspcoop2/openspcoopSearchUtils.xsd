@@ -714,6 +714,36 @@
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
+				<xsd:element name="tipoauth" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="tipoauth"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="utente" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="utente"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="token_policy" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="token_policy"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element name="id-soggetto" type="id-soggetto">
 					<xsd:annotation>
 						<xsd:appinfo>
@@ -731,6 +761,16 @@
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-column-mapping name="id_servizio_applicativo"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="servizio-applicativo-proprieta-protocollo" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_proprietario"/>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>
@@ -757,6 +797,58 @@
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="servizio-applicativo-proprieta-protocollo">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-table-mapping name="protocol_properties" />
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="name" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="name"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="value_string" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="value_string"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="value_number" type="xsd:long" minOccurs="0">
+				    <xsd:annotation>
+				        <xsd:appinfo>
+				            <linkit:generator
+				                xmlns:linkit="http://www.link.it/project_generator">
+				                <linkit:sql-column-mapping name="value_number"/>
+				            </linkit:generator>
+				        </xsd:appinfo>
+				    </xsd:annotation>
+				</xsd:element>
+				<xsd:element name="value_boolean" type="xsd:int" minOccurs="0">
+				    <xsd:annotation>
+				        <xsd:appinfo>
+				            <linkit:generator
+				                xmlns:linkit="http://www.link.it/project_generator">
+				                <linkit:sql-column-mapping name="value_boolean"/>
+				            </linkit:generator>
+				        </xsd:appinfo>
+				    </xsd:annotation>
 				</xsd:element>
 			</xsd:sequence>
 		</xsd:complexType>

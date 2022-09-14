@@ -316,7 +316,23 @@ public class TransazioniHelper {
 				}
 				FiltroMittenteFruizioneApplicativo fAppl = (FiltroMittenteFruizioneApplicativo) fMittente;
 				search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO);
+				if(fAppl.getTipoIdentificazioneApplicativo()!=null) {
+					switch (fAppl.getTipoIdentificazioneApplicativo()) {
+					case TRASPORTO:
+						search.setIdentificazione(Costanti.IDENTIFICAZIONE_TRASPORTO_KEY);
+						break;
+					case TOKEN:
+						search.setIdentificazione(Costanti.IDENTIFICAZIONE_TOKEN_KEY);
+						break;
+					}
+				}
+				else {
+					search.setIdentificazione(Costanti.IDENTIFICAZIONE_TRASPORTO_KEY);
+				}
 				search.setServizioApplicativo(fAppl.getApplicativo());
+				
+				search.setTipoNomeMittente(new IDSoggetto(tipo_soggetto, env.nomeSoggettoLocale).toString());
+				
 				break;
 			}
 			
@@ -408,6 +424,19 @@ public class TransazioniHelper {
 				}
 				FiltroMittenteErogazioneApplicativo fAppl = (FiltroMittenteErogazioneApplicativo) fMittente;
 				search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO);
+				if(fAppl.getTipoIdentificazioneApplicativo()!=null) {
+					switch (fAppl.getTipoIdentificazioneApplicativo()) {
+					case TRASPORTO:
+						search.setIdentificazione(Costanti.IDENTIFICAZIONE_TRASPORTO_KEY);
+						break;
+					case TOKEN:
+						search.setIdentificazione(Costanti.IDENTIFICAZIONE_TOKEN_KEY);
+						break;
+					}
+				}
+				else {
+					search.setIdentificazione(Costanti.IDENTIFICAZIONE_TRASPORTO_KEY);
+				}
 				search.setServizioApplicativo(fAppl.getApplicativo());
 				search.setTipoNomeMittente(new IDSoggetto(tipo_soggetto, fAppl.getSoggetto()).toString());
 				break;

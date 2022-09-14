@@ -142,9 +142,22 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
 			CredenzialeTipo tipoAutenticazione = CredenzialeTipo.toEnumConstant(portaDelegata.getAutenticazione());
 			Boolean appId = null;
+			String tokenPolicy = null;
+			boolean tokenPolicyOR = false;
 			if(CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
 				ApiKeyState apiKeyState =  new ApiKeyState(porteDelegateCore.getParametroAutenticazione(portaDelegata.getAutenticazione(), portaDelegata.getProprietaAutenticazioneList()));
 				appId = apiKeyState.appIdSelected;
+			}
+			if(portaDelegata.getGestioneToken()!=null && portaDelegata.getGestioneToken().getPolicy()!=null) {
+				tokenPolicy = portaDelegata.getGestioneToken().getPolicy();
+				if(tokenPolicy!=null && !"".equals(tokenPolicy)) {
+					if(tipoAutenticazione!=null && !CredenzialeTipo.TOKEN.equals(tipoAutenticazione)) {
+						tokenPolicyOR = true;
+					}
+					else {
+						tipoAutenticazione = CredenzialeTipo.TOKEN;
+					}
+				}
 			}
 			String nomePorta = portaDelegata.getNome();
 			
@@ -220,8 +233,10 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 				// Prendo la lista di servizioApplicativo associati al soggetto
 				// e la metto in un array
 				Vector<String> silV = new Vector<String>();
+				boolean bothSslAndToken = false;
 				List<IDServizioApplicativoDB> oldSilList = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione,appId,
-						filtroTipoSA);
+						filtroTipoSA, 
+						bothSslAndToken, tokenPolicy, tokenPolicyOR);
 				for (int i = 0; i < oldSilList.size(); i++) {
 					IDServizioApplicativoDB singleSA = oldSilList.get(i);
 					String tmpNome = singleSA.getNome();
@@ -300,8 +315,10 @@ public final class PorteDelegateTrasformazioniServizioApplicativoAdd extends Act
 				// Prendo la lista di servizioApplicativo (tranne quelli già
 				// usati) e la metto in un array
 				Vector<String> silV = new Vector<String>();
+				boolean bothSslAndToken = false;
 				List<IDServizioApplicativoDB> oldSilList = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione,appId,
-						filtroTipoSA);
+						filtroTipoSA, 
+						bothSslAndToken, tokenPolicy, tokenPolicyOR);
 				for (int i = 0; i < oldSilList.size(); i++) {
 					IDServizioApplicativoDB singleSA = oldSilList.get(i);
 					String tmpNome = singleSA.getNome();

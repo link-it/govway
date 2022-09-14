@@ -54,8 +54,10 @@ import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneToken;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.PortaDelegataAutorizzazioneToken;
 import org.openspcoop2.core.config.PortaDelegataAzione;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
@@ -201,7 +203,8 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
 public class ErogazioniApiHelper {
 		
 	
-	public static void validateProperties(ErogazioniEnv env, ProtocolProperties protocolProperties, AccordoServizioParteSpecifica asps)
+	public static void validateProperties(ErogazioniEnv env, ProtocolProperties protocolProperties, AccordoServizioParteSpecifica asps,
+			ConsoleOperationType operationType)
 			throws Exception {
 		if(protocolProperties!=null) {
 			try{
@@ -209,13 +212,28 @@ public class ErogazioniApiHelper {
 				ConsoleConfiguration consoleConf = getConsoleConfiguration(env, asps);
 
 				env.apsHelper.validaProtocolProperties(consoleConf, ConsoleOperationType.ADD, protocolProperties);
+				
+				IDServizio oldIdAps = env.idServizioFactory.getIDServizioFromValues(asps.getTipo(), asps.getNome(), new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()), asps.getVersione()); 
+				oldIdAps.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+				oldIdAps.setPortType(asps.getPortType());
+				
+				IConsoleDynamicConfiguration consoleDynamicConfiguration = env.protocolFactory.createDynamicConfigurationConsole();
+				IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory); 
+				IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(env.protocolFactory);
+				consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(consoleConf, operationType, env.apsHelper, protocolProperties, 
+						registryReader, configRegistryReader, oldIdAps);
+				
+				consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteSpecifica(consoleConf, operationType, env.apsHelper, protocolProperties, 
+						registryReader, configRegistryReader, oldIdAps);
+				
 			}catch(ProtocolException e){
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e.getMessage());
 			}
 		}
 	}
 
-	public static void validateProperties(ErogazioniEnv env, ProtocolProperties protocolProperties, IDFruizione id)
+	public static void validateProperties(ErogazioniEnv env, ProtocolProperties protocolProperties, IDFruizione id,
+			ConsoleOperationType operationType)
 			throws Exception {
 		if(protocolProperties!=null) {
 			try{
@@ -223,6 +241,16 @@ public class ErogazioniApiHelper {
 				ConsoleConfiguration consoleConf = getConsoleConfiguration(env, id);
 
 				env.apsHelper.validaProtocolProperties(consoleConf, ConsoleOperationType.ADD, protocolProperties);
+				
+				IConsoleDynamicConfiguration consoleDynamicConfiguration = env.protocolFactory.createDynamicConfigurationConsole();
+				IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory); 
+				IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(env.protocolFactory);
+				consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(consoleConf, operationType, env.apsHelper, protocolProperties, 
+						registryReader, configRegistryReader, id);
+				
+				consoleDynamicConfiguration.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(consoleConf, operationType, env.apsHelper, protocolProperties, 
+						registryReader, configRegistryReader, id);
+				
 			}catch(ProtocolException e){
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e.getMessage());
 			}
@@ -340,7 +368,7 @@ public class ErogazioniApiHelper {
 		return p;
 	}
 	
-	public static ProtocolProperties getProtocolProperties(Erogazione body, ProfiloEnum profilo, AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
+	public static ProtocolProperties getProtocolProperties(Erogazione body, ProfiloEnum profilo, AccordoServizioParteSpecifica asps, ErogazioniEnv env, boolean required) throws Exception {
 
 
 		if(!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA) && body.getModi() != null) {
@@ -356,14 +384,14 @@ public class ErogazioniApiHelper {
 			return FatturaPAErogazioniApiHelper.getProtocolProperties(body);
 		case MODI:
 		case MODIPA:
-			return ModiErogazioniApiHelper.getProtocolProperties(body, asps, env);
+			return ModiErogazioniApiHelper.getProtocolProperties(body, asps, env, required);
 		case SPCOOP:
 			return SPCoopErogazioniApiHelper.getProtocolProperties(body);
 		}
 		return null;
 	}
 
-	public static ProtocolProperties getProtocolProperties(Fruizione body, ProfiloEnum profilo, AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
+	public static ProtocolProperties getProtocolProperties(Fruizione body, ProfiloEnum profilo, AccordoServizioParteSpecifica asps, ErogazioniEnv env, boolean required) throws Exception {
 
 
 		if(!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA) && body.getModi() != null) {
@@ -374,14 +402,14 @@ public class ErogazioniApiHelper {
 		case APIGATEWAY:
 			return null;// trasparente 
 		case EDELIVERY:
-//			return EDeliveryErogazioniApiHelper.getProtocolProperties(body);
+			return EDeliveryErogazioniApiHelper.getProtocolProperties(body);
 		case FATTURAPA:
-//			return FatturaPAErogazioniApiHelper.getProtocolProperties(body);
+			return FatturaPAErogazioniApiHelper.getProtocolProperties(body);
 		case MODI:
 		case MODIPA:
-			return ModiErogazioniApiHelper.getProtocolProperties(body, asps, env);
+			return ModiErogazioniApiHelper.getProtocolProperties(body, asps, env, required);
 		case SPCOOP:
-//			return SPCoopErogazioniApiHelper.getProtocolProperties(body); 
+			return SPCoopErogazioniApiHelper.getProtocolProperties(body); 
 		}
 		return null;
 	}
@@ -1835,6 +1863,10 @@ public class ErogazioniApiHelper {
 				null,	// servizioApplicativo Come da Debug, 
 				ruolo,	// ruolo: E' il ruolo scelto nella label "Ruolo" 
 		    	soggettoAutenticato,	// soggettoAutenticato TODO BISOGNA AGGIUNGERE IL CONTROLLO CHE IL SOGGETTO AUTENTICATO SIA NEL REGISTRO 
+		    	null,   // 	autorizzazioneAutenticatiToken, 
+		    	null,   // 	autorizzazioneRuoliToken, 
+		    	null,   // 	autorizzazioneRuoliTipologiaToken, 
+		    	null,   // 	autorizzazioneRuoliMatchToken,
 				null,	// autorizzazione_tokenOptions, 
 				null,	// autorizzazioneScope, 
 				null,	// scope, 
@@ -2368,7 +2400,7 @@ public class ErogazioniApiHelper {
 			
 			ApiCanale canale = ErogazioniApiHelper.toApiCanale(env, paDefault, apc, false);
 			
-			String urlConnettore = ConnettoreAPIHelper.getUrlConnettore(getServizioApplicativoErogazione(idServizio, env.saCore, env.paCore), isRidefinito);
+			String urlConnettore = ConnettoreAPIHelper.getUrlConnettore(getServizioApplicativoErogazione(idServizio, env.saCore, env.paCore, env.paHelper), isRidefinito);
 			fillApiImplViewItemWithAsps(
 					env, 
 					asps, 
@@ -2673,19 +2705,29 @@ public class ErogazioniApiHelper {
 	}
 	
 	
-	public static final InvocazioneServizio getInvocazioneServizioErogazione(IDServizio idServizio, ServiziApplicativiCore saCore, PorteApplicativeCore paCore) 
+	public static final InvocazioneServizio getInvocazioneServizioErogazione(IDServizio idServizio, ServiziApplicativiCore saCore, PorteApplicativeCore paCore, PorteApplicativeHelper paHelper) 
 			throws DriverConfigurazioneNotFound, DriverConfigurazioneException, CoreException, DriverRegistroServiziException, DriverRegistroServiziNotFound {
 	
-		ServizioApplicativo sa = getServizioApplicativoErogazione(idServizio, saCore, paCore);
+		ServizioApplicativo sa = getServizioApplicativoErogazione(idServizio, saCore, paCore, paHelper);
 		        		
 		return sa.getInvocazioneServizio();
 	}
 	
-	public static final ServizioApplicativo getServizioApplicativoErogazione(IDServizio idServizio, ServiziApplicativiCore saCore, PorteApplicativeCore paCore) 
+	public static final ServizioApplicativo getServizioApplicativoErogazione(IDServizio idServizio, ServiziApplicativiCore saCore, PorteApplicativeCore paCore, PorteApplicativeHelper paHelper) 
 			throws DriverConfigurazioneNotFound, DriverConfigurazioneException, CoreException, DriverRegistroServiziException, DriverRegistroServiziNotFound {
 	
 		final IDPortaApplicativa idPA = paCore.getIDPortaApplicativaAssociataDefault(idServizio);
-		return saCore.getServizioApplicativo(saCore.getIdServizioApplicativo(idServizio.getSoggettoErogatore(), idPA.getNome()));
+		PortaApplicativa pa = paCore.getPortaApplicativa(idPA);
+		String nomeSaDefault = idPA.getNome();
+		if(pa.sizeServizioApplicativoList()>0) {
+			for (PortaApplicativaServizioApplicativo pasa : pa.getServizioApplicativoList()) {
+				if(paHelper.isConnettoreDefault(pasa)) {
+					nomeSaDefault = pasa.getNome();
+					break;
+				}
+			}
+		}
+		return saCore.getServizioApplicativo(saCore.getIdServizioApplicativo(idServizio.getSoggettoErogatore(), nomeSaDefault));
 	}
 	
 	public static final InvocazioneServizio getInvocazioneServizioErogazioneGruppo(IdServizio idAsps, IDServizio idServizio, ErogazioniEnv env, String gruppo) 
@@ -3545,6 +3587,13 @@ public class ErogazioniApiHelper {
 			attributeAuthorityAttributi = env.apsCore.buildAttributesStringFromAuthority(newPd.getAttributeAuthorityList());
 		}
 		
+		String autorizzazioneAutenticatiToken = null;
+		String autorizzazioneRuoliToken = null;
+		if(newPd.getAutorizzazioneToken()!=null) {
+			autorizzazioneAutenticatiToken = ServletUtils.boolToCheckBoxStatus(StatoFunzionalita.ABILITATO.equals(newPd.getAutorizzazioneToken().getAutorizzazioneApplicativi()));
+			autorizzazioneRuoliToken = ServletUtils.boolToCheckBoxStatus(StatoFunzionalita.ABILITATO.equals(newPd.getAutorizzazioneToken().getAutorizzazioneRuoli()));
+		}
+		
 		return env.paHelper.controlloAccessiCheck(
 				TipoOperazione.OTHER, 
 				newPd.getAutenticazione(),				// Autenticazione
@@ -3568,6 +3617,8 @@ public class ErogazioniApiHelper {
 				evalnull( () -> newPd.getGestioneToken().getIntrospection().toString() ), 
 				evalnull( () -> newPd.getGestioneToken().getUserInfo().toString() ),
 				evalnull( () -> newPd.getGestioneToken().getForward().toString() ),
+				autorizzazioneAutenticatiToken, 
+				autorizzazioneRuoliToken, 
 				evalnull( () -> ServletUtils.boolToCheckBoxStatus( newPd.getGestioneToken().getOptions() != null ) ),
 				evalnull( () -> newPd.getGestioneToken().getOptions() ),
 				evalnull( () -> ServletUtils.boolToCheckBoxStatus( autorizzazioneScope ) ),
@@ -3639,6 +3690,13 @@ public class ErogazioniApiHelper {
 			attributeAuthorityAttributi = env.apsCore.buildAttributesStringFromAuthority(newPa.getAttributeAuthorityList());
 		}
 		
+		String autorizzazioneAutenticatiToken = null;
+		String autorizzazioneRuoliToken = null;
+		if(newPa.getAutorizzazioneToken()!=null) {
+			autorizzazioneAutenticatiToken = ServletUtils.boolToCheckBoxStatus(StatoFunzionalita.ABILITATO.equals(newPa.getAutorizzazioneToken().getAutorizzazioneApplicativi()));
+			autorizzazioneRuoliToken = ServletUtils.boolToCheckBoxStatus(StatoFunzionalita.ABILITATO.equals(newPa.getAutorizzazioneToken().getAutorizzazioneRuoli()));
+		}
+		
 		return env.paHelper.controlloAccessiCheck(
 				TipoOperazione.OTHER, 
 				newPa.getAutenticazione(),				// Autenticazione
@@ -3662,6 +3720,8 @@ public class ErogazioniApiHelper {
 				evalnull( () -> newPa.getGestioneToken().getIntrospection().toString() ), // introspection
 				evalnull( () -> newPa.getGestioneToken().getUserInfo().toString() ),		// userInfo
 				evalnull( () -> newPa.getGestioneToken().getForward().toString() ),		// forward
+				autorizzazioneAutenticatiToken, 
+				autorizzazioneRuoliToken, 
 				evalnull( () -> ServletUtils.boolToCheckBoxStatus( newPa.getGestioneToken().getOptions() != null ) ),	// autorizzazioneToken
 				evalnull( () -> newPa.getGestioneToken().getOptions() ),
 				evalnull( () -> ServletUtils.boolToCheckBoxStatus( autorizzazioneScope ) ),
@@ -3701,21 +3761,37 @@ public class ErogazioniApiHelper {
 			}
 			
 			final String autorizzazione = AutorizzazioneUtilities.STATO_ABILITATO;
+			
 			final String autorizzazioneAutenticati = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isRichiedente());
+			
 			final String autorizzazioneRuoli = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isRuoli());
+			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(authzAbilitata.getRuoliFonte());
+			RuoloTipoMatch tipoRuoloMatch = null;
+			if(authzAbilitata.getRuoliRichiesti()!=null) {
+				tipoRuoloMatch = RuoloTipoMatch.toEnumConstant( evalnull( () -> authzAbilitata.getRuoliRichiesti().toString()) );	// Gli enum coincidono
+			}
+			
+			final String autorizzazioneTokenAutenticati = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isTokenRichiedente());
+			
+			final String autorizzazioneTokenRuoli = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isTokenRuoli());
+			final org.openspcoop2.core.config.constants.RuoloTipologia tipoTokenRuoloFonte = Enums.ruoloTipologiaConfigFromRest.get(authzAbilitata.getTokenRuoliFonte());
+			RuoloTipoMatch tipoTokenRuoloMatch = null;
+			if(authzAbilitata.getTokenRuoliRichiesti()!=null) {
+				tipoTokenRuoloMatch = RuoloTipoMatch.toEnumConstant( evalnull( () -> authzAbilitata.getTokenRuoliRichiesti().toString()) );	// Gli enum coincidono
+			}
+			
 			final String autorizzazioneScope = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isScope());
+			final ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant( evalnull( () -> authzAbilitata.getScopeRichiesti().toString()) );
+			
 			String autorizzazione_tokenOptions = null;
 			if(authzAbilitata.getTokenClaims()!=null && !authzAbilitata.getTokenClaims().isEmpty()) {
 				autorizzazione_tokenOptions = String.join("\n", authzAbilitata.getTokenClaims());
 			}
-			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(authzAbilitata.getRuoliFonte());
-			final RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant( evalnull( () -> authzAbilitata.getRuoliRichiesti().toString()) );	// Gli enum coincidono
-			final ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant( evalnull( () -> authzAbilitata.getScopeRichiesti().toString()) );
-	
+			
 			
 			final String tipoAutorString =	AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(autorizzazione,
-					ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati),
-					ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli),		
+					ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati), ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli),
+					ServletUtils.isCheckBoxEnabled(autorizzazioneTokenAutenticati), ServletUtils.isCheckBoxEnabled(autorizzazioneTokenRuoli),		
 					ServletUtils.isCheckBoxEnabled(autorizzazioneScope),		
 					autorizzazione_tokenOptions,					// Questo è il token claims
 					tipoRuoloFonte									// RuoliFonte: Qualsiasi, Registro, Esterna
@@ -3731,6 +3807,22 @@ public class ErogazioniApiHelper {
 				newPd.setRuoli(null);
 			}
 			
+			if(authzAbilitata.isTokenRichiedente() || authzAbilitata.isTokenRuoli()) {
+				newPd.setAutorizzazioneToken(new PortaDelegataAutorizzazioneToken());
+				
+				if(authzAbilitata.isTokenRichiedente()) {
+					newPd.getAutorizzazioneToken().setAutorizzazioneApplicativi(StatoFunzionalita.ABILITATO);
+				}
+				
+				if(authzAbilitata.isTokenRuoli()) {
+					newPd.getAutorizzazioneToken().setAutorizzazioneRuoli(StatoFunzionalita.ABILITATO);
+					newPd.getAutorizzazioneToken().setTipologiaRuoli(tipoTokenRuoloFonte);
+					if(newPd.getAutorizzazioneToken().getRuoli()==null) {
+						newPd.getAutorizzazioneToken().setRuoli(new AutorizzazioneRuoli());
+					}
+					newPd.getAutorizzazioneToken().getRuoli().setMatch(tipoTokenRuoloMatch);
+				}
+			}
 			
 			if ( authzAbilitata.isScope() ) {
 				if ( newPd.getScope() == null ) newPd.setScope(new AutorizzazioneScope());
@@ -3770,8 +3862,8 @@ public class ErogazioniApiHelper {
 			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(authzXacml.getRuoliFonte());
 			
 			final String tipoAutorString =	AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(TipoAutorizzazioneEnum.XACML_POLICY.toString(),
-					false,
-					false,		
+					false,false,
+					false,false,
 					false,
 					"",
 					tipoRuoloFonte									// RuoliFonte: Qualsiasi, Registro, Esterna
@@ -3827,20 +3919,36 @@ public class ErogazioniApiHelper {
 			}
 			
 			final String statoAutorizzazione = AutorizzazioneUtilities.STATO_ABILITATO;
+			
 			final String autorizzazioneAutenticati = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isRichiedente());
+			
 			final String autorizzazioneRuoli = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isRuoli());
+			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(authzAbilitata.getRuoliFonte());
+			RuoloTipoMatch tipoRuoloMatch = null;
+			if(authzAbilitata.getRuoliRichiesti()!=null) {
+				tipoRuoloMatch = RuoloTipoMatch.toEnumConstant( evalnull( () -> authzAbilitata.getRuoliRichiesti().toString()) );	// Gli enum coincidono
+			}
+			
+			final String autorizzazioneTokenAutenticati = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isTokenRichiedente());
+			
+			final String autorizzazioneTokenRuoli = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isTokenRuoli());
+			final org.openspcoop2.core.config.constants.RuoloTipologia tipoTokenRuoloFonte = Enums.ruoloTipologiaConfigFromRest.get(authzAbilitata.getTokenRuoliFonte());
+			RuoloTipoMatch tipoTokenRuoloMatch = null;
+			if(authzAbilitata.getTokenRuoliRichiesti()!=null) {
+				tipoTokenRuoloMatch = RuoloTipoMatch.toEnumConstant( evalnull( () -> authzAbilitata.getTokenRuoliRichiesti().toString()) );	// Gli enum coincidono
+			}
+			
 			final String autorizzazioneScope = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isScope());
+			final ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant( evalnull( () -> authzAbilitata.getScopeRichiesti().toString()) );
+			
 			String autorizzazione_tokenOptions = null;
 			if(authzAbilitata.getTokenClaims()!=null && !authzAbilitata.getTokenClaims().isEmpty()) {
 				autorizzazione_tokenOptions = String.join("\n", authzAbilitata.getTokenClaims());
 			}
-			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(authzAbilitata.getRuoliFonte());
-			final RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant( evalnull( () -> authzAbilitata.getRuoliRichiesti().toString()) );	// Gli enum coincidono
-			final ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant( evalnull( () -> authzAbilitata.getScopeRichiesti().toString()) );
 			
 			final String tipoAutorString =	AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(statoAutorizzazione,
-					ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati),
-					ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli),		
+					ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati), ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli),		
+					ServletUtils.isCheckBoxEnabled(autorizzazioneTokenAutenticati), ServletUtils.isCheckBoxEnabled(autorizzazioneTokenRuoli),		
 					ServletUtils.isCheckBoxEnabled(autorizzazioneScope),		
 					autorizzazione_tokenOptions,					// Questo è il token claims
 					tipoRuoloFonte									// RuoliFonte: Qualsiasi, Registro, Esterna
@@ -3856,6 +3964,22 @@ public class ErogazioniApiHelper {
 				newPa.setRuoli(null);
 			}
 			
+			if(authzAbilitata.isTokenRichiedente() || authzAbilitata.isTokenRuoli()) {
+				newPa.setAutorizzazioneToken(new PortaApplicativaAutorizzazioneToken());
+				
+				if(authzAbilitata.isTokenRichiedente()) {
+					newPa.getAutorizzazioneToken().setAutorizzazioneApplicativi(StatoFunzionalita.ABILITATO);
+				}
+				
+				if(authzAbilitata.isTokenRuoli()) {
+					newPa.getAutorizzazioneToken().setAutorizzazioneRuoli(StatoFunzionalita.ABILITATO);
+					newPa.getAutorizzazioneToken().setTipologiaRuoli(tipoTokenRuoloFonte);
+					if(newPa.getAutorizzazioneToken().getRuoli()==null) {
+						newPa.getAutorizzazioneToken().setRuoli(new AutorizzazioneRuoli());
+					}
+					newPa.getAutorizzazioneToken().getRuoli().setMatch(tipoTokenRuoloMatch);
+				}
+			}
 			
 			if ( authzAbilitata.isScope() ) {
 				if ( newPa.getScope() == null ) newPa.setScope(new AutorizzazioneScope());
@@ -3895,8 +4019,8 @@ public class ErogazioniApiHelper {
 			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(authzXacml.getRuoliFonte());
 			
 			final String tipoAutorString =	AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(AutorizzazioneUtilities.STATO_XACML_POLICY,
-					false,
-					false,		
+					false,false,		
+					false,false,		
 					false,
 					"",
 					tipoRuoloFonte									// RuoliFonte: Qualsiasi, Registro, Esterna
@@ -3974,6 +4098,30 @@ public class ErogazioniApiHelper {
 					));
 			}
 			
+			if(pa.getAutorizzazioneToken()!=null) {
+				if(StatoFunzionalita.ABILITATO.equals(pa.getAutorizzazioneToken().getAutorizzazioneApplicativi())) {
+					authzAbilitata.setTokenRichiedente(true);
+				}
+				
+				if(StatoFunzionalita.ABILITATO.equals(pa.getAutorizzazioneToken().getAutorizzazioneRuoli())) {
+					authzAbilitata.setTokenRuoli(true);
+					
+					authzAbilitata.setTokenRuoliRichiesti( evalnull(  () -> AllAnyEnum.fromValue( pa.getAutorizzazioneToken().getRuoli().getMatch().toString()) ) );
+					if(pa.getAutorizzazioneToken().getTipologiaRuoli()!=null) {
+						switch (pa.getAutorizzazioneToken().getTipologiaRuoli()) {
+						case INTERNO:
+							authzAbilitata.setTokenRuoliFonte(FonteEnum.REGISTRO);
+							break;
+						case ESTERNO:
+							authzAbilitata.setTokenRuoliFonte(FonteEnum.ESTERNA);						
+							break;
+						case QUALSIASI:
+							authzAbilitata.setTokenRuoliFonte(FonteEnum.QUALSIASI);
+							break;
+						}
+					}
+				}
+			}
 			
 			authzAbilitata.setScope( pa.getScope() != null );
 			authzAbilitata.setScopeRichiesti( evalnull( () -> AllAnyEnum.fromValue( pa.getScope().getMatch().getValue() )));
@@ -4051,6 +4199,30 @@ public class ErogazioniApiHelper {
 					));
 			}
 			
+			if(pd.getAutorizzazioneToken()!=null) {
+				if(StatoFunzionalita.ABILITATO.equals(pd.getAutorizzazioneToken().getAutorizzazioneApplicativi())) {
+					authzAbilitata.setTokenRichiedente(true);
+				}
+				
+				if(StatoFunzionalita.ABILITATO.equals(pd.getAutorizzazioneToken().getAutorizzazioneRuoli())) {
+					authzAbilitata.setTokenRuoli(true);
+					
+					authzAbilitata.setTokenRuoliRichiesti( evalnull(  () -> AllAnyEnum.fromValue( pd.getAutorizzazioneToken().getRuoli().getMatch().toString()) ) );
+					if(pd.getAutorizzazioneToken().getTipologiaRuoli()!=null) {
+						switch (pd.getAutorizzazioneToken().getTipologiaRuoli()) {
+						case INTERNO:
+							authzAbilitata.setTokenRuoliFonte(FonteEnum.REGISTRO);
+							break;
+						case ESTERNO:
+							authzAbilitata.setTokenRuoliFonte(FonteEnum.ESTERNA);						
+							break;
+						case QUALSIASI:
+							authzAbilitata.setTokenRuoliFonte(FonteEnum.QUALSIASI);
+							break;
+						}
+					}
+				}
+			}
 			
 			authzAbilitata.setScope( pd.getScope() != null );
 			authzAbilitata.setScopeRichiesti( evalnull( () -> AllAnyEnum.fromValue( pd.getScope().getMatch().getValue() )));

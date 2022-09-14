@@ -138,7 +138,7 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
     	IDServizioApplicativo idSA = datiInvocazione.getIdentitaServizioApplicativoFruitore();
 		IDSoggetto idSoggetto = datiInvocazione.getIdSoggettoFruitore();
 		IDServizio idServizio = datiInvocazione.getIdServizio();
-		String errore = this.getErrorString(idSA, idSoggetto, idServizio);
+		String errore = AbstractAutorizzazioneBase.getErrorString(idSA, idSoggetto, idServizio);
 		
 		
 		

@@ -381,7 +381,7 @@
 
     <registry>
 
-        <organization inboundExternalApplicationAuthentication="true">
+        <organization httpsWithTokenAuthentication="true" inboundExternalApplicationAuthentication="true">
             <types>
             	<type name="modipa"/>
             </types>

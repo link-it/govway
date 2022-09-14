@@ -46,6 +46,11 @@ public class HeaderIntegrazione implements java.io.Serializable{
 		
 	/** Identita del servizio applicativo */
 	private String servizioApplicativo;
+	
+	/** Identita del servizio applicativo token */
+	private String tipoSoggettoProprietarioApplicativoToken;
+	private String nomeSoggettoProprietarioApplicativoToken;
+	private String servizioApplicativoToken;
 
 	/** ID Transazione */
 	private String idTransazione;
@@ -78,6 +83,20 @@ public class HeaderIntegrazione implements java.io.Serializable{
 	public String getServizioApplicativo() {
 		return this.servizioApplicativo;
 	}
+	
+	public String getTipoSoggettoProprietarioApplicativoToken() {
+		return this.tipoSoggettoProprietarioApplicativoToken;
+	}
+	public String getNomeSoggettoProprietarioApplicativoToken() {
+		return this.nomeSoggettoProprietarioApplicativoToken;
+	}
+
+	/**
+	 * @return the servizioApplicativoToken
+	 */
+	public String getServizioApplicativoToken() {
+		return this.servizioApplicativoToken;
+	}
 
 	/**
 	 * @param busta HeaderIntegrazioneBusta
@@ -99,6 +118,20 @@ public class HeaderIntegrazione implements java.io.Serializable{
 	 */
 	public void setServizioApplicativo(String servizioApplicativo) {
 		this.servizioApplicativo = servizioApplicativo;
+	}
+	
+	public void setTipoSoggettoProprietarioApplicativoToken(String tipoSoggettoProprietarioApplicativoToken) {
+		this.tipoSoggettoProprietarioApplicativoToken = tipoSoggettoProprietarioApplicativoToken;
+	}
+	public void setNomeSoggettoProprietarioApplicativoToken(String nomeSoggettoProprietarioApplicativoToken) {
+		this.nomeSoggettoProprietarioApplicativoToken = nomeSoggettoProprietarioApplicativoToken;
+	}
+	
+	/**
+	 * @param servizioApplicativoToken the servizioApplicativo to set
+	 */
+	public void setServizioApplicativoToken(String servizioApplicativoToken) {
+		this.servizioApplicativoToken = servizioApplicativoToken;
 	}
 
 

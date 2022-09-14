@@ -49,6 +49,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -65,6 +66,7 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreFILE;
 import org.openspcoop2.pdd.core.connettori.ConnettoreFile_outputConfig;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
@@ -1257,24 +1259,28 @@ public class ConnettoriHelper extends ConsoleHelper {
 	public Vector<DataElement> addCredenzialiToDati(Vector<DataElement> dati, String tipoauth, String utente, String password, String subject, String principal,
 			String toCall, boolean showLabelCredenzialiAccesso, String endpointtype,boolean connettore,boolean visualizzaTipoAutenticazione,
 			String prefix, boolean autenticazioneNessunaAbilitata) throws Exception {
-		return this.addCredenzialiToDati(dati, tipoauth, null, utente, password, subject, principal, toCall, showLabelCredenzialiAccesso, endpointtype, connettore, visualizzaTipoAutenticazione, prefix, autenticazioneNessunaAbilitata, 
+		return this.addCredenzialiToDati(null, dati, tipoauth, null, utente, password, subject, principal, toCall, showLabelCredenzialiAccesso, endpointtype, connettore, visualizzaTipoAutenticazione, prefix, autenticazioneNessunaAbilitata, 
 				null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
 				null,
 				null,null,null,
-				null, false, false, null, null, null, null);
+				null, false, false, null, null, null, null,
+				false, null,null,false,
+				false, null);
 	}
 	public Vector<DataElement> addCredenzialiToDati(Vector<DataElement> dati, String tipoauth, String utente, String password, String subject, String principal,
 			String toCall, boolean showLabelCredenzialiAccesso, String endpointtype,boolean connettore,boolean visualizzaTipoAutenticazione,
 			String prefix, boolean autenticazioneNessunaAbilitata,
 			String subtitleConfigurazione) throws Exception {
-		return this.addCredenzialiToDati(dati, tipoauth, null, utente, password, subject, principal, toCall, showLabelCredenzialiAccesso, endpointtype, connettore, visualizzaTipoAutenticazione, prefix, autenticazioneNessunaAbilitata, 
+		return this.addCredenzialiToDati(null, dati, tipoauth, null, utente, password, subject, principal, toCall, showLabelCredenzialiAccesso, endpointtype, connettore, visualizzaTipoAutenticazione, prefix, autenticazioneNessunaAbilitata, 
 				null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
 				null,
 				null,null,null,
-				subtitleConfigurazione, false, false, null, null, null, null);
+				subtitleConfigurazione, false, false, null, null, null, null,
+				false, null,null,false,
+				false, null);
 	} 
 	
-	public Vector<DataElement> addCredenzialiToDati(Vector<DataElement> dati, String tipoauth, String oldtipoauth, String utente, String password, String subject, String principal,
+	public Vector<DataElement> addCredenzialiToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String tipoauth, String oldtipoauth, String utente, String password, String subject, String principal,
 			String toCall, boolean showLabelCredenzialiAccesso, String endpointtype,boolean connettore,boolean visualizzaTipoAutenticazione,
 			String prefix, boolean autenticazioneNessunaAbilitata,String tipoCredenzialiSSLSorgente, ArchiveType tipoCredenzialiSSLTipoArchivio, BinaryParameter tipoCredenzialiSSLFileCertificato, String tipoCredenzialiSSLFileCertificatoPassword,
 			List<String> listaAliasEstrattiCertificato, String tipoCredenzialiSSLAliasCertificato,	String tipoCredenzialiSSLAliasCertificatoSubject, String tipoCredenzialiSSLAliasCertificatoIssuer,
@@ -1283,8 +1289,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String issuer, String tipoCredenzialiSSLStatoElaborazioneCertificato,
 			String changepwd, 
 			String multipleApiKey, String appId, String apiKey, 
-			boolean visualizzaModificaCertificato, boolean visualizzaAddCertificato, String servletCredenzialiList, List<Parameter> parametersServletCredenzialiList, Integer numeroCertificati, String servletCredenzialiAdd) throws Exception{
-		return addCredenzialiToDati(dati, tipoauth, oldtipoauth, utente, password, subject, principal,
+			boolean visualizzaModificaCertificato, boolean visualizzaAddCertificato, String servletCredenzialiList, List<Parameter> parametersServletCredenzialiList, Integer numeroCertificati, String servletCredenzialiAdd,
+			boolean credenzialiToken, String tokenPolicySA, String tokenClientIdSA, boolean tokenWithHttpsEnabledByConfigSA,
+			boolean dominioEsterno, String protocollo) throws Exception{
+		return addCredenzialiToDati(tipoOperazione, dati, tipoauth, oldtipoauth, utente, password, subject, principal,
 				toCall, showLabelCredenzialiAccesso, endpointtype,connettore,visualizzaTipoAutenticazione,
 				prefix, autenticazioneNessunaAbilitata,tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato, tipoCredenzialiSSLFileCertificatoPassword,
 				listaAliasEstrattiCertificato, tipoCredenzialiSSLAliasCertificato,tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
@@ -1293,9 +1301,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 				issuer, tipoCredenzialiSSLStatoElaborazioneCertificato,
 				changepwd,
 				multipleApiKey, appId, apiKey,
-				null, visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd);
+				null, visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
+				credenzialiToken, tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA,
+				dominioEsterno, protocollo);
 	}
-	public Vector<DataElement> addCredenzialiToDati(Vector<DataElement> dati, String tipoauth, String oldtipoauth, String utente, String password, String subject, String principal,
+	public Vector<DataElement> addCredenzialiToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String tipoauth, String oldtipoauth, String utente, String password, String subject, String principal,
 			String toCall, boolean showLabelCredenzialiAccesso, String endpointtype,boolean connettore,boolean visualizzaTipoAutenticazione,
 			String prefix, boolean autenticazioneNessunaAbilitata,String tipoCredenzialiSSLSorgente, ArchiveType tipoCredenzialiSSLTipoArchivio, BinaryParameter tipoCredenzialiSSLFileCertificato, String tipoCredenzialiSSLFileCertificatoPassword,
 			List<String> listaAliasEstrattiCertificato, String tipoCredenzialiSSLAliasCertificato,	String tipoCredenzialiSSLAliasCertificatoSubject, String tipoCredenzialiSSLAliasCertificatoIssuer,
@@ -1305,8 +1315,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String changepwd, 
 			String multipleApiKey, String appId, String apiKey,
 			String subtitleConfigurazione, 
-			boolean visualizzaModificaCertificato, boolean visualizzaAddCertificato, String servletCredenzialiList, List<Parameter> parametersServletCredenzialiList, Integer numeroCertificati, String servletCredenzialiAdd) throws Exception{
-
+			boolean visualizzaModificaCertificato, boolean visualizzaAddCertificato, String servletCredenzialiList, List<Parameter> parametersServletCredenzialiList, Integer numeroCertificati, String servletCredenzialiAdd,
+			boolean credenzialiToken, String tokenPolicySA, String tokenClientIdSA, boolean tokenWithHttpsEnabledByConfigSA, 
+			boolean dominioEsterno, String protocollo) throws Exception{
+		
 		if(subtitleConfigurazione==null) {
 			subtitleConfigurazione = ConnettoriCostanti.LABEL_CONFIGURAZIONE_SSL_TITLE_CONFIGURAZIONE;
 		}
@@ -1317,6 +1329,17 @@ public class ConnettoriHelper extends ConsoleHelper {
 			prefix = "";
 		}
 
+		boolean tokenWithHttsSupportato = false;
+		if(!connettore && dominioEsterno & protocollo!=null) {
+			ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+			tokenWithHttsSupportato = protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportatoAutenticazioneApplicativiHttpsConToken();
+		}
+		if(tokenWithHttsSupportato) {
+			if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(tipoauth) && tokenWithHttpsEnabledByConfigSA) {
+				tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN;
+			}
+		}
+		
 		String[] tipoA = null;
 		String[] labelTipoA = null;
 		if(visualizzaTipoAutenticazione){
@@ -1356,10 +1379,21 @@ public class ConnettoriHelper extends ConsoleHelper {
 				else{
 					tipoA = ConnettoriCostanti.CREDENZIALI_VALUES;
 					labelTipoA = ConnettoriCostanti.CREDENZIALI_LABELS;
+					if(credenzialiToken) {
+						tipoA = ConnettoriCostanti.CREDENZIALI_CON_TOKEN_VALUES;
+						labelTipoA = ConnettoriCostanti.CREDENZIALI_CON_TOKEN_LABELS;
+					}
 					if(tipoauth==null){
 						tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL;
 					}
 				}
+			}
+		}
+		else {
+			if(tokenWithHttsSupportato && StringUtils.isNotEmpty(protocollo) && isProfiloModIPA(protocollo)) {
+				visualizzaTipoAutenticazione = true;
+				tipoA = ConnettoriCostanti.CREDENZIALI_MODI_ESTERNO_VALUES;
+				labelTipoA = ConnettoriCostanti.CREDENZIALI_MODI_ESTERNO_LABELS;
 			}
 		}
 
@@ -1389,7 +1423,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 			}
 
 			de = new DataElement();
-			if(showLabelCredenzialiAccesso){
+			if(tokenWithHttsSupportato && StringUtils.isNotEmpty(protocollo) && isProfiloModIPA(protocollo)) {
+				de.setLabel(CostantiLabel.MODIPA_API_PROFILO_SICUREZZA_MESSAGGIO_LABEL);
+			}
+			else if(showLabelCredenzialiAccesso){
 				de.setLabel(ServiziApplicativiCostanti.LABEL_TIPO_CREDENZIALE);
 			}else{
 				de.setLabel(ServiziApplicativiCostanti.LABEL_CREDENZIALE_ACCESSO);
@@ -1523,7 +1560,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 			}
 			
-			if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(tipoauth) && !connettore) {
+			if ( 
+					(
+							ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(tipoauth)
+							||
+							ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN.equals(tipoauth)
+					)
+					&& !connettore) {
 				boolean add = ( SoggettiCostanti.SERVLET_NAME_SOGGETTI_ADD.equals(toCall) ||  ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD.equals(toCall));
 				
 				boolean visualizzaFieldCert = false;
@@ -1570,7 +1613,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 						!tipoCredenzialiSSLStatoElaborazioneCertificato.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_NO_WIZARD_ARCHIVI);
 				
 				de = new DataElement();
-				de.setLabel(subtitleConfigurazione);
+				if(dominioEsterno && StringUtils.isNotEmpty(protocollo) && isProfiloModIPA(protocollo)) {
+					de.setLabel(CostantiLabel.MODIPA_SICUREZZA_MESSAGGIO_FIRMA_APPLICATIVO_SUBTITLE_LABEL);
+				}
+				else {
+					de.setLabel(subtitleConfigurazione);
+				}
 				de.setType(DataElementType.SUBTITLE);
 				dati.addElement(de);
 				
@@ -1718,7 +1766,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 					// 1a. Pannello Recap info certificato.
 					
-					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSubject)) {
+					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSubject) &&
+							!(dominioEsterno && StringUtils.isNotEmpty(protocollo) && isProfiloModIPA(protocollo)) 
+						) {
 						de = new DataElement();
 						de.setLabel(ConnettoriCostanti.LABEL_CONFIGURAZIONE_SSL_TITLE_INFORMAZIONI_CERTIFICATO+" "+
 						tipoCredenzialiSSLAliasCertificatoType+" v"+tipoCredenzialiSSLAliasCertificatoVersion);
@@ -2113,6 +2163,79 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setSize(this.getSize());
 				de.setRequired(true);
 				dati.addElement(de);
+			}
+			
+			
+			if (!connettore &&
+					credenzialiToken &
+					(
+							ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN.equals(tipoauth)
+							||
+							(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN.equals(tipoauth))
+					)
+				) {
+				
+				if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN.equals(tipoauth) || 
+						(dominioEsterno && StringUtils.isNotEmpty(protocollo) && isProfiloModIPA(protocollo))) {
+					de = new DataElement();
+					if(dominioEsterno && StringUtils.isNotEmpty(protocollo) && isProfiloModIPA(protocollo)) {
+						de.setLabel(CostantiLabel.MODIPA_SICUREZZA_TOKEN_FIRMA_APPLICATIVO_SUBTITLE_LABEL);
+					}
+					else {
+						de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_DESCR);
+					}
+					de.setType(DataElementType.SUBTITLE);
+					dati.addElement(de);
+				}
+
+				// Token Policy
+				List<GenericProperties> gestorePolicyTokenList = this.confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
+				String [] policyLabels = null;
+				String [] policyValues = null;
+				if(!TipoOperazione.CHANGE.equals(tipoOperazione)){
+					policyLabels = new String[gestorePolicyTokenList.size() + 1];
+					policyValues = new String[gestorePolicyTokenList.size() + 1];
+					
+					policyLabels[0] = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+					policyValues[0] = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+				}
+				else {
+					policyLabels = new String[gestorePolicyTokenList.size()];
+					policyValues = new String[gestorePolicyTokenList.size()];
+				}
+				
+				for (int i = 0; i < gestorePolicyTokenList.size(); i++) {
+					GenericProperties genericProperties = gestorePolicyTokenList.get(i);
+					if(!TipoOperazione.CHANGE.equals(tipoOperazione)){
+						policyLabels[(i+1)] = genericProperties.getNome();
+						policyValues[(i+1)] = genericProperties.getNome();
+					}
+					else {
+						policyLabels[i] = genericProperties.getNome();
+						policyValues[i] = genericProperties.getNome();
+					}
+				}
+				
+				de = new DataElement();
+				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY);
+				de.setType(DataElementType.SELECT);
+				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY);
+				de.setSelected(tokenPolicySA);
+				de.setValues(policyValues);
+				de.setLabels(policyLabels);
+				de.setSize(this.getSize());
+				de.setRequired(true);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
+				de.setValue(StringEscapeUtils.escapeHtml(tokenClientIdSA));
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
+				de.setSize(this.getSize());
+				de.setRequired(true);
+				dati.addElement(de);
+				
 			}
 
 		}  
@@ -4825,6 +4948,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 		String principal = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
 		String appId = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
 		
+		String tokenPolicy = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY);
+		String tokenClientId = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
+		boolean tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN.equals(tipoauth);
+		if(tokenWithHttpsEnabledByConfigSA) {
+			tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL;
+		}
+		
 		if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {
 			
 			boolean validaPassword = false;
@@ -5034,17 +5164,43 @@ public class ConnettoriHelper extends ConsoleHelper {
 				return false;
 			}
 		}
+		
+		if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN) || tokenWithHttpsEnabledByConfigSA ) {
+			
+			StringBuilder sb = new StringBuilder();
+			
+			if(tokenPolicy==null || StringUtils.isEmpty(tokenPolicy) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicy)) {
+				sb.append(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY);
+			}
+
+			if(tokenClientId==null || StringUtils.isEmpty(tokenClientId)) {
+				if(sb.length()>0) {
+					sb.append(", ");
+				}
+				sb.append(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
+			}
+			if(sb.length()>0) {
+				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + sb.toString());
+				return false;
+			}
+			
+			if(this.checkLengthSubject_SSL_Principal(tokenClientId, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID)==false) {
+				return false;
+			}
+		}
 				
 		if (!tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC) && 
 				!tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL) && 
 				!tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL) && 
 				!tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY) && 
+				!tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN) && 
 				!tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)) {
 			this.pd.setMessage("Tipo dev'essere "+
 					ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC+", "+
 					ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL+" o "+
 					ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL+" o "+
 					ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY+" o "+
+					ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN+" o "+
 					ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA);
 			return false;
 		}

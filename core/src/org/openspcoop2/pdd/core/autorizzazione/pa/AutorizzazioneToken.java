@@ -40,7 +40,7 @@ public class AutorizzazioneToken extends AbstractAutorizzazioneBase {
     @Override
 	public EsitoAutorizzazionePortaApplicativa process(DatiInvocazionePortaApplicativa datiInvocazione){
     	
-    	// La logica di autorizzazione per token (scope e options) viene realizzata nel Gestore dell'Autorizzazione
+    	// La logica di autorizzazione per token (richiedente, ruoli, scope e options) viene realizzata nel Gestore dell'Autorizzazione
     	
     	EsitoAutorizzazionePortaApplicativa esito = new EsitoAutorizzazionePortaApplicativa();
     	esito.setAutorizzato(true);

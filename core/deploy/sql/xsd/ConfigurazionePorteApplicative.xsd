@@ -49,6 +49,8 @@
                                 <linkit:sql-table object-name="porte-applicative-trasformazioni-header-risposta" object-type="porte-applicative-trasformazioni-header-risposta"/>
                                 <linkit:sql-table object-name="porte-applicative-handlers" object-type="porte-applicative-handlers"/>
                                 <linkit:sql-table object-name="porte-applicative-aa" object-type="porte-applicative-aa"/>
+				<linkit:sql-table object-name="porte-applicative-token-sa" object-type="porte-applicative-token-sa"/>
+				<linkit:sql-table object-name="porte-applicative-token-ruoli" object-type="porte-applicative-token-ruoli"/>
                             </linkit:sql-table-list>
                         </linkit:sql-script>
                         <linkit:sql-mapping single-table-mapping="false"
@@ -729,6 +731,55 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
 - 'all': tutti i ruoli associati alla porta applicativa (tramite tabella pa_ruoli) devono essere posseduti dal chiamante
 - 'any': per essere autorizzati ad invocare il servizio è sufficiente per il chiamante possedere uno dei ruoli definiti sulla porta applicativa]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[all/any]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+		<xsd:element name="token_sa_stato" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="token_sa_stato"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica se l'autorizzazione token per richiedente è abilitata]]></linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+		<xsd:element name="token_ruoli_stato" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="token_ruoli_stato"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica se l'autorizzazione token per ruoli è abilitata]]></linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="token_ruoli_match" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="token_ruoli_match"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica quali ruoli sono richiesti alla fruizione, se nella porta è stata impostata una autorizzazione token basata sui ruoli (vedi colonna 'token_ruoli_stato'):
+- 'all': tutti i ruoli associati alla porta applicativa (tramite tabella pa_token_ruoli) devono essere posseduti dal chiamante
+- 'any': per essere autorizzati ad invocare il servizio è sufficiente per il chiamante possedere uno dei ruoli definiti sulla porta applicativa]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[all/any]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="token_ruoli_tipologia" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica la fonte del ruolo:
+- 'interno': indica un ruolo registrato internamente alla porta di dominio
+- 'esterno': indica un ruolo registrato all'interno del realm dell'application server
+- 'qualsiasi': il ruolo è sia censilto internamente alla porta di dominio che all'interno del realm dell'application server]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -3301,6 +3352,114 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="attributi" text="true"/>
                                 <linkit:sql-ddl-column-comment>Elenco di attributi</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+
+    <xsd:element name="porte-applicative-token-sa">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_token_sa" 
+                        comment="Elenco di servizi applicativi, identificati tramite token,  che sono autorizzati a fruire della porta applicativa, se nella porta è stata impostata una autorizzazione 'authenticated' (vedi colonna 'autorizzazione')">
+                        <linkit:sql-table-constraint unique="uniq_pa_token_sa" index="idx_pa_token_sa"/>
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative"
+                            reference-object-type="porte-applicative"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-foreign-key reference-table="servizi_applicativi">
+                            <linkit:sql-table-fk-field name="id_servizio_applicativo"/>
+                            <linkit:sql-table-fk-reference-column name="id"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique>
+                            <linkit:sql-table-unique-field name="id_porta"/>
+                            <linkit:sql-table-unique-field name="id_servizio_applicativo"/>
+                        </linkit:sql-table-unique>
+                        <linkit:sql-table-index name="INDEX_PA_TOKEN_SA">
+                            <linkit:sql-table-index-field name="id_porta"/>
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_porta" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_porta"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della porta applicativa [FK verso tabella porte_applicative(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_servizio_applicativo" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_servizio_applicativo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del servizio applicativo associato alla porta [FK verso tabella servizi_applicativi(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+
+    <xsd:element name="porte-applicative-token-ruoli">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_token_ruoli"
+                                              comment="Elenco di ruoli richiesti per la fruizione del servizio che devono essere presenti nel token o associati agli applicativi identificati tramite il token">
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative"
+                            reference-object-type="porte-applicative"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-column name="id_porta" />
+                            <linkit:sql-table-unique-column name="ruolo" />
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_porta" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_porta"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della porta applicativa [FK verso tabella porte_applicative(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ruolo" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="ruolo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del ruolo associato alla porta [FK logica verso tabella ruoli(nome)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

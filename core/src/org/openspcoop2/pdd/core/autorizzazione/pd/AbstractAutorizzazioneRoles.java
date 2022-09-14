@@ -65,7 +65,7 @@ abstract class AbstractAutorizzazioneRoles extends AbstractAutorizzazioneBase {
     	try{
     		StringBuilder detailsBuffer = new StringBuilder();
     		if( ConfigurazionePdDManager.getInstance(datiInvocazione.getState()).
-    				autorizzazioneRoles(datiInvocazione.getPd(), datiInvocazione.getServizioApplicativo(), 
+    				autorizzazioneTrasportoRoles(datiInvocazione.getPd(), datiInvocazione.getServizioApplicativo(), 
     						datiInvocazione.getInfoConnettoreIngresso(), 
     						this.getPddContext(),
     						this.checkRuoloRegistro, this.checkRuoloEsterno,

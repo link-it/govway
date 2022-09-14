@@ -42,8 +42,6 @@ Scenario: Controllo accessi autorizzazione applicativi puntuale Fruizioni
 
     * def autorizzazione_disabilitata = ({ autorizzazione: { tipo: 'disabilitato' } })
     * def autorizzazione = read('classpath:bodies/controllo-accessi-autorizzazione-puntuale.json')
-    * def autorizzazione_xacml = read('classpath:bodies/controllo-accessi-autorizzazione-xacml.json')
-    * def autorizzazione_custom = read('classpath:bodies/controllo-accessi-autorizzazione-custom.json')
 
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'soggetti', body: erogatore })
@@ -105,6 +103,98 @@ Scenario: Controllo accessi autorizzazione applicativi puntuale Fruizioni
     # Rimuovo l'applicativo dall'autorizzazione
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione', 'applicativi', applicativo_puntuale.applicativo
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method delete
+    Then status 204
+
+    # Rimuovo l'applicativo dal registro
+    Given url configUrl
+    And path 'applicativi', applicativo.nome
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method delete
+    Then status 204
+
+    * call delete ({ resourcePath: fruizione_petstore_path })
+    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
+    * call delete ({ resourcePath: api_petstore_path })
+
+
+@AutorizzazioneApplicativiTokenPuntuale
+Scenario: Controllo accessi autorizzazione applicativi token puntuale Fruizioni
+
+    * def autorizzazione_disabilitata = ({ autorizzazione: { tipo: 'disabilitato' } })
+    * def autorizzazione = read('classpath:bodies/controllo-accessi-autorizzazione-puntuale.json')
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'soggetti', body: erogatore })
+    * call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
+ 
+    # Abilito la gestione dei tokens
+    * def gestione_token_body = read('classpath:bodies/gestione-token-petstore.json')
+    * def servizio_path = fruizione_petstore_path
+    
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'gestione-token'
+    And header Authorization = govwayConfAuth
+    And request gestione_token_body
+    And params query_params
+    When method put
+    Then status 204
+
+    # Abilito l'autorizzazione per applicativi token
+    * def options = { richiedente: false, ruoli: false, token_richiedente: true, scope: false, token: false }
+    * eval autorizzazione.autorizzazione.richiedente = false
+    * eval autorizzazione.autorizzazione.ruoli = false
+    * eval autorizzazione.autorizzazione.token_richiedente = true
+    * eval autorizzazione.autorizzazione.scope = false
+    * eval autorizzazione.autorizzazione.token = false
+
+    # Imposto l'autorizzazione in modo che supporti l'autorizzazione puntuale
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione'
+    And header Authorization = govwayConfAuth
+    And request autorizzazione
+    And params query_params
+    When method put
+    Then status 204
+
+    * def applicativo = read('classpath:bodies/applicativo_token.json')
+    * eval randomize(applicativo, ["nome", "credenziali.identificativo"])
+
+    * def applicativo_puntuale = ({ applicativo: applicativo.nome })
+
+    # Creo l'applicativo nel registro
+    Given url configUrl
+    And path 'applicativi'
+    And header Authorization = govwayConfAuth
+    And request applicativo
+    And params query_params
+    When method post
+    Then status 201
+
+    # Aggiungo l'applicativo all'autorizzazione
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione', 'token', 'applicativi'
+    And header Authorization = govwayConfAuth
+    And request applicativo_puntuale
+    And params query_params
+    When method post
+    Then status 201
+
+    # Recupero l'applicativo appena aggiunto per mezzo della findall
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione', 'token', 'applicativi'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    And match response.applicativi contains ([applicativo_puntuale.applicativo])
+
+    # Rimuovo l'applicativo dall'autorizzazione
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione', 'token', 'applicativi', applicativo_puntuale.applicativo
     And header Authorization = govwayConfAuth
     And params query_params
     When method delete

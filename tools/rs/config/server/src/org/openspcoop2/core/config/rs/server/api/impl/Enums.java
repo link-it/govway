@@ -87,6 +87,12 @@ public class Enums {
 		Enums.ruoloTipologiaFromRest.put(FonteEnum.QUALSIASI, RuoloTipologia.QUALSIASI);
 		Enums.ruoloTipologiaFromRest.put(FonteEnum.REGISTRO, RuoloTipologia.INTERNO);
 	}
+	public static final Map<FonteEnum, org.openspcoop2.core.config.constants.RuoloTipologia> ruoloTipologiaConfigFromRest = new HashMap<FonteEnum, org.openspcoop2.core.config.constants.RuoloTipologia>();
+	static {
+		Enums.ruoloTipologiaConfigFromRest.put(FonteEnum.ESTERNA, org.openspcoop2.core.config.constants.RuoloTipologia.ESTERNO);
+		Enums.ruoloTipologiaConfigFromRest.put(FonteEnum.QUALSIASI, org.openspcoop2.core.config.constants.RuoloTipologia.QUALSIASI);
+		Enums.ruoloTipologiaConfigFromRest.put(FonteEnum.REGISTRO, org.openspcoop2.core.config.constants.RuoloTipologia.INTERNO);
+	}
 	
 	
 	public static final Map<TipoAutenticazioneEnum, TipoAutenticazione> tipoAutenticazioneFromRest = new HashMap<TipoAutenticazioneEnum, TipoAutenticazione>();

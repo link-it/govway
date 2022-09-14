@@ -40,6 +40,9 @@ public class AuthenticationHttps  implements OneOfBaseCredenzialiCredenziali {
   
   @Schema(description = "")
   private List<AuthenticationHttpsBaseCertificato> certificati = null;
+  
+  @Schema(description = "")
+  private AuthenticationTokenBase token = null;
  /**
    * Get modalitaAccesso
    * @return modalitaAccesso
@@ -105,6 +108,25 @@ public class AuthenticationHttps  implements OneOfBaseCredenzialiCredenziali {
     return this;
   }
 
+ /**
+   * Get token
+   * @return token
+  **/
+  @JsonProperty("token")
+  @Valid
+  public AuthenticationTokenBase getToken() {
+    return this.token;
+  }
+
+  public void setToken(AuthenticationTokenBase token) {
+    this.token = token;
+  }
+
+  public AuthenticationHttps token(AuthenticationTokenBase token) {
+    this.token = token;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -114,6 +136,7 @@ public class AuthenticationHttps  implements OneOfBaseCredenzialiCredenziali {
     sb.append("    modalitaAccesso: ").append(AuthenticationHttps.toIndentedString(this.modalitaAccesso)).append("\n");
     sb.append("    certificato: ").append(AuthenticationHttps.toIndentedString(this.certificato)).append("\n");
     sb.append("    certificati: ").append(AuthenticationHttps.toIndentedString(this.certificati)).append("\n");
+    sb.append("    token: ").append(AuthenticationHttps.toIndentedString(this.token)).append("\n");
     sb.append("}");
     return sb.toString();
   }

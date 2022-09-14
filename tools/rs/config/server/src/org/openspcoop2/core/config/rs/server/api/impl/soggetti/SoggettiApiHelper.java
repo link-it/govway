@@ -69,6 +69,12 @@ import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
  */
 public class SoggettiApiHelper {
 
+	public static void validateCredentials(OneOfBaseCredenzialiCredenziali creds) throws Exception {
+		if(creds!=null && ModalitaAccessoEnum.TOKEN.equals(creds.getModalitaAccesso())) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è possibile associare credenziali di tipo '"+creds.getModalitaAccesso()+"' ad un soggetto");
+		}
+	}
+	
 	public static ApiKeyInfo createApiKey(OneOfBaseCredenzialiCredenziali creds, IDSoggetto idSoggetto, SoggettiCore soggettiCore, String protocollo) throws Exception {
 		if(creds!=null && ModalitaAccessoEnum.API_KEY.equals(creds.getModalitaAccesso())) {
 			AuthenticationApiKey apiKey = (AuthenticationApiKey) creds;

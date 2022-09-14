@@ -40,6 +40,7 @@ import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.plugins.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.plugins.dao.IConfigurazioneServizioAzioneServiceSearch;
@@ -59,13 +60,16 @@ import org.openspcoop2.core.transazioni.model.TransazioneModel;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.core.transazioni.utils.TransazioniIndexUtils;
 import org.openspcoop2.core.transazioni.utils.credenziali.AbstractCredenzialeList;
+import org.openspcoop2.core.transazioni.utils.credenziali.AbstractSearchCredenziale;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeClientAddress;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchApi;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchClientAddress;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchEvento;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchGruppo;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchToken;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchTokenClient;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchTrasporto;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeTokenClient;
 import org.openspcoop2.generic_project.beans.Function;
 import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.beans.IField;
@@ -107,6 +111,7 @@ import org.openspcoop2.monitor.sdk.exceptions.SearchException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.pdd.config.DynamicClusterManager;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
@@ -1280,14 +1285,44 @@ public class TransazioniService implements ITransazioniService {
 				MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
 				CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteFromCache(Long.parseLong(tokenClientID));
 				if(credenzialeMittente!=null) {
-					transazioneBean.setTokenClientIdLabel(credenzialeMittente.getCredenziale());
+					
+					String credenziale = credenzialeMittente.getCredenziale();
+					
+					try {
+						String clientId = CredenzialeTokenClient.convertClientIdDBValueToOriginal(credenziale);
+						transazioneBean.setTokenClientIdLabel(clientId);
+					} catch(Throwable e) {
+						// informazione non valida
+						transazioneBean.setTokenClientIdLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+					}
+					
+					try {
+						IDServizioApplicativo idSA = CredenzialeTokenClient.convertApplicationDBValueToOriginal(credenziale);
+						transazioneBean.setTokenClient(idSA);
+						if(idSA!=null) {
+							transazioneBean.setTokenClientNameLabel(idSA.getNome()); 
+							transazioneBean.setTokenClientOrganizationNameLabel(NamingUtils.getLabelSoggetto(transazioneBean.getProtocollo(), idSA.getIdSoggettoProprietario().getTipo(), idSA.getIdSoggettoProprietario().getNome())); 
+						}
+					} catch(Throwable e) {
+						// informazione non valida
+						transazioneBean.setTokenClient(null);
+						transazioneBean.setTokenClientNameLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+						transazioneBean.setTokenClientOrganizationNameLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+					}
+					
 				}
 			} catch(NumberFormatException e) {
 				// informazione non valida
 				transazioneBean.setTokenClientIdLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+				transazioneBean.setTokenClient(null);
+				transazioneBean.setTokenClientNameLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+				transazioneBean.setTokenClientOrganizationNameLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
 			} catch(NotFoundException e) {
 				// informazione non piu disponibile
 				transazioneBean.setTokenClientIdLabel(Costanti.LABEL_INFORMAZIONE_NON_PIU_PRESENTE); 
+				transazioneBean.setTokenClient(null);
+				transazioneBean.setTokenClientNameLabel(Costanti.LABEL_INFORMAZIONE_NON_PIU_PRESENTE); 
+				transazioneBean.setTokenClientOrganizationNameLabel(Costanti.LABEL_INFORMAZIONE_NON_PIU_PRESENTE); 
 			}
 		}
 		
@@ -3424,16 +3459,29 @@ public class TransazioniService implements ITransazioniService {
 			} else if (TipologiaRicerca.ingresso.equals(this.searchForm.getTipologiaRicercaEnum())) {
 				// EROGAZIONE
 
+				boolean ignoreSetMittente = false;
+				if(StringUtils.isNotEmpty(this.searchForm.getRiconoscimento())) {
+					if(this.searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+						if (StringUtils.isNotBlank(this.searchForm.getIdentificazione())) {
+							if (StringUtils.isNotBlank(this.searchForm.getServizioApplicativo())) {
+								if(Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.searchForm.getIdentificazione())) {
+									ignoreSetMittente=true; // la ricerca avviene dentro la credenziale salvata per l'applicativo token
+								}
+							}
+						}
+					}
+				}
+				
 				boolean setMittente = false;
 				
 				// il mittente puo non essere specifica
-				if (StringUtils.isNotBlank(this.searchForm.getNomeMittente())) {
+				if (StringUtils.isNotBlank(this.searchForm.getNomeMittente()) && !ignoreSetMittente) {
 					// sb.append("AND t.soggettoFruitore = :nome_mittente ");
 					filter.and().equals(Transazione.model().NOME_SOGGETTO_FRUITORE,	this.searchForm.getNomeMittente());
 					setMittente = true;
 				}
 
-				if (StringUtils.isNotBlank(this.searchForm.getTipoMittente())) {
+				if (StringUtils.isNotBlank(this.searchForm.getTipoMittente()) && !ignoreSetMittente) {
 					// sb.append("AND t.soggettoFruitore = :nome_mittente ");
 					filter.and().equals(Transazione.model().TIPO_SOGGETTO_FRUITORE,	this.searchForm.getTipoMittente());
 					setMittente = true;
@@ -3692,17 +3740,56 @@ public class TransazioniService implements ITransazioniService {
 				
 			}
 			else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
-				if (StringUtils.isNotBlank(searchForm.getServizioApplicativo())) {
-					// sb.append("AND t.servizioApplicativo = :servizio_applicativo ");
-					IExpression saOr = transazioniSearchDAO.newExpression();
-					saOr.equals(model.SERVIZIO_APPLICATIVO_FRUITORE,	searchForm.getServizioApplicativo());
-//					saOr.or();
-//					saOr.equals(model.SERVIZIO_APPLICATIVO_EROGATORE,	searchForm.getServizioApplicativo());
-					filter.and(saOr);
+				
+				if (StringUtils.isNotBlank(searchForm.getIdentificazione())) {
+				
+					if (StringUtils.isNotBlank(searchForm.getServizioApplicativo())) {
+						
+						if(Costanti.IDENTIFICAZIONE_TRASPORTO_KEY.equals(searchForm.getIdentificazione())) {
+							// sb.append("AND t.servizioApplicativo = :servizio_applicativo ");
+							IExpression saOr = transazioniSearchDAO.newExpression();
+							saOr.equals(model.SERVIZIO_APPLICATIVO_FRUITORE,	searchForm.getServizioApplicativo());
+			//						saOr.or();
+			//						saOr.equals(model.SERVIZIO_APPLICATIVO_EROGATORE,	searchForm.getServizioApplicativo());
+							filter.and(saOr);
+						}
+						else if(Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(searchForm.getIdentificazione())) {
+							
+							boolean soggettoDefined = StringUtils.isNotBlank(this.searchForm.getNomeMittente()) && StringUtils.isNotBlank(this.searchForm.getTipoMittente());
+							if(soggettoDefined) {
+								IDSoggetto idSoggetto = new IDSoggetto(this.searchForm.getTipoMittente(), this.searchForm.getNomeMittente());
+								IDServizioApplicativo idSA = new IDServizioApplicativo();
+								idSA.setIdSoggettoProprietario(idSoggetto);
+								idSA.setNome(searchForm.getServizioApplicativo());
+								String idSAasString = CredenzialeTokenClient.getApplicationAsString(idSA);
+								String dbValue = CredenzialeTokenClient.getApplicationDBValue(idSAasString);
+								CredenzialeSearchTokenClient searchToken = new CredenzialeSearchTokenClient(false, true, false);
+								searchToken.disableConvertToDBValue();
+								boolean ricercaEsatta = false;
+								boolean caseSensitive = true;
+								try {
+									IPaginatedExpression pagExpr = searchToken.createExpression(this.credenzialiMittenteDAO, dbValue, ricercaEsatta, caseSensitive);
+									List<CredenzialeMittente> listaCredenzialiMittente = this.credenzialiMittenteDAO.findAll(pagExpr);
+									addListaCredenzialiMittente(filter, listaCredenzialiMittente, model);
+								}catch(Exception e) {
+									throw new ServiceException(e.getMessage(),e);
+								}
+							}
+							else {
+								filter.and().equals(model.ID_TRANSAZIONE, "-1"); // Serve a non far tornare transazioni, visto che viene segnalato l'errore
+							}
+							
+						}
+						
+					}else {
+						filter.and().equals(model.ID_TRANSAZIONE, "-1"); // Serve a non far tornare transazioni, visto che viene segnalato l'errore
+					}
+					
 				}
 				else {
 					filter.and().equals(model.ID_TRANSAZIONE, "-1"); // Serve a non far tornare transazioni, visto che viene segnalato l'errore
 				}
+				
 			} else {
 				List<CredenzialeMittente> listaCredenzialiMittente = getIdCredenzialiFromFilter(searchForm, this.credenzialiMittenteDAO, isCount, isLiveSearch);
 				addListaCredenzialiMittente(filter, listaCredenzialiMittente, model);
@@ -3765,6 +3852,17 @@ public class TransazioniService implements ITransazioniService {
 					try {
 						CredenzialeSearchClientAddress searchClientAddress = new CredenzialeSearchClientAddress(true, true, false);
 						IPaginatedExpression pagExpr = searchClientAddress.createExpression(this.credenzialiMittenteDAO, this.searchForm.getRicercaLiberaIndirizzoIP(), ricercaLiberaEsatta, ricercaLiberaCaseSensitive);
+						List<CredenzialeMittente> listaCredenzialiMittente = this.credenzialiMittenteDAO.findAll(pagExpr);
+						addListaCredenzialiMittente(filter, listaCredenzialiMittente, Transazione.model());
+					}catch(Exception e) {
+						throw new ServiceException(e.getMessage(),e);
+					}
+				}
+				
+				if(StringUtils.isNotBlank(this.searchForm.getRicercaLiberaApplicativoToken())) {
+					try {
+						CredenzialeSearchTokenClient searchToken = new CredenzialeSearchTokenClient(false, true, false);
+						IPaginatedExpression pagExpr = searchToken.createExpression(this.credenzialiMittenteDAO, this.searchForm.getRicercaLiberaApplicativoToken(), ricercaLiberaEsatta, ricercaLiberaCaseSensitive);
 						List<CredenzialeMittente> listaCredenzialiMittente = this.credenzialiMittenteDAO.findAll(pagExpr);
 						addListaCredenzialiMittente(filter, listaCredenzialiMittente, Transazione.model());
 					}catch(Exception e) {
@@ -3916,7 +4014,13 @@ public class TransazioniService implements ITransazioniService {
 			
 			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
 				TipoCredenzialeMittente tcm = TipoCredenzialeMittente.valueOf(searchForm.getTokenClaim());
-				CredenzialeSearchToken searchToken = new CredenzialeSearchToken(tcm);
+				AbstractSearchCredenziale searchToken = null;
+				if(TipoCredenzialeMittente.token_clientId.equals(tcm)) {
+					searchToken = new CredenzialeSearchTokenClient(true, false, true);
+				}
+				else {
+					searchToken = new CredenzialeSearchToken(tcm);
+				}
 				pagExpr = searchToken.createExpression(credenzialeMittentiService, searchForm.getValoreRiconoscimento(), ricercaEsatta, caseSensitive);
 			}
 			

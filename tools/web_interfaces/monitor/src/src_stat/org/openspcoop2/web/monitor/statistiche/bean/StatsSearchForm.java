@@ -265,16 +265,20 @@ public class StatsSearchForm extends BaseSearchForm{
 		if(StringUtils.isNotEmpty(this.getRiconoscimento())) {
 			if(this.getRiconoscimento().equals(Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO)) {
 			} else if(this.getRiconoscimento().equals(Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+				if (StringUtils.isEmpty(this.getIdentificazione())) {
+					MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.SEARCH_MISSING_PARAMETERS_IDENTIFICAZIONE_LABEL_KEY));
+					return false;
+				}
 			} else if(this.getRiconoscimento().equals(Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
 			} else if(this.getRiconoscimento().equals(Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP)) {
 			} else { // token_info
 				if (StringUtils.isEmpty(this.getTokenClaim())) {
-					MessageUtils.addErrorMsg("Indicare un Claim");
+					MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.SEARCH_MISSING_PARAMETERS_CLAIM_LABEL_KEY));
 					return false;
 				}
 			}
 		} else {
-			MessageUtils.addErrorMsg("Indicare un Tipo");
+			MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.SEARCH_MISSING_PARAMETERS_TIPO_LABEL_KEY));
 			return false;
 		}
 		

@@ -124,6 +124,8 @@ public class ServiziApplicativiCostanti {
 	public final static String LABEL_CREDENZIALE_ACCESSO_HTTPS ="X.509 Subject";
 	public final static String LABEL_CREDENZIALE_ACCESSO_USERNAME ="Basic Username";
 	public final static String LABEL_CREDENZIALE_ACCESSO_PRINCIPAL ="Principal";
+	public final static String LABEL_CREDENZIALE_ACCESSO_TOKEN_POLICY ="Token Policy";
+	public final static String LABEL_CREDENZIALE_ACCESSO_TOKEN_CLIENT_ID = "Identificativo Client";
 	public final static String LABEL_TIPO_CREDENZIALE ="Tipo";
 	public final static String LABEL_ERRORE_APPLICATIVO = "Errore Applicativo generato della Porta";
 	public final static String LABEL_TRATTAMENTO_MESSAGGIO = "Trattamento Messaggio";

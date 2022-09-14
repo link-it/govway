@@ -114,6 +114,7 @@ Context, Cloneable {
 	private String ricercaLiberaIdentificativoAutenticato;
 	private String ricercaLiberaIndirizzoIP;
 	
+	private String ricercaLiberaApplicativoToken;
 	private String ricercaLiberaTokenIssuer;
 	private String ricercaLiberaTokenSubject;
 	private String ricercaLiberaTokenClientID;
@@ -358,6 +359,7 @@ Context, Cloneable {
 		this.ricercaLiberaIdentificativoAutenticato = null;
 		this.ricercaLiberaIndirizzoIP = null;
 		
+		this.ricercaLiberaApplicativoToken = null;
 		this.ricercaLiberaTokenIssuer = null;
 		this.ricercaLiberaTokenSubject = null;
 		this.ricercaLiberaTokenClientID = null;
@@ -1396,6 +1398,14 @@ Context, Cloneable {
 		this.ricercaLiberaIndirizzoIP = ricercaLiberaIndirizzoIP;
 	}
 
+	public String getRicercaLiberaApplicativoToken() {
+		return this.ricercaLiberaApplicativoToken;
+	}
+
+	public void setRicercaLiberaApplicativoToken(String ricercaLiberaApplicativoToken) {
+		this.ricercaLiberaApplicativoToken = ricercaLiberaApplicativoToken;
+	}
+	
 	public String getRicercaLiberaTokenIssuer() {
 		return this.ricercaLiberaTokenIssuer;
 	}

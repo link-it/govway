@@ -28,7 +28,29 @@ import javax.validation.Valid;
 public class RicercaStatisticaDistribuzioneApplicativoRegistrato extends RicercaStatisticaDistribuzioneApplicativo {
   
   @Schema(description = "")
+  private TipoIdentificazioneApplicativoEnum tipoIdentificazioneApplicativo = null;
+  
+  @Schema(description = "")
   private String soggettoMittente = null;
+ /**
+   * Get tipoIdentificazioneApplicativo
+   * @return tipoIdentificazioneApplicativo
+  **/
+  @JsonProperty("tipo_identificazione_applicativo")
+  @Valid
+  public TipoIdentificazioneApplicativoEnum getTipoIdentificazioneApplicativo() {
+    return this.tipoIdentificazioneApplicativo;
+  }
+
+  public void setTipoIdentificazioneApplicativo(TipoIdentificazioneApplicativoEnum tipoIdentificazioneApplicativo) {
+    this.tipoIdentificazioneApplicativo = tipoIdentificazioneApplicativo;
+  }
+
+  public RicercaStatisticaDistribuzioneApplicativoRegistrato tipoIdentificazioneApplicativo(TipoIdentificazioneApplicativoEnum tipoIdentificazioneApplicativo) {
+    this.tipoIdentificazioneApplicativo = tipoIdentificazioneApplicativo;
+    return this;
+  }
+
  /**
    * Get soggettoMittente
    * @return soggettoMittente
@@ -54,6 +76,7 @@ public class RicercaStatisticaDistribuzioneApplicativoRegistrato extends Ricerca
     StringBuilder sb = new StringBuilder();
     sb.append("class RicercaStatisticaDistribuzioneApplicativoRegistrato {\n");
     sb.append("    ").append(RicercaStatisticaDistribuzioneApplicativoRegistrato.toIndentedString(super.toString())).append("\n");
+    sb.append("    tipoIdentificazioneApplicativo: ").append(RicercaStatisticaDistribuzioneApplicativoRegistrato.toIndentedString(this.tipoIdentificazioneApplicativo)).append("\n");
     sb.append("    soggettoMittente: ").append(RicercaStatisticaDistribuzioneApplicativoRegistrato.toIndentedString(this.soggettoMittente)).append("\n");
     sb.append("}");
     return sb.toString();

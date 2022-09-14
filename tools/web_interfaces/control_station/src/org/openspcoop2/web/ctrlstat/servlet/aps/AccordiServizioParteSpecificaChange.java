@@ -1299,7 +1299,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							null,null,null,null,null,
 							null,null,
 							null,null,null,null,moreThenOneImplementation, canaleStato, canaleAPI, canale, canaleList, gestioneCanaliEnabled,
-							null, null, null, null, null);
+							null, null, null, null, null,
+							null,
+							null,null,null);
 
 					if(apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
 					
@@ -1498,7 +1500,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						null,null,null,null,null,
 						null,null,
 						null,null,null,null,moreThenOneImplementation, canaleStato, canaleAPI, canale, canaleList, gestioneCanaliEnabled,
-						null,null,null,null,null);
+						null,null,null,null,null,
+						null,
+						null,null,null);
 
 				if(apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
 				
@@ -1621,7 +1625,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							null,null,null,null,null,
 							null,null,
 							null,null,null,null,moreThenOneImplementation, canaleStato, canaleAPI, canale, canaleList, gestioneCanaliEnabled,
-							null,null,null,null,null);
+							null,null,null,null,null,
+							null,
+							null,null,null);
 
 					if(apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
 						boolean forceEnableConnettore = false;
@@ -1980,7 +1986,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							null,null,null,null,null,
 							null,null,
 							null,null,null,null,moreThenOneImplementation, canaleStato, canaleAPI, canale, canaleList, gestioneCanaliEnabled,
-							null,null,null,null,null);
+							null,null,null,null,null,
+							null,
+							null,null,null);
 
 					if(apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
 					

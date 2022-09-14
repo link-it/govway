@@ -102,8 +102,10 @@ import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfigura
 import org.openspcoop2.pdd.core.dynamic.Template;
 import org.openspcoop2.pdd.core.dynamic.TemplateSource;
 import org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.UtilsException;
@@ -179,6 +181,34 @@ public class ConfigurazionePdD  {
 
 	/** ConfigurazionePdD_allarmi */
 	private ConfigurazionePdD_allarmi configurazionePdD_allarmi = null;
+	
+	/** Configurazione token con https */
+	private Boolean _tokenWithHttpsEnabledInitialized = null;
+	private boolean _tokenWithHttpsEnabled = false;
+	private synchronized void initializeTokenWithHttpsEnabled()throws DriverConfigurazioneException {
+		if(this._tokenWithHttpsEnabledInitialized==null) {
+			// Inizializzo parametri relativi al protocollo
+			// basta un protocollo che lo supporta per doverli cercare anche con la funzionalita' abilitata
+			try {
+				this._tokenWithHttpsEnabled = false;
+				for(IProtocolFactory<?> protocolFactory: ProtocolFactoryManager.getInstance().getProtocolFactories().values()) {
+					if(protocolFactory.createProtocolConfiguration().isSupportatoAutenticazioneApplicativiHttpsConToken()) {
+						this._tokenWithHttpsEnabled = true;
+						break;
+					}
+				}
+				this._tokenWithHttpsEnabledInitialized = true;
+			}catch(Throwable t) {
+				throw new DriverConfigurazioneException(t.getMessage(),t);
+			}
+		}
+	}
+	private boolean isTokenWithHttpsEnabled() throws DriverConfigurazioneException {
+		if(this._tokenWithHttpsEnabledInitialized==null) {
+			initializeTokenWithHttpsEnabled();
+		}
+		return this._tokenWithHttpsEnabled;
+	}
 
 
 	/* --------------- Cache --------------------*/
@@ -363,7 +393,7 @@ public class ConfigurazionePdD  {
 			this.log.info(msg);
 			if(alogConsole!=null)
 				alogConsole.info(msg);
-
+			
 			// inizializzazione XML
 			if(CostantiConfigurazione.CONFIGURAZIONE_XML.equalsIgnoreCase(accessoConfigurazione.getTipo())){
 				this.driverConfigurazionePdD = new DriverConfigurazioneXML(accessoConfigurazione.getLocation(),this.log);
@@ -822,6 +852,14 @@ public class ConfigurazionePdD  {
 											catch(DriverConfigurazioneNotFound notFound){}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
 										}
+										else if(CredenzialeTipo.TOKEN.equals(credenziale.getTipo())){
+											try{
+												this.cache.remove(_getKey_getServizioApplicativoByCredenzialiToken(credenziale.getTokenPolicy(), credenziale.getUser()));
+												this.getServizioApplicativoByCredenzialiToken(connectionPdD, credenziale.getTokenPolicy(), credenziale.getUser());
+											}
+											catch(DriverConfigurazioneNotFound notFound){}
+											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
+										}
 									}
 								}
 							}
@@ -1089,6 +1127,14 @@ public class ConfigurazionePdD  {
 								try{
 									this.cache.remove(_getKey_getServizioApplicativoByCredenzialiPrincipal(credenziale.getUser()));
 									this.getServizioApplicativoByCredenzialiPrincipal(connectionPdD, credenziale.getUser());
+								}
+								catch(DriverConfigurazioneNotFound notFound){}
+								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
+							}
+							else if(CredenzialeTipo.TOKEN.equals(credenziale.getTipo())){
+								try{
+									this.cache.remove(_getKey_getServizioApplicativoByCredenzialiToken(credenziale.getTokenPolicy(), credenziale.getUser()));
+									this.getServizioApplicativoByCredenzialiToken(connectionPdD, credenziale.getTokenPolicy(), credenziale.getUser());
 								}
 								catch(DriverConfigurazioneNotFound notFound){}
 								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
@@ -1840,6 +1886,9 @@ public class ConfigurazionePdD  {
 				if("getServizioApplicativoByCredenzialiApiKey".equals(methodName) && i==2) {
 					classArgoments[i] = boolean.class;
 				}
+				else if("getServizioApplicativoByCredenzialiToken".equals(methodName) && i==2) {
+					classArgoments[i] = boolean.class;
+				}
 				else if("instanceAllarmi".equals(methodName) && i==0) {
 					classArgoments[i] = List.class;
 				}
@@ -1955,6 +2004,9 @@ public class ConfigurazionePdD  {
 					}
 				}
 				if("getServizioApplicativoByCredenzialiApiKey".equals(methodNameParam) && i==2) {
+					classArgoments[i] = boolean.class;
+				}
+				else if("getServizioApplicativoByCredenzialiToken".equals(methodNameParam) && i==2) {
 					classArgoments[i] = boolean.class;
 				}
 				else if("instanceAllarmi".equals(methodNameParam) && i==0) {
@@ -3763,6 +3815,54 @@ public class ConfigurazionePdD  {
 			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiPrincipal",connectionPdD,ConfigurazionePdDType.config,principal);
 		}else{
 			s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiPrincipal",connectionPdD,ConfigurazionePdDType.config,principal);
+		}
+
+		if(s!=null)
+			return s;
+		else
+			throw new DriverConfigurazioneNotFound("Servizio Applicativo non trovato");
+	}
+	
+	protected static String _toKey_getServizioApplicativoByCredenzialiTokenPrefix(){
+		return "getServizioApplicativoByCredenzialiToken";
+	}
+	private String _getKey_getServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId) throws DriverConfigurazioneException{
+		String key = _toKey_getServizioApplicativoByCredenzialiTokenPrefix();
+		key = key +"_"+tokenPolicy+"@[https:"+this.isTokenWithHttpsEnabled()+"]"+tokenClientId;
+		return key;
+	}
+	public ServizioApplicativo getServizioApplicativoByCredenzialiToken(Connection connectionPdD,String tokenPolicy, String tokenClientId)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+
+		// Raccolta dati
+		if(tokenPolicy == null)
+			throw new DriverConfigurazioneException("[getServizioApplicativo]: Parametro non definito (tokenPolicy)");		
+		if(tokenClientId == null)
+			throw new DriverConfigurazioneException("[getServizioApplicativo]: Parametro non definito (tokenClientId)");	
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = this._getKey_getServizioApplicativoByCredenzialiToken(tokenPolicy, tokenClientId);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((ServizioApplicativo) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		ServizioApplicativo s = null;
+		if(this.cache!=null){
+			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiToken",connectionPdD,ConfigurazionePdDType.config,tokenPolicy, tokenClientId, this.isTokenWithHttpsEnabled());
+		}else{
+			s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiToken",connectionPdD,ConfigurazionePdDType.config,tokenPolicy, tokenClientId, this.isTokenWithHttpsEnabled());
 		}
 
 		if(s!=null)

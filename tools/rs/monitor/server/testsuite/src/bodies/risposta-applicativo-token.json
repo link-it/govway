@@ -1,0 +1,10 @@
+{
+	"applicativo_token" : {
+	        "nome" : "TestSuiteApplicativoToken7096796",
+	        "soggetto" : "ENTE",
+	        "informazioni_soggetto" : {
+		          "tipo" : "gw",
+		          "codice" : "domain/gw/ENTE"
+	        }
+	}
+}

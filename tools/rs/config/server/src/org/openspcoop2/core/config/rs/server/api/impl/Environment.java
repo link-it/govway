@@ -28,15 +28,18 @@ import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.core.registry.IdSoggetto;
+import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.PageData;
 
@@ -69,6 +72,8 @@ public class Environment {
 	
 	public final SoggettiCore soggettiCore;
 	
+	public final PddCore pddCore;
+	
 	public final ProtocolFactoryManager protocolFactoryMgr;
 	
 	public final boolean delete_404;
@@ -94,6 +99,7 @@ public class Environment {
 		this.requestWrapper = new HttpRequestWrapper(req);
 		
 		this.stationCore = new ControlStationCore(true, ServerProperties.getInstance().getConfDirectory() ,this.tipo_protocollo);
+		this.pddCore = new PddCore(this.stationCore);
 		this.soggettiCore = new SoggettiCore(this.stationCore);
 		this.protocolFactoryMgr = ProtocolFactoryManager.getInstance();
 		
@@ -130,6 +136,29 @@ public class Environment {
 				this.canali.add(canale.getNome());
 			}
 		}
+	}
+	
+	public boolean isDominioInterno(IDSoggetto idSoggetto) {
+		try {
+			Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(idSoggetto);
+			return !this.pddCore.isPddEsterna(soggetto.getPortaDominio());
+		}catch(Exception e) {
+			return false;
+		}
+	}
+	
+	public boolean isProfiloModi() {
+		return this.isProfiloModi(this.profilo);
+	}
+	public boolean isProfiloModi(ProfiloEnum profilo) {
+		return profilo!=null && (ProfiloEnum.MODI.equals(profilo) || ProfiloEnum.MODIPA.equals(profilo));
+	}
+	
+	public boolean isProfiloSPCoop() {
+		return this.isProfiloSPCoop(this.profilo);
+	}
+	public boolean isProfiloSPCoop(ProfiloEnum profilo) {
+		return profilo!=null && ProfiloEnum.SPCOOP.equals(profilo);
 	}
 
 }

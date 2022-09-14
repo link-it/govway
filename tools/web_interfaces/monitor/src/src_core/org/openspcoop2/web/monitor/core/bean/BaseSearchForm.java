@@ -182,6 +182,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 
 	private String riconoscimento = null;
 	private String autenticazione = null;
+	private String identificazione = null;
 	private String tokenClaim = null;
 	private String valoreRiconoscimento = null;
 	private TipoMatch mittenteMatchingType = TipoMatch.EQUALS;
@@ -418,6 +419,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			
 			this.riconoscimento = null;
 			this.autenticazione = null;
+			this.identificazione = null;
 			this.tokenClaim = null;
 			this.valoreRiconoscimento = null;
 			this.mittenteMatchingType = TipoMatch.EQUALS;
@@ -532,6 +534,10 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		this.nomeStatisticaPersonalizzata = null;
 	}
 
+	public void identificazioneSelected(ActionEvent ae) {
+		this.servizioApplicativo=null;
+	}
+	
 	public void tipologiaRicercaListener(ActionEvent ae) {
 		// se cambia la tipologia di ricerca devo azzerare le scelte precedenti
 		// this.nomeDestinatario = null;
@@ -1290,22 +1296,26 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		if(StringUtils.isNotEmpty(this.getRiconoscimento())) {
 			if(this.getRiconoscimento().equals(Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO)) {
 				if (StringUtils.isEmpty(this.getTipoNomeMittente())) {
-					MessageUtils.addErrorMsg("Indicare un Soggetto");
+					MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.SEARCH_MISSING_PARAMETERS_SOGGETTO_LABEL_KEY));
 					return false;
 				}
 			} else if(this.getRiconoscimento().equals(Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+				if (StringUtils.isEmpty(this.getIdentificazione())) {
+					MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.SEARCH_MISSING_PARAMETERS_IDENTIFICAZIONE_LABEL_KEY));
+					return false;
+				}
 				if (StringUtils.isEmpty(this.getServizioApplicativo())) {
-					MessageUtils.addErrorMsg("Indicare un Applicativo");
+					MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.SEARCH_MISSING_PARAMETERS_APPLICATIVO_LABEL_KEY));
 					return false;
 				}
 			} else if(this.getRiconoscimento().equals(Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
 				if (StringUtils.isEmpty(this.getAutenticazione())) {
-					MessageUtils.addErrorMsg("Indicare un'Autenicazione");
+					MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.SEARCH_MISSING_PARAMETERS_AUTENTICAZIONE_LABEL_KEY));
 					return false;
 				}
 				
 				if (StringUtils.isEmpty(this.getValoreRiconoscimento())) {
-					MessageUtils.addErrorMsg("Indicare un Identificativo");
+					MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.SEARCH_MISSING_PARAMETERS_ID_LABEL_KEY));
 					return false;
 				}
 				
@@ -1316,7 +1326,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 					try {
 						CertificateUtils.validaPrincipal(this.getValoreRiconoscimento(), PrincipalType.subject);
 					} catch (UtilsException e) {
-						MessageUtils.addErrorMsg("Indicare un Subject corretto");
+						MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.SEARCH_MISSING_PARAMETERS_SSL_SUBJECT_LABEL_KEY));
 						return false;
 					}
 				}
@@ -1330,18 +1340,18 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				}*/
 				
 				if (StringUtils.isEmpty(this.getValoreRiconoscimento())) {
-					MessageUtils.addErrorMsg("Indicare un Indirizzo");
+					MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.SEARCH_MISSING_PARAMETERS_INDIRIZZO_IP_LABEL_KEY));
 					return false;
 				}
 			}
 			else { // token_info
 				if (StringUtils.isEmpty(this.getTokenClaim())) {
-					MessageUtils.addErrorMsg("Indicare un Claim");
+					MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.SEARCH_MISSING_PARAMETERS_CLAIM_LABEL_KEY));
 					return false;
 				}
 				
 				if (StringUtils.isEmpty(this.getValoreRiconoscimento())) {
-					MessageUtils.addErrorMsg("Indicare un Valore");
+					MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(Costanti.SEARCH_MISSING_PARAMETERS_VALORE_LABEL_KEY));
 					return false;
 				}
 			}
@@ -2262,6 +2272,27 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		
 		return lst;
 	}
+	
+	public String getIdentificazione() {
+		return this.identificazione;
+	}
+
+	public void setIdentificazione(String identificazione) {
+		this.identificazione = identificazione;
+		
+		if (StringUtils.isEmpty(identificazione)	|| "--".equals(identificazione))
+			this.identificazione = null;
+	}
+	
+	public List<SelectItem> getListaIdentificazioni(){
+		List<SelectItem> lst = new ArrayList<>();
+		
+		lst.add(new SelectItem("--", "--"));
+		lst.add(new SelectItem(Costanti.IDENTIFICAZIONE_TRASPORTO_KEY, MessageManager.getInstance().getMessage(Costanti.IDENTIFICAZIONE_TRASPORTO_KEY)));  
+		lst.add(new SelectItem(Costanti.IDENTIFICAZIONE_TOKEN_KEY, MessageManager.getInstance().getMessage(Costanti.IDENTIFICAZIONE_TOKEN_KEY)));  
+		
+		return lst;
+	}
 
 	public String getClientAddressMode() {
 		if( this.clientAddressMode == null || StringUtils.isEmpty(this.clientAddressMode)) {
@@ -2427,15 +2458,41 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	public String getDefaultLabelServizioApplicativo() {
 		if(this.getTipologiaRicercaEnum().equals(TipologiaRicerca.ingresso)) {
 			if(StringUtils.isNotEmpty(this.getTipoNomeMittente())) {
-				return MessageManager.getInstance().getMessage(Costanti.SEARCH_APPLICATIVO_DEFAULT_LABEL_KEY);
+				if(StringUtils.isNotEmpty(this.getIdentificazione())) {
+					return MessageManager.getInstance().getMessage(Costanti.SEARCH_APPLICATIVO_DEFAULT_LABEL_KEY);
+				}
+				else {
+					return MessageManager.getInstance().getMessage(Costanti.SEARCH_APPLICATIVO_DEFAULT_LABEL_NO_IDENTIFICAZIONE_KEY);
+				}
 			} else {
-				return MessageManager.getInstance().getMessage(Costanti.SEARCH_APPLICATIVO_DEFAULT_LABEL_NO_SOGGETTO_FRUITORE_KEY);
+				if(StringUtils.isNotEmpty(this.getIdentificazione())) {
+					return MessageManager.getInstance().getMessage(Costanti.SEARCH_APPLICATIVO_DEFAULT_LABEL_NO_SOGGETTO_FRUITORE_KEY);
+				}
+				else {
+					String msg = MessageManager.getInstance().getMessage(Costanti.SEARCH_APPLICATIVO_DEFAULT_LABEL_NO_IDENTIFICAZIONE_NO_SOGGETTO_FRUITORE_KEY);
+					// troppo lunga. In questo caso indico prima di selezionare una identificazione
+					msg = MessageManager.getInstance().getMessage(Costanti.SEARCH_APPLICATIVO_DEFAULT_LABEL_NO_IDENTIFICAZIONE_KEY);
+					return msg;
+				}
 			}
 		} else {
 			if(StringUtils.isNotEmpty(this.getSoggettoLocale())) {
-				return MessageManager.getInstance().getMessage(Costanti.SEARCH_APPLICATIVO_DEFAULT_LABEL_KEY);
+				if(StringUtils.isNotEmpty(this.getIdentificazione())) {
+					return MessageManager.getInstance().getMessage(Costanti.SEARCH_APPLICATIVO_DEFAULT_LABEL_KEY);
+				}
+				else {
+					return MessageManager.getInstance().getMessage(Costanti.SEARCH_APPLICATIVO_DEFAULT_LABEL_NO_IDENTIFICAZIONE_KEY);
+				}
 			} else {
-				return MessageManager.getInstance().getMessage(Costanti.SEARCH_APPLICATIVO_DEFAULT_LABEL_NO_SOGGETTO_LOCALE_KEY);
+				if(StringUtils.isNotEmpty(this.getIdentificazione())) {
+					return MessageManager.getInstance().getMessage(Costanti.SEARCH_APPLICATIVO_DEFAULT_LABEL_NO_SOGGETTO_LOCALE_KEY);
+				}
+				else {
+					String msg = MessageManager.getInstance().getMessage(Costanti.SEARCH_APPLICATIVO_DEFAULT_LABEL_NO_IDENTIFICAZIONE_NO_SOGGETTO_LOCALE_KEY);
+					// troppo lunga. In questo caso indico prima di selezionare un soggetto locale
+					msg = MessageManager.getInstance().getMessage(Costanti.SEARCH_APPLICATIVO_DEFAULT_LABEL_NO_SOGGETTO_LOCALE_KEY);
+					return msg;
+				}
 			}
 		}
 	}

@@ -24,6 +24,9 @@ Background:
 * def applicativo_https_multipleCertificate = read('classpath:bodies/applicativo_https_multipleCertificate.json') 
 * eval randomize(applicativo_https_multipleCertificate, ["nome" ])
 
+* def applicativo_token = read('classpath:bodies/applicativo_token.json') 
+* eval randomize(applicativo_token, ["nome", "credenziali.identificativo"])
+
 * def applicativo_proprieta = read('classpath:bodies/applicativo_proprieta.json') 
 * eval randomize(applicativo_proprieta, ["nome", "credenziali.userid" ])
 
@@ -81,6 +84,23 @@ Scenario: Applicativi Creazione 204 OK (credenziali apikey)
 Scenario: Applicativi Creazione 204 OK (credenziali multipleApikey)
     
     * call create_201_multipleapikey { resourcePath: 'applicativi', body: '#(applicativo_multipleApikey)', key: '#(applicativo_multipleApikey.nome)' }
+
+@Create204_token
+Scenario: Applicativi Creazione 204 OK (credenziali token)
+    
+    * call create_201 { resourcePath: 'applicativi', body: '#(applicativo_token)', key: '#(applicativo_token.nome)' }
+
+@Create400_token
+Scenario: Applicativi Creazione con token policy inesistente
+ 
+    * eval applicativo_token.credenziali.token_policy = 'TokenPolicyNonEsistente' + random()
+
+    Given url configUrl
+    And path 'applicativi'
+    And  header Authorization = govwayConfAuth
+    And request applicativo_token
+    When method post
+    Then status 400
 
 @Create204_proprieta
 Scenario: Applicativi Creazione 204 OK (presenza di proprieta')

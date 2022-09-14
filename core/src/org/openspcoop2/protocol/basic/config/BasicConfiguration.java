@@ -212,6 +212,11 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 	}
 	
 	@Override
+	public boolean isSupportatoAutenticazioneApplicativiHttpsConToken() {
+		return this.registroManifest.getOrganization().getHttpsWithTokenAuthentication();
+	}
+	
+	@Override
 	public boolean isSupportoAutenticazioneApplicativiErogazioni() {
 		return this.registroManifest.getOrganization().getInboundApplicativeAuthentication();
 	}

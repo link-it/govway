@@ -16,6 +16,7 @@ ESEMPIO:
 ./add applicativi bodies/applicativo_https_certificate.json
 ./add applicativi bodies/applicativo_apikey.json
 ./add applicativi bodies/applicativo_multipleApikey.json
+./add applicativi bodies/applicativo_token.json
 
 #./add soggetti bodies/soggetto_esterno.json
 ./add applicativi bodies/applicativo_esterno.json soggetto=SoggettoEsternoJson
@@ -35,6 +36,7 @@ ESEMPIO:
 ./update applicativi/ApplicativoJsonApiKey bodies/applicativo_apikey_update.json
 ./update applicativi/ApplicativoJsonApiKeyAddId bodies/applicativo_multipleApikey_update.json
 ./update applicativi/ApplicativoJsonApiKeyAddId bodies/applicativo_disableMultipleApikey_update.json  // DA ERRORE!
+./update applicativi/ApplicativoJsonToken bodies/applicativo_token.json
 
 ./update applicativi/ApplicativoEsternoJson bodies/applicativo_esterno.json soggetto=SoggettoEsternoJson
 
@@ -44,6 +46,7 @@ ESEMPIO:
 ./update applicativi/ApplicativoJson/credenziali bodies/credenziali_principal.json
 ./update applicativi/ApplicativoJson/credenziali bodies/credenziali_apikey.json
 ./update applicativi/ApplicativoJson/credenziali bodies/credenziali_multipleApikey.json
+./update applicativi/ApplicativoJson/credenziali bodies/credenziali_token.json
 
 ./update applicativi/ApplicativoEsternoJson/credenziali bodies/credenziali_httpBasic.json soggetto=SoggettoEsternoJson
 

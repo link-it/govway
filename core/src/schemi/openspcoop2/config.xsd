@@ -154,6 +154,16 @@
 			<xsd:element name="ruoli" type="autorizzazione-ruoli" maxOccurs="1" minOccurs="0" />	
 			<xsd:element name="scope" type="autorizzazione-scope" maxOccurs="1" minOccurs="0" />	
 			<xsd:element name="gestione-token" type="gestione-token" maxOccurs="1" minOccurs="0"/>
+			<xsd:element name="autorizzazione-token" type="porta-delegata-autorizzazione-token" maxOccurs="1" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
 			<xsd:element name="local-forward" type="porta-delegata-local-forward" maxOccurs="1" minOccurs="0"/>
 			<xsd:element name="proprieta" type="proprieta" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="mtom-processor" type="mtom-processor" maxOccurs="1" minOccurs="0" />
@@ -461,6 +471,22 @@
 		</xsd:attribute>
 		<xsd:attribute name="porta-applicativa" type="xsd:string" use="optional"/>
 	</xsd:complexType>
+	<!-- PortaDelegata AutorizzazioneToken per Servizi Applicativi -->
+	<xsd:complexType name="porta-delegata-autorizzazione-servizi-applicativi">
+		<xsd:sequence>
+			<xsd:element name="servizio-applicativo" type="porta-delegata-servizio-applicativo" maxOccurs="unbounded" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- PortaDelegata.AutorizzazioneToken -->
+	<xsd:complexType name="porta-delegata-autorizzazione-token">
+		<xsd:sequence>
+			<xsd:element name="servizi-applicativi" type="porta-delegata-autorizzazione-servizi-applicativi" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="ruoli" type="autorizzazione-ruoli" maxOccurs="1" minOccurs="0" />
+		</xsd:sequence>
+		<xsd:attribute name="autorizzazione-applicativi" type="StatoFunzionalita" default="disabilitato" use="optional"/>
+		<xsd:attribute name="autorizzazione-ruoli" type="StatoFunzionalita" default="disabilitato" use="optional"/>
+		<xsd:attribute name="tipologia-ruoli" type="RuoloTipologia" default="qualsiasi" use="optional"/>
+	</xsd:complexType>
 
 
 	<!-- ** PortaApplicativa ** -->
@@ -493,6 +519,16 @@
 			<xsd:element name="ruoli" type="autorizzazione-ruoli" maxOccurs="1" minOccurs="0" />	
 			<xsd:element name="scope" type="autorizzazione-scope" maxOccurs="1" minOccurs="0" />	
 			<xsd:element name="gestione-token" type="gestione-token" maxOccurs="1" minOccurs="0"/>
+			<xsd:element name="autorizzazione-token" type="porta-applicativa-autorizzazione-token" maxOccurs="1" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
 			<xsd:element name="proprieta" type="proprieta" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="mtom-processor" type="mtom-processor" maxOccurs="1" minOccurs="0"/>
 			<xsd:element name="message-security" type="message-security" maxOccurs="1" minOccurs="0" >
@@ -870,6 +906,16 @@
 			<xsd:element name="proprieta" type="proprieta" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>		
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<!-- PortaApplicativa.AutorizzazioneToken -->
+	<xsd:complexType name="porta-applicativa-autorizzazione-token">
+		<xsd:sequence>
+			<xsd:element name="servizi-applicativi" type="porta-applicativa-autorizzazione-servizi-applicativi" maxOccurs="1" minOccurs="0" />	
+			<xsd:element name="ruoli" type="autorizzazione-ruoli" maxOccurs="1" minOccurs="0" />
+		</xsd:sequence>
+		<xsd:attribute name="autorizzazione-applicativi" type="StatoFunzionalita" default="disabilitato" use="optional"/>
+		<xsd:attribute name="autorizzazione-ruoli" type="StatoFunzionalita" default="disabilitato" use="optional"/>
+		<xsd:attribute name="tipologia-ruoli" type="RuoloTipologia" default="qualsiasi" use="optional"/>
 	</xsd:complexType>
 
 
@@ -1409,6 +1455,7 @@
 				</xsd:appinfo>
 			</xsd:annotation>
 		</xsd:attribute>
+		<xsd:attribute name="token-policy" type="xsd:string"/>
 	</xsd:complexType>
 	
 	<!-- Connettore -->
@@ -2393,6 +2440,7 @@
 			<xsd:enumeration value="ssl"/>
 			<xsd:enumeration value="principal"/>
 			<xsd:enumeration value="apikey"/>
+			<xsd:enumeration value="token"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="GestioneErroreComportamento">
@@ -2482,6 +2530,13 @@
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="portaDelegata"/>
 			<xsd:enumeration value="portaApplicativa"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RuoloTipologia">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="interno"/>
+			<xsd:enumeration value="esterno"/>
+			<xsd:enumeration value="qualsiasi"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ServiceBinding">

@@ -78,6 +78,7 @@ import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.basic.archive.APIUtils;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
@@ -210,7 +211,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
-			ApiApiHelper.validateProperties(env, protocolProperties, idAccordoFromAccordo);
+			ApiApiHelper.validateProperties(env, protocolProperties, idAccordoFromAccordo, ConsoleOperationType.ADD);
 			
 
 			List<Object> objectToCreate = new ArrayList<>();
@@ -402,6 +403,16 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
+			
+			IDPortType idPT = new IDPortType();
+			idPT.setNome(pt.getNome());
+			idPT.setIdAccordo(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as));
+			IDPortTypeAzione idAccordoAzione = new IDPortTypeAzione();
+			idAccordoAzione.setNome(newOp.getNome());
+			idAccordoAzione.setIdPortType(idPT);
+			
+			ApiApiHelper.validateProperties(env, protocolProperties, idAccordoAzione, ConsoleOperationType.ADD);
+			
 
 			AccordiServizioParteComuneUtilities.createPortTypeOperation(env.apcCore.isEnableAutoMappingWsdlIntoAccordo(),
 					env.apcCore, env.apcHelper, as, pt, env.userLogin);
@@ -485,6 +496,12 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 
+			IDResource idResource = new IDResource();
+			idResource.setNome(newRes.getNome());
+			idResource.setIdAccordo(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as));
+			
+			ApiApiHelper.validateProperties(env, protocolProperties, idResource, newRes.getMethod()!=null ? newRes.getMethod().toString() : null, newRes.getPath(), ConsoleOperationType.ADD);
+			
 			as.addResource(newRes);
 
 			AccordiServizioParteComuneUtilities.createResource(env.apcCore.isEnableAutoMappingWsdlIntoAccordo(), env.apcCore,
@@ -1897,6 +1914,15 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 
+			IDPortType idPT = new IDPortType();
+			idPT.setNome(pt.getNome());
+			idPT.setIdAccordo(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as));
+			IDPortTypeAzione idAccordoAzione = new IDPortTypeAzione();
+			idAccordoAzione.setNome(oldOp.getNome());
+			idAccordoAzione.setIdPortType(idPT);
+			
+			ApiApiHelper.validateProperties(env, protocolProperties, idAccordoAzione, ConsoleOperationType.CHANGE);
+			
 			// Dopo aver fatto i controlli sui dati aggiungo la nuova azione
 			pt.addAzione(newOp);
 
@@ -2372,7 +2398,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			ProtocolProperties updateModiProtocolProperties = ModiApiApiHelper.updateModiProtocolProperties(as, profilo, body);
 			
 			IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromAccordo(as);
-			ApiApiHelper.validateProperties(env, updateModiProtocolProperties, idAccordoFromAccordo);
+			ApiApiHelper.validateProperties(env, updateModiProtocolProperties, idAccordoFromAccordo, ConsoleOperationType.CHANGE);
 			
 			if(updateModiProtocolProperties != null) {
 				as.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(updateModiProtocolProperties, ConsoleOperationType.ADD, null));
@@ -2454,6 +2480,13 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					newRes.getScadenza() != null ? newRes.getScadenza() : "")) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
+			
+			IDResource idResource = new IDResource();
+			idResource.setNome(oldResource.getNome());
+			idResource.setIdAccordo(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as));
+			
+			ApiApiHelper.validateProperties(env, protocolProperties, idResource, newRes.getMethod()!=null ? newRes.getMethod().toString() : null, newRes.getPath(), ConsoleOperationType.ADD);
+			
 
 			as.addResource(newRes);
 

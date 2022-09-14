@@ -25,6 +25,7 @@ import java.util.List;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.ConfigurazioneMultitenant;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -162,6 +163,27 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	public ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(String principal) throws RegistryNotFound,RegistryException{
 		try{
 			IDServizioApplicativo idSA = this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiPrincipal(principal);
+			return this.configurazionePdDMangager.getServizioApplicativo(idSA);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public boolean existsServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId, boolean tokenWithHttpsEnabled) {
+		try{
+			return this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiToken(tokenPolicy, tokenClientId)!=null;
+		} catch(Exception e){
+			return false;
+		}
+	}
+	
+	@Override
+	public ServizioApplicativo getServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId, boolean tokenWithHttpsEnabled) throws RegistryNotFound,RegistryException{
+		try{
+			IDServizioApplicativo idSA = this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiToken(tokenPolicy, tokenClientId);
 			return this.configurazionePdDMangager.getServizioApplicativo(idSA);
 		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
@@ -365,6 +387,33 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	
 	@Override
 	public String getNextAlarmInstanceSerialId(String tipoPlugin) throws RegistryException{
+		throw new RegistryException("Not Implemented");
+	}
+	
+	@Override
+	public List<GenericProperties> getTokenPolicyValidazione() throws RegistryException {
+		throw new RegistryException("Not Implemented");
+	}
+	@Override
+	public GenericProperties getTokenPolicyValidazione(String nome) throws RegistryNotFound,RegistryException{
+		throw new RegistryException("Not Implemented");
+	}
+	
+	@Override
+	public List<GenericProperties> getTokenPolicyNegoziazione() throws RegistryException {
+		throw new RegistryException("Not Implemented");
+	}
+	@Override
+	public GenericProperties getTokenPolicyNegoziazione(String nome) throws RegistryNotFound,RegistryException{
+		throw new RegistryException("Not Implemented");
+	}
+	
+	@Override
+	public List<GenericProperties> getAttributeAuthority() throws RegistryException {
+		throw new RegistryException("Not Implemented");
+	}
+	@Override
+	public GenericProperties getAttributeAuthority(String nome) throws RegistryNotFound,RegistryException{
 		throw new RegistryException("Not Implemented");
 	}
 }

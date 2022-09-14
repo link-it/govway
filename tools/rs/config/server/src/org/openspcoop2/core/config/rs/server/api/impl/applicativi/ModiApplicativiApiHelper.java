@@ -26,6 +26,8 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.rs.server.api.impl.ProtocolPropertiesHelper;
 import org.openspcoop2.core.config.rs.server.model.Applicativo;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationHttps;
+import org.openspcoop2.core.config.rs.server.model.AuthenticationToken;
+import org.openspcoop2.core.config.rs.server.model.AuthenticationTokenBase;
 import org.openspcoop2.core.config.rs.server.model.DominioEnum;
 import org.openspcoop2.core.config.rs.server.model.ModIApplicativoEsterno;
 import org.openspcoop2.core.config.rs.server.model.ModIApplicativoInterno;
@@ -66,21 +68,100 @@ public class ModiApplicativiApiHelper {
 				if(body.getModi() instanceof ModIApplicativoInterno) {
 					ModIApplicativoInterno mai = (ModIApplicativoInterno)body.getModi();
 
-					p.addProperty(ProtocolPropertiesFactory.newProperty(ModICostanti.MODIPA_SICUREZZA_MESSAGGIO, true));
-
-					if(mai.getSicurezzaMessaggio().getKeystore().getTipologia().equals(ModIKeystoreTipologiaEnum.HSM)) {
-						ModIKeyStoreHSMApplicativo hsmKeystore = (ModIKeyStoreHSMApplicativo)mai.getSicurezzaMessaggio().getKeystore();
-						p.addProperty(ModICostanti.MODIPA_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_HSM);
-
-
-						p.addProperty(ModICostanti.MODIPA_KEYSTORE_TYPE, hsmKeystore.getPcks11Tipo());
-						p.addProperty(ModICostanti.MODIPA_KEY_ALIAS, hsmKeystore.getKeyAlias());
-						if( hsmKeystore.getKeystoreCertificato()!=null && hsmKeystore.getKeystoreCertificato().length>0) {
-							String filename = "applicativo.cer";
-							p.addProperty(ModICostanti.MODIPA_KEYSTORE_CERTIFICATE, hsmKeystore.getKeystoreCertificato(), filename, filename);
+					if(mai.getSicurezzaMessaggio()==null && mai.getToken()==null) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione 'ModI' non valida: definire almeno una configurazione tra sicurezza messaggio e token");
+					}
+					
+					if(mai.getSicurezzaMessaggio()!=null) {
+						p.addProperty(ProtocolPropertiesFactory.newProperty(ModICostanti.MODIPA_SICUREZZA_MESSAGGIO, true));
+	
+						if(mai.getSicurezzaMessaggio().getKeystore().getTipologia().equals(ModIKeystoreTipologiaEnum.HSM)) {
+							ModIKeyStoreHSMApplicativo hsmKeystore = (ModIKeyStoreHSMApplicativo)mai.getSicurezzaMessaggio().getKeystore();
+							p.addProperty(ModICostanti.MODIPA_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_HSM);
+	
+	
+							p.addProperty(ModICostanti.MODIPA_KEYSTORE_TYPE, hsmKeystore.getPcks11Tipo());
+							p.addProperty(ModICostanti.MODIPA_KEY_ALIAS, hsmKeystore.getKeyAlias());
+							if( hsmKeystore.getKeystoreCertificato()!=null && hsmKeystore.getKeystoreCertificato().length>0) {
+								String filename = "applicativo.cer";
+								p.addProperty(ModICostanti.MODIPA_KEYSTORE_CERTIFICATE, hsmKeystore.getKeystoreCertificato(), filename, filename);
+								
+								try {
+									CertificateInfo cert = ModIDynamicConfiguration.readKeystoreConfig(p, true);
+									if(cert!=null && cert.getSubject()!=null) {
+										p.addProperty(ModICostanti.MODIPA_KEY_CN_SUBJECT, cert.getSubject().toString());
+										if(cert.getIssuer()!=null) {
+											p.addProperty(ModICostanti.MODIPA_KEY_CN_ISSUER, cert.getIssuer().toString());
+										}
+									}
+								}catch(Throwable e) {
+									// errore sollevato in validazione
+								}
+							}
+						}
+						else if(mai.getSicurezzaMessaggio().getKeystore().getTipologia().equals(ModIKeystoreTipologiaEnum.FILESYSTEM)) {
+							ModIKeyStoreFileApplicativo fsKeystore = (ModIKeyStoreFileApplicativo)mai.getSicurezzaMessaggio().getKeystore();
+							p.addProperty(ModICostanti.MODIPA_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_PATH);
+	
+	
+							String tipo = null;
+							switch(fsKeystore.getKeystoreTipo()) {
+							case JKS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS;
+							break;
+							case PKCS12:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12;
+							break;
+							default:
+								break;
+							}
+	
+							p.addProperty(ModICostanti.MODIPA_KEYSTORE_TYPE, tipo);
+							p.addProperty(ModICostanti.MODIPA_KEY_ALIAS, fsKeystore.getKeyAlias());
+							p.addProperty(ModICostanti.MODIPA_KEY_PASSWORD, fsKeystore.getKeyPassword());
+							p.addProperty(ModICostanti.MODIPA_KEYSTORE_PASSWORD, fsKeystore.getKeystorePassword());
+							p.addProperty(ModICostanti.MODIPA_KEYSTORE_PATH, fsKeystore.getKeystorePath());
+							
+							if( fsKeystore.getKeystoreCertificato()!=null && fsKeystore.getKeystoreCertificato().length>0) {
+								String filename = "applicativo.cer";
+								p.addProperty(ModICostanti.MODIPA_KEYSTORE_CERTIFICATE, fsKeystore.getKeystoreCertificato(), filename, filename);
+								
+								try {
+									CertificateInfo cert = ModIDynamicConfiguration.readKeystoreConfig(p, true);
+									if(cert!=null && cert.getSubject()!=null) {
+										p.addProperty(ModICostanti.MODIPA_KEY_CN_SUBJECT, cert.getSubject().toString());
+										if(cert.getIssuer()!=null) {
+											p.addProperty(ModICostanti.MODIPA_KEY_CN_ISSUER, cert.getIssuer().toString());
+										}
+									}
+								}catch(Throwable e) {
+									// errore sollevato in validazione
+								}
+							}
+							
+						} else {
+							ModIKeyStoreArchive archiveKeystore = (ModIKeyStoreArchive)mai.getSicurezzaMessaggio().getKeystore();
+							p.addProperty(ModICostanti.MODIPA_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE);
+	
+	
+							String tipo = null;
+							String filename = null;
+	
+							switch(archiveKeystore.getKeystoreTipo()) {
+							case JKS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS; filename = "Keystore.jks";
+							break;
+							case PKCS12:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12; filename = "Keystore.p12";
+							break;
+							default:
+								break;
+							}
+	
+							p.addProperty(ModICostanti.MODIPA_KEYSTORE_TYPE, tipo);
+							p.addProperty(ModICostanti.MODIPA_KEY_ALIAS, archiveKeystore.getKeyAlias());
+							p.addProperty(ModICostanti.MODIPA_KEY_PASSWORD, archiveKeystore.getKeyPassword());
+							p.addProperty(ModICostanti.MODIPA_KEYSTORE_PASSWORD, archiveKeystore.getKeystorePassword());
+							p.addProperty(ModICostanti.MODIPA_KEYSTORE_ARCHIVE, archiveKeystore.getKeystoreArchivio(), filename, filename);
 							
 							try {
-								CertificateInfo cert = ModIDynamicConfiguration.readKeystoreConfig(p, true);
+								CertificateInfo cert = ModIDynamicConfiguration.readKeystoreConfig(p, false);
 								if(cert!=null && cert.getSubject()!=null) {
 									p.addProperty(ModICostanti.MODIPA_KEY_CN_SUBJECT, cert.getSubject().toString());
 									if(cert.getIssuer()!=null) {
@@ -91,87 +172,20 @@ public class ModiApplicativiApiHelper {
 								// errore sollevato in validazione
 							}
 						}
-					}
-					else if(mai.getSicurezzaMessaggio().getKeystore().getTipologia().equals(ModIKeystoreTipologiaEnum.FILESYSTEM)) {
-						ModIKeyStoreFileApplicativo fsKeystore = (ModIKeyStoreFileApplicativo)mai.getSicurezzaMessaggio().getKeystore();
-						p.addProperty(ModICostanti.MODIPA_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_PATH);
-
-
-						String tipo = null;
-						switch(fsKeystore.getKeystoreTipo()) {
-						case JKS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS;
-						break;
-						case PKCS12:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12;
-						break;
-						default:
-							break;
+	
+						if(mai.getSicurezzaMessaggio().getReplyAudience()!=null) {
+							p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE, mai.getSicurezzaMessaggio().getReplyAudience());
 						}
-
-						p.addProperty(ModICostanti.MODIPA_KEYSTORE_TYPE, tipo);
-						p.addProperty(ModICostanti.MODIPA_KEY_ALIAS, fsKeystore.getKeyAlias());
-						p.addProperty(ModICostanti.MODIPA_KEY_PASSWORD, fsKeystore.getKeyPassword());
-						p.addProperty(ModICostanti.MODIPA_KEYSTORE_PASSWORD, fsKeystore.getKeystorePassword());
-						p.addProperty(ModICostanti.MODIPA_KEYSTORE_PATH, fsKeystore.getKeystorePath());
-						
-						if( fsKeystore.getKeystoreCertificato()!=null && fsKeystore.getKeystoreCertificato().length>0) {
-							String filename = "applicativo.cer";
-							p.addProperty(ModICostanti.MODIPA_KEYSTORE_CERTIFICATE, fsKeystore.getKeystoreCertificato(), filename, filename);
-							
-							try {
-								CertificateInfo cert = ModIDynamicConfiguration.readKeystoreConfig(p, true);
-								if(cert!=null && cert.getSubject()!=null) {
-									p.addProperty(ModICostanti.MODIPA_KEY_CN_SUBJECT, cert.getSubject().toString());
-									if(cert.getIssuer()!=null) {
-										p.addProperty(ModICostanti.MODIPA_KEY_CN_ISSUER, cert.getIssuer().toString());
-									}
-								}
-							}catch(Throwable e) {
-								// errore sollevato in validazione
-							}
-						}
-						
-					} else {
-						ModIKeyStoreArchive archiveKeystore = (ModIKeyStoreArchive)mai.getSicurezzaMessaggio().getKeystore();
-						p.addProperty(ModICostanti.MODIPA_KEYSTORE_MODE, ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE);
-
-
-						String tipo = null;
-						String filename = null;
-
-						switch(archiveKeystore.getKeystoreTipo()) {
-						case JKS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS; filename = "Keystore.jks";
-						break;
-						case PKCS12:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12; filename = "Keystore.p12";
-						break;
-						default:
-							break;
-						}
-
-						p.addProperty(ModICostanti.MODIPA_KEYSTORE_TYPE, tipo);
-						p.addProperty(ModICostanti.MODIPA_KEY_ALIAS, archiveKeystore.getKeyAlias());
-						p.addProperty(ModICostanti.MODIPA_KEY_PASSWORD, archiveKeystore.getKeyPassword());
-						p.addProperty(ModICostanti.MODIPA_KEYSTORE_PASSWORD, archiveKeystore.getKeystorePassword());
-						p.addProperty(ModICostanti.MODIPA_KEYSTORE_ARCHIVE, archiveKeystore.getKeystoreArchivio(), filename, filename);
-						
-						try {
-							CertificateInfo cert = ModIDynamicConfiguration.readKeystoreConfig(p, false);
-							if(cert!=null && cert.getSubject()!=null) {
-								p.addProperty(ModICostanti.MODIPA_KEY_CN_SUBJECT, cert.getSubject().toString());
-								if(cert.getIssuer()!=null) {
-									p.addProperty(ModICostanti.MODIPA_KEY_CN_ISSUER, cert.getIssuer().toString());
-								}
-							}
-						}catch(Throwable e) {
-							// errore sollevato in validazione
+	
+						if(mai.getSicurezzaMessaggio().getUrlX5u()!=null) {
+							p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_SA_RICHIESTA_X509_VALUE_X5URL, mai.getSicurezzaMessaggio().getUrlX5u());
 						}
 					}
-
-					if(mai.getSicurezzaMessaggio().getReplyAudience()!=null) {
-						p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE, mai.getSicurezzaMessaggio().getReplyAudience());
-					}
-
-					if(mai.getSicurezzaMessaggio().getUrlX5u()!=null) {
-						p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_SA_RICHIESTA_X509_VALUE_X5URL, mai.getSicurezzaMessaggio().getUrlX5u());
+					
+					if(mai.getToken()!=null) {
+						p.addProperty(ProtocolPropertiesFactory.newProperty(ModICostanti.MODIPA_SICUREZZA_TOKEN, true));
+						p.addProperty(ProtocolPropertiesFactory.newProperty(ModICostanti.MODIPA_SICUREZZA_TOKEN_POLICY, mai.getToken().getTokenPolicy()));
+						p.addProperty(ProtocolPropertiesFactory.newProperty(ModICostanti.MODIPA_SICUREZZA_TOKEN_CLIENT_ID, mai.getToken().getIdentificativo()));
 					}
 
 				} else {
@@ -183,8 +197,8 @@ public class ModiApplicativiApiHelper {
 			}
 		} else {
 
-			if(!(body.getCredenziali() instanceof AuthenticationHttps)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Certificato, che identifica l’applicativo, non fornito");
+			if(!(body.getCredenziali() instanceof AuthenticationHttps) && !(body.getCredenziali() instanceof AuthenticationToken)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non sono state fornite credenziali (certificato o tokenClientId) che identificano l’applicativo");
 			}
 			if(body.getModi() != null) {
 	
@@ -218,9 +232,13 @@ public class ModiApplicativiApiHelper {
 			ModIApplicativoInterno app = new ModIApplicativoInterno();
 			app.setDominio(DominioEnum.INTERNO);
 
-			boolean enabled = ProtocolPropertiesHelper.getBooleanProperty(p, ModICostanti.MODIPA_SICUREZZA_MESSAGGIO, true);
+			boolean enabledSicurezzaMessaggio = false;
+			AbstractProperty<?> ap = ProtocolPropertiesHelper.getProperty(p, ModICostanti.MODIPA_SICUREZZA_MESSAGGIO, false);
+			if(ap!=null && ap.getValue()!=null) {
+				enabledSicurezzaMessaggio = ProtocolPropertiesHelper.getBooleanProperty(p, ModICostanti.MODIPA_SICUREZZA_MESSAGGIO, true);
+			}
 
-			if(enabled) {
+			if(enabledSicurezzaMessaggio) {
 				ModIApplicativoSicurezzaMessaggio sicurezzaMsg = new ModIApplicativoSicurezzaMessaggio();
 
 				String keystoreModeString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_MODE, true);
@@ -294,7 +312,30 @@ public class ModiApplicativiApiHelper {
 				app.setSicurezzaMessaggio(sicurezzaMsg);
 			}
 
-			if(enabled) {
+			boolean enabledSicurezzaToken = false;
+			ap = ProtocolPropertiesHelper.getProperty(p, ModICostanti.MODIPA_SICUREZZA_TOKEN, false);
+			if(ap!=null && ap.getValue()!=null) {
+				enabledSicurezzaToken = ProtocolPropertiesHelper.getBooleanProperty(p, ModICostanti.MODIPA_SICUREZZA_TOKEN, true);
+			}
+
+			if(enabledSicurezzaToken) {
+				
+				AuthenticationTokenBase token = new AuthenticationTokenBase();
+				
+				String tokenPolicy = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_SICUREZZA_TOKEN_POLICY, false);
+				if(tokenPolicy != null) {
+					token.setTokenPolicy(tokenPolicy);
+				}
+				
+				String identificativo = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_SICUREZZA_TOKEN_CLIENT_ID, false);
+				if(identificativo != null) {
+					token.setIdentificativo(identificativo);
+				}
+				
+				app.setToken(token);
+			}
+			
+			if(enabledSicurezzaMessaggio || enabledSicurezzaToken) {
 				// modi richiede la presenza obbligatoria della sicurezza
 				ret.setModi(app);
 			}

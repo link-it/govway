@@ -79,6 +79,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.information_missing.constants.StatoType;
+import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
@@ -205,7 +206,24 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 
 			ProtocolProperties protocolProperties = null;
 			if(profilo != null) {
-				protocolProperties = ErogazioniApiHelper.getProtocolProperties(body, profilo, asps, env);
+				
+				boolean required = false;
+				if(env.isProfiloModi()) {
+					AccordoServizioParteComune accordoFull = Helper.getAccordoFull(body.getApiNome(),
+							body.getApiVersione(), idReferente, env.apcCore);
+					if(accordoFull.sizeProtocolPropertyList()>0) {
+						for (org.openspcoop2.core.registry.ProtocolProperty pp : accordoFull.getProtocolPropertyList()) {
+							if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO.equals(pp.getName())) {
+								String v = pp.getValue();
+								if(v!=null && StringUtils.isNotEmpty(v) && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(v)) {
+									required = true;
+								}
+							}
+						}
+					}
+				}
+				
+				protocolProperties = ErogazioniApiHelper.getProtocolProperties(body, profilo, asps, env, required);
 	
 				if(protocolProperties != null) {
 					f.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));
@@ -213,7 +231,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 			}
 
 
-			ErogazioniApiHelper.validateProperties(env, protocolProperties, idFruizione);
+			ErogazioniApiHelper.validateProperties(env, protocolProperties, idFruizione, ConsoleOperationType.ADD);
 
 			ErogazioniApiHelper.createAps(env, asps, regConnettore, body, alreadyExists, false);
 
@@ -1228,7 +1246,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 
 			asps.setOldIDServizioForUpdate(env.idServizioFactory.getIDServizioFromAccordo(asps));
 
-			ErogazioniApiHelper.validateProperties(env, protocolProperties, idFruizione);
+			ErogazioniApiHelper.validateProperties(env, protocolProperties, idFruizione, ConsoleOperationType.CHANGE);
 
 			List<Object> oggettiDaAggiornare = AccordiServizioParteSpecificaUtilities.getOggettiDaAggiornare(asps,
 					env.apsCore);

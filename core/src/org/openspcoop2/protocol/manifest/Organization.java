@@ -38,6 +38,7 @@ import java.io.Serializable;
  * 			&lt;element name="types" type="{http://www.openspcoop2.org/protocol/manifest}OrganizationTypes" minOccurs="1" maxOccurs="1"/&gt;
  * 		&lt;/sequence&gt;
  * 		&lt;attribute name="authentication" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/&gt;
+ * 		&lt;attribute name="httpsWithTokenAuthentication" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
  * 		&lt;attribute name="inboundApplicativeAuthentication" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/&gt;
  * 		&lt;attribute name="inboundOrganizationAuthorizationWithoutAuthentication" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
  * 		&lt;attribute name="inboundExternalApplicationAuthentication" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
@@ -84,6 +85,18 @@ public class Organization extends org.openspcoop2.utils.beans.BaseBean implement
 
   public void setAuthentication(boolean authentication) {
     this.authentication = authentication;
+  }
+
+  public boolean isHttpsWithTokenAuthentication() {
+    return this.httpsWithTokenAuthentication;
+  }
+
+  public boolean getHttpsWithTokenAuthentication() {
+    return this.httpsWithTokenAuthentication;
+  }
+
+  public void setHttpsWithTokenAuthentication(boolean httpsWithTokenAuthentication) {
+    this.httpsWithTokenAuthentication = httpsWithTokenAuthentication;
   }
 
   public boolean isInboundApplicativeAuthentication() {
@@ -168,6 +181,10 @@ public class Organization extends org.openspcoop2.utils.beans.BaseBean implement
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="authentication",required=false)
   protected boolean authentication = true;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="httpsWithTokenAuthentication",required=false)
+  protected boolean httpsWithTokenAuthentication = false;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="inboundApplicativeAuthentication",required=false)

@@ -13563,6 +13563,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				PortaApplicativa portaApplicativa = null;
 				CredenzialeTipo tipoAutenticazione = null;
 				Boolean appId = null;
+				String tokenPolicy = null;
 				IDSoggetto idSoggettoProprietario = null;
 				if(ruoloPorta!=null) {
 					if(applicativa) {
@@ -13588,6 +13589,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							ApiKeyState apiKeyState =  new ApiKeyState(this.porteApplicativeCore.getParametroAutenticazione(portaApplicativa.getAutenticazione(), portaApplicativa.getProprietaAutenticazioneList()));
 							appId = apiKeyState.appIdSelected;
 						}
+						if(portaApplicativa.getGestioneToken()!=null && portaApplicativa.getGestioneToken().getPolicy()!=null) {
+							tokenPolicy = portaApplicativa.getGestioneToken().getPolicy();
+						}
 						idSoggettoProprietario = new IDSoggetto(portaApplicativa.getTipoSoggettoProprietario(), portaApplicativa.getNomeSoggettoProprietario());
 						
 						if(portaApplicativa.getGestioneToken()!=null) {
@@ -13611,6 +13615,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						if(CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
 							ApiKeyState apiKeyState =  new ApiKeyState(this.porteDelegateCore.getParametroAutenticazione(portaDelegata.getAutenticazione(), portaDelegata.getProprietaAutenticazioneList()));
 							appId = apiKeyState.appIdSelected;
+						}
+						if(portaDelegata.getGestioneToken()!=null && portaDelegata.getGestioneToken().getPolicy()!=null) {
+							tokenPolicy = portaDelegata.getGestioneToken().getPolicy();
 						}
 						idSoggettoProprietario = new IDSoggetto(portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario());
 						
@@ -13640,7 +13647,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				// Filtro 
 				addToDatiAttivazioneFiltro(dati, tipoOperazione, policy, nomeSezione, infoPolicy, ruoloPorta, nomePorta, serviceBinding,
 						idSoggettoProprietario, tokenAbilitato, 
-						tipoAutenticazione, appId, 
+						tipoAutenticazione, appId, tokenPolicy,
 						pddTipologiaSoggettoAutenticati, gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore
 						);
 				
@@ -13895,7 +13902,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	private void addToDatiAttivazioneFiltro(Vector<DataElement> dati, TipoOperazione tipoOperazione,AttivazionePolicy policy, String nomeSezione, InfoPolicy infoPolicy, 
 			RuoloPolicy ruoloPorta, String nomePorta, ServiceBinding serviceBinding,
 			IDSoggetto idSoggettoProprietario, boolean tokenAbilitato, 
-			CredenzialeTipo tipoAutenticazione, Boolean appId, 
+			CredenzialeTipo tipoAutenticazione, Boolean appId, String tokenPolicy, 
 			PddTipologia pddTipologiaSoggettoAutenticati, boolean gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore) throws Exception {
 	
 		boolean delegata = false;
@@ -13914,6 +13921,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		org.openspcoop2.core.config.constants.CredenzialeTipo tipoAutenticazioneConfig = null;
 		if(tipoAutenticazione!=null) {
 			tipoAutenticazioneConfig = org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(tipoAutenticazione.getValue(), true);
+		}
+		
+		boolean tokenPolicyOR = false;
+		if(tokenPolicy!=null && !"".equals(tokenPolicy)) {
+			if(tipoAutenticazione!=null && !org.openspcoop2.core.config.constants.CredenzialeTipo.TOKEN.equals(tipoAutenticazioneConfig)) {
+				tokenPolicyOR = true;
+			}
+			else {
+				tipoAutenticazioneConfig = org.openspcoop2.core.config.constants.CredenzialeTipo.TOKEN;
+			}
 		}
 		
 		boolean multitenant = this.confCore.isMultitenant();
@@ -14546,9 +14563,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 									}									
 								}
 								
+								boolean bothSslAndToken = false;
+								
 								if(!found && multitenant && !isPddEsterna) {
 									List<IDServizioApplicativoDB> listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazioneConfig, appId, 
-											CostantiConfigurazione.CLIENT);
+											CostantiConfigurazione.CLIENT,
+											bothSslAndToken, tokenPolicy, tokenPolicyOR);
 									if(listServiziApplicativiTmp!=null && !listServiziApplicativiTmp.isEmpty()) {
 										IDSoggettoDB idSoggettoDB = new IDSoggettoDB();
 										idSoggettoDB.setTipo(s.getTipo());
@@ -14561,7 +14581,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								
 								if(!found && isSupportatoAutenticazioneApplicativiEsterni && isPddEsterna) {
 									List<IDServizioApplicativoDB> listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazioneConfig, appId,
-											CostantiConfigurazione.CLIENT);
+											CostantiConfigurazione.CLIENT,
+											bothSslAndToken, tokenPolicy, tokenPolicyOR);
 									if(listServiziApplicativiTmp!=null && !listServiziApplicativiTmp.isEmpty()) {
 										IDSoggettoDB idSoggettoDB = new IDSoggettoDB();
 										idSoggettoDB.setTipo(s.getTipo());
@@ -14653,11 +14674,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						if(protocolloSelezionatoValue!=null && !"".equals(protocolloSelezionatoValue)) {
 							isSupportatoAutenticazioneApplicativiEsterni = this.saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocolloSelezionatoValue);
 						} 
+						
+						boolean bothSslAndToken = false;
 												
 						List<IDServizioApplicativoDB> listServiziApplicativiTmp = null;
 						if(delegata || !multitenant) {
 							listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggettoProprietario,userLogin,tipoAutenticazioneConfig,appId,
-									CostantiConfigurazione.CLIENT);
+									CostantiConfigurazione.CLIENT,
+									bothSslAndToken, tokenPolicy, tokenPolicyOR);
 						}
 						else {
 							// sull'applicativa con multitenant deve essere stata selezionato un soggetto operativo.
@@ -14667,7 +14691,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								boolean isPddEsterna = this.pddCore.isPddEsterna(s.getPortaDominio());
 								if(!isPddEsterna || isSupportatoAutenticazioneApplicativiEsterni) {
 									listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggettoSelezionato,userLogin,tipoAutenticazioneConfig,appId,
-											CostantiConfigurazione.CLIENT);
+											CostantiConfigurazione.CLIENT,
+											bothSslAndToken, tokenPolicy, tokenPolicyOR);
 								}							
 							}
 						}
@@ -20878,6 +20903,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		PortaApplicativa portaApplicativa = null;
 		CredenzialeTipo tipoAutenticazione = null;
 		Boolean appId = null;
+		String tokenPolicy = null;
 		IDSoggetto idSoggettoProprietario = null;
 		if(ruoloPorta!=null) {
 			if(applicativa) {
@@ -20903,6 +20929,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					ApiKeyState apiKeyState =  new ApiKeyState(this.porteApplicativeCore.getParametroAutenticazione(portaApplicativa.getAutenticazione(), portaApplicativa.getProprietaAutenticazioneList()));
 					appId = apiKeyState.appIdSelected;
 				}
+				if(portaApplicativa.getGestioneToken()!=null && portaApplicativa.getGestioneToken().getPolicy()!=null) {
+					tokenPolicy = portaApplicativa.getGestioneToken().getPolicy();
+				}
 				idSoggettoProprietario = new IDSoggetto(portaApplicativa.getTipoSoggettoProprietario(), portaApplicativa.getNomeSoggettoProprietario());
 				
 				if(portaApplicativa.getGestioneToken()!=null) {
@@ -20926,6 +20955,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
 					ApiKeyState apiKeyState =  new ApiKeyState(this.porteDelegateCore.getParametroAutenticazione(portaDelegata.getAutenticazione(), portaDelegata.getProprietaAutenticazioneList()));
 					appId = apiKeyState.appIdSelected;
+				}
+				if(portaDelegata.getGestioneToken()!=null && portaDelegata.getGestioneToken().getPolicy()!=null) {
+					tokenPolicy = portaDelegata.getGestioneToken().getPolicy();
 				}
 				idSoggettoProprietario = new IDSoggetto(portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario());
 				
@@ -20990,8 +21022,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(this.isShowFilter(allarme, context)) {
 			this.addToDatiAllarmeFiltro(dati, tipoOperazione, allarme, context,
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO,
-					ruoloPorta, nomePorta, serviceBinding, idSoggettoProprietario, tokenAbilitato , tipoAutenticazione, 
-					appId, pddTipologiaSoggettoAutenticati, gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore);
+					ruoloPorta, nomePorta, serviceBinding, idSoggettoProprietario, tokenAbilitato , 
+					tipoAutenticazione,	appId, tokenPolicy, 
+					pddTipologiaSoggettoAutenticati, gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore);
 		}
 		
 		// Notifiche Email
@@ -21203,7 +21236,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	private void addToDatiAllarmeFiltro(Vector<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazioneAllarmeBean allarme, Context context, String nomeSezione,
 			RuoloPorta ruoloPorta, String nomePorta, ServiceBinding serviceBinding,
 			IDSoggetto idSoggettoProprietario, boolean tokenAbilitato, 
-			CredenzialeTipo tipoAutenticazione, Boolean appId, 
+			CredenzialeTipo tipoAutenticazione, Boolean appId, String tokenPolicy, 
 			PddTipologia pddTipologiaSoggettoAutenticati, boolean gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore) throws Exception {
 	
 		boolean delegata = false;
@@ -21222,6 +21255,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		org.openspcoop2.core.config.constants.CredenzialeTipo tipoAutenticazioneConfig = null;
 		if(tipoAutenticazione!=null) {
 			tipoAutenticazioneConfig = org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(tipoAutenticazione.getValue(), true);
+		}
+		
+		boolean tokenPolicyOR = false;
+		if(tokenPolicy!=null && !"".equals(tokenPolicy)) {
+			if(tipoAutenticazione!=null && !org.openspcoop2.core.config.constants.CredenzialeTipo.TOKEN.equals(tipoAutenticazioneConfig)) {
+				tokenPolicyOR = true;
+			}
+			else {
+				tipoAutenticazioneConfig = org.openspcoop2.core.config.constants.CredenzialeTipo.TOKEN;
+			}
 		}
 		
 		boolean multitenant = this.confCore.isMultitenant();
@@ -21869,9 +21912,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 									}									
 								}
 								
+								boolean bothSslAndToken = false;
+								
 								if(!found && multitenant && !isPddEsterna) {
 									List<IDServizioApplicativoDB> listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazioneConfig, appId, 
-											CostantiConfigurazione.CLIENT);
+											CostantiConfigurazione.CLIENT,
+											bothSslAndToken, tokenPolicy, tokenPolicyOR);
 									if(listServiziApplicativiTmp!=null && !listServiziApplicativiTmp.isEmpty()) {
 										IDSoggettoDB idSoggettoDB = new IDSoggettoDB();
 										idSoggettoDB.setTipo(s.getTipo());
@@ -21884,7 +21930,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								
 								if(!found && isSupportatoAutenticazioneApplicativiEsterni && isPddEsterna) {
 									List<IDServizioApplicativoDB> listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazioneConfig, appId,
-											CostantiConfigurazione.CLIENT);
+											CostantiConfigurazione.CLIENT,
+											bothSslAndToken, tokenPolicy, tokenPolicyOR);
 									if(listServiziApplicativiTmp!=null && !listServiziApplicativiTmp.isEmpty()) {
 										IDSoggettoDB idSoggettoDB = new IDSoggettoDB();
 										idSoggettoDB.setTipo(s.getTipo());
@@ -21978,10 +22025,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							isSupportatoAutenticazioneApplicativiEsterni = this.saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocolloSelezionatoValue);
 						}
 						
+						boolean bothSslAndToken = false;
+						
 						List<IDServizioApplicativoDB> listServiziApplicativiTmp = null;
 						if(delegata || !multitenant) {
 							listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggettoProprietario,userLogin,tipoAutenticazioneConfig,appId,
-									CostantiConfigurazione.CLIENT);
+									CostantiConfigurazione.CLIENT,
+									bothSslAndToken, tokenPolicy, tokenPolicyOR);
 						}
 						else {
 							// sull'applicativa con multitenant deve essere stata selezionato un soggetto operativo.
@@ -21991,7 +22041,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								boolean isPddEsterna = this.pddCore.isPddEsterna(s.getPortaDominio());
 								if(!isPddEsterna || isSupportatoAutenticazioneApplicativiEsterni) {
 									listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggettoSelezionato,userLogin,tipoAutenticazioneConfig,appId,
-											CostantiConfigurazione.CLIENT);
+											CostantiConfigurazione.CLIENT,
+											bothSslAndToken, tokenPolicy, tokenPolicyOR);
 								}									
 							}
 						}

@@ -37,6 +37,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.Credenziali;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -359,7 +360,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String multipleApiKey, String appId, String apiKey,
 			boolean autenticazioneToken, String tokenPolicy, String tipoSA, boolean useAsClient,
 			boolean integrationManagerEnabled, 
-			boolean visualizzaModificaCertificato, boolean visualizzaAddCertificato, String servletCredenzialiList, List<Parameter> parametersServletCredenzialiList, Integer numeroCertificati, String servletCredenzialiAdd) throws Exception {
+			boolean visualizzaModificaCertificato, boolean visualizzaAddCertificato, String servletCredenzialiList, List<Parameter> parametersServletCredenzialiList, Integer numeroCertificati, String servletCredenzialiAdd,
+			String tokenPolicySA, String tokenClientIdSA, boolean tokenWithHttpsEnabledByConfigSA) throws Exception {
 
 		
 		ServizioApplicativo sa = null;
@@ -987,7 +989,15 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			if(dominioEsternoProfiloModIPA) {
 				
 				visualizzaTipoAutenticazione = false;
-				tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL;
+				boolean trovato = false;
+				for (String tipoAuthModIEsterno: ConnettoriCostanti.CREDENZIALI_MODI_ESTERNO_VALUES) {
+					if(tipoAuthModIEsterno.equals(tipoauth)) {
+						trovato = true;
+					}
+				}
+				if(!trovato) {
+					tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL;
+				}
 				
 				String label = CostantiLabel.MODIPA_PROTOCOL_LABEL;
 				if(label!=null && !"".equals(label)) {
@@ -999,7 +1009,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 			
 			if(!dominioEsternoProfiloModIPA) {
-				dati = this.addCredenzialiToDati(dati, tipoauth, oldtipoauth, utente, password, subject, principal, servlet, showLabelCredenzialiAccesso, null, false, visualizzaTipoAutenticazione, null, true,
+				dati = this.addCredenzialiToDati(tipoOperazione, dati, tipoauth, oldtipoauth, utente, password, subject, principal, servlet, showLabelCredenzialiAccesso, null, false, visualizzaTipoAutenticazione, null, true,
 						tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato, tipoCredenzialiSSLFileCertificatoPassword,listaAliasEstrattiCertificato, 
 						tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
 						tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
@@ -1007,7 +1017,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuer, tipoCredenzialiSSLStatoElaborazioneCertificato,
 						changepwd,
 						multipleApiKey, appId, apiKey,
-						subtitleConfigSslCredenziali, visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd);
+						subtitleConfigSslCredenziali, visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
+						true, tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA,
+						dominioEsterno, tipoProtocollo);
 			}
 			else {
 				// aggiungo dopo il link sui ruoli
@@ -1063,7 +1075,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					dati.addElement(de);
 				}
 				
-				dati = this.addCredenzialiToDati(dati, tipoauth, oldtipoauth, utente, password, subject, principal, servlet, showLabelCredenzialiAccesso, null, false, visualizzaTipoAutenticazione, null, true,
+				dati = this.addCredenzialiToDati(tipoOperazione, dati, tipoauth, oldtipoauth, utente, password, subject, principal, servlet, showLabelCredenzialiAccesso, null, false, visualizzaTipoAutenticazione, null, true,
 						tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato, tipoCredenzialiSSLFileCertificatoPassword,listaAliasEstrattiCertificato, 
 						tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
 						tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
@@ -1071,7 +1083,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuer, tipoCredenzialiSSLStatoElaborazioneCertificato,
 						changepwd,
 						multipleApiKey, appId, apiKey,
-						subtitleConfigSslCredenziali, visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd);
+						subtitleConfigSslCredenziali, visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
+						true, tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA,
+						dominioEsterno, tipoProtocollo);
 			}
 			
 		}
@@ -1383,7 +1397,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				if (principal == null) {
 					principal = "";
 				}
-				dati = this.addCredenzialiToDati(dati, tipoauth, oldtipoauth, utente, password, subject, principal, servlet, true, null, false, true, null, true,
+				dati = this.addCredenzialiToDati(tipoOperazione, dati, tipoauth, oldtipoauth, utente, password, subject, principal, servlet, true, null, false, true, null, true,
 						tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato, tipoCredenzialiSSLFileCertificatoPassword, listaAliasEstrattiCertificato, 
 						tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
 						tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
@@ -1391,7 +1405,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuer, tipoCredenzialiSSLStatoElaborazioneCertificato,
 						changepwd,
 						multipleApiKey, appId, apiKey,
-						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd
+						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
+						true, tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA,
+						dominioEsterno, tipoProtocollo
 						);
 				
 			}
@@ -1685,7 +1701,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					filtro.setNomeServizioApplicativo(idSA.getNome());
 					List<IDPortaDelegata> list = this.porteDelegateCore.getAllIdPorteDelegate(filtro);
 					if(list!=null && list.size()>0) {
-						this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; l'applicativo viene utilizzato all'interno del controllo degli accessi di "+
+						this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; l'applicativo viene utilizzato all'interno del controllo degli accessi (autorizzazione trasporto) di "+
 								list.size()+" fruizion"+(list.size()>1?"i":"e"));
 						return false;
 					}
@@ -1697,7 +1713,27 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					filtroPA.setIdServizioApplicativoAutorizzato(idServizioApplicativoAutorizzato);
 					List<IDPortaApplicativa> listPA = this.porteApplicativeCore.getAllIdPorteApplicative(filtroPA);
 					if(listPA!=null && listPA.size()>0) {
-						this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; l'applicativo viene utilizzato all'interno del controllo degli accessi di "+
+						this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; l'applicativo viene utilizzato all'interno del controllo degli accessi (autorizzazione trasporto) di "+
+								listPA.size()+" erogazion"+(listPA.size()>1?"i":"e"));
+						return false;
+					}
+					
+					filtro = new FiltroRicercaPorteDelegate();
+					filtro.setTipoSoggetto(idSA.getIdSoggettoProprietario().getTipo());
+					filtro.setNomeSoggetto(idSA.getIdSoggettoProprietario().getNome());
+					filtro.setNomeServizioApplicativoToken(idSA.getNome());
+					list = this.porteDelegateCore.getAllIdPorteDelegate(filtro);
+					if(list!=null && list.size()>0) {
+						this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; l'applicativo viene utilizzato all'interno del controllo degli accessi (autorizzazione token) di "+
+								list.size()+" fruizion"+(list.size()>1?"i":"e"));
+						return false;
+					}
+					
+					filtroPA = new FiltroRicercaPorteApplicative();
+					filtroPA.setIdServizioApplicativoAutorizzatoToken(idServizioApplicativoAutorizzato);
+					listPA = this.porteApplicativeCore.getAllIdPorteApplicative(filtroPA);
+					if(listPA!=null && listPA.size()>0) {
+						this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; l'applicativo viene utilizzato all'interno del controllo degli accessi (autorizzazione token) di "+
 								listPA.size()+" erogazion"+(listPA.size()>1?"i":"e"));
 						return false;
 					}
@@ -1778,6 +1814,13 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 			String principal = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
 
+			String tokenPolicy = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY);
+			String tokenClientId = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
+			boolean tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN.equals(tipoauth);
+			if(tokenWithHttpsEnabledByConfigSA) {
+				tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL;
+			}
+			
 			// Se sono presenti credenziali, controllo che non siano gia'
 			// utilizzate da altri soggetti
 			if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {
@@ -2051,6 +2094,78 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					return false;
 				}
 			} 
+			//else per gestire la possibilita' con https 
+			if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN.equals(tipoauth) || tokenWithHttpsEnabledByConfigSA) {
+				
+				if(tokenPolicy==null || StringUtils.isEmpty(tokenPolicy)) {
+					this.pd.setMessage("TokenPolicy non indicata");
+				}
+				if(ControlStationCore.isAPIMode()) {
+					// Altrimenti la select list è valorizzata con quelli esistenti
+					GenericProperties gp = null;
+					try {
+						gp = this.confCore.getGenericProperties(tokenPolicy, org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, false);
+					}catch(DriverConfigurazioneNotFound notFound) {}
+					if(gp==null) {
+						this.pd.setMessage("TokenPolicy indicata '"+tokenPolicy+"' non esiste");
+						return false;
+					}
+				}
+				
+				// recupera lista servizi applicativi con stesse credenziali
+				List<ServizioApplicativo> saList = this.saCore.servizioApplicativoWithCredenzialiTokenList(tokenPolicy, tokenClientId);
+
+				String portaDominio = null;
+				if(this.core.isRegistroServiziLocale()){
+					Soggetto soggettoToCheck = tipoOperazione.equals(TipoOperazione.CHANGE) ? 
+							this.soggettiCore.getSoggettoRegistro(idProvOld) : this.soggettiCore.getSoggettoRegistro(newProv);
+							portaDominio = soggettoToCheck.getPortaDominio();
+				}
+
+				for (int i = 0; i < saList.size(); i++) {
+					ServizioApplicativo sa = saList.get(i);
+
+					//String tipoNomeSoggetto = null;
+
+					if(!this.core.isSinglePdD()){
+
+						// bugfix #66
+						// controllo se soggetto appartiene a nal diversi, in tal
+						// caso e' possibile
+						// avere stesse credenziali
+						// Raccolgo informazioni soggetto
+						Soggetto tmpSoggettoProprietarioSa = this.soggettiCore.getSoggettoRegistro(sa.getIdSoggetto());
+						//tipoNomeSoggetto = tmpSoggettoProprietarioSa.getTipo() + "/" + tmpSoggettoProprietarioSa.getNome();
+
+						// se appartengono a nal diversi allora va bene continuo
+						if (!portaDominio.equals(tmpSoggettoProprietarioSa.getPortaDominio()))
+							continue;
+					}
+					else{
+
+						//org.openspcoop2.core.config.Soggetto tmpSoggettoProprietarioSa = this.soggettiCore.getSoggetto(sa.getIdSoggetto());
+						//tipoNomeSoggetto = tmpSoggettoProprietarioSa.getTipo() + "/" + tmpSoggettoProprietarioSa.getNome();
+
+					}
+
+					if ((tipoOperazione.equals(TipoOperazione.CHANGE)) && (nome.equals(sa.getNome())) && (idProvOld == sa.getIdSoggetto())) {
+						continue;
+					}
+					if(saOld!=null && tipoOperazione.equals(TipoOperazione.CHANGE) && saOld.getId().longValue() == sa.getId().longValue()) {
+						continue;
+					}
+
+					// Messaggio di errore
+					String labelSoggetto = this.getLabelNomeSoggetto(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+					if(protocollo!=null && this.core.isProfiloModIPA(protocollo)) {
+						this.pd.setMessage("L'applicativo "+sa.getNome()+" (soggetto: "+labelSoggetto+") possiede già l'identificativo client indicato");
+					}
+					else {
+						this.pd.setMessage("L'applicativo "+sa.getNome()+" (soggetto: "+labelSoggetto+") possiede già le credenziali indicate");
+					}
+					return false;
+				}
+			} 
 
 			// erogatore
 			boolean validaEndPoint = this.isModalitaStandard() && !TipologiaErogazione.DISABILITATO.equals(ruoloErogatore);
@@ -2254,11 +2369,16 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 			
 			String filterTipoCredenziali = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_TIPO_CREDENZIALI);
-			this.addFilterTipoCredenziali(filterTipoCredenziali,true);
+			this.addFilterTipoCredenziali(filterTipoCredenziali,true,true);
+			
+			if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN.equals(filterTipoCredenziali)) {
+				String filterCredenzialeTokenPolicy = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CREDENZIALE_TOKEN_POLICY);
+				this.addFilterCredenzialeTokenPolicy(filterCredenzialeTokenPolicy, false);
+			}
 			
 			String filterCredenziale = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_CREDENZIALE);
 			this.addFilterCredenziale(filterTipoCredenziali, filterCredenziale);
-			
+					
 			String filterRuolo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO);
 			addFilterRuolo(filterRuolo, false);
 			
@@ -2347,12 +2467,24 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 							// filtro sicurezza messaggio
 							String sicurezzaMessaggio = this.addFilterModISicurezzaMessaggioSA(ricerca, idLista, true);
 							
-							if(sicurezzaMessaggio==null || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI.equals(sicurezzaMessaggio) ||
+							if(sicurezzaMessaggio!=null && !CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI.equals(sicurezzaMessaggio) &&
 									StatoFunzionalita.ABILITATO.getValue().equals(sicurezzaMessaggio)) {
 							
 								// filtro keystore
 								this.addFilterModIKeystorePath(ricerca, idLista);
 								this.addFilterModIKeystoreSubject(ricerca, idLista);
+								
+							}
+							
+							// filtro sicurezza token
+							String sicurezzaToken = this.addFilterModISicurezzaTokenSA(ricerca, idLista, true);
+							
+							if(sicurezzaToken!=null && !CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI.equals(sicurezzaToken) &&
+									StatoFunzionalita.ABILITATO.getValue().equals(sicurezzaToken)) {
+							
+								// filtro token
+								this.addFilterModITokenPolicy(ricerca, idLista, false);
+								this.addFilterModITokenClientId(ricerca, idLista);
 								
 							}
 																

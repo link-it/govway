@@ -55,7 +55,12 @@ effettuare la verifica all'interno di una XACML-Policy, sono i seguenti:
    org:govway:subject:token:issuer                               Issuer del token                                                                                                           
    org:govway:subject:token:subject                              Subject del token
    org:govway:subject:token:username                             Username dell'utente cui è associato il token
-   org:govway:subject:token:clientId                             Identificativo del client che ha negoziato il token                                                                        
+   org:govway:subject:token:clientId                             Identificativo del client che ha negoziato il token
+   org:govway:subject:token:client                               Identificativo dell'applicativo client registrato su GovWay e identificato tramite il clientId presente nel token (nel seguito applicativo token) 
+   org:govway:subject:token:client:config:<nome>                 Proprietà configurate nell'applicativo token
+   org:govway:subject:token:client:organization                  Identificativo del soggetto proprietario dell'applicativo token
+   org:govway:subject:token:client:organization:config:<nome>    Proprietà configurate nel soggetto proprietario dell'applicativo token
+   org:govway:subject:token:client:role                          Elenco dei ruoli che possiede l'applicativo token
    org:govway:subject:token:userInfo:fullName                    Nome completo dell'utente cui è associato il token                                                                         
    org:govway:subject:token:userInfo:firstName                   Nome dell'utente cui è associato il token                                                                                  
    org:govway:subject:token:userInfo:middleName                  Secondo nome (o nomi aggiuntivi) dell'utente cui è associato il token                                                      

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
@@ -60,6 +61,7 @@ import org.openspcoop2.core.config.rs.server.model.ApplicativoItem;
 import org.openspcoop2.core.config.rs.server.model.ApplicativoServer;
 import org.openspcoop2.core.config.rs.server.model.ApplicativoServerItem;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationApiKey;
+import org.openspcoop2.core.config.rs.server.model.AuthenticationHttps;
 import org.openspcoop2.core.config.rs.server.model.BaseCredenziali;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import org.openspcoop2.core.config.rs.server.model.OneOfBaseCredenzialiCredenziali;
@@ -108,6 +110,14 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public class ApplicativiApiHelper {
 	
+	public static void validateCredentials(OneOfBaseCredenzialiCredenziali creds, boolean dominioInterno, boolean profiloModi) throws Exception {
+		if(creds!=null && creds instanceof AuthenticationHttps) {
+			AuthenticationHttps https = (AuthenticationHttps) creds;
+			if(https.getToken()!=null && (dominioInterno || !profiloModi)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è possibile definire anche una configurazione 'token' alle credenziali di tipo '"+creds.getModalitaAccesso()+"' se l'applicativo non è di profilo ModI e di dominio esterno");
+			}
+		}
+	}
 
 	public static void overrideSAParameters(HttpRequestWrapper wrap, ConsoleHelper consoleHelper, ServizioApplicativo sa, Applicativo applicativo,
 			ApiKeyInfo apiKeyInfo, boolean updateKey) {
@@ -123,6 +133,11 @@ public class ApplicativiApiHelper {
 		wrap.overrideParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_FAULT, ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT_SOAP);
 		
 		wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE, credenziali.getTipo().toString());
+		if(CredenzialeTipo.SSL.equals(credenziali.getTipo())){
+			if(credenziali.getTokenPolicy()!=null && StringUtils.isNotEmpty(credenziali.getTokenPolicy())){
+				wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE,  ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN);
+			}
+		}
 		
 		if(credenzialiApiRest!=null) {
 			
@@ -595,7 +610,8 @@ public class ApplicativiApiHelper {
 		if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC) ||
 				tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL) ||
 				tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY) ||
-				tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
+				tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL) ||
+				tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN)) {
 			creds = Helper.translateCredenziali(c, create);
 		}
 		else if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)) {
@@ -874,13 +890,28 @@ public class ApplicativiApiHelper {
 	}
 
 	public static void validateProperties(ApplicativiEnv env, ProtocolProperties protocolProperties,
-			ServizioApplicativo sa) throws Exception {
+			ServizioApplicativo sa,
+			ConsoleOperationType operationType) throws Exception {
 		if(protocolProperties!=null) {
 			try{
 
 				ConsoleConfiguration consoleConf = getConsoleConfiguration(sa, env);
 
-				env.saHelper.validaProtocolProperties(consoleConf, ConsoleOperationType.ADD, protocolProperties);
+				env.saHelper.validaProtocolProperties(consoleConf, operationType, protocolProperties);
+				
+				IDServizioApplicativo idSA = new IDServizioApplicativo();
+				idSA.setIdSoggettoProprietario(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+				idSA.setNome(sa.getNome());
+				
+				IConsoleDynamicConfiguration consoleDynamicConfiguration = env.protocolFactory.createDynamicConfigurationConsole();
+				IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory); 
+				IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(env.protocolFactory);
+				consoleDynamicConfiguration.updateDynamicConfigServizioApplicativo(consoleConf, operationType, env.saHelper, protocolProperties, 
+						registryReader, configRegistryReader, idSA);
+				
+				consoleDynamicConfiguration.validateDynamicConfigServizioApplicativo(consoleConf, operationType, env.saHelper, protocolProperties, 
+						registryReader, configRegistryReader, idSA);  
+				
 			}catch(ProtocolException e){
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e.getMessage());
 			}

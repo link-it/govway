@@ -61,7 +61,7 @@ public class CredenzialeSearchTrasporto extends AbstractSearchCredenziale {
 	}
 	
 	@Override
-	protected String getExactValueDatabase(String credentialParam) throws UtilsException {
+	protected String getExactValueDatabase(String credentialParam, boolean ricercaEsatta) throws UtilsException {
 		throw new UtilsException("Not Implemented"); // il metodo non viene usato poich' createExpression è ridefinito per questo tipo di classe
 	}
 	

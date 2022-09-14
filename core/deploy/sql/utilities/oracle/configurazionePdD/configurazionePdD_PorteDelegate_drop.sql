@@ -1,4 +1,5 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX INDEX_PD_TOKEN_SA;
 -- DROP INDEX idx_pd_trasf_hdr_resp_1;
 -- DROP INDEX idx_pd_trasf_url_1;
 -- DROP INDEX idx_pd_trasf_hdr_1;
@@ -18,6 +19,8 @@
 -- DROP INDEX INDEX_PD_SA;
 -- DROP INDEX index_porte_delegate_2;
 -- DROP INDEX index_porte_delegate_1;
+DROP TRIGGER trg_pd_token_ruoli;
+DROP TRIGGER trg_pd_token_sa;
 DROP TRIGGER trg_pd_aa;
 DROP TRIGGER trg_pd_handlers;
 DROP TRIGGER trg_pd_transform_risp_hdr;
@@ -43,6 +46,8 @@ DROP TRIGGER trg_pd_authz_properties;
 DROP TRIGGER trg_pd_auth_properties;
 DROP TRIGGER trg_porte_delegate_sa;
 DROP TRIGGER trg_porte_delegate;
+DROP TABLE pd_token_ruoli;
+DROP TABLE pd_token_sa;
 DROP TABLE pd_aa;
 DROP TABLE pd_handlers;
 DROP TABLE pd_transform_risp_hdr;
@@ -68,6 +73,8 @@ DROP TABLE pd_authz_properties;
 DROP TABLE pd_auth_properties;
 DROP TABLE porte_delegate_sa;
 DROP TABLE porte_delegate;
+DROP SEQUENCE seq_pd_token_ruoli;
+DROP SEQUENCE seq_pd_token_sa;
 DROP SEQUENCE seq_pd_aa;
 DROP SEQUENCE seq_pd_handlers;
 DROP SEQUENCE seq_pd_transform_risp_hdr;

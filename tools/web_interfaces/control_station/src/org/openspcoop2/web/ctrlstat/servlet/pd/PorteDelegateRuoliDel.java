@@ -76,6 +76,10 @@ public final class PorteDelegateRuoliDel extends Action {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
 			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(id);
+			
+			String tokenList = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TOKEN_AUTHORIZATION);
+			boolean isToken = tokenList!=null && !"".equals(tokenList) && Boolean.valueOf(tokenList);
+			
 			String objToRemove = porteDelegateHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			// Elimino il servizioApplicativo della porta delegata dal db
@@ -95,10 +99,22 @@ public final class PorteDelegateRuoliDel extends Action {
 
 				String ruolo = idsToRemove.get(i);
 				
-				for (int j = 0; j < pde.getRuoli().sizeRuoloList(); j++) {
-					if(pde.getRuoli().getRuolo(j).getNome().equals(ruolo)){
-						pde.getRuoli().removeRuolo(j);
-						break;
+				if(isToken) {
+					if(pde.getAutorizzazioneToken()!=null && pde.getAutorizzazioneToken().getRuoli()!=null) {
+						for (int j = 0; j < pde.getAutorizzazioneToken().getRuoli().sizeRuoloList(); j++) {
+							if(pde.getAutorizzazioneToken().getRuoli().getRuolo(j).getNome().equals(ruolo)){
+								pde.getAutorizzazioneToken().getRuoli().removeRuolo(j);
+								break;
+							}
+						}
+					}
+				}
+				else {
+					for (int j = 0; j < pde.getRuoli().sizeRuoloList(); j++) {
+						if(pde.getRuoli().getRuolo(j).getNome().equals(ruolo)){
+							pde.getRuoli().removeRuolo(j);
+							break;
+						}
 					}
 				}
 			}
@@ -114,10 +130,16 @@ public final class PorteDelegateRuoliDel extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
 			int idLista = Liste.PORTE_DELEGATE_RUOLI;
+			if(isToken) {
+				idLista = Liste.PORTE_DELEGATE_TOKEN_RUOLI;
+			}
 
 			ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
 			
-			List<String> lista = porteDelegateCore.portaDelegataRuoliList(Integer.parseInt(id), ricerca);
+			List<String> lista = isToken ?
+					porteDelegateCore.portaDelegataRuoliTokenList(Integer.parseInt(id), ricerca)
+					:
+					porteDelegateCore.portaDelegataRuoliList(Integer.parseInt(id), ricerca);
 
 			porteDelegateHelper.preparePorteDelegateRuoliList(pde.getNome(), ricerca, lista);
 

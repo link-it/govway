@@ -121,11 +121,28 @@ public class Costanti {
 	public static final String EROGATORE_LABEL_KEY = "commons.erogatore.label";
 	public static final String FRUITORE_LABEL_KEY = "commons.fruitore.label";
 	public static final String TOKEN_INFO_KEY = "commons.tokenInfo.label";
+	public static final String TOKEN_CLIENT_ID_KEY = "commons.tokenInfo.clientID.label";
 	public static final String IDENTIFICATIVO_AUTENTICATO_KEY = "commons.identificativoAutenticato.label";
 	public static final String INDIRIZZO_IP_KEY = "commons.indirizzoIP.label";
+	public static final String IDENTIFICAZIONE_TOKEN_KEY = "commons.identificazione.token.label";
+	public static final String IDENTIFICAZIONE_TRASPORTO_KEY = "commons.identificazione.trasporto.label";
 	
 	public static final String SEARCH_APPLICATIVO_DEFAULT_LABEL_KEY = "commons.search.applicativo.defaultLabel";
 	public static final String SEARCH_APPLICATIVO_DEFAULT_LABEL_NO_SOGGETTO_LOCALE_KEY = "commons.search.applicativo.defaultLabelNoSoggettoLocal";
+	public static final String SEARCH_APPLICATIVO_DEFAULT_LABEL_NO_IDENTIFICAZIONE_NO_SOGGETTO_LOCALE_KEY = "commons.search.applicativo.defaultLabelNoIdentificazioneNoSoggettoLocal";
 	public static final String SEARCH_APPLICATIVO_DEFAULT_LABEL_NO_SOGGETTO_FRUITORE_KEY = "commons.search.applicativo.defaultLabelNoSoggettoFruitore";
+	public static final String SEARCH_APPLICATIVO_DEFAULT_LABEL_NO_IDENTIFICAZIONE_NO_SOGGETTO_FRUITORE_KEY = "commons.search.applicativo.defaultLabelNoIdentificazioneNoSoggettoFruitore";
+	public static final String SEARCH_APPLICATIVO_DEFAULT_LABEL_NO_IDENTIFICAZIONE_KEY = "commons.search.applicativo.defaultLabelNoIdentificazione";
+	
+	public static final String SEARCH_MISSING_PARAMETERS_SOGGETTO_LABEL_KEY = "commons.search.missing_parameters.soggetto";
+	public static final String SEARCH_MISSING_PARAMETERS_IDENTIFICAZIONE_LABEL_KEY = "commons.search.missing_parameters.identificazione";
+	public static final String SEARCH_MISSING_PARAMETERS_APPLICATIVO_LABEL_KEY = "commons.search.missing_parameters.applicativo";
+	public static final String SEARCH_MISSING_PARAMETERS_AUTENTICAZIONE_LABEL_KEY = "commons.search.missing_parameters.autenticazione";
+	public static final String SEARCH_MISSING_PARAMETERS_ID_LABEL_KEY = "commons.search.missing_parameters.id";
+	public static final String SEARCH_MISSING_PARAMETERS_SSL_SUBJECT_LABEL_KEY = "commons.search.missing_parameters.ssl.subject";
+	public static final String SEARCH_MISSING_PARAMETERS_INDIRIZZO_IP_LABEL_KEY = "commons.search.missing_parameters.indirizzoIP";
+	public static final String SEARCH_MISSING_PARAMETERS_CLAIM_LABEL_KEY = "commons.search.missing_parameters.claim";
+	public static final String SEARCH_MISSING_PARAMETERS_VALORE_LABEL_KEY = "commons.search.missing_parameters.valore";
+	public static final String SEARCH_MISSING_PARAMETERS_TIPO_LABEL_KEY = "commons.search.missing_parameters.tipo";
 	
 }

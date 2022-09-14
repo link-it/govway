@@ -99,7 +99,7 @@ public class FileTraceManager {
 		
 		CredenzialiMittente credenzialiMittente = transaction.getCredenzialiMittente();
 		
-		InfoConfigurazione infoConfigurazione = new InfoConfigurazione(transazioneDTO, context);
+		InfoConfigurazione infoConfigurazione = new InfoConfigurazione(transazioneDTO, context, credenzialiMittente);
 		
 		boolean base64 = true;
 		

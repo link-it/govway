@@ -360,6 +360,16 @@
 				</link:prop>
 				
 				<a4j:outputPanel layout="block" id="tipoRiconoscimentoPnl" rendered="#{not empty sf_bean.riconoscimento}">
+
+					<a4j:outputPanel layout="block" id="idIdentificazioneComboCtr" rendered="#{sf_bean.riconoscimento == 'applicativo'}">
+						<link:prop label="#{msg['transazioni.search.identificazione']}" required="true">
+							<rich:comboBox id="identificazioneCombo" value="#{sf_bean.identificazione}" defaultLabel="Selezione #{msg['transazioni.search.identificazione']}" 
+									converter="selectItemConverter"	directInputSuggestions="true" width="416" enableManualInput="false">
+								<f:selectItems value="#{sf_bean.listaIdentificazioni}"/>
+								<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.identificazioneSelected}" reRender="searchPnl,soggettoToolTip,saToolTip" limitToList="true"/>
+							</rich:comboBox>
+						</link:prop>				
+					</a4j:outputPanel>
 							
 					<a4j:outputPanel layout="block" id="sogMitComboCtr" rendered="#{sf_bean.riconoscimento == 'soggetto' or sf_bean.riconoscimento == 'applicativo' or sf_bean.riconoscimento == 'tokenInfo'}">	
 						<c:if test="#{not sf_bean.visualizzaFiltroSoggettiSelectList}">
@@ -383,7 +393,7 @@
 									</a4j:support>
 								</rich:suggestionbox>
 								<h:inputHidden id="sogMitComboHidden" value="#{sf_nomeMittente}" />
-								<rich:toolTip rendered="#{not empty sf_nomeMittente}" direction="top-right" for="sogMitCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.tipoNomeMittenteTooltip}"/>
+								<rich:toolTip id="soggettoToolTip" rendered="#{not empty sf_nomeMittente}" direction="top-right" for="sogMitCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.tipoNomeMittenteTooltip}"/>
 							</link:prop>
 						</c:if>
 						<c:if test="#{sf_bean.visualizzaFiltroSoggettiSelectList}">
@@ -397,13 +407,13 @@
 									<f:selectItems value="#{sf_soggetti}"  />
 									<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" limitToList="true"/>
 								</rich:comboBox>
-								<rich:toolTip rendered="#{not empty sf_nomeMittente}" direction="top-right" for="sogMitCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.tipoNomeMittenteTooltip}"/>
+								<rich:toolTip id="soggettoToolTip" rendered="#{not empty sf_nomeMittente}" direction="top-right" for="sogMitCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.tipoNomeMittenteTooltip}"/>
 							</link:prop>
 						</c:if>
 					</a4j:outputPanel>
 									
 					<a4j:outputPanel layout="block" id="saComboCtr" rendered="#{sf_bean.riconoscimento == 'applicativo'}">
-						<link:prop label="Applicativo" required="true">
+						<link:prop label="#{msg['transazioni.search.applicativo']}" required="true">
 							<rich:comboBox id="saCombo" value="#{sf_servizioApplicativo}"
 										defaultLabel="#{sf_bean.defaultLabelServizioApplicativo}" 
 										directInputSuggestions="true" listWidth="#{sf_mbean.serviziApplicativiSelectItemsWidth}"
@@ -417,18 +427,17 @@
 					</a4j:outputPanel>
 
 					<a4j:outputPanel layout="block" id="idAutenticatoComboCtr" rendered="#{sf_bean.riconoscimento == 'identificativoAutenticato'}">
-						<link:prop label="Autenticazione" required="true">
-							<rich:comboBox id="authCombo" value="#{sf_bean.autenticazione}" defaultLabel="Selezione Autenticazione" 
+						<link:prop label="#{msg['transazioni.search.autenticazione']}" required="true">
+							<rich:comboBox id="authCombo" value="#{sf_bean.autenticazione}" defaultLabel="Selezione #{msg['transazioni.search.autenticazione']}" 
 									converter="selectItemConverter"	directInputSuggestions="true" width="416" enableManualInput="false">
 								<f:selectItems value="#{sf_bean.listaAutenticazioni}"/>
 							</rich:comboBox>
-						</link:prop>
-					
+						</link:prop>				
 					</a4j:outputPanel>
 					
 					<a4j:outputPanel layout="block" id="tokenInfoComboCtr" rendered="#{sf_bean.riconoscimento == 'tokenInfo'}">
-						<link:prop label="Claim" required="true">
-							<rich:comboBox id="claimCombo" value="#{sf_bean.tokenClaim}" defaultLabel="Selezione Claim" 
+						<link:prop label="#{msg['transazioni.search.claim']}" required="true">
+							<rich:comboBox id="claimCombo" value="#{sf_bean.tokenClaim}" defaultLabel="Selezione #{msg['transazioni.search.claim']}" 
 									converter="selectItemConverter"	directInputSuggestions="true" width="416" enableManualInput="false">
 								<f:selectItem itemValue="--" itemLabel="--"/>
 								<f:selectItem itemValue="token_issuer" itemLabel="Issuer"/>
@@ -651,7 +660,7 @@
 				</link:prop>
 				
 				<div class="subtitle">
-					<h:outputText id="idDatiMittenteRicercaLibera" value="#{msg['transazioni.search.sezioneFiltroDatiMittente.label']}" styleClass="subtitle"/>
+					<h:outputText id="idDatiMittenteRicercaLibera" value="#{msg['transazioni.search.sezioneFiltroRicercaLibera.trasporto.label']}" styleClass="subtitle"/>
 				</div>
 				
 				<link:prop label="#{msg['commons.applicativo.label']}" rendered="">
@@ -670,6 +679,10 @@
 					<h:outputText id="idDatiTokenRicercaLibera" value="#{msg['transazioni.search.sezioneFiltroRicercaLibera.token.label']}" styleClass="subtitle"/>
 				</div>
 				
+				<link:prop label="#{msg['commons.applicativo.label']}" rendered="">
+					<h:inputText id="ricercaLiberaApplicativoToken" value="#{sf_bean.ricercaLiberaApplicativoToken}"  styleClass="inputLinkLong"/>
+				</link:prop>
+				
 				<link:prop label="#{msg['transazioni.search.sezioneFiltroRicercaLibera.tokenInfo.issuer.label']}" rendered="">
 					<h:inputText id="ricercaLiberaTokenIssuer" value="#{sf_bean.ricercaLiberaTokenIssuer}"  styleClass="inputLinkLong"/>
 				</link:prop>
@@ -677,7 +690,7 @@
 				<link:prop label="#{msg['transazioni.search.sezioneFiltroRicercaLibera.tokenInfo.subject.label']}" rendered="">
 					<h:inputText id="ricercaLiberaTokenSubject" value="#{sf_bean.ricercaLiberaTokenSubject}"  styleClass="inputLinkLong"/>
 				</link:prop>
-				
+								
 				<link:prop label="#{msg['transazioni.search.sezioneFiltroRicercaLibera.tokenInfo.clientID.label']}" rendered="">
 					<h:inputText id="ricercaLiberaTokenClientID" value="#{sf_bean.ricercaLiberaTokenClientID}"  styleClass="inputLinkLong"/>
 				</link:prop>

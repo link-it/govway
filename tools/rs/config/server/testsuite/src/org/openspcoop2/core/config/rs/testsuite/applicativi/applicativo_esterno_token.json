@@ -1,0 +1,12 @@
+{
+ 	"nome": "TestSuiteApplicativoHttpsCert",
+   	"credenziali": {
+		"modalita_accesso": "token",
+   		"identificativo": "clientIdTestSuiteModIEsterno",
+		"token_policy": "Google"
+	},
+	"modi": {
+		"dominio": "esterno",
+		"reply_audience": "me"
+	}
+}

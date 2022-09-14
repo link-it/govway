@@ -17,6 +17,8 @@ Background:
 * eval randomize(api_petstore_rest_contemporaneita, ["nome"])
 * eval api_petstore_rest_contemporaneita.referente = soggettoDefault
 
+* def header_firmare_default = read('api_modi_header_firmare_default.json')
+
 * def getExpectedSOAP =
 """
 function(modi) {
@@ -34,12 +36,13 @@ return expected;
 
 * def getExpectedRest =
 """
-function(modi) {
+function(modi, httpHeaderDefault) {
 var expected = modi;
 expected.risposta.sicurezza_messaggio.riferimento_x509 = expected.risposta.sicurezza_messaggio.riferimento_x509 != null ? expected.risposta.sicurezza_messaggio.riferimento_x509 : 'richiesta'
 expected.risposta.sicurezza_messaggio.time_to_live = expected.risposta.sicurezza_messaggio.time_to_live != null ? expected.risposta.sicurezza_messaggio.time_to_live: 300
 expected.risposta.sicurezza_messaggio.algoritmo = expected.risposta.sicurezza_messaggio.algoritmo != null ? expected.risposta.sicurezza_messaggio.algoritmo: 'RS256'
 expected.risposta.sicurezza_messaggio.certificate_chain = expected.risposta.sicurezza_messaggio.certificate_chain != null ? expected.risposta.sicurezza_messaggio.certificate_chain: false
+expected.risposta.sicurezza_messaggio.header_http_firmare = expected.risposta.sicurezza_messaggio.header_http_firmare !=null ? expected.risposta.sicurezza_messaggio.header_http_firmare : httpHeaderDefault.header_http_firmare
 
 return expected;
 } 
@@ -110,7 +113,7 @@ Scenario Outline: Erogazioni Aggiornamento Petstore REST <nome>
     * call create ( { resourcePath: 'erogazioni', body: erogazione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
     * call put ( { resourcePath: 'erogazioni/'+petstore_key+'/modi', body: {modi: erogazione_petstore_update.modi},  query_params: query_param_profilo_modi } )
 		* call get ( { resourcePath: 'erogazioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
-		* def expected = getExpectedRest(erogazione_petstore_update.modi)
+		* def expected = getExpectedRest(erogazione_petstore_update.modi, header_firmare_default)
     * match response.modi == expected
     * call delete ({ resourcePath: 'erogazioni/' + petstore_key, query_params: query_param_profilo_modi } )
     * call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )
@@ -155,7 +158,7 @@ Scenario Outline: Erogazioni Aggiornamento Petstore REST <nome> con configurazio
     * call create ( { resourcePath: 'erogazioni', body: erogazione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
     * call put ( { resourcePath: 'erogazioni/'+petstore_key+'/modi', body: {modi: erogazione_petstore_update.modi},  query_params: query_param_profilo_modi } )
 		* call get ( { resourcePath: 'erogazioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
-		* def expected = getExpectedRest(erogazione_petstore_update.modi)
+		* def expected = getExpectedRest(erogazione_petstore_update.modi, header_firmare_default)
     * match response.modi == expected
     * call delete ({ resourcePath: 'erogazioni/' + petstore_key, query_params: query_param_profilo_modi } )
     * call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )

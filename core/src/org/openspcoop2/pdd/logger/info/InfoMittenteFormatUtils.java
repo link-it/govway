@@ -43,14 +43,47 @@ public class InfoMittenteFormatUtils {
 
 	public static String getRichiedente(DatiMittente infoDatiMittente) {
 		
+		/**
+		 * Logica:
+		 * - prevale l'utente descritto in forma umana (username);
+		 * - altrimenti prevale un eventuale applicativo identificato (registrato su GovWay) dando precedenza ad un applicativo token rispetto ad un applicativo di trasporto;
+		 * - altrimenti prevalgono le informazioni di un eventuale token presente rispetto al trasporto; se si tratta di client credentials (subject non presente o client_id=subject) prevale l'informazione sul client-id altrimenti quella sul subject.
+		 */
+		
 		// 1) Username del Token
 		String sTokenUsername = infoDatiMittente.getTokenUsername();
 		if(StringUtils.isNotEmpty(sTokenUsername)) {
 			return sTokenUsername;
 		}
 		
-		// 2) Subject/Issuer del Token
+		// 2) Applicativo Token identificato tramite ClientID
+		String sTokenClient = infoDatiMittente.getTokenClient();
+		if(StringUtils.isNotEmpty(sTokenClient)) {
+			return sTokenClient;
+		}
+		
+		// 3) Applicativo Fruitore
+		String sApplicativoFruitore = infoDatiMittente.getServizioApplicativoFruitore();
+		if(StringUtils.isNotEmpty(sApplicativoFruitore)) {
+			return sApplicativoFruitore;
+		}
+			
+		// 4) ClientId/Subject/Issuer del Token
+		String sTokenClientId = infoDatiMittente.getTokenClientId();
 		String sTokenSubject = infoDatiMittente.getTokenSubject();
+		boolean clientCredentialsFlow = false;
+		if(StringUtils.isNotEmpty(sTokenClientId)) {
+			clientCredentialsFlow = (sTokenSubject==null) || (StringUtils.isEmpty(sTokenSubject)) || (sTokenSubject.equals(sTokenClientId));
+		}
+		
+		// 4a) Client ID, per il caso di ClientCredential
+		if(clientCredentialsFlow) {
+			if(StringUtils.isNotEmpty(sTokenClientId)) {
+				return sTokenClientId;
+			}
+		}
+		
+		// 4b) Subject/Issuer del Token
 		if(StringUtils.isNotEmpty(sTokenSubject)) {
 			
 			String sTokenIssuer = infoDatiMittente.getTokenIssuer();
@@ -62,13 +95,14 @@ public class InfoMittenteFormatUtils {
 			}
 		}
 		
-		// 3) Applicativo Fruitore
-		String sApplicativoFruitore = infoDatiMittente.getServizioApplicativoFruitore();
-		if(StringUtils.isNotEmpty(sApplicativoFruitore)) {
-			return sApplicativoFruitore;
+		// 4c) Client ID, per il caso diverso da ClientCredential
+		if(!clientCredentialsFlow) {
+			if(StringUtils.isNotEmpty(sTokenClientId)) {
+				return sTokenClientId;
+			}
 		}
 		
-		// 4) Credenziali dell'autenticazione di trasporto
+		// 5) Credenziali dell'autenticazione di trasporto
 		// volutamente uso l'id autenticato.
 		// se l'api è pubblica non deve essere visualizzata questa informazione!
 		String sTrasportoMittente = infoDatiMittente.getTrasportoMittente();
@@ -108,13 +142,7 @@ public class InfoMittenteFormatUtils {
 				return sTrasportoMittente;
 			}
 		}
-		
-		// 5) Client ID, per il caso di ClientCredential
-		String sTokenClientId = infoDatiMittente.getTokenClientId();
-		if(StringUtils.isNotEmpty(sTokenClientId)) {
-			return sTokenClientId;
-		}
-		
+						
 		return null;
 		
 	}
@@ -143,45 +171,73 @@ public class InfoMittenteFormatUtils {
 			bf.append(richiedente);	
 		}
 		
-		
-		
-		String sFruitore = infoDatiMittente.getSoggettoFruitore();
-		if(StringUtils.isNotEmpty(sFruitore)) {
-
-			boolean addFruitore = true;
-						
-			if(org.openspcoop2.core.transazioni.constants.PddRuolo.APPLICATIVA.equals(infoDatiMittente.getPddRuolo())) {
+		String sTokenClient = infoDatiMittente.getTokenClient();
+		if(StringUtils.isNotEmpty(sTokenClient)) {
+			
+			// dominio di un applicativo client
+			if(infoDatiMittente.getTokenClientSoggettoFruitore()!=null &&
+					infoDatiMittente.getTokenClientTipoSoggettoFruitore()!=null && infoDatiMittente.getTokenClientNomeSoggettoFruitore()!=null) {
 				
-				// L'AppId di un soggetto è già il soggetto. L'informazione sarebbe ridondante.
-				String sTrasportoMittente = infoDatiMittente.getTrasportoMittente();
-				if(richiedente!=null && sTrasportoMittente!=null && richiedente.equals(sTrasportoMittente)) { // se e' stato selezionato l'appId
-					String sTipoTrasportoMittente = infoDatiMittente.getTipoTrasportoMittente();
-					if(sTipoTrasportoMittente!=null && StringUtils.isNotEmpty(sTipoTrasportoMittente) && 
-							sTipoTrasportoMittente.endsWith("_"+TipoAutenticazione.APIKEY.getValue())) {
-						// autenticazione api-key
-						if(!sTrasportoMittente.contains(ApiKeyUtilities.APPLICATIVO_SOGGETTO_SEPARATOR)) {
-							// appId di un soggetto
-							bf = new StringBuilder(); // aggiunto solo il soggetto
-						}		
+				boolean addFruitore = true;
+				
+				IDSoggetto idSoggettoFruitore = new IDSoggetto(infoDatiMittente.getTokenClientTipoSoggettoFruitore(), infoDatiMittente.getTokenClientNomeSoggettoFruitore());
+				
+				if(org.openspcoop2.core.transazioni.constants.PddRuolo.DELEGATA.equals(infoDatiMittente.getPddRuolo())) {
+					addFruitore = (idSoggettoFruitore==null) || (infoDatiMittente.getSoggettoOperativo()==null) || (!infoDatiMittente.getSoggettoOperativo().equals(idSoggettoFruitore.toString()));
+				}
+				
+				if(addFruitore) {
+					if(bf.length()>0) {
+						bf.append(NamingUtils.LABEL_DOMINIO);
 					}
+					
+					bf.append(infoDatiMittente.getTokenClientSoggettoFruitore());	
 				}
-				
-			}
-			else if(org.openspcoop2.core.transazioni.constants.PddRuolo.DELEGATA.equals(infoDatiMittente.getPddRuolo())) {
-				
-				if(infoDatiMittente.getSoggettoOperativo()!=null && StringUtils.isNotEmpty(infoDatiMittente.getTipoSoggettoFruitore()) && StringUtils.isNotEmpty(infoDatiMittente.getNomeSoggettoFruitore())) {
-					IDSoggetto idSoggettoFruitore = new IDSoggetto(infoDatiMittente.getTipoSoggettoFruitore(), infoDatiMittente.getNomeSoggettoFruitore());
-					addFruitore = !infoDatiMittente.getSoggettoOperativo().equals(idSoggettoFruitore.toString());
-				}
-				
 			}
 			
-			if(addFruitore) {
-				if(bf.length()>0) {
-					bf.append(NamingUtils.LABEL_DOMINIO);
+		}
+		else {
+			
+			// dominio del soggetto fruitore
+			
+			String sFruitore = infoDatiMittente.getSoggettoFruitore();
+			if(StringUtils.isNotEmpty(sFruitore)) {
+	
+				boolean addFruitore = true;
+							
+				if(org.openspcoop2.core.transazioni.constants.PddRuolo.APPLICATIVA.equals(infoDatiMittente.getPddRuolo())) {
+					
+					// L'AppId di un soggetto è già il soggetto. L'informazione sarebbe ridondante.
+					String sTrasportoMittente = infoDatiMittente.getTrasportoMittente();
+					if(richiedente!=null && sTrasportoMittente!=null && richiedente.equals(sTrasportoMittente)) { // se e' stato selezionato l'appId
+						String sTipoTrasportoMittente = infoDatiMittente.getTipoTrasportoMittente();
+						if(sTipoTrasportoMittente!=null && StringUtils.isNotEmpty(sTipoTrasportoMittente) && 
+								sTipoTrasportoMittente.endsWith("_"+TipoAutenticazione.APIKEY.getValue())) {
+							// autenticazione api-key
+							if(!sTrasportoMittente.contains(ApiKeyUtilities.APPLICATIVO_SOGGETTO_SEPARATOR)) {
+								// appId di un soggetto
+								bf = new StringBuilder(); // aggiunto solo il soggetto
+							}		
+						}
+					}
+					
+				}
+				else if(org.openspcoop2.core.transazioni.constants.PddRuolo.DELEGATA.equals(infoDatiMittente.getPddRuolo())) {
+					
+					if(infoDatiMittente.getSoggettoOperativo()!=null && StringUtils.isNotEmpty(infoDatiMittente.getTipoSoggettoFruitore()) && StringUtils.isNotEmpty(infoDatiMittente.getNomeSoggettoFruitore())) {
+						IDSoggetto idSoggettoFruitore = new IDSoggetto(infoDatiMittente.getTipoSoggettoFruitore(), infoDatiMittente.getNomeSoggettoFruitore());
+						addFruitore = !infoDatiMittente.getSoggettoOperativo().equals(idSoggettoFruitore.toString());
+					}
+					
 				}
 				
-				bf.append(sFruitore);	
+				if(addFruitore) {
+					if(bf.length()>0) {
+						bf.append(NamingUtils.LABEL_DOMINIO);
+					}
+					
+					bf.append(sFruitore);	
+				}
 			}
 		}
 		

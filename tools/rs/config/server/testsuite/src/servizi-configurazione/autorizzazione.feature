@@ -283,3 +283,82 @@ Scenario: Controllo Accessi Autorizzazione Scope
 
     # Rimuovo lo scope dal registro
     * call delete ({ resourcePath: 'scope/' +  scope_registro.nome })
+
+
+@AutorizzazioneRuoliToken
+Scenario: Controllo accessi autorizzazione ruoli via token
+
+    # Abilito la gestione dei tokens
+    * def gestione_token_body = read('classpath:bodies/gestione-token-petstore.json')
+
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'gestione-token'
+    And header Authorization = govwayConfAuth
+    And request gestione_token_body
+    And params query_params
+    When method put
+    Then status 204
+
+    # Abilito l'autorizzazione per token roles
+    * def options = { richiedente: false, ruoli: false, token_ruoli: true, scope: false, token: false }
+    * eval autorizzazione.autorizzazione.richiedente = false
+    * eval autorizzazione.autorizzazione.ruoli = false
+    * eval autorizzazione.autorizzazione.token_ruoli = true
+    * eval autorizzazione.autorizzazione.scope = false
+    * eval autorizzazione.autorizzazione.token = false
+
+    # Imposto l'autorizzazione in modo che supporti l'autorizzazione per ruoli via token
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione'
+    And header Authorization = govwayConfAuth
+    And request autorizzazione
+    And params query_params
+    When method put
+    Then status 204
+
+    * def ruolo_registro = read('classpath:bodies/ruolo.json')
+    * eval randomize(ruolo_registro, ["nome"] )
+    * def ruolo = ({ ruolo: ruolo_registro.nome })
+    
+    # Creo il ruolo nel registro
+    Given url configUrl
+    And path 'ruoli'
+    And header Authorization = govwayConfAuth
+    And request ruolo_registro
+    And params query_params
+    When method post
+    Then status 201
+
+    # Aggiungo il ruolo all'autorizzazione per token
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione', 'token', 'ruoli'
+    And header Authorization = govwayConfAuth
+    And request ruolo
+    And params query_params
+    When method post
+    Then status 201
+
+    # Recupero il ruolo appena aggiunto per mezzo della findall
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione', 'token', 'ruoli'
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    And match response.ruoli contains ([ruolo.ruolo])
+
+    # Rimuovo il ruolo dall'autorizzazione per token
+    Given url configUrl
+    And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione', 'token', 'ruoli', ruolo.ruolo
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method delete
+    Then status 204
+
+    # Rimuovo il ruolo dal registro
+    Given url configUrl
+    And path 'ruoli', ruolo_registro.nome
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method delete
+    Then status 204

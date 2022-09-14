@@ -30,9 +30,11 @@ import java.util.TimeZone;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.transazioni.constants.TipoAPI;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeTokenClient;
 import org.openspcoop2.pdd.core.token.InformazioniNegoziazioneToken;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
@@ -1374,7 +1376,115 @@ public class Info {
 		return getTokenClientId(null);
 	}
 	public java.lang.String getTokenClientId(String defaultValue) {
-		return correctValue(this.credenzialiMittente!=null && this.credenzialiMittente.getToken_clientId()!=null ? this.credenzialiMittente.getToken_clientId().getCredenziale() : null, defaultValue);
+		return correctValue(this.credenzialiMittente!=null && this.credenzialiMittente.getToken_clientId()!=null ? CredenzialeTokenClient.convertClientIdDBValueToOriginal(this.credenzialiMittente.getToken_clientId().getCredenziale()) : null, defaultValue);
+	}
+	
+	private IDServizioApplicativo tokenClientApplication;
+	private Boolean tokenClientApplication_read;
+	private void _initTokenClientApplication() {
+		try {
+			this.tokenClientApplication = this.credenzialiMittente!=null && this.credenzialiMittente.getToken_clientId()!=null ? CredenzialeTokenClient.convertApplicationDBValueToOriginal(this.credenzialiMittente.getToken_clientId().getCredenziale()) : null;
+		}catch(Throwable t) {
+			this.log.error("_initTokenClientApplication() failed: "+t.getMessage(),t);
+		}
+		this.tokenClientApplication_read=true;
+	}
+	private IDServizioApplicativo _getTokenClientApplication() {
+		if(this.tokenClientApplication_read==null) {
+			_initTokenClientApplication();
+		}
+		return this.tokenClientApplication;
+	}
+	
+	public java.lang.String getTokenClientApplication() {
+		return getTokenClientApplication(null);
+	}
+	public java.lang.String getTokenClientApplication(String defaultValue) {
+		IDServizioApplicativo idSA = _getTokenClientApplication();
+		return correctValue(idSA!=null ? idSA.getNome() : null, defaultValue);
+	}
+	
+	public java.lang.String getTokenClientApplicationProperty(String name) {
+		return getTokenClientApplicationProperty(name, null);
+	}
+	public java.lang.String getTokenClientApplicationProperty(String name, String defaultValue) {
+		return correctValue(this.infoConfigurazione.getTokenClientApplicationProperty(name),defaultValue);
+	}
+	public java.lang.String getTokenClientApplicationPropertiesKeys(){
+		return getTokenClientApplicationPropertiesKeys(null);
+	}
+	public java.lang.String getTokenClientApplicationPropertiesKeys(String defaultValue){
+		return getTokenClientApplicationPropertiesKeys(InfoConfigurazione.KEYS_SEPARATOR,defaultValue);
+	}
+	public java.lang.String getTokenClientApplicationPropertiesKeys(String separator, String defaultValue){
+		return correctValue(this.infoConfigurazione.getTokenClientApplicationPropertiesKeysAsString(separator),defaultValue);
+	}
+	public java.lang.String getTokenClientApplicationProperties(){
+		return getTokenClientApplicationProperties(null);
+	}
+	public java.lang.String getTokenClientApplicationProperties(String defaultValue){
+		return getTokenClientApplicationProperties(InfoConfigurazione.PROPERTY_SEPARATOR,InfoConfigurazione.VALUE_SEPARATOR,defaultValue);
+	}
+	public java.lang.String getTokenClientApplicationProperties(String propertySeparator, String valueSeparator){
+		return getTokenClientApplicationProperties(propertySeparator, valueSeparator, null);
+	}
+	public java.lang.String getTokenClientApplicationProperties(String propertySeparator, String valueSeparator, String defaultValue){
+		return correctValue(this.infoConfigurazione.getTokenClientApplicationPropertiesAsString(propertySeparator,valueSeparator),defaultValue);
+	}
+	
+	public java.lang.String getTokenClientOrganizationType() {
+		return getTokenClientOrganizationType(null);
+	}
+	public java.lang.String getTokenClientOrganizationType(String defaultValue) {
+		IDServizioApplicativo idSA = _getTokenClientApplication();
+		return correctValue(idSA!=null ? idSA.getIdSoggettoProprietario().getTipo() : null, defaultValue);
+	}
+	public java.lang.String getTokenClientOrganization() {
+		return getTokenClientOrganization(null);
+	}
+	public java.lang.String getTokenClientOrganization(String defaultValue) {
+		IDServizioApplicativo idSA = _getTokenClientApplication();
+		return correctValue(idSA!=null ? idSA.getIdSoggettoProprietario().getNome() : null, defaultValue);
+	}
+	public java.lang.String getTokenClientOrganizationId() {
+		return getTokenClientOrganizationId(null);
+	}
+	public java.lang.String getTokenClientOrganizationId(String defaultValue) {
+		String nome = null;
+		if(StringUtils.isNotEmpty(this.getTokenClientOrganization())) {
+			try {
+				nome = NamingUtils.getLabelSoggetto(this.getProfile(), this.getTokenClientOrganizationType(), this.getTokenClientOrganization());
+			}catch(Exception e) {}
+		}
+		return correctValue(nome, defaultValue);
+	}
+	
+	public java.lang.String getTokenClientOrganizationProperty(String name) {
+		return getTokenClientOrganizationProperty(name, null);
+	}
+	public java.lang.String getTokenClientOrganizationProperty(String name, String defaultValue) {
+		return correctValue(this.infoConfigurazione.getTokenClientOrganizationProperty(name),defaultValue);
+	}
+	public java.lang.String getTokenClientOrganizationPropertiesKeys(){
+		return getTokenClientOrganizationPropertiesKeys(null);
+	}
+	public java.lang.String getTokenClientOrganizationPropertiesKeys(String defaultValue){
+		return getTokenClientOrganizationPropertiesKeys(InfoConfigurazione.KEYS_SEPARATOR,defaultValue);
+	}
+	public java.lang.String getTokenClientOrganizationPropertiesKeys(String separator, String defaultValue){
+		return correctValue(this.infoConfigurazione.getTokenClientOrganizationPropertiesKeysAsString(separator),defaultValue);
+	}
+	public java.lang.String getTokenClientOrganizationProperties(){
+		return getTokenClientOrganizationProperties(null);
+	}
+	public java.lang.String getTokenClientOrganizationProperties(String defaultValue){
+		return getTokenClientOrganizationProperties(InfoConfigurazione.PROPERTY_SEPARATOR,InfoConfigurazione.VALUE_SEPARATOR,defaultValue);
+	}
+	public java.lang.String getTokenClientOrganizationProperties(String propertySeparator, String valueSeparator){
+		return getTokenClientOrganizationProperties(propertySeparator, valueSeparator, null);
+	}
+	public java.lang.String getTokenClientOrganizationProperties(String propertySeparator, String valueSeparator, String defaultValue){
+		return correctValue(this.infoConfigurazione.getTokenClientOrganizationPropertiesAsString(propertySeparator,valueSeparator),defaultValue);
 	}
 	
 	public java.lang.String getTokenUsername() {
@@ -1790,7 +1900,12 @@ public class Info {
 		datiMittente.setTokenUsername(getTokenUsername());
 		datiMittente.setTokenSubject(getTokenSubject());
 		datiMittente.setTokenIssuer(getTokenIssuer());
+		
 		datiMittente.setTokenClientId(getTokenClientId());
+		datiMittente.setTokenClient(getTokenClientApplication());
+		datiMittente.setTokenClientTipoSoggettoFruitore(getTokenClientOrganizationType());
+		datiMittente.setTokenClientNomeSoggettoFruitore(getTokenClientOrganization());
+		datiMittente.setTokenClientSoggettoFruitore(getTokenClientOrganizationId());
 		
 		datiMittente.setTipoTrasportoMittente(getPrincipalAuthType());
 		datiMittente.setTrasportoMittente(getPrincipal());

@@ -8,7 +8,7 @@ info:
   license:
     name: "GPL v3.0"
     url: "https://www.gnu.org/licenses/gpl-3.0.txt"
-  version: "3.3.7"
+  version: "3.3.8"
   x-api-id: "https://govway.org/apiConfig"
   x-summary: "Servizi per la configurazione di GovWay"
 servers:
@@ -3028,6 +3028,207 @@ paths:
     - $ref: "#/components/parameters/id_ruolo_autorizzato"
     - $ref: "#/components/parameters/gruppo"
     - $ref: "#/components/parameters/tipo_servizio"
+  /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/token/applicativi:
+    get:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Restituisce l'elenco degli applicativi token autorizzati"
+      description: "Questa operazione consente di ottenere l'elenco degli applicativi\
+        \ token autorizzati"
+      operationId: "getErogazioneControlloAccessiAutorizzazioneApplicativiToken"
+      responses:
+        "200":
+          description: "Elenco applicativi token autorizzati restituito con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ControlloAccessiErogazioneAutorizzazioneApplicativi"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    post:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Aggiunta di applicativi token all'elenco degli applicativi autorizzati"
+      description: "Questa operazione consente di aggiungere applicativi token all'elenco\
+        \ degli applicativi autorizzati"
+      operationId: "addErogazioneControlloAccessiAutorizzazioneApplicativiToken"
+      requestBody:
+        description: "Applicativi Token che si vuole aggiungere"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ControlloAccessiErogazioneAutorizzazioneApplicativo"
+        required: true
+      responses:
+        "201":
+          $ref: "#/components/responses/201Created"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "409":
+          $ref: "#/components/responses/409Conflict"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+  /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/token/applicativi/{applicativo_autorizzato}:
+    delete:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Elimina applicativi dall'elenco degli applicativi token autorizzati"
+      description: "Questa operazione consente di eliminare applicativi token dall'elenco\
+        \ degli applicativi autorizzati"
+      operationId: "deleteErogazioneControlloAccessiAutorizzazioneApplicativiToken"
+      responses:
+        "204":
+          description: "Applicativi Token eliminati con successo"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/id_applicativo_autorizzato"
+    - $ref: "#/components/parameters/id_soggetto_applicativo"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+  /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/token/ruoli:
+    get:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Restituisce l'elenco dei ruoli token autorizzati"
+      description: "Questa operazione consente di ottenere l'elenco dei ruoli token\
+        \ autorizzati"
+      operationId: "getErogazioneControlloAccessiAutorizzazioneRuoliToken"
+      responses:
+        "200":
+          description: "Elenco ruoli token autorizzati restituito con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ControlloAccessiAutorizzazioneRuoli"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    post:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Aggiunta di ruoli all'elenco dei ruoli token autorizzati"
+      description: "Questa operazione consente di aggiungere ruoli all'elenco dei\
+        \ ruoli token autorizzati"
+      operationId: "addErogazioneControlloAccessiAutorizzazioneRuoliToken"
+      requestBody:
+        description: "Ruoli che si vuole aggiungere"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ControlloAccessiAutorizzazioneRuolo"
+        required: true
+      responses:
+        "201":
+          $ref: "#/components/responses/201Created"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "409":
+          $ref: "#/components/responses/409Conflict"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+  /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/token/ruoli/{ruolo_autorizzato}:
+    delete:
+      tags:
+      - "erogazioni-configurazione"
+      summary: "Elimina ruoli dall'elenco dei ruoli token autorizzati"
+      description: "Questa operazione consente di eliminare ruoli dall'elenco dei\
+        \ ruoli token autorizzati"
+      operationId: "deleteErogazioneControlloAccessiAutorizzazioneRuoliToken"
+      responses:
+        "204":
+          description: "Ruoli eliminati con successo"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/id_ruolo_autorizzato"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/scope:
     get:
       tags:
@@ -5623,6 +5824,210 @@ paths:
     - $ref: "#/components/parameters/id_ruolo_autorizzato"
     - $ref: "#/components/parameters/gruppo"
     - $ref: "#/components/parameters/tipo_servizio"
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/token/applicativi:
+    get:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Restituisce l'elenco degli applicativi token autorizzati"
+      description: "Questa operazione consente di ottenere l'elenco degli applicativi\
+        \ token autorizzati"
+      operationId: "getFruizioneControlloAccessiAutorizzazioneApplicativiToken"
+      responses:
+        "200":
+          description: "Elenco applicativi token autorizzati restituito con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ControlloAccessiAutorizzazioneApplicativi"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    post:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Aggiunta di applicativi all'elenco degli applicativi token autorizzati"
+      description: "Questa operazione consente di aggiungere applicativi all'elenco\
+        \ degli applicativi token autorizzati"
+      operationId: "addFruizioneControlloAccessiAutorizzazioneApplicativiToken"
+      requestBody:
+        description: "Applicativi che si vuole aggiungere"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ControlloAccessiAutorizzazioneApplicativo"
+        required: true
+      responses:
+        "201":
+          $ref: "#/components/responses/201Created"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "409":
+          $ref: "#/components/responses/409Conflict"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_erogatore"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+  ? /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/token/applicativi/{applicativo_autorizzato}
+  : delete:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Elimina applicativi dall'elenco degli applicativi token autorizzati"
+      description: "Questa operazione consente di eliminare applicativi dall'elenco\
+        \ degli applicativi token autorizzati"
+      operationId: "deleteFruizioneControlloAccessiAutorizzazioneApplicativiToken"
+      responses:
+        "204":
+          description: "Applicativi eliminati con successo"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_erogatore"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/id_applicativo_autorizzato"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/token/ruoli:
+    get:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Restituisce l'elenco dei ruoli token autorizzati"
+      description: "Questa operazione consente di ottenere l'elenco dei ruoli token\
+        \ autorizzati"
+      operationId: "getFruizioneControlloAccessiAutorizzazioneRuoliToken"
+      responses:
+        "200":
+          description: "Elenco ruoli autorizzati restituito con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ControlloAccessiAutorizzazioneRuoli"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    post:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Aggiunta di ruoli all'elenco dei ruoli token autorizzati"
+      description: "Questa operazione consente di aggiungere ruoli all'elenco dei\
+        \ ruoli token autorizzati"
+      operationId: "addFruizioneControlloAccessiAutorizzazioneRuoliToken"
+      requestBody:
+        description: "Ruoli che si vuole aggiungere"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ControlloAccessiAutorizzazioneRuolo"
+        required: true
+      responses:
+        "201":
+          $ref: "#/components/responses/201Created"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "409":
+          $ref: "#/components/responses/409Conflict"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_erogatore"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/token/ruoli/{ruolo_autorizzato}:
+    delete:
+      tags:
+      - "fruizioni-configurazione"
+      summary: "Elimina ruoli dall'elenco dei ruoli token autorizzati"
+      description: "Questa operazione consente di eliminare ruoli dall'elenco dei\
+        \ ruoli token autorizzati"
+      operationId: "deleteFruizioneControlloAccessiAutorizzazioneRuoliToken"
+      responses:
+        "204":
+          description: "Ruoli eliminati con successo"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
+    - $ref: "#/components/parameters/id_erogatore"
+    - $ref: "#/components/parameters/id_ncname"
+    - $ref: "#/components/parameters/id_versione"
+    - $ref: "#/components/parameters/id_ruolo_autorizzato"
+    - $ref: "#/components/parameters/gruppo"
+    - $ref: "#/components/parameters/tipo_servizio"
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/scope:
     get:
       tags:
@@ -6751,7 +7156,7 @@ paths:
     put:
       tags:
       - "soggetti"
-      summary: "Modifica i dati di un soggetto"
+      summary: "Modifica le credenziali associate ad un soggetto"
       description: "Questa operazione consente di aggiornare le credenziali associate\
         \ ad un soggetto identificato dal nome"
       operationId: "updateCredenzialiSoggetto"
@@ -6944,7 +7349,7 @@ paths:
     put:
       tags:
       - "applicativi"
-      summary: "Modifica i dati di un applicativo"
+      summary: "Modifica le credenziali associate ad un applicativo"
       description: "Questa operazione consente di aggiornare le credenziali associate\
         \ ad un applicativo identificato dal nome e dal soggetto di riferimento"
       operationId: "updateCredenzialiApplicativo"
@@ -8518,7 +8923,7 @@ components:
         modalita_accesso:
           $ref: "#/components/schemas/ModalitaAccessoEnum"
         username:
-          maxLength: 255
+          maxLength: 2800
           type: "string"
           example: "user"
         password:
@@ -8549,6 +8954,8 @@ components:
           type: "array"
           items:
             $ref: "#/components/schemas/AuthenticationHttpsBaseCertificato"
+        token:
+          $ref: "#/components/schemas/AuthenticationTokenBase"
       additionalProperties: false
     AuthenticationHttpsBaseCertificato:
       required:
@@ -8608,7 +9015,7 @@ components:
         modalita_accesso:
           $ref: "#/components/schemas/ModalitaAccessoEnum"
         userid:
-          maxLength: 255
+          maxLength: 2800
           type: "string"
           example: "idEsterno"
       additionalProperties: false
@@ -8623,6 +9030,28 @@ components:
           type: "boolean"
           default: false
       additionalProperties: false
+    AuthenticationTokenBase:
+      required:
+      - "identificativo"
+      - "token_policy"
+      type: "object"
+      properties:
+        token_policy:
+          maxLength: 255
+          type: "string"
+        identificativo:
+          maxLength: 2800
+          type: "string"
+    AuthenticationToken:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/AuthenticationTokenBase"
+      - required:
+        - "modalita_accesso"
+        type: "object"
+        properties:
+          modalita_accesso:
+            $ref: "#/components/schemas/ModalitaAccessoEnum"
     BaseCredenziali:
       type: "object"
       properties:
@@ -8635,11 +9064,13 @@ components:
               https: "#/components/schemas/AuthenticationHttps"
               principal: "#/components/schemas/AuthenticationPrincipal"
               api-key: "#/components/schemas/AuthenticationApiKey"
+              token: "#/components/schemas/AuthenticationToken"
           oneOf:
           - $ref: "#/components/schemas/AuthenticationHttpBasic"
           - $ref: "#/components/schemas/AuthenticationHttps"
           - $ref: "#/components/schemas/AuthenticationPrincipal"
           - $ref: "#/components/schemas/AuthenticationApiKey"
+          - $ref: "#/components/schemas/AuthenticationToken"
     BaseTrustStore:
       required:
       - "truststore_password"
@@ -9311,6 +9742,18 @@ components:
         ruoli_fonte:
           $ref: "#/components/schemas/FonteEnum"
         ruoli_richiesti:
+          $ref: "#/components/schemas/AllAnyEnum"
+        token_richiedente:
+          type: "boolean"
+          example: false
+          default: true
+        token_ruoli:
+          type: "boolean"
+          example: false
+          default: false
+        token_ruoli_fonte:
+          $ref: "#/components/schemas/FonteEnum"
+        token_ruoli_richiesti:
           $ref: "#/components/schemas/AllAnyEnum"
         scope:
           type: "boolean"
@@ -10145,13 +10588,14 @@ components:
     ModIApplicativoInterno:
       required:
       - "dominio"
-      - "sicurezza_messaggio"
       type: "object"
       properties:
         dominio:
           $ref: "#/components/schemas/DominioEnum"
         sicurezza_messaggio:
           $ref: "#/components/schemas/ModIApplicativoSicurezzaMessaggio"
+        token:
+          $ref: "#/components/schemas/AuthenticationTokenBase"
     ModIApplicativoSicurezzaMessaggio:
       required:
       - "keystore"
@@ -11224,6 +11668,7 @@ components:
       - "https"
       - "principal"
       - "api-key"
+      - "token"
     ContestoEnum:
       type: "string"
       example: "qualsiasi"

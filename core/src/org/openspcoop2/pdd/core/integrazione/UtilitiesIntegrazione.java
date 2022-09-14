@@ -320,6 +320,15 @@ public class UtilitiesIntegrazione {
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO.equals(keywordIntegrazione)) {
 										integrazione.setServizioApplicativo(TransportUtils.getFirstValue(prop,key));	
 									}
+									else if(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE_TOKEN.equals(keywordIntegrazione)) {
+										integrazione.setTipoSoggettoProprietarioApplicativoToken(TransportUtils.getFirstValue(prop,key));	
+									}
+									else if(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE_TOKEN.equals(keywordIntegrazione)) {
+										integrazione.setNomeSoggettoProprietarioApplicativoToken(TransportUtils.getFirstValue(prop,key));	
+									}
+									else if(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO_TOKEN.equals(keywordIntegrazione)) {
+										integrazione.setServizioApplicativoToken(TransportUtils.getFirstValue(prop,key));	
+									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE.equals(keywordIntegrazione)) {
 										integrazione.setIdTransazione(TransportUtils.getFirstValue(prop,key));	
 									}
@@ -401,6 +410,15 @@ public class UtilitiesIntegrazione {
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO.equals(keywordIntegrazione)) {
 										integrazione.setServizioApplicativo(TransportUtils.getFirstValue(prop,key));	
+									}
+									else if(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE_TOKEN.equals(keywordIntegrazione)) {
+										integrazione.setTipoSoggettoProprietarioApplicativoToken(TransportUtils.getFirstValue(prop,key));	
+									}
+									else if(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE_TOKEN.equals(keywordIntegrazione)) {
+										integrazione.setNomeSoggettoProprietarioApplicativoToken(TransportUtils.getFirstValue(prop,key));	
+									}
+									else if(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO_TOKEN.equals(keywordIntegrazione)) {
+										integrazione.setServizioApplicativoToken(TransportUtils.getFirstValue(prop,key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE.equals(keywordIntegrazione)) {
 										integrazione.setIdTransazione(TransportUtils.getFirstValue(prop,key));	
@@ -491,6 +509,21 @@ public class UtilitiesIntegrazione {
 				if(integrazione.getServizioApplicativo()!=null) {
 					if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO)) {
 						TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO), integrazione.getServizioApplicativo());
+					}
+				}
+				if(integrazione.getTipoSoggettoProprietarioApplicativoToken()!=null) {
+					if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE_TOKEN)) {
+						TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE_TOKEN), integrazione.getTipoSoggettoProprietarioApplicativoToken());
+					}
+				}
+				if(integrazione.getNomeSoggettoProprietarioApplicativoToken()!=null) {
+					if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE_TOKEN)) {
+						TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE_TOKEN), integrazione.getNomeSoggettoProprietarioApplicativoToken());
+					}
+				}
+				if(integrazione.getServizioApplicativoToken()!=null) {
+					if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO_TOKEN)) {
+						TransportUtils.setParameter(properties,this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO_TOKEN), integrazione.getServizioApplicativoToken());
 					}
 				}
 				if(integrazione.getIdTransazione()!=null) {
@@ -609,6 +642,21 @@ public class UtilitiesIntegrazione {
 				if(integrazione.getServizioApplicativo()!=null) {
 					if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO)) {
 						TransportUtils.setHeader(properties,this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO), integrazione.getServizioApplicativo());
+					}
+				}
+				if(integrazione.getTipoSoggettoProprietarioApplicativoToken()!=null) {
+					if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE_TOKEN)) {
+						TransportUtils.setParameter(properties,this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE_TOKEN), integrazione.getTipoSoggettoProprietarioApplicativoToken());
+					}
+				}
+				if(integrazione.getNomeSoggettoProprietarioApplicativoToken()!=null) {
+					if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE_TOKEN)) {
+						TransportUtils.setParameter(properties,this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE_TOKEN), integrazione.getNomeSoggettoProprietarioApplicativoToken());
+					}
+				}
+				if(integrazione.getServizioApplicativoToken()!=null) {
+					if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO_TOKEN)) {
+						TransportUtils.setParameter(properties,this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO_TOKEN), integrazione.getServizioApplicativoToken());
 					}
 				}
 				if(integrazione.getIdTransazione()!=null) {
@@ -838,6 +886,33 @@ public class UtilitiesIntegrazione {
 			}catch(Exception e){}
 			if(sa!=null && sa.compareTo("")!=0)
 				integrazione.setServizioApplicativo(sa);
+			
+			String tipoMittenteToken = null;
+			try{
+				if(this.keyReadEnabled_HeaderIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE_TOKEN)) {
+					tipoMittenteToken = headerElement.getAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE_TOKEN));
+				}
+			}catch(Exception e){}
+			if(tipoMittenteToken!=null && tipoMittenteToken.compareTo("")!=0)
+				integrazione.setTipoSoggettoProprietarioApplicativoToken(tipoMittenteToken);
+			
+			String mittenteToken = null;
+			try{
+				if(this.keyReadEnabled_HeaderIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE_TOKEN)) {
+					mittenteToken = headerElement.getAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE_TOKEN));
+				}
+			}catch(Exception e){}
+			if(mittenteToken!=null && mittenteToken.compareTo("")!=0)
+				integrazione.setNomeSoggettoProprietarioApplicativoToken(mittenteToken);
+			
+			String saToken = null;
+			try{
+				if(this.keyReadEnabled_HeaderIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO_TOKEN)) {
+					saToken = headerElement.getAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO_TOKEN));
+				}
+			}catch(Exception e){}
+			if(sa!=null && sa.compareTo("")!=0)
+				integrazione.setServizioApplicativoToken(saToken);
 			
 			String idTransazione = null;
 			try{
@@ -1084,6 +1159,23 @@ public class UtilitiesIntegrazione {
 		if(integrazione.getServizioApplicativo()!=null){
 			if(this.keySetEnabled_HeaderIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO)) {
 				header.setAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO), integrazione.getServizioApplicativo());
+			}
+		}
+		
+		if(integrazione.getTipoSoggettoProprietarioApplicativoToken()!=null){
+			if(this.keySetEnabled_HeaderIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE_TOKEN)) {
+				header.setAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE_TOKEN), integrazione.getTipoSoggettoProprietarioApplicativoToken());
+			}
+		}
+		if(integrazione.getNomeSoggettoProprietarioApplicativoToken()!=null){
+			if(this.keySetEnabled_HeaderIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE_TOKEN)) {
+				header.setAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE_TOKEN), integrazione.getNomeSoggettoProprietarioApplicativoToken());
+			}
+		}
+		
+		if(integrazione.getServizioApplicativoToken()!=null){
+			if(this.keySetEnabled_HeaderIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO_TOKEN)) {
+				header.setAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO_TOKEN), integrazione.getServizioApplicativoToken());
 			}
 		}
 		

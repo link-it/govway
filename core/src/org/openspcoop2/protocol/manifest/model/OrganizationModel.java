@@ -42,6 +42,7 @@ public class OrganizationModel extends AbstractModel<Organization> {
 	
 		this.TYPES = new org.openspcoop2.protocol.manifest.model.OrganizationTypesModel(new Field("types",org.openspcoop2.protocol.manifest.OrganizationTypes.class,"Organization",Organization.class));
 		this.AUTHENTICATION = new Field("authentication",boolean.class,"Organization",Organization.class);
+		this.HTTPS_WITH_TOKEN_AUTHENTICATION = new Field("httpsWithTokenAuthentication",boolean.class,"Organization",Organization.class);
 		this.INBOUND_APPLICATIVE_AUTHENTICATION = new Field("inboundApplicativeAuthentication",boolean.class,"Organization",Organization.class);
 		this.INBOUND_ORGANIZATION_AUTHORIZATION_WITHOUT_AUTHENTICATION = new Field("inboundOrganizationAuthorizationWithoutAuthentication",boolean.class,"Organization",Organization.class);
 		this.INBOUND_EXTERNAL_APPLICATION_AUTHENTICATION = new Field("inboundExternalApplicationAuthentication",boolean.class,"Organization",Organization.class);
@@ -57,6 +58,7 @@ public class OrganizationModel extends AbstractModel<Organization> {
 	
 		this.TYPES = new org.openspcoop2.protocol.manifest.model.OrganizationTypesModel(new ComplexField(father,"types",org.openspcoop2.protocol.manifest.OrganizationTypes.class,"Organization",Organization.class));
 		this.AUTHENTICATION = new ComplexField(father,"authentication",boolean.class,"Organization",Organization.class);
+		this.HTTPS_WITH_TOKEN_AUTHENTICATION = new ComplexField(father,"httpsWithTokenAuthentication",boolean.class,"Organization",Organization.class);
 		this.INBOUND_APPLICATIVE_AUTHENTICATION = new ComplexField(father,"inboundApplicativeAuthentication",boolean.class,"Organization",Organization.class);
 		this.INBOUND_ORGANIZATION_AUTHORIZATION_WITHOUT_AUTHENTICATION = new ComplexField(father,"inboundOrganizationAuthorizationWithoutAuthentication",boolean.class,"Organization",Organization.class);
 		this.INBOUND_EXTERNAL_APPLICATION_AUTHENTICATION = new ComplexField(father,"inboundExternalApplicationAuthentication",boolean.class,"Organization",Organization.class);
@@ -71,6 +73,8 @@ public class OrganizationModel extends AbstractModel<Organization> {
 	public org.openspcoop2.protocol.manifest.model.OrganizationTypesModel TYPES = null;
 	 
 	public IField AUTHENTICATION = null;
+	 
+	public IField HTTPS_WITH_TOKEN_AUTHENTICATION = null;
 	 
 	public IField INBOUND_APPLICATIVE_AUTHENTICATION = null;
 	 

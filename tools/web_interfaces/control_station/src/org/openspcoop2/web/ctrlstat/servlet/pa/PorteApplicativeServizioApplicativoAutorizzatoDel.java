@@ -38,7 +38,9 @@ import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplica
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -79,6 +81,14 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoDel extends Act
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
 			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			int idInt = Integer.parseInt(idPorta);
+			
+			String tokenList = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TOKEN_AUTHORIZATION);
+			boolean isToken = tokenList!=null && !"".equals(tokenList) && Boolean.valueOf(tokenList);
+			
+			String autorizzazioneModi = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA);
+			@SuppressWarnings("unused")
+			boolean isAutorizzazioneModi = autorizzazioneModi!=null && !"".equals(autorizzazioneModi) && Boolean.valueOf(autorizzazioneModi);
+			
 			String objToRemove = porteApplicativeHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			// Elimino il servizioApplicativo della porta applicativa dal db
@@ -94,20 +104,37 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoDel extends Act
 
 			// Prendo la porta applicativa
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
+			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
-
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(pa.getTipoSoggettoProprietario());
+			boolean modi = porteApplicativeCore.isProfiloModIPA(protocollo);
+			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
 				// .elementAt(idToRemove[i])).elementAt(0);
 				// servizioApplicativo = de.getValue();
 				sa = idsToRemove.get(i);
-				for (int j = 0; j < pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList(); j++) {
-					PortaApplicativaAutorizzazioneServizioApplicativo saAutorizzato = pa.getServiziApplicativiAutorizzati().getServizioApplicativo(j);
-					String idSaAutorizzato = saAutorizzato.getNome()+"@"+saAutorizzato.getTipoSoggettoProprietario() + "/" + saAutorizzato.getNomeSoggettoProprietario();
-					if (sa.equals(idSaAutorizzato)) {
-						pa.getServiziApplicativiAutorizzati().removeServizioApplicativo(j);
-						break;
+				if(isToken && !modi) {	
+					if(pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getServiziApplicativi()!=null) {
+						for (int j = 0; j < pa.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList(); j++) {
+							PortaApplicativaAutorizzazioneServizioApplicativo saAutorizzato = pa.getAutorizzazioneToken().getServiziApplicativi().getServizioApplicativo(j);
+							String idSaAutorizzato = saAutorizzato.getNome()+"@"+saAutorizzato.getTipoSoggettoProprietario() + "/" + saAutorizzato.getNomeSoggettoProprietario();
+							if (sa.equals(idSaAutorizzato)) {
+								pa.getAutorizzazioneToken().getServiziApplicativi().removeServizioApplicativo(j);
+								break;
+							}
+						}
+					}
+				}
+				else {
+					for (int j = 0; j < pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList(); j++) {
+						PortaApplicativaAutorizzazioneServizioApplicativo saAutorizzato = pa.getServiziApplicativiAutorizzati().getServizioApplicativo(j);
+						String idSaAutorizzato = saAutorizzato.getNome()+"@"+saAutorizzato.getTipoSoggettoProprietario() + "/" + saAutorizzato.getNomeSoggettoProprietario();
+						if (sa.equals(idSaAutorizzato)) {
+							pa.getServiziApplicativiAutorizzati().removeServizioApplicativo(j);
+							break;
+						}
 					}
 				}
 			}
@@ -123,10 +150,16 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoDel extends Act
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
 			int idLista = Liste.PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO;
+			if(isToken && !modi) {
+				idLista = Liste.PORTE_APPLICATIVE_TOKEN_SERVIZIO_APPLICATIVO;
+			}
 
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 			
-			List<PortaApplicativaAutorizzazioneServizioApplicativo> lista = porteApplicativeCore.porteAppServiziApplicativiAutorizzatiList(Integer.parseInt(idPorta), ricerca);
+			List<PortaApplicativaAutorizzazioneServizioApplicativo> lista = (isToken && !modi) ? 
+					porteApplicativeCore.porteAppServiziApplicativiAutorizzatiTokenList(Integer.parseInt(idPorta), ricerca)
+					:
+					porteApplicativeCore.porteAppServiziApplicativiAutorizzatiList(Integer.parseInt(idPorta), ricerca);
 
 			porteApplicativeHelper.preparePorteAppServizioApplicativoAutorizzatoList(pa.getNome(), ricerca, lista);
 

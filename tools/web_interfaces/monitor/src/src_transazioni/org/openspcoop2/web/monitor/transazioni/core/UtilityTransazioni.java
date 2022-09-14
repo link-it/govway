@@ -76,6 +76,7 @@ import org.openspcoop2.web.monitor.transazioni.core.manifest.TransazioneType.Dim
 import org.openspcoop2.web.monitor.transazioni.core.manifest.TransazioneType.Dominio;
 import org.openspcoop2.web.monitor.transazioni.core.manifest.TransazioneType.Esito;
 import org.openspcoop2.web.monitor.transazioni.core.manifest.TransazioneType.IntegrationManager;
+import org.openspcoop2.web.monitor.transazioni.core.manifest.TransazioneType.ServizioApplicativoToken;
 import org.openspcoop2.web.monitor.transazioni.core.manifest.TransazioneType.TempiAttraversamento;
 import org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ConsegnaType.DatiConsegna;
 import org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ConsegnaType.DatiConsegna.UltimoErrore;
@@ -725,6 +726,15 @@ public class UtilityTransazioni {
 			
 			
 			transazione.setDatiIntegrazione(datiIntegrazione);
+		}
+		
+		// applicativo token
+		if( t.getTokenClient()!=null ) {
+			ServizioApplicativoToken sa = new ServizioApplicativoToken();
+			sa.setNome(t.getTokenClient().getNome());
+			sa.setTipoSoggetto(t.getTokenClient().getIdSoggettoProprietario().getTipo());
+			sa.setNomeSoggetto(t.getTokenClient().getIdSoggettoProprietario().getNome());
+			transazione.setServizioApplicativoToken(sa);
 		}
 		
 		// eventi di gestione

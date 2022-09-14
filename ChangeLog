@@ -1,3 +1,13 @@
+2022-09-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, ApiRsConfigurazione, GovWayMonitor, ApiRsMonitoraggio, ProtocolloModIPA]
+	Aggiunta funzionalità OP-1101
+	È adesso possibile registrare applicativi con credenziali di tipo 'token'.
+	Le credenziali consentono al processo di autenticazione token di identificare gli applicativi al fine di registrarli nei log e poterli ricercare tramite gli strumenti di monitoraggio.
+	È inoltre stata aggiunta, nel controllo degli accessi di una erogazione o fruizione, la possibilità di autorizzare per richiedente o per ruolo gli applicativi identificati tramite token.
+	Nel profilo ModI la nuova modalità consente di identificare ed autorizzare puntualmente gli applicativi registrati su PDND e 
+	di attuare controlli di consistenza nel caso di presenza sia dell'header Authorization generato dalla PDND sia dell'header Agid-JWT-Signature generato dalla parte mittente.
+
 2022-08-09  Andrea Poli <apoli@link.it>
 
 	* [Utils, GovWayCore]

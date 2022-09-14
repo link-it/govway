@@ -33,6 +33,7 @@ import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
@@ -60,6 +61,7 @@ import org.openspcoop2.core.id.IdentificativiFruizione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziAzioneNotFound;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziCorrelatoNotFound;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -171,6 +173,7 @@ import org.openspcoop2.protocol.engine.builder.Imbustamento;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
 import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.engine.validator.ValidazioneSintattica;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -2524,7 +2527,7 @@ public class RicezioneContenutiApplicativi {
 					
 				} catch (Exception e) {
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento("["+ RicezioneBuste.ID_MODULO+ "] processo di autenticazione token ["
+							get5XX_ErroreProcessamento("["+ RicezioneContenutiApplicativi.ID_MODULO+ "] processo di autenticazione token ["
 									+ checkAuthnToken + "] fallito, " + e.getMessage(),CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE);
 					eAutenticazione = e;
 					logCore.error("processo di autenticazione token ["
@@ -2604,6 +2607,114 @@ public class RicezioneContenutiApplicativi {
 			informazioniTokenNormalizzate = (InformazioniToken) pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
 		}
 		
+		IDServizioApplicativo idApplicativoToken = null;
+		if(informazioniTokenNormalizzate!=null && 
+				informazioniTokenNormalizzate.getClientId()!=null && StringUtils.isNotEmpty(informazioniTokenNormalizzate.getClientId())) {
+			transaction.getTempiElaborazione().startAutenticazioneApplicativoToken();
+			try {
+			
+				msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_CLIENT_ID, informazioniTokenNormalizzate.getClientId());
+				msgDiag.logPersonalizzato("autenticazioneApplicativoTokenInCorso");
+				
+				ErroreIntegrazione errore = null;
+				Exception eAutenticazione = null;
+				IntegrationFunctionError integrationFunctionError = null;
+				try {						
+						
+					EsitoAutenticazionePortaDelegata esito = 
+							GestoreAutenticazione.verificaAutenticazionePortaDelegata(CostantiConfigurazione.AUTENTICAZIONE_TOKEN, 
+									datiInvocazioneAutenticazione, new ParametriAutenticazione(portaDelegata.getProprietaAutenticazioneList()), 
+									pddContext, protocolFactory, requestMessage); 
+					CostantiPdD.addKeywordInCache(msgDiag, esito.isEsitoPresenteInCache(),
+							pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTENTICAZIONE);
+					if(esito.isClientAuthenticated() == false) {
+						errore = esito.getErroreIntegrazione();
+						eAutenticazione = esito.getEccezioneProcessamento();
+						integrationFunctionError = esito.getIntegrationFunctionError();
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE_TOKEN, "true");
+					}
+					else {
+						if(esito.isClientIdentified()) {
+							idApplicativoToken = esito.getIdServizioApplicativo();
+							msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_SERVIZIO_APPLICATIVO, idApplicativoToken.getNome()+NamingUtils.LABEL_DOMINIO+idApplicativoToken.getIdSoggettoProprietario().toString());
+							msgDiag.logPersonalizzato("autenticazioneApplicativoTokenEffettuata.identificazioneRiuscita");
+							
+							pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN, idApplicativoToken);
+							try {
+								ServizioApplicativo sa = configurazionePdDReader.getServizioApplicativo(idApplicativoToken);
+								Map<String, String> configProperties = configurazionePdDReader.getProprietaConfigurazione(sa);
+					            if (configProperties != null && !configProperties.isEmpty()) {
+					            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO_TOKEN, configProperties);
+								}	
+							}catch(Throwable t) {}	
+							try {
+								Soggetto soggetto = registroServiziReader.getSoggetto(idApplicativoToken.getIdSoggettoProprietario(), null);
+								Map<String, String> configProperties = registroServiziReader.getProprietaConfigurazione(soggetto);
+					            if (configProperties != null && !configProperties.isEmpty()) {
+					            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN, configProperties);
+								}	
+							}catch(Throwable t) {}	
+						}
+						else {
+							errore = esito.getErroreIntegrazione();
+							eAutenticazione = esito.getEccezioneProcessamento();
+							integrationFunctionError = esito.getIntegrationFunctionError();
+							if(integrationFunctionError!=null && IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS.equals(integrationFunctionError)) {
+								pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE_TOKEN, "true");
+							}
+							if(errore==null) {
+								msgDiag.logPersonalizzato("autenticazioneApplicativoTokenEffettuata.identificazioneFallita");
+							}
+						}
+					}
+				} catch (Exception e) {
+					CostantiPdD.addKeywordInCache(msgDiag, false,
+							pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTENTICAZIONE);
+					errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento("processo di autenticazione applicativo token fallito, " + e.getMessage(),CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE);
+					eAutenticazione = e;
+					logCore.error("processo di autenticazione applicativo token fallito, " + e.getMessage(),e);
+					integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+				}
+				if (errore != null) {
+					String descrizioneErrore = null;
+					try{
+						descrizioneErrore = errore.getDescrizione(protocolFactory);
+						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, descrizioneErrore);
+					}catch(Exception e){
+						logCore.error("getDescrizione Error:"+e.getMessage(),e);
+					}
+					String errorMsg =  "Riscontrato errore durante il processo di autenticazione dell'applicativo token per il messaggio con identificativo di transazione ["+idTransazione+"]: "+descrizioneErrore;
+					msgDiag.logPersonalizzato("autenticazioneApplicativoTokenFallita");
+					if(eAutenticazione!=null){
+						logCore.error(errorMsg,eAutenticazione);
+					}
+					else{
+						logCore.error(errorMsg);
+					}
+					openspcoopstate.releaseResource();
+	
+					if (this.msgContext.isGestioneRisposta()) {
+						
+						if(integrationFunctionError==null) {
+							integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
+						}
+												
+						OpenSPCoop2Message errorOpenSPCoopMsg = (this.generatoreErrore.build(pddContext,integrationFunctionError,errore,
+								eAutenticazione,null));
+						
+						this.msgContext.setMessageResponse(errorOpenSPCoopMsg);
+						
+					}
+					
+					return;
+				}
+			}
+			finally {
+				transaction.getTempiElaborazione().endAutenticazioneApplicativoToken();
+			}
+		}
+		
 		if(propertiesReader.isTransazioniEnabled() && 
 				(credenzialeTrasporto!=null || informazioniTokenNormalizzate!=null)) {
 			CredenzialiMittente credenzialiMittente = new CredenzialiMittente();
@@ -2616,7 +2727,7 @@ public class RicezioneContenutiApplicativi {
 				}
 				
 				if(informazioniTokenNormalizzate!=null) {
-					GestoreAutenticazione.updateCredenzialiToken(identitaPdD, ID_MODULO, idTransazione, informazioniTokenNormalizzate, credenzialiMittente, 
+					GestoreAutenticazione.updateCredenzialiToken(identitaPdD, ID_MODULO, idTransazione, informazioniTokenNormalizzate, idApplicativoToken, credenzialiMittente, 
 							openspcoopstate, "RicezioneContenutiApplicativi.credenzialiToken");
 				}
 				
@@ -2760,6 +2871,18 @@ public class RicezioneContenutiApplicativi {
 						ErroriIntegrazione.ERRORE_438_TIPO_SERVIZIO_NOT_SUPPORTED_BY_PROTOCOL.
 						getErrore438_TipoServizioNotSupportedByProtocol(requestMessage.getServiceBinding(),
 								richiestaDelegata.getIdServizio(),protocolFactory),null,null)));
+			}
+			return;
+		}
+		if(idApplicativoToken!=null && idApplicativoToken.getIdSoggettoProprietario()!=null &&
+				idApplicativoToken.getIdSoggettoProprietario().getTipo()!=null && 
+				tipiSoggettiSupportatiCanale.contains(idApplicativoToken.getIdSoggettoProprietario().getTipo())==false){
+			msgDiag.logPersonalizzato("protocolli.tipoSoggetto.applicativoToken.unsupported");
+			openspcoopstate.releaseResource();
+			if (this.msgContext.isGestioneRisposta()) {
+				this.msgContext.setMessageResponse((this.generatoreErrore.build(pddContext,IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL,
+						ErroriIntegrazione.ERRORE_449_TIPO_SOGGETTO_APPLICATIVO_TOKEN_NOT_SUPPORTED_BY_PROTOCOL.
+							getErrore449_TipoSoggettoApplicativoTokenNotSupportedByProtocol(idApplicativoToken,protocolFactory),null,null)));
 			}
 			return;
 		}
@@ -3545,6 +3668,9 @@ public class RicezioneContenutiApplicativi {
 		}
 		msgDiag.highDebug("Convert infoServizio to Busta ...");
 		Busta bustaRichiesta = infoServizio.convertToBusta(protocolFactory.getProtocol(), soggettoFruitore);
+		if(sa!=null) {
+			bustaRichiesta.setServizioApplicativoFruitore(sa.getNome());
+		}
 		msgDiag.highDebug("Convert infoServizio to Busta terminata");
 		inRequestPDMessage.setBustaRichiesta(bustaRichiesta);
 		

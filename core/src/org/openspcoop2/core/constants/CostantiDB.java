@@ -125,6 +125,8 @@ public final class CostantiDB {
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_HEADER = "pa_transform_risp_hdr";
     public static final String PORTE_APPLICATIVE_HANDLERS = "pa_handlers";
     public static final String PORTE_APPLICATIVE_ATTRIBUTE_AUTHORITY = "pa_aa";
+    public static final String PORTE_APPLICATIVE_TOKEN_SA = "pa_token_sa";
+    public static final String PORTE_APPLICATIVE_TOKEN_RUOLI = "pa_token_ruoli";
     public static final String PORTE_DELEGATE = "porte_delegate";
     public static final String PORTE_DELEGATE_SA = "porte_delegate_sa";
     public static final String PORTE_DELEGATE_AUTENTICAZIONE_PROP = "pd_auth_properties";
@@ -156,6 +158,8 @@ public final class CostantiDB {
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_HEADER = "pd_transform_risp_hdr";
     public static final String PORTE_DELEGATE_HANDLERS = "pd_handlers";
     public static final String PORTE_DELEGATE_ATTRIBUTE_AUTHORITY = "pd_aa";
+    public static final String PORTE_DELEGATE_TOKEN_SA = "pd_token_sa";
+    public static final String PORTE_DELEGATE_TOKEN_RUOLI = "pd_token_ruoli";
     public static final String REGISTRI = "registri";
     public static final String SERVIZI_PDD = "servizi_pdd";
     public static final String SERVIZI_PDD_FILTRI = "servizi_pdd_filtri";
@@ -620,6 +624,12 @@ public final class CostantiDB {
     public static final String MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC02 = "idac02";
     
 	public static final String MODIPA_SICUREZZA_MESSAGGIO = "modipaSecurityMessage";
+	
+	public static final String MODIPA_SICUREZZA_TOKEN = "modipaSecurityToken";
+	
+	public static final String MODIPA_SICUREZZA_TOKEN_POLICY = "modipaSecurityTokenPolicy";
+	
+	public static final String MODIPA_SICUREZZA_TOKEN_CLIENT_ID = "modipaSecurityTokenClientId";
 	
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE = "modipaSecurityMessageProfileActionMode";
     

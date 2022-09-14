@@ -32,9 +32,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
@@ -44,6 +47,7 @@ import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.autorizzazione.container.AutorizzazioneHttpServletRequest;
 import org.openspcoop2.pdd.core.autorizzazione.pa.DatiInvocazionePortaApplicativa;
@@ -253,7 +257,7 @@ public class XACMLPolicyUtilities {
 		Map<String, String> applicativoConfig = readConfig(pddContext, org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO);
 		Map<String, String> soggettoFruitoreConfig = readConfig(pddContext, org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE);
 		Map<String, String> soggettoErogatoreConfig = readConfig(pddContext, org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_EROGATORE);
-		
+						
 		HttpServletRequest httpServletRequest = null;
 		if(checkRuoloEsterno){
 			if(datiInvocazione.getInfoConnettoreIngresso().getUrlProtocolContext().getHttpServletRequest()==null){
@@ -449,7 +453,8 @@ public class XACMLPolicyUtilities {
 		List<String> roles = new ArrayList<>();
 		if(checkRuoloRegistro){
 			if(datiPD!=null){
-				if(datiPD.getServizioApplicativo()==null && !checkRuoloEsterno){
+				if(datiPD.getServizioApplicativo()==null && !checkRuoloEsterno &&
+						informazioniTokenNormalizzate==null){
 					throw new AutorizzazioneException("Identità servizio applicativo non disponibile; tale informazione è richiesta dall'autorizzazione");
 				}
 				if(datiPD.getServizioApplicativo()!=null) {
@@ -463,7 +468,8 @@ public class XACMLPolicyUtilities {
 				}
 			}
 			else if(datiPA!=null){
-				if(datiPA.getSoggettoFruitore()==null && !checkRuoloEsterno){
+				if(datiPA.getSoggettoFruitore()==null && !checkRuoloEsterno &&
+						informazioniTokenNormalizzate==null){
 					throw new AutorizzazioneException("Identità soggetto fruitore non disponibile; tale informazione è richiesta dall'autorizzazione");
 				}
 				if(datiPA.getSoggettoFruitore()!=null) {
@@ -511,7 +517,84 @@ public class XACMLPolicyUtilities {
 			}
 			catch(DriverRegistroServiziNotFound notFound){
 				if(!checkRuoloRegistro) {
-					throw new AutorizzazioneException("Non sono stati registrati sulla PdD ruoli utilizzabili con un'autorizzazione esterna");
+					throw new AutorizzazioneException("Non sono stati registrati ruoli utilizzabili con un'autorizzazione esterna");
+				}
+			}
+			catch(Exception e){
+				throw new AutorizzazioneException("E' avvenuto un errore durante la ricerca dei ruoli: "+e.getMessage(),e);
+			}
+		}
+		
+		oTmp = pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN);
+		IDServizioApplicativo idApplicativoToken = null;
+		Map<String, String> applicativoTokenConfig = null;
+		Map<String, String> soggettoProprietarioApplicativoTokenConfig = null;
+		List<String> applicativoTokenRoles = new ArrayList<>();
+		if(oTmp!=null && oTmp instanceof IDServizioApplicativo) {
+			idApplicativoToken = (IDServizioApplicativo) oTmp;
+			applicativoTokenConfig = readConfig(pddContext, org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO_TOKEN);
+			soggettoProprietarioApplicativoTokenConfig = readConfig(pddContext, org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN);
+			
+			ServizioApplicativo saToken = null;
+			if(checkRuoloRegistro || checkRuoloEsterno) {
+				try {
+					saToken = ConfigurazionePdDManager.getInstance().getServizioApplicativo(idApplicativoToken);
+				}catch(DriverConfigurazioneNotFound notFound) {}
+				catch(Exception e){
+					throw new AutorizzazioneException("E' avvenuto un errore durante la ricerca dell'applicativo token '"+idApplicativoToken+"': "+e.getMessage(),e);
+				}
+			}
+			if(checkRuoloRegistro){
+				if(saToken!=null) {
+					if(saToken.getInvocazionePorta()!=null && 
+							saToken.getInvocazionePorta().getRuoli()!=null &&
+									saToken.getInvocazionePorta().getRuoli().sizeRuoloList()>0){
+						for (int i = 0; i < saToken.getInvocazionePorta().getRuoli().sizeRuoloList(); i++) {
+							applicativoTokenRoles.add(saToken.getInvocazionePorta().getRuoli().getRuolo(i).getNome());
+						}
+					}
+				}
+			}
+		}
+		if(checkRuoloEsterno && informazioniTokenNormalizzate!=null && tokenRoles!=null &&
+				!tokenRoles.isEmpty()){
+			try{
+				FiltroRicercaRuoli filtroRicerca = new FiltroRicercaRuoli();
+				if(datiPD!=null){
+					filtroRicerca.setContesto(RuoloContesto.PORTA_DELEGATA);
+				}
+				else if(datiPA!=null){
+					filtroRicerca.setContesto(RuoloContesto.PORTA_APPLICATIVA);
+				}
+				filtroRicerca.setTipologia(RuoloTipologia.ESTERNO);
+				RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance(datiInvocazione.getState());
+				List<IDRuolo> list = registroServiziManager.getAllIdRuoli(filtroRicerca, null);
+				if(list==null || list.size()<=0){
+					throw new DriverRegistroServiziNotFound();
+				}
+				for (IDRuolo idRuolo : list) {
+					String nomeRuoloDaVerificare = idRuolo.getNome();
+					try {
+						Ruolo ruoloRegistro = registroServiziManager.getRuolo(idRuolo.getNome(), null);
+						if(ruoloRegistro.getNomeEsterno()!=null && !"".equals(ruoloRegistro.getNomeEsterno())) {
+							nomeRuoloDaVerificare = ruoloRegistro.getNomeEsterno();
+						}
+					}catch(Exception e) {
+						throw new Exception("Recupero del ruolo '"+idRuolo.getNome()+"' fallito: "+e.getMessage(),e);
+					}
+					if(informazioniTokenNormalizzate.getRoles().contains(nomeRuoloDaVerificare)) {
+						applicativoTokenRoles.add(idRuolo.getNome()); // nella xacml policy comunque inserisco l'identificativo del ruolo nel registro della PdD
+					}
+				}
+				for (String role : tokenRoles) {
+					if(!applicativoTokenRoles.contains(role)) {
+						applicativoTokenRoles.addAll(tokenRoles); // inserisco anche i nomi originali
+					}
+				}
+			}
+			catch(DriverRegistroServiziNotFound notFound){
+				if(!checkRuoloRegistro) {
+					throw new AutorizzazioneException("Non sono stati registrati ruoli utilizzabili con un'autorizzazione esterna");
 				}
 			}
 			catch(Exception e){
@@ -612,6 +695,37 @@ public class XACMLPolicyUtilities {
 		}
 		if(attributes!=null && attributes.size()>0){
 			addAttributes(xacmlRequest, attributes, multipleAA);
+		}
+		
+		if(idApplicativoToken!=null) {
+			if(idApplicativoToken.getNome()!=null) {
+				xacmlRequest.addSubjectAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_TOKEN_CLIENT_APPLICATION_ATTRIBUTE_ID, idApplicativoToken.getNome());
+			}
+			if(applicativoTokenConfig!=null && !applicativoTokenConfig.isEmpty()) {
+				Iterator<String> keys = applicativoTokenConfig.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
+					String value = applicativoTokenConfig.get(key);
+					xacmlRequest.addSubjectAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_TOKEN_CLIENT_CONFIG_ATTRIBUTE_PREFIX+key, value);
+				}
+			}
+			
+			if(idApplicativoToken.getIdSoggettoProprietario()!=null) {
+				xacmlRequest.addSubjectAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_TOKEN_CLIENT_ORGANIZATION_ATTRIBUTE_ID, idApplicativoToken.getIdSoggettoProprietario().toString());
+			}
+			if(soggettoProprietarioApplicativoTokenConfig!=null && !soggettoProprietarioApplicativoTokenConfig.isEmpty()) {
+				Iterator<String> keys = soggettoProprietarioApplicativoTokenConfig.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
+					String value = soggettoProprietarioApplicativoTokenConfig.get(key);
+					xacmlRequest.addSubjectAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_TOKEN_CLIENT_ORGANIZATION_CONFIG_ATTRIBUTE_PREFIX+key, value);
+				}
+			}
+			
+		}
+		
+		if(applicativoTokenRoles!=null && applicativoTokenRoles.size()>0){
+			xacmlRequest.addSubjectAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_TOKEN_CLIENT_ROLE_ATTRIBUTE_ID, applicativoTokenRoles);
 		}
 
 		

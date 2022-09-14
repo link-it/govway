@@ -30,6 +30,9 @@ public class FiltroMittenteFruizioneApplicativo  implements OneOfRicercaInterval
   @Schema(required = true, description = "")
   private TipoFiltroMittenteEnum identificazione = null;
   
+  @Schema(description = "")
+  private TipoIdentificazioneApplicativoEnum tipoIdentificazioneApplicativo = null;
+  
   @Schema(required = true, description = "")
   private String applicativo = null;
  /**
@@ -50,6 +53,25 @@ public class FiltroMittenteFruizioneApplicativo  implements OneOfRicercaInterval
 
   public FiltroMittenteFruizioneApplicativo identificazione(TipoFiltroMittenteEnum identificazione) {
     this.identificazione = identificazione;
+    return this;
+  }
+
+ /**
+   * Get tipoIdentificazioneApplicativo
+   * @return tipoIdentificazioneApplicativo
+  **/
+  @JsonProperty("tipo_identificazione_applicativo")
+  @Valid
+  public TipoIdentificazioneApplicativoEnum getTipoIdentificazioneApplicativo() {
+    return this.tipoIdentificazioneApplicativo;
+  }
+
+  public void setTipoIdentificazioneApplicativo(TipoIdentificazioneApplicativoEnum tipoIdentificazioneApplicativo) {
+    this.tipoIdentificazioneApplicativo = tipoIdentificazioneApplicativo;
+  }
+
+  public FiltroMittenteFruizioneApplicativo tipoIdentificazioneApplicativo(TipoIdentificazioneApplicativoEnum tipoIdentificazioneApplicativo) {
+    this.tipoIdentificazioneApplicativo = tipoIdentificazioneApplicativo;
     return this;
   }
 
@@ -80,6 +102,7 @@ public class FiltroMittenteFruizioneApplicativo  implements OneOfRicercaInterval
     sb.append("class FiltroMittenteFruizioneApplicativo {\n");
     
     sb.append("    identificazione: ").append(FiltroMittenteFruizioneApplicativo.toIndentedString(this.identificazione)).append("\n");
+    sb.append("    tipoIdentificazioneApplicativo: ").append(FiltroMittenteFruizioneApplicativo.toIndentedString(this.tipoIdentificazioneApplicativo)).append("\n");
     sb.append("    applicativo: ").append(FiltroMittenteFruizioneApplicativo.toIndentedString(this.applicativo)).append("\n");
     sb.append("}");
     return sb.toString();

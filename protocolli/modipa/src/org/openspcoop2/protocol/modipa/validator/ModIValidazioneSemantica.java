@@ -27,16 +27,23 @@ import java.util.Date;
 
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
+import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.RuoloTipologia;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.protocol.basic.validator.ValidazioneSemantica;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.utils.ModIPropertiesUtils;
+import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -115,7 +122,8 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				securityMessageProfile = ModIPropertiesUtils.convertProfiloSicurezzaToConfigurationValue(securityMessageProfile);
 			}
 			
-			if(securityMessageProfile!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfile)) {
+			boolean sicurezzaMessaggio = securityMessageProfile!=null && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(securityMessageProfile);
+			if(sicurezzaMessaggio) {
 				
 				Date now = DateManager.getDate();
 				
@@ -194,47 +202,164 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 					}
 				}
 				
-				if(isRichiesta) {
-					
-					if(msg.getTransportRequestContext()==null || msg.getTransportRequestContext().getInterfaceName()==null) {
-						throw new Exception("ID Porta non presente");
-					}
-					IDPortaApplicativa idPA = new IDPortaApplicativa();
-					idPA.setNome(msg.getTransportRequestContext().getInterfaceName());
-					PortaApplicativa pa = factory.getCachedConfigIntegrationReader(state).getPortaApplicativa(idPA);
-					boolean autorizzazioneModIPAAbilitata = false;
-					if(pa.getServiziApplicativiAutorizzati()!=null) {
-						autorizzazioneModIPAAbilitata = pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0;
-					}
-					
-					if(autorizzazioneModIPAAbilitata) {
-					
-						if(busta.getServizioApplicativoFruitore()==null || CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(busta.getServizioApplicativoFruitore())) {
-							this.context.addObject(Costanti.ERRORE_AUTORIZZAZIONE, Costanti.ERRORE_TRUE);
-							this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA, 
-									"Applicativo Mittente non identificato"));
-						}
-						else {
-							boolean autorizzato = false;
-							if(pa.getServiziApplicativiAutorizzati()!=null) {
-								for (PortaApplicativaAutorizzazioneServizioApplicativo paSA : pa.getServiziApplicativiAutorizzati().getServizioApplicativoList()) {
-									if(paSA.getTipoSoggettoProprietario().equals(busta.getTipoMittente()) &&
-											paSA.getNomeSoggettoProprietario().equals(busta.getMittente()) &&
-											paSA.getNome().equals(busta.getServizioApplicativoFruitore())) {
-										autorizzato = true;
-									}
-								}
-							}
-							if(!autorizzato) {
-								String idApp = busta.getServizioApplicativoFruitore() + " (Soggetto: "+busta.getMittente()+")";
-								this.context.addObject(Costanti.ERRORE_AUTORIZZAZIONE, Costanti.ERRORE_TRUE);
-								this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA, 
-										"Applicativo Mittente "+idApp+" non autorizzato"));
-							}
-						}
-						
+			}
+			
+			if(isRichiesta) {
+				
+				// vale sia per sicurezza messaggio che per token
+				// durante l'identificazione viene identificato 1 solo applicativo (non possono essere differenti tra token e trasporto)
+				// viene quindi inserito dentro busta e usato per i controlli sottostanti
+				
+				if(msg.getTransportRequestContext()==null || msg.getTransportRequestContext().getInterfaceName()==null) {
+					throw new Exception("ID Porta non presente");
+				}
+				IDPortaApplicativa idPA = new IDPortaApplicativa();
+				idPA.setNome(msg.getTransportRequestContext().getInterfaceName());
+				PortaApplicativa pa = factory.getCachedConfigIntegrationReader(state).getPortaApplicativa(idPA);
+				
+				
+				/** Identificazione Mittente by LineeGuida e Token */
+				boolean saIdentificatoBySecurity = busta.getServizioApplicativoFruitore()!=null && !CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(busta.getServizioApplicativoFruitore());
+				
+				boolean sicurezzaToken = this.context.containsKey(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+				boolean saIdentificatoByToken = false;
+				if(sicurezzaToken) {
+					IDServizioApplicativo idSAbyToken = IdentificazioneApplicativoMittenteUtils.identificazioneApplicativoMittenteByToken(this.log, state, busta, this.context);
+					saIdentificatoByToken = idSAbyToken!=null;
+				}
+				
+				boolean saFruitoreAnonimo = busta.getServizioApplicativoFruitore()==null || CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(busta.getServizioApplicativoFruitore());
+								
+				/** Tipi di Autorizzazione definiti */
+				boolean autorizzazionePerRichiedente = false;
+				if(pa.getServiziApplicativiAutorizzati()!=null) {
+					autorizzazionePerRichiedente = pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0;
+				}
+				boolean autorizzazionePerRuolo = false;
+				boolean checkRuoloRegistro = false;
+				boolean checkRuoloEsterno = false;
+				if(pa.getAutorizzazioneToken()!=null) {
+	    			autorizzazionePerRuolo = StatoFunzionalita.ABILITATO.equals(pa.getAutorizzazioneToken().getAutorizzazioneRuoli());
+				}
+				if(autorizzazionePerRuolo) {
+    				if( pa.getAutorizzazioneToken().getTipologiaRuoli()==null ||
+    					RuoloTipologia.QUALSIASI.equals(pa.getAutorizzazioneToken().getTipologiaRuoli())){
+    					checkRuoloRegistro = true;
+    					checkRuoloEsterno = true;
+    				} 
+    				else if( RuoloTipologia.INTERNO.equals(pa.getAutorizzazioneToken().getTipologiaRuoli())){
+    					checkRuoloRegistro = true;
+    				}
+    				else if( RuoloTipologia.ESTERNO.equals(pa.getAutorizzazioneToken().getTipologiaRuoli())){
+    					checkRuoloEsterno = true;
+    				}
+				}
+				
+				/** Verifica consistenza identificazione del mittente */
+				if(autorizzazionePerRichiedente || 
+						(autorizzazionePerRuolo && checkRuoloRegistro && !checkRuoloEsterno) ) {	
+					if(saFruitoreAnonimo) {
+						this.context.addObject(Costanti.ERRORE_AUTORIZZAZIONE, Costanti.ERRORE_TRUE);
+						this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA, 
+								"Applicativo Mittente non identificato"));
+						return;
 					}
 				}
+				if(!saFruitoreAnonimo) {
+					if(autorizzazionePerRichiedente || checkRuoloRegistro) {
+						// se utilizzo l'informazione dell'applicativo, tale informazione deve essere consistente rispetto a tutti i criteri di sicurezza
+						if(sicurezzaMessaggio) {
+							if(!saIdentificatoBySecurity) {
+								this.context.addObject(Costanti.ERRORE_AUTORIZZAZIONE, Costanti.ERRORE_TRUE);
+								String idApp = busta.getServizioApplicativoFruitore() + " (Soggetto: "+busta.getMittente()+")";
+								this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA, 
+										"Applicativo Mittente "+idApp+" non autorizzato; il certificato di firma non corrisponde all'applicativo"));
+								return;
+							}
+						}
+						if(sicurezzaToken) {
+							if(!saIdentificatoByToken) {
+								this.context.addObject(Costanti.ERRORE_AUTORIZZAZIONE, Costanti.ERRORE_TRUE);
+								String idApp = busta.getServizioApplicativoFruitore() + " (Soggetto: "+busta.getMittente()+")";
+								this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA, 
+										"Applicativo Mittente "+idApp+" non autorizzato; il claim 'clientId' presente nel token non corrisponde all'applicativo"));
+								return;
+							}
+						}
+					}
+				}
+				
+				/** Autorizzazione per Richiedente */
+				Eccezione eccezioneAutorizzazionePerRichiedente = null;
+				if(autorizzazionePerRichiedente) {					
+					boolean autorizzato = false;
+					if(pa.getServiziApplicativiAutorizzati()!=null) {
+						for (PortaApplicativaAutorizzazioneServizioApplicativo paSA : pa.getServiziApplicativiAutorizzati().getServizioApplicativoList()) {
+							if(paSA.getTipoSoggettoProprietario().equals(busta.getTipoMittente()) &&
+									paSA.getNomeSoggettoProprietario().equals(busta.getMittente()) &&
+									paSA.getNome().equals(busta.getServizioApplicativoFruitore())) {
+								autorizzato = true;
+							}
+						}
+					}
+					if(!autorizzato) {
+						String idApp = busta.getServizioApplicativoFruitore() + " (Soggetto: "+busta.getMittente()+")";
+						eccezioneAutorizzazionePerRichiedente = this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA, 
+								"Applicativo Mittente "+idApp+" non autorizzato");
+					}
+				}
+				
+				/** Autorizzazione per Ruolo */
+				Eccezione eccezioneAutorizzazionePerRuolo = null;
+				if(autorizzazionePerRuolo) {
+    				StringBuilder detailsBufferRuoli = new StringBuilder();
+    				ServizioApplicativo sa = null;
+    				if(!saFruitoreAnonimo) {
+    					IDServizioApplicativo idSA = new IDServizioApplicativo();
+    					idSA.setIdSoggettoProprietario(new IDSoggetto(busta.getTipoMittente(), busta.getMittente()));
+    					idSA.setNome(busta.getServizioApplicativoFruitore());
+    					sa = factory.getCachedConfigIntegrationReader(state).getServizioApplicativo(idSA);
+    				}
+    				boolean authRuoli = ConfigurazionePdDReader._autorizzazioneRoles(
+    								RegistroServiziManager.getInstance(state),
+    								null, sa, 
+    								null, false, 
+    								this.context,
+    								checkRuoloRegistro, checkRuoloEsterno,
+    								detailsBufferRuoli,
+    								pa.getAutorizzazioneToken().getRuoli().getMatch(), pa.getAutorizzazioneToken().getRuoli(),
+    								true);
+    				if(!authRuoli) {
+    					String errore = "Applicativo Mittente";
+    					if(!saFruitoreAnonimo) {
+    						errore = errore + " "+ busta.getServizioApplicativoFruitore() + " (Soggetto: "+busta.getMittente()+")";
+    					}
+    					errore = errore + " non autorizzato; ";
+    					eccezioneAutorizzazionePerRuolo = this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA, 
+    							errore + detailsBufferRuoli.toString());
+    				}
+	    		}
+				
+				/** Gestione Eccezioni */
+				if(autorizzazionePerRichiedente && autorizzazionePerRuolo) {
+					if(eccezioneAutorizzazionePerRichiedente!=null && eccezioneAutorizzazionePerRuolo!=null) {
+						this.context.addObject(Costanti.ERRORE_AUTORIZZAZIONE, Costanti.ERRORE_TRUE);
+						this.erroriValidazione.add(eccezioneAutorizzazionePerRuolo); // uso eccezione per ruolo che e' più completa come messaggistica
+					}
+					// se una delle due autorizzazione e' andata a buon fine devo autorizzare
+				}
+				else {
+					if(eccezioneAutorizzazionePerRichiedente!=null || eccezioneAutorizzazionePerRuolo!=null) {
+						this.context.addObject(Costanti.ERRORE_AUTORIZZAZIONE, Costanti.ERRORE_TRUE);
+						if(eccezioneAutorizzazionePerRichiedente!=null) {
+							this.erroriValidazione.add(eccezioneAutorizzazionePerRichiedente); 
+						}
+						else {
+							this.erroriValidazione.add(eccezioneAutorizzazionePerRuolo);
+						}
+					}
+				}
+				
 			}
 			
 		}catch(Exception e){

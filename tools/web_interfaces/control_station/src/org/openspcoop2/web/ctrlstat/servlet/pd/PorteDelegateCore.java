@@ -36,6 +36,7 @@ import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.PortaDelegataAutorizzazioneToken;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
@@ -93,6 +94,8 @@ public class PorteDelegateCore extends ControlStationCore {
 			String fruizioneAutenticazione, String fruizioneAutenticazioneOpzionale, TipoAutenticazionePrincipal fruizioneAutenticazionePrincipal, List<String> fruizioneAutenticazioneParametroList,
 			String fruizioneAutorizzazione, String fruizioneAutorizzazioneAutenticati, String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,
 			String fruizioneServizioApplicativo, String fruizioneRuolo, 
+			String autorizzazioneAutenticatiToken, 
+			String autorizzazioneRuoliToken, String autorizzazioneRuoliTipologiaToken, String autorizzazioneRuoliMatchToken,
 			String fruizioneAutorizzazione_tokenOptions,
 			String fruizioneAutorizzazioneScope, String fruizioneScope, String fruizioneAutorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
 			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) {
@@ -114,6 +117,8 @@ public class PorteDelegateCore extends ControlStationCore {
 		portaDelegata.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(fruizioneAutorizzazione, 
 				ServletUtils.isCheckBoxEnabled(fruizioneAutorizzazioneAutenticati), 
 				ServletUtils.isCheckBoxEnabled(fruizioneAutorizzazioneRuoli),
+				ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticatiToken), 
+				ServletUtils.isCheckBoxEnabled(autorizzazioneRuoliToken),
 				ServletUtils.isCheckBoxEnabled(fruizioneAutorizzazioneScope),
 				fruizioneAutorizzazione_tokenOptions,
 				RuoloTipologia.toEnumConstant(fruizioneAutorizzazioneRuoliTipologia)));
@@ -151,6 +156,67 @@ public class PorteDelegateCore extends ControlStationCore {
 			portaDelegata.getRuoli().addRuolo(ruolo);
 		}
 		
+		// token applicativi
+		if(ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticatiToken)) {
+			if(portaDelegata.getAutorizzazioneToken()==null) {
+				portaDelegata.setAutorizzazioneToken(new PortaDelegataAutorizzazioneToken() );
+			}
+			portaDelegata.getAutorizzazioneToken().setAutorizzazioneApplicativi(StatoFunzionalita.ABILITATO); 
+		}
+		else {
+			if(portaDelegata.getAutorizzazioneToken()!=null) {
+				portaDelegata.getAutorizzazioneToken().setAutorizzazioneApplicativi(null);
+				portaDelegata.getAutorizzazioneToken().setServiziApplicativi(null);
+			}
+		}
+		
+		// token ruoli
+		if(ServletUtils.isCheckBoxEnabled(autorizzazioneRuoliToken)) {
+			if(portaDelegata.getAutorizzazioneToken()==null) {
+				portaDelegata.setAutorizzazioneToken(new PortaDelegataAutorizzazioneToken() );
+			}
+			portaDelegata.getAutorizzazioneToken().setAutorizzazioneRuoli(StatoFunzionalita.ABILITATO); 
+			
+			if(autorizzazioneRuoliTipologiaToken!=null && !"".equals(autorizzazioneRuoliTipologiaToken)){
+				org.openspcoop2.core.config.constants.RuoloTipologia ruoloTipologia = org.openspcoop2.core.config.constants.RuoloTipologia.toEnumConstant(autorizzazioneRuoliTipologiaToken);
+				portaDelegata.getAutorizzazioneToken().setTipologiaRuoli(ruoloTipologia);
+			}
+			else {
+				portaDelegata.getAutorizzazioneToken().setTipologiaRuoli(null);
+			}
+			
+			if(autorizzazioneRuoliMatchToken!=null && !"".equals(autorizzazioneRuoliMatchToken)){
+				RuoloTipoMatch ruoloTipoMatch = RuoloTipoMatch.toEnumConstant(autorizzazioneRuoliMatchToken);
+				if(ruoloTipoMatch!=null){
+					if(portaDelegata.getAutorizzazioneToken().getRuoli()==null){
+						portaDelegata.getAutorizzazioneToken().setRuoli(new AutorizzazioneRuoli());
+					}
+					portaDelegata.getAutorizzazioneToken().getRuoli().setMatch(ruoloTipoMatch);
+				}
+				else {
+					if(portaDelegata.getAutorizzazioneToken().getRuoli()!=null){
+						portaDelegata.getAutorizzazioneToken().getRuoli().setMatch(null);
+					}
+				}
+			}
+			else {
+				if(portaDelegata.getAutorizzazioneToken().getRuoli()!=null){
+					portaDelegata.getAutorizzazioneToken().getRuoli().setMatch(null);
+				}
+			}
+		}
+		else {
+			if(portaDelegata.getAutorizzazioneToken()!=null) {
+				portaDelegata.getAutorizzazioneToken().setAutorizzazioneRuoli(null);
+				portaDelegata.getAutorizzazioneToken().setTipologiaRuoli(null);
+				portaDelegata.getAutorizzazioneToken().setRuoli(null);
+			}
+		}
+		
+		// token options
+		// impostato in configureControlloAccessiGestioneToken 
+		
+		// scope
 		if(ServletUtils.isCheckBoxEnabled(fruizioneAutorizzazioneScope)) {
 			if(portaDelegata.getScope() == null)
 				portaDelegata.setScope(new AutorizzazioneScope());
@@ -160,7 +226,6 @@ public class PorteDelegateCore extends ControlStationCore {
 		else {
 			portaDelegata.setScope(null);
 		}
-		// scope
 		if(fruizioneScope!=null && !"".equals(fruizioneScope) && !"-".equals(fruizioneScope)){
 			if(portaDelegata.getScope() == null) {
 				portaDelegata.setScope(new AutorizzazioneScope());
@@ -707,6 +772,28 @@ public class PorteDelegateCore extends ControlStationCore {
 
 	}
 	
+	public List<ServizioApplicativo> porteDelegateServizioApplicativoTokenList(long idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "porteDelegateServizioApplicativoTokenList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().porteDelegateServizioApplicativoTokenList(idPortaDelegata, ricerca);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
 	public List<CorrelazioneApplicativaElemento> porteDelegateCorrelazioneApplicativaList(long idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "porteDelegateCorrelazioneApplicativaList";
@@ -893,6 +980,28 @@ public class PorteDelegateCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
 			return driver.getDriverConfigurazioneDB().portaDelegataRuoliList(idPD, ricerca);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
+	public List<String> portaDelegataRuoliTokenList(long idPD, ISearch ricerca) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "portaDelegataRuoliTokenList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().portaDelegataRuoliTokenList(idPD, ricerca);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

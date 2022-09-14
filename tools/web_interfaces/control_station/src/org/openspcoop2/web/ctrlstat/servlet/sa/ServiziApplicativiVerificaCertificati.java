@@ -172,6 +172,12 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 			Soggetto soggettoProprietario = soggettiCore.getSoggettoRegistro(idSoggettoProprietario);
 			String dominio = pddCore.isPddEsterna(soggettoProprietario.getPortaDominio()) ? SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE : SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE;
 		
+			boolean tokenWithHttsSupportato = false;
+			if(tipoProtocollo!=null) {
+				ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+				tokenWithHttsSupportato = protocolFactoryManager.getProtocolFactoryByName(tipoProtocollo).createProtocolConfiguration().isSupportatoAutenticazioneApplicativiHttpsConToken();
+			}
+						
 			List<Parameter> parametersServletSAChange = new ArrayList<Parameter>();
 			Parameter pIdSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+"");
 			parametersServletSAChange.add(pIdSA);
@@ -1253,6 +1259,9 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 					String multipleApiKey = null;
 					String appId = null;
 					String apiKey = null;
+					String tokenPolicySA = null;
+					String tokenClientIdSA = null;
+					boolean tokenWithHttpsEnabledByConfigSA = false;
 					BinaryParameter tipoCredenzialiSSLFileCertificato = saHelper.getBinaryParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO);
 					String tipoCredenzialiSSLSorgente = null;
 					String tipoCredenzialiSSLAliasCertificato = null;
@@ -1290,6 +1299,18 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 						if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL.equals(tipoauthSA)) {
 							principalSA = credenziali.getUser();
 						}
+						
+						if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN.equals(tipoauthSA)) {
+							tokenClientIdSA = credenziali.getUser();
+							tokenPolicySA = credenziali.getTokenPolicy();
+						}
+						else if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(tipoauthSA) && tokenWithHttsSupportato) {
+							tokenClientIdSA = credenziali.getUser();
+							tokenPolicySA = credenziali.getTokenPolicy();
+							tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(tipoauthSA) && StringUtils.isNotEmpty(tokenClientIdSA);
+						}
+						tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(tipoauthSA) && StringUtils.isNotEmpty(tokenClientIdSA);
+						
 					}
 					
 					if(credenziali!=null) {
@@ -1378,7 +1399,8 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 							multipleApiKey, appId, apiKey,
 							autenticazioneToken,token_policy,tipoSA, useAsClient,
 							integrationManagerEnabled, 
-							visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd);
+							visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
+							tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA);
 
 					// aggiunta campi custom
 					dati = saHelper.addProtocolPropertiesToDatiConfig(dati, consoleConfiguration,consoleOperationType, protocolProperties,oldProtocolPropertyList,propertiesProprietario);

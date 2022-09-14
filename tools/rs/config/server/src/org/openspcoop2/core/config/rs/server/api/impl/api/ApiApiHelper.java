@@ -108,7 +108,8 @@ public class ApiApiHelper {
 
 
 
-	public static void validateProperties(ApiEnv env, ProtocolProperties protocolProperties, IDAccordo idAccordoFromAccordo)
+	public static void validateProperties(ApiEnv env, ProtocolProperties protocolProperties, IDAccordo idAccordoFromAccordo,
+			ConsoleOperationType operationType)
 			throws DriverConfigurazioneException {
 		if(protocolProperties!=null) {
 			try{
@@ -116,6 +117,16 @@ public class ApiApiHelper {
 				ConsoleConfiguration consoleConf = getConsoleConfiguration(env, idAccordoFromAccordo);
 
 				env.apcHelper.validaProtocolProperties(consoleConf, ConsoleOperationType.ADD, protocolProperties);
+				
+				IConsoleDynamicConfiguration consoleDynamicConfiguration = env.protocolFactory.createDynamicConfigurationConsole();
+				IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory); 
+				IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(env.protocolFactory);
+				consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(consoleConf, operationType, env.apcHelper, protocolProperties, 
+						registryReader, configRegistryReader, idAccordoFromAccordo);
+				
+				consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteComune(consoleConf, operationType, env.apcHelper, protocolProperties, 
+						registryReader, configRegistryReader, idAccordoFromAccordo);
+				
 			}catch(ProtocolException e){
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e.getMessage());
 			}
@@ -134,6 +145,31 @@ public class ApiApiHelper {
 		return consoleConf;
 	}
 
+	public static void validateProperties(ApiEnv env, ProtocolProperties protocolProperties, IDResource idResource, String method, String path,
+			ConsoleOperationType operationType)
+			throws DriverConfigurazioneException {
+		if(protocolProperties!=null) {
+			try{
+
+				ConsoleConfiguration consoleConf = getConsoleConfiguration(env, idResource, method, path);
+
+				env.apcHelper.validaProtocolProperties(consoleConf, ConsoleOperationType.ADD, protocolProperties);
+				
+				IConsoleDynamicConfiguration consoleDynamicConfiguration = env.protocolFactory.createDynamicConfigurationConsole();
+				IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory); 
+				IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(env.protocolFactory);
+				consoleDynamicConfiguration.updateDynamicConfigResource(consoleConf, operationType, env.apcHelper, protocolProperties, 
+						registryReader, configRegistryReader, idResource, method, path);
+				
+				consoleDynamicConfiguration.validateDynamicConfigResource(consoleConf, operationType, env.apcHelper, protocolProperties, 
+						registryReader, configRegistryReader, idResource, method, path);
+				
+			}catch(ProtocolException e){
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e.getMessage());
+			}
+		}
+	}
+	
 	public static ConsoleConfiguration getConsoleConfiguration(ApiEnv env, IDResource idResource, String method, String path)
 			throws ProtocolException, DriverConfigurazioneException {
 		IConsoleDynamicConfiguration consoleDynamicConfiguration = env.protocolFactory.createDynamicConfigurationConsole();
@@ -146,6 +182,31 @@ public class ApiApiHelper {
 		return consoleConf;
 	}
 
+	public static void validateProperties(ApiEnv env, ProtocolProperties protocolProperties, IDPortTypeAzione idAccordoAzione,
+			ConsoleOperationType operationType)
+			throws DriverConfigurazioneException {
+		if(protocolProperties!=null) {
+			try{
+
+				ConsoleConfiguration consoleConf = getConsoleConfiguration(env, idAccordoAzione);
+
+				env.apcHelper.validaProtocolProperties(consoleConf, ConsoleOperationType.ADD, protocolProperties);
+				
+				IConsoleDynamicConfiguration consoleDynamicConfiguration = env.protocolFactory.createDynamicConfigurationConsole();
+				IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory); 
+				IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(env.protocolFactory);
+				consoleDynamicConfiguration.updateDynamicConfigOperation(consoleConf, operationType, env.apcHelper, protocolProperties, 
+						registryReader, configRegistryReader, idAccordoAzione);
+				
+				consoleDynamicConfiguration.validateDynamicConfigOperation(consoleConf, operationType, env.apcHelper, protocolProperties, 
+						registryReader, configRegistryReader, idAccordoAzione);
+				
+			}catch(ProtocolException e){
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e.getMessage());
+			}
+		}
+	}
+	
 	public static ConsoleConfiguration getConsoleConfiguration(ApiEnv env, IDPortTypeAzione idAccordoAzione)
 			throws ProtocolException, DriverConfigurazioneException {
 		

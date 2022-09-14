@@ -40,6 +40,7 @@ import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.PortaDelegataAutorizzazioneToken;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
@@ -133,6 +134,11 @@ public class PorteDelegateControlloAccessi extends Action {
 			String autorizzazioneRuoliTipologia = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
 			String ruoloMatch = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
 			
+			String autorizzazioneAutenticatiToken = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_TOKEN);
+			String autorizzazioneRuoliToken = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI_TOKEN);
+			String autorizzazioneRuoliTipologiaToken = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA_TOKEN);
+			String autorizzazioneRuoliMatchToken = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH_TOKEN);
+			
 			String autorizzazioneContenuti = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI);
 			String autorizzazioneContenutiStato = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_STATO);
 			String autorizzazioneContenutiProperties = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_PROPERTIES);
@@ -204,6 +210,16 @@ public class PorteDelegateControlloAccessi extends Action {
 				sizeFruitori = portaDelegata.sizeServizioApplicativoList();
 			}
 			
+			int numAutenticatiToken = 0; 
+			if(portaDelegata.getAutorizzazioneToken()!=null && portaDelegata.getAutorizzazioneToken().getServiziApplicativi()!=null){
+				numAutenticatiToken = portaDelegata.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList();
+			}
+			
+			int numRuoliToken = 0; 
+			if(portaDelegata.getAutorizzazioneToken()!=null && portaDelegata.getAutorizzazioneToken().getRuoli()!=null){
+				numRuoliToken = portaDelegata.getAutorizzazioneToken().getRuoli().sizeRuoloList();
+			}
+			
 			int numAutenticazioneCustomPropertiesList = portaDelegata.sizeProprietaAutenticazioneList();
 			int numAutorizzazioneCustomPropertiesList = portaDelegata.sizeProprietaAutorizzazioneList();
 			int numAutorizzazioneContenutiCustomPropertiesList = portaDelegata.sizeProprietaAutorizzazioneContenutoList();
@@ -252,6 +268,7 @@ public class PorteDelegateControlloAccessi extends Action {
 			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idSoggFruitore);
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
+			Parameter pTokenAuthorization = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TOKEN_AUTHORIZATION, true+"");
 
 			Parameter[] urlParmsAutorizzazioneAutenticati = {  pId,pIdSoggetto,pIdAsps,pIdFrizione  };
 			Parameter urlAutorizzazioneAutenticatiParam= new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_LIST , urlParmsAutorizzazioneAutenticati);
@@ -260,6 +277,14 @@ public class PorteDelegateControlloAccessi extends Action {
 			Parameter[] urlParmsAutorizzazioneRuoli = {  pId,pIdSoggetto,pIdAsps,pIdFrizione };
 			Parameter urlAutorizzazioneRuoliParam = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RUOLI_LIST , urlParmsAutorizzazioneRuoli);
 			String urlAutorizzazioneRuoli = urlAutorizzazioneRuoliParam.getValue();
+			
+			Parameter[] urlParmsAutorizzazioneAutenticatiToken = {  pId,pIdSoggetto,pIdAsps,pIdFrizione,pTokenAuthorization  };
+			Parameter urlAutorizzazioneAutenticatiParamToken= new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_LIST , urlParmsAutorizzazioneAutenticatiToken);
+			String urlAutorizzazioneAutenticatiToken = urlAutorizzazioneAutenticatiParamToken.getValue();
+			
+			Parameter[] urlParmsAutorizzazioneRuoliToken = {  pId,pIdSoggetto,pIdAsps,pIdFrizione,pTokenAuthorization };
+			Parameter urlAutorizzazioneRuoliParamToken = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RUOLI_LIST , urlParmsAutorizzazioneRuoliToken);
+			String urlAutorizzazioneRuoliToken = urlAutorizzazioneRuoliParamToken.getValue();
 			
 			Parameter[] urlParmsAutorizzazioneScope = {  pId,pIdSoggetto,pIdAsps,pIdFrizione };
 			Parameter urlAutorizzazioneScopeParam = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_SCOPE_LIST , urlParmsAutorizzazioneScope);
@@ -372,6 +397,28 @@ public class PorteDelegateControlloAccessi extends Action {
 				if (ruoloMatch == null) {
 					if(portaDelegata.getRuoli()!=null && portaDelegata.getRuoli().getMatch()!=null){
 						ruoloMatch = portaDelegata.getRuoli().getMatch().getValue();
+					}
+				}
+				
+				if(autorizzazioneAutenticatiToken==null) {
+					if(portaDelegata.getAutorizzazioneToken()!=null && portaDelegata.getAutorizzazioneToken().getAutorizzazioneApplicativi()!=null) {
+						autorizzazioneAutenticatiToken = StatoFunzionalita.ABILITATO.equals(portaDelegata.getAutorizzazioneToken().getAutorizzazioneApplicativi()) ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
+					}
+				}
+				
+				if(autorizzazioneRuoliToken==null) {
+					if(portaDelegata.getAutorizzazioneToken()!=null && portaDelegata.getAutorizzazioneToken().getAutorizzazioneRuoli()!=null) {
+						autorizzazioneRuoliToken = StatoFunzionalita.ABILITATO.equals(portaDelegata.getAutorizzazioneToken().getAutorizzazioneRuoli()) ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
+					}
+				}
+				if(autorizzazioneRuoliTipologiaToken==null) {
+					if(portaDelegata.getAutorizzazioneToken()!=null && portaDelegata.getAutorizzazioneToken().getTipologiaRuoli()!=null) {
+						autorizzazioneRuoliTipologiaToken = portaDelegata.getAutorizzazioneToken().getTipologiaRuoli().getValue();
+					}
+				}
+				if (autorizzazioneRuoliMatchToken == null) {
+					if(portaDelegata.getAutorizzazioneToken()!=null && portaDelegata.getAutorizzazioneToken().getRuoli()!=null && portaDelegata.getAutorizzazioneToken().getRuoli().getMatch()!=null){
+						autorizzazioneRuoliMatchToken = portaDelegata.getAutorizzazioneToken().getRuoli().getMatch().getValue();
 					}
 				}
 				
@@ -562,7 +609,10 @@ public class PorteDelegateControlloAccessi extends Action {
 						autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
 						null, 0,
 						urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList,
-						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
+						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
+						autorizzazioneAutenticatiToken, urlAutorizzazioneAutenticatiToken, numAutenticatiToken, 
+						autorizzazioneRuoliToken,  urlAutorizzazioneRuoliToken, numRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken
+						);
 				
 				porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, true, portaDelegata,protocollo, 
 						autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
@@ -586,6 +636,7 @@ public class PorteDelegateControlloAccessi extends Action {
 					autorizzazioneRuoliTipologia, ruoloMatch, 
 					 isSupportatoAutenticazione, isPortaDelegata, portaDelegata, ruoli,gestioneToken, gestioneTokenPolicy, 
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
+						autorizzazioneAutenticatiToken, autorizzazioneRuoliToken, 
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
@@ -620,7 +671,9 @@ public class PorteDelegateControlloAccessi extends Action {
 						autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
 						null, 0,
 						urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList,
-						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
+						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
+						autorizzazioneAutenticatiToken, urlAutorizzazioneAutenticatiToken, numAutenticatiToken, 
+						autorizzazioneRuoliToken,  urlAutorizzazioneRuoliToken, numRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken);
 				
 				porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, true, portaDelegata,protocollo,
 						autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,
@@ -667,6 +720,8 @@ public class PorteDelegateControlloAccessi extends Action {
 				portaDelegata.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(autorizzazione, 
 						ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati), 
 						ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli), 
+						ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticatiToken), 
+						ServletUtils.isCheckBoxEnabled(autorizzazioneRuoliToken),
 						ServletUtils.isCheckBoxEnabled(autorizzazioneScope),
 						autorizzazione_tokenOptions,
 						RuoloTipologia.toEnumConstant(autorizzazioneRuoliTipologia)));
@@ -690,6 +745,66 @@ public class PorteDelegateControlloAccessi extends Action {
 					portaDelegata.getRuoli().setMatch(tipoRuoloMatch);
 				}
 			}
+			
+			if(ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticatiToken ) ) {
+				if(portaDelegata.getAutorizzazioneToken()==null) {
+					portaDelegata.setAutorizzazioneToken(new PortaDelegataAutorizzazioneToken());
+				}
+				portaDelegata.getAutorizzazioneToken().setAutorizzazioneApplicativi(StatoFunzionalita.ABILITATO);
+			}
+			else {
+				if(portaDelegata.getAutorizzazioneToken()!=null) {
+					portaDelegata.getAutorizzazioneToken().setAutorizzazioneApplicativi(StatoFunzionalita.DISABILITATO);
+					portaDelegata.getAutorizzazioneToken().setServiziApplicativi(null);
+				}
+			}
+			
+			if(ServletUtils.isCheckBoxEnabled(autorizzazioneRuoliToken ) ) {
+				if(portaDelegata.getAutorizzazioneToken()==null) {
+					portaDelegata.setAutorizzazioneToken(new PortaDelegataAutorizzazioneToken());
+				}
+				portaDelegata.getAutorizzazioneToken().setAutorizzazioneRuoli(StatoFunzionalita.ABILITATO);
+				
+				if(autorizzazioneRuoliMatchToken!=null && !"".equals(autorizzazioneRuoliMatchToken)){
+					RuoloTipoMatch ruoloTipoMatch = RuoloTipoMatch.toEnumConstant(autorizzazioneRuoliMatchToken);
+					if(ruoloTipoMatch!=null){
+						if(portaDelegata.getAutorizzazioneToken().getRuoli()==null){
+							portaDelegata.getAutorizzazioneToken().setRuoli(new AutorizzazioneRuoli());
+						}
+						portaDelegata.getAutorizzazioneToken().getRuoli().setMatch(ruoloTipoMatch);
+					}
+					else {
+						if(portaDelegata.getAutorizzazioneToken().getRuoli()!=null){
+							portaDelegata.getAutorizzazioneToken().getRuoli().setMatch(null);
+						}
+					}
+				}
+				else {
+					if(portaDelegata.getAutorizzazioneToken().getRuoli()!=null){
+						portaDelegata.getAutorizzazioneToken().getRuoli().setMatch(null);
+					}
+				}
+				
+				if(autorizzazioneRuoliTipologiaToken!=null && !"".equals(autorizzazioneRuoliTipologiaToken)){
+					org.openspcoop2.core.config.constants.RuoloTipologia ruoloTipologia = org.openspcoop2.core.config.constants.RuoloTipologia.toEnumConstant(autorizzazioneRuoliTipologiaToken);
+					if(ruoloTipologia!=null){
+						portaDelegata.getAutorizzazioneToken().setTipologiaRuoli(ruoloTipologia);
+					}
+					else {
+						portaDelegata.getAutorizzazioneToken().setTipologiaRuoli(null);
+					}
+				}
+				else {
+					portaDelegata.getAutorizzazioneToken().setTipologiaRuoli(null);
+				}
+			}
+			else {
+				if(portaDelegata.getAutorizzazioneToken()!=null) {
+					portaDelegata.getAutorizzazioneToken().setAutorizzazioneRuoli(StatoFunzionalita.DISABILITATO);
+					portaDelegata.getAutorizzazioneToken().setRuoli(null);
+				}
+			}
+			
 			if(ServletUtils.isCheckBoxEnabled(autorizzazioneScope )) {
 				if(portaDelegata.getScope() == null)
 					portaDelegata.setScope(new AutorizzazioneScope());
@@ -813,6 +928,16 @@ public class PorteDelegateControlloAccessi extends Action {
 				sizeFruitori = portaDelegata.sizeServizioApplicativoList();
 			}
 			
+			numAutenticatiToken = 0; 
+			if(portaDelegata.getAutorizzazioneToken()!=null && portaDelegata.getAutorizzazioneToken().getServiziApplicativi()!=null){
+				numAutenticatiToken = portaDelegata.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList();
+			}
+			
+			numRuoliToken = 0; 
+			if(portaDelegata.getAutorizzazioneToken()!=null && portaDelegata.getAutorizzazioneToken().getRuoli()!=null){
+				numRuoliToken = portaDelegata.getAutorizzazioneToken().getRuoli().sizeRuoloList();
+			}
+			
 			numAutenticazioneCustomPropertiesList = portaDelegata.sizeProprietaAutenticazioneList();
 			numAutorizzazioneCustomPropertiesList = portaDelegata.sizeProprietaAutorizzazioneList();
 			numAutorizzazioneContenutiCustomPropertiesList = portaDelegata.sizeProprietaAutorizzazioneContenutoList();
@@ -858,6 +983,28 @@ public class PorteDelegateControlloAccessi extends Action {
 			if (ruoloMatch == null) {
 				if(portaDelegata.getRuoli()!=null && portaDelegata.getRuoli().getMatch()!=null){
 					ruoloMatch = portaDelegata.getRuoli().getMatch().getValue();
+				}
+			}
+			
+			if(autorizzazioneAutenticatiToken==null) {
+				if(portaDelegata.getAutorizzazioneToken()!=null && portaDelegata.getAutorizzazioneToken().getAutorizzazioneApplicativi()!=null) {
+					autorizzazioneAutenticatiToken = StatoFunzionalita.ABILITATO.equals(portaDelegata.getAutorizzazioneToken().getAutorizzazioneApplicativi()) ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
+				}
+			}
+			
+			if(autorizzazioneRuoliToken==null) {
+				if(portaDelegata.getAutorizzazioneToken()!=null && portaDelegata.getAutorizzazioneToken().getAutorizzazioneRuoli()!=null) {
+					autorizzazioneRuoliToken = StatoFunzionalita.ABILITATO.equals(portaDelegata.getAutorizzazioneToken().getAutorizzazioneRuoli()) ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
+				}
+			}
+			if(autorizzazioneRuoliTipologiaToken==null) {
+				if(portaDelegata.getAutorizzazioneToken()!=null && portaDelegata.getAutorizzazioneToken().getTipologiaRuoli()!=null) {
+					autorizzazioneRuoliTipologiaToken = portaDelegata.getAutorizzazioneToken().getTipologiaRuoli().getValue();
+				}
+			}
+			if (autorizzazioneRuoliMatchToken == null) {
+				if(portaDelegata.getAutorizzazioneToken()!=null && portaDelegata.getAutorizzazioneToken().getRuoli()!=null && portaDelegata.getAutorizzazioneToken().getRuoli().getMatch()!=null){
+					autorizzazioneRuoliMatchToken = portaDelegata.getAutorizzazioneToken().getRuoli().getMatch().getValue();
 				}
 			}
 			
@@ -1036,7 +1183,9 @@ public class PorteDelegateControlloAccessi extends Action {
 					autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
 					null, 0,
 					urlAutorizzazioneCustomProperties, numAutorizzazioneCustomPropertiesList,
-					identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
+					identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
+					autorizzazioneAutenticatiToken, urlAutorizzazioneAutenticatiToken, numAutenticatiToken, 
+					autorizzazioneRuoliToken,  urlAutorizzazioneRuoliToken, numRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken);
 			
 			porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, TipoOperazione.OTHER, true, portaDelegata,protocollo,
 					autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding,

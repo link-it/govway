@@ -30,6 +30,8 @@ import javax.xml.soap.AttachmentPart;
 
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
+import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageRole;
@@ -151,6 +153,32 @@ public class Test {
 	private static final String CONFIG3_APPLICATIVO_VALORE = "ConfigAppValore3";
 	private static final String CONFIG4_APPLICATIVO = "ConfigApp4";
 	private static final String CONFIG4_APPLICATIVO_VALORE = "ConfigAppValore4";
+	
+	private static final String CONFIG_APPLICATIVO_TOKEN_NOME = "ConfigAppTokenApplicativoID";
+	private static final String CONFIG_APPLICATIVO_TOKEN_SOGGETTO_NOME = "ConfigAppTokenSoggettoID";
+	private static final IDServizioApplicativo APPLICATIVO_TOKEN = new IDServizioApplicativo();
+	static {
+		APPLICATIVO_TOKEN.setNome("ApplicativoTokenEsempio");
+		APPLICATIVO_TOKEN.setIdSoggettoProprietario(new IDSoggetto("gw", "SoggettoProprietarioApplicativoTokenEsempio"));
+	}
+	
+	private static final String CONFIG1_APPLICATIVO_TOKEN = "ConfigAppToken1";
+	private static final String CONFIG1_APPLICATIVO_TOKEN_VALORE = "ConfigAppTokenValore1";
+	private static final String CONFIG2_APPLICATIVO_TOKEN = "ConfigAppToken2";
+	private static final String CONFIG2_APPLICATIVO_TOKEN_VALORE = "ConfigAppTokenValore2";
+	private static final String CONFIG3_APPLICATIVO_TOKEN = "ConfigAppToken3";
+	private static final String CONFIG3_APPLICATIVO_TOKEN_VALORE = "ConfigAppTokenValore3";
+	private static final String CONFIG4_APPLICATIVO_TOKEN = "ConfigAppToken4";
+	private static final String CONFIG4_APPLICATIVO_TOKEN_VALORE = "ConfigAppTokenValore4";
+	
+	private static final String CONFIG1_SOGGETTO_APPLICATIVO_TOKEN = "ConfigSogAppToken1";
+	private static final String CONFIG1_SOGGETTO_APPLICATIVO_TOKEN_VALORE = "ConfigSogAppTokenValore1";
+	private static final String CONFIG2_SOGGETTO_APPLICATIVO_TOKEN = "ConfigSogAppToken2";
+	private static final String CONFIG2_SOGGETTO_APPLICATIVO_TOKEN_VALORE = "ConfigSogAppTokenValore2";
+	private static final String CONFIG3_SOGGETTO_APPLICATIVO_TOKEN = "ConfigSogAppToken3";
+	private static final String CONFIG3_SOGGETTO_APPLICATIVO_TOKEN_VALORE = "ConfigSogAppTokenValore3";
+	private static final String CONFIG4_SOGGETTO_APPLICATIVO_TOKEN = "ConfigSogAppToken4";
+	private static final String CONFIG4_SOGGETTO_APPLICATIVO_TOKEN_VALORE = "ConfigSogAppTokenValore4";
 	
 	private static final String SYSTEM_CONFIG1 = "System1";
 	private static final String SYSTEM_CONFIG1_VALORE = "SystemValore1";
@@ -276,6 +304,10 @@ public class Test {
 			"\""+CONFIG1_APPLICATIVO+"\": \"${clientApplicationConfig:"+CONFIG1_APPLICATIVO+"}\",\n"+
 			"\""+CONFIG1_SOGGETTO_FRUITORE+"\": \"${clientOrganizationConfig:"+CONFIG1_SOGGETTO_FRUITORE+"}\",\n"+
 			"\""+CONFIG1_SOGGETTO_EROGATORE+"\": \"${providerOrganizationConfig:"+CONFIG1_SOGGETTO_EROGATORE+"}\",\n"+
+			"\""+CONFIG_APPLICATIVO_TOKEN_NOME+"\": \"${tokenClient:nome}\",\n"+
+			"\""+CONFIG_APPLICATIVO_TOKEN_SOGGETTO_NOME+"\": \"${tokenClient:idSoggettoProprietario.nome}\",\n"+
+			"\""+CONFIG1_APPLICATIVO_TOKEN+"\": \"${tokenClientApplicationConfig:"+CONFIG1_APPLICATIVO_TOKEN+"}\",\n"+
+			"\""+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+"\": \"${tokenClientOrganizationConfig:"+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+"}\",\n"+
 			"\""+SYSTEM_CONFIG1+"\": \"${system:"+SYSTEM_CONFIG1+"}\",\n"+
 			"\""+ENV_CONFIG1+"\": \"${env:"+ENV_CONFIG1+"}\",\n"+
 			"\""+JAVA_CONFIG1+"\": \"${java:"+JAVA_CONFIG1+"}\",\n";
@@ -314,6 +346,10 @@ public class Test {
 			"<"+CONFIG1_APPLICATIVO+">"+"${clientapplicationconfig:"+CONFIG1_APPLICATIVO+"}"+"</"+CONFIG1_APPLICATIVO+">\n"+
 			"<"+CONFIG1_SOGGETTO_FRUITORE+">"+"${clientorganizationconfig:"+CONFIG1_SOGGETTO_FRUITORE+"}"+"</"+CONFIG1_SOGGETTO_FRUITORE+">\n"+
 			"<"+CONFIG1_SOGGETTO_EROGATORE+">"+"${providerorganizationconfig:"+CONFIG1_SOGGETTO_EROGATORE+"}"+"</"+CONFIG1_SOGGETTO_EROGATORE+">\n"+
+			"<"+CONFIG_APPLICATIVO_TOKEN_NOME+">"+"${tokenClient:nome}"+"</"+CONFIG_APPLICATIVO_TOKEN_NOME+">\n"+
+			"<"+CONFIG_APPLICATIVO_TOKEN_SOGGETTO_NOME+">"+"${tokenClient:idSoggettoProprietario.nome}"+"</"+CONFIG_APPLICATIVO_TOKEN_SOGGETTO_NOME+">\n"+
+			"<"+CONFIG1_APPLICATIVO_TOKEN+">"+"${tokenClientApplicationConfig:"+CONFIG1_APPLICATIVO_TOKEN+"}"+"</"+CONFIG1_APPLICATIVO_TOKEN+">\n"+
+			"<"+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+">"+"${tokenClientOrganizationConfig:"+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+"}"+"</"+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+">\n"+
 			"<"+SYSTEM_CONFIG1+">"+"${system:"+SYSTEM_CONFIG1+"}"+"</"+SYSTEM_CONFIG1+">\n"+
 			"<"+ENV_CONFIG1+">"+"${env:"+ENV_CONFIG1+"}"+"</"+ENV_CONFIG1+">\n"+
 			"<"+JAVA_CONFIG1+">"+"${java:"+JAVA_CONFIG1+"}"+"</"+JAVA_CONFIG1+">\n"+
@@ -369,7 +405,11 @@ public class Test {
             "\""+CONFIG1+"\": \"${config[\""+CONFIG1+"\"]}\",\n"+
             "\""+CONFIG1_APPLICATIVO+"\": \"${clientApplicationConfig[\""+CONFIG1_APPLICATIVO+"\"]}\",\n"+
             "\""+CONFIG1_SOGGETTO_FRUITORE+"\": \"${clientOrganizationConfig[\""+CONFIG1_SOGGETTO_FRUITORE+"\"]}\",\n"+
-            "\""+CONFIG1_SOGGETTO_EROGATORE+"\": \"${providerOrganizationConfig[\""+CONFIG1_SOGGETTO_EROGATORE+"\"]}\",\n"+
+            "\""+CONFIG1_SOGGETTO_EROGATORE+"\": \"${providerOrganizationConfig[\""+CONFIG1_SOGGETTO_EROGATORE+"\"]}\",\n"+        
+			"\""+CONFIG_APPLICATIVO_TOKEN_NOME+"\": \"${tokenClient.nome}\",\n"+
+			"\""+CONFIG_APPLICATIVO_TOKEN_SOGGETTO_NOME+"\": \"${tokenClient.idSoggettoProprietario.nome}\",\n"+
+			"\""+CONFIG1_APPLICATIVO_TOKEN+"\": \"${tokenClientApplicationConfig[\""+CONFIG1_APPLICATIVO_TOKEN+"\"]}\",\n"+
+			"\""+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+"\": \"${tokenClientOrganizationConfig[\""+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+"\"]}\",\n"+
             "\""+SYSTEM_CONFIG1+"\": \"${system.read(\""+SYSTEM_CONFIG1+"\")}\",\n"+
             "\""+ENV_CONFIG1+"\": \"${env.read(\""+ENV_CONFIG1+"\")}\",\n"+
             "\""+JAVA_CONFIG1+"\": \"${java.read(\""+JAVA_CONFIG1+"\")}\",\n";
@@ -439,7 +479,11 @@ public class Test {
 			"<"+CONFIG1+">"+"${config[\""+CONFIG1+"\"]}"+"</"+CONFIG1+">\n"+
 			"<"+CONFIG1_APPLICATIVO+">"+"${clientapplicationconfig[\""+CONFIG1_APPLICATIVO+"\"]}"+"</"+CONFIG1_APPLICATIVO+">\n"+
 			"<"+CONFIG1_SOGGETTO_FRUITORE+">"+"${clientorganizationconfig[\""+CONFIG1_SOGGETTO_FRUITORE+"\"]}"+"</"+CONFIG1_SOGGETTO_FRUITORE+">\n"+
-			"<"+CONFIG1_SOGGETTO_EROGATORE+">"+"${providerorganizationconfig[\""+CONFIG1_SOGGETTO_EROGATORE+"\"]}"+"</"+CONFIG1_SOGGETTO_EROGATORE+">\n"+
+			"<"+CONFIG1_SOGGETTO_EROGATORE+">"+"${providerorganizationconfig[\""+CONFIG1_SOGGETTO_EROGATORE+"\"]}"+"</"+CONFIG1_SOGGETTO_EROGATORE+">\n"+		
+			"<"+CONFIG_APPLICATIVO_TOKEN_NOME+">"+"${tokenClient.nome}"+"</"+CONFIG_APPLICATIVO_TOKEN_NOME+">\n"+
+			"<"+CONFIG_APPLICATIVO_TOKEN_SOGGETTO_NOME+">"+"${tokenClient.idSoggettoProprietario.nome}"+"</"+CONFIG_APPLICATIVO_TOKEN_SOGGETTO_NOME+">\n"+
+			"<"+CONFIG1_APPLICATIVO_TOKEN+">"+"${tokenClientApplicationConfig[\""+CONFIG1_APPLICATIVO_TOKEN+"\"]}"+"</"+CONFIG1_APPLICATIVO_TOKEN+">\n"+
+			"<"+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+">"+"${tokenClientOrganizationConfig[\""+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+"\"]}"+"</"+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+">\n"+		
 			"<"+SYSTEM_CONFIG1+">"+"${system.read(\""+SYSTEM_CONFIG1+"\")}"+"</"+SYSTEM_CONFIG1+">\n"+
 			"<"+ENV_CONFIG1+">"+"${env.read(\""+ENV_CONFIG1+"\")}"+"</"+ENV_CONFIG1+">\n"+
 			"<"+JAVA_CONFIG1+">"+"${java.read(\""+JAVA_CONFIG1+"\")}"+"</"+JAVA_CONFIG1+">\n"+
@@ -528,6 +572,10 @@ public class Test {
             "\""+CONFIG1_APPLICATIVO+"\": \"${clientApplicationConfig[\""+CONFIG1_APPLICATIVO+"\"]}\",\n"+
             "\""+CONFIG1_SOGGETTO_FRUITORE+"\": \"${clientOrganizationConfig[\""+CONFIG1_SOGGETTO_FRUITORE+"\"]}\",\n"+
             "\""+CONFIG1_SOGGETTO_EROGATORE+"\": \"${providerOrganizationConfig[\""+CONFIG1_SOGGETTO_EROGATORE+"\"]}\",\n"+
+            "\""+CONFIG_APPLICATIVO_TOKEN_NOME+"\": \"${tokenClient.nome}\",\n"+
+			"\""+CONFIG_APPLICATIVO_TOKEN_SOGGETTO_NOME+"\": \"${tokenClient.idSoggettoProprietario.nome}\",\n"+
+			"\""+CONFIG1_APPLICATIVO_TOKEN+"\": \"${tokenClientApplicationConfig[\""+CONFIG1_APPLICATIVO_TOKEN+"\"]}\",\n"+
+			"\""+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+"\": \"${tokenClientOrganizationConfig[\""+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+"\"]}\",\n"+
             "\""+SYSTEM_CONFIG1+"\": \"${system.read(\""+SYSTEM_CONFIG1+"\")}\",\n"+
 			"\""+ENV_CONFIG1+"\": \"${env.read(\""+ENV_CONFIG1+"\")}\",\n"+
 			"\""+JAVA_CONFIG1+"\": \"${java.read(\""+JAVA_CONFIG1+"\")}\",\n";
@@ -597,6 +645,10 @@ public class Test {
 			"<"+CONFIG1_APPLICATIVO+">"+"${clientapplicationconfig[\""+CONFIG1_APPLICATIVO+"\"]}"+"</"+CONFIG1_APPLICATIVO+">\n"+
 			"<"+CONFIG1_SOGGETTO_FRUITORE+">"+"${clientorganizationconfig[\""+CONFIG1_SOGGETTO_FRUITORE+"\"]}"+"</"+CONFIG1_SOGGETTO_FRUITORE+">\n"+
 			"<"+CONFIG1_SOGGETTO_EROGATORE+">"+"${providerorganizationconfig[\""+CONFIG1_SOGGETTO_EROGATORE+"\"]}"+"</"+CONFIG1_SOGGETTO_EROGATORE+">\n"+
+			"<"+CONFIG_APPLICATIVO_TOKEN_NOME+">"+"${tokenClient.nome}"+"</"+CONFIG_APPLICATIVO_TOKEN_NOME+">\n"+
+			"<"+CONFIG_APPLICATIVO_TOKEN_SOGGETTO_NOME+">"+"${tokenClient.idSoggettoProprietario.nome}"+"</"+CONFIG_APPLICATIVO_TOKEN_SOGGETTO_NOME+">\n"+
+			"<"+CONFIG1_APPLICATIVO_TOKEN+">"+"${tokenClientApplicationConfig[\""+CONFIG1_APPLICATIVO_TOKEN+"\"]}"+"</"+CONFIG1_APPLICATIVO_TOKEN+">\n"+
+			"<"+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+">"+"${tokenClientOrganizationConfig[\""+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+"\"]}"+"</"+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+">\n"+
 			"<"+SYSTEM_CONFIG1+">"+"${system.read(\""+SYSTEM_CONFIG1+"\")}"+"</"+SYSTEM_CONFIG1+">\n"+
 			"<"+ENV_CONFIG1+">"+"${env.read(\""+ENV_CONFIG1+"\")}"+"</"+ENV_CONFIG1+">\n"+
 			"<"+JAVA_CONFIG1+">"+"${java.read(\""+JAVA_CONFIG1+"\")}"+"</"+JAVA_CONFIG1+">\n"+
@@ -867,6 +919,22 @@ public class Test {
 		configServizioApplicativo.put(CONFIG3_APPLICATIVO, CONFIG3_APPLICATIVO_VALORE);
 		configServizioApplicativo.put(CONFIG4_APPLICATIVO, CONFIG4_APPLICATIVO_VALORE);
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO, configServizioApplicativo);
+		
+		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN, APPLICATIVO_TOKEN);
+		
+		Map<String, String> configServizioApplicativoToken = new HashMap<String, String>();
+		configServizioApplicativoToken.put(CONFIG1_APPLICATIVO_TOKEN, CONFIG1_APPLICATIVO_TOKEN_VALORE);
+		configServizioApplicativoToken.put(CONFIG2_APPLICATIVO_TOKEN, CONFIG2_APPLICATIVO_TOKEN_VALORE);
+		configServizioApplicativoToken.put(CONFIG3_APPLICATIVO_TOKEN, CONFIG3_APPLICATIVO_TOKEN_VALORE);
+		configServizioApplicativoToken.put(CONFIG4_APPLICATIVO_TOKEN, CONFIG4_APPLICATIVO_TOKEN_VALORE);
+		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO_TOKEN, configServizioApplicativoToken);
+		
+		Map<String, String> configServizioApplicativoTokenSoggetto = new HashMap<String, String>();
+		configServizioApplicativoTokenSoggetto.put(CONFIG1_SOGGETTO_APPLICATIVO_TOKEN, CONFIG1_SOGGETTO_APPLICATIVO_TOKEN_VALORE);
+		configServizioApplicativoTokenSoggetto.put(CONFIG2_SOGGETTO_APPLICATIVO_TOKEN, CONFIG2_SOGGETTO_APPLICATIVO_TOKEN_VALORE);
+		configServizioApplicativoTokenSoggetto.put(CONFIG3_SOGGETTO_APPLICATIVO_TOKEN, CONFIG3_SOGGETTO_APPLICATIVO_TOKEN_VALORE);
+		configServizioApplicativoTokenSoggetto.put(CONFIG4_SOGGETTO_APPLICATIVO_TOKEN, CONFIG4_SOGGETTO_APPLICATIVO_TOKEN_VALORE);
+		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN, configServizioApplicativoTokenSoggetto);
 		
 		pddContext.addObject(PDDCONTEXT_1, PDDCONTEXT_1_VALORE);
 		pddContext.addObject(PDDCONTEXT_2, PDDCONTEXT_2_VALORE);
@@ -1644,6 +1712,34 @@ public class Test {
 		}
 		if(!contenuto.contains(CONFIG1_SOGGETTO_EROGATORE_VALORE)) {
 			throw new Exception("Valore '"+CONFIG1_SOGGETTO_EROGATORE_VALORE+"' per field '"+CONFIG1_SOGGETTO_EROGATORE+"' non trovato");
+		}	
+		
+		if(!contenuto.contains(CONFIG_APPLICATIVO_TOKEN_NOME)) {
+			throw new Exception("ApplicativoToken '"+CONFIG_APPLICATIVO_TOKEN_NOME+"' non trovata");
+		}
+		if(!contenuto.contains(APPLICATIVO_TOKEN.getNome())) {
+			throw new Exception("Valore '"+APPLICATIVO_TOKEN.getNome()+"' per field '"+CONFIG_APPLICATIVO_TOKEN_NOME+"' non trovato");
+		}	
+		
+		if(!contenuto.contains(CONFIG_APPLICATIVO_TOKEN_SOGGETTO_NOME)) {
+			throw new Exception("ApplicativoToken soggetto '"+CONFIG_APPLICATIVO_TOKEN_SOGGETTO_NOME+"' non trovata");
+		}
+		if(!contenuto.contains(APPLICATIVO_TOKEN.getIdSoggettoProprietario().getNome())) {
+			throw new Exception("Valore '"+APPLICATIVO_TOKEN.getIdSoggettoProprietario().getNome()+"' per field '"+CONFIG_APPLICATIVO_TOKEN_SOGGETTO_NOME+"' non trovato");
+		}
+		
+		if(!contenuto.contains(CONFIG1_APPLICATIVO_TOKEN)) {
+			throw new Exception("Configurazione '"+CONFIG1_APPLICATIVO_TOKEN+"' non trovata");
+		}
+		if(!contenuto.contains(CONFIG1_APPLICATIVO_TOKEN_VALORE)) {
+			throw new Exception("Valore '"+CONFIG1_APPLICATIVO_TOKEN_VALORE+"' per field '"+CONFIG1_APPLICATIVO_TOKEN+"' non trovato");
+		}	
+		
+		if(!contenuto.contains(CONFIG1_SOGGETTO_APPLICATIVO_TOKEN)) {
+			throw new Exception("Configurazione '"+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+"' non trovata");
+		}
+		if(!contenuto.contains(CONFIG1_SOGGETTO_APPLICATIVO_TOKEN_VALORE)) {
+			throw new Exception("Valore '"+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN_VALORE+"' per field '"+CONFIG1_SOGGETTO_APPLICATIVO_TOKEN+"' non trovato");
 		}	
 		
 		if(!contenuto.contains(SYSTEM_CONFIG1)) {

@@ -30,6 +30,7 @@ import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.Resource;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.transazioni.Transazione;
@@ -93,8 +94,11 @@ public class TransazioneBean extends Transazione{
 	private java.lang.String trasportoMittenteLabel = null;
 	private java.lang.String tipoTrasportoMittenteLabel = null;
 	private java.lang.String tokenIssuerLabel = null;
-	private java.lang.String tokenClientIdLabel = null;
 	private java.lang.String tokenSubjectLabel = null;
+	private java.lang.String tokenClientIdLabel = null;
+	private IDServizioApplicativo tokenClient = null;
+	private String tokenClientNameLabel = null;
+	private String tokenClientOrganizationNameLabel = null;
 	private java.lang.String tokenUsernameLabel = null;
 	private java.lang.String tokenMailLabel = null;
 	private java.lang.String eventiLabel = null;
@@ -121,8 +125,12 @@ public class TransazioneBean extends Transazione{
 		metodiEsclusi.add(new BlackListElement("setTrasportoMittenteLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setTipoTrasportoMittenteLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setTokenIssuerLabel", String.class));
-		metodiEsclusi.add(new BlackListElement("setTokenClientIdLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setTokenSubjectLabel", String.class));
+		metodiEsclusi.add(new BlackListElement("setTokenClientIdLabel", String.class));
+		metodiEsclusi.add(new BlackListElement("setTokenClient", IDServizioApplicativo.class));
+		metodiEsclusi.add(new BlackListElement("setTokenClientNameLabel", String.class));
+		metodiEsclusi.add(new BlackListElement("setTokenClientOrganizationNameLabel", String.class));
+		metodiEsclusi.add(new BlackListElement("setTokenClientWithOrganizationNameLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setTokenUsernameLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setTokenMailLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setEventiLabel", String.class));
@@ -390,6 +398,14 @@ public class TransazioneBean extends Transazione{
 		this.tokenIssuerLabel = tokenIssuerLabel;
 	}
 
+	public java.lang.String getTokenSubjectLabel() {
+		return this.tokenSubjectLabel;
+	}
+
+	public void setTokenSubjectLabel(java.lang.String tokenSubjectLabel) {
+		this.tokenSubjectLabel = tokenSubjectLabel;
+	}
+	
 	public java.lang.String getTokenClientIdLabel() {
 		return this.tokenClientIdLabel;
 	}
@@ -398,14 +414,53 @@ public class TransazioneBean extends Transazione{
 		this.tokenClientIdLabel = tokenClientIdLabel;
 	}
 
-	public java.lang.String getTokenSubjectLabel() {
-		return this.tokenSubjectLabel;
+	public IDServizioApplicativo getTokenClient() {
+		return this.tokenClient;
 	}
 
-	public void setTokenSubjectLabel(java.lang.String tokenSubjectLabel) {
-		this.tokenSubjectLabel = tokenSubjectLabel;
+	public void setTokenClient(IDServizioApplicativo tokenClient) {
+		this.tokenClient = tokenClient;
 	}
 
+	public String getTokenClientNameLabel() {
+		return this.tokenClientNameLabel;
+	}
+
+	public void setTokenClientNameLabel(String tokenClientNameLabel) {
+		this.tokenClientNameLabel = tokenClientNameLabel;
+	}
+
+	public String getTokenClientOrganizationNameLabel() {
+		return this.tokenClientOrganizationNameLabel;
+	}
+
+	public void setTokenClientOrganizationNameLabel(String tokenClientOrganizationNameLabel) {
+		this.tokenClientOrganizationNameLabel = tokenClientOrganizationNameLabel;
+	}
+	
+	public String getTokenClientWithOrganizationNameLabel() {
+		if(this.tokenClientNameLabel!=null && StringUtils.isNotEmpty(this.tokenClientNameLabel)) {
+			if(this.tokenClientOrganizationNameLabel!=null && StringUtils.isNotEmpty(this.tokenClientOrganizationNameLabel)) {
+				boolean equals = false;
+				try {
+					equals = this.tokenClientOrganizationNameLabel.equals(this.getSoggettoFruitore());
+				}catch(Throwable t) {}
+				if(!equals) {
+					return this.tokenClientNameLabel + NamingUtils.LABEL_DOMINIO + this.tokenClientOrganizationNameLabel;
+				}
+				else {
+					return this.tokenClientNameLabel;
+				}
+			}
+			return this.tokenClientNameLabel;
+		}
+		return null;
+	}
+
+	public void setTokenClientWithOrganizationNameLabel(String tokenClientOrganizationNameLabel) {
+		// nop
+	}
+	
 	public java.lang.String getTokenUsernameLabel() {
 		return this.tokenUsernameLabel;
 	}
@@ -787,6 +842,13 @@ public class TransazioneBean extends Transazione{
 	
 	public void normalizeRichiedenteInfo(Transazione t, TransazioneBean transazioneBean, TransazioniService transazioniService) throws ServiceException, MultipleResultException, NotImplementedException {
 		
+		/**
+		 * Logica (vedi classe org.openspcoop2.pdd.logger.info.InfoMittenteFormatUtils):
+		 * - prevale l'utente descritto in forma umana (username);
+		 * - altrimenti prevale un eventuale applicativo identificato (registrato su GovWay) dando precedenza ad un applicativo token rispetto ad un applicativo di trasporto;
+		 * - altrimenti prevalgono le informazioni di un eventuale token presente rispetto al trasporto; se si tratta di client credentials (subject non presente o client_id=subject) prevale l'informazione sul client-id altrimenti quella sul subject.
+		 */
+		
 		// 1) Username del Token
 		String sTokenUsername = getTokenUsername();
 		if(StringUtils.isNotEmpty(sTokenUsername)) {
@@ -794,14 +856,10 @@ public class TransazioneBean extends Transazione{
 			return;
 		}
 		
-		// 2) Subject/Issuer del Token
-		String sTokenSubject = getTokenSubject();
-		if(StringUtils.isNotEmpty(sTokenSubject)) {
-			transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteTokenSubject(transazioneBean, t);
-			String sTokenIssuer = getTokenIssuer();
-			if(StringUtils.isNotEmpty(sTokenIssuer)) {
-				transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteTokenIssuer(transazioneBean, t);
-			}
+		// 2) Applicativo Token identificato tramite ClientID
+		String sTokenClientId = getTokenClientId();
+		if(StringUtils.isNotEmpty(sTokenClientId)) {
+			transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteTokenClientID(transazioneBean, t);
 			return;
 		}
 		
@@ -811,23 +869,49 @@ public class TransazioneBean extends Transazione{
 			return;
 		}
 		
-		// 4) Credenziali dell'autenticazione di trasporto
+		// 4) ClientId/Subject/Issuer del Token
+		String sTokenSubject = getTokenSubject();
+		boolean clientCredentialsFlow = false;
+		if(StringUtils.isNotEmpty(sTokenClientId)) {
+			clientCredentialsFlow = (sTokenSubject==null) || (StringUtils.isEmpty(sTokenSubject)) || (sTokenSubject.equals(sTokenClientId));
+		}
+		
+		// 4a) Client ID, per il caso di ClientCredential
+		if(clientCredentialsFlow) {
+			if(StringUtils.isNotEmpty(sTokenClientId)) {
+				// gia' normalizzato prima
+				return;
+			}
+		}
+		
+		// 4b) Subject/Issuer del Token
+		if(StringUtils.isNotEmpty(sTokenSubject)) {
+			transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteTokenSubject(transazioneBean, t);
+			String sTokenIssuer = getTokenIssuer();
+			if(StringUtils.isNotEmpty(sTokenIssuer)) {
+				transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteTokenIssuer(transazioneBean, t);
+			}
+			return;
+		}
+		
+		// 4c) Client ID, per il caso diverso da ClientCredential
+		if(!clientCredentialsFlow) {
+			if(StringUtils.isNotEmpty(sTokenClientId)) {
+				// gia' normalizzato prima
+				return;
+			}
+		}
+		
+		// 5) Credenziali dell'autenticazione di trasporto
 		String sTrasportoMittente = getTrasportoMittente();
 		if(StringUtils.isNotEmpty(sTrasportoMittente)) {
 			transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteTrasporto(transazioneBean, t);
 			return;
 		}
-		
-		// 5) Client ID, per il caso di ClientCredential
-		String sTokenClientId = getTokenClientId();
-		if(StringUtils.isNotEmpty(sTokenClientId)) {
-			transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteTokenClientID(transazioneBean, t);
-			return;
-		}
 
 	}
 	
-	public boolean isVisualizzaTextAreaRichiedente() {
+	public boolean isVisualizzaTextAreaRichiedente() throws Exception {
 		String de = this.getRichiedente();
 		if(StringUtils.isNotEmpty(de)) {
 			if(de.length() > 150)
@@ -844,7 +928,17 @@ public class TransazioneBean extends Transazione{
 		datiMittente.setTokenSubject(getTokenSubjectLabel());
 		datiMittente.setTokenIssuer(getTokenIssuerLabel());
 		datiMittente.setTokenClientId(getTokenClientIdLabel());
-		
+		if(getTokenClient()!=null) {
+			datiMittente.setTokenClient(getTokenClient().getNome());
+			datiMittente.setTokenClientTipoSoggettoFruitore(getTokenClient().getIdSoggettoProprietario().getTipo());
+			datiMittente.setTokenClientNomeSoggettoFruitore(getTokenClient().getIdSoggettoProprietario().getNome());
+			try {
+				datiMittente.setTokenClientSoggettoFruitore(getTokenClientOrganizationNameLabel());
+			}catch(Exception e) {
+				throw new RuntimeException(e.getMessage(),e);
+			}
+		}
+				
 		datiMittente.setTipoTrasportoMittente(getTipoTrasportoMittenteLabel());
 		datiMittente.setTrasportoMittente(getTrasportoMittenteLabel());
 		
@@ -897,9 +991,24 @@ public class TransazioneBean extends Transazione{
 	}
 	
 	
-	public String getRichiedente() {
+	public String getRichiedente() throws Exception {
 				
 		DatiMittente datiMittente = this.convertToDatiMittente();
+		
+		if( (datiMittente.getTokenUsername()==null || StringUtils.isEmpty(datiMittente.getTokenUsername()))
+				&&
+			StringUtils.isNotEmpty(datiMittente.getTokenClient())) {
+			boolean soggettoEqualsTokenSoggetto = false;
+			if(datiMittente.getTokenClientSoggettoFruitore()!=null &&
+					datiMittente.getTokenClientTipoSoggettoFruitore()!=null && datiMittente.getTokenClientNomeSoggettoFruitore()!=null) {
+				soggettoEqualsTokenSoggetto = datiMittente.getTokenClientTipoSoggettoFruitore().equals(datiMittente.getTipoSoggettoFruitore()) && 
+						datiMittente.getTokenClientNomeSoggettoFruitore().equals(datiMittente.getNomeSoggettoFruitore());
+			}
+			if(!soggettoEqualsTokenSoggetto) {
+				return getLabelRichiedenteConFruitore();
+			}
+		}
+		
 		return InfoMittenteFormatUtils.getRichiedente(datiMittente);
 				
 	}

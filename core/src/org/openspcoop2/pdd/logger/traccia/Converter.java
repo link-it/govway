@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.joda.time.DateTime;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.transazioni.DumpAllegato;
 import org.openspcoop2.core.transazioni.DumpContenuto;
@@ -36,6 +37,7 @@ import org.openspcoop2.core.transazioni.DumpMultipartHeader;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeTokenClient;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -71,6 +73,7 @@ import org.openspcoop2.utils.service.beans.TransazioneExtDettaglioRichiesta;
 import org.openspcoop2.utils.service.beans.TransazioneExtDettaglioRisposta;
 import org.openspcoop2.utils.service.beans.TransazioneExtInformazioniApi;
 import org.openspcoop2.utils.service.beans.TransazioneExtInformazioniMittente;
+import org.openspcoop2.utils.service.beans.TransazioneExtInformazioniMittenteApplicativoToken;
 import org.openspcoop2.utils.service.beans.TransazioneExtInformazioniSoggetto;
 import org.openspcoop2.utils.service.beans.TransazioneExtInformazioniToken;
 import org.openspcoop2.utils.service.beans.TransazioneInformazioniApi;
@@ -140,6 +143,7 @@ public class Converter {
 	private boolean mittente_credenziali = true;
 	private boolean mittente_token = true;
 	private boolean mittente_tokenClaims = true;
+	private boolean mittente_applicativoToken = true;
 	
 	
 	
@@ -649,6 +653,17 @@ public class Converter {
 			if(this.mittente_credenziali) {
 				((TransazioneExtInformazioniMittente)mittente).setCredenziali(transazioneDB.getCredenziali());
 			}
+			if(this.mittente_applicativoToken && credenzialiMittente!=null && credenzialiMittente.getToken_clientId()!=null) {
+				IDServizioApplicativo idSA = CredenzialeTokenClient.convertApplicationDBValueToOriginal(credenzialiMittente.getToken_clientId().getCredenziale());
+				if(idSA!=null) {
+					((TransazioneExtInformazioniMittente)mittente).setApplicativoToken(new TransazioneExtInformazioniMittenteApplicativoToken());
+					((TransazioneExtInformazioniMittente)mittente).getApplicativoToken().setNome(idSA.getNome());
+					((TransazioneExtInformazioniMittente)mittente).getApplicativoToken().setSoggetto(idSA.getIdSoggettoProprietario().getNome());
+					String idPorta = protocolFactory.createTraduttore().getIdentificativoPortaDefault(new IDSoggetto(idSA.getIdSoggettoProprietario().getTipo(), idSA.getIdSoggettoProprietario().getNome()));
+					((TransazioneExtInformazioniMittente)mittente).getApplicativoToken().setInformazioniSoggetto(_newTransazioneSoggetto(idSA.getIdSoggettoProprietario().getTipo(), 
+							idPorta, null));
+				}
+			}
 		}
 		if(this.mittente_principal && credenzialiMittente!=null && credenzialiMittente.getTrasporto()!=null) {
 			mittente.setPrincipal(credenzialiMittente.getTrasporto().getCredenziale());
@@ -660,7 +675,7 @@ public class Converter {
 			mittente.setUtente(credenzialiMittente.getToken_username().getCredenziale());
 		}
 		if(this.mittente_client && credenzialiMittente!=null && credenzialiMittente.getToken_clientId()!=null) {
-			mittente.setClient(credenzialiMittente.getToken_clientId().getCredenziale());
+			mittente.setClient(CredenzialeTokenClient.convertClientIdDBValueToOriginal(credenzialiMittente.getToken_clientId().getCredenziale()));
 		}
 		if(this.mittente_indirizzoClient) {
 			mittente.setIndirizzoClient(transazioneDB.getSocketClientAddress());
@@ -674,7 +689,7 @@ public class Converter {
 				TransazioneExtInformazioniToken informazioniToken = new TransazioneExtInformazioniToken();
 				if(this.mittente_tokenClaims && credenzialiMittente!=null) {
 					if(credenzialiMittente.getToken_clientId()!=null) {
-						informazioniToken.setClientId(credenzialiMittente.getToken_clientId().getCredenziale());
+						informazioniToken.setClientId(CredenzialeTokenClient.convertClientIdDBValueToOriginal(credenzialiMittente.getToken_clientId().getCredenziale()));
 					}
 					if(credenzialiMittente.getToken_issuer()!=null) {
 						informazioniToken.setIssuer(credenzialiMittente.getToken_issuer().getCredenziale());

@@ -1,4 +1,5 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX INDEX_PA_TOKEN_SA;
 -- DROP INDEX idx_pa_trasf_hdr_resp_1;
 -- DROP INDEX idx_pa_trasf_url_1;
 -- DROP INDEX idx_pa_trasf_hdr_1;
@@ -23,6 +24,8 @@
 -- DROP INDEX INDEX_PA_SA;
 -- DROP INDEX index_porte_applicative_2;
 -- DROP INDEX index_porte_applicative_1;
+DROP TRIGGER trg_pa_token_ruoli;
+DROP TRIGGER trg_pa_token_sa;
 DROP TRIGGER trg_pa_aa;
 DROP TRIGGER trg_pa_handlers;
 DROP TRIGGER trg_pa_transform_risp_hdr;
@@ -53,6 +56,8 @@ DROP TRIGGER trg_pa_behaviour_props;
 DROP TRIGGER trg_pa_sa_properties;
 DROP TRIGGER trg_porte_applicative_sa;
 DROP TRIGGER trg_porte_applicative;
+DROP TABLE pa_token_ruoli;
+DROP TABLE pa_token_sa;
 DROP TABLE pa_aa;
 DROP TABLE pa_handlers;
 DROP TABLE pa_transform_risp_hdr;
@@ -83,6 +88,8 @@ DROP TABLE pa_behaviour_props;
 DROP TABLE pa_sa_properties;
 DROP TABLE porte_applicative_sa;
 DROP TABLE porte_applicative;
+DROP SEQUENCE seq_pa_token_ruoli;
+DROP SEQUENCE seq_pa_token_sa;
 DROP SEQUENCE seq_pa_aa;
 DROP SEQUENCE seq_pa_handlers;
 DROP SEQUENCE seq_pa_transform_risp_hdr;

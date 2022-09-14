@@ -32,7 +32,7 @@ Le trasformazioni create sono visualizzate nella forma di elenco ordinato (:numr
 
     Lista regole di trasformazione
 
-Ciascuna regola elencata visualizza i dati che sono stati forniti come criterio di applicabilità. A quelli inseriti in fase di creazione si aggiungono i Soggetti e gli Applicativi, che possono essere forniti accedendo i rispettivi collegamenti. I soggetti/applicativi associati ad una regola saranno confrontati con l'identità del soggetto/applicativo mittente di ciascuna richiesta.
+Ciascuna regola elencata visualizza i dati che sono stati forniti come criterio di applicabilità. A quelli inseriti in fase di creazione si aggiungono i Soggetti e gli Applicativi, che possono essere forniti accedendo i rispettivi collegamenti. I soggetti/applicativi associati ad una regola saranno confrontati con l'identità del soggetto/applicativo mittente di ciascuna richiesta, identificato tramite l'autenticazione trasporto e/o token.
 
 Accedendo il dettaglio di una regola di trasformazione vengono presentate le due sezioni:
 

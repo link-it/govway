@@ -71,6 +71,9 @@ public final class PorteDelegateServizioApplicativoList extends Action {
 			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			String nomePorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
 	
+			String tokenList = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TOKEN_AUTHORIZATION);
+			boolean isToken = tokenList!=null && !"".equals(tokenList) && Boolean.valueOf(tokenList);
+			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
 	
@@ -78,11 +81,17 @@ public final class PorteDelegateServizioApplicativoList extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 	
 			int idLista = Liste.PORTE_DELEGATE_SERVIZIO_APPLICATIVO;
+			if(isToken) {
+				idLista = Liste.PORTE_DELEGATE_TOKEN_SERVIZIO_APPLICATIVO;
+			}
 	
 			ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
 	
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
-			List<ServizioApplicativo> lista = porteDelegateCore.porteDelegateServizioApplicativoList(Integer.parseInt(id), ricerca);
+			List<ServizioApplicativo> lista = isToken ?
+					porteDelegateCore.porteDelegateServizioApplicativoTokenList(Integer.parseInt(id), ricerca)
+					:
+					porteDelegateCore.porteDelegateServizioApplicativoList(Integer.parseInt(id), ricerca);
 	
 			porteDelegateHelper.preparePorteDelegateServizioApplicativoList(nomePorta, ricerca, lista);
 	

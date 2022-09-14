@@ -39,6 +39,7 @@ import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.core.ConfigurazioneSoggettiVisualizzatiSearchForm;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -564,8 +565,12 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 				}
 			}
 
-			if(tipoSoggetto!=null && nomeSoggetto!=null) {
-				this.serviziApplicativi = this.dynamicUtils.getListaSelectItemsServiziApplicativiFromSoggettoLocale(tipoProtocollo,tipoSoggetto, nomeSoggetto);
+			if(tipoSoggetto!=null && nomeSoggetto!=null && StringUtils.isNotEmpty(this.search.getIdentificazione())) {
+				
+				boolean trasporto = Costanti.IDENTIFICAZIONE_TRASPORTO_KEY.equals(this.search.getIdentificazione());
+				boolean token = Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.search.getIdentificazione());
+				
+				this.serviziApplicativi = this.dynamicUtils.getListaSelectItemsServiziApplicativiFromSoggettoLocale(tipoProtocollo,tipoSoggetto, nomeSoggetto, trasporto, token);
 			}
 			Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(this.serviziApplicativi);
 			this.serviziApplicativiSelectItemsWidth = Math.max(this.serviziApplicativiSelectItemsWidth,  lunghezzaSelectList);

@@ -39,6 +39,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
@@ -93,12 +94,14 @@ public class GestoreTrasformazioni {
 	private IDServizio idServizio;
 	private IDSoggetto soggettoFruitore;
 	private String servizioApplicativoFruitore;
+	private IDServizioApplicativo idServizioApplicativoToken;
 	private Trasformazioni trasformazioni;
 	private Transaction transaction;
 	private PdDContext pddContext;
 	private RequestInfo requestInfo;
 	private ErroreIntegrazione errore;
 	private MsgDiagnostico msgDiag;
+	@SuppressWarnings("unused")
 	private TipoPdD tipoPdD;
 	private AbstractErrorGenerator errorGenerator;
 
@@ -198,6 +201,9 @@ public class GestoreTrasformazioni {
 		this.idServizio = idServizio;
 		this.soggettoFruitore = soggettoFruitore;
 		this.servizioApplicativoFruitore = servizioApplicativoFruitore;
+		if(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN)) {
+    		this.idServizioApplicativoToken = (IDServizioApplicativo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN);
+    	}
 		this.trasformazioni = trasformazioni;
 		this.transaction = transaction;
 		this.pddContext = pddContext;
@@ -555,16 +561,46 @@ public class GestoreTrasformazioni {
 					
 					// controllo applicativi e soggetti
 					this.log.debug(suffix+" check applicabilità tra i "+check.getApplicabilita().sizeServizioApplicativoList()+" servizi applicativi e i "+check.getApplicabilita().sizeSoggettoList()+" soggetti");
-					if(check.getApplicabilita().sizeServizioApplicativoList()>0 || check.getApplicabilita().sizeSoggettoList()>0) {
-						boolean applicativi = true;
-						boolean soggetti = TipoPdD.APPLICATIVA.equals(this.tipoPdD);
+					if(check.getApplicabilita().sizeServizioApplicativoList()>0 && check.getApplicabilita().sizeSoggettoList()>0) {
+						boolean applicativi = false;
+						boolean soggetti = false;
 						if(check.getApplicabilita().sizeServizioApplicativoList()>0) {
 							applicativi = GestoreTrasformazioniUtilities.isMatchServizioApplicativo(this.soggettoFruitore, this.servizioApplicativoFruitore, check.getApplicabilita().getServizioApplicativoList());
+							if(!applicativi && this.idServizioApplicativoToken!=null) {
+								applicativi = GestoreTrasformazioniUtilities.isMatchServizioApplicativo(this.idServizioApplicativoToken.getIdSoggettoProprietario(), this.idServizioApplicativoToken.getNome(), check.getApplicabilita().getServizioApplicativoList());
+							}
 						}
 						if(check.getApplicabilita().sizeSoggettoList()>0) {
 							soggetti = GestoreTrasformazioniUtilities.isMatchSoggetto(this.soggettoFruitore, check.getApplicabilita().getSoggettoList());
+							if(!soggetti && this.idServizioApplicativoToken!=null) {
+								soggetti = GestoreTrasformazioniUtilities.isMatchSoggetto(this.idServizioApplicativoToken.getIdSoggettoProprietario(), check.getApplicabilita().getSoggettoList());
+							}
 						}
 						if(!applicativi && !soggetti) {
+							continue; // basta un match tra un soggetto o un applicativo per avere una applicabilita'
+						}
+					}
+					else if(check.getApplicabilita().sizeServizioApplicativoList()>0) {
+						boolean applicativi = false;
+						if(check.getApplicabilita().sizeServizioApplicativoList()>0) {
+							applicativi = GestoreTrasformazioniUtilities.isMatchServizioApplicativo(this.soggettoFruitore, this.servizioApplicativoFruitore, check.getApplicabilita().getServizioApplicativoList());
+							if(!applicativi && this.idServizioApplicativoToken!=null) {
+								applicativi = GestoreTrasformazioniUtilities.isMatchServizioApplicativo(this.idServizioApplicativoToken.getIdSoggettoProprietario(), this.idServizioApplicativoToken.getNome(), check.getApplicabilita().getServizioApplicativoList());
+							}
+						}
+						if(!applicativi) {
+							continue;
+						}
+					}
+					else if(check.getApplicabilita().sizeSoggettoList()>0) {
+						boolean soggetti = false;
+						if(check.getApplicabilita().sizeSoggettoList()>0) {
+							soggetti = GestoreTrasformazioniUtilities.isMatchSoggetto(this.soggettoFruitore, check.getApplicabilita().getSoggettoList());
+							if(!soggetti && this.idServizioApplicativoToken!=null) {
+								soggetti = GestoreTrasformazioniUtilities.isMatchSoggetto(this.idServizioApplicativoToken.getIdSoggettoProprietario(), check.getApplicabilita().getSoggettoList());
+							}
+						}
+						if(!soggetti) {
 							continue;
 						}
 					}

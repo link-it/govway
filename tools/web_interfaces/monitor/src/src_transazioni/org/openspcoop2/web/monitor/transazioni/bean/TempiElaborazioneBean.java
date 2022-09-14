@@ -97,6 +97,10 @@ public class TempiElaborazioneBean extends TempiElaborazione {
 		return this._getInfoTempiElaborazione(this.autenticazioneToken);
 	}
 	
+	public String getInfoTempiElaborazioneAutenticazioneApplicativoToken() {
+		return this._getInfoTempiElaborazione(this.autenticazioneApplicativoToken);
+	}
+	
 	public String getInfoTempiElaborazioneAutorizzazione() {
 		return this._getInfoTempiElaborazione(this.autorizzazione);
 	}

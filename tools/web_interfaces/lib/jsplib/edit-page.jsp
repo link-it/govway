@@ -355,6 +355,13 @@ for (int i = 0; i < dati.size(); i++) {
     				}
     			}
     			
+    			if(subtitleOpen){
+    				%>
+    				</div>
+        			<%
+        			subtitleOpen = false;
+    			}
+    			
     			// se c'e' un altro field set aperto viene chiuso
     			if(fieldsetOpen){
     				%>

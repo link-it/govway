@@ -271,6 +271,8 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
     CODICE_447_API_NON_INVOCABILE_CONTESTO_UTILIZZATO(447),
     /** String che contiene un codice di errore OpenSPCoop: Api non invocabile sul tipo utilizzato,448 */
     CODICE_448_API_NON_INVOCABILE_TIPO_SERVIZIO_UTILIZZATO(448),
+    /** String che contiene un codice di errore OpenSPCoop: Errore, TipoSoggettoFruitoreNotSupported, 449*/
+    CODICE_449_TIPO_SOGGETTO_APPLICATIVO_TOKEN_NOT_SUPPORTED_BY_PROTOCOL(449),
     
     // errori spediti in buste errore
     
@@ -372,6 +374,7 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
 				case 446: return CodiceErroreIntegrazione.CODICE_446_SUSPEND;
 				case 447: return CodiceErroreIntegrazione.CODICE_447_API_NON_INVOCABILE_CONTESTO_UTILIZZATO;
 				case 448: return CodiceErroreIntegrazione.CODICE_448_API_NON_INVOCABILE_TIPO_SERVIZIO_UTILIZZATO;
+				case 449: return CodiceErroreIntegrazione.CODICE_449_TIPO_SOGGETTO_APPLICATIVO_TOKEN_NOT_SUPPORTED_BY_PROTOCOL;
 				case 450: return CodiceErroreIntegrazione.CODICE_450_PA_INESISTENTE;
 				case 451: return CodiceErroreIntegrazione.CODICE_451_SOGGETTO_INESISTENTE;
 				case 452: return CodiceErroreIntegrazione.CODICE_452_BUSTA_GIA_RICEVUTA;

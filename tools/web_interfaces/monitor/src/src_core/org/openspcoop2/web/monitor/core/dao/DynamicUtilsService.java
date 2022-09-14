@@ -675,40 +675,42 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Object> findElencoServiziApplicativi(String tipoProtocollo,Soggetto soggetto){
+	public List<Object> findElencoServiziApplicativi(String tipoProtocollo,Soggetto soggetto, boolean trasporto, boolean token){
 		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
-			String key = buildKey(tipoProtocollo, soggetto!=null ? (soggetto.getTipoSoggetto()+"/"+soggetto.getNomeSoggetto()) : "??");
+			String key = buildKey(tipoProtocollo, soggetto!=null ? (soggetto.getTipoSoggetto()+"/"+soggetto.getNomeSoggetto()) : "??", trasporto, token );
 			String methodName = "findElencoServiziApplicativi";
 			try {
 				return (List<Object>) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName, 
-						new Class<?>[] {String.class, Soggetto.class},
-						tipoProtocollo, soggetto);
+						new Class<?>[] {String.class, Soggetto.class, boolean.class, boolean.class},
+						tipoProtocollo, soggetto,
+						trasporto, token);
 			}catch(Throwable e) {
 				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
 				return null;
 			}
 		}
 		else {
-			return this.driver.findElencoServiziApplicativi(tipoProtocollo, soggetto);
+			return this.driver.findElencoServiziApplicativi(tipoProtocollo, soggetto, trasporto, token);
 		}
 	}
 
 	@Override
-	public int countElencoServiziApplicativi(String tipoProtocollo,Soggetto soggetto){
+	public int countElencoServiziApplicativi(String tipoProtocollo,Soggetto soggetto, boolean trasporto, boolean token){
 		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
-			String key = buildKey(tipoProtocollo, soggetto!=null ? (soggetto.getTipoSoggetto()+"/"+soggetto.getNomeSoggetto()) : "??");
+			String key = buildKey(tipoProtocollo, soggetto!=null ? (soggetto.getTipoSoggetto()+"/"+soggetto.getNomeSoggetto()) : "??", trasporto, token);
 			String methodName = "countElencoServiziApplicativi";
 			try {
 				return (Integer) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName, 
-						new Class<?>[] {String.class, Soggetto.class},
-						tipoProtocollo, soggetto);
+						new Class<?>[] {String.class, Soggetto.class, boolean.class, boolean.class},
+						tipoProtocollo, soggetto,
+						trasporto, token);
 			}catch(Throwable e) {
 				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
 				return 0;
 			}
 		}
 		else {
-			return this.driver.countElencoServiziApplicativi(tipoProtocollo, soggetto);
+			return this.driver.countElencoServiziApplicativi(tipoProtocollo, soggetto, trasporto, token);
 		}
 	}
 	

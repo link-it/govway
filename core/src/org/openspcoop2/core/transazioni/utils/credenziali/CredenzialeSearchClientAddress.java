@@ -28,7 +28,7 @@ import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.utils.UtilsException;
 
 /**     
- * CredenzialeTrasporto
+ * CredenzialeSearchClientAddress
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
@@ -48,7 +48,7 @@ public class CredenzialeSearchClientAddress extends AbstractSearchCredenziale {
 	}
 
 	@Override
-	protected String getExactValueDatabase(String credentialParam) throws UtilsException {
+	protected String getExactValueDatabase(String credentialParam, boolean ricercaEsatta) throws UtilsException {
 		throw new UtilsException("Not Implemented"); // il metodo non viene usato poich' createExpression è ridefinito per questo tipo di classe
 	}
 	
@@ -57,108 +57,108 @@ public class CredenzialeSearchClientAddress extends AbstractSearchCredenziale {
 		
 		try {
 		
-			IPaginatedExpression pagEpression = credenzialeMittentiService.newPaginatedExpression();
-			pagEpression.and();
+			IPaginatedExpression pagExpression = credenzialeMittentiService.newPaginatedExpression();
+			pagExpression.and();
 			
-			String credentialSocket = this.convertToDBValue ? CredenzialeClientAddress.getSocketAddressDBValue(credentialParam) : credentialParam;
-			String credentialTransport = this.convertToDBValue ? CredenzialeClientAddress.getTransportAddressDBValue(credentialParam) : credentialParam;
+			String credentialSocket = this.convertToDBValue ? CredenzialeClientAddress.getSocketAddressDBValue(credentialParam, ricercaEsatta) : credentialParam;
+			String credentialTransport = this.convertToDBValue ? CredenzialeClientAddress.getTransportAddressDBValue(credentialParam, ricercaEsatta) : credentialParam;
 			
-			pagEpression.equals(CredenzialeMittente.model().TIPO, this.tipo.name());
+			pagExpression.equals(CredenzialeMittente.model().TIPO, this.tipo.name());
 			
 			if(ricercaEsatta && caseSensitive) {
 				if(this.socketAddress && this.trasportAddress) {
 					
-					IPaginatedExpression pagEpressionSocket = credenzialeMittentiService.newPaginatedExpression();
+					IPaginatedExpression pagExpressionSocket = credenzialeMittentiService.newPaginatedExpression();
 					if(this.convertToDBValue) {
-						pagEpressionSocket.like(CredenzialeMittente.model().CREDENZIALE, credentialSocket, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il socket
+						pagExpressionSocket.like(CredenzialeMittente.model().CREDENZIALE, credentialSocket, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il socket
 					}
 					else {
-						pagEpressionSocket.equals(CredenzialeMittente.model().CREDENZIALE, credentialSocket); // utilizzato da govway dove credentialSocket=credentialTransport
+						pagExpressionSocket.equals(CredenzialeMittente.model().CREDENZIALE, credentialSocket); // utilizzato da govway dove credentialSocket=credentialTransport
 					}
 					
-					IPaginatedExpression pagEpressionTransport = credenzialeMittentiService.newPaginatedExpression();
+					IPaginatedExpression pagExpressionTransport = credenzialeMittentiService.newPaginatedExpression();
 					if(this.convertToDBValue) {
-						pagEpressionTransport.like(CredenzialeMittente.model().CREDENZIALE, credentialTransport, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il trasporto
+						pagExpressionTransport.like(CredenzialeMittente.model().CREDENZIALE, credentialTransport, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il trasporto
 					}
 					else {
-						pagEpressionTransport.equals(CredenzialeMittente.model().CREDENZIALE, credentialTransport); // utilizzato da govway dove credentialSocket=credentialTransport
+						pagExpressionTransport.equals(CredenzialeMittente.model().CREDENZIALE, credentialTransport); // utilizzato da govway dove credentialSocket=credentialTransport
 					}
 					
 					if(this.andOperator) {
-						pagEpression.and(pagEpressionSocket, pagEpressionTransport);
+						pagExpression.and(pagExpressionSocket, pagExpressionTransport);
 					}
 					else {
-						pagEpression.or(pagEpressionSocket, pagEpressionTransport);
+						pagExpression.or(pagExpressionSocket, pagExpressionTransport);
 					}
 				}
 				else if(this.socketAddress) {
 					if(this.convertToDBValue) {
-						pagEpression.like(CredenzialeMittente.model().CREDENZIALE, credentialSocket, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il socket
+						pagExpression.like(CredenzialeMittente.model().CREDENZIALE, credentialSocket, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il socket
 					}
 					else {
-						pagEpression.equals(CredenzialeMittente.model().CREDENZIALE, credentialSocket);
+						pagExpression.equals(CredenzialeMittente.model().CREDENZIALE, credentialSocket);
 					}
 				}
 				else if(this.trasportAddress) {
 					if(this.convertToDBValue) {
-						pagEpression.like(CredenzialeMittente.model().CREDENZIALE, credentialTransport, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il trasporto
+						pagExpression.like(CredenzialeMittente.model().CREDENZIALE, credentialTransport, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il trasporto
 					}
 					else {
-						pagEpression.equals(CredenzialeMittente.model().CREDENZIALE, credentialTransport);
+						pagExpression.equals(CredenzialeMittente.model().CREDENZIALE, credentialTransport);
 					}
 				}
 			}
 			else if(ricercaEsatta && !caseSensitive) {
 				if(this.socketAddress && this.trasportAddress) {
 					
-					IPaginatedExpression pagEpressionSocket = credenzialeMittentiService.newPaginatedExpression();
+					IPaginatedExpression pagExpressionSocket = credenzialeMittentiService.newPaginatedExpression();
 					if(this.convertToDBValue) {
-						pagEpressionSocket.ilike(CredenzialeMittente.model().CREDENZIALE, credentialSocket, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il socket
+						pagExpressionSocket.ilike(CredenzialeMittente.model().CREDENZIALE, credentialSocket, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il socket
 					}
 					else {
-						pagEpressionSocket.ilike(CredenzialeMittente.model().CREDENZIALE, credentialSocket, LikeMode.EXACT); // utilizzato da govway dove credentialSocket=credentialTransport
+						pagExpressionSocket.ilike(CredenzialeMittente.model().CREDENZIALE, credentialSocket, LikeMode.EXACT); // utilizzato da govway dove credentialSocket=credentialTransport
 					}
 					
-					IPaginatedExpression pagEpressionTransport = credenzialeMittentiService.newPaginatedExpression();
+					IPaginatedExpression pagExpressionTransport = credenzialeMittentiService.newPaginatedExpression();
 					if(this.convertToDBValue) {
-						pagEpressionTransport.ilike(CredenzialeMittente.model().CREDENZIALE, credentialTransport, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il trasporto
+						pagExpressionTransport.ilike(CredenzialeMittente.model().CREDENZIALE, credentialTransport, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il trasporto
 					}
 					else {
-						pagEpressionTransport.ilike(CredenzialeMittente.model().CREDENZIALE, credentialTransport, LikeMode.EXACT); // utilizzato da govway dove credentialSocket=credentialTransport
+						pagExpressionTransport.ilike(CredenzialeMittente.model().CREDENZIALE, credentialTransport, LikeMode.EXACT); // utilizzato da govway dove credentialSocket=credentialTransport
 					}
 						
 					if(this.andOperator) {
-						pagEpression.and(pagEpressionSocket, pagEpressionTransport);
+						pagExpression.and(pagExpressionSocket, pagExpressionTransport);
 					}
 					else {
-						pagEpression.or(pagEpressionSocket, pagEpressionTransport);
+						pagExpression.or(pagExpressionSocket, pagExpressionTransport);
 					}
 				}
 				else if(this.socketAddress) {
 					if(this.convertToDBValue) {
-						pagEpression.ilike(CredenzialeMittente.model().CREDENZIALE, credentialSocket, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il socket
+						pagExpression.ilike(CredenzialeMittente.model().CREDENZIALE, credentialSocket, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il socket
 					}
 					else {
-						pagEpression.ilike(CredenzialeMittente.model().CREDENZIALE, credentialSocket, LikeMode.EXACT);
+						pagExpression.ilike(CredenzialeMittente.model().CREDENZIALE, credentialSocket, LikeMode.EXACT);
 					}
 				}
 				else if(this.trasportAddress) {
 					if(this.convertToDBValue) {
-						pagEpression.ilike(CredenzialeMittente.model().CREDENZIALE, credentialTransport, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il trasporto
+						pagExpression.ilike(CredenzialeMittente.model().CREDENZIALE, credentialTransport, LikeMode.ANYWHERE); // cmq devo usare anywhere, il valore è gia codificato per cercare il trasporto
 					}
 					else {
-						pagEpression.ilike(CredenzialeMittente.model().CREDENZIALE, credentialTransport, LikeMode.EXACT);
+						pagExpression.ilike(CredenzialeMittente.model().CREDENZIALE, credentialTransport, LikeMode.EXACT);
 					}
 				}
 			}
 			else if(!ricercaEsatta && !caseSensitive) {
-				pagEpression.ilike(CredenzialeMittente.model().CREDENZIALE, credentialParam, LikeMode.ANYWHERE); // non si differenzia tra socket e transport
+				pagExpression.ilike(CredenzialeMittente.model().CREDENZIALE, credentialParam, LikeMode.ANYWHERE); // non si differenzia tra socket e transport
 			}
 			else { // !ricercaEsatta && caseSensitive
-				pagEpression.like(CredenzialeMittente.model().CREDENZIALE, credentialParam, LikeMode.ANYWHERE); // non si differenzia tra socket e transport
+				pagExpression.like(CredenzialeMittente.model().CREDENZIALE, credentialParam, LikeMode.ANYWHERE); // non si differenzia tra socket e transport
 			}
 		
-			return pagEpression;
+			return pagExpression;
 			
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(), e);

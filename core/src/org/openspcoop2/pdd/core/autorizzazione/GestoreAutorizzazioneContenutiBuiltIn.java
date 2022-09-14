@@ -89,12 +89,17 @@ public class GestoreAutorizzazioneContenutiBuiltIn {
 			}catch(Exception e) {
 				String msgError = "Conversione valore della risorsa '"+risorsa+"' non riuscita: "+e.getMessage();
 				if(CostantiAutorizzazione.AUTHZ_UNDEFINED.equalsIgnoreCase(expectedValue)) {
-					if(!e.getMessage().contains("not exists as key in map")) {
-						
-					}
+					// NOP: se non l'ho risolto significa che non esiste.... sotto nel controllo undefined quindi autorizzo
+					//if(!e.getMessage().contains("not exists as key in map")) {
+					//	
+					//}
 				}
 				else {
-					throw new Exception(msgError,e);
+					log.error(msgError, e);
+					this.autorizzato = false;
+					this.errorMessage = "Resource '"+risorsa+"' not verifiable; unprocessable dynamic value '"+expectedValue+"': "+e.getMessage();
+					break;
+					//throw new Exception(msgError,e);
 				}
 			}
 			

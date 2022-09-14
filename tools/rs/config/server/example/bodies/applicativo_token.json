@@ -1,0 +1,9 @@
+{
+ 	"nome": "ApplicativoJsonToken",
+   	"credenziali": {
+		"modalita_accesso": "token",
+		"identificativo": "clientIdTestSuiteGoogle",
+		"token_policy": "Google"
+	},
+	"ruoli": [ "RuoloDemo" ]
+}

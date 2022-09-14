@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -239,6 +240,11 @@ public enum ErroriIntegrazione {
 	
 	ERRORE_448_API_NON_INVOCABILE_TIPO_SERVIZIO_UTILIZZATO("L'API invocata possiede un service binding non abilitato per il tipo di servizio utilizzato",
 			CodiceErroreIntegrazione.CODICE_448_API_NON_INVOCABILE_TIPO_SERVIZIO_UTILIZZATO),
+	
+	ERRORE_449_TIPO_SOGGETTO_APPLICATIVO_TOKEN_NOT_SUPPORTED_BY_PROTOCOL("Il tipo "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO+
+			" del soggetto appartenente all'applicativo token "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_NOME+
+			" non è tra i tipi supportati dal protocollo "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PROTOCOL+" (tipi supportati: "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPI_SUPPORTATI,
+			CodiceErroreIntegrazione.CODICE_449_TIPO_SOGGETTO_APPLICATIVO_TOKEN_NOT_SUPPORTED_BY_PROTOCOL),
 	
 	// errori spediti in buste errore
 	
@@ -506,6 +512,9 @@ public enum ErroriIntegrazione {
 	}
 	public ErroreIntegrazione getErrore402_AutenticazioneFallitaPrincipal(String msgErrore,String userId) {
 		return getErrore402_AutenticazioneFallita(msgErrore, userId, null, null);
+	}
+	public ErroreIntegrazione getErrore402_AutenticazioneFallitaToken(String msgErrore,String clientId) {
+		return getErrore402_AutenticazioneFallita(msgErrore, clientId, null, null);
 	}
 	public ErroreIntegrazione getErrore402_AutenticazioneFallita(String msgErrore,String username,String password,String subject) {
 		if(!this.equals(ERRORE_402_AUTENTICAZIONE_FALLITA)){
@@ -906,6 +915,20 @@ public enum ErroriIntegrazione {
 			bf.append(" servizioApplicativo["+servizioApplicativo+"]");
 		}
 		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_PARAMETRI,bf.toString()));
+		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
+	}
+	
+	public ErroreIntegrazione getErrore449_TipoSoggettoApplicativoTokenNotSupportedByProtocol(IDServizioApplicativo idApplicativoToken,IProtocolFactory<?> protocolFactory) {
+		if(!this.equals(ERRORE_449_TIPO_SOGGETTO_APPLICATIVO_TOKEN_NOT_SUPPORTED_BY_PROTOCOL)){
+			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_449_TIPO_SOGGETTO_APPLICATIVO_TOKEN_NOT_SUPPORTED_BY_PROTOCOL.name());
+		}
+		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
+		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO,idApplicativoToken.getIdSoggettoProprietario().getTipo()));
+		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_NOME,idApplicativoToken.getNome()+"@"+idApplicativoToken.getIdSoggettoProprietario().toString()));
+		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PROTOCOL,protocolFactory.getProtocol()));
+		try{
+			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPI_SUPPORTATI,protocolFactory.createProtocolConfiguration().getTipiSoggetti().toString()));
+		}catch(Exception e){}
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	

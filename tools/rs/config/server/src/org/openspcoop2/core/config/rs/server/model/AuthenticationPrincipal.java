@@ -60,7 +60,7 @@ public class AuthenticationPrincipal  implements OneOfBaseCredenzialiCredenziali
   @JsonProperty("userid")
   @NotNull
   @Valid
- @Size(max=255)  public String getUserid() {
+ @Size(max=2800)  public String getUserid() {
     return this.userid;
   }
 

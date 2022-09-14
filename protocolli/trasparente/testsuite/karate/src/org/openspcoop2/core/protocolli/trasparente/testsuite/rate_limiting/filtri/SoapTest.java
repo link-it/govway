@@ -33,6 +33,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoS
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils.PolicyAlias;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
@@ -141,6 +142,108 @@ public class SoapTest extends ConfigLoader {
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, maxRequests);		
 	}
 	
+	
+	
+	@Test
+	public void filtroApplicativoTokenErogazione() throws Exception {
+		filtroRichiedenteToken(TipoServizio.EROGAZIONE, "FiltroApplicativoTokenSoap", "clientIdApplicativoToken2SoggettoInternoFruitore", "clientIdApplicativoToken1SoggettoInternoFruitore");
+	}
+	
+	
+	@Test
+	public void filtroApplicativoTokenFruizione() throws Exception {
+		filtroRichiedenteToken(TipoServizio.FRUIZIONE, "FiltroApplicativoTokenSoap", "clientIdApplicativoToken2SoggettoInternoFruitore", "clientIdApplicativoToken1SoggettoInternoFruitore");
+	}
+	
+	@Test
+	public void filtroApplicativoTokenErogazione_testIdNonRegistrato() throws Exception {
+		filtroRichiedenteToken(TipoServizio.EROGAZIONE, "FiltroApplicativoTokenSoap", "clientIdNonRegistrato", "clientIdApplicativoToken1SoggettoInternoFruitore");
+	}
+	
+	
+	@Test
+	public void filtroApplicativoTokenFruizione_testIdNonRegistrato() throws Exception {
+		filtroRichiedenteToken(TipoServizio.FRUIZIONE, "FiltroApplicativoTokenSoap", "clientIdNonRegistrato", "clientIdApplicativoToken1SoggettoInternoFruitore");
+	}
+	
+	/**
+	 * Testiamo che la policy venga applicata solo per il soggetto indicato
+	 * nel filtro. Il filtro per soggetto è applicabile solamente per le erogazioni.
+	 * 
+	 * La policy che andiamo a testare è NumeroRichiesteCompletateConSuccesso con
+	 * finestra Oraria.
+	 * @throws Exception 
+	 */
+	public void filtroRichiedenteToken(TipoServizio tipoServizio, String erogazione, String clientIdNonFiltrato, String clientIdFiltrato) throws Exception {
+		// Sulla stessa api 
+		final int maxRequests = 5;
+		
+		final PolicyAlias policy = PolicyAlias.ORARIO;
+		final int windowSize = Utils.getPolicyWindowSize(policy);
+		
+		final String idPolicy = tipoServizio == TipoServizio.EROGAZIONE
+				? dbUtils.getIdPolicyErogazione("SoggettoInternoTest", erogazione, policy)
+				: dbUtils.getIdPolicyFruizione("SoggettoInternoTestFruitore", "SoggettoInternoTest", erogazione, policy);
+				
+
+		final String urlServizio = tipoServizio == TipoServizio.EROGAZIONE
+				? basePath + "/SoggettoInternoTest/"+erogazione+"/v1"
+				: basePath + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1";
+		
+		Utils.resetCounters(idPolicy);
+		Utils.waitForPolicy(policy);
+		Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0);
+		
+		// Faccio N richieste che non devono essere conteggiate perchè di un richiedente non filtrato
+		
+		String tokenNonFiltrato = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.applicativi_token.Utilities.buildJWT(clientIdNonFiltrato, null, false);
+		
+		HttpRequest requestNonFiltrata = new HttpRequest();
+		requestNonFiltrata.setContentType("application/soap+xml");
+		requestNonFiltrata.setMethod(HttpRequestMethod.POST);
+		requestNonFiltrata.setUrl(urlServizio);
+		requestNonFiltrata.addHeader(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+tokenNonFiltrato);
+		requestNonFiltrata.setContent(SoapBodies.get(policy).getBytes());
+		
+		Vector<HttpResponse> nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests+1);
+		
+		assertEquals(maxRequests+1, nonFiltrateResponses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
+		
+		Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0);
+
+		// Faccio N richieste che devono far scattare la policy perchè di un richiedente filtrato
+		
+		String tokenFiltrato = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.applicativi_token.Utilities.buildJWT(clientIdFiltrato, null, false);
+		
+		HttpRequest requestFiltrata = new HttpRequest();
+		requestFiltrata.setContentType("application/soap+xml");
+		requestFiltrata.setMethod(HttpRequestMethod.POST);
+		requestFiltrata.setUrl(urlServizio);
+		requestFiltrata.addHeader(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+tokenFiltrato);
+		requestFiltrata.setContent(SoapBodies.get(policy).getBytes());
+		
+		
+		Vector<HttpResponse> filtrateResponsesOk = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
+		
+		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, 0);
+
+		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.SoapTest.checkOkRequests(filtrateResponsesOk, windowSize, maxRequests);
+		
+		Vector<HttpResponse> filtrateResponsesBlocked = Utils.makeSequentialRequests(requestFiltrata, maxRequests);
+		
+		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, maxRequests);
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.numero_richieste_completate_con_successo.SoapTest.checkFailedRequests(filtrateResponsesBlocked, windowSize, maxRequests);
+		
+		// Faccio N richieste che non devono essere filtrate e devono passare
+		
+		nonFiltrateResponses = Utils.makeSequentialRequests(requestNonFiltrata, maxRequests+1);
+		
+		assertEquals(maxRequests+1, nonFiltrateResponses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
+		
+		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, maxRequests);	
+		
+	}
 	
 	
 	/*
@@ -333,6 +436,32 @@ public class SoapTest extends ConfigLoader {
 		assertEquals(maxRequests, nonFiltrateResponses.stream().filter(r -> r.getResultHTTPOperation() == 200).count());
 		
 		Utils.checkConditionsNumeroRichieste(idPolicy, 0, maxRequests, maxRequests);
+	}
+	
+	
+	
+	/*
+	 * Analogo al test filtroRichiedente ma filtriamo per ruoli, 
+	 */
+	@Test
+	public void filtroRuoloRichiedenteTokenErogazione() throws Exception {
+		filtroRichiedenteToken(TipoServizio.EROGAZIONE, "FiltroRuoloTokenSoap", "clientIdApplicativoToken1SoggettoInternoFruitore", "clientIdApplicativoToken2SoggettoInternoFruitore");
+	}
+	
+	@Test
+	public void filtroRuoloRichiedenteTokenFruizione() throws Exception {
+		filtroRichiedenteToken(TipoServizio.FRUIZIONE, "FiltroRuoloTokenSoap", "clientIdApplicativoToken1SoggettoInternoFruitore", "clientIdApplicativoToken2SoggettoInternoFruitore");
+	}
+	
+	@Test
+	public void filtroRuoloRichiedenteTokenErogazione_testIdNonRegistrato() throws Exception {
+		filtroRichiedenteToken(TipoServizio.EROGAZIONE, "FiltroRuoloTokenSoap", "clientIdNonRegistrato", "clientIdApplicativoToken2SoggettoInternoFruitore");
+	}
+	
+	
+	@Test
+	public void filtroRuoloRichiedenteTokenFruizione_testIdNonRegistrato() throws Exception {
+		filtroRichiedenteToken(TipoServizio.FRUIZIONE, "FiltroRuoloTokenSoap", "clientIdNonRegistrato", "clientIdApplicativoToken2SoggettoInternoFruitore");
 	}
 	
 	

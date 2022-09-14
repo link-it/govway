@@ -69,6 +69,7 @@ public class TransazioniCsvExporter extends HttpServlet{
 	private boolean contenutiAsProperties = false;
 	private transient ITracciaDriver tracciamentoService = null;
 	private transient IDiagnosticDriver diagnosticiService = null; 
+	private boolean exportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti = false;
 
 	@Override
 	public void init() throws ServletException {
@@ -81,6 +82,7 @@ public class TransazioniCsvExporter extends HttpServlet{
 			this.contenutiAsProperties = govwayMonitorProperties.isAttivoTransazioniExportContenutiAsProperties();
 			this.tracciamentoService = govwayMonitorProperties.getDriverTracciamento();
 			this.diagnosticiService = govwayMonitorProperties.getDriverMsgDiagnostici();
+			this.exportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti = govwayMonitorProperties.isExportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti();
 		}catch(Exception e){
 			TransazioniCsvExporter.log.error("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
 		}
@@ -139,7 +141,7 @@ public class TransazioniCsvExporter extends HttpServlet{
 			boolean exportDiagnostici = false;
 			boolean exportContenuti = false;
 
-			if(ex!=null){
+			if(this.exportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti && ex!=null){
 				for (String val : ex) {
 					if(CostantiExport.ESPORTAZIONI_VALUE_TRACCE.equals(val))
 						exportTracce=true;

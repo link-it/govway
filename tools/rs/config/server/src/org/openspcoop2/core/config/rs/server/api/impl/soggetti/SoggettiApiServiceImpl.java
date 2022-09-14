@@ -112,6 +112,8 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			String tipo_soggetto = ProtocolFactoryManager.getInstance().getDefaultOrganizationTypes().get(protocollo);
 			IDSoggetto idSoggetto = new IDSoggetto(tipo_soggetto,soggetto.getNome());
 		
+			SoggettiApiHelper.validateCredentials(soggetto.getCredenziali());
+			
 			ApiKeyInfo keyInfo = null;
 			if ( soggetto.getCredenziali() != null && soggetto.getCredenziali().getModalitaAccesso() != null ) {
 				keyInfo = SoggettiApiHelper.createApiKey(soggetto.getCredenziali(), idSoggetto, env.soggettiCore, protocollo);
@@ -355,6 +357,8 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			if (profilo == null)
 				profilo = Helper.getProfiloDefault();
             
+			SoggettiApiHelper.validateCredentials(body.getCredenziali());
+			
 			OneOfBaseCredenzialiCredenziali credenziali = null;
 			try{
 				credenziali = Helper.translateCredenziali(body.getCredenziali(), true); // metto true, come se fosse create per obbligare la password basic
@@ -451,6 +455,8 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			if (profilo == null)
 				profilo = Helper.getProfiloDefault();
             
+			SoggettiApiHelper.validateCredentials(body.getCredenziali());
+			
 			Soggetto soggetto = null;
 			try{
 				soggetto = (Soggetto) body;

@@ -231,7 +231,18 @@ components:
             informazioni_fruitore:
               $ref: '#/components/schemas/TransazioneExtInformazioniSoggetto'
             applicativo:
-              $ref: 'govway_core.yaml#/components/schemas/NCName'                  
+              $ref: 'govway_core.yaml#/components/schemas/NCName'
+            applicativo_token:
+              $ref: '#/components/schemas/TransazioneExtInformazioniMittenteApplicativoToken'
+    TransazioneExtInformazioniMittenteApplicativoToken:
+      type: object
+      properties:
+        nome:
+           $ref: 'govway_core.yaml#/components/schemas/NCName'            
+        soggetto:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'  
+        informazioni_soggetto:
+           $ref: '#/components/schemas/TransazioneExtInformazioniSoggetto'
  
     TransazioneExtInformazioniMittente:
       type: object

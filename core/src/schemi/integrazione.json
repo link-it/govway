@@ -41,6 +41,8 @@
            },
            "additionalProperties": false
         },
+	"jti": {"type": "string"},
+        "purposeId": {"type": "string"},
         "claims": {
             "type": "array",
             "items": {

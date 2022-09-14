@@ -34,6 +34,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -71,6 +72,13 @@ public final class PorteApplicativeRuoliList extends Action {
 			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			String nomePorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
 	
+			String tokenList = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TOKEN_AUTHORIZATION);
+			boolean isToken = tokenList!=null && !"".equals(tokenList) && Boolean.valueOf(tokenList);
+			
+			String autorizzazioneModi = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA);
+			@SuppressWarnings("unused")
+			boolean isAutorizzazioneModi = autorizzazioneModi!=null && !"".equals(autorizzazioneModi) && Boolean.valueOf(autorizzazioneModi);
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 	
@@ -78,12 +86,18 @@ public final class PorteApplicativeRuoliList extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 	
 			int idLista = Liste.PORTE_APPLICATIVE_RUOLI;
+			if(isToken) {
+				idLista = Liste.PORTE_APPLICATIVE_TOKEN_RUOLI;
+			}
 	
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 	
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			
-			List<String> lista = porteApplicativeCore.portaApplicativaRuoliList(Integer.parseInt(idPorta), ricerca);
+			List<String> lista = isToken ?
+					porteApplicativeCore.portaApplicativaRuoliTokenList(Integer.parseInt(idPorta), ricerca)
+					:
+					porteApplicativeCore.portaApplicativaRuoliList(Integer.parseInt(idPorta), ricerca);
 
 			porteApplicativeHelper.preparePorteApplicativeRuoliList(nomePorta, ricerca, lista);
 	

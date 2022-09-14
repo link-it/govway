@@ -55,8 +55,10 @@ import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchClien
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchEvento;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchGruppo;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchToken;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchTokenClient;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchTrasporto;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeToken;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeTokenClient;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeTrasporto;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
@@ -1034,7 +1036,7 @@ public class GestoreAutenticazione {
     }
     
     public static void updateCredenzialiToken(IDSoggetto dominio, String modulo, String idTransazione, 
-    		InformazioniToken informazioniTokenNormalizzate, CredenzialiMittente credenzialiMittente, 
+    		InformazioniToken informazioniTokenNormalizzate, IDServizioApplicativo idApplicativoToken, CredenzialiMittente credenzialiMittente, 
     		IOpenSPCoopState openspcoopState, String identitaChiamante) throws Exception{
     	
     	if(informazioniTokenNormalizzate.getIss()!=null) {
@@ -1046,12 +1048,22 @@ public class GestoreAutenticazione {
     				null));
     	}
     	if(informazioniTokenNormalizzate.getClientId()!=null) {
-    		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.token_clientId);
-    		tokenSearch.disableConvertToDBValue();
-    		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.token_clientId, informazioniTokenNormalizzate.getClientId());
-    		credenzialiMittente.setToken_clientId(getCredenzialeMittente(dominio, modulo, idTransazione, 
-    				tokenSearch, token, openspcoopState, identitaChiamante,
-    				null));
+    		if(idApplicativoToken==null) {
+	    		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.token_clientId);
+	    		tokenSearch.disableConvertToDBValue();
+	    		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.token_clientId, informazioniTokenNormalizzate.getClientId());
+	    		credenzialiMittente.setToken_clientId(getCredenzialeMittente(dominio, modulo, idTransazione, 
+	    				tokenSearch, token, openspcoopState, identitaChiamante,
+	    				null));
+    		}
+    		else {
+    			CredenzialeSearchTokenClient tokenSearch = new CredenzialeSearchTokenClient(true, true, true);
+    			tokenSearch.disableConvertToDBValue();
+    			CredenzialeTokenClient token = new CredenzialeTokenClient(informazioniTokenNormalizzate.getClientId(), idApplicativoToken);
+    			credenzialiMittente.setToken_clientId(getCredenzialeMittente(dominio, modulo, idTransazione, 
+	    				tokenSearch, token, openspcoopState, identitaChiamante,
+	    				null));
+    		}
     	}
     	if(informazioniTokenNormalizzate.getSub()!=null) {
     		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.token_subject);
@@ -1304,8 +1316,8 @@ public class GestoreAutenticazione {
 			ICredenzialeMittenteService credenzialiMittenteService = transazioniSM.getCredenzialeMittenteService();
 			boolean ricercaEsatta = true;
 	    	boolean caseSensitive = true;
-	    	IPaginatedExpression pagEpression = searchCredential.createExpression(credenzialiMittenteService, credential.getCredenziale(), ricercaEsatta, caseSensitive);
-			List<CredenzialeMittente> list = credenzialiMittenteService.findAll(pagEpression);
+	    	IPaginatedExpression pagExpression = searchCredential.createExpression(credenzialiMittenteService, credential.getCredenziale(), ricercaEsatta, caseSensitive);
+			List<CredenzialeMittente> list = credenzialiMittenteService.findAll(pagExpression);
 			if(list!=null && !list.isEmpty() && credential instanceof CredenzialeTrasporto) {
 				CredenzialeTrasporto cTrasporto = (CredenzialeTrasporto) credential;
 				if(cTrasporto.isSsl()) {

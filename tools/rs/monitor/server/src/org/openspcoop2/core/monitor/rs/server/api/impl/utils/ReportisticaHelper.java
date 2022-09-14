@@ -273,6 +273,19 @@ public class ReportisticaHelper {
 						+ "non utilizzabile con il tipo di filtro mittente utilizzato '"+filtro.getClass().getName()+"' (atteso: "+FiltroMittenteFruizioneApplicativo.class.getName()+")");
 			}
 			FiltroMittenteFruizioneApplicativo fAppl = (FiltroMittenteFruizioneApplicativo) filtro;
+			if(fAppl.getTipoIdentificazioneApplicativo()!=null) {
+				switch (fAppl.getTipoIdentificazioneApplicativo()) {
+				case TRASPORTO:
+					wrap.overrideParameter(CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO, CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO_TRASPORTO);
+					break;
+				case TOKEN:
+					wrap.overrideParameter(CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO, CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO_TOKEN);
+					break;
+				}
+			}
+			else {
+				wrap.overrideParameter(CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO, CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO_TRASPORTO);
+			}
 			wrap.overrideParameter(CostantiExporter.APPLICATIVO, fAppl.getApplicativo());
 			break;
 		}
@@ -376,6 +389,19 @@ public class ReportisticaHelper {
 							+ "non utilizzabile con il tipo di filtro mittente utilizzato '"+filtro.getClass().getName()+"' (atteso: "+FiltroMittenteErogazioneApplicativo.class.getName()+")");
 				}
 				FiltroMittenteErogazioneApplicativo fAppl = (FiltroMittenteErogazioneApplicativo) filtro;
+				if(fAppl.getTipoIdentificazioneApplicativo()!=null) {
+					switch (fAppl.getTipoIdentificazioneApplicativo()) {
+					case TRASPORTO:
+						wrap.overrideParameter(CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO, CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO_TRASPORTO);
+						break;
+					case TOKEN:
+						wrap.overrideParameter(CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO, CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO_TOKEN);
+						break;
+					}
+				}
+				else {
+					wrap.overrideParameter(CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO, CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO_TRASPORTO);
+				}
 				wrap.overrideParameter(CostantiExporter.APPLICATIVO, fAppl.getApplicativo());
 				wrap.overrideParameter(CostantiExporter.MITTENTE,new IDSoggetto(env.tipoSoggetto, fAppl.getSoggetto()).toString());
 				break;
@@ -930,6 +956,20 @@ public class ReportisticaHelper {
 		ReportisticaHelper.overrideOpzioniGenerazioneReport(body.getReport(), wrap, env);
 		wrap.overrideParameter(CostantiExporter.AZIONE, body.getAzione());
 
+		if(body.getTipoIdentificazioneApplicativo()!=null) {
+			switch (body.getTipoIdentificazioneApplicativo()) {
+			case TRASPORTO:
+				wrap.overrideParameter(CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO, CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO_TRASPORTO);
+				break;
+			case TOKEN:
+				wrap.overrideParameter(CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO, CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO_TOKEN);
+				break;
+			}
+		}
+		else {
+			wrap.overrideParameter(CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO, CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO_TRASPORTO);
+		}
+		
 		if(body.getSoggettoMittente()!=null && !StringUtils.isEmpty(body.getSoggettoMittente())) {
 			if(body.getTipo()!=null && FiltroRicercaRuoloTransazioneEnum.EROGAZIONE.equals(body.getTipo())) {
 				wrap.overrideParameter(CostantiExporter.MITTENTE,new IDSoggetto(env.tipoSoggetto, body.getSoggettoMittente()).toString());

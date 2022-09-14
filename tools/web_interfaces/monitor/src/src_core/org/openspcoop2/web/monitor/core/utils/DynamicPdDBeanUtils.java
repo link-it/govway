@@ -261,21 +261,21 @@ public class DynamicPdDBeanUtils implements Serializable {
 		return protocolFactory.createProtocolConfiguration().isSupportoAutenticazioneApplicativiEsterniErogazioni();
 	}
 	
-	public List<Object> findElencoServiziApplicativiFromSoggettoLocale(String tipoProtocollo,String tipoSoggetto,String nomeSoggetto){
+	public List<Object> findElencoServiziApplicativiFromSoggettoLocale(String tipoProtocollo,String tipoSoggetto,String nomeSoggetto, boolean trasporto, boolean token){
 		List<Object> list = new ArrayList<Object>();
 		Soggetto erogatore = this.dynamicUtilsService.findSoggettoByTipoNome(tipoSoggetto, nomeSoggetto);
 
 		if(erogatore != null)
-			list = this.dynamicUtilsService.findElencoServiziApplicativi(tipoProtocollo,erogatore);
+			list = this.dynamicUtilsService.findElencoServiziApplicativi(tipoProtocollo,erogatore, trasporto, token);
 
 
 		return list;
 	}
 
-	public List<SelectItem> getListaSelectItemsServiziApplicativiFromSoggettoLocale(String tipoProtocollo,String tipoSoggetto,String nomeSoggetto){
+	public List<SelectItem> getListaSelectItemsServiziApplicativiFromSoggettoLocale(String tipoProtocollo,String tipoSoggetto,String nomeSoggetto, boolean trasporto, boolean token){
 		List<SelectItem> sa = new ArrayList<SelectItem>();
 
-		List<Object> list = this.findElencoServiziApplicativiFromSoggettoLocale(tipoProtocollo,tipoSoggetto, nomeSoggetto);
+		List<Object> list = this.findElencoServiziApplicativiFromSoggettoLocale(tipoProtocollo,tipoSoggetto, nomeSoggetto, trasporto, token);
 
 		for (Object res : list) {
 			sa.add(new SelectItem((String) res));

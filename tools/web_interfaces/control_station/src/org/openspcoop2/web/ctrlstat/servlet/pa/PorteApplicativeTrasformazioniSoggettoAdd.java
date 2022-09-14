@@ -50,6 +50,7 @@ import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -111,6 +112,7 @@ public final class PorteApplicativeTrasformazioniSoggettoAdd extends Action {
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
+			ServiziApplicativiCore saCore = new ServiziApplicativiCore(porteApplicativeCore);
 
 			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneErogatori = false;
@@ -201,11 +203,38 @@ public final class PorteApplicativeTrasformazioniSoggettoAdd extends Action {
 			
 			// calcolo soggetti compatibili con tipi protocollo supportati dalla pa e credenziali indicate
 			List<IDSoggettoDB> list = null;
-			if(apsCore.isVisioneOggettiGlobale(userLogin)){
-				list = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, appId, pddTipologiaSoggettoAutenticati);
-			}else{
-				list = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, userLogin, tipoAutenticazione, appId, pddTipologiaSoggettoAutenticati);
+			boolean isSupportatoAutorizzazioneRichiedenteSenzaAutenticazioneErogazione = soggettiCore.isSupportatoAutorizzazioneRichiedenteSenzaAutenticazioneErogazione(protocollo);
+			if(tipoAutenticazione!=null || isSupportatoAutorizzazioneRichiedenteSenzaAutenticazioneErogazione) {
+				if(apsCore.isVisioneOggettiGlobale(userLogin)){
+					list = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, appId, pddTipologiaSoggettoAutenticati);
+				}else{
+					list = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, userLogin, tipoAutenticazione, appId, pddTipologiaSoggettoAutenticati);
+				}
 			}
+			// calcolo soggetti compatibili con token (devono possedere applicativi token)
+			if(portaApplicativa.getGestioneToken()!=null && portaApplicativa.getGestioneToken().getPolicy()!=null) {
+				PorteApplicativeServizioApplicativoAutorizzatoUtilities utilities = new PorteApplicativeServizioApplicativoAutorizzatoUtilities();
+				boolean escludiSAServer = saCore.isApplicativiServerEnabled(porteApplicativeHelper);
+				boolean isSupportatoAutenticazioneApplicativiEsterni = saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocollo);
+				utilities.buildListTrasformazioniSoggettiToken(portaApplicativa, false, protocollo, gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore,
+						idSoggettoToAdd,
+						porteApplicativeCore, porteApplicativeHelper, escludiSAServer,
+						isSupportatoAutenticazioneApplicativiEsterni);
+				List<IDSoggettoDB> soggettiList_tmp = utilities.soggettiDBList_trasformazioniSoggettiToken;
+				if(soggettiList_tmp!=null && !soggettiList_tmp.isEmpty()) {
+					if(list==null) {
+						list = soggettiList_tmp;
+					}
+					else {
+						for (IDSoggettoDB idSoggettoDB : soggettiList_tmp) {
+							if(!list.contains(idSoggettoDB)) {
+								list.add(idSoggettoDB);
+							}
+						}
+					}
+				}				
+			}
+			// escludo soggetto erogatore
 			if(list!=null && !list.isEmpty() && gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore) {
 				for (int i = 0; i < list.size(); i++) {
 					IDSoggettoDB soggettoCheck = list.get(i);

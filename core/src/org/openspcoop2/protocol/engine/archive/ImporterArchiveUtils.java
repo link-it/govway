@@ -1443,6 +1443,10 @@ public class ImporterArchiveUtils {
 							saFound = this.importerEngine.getServizioApplicativoCredenzialiPrincipal(credenziali.getUser());
 							c = credenziali.getUser();
 							break;
+						case TOKEN:
+							saFound = this.importerEngine.getServizioApplicativoCredenzialiToken(credenziali.getTokenPolicy(), credenziali.getUser());
+							c = credenziali.getUser();
+							break;
 						}
 						if(saFound!=null) {
 							IDSoggetto idSoggettoProprietarioFound =  new IDSoggetto(saFound.getTipoSoggettoProprietario(), saFound.getNomeSoggettoProprietario());

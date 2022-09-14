@@ -89,7 +89,11 @@ public final class CostantiLabel {
 	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_APP_ID = "App ID";
 	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_API_KEY = "Api Key";
 	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL = "UserId";
-    
+	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_DESCR = "Credenziali Token";
+	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_WITH_HTTPS = "Abilitato";
+	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY = "Token Policy";
+	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID = "Identificativo";
+	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID_SEARCH = "Token ClientId";
    	
     /**
      * PROPRIETA CONNETTORE
@@ -151,6 +155,14 @@ public final class CostantiLabel {
 	public static final String MODIPA_API_PROFILO_CANALE_LABEL = "Sicurezza Canale";
 	public static final String MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC01 = "ID_AUTH_CHANNEL_01";
 	public static final String MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC02 = "ID_AUTH_CHANNEL_02";
+	
+	public static final String MODIPA_SICUREZZA_CHOICE_LABEL = "Sicurezza Messaggio";
+	public static final String MODIPA_SICUREZZA_CHOICE_MESSAGE_LABEL = "Certificato Mittente";
+	public static final String MODIPA_SICUREZZA_CHOICE_TOKEN_LABEL = "Token OAuth";
+	public static final String MODIPA_SICUREZZA_CHOICE_MESSAGE_TOKEN_LABEL = "Entrambi";
+	
+	public static final String MODIPA_SICUREZZA_MESSAGGIO_FIRMA_APPLICATIVO_SUBTITLE_LABEL = "Certificato";
+	public static final String MODIPA_SICUREZZA_TOKEN_FIRMA_APPLICATIVO_SUBTITLE_LABEL = "Identificativo registrato sull'Authorization Server";
 	
 	public static final String MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL = "Sicurezza Messaggio";
 	public static final String MODIPA_API_PROFILO_SICUREZZA_MESSAGGIO_LABEL = "Sicurezza Messaggio";
@@ -215,6 +227,8 @@ public final class CostantiLabel {
     public static final String MODIPA_API_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_LABEL_RICHIESTA_CON_ATTACHMENTS = "Richiesta (con firma degli allegati)";
     public static final String MODIPA_API_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_LABEL_RISPOSTA_CON_ATTACHMENTS = "Risposta (con firma degli allegati)";
     public static final String MODIPA_API_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_LABEL_PERSONALIZZATO = "Personalizza criteri di applicabilità";
+    
+    public static final String MODIPA_API_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_LABEL_PARAMETRI_RISPOSTA = "Parametri della Risposta";
     
     public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_INTEGRITY_REST_LABEL = "Integrity"; 
     public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RICHIESTA_REST_LABEL = "Audience"; 

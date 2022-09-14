@@ -32,6 +32,8 @@ Background:
     
     * def credenziali_https_multipleCertificate = read('classpath:bodies/credenziali_https_multipleCertificate.json')
 
+    * def credenziali_token = read('classpath:bodies/credenziali_token.json') 
+
     * def applicativo_proprieta = read('classpath:bodies/applicativo_proprieta.json') 
     * eval randomize(applicativo_proprieta, ["nome", "credenziali.userid" ])
 
@@ -216,6 +218,48 @@ Scenario: Applicativi Aggiornamento Credenziali Https Certificati Multipli
     And match response.credenziali contains options
 
     * call delete ( { resourcePath: 'applicativi/' + applicativo_https_multipleCertificate.nome } )
+
+@UpdateCredenzialiToken
+Scenario: Applicativi Aggiornamento Credenziali Token
+
+    * def options = { modalita_accesso: 'token', identificativo: '#(credenziali_token.credenziali.identificativo)', token_policy: '#(credenziali_token.credenziali.token_policy)' }
+
+    * call create { resourcePath: 'applicativi', body: '#(applicativo)' }
+
+    Given url configUrl
+    And path 'applicativi/' + applicativo.nome + '/credenziali'
+    And header Authorization = govwayConfAuth
+    And request credenziali_token
+    When method put
+    Then status 204
+    And match responseHeaders contains { 'X-Api-Key': '#notpresent' }
+    And match responseHeaders contains { 'X-App-Id': '#notpresent' }
+
+    Given url configUrl
+    And path 'applicativi' , applicativo.nome
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+    And match response.credenziali contains options
+
+    * call delete ( { resourcePath: 'applicativi/' + applicativo.nome } )
+
+@UpdateCredenzialiToken400
+Scenario: Applicativi Aggiornamento Token Policy Inesistente 400
+
+    * call create { resourcePath: 'applicativi', body: '#(applicativo)' }
+
+    * eval credenziali_token.credenziali.token_policy = 'TokenPolicyInesistente_' + random()
+
+    Given url configUrl
+    And path 'applicativi/' + applicativo.nome + '/credenziali'
+    And header Authorization = govwayConfAuth
+    And request credenziali_token
+    When method put
+    Then status 400
+
+    * call delete ( { resourcePath: 'applicativi/' + applicativo.nome } )
 
 @UpdateProprieta
 Scenario: Applicativi Aggiornamento Proprieta

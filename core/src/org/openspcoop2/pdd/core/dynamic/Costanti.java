@@ -89,7 +89,7 @@ public class Costanti {
     public static final String MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY = "providerOrganizationConfig";
     public static final String TYPE_MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY = "java.util.Map<String, String>";
     public static final String TYPE_MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
-    
+        
     // Per ora messi solamente nelle trasformazioni, valutare se poi metterli anche nel connettore
     public final static String MAP_ELEMENT_URL_REGEXP = "urlRegExp";
     public final static String MAP_ELEMENT_URL_REGEXP_PREFIX = "{"+MAP_ELEMENT_URL_REGEXP+":";
@@ -137,6 +137,17 @@ public class Costanti {
     public final static String MAP_TOKEN_INFO = "tokenInfo";
     public final static String TYPE_MAP_TOKEN_INFO = org.openspcoop2.pdd.core.token.InformazioniToken.class.getName();
     
+    public final static String MAP_APPLICATIVO_TOKEN = "tokenClient";
+    public final static String TYPE_MAP_APPLICATIVO_TOKEN = org.openspcoop2.core.id.IDServizioApplicativo.class.getName();
+    
+    public static final String MAP_APPLICATIVO_TOKEN_CONFIG_PROPERTY = "tokenClientApplicationConfig";
+    public static final String TYPE_MAP_APPLICATIVO_TOKEN_CONFIG_PROPERTY = "java.util.Map<String, String>";
+    public static final String TYPE_MAP_APPLICATIVO_TOKEN_CONFIG_PROPERTY_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
+    
+    public static final String MAP_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN_CONFIG_PROPERTY = "tokenClientOrganizationConfig";
+    public static final String TYPE_MAP_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN_CONFIG_PROPERTY = "java.util.Map<String, String>";
+    public static final String TYPE_MAP_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN_CONFIG_PROPERTY_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
+        
     public final static String MAP_ATTRIBUTES = "aa"; // attributeAuthority, all'interno poi c'è il metodo attributes
     public final static String TYPE_MAP_ATTRIBUTES = org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi.class.getName();
     

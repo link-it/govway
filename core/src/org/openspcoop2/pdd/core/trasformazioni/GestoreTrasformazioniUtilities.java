@@ -92,7 +92,8 @@ public class GestoreTrasformazioniUtilities {
 		}
 		
 		if(soggettoFruitore==null || soggettoFruitore.getTipo()==null || soggettoFruitore.getNome()==null || sa==null) {
-			return true;
+			//return true;
+			return false; // se ho indicato una compatibilita attraverso una lista, e non ho l'informazione sul mittente non deve avere un match.
 		}
 		
 		for (TrasformazioneRegolaApplicabilitaServizioApplicativo saCheck : saCheckList) {
@@ -114,7 +115,8 @@ public class GestoreTrasformazioniUtilities {
 		}
 		
 		if(soggettoFruitore==null || soggettoFruitore.getTipo()==null || soggettoFruitore.getNome()==null) {
-			return true;
+			//return true;
+			return false; // se ho indicato una compatibilita attraverso una lista, e non ho l'informazione sul mittente non deve avere un match.
 		}
 		
 		for (TrasformazioneRegolaApplicabilitaSoggetto soggettoCheck : soggettoCheckList) {

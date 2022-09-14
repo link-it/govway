@@ -405,8 +405,8 @@ public class Utils {
 					assertTrue("PolicyRichiesteBloccate["+polInfo.richiesteBloccate+"]<=attese["+bloccate+"]", polInfo.richiesteBloccate<=bloccate);
 				}
 				else if(policyType!=null && policyType.isApproximated()) {
-					assertTrue("PolicyConteggiate["+polInfo.richiesteConteggiate+"] = (attese["+conteggiate+"] OR attese-1["+(conteggiate-1)+"])", 
-							( (polInfo.richiesteConteggiate==conteggiate) || (polInfo.richiesteConteggiate==(conteggiate-1)) ));
+					assertTrue("PolicyConteggiate["+polInfo.richiesteConteggiate+"] = (attese["+conteggiate+"] OR attese-1["+(conteggiate-1)+"] OR attese+1["+(conteggiate+1)+"])", 
+							( (polInfo.richiesteConteggiate==conteggiate) || (polInfo.richiesteConteggiate==(conteggiate-1)) || (polInfo.richiesteConteggiate==(conteggiate+1)) ));
 					assertTrue("PolicyRichiesteBloccate["+polInfo.richiesteBloccate+"]<=attese["+bloccate+"]", polInfo.richiesteBloccate<=bloccate);
 				}
 				else {

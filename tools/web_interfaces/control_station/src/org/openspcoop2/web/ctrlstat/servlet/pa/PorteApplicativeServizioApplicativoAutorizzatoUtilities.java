@@ -38,6 +38,7 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -65,15 +66,21 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 	public PortaApplicativaAutorizzazioneServiziApplicativi saAutorizzatiList;
 	public TrasformazioneRegolaApplicabilitaRichiesta saTrasformazioniList;
 	
+	public List<IDSoggettoDB> soggettiDBList_trasformazioniSoggettiToken = null;
+	
 	public void buildList(PortaApplicativa pa, boolean modipa, String protocollo, boolean escludiSoggettoErogatore,
 			String idSoggettoToAdd,
 			PorteApplicativeCore paCore, ConsoleHelper porteApplicativeHelper, boolean escludiSAServer,
-			boolean isSupportatoAutenticazioneApplicativiEsterni) throws Exception {
+			boolean isSupportatoAutenticazioneApplicativiEsterni,
+			boolean isAutorizzazioneToken,
+			boolean modiSicurezzaMessaggio) throws Exception {
 		buildList(pa, modipa, protocollo, escludiSoggettoErogatore,
 				idSoggettoToAdd,
 				paCore, porteApplicativeHelper, escludiSAServer,
 				isSupportatoAutenticazioneApplicativiEsterni,
-				null);
+				null,
+				isAutorizzazioneToken,
+				modiSicurezzaMessaggio);
 	}
 	
 	public void buildListTrasformazioni(PortaApplicativa pa, boolean modipa, String protocollo, boolean escludiSoggettoErogatore,
@@ -85,22 +92,68 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 				idSoggettoToAdd,
 				paCore, porteApplicativeHelper, escludiSAServer,
 				isSupportatoAutenticazioneApplicativiEsterni,
-				regola);
+				regola,
+				false,
+				false);
+	}
+	
+	public void buildListTrasformazioniSoggettiToken(PortaApplicativa pa, boolean modipa, String protocollo, boolean escludiSoggettoErogatore,
+			String idSoggettoToAdd,
+			PorteApplicativeCore paCore, ConsoleHelper porteApplicativeHelper, boolean escludiSAServer,
+			boolean isSupportatoAutenticazioneApplicativiEsterni) throws Exception {
+		this.soggettiDBList_trasformazioniSoggettiToken = new ArrayList<IDSoggettoDB>();
+		buildList(pa, modipa, protocollo, escludiSoggettoErogatore,
+				idSoggettoToAdd,
+				paCore, porteApplicativeHelper, escludiSAServer,
+				isSupportatoAutenticazioneApplicativiEsterni,
+				null,
+				true,
+				false);
 	}
 	
 	private void buildList(PortaApplicativa pa, boolean modipa, String protocollo, boolean escludiSoggettoErogatore,
 			String idSoggettoToAdd,
 			PorteApplicativeCore paCore, ConsoleHelper porteApplicativeHelper, boolean escludiSAServer,
 			boolean isSupportatoAutenticazioneApplicativiEsterni,
-			TrasformazioneRegola regola) throws Exception {
+			TrasformazioneRegola regola,
+			boolean isAutorizzazioneToken,
+			boolean isModiSicurezzaMessaggio) throws Exception {
 		
 		this.idSoggettoToAdd = idSoggettoToAdd;
 		
-		CredenzialeTipo tipoAutenticazione = CredenzialeTipo.toEnumConstant(pa.getAutenticazione());
+		CredenzialeTipo tipoAutenticazione = null;
+		boolean tokenWithHttpsEnabled = false;
 		Boolean appId = null;
-		if(CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
-			ApiKeyState apiKeyState =  new ApiKeyState(paCore.getParametroAutenticazione(pa.getAutenticazione(), pa.getProprietaAutenticazioneList()));
-			appId = apiKeyState.appIdSelected;
+		String tokenPolicy = null;
+		boolean tokenPolicyOR = false;
+		if(isAutorizzazioneToken) {
+			tipoAutenticazione = CredenzialeTipo.TOKEN;
+			if(isModiSicurezzaMessaggio) {
+				tokenWithHttpsEnabled=true;
+			}
+			if(pa.getGestioneToken()!=null && pa.getGestioneToken().getPolicy()!=null) {
+				tokenPolicy = pa.getGestioneToken().getPolicy();
+			}
+		}
+		else {
+			tipoAutenticazione = CredenzialeTipo.toEnumConstant(pa.getAutenticazione());
+			if(CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
+				ApiKeyState apiKeyState =  new ApiKeyState(paCore.getParametroAutenticazione(pa.getAutenticazione(), pa.getProprietaAutenticazioneList()));
+				appId = apiKeyState.appIdSelected;
+			}
+			if(regola!=null) {
+				if(pa.getGestioneToken()!=null && pa.getGestioneToken().getPolicy()!=null) {
+					tokenPolicy = pa.getGestioneToken().getPolicy();
+					if(tokenPolicy!=null && !"".equals(tokenPolicy)) {
+						if(tipoAutenticazione!=null && !CredenzialeTipo.TOKEN.equals(tipoAutenticazione)) {
+							tokenPolicyOR = true;
+						}
+						else {
+							tipoAutenticazione = CredenzialeTipo.TOKEN;
+						}
+					}
+				}
+			}
 		}
 		
 		SoggettiCore soggettiCore = new SoggettiCore(paCore);
@@ -109,8 +162,10 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 		
 		String userLogin = ServletUtils.getUserLoginFromSession(porteApplicativeHelper.getSession());	
 		
+		boolean autenticazioneToken = pa!=null && pa.getGestioneToken()!=null && pa.getGestioneToken().getPolicy()!=null && !"".equals(pa.getGestioneToken().getPolicy());
+		
 		List<org.openspcoop2.core.registry.Soggetto> listSoggetti = null; 
-		if(isSupportatoAutenticazioneApplicativiEsterni) {
+		if(isSupportatoAutenticazioneApplicativiEsterni || isAutorizzazioneToken || (regola!=null && autenticazioneToken)) {
 			listSoggetti = soggettiCore.getSoggetti(protocollo);
 		}
 		else {
@@ -131,7 +186,14 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 			this.saSize = this.saTrasformazioniList!=null ? this.saTrasformazioniList.sizeServizioApplicativoList() : 0;
 		}
 		else {
-			this.saAutorizzatiList = pa.getServiziApplicativiAutorizzati();
+			if(isAutorizzazioneToken && !modipa) {
+				if(pa.getAutorizzazioneToken()!=null) {
+					this.saAutorizzatiList = pa.getAutorizzazioneToken().getServiziApplicativi();
+				}
+			}
+			else {
+				this.saAutorizzatiList = pa.getServiziApplicativiAutorizzati();
+			}
 			this.saSize = this.saAutorizzatiList!=null ? this.saAutorizzatiList.sizeServizioApplicativoList() : 0;
 		}
 
@@ -145,27 +207,94 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 			for (org.openspcoop2.core.registry.Soggetto soggetto : listSoggetti) {
 				IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(), soggetto.getNome());
 				List<IDServizioApplicativoDB> listServiziApplicativiTmp = null;
-				if(!modipa || pddCore.isPddEsterna(soggetto.getPortaDominio())) {
-					listServiziApplicativiTmp = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione, appId, filtroTipoSA);
+				if(regola!=null || !modipa || pddCore.isPddEsterna(soggetto.getPortaDominio())) {
+					
+					boolean bothSslAndToken = false;
+					if(modipa && isModiSicurezzaMessaggio && isAutorizzazioneToken) {
+						bothSslAndToken = true;
+					}
+					listServiziApplicativiTmp = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione, appId, filtroTipoSA, bothSslAndToken, tokenPolicy, tokenPolicyOR);
+					
+					if(tokenWithHttpsEnabled) {
+						// nop: il metodo sopra già recupera tutti gli applicativi che hanno definito un token o un ssl che contiene a sua volta un token se gli si passa tipoAutenticazione=TOKEN
+					}
 				}
 				else {
 					// modipa, soggetto interno
-					FiltroRicercaServiziApplicativi filtro = new FiltroRicercaServiziApplicativi();
-					filtro.setTipoSoggetto(idSoggetto.getTipo());
-					filtro.setNomeSoggetto(idSoggetto.getNome());
-					filtro.setProtocolProperties(new ArrayList<>());
-					filtro.setTipo(filtroTipoSA);
-					FiltroRicercaProtocolProperty pp = new FiltroRicercaProtocolProperty();
-					pp.setName(CostantiDB.MODIPA_SICUREZZA_MESSAGGIO);
-					pp.setValueAsBoolean(true);
-					filtro.getProtocolProperties().add(pp);
-					List<IDServizioApplicativo> list = saCore.getAllIdServiziApplicativi(filtro); 
-					if(list!=null && !list.isEmpty()) {
-						listServiziApplicativiTmp = new ArrayList<>();
-						for (IDServizioApplicativo idSA : list) {
-							IDServizioApplicativoDB idSADB = new IDServizioApplicativoDB(idSA);
-							idSADB.setId(saCore.getIdServizioApplicativo(idSA.getIdSoggettoProprietario(), idSA.getNome()));
-							listServiziApplicativiTmp.add(idSADB);	
+					
+					if(isModiSicurezzaMessaggio && isAutorizzazioneToken) {
+						FiltroRicercaServiziApplicativi filtro = new FiltroRicercaServiziApplicativi();
+						filtro.setTipoSoggetto(idSoggetto.getTipo());
+						filtro.setNomeSoggetto(idSoggetto.getNome());
+						filtro.setProtocolProperties(new ArrayList<>());
+						filtro.setTipo(filtroTipoSA);
+						
+						FiltroRicercaProtocolProperty ppSicMsg = new FiltroRicercaProtocolProperty();
+						ppSicMsg.setName(CostantiDB.MODIPA_SICUREZZA_MESSAGGIO);
+						ppSicMsg.setValueAsBoolean(true);
+						filtro.getProtocolProperties().add(ppSicMsg);
+						
+						FiltroRicercaProtocolProperty ppSicToken = new FiltroRicercaProtocolProperty();
+						ppSicToken.setName(CostantiDB.MODIPA_SICUREZZA_TOKEN);
+						ppSicToken.setValueAsBoolean(true);
+						filtro.getProtocolProperties().add(ppSicToken);
+						
+						List<IDServizioApplicativo> list = saCore.getAllIdServiziApplicativi(filtro); 
+						if(list!=null && !list.isEmpty()) {
+							listServiziApplicativiTmp = new ArrayList<>();
+							for (IDServizioApplicativo idSA : list) {
+								IDServizioApplicativoDB idSADB = new IDServizioApplicativoDB(idSA);
+								idSADB.setId(saCore.getIdServizioApplicativo(idSA.getIdSoggettoProprietario(), idSA.getNome()));
+								listServiziApplicativiTmp.add(idSADB);	
+							}
+						}
+					}
+					else {
+					
+						if(isModiSicurezzaMessaggio) {
+							FiltroRicercaServiziApplicativi filtro = new FiltroRicercaServiziApplicativi();
+							filtro.setTipoSoggetto(idSoggetto.getTipo());
+							filtro.setNomeSoggetto(idSoggetto.getNome());
+							filtro.setProtocolProperties(new ArrayList<>());
+							filtro.setTipo(filtroTipoSA);
+							FiltroRicercaProtocolProperty pp = new FiltroRicercaProtocolProperty();
+							pp.setName(CostantiDB.MODIPA_SICUREZZA_MESSAGGIO);
+							pp.setValueAsBoolean(true);
+							filtro.getProtocolProperties().add(pp);
+							List<IDServizioApplicativo> list = saCore.getAllIdServiziApplicativi(filtro); 
+							if(list!=null && !list.isEmpty()) {
+								listServiziApplicativiTmp = new ArrayList<>();
+								for (IDServizioApplicativo idSA : list) {
+									IDServizioApplicativoDB idSADB = new IDServizioApplicativoDB(idSA);
+									idSADB.setId(saCore.getIdServizioApplicativo(idSA.getIdSoggettoProprietario(), idSA.getNome()));
+									listServiziApplicativiTmp.add(idSADB);	
+								}
+							}
+						}
+						
+						if(isAutorizzazioneToken) {
+							FiltroRicercaServiziApplicativi filtro = new FiltroRicercaServiziApplicativi();
+							filtro.setTipoSoggetto(idSoggetto.getTipo());
+							filtro.setNomeSoggetto(idSoggetto.getNome());
+							filtro.setProtocolProperties(new ArrayList<>());
+							filtro.setTipo(filtroTipoSA);
+							FiltroRicercaProtocolProperty pp = new FiltroRicercaProtocolProperty();
+							pp.setName(CostantiDB.MODIPA_SICUREZZA_TOKEN);
+							pp.setValueAsBoolean(true);
+							filtro.getProtocolProperties().add(pp);
+							List<IDServizioApplicativo> list = saCore.getAllIdServiziApplicativi(filtro); 
+							if(list!=null && !list.isEmpty()) {
+								if(listServiziApplicativiTmp==null) {
+									listServiziApplicativiTmp = new ArrayList<>();
+								}
+								for (IDServizioApplicativo idSA : list) {
+									IDServizioApplicativoDB idSADB = new IDServizioApplicativoDB(idSA);
+									idSADB.setId(saCore.getIdServizioApplicativo(idSA.getIdSoggettoProprietario(), idSA.getNome()));
+									if(!listServiziApplicativiTmp.contains(idSADB)) {
+										listServiziApplicativiTmp.add(idSADB);
+									}
+								}
+							}
 						}
 					}
 				}
@@ -212,6 +341,11 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 					this.listServiziApplicativi.put(id, listServiziApplicativiTmpUnique);
 					if(this.idSoggettoToAdd==null || "".equals(this.idSoggettoToAdd)) {
 						this.idSoggettoToAdd = id;
+					}
+					if(this.soggettiDBList_trasformazioniSoggettiToken!=null) {
+						IDSoggettoDB idS = new IDSoggettoDB(soggetto.getTipo(), soggetto.getNome());
+						idS.setId(soggetto.getId());
+						this.soggettiDBList_trasformazioniSoggettiToken.add(idS);
 					}
 				}
 			}

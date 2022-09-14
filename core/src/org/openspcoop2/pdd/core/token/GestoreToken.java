@@ -2006,6 +2006,36 @@ public class GestoreToken {
 					jsonNode.set("userInfo", userInfoNode);
 				}
 			}	
+			if(informazioniTokenNormalizzate.getClaims()!=null && !informazioniTokenNormalizzate.getClaims().isEmpty()) {
+				if(informazioniTokenNormalizzate.getClaims().containsKey(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID)) {
+					Object oPid = informazioniTokenNormalizzate.getClaims().get(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID);
+					if(oPid!=null && oPid instanceof String) {
+						String pId = (String) oPid;
+						if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_JTI)) {
+							if(op2headers) {
+								TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_JTI), pId);
+							}
+							else {
+								jsonNode.put("jti", pId);
+							}
+						}
+					}
+				}
+				if(informazioniTokenNormalizzate.getClaims().containsKey(Costanti.PDND_PURPOSE_ID)) {
+					Object oPid = informazioniTokenNormalizzate.getClaims().get(Costanti.PDND_PURPOSE_ID);
+					if(oPid!=null && oPid instanceof String) {
+						String pId = (String) oPid;
+						if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PURPOSE_ID)) {
+							if(op2headers) {
+								TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PURPOSE_ID), pId);
+							}
+							else {
+								jsonNode.put("purposeId", pId);
+							}
+						}
+					}
+				}
+			}
 			List<String> listCustomClaims = properties.getCustomClaimsKeys_gestioneTokenForward();
 			if(listCustomClaims!=null && !listCustomClaims.isEmpty()) {
 				

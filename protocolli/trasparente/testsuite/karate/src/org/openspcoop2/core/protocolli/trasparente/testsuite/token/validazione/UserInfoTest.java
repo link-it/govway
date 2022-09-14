@@ -425,7 +425,7 @@ public class UserInfoTest extends ConfigLoader {
 						mapExpectedTokenInfo));
 		
 		Utilities._test(logCore, validazione, "rolesAny", headers,  query,
-				"(Roles not found) Il mittente non è autorizzato ad invocare il servizio gw/TestValidazioneToken-UserInfo (versione:1) erogato da gw/SoggettoInternoTest",
+				"(Roles not found in request context) Il mittente non è autorizzato ad invocare il servizio gw/TestValidazioneToken-UserInfo (versione:1) erogato da gw/SoggettoInternoTest",
 				mapExpectedTokenInfo);
 	}
 	
@@ -443,7 +443,7 @@ public class UserInfoTest extends ConfigLoader {
 						mapExpectedTokenInfo));
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
-				"(Role 'r2' not found) Il mittente non è autorizzato ad invocare il servizio gw/TestValidazioneToken-UserInfo (versione:1) erogato da gw/SoggettoInternoTest",
+				"(Role 'r2' not found in request context) Il mittente non è autorizzato ad invocare il servizio gw/TestValidazioneToken-UserInfo (versione:1) erogato da gw/SoggettoInternoTest",
 				mapExpectedTokenInfo);
 	}
 	
@@ -461,7 +461,7 @@ public class UserInfoTest extends ConfigLoader {
 						mapExpectedTokenInfo));
 		
 		Utilities._test(logCore, validazione, "success", headers,  query,
-				"(Role 'r3' not found) Il mittente non è autorizzato ad invocare il servizio gw/TestValidazioneToken-UserInfo (versione:1) erogato da gw/SoggettoInternoTest",
+				"(Role 'r3' not found in request context) Il mittente non è autorizzato ad invocare il servizio gw/TestValidazioneToken-UserInfo (versione:1) erogato da gw/SoggettoInternoTest",
 				mapExpectedTokenInfo);
 	}
 	

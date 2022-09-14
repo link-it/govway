@@ -70,6 +70,9 @@ public final class PorteDelegateRuoliList extends Action {
 			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			String nomePorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
 	
+			String tokenList = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TOKEN_AUTHORIZATION);
+			boolean isToken = tokenList!=null && !"".equals(tokenList) && Boolean.valueOf(tokenList);
+			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
 	
@@ -77,12 +80,18 @@ public final class PorteDelegateRuoliList extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 	
 			int idLista = Liste.PORTE_DELEGATE_RUOLI;
+			if(isToken) {
+				idLista = Liste.PORTE_DELEGATE_TOKEN_RUOLI;
+			}
 	
 			ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
 	
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
 
-			List<String> lista = porteDelegateCore.portaDelegataRuoliList(Integer.parseInt(id), ricerca);
+			List<String> lista = isToken ?
+					porteDelegateCore.portaDelegataRuoliTokenList(Integer.parseInt(id), ricerca)
+					:
+					porteDelegateCore.portaDelegataRuoliList(Integer.parseInt(id), ricerca);
 
 			porteDelegateHelper.preparePorteDelegateRuoliList(nomePorta, ricerca, lista);
 	

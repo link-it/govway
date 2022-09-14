@@ -79,8 +79,17 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 	/** Autorizzazione ServizioApplicativo */
 	private String nomeServizioApplicativo;
 	
+	/** Autorizzazione Token Servizio Applicativo */
+	private String nomeServizioApplicativoToken;
+	
+	/** Autorizzazione Token Ruolo */
+	private IDRuolo idRuoloToken;
+	
 	/** Trasformazioni Applicabilita Servizio Applicativo */
 	private String nomeServizioApplicativoRiferitoApplicabilitaTrasformazione;
+	
+	/** Trasformazioni Applicabilita Servizio Applicativo Token */
+	private String nomeServizioApplicativoTokenRiferitoApplicabilitaTrasformazione;
 	
 	/** Stato */
 	private StatoFunzionalita stato;
@@ -114,12 +123,18 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 			bf.append(" [azione:"+this.azione+"]");
 		if(this.idRuolo!=null)
 			bf.append(" [ruolo:"+this.idRuolo+"]");
+		if(this.idRuoloToken!=null)
+			bf.append(" [ruoloToken:"+this.idRuoloToken+"]");
 		if(this.idScope!=null)
 			bf.append(" [scope:"+this.idScope+"]");
 		if(this.nomeServizioApplicativo!=null)
 			bf.append(" [nomeServizioApplicativo:"+this.nomeServizioApplicativo+"]");
+		if(this.nomeServizioApplicativoToken!=null)
+			bf.append(" [nomeServizioApplicativoToken:"+this.nomeServizioApplicativoToken+"]");
 		if(this.nomeServizioApplicativoRiferitoApplicabilitaTrasformazione!=null)
 			bf.append(" [nomeServizioApplicativoRiferitoApplicabilitaTrasformazione:"+this.nomeServizioApplicativoRiferitoApplicabilitaTrasformazione+"]");
+		if(this.nomeServizioApplicativoTokenRiferitoApplicabilitaTrasformazione!=null)
+			bf.append(" [nomeServizioApplicativoTokenRiferitoApplicabilitaTrasformazione:"+this.nomeServizioApplicativoTokenRiferitoApplicabilitaTrasformazione+"]");
 		if(this.stato!=null)
 			bf.append(" [stato:"+this.stato+"]");
 		if(this.nomePortaDelegante!=null)
@@ -214,6 +229,14 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 		this.idRuolo = idRuolo;
 	}
 	
+	public IDRuolo getIdRuoloToken() {
+		return this.idRuoloToken;
+	}
+
+	public void setIdRuoloToken(IDRuolo idRuoloToken) {
+		this.idRuoloToken = idRuoloToken;
+	}
+	
 	public IDScope getIdScope() {
 		return this.idScope;
 	}
@@ -246,6 +269,14 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 		this.nomeServizioApplicativo = nomeServizioApplicativo;
 	}
 	
+	public String getNomeServizioApplicativoToken() {
+		return this.nomeServizioApplicativoToken;
+	}
+
+	public void setNomeServizioApplicativoToken(String nomeServizioApplicativoToken) {
+		this.nomeServizioApplicativoToken = nomeServizioApplicativoToken;
+	}
+	
 	public String getNomeServizioApplicativoRiferitoApplicabilitaTrasformazione() {
 		return this.nomeServizioApplicativoRiferitoApplicabilitaTrasformazione;
 	}
@@ -253,6 +284,15 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 	public void setNomeServizioApplicativoRiferitoApplicabilitaTrasformazione(
 			String nomeServizioApplicativoRiferitoApplicabilitaTrasformazione) {
 		this.nomeServizioApplicativoRiferitoApplicabilitaTrasformazione = nomeServizioApplicativoRiferitoApplicabilitaTrasformazione;
+	}
+	
+	public String getNomeServizioApplicativoTokenRiferitoApplicabilitaTrasformazione() {
+		return this.nomeServizioApplicativoTokenRiferitoApplicabilitaTrasformazione;
+	}
+
+	public void setNomeServizioApplicativoTokenRiferitoApplicabilitaTrasformazione(
+			String nomeServizioApplicativoTokenRiferitoApplicabilitaTrasformazione) {
+		this.nomeServizioApplicativoTokenRiferitoApplicabilitaTrasformazione = nomeServizioApplicativoTokenRiferitoApplicabilitaTrasformazione;
 	}
 
 }

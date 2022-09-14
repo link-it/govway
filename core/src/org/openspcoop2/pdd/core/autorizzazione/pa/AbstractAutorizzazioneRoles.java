@@ -64,7 +64,7 @@ abstract class AbstractAutorizzazioneRoles extends AbstractAutorizzazioneBase {
     		IDServizioApplicativo idSA = datiInvocazione.getIdentitaServizioApplicativoFruitore();
     		IDSoggetto idSoggetto = datiInvocazione.getIdSoggettoFruitore();
     		IDServizio idServizio = datiInvocazione.getIdServizio();
-    		errore = this.getErrorString(idSA, idSoggetto, idServizio);
+    		errore = AbstractAutorizzazioneBase.getErrorString(idSA, idSoggetto, idServizio);
     		
     		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(datiInvocazione.getState()); 
     		
@@ -75,7 +75,7 @@ abstract class AbstractAutorizzazioneRoles extends AbstractAutorizzazioneBase {
     		
     		StringBuilder detailsBuffer = new StringBuilder();
     		if(configurazionePdDManager.
-    				autorizzazioneRoles(datiInvocazione.getPa(), datiInvocazione.getSoggettoFruitore(), sa,
+    				autorizzazioneTrasportoRoles(datiInvocazione.getPa(), datiInvocazione.getSoggettoFruitore(), sa,
     						datiInvocazione.getInfoConnettoreIngresso(), 
     						this.getPddContext(),
     						this.checkRuoloRegistro, this.checkRuoloEsterno,

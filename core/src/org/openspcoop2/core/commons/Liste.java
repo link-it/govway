@@ -70,6 +70,8 @@ public final class Liste
 	public final static int PORTE_APPLICATIVE_CONNETTORI_MULTIPLI;
 	public final static int PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPRIETA;
 	public final static int PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA;
+	public final static int PORTE_APPLICATIVE_TOKEN_SERVIZIO_APPLICATIVO;
+	public final static int PORTE_APPLICATIVE_TOKEN_RUOLI;
 	
 	public final static int PORTE_DELEGATE;
 	public final static int PORTE_DELEGATE_BY_SOGGETTO;
@@ -95,6 +97,8 @@ public final class Liste
 	public final static int PORTE_DELEGATE_PROPRIETA_AUTENTICAZIONE;
 	public final static int PORTE_DELEGATE_PROPRIETA_AUTORIZZAZIONE;
 	public final static int PORTE_DELEGATE_PROPRIETA_AUTORIZZAZIONE_CONTENUTO;
+	public final static int PORTE_DELEGATE_TOKEN_SERVIZIO_APPLICATIVO;
+	public final static int PORTE_DELEGATE_TOKEN_RUOLI;
 	
 	public final static int SERVIZIO_APPLICATIVO;
 	public final static int SERVIZI_APPLICATIVI_BY_SOGGETTO;
@@ -214,6 +218,8 @@ public final class Liste
     	PORTE_APPLICATIVE_CONNETTORI_MULTIPLI = numeroListe ++;
     	PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPRIETA = numeroListe ++;
     	PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA = numeroListe ++;
+    	PORTE_APPLICATIVE_TOKEN_SERVIZIO_APPLICATIVO = numeroListe ++;
+    	PORTE_APPLICATIVE_TOKEN_RUOLI = numeroListe ++;
     	PORTE_DELEGATE = numeroListe ++;
     	PORTE_DELEGATE_BY_SOGGETTO= numeroListe ++;
     	PORTE_DELEGATE_PROP= numeroListe ++;
@@ -238,6 +244,8 @@ public final class Liste
     	PORTE_DELEGATE_PROPRIETA_AUTENTICAZIONE = numeroListe ++;
     	PORTE_DELEGATE_PROPRIETA_AUTORIZZAZIONE = numeroListe ++;
     	PORTE_DELEGATE_PROPRIETA_AUTORIZZAZIONE_CONTENUTO = numeroListe ++;
+    	PORTE_DELEGATE_TOKEN_SERVIZIO_APPLICATIVO = numeroListe ++;
+    	PORTE_DELEGATE_TOKEN_RUOLI = numeroListe ++;
     	SERVIZIO_APPLICATIVO = numeroListe ++;
     	SERVIZI_APPLICATIVI_BY_SOGGETTO = numeroListe ++;
     	SERVIZIO_APPLICATIVO_RUOLI = numeroListe ++;

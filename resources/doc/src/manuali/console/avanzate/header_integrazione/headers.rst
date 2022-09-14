@@ -26,9 +26,9 @@ configurazione della voce *Metadati* nella sezione *Integrazione* per attivare g
       :widths: auto
       :name: headerGw2SrvUrlTab
 
-      ==================================  =========================================================
+      ==================================  ==============================================================================================================
       Nome Query URL Parameter            Descrizione
-      ==================================  =========================================================
+      ==================================  ==============================================================================================================
       govway_message_id                   Identificativo del messaggio assegnato da GovWay
       govway_relates_to                   Identificativo del messaggio riferito
       govway_conversation_id              Identificativo della conversazione
@@ -42,8 +42,11 @@ configurazione della voce *Metadati* nella sezione *Integrazione* per attivare g
       govway_service_version              Progressivo di versione del servizio
       govway_action                       Identificativo dell'azione
       govway_application_message_id       Identificativo del messaggio assegnato dall'applicativo
-      govway_application                  Identificativo dell'applicativo
-      ==================================  =========================================================
+      govway_application                  Identificativo dell'applicativo identificato tramite autenticazione trasporto
+      govway_token_sender_type            Codice che identifica il tipo del dominio mittente dell'applicativo identificato tramite autenticazione token
+      govway_token_sender                 Identificativo del dominio mittente dell'applicativo identificato tramite autenticazione token
+      govway_token_application            Identificativo dell'applicativo identificato tramite autenticazione token
+      ==================================  ==============================================================================================================
 
 -  *Header SOAP GovWay*: le informazioni precedentemente descritte vengono
    incluse come attributi in uno specifico header SOAP proprietario di
@@ -67,9 +70,9 @@ configurazione della voce *Metadati* nella sezione *Integrazione* per attivare g
       :widths: auto
       :name: headerGwSoapTab
 
-      ========================     ===============
+      ========================     ===============================================================================================================
       Nome Attributo               Descrizione
-      ========================     ===============
+      ========================     ===============================================================================================================
       messageId                    Identificativo del messaggio assegnato da GovWay
       relatesTo                    Identificativo del messaggio riferito
       conversationId               Identificativo della conversazione
@@ -84,7 +87,10 @@ configurazione della voce *Metadati* nella sezione *Integrazione* per attivare g
       action                       Identificativo dell'azione
       applicationMessageId         Identificativo del messaggio assegnato dall'applicativo
       application                  Identificativo dell'applicativo
-      ========================     ===============
+      tokenSenderType              Codice che identifica il tipo del dominio mittente dell'applicativo identificato tramite autenticazione token
+      tokenSender                  Identificativo del dominio mittente dell'applicativo identificato tramite autenticazione token
+      tokenApplication             Identificativo dell'applicativo identificato tramite autenticazione token
+      ========================     ===============================================================================================================
 
    .. note::
       Utilizzabile solamente con API di tipologia SOAP

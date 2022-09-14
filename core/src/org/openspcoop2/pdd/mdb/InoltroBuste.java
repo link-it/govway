@@ -350,6 +350,10 @@ public class InoltroBuste extends GenericLib{
 		msgDiag.setServizio(richiestaDelegata.getIdServizio());
 		
 
+		IDServizioApplicativo servizioApplicativoToken = null;
+    	if(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN)) {
+    		servizioApplicativoToken = (IDServizioApplicativo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN);
+    	}
 		
 		
 		// VM ProtocolInfo (se siamo arrivati da un canale VM)
@@ -1175,6 +1179,13 @@ public class InoltroBuste extends GenericLib{
 			headerIntegrazione.getBusta().setProfiloDiCollaborazione(bustaRichiesta.getProfiloDiCollaborazione());
 			headerIntegrazione.setIdApplicativo(idCorrelazioneApplicativa);
 			headerIntegrazione.setServizioApplicativo(servizioApplicativoFruitore);
+			if(servizioApplicativoToken!=null) {
+				headerIntegrazione.setServizioApplicativoToken(servizioApplicativoToken.getNome());
+				if(servizioApplicativoToken.getIdSoggettoProprietario()!=null) {
+					headerIntegrazione.setTipoSoggettoProprietarioApplicativoToken(servizioApplicativoToken.getIdSoggettoProprietario().getTipo());
+					headerIntegrazione.setNomeSoggettoProprietarioApplicativoToken(servizioApplicativoToken.getIdSoggettoProprietario().getNome());
+				}
+			}
 
 			Map<String, List<String>>  propertiesTrasporto = new HashMap<String, List<String>> ();
 			Map<String, List<String>>  propertiesUrlBased = new HashMap<String, List<String>> ();

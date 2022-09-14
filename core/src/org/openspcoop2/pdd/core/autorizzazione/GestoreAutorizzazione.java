@@ -30,10 +30,15 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.core.config.AutorizzazioneScope;
+import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.Scope;
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.RuoloTipologia;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -42,9 +47,11 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.utils.WWWAuthenticateErrorCode;
 import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
 import org.openspcoop2.pdd.core.AbstractCore;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.autorizzazione.pa.DatiInvocazionePortaApplicativa;
 import org.openspcoop2.pdd.core.autorizzazione.pa.EsitoAutorizzazionePortaApplicativa;
@@ -58,8 +65,10 @@ import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
@@ -564,6 +573,125 @@ public class GestoreAutorizzazione {
     		return esito;
     	}
 		
+    	// Verifiche Richieste
+    	boolean verificaAutorizzazioneRichiedenti = false;
+    	boolean verificaAutorizzazioneRuoli = false;
+    	if(datiInvocazione.getPd()!=null) {
+    		if(datiInvocazione.getPd().getAutorizzazioneToken()!=null) {
+    			if(StatoFunzionalita.ABILITATO.equals(datiInvocazione.getPd().getAutorizzazioneToken().getAutorizzazioneApplicativi())){
+    				verificaAutorizzazioneRichiedenti=true;
+    			}
+    			if(StatoFunzionalita.ABILITATO.equals(datiInvocazione.getPd().getAutorizzazioneToken().getAutorizzazioneRuoli())){
+    				verificaAutorizzazioneRuoli = true;
+    			}
+    		}
+    	}
+    	
+    	// Verifica Token Richiedenti
+    	
+    	IDServizioApplicativo idSAToken = null;
+    	if(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN)) {
+    		idSAToken = (IDServizioApplicativo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN);
+    	}
+    	
+    	boolean authRichiedenti = true;
+    	if(verificaAutorizzazioneRichiedenti){
+			authRichiedenti = false;
+			if( idSAToken!=null &&
+					datiInvocazione.getPd().getAutorizzazioneToken().getServiziApplicativi()!=null &&
+					datiInvocazione.getPd().getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList()>0){
+				for (PortaDelegataServizioApplicativo sa : datiInvocazione.getPd().getAutorizzazioneToken().getServiziApplicativi().getServizioApplicativoList()) {
+					if(idSAToken.getNome().equals(sa.getNome())) {
+						authRichiedenti = true;
+						break;
+					}
+				}
+			}
+		}
+
+    	
+    	// Verifica Token Roles
+    	
+    	boolean authRuoli = true;
+    	StringBuilder detailsBufferRuoli = null;
+    	if(verificaAutorizzazioneRuoli){
+			boolean checkRuoloRegistro = false;
+			boolean checkRuoloEsterno = false;
+			if( datiInvocazione.getPd().getAutorizzazioneToken().getTipologiaRuoli()==null ||
+				RuoloTipologia.QUALSIASI.equals(datiInvocazione.getPd().getAutorizzazioneToken().getTipologiaRuoli())){
+				checkRuoloRegistro = true;
+				checkRuoloEsterno = true;
+			} 
+			else if( RuoloTipologia.INTERNO.equals(datiInvocazione.getPd().getAutorizzazioneToken().getTipologiaRuoli())){
+				checkRuoloRegistro = true;
+			}
+			else if( RuoloTipologia.ESTERNO.equals(datiInvocazione.getPd().getAutorizzazioneToken().getTipologiaRuoli())){
+				checkRuoloEsterno = true;
+			}
+			detailsBufferRuoli = new StringBuilder();
+			ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(datiInvocazione.getState());
+			ServizioApplicativo sa = null;
+			if(idSAToken!=null) {
+				sa = configurazionePdDManager.getServizioApplicativo(idSAToken);
+			}
+			authRuoli = configurazionePdDManager.
+					autorizzazioneTokenRoles(datiInvocazione.getPd(), sa, 
+							datiInvocazione.getInfoConnettoreIngresso(), 
+							pddContext,
+							checkRuoloRegistro, checkRuoloEsterno,
+							detailsBufferRuoli);
+    	}
+    	
+    	
+    	// Esiti Verifiche Richieste
+    	
+    	if(verificaAutorizzazioneRichiedenti && verificaAutorizzazioneRuoli) {
+    		// se una delle due autorizzazione e' andata a buon fine devo autorizzare
+    		if(!authRichiedenti && !authRuoli) {
+    			// uso eccezione per ruolo che e' più completa come messaggistica
+    			EsitoAutorizzazionePortaDelegata esitoNew = esito;
+	    		if(idSAToken!=null){
+	    			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHORIZATION_MISSING_ROLE, ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
+	    					getErrore404_AutorizzazioneFallitaServizioApplicativo(idSAToken.getNome()));
+				}
+				else{
+					esito.setErroreIntegrazione(IntegrationFunctionError.AUTHORIZATION_MISSING_ROLE, ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA_ANONIMO.
+							getErrore404_AutorizzazioneFallitaServizioApplicativoAnonimo());
+				}
+				esito.setAutorizzato(false);
+				if(detailsBufferRuoli.length()>0) {
+					esito.setDetails(detailsBufferRuoli.toString());
+				}
+	    		return esitoNew;
+    		}
+    	}
+    	else {
+	    	if(verificaAutorizzazioneRichiedenti && !authRichiedenti) {
+	    		EsitoAutorizzazionePortaDelegata esitoNew = esito;
+	    		esitoNew.setAutorizzato(false);
+				esito.setErroreIntegrazione(IntegrationFunctionError.AUTHORIZATION_DENY, ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
+						getErrore404_AutorizzazioneFallitaServizioApplicativo(idSAToken!=null ? idSAToken.getNome() : CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO ));
+				return esitoNew;
+	    	}
+	    	if(verificaAutorizzazioneRuoli && !authRuoli) {
+	    		EsitoAutorizzazionePortaDelegata esitoNew = esito;
+	    		if(idSAToken!=null){
+	    			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHORIZATION_MISSING_ROLE, ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
+	    					getErrore404_AutorizzazioneFallitaServizioApplicativo(idSAToken.getNome()));
+				}
+				else{
+					esito.setErroreIntegrazione(IntegrationFunctionError.AUTHORIZATION_MISSING_ROLE, ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA_ANONIMO.
+							getErrore404_AutorizzazioneFallitaServizioApplicativoAnonimo());
+				}
+				esito.setAutorizzato(false);
+				if(detailsBufferRuoli.length()>0) {
+					esito.setDetails(detailsBufferRuoli.toString());
+				}
+	    		return esitoNew;
+	    	}
+    	}
+    	
+    	
 		// Verifica Token Scopes
     	
     	AutorizzazioneScope authScope = null;
@@ -691,13 +819,194 @@ public class GestoreAutorizzazione {
     		return esito;
     	}
     	
+    	    	
+    	boolean skipProfiloModi = false;
+    	if(protocolFactory!=null && Costanti.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol())) {
+    		skipProfiloModi=true;
+    	}
+    	
+    	if(!skipProfiloModi) {
+    	
+        	// Verifiche Richieste
+    		
+	    	boolean verificaAutorizzazioneRichiedenti = false;
+	    	boolean verificaAutorizzazioneRuoli = false;
+	    	if(datiInvocazione.getPa()!=null) {
+	    		if(datiInvocazione.getPa().getAutorizzazioneToken()!=null) {
+	    			if(StatoFunzionalita.ABILITATO.equals(datiInvocazione.getPa().getAutorizzazioneToken().getAutorizzazioneApplicativi())){
+	    				verificaAutorizzazioneRichiedenti=true;
+	    			}
+	    			if(StatoFunzionalita.ABILITATO.equals(datiInvocazione.getPa().getAutorizzazioneToken().getAutorizzazioneRuoli())){
+	    				verificaAutorizzazioneRuoli = true;
+	    			}
+	    		}
+	    	}
+	    	else if(datiInvocazione.getPd()!=null){
+	    		if(datiInvocazione.getPd().getAutorizzazioneToken()!=null) {
+	    			if(StatoFunzionalita.ABILITATO.equals(datiInvocazione.getPd().getAutorizzazioneToken().getAutorizzazioneApplicativi())){
+	    				verificaAutorizzazioneRichiedenti=true;
+	    			}
+	    			if(StatoFunzionalita.ABILITATO.equals(datiInvocazione.getPd().getAutorizzazioneToken().getAutorizzazioneRuoli())){
+	    				verificaAutorizzazioneRuoli = true;
+	    			}
+	    		}
+	    	}
+    	
+
+	    	// Verifica Token Richiedenti
+    	
+	    	IDServizioApplicativo idSAToken = null;
+	    	if(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN)) {
+	    		idSAToken = (IDServizioApplicativo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN);
+	    	}
+	    	
+	    	boolean authRichiedenti = true;
+	    	if(datiInvocazione.getPa()!=null) {
+	    		if(verificaAutorizzazioneRichiedenti){
+    				authRichiedenti = false;
+        			if( idSAToken!=null &&
+        					datiInvocazione.getPa().getAutorizzazioneToken().getServiziApplicativi()!=null &&
+        					datiInvocazione.getPa().getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList()>0){
+        				for (PortaApplicativaAutorizzazioneServizioApplicativo sa : datiInvocazione.getPa().getAutorizzazioneToken().getServiziApplicativi().getServizioApplicativoList()) {
+    						if(idSAToken.getNome().equals(sa.getNome()) &&
+    								idSAToken.getIdSoggettoProprietario().getTipo().equals(sa.getTipoSoggettoProprietario()) &&
+    								idSAToken.getIdSoggettoProprietario().getNome().equals(sa.getNomeSoggettoProprietario())) {
+    							authRichiedenti = true;
+    							break;
+    						}
+    					}
+        			}
+	    		}
+	    	}
+	    	else if(datiInvocazione.getPd()!=null){
+	    		if(verificaAutorizzazioneRichiedenti){
+    				authRichiedenti = false;
+        			if( idSAToken!=null &&
+        					datiInvocazione.getPd().getAutorizzazioneToken().getServiziApplicativi()!=null &&
+        					datiInvocazione.getPd().getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList()>0){
+        				for (PortaDelegataServizioApplicativo sa : datiInvocazione.getPd().getAutorizzazioneToken().getServiziApplicativi().getServizioApplicativoList()) {
+    						if(idSAToken.getNome().equals(sa.getNome())) {
+    							authRichiedenti = true;
+    							break;
+    						}
+    					}
+        			}
+	    		}
+	    	}
+    	
+    	
+    		// Verifica Token Roles
+    	
+	    	boolean authRuoli = true;
+	    	StringBuilder detailsBufferRuoli = null;
+	    	if(datiInvocazione.getPa()!=null) {
+	    		if(verificaAutorizzazioneRuoli){
+    				boolean checkRuoloRegistro = false;
+    				boolean checkRuoloEsterno = false;
+    				if( datiInvocazione.getPa().getAutorizzazioneToken().getTipologiaRuoli()==null ||
+    					RuoloTipologia.QUALSIASI.equals(datiInvocazione.getPa().getAutorizzazioneToken().getTipologiaRuoli())){
+    					checkRuoloRegistro = true;
+    					checkRuoloEsterno = true;
+    				} 
+    				else if( RuoloTipologia.INTERNO.equals(datiInvocazione.getPa().getAutorizzazioneToken().getTipologiaRuoli())){
+    					checkRuoloRegistro = true;
+    				}
+    				else if( RuoloTipologia.ESTERNO.equals(datiInvocazione.getPa().getAutorizzazioneToken().getTipologiaRuoli())){
+    					checkRuoloEsterno = true;
+    				}
+    				detailsBufferRuoli = new StringBuilder();
+    				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(datiInvocazione.getState());
+    				ServizioApplicativo sa = null;
+    				if(idSAToken!=null) {
+    					sa = configurazionePdDManager.getServizioApplicativo(idSAToken);
+    				}
+    				authRuoli = configurazionePdDManager.
+    						autorizzazioneTokenRoles(datiInvocazione.getPa(), sa, 
+    								datiInvocazione.getInfoConnettoreIngresso(), 
+    								pddContext,
+    								checkRuoloRegistro, checkRuoloEsterno,
+    								detailsBufferRuoli);
+	    		}
+	    	}
+	    	else if(datiInvocazione.getPd()!=null){
+	    		if(verificaAutorizzazioneRuoli){
+    				boolean checkRuoloRegistro = false;
+    				boolean checkRuoloEsterno = false;
+    				if( datiInvocazione.getPd().getAutorizzazioneToken().getTipologiaRuoli()==null ||
+    					RuoloTipologia.QUALSIASI.equals(datiInvocazione.getPd().getAutorizzazioneToken().getTipologiaRuoli())){
+    					checkRuoloRegistro = true;
+    					checkRuoloEsterno = true;
+    				} 
+    				else if( RuoloTipologia.INTERNO.equals(datiInvocazione.getPd().getAutorizzazioneToken().getTipologiaRuoli())){
+    					checkRuoloRegistro = true;
+    				}
+    				else if( RuoloTipologia.ESTERNO.equals(datiInvocazione.getPd().getAutorizzazioneToken().getTipologiaRuoli())){
+    					checkRuoloEsterno = true;
+    				}
+    				detailsBufferRuoli = new StringBuilder();
+    				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(datiInvocazione.getState());
+    				ServizioApplicativo sa = null;
+    				if(idSAToken!=null) {
+    					sa = configurazionePdDManager.getServizioApplicativo(idSAToken);
+    				}
+    				authRuoli = configurazionePdDManager.
+    						autorizzazioneTokenRoles(datiInvocazione.getPd(), sa, 
+    								datiInvocazione.getInfoConnettoreIngresso(), 
+    								pddContext,
+    								checkRuoloRegistro, checkRuoloEsterno,
+    								detailsBufferRuoli);
+	    		}
+	    	}
+	    	
+	    	
+	    	// Esiti Verifiche Richieste
+	    	
+	    	if(verificaAutorizzazioneRichiedenti && verificaAutorizzazioneRuoli) {
+	    		// se una delle due autorizzazione e' andata a buon fine devo autorizzare
+	    		if(!authRichiedenti && !authRuoli) {
+	    			// uso eccezione per ruolo che e' più completa come messaggistica
+	    			EsitoAutorizzazionePortaApplicativa esitoNew = esito;
+		    		String errore = "";
+		    		esitoNew.setErroreCooperazione(IntegrationFunctionError.AUTHORIZATION_MISSING_ROLE, ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
+		    		esitoNew.setAutorizzato(false);
+					if(detailsBufferRuoli.length()>0) {
+						esitoNew.setDetails(detailsBufferRuoli.toString());
+					}
+		    		return esitoNew;
+	    		}
+	    	}
+	    	else {
+		    	if(verificaAutorizzazioneRichiedenti && !authRichiedenti) {
+		    		EsitoAutorizzazionePortaApplicativa esitoNew = esito;
+		    		esitoNew.setAutorizzato(false);
+		    		IDServizio idServizio = datiInvocazione.getIdServizio();
+		    		String errore = org.openspcoop2.pdd.core.autorizzazione.pa.AbstractAutorizzazioneBase.getErrorString(idSAToken, null, idServizio);
+					if(esitoNew.getDetails()!=null){
+						errore = errore + " ("+esitoNew.getDetails()+")";
+					}
+		    		esitoNew.setErroreCooperazione(IntegrationFunctionError.AUTHORIZATION_DENY, ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
+					return esitoNew;
+		    	}
+		    	if(verificaAutorizzazioneRuoli && !authRuoli) {
+		    		EsitoAutorizzazionePortaApplicativa esitoNew = esito;
+		    		String errore = "";
+		    		esitoNew.setErroreCooperazione(IntegrationFunctionError.AUTHORIZATION_MISSING_ROLE, ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
+		    		esitoNew.setAutorizzato(false);
+					if(detailsBufferRuoli.length()>0) {
+						esitoNew.setDetails(detailsBufferRuoli.toString());
+					}
+		    		return esitoNew;
+		    	}
+	    	}
+    	}
+    	
     	// Verifica Token Scopes
     	
     	AutorizzazioneScope authScope = null;
     	if(datiInvocazione.getPa()!=null) {
     		authScope = datiInvocazione.getPa().getScope();
     	}
-    	else {
+    	else if(datiInvocazione.getPd()!=null){
     		authScope = datiInvocazione.getPd().getScope();
     	}
     	if(authScope!=null && authScope.sizeScopeList()>0) {
@@ -717,7 +1026,7 @@ public class GestoreAutorizzazione {
     			tokenOptions = datiInvocazione.getPa().getGestioneToken().getOptions();
     		}
     	}
-    	else {
+    	else if(datiInvocazione.getPd()!=null){
     		if(datiInvocazione.getPd().getGestioneToken()!=null) {
     			tokenOptions = datiInvocazione.getPd().getGestioneToken().getOptions();
     		}

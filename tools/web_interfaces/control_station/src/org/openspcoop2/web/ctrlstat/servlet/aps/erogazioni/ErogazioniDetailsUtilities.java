@@ -897,6 +897,12 @@ public class ErogazioniDetailsUtilities {
 		List<IDServizioApplicativo> authzApplicativi = null;
 		List<String> authzRuoli = null;
 		boolean allRuoli = false;
+		boolean authzApplicativiTokenEnabled = false;
+		List<IDServizioApplicativo> authzApplicativiToken = null; 
+		boolean authzRuoliTokenEnabled = false;
+		List<String> authzRuoliToken = null;
+		boolean allRuoliToken = false; 
+		boolean authzScopeTokenEnabled = false;
 		List<String> authzScope = null;
 		boolean allScope = false;
 		List<String> authzTokenClaims = null;
@@ -915,18 +921,51 @@ public class ErogazioniDetailsUtilities {
 				authzApplicativi.add(idSA);
 			}
 		}
+		if(paAssociata.getRuoli()!=null) {
+			allRuoli = paAssociata.getRuoli().getMatch()==null || RuoloTipoMatch.ALL.equals(paAssociata.getRuoli().getMatch());
+		}
 		if(paAssociata.getRuoli()!=null && paAssociata.getRuoli().sizeRuoloList()>0) {
 			authzRuoli = new ArrayList<String>();
-			allRuoli = paAssociata.getRuoli().getMatch()==null || RuoloTipoMatch.ALL.equals(paAssociata.getRuoli().getMatch());
 			for (Ruolo ruolo: paAssociata.getRuoli().getRuoloList()) {
 				authzRuoli.add(ruolo.getNome());
 			}
 		}
-		if(paAssociata.getScope()!=null && paAssociata.getScope().sizeScopeList()>0) {
-			authzScope = new ArrayList<String>();
-			allScope = paAssociata.getScope().getMatch()==null || ScopeTipoMatch.ALL.equals(paAssociata.getScope().getMatch());
-			for (Scope scope: paAssociata.getScope().getScopeList()) {
-				authzScope.add(scope.getNome());
+		if(paAssociata.getAutorizzazioneToken()!=null) {
+			authzApplicativiTokenEnabled = StatoFunzionalita.ABILITATO.equals(paAssociata.getAutorizzazioneToken().getAutorizzazioneApplicativi());
+			if(authzApplicativiTokenEnabled) {
+				if(paAssociata.getAutorizzazioneToken().getServiziApplicativi()!=null && paAssociata.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList()>0) {
+					authzApplicativiToken = new ArrayList<IDServizioApplicativo>();
+					for (PortaApplicativaAutorizzazioneServizioApplicativo sa : paAssociata.getAutorizzazioneToken().getServiziApplicativi().getServizioApplicativoList()) {
+						IDServizioApplicativo idSA = new IDServizioApplicativo();
+						idSA.setIdSoggettoProprietario(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+						idSA.setNome(sa.getNome());
+						authzApplicativiToken.add(idSA);
+					}
+				}
+			}
+			authzRuoliTokenEnabled = StatoFunzionalita.ABILITATO.equals(paAssociata.getAutorizzazioneToken().getAutorizzazioneRuoli());
+			if(authzRuoliTokenEnabled) {
+				if(paAssociata.getAutorizzazioneToken().getRuoli()!=null) {
+					allRuoliToken = paAssociata.getAutorizzazioneToken().getRuoli().getMatch()==null || RuoloTipoMatch.ALL.equals(paAssociata.getAutorizzazioneToken().getRuoli().getMatch());
+				}
+				if(paAssociata.getAutorizzazioneToken().getRuoli()!=null && paAssociata.getAutorizzazioneToken().getRuoli().sizeRuoloList()>0) {
+					authzRuoliToken = new ArrayList<String>();
+					for (Ruolo ruolo: paAssociata.getAutorizzazioneToken().getRuoli().getRuoloList()) {
+						authzRuoliToken.add(ruolo.getNome());
+					}
+				}
+			}
+		}
+		if(paAssociata.getScope()!=null) {
+			authzScopeTokenEnabled = StatoFunzionalita.ABILITATO.equals(paAssociata.getScope().getStato());
+			if(authzScopeTokenEnabled) {
+				allScope = paAssociata.getScope().getMatch()==null || ScopeTipoMatch.ALL.equals(paAssociata.getScope().getMatch());
+				if(paAssociata.getScope().sizeScopeList()>0) {
+					authzScope = new ArrayList<String>();
+					for (Scope scope: paAssociata.getScope().getScopeList()) {
+						authzScope.add(scope.getNome());
+					}
+				}
 			}
 		}
 		if(paAssociata.getGestioneToken()!=null && paAssociata.getGestioneToken().getOptions()!=null) {
@@ -949,7 +988,9 @@ public class ErogazioniDetailsUtilities {
 				paAssociata.getAttributeAuthorityList(),
 				paAssociata.getAutorizzazione(), authzSoggetti, authzApplicativi, 
 				authzRuoli, allRuoli,
-				authzScope, allScope,
+				authzApplicativiTokenEnabled, authzApplicativiToken, 
+				authzRuoliTokenEnabled, authzRuoliToken, allRuoliToken, 
+				authzScopeTokenEnabled, authzScope, allScope,
 				authzTokenClaims,
 				paAssociata.getAutorizzazioneContenuto(),
 				sb,
@@ -965,6 +1006,12 @@ public class ErogazioniDetailsUtilities {
 		List<IDServizioApplicativo> authzApplicativi = null;
 		List<String> authzRuoli = null;
 		boolean allRuoli = false;
+		boolean authzApplicativiTokenEnabled = false;
+		List<IDServizioApplicativo> authzApplicativiToken = null; 
+		boolean authzRuoliTokenEnabled = false;
+		List<String> authzRuoliToken = null;
+		boolean allRuoliToken = false; 
+		boolean authzScopeTokenEnabled = false;
 		List<String> authzScope = null;
 		boolean allScope = false;
 		List<String> authzTokenClaims = null;
@@ -977,18 +1024,51 @@ public class ErogazioniDetailsUtilities {
 				authzApplicativi.add(idSA);
 			}
 		}
+		if(pdAssociata.getRuoli()!=null) {
+			allRuoli = pdAssociata.getRuoli().getMatch()==null || RuoloTipoMatch.ALL.equals(pdAssociata.getRuoli().getMatch());
+		}
 		if(pdAssociata.getRuoli()!=null && pdAssociata.getRuoli().sizeRuoloList()>0) {
 			authzRuoli = new ArrayList<String>();
-			allRuoli = pdAssociata.getRuoli().getMatch()==null || RuoloTipoMatch.ALL.equals(pdAssociata.getRuoli().getMatch());
 			for (Ruolo ruolo: pdAssociata.getRuoli().getRuoloList()) {
 				authzRuoli.add(ruolo.getNome());
 			}
 		}
-		if(pdAssociata.getScope()!=null && pdAssociata.getScope().sizeScopeList()>0) {
-			authzScope = new ArrayList<String>();
-			allScope = pdAssociata.getScope().getMatch()==null || ScopeTipoMatch.ALL.equals(pdAssociata.getScope().getMatch());
-			for (Scope scope: pdAssociata.getScope().getScopeList()) {
-				authzScope.add(scope.getNome());
+		if(pdAssociata.getAutorizzazioneToken()!=null) {
+			authzApplicativiTokenEnabled = StatoFunzionalita.ABILITATO.equals(pdAssociata.getAutorizzazioneToken().getAutorizzazioneApplicativi());
+			if(authzApplicativiTokenEnabled) {
+				if(pdAssociata.getAutorizzazioneToken().getServiziApplicativi()!=null && pdAssociata.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList()>0) {
+					authzApplicativiToken = new ArrayList<IDServizioApplicativo>();
+					for (PortaDelegataServizioApplicativo sa : pdAssociata.getAutorizzazioneToken().getServiziApplicativi().getServizioApplicativoList()) {
+						IDServizioApplicativo idSA = new IDServizioApplicativo();
+						idSA.setIdSoggettoProprietario(new IDSoggetto(pdAssociata.getTipoSoggettoProprietario(), pdAssociata.getNomeSoggettoProprietario()));
+						idSA.setNome(sa.getNome());
+						authzApplicativiToken.add(idSA);
+					}
+				}
+			}
+			authzRuoliTokenEnabled = StatoFunzionalita.ABILITATO.equals(pdAssociata.getAutorizzazioneToken().getAutorizzazioneRuoli());
+			if(authzRuoliTokenEnabled) {
+				if(pdAssociata.getAutorizzazioneToken().getRuoli()!=null) {
+					allRuoliToken = pdAssociata.getAutorizzazioneToken().getRuoli().getMatch()==null || RuoloTipoMatch.ALL.equals(pdAssociata.getAutorizzazioneToken().getRuoli().getMatch());
+				}
+				if(pdAssociata.getAutorizzazioneToken().getRuoli()!=null && pdAssociata.getAutorizzazioneToken().getRuoli().sizeRuoloList()>0) {
+					authzRuoliToken = new ArrayList<String>();
+					for (Ruolo ruolo: pdAssociata.getAutorizzazioneToken().getRuoli().getRuoloList()) {
+						authzRuoliToken.add(ruolo.getNome());
+					}
+				}
+			}
+		}
+		if(pdAssociata.getScope()!=null) {
+			authzScopeTokenEnabled = StatoFunzionalita.ABILITATO.equals(pdAssociata.getScope().getStato());
+			if(authzScopeTokenEnabled) {
+				allScope = pdAssociata.getScope().getMatch()==null || ScopeTipoMatch.ALL.equals(pdAssociata.getScope().getMatch());
+				if(pdAssociata.getScope().sizeScopeList()>0) {
+					authzScope = new ArrayList<String>();
+					for (Scope scope: pdAssociata.getScope().getScopeList()) {
+						authzScope.add(scope.getNome());
+					}
+				}
 			}
 		}
 		if(pdAssociata.getGestioneToken()!=null && pdAssociata.getGestioneToken().getOptions()!=null) {
@@ -1011,7 +1091,9 @@ public class ErogazioniDetailsUtilities {
 				pdAssociata.getAttributeAuthorityList(),
 				pdAssociata.getAutorizzazione(), authzSoggetti, authzApplicativi, 
 				authzRuoli, allRuoli, 
-				authzScope, allScope,
+				authzApplicativiTokenEnabled, authzApplicativiToken, 
+				authzRuoliTokenEnabled, authzRuoliToken, allRuoliToken, 
+				authzScopeTokenEnabled, authzScope, allScope,
 				authzTokenClaims,
 				pdAssociata.getAutorizzazioneContenuto(),
 				sb,
@@ -1025,7 +1107,10 @@ public class ErogazioniDetailsUtilities {
 			List<AttributeAuthority> listAA,
 			String autorizzazione, List<IDSoggetto> authzSoggetti, List<IDServizioApplicativo> authzApplicativi, 
 			List<String> authzRuoli, boolean allRuoli, 
-			List<String> authzScope, boolean allScope, List<String> authzTokenClaims,
+			boolean authzApplicativiTokenEnabled, List<IDServizioApplicativo> authzApplicativiToken, 
+			boolean authzRuoliTokenEnabled, List<String> authzRuoliToken, boolean allRuoliToken, 
+			boolean authzScopeTokenEnabled, List<String> authzScope, boolean allScope, 
+			List<String> authzTokenClaims,
 			String autorizzazioneContenuti,
 			StringBuilder sb,
 			String separator, String newLine) {
@@ -1231,7 +1316,14 @@ public class ErogazioniDetailsUtilities {
 				label = CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CANALE;
 			}
 			else {
-				label = CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE;
+				if(autorizzazione.toLowerCase().contains(TipoAutorizzazione.ROLES.getValue().toLowerCase())
+						||
+						autorizzazione.toLowerCase().contains(TipoAutorizzazione.AUTHENTICATED.getValue().toLowerCase())){
+					label = CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TRASPORTO;
+				}
+				else {
+					label = CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_DIFFERENTE_DA_TRASPORTO_E_TOKEN;
+				}
 			}
 			//sb.append("- "+label+" -");
 			
@@ -1246,6 +1338,17 @@ public class ErogazioniDetailsUtilities {
 					||
 					autorizzazione.toLowerCase().contains(TipoAutorizzazione.AUTHENTICATED.getValue().toLowerCase())){
 				value = CostantiConfigurazione.ABILITATO.getValue();
+				value = value + " ("; 
+				if(autorizzazione.toLowerCase().contains(TipoAutorizzazione.AUTHENTICATED.getValue().toLowerCase())) {
+					value = value + CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_SERVIZI_APPLICATIVI_SUFFIX;
+					if(autorizzazione.toLowerCase().contains(TipoAutorizzazione.ROLES.getValue().toLowerCase())) {
+						value = value + ", ";
+					}
+				}
+				if(autorizzazione.toLowerCase().contains(TipoAutorizzazione.ROLES.getValue().toLowerCase())) {
+					value = value + CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI_SUFFIX;
+				}
+				value = value + ")"; 
 			}
 			else{
 				try {
@@ -1271,6 +1374,8 @@ public class ErogazioniDetailsUtilities {
 			// servono anche in custom auth
 			// basta che siano definiti
 				
+			boolean richiedentiDefiniti = false;
+			
 			// devo elencare i soggetti autorizzati
 			if(authzSoggetti!=null && !authzSoggetti.isEmpty()) {
 				StringBuilder sbSog = new StringBuilder();
@@ -1287,6 +1392,7 @@ public class ErogazioniDetailsUtilities {
 					sb.append(CostantiControlStation.LABEL_PARAMETRO_SOGGETTI).append(" autorizzati");
 					sb.append(separator);
 					sb.append(sbSog.toString());
+					richiedentiDefiniti=true;
 				}
 			}
 
@@ -1314,18 +1420,35 @@ public class ErogazioniDetailsUtilities {
 						sb.append(CostantiControlStation.LABEL_APPLICATIVI).append(" autorizzati");
 						sb.append(separator);
 						sb.append(sbApp.toString());
+						richiedentiDefiniti=true;
 					}
 				}
+			}
+			
+			if(autorizzazione.toLowerCase().contains(TipoAutorizzazione.AUTHENTICATED.getValue().toLowerCase()) && !richiedentiDefiniti) {
+				sb.append(newLine);
+				sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RICHIEDENTI).append(" autorizzati");
+				sb.append(separator);
+				sb.append("-");
 			}
 				
 			//if(autorizzazione.toLowerCase().contains(TipoAutorizzazione.ROLES.getValue().toLowerCase())){
 			// servono anche in xacml policy. 
 			// comunque basta che siano definiti
-			if(authzRuoli!=null && !authzRuoli.isEmpty()){
+			if(autorizzazione.toLowerCase().contains(TipoAutorizzazione.ROLES.getValue().toLowerCase())
+					||
+					autorizzazione.toLowerCase().contains(TipoAutorizzazione.XACML_POLICY.getValue().toLowerCase())) {
 				StringBuilder sbRuoli = new StringBuilder();
-				for (String ruolo : authzRuoli) {
-					if(sbRuoli.length()>0) sbRuoli.append(", ");
-					sbRuoli.append(ruolo);
+				if(authzRuoli!=null && !authzRuoli.isEmpty()){
+					for (String ruolo : authzRuoli) {
+						if(sbRuoli.length()>0) sbRuoli.append(", ");
+						sbRuoli.append(ruolo);
+					}
+				}
+				else {
+					if(autorizzazione.toLowerCase().contains(TipoAutorizzazione.ROLES.getValue().toLowerCase())) {
+						sbRuoli.append("-");
+					}
 				}
 				if(sbRuoli.toString().length()>0) {
 					sb.append(newLine);
@@ -1338,11 +1461,195 @@ public class ErogazioniDetailsUtilities {
 			}
 			//}
 			
-			if(authzScope!=null && !authzScope.isEmpty()){
+			if(modipa && !gestioneFruitore) {
+				
+				// backwardCompatibility
+				if(!authzApplicativiTokenEnabled && 
+					authzApplicativi!=null && !authzApplicativi.isEmpty()) {
+					authzApplicativiTokenEnabled = true;
+				}
+				
+				boolean autorizzazioneMessaggio = (authzApplicativiTokenEnabled)
+						||
+						(authzRuoliTokenEnabled);
+				
+				if(autorizzazioneMessaggio) {
+					label = CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_MESSAGGIO;
+					value = CostantiConfigurazione.ABILITATO.getValue();
+					value = value + " ("; 
+					boolean first = true;
+					if(authzApplicativiTokenEnabled) {
+						if(!first) {
+							value = value + ", ";
+						}
+						value = value + CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_SERVIZI_APPLICATIVI_SUFFIX;
+						first=false;
+					}
+					if(authzRuoliTokenEnabled) {
+						if(!first) {
+							value = value + ", ";
+						}
+						value = value + CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI_SUFFIX;
+						first=false;
+					}
+					value = value + ")"; 
+					sb.append(newLine);
+					//sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE);
+					sb.append(label);
+					sb.append(separator);
+					sb.append(value);
+				}
+			}
+			else {
+							
+				boolean autorizzazioneToken = (authzApplicativiTokenEnabled)
+						||
+						(authzRuoliTokenEnabled)
+						||
+						(authzScopeTokenEnabled)
+						||
+						(authzTokenClaims!=null && !authzTokenClaims.isEmpty());
+				
+				if(autorizzazioneToken) {
+					label = CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN;
+					value = CostantiConfigurazione.ABILITATO.getValue();
+					value = value + " ("; 
+					boolean first = true;
+					if(authzApplicativiTokenEnabled) {
+						if(!first) {
+							value = value + ", ";
+						}
+						value = value + CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_SERVIZI_APPLICATIVI_SUFFIX;
+						first=false;
+					}
+					if(authzRuoliTokenEnabled) {
+						if(!first) {
+							value = value + ", ";
+						}
+						value = value + CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI_SUFFIX;
+						first=false;
+					}
+					if(authzScopeTokenEnabled) {
+						if(!first) {
+							value = value + ", ";
+						}
+						value = value + ScopeCostanti.LABEL_SCOPE;
+						first=false;
+					}
+					if(authzTokenClaims!=null && !authzTokenClaims.isEmpty()) {
+						if(!first) {
+							value = value + ", ";
+						}
+						value = value + CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_CLAIMS_SUBTITLE_SUFFIX;
+						first=false;
+					}
+					value = value + ")"; 
+					sb.append(newLine);
+					//sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE);
+					sb.append(label);
+					sb.append(separator);
+					sb.append(value);
+				}
+			}
+					
+			if(authzApplicativiTokenEnabled) {
+				StringBuilder sbApp = new StringBuilder();
+				List<IDServizioApplicativo> ll = authzApplicativiToken;
+				if(modipa && !gestioneFruitore) {
+					ll = authzApplicativi;
+				}
+				if(ll!=null && !ll.isEmpty()) {
+					for (IDServizioApplicativo sa : ll) {
+						if(sbApp.length()>0) sbApp.append(", ");
+						if(gestioneFruitore) {
+							sbApp.append(sa.getNome());
+						}
+						else {
+							String sog = null;
+							try {
+								sog = consoleHelper.getLabelNomeSoggetto(protocollo, sa.getIdSoggettoProprietario().getTipo(), sa.getIdSoggettoProprietario().getNome());
+							}catch(Throwable t) {
+								sog = sa.getIdSoggettoProprietario().getTipo()+"/"+sa.getIdSoggettoProprietario().getNome();
+							}
+							sbApp.append(sa.getNome() + "@"+sog+"");
+						}
+					}
+				}
+				else {
+					sbApp.append("-");
+				}
+				if(sbApp.toString().length()>0) {
+					sb.append(newLine);
+					sb.append(CostantiControlStation.LABEL_APPLICATIVI).append(" autorizzati");
+					sb.append(separator);
+					sb.append(sbApp.toString());
+				}
+			}
+			
+			if(authzRuoliTokenEnabled){
+				StringBuilder sbRuoli = new StringBuilder();
+				if(authzRuoliToken!=null && !authzRuoliToken.isEmpty()){
+					for (String ruolo : authzRuoliToken) {
+						if(sbRuoli.length()>0) sbRuoli.append(", ");
+						sbRuoli.append(ruolo);
+					}
+				}
+				else {
+					sbRuoli.append("-");
+				}
+				if(sbRuoli.toString().length()>0) {
+					sb.append(newLine);
+					sb.append(RuoliCostanti.LABEL_RUOLI).append(" (").
+						append(allRuoliToken ? CostantiControlStation.LABEL_PARAMETRO_RUOLO_MATCH_ALL : CostantiControlStation.LABEL_PARAMETRO_RUOLO_MATCH_ANY).
+						append(")");
+					sb.append(separator);
+					sb.append(sbRuoli.toString());
+				}
+			}
+			
+			if(modipa && !gestioneFruitore) {
+				boolean autorizzazioneToken = (authzScopeTokenEnabled)
+						||
+						(authzTokenClaims!=null && !authzTokenClaims.isEmpty());
+				
+				if(autorizzazioneToken) {
+					label = CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_TOKEN;
+					value = CostantiConfigurazione.ABILITATO.getValue();
+					value = value + " ("; 
+					boolean first = true;
+					if(authzScopeTokenEnabled) {
+						if(!first) {
+							value = value + ", ";
+						}
+						value = value + ScopeCostanti.LABEL_SCOPE;
+						first=false;
+					}
+					if(authzTokenClaims!=null && !authzTokenClaims.isEmpty()) {
+						if(!first) {
+							value = value + ", ";
+						}
+						value = value + CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_CLAIMS_SUBTITLE_SUFFIX;
+						first=false;
+					}
+					value = value + ")"; 
+					sb.append(newLine);
+					//sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE);
+					sb.append(label);
+					sb.append(separator);
+					sb.append(value);
+				}
+			}
+			
+			if(authzScopeTokenEnabled){
 				StringBuilder sbScope = new StringBuilder();
-				for (String scope : authzScope) {
-					if(sbScope.length()>0) sbScope.append(", ");
-					sbScope.append(scope);
+				if(authzScope!=null && !authzScope.isEmpty()){
+					for (String scope : authzScope) {
+						if(sbScope.length()>0) sbScope.append(", ");
+						sbScope.append(scope);
+					}
+				}
+				else {
+					sbScope.append("-");
 				}
 				if(sbScope.toString().length()>0) {
 					sb.append(newLine);
@@ -1362,50 +1669,13 @@ public class ErogazioniDetailsUtilities {
 				}
 				if(sbTokenClaims.toString().length()>0) {
 					sb.append(newLine);
-					sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_SUBTITLE_SUFFIX);
+					sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_CLAIMS_SUBTITLE_SUFFIX);
 					sb.append(separator);
 					sb.append(sbTokenClaims.toString());
 				}
 			}
 		}
-		
-		// Autorizzazione Messaggio
-		if(autorizzazione!=null && modipa && !gestioneFruitore) {
-			
-			//sb.append(newLine);
-			String label = CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_MESSAGGIO;
-			//sb.append("- "+label+" -");
-			
-			StatoFunzionalita stato = (authzApplicativi!=null && !authzApplicativi.isEmpty()) ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO;
-			sb.append(newLine);
-			//sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE);
-			sb.append(label);
-			sb.append(separator);
-			sb.append(stato);
-			
-			// devo elencare gli applicativi autorizzati
-			if(authzApplicativi!=null && !authzApplicativi.isEmpty()) {
-				StringBuilder sbApp = new StringBuilder();
-				for (IDServizioApplicativo sa : authzApplicativi) {
-					if(sbApp.length()>0) sbApp.append(", ");
-					String sog = null;
-					try {
-						sog = consoleHelper.getLabelNomeSoggetto(protocollo, sa.getIdSoggettoProprietario().getTipo(), sa.getIdSoggettoProprietario().getNome());
-					}catch(Throwable t) {
-						sog = sa.getIdSoggettoProprietario().getTipo()+"/"+sa.getIdSoggettoProprietario().getNome();
-					}
-					sbApp.append(sa.getNome() + "@"+sog+"");
-				}
-				if(sbApp.toString().length()>0) {
-					sb.append(newLine);
-					sb.append(CostantiControlStation.LABEL_APPLICATIVI).append(" autorizzati");
-					sb.append(separator);
-					sb.append(sbApp.toString());
-				}
-			}
-			
-		}
-		
+				
 		// Autorizzazione Contenuti
 		if(autorizzazioneContenuti!=null && !CostantiConfigurazione.AUTORIZZAZIONE_NONE.equals(autorizzazioneContenuti)){
 			

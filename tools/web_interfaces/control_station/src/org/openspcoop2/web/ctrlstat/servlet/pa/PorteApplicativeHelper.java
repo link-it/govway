@@ -581,11 +581,15 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				String [] attributeAuthoritySelezionate = this.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
 				String attributeAuthorityAttributi = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI);
 				
+				String autorizzazioneAutenticatiToken = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_TOKEN);
+				String autorizzazioneRuoliToken = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI_TOKEN);
+				
 				if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList,
 						autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
 						autorizzazioneRuoliTipologia, ruoloMatch, 
 						isSupportatoAutenticazione, false, pa, ruoli,gestioneToken, gestioneTokenPolicy, 
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
+						autorizzazioneAutenticatiToken, autorizzazioneRuoliToken, 
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
@@ -1091,6 +1095,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			String autorizzazioneScope, int numScope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
 			String messageEngine,String canalePorta,
 			String identificazioneAttributiStato, String[] attributeAuthorityLabels, String[] attributeAuthorityValues, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi,
+			String autorizzazioneAutenticatiToken, String urlAutorizzazioneAutenticatiToken, int numAutenticatiToken,
+			String autorizzazioneRuoliToken,  String urlAutorizzazioneRuoliToken, int numRuoliToken, String autorizzazioneRuoliTipologiaToken, String autorizzazioneRuoliMatchToken,
 			String ctModalitaSincronizzazione, String ctImplementazione, String ctContatori, String ctTipologia,
 			String ctHeaderHttp, String ctHeaderHttp_limit, String ctHeaderHttp_remaining, String ctHeaderHttp_reset,
 			String ctHeaderHttp_retryAfter, String ctHeaderHttp_retryAfterBackoff) throws Exception {
@@ -1779,7 +1785,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					confPers, isSupportatoAutenticazioneSoggetti, contaListe, false, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
 					gestioneToken, gestioneTokenPolicy, autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
 					urlAutorizzazioneErogazioneApplicativiAutenticati, 0, urlAutorizzazioneErogazioneCustomPropertiesList , 0,
-					identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
+					identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
+					autorizzazioneAutenticatiToken, urlAutorizzazioneAutenticatiToken, numAutenticatiToken,
+					autorizzazioneRuoliToken,  urlAutorizzazioneRuoliToken, numRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken);
 			
 			this.controlloAccessiAutorizzazioneContenuti(dati, tipoOp, false, null,protocollo,
 					autorizzazioneContenutiStato, 
@@ -3350,6 +3358,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(mySogg.getTipo());
 			}
 
+			boolean modipa = this.porteApplicativeCore.isProfiloModIPA(protocollo);
+			
 			PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 			String idporta = myPA.getNome();
 
@@ -3372,7 +3382,15 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)));
 			
-			String labelPag = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_CONFIG;
+			String labelPag = 
+					(
+							modipa ?
+							CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CANALE
+							:
+							CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TRASPORTO
+					)
+					+ " - " +
+					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_CONFIG;
 			
 			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 			if(search.equals("")){
@@ -3451,28 +3469,26 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			String idPorta = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			String idsogg = this.request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
-			String modipa = this.request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA);
+			String autorizzazioneModi = this.request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA);
+			String token = this.request.getParameter(CostantiControlStation.PARAMETRO_TOKEN_AUTHORIZATION);
 			//boolean modipaEnabled = "true".equalsIgnoreCase(modipa);
 			
 			List<Parameter> listP = new ArrayList<>();
 			listP.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
 			listP.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
 			listP.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
-			if(modipa!=null) {
-				listP.add(new Parameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA, modipa));
+			if(token!=null) {
+				listP.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TOKEN_AUTHORIZATION, token));
+			}
+			if(autorizzazioneModi!=null) {
+				listP.add(new Parameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA, autorizzazioneModi));
 			}
 			ServletUtils.addListElementIntoSession(this.session,  PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO,
 					listP);
 
-			int idLista = Liste.PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO;
-			int limit = ricerca.getPageSize(idLista);
-			int offset = ricerca.getIndexIniziale(idLista);
-			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
-
-			this.pd.setIndex(offset);
-			this.pd.setPageSize(limit);
-			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
-
+			boolean isToken = token!=null && !"".equals(token) && Boolean.valueOf(token);
+			boolean isAutorizzazioneModi = autorizzazioneModi!=null && !"".equals(autorizzazioneModi) && Boolean.valueOf(autorizzazioneModi);
+			
 			String protocollo = null;
 			if(this.core.isRegistroServiziLocale()){
 				Soggetto mySogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idsogg));
@@ -3482,9 +3498,22 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				org.openspcoop2.core.config.Soggetto mySogg = this.soggettiCore.getSoggetto(Integer.parseInt(idsogg));
 				protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(mySogg.getTipo());
 			}
-
+			boolean modi = this.porteApplicativeCore.isProfiloModIPA(protocollo);
+			
 			boolean isSupportatoAutenticazioneApplicativiEsterni = this.saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocollo);
 			
+			int idLista = Liste.PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO;
+			if(isToken && !modi) {
+				idLista = Liste.PORTE_APPLICATIVE_TOKEN_SERVIZIO_APPLICATIVO;
+			}
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+
 			PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 			String idporta = myPA.getNome();
 
@@ -3507,7 +3536,17 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)));
 			
-			String labelPag = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_APPLICATIVI_CONFIG;
+			String labelPag = 
+					(
+							(isToken && !modi) ? 
+							CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN :
+								modi ?
+										CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_MESSAGGIO
+										:
+										CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TRASPORTO
+					)
+					+ " - " +
+					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_APPLICATIVI_CONFIG;
 			
 			this.pd.setSearchLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 			if(search.equals("")){
@@ -3518,7 +3557,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO_LIST,
 						new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
 						new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)));
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps),
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TOKEN_AUTHORIZATION, isToken+""),
+						new Parameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA, isAutorizzazioneModi+"")));
 				
 				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE_RISULTATI_RICERCA, null));
 			}
@@ -3534,7 +3575,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			// setto le label delle colonne
 			List<String> labels = new ArrayList<>();
-			if(this.porteApplicativeCore.isMultitenant() || isSupportatoAutenticazioneApplicativiEsterni) {
+			if(this.porteApplicativeCore.isMultitenant() || isSupportatoAutenticazioneApplicativiEsterni || isToken) {
 				labels.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO);
 			}
 			labels.add(CostantiControlStation.LABEL_PARAMETRO_APPLICATIVO);
@@ -4124,13 +4165,29 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 			String id = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			String idsogg = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
+			String autorizzazioneModi = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA);
+			String token = this.getParameter(CostantiControlStation.PARAMETRO_TOKEN_AUTHORIZATION);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_RUOLI,
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, id), 
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
+			List<Parameter> listP = new ArrayList<>();
+			listP.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, id));
+			listP.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
+			listP.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
+			if(token!=null) {
+				listP.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TOKEN_AUTHORIZATION, token));
+			}
+			if(autorizzazioneModi!=null) {
+				listP.add(new Parameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA, autorizzazioneModi));
+			}
+			ServletUtils.addListElementIntoSession(this.session,  PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_RUOLI,
+					listP);
 
+			boolean isToken = token!=null && !"".equals(token) && Boolean.valueOf(token);
+			boolean isAutorizzazioneModi = autorizzazioneModi!=null && !"".equals(autorizzazioneModi) && Boolean.valueOf(autorizzazioneModi);
+			
 			int idLista = Liste.PORTE_APPLICATIVE_RUOLI;
+			if(isToken) {
+				idLista = Liste.PORTE_APPLICATIVE_TOKEN_RUOLI;
+			}
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
@@ -4140,6 +4197,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
 			PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(id));
+			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(pa.getTipoSoggettoProprietario());
+			boolean modi = this.porteApplicativeCore.isProfiloModIPA(protocollo);
 			String idporta = pa.getNome();
 
 			// setto la barra del titolo
@@ -4161,7 +4220,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)));
 			
-			String labelPagLista = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI_CONFIG;
+			String labelPagLista = 
+					isToken ? 
+							((isAutorizzazioneModi || modi)? CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_MESSAGGIO : CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN)
+							:
+							(modi? CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CANALE : CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TRASPORTO);
+			labelPagLista = labelPagLista
+							+ " - " +
+					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI_CONFIG;
 			
 			this.pd.setSearchLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO);
 			if(search.equals("")){
@@ -4173,7 +4239,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_LIST,
 						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID,id),
 						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,idsogg),
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps),
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TOKEN_AUTHORIZATION, isToken+""),
+						new Parameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA, isAutorizzazioneModi+"")
 						));
 				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_RISULTATI_RICERCA, null));
 
@@ -4688,6 +4756,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			String protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(myPA.getServizio().getTipo());
 			boolean isSupportatoAutenticazione = this.soggettiCore.isSupportatoAutenticazioneApplicativiErogazione(protocollo);
 
+			boolean autenticazioneToken = myPA.getGestioneToken()!=null && myPA.getGestioneToken().getPolicy()!=null;
 			
 			// setto la barra del titolo
 			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
@@ -4727,10 +4796,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			if(myPA!=null && myPA.getBehaviour()!=null && myPA.sizeServizioApplicativoList()>0) {
 				lstLabels.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_APPLICABILITA_CONNETTORI);
 			}
-			if(autenticazione){
+			if(autenticazione || autenticazioneToken){
 				lstLabels.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI);
 			}
-			if(isSupportatoAutenticazione && autenticazione) {
+			if( (isSupportatoAutenticazione && autenticazione) || autenticazioneToken) {
 				lstLabels.add( PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVI);// uso cmq label PD
 			}
 			this.pd.setLabels(lstLabels.toArray(new String [lstLabels.size()]));
@@ -4939,7 +5008,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					}
 					
 					
-					if(autenticazione){
+					if(autenticazione || autenticazioneToken){
 						
 						String servletTrasformazioniAutorizzazioneAutenticati =   PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTO_LIST;
 						List<Parameter> parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati = new ArrayList<Parameter>();
@@ -4960,7 +5029,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						e.addElement(de);
 					}
 					
-					if(isSupportatoAutenticazione && autenticazione) {
+					if((isSupportatoAutenticazione && autenticazione) || (autenticazioneToken)) {
 						
 						String servletTrasformazioniApplicativiAutenticati = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_AUTORIZZATO_LIST;
 						List<Parameter> parametriInvocazioneServletTrasformazioniApplicativiAutenticati  = new ArrayList<Parameter>();

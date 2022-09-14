@@ -31,6 +31,7 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 
 import org.openspcoop2.core.commons.search.ServizioApplicativo;
+import org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo;
 import org.openspcoop2.core.commons.search.ServizioApplicativoRuolo;
 import org.openspcoop2.core.constants.CostantiDB;
 
@@ -65,6 +66,12 @@ public class ServizioApplicativoFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "tipo", ServizioApplicativo.model().TIPO.getFieldType()));
 				setParameter(object, "setAsClient", ServizioApplicativo.model().AS_CLIENT.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "as_client", ServizioApplicativo.model().AS_CLIENT.getFieldType()));
+				setParameter(object, "setTipoauth", ServizioApplicativo.model().TIPOAUTH.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "tipoauth", ServizioApplicativo.model().TIPOAUTH.getFieldType()));
+				setParameter(object, "setUtente", ServizioApplicativo.model().UTENTE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "utente", ServizioApplicativo.model().UTENTE.getFieldType()));
+				setParameter(object, "setTokenPolicy", ServizioApplicativo.model().TOKEN_POLICY.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "token_policy", ServizioApplicativo.model().TOKEN_POLICY.getFieldType()));
 				return object;
 			}
 			if(model.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO)){
@@ -73,6 +80,20 @@ public class ServizioApplicativoFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
 				setParameter(object, "setNome", ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO.NOME.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "ruolo", ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO.NOME.getFieldType()));
+				return object;
+			}
+			if(model.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO)){
+				ServizioApplicativoProprietaProtocollo object = new ServizioApplicativoProprietaProtocollo();
+				setParameter(object, "setId", Long.class,
+					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
+				setParameter(object, "setName", ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.NAME.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "name", ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.NAME.getFieldType()));
+				setParameter(object, "setValueString", ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.VALUE_STRING.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "value_string", ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.VALUE_STRING.getFieldType()));
+				setParameter(object, "setValueNumber", ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.VALUE_NUMBER.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "value_number", ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.VALUE_NUMBER.getFieldType()));
+				setParameter(object, "setValueBoolean", ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.VALUE_BOOLEAN.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "value_boolean", ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.VALUE_BOOLEAN.getFieldType()));
 				return object;
 			}
 			
@@ -105,6 +126,12 @@ public class ServizioApplicativoFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"tipo"));
 				setParameter(object, "setAsClient", ServizioApplicativo.model().AS_CLIENT.getFieldType(),
 					this.getObjectFromMap(map,"as_client"));
+				setParameter(object, "setTipoauth", ServizioApplicativo.model().TIPOAUTH.getFieldType(),
+					this.getObjectFromMap(map,"tipoauth"));
+				setParameter(object, "setUtente", ServizioApplicativo.model().UTENTE.getFieldType(),
+					this.getObjectFromMap(map,"utente"));
+				setParameter(object, "setTokenPolicy", ServizioApplicativo.model().TOKEN_POLICY.getFieldType(),
+					this.getObjectFromMap(map,"token_policy"));
 				return object;
 			}
 			if(model.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO)){
@@ -113,6 +140,20 @@ public class ServizioApplicativoFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"servizio-applicativo-ruolo.id"));
 				setParameter(object, "setNome", ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO.NOME.getFieldType(),
 					this.getObjectFromMap(map,"servizio-applicativo-ruolo.nome"));
+				return object;
+			}
+			if(model.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO)){
+				ServizioApplicativoProprietaProtocollo object = new ServizioApplicativoProprietaProtocollo();
+				setParameter(object, "setId", Long.class,
+					this.getObjectFromMap(map,"servizio-applicativo-proprieta-protocollo.id"));
+				setParameter(object, "setName", ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.NAME.getFieldType(),
+					this.getObjectFromMap(map,"servizio-applicativo-proprieta-protocollo.name"));
+				setParameter(object, "setValueString", ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.VALUE_STRING.getFieldType(),
+					this.getObjectFromMap(map,"servizio-applicativo-proprieta-protocollo.value_string"));
+				setParameter(object, "setValueNumber", ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.VALUE_NUMBER.getFieldType(),
+					this.getObjectFromMap(map,"servizio-applicativo-proprieta-protocollo.value_number"));
+				setParameter(object, "setValueBoolean", ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.VALUE_BOOLEAN.getFieldType(),
+					this.getObjectFromMap(map,"servizio-applicativo-proprieta-protocollo.value_boolean"));
 				return object;
 			}
 			
@@ -137,6 +178,9 @@ public class ServizioApplicativoFetch extends AbstractJDBCFetch {
 			}
 			if(model.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO)){
 				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.SERVIZI_APPLICATIVI_RUOLI,"id","seq_"+CostantiDB.SERVIZI_APPLICATIVI_RUOLI,CostantiDB.SERVIZI_APPLICATIVI_RUOLI+"_init_seq");
+			}
+			if(model.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO)){
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject(CostantiDB.PROTOCOL_PROPERTIES,"id","seq_"+CostantiDB.PROTOCOL_PROPERTIES,CostantiDB.PROTOCOL_PROPERTIES+"_init_seq");
 			}
 			
 			else{

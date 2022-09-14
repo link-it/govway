@@ -45,8 +45,12 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 		this.TIPOLOGIA_EROGAZIONE = new Field("tipologia_erogazione",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.TIPO = new Field("tipo",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.AS_CLIENT = new Field("as_client",java.lang.Integer.class,"servizio-applicativo",ServizioApplicativo.class);
+		this.TIPOAUTH = new Field("tipoauth",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
+		this.UTENTE = new Field("utente",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
+		this.TOKEN_POLICY = new Field("token_policy",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.ID_SOGGETTO = new org.openspcoop2.core.commons.search.model.IdSoggettoModel(new Field("id-soggetto",org.openspcoop2.core.commons.search.IdSoggetto.class,"servizio-applicativo",ServizioApplicativo.class));
 		this.SERVIZIO_APPLICATIVO_RUOLO = new org.openspcoop2.core.commons.search.model.ServizioApplicativoRuoloModel(new Field("servizio-applicativo-ruolo",org.openspcoop2.core.commons.search.ServizioApplicativoRuolo.class,"servizio-applicativo",ServizioApplicativo.class));
+		this.SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO = new org.openspcoop2.core.commons.search.model.ServizioApplicativoProprietaProtocolloModel(new Field("servizio-applicativo-proprieta-protocollo",org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo.class,"servizio-applicativo",ServizioApplicativo.class));
 	
 	}
 	
@@ -59,8 +63,12 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 		this.TIPOLOGIA_EROGAZIONE = new ComplexField(father,"tipologia_erogazione",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.AS_CLIENT = new ComplexField(father,"as_client",java.lang.Integer.class,"servizio-applicativo",ServizioApplicativo.class);
+		this.TIPOAUTH = new ComplexField(father,"tipoauth",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
+		this.UTENTE = new ComplexField(father,"utente",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
+		this.TOKEN_POLICY = new ComplexField(father,"token_policy",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.ID_SOGGETTO = new org.openspcoop2.core.commons.search.model.IdSoggettoModel(new ComplexField(father,"id-soggetto",org.openspcoop2.core.commons.search.IdSoggetto.class,"servizio-applicativo",ServizioApplicativo.class));
 		this.SERVIZIO_APPLICATIVO_RUOLO = new org.openspcoop2.core.commons.search.model.ServizioApplicativoRuoloModel(new ComplexField(father,"servizio-applicativo-ruolo",org.openspcoop2.core.commons.search.ServizioApplicativoRuolo.class,"servizio-applicativo",ServizioApplicativo.class));
+		this.SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO = new org.openspcoop2.core.commons.search.model.ServizioApplicativoProprietaProtocolloModel(new ComplexField(father,"servizio-applicativo-proprieta-protocollo",org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo.class,"servizio-applicativo",ServizioApplicativo.class));
 	
 	}
 	
@@ -76,9 +84,17 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 	 
 	public IField AS_CLIENT = null;
 	 
+	public IField TIPOAUTH = null;
+	 
+	public IField UTENTE = null;
+	 
+	public IField TOKEN_POLICY = null;
+	 
 	public org.openspcoop2.core.commons.search.model.IdSoggettoModel ID_SOGGETTO = null;
 	 
 	public org.openspcoop2.core.commons.search.model.ServizioApplicativoRuoloModel SERVIZIO_APPLICATIVO_RUOLO = null;
+	 
+	public org.openspcoop2.core.commons.search.model.ServizioApplicativoProprietaProtocolloModel SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO = null;
 	 
 
 	@Override

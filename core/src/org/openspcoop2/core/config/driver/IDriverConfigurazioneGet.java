@@ -253,6 +253,18 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	
 	/**
 	 * Restituisce Il servizio applicativo che include le credenziali passate come parametro. 
+	 * 
+	 * @param tokenPolicy TokenPolicy
+	 * @param tokenClientId Identificativo del client nel dominio della token policy 
+	 * @param tokenWithHttpsEnabled Indicazione se il client e' stato registrato anche con credenziali https
+	 * @return Il servizio applicativo che include le credenziali passate come parametro. 
+	 * @throws DriverConfigurazioneException
+	 * @throws DriverConfigurazioneNotFound
+	 */
+	public ServizioApplicativo getServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId, boolean tokenWithHttpsEnabled) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
+	
+	/**
+	 * Restituisce Il servizio applicativo che include le credenziali passate come parametro. 
 	 *
 	 * @param subject Subject utilizzato nella connessione HTTPS.
 	 * @param issuer Issuer utilizzato nella connessione HTTPS.

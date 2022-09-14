@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -163,9 +164,11 @@ public class Utilities extends ConfigLoader {
 		else {
 			verifyOk(response, 200, contentType);
 		}
-						
-		DBVerifier.verify(idTransazione, esitoExpected, msgError,
-				mapExpectedTokenInfo);
+					
+		if(!ForwardInformazioniTest.forward.equals(api)) {
+			DBVerifier.verify(idTransazione, esitoExpected, msgError,
+					mapExpectedTokenInfo);
+		}
 		
 		return response;
 		
@@ -443,6 +446,209 @@ public class Utilities extends ConfigLoader {
 		if(mapExpectedTokenInfo!=null) {
 			mapExpectedTokenInfo.add(jtiS);
 		}
+		
+		//System.out.println("TOKEN ["+jsonInput+"]");
+		
+		return jsonInput;
+	}
+	
+	
+	
+	public static String buildFullJson(Map<String, List<String>> values) throws Exception {
+			
+		String jsonInput = "{\n";
+		
+		String issuer = "testAuthEnte";
+		String iss ="  \""+"iss\":\""+issuer+"\"";
+		jsonInput = jsonInput+
+				iss+" ,\n ";
+		List<String> issList = new ArrayList<String>();
+		issList.add(issuer);
+		values.put("iss", issList);
+		
+		String subject = "SUB10623542342342323";
+		String sub = "  \"sub\":\""+subject+"\"";
+		jsonInput = jsonInput+
+				sub+" ,\n ";
+		List<String> subList = new ArrayList<String>();
+		subList.add(subject);
+		values.put("sub", subList);
+		
+		String audience = "23223.apps";
+		String audience2 = "7777.apps";
+		String aud = "  \"aud\":[\""+audience+"\",\""+audience2+"\"]";
+		jsonInput = jsonInput+
+				aud+" ,\n ";
+		List<String> audList = new ArrayList<String>();
+		audList.add(audience);
+		audList.add(audience2);
+		values.put("aud", audList);
+		
+		String cliendId = "18192.apps";
+		String cId = "\"client_id\":\""+cliendId+"\"";
+		jsonInput = jsonInput+
+				cId+" ,\n ";
+		List<String> clientIdList = new ArrayList<String>();
+		clientIdList.add(cliendId);
+		values.put("clientId", clientIdList);
+		
+		Date now = DateManager.getDate();
+		Date campione = new Date( (now.getTime()/1000)*1000);
+		Date iat = new Date(campione.getTime());
+		String iatV = (iat.getTime()/1000)+"";
+		String iatJson = "  \"iat\":"+iatV+""; 
+		jsonInput = jsonInput +
+				iatJson + " ,\n ";
+		List<String> iatList = new ArrayList<String>();
+		iatList.add(iatV);
+		values.put("iat", iatList);
+		
+		Date nbf = new Date(campione.getTime() - (1000*20));
+		String nbfV = (nbf.getTime()/1000)+"";
+		String nbfJson = "  \"nbf\":"+nbfV+"";
+		jsonInput = jsonInput +
+				nbfJson+ " ,\n ";
+		List<String> nbfList = new ArrayList<String>();
+		nbfList.add(nbfV);
+		values.put("nbf", nbfList);
+		
+		Date exp = new Date(campione.getTime() + (1000*60));
+		String expV = (exp.getTime()/1000) + "";
+		String expJson = "  \"exp\":"+expV+"";
+		jsonInput = jsonInput +
+				expJson + " ,\n  ";
+		List<String> expList = new ArrayList<String>();
+		expList.add(expV);
+		values.put("exp", expList);
+		
+		String roleValue = "";
+		if(roleValue.length()>0) {
+			roleValue+=",";
+		}
+		else {
+			roleValue+="[";
+		}
+		roleValue+="\""+r1+"\"";
+		if(roleValue.length()>0) {
+			roleValue+=",";
+		}
+		else {
+			roleValue+="[";
+		}
+		roleValue+="\""+r2+"\"";
+		if(roleValue.length()>0) {
+			roleValue+=",";
+		}
+		else {
+			roleValue+="[";
+		}
+		roleValue+="\""+r3+"\"";
+		if(roleValue.length()>0) {
+			String r = "  \"role\":"+roleValue+"]";
+			jsonInput = jsonInput +
+					r+" ,\n";
+			List<String> roleList = new ArrayList<String>();
+			roleList.add(r1);
+			roleList.add(r2);
+			roleList.add(r3);
+			values.put("role", roleList);
+		}
+		
+		String scopeValue = "";
+		if(scopeValue.length()>0) {
+			scopeValue+=" ";
+		}
+		scopeValue+=s1;
+		if(scopeValue.length()>0) {
+			scopeValue+=" ";
+		}
+		scopeValue+=s2;
+		if(scopeValue.length()>0) {
+			scopeValue+=" ";
+		}
+		scopeValue+=s3;
+		if(scopeValue.length()>0) {
+			String s = "  \"scope\":\""+scopeValue+"\"";
+			jsonInput = jsonInput +
+					s+" ,\n";
+			List<String> scopeList = new ArrayList<String>();
+			scopeList.add(s1);
+			scopeList.add(s2);
+			scopeList.add(s3);
+			values.put("scope", scopeList);
+		}
+		
+		String fullName = "Mario Bianchi Rossi";
+		String u = "  \"username\":\""+(username)+"\"";
+		String name = "  \"name\":\""+fullName+"\"";
+		jsonInput = jsonInput+
+				u+" ,\n"+
+				name+" ,\n ";
+		List<String> usernameList = new ArrayList<String>();
+		usernameList.add(username);
+		values.put("username", usernameList);
+		List<String> nameList = new ArrayList<String>();
+		nameList.add(fullName);
+		values.put("fullName", nameList);
+		
+		String firstName = "Mario";
+		String gName = "  \"given_name\":\""+firstName+"\"";
+		jsonInput = jsonInput +
+				gName+" ,\n ";
+		List<String> firstNameList = new ArrayList<String>();
+		firstNameList.add(firstName);
+		values.put("firstName", firstNameList);
+		
+		String middleName = "Bianchi";
+		String mName = "  \"middle_name\":\""+middleName+"\"";
+		jsonInput = jsonInput +
+				mName+" ,\n ";
+		List<String> middleNameList = new ArrayList<String>();
+		middleNameList.add(middleName);
+		values.put("middleName", middleNameList);
+		
+		String familyName = "Rossi";
+		String fName = "  \"family_name\":\""+familyName+"\"";
+		jsonInput = jsonInput +
+				fName+" ,\n ";
+		List<String> familyNameList = new ArrayList<String>();
+		familyNameList.add(familyName);
+		values.put("familyName", familyNameList);
+		
+		String email = "mariorossi@govway.org";
+		String mail = "  \"email\":\""+email+"\"";
+		jsonInput = jsonInput+
+				mail+" ,\n ";
+		List<String> emailList = new ArrayList<String>();
+		emailList.add(email);
+		values.put("email", emailList);
+		
+		String jti = "33aa1676-1f9e-34e2-8515-0cfca111a188";
+		String jtiS = "  \"jti\":\""+jti+"\"";
+		jsonInput = jsonInput +
+				" "+jtiS+" ,\n";
+		List<String> jtiList = new ArrayList<String>();
+		jtiList.add(jti);
+		values.put("jti", jtiList);
+
+		String purposeId = "66aa1676-1f9e-34e2-9915-0cfca111a133-purpose";
+		String purposeIdS = "  \"purposeId\":\""+purposeId+"\"";
+		jsonInput = jsonInput +
+				" "+purposeIdS+" ,\n";
+		List<String> purposeIdList = new ArrayList<String>();
+		purposeIdList.add(purposeId);
+		values.put("purposeId", purposeIdList);
+		
+		String customclaim = "valoreCustom";
+		String customclaimS = "  \"customClaim\":\""+customclaim+"\"";
+		jsonInput = jsonInput +
+				" "+customclaimS+" ";
+		List<String> customclaimList = new ArrayList<String>();
+		customclaimList.add(customclaim);
+		values.put("customclaim", customclaimList);
+		
+		jsonInput = jsonInput +
+				" }";
 		
 		//System.out.println("TOKEN ["+jsonInput+"]");
 		

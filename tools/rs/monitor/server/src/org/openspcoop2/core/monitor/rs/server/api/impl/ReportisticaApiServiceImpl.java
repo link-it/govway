@@ -55,6 +55,7 @@ import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzio
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneSoggettoRemoto;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneTokenInfo;
 import org.openspcoop2.core.monitor.rs.server.model.Riepilogo;
+import org.openspcoop2.core.monitor.rs.server.model.TipoIdentificazioneApplicativoEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TokenClaimEnum;
@@ -378,7 +379,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	@Override
     public byte[] getReportDistribuzioneApplicativoBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, 
     		ProfiloEnum profilo, String soggetto, String idCluster, String soggettoRemoto, String soggettoErogatore,String soggettoMittente, String tag, String uriApiImplementata, 
-    		String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
+    		String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, TipoIdentificazioneApplicativoEnum tipoIdentificazione, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 
 		IContext context = this.getContext();
 		try {
@@ -404,6 +405,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			ricerca.setTipo(tipo);
 			ricerca.setIdCluster(idCluster);
 
+			ricerca.setTipoIdentificazioneApplicativo(tipoIdentificazione);
+			
 			OpzioniGenerazioneReport opzioni = new OpzioniGenerazioneReport();
 			opzioni.setFormato(formatoReport);
 			opzioni.setTipo(tipoReport);

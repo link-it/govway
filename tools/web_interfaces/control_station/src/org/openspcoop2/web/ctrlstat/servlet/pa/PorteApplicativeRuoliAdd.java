@@ -45,6 +45,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -91,30 +92,59 @@ public final class PorteApplicativeRuoliAdd extends Action {
 			if(idAsps == null) 
 				idAsps = "";
 			
+			String autorizzazioneModi = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA);
+			boolean isAutorizzazioneModi = false;
+			if(autorizzazioneModi!=null && "true".equalsIgnoreCase(autorizzazioneModi)) {
+				isAutorizzazioneModi = true;
+			}
+			
+			String tokenList = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TOKEN_AUTHORIZATION);
+			boolean isToken = tokenList!=null && !"".equals(tokenList) && Boolean.valueOf(tokenList);
+			
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
+			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
 
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
 			// Prendo nome della porta applicativa
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(pa.getTipoSoggettoProprietario());
+			boolean modi = porteApplicativeCore.isProfiloModIPA(protocollo);
 			String nomePorta = pa.getNome();
 			
 			// Cerco Ruoli
 			FiltroRicercaRuoli filtroRuoli = new FiltroRicercaRuoli();
 			filtroRuoli.setContesto(RuoloContesto.PORTA_APPLICATIVA);
 			filtroRuoli.setTipologia(RuoloTipologia.QUALSIASI);
-			if(TipoAutorizzazione.isInternalRolesRequired(pa.getAutorizzazione()) ){
-				filtroRuoli.setTipologia(RuoloTipologia.INTERNO);
+			if(isToken) {
+				if(pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getTipologiaRuoli()!=null) {
+					RuoloTipologia r = RuoloTipologia.toEnumConstant(pa.getAutorizzazioneToken().getTipologiaRuoli().getValue());
+					filtroRuoli.setTipologia(r);
+				}
 			}
-			else if(TipoAutorizzazione.isExternalRolesRequired(pa.getAutorizzazione()) ){
-				filtroRuoli.setTipologia(RuoloTipologia.ESTERNO);
+			else {
+				if(TipoAutorizzazione.isInternalRolesRequired(pa.getAutorizzazione()) ){
+					filtroRuoli.setTipologia(RuoloTipologia.INTERNO);
+				}
+				else if(TipoAutorizzazione.isExternalRolesRequired(pa.getAutorizzazione()) ){
+					filtroRuoli.setTipologia(RuoloTipologia.ESTERNO);
+				}
 			}
 						
 			List<String> ruoli = new ArrayList<>();
-			if(pa.getRuoli()!=null && pa.getRuoli().getRuoloList()!=null && pa.getRuoli().getRuoloList().size()>0){
-				for (Ruolo ruolo : pa.getRuoli().getRuoloList()) {
-					ruoli.add(ruolo.getNome());	
+			if(isToken) {
+				if(pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getRuoli()!=null && pa.getAutorizzazioneToken().getRuoli().getRuoloList()!=null && pa.getAutorizzazioneToken().getRuoli().getRuoloList().size()>0){
+					for (Ruolo ruolo : pa.getAutorizzazioneToken().getRuoli().getRuoloList()) {
+						ruoli.add(ruolo.getNome());	
+					}
+				}
+			}
+			else {
+				if(pa.getRuoli()!=null && pa.getRuoli().getRuoloList()!=null && pa.getRuoli().getRuoloList().size()>0){
+					for (Ruolo ruolo : pa.getRuoli().getRuoloList()) {
+						ruoli.add(ruolo.getNome());	
+					}
 				}
 			}
 			
@@ -136,13 +166,22 @@ public final class PorteApplicativeRuoliAdd extends Action {
 					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)));
 			
-			String labelPagLista = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI_CONFIG;
+			String labelPagLista = 
+					isToken ? 
+							((isAutorizzazioneModi || modi)? CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_MESSAGGIO : CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN)
+							:
+							(modi? CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CANALE : CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TRASPORTO);
+			labelPagLista = labelPagLista
+							+ " - " +
+					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI_CONFIG;
 			
 			lstParam.add(new Parameter(labelPagLista,
 					PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_LIST,
 					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta),
 					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
-					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)
+					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps),
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TOKEN_AUTHORIZATION, isToken+""),
+					new Parameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA, isAutorizzazioneModi+"")
 					));
 			lstParam.add(ServletUtils.getParameterAggiungi());
 
@@ -156,7 +195,7 @@ public final class PorteApplicativeRuoliAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true, null);
+				dati = porteApplicativeHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true, null, isToken);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps,  dati);
 
@@ -180,7 +219,7 @@ public final class PorteApplicativeRuoliAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true, null);
+				dati = porteApplicativeHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true, null, isToken);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, dati);
 
@@ -195,10 +234,18 @@ public final class PorteApplicativeRuoliAdd extends Action {
 			// Inserisco il ruolo nel db
 			Ruolo ruolo = new Ruolo();
 			ruolo.setNome(nome);
-			if(pa.getRuoli()==null){
-				pa.setRuoli(new AutorizzazioneRuoli());
+			if(isToken) {
+				if(pa.getAutorizzazioneToken().getRuoli()==null) {
+					pa.getAutorizzazioneToken().setRuoli(new AutorizzazioneRuoli());
+				}
+				pa.getAutorizzazioneToken().getRuoli().addRuolo(ruolo);
 			}
-			pa.getRuoli().addRuolo(ruolo);
+			else {
+				if(pa.getRuoli()==null){
+					pa.setRuoli(new AutorizzazioneRuoli());
+				}
+				pa.getRuoli().addRuolo(ruolo);
+			}
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
@@ -208,10 +255,16 @@ public final class PorteApplicativeRuoliAdd extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
 			int idLista = Liste.PORTE_APPLICATIVE_RUOLI;
+			if(isToken) {
+				idLista = Liste.PORTE_APPLICATIVE_TOKEN_RUOLI;
+			}
 
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 
-			List<String> lista = porteApplicativeCore.portaApplicativaRuoliList(idInt, ricerca);
+			List<String> lista = isToken ?
+					porteApplicativeCore.portaApplicativaRuoliTokenList(idInt, ricerca) 
+					:
+					porteApplicativeCore.portaApplicativaRuoliList(idInt, ricerca);	
 
 			porteApplicativeHelper.preparePorteApplicativeRuoliList(nomePorta, ricerca, lista);
 

@@ -23,8 +23,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
+import org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione;
+import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.commons.search.Fruitore;
+import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
+import org.openspcoop2.core.commons.search.IdAccordoServizioParteSpecifica;
+import org.openspcoop2.core.commons.search.IdFruitore;
+import org.openspcoop2.core.commons.search.IdPortType;
+import org.openspcoop2.core.commons.search.IdSoggetto;
+import org.openspcoop2.core.commons.search.Operation;
+import org.openspcoop2.core.commons.search.PortType;
+import org.openspcoop2.core.commons.search.PortaApplicativa;
+import org.openspcoop2.core.commons.search.PortaDelegata;
+import org.openspcoop2.core.commons.search.Resource;
 import org.openspcoop2.core.config.Connettore;
-import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
@@ -61,20 +74,6 @@ import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULL;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho;
-import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
-import org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione;
-import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.commons.search.Fruitore;
-import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
-import org.openspcoop2.core.commons.search.IdAccordoServizioParteSpecifica;
-import org.openspcoop2.core.commons.search.IdFruitore;
-import org.openspcoop2.core.commons.search.IdPortType;
-import org.openspcoop2.core.commons.search.IdSoggetto;
-import org.openspcoop2.core.commons.search.Operation;
-import org.openspcoop2.core.commons.search.PortType;
-import org.openspcoop2.core.commons.search.PortaApplicativa;
-import org.openspcoop2.core.commons.search.PortaDelegata;
-import org.openspcoop2.core.commons.search.Resource;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPA;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPA.DettaglioSA;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPD;
@@ -563,32 +562,32 @@ public class ConfigurazioniUtils {
 				IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
 				idServizioApplicativo.setIdSoggettoProprietario(idPD.getIdentificativiFruizione().getSoggettoFruitore());
 				idServizioApplicativo.setNome(saNome);
-				ServizioApplicativo saOp2 = driverConfigDB.getServizioApplicativo(idServizioApplicativo);
-				if(saOp2.getInvocazionePorta()!=null && saOp2.getInvocazionePorta().sizeCredenzialiList()>0){
-					String credenziale = null;
-					Credenziali cr = saOp2.getInvocazionePorta().getCredenziali(0);
-					switch (cr.getTipo()) {
-					case BASIC:
-						credenziale = CostantiConfigurazioni.VALUE_USER + CostantiConfigurazioni.LABEL_DOTS+cr.getUser();
-						break;
-					case APIKEY:
-						credenziale = CostantiConfigurazioni.VALUE_APP_ID + CostantiConfigurazioni.LABEL_DOTS+cr.getUser();
-						break;
-					case SSL:
-						credenziale = CostantiConfigurazioni.VALUE_SUBJECT + CostantiConfigurazioni.LABEL_DOTS+cr.getSubject();
-						break;
-					case PRINCIPAL:
-						credenziale = CostantiConfigurazioni.VALUE_PRINCIPAL + CostantiConfigurazioni.LABEL_DOTS+cr.getUser();
-						break;
-					}
-
-					sa.add(saNome+" ("+credenziale+")");
-					p.setValore(saNome+" ("+credenziale+")");
-				}
-				else{
-					sa.add(saNome);
-					p.setValore(saNome);
-				}
+//				ServizioApplicativo saOp2 = driverConfigDB.getServizioApplicativo(idServizioApplicativo);
+//				if(saOp2.getInvocazionePorta()!=null && saOp2.getInvocazionePorta().sizeCredenzialiList()>0){
+//					String credenziale = null;
+//					org.openspcoop2.core.config.Credenziali cr = saOp2.getInvocazionePorta().getCredenziali(0);
+//					switch (cr.getTipo()) {
+//					case BASIC:
+//						credenziale = CostantiConfigurazioni.VALUE_USER + CostantiConfigurazioni.LABEL_DOTS+cr.getUser();
+//						break;
+//					case APIKEY:
+//						credenziale = CostantiConfigurazioni.VALUE_APP_ID + CostantiConfigurazioni.LABEL_DOTS+cr.getUser();
+//						break;
+//					case SSL:
+//						credenziale = CostantiConfigurazioni.VALUE_SUBJECT + CostantiConfigurazioni.LABEL_DOTS+cr.getSubject();
+//						break;
+//					case PRINCIPAL:
+//						credenziale = CostantiConfigurazioni.VALUE_PRINCIPAL + CostantiConfigurazioni.LABEL_DOTS+cr.getUser();
+//						break;
+//					}
+//
+//					sa.add(saNome+" ("+credenziale+")");
+//					p.setValore(saNome+" ("+credenziale+")");
+//				}
+//				else{
+				sa.add(saNome);
+				p.setValore(saNome);
+				//}
 
 
 				lst.add(p);

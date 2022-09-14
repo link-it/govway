@@ -50,12 +50,16 @@ import org.openspcoop2.core.config.MtomProcessorFlow;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
+import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneToken;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.PortaDelegataAutorizzazioneToken;
 import org.openspcoop2.core.config.PortaDelegataAzione;
+import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.Scope;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.TrasformazioneRegola;
@@ -148,15 +152,24 @@ public class ConfigurazioniCsvExporter {
 	    
 	    Autorizzazione (stato)
 	    Autorizzazione (proprieta)
-	    Autorizzazione (Soggetti autorizzati)
-	    Soggetti Autorizzati la colonna contiene l'elenco dei soggetti  separati da '\n').
-	    Autorizzazione (Ruoli)
-	    Ruoli Richiesti (all/any)
-	    Ruoli (separati da '\n')
-	    Autorizzazione (Scope)
-	    Scope Richiesti (all/any)
-	    Scope (separati da '\n')
-	    Autorizzazione (Token claims)
+	    
+	    Autorizzazione Trasporto (Soggetti/Applicativi Autorizzati)
+		Applicativi Autorizzati (Authz Trasporto) (la colonna contiene l'elenco dei soggetti  separati da '\n')
+		Autorizzazione Trasporto (Ruoli Autorizzati) (la colonna contiene l'elenco dei ruoli separati da '\n')
+		Ruoli Richiesti (Authz Trasporto) (all/any)
+		Ruoli (Authz Trasporto) (separati da '\n')
+		
+		Autorizzazione Token (Applicativi Autorizzati)
+		Applicativi Autorizzati (Authz Token) (la colonna contiene l'elenco dei soggetti  separati da '\n')
+		Autorizzazione Token (Ruoli Autorizzati) (la colonna contiene l'elenco dei ruoli separati da '\n')
+		Ruoli Richiesti (Authz Token) (all/any)
+		Ruoli (Authz Token) (separati da '\n')
+		
+		Autorizzazione (Token claims)
+		
+		Autorizzazione per Token Scope
+		Scope Richiesti (all/any)
+		Scope (la colonna contiene l'elenco degli scope separati da '\n')
 	    
 	    AutorizzazioneContenuti (stato)
 	    AutorizzazioneContenuti (proprieta)
@@ -243,15 +256,24 @@ public class ConfigurazioniCsvExporter {
 			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_PROPRIETA);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_RICHIEDENTI_AUTORIZZATI_STATO);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TRASPORTO_RICHIEDENTI_AUTORIZZATI_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_APPLICATIVI_AUTORIZZATI);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_RUOLI_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TRASPORTO_RUOLI_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI_RICHIESTI);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_RICHIEDENTI_AUTORIZZATI_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_APPLICATIVI_AUTORIZZATI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_RUOLI_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI_RICHIESTI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_CLAIMS);
+			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_SCOPE_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SCOPE_RICHIESTI);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SCOPE_FORNITI);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_CLAIMS);
 			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_CONTENUTI_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_CONTENUTI_PROPRIETA);
@@ -334,17 +356,25 @@ public class ConfigurazioniCsvExporter {
 	    
 	    Autorizzazione (stato)
 	    Autorizzazione (proprieta)
-	    Autorizzazione (Soggetti autorizzati)
-	    Autorizzazione (Applicativi autorizzati)
-	    Soggetti Autorizzati la colonna contiene l'elenco dei soggetti  separati da '\n').
-	    Autorizzazione (Ruoli)
-	    Ruoli Richiesti (all/any)
-	    Ruoli (separati da '\n')
-	    Autorizzazione (Scope)
-	    Scope Richiesti (all/any)
-	    Scope (separati da '\n')
-	    Autorizzazione (Token claims)
 	    
+	    Autorizzazione Trasporto (Soggetti/Applicativi Autorizzati)
+		Soggetti/Applicativi Autorizzati (Authz Trasporto) (la colonna contiene l'elenco dei soggetti  separati da '\n')
+		Autorizzazione Trasporto (Ruoli Autorizzati) (la colonna contiene l'elenco dei ruoli separati da '\n')
+		Ruoli Richiesti (Authz Trasporto) (all/any)
+		Ruoli (Authz Trasporto) (separati da '\n')
+		
+		Autorizzazione Token (Applicativi Autorizzati)
+		Applicativi Autorizzati (Authz Token) (la colonna contiene l'elenco dei soggetti  separati da '\n')
+		Autorizzazione Token (Ruoli Autorizzati) (la colonna contiene l'elenco dei ruoli separati da '\n')
+		Ruoli Richiesti (Authz Token) (all/any)
+		Ruoli (Authz Token) (separati da '\n')
+		
+		Autorizzazione (Token claims)
+		
+		Autorizzazione per Token Scope
+		Scope Richiesti (all/any)
+		Scope (la colonna contiene l'elenco degli scope separati da '\n')
+	    	    
 	    AutorizzazioneContenuti (stato)
 	    AutorizzazioneContenuti (proprieta)
 	    
@@ -433,16 +463,25 @@ public class ConfigurazioniCsvExporter {
 			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_PROPRIETA);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_RICHIEDENTI_AUTORIZZATI_STATO);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TRASPORTO_RICHIEDENTI_AUTORIZZATI_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SOGGETTI_AUTORIZZATI);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_APPLICATIVI_AUTORIZZATI);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_RUOLI_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TRASPORTO_RUOLI_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI_RICHIESTI);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_RICHIEDENTI_AUTORIZZATI_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_APPLICATIVI_AUTORIZZATI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_RUOLI_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI_RICHIESTI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI);
+
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_CLAIMS);
+			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_SCOPE_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SCOPE_RICHIESTI);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_SCOPE_FORNITI);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_CLAIMS);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_SCOPE_FORNITI);			
 			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_CONTENUTI_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_CONTENUTI_PROPRIETA);
@@ -832,15 +871,24 @@ public class ConfigurazioniCsvExporter {
 		
 		// Autorizzazione (Stato)
 		// Autorizzazione (proprieta)
-		// Autorizzazione (Soggetti Autorizzati)
-		// Soggetti Autorizzati
-		// Autorizzazione (Ruoli Autorizzati)
-		// Ruoli Richiesti
-		// Ruoli Forniti
-		// Autorizzazione (Scope)
+		
+		// Autorizzazione Trasporto (Soggetti/Applicativi Autorizzati)
+		// Soggetti/Applicativi Autorizzati (Authz Trasporto)
+		// Autorizzazione Trasporto (Ruoli Autorizzati)
+		// Ruoli Richiesti (Authz Trasporto)
+		// Ruoli Forniti (Authz Trasporto)
+		
+		// Autorizzazione Token (Applicativi Autorizzati)
+		// Applicativi Autorizzati (Authz Token)
+		// Autorizzazione Token (Ruoli Autorizzati)
+		// Ruoli Richiesti (Authz Token)
+		// Ruoli Forniti (Authz Token)
+		
+		// Autorizzazione per Token Scope
 		// Scope Richiesti
 		// Scope Forniti
-		// Autorizzazione (Token Claims)
+		
+		// Autorizzazione per Token Claims
 		
 		// Soggetti Autorizzati la colonna contiene l'elenco dei soggetti  separati da '\n').
 		// Ruoli (separati da '\n')
@@ -866,7 +914,7 @@ public class ConfigurazioniCsvExporter {
 		// Autorizzazione (proprieta)
 		oneLine.add(this.toStringProprieta(paOp2.getProprietaAutorizzazioneList()));
 		
-		// Autorizzazione (Soggetti Autorizzati)
+		// Autorizzazione Trasporto (Soggetti Autorizzati)
 		// Se abilitato:
 		// Servizi Applicativi Autorizzati: sa1 (user:xxx)
 		//                                  sa2 (user:xxx)
@@ -905,7 +953,7 @@ public class ConfigurazioniCsvExporter {
 				StringBuilder sb = new StringBuilder();
 				for (PortaApplicativaAutorizzazioneServizioApplicativo sa : paOp2.getServiziApplicativiAutorizzati().getServizioApplicativoList()) {
 					if(sb.length()>0) sb.append("\n");
-					sb.append(sa.getNome() + " soggetto:"+sa.getTipoSoggettoProprietario()+"/"+sa.getNomeSoggettoProprietario()+"");
+						sb.append(sa.getNome() + " soggetto:"+sa.getTipoSoggettoProprietario()+"/"+sa.getNomeSoggettoProprietario()+"");
 				}
 				oneLine.add(sb.toString());
 			}
@@ -919,7 +967,7 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add("");
 		}
 
-		// Autorizzazione (Ruoli Autorizzati)
+		// Autorizzazione Trasporto (Ruoli Autorizzati)
 		// Ruoli Richiesti: tutti/almenoUno
 		// Ruoli Autorizzati: ruolo1 (fonte esterna)
 		//                    ruolo2 (fonte interna)
@@ -950,6 +998,61 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add("");
 		}
 		
+		// Autorizzazione Token (Applicativi Autorizzati)
+		// Applicativi Autorizzati (Authz Token)
+		PortaApplicativaAutorizzazioneToken autorizzazioneToken = paOp2.getAutorizzazioneToken();
+		if(autorizzazioneToken!=null && StatoFunzionalita.ABILITATO.equals(autorizzazioneToken.getAutorizzazioneApplicativi())){
+			oneLine.add(StatoFunzionalita.ABILITATO.getValue());
+			StringBuilder sb = new StringBuilder();
+			if(autorizzazioneToken.getServiziApplicativi()!=null && autorizzazioneToken.getServiziApplicativi().sizeServizioApplicativoList()>0) {
+				for (PortaApplicativaAutorizzazioneServizioApplicativo sa : autorizzazioneToken.getServiziApplicativi().getServizioApplicativoList()) {
+					if(sb.length()>0) sb.append("\n");
+						sb.append(sa.getNome() + " soggetto:"+sa.getTipoSoggettoProprietario()+"/"+sa.getNomeSoggettoProprietario()+"");
+				}
+			}
+			oneLine.add(sb.toString());
+		} else {
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+			oneLine.add("");
+		}
+		
+		// Autorizzazione Token (Ruoli Autorizzati)
+		// Ruoli Richiesti (Authz Token)
+		// Ruoli Forniti (Authz Token)
+		if(autorizzazioneToken!=null && StatoFunzionalita.ABILITATO.equals(autorizzazioneToken.getAutorizzazioneRuoli())){
+			oneLine.add(StatoFunzionalita.ABILITATO.getValue());
+			String match = autorizzazioneToken.getRuoli()!=null && autorizzazioneToken.getRuoli().getMatch()!=null ? 
+					(org.openspcoop2.core.config.constants.RuoloTipoMatch.ANY.equals(autorizzazioneToken.getRuoli().getMatch()) ? CostantiConfigurazioni.LABEL_RUOLI_ANY : CostantiConfigurazioni.LABEL_RUOLI_ALL) 
+					: 
+					"";
+			oneLine.add(match);
+			if(autorizzazioneToken.getRuoli()!=null && autorizzazioneToken.getRuoli().sizeRuoloList()>0){
+				StringBuilder sb = new StringBuilder();
+				for (Ruolo ruolo : autorizzazioneToken.getRuoli().getRuoloList()) {
+					if(sb.length()>0) sb.append("\n");
+						sb.append(ruolo.getNome());
+				}
+				oneLine.add(sb.toString());
+			} else {
+				oneLine.add("");
+			}
+		} else {
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+			oneLine.add("");
+			oneLine.add("");
+		}
+		
+		// Autorizzazione (Token Claims)
+		
+		if(gestioneToken != null) {
+			if(StringUtils.isNotEmpty(gestioneToken.getOptions()))
+				oneLine.add(gestioneToken.getOptions());
+			else 
+				oneLine.add("");
+		}else {
+			oneLine.add("");
+		}
+		
 		// Autorizzazione (Scope)
 		// Scope Richiesti
 		// Scope Forniti
@@ -974,17 +1077,6 @@ public class ConfigurazioniCsvExporter {
 		} else {
 			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
 			oneLine.add("");
-			oneLine.add("");
-		}
-
-		// Autorizzazione (Token Claims)
-		
-		if(gestioneToken != null) {
-			if(StringUtils.isNotEmpty(gestioneToken.getOptions()))
-				oneLine.add(gestioneToken.getOptions());
-			else 
-				oneLine.add("");
-		}else {
 			oneLine.add("");
 		}
 		
@@ -1503,26 +1595,34 @@ public class ConfigurazioniCsvExporter {
 		
 		// Autorizzazione (Stato)
 		// Autorizzazione (proprieta)
-		// Autorizzazione (Soggetti Autorizzati)
-		// Soggetti Autorizzati
-		// Autorizzazione (Ruoli Autorizzati)
-		// Ruoli Richiesti
-		// Ruoli Forniti
-		// Autorizzazione (Scope)
+		
+		// Autorizzazione Trasporto (Soggetti/Applicativi Autorizzati)
+		// Applicativi Autorizzati (Authz Trasporto)
+		// Autorizzazione Trasporto (Ruoli Autorizzati)
+		// Ruoli Richiesti (Authz Trasporto)
+		// Ruoli Forniti (Authz Trasporto)
+		
+		// Autorizzazione Token (Applicativi Autorizzati)
+		// Applicativi Autorizzati (Authz Token)
+		// Autorizzazione Token (Ruoli Autorizzati)
+		// Ruoli Richiesti (Authz Token)
+		// Ruoli Forniti (Authz Token)
+		
+		// Autorizzazione per Token Scope
 		// Scope Richiesti
 		// Scope Forniti
-		// Autorizzazione (Token Claims)
 		
-		// Soggetti Autorizzati la colonna contiene l'elenco dei soggetti  separati da '\n').
-		// Ruoli (separati da '\n')
-		// Ruoli Richiesti (all/any)
+		// Autorizzazione per Token Claims
+		
+		/* Dettagli dei valori:
+		 * 
+		 * Autorizzazione (stato): disabilitato/abilitato/xacmlPolicy/NomeCustom
+		 * 
+		   Applicativi Autorizzati la colonna contiene l'elenco dei soggetti  separati da '\n').
+		   Ruoli (separati da '\n')
+		   Ruoli Richiesti (all/any)
+		   */
 
-		// Autorizzazione (stato): disabilitato/abilitato/xacmlPolicy/NomeCustom
-
-		// Autorizzazione (stato) Tipo: disabilitato/abilitato/xacmlPolicy/NomeCustom
-		// Applicativi Autorizzati la colonna contiene l'elenco degli applicativi separati da '\n').
-		// Ruoli (separati da '\n')
-		// Ruoli Richiesti (all/any)
 		String autorizzazione = pdOp2.getAutorizzazione();
 		if(CostantiConfigurazione.AUTORIZZAZIONE_NONE.equals(autorizzazione)){
 			oneLine.add(CostantiConfigurazione.DISABILITATO.getValue());
@@ -1542,10 +1642,12 @@ public class ConfigurazioniCsvExporter {
 		// Autorizzazione (proprieta)
 		oneLine.add(this.toStringProprieta(pdOp2.getProprietaAutorizzazioneList()));
 
+		// Autorizzazione Trasporto (Soggetti/Applicativi Autorizzati)
+		// Applicativi Autorizzati (Authz Trasporto)
 		// Se abilitato:
-		// Servizi Applicativi Autorizzati: sa1 (user:xxx)
-		//                                  sa2 (user:xxx)
-		//                                  sa3 (user:xxx)
+		// Servizi Applicativi Autorizzati: sa1
+		//                                  sa2
+		//                                  sa3
 		if(autorizzazione.toLowerCase().contains(TipoAutorizzazione.AUTHENTICATED.getValue().toLowerCase())){
 			oneLine.add(StatoFunzionalita.ABILITATO.getValue());
 			List<String> sa = dettaglioPD.getSa();
@@ -1560,6 +1662,9 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add("");
 		}
 
+		// Autorizzazione Trasporto (Ruoli Autorizzati)
+		// Ruoli Richiesti (Authz Trasporto)
+		// Ruoli Forniti (Authz Trasporto)
 		// Ruoli: tutti/almenoUno
 		// Ruoli Autorizzati: ruolo1 (fonte esterna)
 		//                    ruolo2 (fonte interna)
@@ -1569,6 +1674,7 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add(StatoFunzionalita.ABILITATO.getValue());
 			List<String> ruoli = dettaglioPD.getRuoli();
 			String match = dettaglioPD.getMatchRuoli();
+			oneLine.add(match);
 			if(pdOp2.getRuoli()!=null){
 				StringBuilder sb = new StringBuilder();
 
@@ -1581,10 +1687,64 @@ public class ConfigurazioniCsvExporter {
 			} else {
 				oneLine.add("");
 			}
-			oneLine.add(match);
 		} else {
 			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
 			oneLine.add("");
+			oneLine.add("");
+		}
+		
+		// Autorizzazione Token (Applicativi Autorizzati)
+		// Applicativi Autorizzati (Authz Token)
+		PortaDelegataAutorizzazioneToken autorizzazioneToken = pdOp2.getAutorizzazioneToken();
+		if(autorizzazioneToken!=null && StatoFunzionalita.ABILITATO.equals(autorizzazioneToken.getAutorizzazioneApplicativi())){
+			oneLine.add(StatoFunzionalita.ABILITATO.getValue());
+			StringBuilder sb = new StringBuilder();
+			if(autorizzazioneToken.getServiziApplicativi()!=null && autorizzazioneToken.getServiziApplicativi().sizeServizioApplicativoList()>0) {
+				for (PortaDelegataServizioApplicativo servApp : autorizzazioneToken.getServiziApplicativi().getServizioApplicativoList()) {
+					if(sb.length()>0) sb.append("\n");
+						sb.append(servApp.getNome());
+				}
+			}
+			oneLine.add(sb.toString());
+		} else {
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+			oneLine.add("");
+		}
+		
+		// Autorizzazione Token (Ruoli Autorizzati)
+		// Ruoli Richiesti (Authz Token)
+		// Ruoli Forniti (Authz Token)
+		if(autorizzazioneToken!=null && StatoFunzionalita.ABILITATO.equals(autorizzazioneToken.getAutorizzazioneRuoli())){
+			oneLine.add(StatoFunzionalita.ABILITATO.getValue());
+			String match = autorizzazioneToken.getRuoli()!=null && autorizzazioneToken.getRuoli().getMatch()!=null ? 
+					(org.openspcoop2.core.config.constants.RuoloTipoMatch.ANY.equals(autorizzazioneToken.getRuoli().getMatch()) ? CostantiConfigurazioni.LABEL_RUOLI_ANY : CostantiConfigurazioni.LABEL_RUOLI_ALL) 
+					: 
+					"";
+			oneLine.add(match);
+			if(autorizzazioneToken.getRuoli()!=null && autorizzazioneToken.getRuoli().sizeRuoloList()>0){
+				StringBuilder sb = new StringBuilder();
+				for (Ruolo ruolo : autorizzazioneToken.getRuoli().getRuoloList()) {
+					if(sb.length()>0) sb.append("\n");
+						sb.append(ruolo.getNome());
+				}
+				oneLine.add(sb.toString());
+			} else {
+				oneLine.add("");
+			}
+		} else {
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+			oneLine.add("");
+			oneLine.add("");
+		}
+		
+		// Autorizzazione (Token Claims)
+		
+		if(gestioneToken != null) {
+			if(StringUtils.isNotEmpty(gestioneToken.getOptions()))
+				oneLine.add(gestioneToken.getOptions());
+			else 
+				oneLine.add("");
+		}else {
 			oneLine.add("");
 		}
 		
@@ -1614,18 +1774,7 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add("");
 			oneLine.add("");
 		}
-		
-		// Autorizzazione (Token Claims)
-		
-		if(gestioneToken != null) {
-			if(StringUtils.isNotEmpty(gestioneToken.getOptions()))
-				oneLine.add(gestioneToken.getOptions());
-			else 
-				oneLine.add("");
-		}else {
-			oneLine.add("");
-		}
-		
+				
 		// Autorizzazione Contenuti (Stato)
 		String autorizzazioneContenuti = pdOp2.getAutorizzazioneContenuto();
 		if(CostantiConfigurazione.AUTORIZZAZIONE_NONE.equals(autorizzazioneContenuti)){

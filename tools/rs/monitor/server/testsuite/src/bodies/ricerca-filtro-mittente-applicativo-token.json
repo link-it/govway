@@ -1,0 +1,14 @@
+{
+        "intervallo_temporale": {
+		"data_inizio": "2012-07-21T17:32:28Z",
+		"data_fine": "2042-07-21T17:32:28Z"
+	},
+	"tipo": "erogazione",
+	"mittente": {
+		"identificazione": "erogazione_applicativo",
+		"tipo_identificazione_applicativo": "token",
+		"soggetto": "Ente",
+		"applicativo": "Applicativone"
+	}
+}
+

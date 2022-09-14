@@ -97,7 +97,7 @@ Si compilano i campi seguenti:
 
    -  *Ruolo Richiedente*: Opzione per filtrare le richieste in base al ruolo posseduto dal richiedente (sia che si tratti di un soggetto che di un applicativo).
 
-   -  *Soggetto o Applicativo Fruitore*: In aternativca al filtro per ruolo, è possibile specificare un soggetto fruitore ed eventualmente uno dei suoi applicativi.
+   -  *Soggetto o Applicativo Fruitore*: In aternativca al filtro per ruolo, è possibile specificare un soggetto fruitore ed eventualmente uno dei suoi applicativi (identificati tramite autenticazione trasporto o token).
 
    -  *Token Claims*: consente di indicare per riga (nome=valore) i "claims" che le richieste devono possedere nel token OAuth2.
 

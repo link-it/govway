@@ -7,6 +7,8 @@ Fornisce statistiche sulle transazioni sulla base della loro
 ripartizione tra gli applicativi dei soggetti interni al dominio GovWay
 che hanno inviato le richieste (di fruizione o erogazione).
 
+Deve essere selezionata anche la modalità di identificazione dell'applicativo se derivante da credenziali ottenute tramite autenticazione trasporto o token.
+
 Di seguito alcuni esempi di report generabili.
 
 Tabella:

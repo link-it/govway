@@ -152,7 +152,7 @@ public interface ApplicativiApi  {
     public void updateApplicativo(@Valid Applicativo body, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto);
 
     /**
-     * Modifica i dati di un applicativo
+     * Modifica le credenziali associate ad un applicativo
      *
      * Questa operazione consente di aggiornare le credenziali associate ad un applicativo identificato dal nome e dal soggetto di riferimento
      *
@@ -161,7 +161,7 @@ public interface ApplicativiApi  {
     @Path("/applicativi/{nome}/credenziali")
     @Consumes({ "application/json" })
     @Produces({ "application/problem+json" })
-    @Operation(summary = "Modifica i dati di un applicativo", tags={ "applicativi" })
+    @Operation(summary = "Modifica le credenziali associate ad un applicativo", tags={ "applicativi" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "204", description = "Resource updated"),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),

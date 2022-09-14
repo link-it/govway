@@ -162,7 +162,15 @@
                     <xsd:attribute name="token-subject" type="xsd:string" use="optional"/>
                     <xsd:attribute name="token-username" type="xsd:string" use="optional"/>
                     <xsd:attribute name="token-eMail" type="xsd:string" use="optional"/>
-                    
+
+                </xsd:complexType>
+            </xsd:element> 
+
+            <xsd:element name="servizio-applicativo-token" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:attribute name="nome" type="xsd:string" use="optional"/>
+                    <xsd:attribute name="tipo-soggetto" type="xsd:string" use="optional"/>
+                    <xsd:attribute name="nome-soggetto" type="xsd:string" use="optional"/>
                 </xsd:complexType>
             </xsd:element> 
             

@@ -1750,6 +1750,10 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("local_forward", "?");
 				sqlQueryObject.addInsertField("local_forward_pa", "?");
 				sqlQueryObject.addInsertField("ruoli_match", "?");
+				sqlQueryObject.addInsertField("token_sa_stato", "?");
+				sqlQueryObject.addInsertField("token_ruoli_stato", "?");
+				sqlQueryObject.addInsertField("token_ruoli_match", "?");
+				sqlQueryObject.addInsertField("token_ruoli_tipologia", "?");
 				sqlQueryObject.addInsertField("scope_stato", "?");
 				sqlQueryObject.addInsertField("scope_match", "?");
 				sqlQueryObject.addInsertField("ricerca_porta_azione_delegata", "?");
@@ -1876,6 +1880,19 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, aPD!=null && aPD.getRuoli()!=null && aPD.getRuoli().getMatch()!=null ? 
 						aPD.getRuoli().getMatch().getValue() : null);
 				
+				// Token sa
+				stm.setString(index++, aPD!=null && aPD.getAutorizzazioneToken()!=null && aPD.getAutorizzazioneToken().getAutorizzazioneApplicativi()!=null ? 
+						DriverConfigurazioneDB_LIB.getValue(aPD.getAutorizzazioneToken().getAutorizzazioneApplicativi()) : null);
+				
+				// Token ruoli
+				stm.setString(index++, aPD!=null && aPD.getAutorizzazioneToken()!=null && aPD.getAutorizzazioneToken().getAutorizzazioneRuoli()!=null ? 
+						DriverConfigurazioneDB_LIB.getValue(aPD.getAutorizzazioneToken().getAutorizzazioneRuoli()) : null);
+				stm.setString(index++, aPD!=null && aPD.getAutorizzazioneToken()!=null && aPD.getAutorizzazioneToken().getRuoli()!=null && 
+						aPD.getAutorizzazioneToken().getRuoli().getMatch()!=null ? 
+						aPD.getAutorizzazioneToken().getRuoli().getMatch().getValue() : null);
+				stm.setString(index++, aPD!=null && aPD.getAutorizzazioneToken()!=null && aPD.getAutorizzazioneToken().getTipologiaRuoli()!=null ? 
+						aPD.getAutorizzazioneToken().getTipologiaRuoli().getValue() : null);
+				
 				// Scope
 				stm.setString(index++, aPD!=null && aPD.getScope()!=null && aPD.getScope().getStato()!=null ? 
 						DriverConfigurazioneDB_LIB.getValue(aPD.getScope().getStato()) : null);
@@ -1975,6 +1992,15 @@ public class DriverConfigurazioneDB_LIB {
 								aPD.getAllegaBody(),aPD.getScartaBody(),aPD.getGestioneManifest(),aPD.getStateless(),aPD.getLocalForward(),
 								(aPD!=null && aPD.getRuoli()!=null && aPD.getRuoli().getMatch()!=null ? 
 										aPD.getRuoli().getMatch().getValue() : null),
+								(aPD!=null && aPD.getAutorizzazioneToken()!=null && aPD.getAutorizzazioneToken().getAutorizzazioneApplicativi()!=null ? 
+										DriverConfigurazioneDB_LIB.getValue(aPD.getAutorizzazioneToken().getAutorizzazioneApplicativi()) : null),
+								(aPD!=null && aPD.getAutorizzazioneToken()!=null && aPD.getAutorizzazioneToken().getAutorizzazioneRuoli()!=null ? 
+										DriverConfigurazioneDB_LIB.getValue(aPD.getAutorizzazioneToken().getAutorizzazioneRuoli()) : null),
+								(aPD!=null && aPD.getAutorizzazioneToken()!=null && aPD.getAutorizzazioneToken().getRuoli()!=null && 
+									aPD.getAutorizzazioneToken().getRuoli().getMatch()!=null ? 
+										aPD.getAutorizzazioneToken().getRuoli().getMatch().getValue() : null),
+								(aPD.getAutorizzazioneToken()!=null && aPD.getAutorizzazioneToken().getTipologiaRuoli()!=null ? 
+										aPD.getAutorizzazioneToken().getTipologiaRuoli().getValue() : null),
 								(aPD!=null && aPD.getScope()!=null && aPD.getScope().getStato()!=null ? 
 										aPD.getScope().getStato() : null),
 								(aPD!=null && aPD.getScope()!=null && aPD.getScope().getMatch()!=null ? 
@@ -2374,6 +2400,66 @@ public class DriverConfigurazioneDB_LIB {
 				
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " scope alla PortaDelegata[" + idPortaDelegata + "]");
 				
+				
+				// serviziapplicativi (token)
+				if(aPD.getAutorizzazioneToken()!=null && aPD.getAutorizzazioneToken().getServiziApplicativi()!=null &&
+						aPD.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList()>0) {
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_TOKEN_SA);
+					sqlQueryObject.addInsertField("id_porta", "?");
+					sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
+					sqlQuery = sqlQueryObject.createSQLInsert();
+					stm = con.prepareStatement(sqlQuery);
+	
+					for (i = 0; i < aPD.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList(); i++) {
+						PortaDelegataServizioApplicativo servizioApplicativo = aPD.getAutorizzazioneToken().getServiziApplicativi().getServizioApplicativo(i);
+						String nomeSA = servizioApplicativo.getNome();
+						//il tipo e il nome proprietario servizio applicativo sono gli stessi della porta delegata
+						String nomeProprietarioSA = aPD.getNomeSoggettoProprietario(); //servizioApplicativo.getNomeSoggettoProprietario();
+						String tipoProprietarioSA = aPD.getTipoSoggettoProprietario(); //servizioApplicativo.getTipoSoggettoProprietario();
+						if (nomeSA == null || nomeSA.equals(""))
+							throw new DriverConfigurazioneException("Nome del ServizioApplicativo associato non valido.");
+						if (nomeProprietarioSA == null || nomeProprietarioSA.equals(""))
+							throw new DriverConfigurazioneException("Nome Proprietario del ServizioApplicativo associato non valido.");
+						if (tipoProprietarioSA == null || tipoProprietarioSA.equals(""))
+							throw new DriverConfigurazioneException("Tipo Proprietario del ServizioApplicativo associato non valido.");
+	
+						long idSA = DriverConfigurazioneDB_LIB.getIdServizioApplicativo(nomeSA, tipoProprietarioSA, nomeProprietarioSA, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+	
+						if (idSA <= 0)
+							throw new DriverConfigurazioneException("Impossibile recuperare l'id del Servizio Applicativo [" + nomeSA + "] di [" + tipoProprietarioSA + "/" + nomeProprietarioSA + "]");
+	
+						stm.setLong(1, idPortaDelegata);
+						stm.setLong(2, idSA);
+						stm.executeUpdate();
+					}
+					stm.close();
+					DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " associazioni ServizioApplicativo<->PortaDelegata (token) associati alla PortaDelegata[" + idPortaDelegata + "]");
+				}
+				
+				// Ruoli (Token)
+				n=0;
+				if(aPD.getAutorizzazioneToken()!=null && aPD.getAutorizzazioneToken().getRuoli()!=null &&
+						aPD.getAutorizzazioneToken().getRuoli().sizeRuoloList()>0){
+					for (int j = 0; j < aPD.getAutorizzazioneToken().getRuoli().sizeRuoloList(); j++) {
+						Ruolo ruolo = aPD.getAutorizzazioneToken().getRuoli().getRuolo(j);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_TOKEN_RUOLI);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						sqlQueryObject.addInsertField("ruolo", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, aPD.getId());
+						stm.setString(2, ruolo.getNome());
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunto ruolo[" + ruolo.getNome() + "] (token) alla PortaDelegata[" + idPortaDelegata + "]");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " ruoli (token) alla PortaDelegata[" + idPortaDelegata + "]");
+				
 				// Azioni
 				n=0;
 				if(aPD.getAzione()!=null && aPD.getAzione().sizeAzioneDelegataList()>0){
@@ -2641,6 +2727,10 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("local_forward", "?");
 				sqlQueryObject.addUpdateField("local_forward_pa", "?");
 				sqlQueryObject.addUpdateField("ruoli_match", "?");
+				sqlQueryObject.addUpdateField("token_sa_stato", "?");
+				sqlQueryObject.addUpdateField("token_ruoli_stato", "?");
+				sqlQueryObject.addUpdateField("token_ruoli_match", "?");
+				sqlQueryObject.addUpdateField("token_ruoli_tipologia", "?");
 				sqlQueryObject.addUpdateField("scope_stato", "?");
 				sqlQueryObject.addUpdateField("scope_match", "?");
 				sqlQueryObject.addUpdateField("ricerca_porta_azione_delegata", "?");
@@ -2763,6 +2853,17 @@ public class DriverConfigurazioneDB_LIB {
 				// Ruoli
 				stm.setString(index++, aPD!=null && aPD.getRuoli()!=null && aPD.getRuoli().getMatch()!=null ? 
 						aPD.getRuoli().getMatch().getValue() : null);
+				// Token sa
+				stm.setString(index++, aPD!=null && aPD.getAutorizzazioneToken()!=null && aPD.getAutorizzazioneToken().getAutorizzazioneApplicativi()!=null ? 
+						DriverConfigurazioneDB_LIB.getValue(aPD.getAutorizzazioneToken().getAutorizzazioneApplicativi()) : null);	
+				// Token ruoli
+				stm.setString(index++, aPD!=null && aPD.getAutorizzazioneToken()!=null && aPD.getAutorizzazioneToken().getAutorizzazioneRuoli()!=null ? 
+						DriverConfigurazioneDB_LIB.getValue(aPD.getAutorizzazioneToken().getAutorizzazioneRuoli()) : null);
+				stm.setString(index++, aPD!=null && aPD.getAutorizzazioneToken()!=null && aPD.getAutorizzazioneToken().getRuoli()!=null && 
+						aPD.getAutorizzazioneToken().getRuoli().getMatch()!=null ? 
+						aPD.getAutorizzazioneToken().getRuoli().getMatch().getValue() : null);
+				stm.setString(index++, aPD!=null && aPD.getAutorizzazioneToken()!=null && aPD.getAutorizzazioneToken().getTipologiaRuoli()!=null ? 
+						aPD.getAutorizzazioneToken().getTipologiaRuoli().getValue() : null);
 				// Scope
 				stm.setString(index++, aPD!=null && aPD.getScope()!=null && aPD.getScope().getStato()!=null ? 
 						DriverConfigurazioneDB_LIB.getValue(aPD.getScope().getStato()) : null);
@@ -3393,6 +3494,104 @@ public class DriverConfigurazioneDB_LIB {
 				
 				
 				
+				/*Sincronizzazione servizi applicativi token */
+				//la lista dei servizi applicativi passata contiene tutti e soli i servizi applicativi necessari
+				//quindi nel db devono essere presenti tutti e solo quelli presenti nella lista
+				//se la lista e' vuota allora i servizi applicativi vanno cancellati
+
+				//TODO possibile ottimizzazione in termini di tempo
+				//cancello i servizi applicativi associati alla porta e inserisco tutti e soli quelli presenti in lista
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TOKEN_SA);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaDelegata);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" servizi applicativi (token) associati alla Porta Delegata "+idPortaDelegata);
+			
+				// serviziapplicativi (token)
+				if(aPD.getAutorizzazioneToken()!=null && aPD.getAutorizzazioneToken().getServiziApplicativi()!=null &&
+						aPD.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList()>0) {
+					//scrivo la lista nel db
+					n=0;
+					for (i = 0; i < aPD.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList(); i++) {
+						PortaDelegataServizioApplicativo servizioApplicativo = aPD.getAutorizzazioneToken().getServiziApplicativi().getServizioApplicativo(i);
+	
+						String nomeSA = servizioApplicativo.getNome();
+						//il tipo e il nome proprietario servizio applicativo sono gli stessi della porta delegata
+						//controllo se sono settati gli old, perche potrei essere in un caso di update
+						String nomeProprietarioSA = aPD.getNomeSoggettoProprietario(); 
+						String tipoProprietarioSA = aPD.getTipoSoggettoProprietario(); 
+	
+						if (nomeSA == null || nomeSA.equals(""))
+							throw new DriverConfigurazioneException("Nome del ServizioApplicativo associato non valido.");
+						if (nomeProprietarioSA == null || nomeProprietarioSA.equals(""))
+							throw new DriverConfigurazioneException("Nome Proprietario del ServizioApplicativo associato non valido.");
+						if (tipoProprietarioSA == null || tipoProprietarioSA.equals(""))
+							throw new DriverConfigurazioneException("Tipo Proprietario del ServizioApplicativo associato non valido.");
+	
+						long idSA = DriverConfigurazioneDB_LIB.getIdServizioApplicativo(nomeSA, tipoProprietarioSA, nomeProprietarioSA, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+	
+						if (idSA <= 0)
+							throw new DriverConfigurazioneException("Impossibile recuperare l'id del Servizio Applicativo [" + nomeSA + "] di [" + tipoProprietarioSA + "/" + nomeProprietarioSA + "]");
+	
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_TOKEN_SA);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, idPortaDelegata);
+						stm.setLong(2, idSA);
+	
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunta associazione PortaDelegata<->ServizioApplicativo (token) [" + idPortaDelegata + "]<->[" + idSA + "]");
+					}
+	
+					DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " associazioni PortaDelegata<->ServizioApplicativo (token) associati alla PortaDelegata[" + idPortaDelegata + "]");
+				}
+				
+				
+				
+				// Ruoli (token)
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TOKEN_RUOLI);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaDelegata);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" ruoli (token) associati alla Porta Delegata "+idPortaDelegata);
+				
+				n=0;
+				if(aPD.getAutorizzazioneToken()!=null && aPD.getAutorizzazioneToken().getRuoli()!=null &&
+						aPD.getAutorizzazioneToken().getRuoli().sizeRuoloList()>0){
+					for (int j = 0; j < aPD.getAutorizzazioneToken().getRuoli().sizeRuoloList(); j++) {
+						Ruolo ruolo = aPD.getAutorizzazioneToken().getRuoli().getRuolo(j);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_TOKEN_RUOLI);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						sqlQueryObject.addInsertField("ruolo", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, idPortaDelegata);
+						stm.setString(2, ruolo.getNome());
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunto ruolo[" + ruolo.getNome() + "] (token) alla PortaDelegata[" + idPortaDelegata + "]");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " ruoli (token) alla PortaDelegata[" + idPortaDelegata + "]");
+				
+				
 				// Azioni
 				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -3613,6 +3812,28 @@ public class DriverConfigurazioneDB_LIB {
 				n=stm.executeUpdate();
 				stm.close();
 				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" azioni delegate associate alla Porta Delegata "+idPortaDelegata);
+				
+				// ruoli (token)
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TOKEN_RUOLI);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaDelegata);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" ruoli (token) associati alla Porta Delegata "+idPortaDelegata);
+				
+				// servizi applicativi (token)
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TOKEN_SA);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaDelegata);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " associazioni PortaDelegata<->ServizioApplicativo (token) associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				// ruoli
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -3922,6 +4143,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("cn_issuer", "?");
 				sqlQueryObject.addInsertField("certificate", "?");
 				sqlQueryObject.addInsertField("cert_strict_verification", "?");
+				sqlQueryObject.addInsertField("token_policy", "?");
 				sqlQueryObject.addInsertField("invio_x_rif_inv", "?");
 				sqlQueryObject.addInsertField("risposta_x_rif_inv", "?");
 				sqlQueryObject.addInsertField("invio_x_rif", "?");
@@ -4050,6 +4272,8 @@ public class DriverConfigurazioneDB_LIB {
 				else {
 					stm.setInt(index++, CostantiDB.FALSE);
 				}
+				
+				stm.setString(index++, credenzialiInvocazionePorta!=null ? credenzialiInvocazionePorta.getTokenPolicy() : null);
 
 				// aggiungo gestione invio/risposta per riferimento
 				// invocazione servizio
@@ -4311,6 +4535,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("cn_issuer", "?");
 				sqlQueryObject.addUpdateField("certificate", "?");
 				sqlQueryObject.addUpdateField("cert_strict_verification", "?");
+				sqlQueryObject.addUpdateField("token_policy", "?");
 				sqlQueryObject.addUpdateField("invio_x_rif_inv", "?");
 				sqlQueryObject.addUpdateField("risposta_x_rif_inv", "?");
 				sqlQueryObject.addUpdateField("invio_x_rif", "?");
@@ -4470,6 +4695,8 @@ public class DriverConfigurazioneDB_LIB {
 				else {
 					stm.setInt(index++, CostantiDB.FALSE);
 				}
+				
+				stm.setString(index++, credenzialiInvocazionePorta!=null ? credenzialiInvocazionePorta.getTokenPolicy() : null);
 
 				// aggiungo gestione invio/risposta per riferimento
 				// invocazione servizio
@@ -4731,6 +4958,10 @@ public class DriverConfigurazioneDB_LIB {
 				if (n > 0)
 					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " ruoli associati al ServizioApplicativo[" + idServizioApplicativo + "]");
 				
+				/*
+				 * BUG?? Devo prima eliminare l'associazione
+				 */
+				/*
 				// cancello anche le associazioni delle porteapplicative
 				// associate a questo servizio
 				// serviziapplicativi
@@ -4790,7 +5021,7 @@ public class DriverConfigurazioneDB_LIB {
 				stm.close();
 				if (n > 0)
 					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " associazioni di PortaDelegata<->ServizioApplicativo associate al ServizioApplicativo[" + idServizioApplicativo + "]");
-
+				 */
 
 
 				DriverConfigurazioneDB_LIB.log.debug("Deleted ...");
@@ -5234,6 +5465,10 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("autorizzazione_xacml", "?");
 				sqlQueryObject.addInsertField("autorizzazione_contenuto", "?");
 				sqlQueryObject.addInsertField("ruoli_match", "?");
+				sqlQueryObject.addInsertField("token_sa_stato", "?");
+				sqlQueryObject.addInsertField("token_ruoli_stato", "?");
+				sqlQueryObject.addInsertField("token_ruoli_match", "?");
+				sqlQueryObject.addInsertField("token_ruoli_tipologia", "?");
 				sqlQueryObject.addInsertField("scope_stato", "?");
 				sqlQueryObject.addInsertField("scope_match", "?");
 				sqlQueryObject.addInsertField("ricerca_porta_azione_delegata", "?");
@@ -5361,6 +5596,19 @@ public class DriverConfigurazioneDB_LIB {
 				// Ruoli
 				stm.setString(index++, aPA!=null && aPA.getRuoli()!=null && aPA.getRuoli().getMatch()!=null ? 
 						aPA.getRuoli().getMatch().getValue() : null);
+				
+				// Token sa
+				stm.setString(index++, aPA!=null && aPA.getAutorizzazioneToken()!=null && aPA.getAutorizzazioneToken().getAutorizzazioneApplicativi()!=null ? 
+						DriverConfigurazioneDB_LIB.getValue(aPA.getAutorizzazioneToken().getAutorizzazioneApplicativi()) : null);
+				
+				// Token ruoli
+				stm.setString(index++, aPA!=null && aPA.getAutorizzazioneToken()!=null && aPA.getAutorizzazioneToken().getAutorizzazioneRuoli()!=null ? 
+						DriverConfigurazioneDB_LIB.getValue(aPA.getAutorizzazioneToken().getAutorizzazioneRuoli()) : null);
+				stm.setString(index++, aPA!=null && aPA.getAutorizzazioneToken()!=null && aPA.getAutorizzazioneToken().getRuoli()!=null && 
+						aPA.getAutorizzazioneToken().getRuoli().getMatch()!=null ? 
+						aPA.getAutorizzazioneToken().getRuoli().getMatch().getValue() : null);
+				stm.setString(index++, aPA!=null && aPA.getAutorizzazioneToken()!=null && aPA.getAutorizzazioneToken().getTipologiaRuoli()!=null ? 
+						aPA.getAutorizzazioneToken().getTipologiaRuoli().getValue() : null);
 				
 				// Scope
 				stm.setString(index++, aPA!=null && aPA.getScope()!=null && aPA.getScope().getStato()!=null ? 
@@ -6018,6 +6266,65 @@ public class DriverConfigurazioneDB_LIB {
 				}
 				
 				
+				// serviziapplicativi token autorizzati
+				if(aPA.getAutorizzazioneToken()!=null && aPA.getAutorizzazioneToken().getServiziApplicativi()!=null &&
+						aPA.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList()>0) {
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_TOKEN_SA);
+					sqlQueryObject.addInsertField("id_porta", "?");
+					sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
+					sqlQuery = sqlQueryObject.createSQLInsert();
+					stm = con.prepareStatement(sqlQuery);
+	
+					for (i = 0; i < aPA.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList(); i++) {
+						PortaApplicativaAutorizzazioneServizioApplicativo servizioApplicativo = aPA.getAutorizzazioneToken().getServiziApplicativi().getServizioApplicativo(i);
+						String nomeSA = servizioApplicativo.getNome();
+						String nomeProprietarioSA = servizioApplicativo.getNomeSoggettoProprietario();
+						String tipoProprietarioSA = servizioApplicativo.getTipoSoggettoProprietario();
+						if (nomeSA == null || nomeSA.equals(""))
+							throw new DriverConfigurazioneException("[CRUDPortaApplicativa(CREATE)[TokenAuth]::Nome del ServizioApplicativo associato non valido.");
+						if (nomeProprietarioSA == null || nomeProprietarioSA.equals(""))
+							throw new DriverConfigurazioneException("[CRUDPortaApplicativa(CREATE)[TokenAuth]::Nome Proprietario del ServizioApplicativo associato non valido.");
+						if (tipoProprietarioSA == null || tipoProprietarioSA.equals(""))
+							throw new DriverConfigurazioneException("[CRUDPortaApplicativa(CREATE)[TokenAuth]::Tipo Proprietario del ServizioApplicativo associato non valido.");
+	
+						long idSA = DriverConfigurazioneDB_LIB.getIdServizioApplicativo(nomeSA, tipoProprietarioSA, nomeProprietarioSA, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+	
+						if (idSA <= 0)
+							throw new DriverConfigurazioneException("Impossibile recuperare l'id del Servizio Applicativo [" + nomeSA + "] di [" + tipoProprietarioSA + "/" + nomeProprietarioSA + "]");
+	
+						stm.setLong(1, idPortaApplicativa);
+						stm.setLong(2, idSA);
+						stm.executeUpdate();
+					}
+					stm.close();
+					DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " servizi applicativi autorizzati (token) associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				}
+				
+				
+				// Ruoli (token)
+				n=0;
+				if(aPA.getAutorizzazioneToken()!=null && aPA.getAutorizzazioneToken().getRuoli()!=null && aPA.getAutorizzazioneToken().getRuoli().sizeRuoloList()>0){
+					for (int j = 0; j < aPA.getAutorizzazioneToken().getRuoli().sizeRuoloList(); j++) {
+						Ruolo ruolo = aPA.getAutorizzazioneToken().getRuoli().getRuolo(j);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_TOKEN_RUOLI);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						sqlQueryObject.addInsertField("ruolo", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, aPA.getId());
+						stm.setString(2, ruolo.getNome());
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunto ruolo[" + ruolo.getNome() + "] (token) alla PortaApplicativa[" + idPortaApplicativa + "]");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " ruoli (token) alla PortaApplicativa[" + idPortaApplicativa + "]");
+				
+				
 				// Azioni
 				n=0;
 				if(aPA.getAzione()!=null && aPA.getAzione().sizeAzioneDelegataList()>0){
@@ -6269,6 +6576,10 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("autorizzazione_xacml", "?");
 				sqlQueryObject.addUpdateField("autorizzazione_contenuto", "?");
 				sqlQueryObject.addUpdateField("ruoli_match", "?");
+				sqlQueryObject.addUpdateField("token_sa_stato", "?");
+				sqlQueryObject.addUpdateField("token_ruoli_stato", "?");
+				sqlQueryObject.addUpdateField("token_ruoli_match", "?");
+				sqlQueryObject.addUpdateField("token_ruoli_tipologia", "?");
 				sqlQueryObject.addUpdateField("scope_stato", "?");
 				sqlQueryObject.addUpdateField("scope_match", "?");
 				sqlQueryObject.addUpdateField("ricerca_porta_azione_delegata", "?");
@@ -6403,6 +6714,17 @@ public class DriverConfigurazioneDB_LIB {
 				// Ruoli
 				stm.setString(index++, aPA!=null && aPA.getRuoli()!=null && aPA.getRuoli().getMatch()!=null ? 
 						aPA.getRuoli().getMatch().getValue() : null);
+				// Token sa
+				stm.setString(index++, aPA!=null && aPA.getAutorizzazioneToken()!=null && aPA.getAutorizzazioneToken().getAutorizzazioneApplicativi()!=null ? 
+						DriverConfigurazioneDB_LIB.getValue(aPA.getAutorizzazioneToken().getAutorizzazioneApplicativi()) : null);	
+				// Token ruoli
+				stm.setString(index++, aPA!=null && aPA.getAutorizzazioneToken()!=null && aPA.getAutorizzazioneToken().getAutorizzazioneRuoli()!=null ? 
+						DriverConfigurazioneDB_LIB.getValue(aPA.getAutorizzazioneToken().getAutorizzazioneRuoli()) : null);
+				stm.setString(index++, aPA!=null && aPA.getAutorizzazioneToken()!=null && aPA.getAutorizzazioneToken().getRuoli()!=null && 
+						aPA.getAutorizzazioneToken().getRuoli().getMatch()!=null ? 
+						aPA.getAutorizzazioneToken().getRuoli().getMatch().getValue() : null);
+				stm.setString(index++, aPA!=null && aPA.getAutorizzazioneToken()!=null && aPA.getAutorizzazioneToken().getTipologiaRuoli()!=null ? 
+						aPA.getAutorizzazioneToken().getTipologiaRuoli().getValue() : null);
 				// Scope
 				stm.setString(index++, aPA!=null && aPA.getScope()!=null && aPA.getScope().getStato()!=null ? 
 						DriverConfigurazioneDB_LIB.getValue(aPA.getScope().getStato()) : null);
@@ -7316,6 +7638,94 @@ public class DriverConfigurazioneDB_LIB {
 				
 				
 				
+				
+				//la lista dei servizi applicativi passata contiene tutti e soli i servizi applicativi necessari
+				//quindi nel db devono essere presenti tutti e solo quelli presenti nella lista
+
+				//TODO possibile ottimizzazione in termini di tempo
+				//cancello i servizi applicativi associati alla porta e inserisco tutti e soli quelli presenti in lista
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_TOKEN_SA);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" servizi applicativi autorizzati (token) associati alla Porta Applicativa "+idPortaApplicativa);
+				
+				//scrivo la lista nel db
+				if(aPA.getAutorizzazioneToken()!=null && aPA.getAutorizzazioneToken().getServiziApplicativi()!=null && 
+						aPA.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList()>0) {
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_TOKEN_SA);
+					sqlQueryObject.addInsertField("id_porta", "?");
+					sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
+					sqlQuery = sqlQueryObject.createSQLInsert();
+					stm = con.prepareStatement(sqlQuery);
+	
+					for (i = 0; i < aPA.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList(); i++) {
+						PortaApplicativaAutorizzazioneServizioApplicativo servizioApplicativoAutorizzato = aPA.getAutorizzazioneToken().getServiziApplicativi().getServizioApplicativo(i);
+						String nomeSA = servizioApplicativoAutorizzato.getNome();
+						String nomeProprietarioSA = servizioApplicativoAutorizzato.getNomeSoggettoProprietario();
+						String tipoProprietarioSA = servizioApplicativoAutorizzato.getTipoSoggettoProprietario();
+						if (nomeSA == null || nomeSA.equals(""))
+							throw new DriverConfigurazioneException("[CRUDPortaApplicativa(CREATE)[TokenAuth]::Nome del ServizioApplicativo associato non valido.");
+						if (nomeProprietarioSA == null || nomeProprietarioSA.equals(""))
+							throw new DriverConfigurazioneException("[CRUDPortaApplicativa(CREATE)[TokenAuth]::Nome Proprietario del ServizioApplicativo associato non valido.");
+						if (tipoProprietarioSA == null || tipoProprietarioSA.equals(""))
+							throw new DriverConfigurazioneException("[CRUDPortaApplicativa(CREATE)[TokenAuth]::Tipo Proprietario del ServizioApplicativo associato non valido.");
+	
+						long idSA = DriverConfigurazioneDB_LIB.getIdServizioApplicativo(nomeSA, tipoProprietarioSA, nomeProprietarioSA, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+	
+						if (idSA <= 0)
+							throw new DriverConfigurazioneException("Impossibile recuperare l'id del Servizio Applicativo [" + nomeSA + "] di [" + tipoProprietarioSA + "/" + nomeProprietarioSA + "]");
+	
+						stm.setLong(1, idPortaApplicativa);
+						stm.setLong(2, idSA);
+						stm.executeUpdate();
+					}
+					stm.close();
+					DriverConfigurazioneDB_LIB.log.debug("Inseriti " + i + " servizi applicativi autorizzati (token) associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				}
+				
+				
+				
+				// Ruoli (token)
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_TOKEN_RUOLI);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" ruoli (token) associati alla Porta Applicativa "+idPortaApplicativa);
+				
+				n=0;
+				if(aPA.getAutorizzazioneToken()!=null && aPA.getAutorizzazioneToken().getRuoli()!=null && aPA.getAutorizzazioneToken().getRuoli().sizeRuoloList()>0){
+					for (int j = 0; j < aPA.getAutorizzazioneToken().getRuoli().sizeRuoloList(); j++) {
+						Ruolo ruolo = aPA.getAutorizzazioneToken().getRuoli().getRuolo(j);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_TOKEN_RUOLI);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						sqlQueryObject.addInsertField("ruolo", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, idPortaApplicativa);
+						stm.setString(2, ruolo.getNome());
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunto ruolo[" + ruolo.getNome() + "] (token) alla PortaApplicativa[" + idPortaApplicativa + "]");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " ruoli (token) alla PortaApplicativa[" + idPortaApplicativa + "]");
+				
+				
+				
 				// Azioni
 				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -7540,6 +7950,28 @@ public class DriverConfigurazioneDB_LIB {
 				n=stm.executeUpdate();
 				stm.close();
 				DriverConfigurazioneDB_LIB.log.debug("Cancellate "+n+" azioni delegate associate alla Porta Applicativa "+idPortaApplicativa);
+				
+				// ruoli (token)
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_TOKEN_RUOLI);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" ruoli (token) associati alla Porta Applicativa "+idPortaApplicativa);
+				
+				// sa autorizzati (token)
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_TOKEN_SA);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" servizi applicativi autorizzati (token) associati alla Porta Applicativa "+idPortaApplicativa);
 				
 				// sa autorizzati
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);

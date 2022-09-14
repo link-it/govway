@@ -248,6 +248,20 @@ public class DeleterArchiveUtils {
 				}
 				esito.getPorteApplicative().add(detail);
 			}
+			// ControlloTraffico (AttivazionePolicy) porta applicativa
+			for (int i = 0; i < archive.getControlloTraffico_activePolicies().size(); i++) {
+				ArchiveActivePolicy archivePolicy = archive.getControlloTraffico_activePolicies().get(i);
+				if(!archivePolicy.isPolicyGlobale() && RuoloPolicy.APPLICATIVA.equals(archivePolicy.getRuoloPorta())) {
+					ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePolicy);
+					try{
+						this.deleteActivePolicy(archivePolicy, detail);
+					}catch(Exception e){
+						detail.setState(ArchiveStatoImport.ERROR);
+						detail.setException(e);
+					}
+					esito.getControlloTraffico_activePolicies().add(detail);
+				}
+			}
 			
 			
 			// PorteDelegate
@@ -280,6 +294,20 @@ public class DeleterArchiveUtils {
 					detail.setException(e);
 				}
 				esito.getPorteDelegate().add(detail);
+			}
+			// ControlloTraffico (AttivazionePolicy) porta delegata
+			for (int i = 0; i < archive.getControlloTraffico_activePolicies().size(); i++) {
+				ArchiveActivePolicy archivePolicy = archive.getControlloTraffico_activePolicies().get(i);
+				if(!archivePolicy.isPolicyGlobale() && RuoloPolicy.DELEGATA.equals(archivePolicy.getRuoloPorta())) {
+					ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePolicy);
+					try{
+						this.deleteActivePolicy(archivePolicy, detail);
+					}catch(Exception e){
+						detail.setState(ArchiveStatoImport.ERROR);
+						detail.setException(e);
+					}
+					esito.getControlloTraffico_activePolicies().add(detail);
+				}
 			}
 			
 					
@@ -512,6 +540,7 @@ public class DeleterArchiveUtils {
 			// ControlloTraffico (AttivazionePolicy)
 			for (int i = 0; i < archive.getControlloTraffico_activePolicies().size(); i++) {
 				ArchiveActivePolicy archivePolicy = archive.getControlloTraffico_activePolicies().get(i);
+				// le elimino cmq tutte, al massimo non esistono piu' if(archivePolicy.isPolicyGlobale()) {
 				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePolicy);
 				try{
 					this.deleteActivePolicy(archivePolicy, detail);

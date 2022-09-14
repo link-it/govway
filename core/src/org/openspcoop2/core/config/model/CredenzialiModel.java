@@ -50,6 +50,7 @@ public class CredenzialiModel extends AbstractModel<Credenziali> {
 		this.CN_ISSUER = new Field("cn-issuer",java.lang.String.class,"credenziali",Credenziali.class);
 		this.CERTIFICATE = new Field("certificate",byte[].class,"credenziali",Credenziali.class);
 		this.CERTIFICATE_STRICT_VERIFICATION = new Field("certificate-strict-verification",boolean.class,"credenziali",Credenziali.class);
+		this.TOKEN_POLICY = new Field("token-policy",java.lang.String.class,"credenziali",Credenziali.class);
 	
 	}
 	
@@ -67,6 +68,7 @@ public class CredenzialiModel extends AbstractModel<Credenziali> {
 		this.CN_ISSUER = new ComplexField(father,"cn-issuer",java.lang.String.class,"credenziali",Credenziali.class);
 		this.CERTIFICATE = new ComplexField(father,"certificate",byte[].class,"credenziali",Credenziali.class);
 		this.CERTIFICATE_STRICT_VERIFICATION = new ComplexField(father,"certificate-strict-verification",boolean.class,"credenziali",Credenziali.class);
+		this.TOKEN_POLICY = new ComplexField(father,"token-policy",java.lang.String.class,"credenziali",Credenziali.class);
 	
 	}
 	
@@ -91,6 +93,8 @@ public class CredenzialiModel extends AbstractModel<Credenziali> {
 	public IField CERTIFICATE = null;
 	 
 	public IField CERTIFICATE_STRICT_VERIFICATION = null;
+	 
+	public IField TOKEN_POLICY = null;
 	 
 
 	@Override

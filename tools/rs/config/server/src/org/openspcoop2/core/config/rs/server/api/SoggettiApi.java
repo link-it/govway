@@ -131,7 +131,7 @@ public interface SoggettiApi  {
     public Soggetto getSoggetto(@PathParam("nome") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String nome, @QueryParam("profilo") ProfiloEnum profilo);
 
     /**
-     * Modifica i dati di un soggetto
+     * Modifica le credenziali associate ad un soggetto
      *
      * Questa operazione consente di aggiornare le credenziali associate ad un soggetto identificato dal nome
      *
@@ -140,7 +140,7 @@ public interface SoggettiApi  {
     @Path("/soggetti/{nome}/credenziali")
     @Consumes({ "application/json" })
     @Produces({ "application/problem+json" })
-    @Operation(summary = "Modifica i dati di un soggetto", tags={ "soggetti" })
+    @Operation(summary = "Modifica le credenziali associate ad un soggetto", tags={ "soggetti" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "204", description = "Resource updated"),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),

@@ -862,6 +862,40 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 							continue;
 						}
 					}	
+					// Filtro By Autorizzazione Token Servizio Applicativo
+					if(filtroRicerca.getNomeServizioApplicativoToken()!=null) {
+						if(pd.getAutorizzazioneToken()==null || pd.getAutorizzazioneToken().getServiziApplicativi()==null ||
+								pd.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList()<=0){
+							continue;
+						}
+						boolean contains = false;
+						for (int z = 0; z < pd.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList(); z++) {
+							if(filtroRicerca.getNomeServizioApplicativoToken().equals(pd.getAutorizzazioneToken().getServiziApplicativi().getServizioApplicativo(z).getNome())){
+								contains = true;
+								break;
+							}
+						}
+						if(!contains){
+							continue;
+						}
+					}	
+					// Filtro By Ruoli Token
+					if(filtroRicerca.getIdRuoloToken()!=null && filtroRicerca.getIdRuoloToken().getNome()!=null){
+						if(pd.getAutorizzazioneToken()==null || pd.getAutorizzazioneToken().getRuoli()==null ||
+								pd.getAutorizzazioneToken().getRuoli().sizeRuoloList()<=0){
+							continue;
+						}
+						boolean contains = false;
+						for (int z = 0; z < pd.getAutorizzazioneToken().getRuoli().sizeRuoloList(); z++) {
+							if(filtroRicerca.getIdRuoloToken().getNome().equals(pd.getAutorizzazioneToken().getRuoli().getRuolo(z).getNome())){
+								contains = true;
+								break;
+							}
+						}
+						if(!contains){
+							continue;
+						}
+					}
 					// Filtro By Applicabilita Trasformazione Servizio Applicativo
 					if(filtroRicerca.getNomeServizioApplicativoRiferitoApplicabilitaTrasformazione()!=null) {
 						if(pd.getTrasformazioni()==null || pd.getTrasformazioni().sizeRegolaList()<=0){
@@ -873,6 +907,30 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 							if(regola.getApplicabilita()!=null && regola.getApplicabilita().sizeServizioApplicativoList()>0) {
 								for (TrasformazioneRegolaApplicabilitaServizioApplicativo tSA : regola.getApplicabilita().getServizioApplicativoList()) {
 									if(filtroRicerca.getNomeServizioApplicativoRiferitoApplicabilitaTrasformazione().equals(tSA.getNome())){
+										contains = true;
+										break;
+									}
+								}
+								if(contains){
+									break;
+								}
+							}
+						}
+						if(!contains){
+							continue;
+						}
+					}	
+					// Filtro By Applicabilita Trasformazione Servizio Applicativo Token
+					if(filtroRicerca.getNomeServizioApplicativoTokenRiferitoApplicabilitaTrasformazione()!=null) {
+						if(pd.getTrasformazioni()==null || pd.getTrasformazioni().sizeRegolaList()<=0){
+							continue;
+						}
+						boolean contains = false;
+						for (int z = 0; z < pd.getTrasformazioni().sizeRegolaList(); z++) {
+							TrasformazioneRegola regola = pd.getTrasformazioni().getRegola(z);
+							if(regola.getApplicabilita()!=null && regola.getApplicabilita().sizeServizioApplicativoList()>0) {
+								for (TrasformazioneRegolaApplicabilitaServizioApplicativo tSA : regola.getApplicabilita().getServizioApplicativoList()) {
+									if(filtroRicerca.getNomeServizioApplicativoTokenRiferitoApplicabilitaTrasformazione().equals(tSA.getNome())){
 										contains = true;
 										break;
 									}
@@ -1417,6 +1475,50 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 							continue;
 						}
 					}
+					// Filtro By ServizioApplicativoAutorizzatoToken (ricerca puntuale)
+					if(filtroRicerca.getIdServizioApplicativoAutorizzatoToken()!=null &&
+							filtroRicerca.getIdServizioApplicativoAutorizzatoToken().getNome()!=null &&
+							filtroRicerca.getIdServizioApplicativoAutorizzatoToken().getIdSoggettoProprietario()!=null &&
+							filtroRicerca.getIdServizioApplicativoAutorizzatoToken().getIdSoggettoProprietario().getTipo()!=null &&
+							filtroRicerca.getIdServizioApplicativoAutorizzatoToken().getIdSoggettoProprietario().getNome()!=null
+							){
+						if(pa.getAutorizzazioneToken()==null || pa.getAutorizzazioneToken().getServiziApplicativi()== null || pa.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList()<=0) {
+							continue;
+						}
+						boolean contains = false;
+						for (int z = 0; z < pa.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList(); z++) {
+							if(!filtroRicerca.getIdServizioApplicativoAutorizzatoToken().getNome().equals(pa.getAutorizzazioneToken().getServiziApplicativi().getServizioApplicativo(z).getNome())){
+								continue;
+							}
+							if(!filtroRicerca.getIdServizioApplicativoAutorizzatoToken().getIdSoggettoProprietario().getTipo().equals(pa.getAutorizzazioneToken().getServiziApplicativi().getServizioApplicativo(z).getTipoSoggettoProprietario())){
+								continue;
+							}	
+							if(!filtroRicerca.getIdServizioApplicativoAutorizzatoToken().getIdSoggettoProprietario().getNome().equals(pa.getAutorizzazioneToken().getServiziApplicativi().getServizioApplicativo(z).getNomeSoggettoProprietario())){
+								continue;
+							}
+							contains = true;
+							break;
+						}
+						if(!contains){
+							continue;
+						}
+					}
+					// Filtro By Ruoli Token
+					if(filtroRicerca.getIdRuoloToken()!=null && filtroRicerca.getIdRuoloToken().getNome()!=null){
+						if(pa.getAutorizzazioneToken()==null || pa.getAutorizzazioneToken().getRuoli()== null || pa.getAutorizzazioneToken().getRuoli().sizeRuoloList()<=0) {
+							continue;
+						}
+						boolean contains = false;
+						for (int z = 0; z < pa.getAutorizzazioneToken().getRuoli().sizeRuoloList(); z++) {
+							if(filtroRicerca.getIdRuoloToken().getNome().equals(pa.getAutorizzazioneToken().getRuoli().getRuolo(z).getNome())){
+								contains = true;
+								break;
+							}
+						}
+						if(!contains){
+							continue;
+						}
+					}
 					// Filtro By Applicabilita Trasformazione Servizio Applicativo
 					if(filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione()!=null &&
 							filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getNome()!=null &&
@@ -1439,6 +1541,42 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 										continue;
 									}	
 									if(!filtroRicerca.getIdServizioApplicativoRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario().getNome().equals(tSA.getNomeSoggettoProprietario())){
+										continue;
+									}
+									contains = true;
+									break;
+								}
+								if(contains){
+									break;
+								}
+							}
+						}
+						if(!contains){
+							continue;
+						}
+					}
+					// Filtro By Applicabilita Trasformazione Servizio Applicativo Token
+					if(filtroRicerca.getIdServizioApplicativoTokenRiferitoApplicabilitaTrasformazione()!=null &&
+							filtroRicerca.getIdServizioApplicativoTokenRiferitoApplicabilitaTrasformazione().getNome()!=null &&
+							filtroRicerca.getIdServizioApplicativoTokenRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario()!=null &&
+							filtroRicerca.getIdServizioApplicativoTokenRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario().getTipo()!=null &&
+							filtroRicerca.getIdServizioApplicativoTokenRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario().getNome()!=null
+							){
+						if(pa.getTrasformazioni()==null || pa.getTrasformazioni().sizeRegolaList()<=0){
+							continue;
+						}
+						boolean contains = false;
+						for (int z = 0; z < pa.getTrasformazioni().sizeRegolaList(); z++) {
+							TrasformazioneRegola regola = pa.getTrasformazioni().getRegola(z);
+							if(regola.getApplicabilita()!=null && regola.getApplicabilita().sizeServizioApplicativoList()>0) {
+								for (TrasformazioneRegolaApplicabilitaServizioApplicativo tSA : regola.getApplicabilita().getServizioApplicativoList()) {
+									if(!filtroRicerca.getIdServizioApplicativoTokenRiferitoApplicabilitaTrasformazione().getNome().equals(tSA.getNome())){
+										continue;
+									}
+									if(!filtroRicerca.getIdServizioApplicativoTokenRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario().getTipo().equals(tSA.getTipoSoggettoProprietario())){
+										continue;
+									}	
+									if(!filtroRicerca.getIdServizioApplicativoTokenRiferitoApplicabilitaTrasformazione().getIdSoggettoProprietario().getNome().equals(tSA.getNomeSoggettoProprietario())){
 										continue;
 									}
 									contains = true;
@@ -1663,6 +1801,42 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		throw new DriverConfigurazioneNotFound("Servizio Applicativo cercato con credenziali basic non trovato");
 	}
 	
+	@Override
+	public ServizioApplicativo getServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId, boolean tokenWithHttpsEnabled) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		if(tokenPolicy==null){
+			throw new DriverConfigurazioneException("TokenPolicy non definita");
+		}
+		if(tokenClientId==null){
+			throw new DriverConfigurazioneException("TokenClientId non definito");
+		}
+		
+		for(int i=0; i<this.openspcoop.sizeSoggettoList(); i++){
+			Soggetto soggettoSearch = this.openspcoop.getSoggetto(i);
+			for(int j=0; j<soggettoSearch.sizeServizioApplicativoList(); j++){
+				ServizioApplicativo sa = soggettoSearch.getServizioApplicativo(j);
+				if(sa.getInvocazionePorta()!=null){
+					for(int z=0;z<sa.getInvocazionePorta().sizeCredenzialiList();z++){
+						if(sa.getInvocazionePorta().getCredenziali(z).getTipo()!=null &&
+								(
+										CostantiConfigurazione.CREDENZIALE_TOKEN.equals(sa.getInvocazionePorta().getCredenziali(z).getTipo())
+										||
+										(tokenWithHttpsEnabled && CostantiConfigurazione.CREDENZIALE_SSL.equals(sa.getInvocazionePorta().getCredenziali(z).getTipo()))
+								)
+								){
+							if( tokenClientId.equals(sa.getInvocazionePorta().getCredenziali(z).getUser()) &&
+									tokenPolicy.equals(sa.getInvocazionePorta().getCredenziali(z).getTokenPolicy())){
+								sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
+								sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
+								return sa;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		throw new DriverConfigurazioneNotFound("Servizio Applicativo cercato con credenziali principal non trovato");
+	}
 	
 	@Override
 	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String aSubject, String aIssuer) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{

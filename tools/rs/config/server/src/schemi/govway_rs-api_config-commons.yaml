@@ -506,7 +506,7 @@ components:
           $ref: '#/components/schemas/ModalitaAccessoEnum'
         username:
           type: string
-          maxLength: 255
+          maxLength: 2800
           example: 'user'
         password:
           type: string
@@ -536,6 +536,8 @@ components:
           type: array
           items:
               $ref: '#/components/schemas/AuthenticationHttpsBaseCertificato'
+        token:
+              $ref: '#/components/schemas/AuthenticationTokenBase'
       additionalProperties: false
     AuthenticationHttpsBaseCertificato:
       type: object
@@ -596,7 +598,7 @@ components:
           $ref: '#/components/schemas/ModalitaAccessoEnum'
         userid:
           type: string
-          maxLength: 255
+          maxLength: 2800
           example: 'idEsterno'
       additionalProperties: false
     AuthenticationApiKey:
@@ -610,6 +612,28 @@ components:
           type: boolean
           default: false
       additionalProperties: false   
+    AuthenticationTokenBase:
+      type: object
+      required:
+       - token_policy
+       - identificativo
+      properties:
+        token_policy:
+          type: string
+          maxLength: 255
+        identificativo:
+          type: string
+          maxLength: 2800
+    AuthenticationToken:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/AuthenticationTokenBase'
+        - type: object
+          required: 
+            - modalita_accesso
+          properties:
+            modalita_accesso:
+              $ref: '#/components/schemas/ModalitaAccessoEnum' 
     BaseCredenziali:
       type: object
       properties:
@@ -620,6 +644,7 @@ components:
             - $ref: '#/components/schemas/AuthenticationHttps'
             - $ref: '#/components/schemas/AuthenticationPrincipal'
             - $ref: '#/components/schemas/AuthenticationApiKey'
+            - $ref: '#/components/schemas/AuthenticationToken'
           discriminator:
             propertyName: modalita_accesso
             mapping:
@@ -627,6 +652,7 @@ components:
               'https': '#/components/schemas/AuthenticationHttps'
               'principal': '#/components/schemas/AuthenticationPrincipal'
               'api-key': '#/components/schemas/AuthenticationApiKey'
+              'token': '#/components/schemas/AuthenticationToken'
 
     # Base: Store (i tipi di keystore vengono definiti dove viene esteso l'oggetto)
     BaseTrustStore:
@@ -1332,6 +1358,18 @@ components:
         ruoli_fonte:
           $ref: '#/components/schemas/FonteEnum' 
         ruoli_richiesti:
+          $ref: '#/components/schemas/AllAnyEnum'
+        token_richiedente:
+          type: boolean
+          default: true
+          example: false
+        token_ruoli:
+          type: boolean
+          default: false
+          example: false
+        token_ruoli_fonte:
+          $ref: '#/components/schemas/FonteEnum' 
+        token_ruoli_richiesti:
           $ref: '#/components/schemas/AllAnyEnum'
         scope:
           type: boolean
@@ -2174,18 +2212,19 @@ components:
           $ref: '#/components/schemas/DominioEnum'
         reply_audience:
            type: string
-           maxLength: 4000         
+           maxLength: 4000
     
     ModIApplicativoInterno:
       type: object      
       required:
         - dominio
-        - sicurezza_messaggio
       properties:
         dominio:
           $ref: '#/components/schemas/DominioEnum'
         sicurezza_messaggio:
            $ref: '#/components/schemas/ModIApplicativoSicurezzaMessaggio'
+        token:
+          $ref: '#/components/schemas/AuthenticationTokenBase'
     ModIApplicativoSicurezzaMessaggio:
       type: object      
       required:
@@ -3256,7 +3295,7 @@ components:
       example: 'esterno'
     ModalitaAccessoEnum:
       type: string
-      enum: ['http-basic', 'https', 'principal', 'api-key']
+      enum: ['http-basic', 'https', 'principal', 'api-key', 'token']
       example: 'http-basic'
     ContestoEnum:
       type: string

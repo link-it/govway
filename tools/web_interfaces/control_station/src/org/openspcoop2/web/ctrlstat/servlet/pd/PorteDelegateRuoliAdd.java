@@ -97,6 +97,9 @@ public final class PorteDelegateRuoliAdd extends Action {
 			if(idFruizione == null)
 				idFruizione = "";
 			
+			String tokenList = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TOKEN_AUTHORIZATION);
+			boolean isToken = tokenList!=null && !"".equals(tokenList) && Boolean.valueOf(tokenList);
+			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
 
@@ -114,17 +117,34 @@ public final class PorteDelegateRuoliAdd extends Action {
 			FiltroRicercaRuoli filtroRuoli = new FiltroRicercaRuoli();
 			filtroRuoli.setContesto(RuoloContesto.PORTA_DELEGATA);
 			filtroRuoli.setTipologia(RuoloTipologia.QUALSIASI);
-			if(TipoAutorizzazione.isInternalRolesRequired(pde.getAutorizzazione()) ){
-				filtroRuoli.setTipologia(RuoloTipologia.INTERNO);
+			if(isToken) {
+				if(pde.getAutorizzazioneToken()!=null && pde.getAutorizzazioneToken().getTipologiaRuoli()!=null) {
+					RuoloTipologia r = RuoloTipologia.toEnumConstant(pde.getAutorizzazioneToken().getTipologiaRuoli().getValue());
+					filtroRuoli.setTipologia(r);
+				}
 			}
-			else if(TipoAutorizzazione.isExternalRolesRequired(pde.getAutorizzazione()) ){
-				filtroRuoli.setTipologia(RuoloTipologia.ESTERNO);
+			else {
+				if(TipoAutorizzazione.isInternalRolesRequired(pde.getAutorizzazione()) ){
+					filtroRuoli.setTipologia(RuoloTipologia.INTERNO);
+				}
+				else if(TipoAutorizzazione.isExternalRolesRequired(pde.getAutorizzazione()) ){
+					filtroRuoli.setTipologia(RuoloTipologia.ESTERNO);
+				}
 			}
 						
 			List<String> ruoli = new ArrayList<>();
-			if(pde.getRuoli()!=null && pde.getRuoli().getRuoloList()!=null && pde.getRuoli().getRuoloList().size()>0){
-				for (Ruolo ruolo : pde.getRuoli().getRuoloList()) {
-					ruoli.add(ruolo.getNome());	
+			if(isToken) {
+				if(pde.getAutorizzazioneToken()!=null && pde.getAutorizzazioneToken().getRuoli()!=null && pde.getAutorizzazioneToken().getRuoli().getRuoloList()!=null && pde.getAutorizzazioneToken().getRuoli().getRuoloList().size()>0){
+					for (Ruolo ruolo : pde.getAutorizzazioneToken().getRuoli().getRuoloList()) {
+						ruoli.add(ruolo.getNome());	
+					}
+				}
+			}
+			else {
+				if(pde.getRuoli()!=null && pde.getRuoli().getRuoloList()!=null && pde.getRuoli().getRuoloList().size()>0){
+					for (Ruolo ruolo : pde.getRuoli().getRuoloList()) {
+						ruoli.add(ruolo.getNome());	
+					}
 				}
 			}
 			
@@ -132,7 +152,8 @@ public final class PorteDelegateRuoliAdd extends Action {
 			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
-			Parameter[] urlParms = { pId,pIdSoggetto,pIdAsps,pIdFrizione };
+			Parameter[] urlParms = { pId,pIdSoggetto,pIdAsps,pIdFrizione,
+					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TOKEN_AUTHORIZATION, isToken+"") };
 			
 			List<Parameter> lstParam = porteDelegateHelper.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
 			
@@ -153,7 +174,15 @@ public final class PorteDelegateRuoliAdd extends Action {
 					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, pde.getIdSoggetto() + ""),
 					pIdAsps, new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione+ "")));
 			
-			String labelPagLista = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RUOLI_CONFIG;
+			String labelPagLista = 
+					(
+							isToken ? 
+							CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN 
+							:
+							CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TRASPORTO
+					)
+					+ " - " +
+					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RUOLI_CONFIG;
 			
 			lstParam.add(new Parameter(labelPagLista, 
 					PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RUOLI_LIST,urlParms));
@@ -170,7 +199,7 @@ public final class PorteDelegateRuoliAdd extends Action {
 				
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteDelegateHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true, null);
+				dati = porteDelegateHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true, null, isToken);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
@@ -195,7 +224,7 @@ public final class PorteDelegateRuoliAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true, null);
+				dati = porteDelegateHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true, null, isToken);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
@@ -212,10 +241,18 @@ public final class PorteDelegateRuoliAdd extends Action {
 			// Inserisco il ruolo nel db
 			Ruolo ruolo = new Ruolo();
 			ruolo.setNome(nome);
-			if(pde.getRuoli()==null){
-				pde.setRuoli(new AutorizzazioneRuoli());
+			if(isToken) {
+				if(pde.getAutorizzazioneToken().getRuoli()==null) {
+					pde.getAutorizzazioneToken().setRuoli(new AutorizzazioneRuoli());
+				}
+				pde.getAutorizzazioneToken().getRuoli().addRuolo(ruolo);
 			}
-			pde.getRuoli().addRuolo(ruolo);
+			else {
+				if(pde.getRuoli()==null){
+					pde.setRuoli(new AutorizzazioneRuoli());
+				}
+				pde.getRuoli().addRuolo(ruolo);
+			}
 
 			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), pde);
 
@@ -223,10 +260,16 @@ public final class PorteDelegateRuoliAdd extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 			
 			int idLista = Liste.PORTE_DELEGATE_RUOLI;
+			if(isToken) {
+				idLista = Liste.PORTE_DELEGATE_TOKEN_RUOLI;
+			}
 
 			ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
 
-			List<String> lista = porteDelegateCore.portaDelegataRuoliList(Integer.parseInt(id), ricerca);
+			List<String> lista = isToken ?
+						porteDelegateCore.portaDelegataRuoliTokenList(Integer.parseInt(id), ricerca)
+						:
+						porteDelegateCore.portaDelegataRuoliList(Integer.parseInt(id), ricerca);				
 
 			porteDelegateHelper.preparePorteDelegateRuoliList(idporta, ricerca, lista);
 

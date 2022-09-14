@@ -265,7 +265,7 @@ public class ServiziApplicativiUtilities {
 		StatoFunzionalita getMessage = invServizio != null ? invServizio.getGetMessage() : null;
 		if (TipiConnettore.DISABILITATO.getNome().equals(connis.getTipo()) && CostantiConfigurazione.DISABILITATO.equals(getMessage)) {
 			Map<ErrorsHandlerCostant, String> whereIsInUso = new HashMap<ErrorsHandlerCostant, String>();
-			if (saCore.isServizioApplicativoInUso(sa, whereIsInUso)) {
+			if (saCore.isServizioApplicativoInUsoComeErogatore(sa, whereIsInUso)) {
 
 				// se in uso in porte applicative allora impossibile
 				// disabilitare connettore o getmessage

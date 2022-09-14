@@ -34,6 +34,10 @@ public class DatiMittente {
 	private String tokenSubject;
 	private String tokenIssuer;
 	private String tokenClientId;
+	private String tokenClient = null;
+	private String tokenClientSoggettoFruitore = null;
+	private String tokenClientTipoSoggettoFruitore = null;
+	private String tokenClientNomeSoggettoFruitore = null;
 	
 	private String trasportoMittente;
 	private String tipoTrasportoMittente;
@@ -73,6 +77,30 @@ public class DatiMittente {
 	}
 	public void setTokenClientId(String tokenClientId) {
 		this.tokenClientId = tokenClientId;
+	}
+	public String getTokenClient() {
+		return this.tokenClient;
+	}
+	public void setTokenClient(String tokenClient) {
+		this.tokenClient = tokenClient;
+	}
+	public String getTokenClientSoggettoFruitore() {
+		return this.tokenClientSoggettoFruitore;
+	}
+	public void setTokenClientSoggettoFruitore(String tokenClientSoggettoFruitore) {
+		this.tokenClientSoggettoFruitore = tokenClientSoggettoFruitore;
+	}
+	public String getTokenClientTipoSoggettoFruitore() {
+		return this.tokenClientTipoSoggettoFruitore;
+	}
+	public void setTokenClientTipoSoggettoFruitore(String tokenClientTipoSoggettoFruitore) {
+		this.tokenClientTipoSoggettoFruitore = tokenClientTipoSoggettoFruitore;
+	}
+	public String getTokenClientNomeSoggettoFruitore() {
+		return this.tokenClientNomeSoggettoFruitore;
+	}
+	public void setTokenClientNomeSoggettoFruitore(String tokenClientNomeSoggettoFruitore) {
+		this.tokenClientNomeSoggettoFruitore = tokenClientNomeSoggettoFruitore;
 	}
 	public String getTrasportoMittente() {
 		return this.trasportoMittente;

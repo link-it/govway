@@ -31,7 +31,7 @@ import javax.validation.Valid;
 
 @XmlAccessorType(XmlAccessType.FIELD)
  @XmlType(name = "TransazioneExtInformazioniMittenteBase", propOrder =
-    { "informazioniFruitore", "applicativo"
+    { "informazioniFruitore", "applicativo", "applicativoToken"
 })
 
 
@@ -44,6 +44,10 @@ public class TransazioneExtInformazioniMittenteBase extends TransazioneInformazi
   
   @Schema(description = "")
   private String applicativo = null;
+  @XmlElement(name="applicativo_token")
+  
+  @Schema(description = "")
+  private TransazioneExtInformazioniMittenteApplicativoToken applicativoToken = null;
  /**
    * Get informazioniFruitore
    * @return informazioniFruitore
@@ -82,6 +86,25 @@ public class TransazioneExtInformazioniMittenteBase extends TransazioneInformazi
     return this;
   }
 
+ /**
+   * Get applicativoToken
+   * @return applicativoToken
+  **/
+  @JsonProperty("applicativo_token")
+  @Valid
+  public TransazioneExtInformazioniMittenteApplicativoToken getApplicativoToken() {
+    return this.applicativoToken;
+  }
+
+  public void setApplicativoToken(TransazioneExtInformazioniMittenteApplicativoToken applicativoToken) {
+    this.applicativoToken = applicativoToken;
+  }
+
+  public TransazioneExtInformazioniMittenteBase applicativoToken(TransazioneExtInformazioniMittenteApplicativoToken applicativoToken) {
+    this.applicativoToken = applicativoToken;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -90,6 +113,7 @@ public class TransazioneExtInformazioniMittenteBase extends TransazioneInformazi
     sb.append("    ").append(TransazioneExtInformazioniMittenteBase.toIndentedString(super.toString())).append("\n");
     sb.append("    informazioniFruitore: ").append(TransazioneExtInformazioniMittenteBase.toIndentedString(this.informazioniFruitore)).append("\n");
     sb.append("    applicativo: ").append(TransazioneExtInformazioniMittenteBase.toIndentedString(this.applicativo)).append("\n");
+    sb.append("    applicativoToken: ").append(TransazioneExtInformazioniMittenteBase.toIndentedString(this.applicativoToken)).append("\n");
     sb.append("}");
     return sb.toString();
   }

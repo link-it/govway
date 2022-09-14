@@ -63,7 +63,7 @@ public class AuthenticationHttpBasic  implements OneOfBaseCredenzialiCredenziali
   @JsonProperty("username")
   @NotNull
   @Valid
- @Size(max=255)  public String getUsername() {
+ @Size(max=2800)  public String getUsername() {
     return this.username;
   }
 

@@ -37,6 +37,8 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
+import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeTokenClient;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.core.handlers.transazioni.PostOutResponseHandler_TransazioneUtilities;
 import org.openspcoop2.protocol.engine.RequestInfo;
@@ -70,9 +72,12 @@ public class InfoConfigurazione implements Serializable {
 	
 	private Map<String, String> applicativoFruitoreProperties = new HashMap<String, String>();
 	
+	private Map<String, String> tokenClientApplicationProperties = new HashMap<String, String>();
+	private Map<String, String> tokenClientOrganizationProperties = new HashMap<String, String>();
+	
 	private String nomeConnettoriMultipli = null;
 	
-	public InfoConfigurazione(Transazione transazioneDTO, Context contextGateway) {
+	public InfoConfigurazione(Transazione transazioneDTO, Context contextGateway, CredenzialiMittente credenzialiMittente) {
 		
 		if(contextGateway!=null && !contextGateway.isEmpty()) {
 			for (String key : contextGateway.keys()) {
@@ -188,6 +193,32 @@ public class InfoConfigurazione implements Serializable {
 			}catch(Throwable t) {}
 		}
 		
+		try {
+			IDServizioApplicativo tokenClientApplication = credenzialiMittente!=null && credenzialiMittente.getToken_clientId()!=null ? CredenzialeTokenClient.convertApplicationDBValueToOriginal(credenzialiMittente.getToken_clientId().getCredenziale()) : null;
+			if(tokenClientApplication!=null && tokenClientApplication.getNome()!=null && tokenClientApplication.getIdSoggettoProprietario()!=null &&
+					tokenClientApplication.getIdSoggettoProprietario().getTipo()!=null && tokenClientApplication.getIdSoggettoProprietario().getNome()!=null) {
+				try {
+					ServizioApplicativo sa = configurazionePdDManager.getServizioApplicativo(tokenClientApplication);
+					if(sa.sizeProprietaList()>0) {
+						for (Proprieta prop : sa.getProprietaList()) {
+							if(prop.getNome()!=null && prop.getValore()!=null) {
+								this.tokenClientApplicationProperties.put(prop.getNome(), prop.getValore());
+							}
+						}
+					}
+				}catch(Throwable t) {}
+				try {
+					Soggetto soggetto = registroServiziManager.getSoggetto(tokenClientApplication.getIdSoggettoProprietario(), null);
+					if(soggetto.sizeProprietaList()>0) {
+						for (org.openspcoop2.core.registry.Proprieta prop : soggetto.getProprietaList()) {
+							if(prop.getNome()!=null && prop.getValore()!=null) {
+								this.tokenClientOrganizationProperties.put(prop.getNome(), prop.getValore());
+							}
+						}
+					}
+				}catch(Throwable t) {}
+			}
+		}catch(Throwable t) {}
 	}
 	
 	public String getContextProperty(String nome) {
@@ -268,6 +299,38 @@ public class InfoConfigurazione implements Serializable {
 	}
 	public String getApplicationPropertiesAsString(String propertySeparator, String valueSeparator){
 		return _getPropertiesAsString(this.applicativoFruitoreProperties, propertySeparator, valueSeparator);
+	}
+	
+	public String getTokenClientApplicationProperty(String nome) {
+		return _getProperty(this.tokenClientApplicationProperties, nome);
+	}
+	public Map<String, String> getTokenClientApplicationProperties(String nome) {
+		return this.tokenClientApplicationProperties;
+	}
+	public List<String> getTokenClientApplicationPropertiesKeys(){
+		return _getPropertiesKeys(this.tokenClientApplicationProperties);
+	}
+	public String getTokenClientApplicationPropertiesKeysAsString(String separator){
+		return _getPropertiesKeysAsString(this.tokenClientApplicationProperties, separator);
+	}
+	public String getTokenClientApplicationPropertiesAsString(String propertySeparator, String valueSeparator){
+		return _getPropertiesAsString(this.tokenClientApplicationProperties, propertySeparator, valueSeparator);
+	}
+	
+	public String getTokenClientOrganizationProperty(String nome) {
+		return _getProperty(this.tokenClientOrganizationProperties, nome);
+	}
+	public Map<String, String> getTokenClientOrganizationProperties(String nome) {
+		return this.tokenClientOrganizationProperties;
+	}
+	public List<String> getTokenClientOrganizationPropertiesKeys(){
+		return _getPropertiesKeys(this.tokenClientOrganizationProperties);
+	}
+	public String getTokenClientOrganizationPropertiesKeysAsString(String separator){
+		return _getPropertiesKeysAsString(this.tokenClientOrganizationProperties, separator);
+	}
+	public String getTokenClientOrganizationPropertiesAsString(String propertySeparator, String valueSeparator){
+		return _getPropertiesAsString(this.tokenClientOrganizationProperties, propertySeparator, valueSeparator);
 	}
 	
 	

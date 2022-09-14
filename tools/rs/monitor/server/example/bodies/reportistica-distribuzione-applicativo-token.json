@@ -2,9 +2,10 @@
     "unita_tempo": "orario",
     "intervallo_temporale": {
       "data_inizio": "2012-04-29T06:51:05.860Z",
-      "data_fine": "2022-04-29T06:51:05.860Z"
+      "data_fine": "2032-04-29T06:51:05.860Z"
     },
     "tipo": "erogazione",
+    "tipo_identificazione_applicativo": "token",
     "report": {
       "formato": "csv",
       "tipo": "table",
@@ -14,11 +15,6 @@
     },
     "esito": {
       "tipo": "ok"
-    },
-    "api": {
-      "nome": "PetStore466249fc32d34d2e86334588",
-      "versione": 1
-    },
-    "azione": "PUT_pet"
+    }
 
   }

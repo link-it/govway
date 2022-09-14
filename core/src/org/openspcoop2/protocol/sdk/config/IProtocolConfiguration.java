@@ -197,6 +197,13 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	public boolean isSupportoAutenticazioneSoggetti();
 	
 	/**
+	 * Ritorna l'indicazione se l'autenticazione degli applicativi registrati con credenziali https puo' avvenire anche per l'autenticazione token
+	 * 
+	 * @return True se l'autenticazione degli applicativi viene supportato dal protocollo
+	 */
+	public boolean isSupportatoAutenticazioneApplicativiHttpsConToken();
+	
+	/**
 	 * Ritorna l'indicazione se l'autenticazione degli applicativi sulle erogazioni viene supportato dal protocollo
 	 * 
 	 * @return True se l'autenticazione degli applicativi sulle erogazioni viene supportato dal protocollo

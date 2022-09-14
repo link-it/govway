@@ -65,6 +65,7 @@ import org.openspcoop2.core.commons.search.dao.jdbc.JDBCSoggettoServiceSearch;
 import org.openspcoop2.core.commons.search.utils.ExpressionProperties;
 import org.openspcoop2.core.commons.search.utils.ProjectInfo;
 import org.openspcoop2.core.commons.search.utils.RegistroCore;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
@@ -1112,7 +1113,7 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 	}
 
 	@Override
-	public List<Object> findElencoServiziApplicativi(String tipoProtocollo,Soggetto soggetto) {
+	public List<Object> findElencoServiziApplicativi(String tipoProtocollo,Soggetto soggetto, boolean trasporto, boolean token) {
 
 		log.debug("Get Lista Servizi Applicativi [Soggetto: " + (soggetto != null ? soggetto.getNomeSoggetto() : "Null")	+ "]");
 		// if (erogatore != null) {
@@ -1124,34 +1125,39 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 		// .getResultList();
 		// }
 		try {
-			IExpression expr = this.serviziApplicativiDAO.newExpression();
-
-			if (soggetto != null) {
-				if(soggetto.getTipoSoggetto()!=null && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(soggetto.getTipoSoggetto())) {
-					expr.equals(ServizioApplicativo.model().ID_SOGGETTO.TIPO,
-							soggetto.getTipoSoggetto());
-				}
-				if(soggetto.getNomeSoggetto()!=null && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(soggetto.getNomeSoggetto())) {
-					expr.and().equals(ServizioApplicativo.model().ID_SOGGETTO.NOME,
-							soggetto.getNomeSoggetto());
+			boolean viaModiProperties = (tipoProtocollo==null) || org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME.equals(tipoProtocollo);
+			
+			IExpression expr = buildExpressionServiziApplicativi(tipoProtocollo, soggetto, trasporto, token, false);
+			expr.sortOrder(SortOrder.ASC).addOrder(ServizioApplicativo.model().NOME);
+			IPaginatedExpression pagExpr = this.serviziApplicativiDAO.toPaginatedExpression(expr);
+			List<Object> l = null;
+			try {
+				l = this.serviziApplicativiDAO.select(pagExpr,true,ServizioApplicativo.model().NOME);
+			}catch (NotFoundException e) {
+				log.debug(e.getMessage(), e);
+			}
+			if(l==null) {
+				l = new ArrayList<Object>();
+			}
+			
+			if(viaModiProperties) {
+			
+				expr = buildExpressionServiziApplicativi(tipoProtocollo, soggetto, trasporto, token, true);
+				expr.sortOrder(SortOrder.ASC).addOrder(ServizioApplicativo.model().NOME);
+				pagExpr = this.serviziApplicativiDAO.toPaginatedExpression(expr);
+				try {
+					List<Object> lmodi = this.serviziApplicativiDAO.select(pagExpr,true,ServizioApplicativo.model().NOME);
+					if(lmodi!=null && !lmodi.isEmpty()) {
+						l.addAll(lmodi);
+					}
+				}catch (NotFoundException e) {
+					log.debug(e.getMessage(), e);
 				}
 				
 			}
 			
-			IExpression exprClient = this.serviziApplicativiDAO.newExpression();
-			exprClient.isNotNull(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE).and().notEquals(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE, TipologiaFruizione.DISABILITATO);
-			IExpression exprServerUseAsClient = this.serviziApplicativiDAO.newExpression();
-			exprServerUseAsClient.isNotNull(ServizioApplicativo.model().AS_CLIENT).and().equals(ServizioApplicativo.model().AS_CLIENT, CostantiDB.TRUE);
-			expr.or(exprClient, exprServerUseAsClient);
+			return l;
 			
-			if(tipoProtocollo != null)
-				expr.and(DynamicUtilsServiceEngine.getExpressionTipiSoggettiCompatibiliConProtocollo(this.serviziApplicativiDAO, ServizioApplicativo.model().ID_SOGGETTO.TIPO, tipoProtocollo));
-
-			expr.sortOrder(SortOrder.ASC).addOrder(ServizioApplicativo.model().NOME);
-
-			IPaginatedExpression pagExpr = this.serviziApplicativiDAO.toPaginatedExpression(expr);
-
-			return this.serviziApplicativiDAO.select(pagExpr,true,ServizioApplicativo.model().NOME);
 		} catch (ServiceException e) {
 			log.error(e.getMessage(), e);
 		} catch (NotImplementedException e) {
@@ -1170,33 +1176,32 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 	}
 
 	@Override
-	public int countElencoServiziApplicativi(String tipoProtocollo,Soggetto soggetto) {
+	public int countElencoServiziApplicativi(String tipoProtocollo,Soggetto soggetto, boolean trasporto, boolean token) {
 		log.debug("countElencoServiziApplicativi [Soggetto: " + (soggetto != null ? soggetto.getNomeSoggetto() : "Null")	+ "]");
 		try {
-			IExpression expr = this.serviziApplicativiDAO.newExpression();
-
-			if (soggetto != null) {
-				if(soggetto.getTipoSoggetto()!=null && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(soggetto.getTipoSoggetto())) {
-					expr.equals(ServizioApplicativo.model().ID_SOGGETTO.TIPO,
-							soggetto.getTipoSoggetto());
-				}
-				if(soggetto.getNomeSoggetto()!=null && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(soggetto.getNomeSoggetto())) {
-					expr.and().equals(ServizioApplicativo.model().ID_SOGGETTO.NOME,
-							soggetto.getNomeSoggetto());
+			boolean viaModiProperties = (tipoProtocollo==null) || org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME.equals(tipoProtocollo);
+			
+			IExpression expr = buildExpressionServiziApplicativi(tipoProtocollo, soggetto, trasporto, token, false);
+			NonNegativeNumber nnn = this.serviziApplicativiDAO.count(expr);
+			
+			int result = 0;
+			if(nnn != null){
+				result = (int) nnn.longValue();
+			}
+			
+			if(viaModiProperties) {
+				expr = buildExpressionServiziApplicativi(tipoProtocollo, soggetto, trasporto, token, false);
+				nnn = this.serviziApplicativiDAO.count(expr);
+				if(nnn != null){
+					int resultModi = (int) nnn.longValue();
+					if(resultModi>0) {
+						result = result + resultModi;
+					}
 				}
 			}
 			
-			expr.isNotNull(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE).and().notEquals(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE, TipologiaFruizione.DISABILITATO);
-
-			if(tipoProtocollo != null)
-				expr.and(DynamicUtilsServiceEngine.getExpressionTipiSoggettiCompatibiliConProtocollo(this.serviziApplicativiDAO, ServizioApplicativo.model().ID_SOGGETTO.TIPO, tipoProtocollo));
-
-
-			NonNegativeNumber nnn = this.serviziApplicativiDAO.count(expr);
-
-			if(nnn != null){
-				return (int) nnn.longValue();
-			}
+			return result;
+			
 		} catch (ServiceException e) {
 			log.error(e.getMessage(), e);
 		} catch (NotImplementedException e) {
@@ -1209,6 +1214,58 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 			log.error(e.getMessage(), e);
 		} 
 		return 0;
+	}
+	
+	private IExpression buildExpressionServiziApplicativi(String tipoProtocollo,Soggetto soggetto, boolean trasporto, boolean token,
+			boolean viaModiProperties) throws Exception {
+		IExpression expr = this.serviziApplicativiDAO.newExpression();
+
+		if (soggetto != null) {
+			if(soggetto.getTipoSoggetto()!=null && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(soggetto.getTipoSoggetto())) {
+				expr.equals(ServizioApplicativo.model().ID_SOGGETTO.TIPO,
+						soggetto.getTipoSoggetto());
+			}
+			if(soggetto.getNomeSoggetto()!=null && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(soggetto.getNomeSoggetto())) {
+				expr.and().equals(ServizioApplicativo.model().ID_SOGGETTO.NOME,
+						soggetto.getNomeSoggetto());
+			}
+			
+		}
+		
+		IExpression exprClient = this.serviziApplicativiDAO.newExpression();
+		exprClient.isNotNull(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE).and().notEquals(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE, TipologiaFruizione.DISABILITATO);
+		IExpression exprServerUseAsClient = this.serviziApplicativiDAO.newExpression();
+		exprServerUseAsClient.isNotNull(ServizioApplicativo.model().AS_CLIENT).and().equals(ServizioApplicativo.model().AS_CLIENT, CostantiDB.TRUE);
+		expr.or(exprClient, exprServerUseAsClient);
+		
+		if(tipoProtocollo != null)
+			expr.and(DynamicUtilsServiceEngine.getExpressionTipiSoggettiCompatibiliConProtocollo(this.serviziApplicativiDAO, ServizioApplicativo.model().ID_SOGGETTO.TIPO, tipoProtocollo));
+
+		if(trasporto && token) {
+			// nop
+		}
+		else {
+			
+			if(token) {
+			
+				if(viaModiProperties) {
+					expr.equals(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.NAME, CostantiDB.MODIPA_SICUREZZA_TOKEN_POLICY);
+					expr.isNotNull(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.VALUE_STRING);
+				}
+				else {
+					expr.and().in(ServizioApplicativo.model().TIPOAUTH, CostantiConfigurazione.CREDENZIALE_TOKEN.toString(), CostantiConfigurazione.CREDENZIALE_SSL.toString());
+					expr.and().isNotNull(ServizioApplicativo.model().TOKEN_POLICY);
+				}
+				
+			}
+			else {// trasporto
+				
+				expr.and().isNull(ServizioApplicativo.model().TOKEN_POLICY);
+				
+			}
+		}
+		return expr;
+			
 	}
 
 

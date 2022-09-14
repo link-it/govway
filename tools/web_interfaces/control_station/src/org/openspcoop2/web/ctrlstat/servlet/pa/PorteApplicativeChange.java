@@ -309,6 +309,16 @@ public final class PorteApplicativeChange extends Action {
 				numScope = pa.getScope().sizeScopeList();
 			}
 			
+			int numAutenticatiToken = 0; 
+			if(pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getServiziApplicativi()!=null){
+				numAutenticatiToken = pa.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList();
+			}
+			
+			int numRuoliToken = 0; 
+			if(pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getRuoli()!=null){
+				numRuoliToken = pa.getAutorizzazioneToken().getRuoli().sizeRuoloList();
+			}
+			
 			String[] servizioApplicativoList = null;
 			Long idSa = null;
 			if(numSA<=1){
@@ -483,6 +493,11 @@ public final class PorteApplicativeChange extends Action {
 			String autenticazioneTokenUsername = null;
 			String autenticazioneTokenEMail = null;
 			
+			String autorizzazioneAutenticatiToken = null;
+			String autorizzazioneRuoliToken = null;
+			String autorizzazioneRuoliTipologiaToken = null;
+			String autorizzazioneRuoliMatchToken = null;
+			
 			String autorizzazione_tokenOptions = null;
 			String autorizzazione_token = null;
 			
@@ -605,6 +620,22 @@ public final class PorteApplicativeChange extends Action {
 				autenticazioneTokenEMail = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_EMAIL;
 			}
 			
+			if(pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getAutorizzazioneApplicativi()!=null) {
+				autorizzazioneAutenticatiToken = StatoFunzionalita.ABILITATO.equals(pa.getAutorizzazioneToken().getAutorizzazioneApplicativi()) ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
+			}
+			
+			if(pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getAutorizzazioneRuoli()!=null) {
+				autorizzazioneRuoliToken = StatoFunzionalita.ABILITATO.equals(pa.getAutorizzazioneToken().getAutorizzazioneRuoli()) ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
+			}
+			
+			if(pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getTipologiaRuoli()!=null) {
+				autorizzazioneRuoliTipologiaToken = pa.getAutorizzazioneToken().getTipologiaRuoli().getValue();
+			}
+			
+			if(pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getRuoli()!=null && pa.getAutorizzazioneToken().getRuoli().getMatch()!=null){
+				autorizzazioneRuoliMatchToken = pa.getAutorizzazioneToken().getRuoli().getMatch().getValue();
+			}
+						
 			String autorizzazioneScope = null;
 			String autorizzazioneScopeMatch = null;
 			
@@ -1138,6 +1169,8 @@ public final class PorteApplicativeChange extends Action {
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						messageEngine, pa.getCanale(),
 						identificazioneAttributiStato, null,null, attributeAuthoritySelezionate, attributeAuthorityAttributi,
+						autorizzazioneAutenticatiToken, null, numAutenticatiToken, 
+						autorizzazioneRuoliToken,  null, numRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
 						ctModalitaSincronizzazione, ctImplementazione, ctContatori, ctTipologia,
 						ctHeaderHttp, ctHeaderHttp_limit, ctHeaderHttp_remaining, ctHeaderHttp_reset,
 						ctHeaderHttp_retryAfter, ctHeaderHttp_retryAfterBackoff);
@@ -1316,6 +1349,8 @@ public final class PorteApplicativeChange extends Action {
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						messageEngine, pa.getCanale(),
 						identificazioneAttributiStato, null,null, attributeAuthoritySelezionate, attributeAuthorityAttributi,
+						autorizzazioneAutenticatiToken, null, numAutenticatiToken, 
+						autorizzazioneRuoliToken,  null, numRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
 						ctModalitaSincronizzazione, ctImplementazione, ctContatori, ctTipologia,
 						ctHeaderHttp, ctHeaderHttp_limit, ctHeaderHttp_remaining, ctHeaderHttp_reset,
 						ctHeaderHttp_retryAfter, ctHeaderHttp_retryAfterBackoff);

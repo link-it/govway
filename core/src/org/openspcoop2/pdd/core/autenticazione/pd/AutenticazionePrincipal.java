@@ -223,15 +223,18 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 			esito.setClientIdentified(false);
 			return esito;
 		}
-		else if(idServizioApplicativo.getIdSoggettoProprietario().equals(soggettoFruitore)==false) {
-			// L'identificazione in principal non e' obbligatoria
-			//esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaSsl("soggetto proprietario dell'applicativo identificato differente dal soggetto proprietario della porta invocata",principal));
-			esito.setClientIdentified(false);
-			return esito;
-		}
 		else {
-			esito.setClientIdentified(true);
-			esito.setIdServizioApplicativo(idServizioApplicativo);
+			if(OpenSPCoop2Properties.getInstance().isAutenticazionePrincipalPortaDelegataCheckSoggettiProprietari() && idServizioApplicativo.getIdSoggettoProprietario().equals(soggettoFruitore)==false) {
+				esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS, 
+						ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.
+							getErrore402_AutenticazioneFallitaPrincipal("soggetto proprietario ("+idServizioApplicativo.getIdSoggettoProprietario()+") dell'applicativo identificato ("+idServizioApplicativo.getNome()+") differente dal soggetto proprietario della porta invocata ("+soggettoFruitore+")",principal));
+				esito.setClientIdentified(false);
+				return esito;
+			}
+			else { 
+				esito.setClientIdentified(true);
+				esito.setIdServizioApplicativo(idServizioApplicativo);
+			}
 		}
 		
 		return esito;

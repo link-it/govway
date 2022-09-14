@@ -1,0 +1,22 @@
+{
+    "unita_tempo": "orario",
+    "intervallo_temporale": {
+      "data_inizio": "2012-07-21T17:32:28Z",
+      "data_fine": "2032-07-21T17:32:28Z"
+    },
+    "tipo": "erogazione",
+    "report": {
+      "formato": "pdf",
+      "tipo": "table",
+      "tipo_informazione": {
+        "tipo": "numero_transazioni"
+      }
+    },
+    "mittente": {
+      "identificazione": "token_info",
+      "ricerca_esatta": false,
+      "case_sensitive": false,
+      "id": "xxxxxCCCCC1111",
+      "claim": "client_id"
+    }
+  }

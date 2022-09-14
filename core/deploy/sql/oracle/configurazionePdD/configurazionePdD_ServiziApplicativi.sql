@@ -50,6 +50,7 @@ CREATE TABLE servizi_applicativi
 	cn_issuer VARCHAR2(255),
 	certificate BLOB,
 	cert_strict_verification NUMBER,
+	token_policy VARCHAR2(255),
 	invio_x_rif VARCHAR2(255),
 	sbustamento_protocol_info NUMBER,
 	tipologia_fruizione VARCHAR2(255),

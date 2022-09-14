@@ -258,6 +258,31 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 		}
 		return false;
 	}
+	
+	public boolean isShowColumnClientIdApplicativoSoggetto() {
+		if(StringUtils.isNotEmpty(this.search.getRiconoscimento())) {
+			if(this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
+				if(StringUtils.isNotEmpty(this.search.getTokenClaim())) {
+					try {
+						org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(this.search.getTokenClaim());
+						return org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_clientId.equals(tcm);
+					}catch(Throwable t) {}
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean isShowColumnClientIdApplicativo() {
+		if(StringUtils.isNotEmpty(this.search.getRiconoscimento())) {
+			if(this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+				if (StringUtils.isNotBlank(this.search.getIdentificazione()) && org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.search.getIdentificazione())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	public String getSubCaption() {
 		String captionText = StatsUtils.getSubCaption((StatsSearchForm)this.search);
@@ -387,12 +412,16 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			tipiBanda.add(((StatsSearchForm)this.search).getTipoBanda());
 			List<TipoLatenza> tipiLatenza = new ArrayList<TipoLatenza>();
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
-			String tipoRiconoscimento = this.search.getRiconoscimento(); 
+			String tipoRiconoscimento = this.search.getRiconoscimento();
+			String identificazione = this.search.getIdentificazione();
+			String tokenClaim = this.search.getTokenClaim();
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), tipoRiconoscimento, false); 
+			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,
+					((StatsSearchForm)this.search).getTipoStatistica(), tipoRiconoscimento, identificazione, tokenClaim, false); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),tipoRiconoscimento);
+			ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,
+					((StatsSearchForm)this.search).getTipoStatistica(),tipoRiconoscimento, identificazione, tokenClaim);
 
 			if(useFaceContext){
 				context.responseComplete();
@@ -486,11 +515,15 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			List<TipoLatenza> tipiLatenza = new ArrayList<TipoLatenza>();
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
 			String tipoRiconoscimento = this.search.getRiconoscimento(); 
+			String identificazione = this.search.getIdentificazione();
+			String tokenClaim = this.search.getTokenClaim();
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), tipoRiconoscimento, false); 
+			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,
+					((StatsSearchForm)this.search).getTipoStatistica(), tipoRiconoscimento, identificazione, tokenClaim, false); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),tipoRiconoscimento);
+			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,
+					((StatsSearchForm)this.search).getTipoStatistica(),tipoRiconoscimento, identificazione, tokenClaim);
 
 			if(useFaceContext){
 				context.responseComplete();
@@ -583,12 +616,16 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			tipiBanda.add(((StatsSearchForm)this.search).getTipoBanda());
 			List<TipoLatenza> tipiLatenza = new ArrayList<TipoLatenza>();
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
-			String tipoRiconoscimento = this.search.getRiconoscimento(); 
+			String tipoRiconoscimento = this.search.getRiconoscimento();
+			String identificazione = this.search.getIdentificazione();
+			String tokenClaim = this.search.getTokenClaim();
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), tipoRiconoscimento, true); 
+			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,
+					((StatsSearchForm)this.search).getTipoStatistica(), tipoRiconoscimento, identificazione, tokenClaim, true); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),tipoRiconoscimento);
+			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,
+					((StatsSearchForm)this.search).getTipoStatistica(),tipoRiconoscimento, identificazione, tokenClaim);
 
 			if(useFaceContext){
 				context.responseComplete();

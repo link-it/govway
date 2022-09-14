@@ -64,12 +64,16 @@ Scenario Outline: Applicativi modi esterno Creazione 204 OK <nome>
     * call put ({ resourcePath: 'applicativi/'+applicativo_https_certificate.nome, body: applicativo_update, query_params: query_param_applicativi})
     * call get ({ resourcePath: 'applicativi', key: applicativo_https_certificate.nome , query_params: query_param_applicativi})
     * match response.modi == getExpectedEsterno(applicativo_update)
+    * match response.credenziali == applicativo_update.credenziali
     
     * call delete ({ resourcePath: 'applicativi/' + applicativo_https_certificate.nome , query_params: query_param_applicativi})
 
 Examples:
 |nome|
 |applicativo_esterno_audience.json|
+|applicativo_esterno_https.json|
+|applicativo_esterno_https_token.json|
+|applicativo_esterno_token.json|
 
 @Update400_modi_applicativi_esterni
 Scenario Outline: Applicativi modi esterno Creazione 400 <nome>
@@ -97,7 +101,9 @@ Scenario Outline: Applicativi modi esterno Creazione 400 <nome>
 Examples:
 |nome| error|
 | applicativo_interno_audience.json | Configurazione \'ModI\' non valida |
-| applicativo_esterno_basic.json | Certificato, che identifica l’applicativo, non fornito |
+| applicativo_esterno_basic.json | Non sono state fornite credenziali (certificato o tokenClientId) che identificano l’applicativo |
+| applicativo_esterno_https_token_policy_inesistente.json | TokenPolicy indicata \'GoogleNonEsistente\' non esiste |
+| applicativo_esterno_token_policy_inesistente.json | TokenPolicy indicata \'GoogleNonEsistente\' non esiste |
 
 @Update204_modi_applicativi_interni
 Scenario Outline: Applicativi modi interno Creazione 204 OK <nome>
@@ -128,6 +134,10 @@ Examples:
 |applicativo_interno_keystore_hsm_certificato.json|
 |applicativo_interno_audience.json|
 |applicativo_interno_url_x5u.json|
+|applicativo_interno_token_keystore_archive.json|
+|applicativo_interno_token_keystore_file.json|
+|applicativo_interno_token_keystore_hsm.json|
+|applicativo_interno_token.json|
 
 
 @Update400_modi_applicativi_interni
@@ -151,4 +161,6 @@ Scenario Outline: Applicativi modi interno Creazione 400 <nome>
 Examples:
 |nome| error |
 | applicativo_esterno_audience.json | Configurazione \'ModI\' non valida |
+| applicativo_interno_token_policy_inesistente.json | Token Policy indicata \'GoogleNonEsistente\' non esiste |
+| applicativo_interno_undefined_security.json | Configurazione \'ModI\' non valida: definire almeno una configurazione tra sicurezza messaggio e token |
 

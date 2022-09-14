@@ -61,7 +61,7 @@ public class ColonnaExportManager {
 		this.ordineInserimentoColonne = new ArrayList<String>();
 		this.ordineInserimentoColonneCustomView = new ArrayList<String>();
 		
-		boolean SHOW_IN_CUSTOM_VIEW = true;
+		boolean SHOW_IN_CUSTOM_VIEW = true; // rappresenta le colonne visualizzate nello storico
 		
 		this._addColonna(CostantiExport.KEY_COL_ID_TRANSAZIONE, CostantiExport.LABEL_COL_ID_TRANSAZIONE, SHOW_IN_CUSTOM_VIEW);
 		this._addColonna(CostantiExport.KEY_COL_PROTOCOLLO, CostantiExport.LABEL_COL_PROTOCOLLO, SHOW_IN_CUSTOM_VIEW);
@@ -141,6 +141,8 @@ public class ColonnaExportManager {
 		this._addColonna(CostantiExport.KEY_COL_TOKEN_CLIENT, CostantiExport.LABEL_COL_TOKEN_CLIENT, !SHOW_IN_CUSTOM_VIEW);
 		this._addColonna(CostantiExport.KEY_COL_TOKEN_USERNAME, CostantiExport.LABEL_COL_TOKEN_USERNAME, !SHOW_IN_CUSTOM_VIEW);
 		this._addColonna(CostantiExport.KEY_COL_TOKEN_EMAIL, CostantiExport.LABEL_COL_TOKEN_EMAIL, !SHOW_IN_CUSTOM_VIEW);
+		this._addColonna(CostantiExport.KEY_COL_TOKEN_CLIENT_APPLICATIVO, CostantiExport.LABEL_COL_TOKEN_CLIENT_APPLICATIVO, SHOW_IN_CUSTOM_VIEW);
+		this._addColonna(CostantiExport.KEY_COL_TOKEN_CLIENT_SOGGETTO, CostantiExport.LABEL_COL_TOKEN_CLIENT_SOGGETTO, SHOW_IN_CUSTOM_VIEW);
 
 		
 //		// AGGIUNTA TRACCE GESTITE DALL'UTENTE NELLA FORM NELLA PAGINA

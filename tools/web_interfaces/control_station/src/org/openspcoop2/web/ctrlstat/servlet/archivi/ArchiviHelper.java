@@ -2658,6 +2658,13 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		String appId = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
 		String apiKey = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
 		
+		String tokenPolicySA = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY);
+		String tokenClientIdSA = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
+		boolean tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN.equals(tipoauth);
+		if(tokenWithHttpsEnabledByConfigSA) {
+			tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL;
+		}
+		
 		if(tipoauth==null || tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)){
 			tipoauth = this.saCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
 		} 
@@ -2705,7 +2712,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		// controllo dei postback
 		
 		//}true,endpointtype,true,false, prefix, true
-		dati =	this.addCredenzialiToDati(dati, tipoauth, null, utente, password, subject, principal,
+		dati =	this.addCredenzialiToDati(TipoOperazione.OTHER, dati, tipoauth, null, utente, password, subject, principal,
 				ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD, showSectionTitle, null, false, true, null, true, 
 				tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato, tipoCredenzialiSSLFileCertificatoPassword, listaAliasEstrattiCertificato, 
 				tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
@@ -2714,7 +2721,9 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuer, tipoCredenzialiSSLStatoElaborazioneCertificato,
 				changepwd, 
 				multipleApiKey, appId, apiKey, 
-				visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd); 
+				visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
+				false, tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA,
+				false, null); 
 	}
 	
 	private void addDatiConnettore(Vector<DataElement> dati, boolean readedDatiConnettori, Default defaultProperties,

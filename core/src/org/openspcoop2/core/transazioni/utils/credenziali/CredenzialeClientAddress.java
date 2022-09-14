@@ -24,7 +24,7 @@ import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.utils.UtilsException;
 
 /**     
- * CredenzialeTrasporto
+ * CredenzialeClientAddress
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
@@ -60,10 +60,25 @@ public class CredenzialeClientAddress extends AbstractCredenziale {
 	private static String PREFIX_TRANSPORT = "#T#";
 	
 	public static String getSocketAddressDBValue(String address) {
-		return PREFIX_SOCKET + address + PREFIX_SOCKET;
+		return getSocketAddressDBValue(address, true);
+	}
+	public static String getSocketAddressDBValue(String address, boolean ricercaEsatta) {
+		if(ricercaEsatta) {
+			return PREFIX_SOCKET + address + PREFIX_SOCKET;
+		}
+		else {
+			return PREFIX_SOCKET + "%" + address + "%" + PREFIX_SOCKET;
+		}
 	}
 	public static String getTransportAddressDBValue(String address) {
-		return PREFIX_TRANSPORT + address + PREFIX_TRANSPORT;
+		return getTransportAddressDBValue(address, true);
+	}
+	public static String getTransportAddressDBValue(String address, boolean ricercaEsatta) {
+		if(ricercaEsatta) {
+			return PREFIX_TRANSPORT + address + PREFIX_TRANSPORT;
+		}else {
+			return PREFIX_TRANSPORT + "%" + address + "%" + PREFIX_TRANSPORT;
+		}
 	}
 	
 	public static boolean isSocketAddressDBValue(String address) {

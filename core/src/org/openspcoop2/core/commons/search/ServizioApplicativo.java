@@ -42,8 +42,12 @@ import java.util.List;
  * 			&lt;element name="tipologia_erogazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="as_client" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="tipoauth" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="utente" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="token_policy" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="id-soggetto" type="{http://www.openspcoop2.org/core/commons/search}id-soggetto" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="servizio-applicativo-ruolo" type="{http://www.openspcoop2.org/core/commons/search}servizio-applicativo-ruolo" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="servizio-applicativo-proprieta-protocollo" type="{http://www.openspcoop2.org/core/commons/search}servizio-applicativo-proprieta-protocollo" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 		&lt;/sequence&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -62,8 +66,12 @@ import java.util.List;
   	"tipologiaErogazione",
   	"tipo",
   	"asClient",
+  	"tipoauth",
+  	"utente",
+  	"tokenPolicy",
   	"idSoggetto",
-  	"servizioApplicativoRuolo"
+  	"servizioApplicativoRuolo",
+  	"servizioApplicativoProprietaProtocollo"
   }
 )
 
@@ -127,6 +135,30 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
     this.asClient = asClient;
   }
 
+  public java.lang.String getTipoauth() {
+    return this.tipoauth;
+  }
+
+  public void setTipoauth(java.lang.String tipoauth) {
+    this.tipoauth = tipoauth;
+  }
+
+  public java.lang.String getUtente() {
+    return this.utente;
+  }
+
+  public void setUtente(java.lang.String utente) {
+    this.utente = utente;
+  }
+
+  public java.lang.String getTokenPolicy() {
+    return this.tokenPolicy;
+  }
+
+  public void setTokenPolicy(java.lang.String tokenPolicy) {
+    this.tokenPolicy = tokenPolicy;
+  }
+
   public IdSoggetto getIdSoggetto() {
     return this.idSoggetto;
   }
@@ -157,6 +189,30 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
 
   public int sizeServizioApplicativoRuoloList() {
     return this.servizioApplicativoRuolo.size();
+  }
+
+  public void addServizioApplicativoProprietaProtocollo(ServizioApplicativoProprietaProtocollo servizioApplicativoProprietaProtocollo) {
+    this.servizioApplicativoProprietaProtocollo.add(servizioApplicativoProprietaProtocollo);
+  }
+
+  public ServizioApplicativoProprietaProtocollo getServizioApplicativoProprietaProtocollo(int index) {
+    return this.servizioApplicativoProprietaProtocollo.get( index );
+  }
+
+  public ServizioApplicativoProprietaProtocollo removeServizioApplicativoProprietaProtocollo(int index) {
+    return this.servizioApplicativoProprietaProtocollo.remove( index );
+  }
+
+  public List<ServizioApplicativoProprietaProtocollo> getServizioApplicativoProprietaProtocolloList() {
+    return this.servizioApplicativoProprietaProtocollo;
+  }
+
+  public void setServizioApplicativoProprietaProtocolloList(List<ServizioApplicativoProprietaProtocollo> servizioApplicativoProprietaProtocollo) {
+    this.servizioApplicativoProprietaProtocollo=servizioApplicativoProprietaProtocollo;
+  }
+
+  public int sizeServizioApplicativoProprietaProtocolloList() {
+    return this.servizioApplicativoProprietaProtocollo.size();
   }
 
   private static final long serialVersionUID = 1L;
@@ -198,6 +254,18 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
   @XmlElement(name="as_client",required=false,nillable=false)
   protected java.lang.Integer asClient;
 
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="tipoauth",required=false,nillable=false)
+  protected java.lang.String tipoauth;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="utente",required=false,nillable=false)
+  protected java.lang.String utente;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="token_policy",required=false,nillable=false)
+  protected java.lang.String tokenPolicy;
+
   @XmlElement(name="id-soggetto",required=true,nillable=false)
   protected IdSoggetto idSoggetto;
 
@@ -229,6 +297,36 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
   @Deprecated
   public int sizeServizioApplicativoRuolo() {
   	return this.servizioApplicativoRuolo.size();
+  }
+
+  @XmlElement(name="servizio-applicativo-proprieta-protocollo",required=true,nillable=false)
+  protected List<ServizioApplicativoProprietaProtocollo> servizioApplicativoProprietaProtocollo = new ArrayList<ServizioApplicativoProprietaProtocollo>();
+
+  /**
+   * @deprecated Use method getServizioApplicativoProprietaProtocolloList
+   * @return List&lt;ServizioApplicativoProprietaProtocollo&gt;
+  */
+  @Deprecated
+  public List<ServizioApplicativoProprietaProtocollo> getServizioApplicativoProprietaProtocollo() {
+  	return this.servizioApplicativoProprietaProtocollo;
+  }
+
+  /**
+   * @deprecated Use method setServizioApplicativoProprietaProtocolloList
+   * @param servizioApplicativoProprietaProtocollo List&lt;ServizioApplicativoProprietaProtocollo&gt;
+  */
+  @Deprecated
+  public void setServizioApplicativoProprietaProtocollo(List<ServizioApplicativoProprietaProtocollo> servizioApplicativoProprietaProtocollo) {
+  	this.servizioApplicativoProprietaProtocollo=servizioApplicativoProprietaProtocollo;
+  }
+
+  /**
+   * @deprecated Use method sizeServizioApplicativoProprietaProtocolloList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeServizioApplicativoProprietaProtocollo() {
+  	return this.servizioApplicativoProprietaProtocollo.size();
   }
 
 }

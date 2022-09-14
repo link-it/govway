@@ -34,6 +34,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.PortaDelegataAutorizzazioneServiziApplicativi;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
@@ -41,6 +42,7 @@ import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
@@ -95,6 +97,9 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 			if(idFruizione == null)
 				idFruizione = "";
 			
+			String tokenList = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TOKEN_AUTHORIZATION);
+			boolean isToken = tokenList!=null && !"".equals(tokenList) && Boolean.valueOf(tokenList);
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
@@ -126,11 +131,21 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 
 			// Prendo nome della porta delegata
 			PortaDelegata pde = porteDelegateCore.getPortaDelegata(idInt);
-			CredenzialeTipo tipoAutenticazione = CredenzialeTipo.toEnumConstant(pde.getAutenticazione());
+			CredenzialeTipo tipoAutenticazione = null;
 			Boolean appId = null;
-			if(CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
-				ApiKeyState apiKeyState =  new ApiKeyState(porteDelegateCore.getParametroAutenticazione(pde.getAutenticazione(), pde.getProprietaAutenticazioneList()));
-				appId = apiKeyState.appIdSelected;
+			String tokenPolicy = null;
+			if(isToken) {
+				tipoAutenticazione = CredenzialeTipo.TOKEN;
+				if(pde.getGestioneToken()!=null && pde.getGestioneToken().getPolicy()!=null) {
+					tokenPolicy = pde.getGestioneToken().getPolicy();
+				}
+			}
+			else {
+				tipoAutenticazione = CredenzialeTipo.toEnumConstant(pde.getAutenticazione());
+				if(CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
+					ApiKeyState apiKeyState =  new ApiKeyState(porteDelegateCore.getParametroAutenticazione(pde.getAutenticazione(), pde.getProprietaAutenticazioneList()));
+					appId = apiKeyState.appIdSelected;
+				}
 			}
 			String idporta = pde.getNome();
 
@@ -138,7 +153,8 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
-			Parameter[] urlParms = { pId,pIdSoggetto,pIdAsps,pIdFrizione };
+			Parameter[] urlParms = { pId,pIdSoggetto,pIdAsps,pIdFrizione,
+					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TOKEN_AUTHORIZATION, isToken+"") };
 			
 			List<Parameter> lstParam = porteDelegateHelper.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
 			
@@ -159,10 +175,19 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, pde.getIdSoggetto() + ""),
 					pIdAsps, new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione+ "")));
 			
-			String labelPagLista = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_CONFIG;
-			if(!porteDelegateHelper.isModalitaCompleta()) {
-				labelPagLista = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVO_CONFIG;
+			String labelApp = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_CONFIG;
+			if(!porteDelegateHelper.isModalitaCompleta() || isToken) {
+				labelApp = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVO_CONFIG;
 			}
+			String labelPagLista = 
+					(
+							isToken ? 
+							CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN 
+							:
+							CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TRASPORTO
+					)
+					+ " - " +
+					labelApp;
 			
 			lstParam.add(new Parameter(labelPagLista, 
 					PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_LIST,urlParms));
@@ -184,16 +209,31 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 				// Prendo la lista di servizioApplicativo associati al soggetto
 				// e la metto in un array
 				Vector<String> silV = new Vector<String>();
-				List<IDServizioApplicativoDB> oldSilList = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione, appId, filtroTipoSA);
+				boolean bothSslAndToken = false;
+				List<IDServizioApplicativoDB> oldSilList = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione, appId, filtroTipoSA, 
+						bothSslAndToken, tokenPolicy);
 				for (int i = 0; i < oldSilList.size(); i++) {
 					IDServizioApplicativoDB singleSA = oldSilList.get(i);
 					String tmpNome = singleSA.getNome();
 					boolean trovatoSA = false;
-					for (int j = 0; j < pde.sizeServizioApplicativoList(); j++) {
-						PortaDelegataServizioApplicativo tmpSA = pde.getServizioApplicativo(j);
-						if (tmpNome.equals(tmpSA.getNome())) {
-							trovatoSA = true;
-							break;
+					if(isToken) {
+						if(pde.getAutorizzazioneToken()!=null && pde.getAutorizzazioneToken().getServiziApplicativi()!=null) {
+							for (int j = 0; j < pde.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList(); j++) {
+								PortaDelegataServizioApplicativo tmpSA = pde.getAutorizzazioneToken().getServiziApplicativi().getServizioApplicativo(j);
+								if (tmpNome.equals(tmpSA.getNome())) {
+									trovatoSA = true;
+									break;
+								}
+							}
+						}
+					}
+					else {
+						for (int j = 0; j < pde.sizeServizioApplicativoList(); j++) {
+							PortaDelegataServizioApplicativo tmpSA = pde.getServizioApplicativo(j);
+							if (tmpNome.equals(tmpSA.getNome())) {
+								trovatoSA = true;
+								break;
+							}
 						}
 					}
 					if (!trovatoSA)
@@ -206,7 +246,7 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 						servizioApplicativoList[j] = silV.get(j);
 				}
 
-				dati = porteDelegateHelper.addPorteServizioApplicativoToDati(TipoOperazione.ADD,dati, "", servizioApplicativoList, oldSilList.size(),true, true);
+				dati = porteDelegateHelper.addPorteServizioApplicativoToDati(TipoOperazione.ADD,dati, "", servizioApplicativoList, oldSilList.size(),true, true, isToken);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
@@ -234,7 +274,9 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 				// Prendo la lista di servizioApplicativo (tranne quelli già
 				// usati) e la metto in un array
 				Vector<String> silV = new Vector<String>();
-				List<IDServizioApplicativoDB> oldSilList = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione, appId, filtroTipoSA);
+				boolean bothSslAndToken = false;
+				List<IDServizioApplicativoDB> oldSilList = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione, appId, filtroTipoSA, 
+						bothSslAndToken, tokenPolicy);
 				for (int i = 0; i < oldSilList.size(); i++) {
 					IDServizioApplicativoDB singleSA = oldSilList.get(i);
 					String tmpNome = singleSA.getNome();
@@ -256,7 +298,7 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 						servizioApplicativoList[j] = silV.get(j);
 				}
 
-				dati = porteDelegateHelper.addPorteServizioApplicativoToDati(TipoOperazione.ADD, dati, servizioApplicativo, servizioApplicativoList, oldSilList.size(),true, true);
+				dati = porteDelegateHelper.addPorteServizioApplicativoToDati(TipoOperazione.ADD, dati, servizioApplicativo, servizioApplicativoList, oldSilList.size(),true, true, isToken);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
@@ -273,7 +315,15 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 			// Inserisco il servizioApplicativo nel db
 			PortaDelegataServizioApplicativo sa = new PortaDelegataServizioApplicativo();
 			sa.setNome(servizioApplicativo);
-			pde.addServizioApplicativo(sa);
+			if(isToken) {
+				if(pde.getAutorizzazioneToken().getServiziApplicativi()==null) {
+					pde.getAutorizzazioneToken().setServiziApplicativi(new PortaDelegataAutorizzazioneServiziApplicativi());
+				}
+				pde.getAutorizzazioneToken().getServiziApplicativi().addServizioApplicativo(sa);
+			}
+			else {
+				pde.addServizioApplicativo(sa);
+			}
 
 			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), pde);
 
@@ -281,10 +331,16 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 			
 			int idLista = Liste.PORTE_DELEGATE_SERVIZIO_APPLICATIVO;
+			if(isToken) {
+				idLista = Liste.PORTE_DELEGATE_TOKEN_SERVIZIO_APPLICATIVO;
+			}
 
 			ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
 
-			List<ServizioApplicativo> lista = porteDelegateCore.porteDelegateServizioApplicativoList(Integer.parseInt(id), ricerca);
+			List<ServizioApplicativo> lista = isToken ?
+					porteDelegateCore.porteDelegateServizioApplicativoTokenList(Integer.parseInt(id), ricerca) 
+					:
+					porteDelegateCore.porteDelegateServizioApplicativoList(Integer.parseInt(id), ricerca) ;
 
 			porteDelegateHelper.preparePorteDelegateServizioApplicativoList(idporta, ricerca, lista);
 

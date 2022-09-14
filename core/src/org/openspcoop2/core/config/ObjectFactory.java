@@ -66,6 +66,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link PortaDelegataAutorizzazioneToken }
+     */
+    public PortaDelegataAutorizzazioneToken createPortaDelegataAutorizzazioneToken() {
+        return new PortaDelegataAutorizzazioneToken();
+    }
+
+    /**
      * Create an instance of {@link Route }
      */
     public Route createRoute() {
@@ -259,6 +266,13 @@ public class ObjectFactory {
      */
     public Trasformazioni createTrasformazioni() {
         return new Trasformazioni();
+    }
+
+    /**
+     * Create an instance of {@link PortaDelegataAutorizzazioneServiziApplicativi }
+     */
+    public PortaDelegataAutorizzazioneServiziApplicativi createPortaDelegataAutorizzazioneServiziApplicativi() {
+        return new PortaDelegataAutorizzazioneServiziApplicativi();
     }
 
     /**
@@ -791,6 +805,13 @@ public class ObjectFactory {
      */
     public SystemProperties createSystemProperties() {
         return new SystemProperties();
+    }
+
+    /**
+     * Create an instance of {@link PortaApplicativaAutorizzazioneToken }
+     */
+    public PortaApplicativaAutorizzazioneToken createPortaApplicativaAutorizzazioneToken() {
+        return new PortaApplicativaAutorizzazioneToken();
     }
 
     /**

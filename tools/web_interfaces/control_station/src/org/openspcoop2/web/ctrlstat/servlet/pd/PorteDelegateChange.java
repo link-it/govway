@@ -326,6 +326,17 @@ public final class PorteDelegateChange extends Action {
 			if(pde.getScope()!=null){
 				numScope = pde.getScope().sizeScopeList();
 			}
+			
+			int numAutenticatiToken = 0; 
+			if(pde.getAutorizzazioneToken()!=null && pde.getAutorizzazioneToken().getServiziApplicativi()!=null){
+				numAutenticatiToken = pde.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList();
+			}
+			
+			int numRuoliToken = 0; 
+			if(pde.getAutorizzazioneToken()!=null && pde.getAutorizzazioneToken().getRuoli()!=null){
+				numRuoliToken = pde.getAutorizzazioneToken().getRuoli().sizeRuoloList();
+			}
+			
 			String statoMessageSecurity  = pde.getStatoMessageSecurity() ;
 
 			// Stato MTOM
@@ -475,6 +486,11 @@ public final class PorteDelegateChange extends Action {
 			String autenticazioneTokenUsername = null;
 			String autenticazioneTokenEMail = null;
 			
+			String autorizzazioneAutenticatiToken = null;
+			String autorizzazioneRuoliToken = null;
+			String autorizzazioneRuoliTipologiaToken = null;
+			String autorizzazioneRuoliMatchToken = null;
+			
 			String autorizzazione_token = null;
 			String autorizzazione_tokenOptions = null;
 			
@@ -595,6 +611,22 @@ public final class PorteDelegateChange extends Action {
 				autenticazioneTokenSubject = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_SUBJECT;
 				autenticazioneTokenUsername = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_USERNAME;
 				autenticazioneTokenEMail = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_EMAIL;
+			}
+			
+			if(pde.getAutorizzazioneToken()!=null && pde.getAutorizzazioneToken().getAutorizzazioneApplicativi()!=null) {
+				autorizzazioneAutenticatiToken = StatoFunzionalita.ABILITATO.equals(pde.getAutorizzazioneToken().getAutorizzazioneApplicativi()) ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
+			}
+			
+			if(pde.getAutorizzazioneToken()!=null && pde.getAutorizzazioneToken().getAutorizzazioneRuoli()!=null) {
+				autorizzazioneRuoliToken = StatoFunzionalita.ABILITATO.equals(pde.getAutorizzazioneToken().getAutorizzazioneRuoli()) ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
+			}
+			
+			if(pde.getAutorizzazioneToken()!=null && pde.getAutorizzazioneToken().getTipologiaRuoli()!=null) {
+				autorizzazioneRuoliTipologiaToken = pde.getAutorizzazioneToken().getTipologiaRuoli().getValue();
+			}
+			
+			if(pde.getAutorizzazioneToken()!=null && pde.getAutorizzazioneToken().getRuoli()!=null && pde.getAutorizzazioneToken().getRuoli().getMatch()!=null){
+				autorizzazioneRuoliMatchToken = pde.getAutorizzazioneToken().getRuoli().getMatch().getValue();
 			}
 			
 			String autorizzazioneScope = null;
@@ -1113,6 +1145,8 @@ public final class PorteDelegateChange extends Action {
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						messageEngine, pde.getCanale(),
 						identificazioneAttributiStato, null,null, attributeAuthoritySelezionate, attributeAuthorityAttributi,
+						autorizzazioneAutenticatiToken, null, numAutenticatiToken, 
+						autorizzazioneRuoliToken,  null, numRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
 						ctModalitaSincronizzazione, ctImplementazione, ctContatori, ctTipologia,
 						ctHeaderHttp, ctHeaderHttp_limit, ctHeaderHttp_remaining, ctHeaderHttp_reset,
 						ctHeaderHttp_retryAfter, ctHeaderHttp_retryAfterBackoff);
@@ -1284,6 +1318,8 @@ public final class PorteDelegateChange extends Action {
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						messageEngine, pde.getCanale(),
 						identificazioneAttributiStato, null,null, attributeAuthoritySelezionate, attributeAuthorityAttributi,
+						autorizzazioneAutenticatiToken, null, numAutenticatiToken, 
+						autorizzazioneRuoliToken,  null, numRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
 						ctModalitaSincronizzazione, ctImplementazione, ctContatori, ctTipologia,
 						ctHeaderHttp, ctHeaderHttp_limit, ctHeaderHttp_remaining, ctHeaderHttp_reset,
 						ctHeaderHttp_retryAfter, ctHeaderHttp_retryAfterBackoff);

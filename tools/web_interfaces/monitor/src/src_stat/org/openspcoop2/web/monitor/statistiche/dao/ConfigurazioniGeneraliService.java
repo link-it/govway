@@ -341,9 +341,9 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				Soggetto soggetto = new Soggetto();
 				soggetto.setTipoSoggetto(this.getSearch().getTipoSoggettoLocale());
 				soggetto.setNomeSoggetto(this.getSearch().getSoggettoLocale());
-				count = this.dynamicService.countElencoServiziApplicativi(tipoProtocollo, soggetto);
+				count = this.dynamicService.countElencoServiziApplicativi(tipoProtocollo, soggetto, true, true);
 			}else {
-				count = this.dynamicService.countElencoServiziApplicativi(tipoProtocollo, null);
+				count = this.dynamicService.countElencoServiziApplicativi(tipoProtocollo, null, true, true);
 			}
 			ConfigurazioniGeneraliService.log.debug("Trovati " + (count) + " " + CostantiConfigurazioni.CONF_SERVIZI_APPLICATIVI_LABEL);
 		}catch(Exception e){

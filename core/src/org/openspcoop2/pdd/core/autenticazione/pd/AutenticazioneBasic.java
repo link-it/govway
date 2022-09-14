@@ -134,7 +134,9 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 			return esito;
 		}
 		else if(idServizioApplicativo.getIdSoggettoProprietario().equals(soggettoFruitore)==false) {
-			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS, ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaBasic("soggetto proprietario dell'applicativo identificato differente dal soggetto proprietario della porta invocata",user,password));
+			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS, 
+					ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.
+						getErrore402_AutenticazioneFallitaBasic("soggetto proprietario ("+idServizioApplicativo.getIdSoggettoProprietario()+") dell'applicativo identificato ("+idServizioApplicativo.getNome()+") differente dal soggetto proprietario della porta invocata ("+soggettoFruitore+")",user,password));
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			if(wwwAuthenticateConfig!=null) {

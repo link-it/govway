@@ -80,6 +80,10 @@ public final class PorteDelegateServizioApplicativoDel extends Action {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
 			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(id);
+			
+			String tokenList = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TOKEN_AUTHORIZATION);
+			boolean isToken = tokenList!=null && !"".equals(tokenList) && Boolean.valueOf(tokenList);
+			
 			String objToRemove = porteDelegateHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			// Elimino il servizioApplicativo della porta delegata dal db
@@ -103,11 +107,24 @@ public final class PorteDelegateServizioApplicativoDel extends Action {
 				// .elementAt(idToRemove[i])).elementAt(0);
 				// servizioApplicativo = de.getValue();
 				servizioApplicativo = idsToRemove.get(i);
-				for (int j = 0; j < pde.sizeServizioApplicativoList(); j++) {
-					PortaDelegataServizioApplicativo sa = pde.getServizioApplicativo(j);
-					if (servizioApplicativo.equals(sa.getNome())) {
-						pde.removeServizioApplicativo(j);
-						break;
+				if(isToken) {
+					if(pde.getAutorizzazioneToken()!=null && pde.getAutorizzazioneToken().getServiziApplicativi()!=null) {
+						for (int j = 0; j < pde.getAutorizzazioneToken().getServiziApplicativi().sizeServizioApplicativoList(); j++) {
+							PortaDelegataServizioApplicativo sa = pde.getAutorizzazioneToken().getServiziApplicativi().getServizioApplicativo(j);
+							if (servizioApplicativo.equals(sa.getNome())) {
+								pde.getAutorizzazioneToken().getServiziApplicativi().removeServizioApplicativo(j);
+								break;
+							}
+						}
+					}
+				}
+				else {
+					for (int j = 0; j < pde.sizeServizioApplicativoList(); j++) {
+						PortaDelegataServizioApplicativo sa = pde.getServizioApplicativo(j);
+						if (servizioApplicativo.equals(sa.getNome())) {
+							pde.removeServizioApplicativo(j);
+							break;
+						}
 					}
 				}
 			}
@@ -123,10 +140,16 @@ public final class PorteDelegateServizioApplicativoDel extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
 			int idLista = Liste.PORTE_DELEGATE_SERVIZIO_APPLICATIVO;
+			if(isToken) {
+				idLista = Liste.PORTE_DELEGATE_TOKEN_SERVIZIO_APPLICATIVO;
+			}
 
 			ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
 
-			List<ServizioApplicativo> lista = porteDelegateCore.porteDelegateServizioApplicativoList(Integer.parseInt(id), ricerca);
+			List<ServizioApplicativo> lista = isToken ?
+					porteDelegateCore.porteDelegateServizioApplicativoTokenList(Integer.parseInt(id), ricerca)
+					:
+					porteDelegateCore.porteDelegateServizioApplicativoList(Integer.parseInt(id), ricerca);
 
 			porteDelegateHelper.preparePorteDelegateServizioApplicativoList(pde.getNome(), ricerca, lista);
 

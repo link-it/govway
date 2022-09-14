@@ -362,6 +362,11 @@ public class InterceptorPolicyUtilities {
 				}
 			}
 			
+			if(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN)) {
+				IDServizioApplicativo servizioApplicativoToken = (IDServizioApplicativo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN);
+				datiTransazione.setIdServizioApplicativoToken(servizioApplicativoToken);
+	    	}
+			
 		}
 		
 		return datiTransazione;
@@ -505,7 +510,43 @@ public class InterceptorPolicyUtilities {
 								}
 							}
 						}
+						
 					}
+
+				}
+				
+				if(!ruoloSoggetto & !ruoloApplicativo && datiTransazione.getIdServizioApplicativoToken()!=null) {
+						
+					if(policyGlobale || TipoPdD.APPLICATIVA.equals(datiTransazione.getTipoPdD())){
+						RegistroServiziManager registroManager = RegistroServiziManager.getInstance(state);
+						Soggetto soggetto = null;
+						try {
+							soggetto = registroManager.getSoggetto(datiTransazione.getIdServizioApplicativoToken().getIdSoggettoProprietario(), null);
+						}catch(DriverRegistroServiziNotFound notFound) {}
+						if(soggetto!=null && soggetto.getRuoli()!=null) {
+							for (int i = 0; i < soggetto.getRuoli().sizeRuoloList(); i++) {
+								if(soggetto.getRuoli().getRuolo(i).getNome().equals(filtro.getRuoloFruitore())) {
+									ruoloSoggetto = true;
+									break;
+								}
+							}
+						}
+					}
+					
+					ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance(state);
+					ServizioApplicativo sa = null;
+					try {
+						sa = configPdDManager.getServizioApplicativo(datiTransazione.getIdServizioApplicativoToken());
+					}catch(DriverConfigurazioneNotFound nofFound) {}
+					if(sa!=null && sa.getInvocazionePorta()!=null && sa.getInvocazionePorta().getRuoli()!=null) {
+						for (int i = 0; i < sa.getInvocazionePorta().getRuoli().sizeRuoloList(); i++) {
+							if(sa.getInvocazionePorta().getRuoli().getRuolo(i).getNome().equals(filtro.getRuoloFruitore())) {
+								ruoloApplicativo = true;
+								break;
+							}
+						}
+					}
+						
 				}
 				
 				if(!ruoloSoggetto && !ruoloApplicativo) {
@@ -514,7 +555,20 @@ public class InterceptorPolicyUtilities {
 					
 			}
 			
-			if(filtro.getTipoFruitore()!=null && !"".equals(filtro.getTipoFruitore())){
+			boolean checkDatiFruitore = true;
+			
+			if(datiTransazione.getIdServizioApplicativoToken()!=null && datiTransazione.getIdServizioApplicativoToken().getIdSoggettoProprietario()!=null &&
+					filtro.getTipoFruitore()!=null && !"".equals(filtro.getTipoFruitore()) &&
+					filtro.getNomeFruitore()!=null && !"".equals(filtro.getNomeFruitore()) &&
+					filtro.getServizioApplicativoFruitore()!=null && !"".equals(filtro.getServizioApplicativoFruitore())){
+				if(filtro.getTipoFruitore().equals(datiTransazione.getIdServizioApplicativoToken().getIdSoggettoProprietario().getTipo()) &&
+						filtro.getNomeFruitore().equals(datiTransazione.getIdServizioApplicativoToken().getIdSoggettoProprietario().getNome()) &&
+						filtro.getServizioApplicativoFruitore().equals(datiTransazione.getIdServizioApplicativoToken().getNome())) {
+					checkDatiFruitore = false; // match con l'applicativo token
+				}
+			}
+			
+			if(checkDatiFruitore && filtro.getTipoFruitore()!=null && !"".equals(filtro.getTipoFruitore())){
 				if(datiTransazione.getSoggettoFruitore()==null){
 					return false;
 				}
@@ -522,7 +576,7 @@ public class InterceptorPolicyUtilities {
 					return false;
 				}
 			}
-			if(filtro.getNomeFruitore()!=null && !"".equals(filtro.getNomeFruitore())){
+			if(checkDatiFruitore && filtro.getNomeFruitore()!=null && !"".equals(filtro.getNomeFruitore())){
 				if(datiTransazione.getSoggettoFruitore()==null){
 					return false;
 				}
@@ -531,7 +585,7 @@ public class InterceptorPolicyUtilities {
 				}
 			}
 			
-			if(filtro.getServizioApplicativoFruitore()!=null && !"".equals(filtro.getServizioApplicativoFruitore())){
+			if(checkDatiFruitore && filtro.getServizioApplicativoFruitore()!=null && !"".equals(filtro.getServizioApplicativoFruitore())){
 				if(filtro.getServizioApplicativoFruitore().equals(datiTransazione.getServizioApplicativoFruitore())==false){
 					return false;
 				}

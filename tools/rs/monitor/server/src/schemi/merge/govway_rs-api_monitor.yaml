@@ -8,7 +8,7 @@ info:
   license:
     name: "GPL v3.0"
     url: "https://www.gnu.org/licenses/gpl-3.0.txt"
-  version: "3.3.7"
+  version: "3.3.8"
   x-api-id: "https://govway.org/apiMonitor"
   x-summary: "Servizi per il monitoraggio di GovWay"
 servers:
@@ -950,6 +950,7 @@ paths:
       - $ref: "#/components/parameters/azione"
       - $ref: "#/components/parameters/esito_transazione"
       - $ref: "#/components/parameters/escludi_scartate"
+      - $ref: "#/components/parameters/tipo_identificazione_applicativo"
       - $ref: "#/components/parameters/formato_report"
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
@@ -2067,6 +2068,8 @@ components:
       - $ref: "#/components/schemas/RicercaStatisticaDistribuzioneApplicativo"
       - type: "object"
         properties:
+          tipo_identificazione_applicativo:
+            $ref: "#/components/schemas/TipoIdentificazioneApplicativoEnum"
           soggetto_mittente:
             $ref: "#/components/schemas/NCName"
     RicercaStatisticaDistribuzioneTokenInfo:
@@ -2175,6 +2178,8 @@ components:
       properties:
         identificazione:
           $ref: "#/components/schemas/TipoFiltroMittenteEnum"
+        tipo_identificazione_applicativo:
+          $ref: "#/components/schemas/TipoIdentificazioneApplicativoEnum"
         soggetto:
           $ref: "#/components/schemas/SimpleName"
         applicativo:
@@ -2187,6 +2192,8 @@ components:
       properties:
         identificazione:
           $ref: "#/components/schemas/TipoFiltroMittenteEnum"
+        tipo_identificazione_applicativo:
+          $ref: "#/components/schemas/TipoIdentificazioneApplicativoEnum"
         applicativo:
           $ref: "#/components/schemas/NCName"
     FiltroMittenteIdAutenticato:
@@ -2270,6 +2277,12 @@ components:
       - "erogazione_token_info"
       - "token_info"
       - "indirizzo_ip"
+    TipoIdentificazioneApplicativoEnum:
+      type: "string"
+      default: "trasporto"
+      enum:
+      - "trasporto"
+      - "token"
     TipoFiltroMittenteIdentificativoAutenticatoEnum:
       type: "string"
       enum:
@@ -2552,6 +2565,17 @@ components:
             $ref: "#/components/schemas/TransazioneExtInformazioniSoggetto"
           applicativo:
             $ref: "#/components/schemas/NCName"
+          applicativo_token:
+            $ref: "#/components/schemas/TransazioneExtInformazioniMittenteApplicativoToken"
+    TransazioneExtInformazioniMittenteApplicativoToken:
+      type: "object"
+      properties:
+        nome:
+          $ref: "#/components/schemas/NCName"
+        soggetto:
+          $ref: "#/components/schemas/NCName"
+        informazioni_soggetto:
+          $ref: "#/components/schemas/TransazioneExtInformazioniSoggetto"
     TransazioneExtInformazioniMittente:
       type: "object"
       allOf:
@@ -3337,6 +3361,14 @@ components:
       required: false
       schema:
         $ref: "#/components/schemas/TipoInformazioneReportEnum"
+    tipo_identificazione_applicativo:
+      name: "tipo_identificazione"
+      in: "query"
+      description: "Indica la modalità di identificazione dell'applicativo tra trasporto\
+        \ o token"
+      required: false
+      schema:
+        $ref: "#/components/schemas/TipoIdentificazioneApplicativoEnum"
     claim:
       name: "claim"
       in: "query"

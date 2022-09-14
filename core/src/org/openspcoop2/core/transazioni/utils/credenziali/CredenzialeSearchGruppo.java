@@ -37,8 +37,8 @@ public class CredenzialeSearchGruppo extends AbstractSearchCredenziale {
 	}
 	
 	@Override
-	protected String getExactValueDatabase(String credentialParam) throws UtilsException {
-		return AbstractCredenzialeList.getDBValue(credentialParam);
+	protected String getExactValueDatabase(String credentialParam, boolean ricercaEsatta) throws UtilsException {
+		return AbstractCredenzialeList.getDBValue(credentialParam, ricercaEsatta);
 	}
 	
 }

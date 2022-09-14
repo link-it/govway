@@ -1,0 +1,3 @@
+{
+	"header_http_firmare": ["Digest","Content-Type","Content-Encoding"]
+}

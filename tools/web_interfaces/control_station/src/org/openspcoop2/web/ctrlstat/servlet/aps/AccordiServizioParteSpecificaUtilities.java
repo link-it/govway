@@ -247,6 +247,8 @@ public class AccordiServizioParteSpecificaUtilities {
 			String autenticazione, String autenticazioneOpzionale, TipoAutenticazionePrincipal autenticazionePrincipal, List<String> autenticazioneParametroList,
 			String autorizzazione, String autorizzazioneAutenticati, String autorizzazioneRuoli, String autorizzazioneRuoliTipologia, String autorizzazioneRuoliMatch,
 			String servizioApplicativo, String ruolo, String soggettoAutenticato, 
+			String autorizzazioneAutenticatiToken, 
+			String autorizzazioneRuoliToken, String autorizzazioneRuoliTipologiaToken, String autorizzazioneRuoliMatchToken,
 			String autorizzazione_tokenOptions,
 			String autorizzazioneScope, String scope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
 			String gestioneToken, 
@@ -270,6 +272,8 @@ public class AccordiServizioParteSpecificaUtilities {
 					autenticazione, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList,
 					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, autorizzazioneRuoliTipologia, autorizzazioneRuoliMatch,
 					servizioApplicativo, ruolo,soggettoAutenticato,
+					autorizzazioneAutenticatiToken, 
+					autorizzazioneRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
 					autorizzazione_tokenOptions,
 					autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 					gestioneToken,
@@ -289,6 +293,8 @@ public class AccordiServizioParteSpecificaUtilities {
 					autenticazione, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList,
 					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, autorizzazioneRuoliTipologia, autorizzazioneRuoliMatch,
 					servizioApplicativo, ruolo,
+					autorizzazioneAutenticatiToken, 
+					autorizzazioneRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
 					autorizzazione_tokenOptions,
 					autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 					gestioneToken, 
@@ -327,6 +333,8 @@ public class AccordiServizioParteSpecificaUtilities {
 			String erogazioneAutenticazione, String erogazioneAutenticazioneOpzionale, TipoAutenticazionePrincipal erogazioneAutenticazionePrincipal, List<String> erogazioneAutenticazioneParametroList,
 			String erogazioneAutorizzazione, String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch,
 			String nomeSA, String erogazioneRuolo, String erogazioneSoggettoAutenticato, 
+			String autorizzazioneAutenticatiToken, 
+			String autorizzazioneRuoliToken, String autorizzazioneRuoliTipologiaToken, String autorizzazioneRuoliMatchToken,
 			String autorizzazione_tokenOptions,
 			String autorizzazioneScope, String scope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
 			String gestioneToken, 
@@ -424,6 +432,8 @@ public class AccordiServizioParteSpecificaUtilities {
 				erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList,
 				erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, erogazioneAutorizzazioneRuoli, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,
 				nomeServizioApplicativoErogatore, erogazioneRuolo,idSoggettoAutenticatoErogazione,
+				autorizzazioneAutenticatiToken, 
+				autorizzazioneRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
 				autorizzazione_tokenOptions,
 				autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 				identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
@@ -461,6 +471,8 @@ public class AccordiServizioParteSpecificaUtilities {
 			String fruizioneAutenticazione, String fruizioneAutenticazioneOpzionale, TipoAutenticazionePrincipal fruizioneAutenticazionePrincipal, List<String> fruizioneAutenticazioneParametroList,
 			String fruizioneAutorizzazione, String fruizioneAutorizzazioneAutenticati, String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,
 			String fruizioneServizioApplicativo, String fruizioneRuolo, 
+			String autorizzazioneAutenticatiToken, 
+			String autorizzazioneRuoliToken, String autorizzazioneRuoliTipologiaToken, String autorizzazioneRuoliMatchToken,
 			String autorizzazione_tokenOptions,
 			String autorizzazioneScope, String scope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
 			String gestioneToken, 
@@ -486,6 +498,8 @@ public class AccordiServizioParteSpecificaUtilities {
 				fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList,
 				fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch,
 				fruizioneServizioApplicativo, fruizioneRuolo,
+				autorizzazioneAutenticatiToken, 
+				autorizzazioneRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
 				autorizzazione_tokenOptions,
 				autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 				identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
@@ -1457,6 +1471,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		} else {// accordo non in uso
 			
 			List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
+			List<Object> listaServiziApplicativiDaEliminare = new ArrayList<Object>();
 			
 			if(paGenerateAutomcaticamente!=null && paGenerateAutomcaticamente.size()>0){
 				
@@ -1517,8 +1532,10 @@ public class AccordiServizioParteSpecificaUtilities {
 						idSA.setIdSoggettoProprietario(soggettoErogatore);
 						idSA.setNome(paGenerataAutomcaticamente.getServizioApplicativoDefault());
 						ServizioApplicativo saGeneratoAutomaticamente = saCore.getServizioApplicativo(idSA);
-						if(!ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(saGeneratoAutomaticamente.getTipo()))
-							listaOggettiDaEliminare.add(saGeneratoAutomaticamente);	
+						if(!ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(saGeneratoAutomaticamente.getTipo())) {
+							//listaOggettiDaEliminare.add(saGeneratoAutomaticamente);
+							listaServiziApplicativiDaEliminare.add(saGeneratoAutomaticamente);
+						}
 					}
 					
 					// cancellazione degli applicativi generati automaticamente
@@ -1532,8 +1549,10 @@ public class AccordiServizioParteSpecificaUtilities {
 							idSA.setNome(paSA.getNome());
 							ServizioApplicativo saGeneratoAutomaticamente = saCore.getServizioApplicativo(idSA);
 							
-							if(!ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(saGeneratoAutomaticamente.getTipo()))
-								listaOggettiDaEliminare.add(saGeneratoAutomaticamente);
+							if(!ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(saGeneratoAutomaticamente.getTipo())) {
+								//listaOggettiDaEliminare.add(saGeneratoAutomaticamente);
+								listaServiziApplicativiDaEliminare.add(saGeneratoAutomaticamente);
+							}
 						}
 					}
 				}
@@ -1597,6 +1616,15 @@ public class AccordiServizioParteSpecificaUtilities {
 			
 			boolean updateAPS = false;
 			if(apsEliminabile) {
+				
+				// Elimino i servizi applicativi generati automaticamente prima dell'aps ma dopo tutte le porte applicative
+				// Questo perche' possono essere piu' associazioni pa_sa verso lo stesso servizio applicativo per i vari gruppi, quando non si ridefinisce un connettore
+				// e in questo caso si avrebbe un errore: integrity constraint (GOVWAY334TESTBYSETUP.FK_PORTE_APPLICATIVE_SA_1) violated - child record found
+				// dopo che ho corretto il fix sul driver configurazione DB_LIB (vedi commento 'BUG?? Devo prima eliminare l'associazione') nel CRUDServizioApplicativo che agiva erroneamente anche nelle tabelle della PA
+				if(listaServiziApplicativiDaEliminare!=null && !listaOggettiDaEliminare.isEmpty()) {
+					listaOggettiDaEliminare.addAll(listaServiziApplicativiDaEliminare);
+				}
+				
 				listaOggettiDaEliminare.add(asps);
 			}
 			else if(gestioneFruitori) {
@@ -1927,6 +1955,8 @@ public class AccordiServizioParteSpecificaUtilities {
 			String erogazioneAutenticazione, String erogazioneAutenticazioneOpzionale, TipoAutenticazionePrincipal erogazioneAutenticazionePrincipal, List<String> erogazioneAutenticazioneParametroList,
 			String erogazioneAutorizzazione, String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch,
 			String nomeSA, String erogazioneRuolo, String erogazioneSoggettoAutenticato, 
+			String autorizzazioneAutenticatiToken, 
+			String autorizzazioneRuoliToken, String autorizzazioneRuoliTipologiaToken, String autorizzazioneRuoliMatchToken,
 			String autorizzazione_tokenOptions,
 			String autorizzazioneScope, String scope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
 			String gestioneToken, 
@@ -2090,6 +2120,8 @@ public class AccordiServizioParteSpecificaUtilities {
 					erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList,
 					erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, erogazioneAutorizzazioneRuoli, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,
 					nomeServizioApplicativoErogatore, erogazioneRuolo,idSoggettoAutenticatoErogazione,
+					autorizzazioneAutenticatiToken, 
+					autorizzazioneRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
 					autorizzazione_tokenOptions,
 					autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 					identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
@@ -2468,6 +2500,8 @@ public class AccordiServizioParteSpecificaUtilities {
 			String fruizioneAutenticazione, String fruizioneAutenticazioneOpzionale, TipoAutenticazionePrincipal fruizioneAutenticazionePrincipal, List<String> fruizioneAutenticazioneParametroList,
 			String fruizioneAutorizzazione, String fruizioneAutorizzazioneAutenticati, String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,
 			String fruizioneServizioApplicativo, String fruizioneRuolo, 
+			String autorizzazioneAutenticatiToken, 
+			String autorizzazioneRuoliToken, String autorizzazioneRuoliTipologiaToken, String autorizzazioneRuoliMatchToken,
 			String autorizzazione_tokenOptions,
 			String autorizzazioneScope, String scope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
 			String gestioneToken, 
@@ -2621,6 +2655,8 @@ public class AccordiServizioParteSpecificaUtilities {
 					fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList,
 					fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch,
 					fruizioneServizioApplicativo, fruizioneRuolo,
+					autorizzazioneAutenticatiToken, 
+					autorizzazioneRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
 					autorizzazione_tokenOptions,
 					autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 					identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);

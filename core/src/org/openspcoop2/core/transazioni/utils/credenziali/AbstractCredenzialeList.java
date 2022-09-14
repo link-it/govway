@@ -57,7 +57,15 @@ public abstract class AbstractCredenzialeList extends AbstractCredenziale {
 	public static String PREFIX = "##";
 	
 	public static String getDBValue(String address) {
-		return PREFIX + address + PREFIX;
+		return getDBValue(address, true);
+	}
+	public static String getDBValue(String address, boolean ricercaEsatta) {
+		if(ricercaEsatta) {
+			return PREFIX + address + PREFIX;
+		}
+		else {
+			return PREFIX + "%" + address + "%" + PREFIX;
+		}
 	}
 	
 	public static List<String> normalizeToList(String dbValue){

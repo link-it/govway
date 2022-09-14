@@ -16,12 +16,16 @@ Le regole di trasformazione possono avvalersi di un contesto di risorse, con val
 -   *busta:FIELD* : accesso alle informazioni proprie del profilo di interoperabilità utilizzato; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.protocol.sdk.Busta' (ad es. per il mittente usare *busta.mittente*)
 -   *property:NAME*: accesso alle proprietà contenute nella traccia (ad esempio l'identificativo SDI); Il valore 'NAME' indica il nome della proprietà da utilizzare.
 -   *tokenInfo:FIELD* : accesso ai claim di un token precedentemente validato; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.pdd.core.token.InformazioniToken' (es. per ottenere il valore del claim 'sub' usare ${tokenInfo:sub})
+-   *tokenClient:FIELD* : identità dell'applicativo client identificato tramite il clientId presente nel token; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.core.id.IDServizioApplicativo' (es. per ottenere il nome dell'applicativo usare ${tokenClient:nome})
 -   *aa:FIELD* : consente di accedere agli attributi recuperati tramite Attribute Authority; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi' (es. per ottenere il valore dell'attributo 'attr1' usare ${aa:attributes[attr1]}, se configurata solamente 1 A.A., altrimenti usare ${aa:attributes[nomeAttributeAuthority][attr1]} )
 -   *transportContext:FIELD* : accesso ai dati della richiesta http; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext' (es. per il principal usare ${transportContext:credential.principal})
+-   *securityToken:FIELD* : permette di accedere alle informazioni relative ai certificati ed ai security token presenti nella richiesta; il valore 'FIELD' fornito deve rappresentare un field valido all'interno della classe 'org.openspcoop2.protocol.sdk.SecurityToken' (es. per accedere al CN del certificato presente nel token ModI 'Authorization' usare ${securityToken:authorization.certificate.subject.info(CN)})
 -   *config:NAME* : accesso alle proprietà configurate per l'API; il valore 'NAME' indica la proprietà desiderata
 -   *clientApplicationConfig:NAME* : accesso alle proprietà configurate nell'applicativo fruitore; il valore 'NAME' indica la proprietà desiderata
 -   *clientOrganizationConfig:NAME* : accesso alle proprietà configurate nel soggetto fruitore; il valore 'NAME' indica la proprietà desiderata
 -   *providerOrganizationConfig:NAME* : accesso alle proprietà configurate nel soggetto erogatore; il valore 'NAME' indica la proprietà desiderata
+-   *tokenClientApplicationConfig:NAME* : permette di accedere alla proprietà, configurata nell'applicativo client identificato tramite il clientId presente nel token, con nome 'NAME'
+-   *tokenClientOrganizationConfig:NAME* : permette di accedere alla proprietà, configurata nel soggetto proprietario dell'applicativo client identificato tramite il clientId presente nel token, con nome 'NAME'
 -   *system:NAME* : valore associato alla proprietà di sistema, indicata nella configurazione generale, con nome 'NAME'
 -   *env:NAME* : valore associato alla variabile di sistema con nome 'NAME'
 -   *java:NAME* : valore associato alla variabile java con nome 'NAME'
@@ -48,12 +52,16 @@ La sintassi per accedere le proprietà dinamiche sopraelencate è differente in 
 - ${busta:FIELD}
 - ${property:NAME}
 - ${tokenInfo:FIELD}
+- ${tokenClient:FIELD}
 - ${aa:FIELD}
 - ${transportContext:FIELD}
+- ${securityToken:FIELD}
 - ${config:NAME}
 - ${clientApplicationConfig:NAME}
 - ${clientOrganizationConfig:NAME}
 - ${providerOrganizationConfig:NAME}
+- ${tokenClientApplicationConfig:NAME}
+- ${tokenClientOrganizationConfig:NAME}
 - ${system:NAME}
 - ${env:NAME}
 - ${java:NAME}
@@ -71,12 +79,16 @@ Nei casi in cui il testo della trasformazione è interpretato da framework ester
 - busta (org.openspcoop2.protocol.sdk.Busta)
 - property (java.util.Map<String, String>)
 - tokenInfo (org.openspcoop2.pdd.core.token.InformazioniToken)
+- tokenClient (org.openspcoop2.core.id.IDServizioApplicativo)
 - aa (org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi)
 - transportContext (org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext)
+- securityToken (org.openspcoop2.protocol.sdk.SecurityToken)
 - config (java.util.Map<String, String>)
 - clientApplicationConfig (java.util.Map<String, String>)
 - clientOrganizationConfig (java.util.Map<String, String>)
 - providerOrganizationConfig (java.util.Map<String, String>)
+- tokenClientApplicationConfig (java.util.Map<String, String>)
+- tokenClientOrganizationConfig (java.util.Map<String, String>)
 - system (org.openspcoop2.pdd.core.dynamic.PropertiesReader)
 - env (org.openspcoop2.pdd.core.dynamic.PropertiesReader)
 - java (org.openspcoop2.pdd.core.dynamic.PropertiesReader)
@@ -93,8 +105,6 @@ Nel caso di utilizzo di template 'Freemarker' o 'Velocity' sono disponibili i se
   - velocity: new.instance("my.package.name","Parametro1","ParametroN") 
   - freemarker: new("my.package.name","Parametro1","ParametroN")
 
-- transportContext (org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext); permette di accedere ai dati della richiesta http (servlet request, principal ...)
-- securityToken (org.openspcoop2.protocol.sdk.SecurityToken); permette di accedere ai certificati e ai security token presenti nella richiesta
 - request/response: permette di accedere al contenuto della richiesta/risposta (org.openspcoop2.pdd.core.dynamic.ContentExtractor)
 - attachments (org.openspcoop2.pdd.core.dynamic.AttachmentsReader); consente di ottenere gli allegati registrati sull'API
 - context (java.util.Map<String, Object>); permette di accedere al contesto della richiesta.

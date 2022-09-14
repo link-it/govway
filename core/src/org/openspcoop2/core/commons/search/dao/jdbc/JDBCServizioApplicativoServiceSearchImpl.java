@@ -55,8 +55,10 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.commons.search.dao.jdbc.converter.ServizioApplicativoFieldConverter;
 import org.openspcoop2.core.commons.search.dao.jdbc.fetch.ServizioApplicativoFetch;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.commons.search.dao.IDBSoggettoServiceSearch;
 import org.openspcoop2.core.commons.search.dao.ISoggettoServiceSearch;
+import org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo;
 import org.openspcoop2.core.commons.search.ServizioApplicativo;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.ServizioApplicativoRuolo;
@@ -478,6 +480,26 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 				}
 			}
 		}
+		if(obj.getServizioApplicativoProprietaProtocolloList()!=null){
+			List<org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo> listObj_ = obj.getServizioApplicativoProprietaProtocolloList();
+			for(org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo itemObj_ : listObj_){
+				org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo itemAlreadySaved_ = null;
+				if(imgSaved.getServizioApplicativoProprietaProtocolloList()!=null){
+					List<org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo> listImgSaved_ = imgSaved.getServizioApplicativoProprietaProtocolloList();
+					for(org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo itemImgSaved_ : listImgSaved_){
+						boolean objEqualsToImgSaved_ = false;
+						objEqualsToImgSaved_ = org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getName(),itemImgSaved_.getName());
+						if(objEqualsToImgSaved_){
+							itemAlreadySaved_=itemImgSaved_;
+							break;
+						}
+					}
+				}
+				if(itemAlreadySaved_!=null){
+					itemObj_.setId(itemAlreadySaved_.getId());
+				}
+			}
+		}
 
 	}
 	
@@ -506,6 +528,9 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 		sqlQueryObjectGet_servizioApplicativo.addSelectField(this.getServizioApplicativoFieldConverter().toColumn(ServizioApplicativo.model().TIPOLOGIA_EROGAZIONE,true));
 		sqlQueryObjectGet_servizioApplicativo.addSelectField(this.getServizioApplicativoFieldConverter().toColumn(ServizioApplicativo.model().TIPO,true));
 		sqlQueryObjectGet_servizioApplicativo.addSelectField(this.getServizioApplicativoFieldConverter().toColumn(ServizioApplicativo.model().AS_CLIENT,true));
+		sqlQueryObjectGet_servizioApplicativo.addSelectField(this.getServizioApplicativoFieldConverter().toColumn(ServizioApplicativo.model().TIPOAUTH,true));
+		sqlQueryObjectGet_servizioApplicativo.addSelectField(this.getServizioApplicativoFieldConverter().toColumn(ServizioApplicativo.model().UTENTE,true));
+		sqlQueryObjectGet_servizioApplicativo.addSelectField(this.getServizioApplicativoFieldConverter().toColumn(ServizioApplicativo.model().TOKEN_POLICY,true));
 		sqlQueryObjectGet_servizioApplicativo.addWhereCondition("id=?");
 
 		// Get servizioApplicativo
@@ -565,6 +590,32 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 				servizioApplicativo.addServizioApplicativoRuolo(servizioApplicativo_servizioApplicativoRuolo);
 			}
 		}
+
+		// Object servizioApplicativo_servizioApplicativoProprietaProtocollo
+		ISQLQueryObject sqlQueryObjectGet_servizioApplicativo_servizioApplicativoProprietaProtocollo = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_servizioApplicativo_servizioApplicativoProprietaProtocollo.setANDLogicOperator(true);
+		sqlQueryObjectGet_servizioApplicativo_servizioApplicativoProprietaProtocollo.addFromTable(this.getServizioApplicativoFieldConverter().toTable(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO));
+		sqlQueryObjectGet_servizioApplicativo_servizioApplicativoProprietaProtocollo.addSelectField("id");
+		sqlQueryObjectGet_servizioApplicativo_servizioApplicativoProprietaProtocollo.addSelectField(this.getServizioApplicativoFieldConverter().toColumn(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.NAME,true));
+		sqlQueryObjectGet_servizioApplicativo_servizioApplicativoProprietaProtocollo.addSelectField(this.getServizioApplicativoFieldConverter().toColumn(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.VALUE_STRING,true));
+		sqlQueryObjectGet_servizioApplicativo_servizioApplicativoProprietaProtocollo.addSelectField(this.getServizioApplicativoFieldConverter().toColumn(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.VALUE_NUMBER,true));
+		sqlQueryObjectGet_servizioApplicativo_servizioApplicativoProprietaProtocollo.addSelectField(this.getServizioApplicativoFieldConverter().toColumn(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO.VALUE_BOOLEAN,true));
+		sqlQueryObjectGet_servizioApplicativo_servizioApplicativoProprietaProtocollo.addWhereCondition("id_proprietario=?");
+		sqlQueryObjectGet_servizioApplicativo_servizioApplicativoProprietaProtocollo.addWhereCondition("tipo_proprietario=?");
+
+		// Get servizioApplicativo_servizioApplicativoProprietaProtocollo
+		java.util.List<Object> servizioApplicativo_servizioApplicativoProprietaProtocollo_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_servizioApplicativo_servizioApplicativoProprietaProtocollo.createSQLQuery(), jdbcProperties.isShowSql(), ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO, this.getServizioApplicativoFetch(),
+			new JDBCObject(servizioApplicativo.getId(),Long.class),
+			new JDBCObject(ProprietariProtocolProperty.SERVIZIO_APPLICATIVO.name(),String.class));
+
+		if(servizioApplicativo_servizioApplicativoProprietaProtocollo_list != null) {
+			for (Object servizioApplicativo_servizioApplicativoProprietaProtocollo_object: servizioApplicativo_servizioApplicativoProprietaProtocollo_list) {
+				ServizioApplicativoProprietaProtocollo servizioApplicativo_servizioApplicativoProprietaProtocollo = (ServizioApplicativoProprietaProtocollo) servizioApplicativo_servizioApplicativoProprietaProtocollo_object;
+
+
+				servizioApplicativo.addServizioApplicativoProprietaProtocollo(servizioApplicativo_servizioApplicativoProprietaProtocollo);
+			}
+		}               
 		
         return servizioApplicativo;  
 	
@@ -611,7 +662,12 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 			String tableName2 = this.getServizioApplicativoFieldConverter().toTable(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO);
 			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_servizio_applicativo");
 		}
-		
+		if(expression.inUseModel(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO,false)){
+			String tableName1 = this.getServizioApplicativoFieldConverter().toTable(ServizioApplicativo.model());
+			String tableName2 = this.getServizioApplicativoFieldConverter().toTable(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO);
+			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_proprietario");
+			sqlQueryObject.addWhereCondition(tableName2+".tipo_proprietario='"+ProprietariProtocolProperty.SERVIZIO_APPLICATIVO.name()+"'");
+		}
 	}
 	
 	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdServizioApplicativo id) throws NotFoundException, ServiceException, NotImplementedException, Exception{
@@ -644,6 +700,12 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 		mapTableToPKColumn.put(converter.toTable(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO),
 			utilities.newList(
 				new CustomField("id", Long.class, "id", converter.toTable(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_RUOLO))
+			));
+
+		// ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA
+		mapTableToPKColumn.put(converter.toTable(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO),
+			utilities.newList(
+				new CustomField("id", Long.class, "id", converter.toTable(ServizioApplicativo.model().SERVIZIO_APPLICATIVO_PROPRIETA_PROTOCOLLO))
 			));
 
         return mapTableToPKColumn;		

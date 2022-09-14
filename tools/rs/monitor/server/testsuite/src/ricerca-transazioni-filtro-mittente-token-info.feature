@@ -15,13 +15,13 @@ Scenario Outline: Ricerca di transazioni filtrate per claim <nome>
     Given request filtro
     When method post
     Then status 200
-    And assert response.items.length == 1
+    And assert response.items.length == 3
 
     * set filtro.tipo = 'fruizione'
     Given request filtro
     When method post
     Then status 200
-    And assert response.items.length == 1
+    And assert response.items.length == 3
 
     Examples:
     | setup.filtro_claims |

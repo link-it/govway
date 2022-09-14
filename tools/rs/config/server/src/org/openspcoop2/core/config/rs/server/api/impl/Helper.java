@@ -41,12 +41,15 @@ import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpsBaseCertif
 import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpsCertificato;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpsConfigurazioneManuale;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationPrincipal;
+import org.openspcoop2.core.config.rs.server.model.AuthenticationToken;
+import org.openspcoop2.core.config.rs.server.model.AuthenticationTokenBase;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import org.openspcoop2.core.config.rs.server.model.OneOfBaseCredenzialiCredenziali;
 import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneHttps;
 import org.openspcoop2.core.config.rs.server.model.TipoKeystore;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -114,6 +117,7 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 		modalitaAccessoFromCredenzialeTipo.put(CredenzialeTipo.PRINCIPAL, ModalitaAccessoEnum.PRINCIPAL);
 		modalitaAccessoFromCredenzialeTipo.put(CredenzialeTipo.SSL, ModalitaAccessoEnum.HTTPS);
 		modalitaAccessoFromCredenzialeTipo.put(CredenzialeTipo.APIKEY, ModalitaAccessoEnum.API_KEY);
+		modalitaAccessoFromCredenzialeTipo.put(CredenzialeTipo.TOKEN, ModalitaAccessoEnum.TOKEN);
 	}
 	
 	public static final Map<ModalitaAccessoEnum,CredenzialeTipo> credenzialeTipoFromModalitaAccesso = new HashMap<ModalitaAccessoEnum,CredenzialeTipo>();
@@ -128,6 +132,7 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 		tipoAuthFromModalitaAccesso.put(ModalitaAccessoEnum.HTTP_BASIC, ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC);
 		tipoAuthFromModalitaAccesso.put(ModalitaAccessoEnum.PRINCIPAL, ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL);
 		tipoAuthFromModalitaAccesso.put(ModalitaAccessoEnum.API_KEY, ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY);
+		tipoAuthFromModalitaAccesso.put(ModalitaAccessoEnum.TOKEN, ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN);
 		tipoAuthFromModalitaAccesso.put(null, ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA);
 	}
 
@@ -136,6 +141,7 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 			new SimpleEntry<>("https", ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL),
 			new SimpleEntry<>("principal",ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL),
 			new SimpleEntry<>("api-key",ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY),
+			new SimpleEntry<>("token",ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN),
 			new SimpleEntry<>("custom", ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)
 		).collect(Collectors.toMap(SimpleEntry::getKey, SimpleEntry::getValue));
 
@@ -273,6 +279,13 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 				
 				break;
 			}
+			
+			// Token per Modi insieme al certificato
+			if(c.getToken()!=null) {
+				wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID, c.getToken().getIdentificativo());
+				wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY,c.getToken().getTokenPolicy());
+			}
+			
 			break;
 		}
 		case PRINCIPAL: {
@@ -283,6 +296,17 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 			
 			AuthenticationPrincipal c = (AuthenticationPrincipal) credenziali;
 			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL, c.getUserid());
+			break;
+		}
+		case TOKEN: {
+			
+			if(! (credenziali instanceof AuthenticationToken)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Credenziali '"+credenziali.getClass().getName()+"' non compatibili con la modalità '+"+modalitaAccesso.toString()+"+'");
+			}
+			
+			AuthenticationToken c = (AuthenticationToken) credenziali;
+			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID, c.getIdentificativo());
+			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY,c.getTokenPolicy());
 			break;
 		}
 		}
@@ -327,6 +351,10 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 		}
 		case API_KEY: {
 			ret = (AuthenticationApiKey) creds;
+			break;
+		}
+		case TOKEN: {
+			ret = (AuthenticationToken) creds;
 			break;
 		}
 		default:
@@ -429,6 +457,13 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 				lstRet.add(ret);
 				break;
 			}
+			
+			// Token per Modi insieme al certificato
+			if(auth.getToken()!=null) {
+				BeanUtils.setProperty(ret, "user", auth.getToken().getIdentificativo());
+				BeanUtils.setProperty(ret, "tokenPolicy", auth.getToken().getTokenPolicy());
+			}
+			
 			break;
 		}
 		case PRINCIPAL: {
@@ -462,6 +497,21 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 			lstRet.add(ret);
 			break;
 		}
+		
+		case TOKEN: {
+			
+			if(! (creds instanceof AuthenticationToken)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Credenziali '"+creds.getClass().getName()+"' non compatibili con la modalità '+"+tipoAuth.toString()+"+'");
+			}
+		
+			AuthenticationToken auth = (AuthenticationToken) creds;
+			BeanUtils.setProperty(ret, "tipo", Enum.valueOf( (Class<Enum>)enumClass, "TOKEN"));
+			BeanUtils.setProperty(ret, "user", auth.getIdentificativo());
+			BeanUtils.setProperty(ret, "tokenPolicy", auth.getTokenPolicy());
+			lstRet.add(ret);
+			break;
+		}
+		
 		default:
 			BeanUtils.setProperty(ret, "tipo", null);
 			lstRet.add(ret);
@@ -535,7 +585,20 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 					certificati.add(certificato );
 				}
 				auth.setCertificati(certificati );
+			}	
+			
+			// Token per Modi insieme al certificato
+			if(!CredenzialiSoggetto.class.getName().equals(credClass.getName())) {
+				String identificativo = BeanUtils.getProperty(govwayCreds, "user");
+				String tokenPolicy = BeanUtils.getProperty(govwayCreds, "tokenPolicy");
+				if(tokenPolicy!=null && identificativo!=null) {
+					AuthenticationTokenBase modiToken = new AuthenticationTokenBase();
+					modiToken.setIdentificativo(identificativo);
+					modiToken.setTokenPolicy(tokenPolicy);
+					auth.setToken(modiToken);
+				}
 			}
+		
 			ret = auth;
 		}
 		else if ("principal".equals(tipo)) {
@@ -550,6 +613,13 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 			boolean appId = (Boolean) mAppId.invoke(govwayCreds);
 			auth.setAppId(appId);
 			auth.setModalitaAccesso(ModalitaAccessoEnum.API_KEY);
+			ret = auth;
+		}
+		else if ("token".equals(tipo)) {
+			AuthenticationToken auth = new AuthenticationToken();
+			auth.setIdentificativo(BeanUtils.getProperty(govwayCreds, "user"));
+			auth.setTokenPolicy(BeanUtils.getProperty(govwayCreds, "tokenPolicy"));
+			auth.setModalitaAccesso(ModalitaAccessoEnum.TOKEN);
 			ret = auth;
 		}
 		

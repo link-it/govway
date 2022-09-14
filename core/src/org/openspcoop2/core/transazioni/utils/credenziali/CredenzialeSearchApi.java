@@ -37,7 +37,7 @@ public class CredenzialeSearchApi extends AbstractSearchCredenziale {
 	}
 	
 	@Override
-	protected String getExactValueDatabase(String credentialParam) throws UtilsException {
+	protected String getExactValueDatabase(String credentialParam, boolean ricercaEsatta) throws UtilsException {
 		return credentialParam; // per l'api nessuna conversione
 	}
 	

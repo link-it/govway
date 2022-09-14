@@ -23,7 +23,7 @@
 				"keystore": {
 					"modalita": "default"
 				},
-				"header_http_firmare": ["principal"]
+				"header_http_firmare": ["principal", "Digest", "Content-Type", "Content-Encoding"]
 			}
 		}
 	}

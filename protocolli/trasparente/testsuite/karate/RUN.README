@@ -40,6 +40,25 @@
 		org.openspcoop2.pdd.soap.urlParameters.forward.enable=true
 		org.openspcoop2.pdd.soap.urlParameters.blackList.internal=*
 		org.openspcoop2.pdd.soap.urlParameters.whiteList=fault*,returnCode,sleep,reply*,GovWay-TestSuite-*
+		# Token - Integrazione
+		org.openspcoop2.pdd.integrazione.trasporto.pd.set.request.enabled.tipoMittenteToken=true
+		org.openspcoop2.pdd.integrazione.trasporto.pd.set.request.enabled.mittenteToken=true
+		org.openspcoop2.pdd.integrazione.trasporto.pd.set.request.enabled.servizioApplicativoToken=true
+		org.openspcoop2.pdd.integrazione.urlBased.pd.set.request.enabled.tipoMittenteToken=true
+		org.openspcoop2.pdd.integrazione.urlBased.pd.set.request.enabled.mittenteToken=true
+		org.openspcoop2.pdd.integrazione.urlBased.pd.set.request.enabled.servizioApplicativoToken=true
+		org.openspcoop2.pdd.integrazione.soap.pd.set.request.enabled.tipoMittenteToken=true
+		org.openspcoop2.pdd.integrazione.soap.pd.set.request.enabled.mittenteToken=true
+		org.openspcoop2.pdd.integrazione.soap.pd.set.request.enabled.servizioApplicativoToken=true
+		# Token Claims aggiuntivi raccolti e serializzati in header o nel json
+		org.openspcoop2.pdd.gestioneToken.forward.custom.customClaim.name=customClaim
+		org.openspcoop2.pdd.gestioneToken.forward.custom.customClaim.trasporto.name=GovWay-Token-CustomClaim
+		org.openspcoop2.pdd.gestioneToken.forward.custom.customClaim.trasporto.pd.set.enabled=true
+		org.openspcoop2.pdd.gestioneToken.forward.custom.customClaim.trasporto.pa.set.enabled=true
+		org.openspcoop2.pdd.gestioneToken.forward.custom.customClaim.json.name=customClaim
+		org.openspcoop2.pdd.gestioneToken.forward.custom.customClaim.json.pd.set.enabled=true
+		org.openspcoop2.pdd.gestioneToken.forward.custom.customClaim.json.pa.set.enabled=true
+
 
 - Abilitare la congestione del traffico impostando una soglia del 55% in modo
   che il sistema venga considerato congestionato con 8 richieste simultanee.
@@ -366,6 +385,9 @@ Di seguito vengono descritti i test del package 'autenticazione':
 - 'applicativi_esterni', verifica l'autenticazione degli applicativi di dominio esterno
    ant run_test -Ddelete=false -Dload=false -Dpackage=autenticazione.applicativi_esterni
 
+- 'applicativi_token', verifica l'autenticazione degli applicativi di tipo 'token'
+   ant run_test -Ddelete=false -Dload=false -Dpackage=autenticazione.applicativi_token
+
 - 'gestore_credenziali', verifica la gestione di credenziali inoltrate da un frontend che si occupa del processo di autenticazione tramite header HTTP.
    ant run_test -Ddelete=false -Dload=false -Dpackage=autenticazione.gestore_credenziali
 
@@ -386,5 +408,5 @@ eseguire lo script in pkcs11
 Di seguito vengono descritti i test del package 'other':
 
 - 'api_grandi', verifica l'utilizzo di API REST con un numero elevato di risorse
-   ant run_test -Ddelete=false -Dload=true -Dpackage=other.api_grandi -Dtest=RestTest
+   ant run_test -Ddelete=false -Dload=false -Dpackage=other.api_grandi -Dtest=RestTest
 

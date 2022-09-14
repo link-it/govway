@@ -43,7 +43,9 @@ public enum CredenzialeTipo implements IEnumeration , Serializable , Cloneable {
 	@javax.xml.bind.annotation.XmlEnumValue("principal")
 	PRINCIPAL ("principal"),
 	@javax.xml.bind.annotation.XmlEnumValue("apikey")
-	APIKEY ("apikey");
+	APIKEY ("apikey"),
+	@javax.xml.bind.annotation.XmlEnumValue("token")
+	TOKEN ("token");
 	
 	
 	/** Value */

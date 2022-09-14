@@ -1370,14 +1370,22 @@ public class OpenSPCoop2Properties {
 			if(this.getCryptConfigAutenticazioneSoggetti()==null) {
 				return false;
 			}
+			
 			this.isAutenticazioneBasicLogPassword();
 			this.getRealmAutenticazioneBasicWWWAuthenticateConfig();
+			
 			this.getRealmAutenticazioneApiKeyWWWAuthenticateConfig();
+			
+			this.isAutenticazioneHttpsPortaDelegataCheckSoggettiProprietari();
 			this.getRealmAutenticazioneHttpsWWWAuthenticateConfig();
+			
+			this.isAutenticazionePrincipalPortaDelegataCheckSoggettiProprietari();
 			TipoAutenticazionePrincipal [] tipiPrincipale = TipoAutenticazionePrincipal.values();
 			for (TipoAutenticazionePrincipal tipoAutenticazionePrincipal : tipiPrincipale) {
 				this.getRealmAutenticazionePrincipalWWWAuthenticateConfig(tipoAutenticazionePrincipal);	
 			}
+			
+			this.isAutenticazioneTokenPortaDelegataCheckSoggettiProprietari();
 			
 			// Gestori Credenziali PD
 			String [] gestoriCredenzialiPD = this.getTipoGestoreCredenzialiPD();
@@ -2907,6 +2915,9 @@ public class OpenSPCoop2Properties {
 		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_COLLABORAZIONE);
 		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO);
 		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE_TOKEN);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE_TOKEN);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO_TOKEN);
 		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE);
 		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_PROTOCOL_INFO);
 		return keywords;
@@ -16624,6 +16635,29 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getRealmAutenticazioneApiKeyWWWAuthenticateConfig;
 	}
 	
+	private static Boolean isAutenticazioneHttpsPortaDelegataCheckSoggettiProprietari = null;
+	public boolean isAutenticazioneHttpsPortaDelegataCheckSoggettiProprietari() {
+		String pName = "org.openspcoop2.pdd.core.autenticazione.https.portaDelegata.checkSoggettiProprietari";
+		if(OpenSPCoop2Properties.isAutenticazioneHttpsPortaDelegataCheckSoggettiProprietari == null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isAutenticazioneHttpsPortaDelegataCheckSoggettiProprietari = Boolean.valueOf(value);
+				}
+				else {
+					this.log.error("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=true");
+					OpenSPCoop2Properties.isAutenticazioneHttpsPortaDelegataCheckSoggettiProprietari = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
+				OpenSPCoop2Properties.isAutenticazioneHttpsPortaDelegataCheckSoggettiProprietari = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isAutenticazioneHttpsPortaDelegataCheckSoggettiProprietari;
+	}
+	
 	private static WWWAuthenticateConfig getRealmAutenticazioneHttpsWWWAuthenticateConfig = null;
 	private static boolean getRealmAutenticazioneHttpsWWWAuthenticateConfig_read = false;
 	public WWWAuthenticateConfig getRealmAutenticazioneHttpsWWWAuthenticateConfig() {
@@ -16691,6 +16725,29 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.getRealmAutenticazioneHttpsWWWAuthenticateConfig;
+	}
+	
+	private static Boolean isAutenticazionePrincipalPortaDelegataCheckSoggettiProprietari = null;
+	public boolean isAutenticazionePrincipalPortaDelegataCheckSoggettiProprietari() {
+		String pName = "org.openspcoop2.pdd.core.autenticazione.principal.portaDelegata.checkSoggettiProprietari";
+		if(OpenSPCoop2Properties.isAutenticazionePrincipalPortaDelegataCheckSoggettiProprietari == null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isAutenticazionePrincipalPortaDelegataCheckSoggettiProprietari = Boolean.valueOf(value);
+				}
+				else {
+					this.log.error("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=true");
+					OpenSPCoop2Properties.isAutenticazionePrincipalPortaDelegataCheckSoggettiProprietari = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
+				OpenSPCoop2Properties.isAutenticazionePrincipalPortaDelegataCheckSoggettiProprietari = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isAutenticazionePrincipalPortaDelegataCheckSoggettiProprietari;
 	}
 	
 	private static Map<TipoAutenticazionePrincipal, WWWAuthenticateConfig> getRealmAutenticazionePrincipalWWWAuthenticateConfig = new HashMap<TipoAutenticazionePrincipal, WWWAuthenticateConfig>();
@@ -16762,6 +16819,29 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.getRealmAutenticazionePrincipalWWWAuthenticateConfig.get(principal);
+	}
+	
+	private static Boolean isAutenticazioneTokenPortaDelegataCheckSoggettiProprietari = null;
+	public boolean isAutenticazioneTokenPortaDelegataCheckSoggettiProprietari() {
+		String pName = "org.openspcoop2.pdd.core.autenticazione.token.portaDelegata.checkSoggettiProprietari";
+		if(OpenSPCoop2Properties.isAutenticazioneTokenPortaDelegataCheckSoggettiProprietari == null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isAutenticazioneTokenPortaDelegataCheckSoggettiProprietari = Boolean.valueOf(value);
+				}
+				else {
+					this.log.error("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=true");
+					OpenSPCoop2Properties.isAutenticazioneTokenPortaDelegataCheckSoggettiProprietari = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
+				OpenSPCoop2Properties.isAutenticazioneTokenPortaDelegataCheckSoggettiProprietari = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isAutenticazioneTokenPortaDelegataCheckSoggettiProprietari;
 	}
 	
 	/**

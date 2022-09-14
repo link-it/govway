@@ -38,6 +38,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
@@ -312,6 +313,38 @@ public class DynamicUtils {
 				}
 				dynamicMap.put(Costanti.MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY, configProperties);
 				dynamicMap.put(Costanti.MAP_SOGGETTO_EROGATORE_CONFIG_PROPERTY.toLowerCase(), configProperties);
+			}
+			if (!dynamicMap.containsKey(Costanti.MAP_APPLICATIVO_TOKEN)) {
+				IDServizioApplicativo idApplicativoToken = null;
+				if (dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN)) {
+					idApplicativoToken = (IDServizioApplicativo)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN);
+				}
+				if(idApplicativoToken!=null) {
+					dynamicMap.put(Costanti.MAP_APPLICATIVO_TOKEN, idApplicativoToken);
+					dynamicMap.put(Costanti.MAP_APPLICATIVO_TOKEN.toLowerCase(), idApplicativoToken);
+				}
+			}
+			if (!dynamicMap.containsKey(Costanti.MAP_APPLICATIVO_TOKEN_CONFIG_PROPERTY)) {
+				Map<String, String> configProperties = null; // aggiungo sempre, piu' pratico il controllo nei template engine
+				if (dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO_TOKEN)) {
+					configProperties = (Map<String, String>)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO_TOKEN);
+				}
+				if(configProperties==null) {
+					configProperties = new HashMap<String, String>();
+				}
+				dynamicMap.put(Costanti.MAP_APPLICATIVO_TOKEN_CONFIG_PROPERTY, configProperties);
+				dynamicMap.put(Costanti.MAP_APPLICATIVO_TOKEN_CONFIG_PROPERTY.toLowerCase(), configProperties);
+			}
+			if (!dynamicMap.containsKey(Costanti.MAP_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN_CONFIG_PROPERTY)) {
+				Map<String, String> configProperties = null; // aggiungo sempre, piu' pratico il controllo nei template engine
+				if (dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN)) {
+					configProperties = (Map<String, String>)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN);
+				}
+				if(configProperties==null) {
+					configProperties = new HashMap<String, String>();
+				}
+				dynamicMap.put(Costanti.MAP_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN_CONFIG_PROPERTY, configProperties);
+				dynamicMap.put(Costanti.MAP_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN_CONFIG_PROPERTY.toLowerCase(), configProperties);
 			}
 		}
 		

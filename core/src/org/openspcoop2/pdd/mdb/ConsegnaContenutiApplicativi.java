@@ -607,6 +607,11 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			}
 		}	
 		
+		IDServizioApplicativo servizioApplicativoToken = null;
+    	if(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN)) {
+    		servizioApplicativoToken = (IDServizioApplicativo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN);
+    	}
+		
 		msgDiag.mediumDebug("Profilo di gestione ["+ConsegnaContenutiApplicativi.ID_MODULO+"] della busta: "+profiloGestione);
 		msgDiag.setDominio(identitaPdD);  // imposto anche il dominio nel msgDiag
 		msgDiag.setIdCorrelazioneApplicativa(idCorrelazioneApplicativa);
@@ -1595,6 +1600,13 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			headerIntegrazione.getBusta().setProfiloDiCollaborazione(bustaRichiesta.getProfiloDiCollaborazione());
 			headerIntegrazione.setIdApplicativo(idCorrelazioneApplicativa);
 			headerIntegrazione.setServizioApplicativo(servizioApplicativoFruitore);
+			if(servizioApplicativoToken!=null) {
+				headerIntegrazione.setServizioApplicativoToken(servizioApplicativoToken.getNome());
+				if(servizioApplicativoToken.getIdSoggettoProprietario()!=null) {
+					headerIntegrazione.setTipoSoggettoProprietarioApplicativoToken(servizioApplicativoToken.getIdSoggettoProprietario().getTipo());
+					headerIntegrazione.setNomeSoggettoProprietarioApplicativoToken(servizioApplicativoToken.getIdSoggettoProprietario().getNome());
+				}
+			}
 
 			Map<String, List<String>> propertiesTrasporto = new HashMap<String, List<String>>();
 			Map<String, List<String>> propertiesUrlBased = new HashMap<String, List<String>>();

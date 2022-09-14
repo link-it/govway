@@ -29,7 +29,8 @@ public enum ModalitaAccessoEnum {
 HTTP_BASIC("http-basic"),
   HTTPS("https"),
   PRINCIPAL("principal"),
-  API_KEY("api-key");
+  API_KEY("api-key"),
+  TOKEN("token");
 
   private String value;
 

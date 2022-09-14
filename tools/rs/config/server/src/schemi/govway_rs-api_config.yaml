@@ -14,7 +14,7 @@ info:
   x-summary: Servizi per la configurazione di GovWay
   description: Servizi per la configurazione di GovWay
   termsOfService: https://govway.org/documentazione/api/index.html
-  version: "3.3.7"
+  version: "3.3.8"
   contact:
     email: info@link.it
   license:
@@ -2967,6 +2967,203 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+  /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/token/applicativi:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - erogazioni-configurazione
+      summary: Restituisce l'elenco degli applicativi token autorizzati
+      operationId: getErogazioneControlloAccessiAutorizzazioneApplicativiToken
+      description: Questa operazione consente di ottenere l'elenco degli applicativi token autorizzati
+      responses:
+        "200":
+          description: Elenco applicativi token autorizzati restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiErogazioneAutorizzazioneApplicativi'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    post:
+      tags:
+        - erogazioni-configurazione
+      summary: Aggiunta di applicativi token all'elenco degli applicativi autorizzati
+      operationId: addErogazioneControlloAccessiAutorizzazioneApplicativiToken
+      description: Questa operazione consente di aggiungere applicativi token all'elenco degli applicativi autorizzati
+      requestBody:
+        description: Applicativi Token che si vuole aggiungere
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiErogazioneAutorizzazioneApplicativo'
+      responses:
+        "201":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '409':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/409Conflict'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+  /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/token/applicativi/{applicativo_autorizzato}:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_applicativo_autorizzato"
+      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_soggetto_applicativo"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    delete:
+      tags:
+        - erogazioni-configurazione
+      summary: Elimina applicativi dall'elenco degli applicativi token autorizzati
+      operationId: deleteErogazioneControlloAccessiAutorizzazioneApplicativiToken
+      description: Questa operazione consente di eliminare applicativi token dall'elenco degli applicativi autorizzati
+      responses: 
+        "204":
+          description: Applicativi Token eliminati con successo
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/token/ruoli:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - erogazioni-configurazione
+      summary: Restituisce l'elenco dei ruoli token autorizzati
+      operationId: getErogazioneControlloAccessiAutorizzazioneRuoliToken
+      description: Questa operazione consente di ottenere l'elenco dei ruoli token autorizzati
+      responses:
+        "200":
+          description: Elenco ruoli token autorizzati restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiAutorizzazioneRuoli'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    post:
+      tags:
+        - erogazioni-configurazione
+      summary: Aggiunta di ruoli all'elenco dei ruoli token autorizzati
+      operationId: addErogazioneControlloAccessiAutorizzazioneRuoliToken
+      description: Questa operazione consente di aggiungere ruoli all'elenco dei ruoli token autorizzati
+      requestBody:
+        description: Ruoli che si vuole aggiungere
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiAutorizzazioneRuolo'
+      responses:
+        "201":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '409':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/409Conflict'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+  /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/token/ruoli/{ruolo_autorizzato}:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ruolo_autorizzato"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo"
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    delete:
+      tags:
+        - erogazioni-configurazione
+      summary: Elimina ruoli dall'elenco dei ruoli token autorizzati
+      operationId: deleteErogazioneControlloAccessiAutorizzazioneRuoliToken
+      description: Questa operazione consente di eliminare ruoli dall'elenco dei ruoli token autorizzati
+      responses: 
+        "204":
+          description: Ruoli eliminati con successo
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/scope:
     parameters:
       - $ref: "govway_core.yaml#/components/parameters/profilo"
@@ -5496,6 +5693,206 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/token/applicativi:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - fruizioni-configurazione
+      summary: Restituisce l'elenco degli applicativi token autorizzati
+      operationId: getFruizioneControlloAccessiAutorizzazioneApplicativiToken
+      description: Questa operazione consente di ottenere l'elenco degli applicativi token autorizzati
+      responses:
+        "200":
+          description: Elenco applicativi token autorizzati restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiAutorizzazioneApplicativi'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    post:
+      tags:
+        - fruizioni-configurazione
+      summary: Aggiunta di applicativi all'elenco degli applicativi token autorizzati
+      operationId: addFruizioneControlloAccessiAutorizzazioneApplicativiToken
+      description: Questa operazione consente di aggiungere applicativi all'elenco degli applicativi token autorizzati
+      requestBody:
+        description: Applicativi che si vuole aggiungere
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiAutorizzazioneApplicativo'
+      responses:
+        "201":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '409':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/409Conflict'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/token/applicativi/{applicativo_autorizzato}:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_applicativo_autorizzato"
+      - $ref: "govway_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    delete:
+      tags:
+        - fruizioni-configurazione
+      summary: Elimina applicativi dall'elenco degli applicativi token autorizzati
+      operationId: deleteFruizioneControlloAccessiAutorizzazioneApplicativiToken
+      description: Questa operazione consente di eliminare applicativi dall'elenco degli applicativi token autorizzati
+      responses: 
+        "204":
+          description: Applicativi eliminati con successo
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/token/ruoli:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    get:
+      tags:
+        - fruizioni-configurazione
+      summary: Restituisce l'elenco dei ruoli token autorizzati
+      operationId: getFruizioneControlloAccessiAutorizzazioneRuoliToken
+      description: Questa operazione consente di ottenere l'elenco dei ruoli token autorizzati
+      responses:
+        "200":
+          description: Elenco ruoli autorizzati restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiAutorizzazioneRuoli'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+    post:
+      tags:
+        - fruizioni-configurazione
+      summary: Aggiunta di ruoli all'elenco dei ruoli token autorizzati
+      operationId: addFruizioneControlloAccessiAutorizzazioneRuoliToken
+      description: Questa operazione consente di aggiungere ruoli all'elenco dei ruoli token autorizzati
+      requestBody:
+        description: Ruoli che si vuole aggiungere
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiAutorizzazioneRuolo'
+      responses:
+        "201":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        '409':
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/409Conflict'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+  /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/token/ruoli/{ruolo_autorizzato}:
+    parameters:
+      - $ref: "govway_core.yaml#/components/parameters/profilo"
+      - $ref: "govway_core.yaml#/components/parameters/soggetto"
+      - $ref: "govway_core.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_core.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_core.yaml#/components/parameters/id_versione" 
+      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_ruolo_autorizzato" 
+      - $ref: "govway_core.yaml#/components/parameters/gruppo" 
+      - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
+    delete:
+      tags:
+        - fruizioni-configurazione
+      summary: Elimina ruoli dall'elenco dei ruoli token autorizzati
+      operationId: deleteFruizioneControlloAccessiAutorizzazioneRuoliToken
+      description: Questa operazione consente di eliminare ruoli dall'elenco dei ruoli token autorizzati
+      responses: 
+        "204":
+          description: Ruoli eliminati con successo
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
   /fruizioni/{erogatore}/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/scope:
     parameters:
       - $ref: "govway_core.yaml#/components/parameters/profilo"
@@ -6598,7 +6995,7 @@ paths:
     put:
       tags:
         - soggetti
-      summary: Modifica i dati di un soggetto
+      summary: Modifica le credenziali associate ad un soggetto
       operationId: updateCredenzialiSoggetto
       description: Questa operazione consente di aggiornare le credenziali associate ad un soggetto identificato dal nome
       requestBody:
@@ -6789,7 +7186,7 @@ paths:
     put:
       tags:
         - applicativi
-      summary: Modifica i dati di un applicativo
+      summary: Modifica le credenziali associate ad un applicativo
       operationId: updateCredenzialiApplicativo
       description: Questa operazione consente di aggiornare le credenziali associate ad un applicativo identificato dal nome e dal soggetto di riferimento
       requestBody:

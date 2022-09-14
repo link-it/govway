@@ -194,6 +194,12 @@ public class CostantiPdD {
     public final static String HEADER_INTEGRAZIONE_COLLABORAZIONE = "idCollaborazione";
     /** Costante che indica il valore dell'header di integrazione: servizioApplicativo*/
     public final static String HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO = "servizioApplicativo";
+    /** Costante che indica il valore dell'header di integrazione: tipo mittenteToken*/
+    public final static String HEADER_INTEGRAZIONE_TIPO_MITTENTE_TOKEN = "tipoMittenteToken";
+    /** Costante che indica il valore dell'header di integrazione: mittenteToken*/
+    public final static String HEADER_INTEGRAZIONE_MITTENTE_TOKEN = "mittenteToken";
+    /** Costante che indica il valore dell'header di integrazione: servizioApplicativoToken*/
+    public final static String HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO_TOKEN = "servizioApplicativoToken";
     /** Costante che indica il valore dell'header di integrazione: identificativo di transazione*/
     public final static String HEADER_INTEGRAZIONE_ID_TRANSAZIONE = "idTransazione";
     
@@ -236,6 +242,9 @@ public class CostantiPdD {
     public final static String HEADER_INTEGRAZIONE_TOKEN_MIDDLE_NAME = "middleName";
     public final static String HEADER_INTEGRAZIONE_TOKEN_FAMILY_NAME = "familyName";
     public final static String HEADER_INTEGRAZIONE_TOKEN_EMAIL = "email";
+    
+    // claim jti
+    public final static String HEADER_INTEGRAZIONE_TOKEN_JTI = "jti";
     
     // ulteriori claim usati per adesso solo nella configurazione della cache key
     // Payload
@@ -615,6 +624,10 @@ public class CostantiPdD {
     public final static String KEY_TOKEN_ENDPOINT_SERVIZIO_USER_INFO = "@TOKEN_ENDPOINT_SERVIZIO_USER_INFO@";
     /** Costante che identifica le informazioni di autenticazione controllate nel token */
     public final static String KEY_TOKEN_AUTHN_CHECK = "@TOKEN_AUTHN_CHECK@";
+    /** Costante che identifica l'applicativo client all'interno del token */
+    public final static String KEY_TOKEN_CLIENT_ID = "@TOKEN_CLIENT_ID@";
+    /** Costante che rappresenta l'identità del servizio applicativo identificato tramite il token */
+    public final static String KEY_TOKEN_SERVIZIO_APPLICATIVO = "@TOKEN_SERVIZIO_APPLICATIVO@";
     /** Costante che identifica il nome del servizio di attribute authority */
     public final static String KEY_ATTRIBUTE_AUTHORITY_NAME = "@ATTRIBUTE_AUTHORITY_NAME@";
     /** Costante che identifica l'endpoint del servizio di attribute authority */

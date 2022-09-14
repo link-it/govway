@@ -45,6 +45,7 @@ import java.io.Serializable;
  * 		&lt;attribute name="cn-issuer" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="certificate" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/&gt;
  * 		&lt;attribute name="certificate-strict-verification" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="token-policy" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * &lt;/complexType&gt;
  * </pre>
  * 
@@ -177,6 +178,14 @@ public class Credenziali extends org.openspcoop2.utils.beans.BaseBean implements
     this.certificateStrictVerification = certificateStrictVerification;
   }
 
+  public java.lang.String getTokenPolicy() {
+    return this.tokenPolicy;
+  }
+
+  public void setTokenPolicy(java.lang.String tokenPolicy) {
+    this.tokenPolicy = tokenPolicy;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -225,5 +234,9 @@ public class Credenziali extends org.openspcoop2.utils.beans.BaseBean implements
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="certificate-strict-verification",required=false)
   protected boolean certificateStrictVerification = false;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="token-policy",required=false)
+  protected java.lang.String tokenPolicy;
 
 }

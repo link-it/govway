@@ -52,6 +52,7 @@ import org.openspcoop2.utils.transport.http.HttpServletCredential;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.constants.CaseSensitiveMatch;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.constants.TipoMatch;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.dao.DBLoginDAO;
@@ -313,6 +314,26 @@ public class ReportExporter extends HttpServlet{
 						+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.TIPI_FORMATO);
 			}
 			
+			// Tipo applicativo
+			String identificazioneApplicativo = null;
+			if(CostantiExporter.TIPO_DISTRIBUZIONE_APPLICATIVO.equals(tipoDistribuzioneReport)){
+				String tipoIdentificazioneApplicativo = req.getParameter(CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO);
+				if(tipoIdentificazioneApplicativo==null){
+					throw new ParameterUncorrectException("Parametro obbligatorio '"+CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO+"' non fornito");
+				}
+				tipoIdentificazioneApplicativo = tipoIdentificazioneApplicativo.trim();
+				if(CostantiExporter.TIPI_IDENTIFICAZIONE_APPLICATIVO.contains(tipoIdentificazioneApplicativo) == false){
+					throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO+"' fornito possiede un valore '"+tipoIdentificazioneApplicativo
+							+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.TIPI_IDENTIFICAZIONE_APPLICATIVO);
+				}
+				if(CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO_TRASPORTO.equals(tipoIdentificazioneApplicativo)) {
+					identificazioneApplicativo = Costanti.IDENTIFICAZIONE_TRASPORTO_KEY;	
+				}
+				else if(CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO_TOKEN.equals(tipoIdentificazioneApplicativo)) {
+					identificazioneApplicativo = Costanti.IDENTIFICAZIONE_TOKEN_KEY;		
+				}
+			}
+			
 			// Identificazione claim
 			org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tokenClaim = null;
 			if(CostantiExporter.TIPO_DISTRIBUZIONE_TOKEN_INFO.equals(tipoDistribuzioneReport)){
@@ -428,6 +449,7 @@ public class ReportExporter extends HttpServlet{
 			else if(CostantiExporter.TIPO_DISTRIBUZIONE_APPLICATIVO.equals(tipoDistribuzioneReport)){
 				statSearchForm.setTipoStatistica(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO);
 				statSearchForm.setRiconoscimento(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO);
+				statSearchForm.setIdentificazione(identificazioneApplicativo);
 				service.setDistribSaSearch(statSearchForm);
 				bean = new DistribuzionePerSABean<>(service.getUtilsServiceManager(), service.getPluginsServiceManager(),
 						service.getDriverRegistroServiziDB(), service.getDriverConfigurazioneDB());
@@ -436,6 +458,7 @@ public class ReportExporter extends HttpServlet{
 				((DistribuzionePerSABean<?>) bean).getSearch().initSearchListener(null);
 				// initSearchListener riazzera
 				statSearchForm.setRiconoscimento(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO);
+				statSearchForm.setIdentificazione(identificazioneApplicativo);
 			}
 			else if(CostantiExporter.TIPO_DISTRIBUZIONE_IDENTIFICATIVO_AUTENTICATO.equals(tipoDistribuzioneReport)){
 				statSearchForm.setTipoStatistica(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO);
@@ -745,6 +768,25 @@ public class ReportExporter extends HttpServlet{
 						throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_RICERCA_MITTENTE+"' valorizzato con '"+tipoRicercaMittente
 								+"' richiede la definizione del parametro '"+CostantiExporter.SOGGETTO_LOCALE+"'");
 					}
+				}
+				
+				String tipoIdentificazioneApplicativo = req.getParameter(CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO);
+				if(tipoIdentificazioneApplicativo!=null){
+					tipoIdentificazioneApplicativo = tipoIdentificazioneApplicativo.trim();
+					if(CostantiExporter.TIPI_IDENTIFICAZIONE_APPLICATIVO.contains(tipoIdentificazioneApplicativo) == false){
+						throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO+"' fornito possiede un valore '"+tipoIdentificazioneApplicativo
+								+"' sconosciuto. I tipi supportati sono: "+CostantiExporter.TIPI_IDENTIFICAZIONE_APPLICATIVO);
+					}
+					if(CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO_TRASPORTO.equals(tipoIdentificazioneApplicativo)) {
+						statSearchForm.setIdentificazione(Costanti.IDENTIFICAZIONE_TRASPORTO_KEY);	
+					}
+					else if(CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO_TOKEN.equals(tipoIdentificazioneApplicativo)) {
+						statSearchForm.setIdentificazione(Costanti.IDENTIFICAZIONE_TOKEN_KEY);		
+					}
+				}
+				else {
+					throw new ParameterUncorrectException("Parametro '"+CostantiExporter.TIPO_RICERCA_MITTENTE+"' valorizzato con '"+tipoRicercaMittente
+							+"' richiede la definizione del parametro '"+CostantiExporter.TIPO_IDENTIFICAZIONE_APPLICATIVO+"'");
 				}
 				
 				String applicativo = req.getParameter(CostantiExporter.APPLICATIVO);

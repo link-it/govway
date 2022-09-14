@@ -877,11 +877,19 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.autorizzazione(pa, servizioApplicativo);
 	}
 
-	public boolean autorizzazioneRoles(PortaApplicativa pa, Soggetto soggetto, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
+	public boolean autorizzazioneTrasportoRoles(PortaApplicativa pa, Soggetto soggetto, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
 			PdDContext pddContext,
 			boolean checkRuoloRegistro, boolean checkRuoloEsterno,
 			StringBuilder details) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
-		return this.configurazionePdDReader.autorizzazioneRoles(this.registroServiziManager, pa, soggetto, sa, infoConnettoreIngresso, 
+		return this.configurazionePdDReader.autorizzazioneTrasportoRoles(this.registroServiziManager, pa, soggetto, sa, infoConnettoreIngresso, 
+				pddContext, checkRuoloRegistro, checkRuoloEsterno, details);
+	}
+	
+	public boolean autorizzazioneTokenRoles(PortaApplicativa pa, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
+			PdDContext pddContext,
+			boolean checkRuoloRegistro, boolean checkRuoloEsterno,
+			StringBuilder details) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.autorizzazioneTokenRoles(this.registroServiziManager, pa, sa, infoConnettoreIngresso, 
 				pddContext, checkRuoloRegistro, checkRuoloEsterno, details);
 	}
 
@@ -1019,16 +1027,28 @@ public class ConfigurazionePdDManager {
 	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiPrincipal(String principal) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiPrincipal(this.getConnection(), principal);
 	}
+	
+	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiToken(this.getConnection(), tokenPolicy, tokenClientId);
+	}
 
 	public boolean autorizzazione(PortaDelegata pd, String servizio) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		return this.configurazionePdDReader.autorizzazione(pd, servizio);
 	}
 
-	public boolean autorizzazioneRoles(PortaDelegata pd, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
+	public boolean autorizzazioneTrasportoRoles(PortaDelegata pd, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
 			PdDContext pddContext,
 			boolean checkRuoloRegistro, boolean checkRuoloEsterno,
 			StringBuilder details) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
-		return this.configurazionePdDReader.autorizzazioneRoles(this.registroServiziManager, pd, sa, infoConnettoreIngresso, 
+		return this.configurazionePdDReader.autorizzazioneTrasportoRoles(this.registroServiziManager, pd, sa, infoConnettoreIngresso, 
+				pddContext, checkRuoloRegistro, checkRuoloEsterno, details);
+	}
+	
+	public boolean autorizzazioneTokenRoles(PortaDelegata pd, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
+			PdDContext pddContext,
+			boolean checkRuoloRegistro, boolean checkRuoloEsterno,
+			StringBuilder details) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.autorizzazioneTokenRoles(this.registroServiziManager, pd, sa, infoConnettoreIngresso, 
 				pddContext, checkRuoloRegistro, checkRuoloEsterno, details);
 	}
 

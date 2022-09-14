@@ -35,8 +35,7 @@ Scenario Outline: Ricerca di report base statistica <nome-statistica> filtrati p
     },
     "esito": {
       "tipo": "ok"
-    },
-    "claim" : "subject" 
+    }
 })
 """  
 * def query =
@@ -51,7 +50,8 @@ Scenario Outline: Ricerca di report base statistica <nome-statistica> filtrati p
     unita_tempo: filtro.unita_tempo,
     tipo_report: filtro.report.tipo,
     tipo_informazione_report: filtro.report.tipo_informazione.tipo,
-    claim: <filtro-claim>
+    claim: <filtro-claim>,
+    tipo_identificazione: <filtro-tipo-identificazione-applicativo>
 })
 """
 		
@@ -61,16 +61,18 @@ Given path <path-distribuzione>
     Then status 200
     
 Examples:
-| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | uri-api |
-| 'distribuzione-temporale' | 'distribuzione-temporale' | filtro.esito.tipo |  null | setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione |
-| 'distribuzione-esiti' | 'distribuzione-esiti' | null |  null | setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
-| 'distribuzione-soggetto-remoto' | 'distribuzione-soggetto-remoto' | filtro.esito.tipo |  null | setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione |
-| 'distribuzione-soggetto-locale' | 'distribuzione-soggetto-locale' | filtro.esito.tipo |  null | setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione |
-| 'distribuzione-azione' | 'distribuzione-azione' | filtro.esito.tipo |  null | setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
-| 'distribuzione-applicativo' | 'distribuzione-applicativo' | filtro.esito.tipo |  null | setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
-| 'distribuzione-id-autenticato' | 'distribuzione-id-autenticato' | filtro.esito.tipo |  null | setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
-| 'distribuzione-token-info' | 'distribuzione-token-info' | filtro.esito.tipo | filtro.claim | setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
-| 'distribuzione-indirizzo-ip' | 'distribuzione-indirizzo-ip' | filtro.esito.tipo |  null | setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-identificazione-applicativo | uri-api |
+| 'distribuzione-temporale' | 'distribuzione-temporale' | filtro.esito.tipo | null | null | setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione |
+| 'distribuzione-esiti' | 'distribuzione-esiti' | null | null | null | setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-soggetto-remoto' | 'distribuzione-soggetto-remoto' | filtro.esito.tipo | null | null | setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione |
+| 'distribuzione-soggetto-locale' | 'distribuzione-soggetto-locale' | filtro.esito.tipo | null | null | setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione |
+| 'distribuzione-azione' | 'distribuzione-azione' | filtro.esito.tipo | null | null | setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-applicativo-trasporto' | 'distribuzione-applicativo' | filtro.esito.tipo | null | 'trasporto' | setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-applicativo-token' | 'distribuzione-applicativo' | filtro.esito.tipo | null | 'token' | setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-id-autenticato' | 'distribuzione-id-autenticato' | filtro.esito.tipo | null | null | setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-token-info-subject' | 'distribuzione-token-info' | filtro.esito.tipo | 'subject' | null | setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-token-info-client-id' | 'distribuzione-token-info' | filtro.esito.tipo | 'client_id' | null | setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-indirizzo-ip' | 'distribuzione-indirizzo-ip' | filtro.esito.tipo | null | null | setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
 
 
 @ReportBaseApiImplementataNotFound
@@ -91,8 +93,7 @@ Scenario Outline: Ricerca di report base statistica <nome-statistica> filtrati p
     },
     "esito": {
       "tipo": "ok"
-    },
-    "claim" : "subject" 
+    }
 })
 """  
 * def query =
@@ -107,7 +108,8 @@ Scenario Outline: Ricerca di report base statistica <nome-statistica> filtrati p
     unita_tempo: filtro.unita_tempo,
     tipo_report: filtro.report.tipo,
     tipo_informazione_report: filtro.report.tipo_informazione.tipo,
-    claim: <filtro-claim>
+    claim: <filtro-claim>,
+    tipo_identificazione: <filtro-tipo-identificazione-applicativo>
 })
 """
 
@@ -117,16 +119,18 @@ Given path <path-distribuzione>
     Then status 404
     
 Examples:
-| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | uri-api |
-| 'distribuzione-temporale' | 'distribuzione-temporale' | filtro.esito.tipo |  null | setup.erogazione_petstore.api_nome+'errato:'+setup.erogazione_petstore.api_versione |
-| 'distribuzione-esiti' | 'distribuzione-esiti' | null |  null | setup.erogazione_petstore.api_nome+'errato:'+setup.erogazione_petstore.api_versione | 
-| 'distribuzione-soggetto-remoto' | 'distribuzione-soggetto-remoto' | filtro.esito.tipo |  null | setup.erogazione_petstore.api_nome+'errato:'+setup.erogazione_petstore.api_versione |
-| 'distribuzione-soggetto-locale' | 'distribuzione-soggetto-locale' | filtro.esito.tipo |  null | setup.erogazione_petstore.api_nome+'errato:'+setup.erogazione_petstore.api_versione |
-| 'distribuzione-azione' | 'distribuzione-azione' | filtro.esito.tipo |  null | setup.erogazione_petstore.api_nome+'errato:'+setup.erogazione_petstore.api_versione | 
-| 'distribuzione-applicativo' | 'distribuzione-applicativo' | filtro.esito.tipo |  null | setup.erogazione_petstore.api_nome+'errato:'+setup.erogazione_petstore.api_versione | 
-| 'distribuzione-id-autenticato' | 'distribuzione-id-autenticato' | filtro.esito.tipo |  null | setup.erogazione_petstore.api_nome+'errato:'+setup.erogazione_petstore.api_versione | 
-| 'distribuzione-token-info' | 'distribuzione-token-info' | filtro.esito.tipo | filtro.claim | setup.erogazione_petstore.api_nome+'errato:'+setup.erogazione_petstore.api_versione | 
-| 'distribuzione-indirizzo-ip' | 'distribuzione-indirizzo-ip' | filtro.esito.tipo |  null | setup.erogazione_petstore.api_nome+'errato:'+setup.erogazione_petstore.api_versione | 
+| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-identificazione-applicativo | uri-api |
+| 'distribuzione-temporale' | 'distribuzione-temporale' | filtro.esito.tipo | null | null | setup.erogazione_petstore.api_nome+'errato:'+setup.erogazione_petstore.api_versione |
+| 'distribuzione-esiti' | 'distribuzione-esiti' | null | null | null | setup.erogazione_petstore.api_nome+'errato:'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-soggetto-remoto' | 'distribuzione-soggetto-remoto' | filtro.esito.tipo | null | null | setup.erogazione_petstore.api_nome+'errato:'+setup.erogazione_petstore.api_versione |
+| 'distribuzione-soggetto-locale' | 'distribuzione-soggetto-locale' | filtro.esito.tipo | null | null | setup.erogazione_petstore.api_nome+'errato:'+setup.erogazione_petstore.api_versione |
+| 'distribuzione-azione' | 'distribuzione-azione' | filtro.esito.tipo | null | null | setup.erogazione_petstore.api_nome+'errato:'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-applicativo-trasporto' | 'distribuzione-applicativo' | filtro.esito.tipo | null | 'trasporto' | setup.erogazione_petstore.api_nome+'errato:'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-applicativo-token' | 'distribuzione-applicativo' | filtro.esito.tipo | null | 'token' | setup.erogazione_petstore.api_nome+'errato:'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-id-autenticato' | 'distribuzione-id-autenticato' | filtro.esito.tipo | null | null | setup.erogazione_petstore.api_nome+'errato:'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-token-info-subject' | 'distribuzione-token-info' | filtro.esito.tipo | 'subject' | null | setup.erogazione_petstore.api_nome+'errato:'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-token-info-client-id' | 'distribuzione-token-info' | filtro.esito.tipo | 'client_id' | null | setup.erogazione_petstore.api_nome+'errato:'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-indirizzo-ip' | 'distribuzione-indirizzo-ip' | filtro.esito.tipo | null | null | setup.erogazione_petstore.api_nome+'errato:'+setup.erogazione_petstore.api_versione | 
 
 
 @ReportBaseApiImplementataConReferente
@@ -147,8 +151,7 @@ Scenario Outline: Ricerca di report base statistica <nome-statistica> filtrati p
     },
     "esito": {
       "tipo": "ok"
-    },
-    "claim" : "subject" 
+    }
 })
 """  
 * def query =
@@ -163,7 +166,8 @@ Scenario Outline: Ricerca di report base statistica <nome-statistica> filtrati p
     unita_tempo: filtro.unita_tempo,
     tipo_report: filtro.report.tipo,
     tipo_informazione_report: filtro.report.tipo_informazione.tipo,
-    claim: <filtro-claim>
+    claim: <filtro-claim>,
+    tipo_identificazione: <filtro-tipo-identificazione-applicativo>
 })
 """
 
@@ -173,16 +177,18 @@ Given path <path-distribuzione>
     Then status 200
     
 Examples:
-| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | uri-api |
-| 'distribuzione-temporale' | 'distribuzione-temporale' | filtro.esito.tipo |  null | 'gw/'+soggettoDefault+':'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione |
-| 'distribuzione-esiti' | 'distribuzione-esiti' | null |  null | 'gw/'+soggettoDefault+':'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
-| 'distribuzione-soggetto-remoto' | 'distribuzione-soggetto-remoto' | filtro.esito.tipo |  null | 'gw/'+soggettoDefault+':'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione |
-| 'distribuzione-soggetto-locale' | 'distribuzione-soggetto-locale' | filtro.esito.tipo |  null | 'gw/'+soggettoDefault+':'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione |
-| 'distribuzione-azione' | 'distribuzione-azione' | filtro.esito.tipo |  null | 'gw/'+soggettoDefault+':'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
-| 'distribuzione-applicativo' | 'distribuzione-applicativo' | filtro.esito.tipo |  null | 'gw/'+soggettoDefault+':'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
-| 'distribuzione-id-autenticato' | 'distribuzione-id-autenticato' | filtro.esito.tipo |  null | 'gw/'+soggettoDefault+':'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
-| 'distribuzione-token-info' | 'distribuzione-token-info' | filtro.esito.tipo | filtro.claim | 'gw/'+soggettoDefault+':'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
-| 'distribuzione-indirizzo-ip' | 'distribuzione-indirizzo-ip' | filtro.esito.tipo |  null | 'gw/'+soggettoDefault+':'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-identificazione-applicativo | uri-api |
+| 'distribuzione-temporale' | 'distribuzione-temporale' | filtro.esito.tipo | null | null | 'gw/'+soggettoDefault+':'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione |
+| 'distribuzione-esiti' | 'distribuzione-esiti' | null | null | null | 'gw/'+soggettoDefault+':'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-soggetto-remoto' | 'distribuzione-soggetto-remoto' | filtro.esito.tipo | null | null | 'gw/'+soggettoDefault+':'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione |
+| 'distribuzione-soggetto-locale' | 'distribuzione-soggetto-locale' | filtro.esito.tipo | null | null | 'gw/'+soggettoDefault+':'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione |
+| 'distribuzione-azione' | 'distribuzione-azione' | filtro.esito.tipo | null | null | 'gw/'+soggettoDefault+':'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-applicativo-trasporto' | 'distribuzione-applicativo' | filtro.esito.tipo | null | 'trasporto' | 'gw/'+soggettoDefault+':'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-applicativo-token' | 'distribuzione-applicativo' | filtro.esito.tipo | null | 'token' | 'gw/'+soggettoDefault+':'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-id-autenticato' | 'distribuzione-id-autenticato' | filtro.esito.tipo | null | null | 'gw/'+soggettoDefault+':'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-token-info-subject' | 'distribuzione-token-info' | filtro.esito.tipo | 'subject' | null | 'gw/'+soggettoDefault+':'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-token-info-client-id' | 'distribuzione-token-info' | filtro.esito.tipo | 'client_id' | null | 'gw/'+soggettoDefault+':'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-indirizzo-ip' | 'distribuzione-indirizzo-ip' | filtro.esito.tipo | null | null | 'gw/'+soggettoDefault+':'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
 
 @ReportBaseApiImplementataConReferenteNotFound
 Scenario Outline: Ricerca di report base statistica <nome-statistica> filtrati per api implementata 
@@ -202,8 +208,7 @@ Scenario Outline: Ricerca di report base statistica <nome-statistica> filtrati p
     },
     "esito": {
       "tipo": "ok"
-    },
-    "claim" : "subject" 
+    }
 })
 """  
 * def query =
@@ -218,7 +223,8 @@ Scenario Outline: Ricerca di report base statistica <nome-statistica> filtrati p
     unita_tempo: filtro.unita_tempo,
     tipo_report: filtro.report.tipo,
     tipo_informazione_report: filtro.report.tipo_informazione.tipo,
-    claim: <filtro-claim>
+    claim: <filtro-claim>,
+    tipo_identificazione: <filtro-tipo-identificazione-applicativo>
 })
 """
 
@@ -228,16 +234,18 @@ Given path <path-distribuzione>
     Then status 404
     
 Examples:
-| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | uri-api |
-| 'distribuzione-temporale' | 'distribuzione-temporale' | filtro.esito.tipo |  null | 'gw/altroSoggetto:'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione |
-| 'distribuzione-esiti' | 'distribuzione-esiti' | null |  null | 'gw/altroSoggetto:'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
-| 'distribuzione-soggetto-remoto' | 'distribuzione-soggetto-remoto' | filtro.esito.tipo |  null | 'gw/altroSoggetto:'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione |
-| 'distribuzione-soggetto-locale' | 'distribuzione-soggetto-locale' | filtro.esito.tipo |  null | 'gw/altroSoggetto:'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione |
-| 'distribuzione-azione' | 'distribuzione-azione' | filtro.esito.tipo |  null | 'gw/altroSoggetto:'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
-| 'distribuzione-applicativo' | 'distribuzione-applicativo' | filtro.esito.tipo |  null | 'gw/altroSoggetto:'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
-| 'distribuzione-id-autenticato' | 'distribuzione-id-autenticato' | filtro.esito.tipo |  null | 'gw/altroSoggetto:'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
-| 'distribuzione-token-info' | 'distribuzione-token-info' | filtro.esito.tipo | filtro.claim | 'gw/altroSoggetto:'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
-| 'distribuzione-indirizzo-ip' | 'distribuzione-indirizzo-ip' | filtro.esito.tipo |  null | 'gw/altroSoggetto:'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-identificazione-applicativo | uri-api |
+| 'distribuzione-temporale' | 'distribuzione-temporale' | filtro.esito.tipo | null | null | 'gw/altroSoggetto:'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione |
+| 'distribuzione-esiti' | 'distribuzione-esiti' | null | null | null | 'gw/altroSoggetto:'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-soggetto-remoto' | 'distribuzione-soggetto-remoto' | filtro.esito.tipo | null | null | 'gw/altroSoggetto:'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione |
+| 'distribuzione-soggetto-locale' | 'distribuzione-soggetto-locale' | filtro.esito.tipo | null | null | 'gw/altroSoggetto:'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione |
+| 'distribuzione-azione' | 'distribuzione-azione' | filtro.esito.tipo | null | null | 'gw/altroSoggetto:'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-applicativo-trasporto' | 'distribuzione-applicativo' | filtro.esito.tipo | null | 'trasporto' | 'gw/altroSoggetto:'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-applicativo-token' | 'distribuzione-applicativo' | filtro.esito.tipo | null | 'token' | 'gw/altroSoggetto:'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-id-autenticato' | 'distribuzione-id-autenticato' | filtro.esito.tipo | null | null | 'gw/altroSoggetto:'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-token-info-subject' | 'distribuzione-token-info' | filtro.esito.tipo | 'subject' | null | 'gw/altroSoggetto:'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-token-info-client-id' | 'distribuzione-token-info' | filtro.esito.tipo | 'client_id' | null | 'gw/altroSoggetto:'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
+| 'distribuzione-indirizzo-ip' | 'distribuzione-indirizzo-ip' | filtro.esito.tipo | null | null | 'gw/altroSoggetto:'+setup.erogazione_petstore.api_nome+':'+setup.erogazione_petstore.api_versione | 
 
 
 @ReportFullApiImplementata
@@ -269,6 +277,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 * eval filtro.api.api_implementata.versione = setup.erogazione_petstore.api_versione
 * eval if(<filtro-esito> != null) filtro.esito = <filtro-esito>
 * eval if(<filtro-claim> != null) filtro.claim = <filtro-claim>
+* eval if(<filtro-tipo-identificazione-applicativo> != null) filtro.tipo_identificazione_applicativo = <filtro-tipo-identificazione-applicativo>
     
 Given path <path-distribuzione>
     And request filtro
@@ -276,16 +285,18 @@ Given path <path-distribuzione>
     Then status 200
     
 Examples:
-| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | 
-| 'distribuzione-temporale' | 'distribuzione-temporale' | { "tipo": "ok" } | null |
-| 'distribuzione-esiti' | 'distribuzione-esiti' | null | null |
-| 'distribuzione-soggetto-remoto' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null |
-| 'distribuzione-soggetto-locale' | 'distribuzione-soggetto-locale' | { "tipo": "ok" } | null |
-| 'distribuzione-azione' | 'distribuzione-azione' | { "tipo": "ok" } | null |
-| 'distribuzione-applicativo' | 'distribuzione-applicativo' | { "tipo": "ok" } | null |
-| 'distribuzione-id-autenticato' | 'distribuzione-id-autenticato' | { "tipo": "ok" } | null |
-| 'distribuzione-token-info' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" |
-| 'distribuzione-indirizzo-ip' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null |
+| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-identificazione-applicativo | 
+| 'distribuzione-temporale' | 'distribuzione-temporale' | { "tipo": "ok" } | null | null |
+| 'distribuzione-esiti' | 'distribuzione-esiti' | null | null | null |
+| 'distribuzione-soggetto-remoto' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null | null |
+| 'distribuzione-soggetto-locale' | 'distribuzione-soggetto-locale' | { "tipo": "ok" } | null | null |
+| 'distribuzione-azione' | 'distribuzione-azione' | { "tipo": "ok" } | null | null |
+| 'distribuzione-applicativo-trasporto' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'trasporto' |
+| 'distribuzione-applicativo-token' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'token' |
+| 'distribuzione-id-autenticato' | 'distribuzione-id-autenticato' | { "tipo": "ok" } | null | null |
+| 'distribuzione-token-info-subject' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" | null |
+| 'distribuzione-token-info-client-id' | 'distribuzione-token-info' | { "tipo": "ok" } | "client_id" | null |
+| 'distribuzione-indirizzo-ip' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null | null |
 
 
 @ReportFullApiImplementataNotFound
@@ -317,6 +328,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 * eval filtro.api.api_implementata.versione = setup.erogazione_petstore.api_versione
 * eval if(<filtro-esito> != null) filtro.esito = <filtro-esito>
 * eval if(<filtro-claim> != null) filtro.claim = <filtro-claim>
+* eval if(<filtro-tipo-identificazione-applicativo> != null) filtro.tipo_identificazione_applicativo = <filtro-tipo-identificazione-applicativo>
     
 Given path <path-distribuzione>
     And request filtro
@@ -324,16 +336,18 @@ Given path <path-distribuzione>
     Then status 404
     
 Examples:
-| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | 
-| 'distribuzione-temporale' | 'distribuzione-temporale' | { "tipo": "ok" } | null |
-| 'distribuzione-esiti' | 'distribuzione-esiti' | null | null |
-| 'distribuzione-soggetto-remoto' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null |
-| 'distribuzione-soggetto-locale' | 'distribuzione-soggetto-locale' | { "tipo": "ok" } | null |
-| 'distribuzione-azione' | 'distribuzione-azione' | { "tipo": "ok" } | null |
-| 'distribuzione-applicativo' | 'distribuzione-applicativo' | { "tipo": "ok" } | null |
-| 'distribuzione-id-autenticato' | 'distribuzione-id-autenticato' | { "tipo": "ok" } | null |
-| 'distribuzione-token-info' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" |
-| 'distribuzione-indirizzo-ip' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null |
+| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-identificazione-applicativo | 
+| 'distribuzione-temporale' | 'distribuzione-temporale' | { "tipo": "ok" } | null | null |
+| 'distribuzione-esiti' | 'distribuzione-esiti' | null | null | null |
+| 'distribuzione-soggetto-remoto' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null | null |
+| 'distribuzione-soggetto-locale' | 'distribuzione-soggetto-locale' | { "tipo": "ok" } | null | null |
+| 'distribuzione-azione' | 'distribuzione-azione' | { "tipo": "ok" } | null | null |
+| 'distribuzione-applicativo-trasporto' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'trasporto' |
+| 'distribuzione-applicativo-token' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'token' |
+| 'distribuzione-id-autenticato' | 'distribuzione-id-autenticato' | { "tipo": "ok" } | null | null |
+| 'distribuzione-token-info-subject' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" | null |
+| 'distribuzione-token-info-client-id' | 'distribuzione-token-info' | { "tipo": "ok" } | "client_id" | null |
+| 'distribuzione-indirizzo-ip' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null | null |
 
 
 @ReportFullApiImplementataConReferente
@@ -367,6 +381,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 * eval filtro.api.api_implementata.versione = setup.erogazione_petstore.api_versione
 * eval if(<filtro-esito> != null) filtro.esito = <filtro-esito>
 * eval if(<filtro-claim> != null) filtro.claim = <filtro-claim>
+* eval if(<filtro-tipo-identificazione-applicativo> != null) filtro.tipo_identificazione_applicativo = <filtro-tipo-identificazione-applicativo>
     
 Given path <path-distribuzione>
     And request filtro
@@ -374,16 +389,18 @@ Given path <path-distribuzione>
     Then status 200
     
 Examples:
-| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | 
-| 'distribuzione-temporale' | 'distribuzione-temporale' | { "tipo": "ok" } | null |
-| 'distribuzione-esiti' | 'distribuzione-esiti' | null | null |
-| 'distribuzione-soggetto-remoto' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null |
-| 'distribuzione-soggetto-locale' | 'distribuzione-soggetto-locale' | { "tipo": "ok" } | null |
-| 'distribuzione-azione' | 'distribuzione-azione' | { "tipo": "ok" } | null |
-| 'distribuzione-applicativo' | 'distribuzione-applicativo' | { "tipo": "ok" } | null |
-| 'distribuzione-id-autenticato' | 'distribuzione-id-autenticato' | { "tipo": "ok" } | null |
-| 'distribuzione-token-info' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" |
-| 'distribuzione-indirizzo-ip' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null |
+| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-identificazione-applicativo | 
+| 'distribuzione-temporale' | 'distribuzione-temporale' | { "tipo": "ok" } | null | null |
+| 'distribuzione-esiti' | 'distribuzione-esiti' | null | null | null |
+| 'distribuzione-soggetto-remoto' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null | null |
+| 'distribuzione-soggetto-locale' | 'distribuzione-soggetto-locale' | { "tipo": "ok" } | null | null |
+| 'distribuzione-azione' | 'distribuzione-azione' | { "tipo": "ok" } | null | null |
+| 'distribuzione-applicativo-trasporto' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'trasporto' |
+| 'distribuzione-applicativo-token' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'token' |
+| 'distribuzione-id-autenticato' | 'distribuzione-id-autenticato' | { "tipo": "ok" } | null | null |
+| 'distribuzione-token-info-subject' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" | null |
+| 'distribuzione-token-info-client-id' | 'distribuzione-token-info' | { "tipo": "ok" } | "client_id" | null |
+| 'distribuzione-indirizzo-ip' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null | null |
 
 
 @ReportFullApiImplementataConReferenteNotFound
@@ -417,6 +434,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 * eval filtro.api.api_implementata.versione = setup.erogazione_petstore.api_versione
 * eval if(<filtro-esito> != null) filtro.esito = <filtro-esito>
 * eval if(<filtro-claim> != null) filtro.claim = <filtro-claim>
+* eval if(<filtro-tipo-identificazione-applicativo> != null) filtro.tipo_identificazione_applicativo = <filtro-tipo-identificazione-applicativo>
     
 Given path <path-distribuzione>
     And request filtro
@@ -424,16 +442,18 @@ Given path <path-distribuzione>
     Then status 404
     
 Examples:
-| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | 
-| 'distribuzione-temporale' | 'distribuzione-temporale' | { "tipo": "ok" } | null |
-| 'distribuzione-esiti' | 'distribuzione-esiti' | null | null |
-| 'distribuzione-soggetto-remoto' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null |
-| 'distribuzione-soggetto-locale' | 'distribuzione-soggetto-locale' | { "tipo": "ok" } | null |
-| 'distribuzione-azione' | 'distribuzione-azione' | { "tipo": "ok" } | null |
-| 'distribuzione-applicativo' | 'distribuzione-applicativo' | { "tipo": "ok" } | null |
-| 'distribuzione-id-autenticato' | 'distribuzione-id-autenticato' | { "tipo": "ok" } | null |
-| 'distribuzione-token-info' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" |
-| 'distribuzione-indirizzo-ip' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null |
+| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-identificazione-applicativo | 
+| 'distribuzione-temporale' | 'distribuzione-temporale' | { "tipo": "ok" } | null | null |
+| 'distribuzione-esiti' | 'distribuzione-esiti' | null | null | null |
+| 'distribuzione-soggetto-remoto' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null | null |
+| 'distribuzione-soggetto-locale' | 'distribuzione-soggetto-locale' | { "tipo": "ok" } | null | null |
+| 'distribuzione-azione' | 'distribuzione-azione' | { "tipo": "ok" } | null | null |
+| 'distribuzione-applicativo-trasporto' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'trasporto' |
+| 'distribuzione-applicativo-token' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'token' |
+| 'distribuzione-id-autenticato' | 'distribuzione-id-autenticato' | { "tipo": "ok" } | null | null |
+| 'distribuzione-token-info-subject' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" | null |
+| 'distribuzione-token-info-client-id' | 'distribuzione-token-info' | { "tipo": "ok" } | "client_id" | null |
+| 'distribuzione-indirizzo-ip' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null | null |
 
 
 
@@ -456,8 +476,7 @@ Scenario Outline: Ricerca di report base statistica <nome-statistica> filtrati p
     },
     "esito": {
       "tipo": "ok"
-    },
-    "claim" : "subject" 
+    }
 })
 """  
 * def query =
@@ -472,7 +491,8 @@ Scenario Outline: Ricerca di report base statistica <nome-statistica> filtrati p
     unita_tempo: filtro.unita_tempo,
     tipo_report: filtro.report.tipo,
     tipo_informazione_report: filtro.report.tipo_informazione.tipo,
-    claim: <filtro-claim>
+    claim: <filtro-claim>,
+    tipo_identificazione: <filtro-tipo-identificazione-applicativo>
 })
 """
 		
@@ -482,9 +502,9 @@ Given path <path-distribuzione>
     Then status 200
     
 Examples:
-| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | distingui-api |
-| 'distribuzione-api' | 'distribuzione-api' | filtro.esito.tipo |  null | true |
-| 'distribuzione-api' | 'distribuzione-api' | filtro.esito.tipo |  null | false |
+| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-identificazione-applicativo | distingui-api |
+| 'distribuzione-api' | 'distribuzione-api' | filtro.esito.tipo | null | null | true |
+| 'distribuzione-api' | 'distribuzione-api' | filtro.esito.tipo | null | null | false |
 
 
 @ReportFullDistinguiApiImplementata
@@ -510,6 +530,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 * eval filtro.distingui_api_implementata = <distingui-api>
 * eval if(<filtro-esito> != null) filtro.esito = <filtro-esito>
 * eval if(<filtro-claim> != null) filtro.claim = <filtro-claim>
+* eval if(<filtro-tipo-identificazione-applicativo> != null) filtro.tipo_identificazione_applicativo = <filtro-tipo-identificazione-applicativo>
     
 Given path <path-distribuzione>
     And request filtro
@@ -517,7 +538,7 @@ Given path <path-distribuzione>
     Then status 200
     
 Examples:
-| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | distingui-api |
-| 'distribuzione-api' | 'distribuzione-api' | { "tipo": "ok" } |  null | true |
-| 'distribuzione-api' | 'distribuzione-api' | { "tipo": "ok" } |  null | false |
+| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-identificazione-applicativo | distingui-api |
+| 'distribuzione-api' | 'distribuzione-api' | { "tipo": "ok" } | null | null | true |
+| 'distribuzione-api' | 'distribuzione-api' | { "tipo": "ok" } | null | null | false |
 

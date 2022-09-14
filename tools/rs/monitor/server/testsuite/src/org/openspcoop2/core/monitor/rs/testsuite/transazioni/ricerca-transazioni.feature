@@ -240,6 +240,34 @@ Scenario: Ricerca per Filtro Mittente Applicativo
     And assert response.items.length >= 1
     And match each response.items contains { mittente: '#(^expected_mittente)' }
 
+@FiltroMittenteApplicativoToken
+Scenario: Ricerca per Filtro Mittente Applicativo Token
+    * def filtro = read('classpath:bodies/ricerca-filtro-mittente-applicativo-token.json')
+    * eval filtro.intervallo_temporale = intervallo_temporale
+    * eval filtro.mittente.soggetto = soggettoDefault
+    * eval filtro.mittente.applicativo = setup.applicativo_token.nome
+
+    * def risposta_applicativo_token = read('classpath:bodies/risposta-applicativo-token.json')
+    * eval risposta_applicativo_token.applicativo_token.nome = setup.applicativo_token.nome
+    * eval risposta_applicativo_token.applicativo_token.soggetto = soggettoDefault
+    * eval risposta_applicativo_token.applicativo_token.informazioni_soggetto.codice = 'domain/gw/'+soggettoDefault
+    * def expected_mittente = ({ applicativo_token: risposta_applicativo_token.applicativo_token })
+
+    Given request filtro
+    When method post
+    Then status 200
+    And assert response.items.length >= 1
+    And match each response.items contains { mittente: '#(^expected_mittente)' }
+
+    * set filtro.tipo = "fruizione"
+    * set filtro.mittente.identificazione = "fruizione_applicativo"
+    * remove filtro.mittente.soggetto
+    Given request filtro
+    When method post
+    Then status 200
+    And assert response.items.length >= 1
+    And match each response.items contains { mittente: '#(^expected_mittente)' }
+
 @FiltroMittenteIdAutenticatoHttp
 Scenario: Ricerca per Filtro Mittente con autenticazione http
     * def filtro = read('classpath:bodies/ricerca-filtro-mittente-idautenticato.json')

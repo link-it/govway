@@ -27,12 +27,15 @@ import java.util.List;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils;
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.Search;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.ConfigurazioneMultitenant;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneCRUD;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
@@ -184,6 +187,26 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
+	public boolean existsServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId, boolean tokenWithHttpsEnabled) {
+		try{
+			return this.driverConfigurazioneGET.getServizioApplicativoByCredenzialiToken(tokenPolicy, tokenClientId, tokenWithHttpsEnabled)!=null;
+		}catch(Exception e){
+			return false;
+		}
+	}
+	
+	@Override
+	public ServizioApplicativo getServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId, boolean tokenWithHttpsEnabled) throws RegistryNotFound,RegistryException{
+		try{
+			return this.driverConfigurazioneGET.getServizioApplicativoByCredenzialiToken(tokenPolicy, tokenClientId, tokenWithHttpsEnabled);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
 	public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws RegistryNotFound,RegistryException{
 		try{
 			return this.driverConfigurazioneGET.getServizioApplicativo(idServizioApplicativo);
@@ -193,7 +216,7 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 			throw new RegistryException(e.getMessage(),e);
 		}
 	}
-	
+		
 	@Override
 	public List<IDServizioApplicativo> findIdServiziApplicativi(FiltroRicercaServiziApplicativi filtroRicerca) throws RegistryNotFound,RegistryException{
 		try{
@@ -596,6 +619,186 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 				return AllarmiDriverUtils.getNextAlarmInstanceSerialId(tipoPlugin,
 						con, this.log, driver.getTipoDB());
 				
+			}
+			catch(Exception e) {
+				throw new RegistryException(e.getMessage(),e);
+			}
+			finally {
+				try {
+					if(con!=null) {
+						driver.releaseConnection(con);
+					}
+				}catch(Exception eClose) {}
+			}
+			
+		}
+		else {
+			throw new RegistryException("Not Implemented");
+		}
+	}
+	
+	@Override
+	public List<GenericProperties> getTokenPolicyValidazione() throws RegistryException{
+		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
+			
+			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
+			Connection con = null;
+			try {
+				org.openspcoop2.core.commons.Search search = new Search(true);
+				List<String> tipologiaList = new ArrayList<>();
+				tipologiaList.add(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION);
+				return driver.getGenericProperties(tipologiaList, Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN, search,false);
+			}
+			catch(Exception e) {
+				throw new RegistryException(e.getMessage(),e);
+			}
+			finally {
+				try {
+					if(con!=null) {
+						driver.releaseConnection(con);
+					}
+				}catch(Exception eClose) {}
+			}
+			
+		}
+		else {
+			throw new RegistryException("Not Implemented");
+		}
+	}
+	@Override
+	public GenericProperties getTokenPolicyValidazione(String nome) throws RegistryNotFound,RegistryException{
+		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
+			
+			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
+			Connection con = null;
+			try {
+				GenericProperties gp = driver.getGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION, nome);
+				if(gp==null) {
+					throw new DriverConfigurazioneNotFound();
+				}
+				return gp;
+			} catch (DriverConfigurazioneNotFound de) {
+				throw new RegistryNotFound(de.getMessage(),de);
+			}
+			catch(Exception e) {
+				throw new RegistryException(e.getMessage(),e);
+			}
+			finally {
+				try {
+					if(con!=null) {
+						driver.releaseConnection(con);
+					}
+				}catch(Exception eClose) {}
+			}
+			
+		}
+		else {
+			throw new RegistryException("Not Implemented");
+		}
+	}
+	
+	@Override
+	public List<GenericProperties> getTokenPolicyNegoziazione() throws RegistryException{
+		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
+			
+			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
+			Connection con = null;
+			try {
+				org.openspcoop2.core.commons.Search search = new Search(true);
+				List<String> tipologiaList = new ArrayList<>();
+				tipologiaList.add(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE);
+				return driver.getGenericProperties(tipologiaList, Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN, search,false);
+			}
+			catch(Exception e) {
+				throw new RegistryException(e.getMessage(),e);
+			}
+			finally {
+				try {
+					if(con!=null) {
+						driver.releaseConnection(con);
+					}
+				}catch(Exception eClose) {}
+			}
+			
+		}
+		else {
+			throw new RegistryException("Not Implemented");
+		}
+	}
+	@Override
+	public GenericProperties getTokenPolicyNegoziazione(String nome) throws RegistryNotFound,RegistryException{
+		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
+			
+			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
+			Connection con = null;
+			try {
+				GenericProperties gp = driver.getGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE, nome);
+				if(gp==null) {
+					throw new DriverConfigurazioneNotFound();
+				}
+				return gp;
+			} catch (DriverConfigurazioneNotFound de) {
+				throw new RegistryNotFound(de.getMessage(),de);
+			}
+			catch(Exception e) {
+				throw new RegistryException(e.getMessage(),e);
+			}
+			finally {
+				try {
+					if(con!=null) {
+						driver.releaseConnection(con);
+					}
+				}catch(Exception eClose) {}
+			}
+			
+		}
+		else {
+			throw new RegistryException("Not Implemented");
+		}
+	}
+	
+	@Override
+	public List<GenericProperties> getAttributeAuthority() throws RegistryException{
+		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
+			
+			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
+			Connection con = null;
+			try {
+				org.openspcoop2.core.commons.Search search = new Search(true);
+				List<String> tipologiaList = new ArrayList<>();
+				tipologiaList.add(CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY);
+				return driver.getGenericProperties(tipologiaList, Liste.CONFIGURAZIONE_GESTIONE_ATTRIBUTE_AUTHORITY, search,false);
+			}
+			catch(Exception e) {
+				throw new RegistryException(e.getMessage(),e);
+			}
+			finally {
+				try {
+					if(con!=null) {
+						driver.releaseConnection(con);
+					}
+				}catch(Exception eClose) {}
+			}
+			
+		}
+		else {
+			throw new RegistryException("Not Implemented");
+		}
+	}
+	@Override
+	public GenericProperties getAttributeAuthority(String nome) throws RegistryNotFound,RegistryException{
+		if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
+			
+			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.driverConfigurazioneGET;
+			Connection con = null;
+			try {
+				GenericProperties gp = driver.getGenericProperties(CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY, nome);
+				if(gp==null) {
+					throw new DriverConfigurazioneNotFound();
+				}
+				return gp;
+			} catch (DriverConfigurazioneNotFound de) {
+				throw new RegistryNotFound(de.getMessage(),de);
 			}
 			catch(Exception e) {
 				throw new RegistryException(e.getMessage(),e);

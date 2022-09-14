@@ -94,7 +94,6 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCos
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
-import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
@@ -161,6 +160,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			String autorizzazioneScope, int numScope, String autorizzazioneScopeMatch, BinaryParameter allegatoXacmlPolicy,
 			String messageEngine, String canale,
 			String identificazioneAttributiStato, String[] attributeAuthorityLabels, String[] attributeAuthorityValues, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi,
+			String autorizzazioneAutenticatiToken, String urlAutorizzazioneAutenticatiToken, int numAutenticatiToken,
+			String autorizzazioneRuoliToken,  String urlAutorizzazioneRuoliToken, int numRuoliToken, String autorizzazioneRuoliTipologiaToken, String autorizzazioneRuoliMatchToken,
 			String ctModalitaSincronizzazione, String ctImplementazione, String ctContatori, String ctTipologia,
 			String ctHeaderHttp, String ctHeaderHttp_limit, String ctHeaderHttp_remaining, String ctHeaderHttp_reset,
 			String ctHeaderHttp_retryAfter, String ctHeaderHttp_retryAfterBackoff) throws Exception {
@@ -844,7 +845,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					gestioneToken, gestioneTokenPolicy, 
 					autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
 					null, 0, null, 0,
-					identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
+					identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
+					autorizzazioneAutenticatiToken, urlAutorizzazioneAutenticatiToken, numAutenticatiToken,
+					autorizzazioneRuoliToken,  urlAutorizzazioneRuoliToken, numRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken);
 			
 				
 			this.controlloAccessiAutorizzazioneContenuti(dati, tipoOp, true, null,protocollo,
@@ -1873,11 +1876,15 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				String [] attributeAuthoritySelezionate = this.getParameterValues(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY);
 				String attributeAuthorityAttributi = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_ATTRIBUTI_AUTHORITY_ATTRIBUTI);
 				
+				String autorizzazioneAutenticatiToken = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_TOKEN);
+				String autorizzazioneRuoliToken = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI_TOKEN);
+				
 				if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList,
 						autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
 						autorizzazioneRuoliTipologia, ruoloMatch, 
 						true, true, null, ruoli,gestioneToken, gestioneTokenPolicy, 
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
+						autorizzazioneAutenticatiToken, autorizzazioneRuoliToken, 
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
@@ -2448,14 +2455,30 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			if(idFruizione == null)
 				idFruizione = "";
 			
+			String token = this.getParameter(CostantiControlStation.PARAMETRO_TOKEN_AUTHORIZATION);
+			
 			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
 			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO, pId, pIdSoggetto, pIdAsps, pIdFrizione);
-
+			List<Parameter> listP = new ArrayList<>();
+			listP.add(pId);
+			listP.add(pIdSoggetto);
+			listP.add(pIdAsps);
+			listP.add(pIdFrizione);
+			if(token!=null) {
+				listP.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TOKEN_AUTHORIZATION, token));
+			}
+			ServletUtils.addListElementIntoSession(this.session,  PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO,
+					listP);
+			
+			boolean isToken = token!=null && !"".equals(token) && Boolean.valueOf(token);
+			
 			int idLista = Liste.PORTE_DELEGATE_SERVIZIO_APPLICATIVO;
+			if(isToken) {
+				idLista = Liste.PORTE_DELEGATE_TOKEN_SERVIZIO_APPLICATIVO;
+			}
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
@@ -2486,10 +2509,19 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, myPD.getIdSoggetto() + ""),
 					pIdAsps, new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione+ "")));
 			
-			String labelPagLista = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_CONFIG;
-			if(!this.isModalitaCompleta()) {
-				labelPagLista = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVO_CONFIG;
+			String labelApp = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_CONFIG;
+			if(!this.isModalitaCompleta() || isToken) {
+				labelApp = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVO_CONFIG;
 			}
+			String labelPagLista = 
+					(
+							isToken ? 
+							CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN 
+							:
+							CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TRASPORTO
+					)
+					+ " - " +
+					labelApp;
 			
 			this.pd.setSearchLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
 			if(search.equals("")){
@@ -2498,7 +2530,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 			else{
 				lstParam.add(new Parameter(labelPagLista,
-						PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_LIST, pId, pIdSoggetto, pIdAsps, pIdFrizione	));
+						PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_LIST, pId, pIdSoggetto, pIdAsps, pIdFrizione,
+						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TOKEN_AUTHORIZATION, isToken+"")	));
 				lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RISULTATI_RICERCA, null));
 			}
 
@@ -2576,14 +2609,30 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			if(idFruizione == null)
 				idFruizione = "";
 			
+			String token = this.getParameter(CostantiControlStation.PARAMETRO_TOKEN_AUTHORIZATION);
+			
 			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
 			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
+			
+			List<Parameter> listP = new ArrayList<>();
+			listP.add(pId);
+			listP.add(pIdSoggetto);
+			listP.add(pIdAsps);
+			listP.add(pIdFrizione);
+			if(token!=null) {
+				listP.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TOKEN_AUTHORIZATION, token));
+			}
+			ServletUtils.addListElementIntoSession(this.session,  PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_RUOLI,
+					listP);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_RUOLI, pId, pIdSoggetto, pIdAsps, pIdFrizione);
-
+			boolean isToken = token!=null && !"".equals(token) && Boolean.valueOf(token);
+			
 			int idLista = Liste.PORTE_DELEGATE_RUOLI;
+			if(isToken) {
+				idLista = Liste.PORTE_DELEGATE_TOKEN_RUOLI;
+			}
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
@@ -2614,7 +2663,15 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, myPD.getIdSoggetto() + ""),
 					pIdAsps, new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione+ "")));
 			
-			String labelPagLista = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RUOLI_CONFIG;
+			String labelPagLista = 
+					(
+							isToken ? 
+							CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN
+							:
+							CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TRASPORTO
+					)
+					+ " - " +
+					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RUOLI_CONFIG;
 
 			Parameter pNomePorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, idporta);
 
@@ -2625,7 +2682,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 			else{
 				lstParam.add(new Parameter(labelPagLista,
-						PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RUOLI_LIST, pId, pIdSoggetto, pNomePorta, pIdAsps, pIdFrizione	));
+						PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RUOLI_LIST, pId, pIdSoggetto, pNomePorta, pIdAsps, pIdFrizione,
+						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TOKEN_AUTHORIZATION, isToken+"")	));
 				lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RISULTATI_RICERCA, null));
 
 			}
@@ -4217,6 +4275,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 			boolean autenticazione = !TipoAutenticazione.DISABILITATO.equals(myPD.getAutenticazione());
 			
+			boolean autenticazioneToken = myPD.getGestioneToken()!=null && myPD.getGestioneToken().getPolicy()!=null;
 			
 			// setto la barra del titolo
 			List<Parameter> lstParam = this.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
@@ -4255,7 +4314,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			lstLabels.add(nomeColonnaAzione);
 			lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICABILITA_CT);
 			lstLabels.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICABILITA_PATTERN);
-			if(autenticazione) {
+			if(autenticazione || autenticazioneToken) {
 				lstLabels.add( PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVI);
 			}
 			
@@ -4410,7 +4469,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					e.addElement(de);
 					
 					
-					if(autenticazione) {
+					if(autenticazione || autenticazioneToken) {
 						
 						String servletTrasformazioniAutorizzazioneAutenticati =  PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO_LIST;
 						List<Parameter> parametriInvocazioneServletTrasformazioniAutorizzazioneAutenticati = new ArrayList<Parameter>();
@@ -4554,7 +4613,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				int i = 0;
 				while (it.hasNext()) {
 					TrasformazioneRegolaRisposta risposta = it.next();
-					Parameter pIdTrasformazioneRisposta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_TRASFORMAZIONE_RISPOSTA, risposta.getId() + "");
+					Parameter pIdTrasformazioneRisposta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE_RISPOSTA, risposta.getId() + "");
 
 					Vector<DataElement> e = new Vector<DataElement>();
 					

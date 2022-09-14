@@ -40,6 +40,8 @@ import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.statistiche.StatisticaGiornaliera;
 import org.openspcoop2.core.statistiche.StatisticaMensile;
@@ -57,12 +59,16 @@ import org.openspcoop2.core.statistiche.model.StatisticaModel;
 import org.openspcoop2.core.statistiche.utils.StatisticheUtils;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.dao.jdbc.JDBCCredenzialeMittenteServiceSearch;
+import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
+import org.openspcoop2.core.transazioni.utils.credenziali.AbstractSearchCredenziale;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeClientAddress;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchApi;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchClientAddress;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchGruppo;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchToken;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchTokenClient;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchTrasporto;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeTokenClient;
 import org.openspcoop2.generic_project.beans.ConstantField;
 import org.openspcoop2.generic_project.beans.Function;
 import org.openspcoop2.generic_project.beans.FunctionField;
@@ -94,6 +100,7 @@ import org.openspcoop2.monitor.engine.statistic.StatisticheSettimanali;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.pdd.config.DynamicClusterManager;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
@@ -1971,8 +1978,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 
 				// il destinatario puo nn essere specificato
-				if (StringUtils.isNotBlank(this.andamentoTemporaleSearch
-						.getNomeMittente())) {
+				boolean ignoreSetMittente = isIgnoreSetMittente(this.andamentoTemporaleSearch);
+				if (StringUtils.isNotBlank(this.andamentoTemporaleSearch.getNomeMittente()) && !ignoreSetMittente) {
 					expr.and().equals(model.TIPO_MITTENTE,
 							this.andamentoTemporaleSearch.getTipoMittente());
 					expr.and().equals(model.MITTENTE,
@@ -2592,8 +2599,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 
 				// il destinatario puo nn essere specificato
-				if (StringUtils.isNotBlank(this.distribErroriSearch
-						.getNomeMittente())) {
+				boolean ignoreSetMittente = isIgnoreSetMittente(this.distribErroriSearch);
+				if (StringUtils.isNotBlank(this.distribErroriSearch.getNomeMittente()) && !ignoreSetMittente) {
 					expr.and().equals(model.TIPO_MITTENTE,
 							this.distribErroriSearch.getTipoMittente());
 					expr.and().equals(model.MITTENTE,
@@ -3492,8 +3499,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 				
 				if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
+					
 					// il mittente puo nn essere specificato
-					if (StringUtils.isNotBlank(this.distribSoggettoSearch.getNomeMittente())) {
+					boolean ignoreSetMittente = isIgnoreSetMittente(this.distribSoggettoSearch);
+					if (StringUtils.isNotBlank(this.distribSoggettoSearch.getNomeMittente()) && !ignoreSetMittente) {
 						erogazione_portaApplicativa_Expr.and().equals(	model.TIPO_MITTENTE,	this.distribSoggettoSearch.getTipoMittente());
 						erogazione_portaApplicativa_Expr.and().equals(	model.MITTENTE, this.distribSoggettoSearch.getNomeMittente());
 					}
@@ -4320,8 +4329,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
+				
 				// il mittente puo nn essere specificato
-				if (StringUtils.isNotBlank(this.distribSoggettoSearch.getNomeMittente())) {
+				boolean ignoreSetMittente = isIgnoreSetMittente(this.distribSoggettoSearch);
+				if (StringUtils.isNotBlank(this.distribSoggettoSearch.getNomeMittente()) && !ignoreSetMittente) {
 					erogazione_portaApplicativa_Expr.and().equals(	model.TIPO_MITTENTE,	this.distribSoggettoSearch.getTipoMittente());
 					erogazione_portaApplicativa_Expr.and().equals(	model.MITTENTE, this.distribSoggettoSearch.getNomeMittente());
 				}
@@ -5449,8 +5460,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 
 				// il destinatario puo nn essere specificato
-				if (StringUtils.isNotBlank(this.distribServizioSearch
-						.getNomeMittente())) {
+				boolean ignoreSetMittente = isIgnoreSetMittente(this.distribServizioSearch);
+				if (StringUtils.isNotBlank(this.distribServizioSearch.getNomeMittente()) && !ignoreSetMittente) {
 					expr.and().equals(model.TIPO_MITTENTE,
 							this.distribServizioSearch.getTipoMittente());
 					expr.and().equals(model.MITTENTE,
@@ -5834,8 +5845,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 
 				// il destinatario puo nn essere specificato
-				if (StringUtils.isNotBlank(this.distribAzioneSearch
-						.getNomeMittente())) {
+				boolean ignoreSetMittente = isIgnoreSetMittente(this.distribAzioneSearch);
+				if (StringUtils.isNotBlank(this.distribAzioneSearch.getNomeMittente()) && !ignoreSetMittente) {
 					expr.and().equals(model.TIPO_MITTENTE,
 							this.distribAzioneSearch.getTipoMittente());
 					expr.and().equals(model.MITTENTE,
@@ -6394,8 +6405,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 //					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(model.DESTINATARIO);
 					if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
 						if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
-							gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(model.TIPO_MITTENTE);
-							gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(model.MITTENTE);
+							if (!org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.distribSaSearch.getIdentificazione())) {
+								gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(model.TIPO_MITTENTE);
+								gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(model.MITTENTE);
+							}
 						}
 					}
 					
@@ -6411,8 +6424,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(credenzialeFieldGroupBy);
 					if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
 						if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
-							gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(model.TIPO_MITTENTE);
-							gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(model.MITTENTE);
+							if (!org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.distribSaSearch.getIdentificazione())) {
+								gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(model.TIPO_MITTENTE);
+								gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(model.MITTENTE);
+							}
 						}
 					}
 					
@@ -6453,8 +6468,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 //					unionExprErogatore.addSelectField(model.DESTINATARIO, aliasFieldSoggetto);
 					if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
 						if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
-							unionExprErogatore.addSelectField(model.TIPO_MITTENTE, aliasFieldTipoSoggetto);
-							unionExprErogatore.addSelectField(model.MITTENTE, aliasFieldSoggetto);
+							if (!org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.distribSaSearch.getIdentificazione())) {
+								unionExprErogatore.addSelectField(model.TIPO_MITTENTE, aliasFieldTipoSoggetto);
+								unionExprErogatore.addSelectField(model.MITTENTE, aliasFieldSoggetto);
+							}
 						}
 					}
 //					unionExprErogatore.addSelectField(new ConstantField(aliasFieldRuoloSoggetto, "Erogatore", String.class),aliasFieldRuoloSoggetto);
@@ -6464,8 +6481,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					unionExprFruitore.addSelectField(credenzialeFieldGroupBy, aliasFieldCredenzialeMittente);
 					if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
 						if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
-							unionExprFruitore.addSelectField(model.TIPO_MITTENTE, aliasFieldTipoSoggetto);
-							unionExprFruitore.addSelectField(model.MITTENTE, aliasFieldSoggetto);
+							if (!org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.distribSaSearch.getIdentificazione())) {
+								unionExprFruitore.addSelectField(model.TIPO_MITTENTE, aliasFieldTipoSoggetto);
+								unionExprFruitore.addSelectField(model.MITTENTE, aliasFieldSoggetto);
+							}
 						}
 					}
 //					unionExprFruitore.addSelectField(new ConstantField(aliasFieldRuoloSoggetto, "Fruitore", String.class),	aliasFieldRuoloSoggetto);
@@ -6479,12 +6498,14 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							aliasFieldCredenzialeMittente);
 					if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
 						if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
-							unionExprFake.addSelectField(new ConstantField(aliasFieldTipoSoggetto, 
-									StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, String.class), 
-									aliasFieldTipoSoggetto);
-							unionExprFake.addSelectField(new ConstantField(aliasFieldSoggetto, 
-									StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, String.class), 
-									aliasFieldSoggetto);
+							if (!org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.distribSaSearch.getIdentificazione())) {
+								unionExprFake.addSelectField(new ConstantField(aliasFieldTipoSoggetto, 
+										StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, String.class), 
+										aliasFieldTipoSoggetto);
+								unionExprFake.addSelectField(new ConstantField(aliasFieldSoggetto, 
+										StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, String.class), 
+										aliasFieldSoggetto);
+							}
 						}
 					}
 //					unionExprFake.addSelectField(new ConstantField(aliasFieldRuoloSoggetto, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, String.class),	aliasFieldRuoloSoggetto);
@@ -6511,9 +6532,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(forceErogazione || forceFruizione){
 				if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
 					if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
-						union.addField(aliasFieldTipoSoggetto);
-						union.addField(aliasFieldSoggetto);
-		//				union.addField(aliasFieldRuoloSoggetto);
+						if (!org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.distribSaSearch.getIdentificazione())) {
+							union.addField(aliasFieldTipoSoggetto);
+							union.addField(aliasFieldSoggetto);
+							//				union.addField(aliasFieldRuoloSoggetto);
+						}
 					}
 				}
 			}
@@ -6521,9 +6544,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(forceErogazione || forceFruizione){
 				if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
 					if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
-						union.addGroupBy(aliasFieldTipoSoggetto);
-						union.addGroupBy(aliasFieldSoggetto);
-		//				union.addGroupBy(aliasFieldRuoloSoggetto);
+						if (!org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.distribSaSearch.getIdentificazione())) {
+							union.addGroupBy(aliasFieldTipoSoggetto);
+							union.addGroupBy(aliasFieldSoggetto);
+							//				union.addGroupBy(aliasFieldRuoloSoggetto);
+						}
 					}
 				}
 			}
@@ -6780,12 +6805,79 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					if(!risultato.contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE))
 						risultato = this.getLabelCredenzialeFieldGroupBy(risultato, this.distribSaSearch);
 					
+					boolean addSoggetto = true;
+					
+					if(	StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
+						if(	this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+							if (StringUtils.isNotBlank(this.distribSaSearch.getIdentificazione()) && org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.distribSaSearch.getIdentificazione())) {
+								try {
+									IDServizioApplicativo idApplicativo = CredenzialeTokenClient.convertApplicationDBValueToOriginal(risultato);
+									if(idApplicativo!=null) {
+										r.getParentMap().put("0",idApplicativo.getIdSoggettoProprietario().getTipo() + "/" + idApplicativo.getIdSoggettoProprietario().getNome());
+										
+										try {
+											if(CredenzialeTokenClient.isClientIdDBValue(risultato)) {
+												String clientId = CredenzialeTokenClient.convertClientIdDBValueToOriginal(risultato);
+												r.getParentMap().put("1", clientId);
+											}
+											else {
+												r.getParentMap().put("1", Costanti.INFORMAZIONE_NON_DISPONIBILE);
+											}
+										}catch(Throwable tAppId) {
+											StatisticheGiornaliereService.log.error(tAppId.getMessage(), tAppId);
+											r.getParentMap().put("1", Costanti.INFORMAZIONE_NON_DISPONIBILE);
+										}
+										
+										risultato=idApplicativo.getNome();
+										addSoggetto = false;
+									}
+									else {
+										// informazione precedente o che non contiene un applicativo
+										continue;
+									}
+								}catch(Throwable tApp) {
+									StatisticheGiornaliereService.log.error(tApp.getMessage(), tApp);
+									continue;
+								}
+							}
+						}
+						else if(	this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
+							try {
+								org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(this.distribSaSearch.getTokenClaim());
+								if(org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.token_clientId.equals(tcm)) {
+									boolean add = false;
+									try {
+										IDServizioApplicativo idApplicativo = CredenzialeTokenClient.convertApplicationDBValueToOriginal(risultato);
+										if(idApplicativo!=null) {
+											String soggetto = NamingUtils.getLabelSoggetto(idApplicativo.getIdSoggettoProprietario());
+											r.getParentMap().put("0", idApplicativo.getNome());
+											r.getParentMap().put("1", soggetto );
+											add = true;
+										}
+									}catch(Throwable tApp) {
+										StatisticheGiornaliereService.log.error(tApp.getMessage(), tApp);
+									}
+									if(!add) {
+										r.getParentMap().put("0", Costanti.INFORMAZIONE_NON_DISPONIBILE);
+										r.getParentMap().put("1", Costanti.INFORMAZIONE_NON_DISPONIBILE );
+									}
+									
+									risultato=CredenzialeTokenClient.convertClientIdDBValueToOriginal(risultato);
+								}
+							}catch(Throwable t) {
+								StatisticheGiornaliereService.log.error(t.getMessage(), t);
+							}
+						}
+					}
+					
 					r.setRisultato(risultato);
 					
 					if(forceErogazione || forceFruizione){
 						if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
 							if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
-								r.getParentMap().put("0",((String) row.get(aliasFieldTipoSoggetto)) + "/" + ((String) row.get(aliasFieldSoggetto)));
+								if(addSoggetto) {
+									r.getParentMap().put("0",((String) row.get(aliasFieldTipoSoggetto)) + "/" + ((String) row.get(aliasFieldSoggetto)));
+								}
 							}
 						}
 						
@@ -7061,8 +7153,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 
 				// il destinatario puo nn essere specificato
-				if (StringUtils.isNotBlank(this.distribSaSearch
-						.getNomeMittente())) {
+				boolean ignoreSetMittente = isIgnoreSetMittente(this.distribSaSearch);
+				if (StringUtils.isNotBlank(this.distribSaSearch.getNomeMittente()) && !ignoreSetMittente) {
 					expr.and().equals(model.TIPO_MITTENTE,
 							this.distribSaSearch.getTipoMittente());
 					expr.and().equals(model.MITTENTE,
@@ -7117,10 +7209,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// Poichè gli applicativi sono identificati univocamente insieme anche al soggetto proprietario, si aggiunge il soggetto nella group by
 			if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
 				if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
-					expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-					expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-					expr.addGroupBy(model.TIPO_MITTENTE);
-					expr.addGroupBy(model.MITTENTE);
+					if (!org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.distribSaSearch.getIdentificazione())) {
+						expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+						expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+						expr.addGroupBy(model.TIPO_MITTENTE);
+						expr.addGroupBy(model.MITTENTE);
+					}
 				}
 			}
 			
@@ -8248,7 +8342,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 
 				// il destinatario puo nn essere specificato
-				if (StringUtils.isNotBlank(this.statistichePersonalizzateSearch.getNomeMittente())) {
+				boolean ignoreSetMittente = isIgnoreSetMittente(this.statistichePersonalizzateSearch);
+				if (StringUtils.isNotBlank(this.statistichePersonalizzateSearch.getNomeMittente()) && !ignoreSetMittente) {
 					expr.and().equals(model.TIPO_MITTENTE,this.statistichePersonalizzateSearch.getTipoMittente());
 					expr.and().equals(model.MITTENTE,this.statistichePersonalizzateSearch.getNomeMittente());
 				}
@@ -8546,7 +8641,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
 				org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(searchForm.getTokenClaim());
-				CredenzialeSearchToken searchToken = new CredenzialeSearchToken(tcm);
+				AbstractSearchCredenziale searchToken = null;
+				if(TipoCredenzialeMittente.token_clientId.equals(tcm)) {
+					searchToken = new CredenzialeSearchTokenClient(true, false, true);
+				}
+				else {
+					searchToken = new CredenzialeSearchToken(tcm);
+				}
 				pagExpr = searchToken.createExpression(credenzialeMittentiService, searchForm.getValoreRiconoscimento(), ricercaEsatta, caseSensitive);
 			}
 			
@@ -8566,9 +8667,37 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		// credenziali mittente
 		if(StringUtils.isNotEmpty(searchForm.getRiconoscimento())) {
 			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
-				if (StringUtils.isNotBlank(searchForm.getServizioApplicativo())) {
-					// sb.append("AND t.servizioApplicativo = :servizio_applicativo ");
-					filter.and().equals(model.SERVIZIO_APPLICATIVO,	searchForm.getServizioApplicativo());
+				if (StringUtils.isNotBlank(searchForm.getIdentificazione())) {
+					if (StringUtils.isNotBlank(searchForm.getServizioApplicativo())) {
+						if(org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TRASPORTO_KEY.equals(searchForm.getIdentificazione())) {
+							// sb.append("AND t.servizioApplicativo = :servizio_applicativo ");
+							filter.and().equals(model.SERVIZIO_APPLICATIVO,	searchForm.getServizioApplicativo());
+						}
+						else if(org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(searchForm.getIdentificazione())) {
+							
+							boolean soggettoDefined = StringUtils.isNotBlank(searchForm.getNomeMittente()) && StringUtils.isNotBlank(searchForm.getTipoMittente());
+							if(soggettoDefined) {
+								IDSoggetto idSoggetto = new IDSoggetto(searchForm.getTipoMittente(), searchForm.getNomeMittente());
+								IDServizioApplicativo idSA = new IDServizioApplicativo();
+								idSA.setIdSoggettoProprietario(idSoggetto);
+								idSA.setNome(searchForm.getServizioApplicativo());
+								String idSAasString = CredenzialeTokenClient.getApplicationAsString(idSA);
+								String dbValue = CredenzialeTokenClient.getApplicationDBValue(idSAasString);
+								CredenzialeSearchTokenClient searchToken = new CredenzialeSearchTokenClient(false, true, false);
+								searchToken.disableConvertToDBValue();
+								boolean ricercaEsatta = false;
+								boolean caseSensitive = true;
+								try {
+									IPaginatedExpression pagExpr = searchToken.createExpression(this.credenzialiMittenteDAO, dbValue, ricercaEsatta, caseSensitive);
+									List<CredenzialeMittente> listaCredenzialiMittente = this.credenzialiMittenteDAO.findAll(pagExpr);
+									addListaCredenzialiMittente(filter, listaCredenzialiMittente, model);
+								}catch(Exception e) {
+									throw new ServiceException(e.getMessage(),e);
+								}
+							}
+							
+						}
+					}
 				}
 			}
 			else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO)) {
@@ -8639,8 +8768,14 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		// credenziali mittente
 		if(StringUtils.isNotEmpty(searchForm.getRiconoscimento())) {
 			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
-				filter.notEquals(model.SERVIZIO_APPLICATIVO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				filter.addGroupBy(model.SERVIZIO_APPLICATIVO);
+				if (StringUtils.isNotBlank(this.distribSaSearch.getIdentificazione()) && org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.distribSaSearch.getIdentificazione())) {
+					filter.notEquals(model.TOKEN_CLIENT_ID, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					filter.addGroupBy(model.TOKEN_CLIENT_ID);
+				}
+				else {
+					filter.notEquals(model.SERVIZIO_APPLICATIVO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					filter.addGroupBy(model.SERVIZIO_APPLICATIVO);
+				}
 			} else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO)) {
 				// Caso non previsto nella distribuzione del servizio applicativo dove viene usato questo metodo
 				return;
@@ -8704,7 +8839,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		// credenziali mittente
 		if(StringUtils.isNotEmpty(searchForm.getRiconoscimento())) {
 			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
-				return model.SERVIZIO_APPLICATIVO;
+				if (StringUtils.isNotBlank(this.distribSaSearch.getIdentificazione()) && org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.distribSaSearch.getIdentificazione())) {
+					return model.TOKEN_CLIENT_ID;
+				}
+				else {
+					return model.SERVIZIO_APPLICATIVO;
+				}
 			}
 			else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO)) {
 				// Caso non previsto nella distribuzione del servizio applicativo dove viene usato questo metodo
@@ -8758,7 +8898,18 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// credenziali mittente
 			if(StringUtils.isNotEmpty(searchForm.getRiconoscimento())) {
 				if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
-					return risultato;
+					if (StringUtils.isNotBlank(this.distribSaSearch.getIdentificazione()) && org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(this.distribSaSearch.getIdentificazione())) {
+						if(StringUtils.isNotEmpty(risultato)) {
+							CredenzialeMittente credenzialeMittente =  ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
+							return credenzialeMittente != null ? credenzialeMittente.getCredenziale() : risultato;
+						}
+						else {
+							return risultato;
+						}
+					}
+					else {
+						return risultato;
+					}
 				} 
 				else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO)) {
 					// Caso non previsto nella distribuzione del servizio applicativo dove viene usato questo metodo
@@ -8830,7 +8981,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					return credenzialeMittente != null ? credenzialeMittente.getCredenziale() : risultato;
 				}
 			}
-		} catch (NumberFormatException | ServiceException | NotFoundException | MultipleResultException	| NotImplementedException e) {
+		} catch (NotFoundException e) {
+			StatisticheGiornaliereService	.log.debug(e.getMessage(), e);
+		}  catch (NumberFormatException | ServiceException | MultipleResultException | NotImplementedException e) {
 			StatisticheGiornaliereService	.log.error(e.getMessage(), e);
 		}
 		
@@ -8896,5 +9049,21 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	@Override
 	public boolean isTimeoutEvent() {
 		return this.timeoutEvent;
+	}
+	
+	private boolean isIgnoreSetMittente(BaseSearchForm searchForm) {
+		boolean ignoreSetMittente = false;
+		if(StringUtils.isNotEmpty(searchForm.getRiconoscimento())) {
+			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+				if (StringUtils.isNotBlank(searchForm.getIdentificazione())) {
+					if (StringUtils.isNotBlank(searchForm.getServizioApplicativo())) {
+						if(org.openspcoop2.web.monitor.core.constants.Costanti.IDENTIFICAZIONE_TOKEN_KEY.equals(searchForm.getIdentificazione())) {
+							ignoreSetMittente=true; // la ricerca avviene dentro la credenziale salvata per l'applicativo token
+						}
+					}
+				}
+			}
+		}
+		return ignoreSetMittente;
 	}
 }

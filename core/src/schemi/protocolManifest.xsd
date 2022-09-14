@@ -408,6 +408,7 @@
                      <xsd:element name="types" type="OrganizationTypes"/>
               </xsd:sequence>
               <xsd:attribute name="authentication" type="xsd:boolean" use="optional" default="true"/>
+	      <xsd:attribute name="httpsWithTokenAuthentication" type="xsd:boolean" use="optional" default="false"/>
               <xsd:attribute name="inboundApplicativeAuthentication" type="xsd:boolean" use="optional" default="true"/>
               <xsd:attribute name="inboundOrganizationAuthorizationWithoutAuthentication" type="xsd:boolean" use="optional" default="false"/>
               <xsd:attribute name="inboundExternalApplicationAuthentication" type="xsd:boolean" use="optional" default="false"/>

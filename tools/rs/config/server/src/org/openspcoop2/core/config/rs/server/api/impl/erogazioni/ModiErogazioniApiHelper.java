@@ -87,6 +87,7 @@ import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
+import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
@@ -1207,12 +1208,12 @@ public class ModiErogazioniApiHelper {
 		
 	}
 
-	public static ProtocolProperties getProtocolProperties(Erogazione body, AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
-		return getModiProtocolProperties(body.getModi(), getTipoApi(asps, env), getErogazioneConf(asps, env));
+	public static ProtocolProperties getProtocolProperties(Erogazione body, AccordoServizioParteSpecifica asps, ErogazioniEnv env, boolean required) throws Exception {
+		return getModiProtocolProperties(body.getModi(), getTipoApi(asps, env), getErogazioneConf(asps, env), required);
 	}
 
-	public static ProtocolProperties getProtocolProperties(Fruizione body, AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws Exception {
-		return getModiProtocolProperties(body.getModi(), getTipoApi(asps, env), getFruizioneConf(asps, env));
+	public static ProtocolProperties getProtocolProperties(Fruizione body, AccordoServizioParteSpecifica asps, ErogazioniEnv env, boolean required) throws Exception {
+		return getModiProtocolProperties(body.getModi(), getTipoApi(asps, env), getFruizioneConf(asps, env), required);
 	}
 
 	public static ProtocolProperties updateModiProtocolProperties(AccordoServizioParteSpecifica asps, ProfiloEnum profilo, OneOfErogazioneModIModi modi, ErogazioniEnv env) throws Exception {
@@ -1273,10 +1274,16 @@ public class ModiErogazioniApiHelper {
 		return p;
 	}
 
-	private static ProtocolProperties getModiProtocolProperties(OneOfFruizioneModi modi, TipoApiEnum protocollo, FruizioneConf fruizioneConf) {
+	private static ProtocolProperties getModiProtocolProperties(OneOfFruizioneModi modi, TipoApiEnum protocollo, FruizioneConf fruizioneConf,
+			boolean modiRequired) {
 
 		if(modi == null) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare la configurazione 'ModI'");
+			if(modiRequired) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare la configurazione 'ModI'");
+			}
+			else {
+				return null;
+			}
 		}
 
 		ProtocolProperties p = new ProtocolProperties();
@@ -1291,10 +1298,16 @@ public class ModiErogazioniApiHelper {
 		return p;
 	}
 
-	private static ProtocolProperties getModiProtocolProperties(OneOfErogazioneModi modi, TipoApiEnum protocollo, ErogazioneConf erogazioneConf) {
+	private static ProtocolProperties getModiProtocolProperties(OneOfErogazioneModi modi, TipoApiEnum protocollo, ErogazioneConf erogazioneConf,
+			boolean modiRequired) {
 
 		if(modi == null) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare la configurazione 'ModI'");
+			if(modiRequired) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare la configurazione 'ModI'");
+			}
+			else {
+				return null;
+			}
 		}
 
 		ProtocolProperties p = new ProtocolProperties();
@@ -1478,6 +1491,15 @@ public class ModiErogazioniApiHelper {
 			String httpHeaders = String.join(",", sicurezzaMessaggioRisposta.getHeaderHttpFirmare());
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST, httpHeaders);
 		}
+		else {
+			// viene applicato il default
+			try {
+				String httpHeaders = ModIProperties.getInstance().getRestSecurityTokenSignedHeadersAsString();
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST, httpHeaders);
+			}catch(Exception e) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Recupero header http da firmare per default fallito: "+e.getMessage());
+			}
+		}
 		
 		if(sicurezzaMessaggioRisposta.getRiferimentoX509() == null || sicurezzaMessaggioRisposta.getRiferimentoX509().equals(ModISicurezzaMessaggioRestRiferimentoX509Risposta.RICHIESTA)) {
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST_VALUE_TRUE);
@@ -1660,6 +1682,15 @@ public class ModiErogazioniApiHelper {
 		if(sicurezzaMessaggioRichiesta.getHeaderHttpFirmare()!=null) {
 			String httpHeaders = String.join(",", sicurezzaMessaggioRichiesta.getHeaderHttpFirmare());
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST, httpHeaders);
+		}
+		else {
+			// viene applicato il default
+			try {
+				String httpHeaders = ModIProperties.getInstance().getRestSecurityTokenSignedHeadersAsString();
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST, httpHeaders);
+			}catch(Exception e) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Recupero header http da firmare per default fallito: "+e.getMessage());
+			}
 		}
 		
 		p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509, getX509(sicurezzaMessaggioRichiesta.getRiferimentoX509())); 

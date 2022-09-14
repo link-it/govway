@@ -52,6 +52,7 @@ import java.util.List;
  * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config}autorizzazione-ruoli" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="scope" type="{http://www.openspcoop2.org/core/config}autorizzazione-scope" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="gestione-token" type="{http://www.openspcoop2.org/core/config}gestione-token" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="autorizzazione-token" type="{http://www.openspcoop2.org/core/config}porta-delegata-autorizzazione-token" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="local-forward" type="{http://www.openspcoop2.org/core/config}porta-delegata-local-forward" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config}mtom-processor" minOccurs="0" maxOccurs="1"/&gt;
@@ -115,6 +116,7 @@ import java.util.List;
   	"ruoli",
   	"scope",
   	"gestioneToken",
+  	"autorizzazioneToken",
   	"localForward",
   	"proprieta",
   	"mtomProcessor",
@@ -358,6 +360,14 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   public void setGestioneToken(GestioneToken gestioneToken) {
     this.gestioneToken = gestioneToken;
+  }
+
+  public PortaDelegataAutorizzazioneToken getAutorizzazioneToken() {
+    return this.autorizzazioneToken;
+  }
+
+  public void setAutorizzazioneToken(PortaDelegataAutorizzazioneToken autorizzazioneToken) {
+    this.autorizzazioneToken = autorizzazioneToken;
   }
 
   public PortaDelegataLocalForward getLocalForward() {
@@ -1027,6 +1037,9 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   @XmlElement(name="gestione-token",required=false,nillable=false)
   protected GestioneToken gestioneToken;
+
+  @XmlElement(name="autorizzazione-token",required=false,nillable=false)
+  protected PortaDelegataAutorizzazioneToken autorizzazioneToken;
 
   @XmlElement(name="local-forward",required=false,nillable=false)
   protected PortaDelegataLocalForward localForward;

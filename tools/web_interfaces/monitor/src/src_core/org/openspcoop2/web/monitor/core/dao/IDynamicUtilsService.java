@@ -209,10 +209,10 @@ public interface IDynamicUtilsService {
 	 * @param soggetto
 	 * @return Servizi Applicativi trovati
 	 */
-	public List<Object> findElencoServiziApplicativi(String tipoProtocollo,Soggetto soggetto);
+	public List<Object> findElencoServiziApplicativi(String tipoProtocollo,Soggetto soggetto, boolean trasporto, boolean token);
 
 
-	public int countElencoServiziApplicativi(String tipoProtocollo,Soggetto soggetto);
+	public int countElencoServiziApplicativi(String tipoProtocollo,Soggetto soggetto, boolean trasporto, boolean token);
 	/****
 	 * 
 	 * Restituisce l'elenco delle azioni corrispondenti al servizio selezionato

@@ -1,3 +1,5 @@
+DELETE FROM pa_token_ruoli;
+DELETE FROM pa_token_sa;
 DELETE FROM pa_aa;
 DELETE FROM pa_handlers;
 DELETE FROM pa_transform_risp_hdr;

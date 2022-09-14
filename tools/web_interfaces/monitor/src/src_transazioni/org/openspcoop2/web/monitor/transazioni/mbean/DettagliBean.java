@@ -971,6 +971,17 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	public void setVisualizzaTextAreaUrlInvocazione(boolean visualizzaTextAreaUrlInvocazione) {
 	}
 	
+	public boolean isVisualizzaTextAreaConnettore () {
+		if(StringUtils.isNotEmpty(this.dettaglio.getLocationConnettore())) {
+			if(this.dettaglio.getLocationConnettore().length() > 150)
+				return true;
+		} 
+		return false;
+	}
+
+	public void setVisualizzaTextAreaConnettore(boolean visualizzaTextAreaConnettore) {
+	}
+	
 	public boolean isVisualizzaTextAreaTrasportoMittente() {
 		if(StringUtils.isNotEmpty(this.dettaglio.getTrasportoMittenteLabel())) {
 			if(this.dettaglio.getTrasportoMittenteLabel().length() > 150)

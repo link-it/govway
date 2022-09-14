@@ -160,6 +160,8 @@ public class CostantiExport {
 	public static final String KEY_COL_TOKEN_CLIENT = "colTokenClientId";
 	public static final String KEY_COL_TOKEN_USERNAME = "colTokenUsername";
 	public static final String KEY_COL_TOKEN_EMAIL = "colTokenEMail";
+	public static final String KEY_COL_TOKEN_CLIENT_APPLICATIVO = "colTokenClientApplication";
+	public static final String KEY_COL_TOKEN_CLIENT_SOGGETTO = "colTokenClientOrganization";
 	
 	/** LABEL campi */
 	
@@ -245,4 +247,6 @@ public class CostantiExport {
 	public static final String LABEL_COL_TOKEN_CLIENT = "Token ClientId";
 	public static final String LABEL_COL_TOKEN_USERNAME = "Token Username";
 	public static final String LABEL_COL_TOKEN_EMAIL = "Token eMail";
+	public static final String LABEL_COL_TOKEN_CLIENT_APPLICATIVO = "Token Applicativo Client";
+	public static final String LABEL_COL_TOKEN_CLIENT_SOGGETTO = "Token Applicativo Client (Soggetto)";
 }

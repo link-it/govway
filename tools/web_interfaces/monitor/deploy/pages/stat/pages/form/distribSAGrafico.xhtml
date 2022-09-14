@@ -95,6 +95,24 @@
 									</f:facet>
 									<h:outputText value="#{item.parentMap['1']}"/>
 								</rich:column>
+								<rich:column rendered="#{distribuzionePerSABean.showColumnClientIdApplicativoSoggetto}">
+									<f:facet name="header">
+										<h:outputText value="Applicativo" />
+									</f:facet>
+									<h:outputText value="#{item.parentMap['0']}"/>
+								</rich:column>
+								<rich:column rendered="#{distribuzionePerSABean.showColumnClientIdApplicativoSoggetto}">
+									<f:facet name="header">
+										<h:outputText value="Soggetto" />
+									</f:facet>
+									<h:outputText value="#{item.parentMap['1']}"/>
+								</rich:column>
+								<rich:column rendered="#{distribuzionePerSABean.showColumnClientIdApplicativo}">
+									<f:facet name="header">
+										<h:outputText value="Token Client ID" />
+									</f:facet>
+									<h:outputText value="#{item.parentMap['1']}"/>
+								</rich:column>
 								<rich:column>
 									<f:facet name="header">
 										<h:outputText value="#{distribuzionePerSABean.sommaColumnHeader}" />

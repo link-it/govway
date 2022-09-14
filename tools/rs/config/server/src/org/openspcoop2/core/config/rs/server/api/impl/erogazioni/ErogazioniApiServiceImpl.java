@@ -83,6 +83,7 @@ import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.beans.OperationSintetica;
 import org.openspcoop2.core.registry.beans.PortTypeSintetico;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
+import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
@@ -187,7 +188,24 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			ProtocolProperties protocolProperties = null;
 			if(profilo != null) {
-				protocolProperties = ErogazioniApiHelper.getProtocolProperties(body, profilo, asps, env);
+				
+				boolean required = false;
+				if(env.isProfiloModi()) {
+					AccordoServizioParteComune accordoFull = Helper.getAccordoFull(body.getApiNome(),
+							body.getApiVersione(), idReferente, env.apcCore);
+					if(accordoFull.sizeProtocolPropertyList()>0) {
+						for (org.openspcoop2.core.registry.ProtocolProperty pp : accordoFull.getProtocolPropertyList()) {
+							if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO.equals(pp.getName())) {
+								String v = pp.getValue();
+								if(v!=null && StringUtils.isNotEmpty(v) && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(v)) {
+									required = true;
+								}
+							}
+						}
+					}
+				}
+				
+				protocolProperties = ErogazioniApiHelper.getProtocolProperties(body, profilo, asps, env, required);
 
 				if(protocolProperties != null) {
 					asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));
@@ -200,7 +218,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 					AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 
 			ErogazioniApiHelper.serviziCheckData(TipoOperazione.ADD, env, as, asps, Optional.empty(), body);
-			ErogazioniApiHelper.validateProperties(env, protocolProperties, asps);
+			ErogazioniApiHelper.validateProperties(env, protocolProperties, asps, ConsoleOperationType.ADD);
 
 			org.openspcoop2.core.registry.Connettore regConnettore = ErogazioniApiHelper.buildConnettoreRegistro(env,
 					body.getConnettore());
@@ -1276,7 +1294,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			asps.setOldIDServizioForUpdate(env.idServizioFactory.getIDServizioFromAccordo(asps));
 
-			ErogazioniApiHelper.validateProperties(env, protocolProperties, asps);
+			ErogazioniApiHelper.validateProperties(env, protocolProperties, asps, ConsoleOperationType.CHANGE);
 
 			List<Object> oggettiDaAggiornare = AccordiServizioParteSpecificaUtilities.getOggettiDaAggiornare(asps,
 					env.apsCore);

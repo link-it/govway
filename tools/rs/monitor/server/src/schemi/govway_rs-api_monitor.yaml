@@ -14,7 +14,7 @@ info:
   x-summary: Servizi per il monitoraggio di GovWay
   description: Servizi per il monitoraggio di GovWay
   termsOfService: https://govway.org/documentazione/api/index.html
-  version: "3.3.7"
+  version: "3.3.8"
   contact:
     email: info@link.it
   license:
@@ -1017,7 +1017,8 @@ paths:
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/azione'                     
         - $ref: '#/components/parameters/esito_transazione'
-        - $ref: '#/components/parameters/escludi_scartate'                     
+        - $ref: '#/components/parameters/escludi_scartate'  
+        - $ref: "#/components/parameters/tipo_identificazione_applicativo"
         - $ref: "#/components/parameters/formato_report"
         - $ref: "#/components/parameters/unita_tempo_report"
         - $ref: "#/components/parameters/tipo_report"
@@ -1768,6 +1769,15 @@ components:
         $ref: '#/components/schemas/TipoInformazioneReportEnum'
       required: false
       
+    tipo_identificazione_applicativo:
+      in: query
+      name: tipo_identificazione
+      description: Indica la modalità di identificazione dell'applicativo tra trasporto o token
+      schema: 
+        $ref: '#/components/schemas/TipoIdentificazioneApplicativoEnum'
+      required: false
+      default: trasporto
+
     claim:
       in: query
       name: claim
@@ -2483,6 +2493,8 @@ components:
         - $ref: '#/components/schemas/RicercaStatisticaDistribuzioneApplicativo'
         - type: object
           properties:
+            tipo_identificazione_applicativo:
+              $ref: '#/components/schemas/TipoIdentificazioneApplicativoEnum'
             soggetto_mittente:
               $ref: 'govway_core.yaml#/components/schemas/NCName'
 
@@ -2613,6 +2625,8 @@ components:
       properties:
         identificazione:
           $ref: '#/components/schemas/TipoFiltroMittenteEnum'
+        tipo_identificazione_applicativo:
+          $ref: '#/components/schemas/TipoIdentificazioneApplicativoEnum'
         soggetto:
           $ref: 'govway_core.yaml#/components/schemas/SimpleName'
         applicativo:
@@ -2625,6 +2639,8 @@ components:
       properties:
         identificazione:
           $ref: '#/components/schemas/TipoFiltroMittenteEnum'
+        tipo_identificazione_applicativo:
+          $ref: '#/components/schemas/TipoIdentificazioneApplicativoEnum'
         applicativo:
           $ref: 'govway_core.yaml#/components/schemas/NCName'
     FiltroMittenteIdAutenticato:
@@ -2713,6 +2729,13 @@ components:
         - erogazione_token_info
         - token_info
         - indirizzo_ip
+
+    TipoIdentificazioneApplicativoEnum:
+      type: string
+      enum:
+        - trasporto
+        - token
+      default: trasporto
 
     TipoFiltroMittenteIdentificativoAutenticatoEnum:
       type: string

@@ -229,7 +229,6 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
-			// MailAndrea: Modificato anche accordiserviziopartespecificautilities: dovevo agganciare il core per creare il saCore
 			AccordiServizioParteSpecificaUtilities.addAccordoServizioParteSpecificaPorteDelegate(
 					mappingDefault,
 					mappingSelezionato,
@@ -309,6 +308,10 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 					null,							// erogazioneAutorizzazioneRuoliMatch,
 					null,							// nomeSA, 
 					null,							// erogazioneRuolo, 
+			    	null,   						// 	autorizzazioneAutenticatiToken, 
+			    	null,   						// 	autorizzazioneRuoliToken, 
+			    	null,   						// 	autorizzazioneRuoliTipologiaToken, 
+			    	null,   						// 	autorizzazioneRuoliMatchToken,
 					null,							// autorizzazione_tokenOptions,
 					null,							// autorizzazioneScope,
 					null,							// scope, 

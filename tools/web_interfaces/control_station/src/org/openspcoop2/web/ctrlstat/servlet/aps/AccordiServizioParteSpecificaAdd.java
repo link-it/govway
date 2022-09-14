@@ -415,6 +415,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			String autenticazioneTokenUsername = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_USERNAME);
 			String autenticazioneTokenEMail = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_MAIL);
 			
+			String autorizzazioneAutenticatiToken = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_TOKEN);
+			String autorizzazioneRuoliToken = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI_TOKEN);
+			String autorizzazioneRuoliTipologiaToken = apsHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA_TOKEN);
+			String autorizzazioneRuoliMatchToken = apsHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH_TOKEN);
+			
 			String autorizzazione_token = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
 			String autorizzazione_tokenOptions = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
 			String autorizzazioneScope = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
@@ -1126,15 +1131,20 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						ApiKeyState apiKeyState =  new ApiKeyState(null);
 						appId = apiKeyState.appIdSelected;
 					}
+					boolean bothSslAndToken = false;
+					String tokenPolicy = null;
+					boolean tokenPolicyOR = false;
 					
 					List<IDServizioApplicativoDB> oldSilList = null;
 					if(apsCore.isVisioneOggettiGlobale(userLogin)){
 						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitoreSelected,null,
-								tipoAutenticazione, appId, filtroTipoSA);
+								tipoAutenticazione, appId, filtroTipoSA, 
+								bothSslAndToken, tokenPolicy, tokenPolicyOR);
 					}
 					else {
 						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitoreSelected,userLogin,
-								tipoAutenticazione, appId, filtroTipoSA);
+								tipoAutenticazione, appId, filtroTipoSA, 
+								bothSslAndToken, tokenPolicy, tokenPolicyOR);
 					}
 					if(oldSilList!=null && oldSilList.size()>0){
 						for (int i = 0; i < oldSilList.size(); i++) {
@@ -1577,7 +1587,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,false,
 						this.canaleStato, canaleAPI, this.canale, canaleList, gestioneCanaliEnabled,
-						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
+						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
+						autorizzazioneAutenticatiToken, 
+						autorizzazioneRuoliToken,  autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken);
 
 				// Controllo se richiedere il connettore
 				
@@ -1794,7 +1806,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,false,
 						this.canaleStato, canaleAPI, this.canale, canaleList, gestioneCanaliEnabled,
-						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
+						identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
+						autorizzazioneAutenticatiToken, 
+						autorizzazioneRuoliToken,  autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken);
 
 				if(!connettoreStatic) {
 					boolean forceEnableConnettore = false;
@@ -2054,7 +2068,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							autorizzazione_token,autorizzazione_tokenOptions,
 							autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,false,
 							this.canaleStato, canaleAPI, this.canale, canaleList, gestioneCanaliEnabled,
-							identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi);
+							identificazioneAttributiStato, attributeAuthorityLabels, attributeAuthorityValues, attributeAuthoritySelezionate, attributeAuthorityAttributi,
+							autorizzazioneAutenticatiToken, 
+							autorizzazioneRuoliToken,  autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken);
 
 					if(!connettoreStatic) {
 					
@@ -2206,6 +2222,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					autenticazione, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList,
 					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, autorizzazioneRuoliTipologia, autorizzazioneRuoliMatch, 
 					servizioApplicativo, ruolo, soggettoAutenticato, 
+					autorizzazioneAutenticatiToken, 
+					autorizzazioneRuoliToken,  autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken,
 					autorizzazione_tokenOptions, 
 					autorizzazioneScope, scope, autorizzazioneScopeMatch, allegatoXacmlPolicy,
 					gestioneToken, 

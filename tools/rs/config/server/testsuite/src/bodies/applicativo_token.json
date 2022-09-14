@@ -1,0 +1,8 @@
+{
+	"nome": "TestSuiteApplicativo",
+	"credenziali": {
+		"modalita_accesso": "token",
+		"identificativo": "clientIdTestSuite",
+		"token_policy": "Google"
+	}
+}

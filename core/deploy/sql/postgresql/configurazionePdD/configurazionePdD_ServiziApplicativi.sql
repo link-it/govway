@@ -50,6 +50,7 @@ CREATE TABLE servizi_applicativi
 	cn_issuer VARCHAR(255),
 	certificate BYTEA,
 	cert_strict_verification INT,
+	token_policy VARCHAR(255),
 	invio_x_rif VARCHAR(255),
 	sbustamento_protocol_info INT DEFAULT 1,
 	tipologia_fruizione VARCHAR(255),

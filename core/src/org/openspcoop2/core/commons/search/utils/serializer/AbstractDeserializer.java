@@ -36,6 +36,7 @@ import org.openspcoop2.core.commons.search.IdAccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.ServizioApplicativoRuolo;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComuneAzione;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo;
 import org.openspcoop2.core.commons.search.Ruolo;
 import org.openspcoop2.core.commons.search.SoggettoRuolo;
 import org.openspcoop2.core.commons.search.ServizioApplicativo;
@@ -1015,6 +1016,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public AccordoServizioParteSpecifica readAccordoServizioParteSpecificaFromString(String in) throws DeserializerException {
 		return (AccordoServizioParteSpecifica) this.xmlToObj(in.getBytes(), AccordoServizioParteSpecifica.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: servizio-applicativo-proprieta-protocollo
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ServizioApplicativoProprietaProtocollo readServizioApplicativoProprietaProtocollo(String fileName) throws DeserializerException {
+		return (ServizioApplicativoProprietaProtocollo) this.xmlToObj(fileName, ServizioApplicativoProprietaProtocollo.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ServizioApplicativoProprietaProtocollo readServizioApplicativoProprietaProtocollo(File file) throws DeserializerException {
+		return (ServizioApplicativoProprietaProtocollo) this.xmlToObj(file, ServizioApplicativoProprietaProtocollo.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ServizioApplicativoProprietaProtocollo readServizioApplicativoProprietaProtocollo(InputStream in) throws DeserializerException {
+		return (ServizioApplicativoProprietaProtocollo) this.xmlToObj(in, ServizioApplicativoProprietaProtocollo.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ServizioApplicativoProprietaProtocollo readServizioApplicativoProprietaProtocollo(byte[] in) throws DeserializerException {
+		return (ServizioApplicativoProprietaProtocollo) this.xmlToObj(in, ServizioApplicativoProprietaProtocollo.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.ServizioApplicativoProprietaProtocollo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ServizioApplicativoProprietaProtocollo readServizioApplicativoProprietaProtocolloFromString(String in) throws DeserializerException {
+		return (ServizioApplicativoProprietaProtocollo) this.xmlToObj(in.getBytes(), ServizioApplicativoProprietaProtocollo.class);
 	}	
 	
 	

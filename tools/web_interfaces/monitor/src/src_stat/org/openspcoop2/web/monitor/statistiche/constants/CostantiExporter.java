@@ -139,6 +139,15 @@ public class CostantiExporter {
 		TIPI_RICERCA_MITTENTE.add(TIPO_RICERCA_MITTENTE_SOGGETTO);
 	}
 	
+	public final static String TIPO_IDENTIFICAZIONE_APPLICATIVO  = "tipo_identificazione_applicativo";
+	public final static String TIPO_IDENTIFICAZIONE_APPLICATIVO_TRASPORTO = "trasporto";
+	public final static String TIPO_IDENTIFICAZIONE_APPLICATIVO_TOKEN = "token";
+	public static final List<String> TIPI_IDENTIFICAZIONE_APPLICATIVO = new ArrayList<String> ();
+	static{
+		TIPI_IDENTIFICAZIONE_APPLICATIVO.add(TIPO_IDENTIFICAZIONE_APPLICATIVO_TRASPORTO);
+		TIPI_IDENTIFICAZIONE_APPLICATIVO.add(TIPO_IDENTIFICAZIONE_APPLICATIVO_TOKEN);
+	}
+	
 	public final static String APPLICATIVO  = "applicativo";
 	
 	public final static String TIPO_AUTENTICAZIONE  = "tipoAutenticazioneRicercaMittente";

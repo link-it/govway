@@ -1,6 +1,16 @@
-2022-06-27  Andrea Poli <apoli@link.it>
+2022-07-18  Andrea Poli <apoli@link.it>
 
-	Registrata proprietà di sistema 'http.maxConnections' impostata per default al valore '200'.
+	Aggiunta gestione degli applicativi token
+	ALTER TABLE servizi_applicativi ADD COLUMN token_policy VARCHAR(255);
+	ALTER TABLE porte_applicative ADD COLUMN token_sa_stato VARCHAR(255);
+	ALTER TABLE porte_applicative ADD COLUMN token_ruoli_stato VARCHAR(255);
+	ALTER TABLE porte_applicative ADD COLUMN token_ruoli_match VARCHAR(255);
+	ALTER TABLE porte_applicative ADD COLUMN token_ruoli_tipologia VARCHAR(255);
+	ALTER TABLE porte_delegate ADD COLUMN token_sa_stato VARCHAR(255);
+	ALTER TABLE porte_delegate ADD COLUMN token_ruoli_stato VARCHAR(255);
+	ALTER TABLE porte_delegate ADD COLUMN token_ruoli_match VARCHAR(255);
+	ALTER TABLE porte_delegate ADD COLUMN token_ruoli_tipologia VARCHAR(255);
+	Aggiunte tabelle 'pd_token_sa', 'pd_token_ruoli', 'pa_token_sa' e 'pa_token_ruoli'.
 
 2022-06-17  Andrea Poli <apoli@link.it>
 

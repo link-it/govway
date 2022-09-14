@@ -77,7 +77,7 @@ public class AutorizzazioneAuthenticated extends AbstractAutorizzazioneBase {
     		}
     		
     		if(!autorizzazioneSoggettiMittenti && !autorizzazioneApplicativiMittenti) {
-    			String errore = this.getErrorString(idSA, idSoggetto, idServizio);
+    			String errore = AbstractAutorizzazioneBase.getErrorString(idSA, idSoggetto, idServizio);
     			esito.setErroreCooperazione(IntegrationFunctionError.AUTHORIZATION_DENY, ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
     			esito.setAutorizzato(false);
     		}
@@ -97,7 +97,7 @@ public class AutorizzazioneAuthenticated extends AbstractAutorizzazioneBase {
     				
 		    		EsitoAutorizzazioneRegistro esitoAutorizzazione = reg.isFruitoreServizioAutorizzato(pdd, identitaServizioApplicativoFruitore, idSoggetto, idServizio);
 		    		if(esitoAutorizzazione.isServizioAutorizzato()==false){
-		    			String errore = this.getErrorString(idSA, idSoggetto, idServizio);
+		    			String errore = AbstractAutorizzazioneBase.getErrorString(idSA, idSoggetto, idServizio);
 		    			if(esitoAutorizzazione.getDetails()!=null){
 		    				errore = errore + " ("+esitoAutorizzazione.getDetails()+")";
 		    			}

@@ -41,6 +41,7 @@ public class TempiElaborazione implements Serializable {
 	protected TempiElaborazioneFunzionalita token;
 	protected TempiElaborazioneFunzionalita autenticazione;
 	protected TempiElaborazioneFunzionalita autenticazioneToken;
+	protected TempiElaborazioneFunzionalita autenticazioneApplicativoToken;
 	protected TempiElaborazioneFunzionalita autorizzazione;
 	protected TempiElaborazioneFunzionalita autorizzazioneContenuti;
 	protected TempiElaborazioneFunzionalita validazioneRichiesta;
@@ -113,6 +114,20 @@ public class TempiElaborazione implements Serializable {
 	}
 	public void endAutenticazioneToken() {
 		this.autenticazioneToken.setDataUscita(DateManager.getDate());
+	}
+	
+	public TempiElaborazioneFunzionalita getAutenticazioneApplicativoToken() {
+		return this.autenticazioneApplicativoToken;
+	}
+	public void setAutenticazioneApplicativoToken(TempiElaborazioneFunzionalita autenticazioneApplicativoToken) {
+		this.autenticazioneApplicativoToken = autenticazioneApplicativoToken;
+	}
+	public void startAutenticazioneApplicativoToken() {
+		this.autenticazioneApplicativoToken = new TempiElaborazioneFunzionalita();
+		this.autenticazioneApplicativoToken.setDataIngresso(DateManager.getDate());
+	}
+	public void endAutenticazioneApplicativoToken() {
+		this.autenticazioneApplicativoToken.setDataUscita(DateManager.getDate());
 	}
 	
 	

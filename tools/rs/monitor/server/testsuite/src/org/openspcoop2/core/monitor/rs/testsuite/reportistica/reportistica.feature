@@ -120,9 +120,41 @@ Scenario: Statistiche Per Distribuzione Temporale con filtraggio per Filtro Mitt
     When method post
     Then status 200
 
+    * set filtro.mittente = ({ identificazione: 'erogazione_applicativo', soggetto: soggettoDefault, applicativo: setup.applicativo.nome, tipo_identificazione_applicativo: 'trasporto'})
+    Given path 'distribuzione-temporale'
+    And request filtro
+    When method post
+    Then status 200
+
     * set filtro.tipo = 'fruizione'
     * set filtro.api.erogatore = setup.fruizione_petstore.erogatore
     * set filtro.mittente = ({ identificazione: 'fruizione_applicativo', applicativo: setup.applicativo.nome})
+    Given path 'distribuzione-temporale'
+    And request filtro
+    When method post
+    Then status 200  
+
+    * set filtro.mittente = ({ identificazione: 'fruizione_applicativo', applicativo: setup.applicativo.nome, tipo_identificazione_applicativo: 'trasporto'})
+    Given path 'distribuzione-temporale'
+    And request filtro
+    When method post
+    Then status 200
+
+@DistribuzioneTemporaleFiltroMittenteApplicativoToken
+Scenario: Statistiche Per Distribuzione Temporale con filtraggio per Filtro Mittente Applicativo Token
+    * def filtro = read('classpath:bodies/reportistica-andamento-temporale-filtro-mittente-applicativo.json')
+    * set filtro.api = ({nome: setup.erogazione_petstore.api_nome, versione: setup.erogazione_petstore.api_versione})
+    * set filtro.intervallo_temporale = intervallo_temporale
+    * set filtro.mittente = ({ identificazione: 'erogazione_applicativo', soggetto: soggettoDefault, applicativo: setup.applicativo_token.nome, tipo_identificazione_applicativo: 'token'})
+
+    Given path 'distribuzione-temporale'
+    And request filtro
+    When method post
+    Then status 200
+
+    * set filtro.tipo = 'fruizione'
+    * set filtro.api.erogatore = setup.fruizione_petstore.erogatore
+    * set filtro.mittente = ({ identificazione: 'fruizione_applicativo', applicativo: setup.applicativo_token.nome, tipo_identificazione_applicativo: 'token'})
     Given path 'distribuzione-temporale'
     And request filtro
     When method post
@@ -457,10 +489,106 @@ Scenario: Statistiche Per Distribuzione Applicativo
     When method get
     Then status 200
 
+@DistribuzioneApplicativoTrasporto
+Scenario: Statistiche Per Distribuzione Applicativo con indicazione del tipo trasporto
+    * def filtro = read('classpath:bodies/reportistica-distribuzione-applicativo.json')
+    * set filtro.api = ({nome: setup.erogazione_petstore.api_nome, versione: setup.erogazione_petstore.api_versione})
+    * set filtro.intervallo_temporale = intervallo_temporale
+    * set filtro.tipo_identificazione_applicativo = 'trasporto'
+
+    Given path 'distribuzione-applicativo'
+    And request filtro
+    When method post
+    Then status 200
+
+    * def query =
+    """
+    ({
+        data_inizio: filtro.intervallo_temporale.data_inizio,
+        data_fine: filtro.intervallo_temporale.data_fine,
+        tipo: filtro.tipo,
+        formato_report: filtro.report.formato,
+        unita_tempo: filtro.unita_tempo,
+        tipo_report: filtro.report.tipo,
+        tipo_informazione_report: filtro.report.tipo_informazione.tipo,
+        esito: filtro.esito.tipo,
+        nome_servizio: filtro.api.nome,
+        versione_servizio: filtro.api.versione,
+        tipo_identificazione: filtro.tipo_identificazione_applicativo
+    })
+    """    
+    Given path 'distribuzione-applicativo'
+    And params query
+    When method get
+    Then status 200
+
+    * set filtro.tipo = 'fruizione'
+    * set filtro.api.erogatore = setup.fruizione_petstore.erogatore
+    Given path 'distribuzione-applicativo'
+    And request filtro
+    When method post
+    Then status 200    
+
+    * set query.tipo = 'fruizione'
+    * set query.soggetto_remoto = filtro.api.erogatore
+    Given path 'distribuzione-applicativo'
+    And params query
+    When method get
+    Then status 200
+
+
+@DistribuzioneApplicativoToken
+Scenario: Statistiche Per Distribuzione Applicativo con indicazione del tipo token
+    * def filtro = read('classpath:bodies/reportistica-distribuzione-applicativo.json')
+    * set filtro.api = ({nome: setup.erogazione_petstore.api_nome, versione: setup.erogazione_petstore.api_versione})
+    * set filtro.intervallo_temporale = intervallo_temporale
+    * set filtro.tipo_identificazione_applicativo = 'token'
+    * set filtro.azione = 'GET_pet.petId'
+
+    Given path 'distribuzione-applicativo'
+    And request filtro
+    When method post
+    Then status 200
+
+    * def query =
+    """
+    ({
+        data_inizio: filtro.intervallo_temporale.data_inizio,
+        data_fine: filtro.intervallo_temporale.data_fine,
+        tipo: filtro.tipo,
+        formato_report: filtro.report.formato,
+        unita_tempo: filtro.unita_tempo,
+        tipo_report: filtro.report.tipo,
+        tipo_informazione_report: filtro.report.tipo_informazione.tipo,
+        esito: filtro.esito.tipo,
+        nome_servizio: filtro.api.nome,
+        versione_servizio: filtro.api.versione,
+        tipo_identificazione: filtro.tipo_identificazione_applicativo
+    })
+    """    
+    Given path 'distribuzione-applicativo'
+    And params query
+    When method get
+    Then status 200
+
+    * set filtro.tipo = 'fruizione'
+    * set filtro.api.erogatore = setup.fruizione_petstore.erogatore
+    Given path 'distribuzione-applicativo'
+    And request filtro
+    When method post
+    Then status 200    
+
+    * set query.tipo = 'fruizione'
+    * set query.soggetto_remoto = filtro.api.erogatore
+    Given path 'distribuzione-applicativo'
+    And params query
+    When method get
+    Then status 200
+
 
 
 @DistribuzioneTokenInfo
-Scenario: Statistiche per Distribuzione Token Info
+Scenario: Statistiche per Distribuzione Token Info (claim: username)
     * def filtro = read('classpath:bodies/reportistica-distribuzione-tokeninfo.json')
     * set filtro.api = ({nome: setup.erogazione_petstore.api_nome, versione: setup.erogazione_petstore.api_versione})
     * set filtro.intervallo_temporale = intervallo_temporale
@@ -504,6 +632,54 @@ Scenario: Statistiche per Distribuzione Token Info
     And params query
     When method get
     Then status 200
+
+@DistribuzioneTokenInfoClientId
+Scenario: Statistiche per Distribuzione Token Info (claim: client-id)
+    * def filtro = read('classpath:bodies/reportistica-distribuzione-tokeninfo.json')
+    * set filtro.api = ({nome: setup.erogazione_petstore.api_nome, versione: setup.erogazione_petstore.api_versione})
+    * set filtro.intervallo_temporale = intervallo_temporale
+    * set filtro.claim = 'client_id'
+
+    Given path 'distribuzione-token-info'
+    And request filtro
+    When method post
+    Then status 200
+    
+    * def query =
+    """
+    ({
+        data_inizio: filtro.intervallo_temporale.data_inizio,
+        data_fine: filtro.intervallo_temporale.data_fine,
+        tipo: filtro.tipo,
+        formato_report: filtro.report.formato,
+        unita_tempo: filtro.unita_tempo,
+        tipo_report: filtro.report.tipo,
+        tipo_informazione_report: filtro.report.tipo_informazione.tipo,
+        esito: filtro.esito.tipo,
+        claim: filtro.claim,
+        nome_servizio: filtro.api.nome,
+        versione_servizio: filtro.api.versione
+    })
+    """    
+    Given path 'distribuzione-token-info'
+    And params query
+    When method get
+    Then status 200
+
+    * set filtro.tipo = 'fruizione'
+    * set filtro.api.erogatore = setup.fruizione_petstore.erogatore
+    Given path 'distribuzione-token-info'
+    And request filtro
+    When method post
+    Then status 200    
+
+    * set query.tipo = 'fruizione'
+    * set query.soggetto_remoto = filtro.api.erogatore
+    Given path 'distribuzione-token-info'
+    And params query
+    When method get
+    Then status 200
+
     
 @DistribuzioneIndirizzoIP
 Scenario: Statistiche per Distribuzione Indirizzo IP

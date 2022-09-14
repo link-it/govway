@@ -43,6 +43,18 @@ public class APIImplAutorizzazioneAbilitata  implements OneOfControlloAccessiAut
   @Schema(description = "")
   private AllAnyEnum ruoliRichiesti = null;
   
+  @Schema(example = "false", description = "")
+  private Boolean tokenRichiedente = true;
+  
+  @Schema(example = "false", description = "")
+  private Boolean tokenRuoli = false;
+  
+  @Schema(description = "")
+  private FonteEnum tokenRuoliFonte = null;
+  
+  @Schema(description = "")
+  private AllAnyEnum tokenRuoliRichiesti = null;
+  
   @Schema(example = "false", required = true, description = "")
   private Boolean scope = false;
   
@@ -157,6 +169,82 @@ public class APIImplAutorizzazioneAbilitata  implements OneOfControlloAccessiAut
   }
 
  /**
+   * Get tokenRichiedente
+   * @return tokenRichiedente
+  **/
+  @JsonProperty("token_richiedente")
+  @Valid
+  public Boolean isTokenRichiedente() {
+    return this.tokenRichiedente;
+  }
+
+  public void setTokenRichiedente(Boolean tokenRichiedente) {
+    this.tokenRichiedente = tokenRichiedente;
+  }
+
+  public APIImplAutorizzazioneAbilitata tokenRichiedente(Boolean tokenRichiedente) {
+    this.tokenRichiedente = tokenRichiedente;
+    return this;
+  }
+
+ /**
+   * Get tokenRuoli
+   * @return tokenRuoli
+  **/
+  @JsonProperty("token_ruoli")
+  @Valid
+  public Boolean isTokenRuoli() {
+    return this.tokenRuoli;
+  }
+
+  public void setTokenRuoli(Boolean tokenRuoli) {
+    this.tokenRuoli = tokenRuoli;
+  }
+
+  public APIImplAutorizzazioneAbilitata tokenRuoli(Boolean tokenRuoli) {
+    this.tokenRuoli = tokenRuoli;
+    return this;
+  }
+
+ /**
+   * Get tokenRuoliFonte
+   * @return tokenRuoliFonte
+  **/
+  @JsonProperty("token_ruoli_fonte")
+  @Valid
+  public FonteEnum getTokenRuoliFonte() {
+    return this.tokenRuoliFonte;
+  }
+
+  public void setTokenRuoliFonte(FonteEnum tokenRuoliFonte) {
+    this.tokenRuoliFonte = tokenRuoliFonte;
+  }
+
+  public APIImplAutorizzazioneAbilitata tokenRuoliFonte(FonteEnum tokenRuoliFonte) {
+    this.tokenRuoliFonte = tokenRuoliFonte;
+    return this;
+  }
+
+ /**
+   * Get tokenRuoliRichiesti
+   * @return tokenRuoliRichiesti
+  **/
+  @JsonProperty("token_ruoli_richiesti")
+  @Valid
+  public AllAnyEnum getTokenRuoliRichiesti() {
+    return this.tokenRuoliRichiesti;
+  }
+
+  public void setTokenRuoliRichiesti(AllAnyEnum tokenRuoliRichiesti) {
+    this.tokenRuoliRichiesti = tokenRuoliRichiesti;
+  }
+
+  public APIImplAutorizzazioneAbilitata tokenRuoliRichiesti(AllAnyEnum tokenRuoliRichiesti) {
+    this.tokenRuoliRichiesti = tokenRuoliRichiesti;
+    return this;
+  }
+
+ /**
    * Get scope
    * @return scope
   **/
@@ -250,6 +338,10 @@ public class APIImplAutorizzazioneAbilitata  implements OneOfControlloAccessiAut
     sb.append("    ruoli: ").append(APIImplAutorizzazioneAbilitata.toIndentedString(this.ruoli)).append("\n");
     sb.append("    ruoliFonte: ").append(APIImplAutorizzazioneAbilitata.toIndentedString(this.ruoliFonte)).append("\n");
     sb.append("    ruoliRichiesti: ").append(APIImplAutorizzazioneAbilitata.toIndentedString(this.ruoliRichiesti)).append("\n");
+    sb.append("    tokenRichiedente: ").append(APIImplAutorizzazioneAbilitata.toIndentedString(this.tokenRichiedente)).append("\n");
+    sb.append("    tokenRuoli: ").append(APIImplAutorizzazioneAbilitata.toIndentedString(this.tokenRuoli)).append("\n");
+    sb.append("    tokenRuoliFonte: ").append(APIImplAutorizzazioneAbilitata.toIndentedString(this.tokenRuoliFonte)).append("\n");
+    sb.append("    tokenRuoliRichiesti: ").append(APIImplAutorizzazioneAbilitata.toIndentedString(this.tokenRuoliRichiesti)).append("\n");
     sb.append("    scope: ").append(APIImplAutorizzazioneAbilitata.toIndentedString(this.scope)).append("\n");
     sb.append("    scopeRichiesti: ").append(APIImplAutorizzazioneAbilitata.toIndentedString(this.scopeRichiesti)).append("\n");
     sb.append("    token: ").append(APIImplAutorizzazioneAbilitata.toIndentedString(this.token)).append("\n");

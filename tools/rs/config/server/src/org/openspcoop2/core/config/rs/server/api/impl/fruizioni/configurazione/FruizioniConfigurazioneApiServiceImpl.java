@@ -43,6 +43,8 @@ import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.PortaDelegataAutorizzazioneServiziApplicativi;
+import org.openspcoop2.core.config.PortaDelegataAutorizzazioneToken;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
@@ -50,6 +52,7 @@ import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.Scope;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
@@ -201,14 +204,19 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			// Prendo la lista di servizi applicativi associati al soggetto
 			final org.openspcoop2.core.config.constants.CredenzialeTipo tipoAutenticazione = org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(pd.getAutenticazione());
+			if(tipoAutenticazione==null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non risulta abilitato un tipo di autenticazione trasporto nella fruizione selezionata");
+			}
 			Boolean appId = null;
 			if(org.openspcoop2.core.config.constants.CredenzialeTipo.APIKEY.equals(tipoAutenticazione)) {
 				ApiKeyState apiKeyState =  new ApiKeyState(env.pdCore.getParametroAutenticazione(pd.getAutenticazione(), pd.getProprietaAutenticazioneList()));
 				appId = apiKeyState.appIdSelected;
 			}
 			
+			boolean bothSslAndToken = false;
 			List<IDServizioApplicativoDB> saCompatibili = env.saCore.soggettiServizioApplicativoList(env.idSoggetto.toIDSoggetto(),env.userLogin,tipoAutenticazione, appId,
-					ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT);
+					ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT,
+					bothSslAndToken, pd.getGestioneToken()!=null ? pd.getGestioneToken().getPolicy() : null);
 			if (!BaseHelper.findFirst(saCompatibili, s -> s.getId().equals(sa.getId())).isPresent()) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il tipo di credenziali dell'Applicativo non sono compatibili con l'autenticazione impostata nella fruizione selezionata");
 			}
@@ -252,6 +260,102 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 		}
     }
     
+    /**
+     * Aggiunta di applicativi all'elenco degli applicativi token autorizzati
+     *
+     * Questa operazione consente di aggiungere applicativi all'elenco degli applicativi token autorizzati
+     *
+     */
+	@Override
+    public void addFruizioneControlloAccessiAutorizzazioneApplicativiToken(ControlloAccessiAutorizzazioneApplicativo body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			BaseHelper.throwIfNull(body);
+			
+			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio);		
+			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
+			
+			final IDServizioApplicativo idSA = new IDServizioApplicativo();
+			idSA.setIdSoggettoProprietario(env.idSoggetto.toIDSoggetto());
+			idSA.setNome(body.getApplicativo());
+			
+			String tokenPolicy = null;
+			if(pd.getGestioneToken()==null || pd.getGestioneToken().getPolicy()==null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione token per richiedente non è utilizzabile, non risulta abilitata una token policy di validazione");
+			}
+			tokenPolicy = pd.getGestioneToken().getPolicy();
+			if(pd.getAutorizzazioneToken()==null || !StatoFunzionalita.ABILITATO.equals(pd.getAutorizzazioneToken().getAutorizzazioneApplicativi())) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione token per richiedente non è abilitata");
+			}
+			
+			final ServizioApplicativo sa = BaseHelper.supplyOrNonValida( 
+					() -> env.saCore.getServizioApplicativo(idSA),
+					"Servizio Applicativo " + idSA.toString()
+				);
+			
+			// Prendo la lista di servizi applicativi associati al soggetto
+			final org.openspcoop2.core.config.constants.CredenzialeTipo tipoAutenticazione = org.openspcoop2.core.config.constants.CredenzialeTipo.TOKEN;
+			Boolean appId = null;
+			boolean bothSslAndToken = false;
+			List<IDServizioApplicativoDB> saCompatibili = env.saCore.soggettiServizioApplicativoList(env.idSoggetto.toIDSoggetto(),env.userLogin,tipoAutenticazione, appId,
+					ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT,
+					bothSslAndToken, tokenPolicy);
+			if (!BaseHelper.findFirst(saCompatibili, s -> s.getId().equals(sa.getId())).isPresent()) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il tipo di credenziali dell'Applicativo non sono compatibili con l'autenticazione impostata nella fruizione selezionata");
+			}
+
+			if(pd.getAutorizzazioneToken()==null) {
+				pd.setAutorizzazioneToken(new PortaDelegataAutorizzazioneToken());
+			}
+			if(pd.getAutorizzazioneToken().getServiziApplicativi()==null) {
+				pd.getAutorizzazioneToken().setServiziApplicativi(new PortaDelegataAutorizzazioneServiziApplicativi());
+			}
+			
+			if ( BaseHelper.findFirst(
+						pd.getAutorizzazioneToken().getServiziApplicativi().getServizioApplicativoList(),
+						s -> s.getNome().equals(sa.getNome())
+						).isPresent()
+				) {
+				throw FaultCode.CONFLITTO.toException("Servizio Applicativo già associato");
+			}
+					
+			env.requestWrapper.overrideParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, pd.getId().toString());
+			env.requestWrapper.overrideParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, env.idSoggetto.getId().toString());
+			env.requestWrapper.overrideParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO, sa.getNome());
+			
+			if (!env.pdHelper.porteDelegateServizioApplicativoCheckData(TipoOperazione.ADD)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+			}
+			
+			
+			PortaDelegataServizioApplicativo pdSa = new PortaDelegataServizioApplicativo();
+			pdSa.setNome(body.getApplicativo());
+			pd.getAutorizzazioneToken().getServiziApplicativi().addServizioApplicativo(pdSa);
+			
+			env.pdCore.performUpdateOperation(env.userLogin, false, pd);
+			
+			context.getLogger().info("Invocazione completata con successo");
+        
+     
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
     /**
      * Aggiunta di ruoli all'elenco dei ruoli autorizzati
      *
@@ -327,6 +431,90 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
+    /**
+     * Aggiunta di ruoli all'elenco dei ruoli token autorizzati
+     *
+     * Questa operazione consente di aggiungere ruoli all'elenco dei ruoli token autorizzati
+     *
+     */
+	@Override
+    public void addFruizioneControlloAccessiAutorizzazioneRuoliToken(ControlloAccessiAutorizzazioneRuolo body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
+			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
+			
+			if(pd.getAutorizzazioneToken()==null || !StatoFunzionalita.ABILITATO.equals(pd.getAutorizzazioneToken().getAutorizzazioneRuoli())) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione token per ruoli non è abilitata");
+			}
+			
+			final RuoliCore ruoliCore = new RuoliCore(env.stationCore);
+			BaseHelper.supplyOrNonValida( 
+					() -> ruoliCore.getRuolo(body.getRuolo())
+					, "Ruolo " + body.getRuolo()
+				);
+			
+			if(pd.getAutorizzazioneToken()==null) {
+				pd.setAutorizzazioneToken(new PortaDelegataAutorizzazioneToken());
+			}
+			if(pd.getAutorizzazioneToken().getRuoli()==null) {
+				pd.getAutorizzazioneToken().setRuoli(new AutorizzazioneRuoli());
+			}
+			
+			// ================================
+			FiltroRicercaRuoli filtroRuoli = new FiltroRicercaRuoli();
+			filtroRuoli.setContesto(RuoloContesto.PORTA_DELEGATA);
+			filtroRuoli.setTipologia(RuoloTipologia.QUALSIASI);
+			if(TipoAutorizzazione.isInternalRolesRequired(pd.getAutorizzazione()) ){
+				filtroRuoli.setTipologia(RuoloTipologia.INTERNO);
+			}
+			else if(TipoAutorizzazione.isExternalRolesRequired(pd.getAutorizzazione()) ){
+				filtroRuoli.setTipologia(RuoloTipologia.ESTERNO);
+			}
+			
+			List<String> ruoliAmmessi = env.stationCore.getAllRuoli(filtroRuoli);
+			
+			if ( !ruoliAmmessi.contains(body.getRuolo())) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il ruolo " + body.getRuolo() + "non è tra i ruoli ammissibili per il gruppo"); 
+			}
+			
+			final List<String> ruoliPresenti = pd.getAutorizzazioneToken().getRuoli().getRuoloList().stream().map( r -> r.getNome()).collect(Collectors.toList());
+			
+			if ( BaseHelper.findFirst( ruoliPresenti, r -> r.equals(body.getRuolo())).isPresent()) {
+				throw FaultCode.CONFLITTO.toException("Il ruolo " + body.getRuolo() + " è già associato al gruppo scelto");
+			}
+			
+			if (!env.paHelper.ruoloCheckData(TipoOperazione.ADD, body.getRuolo(), ruoliPresenti)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+			} 
+			// ================================ CHECK RUOLI
+			
+			Ruolo ruolo = new Ruolo();
+			ruolo.setNome(body.getRuolo());
+			pd.getAutorizzazioneToken().getRuoli().addRuolo(ruolo);
+
+			env.pdCore.performUpdateOperation(env.userLogin, false, pd);
+
+			context.getLogger().info("Invocazione completata con successo");
+        
+			// Bug Fix: altrimenti viene generato 204
+			context.getServletResponse().setStatus(201);
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -729,6 +917,52 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 		}
     }
     
+   /**
+     * Elimina applicativi dall'elenco degli applicativi token autorizzati
+     *
+     * Questa operazione consente di eliminare applicativi dall'elenco degli applicativi token autorizzati
+     *
+     */
+	@Override
+    public void deleteFruizioneControlloAccessiAutorizzazioneApplicativiToken(String erogatore, String nome, Integer versione, String applicativoAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
+			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
+			
+			if(pd.getAutorizzazioneToken()==null) {
+				pd.setAutorizzazioneToken(new PortaDelegataAutorizzazioneToken());
+			}
+			if(pd.getAutorizzazioneToken().getServiziApplicativi()==null) {
+				pd.getAutorizzazioneToken().setServiziApplicativi(new PortaDelegataAutorizzazioneServiziApplicativi());
+			}
+			
+			PortaDelegataServizioApplicativo to_remove = BaseHelper.findAndRemoveFirst(pd.getAutorizzazioneToken().getServiziApplicativi().getServizioApplicativoList(), sa -> sa.getNome().equals(applicativoAutorizzato));
+			
+			if (env.delete_404 && to_remove == null) {
+				throw FaultCode.NOT_FOUND.toException("Nessun Applicativo " + applicativoAutorizzato + " è associato al gruppo scelto"); 
+			} else if ( to_remove != null ) {
+			
+				env.pdCore.performUpdateOperation(env.userLogin, false, pd);
+			}
+			context.getLogger().info("Invocazione completata con successo");
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
     /**
      * Elimina ruoli dall'elenco dei ruoli autorizzati
      *
@@ -770,6 +1004,52 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 		}
     }
     
+    /**
+     * Elimina ruoli dall'elenco dei ruoli token autorizzati
+     *
+     * Questa operazione consente di eliminare ruoli dall'elenco dei ruoli token autorizzati
+     *
+     */
+	@Override
+    public void deleteFruizioneControlloAccessiAutorizzazioneRuoliToken(String erogatore, String nome, Integer versione, String ruoloAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
+			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
+			
+			if(pd.getAutorizzazioneToken()==null) {
+				pd.setAutorizzazioneToken(new PortaDelegataAutorizzazioneToken());
+			}
+			if(pd.getAutorizzazioneToken().getRuoli()==null) {
+				pd.getAutorizzazioneToken().setRuoli(new AutorizzazioneRuoli());
+			}
+			
+			Ruolo to_remove = BaseHelper.findAndRemoveFirst(pd.getAutorizzazioneToken().getRuoli().getRuoloList(), r -> r.getNome().equals(ruoloAutorizzato));
+			
+			if (env.delete_404 && to_remove == null) {
+				throw FaultCode.NOT_FOUND.toException("Nessun Ruolo " + ruoloAutorizzato + " è associato al gruppo scelto"); 
+			} else if ( to_remove != null ) {
+			
+				env.pdCore.performUpdateOperation(env.userLogin, false, pd);
+			}
+			
+			context.getLogger().info("Invocazione completata con successo");   
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
    /**
      * Elimina la proprietà di configurazione dall&#x27;elenco di quelle attivate
      *
@@ -1603,7 +1883,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			ControlloAccessiAutorizzazioneApplicativi ret = new ControlloAccessiAutorizzazioneApplicativi();
 			
-			int idLista = Liste.PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO;
+			int idLista = Liste.PORTE_DELEGATE_SERVIZIO_APPLICATIVO;
 			Search ricerca = Helper.setupRicercaPaginata("", -1, 0, idLista);
 			List<ServizioApplicativo> lista = env.pdCore.porteDelegateServizioApplicativoList(pd.getId(), ricerca);
 			ret.setApplicativi(lista.stream().map( saPA -> saPA.getNome()).collect(Collectors.toList()));
@@ -1621,6 +1901,43 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 		}
     }
     
+    /**
+     * Restituisce l'elenco degli applicativi token autorizzati
+     *
+     * Questa operazione consente di ottenere l'elenco degli applicativi token autorizzati
+     *
+     */
+	@Override
+    public ControlloAccessiAutorizzazioneApplicativi getFruizioneControlloAccessiAutorizzazioneApplicativiToken(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
+			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
+			ControlloAccessiAutorizzazioneApplicativi ret = new ControlloAccessiAutorizzazioneApplicativi();
+			
+			int idLista = Liste.PORTE_DELEGATE_TOKEN_SERVIZIO_APPLICATIVO;
+			Search ricerca = Helper.setupRicercaPaginata("", -1, 0, idLista);
+			List<ServizioApplicativo> lista = env.pdCore.porteDelegateServizioApplicativoTokenList(pd.getId(), ricerca);
+			ret.setApplicativi(lista.stream().map( saPA -> saPA.getNome()).collect(Collectors.toList()));
+		
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
     /**
      * Restituisce l'elenco dei ruoli autorizzati
      *
@@ -1640,7 +1957,9 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			final ControlloAccessiAutorizzazioneRuoli ret = new ControlloAccessiAutorizzazioneRuoli(); 
             
-			ret.setRuoli(BaseHelper.evalnull( () -> pd.getRuoli().getRuoloList().stream().map(Ruolo::getNome).collect(Collectors.toList()) ));
+			if(pd.getRuoli()!=null && pd.getRuoli().sizeRuoloList()>0) {
+				ret.setRuoli(BaseHelper.evalnull( () -> pd.getRuoli().getRuoloList().stream().map(Ruolo::getNome).collect(Collectors.toList()) ));
+			}
         
 			context.getLogger().info("Invocazione completata con successo");
         	return ret;
@@ -1656,6 +1975,42 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 		}
     }
     
+    /**
+     * Restituisce l'elenco dei ruoli token autorizzati
+     *
+     * Questa operazione consente di ottenere l'elenco dei ruoli token autorizzati
+     *
+     */
+	@Override
+    public ControlloAccessiAutorizzazioneRuoli getFruizioneControlloAccessiAutorizzazioneRuoliToken(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
+			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
+			final ControlloAccessiAutorizzazioneRuoli ret = new ControlloAccessiAutorizzazioneRuoli(); 
+            
+			if(pd.getAutorizzazioneToken()!=null && pd.getAutorizzazioneToken().getRuoli()!=null && pd.getAutorizzazioneToken().getRuoli().sizeRuoloList()>0) {
+				ret.setRuoli(BaseHelper.evalnull( () -> pd.getAutorizzazioneToken().getRuoli().getRuoloList().stream().map(Ruolo::getNome).collect(Collectors.toList()) ));
+			}
+        
+			context.getLogger().info("Invocazione completata con successo");
+        	return ret;
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+
     /**
      * Restituisce l'elenco degli scope autorizzati
      *

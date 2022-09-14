@@ -54,6 +54,7 @@ import java.util.List;
  * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config}autorizzazione-ruoli" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="scope" type="{http://www.openspcoop2.org/core/config}autorizzazione-scope" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="gestione-token" type="{http://www.openspcoop2.org/core/config}gestione-token" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="autorizzazione-token" type="{http://www.openspcoop2.org/core/config}porta-applicativa-autorizzazione-token" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/&gt;
  * 			&lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config}mtom-processor" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="message-security" type="{http://www.openspcoop2.org/core/config}message-security" minOccurs="0" maxOccurs="1"/&gt;
@@ -120,6 +121,7 @@ import java.util.List;
   	"ruoli",
   	"scope",
   	"gestioneToken",
+  	"autorizzazioneToken",
   	"proprieta",
   	"mtomProcessor",
   	"messageSecurity",
@@ -379,6 +381,14 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   public void setGestioneToken(GestioneToken gestioneToken) {
     this.gestioneToken = gestioneToken;
+  }
+
+  public PortaApplicativaAutorizzazioneToken getAutorizzazioneToken() {
+    return this.autorizzazioneToken;
+  }
+
+  public void setAutorizzazioneToken(PortaApplicativaAutorizzazioneToken autorizzazioneToken) {
+    this.autorizzazioneToken = autorizzazioneToken;
   }
 
   public void addProprieta(Proprieta proprieta) {
@@ -1062,6 +1072,9 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   @XmlElement(name="gestione-token",required=false,nillable=false)
   protected GestioneToken gestioneToken;
+
+  @XmlElement(name="autorizzazione-token",required=false,nillable=false)
+  protected PortaApplicativaAutorizzazioneToken autorizzazioneToken;
 
   @XmlElement(name="proprieta",required=true,nillable=false)
   protected List<Proprieta> proprieta = new ArrayList<Proprieta>();

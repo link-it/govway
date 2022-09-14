@@ -30,6 +30,9 @@ public class FiltroMittenteErogazioneApplicativo  implements OneOfRicercaInterva
   @Schema(required = true, description = "")
   private TipoFiltroMittenteEnum identificazione = null;
   
+  @Schema(description = "")
+  private TipoIdentificazioneApplicativoEnum tipoIdentificazioneApplicativo = null;
+  
   @Schema(required = true, description = "")
   private String soggetto = null;
   
@@ -53,6 +56,25 @@ public class FiltroMittenteErogazioneApplicativo  implements OneOfRicercaInterva
 
   public FiltroMittenteErogazioneApplicativo identificazione(TipoFiltroMittenteEnum identificazione) {
     this.identificazione = identificazione;
+    return this;
+  }
+
+ /**
+   * Get tipoIdentificazioneApplicativo
+   * @return tipoIdentificazioneApplicativo
+  **/
+  @JsonProperty("tipo_identificazione_applicativo")
+  @Valid
+  public TipoIdentificazioneApplicativoEnum getTipoIdentificazioneApplicativo() {
+    return this.tipoIdentificazioneApplicativo;
+  }
+
+  public void setTipoIdentificazioneApplicativo(TipoIdentificazioneApplicativoEnum tipoIdentificazioneApplicativo) {
+    this.tipoIdentificazioneApplicativo = tipoIdentificazioneApplicativo;
+  }
+
+  public FiltroMittenteErogazioneApplicativo tipoIdentificazioneApplicativo(TipoIdentificazioneApplicativoEnum tipoIdentificazioneApplicativo) {
+    this.tipoIdentificazioneApplicativo = tipoIdentificazioneApplicativo;
     return this;
   }
 
@@ -103,6 +125,7 @@ public class FiltroMittenteErogazioneApplicativo  implements OneOfRicercaInterva
     sb.append("class FiltroMittenteErogazioneApplicativo {\n");
     
     sb.append("    identificazione: ").append(FiltroMittenteErogazioneApplicativo.toIndentedString(this.identificazione)).append("\n");
+    sb.append("    tipoIdentificazioneApplicativo: ").append(FiltroMittenteErogazioneApplicativo.toIndentedString(this.tipoIdentificazioneApplicativo)).append("\n");
     sb.append("    soggetto: ").append(FiltroMittenteErogazioneApplicativo.toIndentedString(this.soggetto)).append("\n");
     sb.append("    applicativo: ").append(FiltroMittenteErogazioneApplicativo.toIndentedString(this.applicativo)).append("\n");
     sb.append("}");

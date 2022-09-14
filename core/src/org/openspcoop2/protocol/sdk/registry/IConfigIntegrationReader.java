@@ -24,6 +24,7 @@ import java.util.List;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.config.CanaliConfigurazione;
 import org.openspcoop2.core.config.ConfigurazioneMultitenant;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -60,6 +61,9 @@ public interface IConfigIntegrationReader extends IConfigIntegrationReaderInUso 
 	
 	public boolean existsServizioApplicativoByCredenzialiPrincipal(String principal);
 	public ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(String principal) throws RegistryNotFound,RegistryException;
+	
+	public boolean existsServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId, boolean tokenWithHttpsEnabled);
+	public ServizioApplicativo getServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId, boolean tokenWithHttpsEnabled) throws RegistryNotFound,RegistryException;
 	
 	public List<IDServizioApplicativo> findIdServiziApplicativi(FiltroRicercaServiziApplicativi filtroRicerca) throws RegistryNotFound,RegistryException;
 	
@@ -101,4 +105,13 @@ public interface IConfigIntegrationReader extends IConfigIntegrationReaderInUso 
 	public List<Allarme> getAllarmiGlobali() throws RegistryNotFound,RegistryException;
 	
 	public String getNextAlarmInstanceSerialId(String tipoPlugin) throws RegistryException;
+	
+	public List<GenericProperties> getTokenPolicyValidazione() throws RegistryException;
+	public GenericProperties getTokenPolicyValidazione(String nome) throws RegistryNotFound,RegistryException;
+	
+	public List<GenericProperties> getTokenPolicyNegoziazione() throws RegistryException;
+	public GenericProperties getTokenPolicyNegoziazione(String nome) throws RegistryNotFound,RegistryException;
+	
+	public List<GenericProperties> getAttributeAuthority() throws RegistryException;
+	public GenericProperties getAttributeAuthority(String nome) throws RegistryNotFound,RegistryException;
 }

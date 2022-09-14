@@ -84,12 +84,21 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 	/** Autorizzazione Servizio Applicativo */
 	private IDServizioApplicativo idServizioApplicativoAutorizzato;
 	
+	/** Autorizzazione Token Servizio Applicativo */
+	private IDServizioApplicativo idServizioApplicativoAutorizzatoToken;
+	
+	/** Autorizzazione token Ruolo */
+	private IDRuolo idRuoloToken;
+	
 	/** Trasformazioni Applicabilita Soggetto */
 	private IDSoggetto idSoggettoRiferitoApplicabilitaTrasformazione;
 	
 	/** Trasformazioni Applicabilita Servizio Applicativo */
 	private IDServizioApplicativo idServizioApplicativoRiferitoApplicabilitaTrasformazione;
 	
+	/** Trasformazioni Applicabilita Servizio Applicativo Token */
+	private IDServizioApplicativo idServizioApplicativoTokenRiferitoApplicabilitaTrasformazione;
+		
 	/** Stato */
 	private StatoFunzionalita stato;
 	
@@ -127,10 +136,16 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 			bf.append(" [soggettoAutorizzato:"+this.idSoggettoAutorizzato+"]");
 		if(this.idServizioApplicativoAutorizzato!=null)
 			bf.append(" [servizioApplicativoAutorizzato:"+this.idServizioApplicativoAutorizzato+"]");
+		if(this.idServizioApplicativoAutorizzatoToken!=null)
+			bf.append(" [servizioApplicativoAutorizzatoToken:"+this.idServizioApplicativoAutorizzatoToken+"]");
+		if(this.idRuoloToken!=null)
+			bf.append(" [ruoloToken:"+this.idRuoloToken+"]");
 		if(this.idSoggettoRiferitoApplicabilitaTrasformazione!=null)
 			bf.append(" [soggettoRiferitoApplicabilitaTrasformazione:"+this.idSoggettoRiferitoApplicabilitaTrasformazione+"]");
 		if(this.idServizioApplicativoRiferitoApplicabilitaTrasformazione!=null)
 			bf.append(" [servizioApplicativoRiferitoApplicabilitaTrasformazione:"+this.idServizioApplicativoRiferitoApplicabilitaTrasformazione+"]");
+		if(this.idServizioApplicativoTokenRiferitoApplicabilitaTrasformazione!=null)
+			bf.append(" [servizioApplicativoTokenRiferitoApplicabilitaTrasformazione:"+this.idServizioApplicativoTokenRiferitoApplicabilitaTrasformazione+"]");
 		if(this.stato!=null)
 			bf.append(" [stato:"+this.stato+"]");
 		if(this.nomePortaDelegante!=null)
@@ -222,6 +237,14 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 		this.idRuolo = idRuolo;
 	}
 	
+	public IDRuolo getIdRuoloToken() {
+		return this.idRuoloToken;
+	}
+
+	public void setIdRuoloToken(IDRuolo idRuoloToken) {
+		this.idRuoloToken = idRuoloToken;
+	}
+	
 	public IDScope getIdScope() {
 		return this.idScope;
 	}
@@ -262,6 +285,14 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 		this.idServizioApplicativoAutorizzato = idServizioApplicativoAutorizzato;
 	}
 	
+	public IDServizioApplicativo getIdServizioApplicativoAutorizzatoToken() {
+		return this.idServizioApplicativoAutorizzatoToken;
+	}
+
+	public void setIdServizioApplicativoAutorizzatoToken(IDServizioApplicativo idServizioApplicativoAutorizzatoToken) {
+		this.idServizioApplicativoAutorizzatoToken = idServizioApplicativoAutorizzatoToken;
+	}
+	
 	public IDSoggetto getIdSoggettoRiferitoApplicabilitaTrasformazione() {
 		return this.idSoggettoRiferitoApplicabilitaTrasformazione;
 	}
@@ -277,5 +308,14 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 	public void setIdServizioApplicativoRiferitoApplicabilitaTrasformazione(
 			IDServizioApplicativo idServizioApplicativoRiferitoApplicabilitaTrasformazione) {
 		this.idServizioApplicativoRiferitoApplicabilitaTrasformazione = idServizioApplicativoRiferitoApplicabilitaTrasformazione;
+	}
+	
+	public IDServizioApplicativo getIdServizioApplicativoTokenRiferitoApplicabilitaTrasformazione() {
+		return this.idServizioApplicativoTokenRiferitoApplicabilitaTrasformazione;
+	}
+
+	public void setIdServizioApplicativoTokenRiferitoApplicabilitaTrasformazione(
+			IDServizioApplicativo idServizioApplicativoTokenRiferitoApplicabilitaTrasformazione) {
+		this.idServizioApplicativoTokenRiferitoApplicabilitaTrasformazione = idServizioApplicativoTokenRiferitoApplicabilitaTrasformazione;
 	}
 }

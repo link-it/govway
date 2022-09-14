@@ -37,8 +37,7 @@ Scenario Outline: Ricerca di report base statistica <nome-statistica> filtrati p
     },
     "esito": {
       "tipo": "ok"
-    },
-    "claim" : "subject" 
+    } 
 })
 """  
 * def query =
@@ -53,7 +52,8 @@ Scenario Outline: Ricerca di report base statistica <nome-statistica> filtrati p
     unita_tempo: filtro.unita_tempo,
     tipo_report: filtro.report.tipo,
     tipo_informazione_report: filtro.report.tipo_informazione.tipo,
-    claim: <filtro-claim>
+    claim: <filtro-claim>,
+    tipo_identificazione: <filtro-tipo-identificazione-applicativo>
 })
 """
 		Given path <path-distribuzione>
@@ -62,17 +62,19 @@ Scenario Outline: Ricerca di report base statistica <nome-statistica> filtrati p
     Then status 200
     
 Examples:
-| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | 
-| 'distribuzione-temporale' | 'distribuzione-temporale' | filtro.esito.tipo |  null | 
-| 'distribuzione-esiti' | 'distribuzione-esiti' | null |  null | 
-| 'distribuzione-soggetto-remoto' | 'distribuzione-soggetto-remoto' | filtro.esito.tipo |  null | 
-| 'distribuzione-soggetto-locale' | 'distribuzione-soggetto-locale' | filtro.esito.tipo |  null | 
-| 'distribuzione-api' | 'distribuzione-api' | filtro.esito.tipo |  null | 
-| 'distribuzione-azione' | 'distribuzione-azione' | filtro.esito.tipo |  null | 
-| 'distribuzione-applicativo' | 'distribuzione-applicativo' | filtro.esito.tipo |  null | 
-| 'distribuzione-id-autenticato' | 'distribuzione-id-autenticato' | filtro.esito.tipo |  null | 
-| 'distribuzione-token-info' | 'distribuzione-token-info' | filtro.esito.tipo | filtro.claim | 
-| 'distribuzione-indirizzo-ip' | 'distribuzione-indirizzo-ip' | filtro.esito.tipo |  null | 
+| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-identificazione-applicativo | 
+| 'distribuzione-temporale' | 'distribuzione-temporale' | filtro.esito.tipo | null | null | 
+| 'distribuzione-esiti' | 'distribuzione-esiti' | null | null | null | 
+| 'distribuzione-soggetto-remoto' | 'distribuzione-soggetto-remoto' | filtro.esito.tipo | null | null | 
+| 'distribuzione-soggetto-locale' | 'distribuzione-soggetto-locale' | filtro.esito.tipo | null | null | 
+| 'distribuzione-api' | 'distribuzione-api' | filtro.esito.tipo | null | null |
+| 'distribuzione-azione' | 'distribuzione-azione' | filtro.esito.tipo | null | null |
+| 'distribuzione-applicativo-trasporto' | 'distribuzione-applicativo' | filtro.esito.tipo | null | 'trasporto' |
+| 'distribuzione-applicativo-token' | 'distribuzione-applicativo' | filtro.esito.tipo | null | 'token' |
+| 'distribuzione-id-autenticato' | 'distribuzione-id-autenticato' | filtro.esito.tipo | null | null |
+| 'distribuzione-token-info-subject' | 'distribuzione-token-info' | filtro.esito.tipo | 'subject' | null | 
+| 'distribuzione-token-info-client-id' | 'distribuzione-token-info' | filtro.esito.tipo | 'client_id' | null | 
+| 'distribuzione-indirizzo-ip' | 'distribuzione-indirizzo-ip' | filtro.esito.tipo | null | null |
 
 @ReportFullTag
 Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati per tag 
@@ -97,6 +99,7 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
 
 * eval if(<filtro-esito> != null) filtro.esito = <filtro-esito>
 * eval if(<filtro-claim> != null) filtro.claim = <filtro-claim>
+* eval if(<filtro-tipo-identificazione-applicativo> != null) filtro.tipo_identificazione_applicativo = <filtro-tipo-identificazione-applicativo>
     
     Given path <path-distribuzione>
     And request filtro
@@ -104,16 +107,18 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
     Then status 200
     
 Examples:
-| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | 
-| 'distribuzione-temporale' | 'distribuzione-temporale' | { "tipo": "ok" } | null |
-| 'distribuzione-esiti' | 'distribuzione-esiti' | null | null |
-| 'distribuzione-soggetto-remoto' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null |
-| 'distribuzione-soggetto-locale' | 'distribuzione-soggetto-locale' | { "tipo": "ok" } | null |
-| 'distribuzione-api' | 'distribuzione-api' | { "tipo": "ok" } | null |
-| 'distribuzione-azione' | 'distribuzione-azione' | { "tipo": "ok" } | null |
-| 'distribuzione-applicativo' | 'distribuzione-applicativo' | { "tipo": "ok" } | null |
-| 'distribuzione-id-autenticato' | 'distribuzione-id-autenticato' | { "tipo": "ok" } | null |
-| 'distribuzione-token-info' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" |
-| 'distribuzione-indirizzo-ip' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null |
+| nome-statistica | path-distribuzione | filtro-esito | filtro-claim | filtro-tipo-identificazione-applicativo |
+| 'distribuzione-temporale' | 'distribuzione-temporale' | { "tipo": "ok" } | null | null |
+| 'distribuzione-esiti' | 'distribuzione-esiti' | null | null | null |
+| 'distribuzione-soggetto-remoto' | 'distribuzione-soggetto-remoto' | { "tipo": "ok" } | null | null |
+| 'distribuzione-soggetto-locale' | 'distribuzione-soggetto-locale' | { "tipo": "ok" } | null | null |
+| 'distribuzione-api' | 'distribuzione-api' | { "tipo": "ok" } | null | null |
+| 'distribuzione-azione' | 'distribuzione-azione' | { "tipo": "ok" } | null | null |
+| 'distribuzione-applicativo-trasporto' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'trasporto' |
+| 'distribuzione-applicativo-token' | 'distribuzione-applicativo' | { "tipo": "ok" } | null | 'token' |
+| 'distribuzione-id-autenticato' | 'distribuzione-id-autenticato' | { "tipo": "ok" } | null | null |
+| 'distribuzione-token-info-subject' | 'distribuzione-token-info' | { "tipo": "ok" } | "subject" | null |
+| 'distribuzione-token-info-client-id' | 'distribuzione-token-info' | { "tipo": "ok" } | "client_id" | null |
+| 'distribuzione-indirizzo-ip' | 'distribuzione-indirizzo-ip' | { "tipo": "ok" } | null | null |
 
 
