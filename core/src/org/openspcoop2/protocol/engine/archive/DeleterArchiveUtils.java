@@ -541,14 +541,17 @@ public class DeleterArchiveUtils {
 			for (int i = 0; i < archive.getControlloTraffico_activePolicies().size(); i++) {
 				ArchiveActivePolicy archivePolicy = archive.getControlloTraffico_activePolicies().get(i);
 				// le elimino cmq tutte, al massimo non esistono piu' if(archivePolicy.isPolicyGlobale()) {
+				// evito cmq di avere errore durante l'aggiunta del dettaglio perchè già esistente
 				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePolicy);
-				try{
-					this.deleteActivePolicy(archivePolicy, detail);
-				}catch(Exception e){
-					detail.setState(ArchiveStatoImport.ERROR);
-					detail.setException(e);
+				if(!esito.getControlloTraffico_activePolicies().containsKey(detail.key())) {
+					try{
+						this.deleteActivePolicy(archivePolicy, detail);
+					}catch(Exception e){
+						detail.setState(ArchiveStatoImport.ERROR);
+						detail.setException(e);
+					}
+					esito.getControlloTraffico_activePolicies().add(detail);
 				}
-				esito.getControlloTraffico_activePolicies().add(detail);
 			}
 			
 			// ControlloTraffico (ConfigurazionePolicy)
