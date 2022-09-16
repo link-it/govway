@@ -94,6 +94,9 @@ public class InterceptorPolicyUtilities {
 		
 		if(policyGroupBy.isServizioApplicativoFruitore()){
 			groupBy.setServizioApplicativoFruitore(datiTransazione.getServizioApplicativoFruitore());
+			if(datiTransazione.getIdServizioApplicativoToken()!=null) {
+				groupBy.setServizioApplicativoToken(datiTransazione.getIdServizioApplicativoToken());
+			}
 		}
 				
 		if(policyGroupBy.isErogatore()){

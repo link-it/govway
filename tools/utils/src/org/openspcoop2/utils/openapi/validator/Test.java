@@ -60,6 +60,10 @@ public class Test {
 	public static void testValidation(URI uri, String baseUrl, String testName, ApiFormats format, OpenAPILibrary openAPILibrary,boolean mergeSpec, ApiSchema ...apiSchemas) throws Exception {
 		try {
 	
+			boolean logSystemOutError = true;
+			// fix per evitare troppo output su jenkins:
+			logSystemOutError = !OpenAPILibrary.json_schema.equals(openAPILibrary);
+			
 			boolean testAdditionalProperties = !ApiFormats.SWAGGER_2.equals(format); // il parser dello swagger non legge l'additiona properties
 			
 			boolean addParameterTipizzati =  !ApiFormats.SWAGGER_2.equals(format); // aggiunti solo in openapi
@@ -72,6 +76,7 @@ public class Test {
 			IApiValidator apiValidator = ApiFactory.newApiValidator(format);
 			OpenapiApiValidatorConfig config = new OpenapiApiValidatorConfig();
 			config.setJsonValidatorAPI(ApiName.NETWORK_NT);
+			config.setEmitLogError(logSystemOutError);
 			if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 				config.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 				config.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);

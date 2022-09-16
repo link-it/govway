@@ -77,6 +77,8 @@ import org.w3c.dom.Element;
  */
 public class TestOpenApi3Extended {
 
+	private static boolean logSystemOutError = true;
+		
 	public static void main(String[] args) throws Exception {
 		
 		
@@ -89,6 +91,9 @@ public class TestOpenApi3Extended {
 		if(args!=null && args.length>1) {
 			mergeSpec = Boolean.valueOf(args[1]);
 		}
+		
+		// fix per evitare troppo output su jenkins:
+		logSystemOutError = !OpenAPILibrary.json_schema.equals(openAPILibrary);
 
 		
 		// *** TEST per il Parser e validazione dello schema *** //
@@ -106,6 +111,7 @@ public class TestOpenApi3Extended {
 			
 			IApiValidator apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 			OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
+			configO.setEmitLogError(logSystemOutError);
 			configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 			configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 			configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
@@ -367,6 +373,7 @@ public class TestOpenApi3Extended {
 				
 		IApiValidator apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
+		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
@@ -3696,6 +3703,7 @@ public class TestOpenApi3Extended {
 								
 		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
+		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
@@ -3888,6 +3896,7 @@ public class TestOpenApi3Extended {
 								
 		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
+		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
@@ -4008,6 +4017,7 @@ public class TestOpenApi3Extended {
 								
 		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
+		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
@@ -4830,6 +4840,7 @@ public class TestOpenApi3Extended {
 								
 		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
+		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
@@ -5104,6 +5115,7 @@ public class TestOpenApi3Extended {
 								
 		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
+		configO.setEmitLogError(logSystemOutError);
 		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);

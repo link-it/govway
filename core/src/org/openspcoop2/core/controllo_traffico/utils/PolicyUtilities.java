@@ -380,6 +380,12 @@ public class PolicyUtilities {
 				}
 				bf.append("SAFruitore: ");
 				bf.append(datiGroupBy.getServizioApplicativoFruitore());
+				
+				if(bf.length()>0){
+					bf.append(", ");
+				}
+				bf.append("ApplicativoToken: ");
+				bf.append(datiGroupBy.getServizioApplicativoToken());
 			}
 			
 			if(groupBy.isInformazioneApplicativaEnabled()){
@@ -435,6 +441,9 @@ public class PolicyUtilities {
 			}
 			else if(tmp.startsWith("SAFruitore: ")) {
 				id.setServizioApplicativoFruitore(tmp.substring("SAFruitore: ".length()));
+			}
+			else if(tmp.startsWith("ApplicativoToken: ")) {
+				id.setServizioApplicativoToken(tmp.substring("ApplicativoToken: ".length()));
 			}
 			else if(tmp.startsWith("Chiave-Tipo: ")) {
 				id.setTipoKey(tmp.substring("Chiave-Tipo: ".length()));

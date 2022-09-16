@@ -38,6 +38,7 @@ public class ApiValidatorConfig extends BaseBean {
 	private boolean verbose = false;
 	private AbstractXMLUtils xmlUtils = XMLUtils.getInstance();
 	private ADDITIONAL policyAdditionalProperties = ADDITIONAL.DEFAULT;
+	private boolean emitLogError = true;
 	
 	public AbstractXMLUtils getXmlUtils() {
 		return this.xmlUtils;
@@ -59,4 +60,10 @@ public class ApiValidatorConfig extends BaseBean {
 		this.policyAdditionalProperties = policyAdditionalProperties;
 	}
 
+	public boolean isEmitLogError() {
+		return this.emitLogError;
+	}
+	public void setEmitLogError(boolean emitLogError) {
+		this.emitLogError = emitLogError;
+	}
 }

@@ -24,6 +24,7 @@ import java.io.Serializable;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 
 /**
@@ -46,6 +47,7 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 	private String protocollo = QUALSIASI;
 	private String fruitore = QUALSIASI;
 	private String servizioApplicativoFruitore = QUALSIASI;
+	private String servizioApplicativoToken = QUALSIASI;
 	private String erogatore = QUALSIASI;
 	private String servizioApplicativoErogatore = QUALSIASI;
 	private String servizio = QUALSIASI;
@@ -73,6 +75,8 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 				this.fruitore.equals(filtro.getFruitore())
 				&&
 				this.servizioApplicativoFruitore.equals(filtro.getServizioApplicativoFruitore())
+				&&
+				this.servizioApplicativoToken.equals(filtro.getServizioApplicativoToken())
 				&&
 				this.erogatore.equals(filtro.getErogatore())
 				&&
@@ -189,7 +193,24 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 				bf.append(" ");
 			}
 			bf.append(this.servizioApplicativoFruitore);
-		}	
+		}
+		
+		if(!QUALSIASI.equals(this.servizioApplicativoToken) || !filterGroupByNotSet){
+			if(filterGroupByNotSet){
+				if(bf.length()>0){
+					bf.append("\n");
+				}
+				bf.append("\t");
+			}
+			else{
+				bf.append(" ");
+			}
+			bf.append("ApplicativoToken:");
+			if(filterGroupByNotSet){
+				bf.append(" ");
+			}
+			bf.append(this.servizioApplicativoToken);
+		}
 		
 		if(!QUALSIASI.equals(this.erogatore) || !filterGroupByNotSet){
 			if(filterGroupByNotSet){
@@ -487,10 +508,31 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 		}
 		return null;
 	}
-
+	
 	public void setServizioApplicativoFruitore(String servizioApplicativoFruitore) {
 		if(servizioApplicativoFruitore!=null)
 			this.servizioApplicativoFruitore = servizioApplicativoFruitore;
+	}
+	
+	public String getServizioApplicativoToken() {
+		return this.servizioApplicativoToken;
+	}
+	
+	public IDServizioApplicativo getServizioApplicativoTokenIfDefined() throws Exception {
+		if(this.servizioApplicativoToken!=null && !this.servizioApplicativoToken.equals(QUALSIASI) ){
+			// tipoSoggetto/nomeSoggetto/nome
+			return IDServizioApplicativo.toIDServizioApplicativo(this.servizioApplicativoToken);
+		}
+		return null;
+	}
+
+	public void setServizioApplicativoToken(IDServizioApplicativo servizioApplicativoToken) {
+		if(servizioApplicativoToken!=null)
+			this.setServizioApplicativoToken(servizioApplicativoToken.toFormatString());
+	}
+	public void setServizioApplicativoToken(String servizioApplicativoToken) {
+		if(servizioApplicativoToken!=null)
+			this.servizioApplicativoToken = servizioApplicativoToken;
 	}
 	
 	public String getErogatore() {
@@ -719,7 +761,7 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 		
 		bf.append(id.servizioApplicativoFruitore);
 		bf.append("\n");
-		
+				
 		bf.append(id.erogatore);
 		bf.append("\n");
 		
@@ -755,13 +797,19 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 		bf.append("\n");
 		
 		bf.append(id.tokenEMail);
-	
+		bf.append("\n");
+			
 		if (id instanceof IDUnivocoGroupByPolicyMapId) {
 			// Aggiungo un ulteriore campo, per la map unica distribuita sul controllo traffico 
-			bf.append("\n");
 			IDUnivocoGroupByPolicyMapId v = (IDUnivocoGroupByPolicyMapId) id;
 			bf.append(v.getUniqueMapId());
 		}
+		else {
+			bf.append(QUALSIASI); // valore ignorato; piu' facile la gestione per future aggiunte
+		}
+		bf.append("\n");
+	
+		bf.append(id.servizioApplicativoToken);
 		
 		return bf.toString();
 	}
@@ -774,13 +822,33 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 		int oldLength = 11;
 		int newLength = oldLength+1+5; // nella 3.1.0 aggiunto idAutenticato e 5 token claims
 		int newLength2 = newLength+1;	// Aggiunto uniqueMapId
+		int newLength3 = newLength2+1;	// nella 3.3.8 aggiunto servizioApplicativoToken
 		
-		if(tmp.length!=oldLength && tmp.length!=newLength && tmp.length!=newLength2){
+		if(tmp.length!=oldLength && tmp.length!=newLength && tmp.length!=newLength2 && tmp.length!=newLength3){
 			throw new Exception("Wrong Format (size: "+tmp.length+")");
 		}
 		
-		IDUnivocoGroupByPolicy id = null;
+		boolean idUnivocoGroupBy = false;
+		boolean length2ConIdUnivocoGroupBy = false;
+		boolean lengthGreaterEquals3 = false;
+		int posizioneIdGroupBy = newLength2-1;
 		if(tmp.length==newLength2) {
+			// potrebbe esserci sia il PolicyMapId (vecchie serializzazioni dove si aggiungeva solo se era) o l'applicativo token 
+			String value = tmp[posizioneIdGroupBy];
+			length2ConIdUnivocoGroupBy = value!=null && value.contains("@"); // l'active policy contiene il @, mentre il servizio applicativo 2 '/'
+			if(length2ConIdUnivocoGroupBy) {
+				idUnivocoGroupBy = true;
+			}
+		}
+		else if(tmp.length>=newLength3) {
+			// l'informazione sul PolicyMapId viene sempre aggiunta, ma viene valorizzata a QUALSIASI se non è effettivamente una PolicyMapId
+			String value = tmp[posizioneIdGroupBy];
+			idUnivocoGroupBy = value!=null && QUALSIASI.equals(value);
+			lengthGreaterEquals3 = true;
+		}
+		
+		IDUnivocoGroupByPolicy id = null;
+		if(idUnivocoGroupBy) {
 			id = new IDUnivocoGroupByPolicyMapId();
 		}
 		else {
@@ -840,7 +908,25 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 				id.tokenEMail = tmp[i].trim();
 			}			
 			else if(i==17){
-				((IDUnivocoGroupByPolicyMapId) id).setUniqueMapId(tmp[i].trim());
+				if(length2ConIdUnivocoGroupBy) {
+					((IDUnivocoGroupByPolicyMapId) id).setUniqueMapId(tmp[i].trim());
+				}
+				else {
+					if(lengthGreaterEquals3) {
+						if(idUnivocoGroupBy) {
+							((IDUnivocoGroupByPolicyMapId) id).setUniqueMapId(tmp[i].trim());
+						}
+						else {
+							// ignoro (serializzato con QUALSIASI)
+						}
+					}
+					else {
+						id.servizioApplicativoToken = tmp[i].trim();
+					}
+				}
+			}
+			else if(i==18){
+				id.servizioApplicativoToken = tmp[i].trim();
 			}
 		}
 		return id;

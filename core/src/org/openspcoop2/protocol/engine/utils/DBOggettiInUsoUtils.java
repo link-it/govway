@@ -39,6 +39,7 @@ import org.openspcoop2.core.config.CanaleConfigurazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoFiltroApplicativo;
@@ -7724,6 +7725,9 @@ public class DBOggettiInUsoUtils  {
 				List<String> mapping_tokenPA_list = whereIsInUso.get(ErrorsHandlerCostant.TOKEN_MAPPING_PA);
 				List<String> mapping_tokenPD_list = whereIsInUso.get(ErrorsHandlerCostant.TOKEN_MAPPING_PD);
 				
+				List<String> tokenSA_list = whereIsInUso.get(ErrorsHandlerCostant.TOKEN_SA);
+				List<String> tokenSA_MODI_list = whereIsInUso.get(ErrorsHandlerCostant.TOKEN_SA_MODI);
+				
 				if (tokenPA_list == null) {
 					tokenPA_list = new ArrayList<String>();
 					whereIsInUso.put(ErrorsHandlerCostant.TOKEN_PA, tokenPA_list);
@@ -7741,6 +7745,16 @@ public class DBOggettiInUsoUtils  {
 					mapping_tokenPD_list = new ArrayList<String>();
 					whereIsInUso.put(ErrorsHandlerCostant.TOKEN_MAPPING_PD, mapping_tokenPD_list);
 				}
+				
+				if (tokenSA_list == null) {
+					tokenSA_list = new ArrayList<String>();
+					whereIsInUso.put(ErrorsHandlerCostant.TOKEN_SA, tokenSA_list);
+				}
+				if (tokenSA_MODI_list == null) {
+					tokenSA_MODI_list = new ArrayList<String>();
+					whereIsInUso.put(ErrorsHandlerCostant.TOKEN_SA_MODI, tokenSA_MODI_list);
+				}
+				
 				
 				// Controllo che non sia in uso nelle porte applicative
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
@@ -7796,6 +7810,81 @@ public class DBOggettiInUsoUtils  {
 				}
 				risultato.close();
 				stmt.close();				
+				
+				
+				// Controllo che non sia in uso nelle credenziali di un servizio applicativo
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addSelectField("tipo_soggetto");
+				sqlQueryObject.addSelectField("nome_soggetto");
+				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI+".nome");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".token_policy = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setString(1, idGP.getNome());
+				risultato = stmt.executeQuery();
+				while (risultato.next()) {
+					String tipo_soggetto = risultato.getString("tipo_soggetto");
+					String nome_soggetto = risultato.getString("nome_soggetto");
+					String nome = risultato.getString("nome");
+					IDSoggetto idSoggetto = new IDSoggetto(tipo_soggetto, nome_soggetto);
+					if(normalizeObjectIds) {
+						String protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(tipo_soggetto);
+						tokenSA_list.add(getProtocolPrefix(protocollo)+nome+getSubjectSuffix(protocollo, idSoggetto));
+					}
+					else {
+						tokenSA_list.add(tipo_soggetto + "/" + nome_soggetto+"_"+nome);
+					}
+					isInUso = true;
+				}
+				risultato.close();
+				stmt.close();
+				
+				
+				// Controllo che non sia in uso nelle credenziali di un servizio applicativo interno ModI
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PROTOCOL_PROPERTIES);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addSelectField("tipo_soggetto");
+				sqlQueryObject.addSelectField("nome_soggetto");
+				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI+".nome");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES+".tipo_proprietario = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES+".id_proprietario = "+CostantiDB.SERVIZI_APPLICATIVI+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES+".name = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES+".value_string = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				int index = 1;
+				stmt.setString(index++, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO.name());
+				stmt.setString(index++, CostantiDB.MODIPA_SICUREZZA_TOKEN_POLICY);
+				stmt.setString(index++, idGP.getNome());
+				risultato = stmt.executeQuery();
+				while (risultato.next()) {
+					String tipo_soggetto = risultato.getString("tipo_soggetto");
+					String nome_soggetto = risultato.getString("nome_soggetto");
+					String nome = risultato.getString("nome");
+					IDSoggetto idSoggetto = new IDSoggetto(tipo_soggetto, nome_soggetto);
+					if(normalizeObjectIds) {
+						String protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(tipo_soggetto);
+						tokenSA_MODI_list.add(getProtocolPrefix(protocollo)+nome+getSubjectSuffix(protocollo, idSoggetto));
+					}
+					else {
+						tokenSA_MODI_list.add(tipo_soggetto + "/" + nome_soggetto+"_"+nome);
+					}
+					isInUso = true;
+				}
+				risultato.close();
+				stmt.close();
 				
 			}
 			
@@ -7996,6 +8085,17 @@ public class DBOggettiInUsoUtils  {
 			case TOKEN_PA:
 				if ( messages!=null && messages.size() > 0) {
 					msg += "utilizzato nelle Porte Inbound (Controllo degli Accessi): " + formatList(messages,separator) + separator;
+				}
+				break;
+				
+			case TOKEN_SA:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato negli Applicativi: " + formatList(messages,separator) + separator;
+				}
+				break;
+			case TOKEN_SA_MODI:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "utilizzato negli Applicativi (ModI "+CostantiLabel.MODIPA_SICUREZZA_CHOICE_TOKEN_LABEL+"): " + formatList(messages,separator) + separator;
 				}
 				break;
 				

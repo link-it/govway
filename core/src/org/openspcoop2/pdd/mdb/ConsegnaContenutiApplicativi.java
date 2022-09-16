@@ -1606,6 +1606,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					headerIntegrazione.setTipoSoggettoProprietarioApplicativoToken(servizioApplicativoToken.getIdSoggettoProprietario().getTipo());
 					headerIntegrazione.setNomeSoggettoProprietarioApplicativoToken(servizioApplicativoToken.getIdSoggettoProprietario().getNome());
 				}
+				if(servizioApplicativoFruitore==null && richiestaApplicativa!=null && Costanti.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol())) {
+					// inserisco come servizioApplicativoFruitore la stessa informazione del token. Sono lo stesso
+					headerIntegrazione.setServizioApplicativo(servizioApplicativoToken.getNome());
+				}
 			}
 
 			Map<String, List<String>> propertiesTrasporto = new HashMap<String, List<String>>();

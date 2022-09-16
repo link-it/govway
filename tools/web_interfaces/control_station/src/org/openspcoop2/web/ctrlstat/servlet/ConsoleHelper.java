@@ -7478,11 +7478,43 @@ public class ConsoleHelper implements IConsoleHelper {
 						}
 					}
 
+					boolean modiSicurezzaMessaggio = false;
+					try {
+						IDServizio idAps = IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(), pa.getServizio().getNome(),
+								pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(),
+								pa.getServizio().getVersione());
+						if(idAps!=null) {
+							AccordoServizioParteSpecifica asps = this.apsCore.getServizio(idAps);
+							idAps.setPortType(asps.getPortType());
+							idAps.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+							
+							IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+							IConsoleDynamicConfiguration consoleDynamicConfiguration = protocolFactory.createDynamicConfigurationConsole();
+							IRegistryReader registryReader = this.apcCore.getRegistryReader(protocolFactory); 
+							IConfigIntegrationReader configRegistryReader = this.apcCore.getConfigIntegrationReader(protocolFactory);
+							ConsoleConfiguration consoleConfiguration = consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(ConsoleOperationType.CHANGE, this, 
+									registryReader, configRegistryReader, idAps );
+							if(consoleConfiguration!=null && consoleConfiguration.getConsoleItem()!=null && !consoleConfiguration.getConsoleItem().isEmpty()) {
+								modiSicurezzaMessaggio = true;
+							}
+						}
+					}catch(Throwable t) {
+						this.log.error(t.getMessage(),t);
+					}
+					
 					if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(gestioneToken)){
 						if(pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getRuoli()!=null &&
 								pa.getAutorizzazioneToken().getRuoli().sizeRuoloList()>0) {
-							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_RUOLI_PRESENTI_AUTENTICAZIONE_TOKEN_MODIFICATA);
-							return false;
+							if(profiloModi) {
+								if(!modiSicurezzaMessaggio) {
+									this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_RUOLI_PRESENTI_AUTENTICAZIONE_TOKEN_MODIFICATA_MODI);
+									return false;
+								}
+							}
+							else {
+								this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_RUOLI_PRESENTI_AUTENTICAZIONE_TOKEN_MODIFICATA);
+								return false;
+							}
 						}
 					}
 					if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)){
@@ -7502,9 +7534,11 @@ public class ConsoleHelper implements IConsoleHelper {
 					
 					if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(gestioneToken)){
 						if(profiloModi) {
-							if(pa.getServiziApplicativiAutorizzati()!=null && pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
-								this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_TOKEN_MODIFICATA_MODI);
-								return false;
+							if(!modiSicurezzaMessaggio) {
+								if(pa.getServiziApplicativiAutorizzati()!=null && pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
+									this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_TOKEN_MODIFICATA_MODI);
+									return false;
+								}
 							}
 						}
 						else if(pa.getAutorizzazioneToken()!=null && pa.getAutorizzazioneToken().getServiziApplicativi()!=null &&

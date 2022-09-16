@@ -51,6 +51,8 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
  */
 public class TestInterfaceBigger {
 
+	private static boolean logSystemOutError = true;
+	
 	public static void main(String[] args) throws Exception {
 		
 
@@ -65,6 +67,8 @@ public class TestInterfaceBigger {
 			mergeSpec = Boolean.valueOf(args[1]);
 		}
 		
+		// fix per evitare troppo output su jenkins:
+		logSystemOutError = !OpenAPILibrary.json_schema.equals(openAPILibrary);
 		
 		
 		// ** FHIR
@@ -101,6 +105,7 @@ public class TestInterfaceBigger {
 			initT = DateManager.getTimeMillis();
 			IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 			OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
+			configO.setEmitLogError(logSystemOutError);
 			configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
 			configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
 			configO.getOpenApiValidatorConfig().setValidateAPISpec(true);

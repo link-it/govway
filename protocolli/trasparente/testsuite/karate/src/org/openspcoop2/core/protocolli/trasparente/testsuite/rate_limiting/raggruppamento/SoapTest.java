@@ -35,11 +35,13 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.SoapB
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils.PolicyAlias;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWSOptions;
 import org.openspcoop2.utils.security.JsonSignature;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
@@ -133,6 +135,90 @@ public class SoapTest extends ConfigLoader {
 		
 	}
 	
+	@Test
+	public void perRichiedenteTokenFruizione() throws Exception {
+		
+		final String erogazione = "RaggruppamentoRichiedenteTokenSoap";
+		final String urlServizio =  basePath + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+erogazione+"/v1";
+		
+		HttpRequest requestGroup1 = new HttpRequest();
+		requestGroup1.setContentType("application/soap+xml");
+		requestGroup1.setMethod(HttpRequestMethod.POST);
+		requestGroup1.setUrl(urlServizio);
+		requestGroup1.setContent(SoapBodies.get(PolicyAlias.ORARIO).getBytes());
+		String clientIdNonFiltrato = "clientIdNonRegistrato";
+		String tokenClienIdSonosciuto = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.applicativi_token.Utilities.buildJWT(clientIdNonFiltrato, null, false);
+		requestGroup1.addHeader(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+tokenClienIdSonosciuto);
+		
+		
+		HttpRequest requestGroup2 = new HttpRequest();
+		requestGroup2.setContentType("application/soap+xml");
+		requestGroup2.setMethod(HttpRequestMethod.POST);
+		requestGroup2.setUrl(urlServizio);
+		requestGroup2.setContent(SoapBodies.get(PolicyAlias.ORARIO).getBytes());
+		String clientIdApp1 = "clientIdApplicativoToken1SoggettoInternoFruitore";
+		String tokenClientIdApp1 = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.applicativi_token.Utilities.buildJWT(clientIdApp1, null, false);
+		requestGroup2.addHeader(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+tokenClientIdApp1);
+		
+		
+		HttpRequest requestGroup3 = new HttpRequest();
+		requestGroup3.setContentType("application/soap+xml");
+		requestGroup3.setMethod(HttpRequestMethod.POST);
+		requestGroup3.setUrl(urlServizio);
+		requestGroup3.setContent(SoapBodies.get(PolicyAlias.ORARIO).getBytes());
+		String clientIdApp2 = "clientIdApplicativoToken2SoggettoInternoFruitore";
+		String tokenClientIdApp2 = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.applicativi_token.Utilities.buildJWT(clientIdApp2, null, false);
+		requestGroup3.addHeader(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+tokenClientIdApp2);
+		
+		
+		HttpRequest[] requests = {requestGroup1, requestGroup2, requestGroup3};
+		
+		makeAndCheckGroupRequests(TipoServizio.FRUIZIONE, PolicyAlias.ORARIO, erogazione, requests);
+		
+	}
+	
+	@Test
+	public void perRichiedenteTokenErogazione() throws Exception {
+		
+		final String erogazione = "RaggruppamentoRichiedenteTokenSoap";
+		final String urlServizio =  basePath + "/SoggettoInternoTest/"+erogazione+"/v1";
+		
+		HttpRequest requestGroup1 = new HttpRequest();
+		requestGroup1.setContentType("application/soap+xml");
+		requestGroup1.setMethod(HttpRequestMethod.POST);
+		requestGroup1.setUrl(urlServizio);
+		requestGroup1.setContent(SoapBodies.get(PolicyAlias.ORARIO).getBytes());
+		String clientIdNonFiltrato = "clientIdNonRegistrato";
+		String tokenClienIdSonosciuto = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.applicativi_token.Utilities.buildJWT(clientIdNonFiltrato, null, false);
+		requestGroup1.addHeader(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+tokenClienIdSonosciuto);
+		
+		
+		HttpRequest requestGroup2 = new HttpRequest();
+		requestGroup2.setContentType("application/soap+xml");
+		requestGroup2.setMethod(HttpRequestMethod.POST);
+		requestGroup2.setUrl(urlServizio);
+		requestGroup2.setContent(SoapBodies.get(PolicyAlias.ORARIO).getBytes());
+		String clientIdApp1 = "clientIdApplicativoToken1SoggettoInternoFruitore";
+		String tokenClientIdApp1 = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.applicativi_token.Utilities.buildJWT(clientIdApp1, null, false);
+		requestGroup2.addHeader(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+tokenClientIdApp1);
+		
+		
+		HttpRequest requestGroup3 = new HttpRequest();
+		requestGroup3.setContentType("application/soap+xml");
+		requestGroup3.setMethod(HttpRequestMethod.POST);
+		requestGroup3.setUrl(urlServizio);
+		requestGroup3.setContent(SoapBodies.get(PolicyAlias.ORARIO).getBytes());
+		String clientIdApp2 = "clientIdApplicativoToken2SoggettoInternoFruitore";
+		String tokenClientIdApp2 = org.openspcoop2.core.protocolli.trasparente.testsuite.autenticazione.applicativi_token.Utilities.buildJWT(clientIdApp2, null, false);
+		requestGroup3.addHeader(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+tokenClientIdApp2);
+		
+		
+		HttpRequest[] requests = {requestGroup1, requestGroup2, requestGroup3};
+		
+		makeAndCheckGroupRequests(TipoServizio.EROGAZIONE, PolicyAlias.ORARIO, erogazione, requests);
+		
+	}
+	
 	
 	
 	private static void makeAndCheckGroupRequests(TipoServizio tipoServizio, PolicyAlias policy, String erogazione, HttpRequest[] requests) {
@@ -157,6 +243,8 @@ public class SoapTest extends ConfigLoader {
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(maxRequests*requests.length);
 
 		for (int i = 0; i < maxRequests; i++) {
+
+			Utilities.sleep(200); // essendo la policy 'completata con sucesso' si conta solo dopo aver completato la richiesta, e andando in parallelo potrebbero risultare nei limiti
 			
 			for(var request : requests) {
 				executor.execute(() -> {
@@ -194,6 +282,8 @@ public class SoapTest extends ConfigLoader {
 		final Vector<HttpResponse> responsesFailed = new Vector<>();
 		executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(maxRequests*requests.length);
 		for (int i = 0; i < maxRequests; i++) {
+
+			Utilities.sleep(200); // essendo la policy 'completata con sucesso' si conta solo dopo aver completato la richiesta, e andando in parallelo potrebbero risultare nei limiti
 			
 			for(var request : requests) {
 			executor.execute(() -> {

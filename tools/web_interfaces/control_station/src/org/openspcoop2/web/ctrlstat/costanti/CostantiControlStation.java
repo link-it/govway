@@ -1776,6 +1776,7 @@ public class CostantiControlStation {
 	
 	private static final String MESSAGGIO_ERRORE_RUOLI_PRESENTI_AUTENTICAZIONE_XXX_MODIFICATA = "Non &egrave; possibile modificare l'autenticazione "+MESSAGGIO_ERRORE_XXX+" senza prima eliminare i ruoli registrati nell'autorizzazione "+MESSAGGIO_ERRORE_XXX+" per ruoli";
 	public static final String MESSAGGIO_ERRORE_RUOLI_PRESENTI_AUTENTICAZIONE_TOKEN_MODIFICATA = MESSAGGIO_ERRORE_RUOLI_PRESENTI_AUTENTICAZIONE_XXX_MODIFICATA.replaceAll(MESSAGGIO_ERRORE_XXX, MESSAGGIO_ERRORE_TOKEN).replace("modificare", "disabilitare");
+	public static final String MESSAGGIO_ERRORE_RUOLI_PRESENTI_AUTENTICAZIONE_TOKEN_MODIFICATA_MODI = MESSAGGIO_ERRORE_RUOLI_PRESENTI_AUTENTICAZIONE_XXX_MODIFICATA.replaceFirst(MESSAGGIO_ERRORE_XXX, MESSAGGIO_ERRORE_TOKEN).replaceFirst(MESSAGGIO_ERRORE_XXX, MESSAGGIO_ERRORE_MESSAGGIO).replace("modificare", "disabilitare");
 	
 	private static final String MESSAGGIO_ERRORE_SCOPE_PRESENTI_AUTENTICAZIONE_XXX_MODIFICATA = "Non &egrave; possibile modificare l'autenticazione "+MESSAGGIO_ERRORE_XXX+" senza prima eliminare gli scope registrati nell'autorizzazione "+MESSAGGIO_ERRORE_XXX+" per scope";
 	public static final String MESSAGGIO_ERRORE_SCOPE_PRESENTI_AUTENTICAZIONE_TOKEN_MODIFICATA = MESSAGGIO_ERRORE_SCOPE_PRESENTI_AUTENTICAZIONE_XXX_MODIFICATA.replaceAll(MESSAGGIO_ERRORE_XXX, MESSAGGIO_ERRORE_TOKEN).replace("modificare", "disabilitare");

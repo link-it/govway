@@ -42,6 +42,7 @@ public class IDUnivocoGroupByPolicyMapId extends IDUnivocoGroupByPolicy implemen
 		this.setProtocollo(idSuper.getProtocollo());
 		this.setFruitore(idSuper.getFruitore());
 		this.setServizioApplicativoFruitore(idSuper.getServizioApplicativoFruitore());
+		this.setServizioApplicativoToken(idSuper.getServizioApplicativoToken());
 		this.setErogatore(idSuper.getErogatore());
 		this.setServizioApplicativoErogatore(idSuper.getServizioApplicativoErogatore());
 		this.setServizio(idSuper.getServizio());

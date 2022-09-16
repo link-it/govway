@@ -687,6 +687,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 									schemaValidationConfig.setVerbose(config.isVerbose());
 									schemaValidationConfig.setAdditionalProperties(policyAdditionalProperties);
 									schemaValidationConfig.setPoliticaInclusioneTipi(POLITICA_INCLUSIONE_TIPI.DEFAULT);
+									schemaValidationConfig.setEmitLogError(config.isEmitLogError());
 									//System.out.println("ADD SCHEMA PER ["+apiSchemaName+"#"+nameInternal+"] ["+new String(bout.toByteArray())+"]");
 									validator.setSchema(schema, schemaValidationConfig, log);
 									
@@ -840,6 +841,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 															schemaValidationConfig.setVerbose(config.isVerbose());
 															schemaValidationConfig.setAdditionalProperties(policyAdditionalProperties);
 															schemaValidationConfig.setPoliticaInclusioneTipi(POLITICA_INCLUSIONE_TIPI.DEFAULT);
+															schemaValidationConfig.setEmitLogError(config.isEmitLogError());
 															//System.out.println("ADD SCHEMA PER ["+apiSchemaName+"#"+nameInternal+"] ["+new String(bout.toByteArray())+"]");
 															validator.setSchema(bout.toByteArray(), schemaValidationConfig, log);
 															
@@ -909,6 +911,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 							schemaValidationConfig.setVerbose(config.isVerbose());
 							schemaValidationConfig.setAdditionalProperties(policyAdditionalProperties);
 							schemaValidationConfig.setPoliticaInclusioneTipi(POLITICA_INCLUSIONE_TIPI.DEFAULT);
+							schemaValidationConfig.setEmitLogError(config.isEmitLogError());
 							//System.out.println("ADD SCHEMA PER ["+schemaName+"] ["+new String(schema)+"]");
 							validator.setSchema(schema, schemaValidationConfig, log);
 							
