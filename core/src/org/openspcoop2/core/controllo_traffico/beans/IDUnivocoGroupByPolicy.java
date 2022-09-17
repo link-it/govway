@@ -843,7 +843,7 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 		else if(tmp.length>=newLength3) {
 			// l'informazione sul PolicyMapId viene sempre aggiunta, ma viene valorizzata a QUALSIASI se non è effettivamente una PolicyMapId
 			String value = tmp[posizioneIdGroupBy];
-			idUnivocoGroupBy = value!=null && QUALSIASI.equals(value);
+			idUnivocoGroupBy = value!=null && !QUALSIASI.equals(value);
 			lengthGreaterEquals3 = true;
 		}
 		

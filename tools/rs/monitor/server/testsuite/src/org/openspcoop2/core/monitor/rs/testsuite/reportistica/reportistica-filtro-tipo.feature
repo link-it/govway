@@ -85,7 +85,11 @@ Examples:
 | 'occupazione_banda-distribuzione-azione' | 'distribuzione-azione' | filtro.esito.tipo | null | 'occupazione_banda' | null |
 | 'occupazione_banda-distribuzione-applicativo' | 'distribuzione-applicativo' | filtro.esito.tipo | null | 'occupazione_banda' | null | 
 | 'occupazione_banda-distribuzione-id-autenticato' | 'distribuzione-id-autenticato' | filtro.esito.tipo | null | 'occupazione_banda' | null | 
-| 'occupazione_banda-distribuzione-token-info' | 'distribuzione-token-info' | filtro.esito.tipo | filtro.claim | 'occupazione_banda' | null | 
+| 'occupazione_banda-distribuzione-token-info-subject' | 'distribuzione-token-info' | filtro.esito.tipo | 'subject' | 'occupazione_banda' | null |
+| 'occupazione_banda-distribuzione-token-info-issuer' | 'distribuzione-token-info' | filtro.esito.tipo | 'issuer' | 'occupazione_banda' | null |
+| 'occupazione_banda-distribuzione-token-info-client-id' | 'distribuzione-token-info' | filtro.esito.tipo | 'client_id' | 'occupazione_banda' | null |
+| 'occupazione_banda-distribuzione-token-info-username' | 'distribuzione-token-info' | filtro.esito.tipo | 'username' | 'occupazione_banda' | null |
+| 'occupazione_banda-distribuzione-token-info-email' | 'distribuzione-token-info' | filtro.esito.tipo | 'email' | 'occupazione_banda' | null |
 | 'occupazione_banda-distribuzione-indirizzo-ip' | 'distribuzione-indirizzo-ip' | filtro.esito.tipo | null | 'occupazione_banda' | null |
 | 'tempo_medio_risposta-distribuzione-temporale' | 'distribuzione-temporale' | filtro.esito.tipo | null | 'tempo_medio_risposta' | null |
 | 'tempo_medio_risposta-distribuzione-esiti' | 'distribuzione-esiti' | null | null | 'tempo_medio_risposta' | null | 
@@ -95,7 +99,11 @@ Examples:
 | 'tempo_medio_risposta-distribuzione-azione' | 'distribuzione-azione' | filtro.esito.tipo | null | 'tempo_medio_risposta' | null | 
 | 'tempo_medio_risposta-distribuzione-applicativo' | 'distribuzione-applicativo' | filtro.esito.tipo | null | 'tempo_medio_risposta' | null | 
 | 'tempo_medio_risposta-distribuzione-id-autenticato' | 'distribuzione-id-autenticato' | filtro.esito.tipo | null | 'tempo_medio_risposta' | null | 
-| 'tempo_medio_risposta-distribuzione-token-info' | 'distribuzione-token-info' | filtro.esito.tipo | filtro.claim | 'tempo_medio_risposta' | null |
+| 'tempo_medio_risposta-distribuzione-token-info-subject' | 'distribuzione-token-info' | filtro.esito.tipo | 'subject' | 'tempo_medio_risposta' | null |
+| 'tempo_medio_risposta-distribuzione-token-info-issuer' | 'distribuzione-token-info' | filtro.esito.tipo | 'issuer' | 'tempo_medio_risposta' | null |
+| 'tempo_medio_risposta-distribuzione-token-info-client-id' | 'distribuzione-token-info' | filtro.esito.tipo | 'client_id' | 'tempo_medio_risposta' | null |
+| 'tempo_medio_risposta-distribuzione-token-info-username' | 'distribuzione-token-info' | filtro.esito.tipo | 'username' | 'tempo_medio_risposta' | null |
+| 'tempo_medio_risposta-distribuzione-token-info-email' | 'distribuzione-token-info' | filtro.esito.tipo | 'email' | 'tempo_medio_risposta' | null |
 | 'tempo_medio_risposta-distribuzione-indirizzo-ip' | 'distribuzione-indirizzo-ip' | filtro.esito.tipo | null | 'tempo_medio_risposta' | null |
 
 @ReportFullTipoQualsiasi

@@ -31,6 +31,7 @@ import java.util.Map;
 import javax.xml.soap.SOAPBody;
 
 import org.apache.commons.io.output.NullOutputStream;
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -1261,7 +1262,9 @@ public class RicezioneBusteService  {
 					}catch(Throwable t) {
 						logCore.error("Parsing errore non riuscito: "+t.getMessage(),t);
 					}
-					descrizioneSoapFault = " ("+contentAsString+")";
+					if(contentAsString!=null && StringUtils.isNotEmpty(contentAsString)) {
+						descrizioneSoapFault = " ("+contentAsString+")";
+					}
 				}
 				res.setStatus(statoServletResponse);
 				

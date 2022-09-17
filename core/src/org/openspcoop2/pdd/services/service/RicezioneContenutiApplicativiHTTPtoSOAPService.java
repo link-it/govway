@@ -32,6 +32,7 @@ import java.util.Map;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.constants.TipoPdD;
@@ -1120,7 +1121,9 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 						}catch(Throwable t) {
 							logCore.error("Parsing errore non riuscito: "+t.getMessage(),t);
 						}
-						descrizioneSoapFault = " ("+contentAsString+")";
+						if(contentAsString!=null && StringUtils.isNotEmpty(contentAsString)) {
+							descrizioneSoapFault = " ("+contentAsString+")";
+						}
 					}
 					res.setStatus(statoServletResponse);
 					
