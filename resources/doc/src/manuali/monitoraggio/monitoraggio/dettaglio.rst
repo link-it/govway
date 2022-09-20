@@ -29,7 +29,7 @@ La sezione **Informazioni Generali** (:numref:`mon_DettaglioTransazioneInfo_fig`
 
     -  Tipologia: indica se l'API invocata riguarda una erogazione o fruizione, e riporta il profilo di utilizzo
 
-    -  Esito: indica se la richiesta è stata gestite con successo dal Gateway, ed in caso di anomalie viene riportato l'errore principale che ha causato il fallimento della gestione
+    -  Esito: indica se la richiesta è stata gestite con successo dal Gateway, ed in caso di anomalie viene riportato l'errore principale che ha causato il fallimento della gestione; maggiori dettagli sui possibili esiti vengono forniti nella sezione :ref:`mon_esito_transazione`
 
     -  Fruitore: soggetto mittente della richiesta; rappresenta il dominio di appartenenza del client che ha generato la richiesta verso il gateway
 
@@ -215,3 +215,8 @@ tra cui:
     :name: mon_DettaglioTransazioneAvanzate_fig
 
     Informazioni Avanzate di una Transazione
+
+.. toctree::
+   :maxdepth: 2
+
+    <esitoTransazione>

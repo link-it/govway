@@ -56,7 +56,7 @@ Vediamo in dettaglio quali elementi contiene il form di ricerca:
    -  **Azione/Risorsa**: permette di selezionare una tra le
       azioni/risorse della API precedentemente selezionata.
 
--  Esito
+-  Esito (per maggiori dettagli sui possibili esiti è possibile consultare la sezione :ref:`mon_esito_transazione`)
 
    -  **Esito**: permette di selezionare una categoria di esiti a cui le transazioni appartengono, a scelta tra:
 
