@@ -1,3 +1,5 @@
 Tutti i keystore jks in questa directory sono arricchiti del certificato 'Erogatore.cer' per poter essere usati sia come keystore che come truststore nella testsuite.
 
 NOTA: i keystore multipleOU*.jks sono differenti da quelli presenti all'interno della directory omonimo per il motivo di cui sopra
+
+Nel truststore erogatore.jks sono stati inseriti anche i certificati delle chiavi presenti in protocolli/modipa/example/keys/xca/ExampleOrganization* per poter essere utilizzate nei canali TLS.

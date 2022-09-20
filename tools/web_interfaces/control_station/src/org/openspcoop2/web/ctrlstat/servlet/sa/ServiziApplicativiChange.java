@@ -549,6 +549,7 @@ public final class ServiziApplicativiChange extends Action {
 
 
 			// Controllo se ho modificato il protocollo, ricalcolo il default della versione del protocollo
+			@SuppressWarnings("unused")
 			boolean postBackTipoAuthSA = false;
 			if(postBackElementName != null ){
 				// tipo autenticazione
@@ -840,7 +841,9 @@ public final class ServiziApplicativiChange extends Action {
 			}
 			
 			boolean checkWizard = false;
-			if(!postBackTipoAuthSA && tipoauthSA != null && tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
+			if(
+					//!postBackTipoAuthSA && // Fix: non veniva attivato il wizard quando da una credenziale diversa da https (anche nessuna) si impostava https   
+					tipoauthSA != null && tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
 				if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO) &&
 						!ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI.equals(postBackElementName)) {
 					if(tipoCredenzialiSSLFileCertificato.getValue() != null && tipoCredenzialiSSLFileCertificato.getValue().length > 0) {

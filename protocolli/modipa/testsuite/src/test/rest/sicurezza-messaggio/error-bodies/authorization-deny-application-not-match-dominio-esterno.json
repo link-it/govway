@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/403/Authorization.html",
+    "title": "Authorization",
+    "status": 403,
+    "detail": "Rilevati due token di sicurezza firmati da applicativi differenti: 'ApplicativoBlockingIDA01ExampleExternalClient1' e 'ApplicativoBlockingIDA01ExampleExternalClient2'",
+    "govway_id": "#string"
+}

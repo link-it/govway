@@ -50,6 +50,9 @@ import com.intuit.karate.netty.FeatureServer;
     "classpath:test/rest/sicurezza-messaggio/idar02.feature",
     "classpath:test/rest/sicurezza-messaggio/idar03.feature",
     "classpath:test/rest/sicurezza-messaggio/idar0302.feature",
+    "classpath:test/rest/sicurezza-messaggio/autorizzazioneMessaggio.feature",
+    "classpath:test/rest/sicurezza-messaggio/autorizzazioneToken.feature",
+    "classpath:test/rest/sicurezza-messaggio/autorizzazioneMessaggioToken.feature"
     })
 public class BloccanteRestSicurezzaMessaggioTest extends ConfigLoader {
     

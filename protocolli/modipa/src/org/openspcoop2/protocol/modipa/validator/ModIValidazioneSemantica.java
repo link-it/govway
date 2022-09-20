@@ -224,7 +224,21 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				boolean sicurezzaToken = this.context.containsKey(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
 				boolean saIdentificatoByToken = false;
 				if(sicurezzaToken) {
-					IDServizioApplicativo idSAbyToken = IdentificazioneApplicativoMittenteUtils.identificazioneApplicativoMittenteByToken(this.log, state, busta, this.context);
+					IDServizioApplicativo idSAbyToken = null;
+					StringBuilder sbError = new StringBuilder();
+					try {
+						idSAbyToken = IdentificazioneApplicativoMittenteUtils.identificazioneApplicativoMittenteByToken(this.log, state, busta, this.context, sbError);
+					}catch(Exception e) {
+						if(sbError!=null && sbError.length()>0) {
+							this.context.addObject(Costanti.ERRORE_AUTORIZZAZIONE, Costanti.ERRORE_TRUE);
+							this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA, 
+									sbError.toString()));
+							return;
+						}
+						else {
+							throw e;
+						}
+					}
 					saIdentificatoByToken = idSAbyToken!=null;
 				}
 				

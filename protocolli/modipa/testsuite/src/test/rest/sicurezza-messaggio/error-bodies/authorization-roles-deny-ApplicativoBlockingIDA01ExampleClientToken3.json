@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/403/Authorization.html",
+    "title": "Authorization",
+    "status": 403,
+    "detail": "Applicativo Mittente ApplicativoBlockingIDA01ExampleClientToken3 (Soggetto: DemoSoggettoFruitore) non autorizzato; Ruolo 'ModIRuolo1FonteQualsiasi' non trovato nell'applicativo e nel contesto della richiesta",
+    "govway_id": "#string"
+}

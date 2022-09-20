@@ -1,3 +1,8 @@
+2022-09-20  Andrea Poli <apoli@link.it>
+
+	* [TestsuiteProtocolloModIPA]
+	Aggiunti test che verificano l'utilizzo di credenziali di tipo 'token' nel profilo ModI.
+
 2022-09-14  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, ApiRsConfigurazione, GovWayMonitor, ApiRsMonitoraggio, ProtocolloModIPA]

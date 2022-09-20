@@ -41,6 +41,8 @@ Vediamo nelle sezioni seguenti come si possono effettuare le configurazioni rela
         messaggio/idar01
         messaggio/idar02
         messaggio/idar03
+        messaggio/pdnd
+        messaggio/pdndIntegrity
 	messaggio/requestDigest
 	messaggio/informazioniUtente
 	messaggio/avanzata/index

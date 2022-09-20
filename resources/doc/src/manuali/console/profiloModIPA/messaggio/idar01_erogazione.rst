@@ -96,7 +96,7 @@ I dati da fornire sono:
     Dati ModI relativi ad un applicativo esterno con configurazione manuale dei dati di sicurezza
 
 
-Per abilitare le funzionalità di autorizzazione dei singoli applicativi (punto 2 del precedente elenco) si deve procedere alla configurazione della sezione "Controllo Accessi" relativa all'erogazione. Quando attiva la sicurezza messaggio, questa sezione conterrà il form "Autorizzazione ModI" (:numref:`erogazione_secMessaggio_fig`). Qui è possibile specificare un elenco di applicativi (esterni) autorizzati, ad accedere all'erogazione, tra quelli identificati nella fase di verifica del relativo certificato. Gli applicativi esterni saranno selezionabili tra quelli censiti nella sezione "Applicativi" (:numref:`erogazione_secMessaggio_fig`).
+Per abilitare le funzionalità di autorizzazione dei singoli applicativi (punto 2 del precedente elenco) si deve procedere alla configurazione della sezione "Controllo Accessi" relativa all'erogazione. Quando attiva la sicurezza messaggio, questa sezione conterrà il form "Autorizzazione Messaggio" (:numref:`erogazione_secMessaggio_fig`). Qui è possibile specificare un elenco puntuale di applicativi (esterni) autorizzati, ad accedere all'erogazione, tra quelli identificati nella fase di verifica del relativo certificato. Gli applicativi esterni saranno selezionabili tra quelli censiti nella sezione "Applicativi" (:numref:`erogazione_secMessaggio_fig`). In alternativa è possibile definire i ruoli che gli applicativi devono possedere.
 
    .. figure:: ../../_figure_console/modipa_erogazione_secMessaggio.png
     :scale: 60%

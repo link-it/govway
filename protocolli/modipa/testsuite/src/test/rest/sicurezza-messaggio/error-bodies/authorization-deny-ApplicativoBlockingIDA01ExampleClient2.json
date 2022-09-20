@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/403/Authorization.html",
+    "title": "Authorization",
+    "status": 403,
+    "detail": "Applicativo Mittente ApplicativoBlockingIDA01ExampleClient2 (Soggetto: DemoSoggettoFruitore) non autorizzato",
+    "govway_id": "#string"
+}

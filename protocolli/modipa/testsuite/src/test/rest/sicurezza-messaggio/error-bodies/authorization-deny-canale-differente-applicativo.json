@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/403/Authorization.html",
+    "title": "Authorization",
+    "status": 403,
+    "detail": "Token di sicurezza firmato da un applicativo 'ApplicativoBlockingIDA01ExampleExternalClient1' risiedente nel dominio del soggetto 'modipa/DemoSoggettoFruitoreEsterno'; il dominio differisce dal soggetto identificato sul canale di trasporto (modipa/DemoSoggettoFruitoreEsterno2)",
+    "govway_id": "#string"
+}

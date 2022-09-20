@@ -1,0 +1,1 @@
+Nel truststore erogatore.jks sono stati inseriti anche i certificati delle chiavi presenti in protocolli/modipa/example/keys/xca/ExampleOrganization* per poter essere utilizzate nei canali TLS.

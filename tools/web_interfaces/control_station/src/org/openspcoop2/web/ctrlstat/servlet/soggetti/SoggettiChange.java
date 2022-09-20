@@ -445,6 +445,7 @@ public final class SoggettiChange extends Action {
 			String labelButtonSalva = Costanti.LABEL_MONITOR_BUTTON_INVIA;
 
 			// Controllo se ho modificato il protocollo, ricalcolo il default della versione del protocollo
+			@SuppressWarnings("unused")
 			boolean postBackTipoAuthSoggetto = false;
 			if(postBackElementName != null ){
 				// tipo autenticazione
@@ -716,7 +717,9 @@ public final class SoggettiChange extends Action {
 			}
 			
 			boolean checkWizard = false;
-			if(!postBackTipoAuthSoggetto && this.tipoauthSoggetto != null && this.tipoauthSoggetto.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
+			if(
+					//!postBackTipoAuthSoggetto &&  // Fix: non veniva attivato il wizard quando da una credenziale diversa da https (anche nessuna) si impostava https  
+					this.tipoauthSoggetto != null && this.tipoauthSoggetto.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
 				
 				boolean changeTipoDominio = false;
 				if(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO.equalsIgnoreCase(postBackElementName)) {

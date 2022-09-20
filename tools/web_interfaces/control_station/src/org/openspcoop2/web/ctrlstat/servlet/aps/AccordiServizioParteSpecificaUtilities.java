@@ -1335,6 +1335,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		List<PortaDelegata> pdGenerateAutomcaticamente = null;
 		List<IDPortaDelegata> idPDGenerateAutomaticamente = null;
+		List<IDPortaDelegata> idPDGenerateAutomaticamenteTutteFruizioni = null;
 		
 		// Verifico se sono in modalità di interfaccia 'standard' che non si tratti della PortaApplicativa generata automaticamente.
 		// In tal caso la posso eliminare.
@@ -1364,6 +1365,31 @@ public class AccordiServizioParteSpecificaUtilities {
 						pdGenerateAutomcaticamente.add(porteDelegateCore.getPortaDelegata(idPortaDelegata));
 					}
 				}
+				
+				if(asps.sizeFruitoreList()>0) {
+					for (Fruitore fruitore: asps.getFruitoreList()) {
+						IDSoggetto idF = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
+						if(idF.equals(idSoggettoFruitore)) {
+							if(idPDGenerateAutomaticamente!=null && idPDGenerateAutomaticamente.size()>0){
+								if(idPDGenerateAutomaticamenteTutteFruizioni==null) {
+									idPDGenerateAutomaticamenteTutteFruizioni = new ArrayList<IDPortaDelegata>();
+								}
+								idPDGenerateAutomaticamenteTutteFruizioni.addAll(idPDGenerateAutomaticamente);
+							}
+						}
+						else {
+							List<IDPortaDelegata> l = porteDelegateCore.getIDPorteDelegateAssociate(idServizio, idF);
+							if(l!=null && l.size()>0){
+								if(idPDGenerateAutomaticamenteTutteFruizioni==null) {
+									idPDGenerateAutomaticamenteTutteFruizioni = new ArrayList<IDPortaDelegata>();
+								}
+								idPDGenerateAutomaticamenteTutteFruizioni.addAll(l);
+							}
+						}
+					}
+				}
+				
+				
 				
 			}
 			else if(generaPACheckSoggetto){
@@ -1450,7 +1476,8 @@ public class AccordiServizioParteSpecificaUtilities {
 		// Devo quindi capire se la fruizione o l'erogazione deve essere eliminata o meno
 		// if(apsEliminabile) {
 		inUso = apsCore.isAccordoServizioParteSpecificaInUso(asps, whereIsInUso, 
-					idPDGenerateAutomaticamente, idPAGenerateAutomaticamente, normalizeObjectIds);
+					idPDGenerateAutomaticamenteTutteFruizioni,//idPDGenerateAutomaticamente, 
+					idPAGenerateAutomaticamente, normalizeObjectIds);
 		//}
 		
 		if (inUso) {// accordo in uso

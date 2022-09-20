@@ -167,7 +167,7 @@ public class IdentificazioneApplicativoMittenteUtils {
 			
 			
 			
-	public static IDServizioApplicativo identificazioneApplicativoMittenteByToken(Logger log, IState state, Busta busta, Context context) throws Exception {
+	public static IDServizioApplicativo identificazioneApplicativoMittenteByToken(Logger log, IState state, Busta busta, Context context, StringBuilder errorDetails) throws Exception {
 		try {	
 			
 			// letto tramite la sicurezza messaggio nella validazione sintattica
@@ -196,17 +196,21 @@ public class IdentificazioneApplicativoMittenteUtils {
 				}
 				// Non ha senso poter identificare entrambi con le stesse credenziali
 				else if(idServizioApplicativoToken.getIdSoggettoProprietario().equals(idSoggettoMittente)==false) {
-					throw new Exception("Token di sicurezza firmato da un applicativo '"+idServizioApplicativoToken.getNome()+
+					String msgError = "Token di sicurezza firmato da un applicativo '"+idServizioApplicativoToken.getNome()+
 							"' risiedente nel dominio del soggetto '"+idServizioApplicativoToken.getIdSoggettoProprietario().toString()+"'; il dominio differisce dal soggetto identificato sul canale di trasporto ("+idSoggettoMittente+
-							")");
+							")";
+					errorDetails.append(msgError);
+					throw new Exception(msgError);
 				}
 	    		
 	    		if(idServizioApplicativo!=null) {
 	    			// già identificato anche in token di sicurezza messaggio
 	    			
 	    			if(!idServizioApplicativo.equals(idServizioApplicativoToken)) {
-	    				throw new Exception("Rilevati due token di sicurezza firmati da applicativi differenti: '"+idServizioApplicativo.getNome()+
-								"' e '"+idServizioApplicativoToken.getNome()+"'");
+	    				String msgError = "Rilevati due token di sicurezza firmati da applicativi differenti: '"+idServizioApplicativo.getNome()+
+								"' e '"+idServizioApplicativoToken.getNome()+"'";
+	    				errorDetails.append(msgError);
+						throw new Exception(msgError);
 	    			}
 	    		}
 	    		else {

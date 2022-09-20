@@ -50,6 +50,9 @@ import com.intuit.karate.netty.FeatureServer;
     "classpath:test/soap/sicurezza-messaggio/idas02.feature",
     "classpath:test/soap/sicurezza-messaggio/idas03.feature",
     "classpath:test/soap/sicurezza-messaggio/idas0302.feature",
+    "classpath:test/soap/sicurezza-messaggio/autorizzazioneMessaggio.feature",
+    "classpath:test/soap/sicurezza-messaggio/autorizzazioneToken.feature",
+    "classpath:test/soap/sicurezza-messaggio/autorizzazioneMessaggioToken.feature"
     })
 
 public class BloccanteSoapSicurezzaMessaggioTest extends ConfigLoader {

@@ -2777,7 +2777,25 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 					//throw new ProtocolException(e.getMessage(),e);
 				}
 				if(profiloSicurezzaMessaggioHeaderItemValue!=null && ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ID.equals(postBackElementName)){
-					profiloSicurezzaMessaggioHeaderItemValue.setValue(null);
+					
+					String headerSelezionato = profiloSicurezzaMessaggioHeaderItemValue.getValue();
+					boolean agidPresente = ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA.equals(headerSelezionato) ||
+							ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE.equals(headerSelezionato)  ||
+							ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_MODIPA.equals(headerSelezionato);
+					boolean authorizationOnlyPresente = ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION.equals(headerSelezionato);
+					if(isSicurezza01 || isSicurezza02) {
+						// se è stato modificato (postback) in 01 o 02, e non c'e' l'header authorization imposto il null per forzare il default
+						if(!authorizationOnlyPresente) {
+							profiloSicurezzaMessaggioHeaderItemValue.setValue(null);
+						}
+					}
+					else if(isSicurezza03) {
+						// se è stato modificato (postback) in 0301 o 0302, e non c'e' l'header agid imposto il null per forzare il default
+						if(!agidPresente) {
+							profiloSicurezzaMessaggioHeaderItemValue.setValue(null);
+						}
+					}
+										
 				}
 				if(isSicurezza03) {
 					if(profiloSicurezzaMessaggioHeaderItemValue!=null &&
