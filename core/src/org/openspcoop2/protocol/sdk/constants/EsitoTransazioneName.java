@@ -77,6 +77,8 @@ public enum EsitoTransazioneName implements Serializable{
 	ERRORE_SOSPENSIONE,
 	CORS_PREFLIGHT_REQUEST_VIA_GATEWAY,
 	CORS_PREFLIGHT_REQUEST_TRASPARENTE,
+	ERRORE_TRASFORMAZIONE_RICHIESTA,
+	ERRORE_TRASFORMAZIONE_RISPOSTA,
 	CONSEGNA_MULTIPLA_FALLITA,
 	API_NON_INDIVIDUATA,
 	OPERAZIONE_NON_INDIVIDUATA,
@@ -131,11 +133,13 @@ public enum EsitoTransazioneName implements Serializable{
 	}
 	
 	public static boolean isErroreRisposta(EsitoTransazioneName esitoTransactionName){
+		// Vedi anche gruppo in esiti.properties
 		if(EsitoTransazioneName.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO.equals(esitoTransactionName) || 
 				EsitoTransazioneName.ERRORE_ALLEGATI_MESSAGGIO_RISPOSTA.equals(esitoTransactionName) || 
 				EsitoTransazioneName.ERRORE_CORRELAZIONE_APPLICATIVA_RISPOSTA.equals(esitoTransactionName) || 
 				EsitoTransazioneName.ERRORE_SICUREZZA_MESSAGGIO_RISPOSTA.equals(esitoTransactionName) || 
 				EsitoTransazioneName.ERRORE_VALIDAZIONE_RISPOSTA.equals(esitoTransactionName) ||
+				EsitoTransazioneName.ERRORE_TRASFORMAZIONE_RISPOSTA.equals(esitoTransactionName) ||
 				EsitoTransazioneName.RISPOSTA_DUPLICATA.equals(esitoTransactionName)
 				){
 			return true;

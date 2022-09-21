@@ -1,7 +1,7 @@
 .. _mon_dettaglio_transazione:
 
 Dettaglio Transazione
-~~~~~~~~~~~~~~~~~~~~~
+----------------------
 
 Dal risutalto di una ricerca transazioni, sia in modalità "live" (:ref:`mon_live`) che
 in modalità "storico" (:ref:`mon_transazioni`), cliccando su un qualunque elemento in elenco, si accede
@@ -29,13 +29,15 @@ La sezione **Informazioni Generali** (:numref:`mon_DettaglioTransazioneInfo_fig`
 
     -  Tipologia: indica se l'API invocata riguarda una erogazione o fruizione, e riporta il profilo di utilizzo
 
-    -  Esito: indica se la richiesta è stata gestite con successo dal Gateway, ed in caso di anomalie viene riportato l'errore principale che ha causato il fallimento della gestione; maggiori dettagli sui possibili esiti vengono forniti nella sezione :ref:`mon_esito_transazione`
+    -  Esito: indica se la richiesta è stata gestite con successo dal Gateway; maggiori dettagli sui possibili esiti vengono forniti nella sezione :ref:`mon_esito_transazione`
+    
+    -  Dettaglio Errore: in caso di anomalie viene riportato l'errore principale che ha causato il fallimento della gestione (per maggiori informazioni vedere la sezione :ref:`mon_dettaglioErrore`)
 
     -  Fruitore: soggetto mittente della richiesta; rappresenta il dominio di appartenenza del client che ha generato la richiesta verso il gateway
 
-    -  Richiedente: indica l'identità del client che ha effettuato la richiesta
+    -  Richiedente: indica l'identità del client che ha effettuato la richiesta (per maggiori informazioni vedere la sezione :ref:`mon_richiedente`)
 
-    -  IP Richiedente: indirizzo IP del client che ha effettuato la richiesta
+    -  IP Richiedente: indirizzo IP del client che ha effettuato la richiesta (per maggiori informazioni vedere la sezione :ref:`mon_richiedente`)
 
     -  Profilo di Collaborazione: per api SOAP viene indicato il profilo di gestione (oneway o sincrono)
 
@@ -217,6 +219,8 @@ tra cui:
     Informazioni Avanzate di una Transazione
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
-    <esitoTransazione>
+    dettagli_transazione/esitoTransazione
+    dettagli_transazione/richiedente
+    dettagli_transazione/errore

@@ -1021,7 +1021,7 @@ public class GestoreCorrelazioneApplicativa {
 		}else{
 			this.idCorrelazione = idCorrelazioneApplicativa;
 		}
-
+TRONCAMENTO E NEL DIAGNOSTICO NON CABLARE 255 MA IL VALORE DELL APROPRIETA
 	}
 	
 	

@@ -637,6 +637,91 @@ public class EsitiProperties {
 		}
 	}
 	
+	private List<Integer> esitiCodeAutorizzazioneNegata = null;
+	public List<Integer> getEsitiCodeAutorizzazioneNegata() throws ProtocolException {
+		if(this.esitiCodeAutorizzazioneNegata == null){
+			this.initEsitiCodeAutorizzazioneNegata();
+		}
+
+		return this.esitiCodeAutorizzazioneNegata;
+	}
+	private synchronized void initEsitiCodeAutorizzazioneNegata() throws ProtocolException {
+		if(this.esitiCodeAutorizzazioneNegata == null){
+			this.esitiCodeAutorizzazioneNegata = filterByProtocol(getListaInteger("esiti.codes.autorizzazioneNegata")); 	   
+		}
+	}
+	
+	private List<Integer> esitiCodeControlloTrafficoPolicyViolate = null;
+	public List<Integer> getEsitiCodeControlloTrafficoPolicyViolate() throws ProtocolException {
+		if(this.esitiCodeControlloTrafficoPolicyViolate == null){
+			this.initEsitiCodeControlloTrafficoPolicyViolate();
+		}
+
+		return this.esitiCodeControlloTrafficoPolicyViolate;
+	}
+	private synchronized void initEsitiCodeControlloTrafficoPolicyViolate() throws ProtocolException {
+		if(this.esitiCodeControlloTrafficoPolicyViolate == null){
+			this.esitiCodeControlloTrafficoPolicyViolate = filterByProtocol(getListaInteger("esiti.codes.controlloTrafficoPolicyViolate")); 	   
+		}
+	}
+	
+	private List<Integer> esitiCodeServizioIntegrationManager = null;
+	public List<Integer> getEsitiCodeServizioIntegrationManager() throws ProtocolException {
+		if(this.esitiCodeServizioIntegrationManager == null){
+			this.initEsitiCodeServizioIntegrationManager();
+		}
+
+		return this.esitiCodeServizioIntegrationManager;
+	}
+	private synchronized void initEsitiCodeServizioIntegrationManager() throws ProtocolException {
+		if(this.esitiCodeServizioIntegrationManager == null){
+			this.esitiCodeServizioIntegrationManager = filterByProtocol(getListaInteger("esiti.codes.servizioIntegrationManager")); 	   
+		}
+	}
+	
+	private List<Integer> esitiCodeErroriProcessamentoRichiesta = null;
+	public List<Integer> getEsitiCodeErroriProcessamentoRichiesta() throws ProtocolException {
+		if(this.esitiCodeErroriProcessamentoRichiesta == null){
+			this.initEsitiCodeErroriProcessamentoRichiesta();
+		}
+
+		return this.esitiCodeErroriProcessamentoRichiesta;
+	}
+	private synchronized void initEsitiCodeErroriProcessamentoRichiesta() throws ProtocolException {
+		if(this.esitiCodeErroriProcessamentoRichiesta == null){
+			this.esitiCodeErroriProcessamentoRichiesta = filterByProtocol(getListaInteger("esiti.codes.erroriProcessamentoRichiesta")); 	   
+		}
+	}
+	
+	private List<Integer> esitiCodeErroriProcessamentoRisposta = null;
+	public List<Integer> getEsitiCodeErroriProcessamentoRisposta() throws ProtocolException {
+		if(this.esitiCodeErroriProcessamentoRisposta == null){
+			this.initEsitiCodeErroriProcessamentoRisposta();
+		}
+
+		return this.esitiCodeErroriProcessamentoRisposta;
+	}
+	private synchronized void initEsitiCodeErroriProcessamentoRisposta() throws ProtocolException {
+		if(this.esitiCodeErroriProcessamentoRisposta == null){
+			this.esitiCodeErroriProcessamentoRisposta = filterByProtocol(getListaInteger("esiti.codes.erroriProcessamentoRisposta")); 	   
+		}
+	}
+	
+	private List<Integer> esitiCodeErroriGenerici = null;
+	public List<Integer> getEsitiCodeErroriGenerici() throws ProtocolException {
+		if(this.esitiCodeErroriGenerici == null){
+			this.initEsitiCodeErroriGenerici();
+		}
+
+		return this.esitiCodeErroriGenerici;
+	}
+	private synchronized void initEsitiCodeErroriGenerici() throws ProtocolException {
+		if(this.esitiCodeErroriGenerici == null){
+			this.esitiCodeErroriGenerici = filterByProtocol(getListaInteger("esiti.codes.erroriGenerici")); 	   
+		}
+	}
+	
+	
 	private List<Integer> esitiCodeForSoapFaultIdentificationMode = null;
 	public List<Integer> getEsitiCodeForSoapFaultIdentificationMode() throws ProtocolException {
 		if(this.esitiCodeForSoapFaultIdentificationMode == null){

@@ -78,7 +78,7 @@ Di seguito vengono indicati tutti gli identificativi delle informazioni disponib
 
 - resultCode: esito della transazione (codifica numerica di GovWay);
 
-- errorDetail: dettaglio dell'errore avvenuto durante la gestione della transazione;
+- errorDetail: dettaglio dell'errore avvenuto durante la gestione della transazione (per maggiori informazioni si rimanda al manuale sulla console di monitoraggio nella sezione :ref:`mon_dettaglioErrore`);
 
 - transactionType: tipo della transazione (Standard, Sistema ...).
 
@@ -299,7 +299,7 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 	- forwardedIP
 	- clientIP
 
-- requester: rappresenta il richiedente della richiesta e assumerà la prima informazione valorizzata, trovata nella richiesta, nel seguente ordine:
+- requester: rappresenta il richiedente della richiesta e assumerà la prima informazione valorizzata, trovata nella richiesta, nel seguente ordine (per maggiori informazioni si rimanda al manuale sulla console di monitoraggio nella sezione :ref:`mon_richiedente`):
 
 	- tokenUsername: username presente nel token;
 	- tokenClient: identificativo dell'applicativo identificato tramite il clientId presente nel token;
@@ -307,15 +307,6 @@ Tutte le informazioni sono ritornate in millisecondi. È possibile ottenere le m
 	- tokenClientId: clientId presente nel token nel caso di client credentials grant type (claims clientId e sub presentano lo stesso valore);
 	- tokenSubject[@tokenIssuer]: subject presente nel token; viene aggiunto anche un suffisso @tokenIssuer se è presente anche un issuer nel token;
 	- principal: identificativo (credenziali) con cui l'applicativo è stato autenticato; se il tipo di autenticazione di trasporto risulta essere 'ssl' viene ritornato il valore dell'attributo CN.
-
-   .. note::
-         Le informazioni sul richiedente seguono la seguente logica:
-
-         - l'utente descritto in forma umana in un token rappresenta l'informazione più significativa (username);
-
-	 - altrimenti prevale un eventuale applicativo identificato (registrato su GovWay) dando precedenza ad un applicativo token rispetto ad un applicativo di trasporto;
-
-         - infine prevalgono le informazioni di un eventuale token presente rispetto al trasporto; se si tratta di client credentials grant type prevale l'informazione sul clientId altrimenti quella sul subject.
 
 **Validazione Token**
 

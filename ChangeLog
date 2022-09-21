@@ -1,3 +1,9 @@
+2022-09-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor, ApiRsMonitoraggio, Documentazione]
+	L'esito 'API Sospesa' è stato incluso nel gruppo 'Richiesta Scartata'
+	Migliorata documentazione della console di monitoraggio relativa alle informazioni Esito, Richiedente e Dettaglio Errore riportate nel dettaglio di una transazione.
+
 2022-09-20  Andrea Poli <apoli@link.it>
 
 	* [TestsuiteProtocolloModIPA]

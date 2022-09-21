@@ -262,46 +262,7 @@ Vediamo in dettaglio quali elementi contiene il form di ricerca:
    -  **Escludi Scartate**: Permette di escludere dall'elenco dei risultati le richieste di erogazione o fruizione scartate dal gateway (richieste malformate, api non individuate, operazioni non individuate, errori di autenticazione,…)
 
 
-Una volta impostati i criteri di ricerca desiderati, per procedere con
-la ricerca si deve utilizzare il pulsante **Cerca**. Se si vogliono
-riportare i criteri di ricerca ai valori iniziali è possibile utilizzare
-il pulsante **Ripulisci**.
 
-Ad eccezione delle ricerche in modalità "Identificativo", dopo aver effettuato una ricerca (tramite il pulsante 'Filtra'),
-saranno disponibili due nuovi pulsanti:
-
--  **Nuova Ricerca**: per effettuare una nuova ricerca utilizzando i parametri presenti nel form.
-
--  **Filtra Risultati**: per effettuare una ricerca usando come insieme di partenza le transazioni restituite dalla precedente ricerca.
-
-L'elenco delle transazioni risultato di una ricerca comprende una rappresentazione sintetica delle informazioni principali (:numref:`mon_ElencoTransazioni_fig`):
-
-- API, nome e versione
-
-- Tipo Erogazione o Fruizione
-
-- Identità del chiamante
-
-- Tags
-
-- Data Ingresso Richiesta
-
-- Operazione/Risorsa coinvolta
-
-- Tempo di latenza totale
-
-- Esito
-
-Ciascuna delle informazioni visualizzate in elenco, al passaggio del mouse, causa l'apertura di un tooltip che riporta ulteriori informazioni ad integrazione.
-
-In fondo all'elenco, nell'area dedicata alla gestione delle pagine, è possibile selezionare il numero massimo di elementi visualizzati per singola pagina (valore minimo 25).
-
-.. figure:: ../../_figure_monitoraggio/ElencoTransazioni.png
-    :scale: 100%
-    :align: center
-    :name: mon_ElencoTransazioni_fig
-
-    Elenco delle transazioni esito della ricerca
 
 La **Ricerca Avanzata** è quella che lascia all'utente la massima flessibilità nell'impostazione dei parametri di ricerca (:numref:`mon_RicercaAvanzata_fig`).
 

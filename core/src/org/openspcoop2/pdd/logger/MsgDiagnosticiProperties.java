@@ -682,8 +682,10 @@ public class MsgDiagnosticiProperties {
 	static {
 		MSG_DIAGNOSTICI_ERRORE_CONNETTORE.add("003008"); // inoltroBuste.inoltroConErrore
 		MSG_DIAGNOSTICI_ERRORE_CONNETTORE.add("003013"); // inoltroBuste.ricezioneSoapFault 
+		MSG_DIAGNOSTICI_ERRORE_CONNETTORE.add("003059"); // inoltroBuste.ricezioneRestProblem
 		MSG_DIAGNOSTICI_ERRORE_CONNETTORE.add("007013"); // consegnaContenutiApplicativi.consegnaConErrore
 		MSG_DIAGNOSTICI_ERRORE_CONNETTORE.add("007014"); // consegnaContenutiApplicativi.ricezioneSoapFault
+		MSG_DIAGNOSTICI_ERRORE_CONNETTORE.add("007058"); // consegnaContenutiApplicativi.ricezioneRestProblem
 	}
 	
 	/*---------- Codici Generazione Messaggio Errore -------------*/
