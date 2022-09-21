@@ -139,6 +139,98 @@ public class CostantiProprieta {
 	
 	
 	
+	// ****  CORRELAZIONE APPLICATIVA *****
+	
+	public static final String CORRELAZIONE_APPLICATIVA_VALUE_ENABLED = VALUE_ENABLED;
+	public static final String CORRELAZIONE_APPLICATIVA_VALUE_DISABLED = VALUE_DISABLED;
+	
+	public static final String CORRELAZIONE_APPLICATIVA_PROPERTY_NAME_TRUNCATE_ID = "correlation.truncate";
+	public static final String CORRELAZIONE_APPLICATIVA_PROPERTY_NAME_ACCEPT_IDENTIFICATION_FAILED_TRUNCATE_ID = "correlation.acceptIdentificationFailed.truncate";
+	public static final String CORRELAZIONE_APPLICATIVA_PROPERTY_NAME_BLOCK_IDENTIFICATION_FAILED_TRUNCATE_ID = "correlation.blockIdentificationFailed.truncate";
+	
+	public static final String CORRELAZIONE_APPLICATIVA_RICHIESTA_PROPERTY_NAME_TRUNCATE_ID = "correlation.request.truncate";
+	public static final String CORRELAZIONE_APPLICATIVA_RICHIESTA_PROPERTY_NAME_ACCEPT_IDENTIFICATION_FAILED_TRUNCATE_ID = "correlation.request.acceptIdentificationFailed.truncate";
+	public static final String CORRELAZIONE_APPLICATIVA_RICHIESTA_PROPERTY_NAME_BLOCK_IDENTIFICATION_FAILED_TRUNCATE_ID = "correlation.request.blockIdentificationFailed.truncate";
+	
+	public static final String CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_TRUNCATE_ID = "correlation.response.truncate";
+	public static final String CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_ACCEPT_IDENTIFICATION_FAILED_TRUNCATE_ID = "correlation.response.acceptIdentificationFailed.truncate";
+	public static final String CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_BLOCK_IDENTIFICATION_FAILED_TRUNCATE_ID = "correlation.response.blockIdentificationFailed.truncate";
+	
+	public static boolean isCorrelazioneApplicativaRichiesta_identificazioneFallita_blocca_truncate(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		return _isCorrelazioneApplicativa_truncate(proprieta, defaultValue,
+				CORRELAZIONE_APPLICATIVA_RICHIESTA_PROPERTY_NAME_BLOCK_IDENTIFICATION_FAILED_TRUNCATE_ID,
+				CORRELAZIONE_APPLICATIVA_RICHIESTA_PROPERTY_NAME_TRUNCATE_ID,
+				CORRELAZIONE_APPLICATIVA_PROPERTY_NAME_BLOCK_IDENTIFICATION_FAILED_TRUNCATE_ID,
+				CORRELAZIONE_APPLICATIVA_PROPERTY_NAME_TRUNCATE_ID);
+	}
+	public static boolean isCorrelazioneApplicativaRichiesta_identificazioneFallita_accetta_truncate(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		return _isCorrelazioneApplicativa_truncate(proprieta, defaultValue,
+				CORRELAZIONE_APPLICATIVA_RICHIESTA_PROPERTY_NAME_ACCEPT_IDENTIFICATION_FAILED_TRUNCATE_ID,
+				CORRELAZIONE_APPLICATIVA_RICHIESTA_PROPERTY_NAME_TRUNCATE_ID,
+				CORRELAZIONE_APPLICATIVA_PROPERTY_NAME_ACCEPT_IDENTIFICATION_FAILED_TRUNCATE_ID,
+				CORRELAZIONE_APPLICATIVA_PROPERTY_NAME_TRUNCATE_ID);
+	}
+	public static boolean isCorrelazioneApplicativaRisposta_identificazioneFallita_blocca_truncate(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		return _isCorrelazioneApplicativa_truncate(proprieta, defaultValue,
+				CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_BLOCK_IDENTIFICATION_FAILED_TRUNCATE_ID,
+				CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_TRUNCATE_ID,
+				CORRELAZIONE_APPLICATIVA_PROPERTY_NAME_BLOCK_IDENTIFICATION_FAILED_TRUNCATE_ID,
+				CORRELAZIONE_APPLICATIVA_PROPERTY_NAME_TRUNCATE_ID);
+	}
+	public static boolean isCorrelazioneApplicativaRisposta_identificazioneFallita_accetta_truncate(List<Proprieta> proprieta, boolean defaultValue) throws Exception {
+		return _isCorrelazioneApplicativa_truncate(proprieta, defaultValue,
+				CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_ACCEPT_IDENTIFICATION_FAILED_TRUNCATE_ID,
+				CORRELAZIONE_APPLICATIVA_RISPOSTA_PROPERTY_NAME_TRUNCATE_ID,
+				CORRELAZIONE_APPLICATIVA_PROPERTY_NAME_ACCEPT_IDENTIFICATION_FAILED_TRUNCATE_ID,
+				CORRELAZIONE_APPLICATIVA_PROPERTY_NAME_TRUNCATE_ID);
+	}
+	private static boolean _isCorrelazioneApplicativa_truncate(List<Proprieta> proprieta, boolean defaultValue,
+			String propertyNameIdentificationFailedFlow, String propertyNameFlow,
+			String propertyNameIdentificationFailed, String propertyName) throws Exception {
+		String valueS = readValue(proprieta, propertyNameIdentificationFailedFlow);
+		if(valueS!=null && StringUtils.isNotEmpty(valueS)) {
+			if(CORRELAZIONE_APPLICATIVA_VALUE_ENABLED.equals(valueS.trim())) {
+				return true;
+			}
+			else if(CORRELAZIONE_APPLICATIVA_VALUE_DISABLED.equals(valueS.trim())) {
+				return false;
+			}
+		}
+		
+		valueS = readValue(proprieta, propertyNameFlow);
+		if(valueS!=null && StringUtils.isNotEmpty(valueS)) {
+			if(CORRELAZIONE_APPLICATIVA_VALUE_ENABLED.equals(valueS.trim())) {
+				return true;
+			}
+			else if(CORRELAZIONE_APPLICATIVA_VALUE_DISABLED.equals(valueS.trim())) {
+				return false;
+			}
+		}
+		
+		valueS = readValue(proprieta, propertyNameIdentificationFailed);
+		if(valueS!=null && StringUtils.isNotEmpty(valueS)) {
+			if(CORRELAZIONE_APPLICATIVA_VALUE_ENABLED.equals(valueS.trim())) {
+				return true;
+			}
+			else if(CORRELAZIONE_APPLICATIVA_VALUE_DISABLED.equals(valueS.trim())) {
+				return false;
+			}
+		}
+		
+		valueS = readValue(proprieta, propertyName);
+		if(valueS!=null && StringUtils.isNotEmpty(valueS)) {
+			if(CORRELAZIONE_APPLICATIVA_VALUE_ENABLED.equals(valueS.trim())) {
+				return true;
+			}
+			else if(CORRELAZIONE_APPLICATIVA_VALUE_DISABLED.equals(valueS.trim())) {
+				return false;
+			}
+		}
+		
+		return defaultValue;
+	}
+	
+	
 	// ****  CONNETTORI *****
 	
 	public static final String CONNETTORE_VALUE_ENABLED = VALUE_ENABLED;

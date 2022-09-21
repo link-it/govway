@@ -3146,7 +3146,8 @@ public class RicezioneContenutiApplicativi {
 		GestoreCorrelazioneApplicativa correlazioneApplicativa = 
 			new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRichiesta(), logCore, richiestaDelegata.getIdSoggettoFruitore(),
 					richiestaDelegata.getIdServizio(),servizioApplicativo,protocolFactory,
-					transaction, pddContext);
+					transaction, pddContext,
+					portaDelegata!=null ? portaDelegata.getProprietaList() : null);
 		boolean correlazioneEsistente = false;
 		String idCorrelazioneApplicativa = null;
 		if (correlazionePD != null) {

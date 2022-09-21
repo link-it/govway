@@ -5408,7 +5408,8 @@ public class RicezioneBuste {
 				gestoreCorrelazioneApplicativa = 
 					new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRichiesta(), logCore, soggettoFruitore,
 							idServizio,servizioApplicativoFruitore,protocolFactory,
-							transaction, pddContext);
+							transaction, pddContext,
+							pa.getProprietaList());
 				
 				gestoreCorrelazioneApplicativa.verificaCorrelazione(pa.getCorrelazioneApplicativa(), urlProtocolContext, requestMessage, 
 						headerIntegrazioneRichiesta, false);

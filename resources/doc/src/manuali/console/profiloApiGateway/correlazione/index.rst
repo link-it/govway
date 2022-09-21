@@ -11,6 +11,12 @@ informazioni già presenti. I dati per configurare la correlazione
 applicativa consistono in un insieme di regole per l'estrazione di tale
 identificatore.
 
+.. note::
+
+	**Lunghezza massima per l'identificativo estratto**
+
+	L'identificativo applicativo estratto deve possedere una lunghezza non superiore ai 255 caratteri. Per maggiori informazioni si rimanda alla sezione :ref:`correlazione_truncate`.
+
 Per accedere alla configurazione della correlazione applicativa, per una
 data erogazione/fruizione, si utilizza la sezione "Correlazione
 Applicativa" presente nell'ambito della configurazione del tracciamento
@@ -21,7 +27,7 @@ Richiesta o Risposta, si accede all'elenco delle regole di correlazione
 applicativa presenti. Premere il pulsante *Aggiungi* per aggiungere una
 nuova regola (:numref:`correlazioneFig`)
 
-   .. figure:: ../_figure_console/CorrelazioneApplicativa-new.png
+   .. figure:: ../../_figure_console/CorrelazioneApplicativa-new.png
     :scale: 100%
     :align: center
     :name: correlazioneFig
@@ -91,3 +97,10 @@ indicare i seguenti dati:
    dell'identificatore del messaggio (assegnato dal gateway) nel caso in
    cui vengano inviati messaggi con identificatori applicativi già
    processati in precedenza.
+
+.. toctree::
+   :maxdepth: 2
+
+   truncate
+
+

@@ -3803,7 +3803,8 @@ public class InoltroBuste extends GenericLib{
 					gestoreCorrelazione = 
 							new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRisposta(),
 									this.log,soggettoFruitore,idServizio, servizioApplicativoFruitore,protocolFactory,
-									transactionNullable, pddContext);
+									transactionNullable, pddContext,
+									pd.getProprietaList());
 
 					gestoreCorrelazione.verificaCorrelazioneRisposta(pd.getCorrelazioneApplicativaRisposta(), responseMessage, headerIntegrazioneRisposta, false);
 					

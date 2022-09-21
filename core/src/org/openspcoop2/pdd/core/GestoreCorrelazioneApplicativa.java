@@ -35,6 +35,7 @@ import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -43,6 +44,7 @@ import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
@@ -121,6 +123,10 @@ public class GestoreCorrelazioneApplicativa {
 	private PdDContext pddContext;
 	
 	private int maxLengthCorrelazioneApplicativa = 255;
+	private int maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_request = -1;
+	private int maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_request = -1;
+	private int maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_response = -1;
+	private int maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_response = -1;
 
 	public boolean isRiusoIdentificativo() {
 		return this.riusoIdentificativo;
@@ -133,7 +139,8 @@ public class GestoreCorrelazioneApplicativa {
 	 */
 	public GestoreCorrelazioneApplicativa(IState state,Logger alog,IDSoggetto soggettoFruitore,IDServizio idServizio,
 			String servizioApplicativo,IProtocolFactory<?> protocolFactory,
-			Transaction transaction, PdDContext pddContext){
+			Transaction transaction, PdDContext pddContext,
+			List<Proprieta> proprieta){
 		this.state = state;
 		if(alog!=null){
 			this.log = alog;
@@ -144,9 +151,40 @@ public class GestoreCorrelazioneApplicativa {
 		this.idServizio = idServizio;
 		this.servizioApplicativo = servizioApplicativo;
 		this.protocolFactory = protocolFactory;
-		this.maxLengthCorrelazioneApplicativa = OpenSPCoop2Properties.getInstance().getMaxLengthCorrelazioneApplicativa();
 		this.transaction = transaction;
 		this.pddContext = pddContext;
+		
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		this.maxLengthCorrelazioneApplicativa = op2Properties.getMaxLengthCorrelazioneApplicativa();
+		try {
+			if(CostantiProprieta.isCorrelazioneApplicativaRichiesta_identificazioneFallita_blocca_truncate(proprieta, op2Properties.isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate())) {
+				this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_request = op2Properties.getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate();
+			}
+		}catch(Throwable e) {
+			this.log.error("[isCorrelazioneApplicativaRichiesta_identificazioneFallita_blocca_truncate] failed: "+e.getMessage(),e);
+		}
+		try {
+			if(CostantiProprieta.isCorrelazioneApplicativaRisposta_identificazioneFallita_blocca_truncate(proprieta, op2Properties.isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate())) {
+				this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_response = op2Properties.getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate();
+			}
+		}catch(Throwable e) {
+			this.log.error("[isCorrelazioneApplicativaRisposta_identificazioneFallita_blocca_truncate] failed: "+e.getMessage(),e);
+		}
+		try {
+			if(CostantiProprieta.isCorrelazioneApplicativaRichiesta_identificazioneFallita_accetta_truncate(proprieta, op2Properties.isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate())) {
+				this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_request = op2Properties.getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate();
+			}
+		}catch(Throwable e) {
+			this.log.error("[isCorrelazioneApplicativaRichiesta_identificazioneFallita_accetta_truncate] failed: "+e.getMessage(),e);
+		}
+		try {
+			if(CostantiProprieta.isCorrelazioneApplicativaRisposta_identificazioneFallita_accetta_truncate(proprieta, op2Properties.isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate())) {
+				this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_response = op2Properties.getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate();
+			}
+		}catch(Throwable e) {
+			this.log.error("[isCorrelazioneApplicativaRisposta_identificazioneFallita_accetta_truncate] failed: "+e.getMessage(),e);
+		}
+		
 	}
 	/**
 	 * Costruttore. 
@@ -154,8 +192,9 @@ public class GestoreCorrelazioneApplicativa {
 	 */
 	public GestoreCorrelazioneApplicativa(IState state,Logger alog,
 			IProtocolFactory<?> protocolFactory,
-			Transaction transaction){
-		this(state,alog,null,null,null,protocolFactory,transaction, null);
+			Transaction transaction,
+			List<Proprieta> proprieta){
+		this(state,alog,null,null,null,protocolFactory,transaction, null, proprieta);
 	}
 
 	public void updateState(IState state){
@@ -551,14 +590,24 @@ public class GestoreCorrelazioneApplicativa {
 					
 					if(idCorrelazioneApplicativa!=null && idCorrelazioneApplicativa.length()>this.maxLengthCorrelazioneApplicativa) {
 						if(bloccaIdentificazioneNonRiuscita) {
-							this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
-									getErrore416_CorrelazioneApplicativaRichiesta("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai 255 caratteri consentiti");
-							throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
+							if(this.isTruncateEnabled(RICHIESTA, BLOCCA)) {
+								idCorrelazioneApplicativa = this.truncate(idCorrelazioneApplicativa, RICHIESTA, BLOCCA);
+							}
+							else {
+								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
+										getErrore416_CorrelazioneApplicativaRichiesta("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai "+this.maxLengthCorrelazioneApplicativa+" caratteri consentiti");
+								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
+							}
 						}
 						else {
-							this.log.error("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai 255 caratteri consentiti");
-							correlazioneNonRiuscitaDaAccettare = true;
-							idCorrelazioneApplicativa = null;
+							if(this.isTruncateEnabled(RICHIESTA, ACCETTA)) {
+								idCorrelazioneApplicativa = this.truncate(idCorrelazioneApplicativa, RICHIESTA, ACCETTA);
+							}
+							else {
+								this.log.error("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai "+this.maxLengthCorrelazioneApplicativa+" caratteri consentiti");
+								correlazioneNonRiuscitaDaAccettare = true;
+								idCorrelazioneApplicativa = null;
+							}
 						}
 					}
 					
@@ -995,14 +1044,24 @@ public class GestoreCorrelazioneApplicativa {
 					
 					if(idCorrelazioneApplicativa!=null && idCorrelazioneApplicativa.length()>this.maxLengthCorrelazioneApplicativa) {
 						if(bloccaIdentificazioneNonRiuscita) {
-							this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
-									getErrore434_CorrelazioneApplicativaRisposta("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai 255 caratteri consentiti");
-							throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
+							if(this.isTruncateEnabled(RISPOSTA, BLOCCA)) {
+								idCorrelazioneApplicativa = this.truncate(idCorrelazioneApplicativa, RISPOSTA, BLOCCA);
+							}
+							else {
+								this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
+										getErrore434_CorrelazioneApplicativaRisposta("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai "+this.maxLengthCorrelazioneApplicativa+" caratteri consentiti");
+								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
+							}
 						}
 						else {
-							this.log.error("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai 255 caratteri consentiti");
-							correlazioneNonRiuscitaDaAccettare = true;
-							idCorrelazioneApplicativa = null;
+							if(this.isTruncateEnabled(RISPOSTA, ACCETTA)) {
+								idCorrelazioneApplicativa = this.truncate(idCorrelazioneApplicativa, RISPOSTA, ACCETTA);
+							}
+							else {
+								this.log.error("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai "+this.maxLengthCorrelazioneApplicativa+" caratteri consentiti");
+								correlazioneNonRiuscitaDaAccettare = true;
+								idCorrelazioneApplicativa = null;
+							}
 						}
 					}
 					
@@ -1021,7 +1080,7 @@ public class GestoreCorrelazioneApplicativa {
 		}else{
 			this.idCorrelazione = idCorrelazioneApplicativa;
 		}
-TRONCAMENTO E NEL DIAGNOSTICO NON CABLARE 255 MA IL VALORE DELL APROPRIETA
+
 	}
 	
 	
@@ -1443,5 +1502,50 @@ TRONCAMENTO E NEL DIAGNOSTICO NON CABLARE 255 MA IL VALORE DELL APROPRIETA
 		return this.idCorrelazione;
 	}
 
+	private static boolean RICHIESTA = true;
+	private static boolean RISPOSTA = false;
+	private static boolean BLOCCA = true;
+	private static boolean ACCETTA = false;
+	public boolean isTruncateEnabled(boolean request, boolean blocca) {
+		if(blocca) {
+			if(request) {
+				return this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_request>0 && 
+						this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_request<this.maxLengthCorrelazioneApplicativa;
+			}
+			else {
+				return this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_response>0 && 
+						this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_response<this.maxLengthCorrelazioneApplicativa;
+			}
+		}
+		else {
+			if(request) {
+				return this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_request>0 && 
+						this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_request<this.maxLengthCorrelazioneApplicativa;
+			}
+			else {
+				return this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_response>0 && 
+						this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_response<this.maxLengthCorrelazioneApplicativa;
+			}
+		}
+	}
+	public String truncate(String id, boolean request, boolean blocca) {
+		if(blocca) {
+			if(request) {
+				return id.substring(0, this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_request);
+			}
+			else {
+				return id.substring(0, this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_response);
+			}
+		}
+		else if(!blocca) {
+			if(request) {
+				return id.substring(0, this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_request);
+			}
+			else {
+				return id.substring(0, this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_response);
+			}
+		}
+		return null;
+	}
 }
 

@@ -30,7 +30,7 @@ nell'intestazione della pagina.
 	sicurezzaMessaggio
 	trasformazioni/index
 	tracciamento
-	correlazione
+	correlazione/index
 	mtom
 	registrazioneMessaggi
 	proprieta

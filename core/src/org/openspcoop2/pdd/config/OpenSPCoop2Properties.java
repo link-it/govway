@@ -440,6 +440,10 @@ public class OpenSPCoop2Properties {
 				return false;
 			}
 			this.getMaxLengthCorrelazioneApplicativa();
+			this.isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate();
+			this.getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate();
+			this.isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate();
+			this.getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate();
 			this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione();
 			this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione_EscludiConScadenzaImpostata();
 			
@@ -6728,6 +6732,120 @@ public class OpenSPCoop2Properties {
 		}
 		
 		return OpenSPCoop2Properties.maxLengthCorrelazioneApplicativa;
+	}
+	
+	private static Boolean maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_active = null;
+	public boolean isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate() {	
+		if(OpenSPCoop2Properties.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_active == null){
+			String pName = "org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLengthExceeded.identificazioneFallita.blocca.truncate";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					//throw new Exception("non definita");
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non definita, viene usato il valore di default: false");
+					OpenSPCoop2Properties.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_active = false;
+				}
+				else{
+					name = name.trim();
+					OpenSPCoop2Properties.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_active = java.lang.Boolean.parseBoolean(name);
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage()+". Viene usato il valore di default: false",e);
+				OpenSPCoop2Properties.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_active = false;
+			}    
+		}
+		
+		return OpenSPCoop2Properties.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_active;
+	}
+	
+	private static Integer maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate = null;
+	private static Boolean maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_read = null;
+	public Integer getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate() {	
+		if(OpenSPCoop2Properties.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_read == null){
+			String pName = "org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLengthExceeded.identificazioneFallita.blocca.truncate.length";
+			try{ 
+				String name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null && StringUtils.isNotEmpty(name.trim())){
+					name = name.trim();
+					OpenSPCoop2Properties.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate = java.lang.Integer.parseInt(name);
+					if(maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate<=0) {
+						throw new Exception("Deve essere fornito un valore maggiore di 0");
+					}
+					if(maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate>=getMaxLengthCorrelazioneApplicativa()) {
+						throw new Exception("Deve essere fornito un valore minore di "+getMaxLengthCorrelazioneApplicativa());
+					}
+				}
+				else {
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non definita, viene usato il valore di default: 245");
+					OpenSPCoop2Properties.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate = 245;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate = null;
+			}  
+			
+			OpenSPCoop2Properties.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_read = true;
+		}
+		
+		return OpenSPCoop2Properties.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate;
+	}
+	
+	private static Boolean maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_active = null;
+	public boolean isMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate() {	
+		if(OpenSPCoop2Properties.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_active == null){
+			String pName = "org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLengthExceeded.identificazioneFallita.accetta.truncate";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null){
+					//throw new Exception("non definita");
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non definita, viene usato il valore di default: false");
+					OpenSPCoop2Properties.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_active = false;
+				}
+				else{
+					name = name.trim();
+					OpenSPCoop2Properties.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_active = java.lang.Boolean.parseBoolean(name);
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage()+". Viene usato il valore di default: false",e);
+				OpenSPCoop2Properties.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_active = false;
+			}    
+		}
+		
+		return OpenSPCoop2Properties.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_active;
+	}
+	
+	private static Integer maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate = null;
+	private static Boolean maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_read = null;
+	public Integer getMaxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate() {	
+		if(OpenSPCoop2Properties.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_read == null){
+			String pName = "org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLengthExceeded.identificazioneFallita.accetta.truncate.length";
+			try{ 
+				String name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null && StringUtils.isNotEmpty(name.trim())){
+					name = name.trim();
+					OpenSPCoop2Properties.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate = java.lang.Integer.parseInt(name);
+					if(maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate<=0) {
+						throw new Exception("Deve essere fornito un valore maggiore di 0");
+					}
+					if(maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate>=getMaxLengthCorrelazioneApplicativa()) {
+						throw new Exception("Deve essere fornito un valore minore di "+getMaxLengthCorrelazioneApplicativa());
+					}
+				}
+				else {
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non definita, viene usato il valore di default: 245");
+					OpenSPCoop2Properties.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate = 245;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate = null;
+			}  
+			
+			OpenSPCoop2Properties.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_read = true;
+		}
+		
+		return OpenSPCoop2Properties.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate;
 	}
 
 	

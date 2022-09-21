@@ -1229,7 +1229,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		boolean rispostaPerRiferimento = false;
 		boolean integrationManager = false;
 		ValidazioneContenutiApplicativi validazioneContenutoApplicativoApplicativo = null;
-		List<Proprieta> proprietaValidazioneContenutoApplicativoApplicativo = null;
+		List<Proprieta> proprietaPorta = null;
 		if(Costanti.SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI.equals(scenarioCooperazione) ||
 				Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA.equals(scenarioCooperazione) ){
 			try{
@@ -1245,7 +1245,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				integrationManager = configurazionePdDManager.consegnaRispostaAsincronaConGetMessage(sa);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getTipoValidazioneContenutoApplicativo) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
 				validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pd,implementazionePdDMittente, false);
-				proprietaValidazioneContenutoApplicativoApplicativo = pd.getProprietaList();
+				proprietaPorta = pd.getProprietaList();
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaPerRiferimento) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
 				consegnaPerRiferimento = configurazionePdDManager.consegnaRispostaAsincronaPerRiferimento(sa);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaRispostaPerRiferimento) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
@@ -1271,7 +1271,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				integrationManager = configurazionePdDManager.consegnaRispostaAsincronaConGetMessage(sa);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getTipoValidazioneContenutoApplicativo) [AsincronoAsimmetricoPolling]...");
 				validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente, false);
-				proprietaValidazioneContenutoApplicativoApplicativo = pa.getProprietaList();
+				proprietaPorta = pa.getProprietaList();
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaPerRiferimento) [AsincronoAsimmetricoPolling]...");
 				consegnaPerRiferimento = configurazionePdDManager.consegnaRispostaAsincronaPerRiferimento(sa);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaRispostaPerRiferimento) [AsincronoAsimmetricoPolling]...");
@@ -1294,7 +1294,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				integrationManager = configurazionePdDManager.invocazioneServizioConGetMessage(sa);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getTipoValidazioneContenutoApplicativo)...");
 				validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente, false);
-				proprietaValidazioneContenutoApplicativoApplicativo = pa.getProprietaList();
+				proprietaPorta = pa.getProprietaList();
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (invocazioneServizioPerRiferimento)...");
 				consegnaPerRiferimento = configurazionePdDManager.invocazioneServizioPerRiferimento(sa);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (invocazioneServizioRispostaPerRiferimento)...");
@@ -3518,7 +3518,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									validazioneAbilitata = hasContent && (isFault==false);
 								}
 								else {
-									validazioneAbilitata = ValidatoreMessaggiApplicativiRest.isValidazioneAbilitata(proprietaValidazioneContenutoApplicativoApplicativo, responseMessage, codiceRitornato);
+									validazioneAbilitata = ValidatoreMessaggiApplicativiRest.isValidazioneAbilitata(proprietaPorta, responseMessage, codiceRitornato);
 								}
 								if( validazioneAbilitata ){
 									
@@ -3545,7 +3545,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 											new ValidatoreMessaggiApplicativi(registroServiziManager,idSValidazioneXSD,
 													responseMessage,readInterface,
 													this.propertiesReader.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione(),
-													proprietaValidazioneContenutoApplicativoApplicativo,
+													proprietaPorta,
 													pddContext);
 	
 										// Validazione WSDL 
@@ -3583,7 +3583,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 										// Init Validatore
 										msgDiag.mediumDebug("Validazione della risposta (initValidator)...");
 										ValidatoreMessaggiApplicativiRest validatoreMessaggiApplicativi = 
-											new ValidatoreMessaggiApplicativiRest(registroServiziManager, idSValidazioneXSD, responseMessage, readInterface, proprietaValidazioneContenutoApplicativoApplicativo, 
+											new ValidatoreMessaggiApplicativiRest(registroServiziManager, idSValidazioneXSD, responseMessage, readInterface, proprietaPorta, 
 													protocolFactory, pddContext);
 										
 										if(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.equals(validazioneContenutoApplicativoApplicativo.getTipo()) &&
@@ -3761,7 +3761,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								gestoreCorrelazione = 
 										new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRisposta(),
 												this.log,soggettoFruitore,idServizio, servizioApplicativo,protocolFactory,
-												transactionNullable, pddContext);
+												transactionNullable, pddContext,
+												proprietaPorta);
 								
 								gestoreCorrelazione.verificaCorrelazioneRisposta(correlazioneApplicativaRisposta, responseMessage, headerIntegrazioneRisposta, false);
 								
