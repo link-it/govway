@@ -77,20 +77,20 @@
 	<archive path="/op2_3.4.dev/lib/httpcore/httpcore5-5.1.3.jar"/>
 	<archive path="/op2_3.4.dev/lib/httpcore/httpcore5-h2-5.1.3.jar"/>
 	<!-- jackson -->
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-annotations-2.13.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-core-2.13.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-annotations-2.13.4"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-core-2.13.4"/>
 	<archive path="/op2_3.4.dev/lib/jackson/jackson-coreutils-1.8.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-databind-2.13.2.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-dataformat-xml-2.13.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-dataformat-yaml-2.13.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-datatype-joda-2.13.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-datatype-jsr310-2.13.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-jaxrs-base-2.13.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-jaxrs-json-provider-2.13.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-jaxrs-xml-provider-2.13.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-jaxrs-yaml-provider-2.13.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-module-jaxb-annotations-2.13.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/jackson/jackson-module-jsonSchema-2.13.2.jar"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-databind-2.13.4"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-dataformat-xml-2.13.4"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-dataformat-yaml-2.13.4"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-datatype-joda-2.13.4"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-datatype-jsr310-2.13.4"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-jaxrs-base-2.13.4"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-jaxrs-json-provider-2.13.4"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-jaxrs-xml-provider-2.13.4"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-jaxrs-yaml-provider-2.13.4"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-module-jaxb-annotations-2.13.4"/>
+	<archive path="/op2_3.4.dev/lib/jackson/jackson-module-jsonSchema-2.13.4"/>
 	<!-- javax -->
 	<archive path="/op2_3.4.dev/lib/javax/javax.annotation-api-1.3.2.jar"/>
         <archive path="/op2_3.4.dev/lib/javax/el-api-1.0.jar"/>
@@ -235,7 +235,7 @@
 	<archive path="/op2_3.4.dev/lib/shared/guava-31.1-jre.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/joda-time-2.10.14.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/java-uuid-generator-4.0.1.jar"/>
-	<archive path="/op2_3.4.dev/lib/shared/snakeyaml-1.30.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/snakeyaml-1.32-gov4j-1"/>
 	<archive path="/op2_3.4.dev/lib/shared/reactive-streams-1.0.3.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/reflections-0.10.2.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/javassist-3.28.0-GA.jar"/>
@@ -262,20 +262,20 @@
 	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-crypto-5.7.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-config-5.7.1.jar"/>
 	<!-- swagger -->
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-annotations-2.1.13.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-core-2.1.13.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-models-2.1.13.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-jaxrs2-2.1.13.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-integration-2.1.13.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-2.0.30.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-core-2.0.30.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-v3-2.0.30-gov4j-1.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-v2-converter-2.0.30.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-1.0.59.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-annotations-2.2.2"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-core-2.2.2"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-models-2.2.2"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-jaxrs2-2.2.2"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-integration-2.2.2"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-2.1.2"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-core-2.1.2"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-v3-2.1.2-gov4j-1"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-v2-converter-2.1.2"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-1.0.61"/>
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-core-1.6.6.jar"/>
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-models-1.6.6.jar"/>
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-ui-4.10.3.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-request-validator-core-2.27.2-gov4j-1.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-request-validator-core-2.30.0-gov4j-1"/>
 	<!-- testsuite-->
         <archive path="/op2_3.4.dev/lib/testsuite/testng-7.5.jar"/>
 	<archive path="/op2_3.4.dev/lib/testsuite/jcommander-1.82.jar"/>

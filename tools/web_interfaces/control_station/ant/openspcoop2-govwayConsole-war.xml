@@ -369,7 +369,7 @@
 				<include name="${xalan_serializer_jar}"/>	
 				<include name="xmlunit-legacy-2.9.0.jar" />
 				<include name="xmlunit-core-2.9.0.jar" />
-				<include name="snakeyaml-1.30.jar" />
+				<include name="snakeyaml-1.32-gov4j-1" />
 				<include name="freemarker-2.3.31.jar" />
 				<include name="joda-time-2.10.14.jar" />
 				<include name="reactive-streams-1.0.3.jar" />

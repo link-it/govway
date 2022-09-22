@@ -112,7 +112,7 @@
 				<include name="joda-time-2.10.14.jar"/>
 				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="guava-31.1-jre.jar"/>
-				<include name="snakeyaml-1.30.jar"/>
+				<include name="snakeyaml-1.32-gov4j-1"/>
 				<include name="javassist-3.28.0-GA.jar"/>
 				<include name="ezmorph-1.0.6.jar" />
 				<include name="xom-1.2.11.jar" />

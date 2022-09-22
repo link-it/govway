@@ -199,7 +199,7 @@
 				<include name="guava-31.1-jre.jar"/>
 				<include name="java-uuid-generator-4.0.1.jar"/>
 				<include name="freemarker-2.3.31.jar"/>
-				<include name="snakeyaml-1.30.jar"/>
+				<include name="snakeyaml-1.32-gov4j-1"/>
 				<include name="rhino-1.7.14.jar"/>
 				<include name="ehcache-3.10.0.jar"/>
 				<!-- NOTA: 

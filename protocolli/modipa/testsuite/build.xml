@@ -41,7 +41,7 @@
 			<include name="*.jar"/>
 		</fileset>
                 <fileset dir="${required_lib}/shared" >
-                        <include name="snakeyaml-1.30.jar"/>
+                        <include name="snakeyaml-1.32-gov4j-1"/>
 			<include name="joda-time-2.10.14.jar"/>
                 </fileset>
                 <fileset dir="${required_lib}/cxf" >
