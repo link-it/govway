@@ -22,7 +22,7 @@
 		<mailapi.version>1.5.6</mailapi.version>
 		<neethi.version>2.0.4</neethi.version>
 		<opensaml.version>1.1</opensaml.version>
-		<wss4j.version>1.5.11</wss4j.version>
+		<wss4j.version>1.6.17</wss4j.version>
 		<xmlsec.version>1.4.4</xmlsec.version>
 		<addressing.version>1.1</addressing.version>
 
