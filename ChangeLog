@@ -1,3 +1,11 @@
+2022-09-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, ApiRsConfigurazione, Utils]
+	Risolto Bug OP-1435
+	Sono state aggiornate le librerie che consentono di effettuare il parsing di un documento yaml (OpenAPI 3) al fine di non essere più vulnerabile a Denial of Service (DoS)
+	per mancanza di limitazione sulla profondita dei nodi analizzati e collezionati durante il parsing.
+	È stata inoltre aggiunta la possibilità di personalizzare i limiti introdotti.
+
 2022-09-21  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

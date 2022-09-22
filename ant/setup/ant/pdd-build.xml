@@ -225,6 +225,13 @@
 			<param name="value" value="${work_dir}/consolePassword.properties"/>
 		</antcall>
 
+		<!-- Snake Limits -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.yaml.snakeLimits"/>
+			<param name="value" value="${work_dir}/snakeLimits.properties"/>
+		</antcall>
+
 		<!-- HTTPS -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>

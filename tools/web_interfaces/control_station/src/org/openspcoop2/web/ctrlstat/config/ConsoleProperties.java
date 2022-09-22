@@ -24,6 +24,7 @@ package org.openspcoop2.web.ctrlstat.config;
 
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -400,6 +401,38 @@ public class ConsoleProperties {
 	
 	public boolean isApiRestResourceRepresentationMessageTypeOverride() throws UtilsException{
 		return this.readBooleanProperty(true, "api.resource.representation.messageTypeOverride");
+	}
+	
+	public Properties getApiYamlSnakeLimits() throws UtilsException{
+
+		String pName = "api.yaml.snakeLimits";
+		
+		try{  
+			String file = this.readProperty(false, pName);
+			if(file!=null && StringUtils.isNotEmpty(file)) {
+				File f = new File(file);
+				if(f.exists()) {
+					if(!f.isFile()) {
+						throw new Exception("Il file indicato '"+f.getAbsolutePath()+"' non è un file");
+					}
+					if(!f.canRead()) {
+						throw new Exception("Il file indicato '"+f.getAbsolutePath()+"' non è accessibile in lettura");
+					}
+					try(InputStream is = new FileInputStream(f)){
+						Properties p = new Properties();
+						p.load(is);
+						if (p != null && !p.isEmpty()){
+							return p;
+						}
+					}
+				}
+			}
+		
+			return null;
+			
+		}catch(java.lang.Exception e) {
+			throw new UtilsException("Proprieta' '"+pName+"' non impostate, errore:"+e.getMessage(),e);
+		}
 	}
 	
 	public boolean isAccordiCooperazioneEnabled() throws UtilsException{

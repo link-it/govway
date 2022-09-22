@@ -208,6 +208,7 @@ import org.openspcoop2.utils.id.serial.InfoStatistics;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
+import org.openspcoop2.utils.json.YamlSnakeLimits;
 import org.openspcoop2.utils.resources.FileSystemMkdirConfig;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
@@ -887,6 +888,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				
 				DynamicUtils.XSLT_PROCESS_AS_DOMSOURCE = propertiesReader.isXsltProcessAsDOMSource();
 				OpenSPCoop2Startup.log.info("DynamicUtils - XSLT_PROCESS_AS_DOMSOURCE: "+DynamicUtils.XSLT_PROCESS_AS_DOMSOURCE);
+				
+				Properties yamlSnakeLimits = propertiesReader.getYamlSnakeLimits();
+				if(yamlSnakeLimits!=null && !yamlSnakeLimits.isEmpty()) {
+					YamlSnakeLimits.initialize(OpenSPCoop2Startup.log, yamlSnakeLimits);
+				}
 				
 				for (int l = 0; l < tipiMessageFactory.size(); l++) {
 					String tipo = tipiMessageFactory.get(l);

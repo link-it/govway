@@ -19,9 +19,13 @@
  */
 package org.openspcoop2.core.config.rs.server.config;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.crypt.CryptConfig;
@@ -185,6 +189,38 @@ public class ServerProperties  {
 	
 	public boolean isUpdateInterfacciaApi_deleteIfNotFound() throws UtilsException {
 		return Boolean.parseBoolean(this.readProperty(true, "updateInterfacciaApi.deleteIfNotFound"));
+	}
+	
+	public Properties getApiYamlSnakeLimits() throws UtilsException{
+
+		String pName = "api.yaml.snakeLimits";
+		
+		try{  
+			String file = this.readProperty(false, pName);
+			if(file!=null && StringUtils.isNotEmpty(file)) {
+				File f = new File(file);
+				if(f.exists()) {
+					if(!f.isFile()) {
+						throw new Exception("Il file indicato '"+f.getAbsolutePath()+"' non è un file");
+					}
+					if(!f.canRead()) {
+						throw new Exception("Il file indicato '"+f.getAbsolutePath()+"' non è accessibile in lettura");
+					}
+					try(InputStream is = new FileInputStream(f)){
+						Properties p = new Properties();
+						p.load(is);
+						if (p != null && !p.isEmpty()){
+							return p;
+						}
+					}
+				}
+			}
+		
+			return null;
+			
+		}catch(java.lang.Exception e) {
+			throw new UtilsException("Proprieta' '"+pName+"' non impostate, errore:"+e.getMessage(),e);
+		}
 	}
 	
 	public boolean isDelete404() throws UtilsException {

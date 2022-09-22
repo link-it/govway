@@ -36,6 +36,7 @@ import org.openspcoop2.monitor.engine.alarm.AlarmEngineConfig;
 import org.openspcoop2.monitor.engine.alarm.AlarmManager;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
+import org.openspcoop2.utils.json.YamlSnakeLimits;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -170,6 +171,11 @@ public class Startup implements ServletContextListener {
 				ControlStationCore.setSoggettiApiKeyPasswordGeneratedLength_apiMode(serverProperties.getSoggettiApiKeyPasswordGeneratedLength());
 				if(serverProperties.isSoggettiBasicPasswordEnableConstraints()) {
 					ControlStationCore.setSoggettiPasswordVerifierEngine_apiMode(serverProperties.getSoggettiPasswordVerifier());
+				}
+				
+				Properties yamlSnakeLimits = serverProperties.getApiYamlSnakeLimits();
+				if(yamlSnakeLimits!=null && !yamlSnakeLimits.isEmpty()) {
+					YamlSnakeLimits.initialize(Startup.log, yamlSnakeLimits);
 				}
 				
 			} catch (Exception e) {

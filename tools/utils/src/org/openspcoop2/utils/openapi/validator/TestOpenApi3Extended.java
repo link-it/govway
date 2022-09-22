@@ -1049,7 +1049,11 @@ public class TestOpenApi3Extended {
 						atteso = "Content type '"+contentTypeTest10+"' is not allowed for body content. (code: 203)";
 						break;
 					case swagger_request_validator:
-						atteso = "Content-Type '"+contentTypeTest10+"' (http response status '201') unsupported"; // swagger-request-validator-unsupported Check risolto da govway
+						if(addContenuto) {
+							atteso = "[ERROR][RESPONSE][] No response body is expected but one was found.";
+						} else {
+							atteso = "Content-Type '"+contentTypeTest10+"' (http response status '201') unsupported"; // swagger-request-validator-unsupported Check risolto da govway
+						}
 						break;
 					}	
 					if(!msg.contains(atteso)) {
@@ -1221,8 +1225,11 @@ public class TestOpenApi3Extended {
 						atteso = "Content type '"+contentTypeTest11+"' is not allowed for body content. (code: 203)";
 						break;
 					case swagger_request_validator:
-						// Quando il content-type non è specificato nello schema, la swagger-request-validator non effettua validazione per cui ci si rifà al validatore custom
-						atteso = "Content-Type '"+contentTypeTest11+"' (http response status '201') unsupported"; // swagger-request-validator-unsupported, check risolto da govway 
+						if(addContenuto) {
+							atteso = "[ERROR][RESPONSE][] No response body is expected but one was found.";
+						} else {
+							atteso = "Content-Type '"+contentTypeTest11+"' (http response status '201') unsupported"; // swagger-request-validator-unsupported Check risolto da govway
+						}
 						break;
 					}	
 					if(!msg.contains(atteso)) {

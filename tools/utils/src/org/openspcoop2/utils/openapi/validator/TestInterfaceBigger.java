@@ -29,6 +29,7 @@ import java.util.Map;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.json.YamlSnakeLimits;
 import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiReaderConfig;
@@ -54,7 +55,8 @@ public class TestInterfaceBigger {
 	private static boolean logSystemOutError = true;
 	
 	public static void main(String[] args) throws Exception {
-		
+
+		YamlSnakeLimits.setDEBUG(true);
 
 		// Con le altre librerie, la costruzione non riesce
 		OpenAPILibrary openAPILibrary = OpenAPILibrary.swagger_request_validator;
@@ -91,10 +93,10 @@ public class TestInterfaceBigger {
 			switch (openAPILibrary) {
 			case json_schema:
 			case openapi4j:
-				maxAtteso = 2000; // 2 secondi (jenkins)
+				maxAtteso = 3000; // 3 secondi (jenkins)
 				break;
 			case swagger_request_validator:
-				maxAtteso = 2000; // 2 secondi (jenkins)
+				maxAtteso = 3000; // 3 secondi (jenkins)
 				break;
 			}	
 			System.out.println("\tReader time:"+Utilities.convertSystemTimeIntoString_millisecondi(time, true));

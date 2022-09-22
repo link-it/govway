@@ -1864,6 +1864,9 @@ public class OpenSPCoop2Properties {
 			this.isXmlFactoryDTDsEnabled();
 			this.isXsltProcessAsDOMSource();
 			
+			// YAML
+			this.getYamlSnakeLimits();
+			
 			// XPath Json Path
 			this.isJsonPathCacheEnabled();
 			this.isReadByPathBufferEnabled();
@@ -20001,6 +20004,45 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isXsltProcessAsDOMSource;
 	}
 	
+	
+	/* ------------- YAML ---------------------*/
+	
+	private static Properties yamlSnakeLimits = null;
+	private static Boolean yamlSnakeLimits_read = null;
+	public Properties getYamlSnakeLimits(){
+
+		String pName = "org.openspcoop2.pdd.yaml.snakeLimits";
+		
+		if(OpenSPCoop2Properties.yamlSnakeLimits_read==null){
+			try{  
+				String file = this.reader.getValue_convertEnvProperties(pName); 
+				if(file!=null && StringUtils.isNotEmpty(file)) {
+					File f = new File(file);
+					if(f.exists()) {
+						if(!f.isFile()) {
+							throw new Exception("Il file indicato '"+f.getAbsolutePath()+"' non è un file");
+						}
+						if(!f.canRead()) {
+							throw new Exception("Il file indicato '"+f.getAbsolutePath()+"' non è accessibile in lettura");
+						}
+						try(InputStream is = new FileInputStream(f)){
+							Properties p = new Properties();
+							p.load(is);
+							if (p != null && !p.isEmpty()){
+								OpenSPCoop2Properties.yamlSnakeLimits = p;
+							}
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostate, errore:"+e.getMessage(),e);
+			}
+			OpenSPCoop2Properties.yamlSnakeLimits_read=true;
+		}
+
+		return OpenSPCoop2Properties.yamlSnakeLimits;
+	}
 	
 	
 	/* ------------- XPath e JSON Path ---------------------*/

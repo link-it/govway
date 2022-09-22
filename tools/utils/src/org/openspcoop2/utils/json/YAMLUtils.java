@@ -42,6 +42,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
  */
 public class YAMLUtils extends AbstractUtils {
 	
+	static {
+		YamlSnakeLimits.initialize();
+	}
+	
 	private static YAMLUtils yamlUtils = null;
 	private static YAMLUtils yamlUtilsPretty = null;
 	private static synchronized void init(boolean prettyPrint){

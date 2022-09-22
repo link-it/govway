@@ -49,6 +49,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
+import org.openspcoop2.utils.json.YamlSnakeLimits;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.xml.XMLDiffImplType;
 import org.openspcoop2.utils.xml.XMLDiffOptions;
@@ -237,6 +238,17 @@ public class InitListener implements ServletContextListener {
 				throw new RuntimeException(e.getMessage(),e);
 			}
 			InitListener.log.info("Inizializzazione resources govwayConsole effettuata con successo.");
+			
+			InitListener.log.info("Inizializzazione YAML Limits in corso...");
+			try{
+				Properties yamlSnakeLimits = consoleProperties.getApiYamlSnakeLimits();
+				if(yamlSnakeLimits!=null && !yamlSnakeLimits.isEmpty()) {
+					YamlSnakeLimits.initialize(InitListener.log, yamlSnakeLimits);
+				}
+			}catch(Exception e){
+				throw new RuntimeException(e.getMessage(),e);
+			}
+			InitListener.log.info("Inizializzazione YAML Limits con successo");
 			
 			InitListener.log.info("Inizializzazione XMLDiff in corso...");
 			try{
