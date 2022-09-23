@@ -2115,6 +2115,7 @@ public class OpenSPCoop2Properties {
 						
 						//if(type.isHazelcast()) {
 						getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId();
+						getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig();
 						isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy();
 						
 						getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPath();
@@ -25872,6 +25873,39 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId;
+	}
+	
+	private static File getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig = null;
+	private static Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig_read = null;
+	public File getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig() throws Exception {
+		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.sharedConfig";
+		if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig_read==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null) {
+					name = name.trim();
+					OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig = new File(name);
+					if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.exists()) {
+						if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.isFile()==false) {
+							throw new Exception("Configuration ["+OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.getAbsolutePath()+"] isn't file");
+						}
+						if(OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.canRead()==false) {
+							throw new Exception("Configuration ["+OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.getAbsolutePath()+"] cannot read");
+						}
+					}
+					else {
+						OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig=null;
+					}
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw e;
+			}
+			OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig_read = true;
+		}
+
+		return OpenSPCoop2Properties.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig;
 	}
 
 	private static Integer getControlloTrafficoGestorePolicyInMemoryHazelcastLocalCacheUpdateInterval = null;	

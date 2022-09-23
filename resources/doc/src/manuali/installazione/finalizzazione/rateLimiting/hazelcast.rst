@@ -15,3 +15,7 @@ Una volta avviata tale modalità si potrà riscontrare come nel log venga riport
          --add-modules java.se --add-exports java.base/jdk.internal.ref=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED 
 
 Per fornire ad Hazelcast l'accesso alle API interne di java deve essere riportata la configurazione indicata nel warning tra le proprietà java dell'Application Server.
+
+.. note::
+  **Ambiente di Produzione** 
+  In un ambiente di produzione non è consigliato utilizzare un discovery automatico (https://docs.hazelcast.com/hazelcast/5.1/clusters/discovery-mechanisms#auto-detection). Si consiglia di disabilitare l'elemento 'auto-detection' e di utilizzare un meccanismo alternativo (esempio il censimento puntuale dei nodi tramite l'elemento 'tpc-ip.member-list') agendo sul file *<directory-lavoro>/govway_local.hazelcast.yaml*. Per maggiori informazioni si rimanda al manuale sulla Console di Gestione nella sezione ':ref:`headerGWRateLimitingCluster_distribuita_hazelcastConfig_sharedConfig`'

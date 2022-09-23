@@ -1,3 +1,9 @@
+2022-09-23  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta Funzionalità OP-1437
+	È adesso possibile fornire un'unica configurazione di rete di Hazelcast condivisa tra tutte le istanze attivate per ogni algoritmo di misurazione.
+
 2022-09-22  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, ApiRsConfigurazione, Utils]

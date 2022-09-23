@@ -2480,7 +2480,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPath());
 						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPath());
 						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPath());
-						HazelcastManager.initialize(log, logControlloTraffico, config, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId());
+						HazelcastManager.initialize(log, logControlloTraffico, config, 
+								propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId(),
+								propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig());
 					}catch(Exception e){
 						msgDiag.logStartupError(e,"Inizializzazione HazelcastManager");
 						return;

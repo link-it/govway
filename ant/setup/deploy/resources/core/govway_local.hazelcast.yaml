@@ -1,0 +1,110 @@
+hazelcast:
+
+  # File utilizzabile ridefinire il 'clusterId'  e la 'network' su tutte le istanze di GovWay, senza dove agire sul singole file hazelcast.yaml (es. govway.hazelcast-atomic-long-counters.yaml, govway.hazelcast-pn-counters.yaml ...)
+  # Se la proprietà 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.sharedConfig' in govway_local.properties risulta indirizzare questo file,
+  # a tutte le istanze di hazelcast verrà applicata la configurazione di rete di seguito.
+
+  # You can create clusters using the cluster-name configuration element.
+  # See: https://docs.hazelcast.com/hazelcast/5.1/clusters/creating-clusters
+  #
+  # Se definita sovrascrive il valore indicato nella proprietà 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.group_id' in govway_local.properties
+  #cluster-name: govway
+  
+  # Per una documentazione degli elementi si consiglia di consultare la documentazione di Hazelcast: https://docs.hazelcast.com/hazelcast/5.1/clusters/network-configuration
+  # La documentazione sotto riportata è stata estratta dalla documentazione 'network-configuration' sopra indicata.
+  network:
+    
+    # overrides the public address of a member.
+    #
+    #public-address: 11.22.33.44:5555
+
+    #By default, Hazelcast lets the system pick up an ephemeral port during socket bind operation. 
+    #But security policies/firewalls may require you to restrict outbound ports to be used by Hazelcast-enabled applications. To fulfill this requirement, you can configure Hazelcast to use only defined outbound ports. 
+    #
+    #outbound-ports:
+    #  - 38000,38500-38600
+
+    #When you shutdown a cluster member, the server socket port goes into the TIME_WAIT state for the next couple of minutes. 
+    #If you start the member right after shutting it down, you may not be able to bind it to the same port because it is in the TIME_WAIT state. 
+    #If you set the reuse-address element to true, the TIME_WAIT state is ignored and you can bind the member to the same port again.
+    #
+    #reuse-address: true
+
+    # you can specify the ports that Hazelcast uses to communicate between cluster members.
+    # !! NOTA !!: non definire l'elemento 'port'.
+    # Anche se definito verrà ignorato poichè ogni singola configurazione utilizzata in GovWay richiede una porta dedicata.
+    # Per modificarla si deve agire nel file govway.hazelcast-*.yaml presente all'interno dell'archivio govway.ear, 
+    # modificandolo direttamente dentro l'archivio o riportandolo nella directory di configurazione esterna.
+    #
+    #port:
+    #  auto-increment: false
+    #  port: 5701
+    #  ....
+
+    join:
+
+      # By default, Hazelcast tries to automatically detect a member’s runtime environment and apply rules to help members discover each other in those environments.
+      # !!! NOTE !!! Auto Detection is not recommended for production. See: https://docs.hazelcast.com/hazelcast/5.1/clusters/discovery-mechanisms
+      #
+      auto-detection:
+        enabled: true
+
+      # The multicast element includes parameters to fine tune the multicast join mechanism.
+      # See https://docs.hazelcast.com/hazelcast/5.1/clusters/discovery-mechanisms#multicast e https://docs.hazelcast.com/hazelcast/5.1/clusters/network-configuration#multicast-element
+      multicast:
+        enabled: false
+      # ...
+
+      # The tcp-ip element includes parameters to fine tune the TCP/IP join mechanism: https://docs.hazelcast.com/hazelcast/5.1/clusters/network-configuration#tcp-ip-element
+      #enabled: Specifies whether the TCP/IP discovery is enabled or not. Values can be true or false.
+      #required-member: IP address of the required member. Cluster is only formed if the member with this IP address is found.
+      #member: IP address(es) of one or more well known members. Once members are connected to these well known ones, all member addresses are communicated with each other. 
+      #        You can also give comma separated IP addresses using the members element.
+      #        ! NOTE ! tcp-ip element also accepts the interface parameter. See the Interfaces element description: https://docs.hazelcast.com/hazelcast/5.1/clusters/network-configuration#interfaces
+      # connection-timeout-seconds: Defines the connection timeout in seconds. This is the maximum amount of time Hazelcast is going to try to connect to a well known member before giving up. 
+      #                             Setting it to a too low value could mean that a member is not able to connect to a cluster. 
+      #                             Setting it to a too high value means that member startup could slow down because of longer timeouts, for example when a well known member is not up. 
+      #                             Increasing this value is recommended if you have many IPs listed and the members cannot properly build up the cluster. Its default value is 5 seconds.
+      #
+      # NOTA: la keyword 'GOVWAY_INSTANCE_PORT' verrà sostituita con la porta dedicata all'istanza che viene attivata
+      #       Se non viene indicata una porta, verrà aggiunta automaticamente al momento dell'istanziazione della configurazione.
+      tcp-ip:
+        enabled: false
+        member-list:
+          - <HOSTNAME1>
+          - <HOSTNAMEN>
+        #
+        # Esempio di lista con porta dichiarata
+        #member-list:
+        #  - <HOSTNAME1>:GOVWAY_INSTANCE_PORT
+        #  - <HOSTNAMEN>:GOVWAY_INSTANCE_PORT
+
+      # The aws element includes parameters to allow the members to form a cluster on the Amazon EC2 and ECS environments.
+      # For details, see Deploying a Cluster on Amazon AWS: https://docs.hazelcast.com/hazelcast/5.1/deploy/deploying-on-aws
+      aws:
+        enabled: false
+      # ...
+
+      # The azure element includes parameters to allow the members to form a cluster on the Azure VM machines.
+      # For details, see Deploying a Cluster on Microsoft Azure: https://docs.hazelcast.com/hazelcast/5.1/deploy/deploying-on-azure
+      azure:
+        enabled: false
+      # ...
+
+      # The gcp element includes parameters to allow the members to form a cluster on the GCP Compute VM instances.
+      # For details, see Deploying a Cluster on Google Cloud Platform: https://docs.hazelcast.com/hazelcast/5.1/deploy/deploying-on-gcp
+      gcp:
+        enabled: false
+      # ...
+
+      # The kubernetes element includes parameters to allow the members to form a cluster on the Kubernetes environment.
+      # For details, see Deploying on Kubernetes: https://docs.hazelcast.com/hazelcast/5.1/deploy/deploying-in-kubernetes
+      kubernetes:
+        enabled: false
+      # ...
+
+      # The discovery-strategies element configures internal or external discovery strategies based on the Hazelcast Discovery SPI. 
+      # For further information, see the Discovery SPI section and the vendor documentation of the used discovery strategy: https://docs.hazelcast.com/hazelcast/5.1/extending-hazelcast/discovery-spi
+      #discovery-strategies:
+      #  discovery-strategy:
+      #    ...

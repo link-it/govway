@@ -32,7 +32,7 @@ Altre modalità di utilizzo di hazelcast, forniti nelle precedenti versioni di G
 .. toctree::
    :maxdepth: 2
 
-   configurazione
+   configurazione/index
    log
    opzioniAvanzate
 
