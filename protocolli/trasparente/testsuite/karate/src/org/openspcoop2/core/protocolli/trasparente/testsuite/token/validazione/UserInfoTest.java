@@ -700,6 +700,99 @@ public class UserInfoTest extends ConfigLoader {
 	
 	
 	
+	@Test
+	public void ignoreCase_success() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test-username", Utilities.username);
+		headers.put("test-ignoreCase-fullName", "bianchi ROSSI");
+		headers.put("test-ignoreCase-firstName", "MARIO");
+		headers.put("test-ignoreCase-iss", "TESTAUTHENTE.INVALID");
+		Map<String, String> query = new HashMap<String, String>();
+		query.put("test-userinfo", 
+				buildJWT_roles(false,true,false, 
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazione, "ignoreCase", headers,  query,
+				null,
+				mapExpectedTokenInfo);
+	}
+	
+	
+	@Test
+	public void ignoreCase_issInvalid() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test-username", Utilities.username);
+		headers.put("test-ignoreCase-fullName", "bianchi ROSSI");
+		headers.put("test-ignoreCase-firstName", "MARIO");
+		headers.put("test-ignoreCase-iss", "TESTAUTHENTE"); // c'e' la regola not
+		Map<String, String> query = new HashMap<String, String>();
+		query.put("test-userinfo", 
+				buildJWT_roles(false,true,false, 
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazione, "ignoreCase", headers,  query,
+				"(Token claim 'iss' with unauthorized value) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
+				mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void ignoreCase_userInfo_fullNameInvalid() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test-username", Utilities.username);
+		headers.put("test-ignoreCase-fullName", "bianchi VERDI"); // atteso Rossi
+		headers.put("test-ignoreCase-firstName", "MARIO");
+		headers.put("test-ignoreCase-iss", "TESTAUTHENTE.INVALID");
+		Map<String, String> query = new HashMap<String, String>();
+		query.put("test-userinfo", 
+				buildJWT_roles(false,true,false, 
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazione, "ignoreCase", headers,  query,
+				"(Token claim 'name' with unexpected value) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
+				mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void ignoreCase_userInfo_firstNameInvalid() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test-username", Utilities.username);
+		headers.put("test-ignoreCase-fullName", "bianchi ROSSI");
+		headers.put("test-ignoreCase-firstName", "ALTRONOME");
+		headers.put("test-ignoreCase-iss", "TESTAUTHENTE.INVALID");
+		Map<String, String> query = new HashMap<String, String>();
+		query.put("test-userinfo", 
+				buildJWT_roles(false,true,false, 
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazione, "ignoreCase", headers,  query,
+				"(Token claim 'given_name' with unexpected value) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
+				mapExpectedTokenInfo);
+	}
+	
+	
+	
+	
+	
 	
 	private static String buildJWT(boolean requiredClaims,
 			List<String> mapExpectedTokenInfo) throws Exception {

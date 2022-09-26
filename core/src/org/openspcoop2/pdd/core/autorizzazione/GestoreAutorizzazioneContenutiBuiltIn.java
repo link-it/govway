@@ -218,7 +218,19 @@ public class GestoreAutorizzazioneContenutiBuiltIn {
 					}
 					expectedValue = expectedValue.substring(CostantiAutorizzazione.AUTHZ_NOT_PREFIX.length(), (expectedValue.length()-CostantiAutorizzazione.AUTHZ_NOT_SUFFIX.length()));
 				}
-								
+				
+				boolean ignoreCase = false;
+				if(
+						expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_IGNORE_CASE_PREFIX.toLowerCase())
+						&&
+						expectedValue.toLowerCase().endsWith(CostantiAutorizzazione.AUTHZ_IGNORE_CASE_SUFFIX.toLowerCase())) {
+					ignoreCase = true;
+					if(expectedValue.length()<= (CostantiAutorizzazione.AUTHZ_IGNORE_CASE_PREFIX.length()+CostantiAutorizzazione.AUTHZ_IGNORE_CASE_SUFFIX.length()) ) {
+						throw new Exception("Resource '"+risorsa+"' configuration without value in ignore case condition");
+					}
+					expectedValue = expectedValue.substring(CostantiAutorizzazione.AUTHZ_IGNORE_CASE_PREFIX.length(), (expectedValue.length()-CostantiAutorizzazione.AUTHZ_IGNORE_CASE_SUFFIX.length()));
+				}
+				
 				try {
 					expectedValue = DynamicUtils.convertDynamicPropertyValue(risorsa, expectedValue, dynamicMap, pddContext, true);
 				}catch(Exception e) {
@@ -237,15 +249,28 @@ public class GestoreAutorizzazioneContenutiBuiltIn {
 						for (int i = 0; i < values.length; i++) {
 							String v = values[i].trim();
 							if(v!=null) {
-								if(v.equals(valoreRisorsa)) {
-									ok = true;
-									break;
+								if(ignoreCase) {
+									if(v.equalsIgnoreCase(valoreRisorsa)) {
+										ok = true;
+										break;
+									}
+								}
+								else {
+									if(v.equals(valoreRisorsa)) {
+										ok = true;
+										break;
+									}
 								}
 							}
 						}
 					}
 					else {
-						ok = expectedValue.equals(valoreRisorsa);
+						if(ignoreCase) {
+							ok = expectedValue.equalsIgnoreCase(valoreRisorsa);
+						}
+						else {
+							ok = expectedValue.equals(valoreRisorsa);
+						}
 					}
 					
 					if(not) {

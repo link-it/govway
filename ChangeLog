@@ -1,6 +1,12 @@
 2022-09-26  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Aggiunta funzionalità OP-1443
+	Sia nell'autorizzazione per Token Claims che nell'autorizzazione per contenuti è adesso possibile definire dei controlli di uguaglianza case insensitive.
+
+2022-09-26  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
 	Risolto Bug OP-1441
 	La validazione tramite interfaccia OpenAPI falliva erroneamente se veniva attuata la validazione di un 'path parameter' contenente caratteri che erano stati codificati per poter essere trasmessi nella url.
 	L'errore avveniva poichè non veniva attuata una decodifica prima della validazione del parametro.

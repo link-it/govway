@@ -1894,7 +1894,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		final SimpleResponse.Builder builder = 
 				new SimpleResponse.Builder(response.getStatus());
 		
-		response.getHeaders().forEach(builder::withHeader);
+		if(response.getHeaders()!=null && !response.getHeaders().isEmpty()) {
+			response.getHeaders().forEach(builder::withHeader);
+		}
 
 		Object content = response.getContent();
 		if(content instanceof String) {
@@ -1935,8 +1937,12 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		final SimpleRequest.Builder builder =
                 new SimpleRequest.Builder(fromHttpMethod(request.getMethod()),request.getUrl());
    
-	    request.getHeaders().forEach(builder::withHeader);
-	    request.getParameters().forEach(builder::withQueryParam);
+		if(request.getHeaders()!=null && !request.getHeaders().isEmpty()) {
+			request.getHeaders().forEach(builder::withHeader);
+		}
+		if(request.getParameters()!=null && !request.getParameters().isEmpty()) {
+			request.getParameters().forEach(builder::withQueryParam);
+		}
 	                        
 		if(content instanceof String) {
 			builder.withBody((String) content);

@@ -1621,6 +1621,18 @@ public class GestoreAutorizzazione {
 								expectedValue = expectedValue.substring(CostantiAutorizzazione.AUTHZ_NOT_PREFIX.length(), (expectedValue.length()-CostantiAutorizzazione.AUTHZ_NOT_SUFFIX.length()));
 							}
 							
+							boolean ignoreCase = false;
+							if(
+									expectedValue.toLowerCase().startsWith(CostantiAutorizzazione.AUTHZ_IGNORE_CASE_PREFIX.toLowerCase())
+									&&
+									expectedValue.toLowerCase().endsWith(CostantiAutorizzazione.AUTHZ_IGNORE_CASE_SUFFIX.toLowerCase())) {
+								ignoreCase = true;
+								if(expectedValue.length()<= (CostantiAutorizzazione.AUTHZ_IGNORE_CASE_PREFIX.length()+CostantiAutorizzazione.AUTHZ_IGNORE_CASE_SUFFIX.length()) ) {
+									throw new Exception(object+" '"+nomeClaimAttribute+"' without value in ignore case condition");
+								}
+								expectedValue = expectedValue.substring(CostantiAutorizzazione.AUTHZ_IGNORE_CASE_PREFIX.length(), (expectedValue.length()-CostantiAutorizzazione.AUTHZ_IGNORE_CASE_SUFFIX.length()));
+							}
+							
 							try {
 								expectedValue = DynamicUtils.convertDynamicPropertyValue(key, expectedValue, dynamicMap, pddContext, true);
 							}catch(Exception e) {
@@ -1638,14 +1650,41 @@ public class GestoreAutorizzazione {
 								ok = false;
 								for (int i = 0; i < values.length; i++) {
 									String v = values[i].trim();
-									if(lClaimValues.contains(v)) {
-										ok = true;
-										break;
+									if(ignoreCase) {
+										boolean find = false;
+										for (String claim : lClaimValues) {
+											if(claim.equalsIgnoreCase(v)) {
+												find = true;
+												break;
+											}	
+										}
+										if(find) {
+											ok = true;
+											break;
+										}
+									}
+									else {
+										if(lClaimValues.contains(v)) {
+											ok = true;
+											break;
+										}
 									}
 								}
 							}
 							else {
-								ok = lClaimValues.contains(expectedValue);
+								if(ignoreCase) {
+									boolean find = false;
+									for (String claim : lClaimValues) {
+										if(claim.equalsIgnoreCase(expectedValue)) {
+											find = true;
+											break;
+										}	
+									}
+									ok = find;
+								}
+								else {
+									ok = lClaimValues.contains(expectedValue);
+								}
 							}
 							
 							if(not) {

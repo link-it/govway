@@ -42,4 +42,6 @@ public class CostantiAutorizzazione {
 	public static final String AUTHZ_REGEXP_SUFFIX = "}";
 	public static final String AUTHZ_NOT_PREFIX = "${not:";
 	public static final String AUTHZ_NOT_SUFFIX = "}";
+	public static final String AUTHZ_IGNORE_CASE_PREFIX = "${ignoreCase:";
+	public static final String AUTHZ_IGNORE_CASE_SUFFIX = "}";
 }
