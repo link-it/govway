@@ -1380,6 +1380,18 @@ public class OpenSPCoop2Properties {
 			
 			this.getRealmAutenticazioneApiKeyWWWAuthenticateConfig();
 			
+			this.isAutenticazioneHttpsPortaDelegataValidityCheck();
+			if(this.getAutenticazioneHttpsPortaDelegataTruststorePath()!=null) {
+				this.getAutenticazioneHttpsPortaDelegataTruststoreType();
+				this.getAutenticazioneHttpsPortaDelegataTruststorePassword();
+				this.getAutenticazioneHttpsPortaDelegataTruststoreCRLs();
+			}
+			this.isAutenticazioneHttpsPortaApplicativaValidityCheck();
+			if(this.getAutenticazioneHttpsPortaApplicativaTruststorePath()!=null) {
+				this.getAutenticazioneHttpsPortaApplicativaTruststoreType();
+				this.getAutenticazioneHttpsPortaApplicativaTruststorePassword();
+				this.getAutenticazioneHttpsPortaApplicativaTruststoreCRLs();
+			}
 			this.isAutenticazioneHttpsPortaDelegataCheckSoggettiProprietari();
 			this.getRealmAutenticazioneHttpsWWWAuthenticateConfig();
 			
@@ -16756,6 +16768,237 @@ public class OpenSPCoop2Properties {
 
 		return OpenSPCoop2Properties.getRealmAutenticazioneApiKeyWWWAuthenticateConfig;
 	}
+	
+	private static Boolean isAutenticazioneHttpsPortaDelegataValidityCheck = null;
+	public boolean isAutenticazioneHttpsPortaDelegataValidityCheck() {
+		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneContenutiApplicativi.validityCheck";
+		if(OpenSPCoop2Properties.isAutenticazioneHttpsPortaDelegataValidityCheck == null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isAutenticazioneHttpsPortaDelegataValidityCheck = Boolean.valueOf(value);
+				}
+				else {
+					this.log.error("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=true");
+					OpenSPCoop2Properties.isAutenticazioneHttpsPortaDelegataValidityCheck = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
+				OpenSPCoop2Properties.isAutenticazioneHttpsPortaDelegataValidityCheck = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isAutenticazioneHttpsPortaDelegataValidityCheck;
+	}
+	
+	private static File getAutenticazioneHttpsPortaDelegataTruststorePath = null;
+	private static Boolean getAutenticazioneHttpsPortaDelegataTruststorePath_read = null;
+	public File getAutenticazioneHttpsPortaDelegataTruststorePath() throws Exception {
+		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneContenutiApplicativi.truststore.path";
+		if(OpenSPCoop2Properties.getAutenticazioneHttpsPortaDelegataTruststorePath_read == null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.getAutenticazioneHttpsPortaDelegataTruststorePath = new File(value);
+					if(OpenSPCoop2Properties.getAutenticazioneHttpsPortaDelegataTruststorePath.exists()) {
+						if(!OpenSPCoop2Properties.getAutenticazioneHttpsPortaDelegataTruststorePath.isFile()) {
+							throw new Exception(OpenSPCoop2Properties.getAutenticazioneHttpsPortaDelegataTruststorePath.getAbsolutePath()+" is not file");
+						}
+						if(!OpenSPCoop2Properties.getAutenticazioneHttpsPortaDelegataTruststorePath.canRead()) {
+							throw new Exception(OpenSPCoop2Properties.getAutenticazioneHttpsPortaDelegataTruststorePath.getAbsolutePath()+" cannot read");
+						}
+					}
+					else {
+						OpenSPCoop2Properties.getAutenticazioneHttpsPortaDelegataTruststorePath=null;
+					}
+				}
+			}catch(java.lang.Exception e) {
+				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}
+			OpenSPCoop2Properties.getAutenticazioneHttpsPortaDelegataTruststorePath_read = true;
+		}
+
+		return OpenSPCoop2Properties.getAutenticazioneHttpsPortaDelegataTruststorePath;
+	}
+	
+	private static String getAutenticazioneHttpsPortaDelegataTruststorePassword = null;
+	private static Boolean getAutenticazioneHttpsPortaDelegataTruststorePassword_read = null;
+	public String getAutenticazioneHttpsPortaDelegataTruststorePassword() throws Exception {
+		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneContenutiApplicativi.truststore.password";
+		if(OpenSPCoop2Properties.getAutenticazioneHttpsPortaDelegataTruststorePassword_read == null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.getAutenticazioneHttpsPortaDelegataTruststorePassword = value;
+				}
+			}catch(java.lang.Exception e) {
+				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}
+			OpenSPCoop2Properties.getAutenticazioneHttpsPortaDelegataTruststorePassword_read = true;
+		}
+
+		return OpenSPCoop2Properties.getAutenticazioneHttpsPortaDelegataTruststorePassword;
+	}
+	
+	private static String getAutenticazioneHttpsPortaDelegataTruststoreType = null;
+	public String getAutenticazioneHttpsPortaDelegataTruststoreType() throws Exception {
+		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneContenutiApplicativi.truststore.type";
+		if(OpenSPCoop2Properties.getAutenticazioneHttpsPortaDelegataTruststoreType == null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.getAutenticazioneHttpsPortaDelegataTruststoreType = value;
+				}
+				else {
+					OpenSPCoop2Properties.getAutenticazioneHttpsPortaDelegataTruststoreType = "jks";
+				}
+			}catch(java.lang.Exception e) {
+				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}
+		}
+
+		return OpenSPCoop2Properties.getAutenticazioneHttpsPortaDelegataTruststoreType;
+	}
+	
+	private static String getAutenticazioneHttpsPortaDelegataTruststoreCRLs = null;
+	private static Boolean getAutenticazioneHttpsPortaDelegataTruststoreCRLs_read = null;
+	public String getAutenticazioneHttpsPortaDelegataTruststoreCRLs() throws Exception {
+		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneContenutiApplicativi.truststore.crls";
+		if(OpenSPCoop2Properties.getAutenticazioneHttpsPortaDelegataTruststoreCRLs_read == null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.getAutenticazioneHttpsPortaDelegataTruststoreCRLs = value;
+				}
+			}catch(java.lang.Exception e) {
+				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}
+			OpenSPCoop2Properties.getAutenticazioneHttpsPortaDelegataTruststoreCRLs_read = true;
+		}
+
+		return OpenSPCoop2Properties.getAutenticazioneHttpsPortaDelegataTruststoreCRLs;
+	}
+	
+	private static Boolean isAutenticazioneHttpsPortaApplicativaValidityCheck = null;
+	public boolean isAutenticazioneHttpsPortaApplicativaValidityCheck() {
+		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneBuste.validityCheck";
+		if(OpenSPCoop2Properties.isAutenticazioneHttpsPortaApplicativaValidityCheck == null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isAutenticazioneHttpsPortaApplicativaValidityCheck = Boolean.valueOf(value);
+				}
+				else {
+					this.log.error("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=true");
+					OpenSPCoop2Properties.isAutenticazioneHttpsPortaApplicativaValidityCheck = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
+				OpenSPCoop2Properties.isAutenticazioneHttpsPortaApplicativaValidityCheck = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isAutenticazioneHttpsPortaApplicativaValidityCheck;
+	}
+	
+	private static File getAutenticazioneHttpsPortaApplicativaTruststorePath = null;
+	private static Boolean getAutenticazioneHttpsPortaApplicativaTruststorePath_read = null;
+	public File getAutenticazioneHttpsPortaApplicativaTruststorePath() throws Exception {
+		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneBuste.truststore.path";
+		if(OpenSPCoop2Properties.getAutenticazioneHttpsPortaApplicativaTruststorePath_read == null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.getAutenticazioneHttpsPortaApplicativaTruststorePath = new File(value);
+					if(OpenSPCoop2Properties.getAutenticazioneHttpsPortaApplicativaTruststorePath.exists()) {
+						if(!OpenSPCoop2Properties.getAutenticazioneHttpsPortaApplicativaTruststorePath.isFile()) {
+							throw new Exception(OpenSPCoop2Properties.getAutenticazioneHttpsPortaApplicativaTruststorePath.getAbsolutePath()+" is not file");
+						}
+						if(!OpenSPCoop2Properties.getAutenticazioneHttpsPortaApplicativaTruststorePath.canRead()) {
+							throw new Exception(OpenSPCoop2Properties.getAutenticazioneHttpsPortaApplicativaTruststorePath.getAbsolutePath()+" cannot read");
+						}
+					}
+					else {
+						OpenSPCoop2Properties.getAutenticazioneHttpsPortaApplicativaTruststorePath=null;
+					}
+				}
+			}catch(java.lang.Exception e) {
+				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}
+			OpenSPCoop2Properties.getAutenticazioneHttpsPortaApplicativaTruststorePath_read = true;
+		}
+
+		return OpenSPCoop2Properties.getAutenticazioneHttpsPortaApplicativaTruststorePath;
+	}
+	
+	private static String getAutenticazioneHttpsPortaApplicativaTruststorePassword = null;
+	private static Boolean getAutenticazioneHttpsPortaApplicativaTruststorePassword_read = null;
+	public String getAutenticazioneHttpsPortaApplicativaTruststorePassword() throws Exception {
+		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneBuste.truststore.password";
+		if(OpenSPCoop2Properties.getAutenticazioneHttpsPortaApplicativaTruststorePassword_read == null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.getAutenticazioneHttpsPortaApplicativaTruststorePassword = value;
+				}
+			}catch(java.lang.Exception e) {
+				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}
+			OpenSPCoop2Properties.getAutenticazioneHttpsPortaApplicativaTruststorePassword_read = true;
+		}
+
+		return OpenSPCoop2Properties.getAutenticazioneHttpsPortaApplicativaTruststorePassword;
+	}
+	
+	private static String getAutenticazioneHttpsPortaApplicativaTruststoreType = null;
+	public String getAutenticazioneHttpsPortaApplicativaTruststoreType() throws Exception {
+		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneBuste.truststore.type";
+		if(OpenSPCoop2Properties.getAutenticazioneHttpsPortaApplicativaTruststoreType == null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.getAutenticazioneHttpsPortaApplicativaTruststoreType = value;
+				}
+				else {
+					OpenSPCoop2Properties.getAutenticazioneHttpsPortaApplicativaTruststoreType = "jks";
+				}
+			}catch(java.lang.Exception e) {
+				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}
+		}
+
+		return OpenSPCoop2Properties.getAutenticazioneHttpsPortaApplicativaTruststoreType;
+	}
+	
+	private static String getAutenticazioneHttpsPortaApplicativaTruststoreCRLs = null;
+	private static Boolean getAutenticazioneHttpsPortaApplicativaTruststoreCRLs_read = null;
+	public String getAutenticazioneHttpsPortaApplicativaTruststoreCRLs() throws Exception {
+		String pName = "org.openspcoop2.pdd.core.autenticazione.https.ricezioneBuste.truststore.crls";
+		if(OpenSPCoop2Properties.getAutenticazioneHttpsPortaApplicativaTruststoreCRLs_read == null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.getAutenticazioneHttpsPortaApplicativaTruststoreCRLs = value;
+				}
+			}catch(java.lang.Exception e) {
+				throw new Exception("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+			}
+			OpenSPCoop2Properties.getAutenticazioneHttpsPortaApplicativaTruststoreCRLs_read = true;
+		}
+
+		return OpenSPCoop2Properties.getAutenticazioneHttpsPortaApplicativaTruststoreCRLs;
+	}
+	
 	
 	private static Boolean isAutenticazioneHttpsPortaDelegataCheckSoggettiProprietari = null;
 	public boolean isAutenticazioneHttpsPortaDelegataCheckSoggettiProprietari() {

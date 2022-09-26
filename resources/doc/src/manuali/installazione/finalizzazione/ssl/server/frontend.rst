@@ -58,9 +58,25 @@ Per abilitare il processamento degli header inoltrati dal frontend è necessario
    ::
 
       # TrustStore per verificare i certificati ricevuti
-      header.ssl.certificate.truststore.path=PATH_ASSOLUTO_FILE_SYSTEM
-      # Password del TrustStore
-      header.ssl.certificate.truststore.password=changeme
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.truststore.path=PATH_ASSOLUTO_FILE_SYSTEM
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.truststore.type=jks
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.truststore.password=changeme
+
+   Se è stata abilitata la verifica viene controllato che il certificato ricevuto sia stato emesso da CA presenti nel trustStore o sia lui stesso direttamente presente nel trustStore.
+   Oltre alla verifica è possibile abilitare la validazione del certificato rispetto alla scadenza.
+
+   ::
+
+      # Indicazione se deve essere verificata la scadenza dei certificati verificati (default:true)
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.truststore.validityCheck=false
+
+   È infine possibile indicare delle CRLs per verificare se un certificato risultato revocato.
+   Con la presenza di CRLs la validazione rispetto alla scadenza viene effettuata per default e non serve abilitarla puntualmente.
+
+   ::
+
+      # Elenco delle CRL per verificare i certificati ricevuti
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.truststore.crls=PATH1.crl,PATH2.crl...
 
 #. Se il frontend inserisce in un header http il principal dell'identità relativa al chiamante, deve essere indicato il nome di tale header tramite la seguente configurazione:
 

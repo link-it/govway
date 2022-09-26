@@ -22,23 +22,28 @@
 
 package org.openspcoop2.pdd.core.autenticazione.pa;
 
+import java.security.cert.CertStore;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.autenticazione.AutenticazioneException;
 import org.openspcoop2.pdd.core.autenticazione.WWWAuthenticateConfig;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
+import org.openspcoop2.pdd.core.keystore.GestoreKeystoreCaching;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.certificate.KeyStore;
 
 /**
  * Classe che implementa una autenticazione BASIC.
@@ -83,17 +88,95 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
     	if(credenziali.getCertificate()!=null) {
     		certificate = credenziali.getCertificate().getCertificate();
     		
+    		List<Proprieta> proprieta = null;
+    		if(datiInvocazione.getPa()!=null) {
+    			proprieta = datiInvocazione.getPa().getProprietaList();
+    		}
+    		else if(datiInvocazione.getPd()!=null) {
+    			proprieta = datiInvocazione.getPd().getProprietaList();
+    		}
+    		
+    		boolean checkValid = false;
+    		boolean trustStore = false;
+    		KeyStore trustStoreCertificatiX509 = null;
+    		CertStore trustStoreCertificatiX509_crls = null;
     		try {
-    			certificate.checkValid();
-    		}catch(Exception e) {
-    			esito.setErroreCooperazione(IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS, 
-    					ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCredenzialiForniteNonCorrette(e.getMessage()));
-    			esito.setClientAuthenticated(false);
-    			esito.setClientIdentified(false);
-    			if(wwwAuthenticateConfig!=null) {
-    				esito.setWwwAuthenticateErrorHeader(wwwAuthenticateConfig.buildWWWAuthenticateHeaderValue_invalid());
+    			checkValid = CostantiProprieta.isAutenticazioneHttpsValidityCheck(proprieta, op2Properties.isAutenticazioneHttpsPortaApplicativaValidityCheck());
+    			trustStore = CostantiProprieta.isAutenticazioneHttpsTrustStore(proprieta, op2Properties.getAutenticazioneHttpsPortaApplicativaTruststorePath());
+    			if(trustStore) {
+    				String path = CostantiProprieta.getAutenticazioneHttpsTrustStorePath(proprieta, op2Properties.getAutenticazioneHttpsPortaApplicativaTruststorePath());
+    				if(path!=null) {
+    					try {
+    						String password = CostantiProprieta.getAutenticazioneHttpsTrustStorePassword(proprieta, op2Properties.getAutenticazioneHttpsPortaApplicativaTruststorePassword());
+    						String type = CostantiProprieta.getAutenticazioneHttpsTrustStoreType(proprieta, op2Properties.getAutenticazioneHttpsPortaApplicativaTruststoreType());
+    	    				trustStoreCertificatiX509 = GestoreKeystoreCaching.getMerlinTruststore(path, 
+    	    						type, 
+    								password).getTrustStore();
+    					}catch(Exception e){
+    						throw new Exception("Errore durante la lettura del truststore indicato ("+path+"): "+e.getMessage());
+    					}
+    				}
+    				
+    				if(trustStoreCertificatiX509!=null) {
+    					String crl = CostantiProprieta.getAutenticazioneHttpsTrustStoreCRLs(proprieta, op2Properties.getAutenticazioneHttpsPortaApplicativaTruststoreCRLs());
+        				if(crl!=null) {
+    						try {
+    							trustStoreCertificatiX509_crls = GestoreKeystoreCaching.getCRLCertstore(crl).getCertStore();
+    						}catch(Exception e){
+    							throw new Exception("Richiesta autenticazione ssl del gateway gestore delle credenziali; errore durante la lettura delle CRLs ("+crl+"): "+e.getMessage());
+    						}
+    					}
+    				}
     			}
+    		}catch(Exception e) {
+    			if(this.logError) {
+        			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneSsl non riuscita",e);
+    			}
+    			esito.setErroreCooperazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
+    			esito.setClientIdentified(false);
+    			esito.setEccezioneProcessamento(e);
     			return esito;
+    		}
+    		
+    		if(checkValid 
+    				&&
+    				trustStoreCertificatiX509_crls==null) { // altrimenti la validita' viene verificata insieme alle CRL
+	    		try {
+	    			certificate.checkValid();
+	    		}catch(Exception e) {
+	    			esito.setErroreCooperazione(IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS, 
+        					ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCredenzialiForniteNonCorrette(e.getMessage()));
+        			esito.setClientAuthenticated(false);
+        			esito.setClientIdentified(false);
+        			if(wwwAuthenticateConfig!=null) {
+        				esito.setWwwAuthenticateErrorHeader(wwwAuthenticateConfig.buildWWWAuthenticateHeaderValue_invalid());
+        			}
+        			return esito;
+	    		}
+    		}
+    		
+    		if(trustStoreCertificatiX509!=null) {
+	    		try {
+		    		if(certificate.isVerified(trustStoreCertificatiX509, true)==false) {
+						throw new Exception("Certificato non verificabile rispetto alle CA conosciute");
+					}
+					if(trustStoreCertificatiX509_crls!=null) {
+						try {
+							certificate.checkValid(trustStoreCertificatiX509_crls, trustStoreCertificatiX509);
+						}catch(Throwable t) {
+							throw new Exception("Certificato non valido: "+t.getMessage());
+						}
+					}
+	    		}catch(Exception e) {
+	    			esito.setErroreCooperazione(IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS, 
+        					ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCredenzialiForniteNonCorrette(e.getMessage()));
+        			esito.setClientAuthenticated(false);
+        			esito.setClientIdentified(false);
+        			if(wwwAuthenticateConfig!=null) {
+        				esito.setWwwAuthenticateErrorHeader(wwwAuthenticateConfig.buildWWWAuthenticateHeaderValue_invalid());
+        			}
+        			return esito;
+	    		}
     		}
     		
     	}

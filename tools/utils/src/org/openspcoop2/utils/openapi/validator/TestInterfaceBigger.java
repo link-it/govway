@@ -93,10 +93,10 @@ public class TestInterfaceBigger {
 			switch (openAPILibrary) {
 			case json_schema:
 			case openapi4j:
-				maxAtteso = 5000; // 5 secondi (jenkins)
+				maxAtteso = 6000; // 6 secondi (jenkins)
 				break;
 			case swagger_request_validator:
-				maxAtteso = 5000; // 5 secondi (jenkins)
+				maxAtteso = 6000; // 6 secondi (jenkins)
 				break;
 			}	
 			System.out.println("\tReader time:"+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
@@ -124,7 +124,7 @@ public class TestInterfaceBigger {
 				maxAtteso = Long.MAX_VALUE;
 				break;
 			case swagger_request_validator:
-				maxAtteso = 5000; // 5 secondi (jenkins)
+				maxAtteso = 6000; // 6 secondi (jenkins)
 				break;
 			}			
 			System.out.println("\tInit validator time:"+Utilities.convertSystemTimeIntoString_millisecondi(time, true));

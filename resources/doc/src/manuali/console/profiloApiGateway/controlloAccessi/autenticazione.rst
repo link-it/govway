@@ -34,6 +34,14 @@ Se è presente un certificato client, il gateway cercherà di identificare un ap
 
     Configurazione Autenticazione 'https'
 
+Durante il processo di autenticazione https, sull'eventuale certificato client presente viene effettuata una validazione della scadenza. È possibile disabilitare tale controllo o abiltarne altri registrando una delle seguenti :ref:`configProprieta` sull'erogazione o sulla fruizione:
+
+- *authentication.https.validityCheck* : (true/false, default:true) consente di disabilitare il controllo sulla scadenza dei certificati ricevuti;
+- *authentication.https.truststore.enabled* : (true/false, default:false) consente di abilitare l'utilizzo di un truststore per verificare i certificati ricevuti; 
+- *authentication.https.truststore*, *authentication.https.truststore.password* e *authentication.https.truststore.type* : parametri che definiscono un truststore da utilizzare per la verifica dei certificati ricevuti;
+- *authentication.https.truststore.crls*: in presenza di un truststore, è possibile indicare delle CRLs per verificare se un certificato risultato revocato. 
+
+
 **- http-basic**
 
 (:numref:`controlloAccessiAutenticazioneHttpBasic`)

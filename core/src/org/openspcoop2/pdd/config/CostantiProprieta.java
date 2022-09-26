@@ -139,6 +139,84 @@ public class CostantiProprieta {
 	
 	
 	
+	// ****  AUTENTICAZIONE HTTPS *****
+	
+	public static final String AUTENTICAZIONE_VALUE_ENABLED = VALUE_ENABLED;
+	public static final String AUTENTICAZIONE_VALUE_DISABLED = VALUE_DISABLED;
+	
+	public static final String AUTENTICAZIONE_HTTPS_VALIDITY_CHECK = "authentication.https.validityCheck";
+	
+	public static final String AUTENTICAZIONE_HTTPS_TRUSTSTORE_ENABLED = "authentication.https.truststore.enabled";
+	public static final String AUTENTICAZIONE_HTTPS_TRUSTSTORE = "authentication.https.truststore";
+	public static final String AUTENTICAZIONE_HTTPS_TRUSTSTORE_PASSWORD = "authentication.https.truststore.password";
+	public static final String AUTENTICAZIONE_HTTPS_TRUSTSTORE_TYPE = "authentication.https.truststore.type";
+	public static final String AUTENTICAZIONE_HTTPS_TRUSTSTORE_CRLS = "authentication.https.truststore.crls";
+	
+	public static boolean isAutenticazioneHttpsValidityCheck(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, AUTENTICAZIONE_HTTPS_VALIDITY_CHECK, defaultValue, AUTENTICAZIONE_VALUE_ENABLED, AUTENTICAZIONE_VALUE_DISABLED);
+	}
+	
+	public static boolean isAutenticazioneHttpsTrustStore(List<Proprieta> proprieta, File pathDefaultValue) {
+		String enabled = readValue(proprieta, AUTENTICAZIONE_HTTPS_TRUSTSTORE_ENABLED);
+		boolean isEnabled = true;
+		if(enabled!=null && !StringUtils.isEmpty(enabled)) {
+			if(AUTENTICAZIONE_VALUE_ENABLED.equals(enabled.trim())) {
+				isEnabled = true;
+			}
+			else if(AUTENTICAZIONE_VALUE_DISABLED.equals(enabled.trim())) {
+				isEnabled = false;
+			}
+		}
+		if(!isEnabled) {
+			return false; // la proprietà serve soprattutto a disabilitarlo se definito in govway.properties
+		}
+		
+		String path = readValue(proprieta, AUTENTICAZIONE_HTTPS_TRUSTSTORE);
+		if(path==null || StringUtils.isEmpty(path)) {
+			if(pathDefaultValue!=null) {
+				path = pathDefaultValue.getAbsolutePath();
+			}
+		}
+		
+		// La presenza di un path, basta ad abilitarlo. La proprietà enabled serve per disabilitarlo
+		return path!=null && StringUtils.isNotEmpty(path);
+	}
+	
+	public static String getAutenticazioneHttpsTrustStorePath(List<Proprieta> proprieta, File pathDefaultValue) {
+		String path = readValue(proprieta, AUTENTICAZIONE_HTTPS_TRUSTSTORE);
+		if(path==null || StringUtils.isEmpty(path)) {
+			if(pathDefaultValue!=null) {
+				path = pathDefaultValue.getAbsolutePath();
+			}
+		}
+		return path;
+	}
+	public static String getAutenticazioneHttpsTrustStorePassword(List<Proprieta> proprieta, String passwordDefaultValue) {
+		String password = readValue(proprieta, AUTENTICAZIONE_HTTPS_TRUSTSTORE_PASSWORD);
+		if(password==null) {
+			password = passwordDefaultValue;
+		}
+		return password;
+	}
+	public static String getAutenticazioneHttpsTrustStoreType(List<Proprieta> proprieta, String typeDefaultValue) {
+		String type = readValue(proprieta, AUTENTICAZIONE_HTTPS_TRUSTSTORE_TYPE);
+		if(type==null) {
+			type = typeDefaultValue;
+		}
+		if(type==null) {
+			type = "jks";
+		}
+		return type;
+	}
+	public static String getAutenticazioneHttpsTrustStoreCRLs(List<Proprieta> proprieta, String crlsDefaultValue) {
+		String crls = readValue(proprieta, AUTENTICAZIONE_HTTPS_TRUSTSTORE_CRLS);
+		if(crls==null) {
+			crls = crlsDefaultValue;
+		}
+		return crls;
+	}
+	
+	
 	// ****  CORRELAZIONE APPLICATIVA *****
 	
 	public static final String CORRELAZIONE_APPLICATIVA_VALUE_ENABLED = VALUE_ENABLED;

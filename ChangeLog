@@ -1,3 +1,10 @@
+2022-09-26  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta Funzionalità OP-1439
+	Il gestore delle credenziali e l'autenticazione HTTPS è adesso configurabile per effettuare una verifica dei certificati ricevuti tramite un truststore.
+	È inoltre possibile configurare una lista di CRL da utilizzare per la verifica dei certificati.
+
 2022-09-23  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

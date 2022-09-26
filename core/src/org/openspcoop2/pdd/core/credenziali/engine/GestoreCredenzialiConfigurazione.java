@@ -29,7 +29,6 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiException;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.utils.certificate.KeyStore;
 
 /**     
  * GestoreCredenzialiConfigurazione
@@ -112,7 +111,11 @@ public class GestoreCredenzialiConfigurazione {
 	private boolean headerSslCertificateReplaceCharacters;
 	private String headerSslCertificateReplaceCharacters_source;
 	private String headerSslCertificateReplaceCharacters_dest;
-	private KeyStore headerSslCertificateTrustStore;
+	private String headerSslCertificateTrustStorePath;
+	private String headerSslCertificateTrustStorePassword;
+	private String headerSslCertificateTrustStoreType;
+	private boolean headerSslCertificateTrustStoreCheckValid = true;
+	private String headerSslCertificateCrlX509;
 
 	private String headerPrincipal;
 	
@@ -290,10 +293,31 @@ public class GestoreCredenzialiConfigurazione {
 				if(password==null) {
 					throw new GestoreCredenzialiException("Non è stata indicata una password per il truststore dei certificati ssl indicato ["+fTrustStore.getAbsolutePath()+"]");
 				}
-				try {
-					this.headerSslCertificateTrustStore = new KeyStore(fTrustStore, password);
-				}catch(Throwable e) {
-					throw new GestoreCredenzialiException("Errore durante l'accesso al truststore dei certificati ssl indicato ["+fTrustStore.getAbsolutePath()+"]: "+e.getMessage(),e);
+				this.headerSslCertificateTrustStorePath = fTrustStore.getAbsolutePath();
+				this.headerSslCertificateTrustStorePassword = password;
+				String type = getProperty(p, "header.ssl.certificate.truststore.type", protocollo, idSoggetto);
+				if(type==null) {
+					this.headerSslCertificateTrustStoreType = "jks";
+				}
+				else {
+					this.headerSslCertificateTrustStoreType = type;
+				}
+			}
+			
+			if(this.headerSslCertificateTrustStorePath!=null) {
+				
+				String v = getProperty(p, "header.ssl.certificate.truststore.validityCheck", protocollo, idSoggetto);
+				if(v!=null && StringUtils.isNotEmpty(v)) {
+					try {
+						this.headerSslCertificateTrustStoreCheckValid = Boolean.valueOf(v);
+					}catch(Throwable e) {
+						throw new GestoreCredenzialiException("Errore durante la lettura della proprietà 'header.ssl.certificate.truststore.validityCheck' (valore: "+v+"): "+e.getMessage(),e);
+					}
+				}
+				
+				String crls = getProperty(p, "header.ssl.certificate.truststore.crls", protocollo, idSoggetto);
+				if(crls!=null && StringUtils.isNotEmpty(crls)) {
+					this.headerSslCertificateCrlX509 = crls;
 				}
 			}
 		}
@@ -485,8 +509,20 @@ public class GestoreCredenzialiConfigurazione {
 	public String getHeaderSslCertificateReplaceCharacters_dest() {
 		return this.headerSslCertificateReplaceCharacters_dest;
 	}
-	public KeyStore getHeaderSslCertificateTrustStore() {
-		return this.headerSslCertificateTrustStore;
+	public String getHeaderSslCertificateTrustStorePath() {
+		return this.headerSslCertificateTrustStorePath;
+	}
+	public String getHeaderSslCertificateTrustStoreType() {
+		return this.headerSslCertificateTrustStoreType;
+	}
+	public String getHeaderSslCertificateTrustStorePassword() {
+		return this.headerSslCertificateTrustStorePassword;
+	}
+	public boolean isHeaderSslCertificateTrustStoreCheckValid() {
+		return this.headerSslCertificateTrustStoreCheckValid;
+	}
+	public String getHeaderSslCertificateCrlX509() {
+		return this.headerSslCertificateCrlX509;
 	}
 	
 	public String getHeaderPrincipal() {
