@@ -39,7 +39,9 @@ tags:
   - name: multipart
     description: test su multipart  
   - name: format-string
-    description: test su vari format string 
+    description: test su vari format string
+  - name: dynamic-path
+    description: test su path dinamico
     
 paths:
           
@@ -1843,6 +1845,106 @@ paths:
               schema:
                 $ref: '#/components/schemas/RichiestaVariFormatString'
 
+  /documenti/dynamic-path/{dynamic_id}:
+
+    get:
+      tags:
+        - dynamic-path
+      description: Esempio di path dinamico
+      operationId: GetDynamicPath
+      parameters:
+      - $ref: '#/components/parameters/dynamic_id'
+      responses:
+        "200":
+          description: test
+          content:
+            text/plain:
+              schema:
+                type: string
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+    post:
+      tags:
+        - dynamic-path
+      description: Esempio di path dinamico
+      operationId: PostDynamicPath
+      parameters:
+      - $ref: '#/components/parameters/dynamic_id'
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            text/plain:
+              schema:
+                type: string
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+    put:
+      tags:
+        - dynamic-path
+      description: Esempio di path dinamico
+      operationId: PutDynamicPath
+      parameters:
+      - $ref: '#/components/parameters/dynamic_id'
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            text/plain:
+              schema:
+                type: string
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
 components:
 
@@ -1905,6 +2007,14 @@ components:
       schema:
         type: string
         format: date-time
+
+    dynamic_id:
+      name: dynamic_id
+      in: path
+      description: Identificativo usato in path
+      required: true
+      schema:
+        $ref: '#/components/schemas/dynamic_id'
         
   schemas:
 
@@ -2895,6 +3005,10 @@ components:
             type: string
             format: ipv6
 
+    dynamic_id:
+      pattern: ^[A-Za-z0-9\-\.\+_:\/\\]{1,73}$
+      type: string
+      description: Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.
 
     ProblemInLineOriginaleTeamDigitale:
       type: object

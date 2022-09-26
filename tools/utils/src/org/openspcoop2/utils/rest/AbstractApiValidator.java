@@ -40,6 +40,7 @@ import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseResponseEntity;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
+import org.springframework.web.util.UriUtils;
 
 /**
  * ApiValidatorConfig
@@ -290,10 +291,36 @@ public abstract class AbstractApiValidator   {
 							throw new ValidatorException("Required dynamic path '"+paramDynamicPath.getName()+"' not found");
 						}
 						if(find){
+							String valueUrlDecoded = valueFound;
 							try{
-								validateValueAsType(ApiParameterType.path, valueFound,paramDynamicPath.getType(),paramDynamicPath.getSchema());
+								// il valore può essere url encoded
+								try {
+									// Note that Java’s URLEncoder class encodes space character(" ") into a + sign. 
+									// This is contrary to other languages like Javascript that encode space character into %20.
+									/*
+									 *  URLEncoder is not for encoding URLs, but for encoding parameter names and values for use in GET-style URLs or POST forms. 
+									 *  That is, for transforming plain text into the application/x-www-form-urlencoded MIME format as described in the HTML specification. 
+									 **/
+									//valueUrlDecoded = java.net.URLDecoder.decode(valueFound, org.openspcoop2.utils.resources.Charset.UTF_8.getValue());
+									
+									valueUrlDecoded = UriUtils.decode(valueFound, org.openspcoop2.utils.resources.Charset.UTF_8.getValue());
+									
+									//System.out.println("DOPO '"+valueUrlDecoded+"' PRIMA '"+valueFound+"'");
+									
+								}catch(Throwable e) {
+									//System.out.println("ERRORE");
+									//e.printStackTrace(System.out);
+									// utilizzo valore originale
+									//throw new RuntimeException(e.getMessage(),e);
+								}
+								validateValueAsType(ApiParameterType.path, valueUrlDecoded ,paramDynamicPath.getType(),paramDynamicPath.getSchema());
 							}catch(ValidatorException val){
-								throw new ValidatorException("Invalid value '"+valueFound+"' in dynamic path '"+paramDynamicPath.getName()+"' (expected type '"+paramDynamicPath.getType()+"'): "+val.getMessage(),val);
+								if(valueUrlDecoded!=null && !valueUrlDecoded.equals(valueFound)) {
+									throw new ValidatorException("Invalid value '"+valueFound+"' (urlDecoded: '"+valueUrlDecoded+"') in dynamic path '"+paramDynamicPath.getName()+"' (expected type '"+paramDynamicPath.getType()+"'): "+val.getMessage(),val);
+								}
+								else {
+									throw new ValidatorException("Invalid value '"+valueFound+"' in dynamic path '"+paramDynamicPath.getName()+"' (expected type '"+paramDynamicPath.getType()+"'): "+val.getMessage(),val);
+								}
 							}
 						}
 					}

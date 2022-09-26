@@ -3547,6 +3547,16 @@ public class TestOpenApi3Extended {
 		testFormatString(openAPILibrary, mergeSpec);
 		
 		System.out.println("Test #26 openapi che usano format string completato\n\n");
+		
+		
+		
+		// ** Test per validazione con openapi che usano path dinamici ... **
+		
+		System.out.println("Test #27 openapi che usano path dinamici ...");
+		
+		testDynamicPath(openAPILibrary, mergeSpec);
+	
+		System.out.println("Test #27 openapi che usano path dinamici completato\n\n");
 	}
 
 	
@@ -5426,6 +5436,337 @@ public class TestOpenApi3Extended {
 			}
 			
 			System.out.println("\tTest Risposta ["+tipo+"] path:"+path+" superato");
+		}
+			
+			
+		System.out.println("TEST Verifica Format String completato!");
+
+	}
+	
+	
+	private static void testDynamicPath(OpenAPILibrary openAPILibrary, boolean mergeSpec)
+			throws UtilsException, ProcessingException, URISyntaxException, Exception {
+		System.out.println("#### Verifica Dynamic Path ####");
+		
+		URL url = TestOpenApi3Extended.class.getResource("/org/openspcoop2/utils/openapi/allegati.yaml");
+					
+		ApiSchema apiSchemaYaml = new ApiSchema("teamdigitale-openapi_definitions.yaml", 
+				Utilities.getAsByteArray(TestOpenApi3Extended.class.getResourceAsStream("/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml")), ApiSchemaType.YAML);
+					
+		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
+		configOpenApi4j.setProcessInclude(false);
+		apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi4j, apiSchemaYaml);
+		
+		Api apiOpenApi4j = apiReaderOpenApi4j.read();
+								
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
+		configO.setEmitLogError(logSystemOutError);
+		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
+		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
+		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
+		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi4j, configO);
+		
+		String parameter1 = "080.253.61401A";
+		
+		String parameter2 = "080.253.61401A.KP%2F2022%2F293.02175680483.2022-01-12T00:00:00+02:00"; // url encoded (essendoci gli / riportati anche sotto, per essere letti nel singolo parametro devono essere url encoded)
+		String parameter2_risorsaNonTrovata = "080.253.61401A.KP/2022/293.02175680483.2022-01-12T00:00:00+02:00"; // RISORSA NON TROVATA!
+		
+		String parameterNonValido = "prova=fr"; 
+		String parameterNonValido_url_encoded = "prova%3Dfr"; 
+		
+		String parameterIllegalForUrl = "prova\\=fr"; 
+		String parameterIllegalForUrl_url_encoded = "prova%5C%3Dfr"; 
+		
+		List<String> tipoTest = new ArrayList<String>();
+		List<HttpRequestMethod> methodTest = new ArrayList<HttpRequestMethod>();
+		List<String> parametroTest = new ArrayList<String>();
+		List<Boolean> erroreAttesoTest = new ArrayList<Boolean>();
+		List<Boolean> erroreAttesoProcessingTest = new ArrayList<Boolean>();
+		List<String> erroreAtteso_openapi4j = new ArrayList<String>();
+		List<String> erroreAtteso_swagger_request = new ArrayList<String>();
+		List<String> erroreAtteso_json_schema = new ArrayList<String>();
+		
+		
+		// *** Test: corretto GET ***
+		
+		tipoTest.add("GET-1");
+		methodTest.add(HttpRequestMethod.GET);
+		parametroTest.add(parameter1);
+		erroreAttesoTest.add(false);
+		erroreAttesoProcessingTest.add(false);
+		erroreAtteso_openapi4j.add(null);
+		erroreAtteso_swagger_request.add(null);
+		erroreAtteso_json_schema.add(null);
+		
+		tipoTest.add("GET-2");
+		methodTest.add(HttpRequestMethod.GET);
+		parametroTest.add(parameter2);
+		erroreAttesoTest.add(false);
+		erroreAttesoProcessingTest.add(false);
+		erroreAtteso_openapi4j.add(null);
+		erroreAtteso_swagger_request.add(null);
+		erroreAtteso_json_schema.add(null);
+		
+		tipoTest.add("PUT-1");
+		methodTest.add(HttpRequestMethod.PUT);
+		parametroTest.add(parameter1);
+		erroreAttesoTest.add(false);
+		erroreAttesoProcessingTest.add(false);
+		erroreAtteso_openapi4j.add(null);
+		erroreAtteso_swagger_request.add(null);
+		erroreAtteso_json_schema.add(null);
+		
+		tipoTest.add("PUT-2");
+		methodTest.add(HttpRequestMethod.PUT);
+		parametroTest.add(parameter2);
+		erroreAttesoTest.add(false);
+		erroreAttesoProcessingTest.add(false);
+		erroreAtteso_openapi4j.add(null);
+		erroreAtteso_swagger_request.add(null);
+		erroreAtteso_json_schema.add(null);
+		
+		tipoTest.add("POST-1");
+		methodTest.add(HttpRequestMethod.PUT);
+		parametroTest.add(parameter1);
+		erroreAttesoTest.add(false);
+		erroreAttesoProcessingTest.add(false);
+		erroreAtteso_openapi4j.add(null);
+		erroreAtteso_swagger_request.add(null);
+		erroreAtteso_json_schema.add(null);
+		
+		tipoTest.add("POST-2");
+		methodTest.add(HttpRequestMethod.PUT);
+		parametroTest.add(parameter2);
+		erroreAttesoTest.add(false);
+		erroreAttesoProcessingTest.add(false);
+		erroreAtteso_openapi4j.add(null);
+		erroreAtteso_swagger_request.add(null);
+		erroreAtteso_json_schema.add(null);
+		
+		
+		tipoTest.add("GET-OPERATION-NOT-FOUND");
+		methodTest.add(HttpRequestMethod.GET);
+		parametroTest.add(parameter2_risorsaNonTrovata);
+		erroreAttesoTest.add(false);
+		erroreAttesoProcessingTest.add(true);
+		erroreAtteso_openapi4j.add("Resource GET '/documenti/dynamic-path/"+parameter2_risorsaNonTrovata+"' not found");
+		erroreAtteso_swagger_request.add("Resource GET '/documenti/dynamic-path/"+parameter2_risorsaNonTrovata+"' not found");
+		erroreAtteso_json_schema.add("Resource GET '/documenti/dynamic-path/"+parameter2_risorsaNonTrovata+"' not found");
+
+		tipoTest.add("PUT-OPERATION-NOT-FOUND");
+		methodTest.add(HttpRequestMethod.PUT);
+		parametroTest.add(parameter2_risorsaNonTrovata);
+		erroreAttesoTest.add(false);
+		erroreAttesoProcessingTest.add(true);
+		erroreAtteso_openapi4j.add("Resource PUT '/documenti/dynamic-path/"+parameter2_risorsaNonTrovata+"' not found");
+		erroreAtteso_swagger_request.add("Resource PUT '/documenti/dynamic-path/"+parameter2_risorsaNonTrovata+"' not found");
+		erroreAtteso_json_schema.add("Resource PUT '/documenti/dynamic-path/"+parameter2_risorsaNonTrovata+"' not found");
+		
+		tipoTest.add("POST-OPERATION-NOT-FOUND");
+		methodTest.add(HttpRequestMethod.POST);
+		parametroTest.add(parameter2_risorsaNonTrovata);
+		erroreAttesoTest.add(false);
+		erroreAttesoProcessingTest.add(true);
+		erroreAtteso_openapi4j.add("Resource POST '/documenti/dynamic-path/"+parameter2_risorsaNonTrovata+"' not found");
+		erroreAtteso_swagger_request.add("Resource POST '/documenti/dynamic-path/"+parameter2_risorsaNonTrovata+"' not found");
+		erroreAtteso_json_schema.add("Resource POST '/documenti/dynamic-path/"+parameter2_risorsaNonTrovata+"' not found");
+		
+		
+		tipoTest.add("GET-NON_VALIDO-1");
+		methodTest.add(HttpRequestMethod.GET);
+		parametroTest.add(parameterNonValido);
+		erroreAttesoTest.add(true);
+		erroreAttesoProcessingTest.add(false);
+		erroreAtteso_openapi4j.add("Invalid value 'prova=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_swagger_request.add("Invalid value 'prova=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_json_schema.add("Invalid value 'prova=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		
+		tipoTest.add("GET-NON_VALIDO-UrlEncoded");
+		methodTest.add(HttpRequestMethod.GET);
+		parametroTest.add(parameterNonValido_url_encoded);
+		erroreAttesoTest.add(true);
+		erroreAttesoProcessingTest.add(false);
+		erroreAtteso_openapi4j.add("Invalid value 'prova%3Dfr' (urlDecoded: 'prova=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_swagger_request.add("Invalid value 'prova%3Dfr' (urlDecoded: 'prova=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_json_schema.add("Invalid value 'prova%3Dfr' (urlDecoded: 'prova=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		
+		
+		tipoTest.add("POST-NON_VALIDO-1");
+		methodTest.add(HttpRequestMethod.POST);
+		parametroTest.add(parameterNonValido);
+		erroreAttesoTest.add(true);
+		erroreAttesoProcessingTest.add(false);
+		erroreAtteso_openapi4j.add("Invalid value 'prova=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_swagger_request.add("Invalid value 'prova=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_json_schema.add("Invalid value 'prova=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		
+		tipoTest.add("POST-NON_VALIDO-UrlEncoded");
+		methodTest.add(HttpRequestMethod.POST);
+		parametroTest.add(parameterNonValido_url_encoded);
+		erroreAttesoTest.add(true);
+		erroreAttesoProcessingTest.add(false);
+		erroreAtteso_openapi4j.add("Invalid value 'prova%3Dfr' (urlDecoded: 'prova=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_swagger_request.add("Invalid value 'prova%3Dfr' (urlDecoded: 'prova=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_json_schema.add("Invalid value 'prova%3Dfr' (urlDecoded: 'prova=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		
+		
+		tipoTest.add("PUT-NON_VALIDO-1");
+		methodTest.add(HttpRequestMethod.PUT);
+		parametroTest.add(parameterNonValido);
+		erroreAttesoTest.add(true);
+		erroreAttesoProcessingTest.add(false);
+		erroreAtteso_openapi4j.add("Invalid value 'prova=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_swagger_request.add("Invalid value 'prova=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_json_schema.add("Invalid value 'prova=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		
+		tipoTest.add("PUT-NON_VALIDO-UrlEncoded");
+		methodTest.add(HttpRequestMethod.PUT);
+		parametroTest.add(parameterNonValido_url_encoded);
+		erroreAttesoTest.add(true);
+		erroreAttesoProcessingTest.add(false);
+		erroreAtteso_openapi4j.add("Invalid value 'prova%3Dfr' (urlDecoded: 'prova=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_swagger_request.add("Invalid value 'prova%3Dfr' (urlDecoded: 'prova=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_json_schema.add("Invalid value 'prova%3Dfr' (urlDecoded: 'prova=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		
+		
+		
+		tipoTest.add("GET-ILLEGAL_CHARACTER-1");
+		methodTest.add(HttpRequestMethod.GET);
+		parametroTest.add(parameterIllegalForUrl);
+		erroreAttesoTest.add(false);
+		erroreAttesoProcessingTest.add(true);
+		erroreAtteso_openapi4j.add("Illegal character in path at index 29: /documenti/dynamic-path/prova\\=fr");
+		erroreAtteso_swagger_request.add("Illegal character in path at index 29: /documenti/dynamic-path/prova\\=fr");
+		erroreAtteso_json_schema.add("Illegal character in path at index 29: /documenti/dynamic-path/prova\\=fr");
+		
+		tipoTest.add("GET-ILLEGAL_CHARACTER-UrlEncoded");
+		methodTest.add(HttpRequestMethod.GET);
+		parametroTest.add(parameterIllegalForUrl_url_encoded);
+		erroreAttesoTest.add(true);
+		erroreAttesoProcessingTest.add(false);
+		erroreAtteso_openapi4j.add("Invalid value 'prova%5C%3Dfr' (urlDecoded: 'prova\\=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_swagger_request.add("Invalid value 'prova%5C%3Dfr' (urlDecoded: 'prova\\=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_json_schema.add("Invalid value 'prova%5C%3Dfr' (urlDecoded: 'prova\\=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		
+		
+		tipoTest.add("POST-ILLEGAL_CHARACTER-1");
+		methodTest.add(HttpRequestMethod.POST);
+		parametroTest.add(parameterIllegalForUrl);
+		erroreAttesoTest.add(false);
+		erroreAttesoProcessingTest.add(true);
+		erroreAtteso_openapi4j.add("Illegal character in path at index 29: /documenti/dynamic-path/prova\\=fr");
+		erroreAtteso_swagger_request.add("Illegal character in path at index 29: /documenti/dynamic-path/prova\\=fr");
+		erroreAtteso_json_schema.add("Illegal character in path at index 29: /documenti/dynamic-path/prova\\=fr");
+		
+		tipoTest.add("POST-ILLEGAL_CHARACTER-UrlEncoded");
+		methodTest.add(HttpRequestMethod.POST);
+		parametroTest.add(parameterIllegalForUrl_url_encoded);
+		erroreAttesoTest.add(true);
+		erroreAttesoProcessingTest.add(false);
+		erroreAtteso_openapi4j.add("Invalid value 'prova%5C%3Dfr' (urlDecoded: 'prova\\=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_swagger_request.add("Invalid value 'prova%5C%3Dfr' (urlDecoded: 'prova\\=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_json_schema.add("Invalid value 'prova%5C%3Dfr' (urlDecoded: 'prova\\=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		
+		
+		tipoTest.add("PUT-ILLEGAL_CHARACTER-1");
+		methodTest.add(HttpRequestMethod.PUT);
+		parametroTest.add(parameterIllegalForUrl);
+		erroreAttesoTest.add(false);
+		erroreAttesoProcessingTest.add(true);
+		erroreAtteso_openapi4j.add("Illegal character in path at index 29: /documenti/dynamic-path/prova\\=fr");
+		erroreAtteso_swagger_request.add("Illegal character in path at index 29: /documenti/dynamic-path/prova\\=fr");
+		erroreAtteso_json_schema.add("Illegal character in path at index 29: /documenti/dynamic-path/prova\\=fr");
+		
+		tipoTest.add("PUT-ILLEGAL_CHARACTER-UrlEncoded");
+		methodTest.add(HttpRequestMethod.PUT);
+		parametroTest.add(parameterIllegalForUrl_url_encoded);
+		erroreAttesoTest.add(true);
+		erroreAttesoProcessingTest.add(false);
+		erroreAtteso_openapi4j.add("Invalid value 'prova%5C%3Dfr' (urlDecoded: 'prova\\=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_swagger_request.add("Invalid value 'prova%5C%3Dfr' (urlDecoded: 'prova\\=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_json_schema.add("Invalid value 'prova%5C%3Dfr' (urlDecoded: 'prova\\=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		
+		
+		
+		
+		
+				
+		// Esecuzione test
+		
+		
+		for (int i = 0; i < tipoTest.size(); i++) {
+		
+			String tipo = tipoTest.get(i);
+			
+			boolean erroreAtteso = erroreAttesoTest.get(i);
+			boolean erroreAttesoProcessing = erroreAttesoProcessingTest.get(i);
+			String content = "HelloWorld";
+			String msgErroreAttesoRichiesta = null;
+			switch (openAPILibrary) {
+			case openapi4j:
+				msgErroreAttesoRichiesta = erroreAtteso_openapi4j.get(i);
+				break;
+			case swagger_request_validator:
+				msgErroreAttesoRichiesta = erroreAtteso_swagger_request.get(i);
+				break;
+			case json_schema:
+				msgErroreAttesoRichiesta = erroreAtteso_json_schema.get(i);
+				break;
+			default:
+				break;
+			}
+
+			
+			String path = "/documenti/dynamic-path/"+parametroTest.get(i);
+			HttpRequestMethod method = methodTest.get(i);
+			String contentType = HttpConstants.CONTENT_TYPE_PLAIN;
+
+			
+			System.out.println("\tTest Richiesta ["+tipo+"] path:"+path+" ...");
+			
+			HttpBaseRequestEntity<?> request = new TextHttpRequestEntity();
+			request.setUrl(path);
+			request.setMethod(method);
+			if(!HttpRequestMethod.GET.equals(method)) {
+				((TextHttpRequestEntity)request).setContent(content);
+				Map<String, List<String>> parametersTrasporto = new HashMap<>();
+				TransportUtils.addHeader(parametersTrasporto,HttpConstants.CONTENT_TYPE, contentType);
+				request.setHeaders(parametersTrasporto);
+				request.setContentType(contentType);
+			}
+			
+								
+			try {				
+				apiValidatorOpenApi4j.validate(request);
+				if(erroreAtteso) {
+					if("SKIP".equals(msgErroreAttesoRichiesta)) {
+						System.out.println("WARN Libreria non supporta ancora correttamente la validazione, si attendeva un errore");
+					}
+					else {
+						throw new Exception("Atteso errore ("+tipo+") '"+msgErroreAttesoRichiesta+"' non rilevato");
+					}
+				}
+			} catch (ValidatorException e) {
+				if(erroreAtteso && e.getMessage()!=null && e.getMessage().contains(msgErroreAttesoRichiesta)) {
+					System.out.println("Errore atteso: "+e.getMessage());
+				}
+				else {
+					throw new Exception("Errore non atteso ("+tipo+"): "+e.getMessage());
+				}
+			} catch(org.openspcoop2.utils.rest.ProcessingException pe) {
+				if(erroreAttesoProcessing && pe.getMessage()!=null && pe.getMessage().contains(msgErroreAttesoRichiesta)) {
+					System.out.println("Errore atteso: "+pe.getMessage());
+				}
+				else {
+					throw new Exception("Errore non atteso ("+tipo+"): "+pe.getMessage());
+				}
+			}
+			
+			System.out.println("\tTest Richiesta ["+tipo+"] path:"+path+" superato");
+		
 		}
 			
 			

@@ -367,7 +367,12 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 
 	private ApiOperation getOperation(Operation operation, List<Parameter> listParameter, HttpRequestMethod method, String pathK, OpenapiApi api) {
 		ApiOperation apiOperation = new ApiOperation(method, pathK);
-		if(operation.getParameters() != null || operation.getRequestBody() != null) {
+		if( (listParameter!=null && !listParameter.isEmpty())
+				||
+				(operation.getParameters() != null)
+				|| 
+				(operation.getRequestBody() != null)
+			) {
 			ApiRequest request = new ApiRequest();
 
 			if(listParameter!=null && !listParameter.isEmpty()) {

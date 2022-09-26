@@ -1,6 +1,13 @@
 2022-09-26  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Risolto Bug OP-1441
+	La validazione tramite interfaccia OpenAPI falliva erroneamente se veniva attuata la validazione di un 'path parameter' contenente caratteri che erano stati codificati per poter essere trasmessi nella url.
+	L'errore avveniva poichè non veniva attuata una decodifica prima della validazione del parametro.
+
+2022-09-26  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
 	Aggiunta Funzionalità OP-1439
 	Il gestore delle credenziali e l'autenticazione HTTPS è adesso configurabile per effettuare una verifica dei certificati ricevuti tramite un truststore.
 	È inoltre possibile configurare una lista di CRL da utilizzare per la verifica dei certificati.
