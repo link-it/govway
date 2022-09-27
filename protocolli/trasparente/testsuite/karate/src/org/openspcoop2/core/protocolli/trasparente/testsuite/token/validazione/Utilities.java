@@ -158,6 +158,12 @@ public class Utilities extends ConfigLoader {
 				error = "TokenInTheFuture";
 				msg = "'iat' token claim is in the future";
 			}
+			else if(operazione.contains("OnlyAuthzContenuti")) {
+				esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
+				code = 403;
+				error = "AuthorizationContentDeny";
+				msg = "Unauthorized request content";
+			}
 			verifyKo(response, error, code, msg, true);
 		
 		}

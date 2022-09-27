@@ -206,7 +206,13 @@
 
 							<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
 							     (file:.../lib/json/accessors-smart-1.2.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
-							<jvmarg value="-Djdk.module.illegalAccess=deny"/>
+							<!-- Modificato da deny a permit per non far comparire il messaggio (sono test): 
+								Caused by: java.lang.IllegalAccessError: class Log4jHotPatch (in unnamed module @0x7a356a0d) 
+									cannot access class jdk.internal.org.objectweb.asm.Opcodes (in module java.base) 
+									because module java.base does not export jdk.internal.org.objectweb.asm to unnamed module @0x7a356a0d
+									at Log4jHotPatch.asmVersion(Log4jHotPatch.java:71)
+							-->
+							<jvmarg value="-Djdk.module.illegalAccess=permit"/>
 
 							<classpath refid="karate_testsuite" />
 							<classpath location="${build_testsuite}" />
@@ -232,7 +238,13 @@
 
 							<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
 							     (file:.../lib/json/accessors-smart-1.2.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
-							<jvmarg value="-Djdk.module.illegalAccess=deny"/>
+							<!-- Modificato da deny a permit per non far comparire il messaggio (sono test): 
+								Caused by: java.lang.IllegalAccessError: class Log4jHotPatch (in unnamed module @0x7a356a0d) 
+									cannot access class jdk.internal.org.objectweb.asm.Opcodes (in module java.base) 
+									because module java.base does not export jdk.internal.org.objectweb.asm to unnamed module @0x7a356a0d
+									at Log4jHotPatch.asmVersion(Log4jHotPatch.java:71)
+							-->
+							<jvmarg value="-Djdk.module.illegalAccess=permit"/>
 
 							<classpath refid="karate_testsuite" />
 							<classpath location="${build_testsuite}" />

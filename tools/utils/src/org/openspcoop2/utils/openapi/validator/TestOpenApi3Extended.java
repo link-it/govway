@@ -78,7 +78,7 @@ import org.w3c.dom.Element;
 public class TestOpenApi3Extended {
 
 	private static boolean logSystemOutError = true;
-		
+
 	public static void main(String[] args) throws Exception {
 		
 		
@@ -95,7 +95,7 @@ public class TestOpenApi3Extended {
 		// fix per evitare troppo output su jenkins:
 		logSystemOutError = !OpenAPILibrary.json_schema.equals(openAPILibrary);
 
-		
+
 		// *** TEST per il Parser e validazione dello schema *** //
 		
 		{
@@ -5636,11 +5636,11 @@ public class TestOpenApi3Extended {
 		tipoTest.add("GET-ILLEGAL_CHARACTER-1");
 		methodTest.add(HttpRequestMethod.GET);
 		parametroTest.add(parameterIllegalForUrl);
-		erroreAttesoTest.add(false);
-		erroreAttesoProcessingTest.add(true);
-		erroreAtteso_openapi4j.add("Illegal character in path at index 29: /documenti/dynamic-path/prova\\=fr");
-		erroreAtteso_swagger_request.add("Illegal character in path at index 29: /documenti/dynamic-path/prova\\=fr");
-		erroreAtteso_json_schema.add("Illegal character in path at index 29: /documenti/dynamic-path/prova\\=fr");
+		erroreAttesoTest.add(true);
+		erroreAttesoProcessingTest.add(false);
+		erroreAtteso_openapi4j.add("Invalid value 'prova\\=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_swagger_request.add("Invalid value 'prova\\=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_json_schema.add("Invalid value 'prova\\=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
 		
 		tipoTest.add("GET-ILLEGAL_CHARACTER-UrlEncoded");
 		methodTest.add(HttpRequestMethod.GET);
@@ -5655,12 +5655,12 @@ public class TestOpenApi3Extended {
 		tipoTest.add("POST-ILLEGAL_CHARACTER-1");
 		methodTest.add(HttpRequestMethod.POST);
 		parametroTest.add(parameterIllegalForUrl);
-		erroreAttesoTest.add(false);
-		erroreAttesoProcessingTest.add(true);
-		erroreAtteso_openapi4j.add("Illegal character in path at index 29: /documenti/dynamic-path/prova\\=fr");
-		erroreAtteso_swagger_request.add("Illegal character in path at index 29: /documenti/dynamic-path/prova\\=fr");
-		erroreAtteso_json_schema.add("Illegal character in path at index 29: /documenti/dynamic-path/prova\\=fr");
-		
+		erroreAttesoTest.add(true);
+		erroreAttesoProcessingTest.add(false);
+		erroreAtteso_openapi4j.add("Invalid value 'prova\\=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_swagger_request.add("Invalid value 'prova\\=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_json_schema.add("Invalid value 'prova\\=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+				
 		tipoTest.add("POST-ILLEGAL_CHARACTER-UrlEncoded");
 		methodTest.add(HttpRequestMethod.POST);
 		parametroTest.add(parameterIllegalForUrl_url_encoded);
@@ -5674,12 +5674,12 @@ public class TestOpenApi3Extended {
 		tipoTest.add("PUT-ILLEGAL_CHARACTER-1");
 		methodTest.add(HttpRequestMethod.PUT);
 		parametroTest.add(parameterIllegalForUrl);
-		erroreAttesoTest.add(false);
-		erroreAttesoProcessingTest.add(true);
-		erroreAtteso_openapi4j.add("Illegal character in path at index 29: /documenti/dynamic-path/prova\\=fr");
-		erroreAtteso_swagger_request.add("Illegal character in path at index 29: /documenti/dynamic-path/prova\\=fr");
-		erroreAtteso_json_schema.add("Illegal character in path at index 29: /documenti/dynamic-path/prova\\=fr");
-		
+		erroreAttesoTest.add(true);
+		erroreAttesoProcessingTest.add(false);
+		erroreAtteso_openapi4j.add("Invalid value 'prova\\=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_swagger_request.add("Invalid value 'prova\\=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_json_schema.add("Invalid value 'prova\\=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+				
 		tipoTest.add("PUT-ILLEGAL_CHARACTER-UrlEncoded");
 		methodTest.add(HttpRequestMethod.PUT);
 		parametroTest.add(parameterIllegalForUrl_url_encoded);
@@ -5761,7 +5761,18 @@ public class TestOpenApi3Extended {
 					System.out.println("Errore atteso: "+pe.getMessage());
 				}
 				else {
-					throw new Exception("Errore non atteso ("+tipo+"): "+pe.getMessage());
+					// Su jenkins e via maven non succede
+					if( "GET-ILLEGAL_CHARACTER-1".equals(tipo) || "POST-ILLEGAL_CHARACTER-1".equals(tipo) || "PUT-ILLEGAL_CHARACTER-1".equals(tipo)) {
+						String errore2 = "Illegal character in path at index 29: /documenti/dynamic-path/prova\\=fr";
+						if(pe.getMessage()!=null && pe.getMessage().contains(errore2)) {
+							System.out.println("Errore atteso: "+pe.getMessage());
+						}
+						else {
+							throw new Exception("Errore non atteso ("+tipo+"): "+pe.getMessage());
+						}
+					} else {
+						throw new Exception("Errore non atteso ("+tipo+"): "+pe.getMessage());
+					}
 				}
 			}
 			

@@ -54,6 +54,18 @@ public class TestInterfaceBigger {
 
 	private static boolean logSystemOutError = true;
 	
+	private static boolean isJenkins() {
+		String j = System.getProperty("jenkins");
+		if(j!=null) {
+			return "true".equalsIgnoreCase(j);
+		}
+		j = System.getenv("jenkins");
+		if(j!=null) {
+			return "true".equalsIgnoreCase(j);
+		}
+		return false;
+	}
+	
 	public static void main(String[] args) throws Exception {
 
 		YamlSnakeLimits.setDEBUG(true);
@@ -72,6 +84,8 @@ public class TestInterfaceBigger {
 		// fix per evitare troppo output su jenkins:
 		logSystemOutError = !OpenAPILibrary.json_schema.equals(openAPILibrary);
 		
+		boolean isJenkins = isJenkins();
+		System.out.println("Jenkins ENV: "+isJenkins);
 		
 		// ** FHIR
 		{
@@ -93,10 +107,10 @@ public class TestInterfaceBigger {
 			switch (openAPILibrary) {
 			case json_schema:
 			case openapi4j:
-				maxAtteso = 6000; // 6 secondi (jenkins)
+				maxAtteso = isJenkins ? 9000 : 3500; 
 				break;
 			case swagger_request_validator:
-				maxAtteso = 6000; // 6 secondi (jenkins)
+				maxAtteso = isJenkins ? 9000 : 3500;
 				break;
 			}	
 			System.out.println("\tReader time:"+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
@@ -124,12 +138,24 @@ public class TestInterfaceBigger {
 				maxAtteso = Long.MAX_VALUE;
 				break;
 			case swagger_request_validator:
-				maxAtteso = 6000; // 6 secondi (jenkins)
+				maxAtteso = isJenkins ? 9000 : 3500;
 				break;
 			}			
 			System.out.println("\tInit validator time:"+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
 			if(time>maxAtteso) {
 				throw new Exception("Atteso un tempo inferiore a '"+maxAtteso+"'ms, trovato '"+time+"'ms");
+			}
+			
+			if(!isJenkins) {
+				switch (openAPILibrary) {
+				case json_schema:
+				case openapi4j:
+					maxAtteso = 6000;
+					break;
+				case swagger_request_validator:
+					maxAtteso = 1500; // dimezzo
+					break;
+				}	
 			}
 			
 			initT = DateManager.getTimeMillis();
@@ -312,7 +338,7 @@ public class TestInterfaceBigger {
 						msgErroreAtteso = "aaaaaaaaa";
 						break;
 					case openapi4j:
-						msgErroreAtteso = "aaaaaaaa";
+						msgErroreAtteso = "Additional property 'resourceNonEsistente' is not allowed. (code: 1000)";
 						break;
 					case swagger_request_validator:
 						msgErroreAtteso = "[ERROR][REQUEST][POST http://hapi.fhir.org/baseR4/Invoice @body] Object instance has properties which are not allowed by the schema: [\"resourceNonEsistente\"]";
@@ -481,7 +507,7 @@ public class TestInterfaceBigger {
 						msgErroreAtteso = "aaaaaaaaa";
 						break;
 					case openapi4j:
-						msgErroreAtteso = "aaaaaaaa";
+						msgErroreAtteso = "Additional property 'resourceNonEsistente' is not allowed. (code: 1000)";
 						break;
 					case swagger_request_validator:
 						msgErroreAtteso = "[ERROR][RESPONSE][] Object instance has properties which are not allowed by the schema: [\"resourceNonEsistente\"]";

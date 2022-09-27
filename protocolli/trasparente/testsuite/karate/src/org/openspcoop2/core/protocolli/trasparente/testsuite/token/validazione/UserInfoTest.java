@@ -700,6 +700,149 @@ public class UserInfoTest extends ConfigLoader {
 	
 	
 	
+	
+	
+	@Test
+	public void notOnlyAuthzContenuti_success() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test-username", Utilities.username);
+		headers.put("test-not-aud", "7777.apps.invalid");
+		headers.put("test-not-iss", "testAuthEnte.invalid");
+		Map<String, String> query = new HashMap<String, String>();
+		query.put("test-userinfo", 
+				buildJWT_roles(false,true,false, 
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazione, "notOnlyAuthzContenuti", headers,  query,
+				null,
+				mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void notOnlyAuthzContenuti_clientIdInvalid() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test-username", Utilities.username);
+		headers.put("test-not-aud", "7777.apps.invalid");
+		headers.put("test-not-iss", "testAuthEnte.invalid");
+		Map<String, String> query = new HashMap<String, String>();
+		query.put("test-userinfo", 
+				buildJWT(true,
+						true, true, true, true, true,
+						true, true, true,
+						false,true,false,
+						false,
+						false, false, false, false,
+						true, false, false, false,
+						mapExpectedTokenInfo));
+		Utilities._test(logCore, validazione, "notOnlyAuthzContenuti", headers,  query,
+				"(Resource '${tokenInfo:clientId}' with unauthorized value '18192.apps.invalid') Il chiamante non è autorizzato ad invocare l'API",
+				mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void notOnlyAuthzContenuti_audienceInvalid() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test-username", Utilities.username);
+		headers.put("test-not-aud", "23223.apps");
+		headers.put("test-not-iss", "testAuthEnte.invalid");
+		Map<String, String> query = new HashMap<String, String>();
+		query.put("test-userinfo", 
+				buildJWT_roles(false,true,false, 
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazione, "notOnlyAuthzContenuti", headers,  query,
+				"(Resource '${tokenInfo:aud[0]}' with unauthorized value '23223.apps') Il chiamante non è autorizzato ad invocare l'API",
+				mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void notOnlyAuthzContenuti_issInvalid() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test-username", Utilities.username);
+		headers.put("test-not-aud", "7777.apps.invalid");
+		headers.put("test-not-iss", "testAuthEnte");
+		Map<String, String> query = new HashMap<String, String>();
+		query.put("test-userinfo", 
+				buildJWT_roles(false,true,false, 
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazione, "notOnlyAuthzContenuti", headers,  query,
+				"(Resource '${tokenInfo:iss}' with unauthorized value 'testAuthEnte') Il chiamante non è autorizzato ad invocare l'API",
+				mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void notOnlyAuthzContenuti_roleInvalid() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test-username", Utilities.username);
+		headers.put("test-not-aud", "7777.apps.invalid");
+		headers.put("test-not-iss", "testAuthEnte.invalid");
+		Map<String, String> query = new HashMap<String, String>();
+		query.put("test-userinfo", 
+				buildJWT_roles(true,true,false, 
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazione, "notOnlyAuthzContenuti", headers,  query,
+				"(Resource '${tokenInfo:roles[0]}' with unexpected value 'https://r1' (regExpr not match failed)) Il chiamante non è autorizzato ad invocare l'API",
+				mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void notOnlyAuthzContenuti_usernameInvalid() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test-username", Utilities.username);
+		headers.put("test-not-aud", "7777.apps.invalid");
+		headers.put("test-not-iss", "testAuthEnte.invalid");
+		Map<String, String> query = new HashMap<String, String>();
+		query.put("test-userinfo", 
+				buildJWT(true,
+				true, true, true, true, true,
+				true, true, true,
+				false,true,false,
+				false,
+				false, false, false, false,
+				false, false, true, false,
+				mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazione, "notOnlyAuthzContenuti", headers,  query,
+				"Resource '${tokenInfo:username}' with unexpected value 'usernameErrato' (regExpr not find failed)) Il chiamante non è autorizzato ad invocare l'API",
+				mapExpectedTokenInfo);
+	}
+	
+	
+	
+	
+	
 	@Test
 	public void ignoreCase_success() throws Exception {
 		
@@ -789,6 +932,98 @@ public class UserInfoTest extends ConfigLoader {
 				mapExpectedTokenInfo);
 	}
 	
+	
+	
+	
+	
+	@Test
+	public void ignoreCaseOnlyAuthzContenuti_success() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test-username", Utilities.username);
+		headers.put("test-ignoreCase-fullName", "bianchi ROSSI");
+		headers.put("test-ignoreCase-firstName", "MARIO");
+		headers.put("test-ignoreCase-iss", "TESTAUTHENTE.INVALID");
+		Map<String, String> query = new HashMap<String, String>();
+		query.put("test-userinfo", 
+				buildJWT_roles(false,true,false, 
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazione, "ignoreCaseOnlyAuthzContenuti", headers,  query,
+				null,
+				mapExpectedTokenInfo);
+	}
+	
+	
+	@Test
+	public void ignoreCaseOnlyAuthzContenuti_issInvalid() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test-username", Utilities.username);
+		headers.put("test-ignoreCase-fullName", "bianchi ROSSI");
+		headers.put("test-ignoreCase-firstName", "MARIO");
+		headers.put("test-ignoreCase-iss", "TESTAUTHENTE"); // c'e' la regola not
+		Map<String, String> query = new HashMap<String, String>();
+		query.put("test-userinfo", 
+				buildJWT_roles(false,true,false, 
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazione, "ignoreCaseOnlyAuthzContenuti", headers,  query,
+				"(Resource '${tokenInfo:iss}' with unauthorized value 'testAuthEnte') Il chiamante non è autorizzato ad invocare l'API",
+				mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void ignoreCaseOnlyAuthzContenuti_userInfo_fullNameInvalid() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test-username", Utilities.username);
+		headers.put("test-ignoreCase-fullName", "bianchi VERDI"); // atteso Rossi
+		headers.put("test-ignoreCase-firstName", "MARIO");
+		headers.put("test-ignoreCase-iss", "TESTAUTHENTE.INVALID");
+		Map<String, String> query = new HashMap<String, String>();
+		query.put("test-userinfo", 
+				buildJWT_roles(false,true,false, 
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazione, "ignoreCaseOnlyAuthzContenuti", headers,  query,
+				"(Resource '${tokenInfo:userInfo.fullName}' with unexpected value 'Mario Bianchi Rossi') Il chiamante non è autorizzato ad invocare l'API",
+				mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void ignoreCaseOnlyAuthzContenuti_userInfo_firstNameInvalid() throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<String>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("test-username", Utilities.username);
+		headers.put("test-ignoreCase-fullName", "bianchi ROSSI");
+		headers.put("test-ignoreCase-firstName", "ALTRONOME");
+		headers.put("test-ignoreCase-iss", "TESTAUTHENTE.INVALID");
+		Map<String, String> query = new HashMap<String, String>();
+		query.put("test-userinfo", 
+				buildJWT_roles(false,true,false, 
+						mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, validazione, "ignoreCaseOnlyAuthzContenuti", headers,  query,
+				"(Resource '${tokenInfo:userInfo.firstName}' with unexpected value 'Mario') Il chiamante non è autorizzato ad invocare l'API",
+				mapExpectedTokenInfo);
+	}
 	
 	
 	

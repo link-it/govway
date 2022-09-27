@@ -15,7 +15,8 @@ La configurazione viene effettuata inserendo nel campo di testo un claim da veri
 - ${regExpFind:EXPR} : simile alla precedente regola, il match dell'espressione regolare può avvenire anche su una sottostringa del valore del claim. Come per la precedente esiste anche la versione ${regExpNotFind:EXPR}.
 - valore : indica esattamente il valore (case sensitive) che deve possedere il claim; il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway descritte di seguito.
 - valore1,..,valoreN : è possibile elencare differenti valori ammissibili; come per la precedente opzione il valore può contenere parti dinamiche.
-- ${not:valore} o ${not:valore1,...,valoreN} : simile alle precedenti regole consente però di indicare esattamente i valori (case sensitive) che non deve possedere il claim.
+- ${ignoreCase:valore} o ${ignoreCase:valore1,...,valoreN} : simile alle precedenti regole consente di attuare una verifica case insensitive.
+- ${not:valore} o ${not:valore1,...,valoreN} : simile alle precedenti regole consente di indicare esattamente i valori (case sensitive) che non deve possedere la risorsa. È possibile utilizzarla anche in combinazione con il controllo case-insensitive: ${not:${ignoreCase:valore}} o ${not:${ignoreCase:valore1,...,valoreN}}
 
 Le espressioni utilizzabili come parti dinamiche, risolte a runtime dal gateway, sono:
 
@@ -45,6 +46,8 @@ Di seguito alcuni esempi:
 - client_id=${not:3} : viene verificato che il claim 'client_id' non possieda il valore 3
 - client_id=3,5,6 : viene verificato che il claim 'client_id' possieda il valore 3 o 5 o 6
 - client_id=${not:3,5,6} : viene verificato che il claim 'client_id' non possieda nessuno dei valori indicati: 3, 5 e 6
+- username=${ignoreCase:paolo rossi} : la verifica sul valore del claim 'username' avviene con un criterio case insensitive. Nell'esempio i valori 'Paolo Rossi', 'paolo rossi', 'PAOLO ROSSI' hanno tutti un match.
+- username=${not${ignoreCase:paolo rossi,marco verdi}} :  viene verificato che il claim 'username' non possieda nessuno dei valori indicati. I valori vengon controllati con un criterio case insensitive.
 - client_id=${anyValue} : viene verificato che il claim 'client_id' possieda un valore (not null e not empty)
 - client_id=${regExpMatch:[0-9]} : viene verificato che il claim 'client_id' possieda esattamente una cifra decimale attraverso la verifica di un match con l'espressione regolare '[0-9]'
 - client_id=${regExpNotMatch:[0-9]} : viene verificato che il claim 'client_id' non sia composto da una cifra decimale (l'espressione regolare '[0-9]' non deve essere soddisfatta)
