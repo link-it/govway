@@ -2485,6 +2485,15 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				profiloSicurezzaMessaggioHeaderItem.addLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE.
 						replace(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_MODIPA, this.modiProperties.getRestSecurityTokenHeaderModI()),
 						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE);
+				
+				profiloSicurezzaMessaggioHeaderItem.addLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_CUSTOM,
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_CUSTOM);
+				profiloSicurezzaMessaggioHeaderItem.addLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_AUTHORIZATION_CUSTOM,
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM);
+				profiloSicurezzaMessaggioHeaderItem.addLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE,
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE);
+				
+				profiloSicurezzaMessaggioHeaderItem.setReloadOnChange(true);
 			}
 			else if(isProfiloSicurezza01(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_DEFAULT_VALUE) || isProfiloSicurezza02(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_DEFAULT_VALUE)) {
 				profiloSicurezzaMessaggioHeaderItem.setDefaultValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_NOT_IDAM03_DEFAULT_VALUE);
@@ -2493,6 +2502,16 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				profiloSicurezzaMessaggioHeaderItem.setType(ConsoleItemType.HIDDEN);
 			}
 			configuration.addConsoleItem(profiloSicurezzaMessaggioHeaderItem);
+			
+			StringConsoleItem profiloSicurezzaMessaggioHeaderCustomItem = (StringConsoleItem) 
+					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+					ConsoleItemType.TEXT_EDIT,
+					ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_ID, 
+					ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_LABEL);
+			profiloSicurezzaMessaggioHeaderCustomItem.setDefaultValue(this.modiProperties.getRestSecurityTokenHeaderModI());
+			profiloSicurezzaMessaggioHeaderCustomItem.setType(ConsoleItemType.HIDDEN);
+			configuration.addConsoleItem(profiloSicurezzaMessaggioHeaderCustomItem);
+			
 		}
 		
 		StringConsoleItem profiloSicurezzaMessaggioConfigurazioneItem = (StringConsoleItem) 
@@ -2766,8 +2785,11 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		if(rest) {
 			AbstractConsoleItem<?> profiloSicurezzaMessaggioHeaderItem = 	
 					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_ID);
+			AbstractConsoleItem<?> profiloSicurezzaMessaggioHeaderCustomItem = 	
+					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_ID);
 			if(isSicurezza01 || isSicurezza02 || isSicurezza03) {
 				profiloSicurezzaMessaggioHeaderItem.setType(ConsoleItemType.SELECT);
+				
 				StringProperty profiloSicurezzaMessaggioHeaderItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_ID);
 				String postBackElementName = null;
 				try {
@@ -2781,7 +2803,10 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 					String headerSelezionato = profiloSicurezzaMessaggioHeaderItemValue.getValue();
 					boolean agidPresente = ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA.equals(headerSelezionato) ||
 							ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE.equals(headerSelezionato)  ||
-							ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_MODIPA.equals(headerSelezionato);
+							ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_MODIPA.equals(headerSelezionato) ||
+							ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM.equals(headerSelezionato) ||
+							ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE.equals(headerSelezionato)  ||
+							ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_CUSTOM.equals(headerSelezionato);
 					boolean authorizationOnlyPresente = ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION.equals(headerSelezionato);
 					if(isSicurezza01 || isSicurezza02) {
 						// se è stato modificato (postback) in 01 o 02, e non c'e' l'header authorization imposto il null per forzare il default
@@ -2811,6 +2836,15 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 					((StringConsoleItem)profiloSicurezzaMessaggioHeaderItem).addLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE.
 							replace(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_MODIPA, this.modiProperties.getRestSecurityTokenHeaderModI()),
 							ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE);
+					
+					((StringConsoleItem)profiloSicurezzaMessaggioHeaderItem).addLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_CUSTOM,
+							ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_CUSTOM);
+					((StringConsoleItem)profiloSicurezzaMessaggioHeaderItem).addLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_AUTHORIZATION_CUSTOM,
+							ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM);
+					((StringConsoleItem)profiloSicurezzaMessaggioHeaderItem).addLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE,
+							ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE);
+					
+					((StringConsoleItem)profiloSicurezzaMessaggioHeaderItem).setReloadOnChange(true);
 				}
 				else if(isSicurezza01 || isSicurezza02) {
 					if(profiloSicurezzaMessaggioHeaderItemValue!=null &&
@@ -2824,6 +2858,52 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 							replace(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_MODIPA, this.modiProperties.getRestSecurityTokenHeaderModI()));
 					((StringConsoleItem)profiloSicurezzaMessaggioHeaderItem).removeLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE.
 							replace(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_MODIPA, this.modiProperties.getRestSecurityTokenHeaderModI()));
+					
+					((StringConsoleItem)profiloSicurezzaMessaggioHeaderItem).removeLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_CUSTOM);
+					((StringConsoleItem)profiloSicurezzaMessaggioHeaderItem).removeLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_AUTHORIZATION_CUSTOM);
+					((StringConsoleItem)profiloSicurezzaMessaggioHeaderItem).removeLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_LABEL_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE);
+					
+					((StringConsoleItem)profiloSicurezzaMessaggioHeaderItem).setReloadOnChange(false);
+				}
+				
+				boolean custom = false;
+				if(isSicurezza03) {
+					if(profiloSicurezzaMessaggioHeaderItemValue!=null &&
+						profiloSicurezzaMessaggioHeaderItemValue.getValue()!=null && 
+						StringUtils.isNotEmpty(profiloSicurezzaMessaggioHeaderItemValue.getValue())
+						) {
+						custom =
+								ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_CUSTOM.equals(profiloSicurezzaMessaggioHeaderItemValue.getValue())
+								||
+								ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM.equals(profiloSicurezzaMessaggioHeaderItemValue.getValue())
+								||
+								ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE.equals(profiloSicurezzaMessaggioHeaderItemValue.getValue());
+					}
+				}
+				if(custom) {
+					if(profiloSicurezzaMessaggioHeaderCustomItem!=null) {
+						profiloSicurezzaMessaggioHeaderCustomItem.setType(ConsoleItemType.TEXT_EDIT);
+						profiloSicurezzaMessaggioHeaderCustomItem.setRequired(true);
+						((StringConsoleItem)profiloSicurezzaMessaggioHeaderCustomItem).setDefaultValue(this.modiProperties.getRestSecurityTokenHeaderModI());
+						if(postBackElementName!=null && postBackElementName.equals(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_ID)) {
+							StringProperty profiloSicurezzaMessaggioHeaderCustomItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_ID);
+							if(profiloSicurezzaMessaggioHeaderCustomItemValue!=null) {
+								if(profiloSicurezzaMessaggioHeaderCustomItemValue.getValue()==null || StringUtils.isEmpty(profiloSicurezzaMessaggioHeaderCustomItemValue.getValue())) {
+									profiloSicurezzaMessaggioHeaderCustomItemValue.setValue(this.modiProperties.getRestSecurityTokenHeaderModI());
+								}
+							}
+						}
+					}
+				}
+				else {
+					if(profiloSicurezzaMessaggioHeaderCustomItem!=null) {
+						profiloSicurezzaMessaggioHeaderCustomItem.setType(ConsoleItemType.HIDDEN);
+						profiloSicurezzaMessaggioHeaderCustomItem.setRequired(false);
+						StringProperty profiloSicurezzaMessaggioHeaderCustomItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_ID);
+						if(profiloSicurezzaMessaggioHeaderCustomItemValue!=null) {
+							profiloSicurezzaMessaggioHeaderCustomItemValue.setValue(null);
+						}
+					}
 				}
 			}
 			else {
@@ -2832,6 +2912,14 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 					StringProperty profiloSicurezzaMessaggioHeaderItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_ID);
 					if(profiloSicurezzaMessaggioHeaderItemValue!=null) {
 						profiloSicurezzaMessaggioHeaderItemValue.setValue(null);
+					}
+				}
+				
+				if(profiloSicurezzaMessaggioHeaderCustomItem!=null) {
+					profiloSicurezzaMessaggioHeaderCustomItem.setType(ConsoleItemType.HIDDEN);
+					StringProperty profiloSicurezzaMessaggioHeaderCustomItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_ID);
+					if(profiloSicurezzaMessaggioHeaderCustomItemValue!=null) {
+						profiloSicurezzaMessaggioHeaderCustomItemValue.setValue(null);
 					}
 				}
 			}
@@ -3185,7 +3273,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		if(tmp!=null && !tmp.isEmpty()) {
 			for (String profiloSicurezzaMessaggio : tmp) {
 				if(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA.equals(profiloSicurezzaMessaggio) ||
-						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE.equals(profiloSicurezzaMessaggio)) {
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE.equals(profiloSicurezzaMessaggio) ||
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM.equals(profiloSicurezzaMessaggio) ||
+						ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE.equals(profiloSicurezzaMessaggio)) {
 					return true;
 				}		
 			}

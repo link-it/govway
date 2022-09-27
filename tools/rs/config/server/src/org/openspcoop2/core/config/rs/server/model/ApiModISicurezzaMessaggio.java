@@ -40,6 +40,9 @@ public class ApiModISicurezzaMessaggio  {
   private ModISicurezzaMessaggioRestHeaderEnum restHeader = null;
   
   @Schema(description = "")
+  private String restHeaderCustom = null;
+  
+  @Schema(description = "")
   private Boolean soapFirmaAllegati = false;
   
   @Schema(description = "")
@@ -125,6 +128,25 @@ public class ApiModISicurezzaMessaggio  {
   }
 
  /**
+   * Get restHeaderCustom
+   * @return restHeaderCustom
+  **/
+  @JsonProperty("rest_header_custom")
+  @Valid
+ @Size(max=255)  public String getRestHeaderCustom() {
+    return this.restHeaderCustom;
+  }
+
+  public void setRestHeaderCustom(String restHeaderCustom) {
+    this.restHeaderCustom = restHeaderCustom;
+  }
+
+  public ApiModISicurezzaMessaggio restHeaderCustom(String restHeaderCustom) {
+    this.restHeaderCustom = restHeaderCustom;
+    return this;
+  }
+
+ /**
    * Get soapFirmaAllegati
    * @return soapFirmaAllegati
   **/
@@ -191,6 +213,7 @@ public class ApiModISicurezzaMessaggio  {
     sb.append("    digestRichiesta: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.digestRichiesta)).append("\n");
     sb.append("    informazioniUtente: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.informazioniUtente)).append("\n");
     sb.append("    restHeader: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.restHeader)).append("\n");
+    sb.append("    restHeaderCustom: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.restHeaderCustom)).append("\n");
     sb.append("    soapFirmaAllegati: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.soapFirmaAllegati)).append("\n");
     sb.append("    applicabilita: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.applicabilita)).append("\n");
     sb.append("    applicabilitaCustom: ").append(ApiModISicurezzaMessaggio.toIndentedString(this.applicabilitaCustom)).append("\n");

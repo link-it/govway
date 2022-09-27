@@ -8774,6 +8774,9 @@ components:
           default: false
         rest_header:
           $ref: "#/components/schemas/ModISicurezzaMessaggioRestHeaderEnum"
+        rest_header_custom:
+          maxLength: 255
+          type: "string"
         soap_firma_allegati:
           type: "boolean"
           default: false
@@ -11955,6 +11958,9 @@ components:
       - "bearer"
       - "agid+bearer-request"
       - "agid+bearer"
+      - "custom"
+      - "custom+bearer-request"
+      - "custom+bearer"
     ModISicurezzaMessaggioRestTokenChoiseEnum:
       type: "string"
       default: "agid"

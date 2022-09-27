@@ -103,6 +103,9 @@ Examples:
 | api_modi_rest_a01_qualsiasi_bearer.json |
 | api_modi_rest_a01_qualsiasi_agid_bearer.json |
 | api_modi_rest_a01_qualsiasi_agid_bearer_in_response.json |
+| api_modi_rest_a01_qualsiasi_custom.json |
+| api_modi_rest_a01_qualsiasi_custom_bearer.json |
+| api_modi_rest_a01_qualsiasi_custom_bearer_in_response.json |
 | api_modi_rest_a01_richiesta_agid.json |
 | api_modi_rest_a01_richiesta_bearer.json |
 | api_modi_rest_a01_risposta_agid.json |

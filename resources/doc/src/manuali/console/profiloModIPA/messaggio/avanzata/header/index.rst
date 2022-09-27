@@ -26,6 +26,16 @@ Per i motivi suddetti le possibili configurazioni supportate configurabili trami
 - 'Agid-JWT-Signature' : viene generato sempre e solo un unico token di sicurezza, indipendentemente dal pattern di sicurezza selezionato, utilizzando come nome dell'header HTTP il nome proprietario delle LG.
 - 'Authorization Bearer' : comportamento identico all'opzione precedente, dove però viene utilizzato l'header HTTP 'Authorization' e prefisso 'Bearer ' nel valore. Questa opzione, in presenza di pattern che prevede 'INTEGRITY_REST_01', consente di essere interoperabile con i servizi implementati con la versione 'bozza' delle LG.
 
+Sono inoltre disponibili ulteriori opzioni che hanno il medesimo comportamento delle voci precedentemente descritte, con la particolarità che consentono di avere un header per l'integrità del messaggio personalizzato. 
+
+- 'Custom-JWT-Signature + Authorization Bearer'
+- 'Custom-JWT-Signature + Authorization Bearer anche nella risposta'
+- 'Custom-JWT-Signature'
+
+Se viene selezionata una gestione personalizzata, tutta la parte relativa alla gestione dell'integrità (calcolo/verifica Digest, gestione claim 'signed_header') non viene effettuata built-in e viene delegata a livello applicativo. In fase di fruizione è possibile aggiungere all'interno del token personalizzato i claim ricevuti dall'applicativo client (dettagli forniti nella sezione :ref:`modipa_sicurezza_avanzate_claims`). In fase di erogazione è possibile far arrivare all'applicativo il token completo (sezione :ref:`modipa_sicurezza_avanzate_sbustamento`) o i singoli claim (securityToken descritto in :ref:`valoriDinamici`) in modo da consentirgli di attuare il processo di validazione personalizzato. 
+
+
+
 .. figure:: ../../../../_figure_console/modipa_sicurezza_header.png
     :scale: 50%
     :align: center

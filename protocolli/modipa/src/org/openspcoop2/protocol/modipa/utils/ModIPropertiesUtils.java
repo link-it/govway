@@ -84,6 +84,10 @@ public class ModIPropertiesUtils {
 	public static String readPropertySecurityMessageHeader(AccordoServizioParteComune aspc, String nomePortType, String azione, boolean request) throws ProtocolException {
 		return _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER, request);
 	}
+	public static boolean isPropertySecurityMessageHeaderCustom(AccordoServizioParteComune aspc, String nomePortType, String azione, boolean request) throws ProtocolException {
+		String tmp = _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM, request);
+		return tmp!=null ? Boolean.valueOf(tmp) : false;
+	}
 	public static boolean isPropertySecurityMessageConCorniceSicurezza(AccordoServizioParteComune aspc, String nomePortType, String azione) throws ProtocolException {
 		String tmp = _readProperty(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA);
 		return tmp!=null ? Boolean.valueOf(tmp) : false;
@@ -126,6 +130,8 @@ public class ModIPropertiesUtils {
 				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO);
 		String securityMessageProfileHeader = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(aspc.getProtocolPropertyList(), 
 				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER);
+		String securityMessageProfileHeaderCustom = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(aspc.getProtocolPropertyList(), 
+				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM);
 		String securityMessageCorniceSicurezza = ProtocolPropertiesUtils.getBooleanValuePropertyRegistry(aspc.getProtocolPropertyList(), 
 				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, false)+"";
 		String securityMessageRequestDigest = ProtocolPropertiesUtils.getBooleanValuePropertyRegistry(aspc.getProtocolPropertyList(), 
@@ -184,6 +190,8 @@ public class ModIPropertiesUtils {
 								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO);
 						securityMessageProfileHeader = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(resource.getProtocolPropertyList(), 
 								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER);
+						securityMessageProfileHeaderCustom = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(resource.getProtocolPropertyList(), 
+								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM);
 						securityMessageCorniceSicurezza = ProtocolPropertiesUtils.getBooleanValuePropertyRegistry(resource.getProtocolPropertyList(), 
 								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, false)+"";
 						securityMessageRequestDigest = ProtocolPropertiesUtils.getBooleanValuePropertyRegistry(resource.getProtocolPropertyList(), 
@@ -250,6 +258,8 @@ public class ModIPropertiesUtils {
 											ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO);
 									securityMessageProfileHeader = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(op.getProtocolPropertyList(), 
 											ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER);
+									securityMessageProfileHeaderCustom = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(op.getProtocolPropertyList(), 
+											ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM);
 									securityMessageCorniceSicurezza = ProtocolPropertiesUtils.getBooleanValuePropertyRegistry(op.getProtocolPropertyList(), 
 											ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, false)+"";
 									securityMessageRequestDigest = ProtocolPropertiesUtils.getBooleanValuePropertyRegistry(op.getProtocolPropertyList(), 
@@ -316,6 +326,8 @@ public class ModIPropertiesUtils {
 									ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO);
 							securityMessageProfileHeader = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(azioneAccordo.getProtocolPropertyList(), 
 									ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER);
+							securityMessageProfileHeaderCustom = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(azioneAccordo.getProtocolPropertyList(), 
+									ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM);
 							securityMessageCorniceSicurezza = ProtocolPropertiesUtils.getBooleanValuePropertyRegistry(azioneAccordo.getProtocolPropertyList(), 
 									ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, false)+"";
 							securityMessageRequestDigest = ProtocolPropertiesUtils.getBooleanValuePropertyRegistry(azioneAccordo.getProtocolPropertyList(), 
@@ -388,11 +400,39 @@ public class ModIPropertiesUtils {
 					return ModIProperties.getInstance().getRestSecurityTokenHeaderModI();
 				}
 			}
+			else if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_CUSTOM.equals(securityMessageProfileHeader)) {
+				String integrityCustom = (securityMessageProfileHeaderCustom!=null && StringUtils.isNotEmpty(securityMessageProfileHeaderCustom)) ? 
+						securityMessageProfileHeaderCustom : ModIProperties.getInstance().getRestSecurityTokenHeaderModI();
+				return integrityCustom;
+			}
+			else if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE.equals(securityMessageProfileHeader)) {
+				String integrityCustom = (securityMessageProfileHeaderCustom!=null && StringUtils.isNotEmpty(securityMessageProfileHeaderCustom)) ? 
+						securityMessageProfileHeaderCustom : ModIProperties.getInstance().getRestSecurityTokenHeaderModI();
+				return HttpConstants.AUTHORIZATION + " " +integrityCustom;
+			}
+			else if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM.equals(securityMessageProfileHeader)) {
+				String integrityCustom = (securityMessageProfileHeaderCustom!=null && StringUtils.isNotEmpty(securityMessageProfileHeaderCustom)) ? 
+						securityMessageProfileHeaderCustom : ModIProperties.getInstance().getRestSecurityTokenHeaderModI();
+				if(request!=null && request) {
+					return HttpConstants.AUTHORIZATION + " " +integrityCustom;
+				}
+				else {
+					return integrityCustom;
+				}
+			}
 			else {
 				// caso che non dovrebbe capitare
 				return HttpConstants.AUTHORIZATION;
 			}
 			
+		}
+		else if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM.equals(propertyName)) {
+			// devo ritornare l'indicazione che e' abilitata. Il nome degli header viene gestita nella chiamata ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER sopra
+			return (ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_CUSTOM.equals(securityMessageProfileHeader) 
+					||
+					ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE.equals(securityMessageProfileHeader)
+					||
+					ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM.equals(securityMessageProfileHeader)) + "";
 		}
 		else if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA.equals(propertyName)) {
 			return securityMessageCorniceSicurezza;

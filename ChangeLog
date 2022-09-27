@@ -1,3 +1,9 @@
+2022-09-27  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, ApiRsConfigurazione, ProtocolloModIPA]
+	Aggiunta funzionalità OP-1101
+	Nel profilo di interoperabilità 'ModI' è adesso possibile gestire un pattern 'INTEGRITY_REST_01' personalizzato nella parte relativa alla gestione dell'integrità (calcolo/verifica Digest, gestione claim 'signed_header').
+
 2022-09-26  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

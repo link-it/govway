@@ -4207,6 +4207,286 @@ Scenario: isTest('pkcs11-trustStore')
 
 
 
+########################
+#       IDAR03 (CUSTOM)#
+########################
+
+Scenario: isTest('idar03-custom-single-header') || isTest('idar0302-custom-single-header')
+
+    * def client_token_match = 
+    """
+    ({
+        header: { kid: 'ExampleClient1' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01'
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['CustomTestSuite-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03Custom/v1')
+    
+    * def request_token = decodeToken(requestHeaders['CustomTestSuite-JWT-Signature'][0], "AGID")
+    * karate.log("Ret: ", request_token)
+    * match request_token.payload.signed_headers == "#notpresent"
+    
+    * match requestHeaders['Digest'] == '#notpresent'
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+
+    * def server_token_match =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            client_id: 'RestBlockingIDAR03Custom/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR03Custom/v1'
+        }
+    })
+    """
+    * call checkToken ({token: responseHeaders['CustomTestSuite-JWT-Signature'][0], match_to: server_token_match, kind: "AGID"  })
+
+    * def response_token = decodeToken(responseHeaders['CustomTestSuite-JWT-Signature'][0], "AGID")
+    * match response_token.payload.signed_headers == "#notpresent"
+    
+    * match responseHeaders['Digest'] == '#notpresent'
+    * match responseHeaders['Authorization'] == '#notpresent'
+    * match responseHeaders['Agid-JWT-Signature'] == '#notpresent'
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['CustomTestSuite-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['CustomTestSuite-JWT-Signature'][0],
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+Scenario: isTest('idar03-custom-doppi-header') || isTest('idar0302-custom-doppi-header')
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: 'ExampleClient1' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01'
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * def client_token_integrity_match = 
+    """
+    ({
+        header: { kid: 'ExampleClient1' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01'
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['CustomTestSuiteDoppi-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
+
+    * match requestHeaders['Digest'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+
+    * def client_token_authorization = decodeToken(requestHeaders['Authorization'][0], "Bearer")
+    * def client_token_integrity = decodeToken(requestHeaders['CustomTestSuiteDoppi-JWT-Signature'][0], "AGID")
+    
+    * def client_token_authorization_jti = get client_token_authorization $.payload.jti
+    * def client_token_integrity_jti = get client_token_integrity $.payload.jti
+    * match client_token_authorization_jti == client_token_integrity_jti
+
+    * def client_token_authorization_iat = get client_token_authorization $.payload.iat
+    * def client_token_integrity_iat = get client_token_integrity $.payload.iat
+    * match client_token_authorization_iat == client_token_integrity_iat
+    
+    * def client_token_authorization_nbf = get client_token_authorization $.payload.nbf
+    * def client_token_integrity_nbf = get client_token_integrity $.payload.nbf
+    * match client_token_authorization_nbf == client_token_integrity_nbf
+    
+    * def client_token_authorization_exp = get client_token_authorization $.payload.exp
+    * def client_token_integrity_exp = get client_token_integrity $.payload.exp
+    * match client_token_authorization_exp == client_token_integrity_exp
+
+    * match client_token_authorization.payload.signed_headers == "#notpresent"
+    * match client_token_integrity.payload.signed_headers == "#notpresent"
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1')
+    
+
+
+    * def server_token_authorization_match =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            client_id: 'RestBlockingIDAR03CustomHeaderDuplicati/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR03CustomHeaderDuplicati/v1'
+        }
+    })
+    """
+    * call checkToken ({token: responseHeaders['Authorization'][0], match_to: server_token_authorization_match, kind: "Bearer"  })
+    
+    * def server_token_integrity_match =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            client_id: 'RestBlockingIDAR03CustomHeaderDuplicati/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR03CustomHeaderDuplicati/v1'
+        }
+    })
+    """
+    * call checkToken ({token: responseHeaders['CustomTestSuiteDoppi-JWT-Signature'][0], match_to: server_token_integrity_match, kind: "AGID"  })
+
+    * def server_token_authorization = decodeToken(responseHeaders['Authorization'][0], "Bearer")
+    * def server_token_integrity = decodeToken(responseHeaders['CustomTestSuiteDoppi-JWT-Signature'][0], "AGID")
+    
+    * def server_token_authorization_jti = get server_token_authorization $.payload.jti
+    * def server_token_integrity_jti = get server_token_integrity $.payload.jti
+    * match server_token_authorization_jti == server_token_integrity_jti
+
+    * def server_token_authorization_iat = get server_token_authorization $.payload.iat
+    * def server_token_integrity_iat = get server_token_integrity $.payload.iat
+    * match server_token_authorization_iat == server_token_integrity_iat
+    
+    * def server_token_authorization_nbf = get server_token_authorization $.payload.nbf
+    * def server_token_integrity_nbf = get server_token_integrity $.payload.nbf
+    * match server_token_authorization_nbf == server_token_integrity_nbf
+    
+    * def server_token_authorization_exp = get server_token_authorization $.payload.exp
+    * def server_token_integrity_exp = get server_token_integrity $.payload.exp
+    * match server_token_authorization_exp == server_token_integrity_exp
+
+    * match server_token_authorization.payload.signed_headers == "#notpresent"
+    * match server_token_integrity.payload.signed_headers == "#notpresent"
+    
+    * match responseHeaders['Digest'] == '#notpresent'
+    * match responseHeaders['Agid-JWT-Signature'] == '#notpresent'
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Integrity-Token': requestHeaders['CustomTestSuiteDoppi-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Server-Authorization-Token': responseHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Server-Integrity-Token': responseHeaders['CustomTestSuiteDoppi-JWT-Signature'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+Scenario: isTest('idar03-custom-doppi-header-solo-richiesta') || isTest('idar0302-custom-doppi-header-solo-richiesta')
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: 'ExampleClient1' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01'
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * def client_token_integrity_match = 
+    """
+    ({
+        header: { kid: 'ExampleClient1' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01'
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['CustomTestSuiteDoppiSoloRichiesta-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
+
+    * match requestHeaders['Digest'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+
+    * def client_token_authorization = decodeToken(requestHeaders['Authorization'][0], "Bearer")
+    * def client_token_integrity = decodeToken(requestHeaders['CustomTestSuiteDoppiSoloRichiesta-JWT-Signature'][0], "AGID")
+    
+    * def client_token_authorization_jti = get client_token_authorization $.payload.jti
+    * def client_token_integrity_jti = get client_token_integrity $.payload.jti
+    * match client_token_authorization_jti == client_token_integrity_jti
+
+    * def client_token_authorization_iat = get client_token_authorization $.payload.iat
+    * def client_token_integrity_iat = get client_token_integrity $.payload.iat
+    * match client_token_authorization_iat == client_token_integrity_iat
+    
+    * def client_token_authorization_nbf = get client_token_authorization $.payload.nbf
+    * def client_token_integrity_nbf = get client_token_integrity $.payload.nbf
+    * match client_token_authorization_nbf == client_token_integrity_nbf
+    
+    * def client_token_authorization_exp = get client_token_authorization $.payload.exp
+    * def client_token_integrity_exp = get client_token_integrity $.payload.exp
+    * match client_token_authorization_exp == client_token_integrity_exp
+
+    * match client_token_authorization.payload.signed_headers == "#notpresent"
+    * match client_token_integrity.payload.signed_headers == "#notpresent"
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1')
+    
+
+    
+    * def server_token_integrity_match =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            client_id: 'RestBlockingIDAR03CustomHeaderDuplicati/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR03CustomHeaderDuplicati/v1'
+        }
+    })
+    """
+    * call checkToken ({token: responseHeaders['CustomTestSuiteDoppiSoloRichiesta-JWT-Signature'][0], match_to: server_token_integrity_match, kind: "AGID"  })
+
+    * def server_token_integrity = decodeToken(responseHeaders['CustomTestSuiteDoppiSoloRichiesta-JWT-Signature'][0], "AGID")
+    
+    * match server_token_integrity.payload.signed_headers == "#notpresent"
+    
+    * match responseHeaders['Authorization'] == '#notpresent'
+    * match responseHeaders['Digest'] == '#notpresent'
+    * match responseHeaders['Agid-JWT-Signature'] == '#notpresent'
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Integrity-Token': requestHeaders['CustomTestSuiteDoppiSoloRichiesta-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Server-Integrity-Token': responseHeaders['CustomTestSuiteDoppiSoloRichiesta-JWT-Signature'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
 # catch all
 #
 #

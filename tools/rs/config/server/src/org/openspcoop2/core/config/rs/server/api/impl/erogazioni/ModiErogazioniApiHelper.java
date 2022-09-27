@@ -170,6 +170,8 @@ public class ModiErogazioniApiHelper {
 		List<String> valueAbilitato = new ArrayList<String>();
 		valueAbilitato.add(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE);
 		valueAbilitato.add(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA);
+		valueAbilitato.add(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE);
+		valueAbilitato.add(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM);
 		return _isAbilitata(aspc, portType, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER, valueAbilitato, null);
 	}
 	private static boolean isInfoUtenteAbilitato(AccordoServizioParteComune aspc, String portType) throws Exception {

@@ -393,6 +393,7 @@ public class ModiApiApiHelper {
 		ModISicurezzaMessaggioRestHeaderEnum restHeader = null;
 		String restHeaderString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER, true);
 
+		boolean custom = false;
 		if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_MODIPA)) {
 			restHeader = ModISicurezzaMessaggioRestHeaderEnum.AGID;
 		} else if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION)) {
@@ -401,8 +402,22 @@ public class ModiApiApiHelper {
 			restHeader = ModISicurezzaMessaggioRestHeaderEnum.AGID_BEARER_REQUEST;
 		} else if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE)) {
 			restHeader = ModISicurezzaMessaggioRestHeaderEnum.AGID_BEARER;
+		} else if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_CUSTOM)) {
+			restHeader = ModISicurezzaMessaggioRestHeaderEnum.CUSTOM;
+			custom = true;
+		} else if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM)) {
+			restHeader = ModISicurezzaMessaggioRestHeaderEnum.CUSTOM_BEARER_REQUEST;
+			custom = true;
+		} else if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE)) {
+			restHeader = ModISicurezzaMessaggioRestHeaderEnum.CUSTOM_BEARER;
+			custom = true;
 		}
 		sicurezzaMessaggio.setRestHeader(restHeader);
+		
+		if(custom) {
+			String restHeaderCustomString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM, true);
+			sicurezzaMessaggio.setRestHeaderCustom(restHeaderCustomString);
+		}
 
 		ModISicurezzaMessaggioApplicabilitaEnum applicabilita = null;
 
@@ -839,6 +854,7 @@ public class ModiApiApiHelper {
 
 
 			String headerHTTPREST = "";
+			boolean custom = false;
 			switch(sicurezzaMessaggio.getRestHeader()) {
 				case AGID: headerHTTPREST = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_MODIPA;
 				break;
@@ -848,10 +864,21 @@ public class ModiApiApiHelper {
 				break;
 				case AGID_BEARER: headerHTTPREST = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE;
 				break;
+				case CUSTOM: headerHTTPREST = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_CUSTOM;
+				custom=true;
+				break;
+				case CUSTOM_BEARER_REQUEST: headerHTTPREST = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM;
+				custom=true;
+				break;
+				case CUSTOM_BEARER: headerHTTPREST = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE;
+				custom=true;
+				break;
 			}
-
-
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER, headerHTTPREST);
+			
+			if(custom && sicurezzaMessaggio.getRestHeaderCustom()!=null) {
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM, sicurezzaMessaggio.getRestHeaderCustom());
+			}
 
 
 			String applicabilita = "";

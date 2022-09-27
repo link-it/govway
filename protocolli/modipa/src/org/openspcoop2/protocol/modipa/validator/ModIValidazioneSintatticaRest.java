@@ -372,7 +372,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 	public String validateSecurityProfile(OpenSPCoop2Message msg, boolean request, String securityMessageProfile, String headerTokenRest, boolean corniceSicurezza, boolean includiRequestDigest, 
 			Busta busta, List<Eccezione> erroriValidazione,
 			ModITruststoreConfig trustStoreCertificati, ModITruststoreConfig trustStoreSsl, ModISecurityConfig securityConfig,
-			boolean buildSecurityTokenInRequest, boolean headerDuplicati, boolean securityHeaderObbligatorio,
+			boolean buildSecurityTokenInRequest, boolean headerDuplicati, boolean integritaCustom, boolean securityHeaderObbligatorio,
 			Map<String, Object> dynamicMapParameter, Busta datiRichiesta) throws Exception {
 		
 		boolean bufferMessage_readOnly = this.modiProperties.isReadByPathBufferEnabled();
@@ -943,7 +943,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			
 			String digestHeader = HttpConstants.DIGEST;
 			String digestValueInHeaderHTTP = null;
-			if(integrita && msg.castAsRest().hasContent()) {
+			if(integrita && !integritaCustom && msg.castAsRest().hasContent()) {
 				
 				List<String> digests = null;
 				if(msg!=null) {
@@ -1035,7 +1035,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			}
 			
 			String claimSignedHeader = this.modiProperties.getRestSecurityTokenClaimSignedHeaders();
-			if(objectNode.has(claimSignedHeader)) {
+			if(integrita && !integritaCustom && objectNode.has(claimSignedHeader)) {
 				
 				boolean findDigestInClaimSignedHeader = false;
 				
@@ -1183,7 +1183,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				}
 			}
 			else {
-				if(integrita && msg.castAsRest().hasContent()) {
+				if(integrita && !integritaCustom && msg.castAsRest().hasContent()) {
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_INTESTAZIONE_NON_PRESENTE, 
 							prefix+"Token senza claim '"+claimSignedHeader+"'"));
 				}

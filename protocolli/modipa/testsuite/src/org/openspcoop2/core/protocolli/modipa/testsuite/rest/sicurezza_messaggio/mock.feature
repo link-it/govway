@@ -498,6 +498,23 @@ Scenario: isTest('multipart-request-mixed-idar0302')
     * def response = read('classpath:test/rest/sicurezza-messaggio/multipart-request.bin')
 
 
+
+##########################################
+#       IDAR03 (CUSTOM)                  #
+##########################################
+
+Scenario: isTest('idar03-custom-single-header') || isTest('idar03-custom-doppi-header') || isTest('idar03-custom-doppi-header-solo-richiesta') ||
+          isTest('idar0302-custom-single-header') || isTest('idar0302-custom-doppi-header') || isTest('idar0302-custom-doppi-header-solo-richiesta')
+
+    * match requestHeaders['CustomTestSuite-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['Authorization'] == '#notpresent'
+    * match requestHeaders['Digest'] == '#notpresent'
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+
+
+
 # catch all
 #
 #

@@ -309,6 +309,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 						String headerTokenRest = null;
 						String headerTokenRestIntegrity = null; // nel caso di Authorization insieme a Agid-JWT-Signature
 						Boolean multipleHeaderAuthorizationConfig = null;
+						boolean integritaCustom = false;
 						if(rest) {
 							headerTokenRest = ModIPropertiesUtils.readPropertySecurityMessageHeader(aspc, nomePortType, azione, request);
 							if(headerTokenRest.contains(" ")) {
@@ -318,6 +319,14 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 									headerTokenRestIntegrity=tmp[1];
 									multipleHeaderAuthorizationConfig = true;
 								}
+							}
+							integritaCustom = ModIPropertiesUtils.isPropertySecurityMessageHeaderCustom(aspc, nomePortType, azione, request);
+							if(integritaCustom) {
+								String hdrCustom = headerTokenRest;
+								if(multipleHeaderAuthorizationConfig!=null && multipleHeaderAuthorizationConfig && headerTokenRestIntegrity!=null) {
+									hdrCustom = headerTokenRestIntegrity;
+								}
+								bustaRitornata.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CUSTOM_HEADER,hdrCustom);
 							}
 						}
 	
@@ -380,7 +389,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 								
 								String token = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, headerTokenRest, corniceSicurezza, includiRequestDigest, bustaRitornata, 
 										erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig,
-										buildSecurityTokenInRequest, !headerDuplicati, securityHeaderObbligatorio,
+										buildSecurityTokenInRequest, !headerDuplicati, integritaCustom, securityHeaderObbligatorio,
 										dynamicMap, datiRichiesta);
 								
 								if(token!=null) {
@@ -416,7 +425,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 								}
 								String tokenAuthorization = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfileAuthorization, headerTokenRest, corniceSicurezza, includiRequestDigest, bustaRitornata, 
 										erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig,
-										buildSecurityTokenInRequest, headerDuplicati, securityHeaderObbligatorio,
+										buildSecurityTokenInRequest, headerDuplicati, integritaCustom, securityHeaderObbligatorio,
 										dynamicMap, datiRichiesta);
 								
 								String audAuthorization = null;
@@ -448,7 +457,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 										false);
 								String tokenIntegrity = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, headerTokenRestIntegrity, corniceSicurezza, includiRequestDigest, bustaRitornata, 
 										erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfigIntegrity,
-										buildSecurityTokenInRequest, headerDuplicati, securityHeaderIntegrityObbligatorio,
+										buildSecurityTokenInRequest, headerDuplicati, integritaCustom, securityHeaderIntegrityObbligatorio,
 										null, null); // gia' inizializzato sopra
 								
 								if(tokenIntegrity!=null) {

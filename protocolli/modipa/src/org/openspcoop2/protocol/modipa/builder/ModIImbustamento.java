@@ -261,6 +261,7 @@ public class ModIImbustamento {
 					String headerTokenRest = null;
 					String headerTokenRestIntegrity = null; // nel caso di Authorization insieme a Agid-JWT-Signature
 					Boolean multipleHeaderAuthorizationConfig = null;
+					boolean integritaCustom = false;
 					if(rest) {
 						headerTokenRest = ModIPropertiesUtils.readPropertySecurityMessageHeader(aspc, nomePortType, azione, isRichiesta);
 						if(headerTokenRest.contains(" ")) {
@@ -270,6 +271,14 @@ public class ModIImbustamento {
 								headerTokenRestIntegrity=tmp[1];
 								multipleHeaderAuthorizationConfig = true;
 							}
+						}
+						integritaCustom = ModIPropertiesUtils.isPropertySecurityMessageHeaderCustom(aspc, nomePortType, azione, isRichiesta);
+						if(integritaCustom) {
+							String hdrCustom = headerTokenRest;
+							if(multipleHeaderAuthorizationConfig!=null && multipleHeaderAuthorizationConfig && headerTokenRestIntegrity!=null) {
+								hdrCustom = headerTokenRestIntegrity;
+							}
+							busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CUSTOM_HEADER,hdrCustom);
 						}
 					}
 					
@@ -325,7 +334,7 @@ public class ModIImbustamento {
 						if(headerTokenRestIntegrity==null) {
 							String token = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfig, busta, 
 									securityMessageProfile, headerTokenRest, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
-									null, busta.getID(), false,
+									null, busta.getID(), false, integritaCustom,
 									dynamicMap);
 							protocolMessage.setBustaRawContent(new ModIBustaRawContent(headerTokenRest, token));
 						}
@@ -356,7 +365,7 @@ public class ModIImbustamento {
 							}
 							String tokenAuthorization = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfig, busta, 
 									securityMessageProfileAuthorization, headerTokenRest, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
-									now, jtiAuthorization, true,
+									now, jtiAuthorization, true, integritaCustom,
 									dynamicMap);
 							
 							// Integrity
@@ -387,7 +396,7 @@ public class ModIImbustamento {
 										false);
 								tokenIntegrity = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfigIntegrity, busta, 
 										securityMessageProfile, headerTokenRestIntegrity, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
-										now, jtiIntegrity, true,
+										now, jtiIntegrity, true, integritaCustom,
 										dynamicMap);
 							}
 							
