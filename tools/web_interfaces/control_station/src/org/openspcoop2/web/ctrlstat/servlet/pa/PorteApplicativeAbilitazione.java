@@ -87,12 +87,13 @@ public final class PorteApplicativeAbilitazione extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, session);
-		if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
-
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
+			
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte applicative
+			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, session, request);
+			if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
+			
 			String changeAbilitato = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ABILITA);
 			String nomePorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA);
 			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
@@ -104,7 +105,7 @@ public final class PorteApplicativeAbilitazione extends Action {
 			
 			String idTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(!porteApplicativeHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
-				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
+				ServletUtils.setObjectIntoSession(request, session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
 			
 			String fromAPIPageInfo = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_API_PAGE_INFO);
@@ -113,7 +114,7 @@ public final class PorteApplicativeAbilitazione extends Action {
 			String actionConferma = porteApplicativeHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 			
 			// check su oldNomePD
-			PageData pdOld =  ServletUtils.getPageDataFromSession(session);
+			PageData pdOld =  ServletUtils.getPageDataFromSession(request, session);
 			String oldNomePA = pdOld.getHidden(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_OLD_NOME_PA);
 			oldNomePA = (((oldNomePA != null) && !oldNomePA.equals("")) ? oldNomePA : nomePorta);
 			
@@ -198,7 +199,7 @@ public final class PorteApplicativeAbilitazione extends Action {
 				}
 			}
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 
 			List<PortaApplicativa> lista = null;
@@ -219,15 +220,15 @@ public final class PorteApplicativeAbilitazione extends Action {
 						idLista = Liste.SERVIZI;
 						ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 						boolean [] permessi = new boolean[2];
-						PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
+						PermessiUtente pu = ServletUtils.getUserFromSession(request, session).getPermessi();
 						permessi[0] = pu.isServizi();
 						permessi[1] = pu.isAccordiCooperazione();
 						List<AccordoServizioParteSpecifica> listaS = null;
 						String superUser   = ServletUtils.getUserLoginFromSession(session);
 						if(apsCore.isVisioneOggettiGlobale(superUser)){
-							listaS = apsCore.soggettiServizioList(null, ricerca,permessi,session);
+							listaS = apsCore.soggettiServizioList(null, ricerca,permessi,session, request);
 						}else{
-							listaS = apsCore.soggettiServizioList(superUser, ricerca,permessi,session);
+							listaS = apsCore.soggettiServizioList(superUser, ricerca,permessi,session, request);
 						}
 						AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 						apsHelper.prepareServiziList(ricerca, listaS);
@@ -260,13 +261,13 @@ public final class PorteApplicativeAbilitazione extends Action {
 				break;
 			}
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			ForwardParams fwP = porteApplicativeHelper.isModalitaCompleta() ? ForwardParams.OTHER("") : PorteApplicativeCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE;
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_ABILITAZIONE, fwP);
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_ABILITAZIONE,
 					ForwardParams.OTHER(""));
 

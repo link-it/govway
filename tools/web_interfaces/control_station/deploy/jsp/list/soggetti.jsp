@@ -25,21 +25,21 @@
 <%
 String iddati = "";
 String ct = request.getContentType();
-if (ct != null && (ct.indexOf("multipart/form-data") != -1)) {
-  iddati = (String) session.getAttribute("iddati");
+if (ct != null && (ct.indexOf(Costanti.MULTIPART) != -1)) {
+  iddati = ServletUtils.getObjectFromSession(request, session, String.class, Costanti.SESSION_ATTRIBUTE_ID_DATI);
 } else {
-  iddati = request.getParameter("iddati");
+  iddati = request.getParameter(Costanti.PARAMETER_NAME_ID_DATI);
 }
-String gdString = "GeneralData";
-String pdString = "PageData";
+String gdString = Costanti.SESSION_ATTRIBUTE_GENERAL_DATA;
+String pdString = Costanti.SESSION_ATTRIBUTE_PAGE_DATA;
 if (iddati != null && !iddati.equals("notdefined")) {
   gdString += iddati;
   pdString += iddati;
 }
 else
   iddati = "notdefined";
-GeneralData gd = (GeneralData) session.getAttribute(gdString);
-PageData pd = (PageData) session.getAttribute(pdString);
+GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
+PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
 
 
 Vector<?> v = pd.getDati();
@@ -85,6 +85,8 @@ visualizzaMetadati = vectorRiepilogo.size() > 1;
 					   .click(function() {
 						   		<%= visualizzaAjaxStatus %>
 								var val = $(this).children('input[id=url_entry_<%=numeroEntryS %>]').val();
+								// addTabID
+								val = addTabIdParam(val,true);
 								window.location = val;
 					       });
 				   </script>
@@ -115,7 +117,10 @@ visualizzaMetadati = vectorRiepilogo.size() > 1;
 				    		$("span[id^='titolo_<%=numeroEntryS %>_ruoli_']").click(function(e){
 				    			
 				    			<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
-				    			window.location = '<%=ruoliUrl %>';
+				    			var val = '<%=ruoliUrl %>';
+				    			// addTabID
+								val = addTabIdParam(val,true);
+								window.location = val;
 				    			e.stopPropagation();
 							});
 				    	}
@@ -220,6 +225,9 @@ visualizzaMetadati = vectorRiepilogo.size() > 1;
 											
 											%>
 											var urlD_<%= numeroEntry %> = $("#hidden_title_iconUso_"+ <%= numeroEntry %>).val();
+											
+											// addTabID
+											urlD_<%= numeroEntry %> = addTabIdParam(urlD_<%= numeroEntry %>,true);
 						    				// chiamata al servizio
 						    				<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
 						    				
@@ -256,7 +264,10 @@ visualizzaMetadati = vectorRiepilogo.size() > 1;
 										
 										<%= deVisualizzaAjaxStatus %>
 										
-										document.location = '<%= de.getUrl() %>';
+										var val = '<%= de.getUrl() %>';
+						    			// addTabID
+										val = addTabIdParam(val,true);
+										document.location = val;
 											
 									 });	
 									<%

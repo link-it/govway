@@ -89,18 +89,18 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateList extend
 			String paramGestioneGruppi = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI);
 			if(paramGestioneGruppi!=null && !"".equals(paramGestioneGruppi)) {
 				boolean gestioneGruppi = Boolean.valueOf(paramGestioneGruppi);
-				ServletUtils.setObjectIntoSession(session, gestioneGruppi+"", AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI);
+				ServletUtils.setObjectIntoSession(request, session, gestioneGruppi+"", AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI);
 			}
 			
 			String paramGestioneConfigurazioni = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI);
 			if(paramGestioneConfigurazioni!=null && !"".equals(paramGestioneConfigurazioni)) {
 				boolean gestioneConfigurazioni = Boolean.valueOf(paramGestioneConfigurazioni);
-				ServletUtils.setObjectIntoSession(session, gestioneConfigurazioni+"", AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI);
+				ServletUtils.setObjectIntoSession(request, session, gestioneConfigurazioni+"", AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI);
 			}
 			
 			String idTab = apsHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(!apsHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
-				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
+				ServletUtils.setObjectIntoSession(request, session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
 			
 			// Preparo il menu
@@ -110,7 +110,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateList extend
 			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
 	
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 	
 			int idLista = Liste.CONFIGURAZIONE_FRUIZIONE;
 	
@@ -138,15 +138,15 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateList extend
 	
 			apsHelper.serviziFruitoriMappingList(lista, idServizio, idSoggFruitoreDelServizio, idSoggettoFruitore, idFruizione, ricerca);
 	
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			// Forward control to the specified success URI
 			ForwardParams fwP = apsHelper.isModalitaCompleta() ? ForwardParams.LIST() : AccordiServizioParteSpecificaCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE;
 			
 			return ServletUtils.getStrutsForward (mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE, fwP);
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE,
 					ForwardParams.LIST());
 		}  

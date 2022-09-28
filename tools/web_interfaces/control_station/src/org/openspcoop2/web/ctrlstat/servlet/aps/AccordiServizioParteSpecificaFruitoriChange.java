@@ -150,19 +150,21 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 		TipoOperazione tipoOp = TipoOperazione.CHANGE;
 		List<ProtocolProperty> oldProtocolPropertyList = null;
 
-		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
-		if(parentPD == null) 
-			parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
-		
 		try {
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
+			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+			
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session, request);
+			if(parentPD == null) 
+				parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
+			
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request);
 			
 			// prendo i dati hidden del pdold e li metto nel pd attuale
-			PageData pdOld = ServletUtils.getPageDataFromSession(session);
+			PageData pdOld = ServletUtils.getPageDataFromSession(request, session);
 			pd.setHidden(pdOld.getHidden());
 
-			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+			
 			
 			boolean isModalitaCompleta = apsHelper.isModalitaCompleta();
 			
@@ -289,7 +291,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			String actionConfirm = apsHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 			
 			
-			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
 			boolean gestioneErogatori = false;
 			if(tipologia!=null) {
@@ -365,7 +367,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 			String idTab = apsHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(azioneConnettoreIdPorta!=null && !"".equals(azioneConnettoreIdPorta) && !apsHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
-				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
+				ServletUtils.setObjectIntoSession(request, session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
 			
 			// Prendo il servizio
@@ -411,7 +413,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			String nomeSoggettoErogatore = asps.getNomeSoggettoErogatore();
 			String idSoggettoErogatoreDelServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
 			if ((idSoggettoErogatoreDelServizio == null) || idSoggettoErogatoreDelServizio.equals("")) {
-				PageData oldPD = ServletUtils.getPageDataFromSession(session);
+				PageData oldPD = ServletUtils.getPageDataFromSession(request, session);
 
 				idSoggettoErogatoreDelServizio = oldPD.getHidden(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
 
@@ -999,7 +1001,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
 					}
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,
 							ForwardParams.CHANGE());
@@ -1154,7 +1156,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI, 
 						ForwardParams.CHANGE());
@@ -1295,7 +1297,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					// disabilito la form
 					pd.disableEditMode();
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI, 
 							ForwardParams.CHANGE());
@@ -1490,7 +1492,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 					pd.setDati(dati);
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI, 
 							ForwardParams.CHANGE());
@@ -1505,14 +1507,14 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			apsCore.performUpdateOperation(superUser, apsHelper.smista(), serviziosp);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			if(accessoDaListaAPS) {
 				if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 					ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);
 					asps = apsCore.getAccordoServizioParteSpecifica(idServizioInt);
 					erogazioniHelper.prepareErogazioneChange(TipoOperazione.CHANGE, asps, new IDSoggetto(fruitore.getTipo(), fruitore.getNome()));
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 					return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
 				}
 				
@@ -1522,7 +1524,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				
 				ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE);
 				
-				PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
+				PermessiUtente pu = ServletUtils.getUserFromSession(request, session).getPermessi();
 				boolean [] permessi = new boolean[2];
 				permessi[0] = pu.isServizi();
 				permessi[1] = pu.isAccordiCooperazione();
@@ -1569,10 +1571,10 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				fwP = PorteDelegateCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE;
 			}
 	
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			return ServletUtils.getStrutsForwardEditModeFinished( mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,fwP);
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,
 					ForwardParams.CHANGE());
 		} 

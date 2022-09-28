@@ -20,6 +20,7 @@
 
 package org.openspcoop2.web.lib.mvc;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -32,7 +33,12 @@ import java.util.List;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Parameter {
+public class Parameter implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private String name;
 	private String value;

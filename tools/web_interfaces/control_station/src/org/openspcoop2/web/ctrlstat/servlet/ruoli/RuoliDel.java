@@ -61,9 +61,6 @@ public final class RuoliDel extends Action {
 
 		HttpSession session = request.getSession(true);
 
-		// Salvo il vecchio PageData
-		// PageData pdold = (PageData) session.getAttribute("PageData");
-
 		// Inizializzo PageData
 		PageData pd = new PageData();
 
@@ -97,7 +94,7 @@ public final class RuoliDel extends Action {
 			}// chiudo for
 
 			if(deleteAlmostOneRole) {
-				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.RUOLI);
+				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.RUOLI);
 			}
 			
 			if (inUsoMessage.length()>0) {
@@ -109,7 +106,7 @@ public final class RuoliDel extends Action {
 			ruoliHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<Ruolo> lista = null;
 			if(ruoliCore.isVisioneOggettiGlobale(userLogin)){
@@ -120,13 +117,13 @@ public final class RuoliDel extends Action {
 			
 			ruoliHelper.prepareRuoliList(ricerca, lista);
 			
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, 
 					RuoliCostanti.OBJECT_NAME_RUOLI,
 					ForwardParams.DEL());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					RuoliCostanti.OBJECT_NAME_RUOLI, ForwardParams.DEL());
 		}
 	}

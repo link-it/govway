@@ -119,7 +119,7 @@ public final class ConfigurazioneDiagnosticaDatasourceAdd extends Action {
 				
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping,
 						ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_DIAGNOSTICA_DATASOURCE, 
@@ -150,7 +150,7 @@ public final class ConfigurazioneDiagnosticaDatasourceAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, 
 						ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_DIAGNOSTICA_DATASOURCE, 
@@ -178,13 +178,13 @@ public final class ConfigurazioneDiagnosticaDatasourceAdd extends Action {
 
 			confHelper.prepareDiagnosticaDatasourceList(lista);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping,
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_DIAGNOSTICA_DATASOURCE,
 					ForwardParams.ADD());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_DIAGNOSTICA_DATASOURCE, ForwardParams.ADD());
 		}
 	}

@@ -895,6 +895,14 @@ public class PddMonitorProperties {
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("utenti.ruoloConfiguratore.enabled", true, true));
 	}
 	
+	public boolean isModificaProfiloUtenteDaLinkAggiornaDB() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("utenti.modificaProfiloUtenteDaLink.aggiornaInfoSuDb", true, true));
+	}
+	
+	public boolean isModificaProfiloUtenteDaFormAggiornaSessione() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("utenti.modificaProfiloUtenteDaForm.aggiornaInfoInSessione", true, true));
+	}
+	
 	// Gestore Filtri
 	
 	public boolean isGestoreFiltriEnabled() throws Exception{

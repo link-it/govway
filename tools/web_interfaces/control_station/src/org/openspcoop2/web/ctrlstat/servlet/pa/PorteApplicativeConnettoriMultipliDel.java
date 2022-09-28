@@ -75,9 +75,6 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 
 		HttpSession session = request.getSession(true);
 
-		// Salvo il vecchio PageData
-		// PageData pdold = (PageData) session.getAttribute("PageData");
-
 		// Inizializzo PageData
 		PageData pd = new PageData();
 
@@ -108,7 +105,7 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 
 			String idConnTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB);
 			if(StringUtils.isNotEmpty(idConnTab)) {
-				ServletUtils.setObjectIntoSession(session, idConnTab, CostantiControlStation.PARAMETRO_ID_CONN_TAB);
+				ServletUtils.setObjectIntoSession(request, session, idConnTab, CostantiControlStation.PARAMETRO_ID_CONN_TAB);
 			}
 
 			String nome = "";
@@ -261,7 +258,7 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 				if(!listaOggettiDaEliminare.isEmpty())
 					porteApplicativeCore.performDeleteOperation(userLogin, porteApplicativeHelper.smista(), listaOggettiDaEliminare.toArray(new Object[listaOggettiDaEliminare.size()]));
 				
-				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI);
+				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI);
 				
 			} 
 
@@ -269,7 +266,7 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 			porteApplicativeHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI;
 
@@ -282,12 +279,12 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 						
 			porteApplicativeHelper.preparePorteAppConnettoriMultipliList_fromDeleteConnettore(pa.getNome(), ricerca, listaFiltrata, pa);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI, 
 					ForwardParams.DEL());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI,
 					ForwardParams.DEL());
 		}  

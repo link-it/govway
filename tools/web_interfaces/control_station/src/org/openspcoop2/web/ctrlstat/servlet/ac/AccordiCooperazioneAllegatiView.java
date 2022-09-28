@@ -121,11 +121,11 @@ public final class AccordiCooperazioneAllegatiView extends Action {
 			pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
 			pd.setDati(dati);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiCooperazioneCostanti.OBJECT_NAME_AC_ALLEGATI, 
 					AccordiCooperazioneCostanti.TIPO_OPERAZIONE_VIEW);
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiCooperazioneCostanti.OBJECT_NAME_AC_ALLEGATI, 
 					AccordiCooperazioneCostanti.TIPO_OPERAZIONE_VIEW);
 		}  

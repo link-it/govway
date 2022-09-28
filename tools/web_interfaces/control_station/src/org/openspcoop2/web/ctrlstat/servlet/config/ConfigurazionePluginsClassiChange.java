@@ -148,7 +148,7 @@ public final class ConfigurazionePluginsClassiChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping,
 						ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_PLUGINS_CLASSI, 
@@ -168,7 +168,7 @@ public final class ConfigurazionePluginsClassiChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, 
 						ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_PLUGINS_CLASSI, 
@@ -209,11 +209,11 @@ public final class ConfigurazionePluginsClassiChange extends Action {
 					||
 				(!tipoPluginS.equals(oldIdPlugin.getTipoPlugin())) 
 				){
-				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.CONFIGURAZIONE_PLUGINS_CLASSI);
+				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.CONFIGURAZIONE_PLUGINS_CLASSI);
 			}
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.CONFIGURAZIONE_PLUGINS_CLASSI;
 
@@ -223,13 +223,13 @@ public final class ConfigurazionePluginsClassiChange extends Action {
 			
 			confHelper.preparePluginsClassiList(ricerca, lista);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping,
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_PLUGINS_CLASSI,
 					ForwardParams.CHANGE());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_PLUGINS_CLASSI, ForwardParams.CHANGE());
 		}
 	}

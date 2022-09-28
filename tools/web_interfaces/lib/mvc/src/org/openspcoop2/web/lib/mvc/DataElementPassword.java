@@ -1,5 +1,7 @@
 package org.openspcoop2.web.lib.mvc;
 
+import java.io.Serializable;
+
 import org.openspcoop2.utils.crypt.PasswordGenerator;
 
 /*
@@ -29,7 +31,12 @@ import org.openspcoop2.utils.crypt.PasswordGenerator;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DataElementPassword {
+public class DataElementPassword implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private boolean visualizzaBottoneGeneraPassword = false;
 	private boolean visualizzaPasswordChiaro = false;

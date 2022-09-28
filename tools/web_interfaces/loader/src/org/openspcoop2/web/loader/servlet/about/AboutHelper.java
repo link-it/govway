@@ -56,7 +56,7 @@ public class AboutHelper extends LoaderHelper {
 		 
 		IVersionInfo versionInfo = null;
 		try {
-			versionInfo = this.core.getInfoVersion(this.session);
+			versionInfo = this.core.getInfoVersion(this.request, this.session);
 		}catch(Exception e) {
 			LoaderCore.log.error("Errore durante la lettura delle informazioni sulla versione: "+e.getMessage(),e);
 		}

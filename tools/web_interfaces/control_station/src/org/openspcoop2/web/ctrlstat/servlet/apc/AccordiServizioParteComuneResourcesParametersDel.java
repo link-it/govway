@@ -63,9 +63,6 @@ public final class AccordiServizioParteComuneResourcesParametersDel extends Acti
 
 		HttpSession session = request.getSession(true);
 
-		// Salvo il vecchio PageData
-		// PageData pdold = (PageData) session.getAttribute("PageData");
-
 		// Inizializzo PageData
 		PageData pd = new PageData();
 
@@ -174,7 +171,7 @@ public final class AccordiServizioParteComuneResourcesParametersDel extends Acti
 				apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			// Devo rileggere l'accordo dal db, perche' altrimenti
 			// manca l'id dei port-type
@@ -211,12 +208,12 @@ public final class AccordiServizioParteComuneResourcesParametersDel extends Acti
 
 			apcHelper.prepareAccordiResourcesParametersList(id, as, lista, ricerca, tipoAccordo, isRequest, risorsa, resourceRequest, resourceResponse);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			return ServletUtils.getStrutsForward(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_PARAMETERS, ForwardParams.DEL());
 			
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES_PARAMETERS, ForwardParams.DEL());
 		} 
 	}

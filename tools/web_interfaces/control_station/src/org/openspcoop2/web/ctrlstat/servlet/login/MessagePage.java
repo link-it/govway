@@ -110,13 +110,13 @@ public class MessagePage extends Action {
 				pd.setMessage(messageText, messageTitle, mt);
 			}
 			
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, LoginCostanti.OBJECT_NAME_MESSAGE_PAGE, ForwardParams.OTHER(""));
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, LoginCostanti.OBJECT_NAME_MESSAGE_PAGE, ForwardParams.OTHER(""));
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, LoginCostanti.OBJECT_NAME_MESSAGE_PAGE, ForwardParams.OTHER(""));
 		}
 	}
 }

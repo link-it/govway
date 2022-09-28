@@ -23,6 +23,7 @@
 
 package org.openspcoop2.web.lib.mvc;
 
+import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,8 +44,12 @@ import org.openspcoop2.web.lib.mvc.DataElement.STATO_APERTURA_SEZIONI;
  * @version $Rev$, $Date$
  * 
  */
-public class PageData {
+public class PageData implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	String pageDescription;
 	String search;
 	String searchDescription;
@@ -91,7 +96,7 @@ public class PageData {
 	boolean includiMenuLateraleSx = true;
 	
 	private boolean paginazione = true;
-		
+	
 	public PageData() {
 		this.pageDescription = "";
 		this.search = "auto";

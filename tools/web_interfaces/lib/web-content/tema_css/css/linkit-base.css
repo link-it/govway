@@ -1351,6 +1351,7 @@ p.note-checkbox-affiancata {
 
 .spanNoEdit {
 /* 	vertical-align: middle; */
+	font-size: 16px;
 }
 
 .spanNoEdit-image {
@@ -1378,6 +1379,7 @@ p.note-checkbox-affiancata {
 
 .divNoEdit {
 	padding-top: 6px;
+	line-height: 16px;
 }
 
 .intervalExternalDiv{

@@ -61,9 +61,6 @@ public final class AccordiServizioParteComuneResourcesDel extends Action {
 
 		HttpSession session = request.getSession(true);
 
-		// Salvo il vecchio PageData
-		// PageData pdold = (PageData) session.getAttribute("PageData");
-
 		// Inizializzo PageData
 		PageData pd = new PageData();
 
@@ -110,7 +107,7 @@ public final class AccordiServizioParteComuneResourcesDel extends Action {
 
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<Resource> lista = apcCore.accordiResourceList(idInt, ricerca);
 
@@ -125,12 +122,12 @@ public final class AccordiServizioParteComuneResourcesDel extends Action {
 			
 			apcHelper.prepareAccordiResourcesList(id,as, lista, ricerca, tipoAccordo);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			return ServletUtils.getStrutsForward(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES, ForwardParams.DEL());
 			
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES, ForwardParams.DEL());
 		} 
 	}

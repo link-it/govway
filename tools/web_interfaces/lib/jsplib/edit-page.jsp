@@ -28,21 +28,21 @@
 <%
 String iddati = "";
 String ct = request.getContentType();
-if (ct != null && (ct.indexOf("multipart/form-data") != -1)) {
-  iddati = (String) session.getAttribute("iddati");
+if (ct != null && (ct.indexOf(Costanti.MULTIPART) != -1)) {
+  iddati = ServletUtils.getObjectFromSession(request, session, String.class, Costanti.SESSION_ATTRIBUTE_ID_DATI);
 } else {
-  iddati = request.getParameter("iddati");
+  iddati = request.getParameter(Costanti.PARAMETER_NAME_ID_DATI);
 }
-String gdString = "GeneralData";
-String pdString = "PageData";
+String gdString = Costanti.SESSION_ATTRIBUTE_GENERAL_DATA;
+String pdString = Costanti.SESSION_ATTRIBUTE_PAGE_DATA;
 if (iddati != null && !iddati.equals("notdefined")) {
   gdString += iddati;
   pdString += iddati;
 }
 else
   iddati = "notdefined";
-GeneralData gd = (GeneralData) session.getAttribute(gdString);
-PageData pd = (PageData) session.getAttribute(pdString);
+GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
+PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
 %>
 
 <%
@@ -79,7 +79,7 @@ if (mime) {
 <%
 boolean elementsRequired = false;
 boolean elementsRequiredEnabled = true;
-if (pd.getMode().equals("view-noeditbutton")) {
+if (pd.getMode().equals(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME)) {
 	elementsRequiredEnabled = false;
 }
 
@@ -104,6 +104,7 @@ boolean mostraComandiHeader = listaComandi != null && listaComandi.size() > 0;
 int colFormHeader = (mostraComandiHeader ? 2 : 1);
 String classPanelTitolo = "panelDettaglioNoForm";
 String numeroEntry = "dettaglio";
+String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
 
 
@@ -213,6 +214,10 @@ String numeroEntry = "dettaglio";
 																
 																%>
 																var urlD_<%= numeroEntry %> = $("#hidden_title_iconUso_<%= numeroEntry %>").val();
+																
+																// addTabID
+																urlD_<%= numeroEntry %> = addTabIdParam(urlD_<%= numeroEntry %>,true);
+
 											    				// chiamata al servizio
 											    				<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
 											    				
@@ -249,7 +254,11 @@ String numeroEntry = "dettaglio";
 															
 															<%= deVisualizzaAjaxStatus %>
 															
-															document.location = '<%= de.getUrl() %>';
+												             var val = '<%= de.getUrl() %>';
+												             // addTabID
+										                     val = addTabIdParam(val,true);
+										                     document.location = val;
+
 																
 														 });	
 														<%
@@ -610,6 +619,10 @@ for (int i = 0; i < dati.size(); i++) {
 							if (!de.getTarget().equals("")) {
 					  			deTarget = " target=\""+ de.getTarget() +"\"";
 					  		}
+							
+							if (!de.getUrl().equals("")) {
+								de.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+							}
 	        				%>
 	            			<div class="prop prop-link">
 	            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabelLink %></label>
@@ -662,6 +675,10 @@ for (int i = 0; i < dati.size(); i++) {
 											  		if (!image.getOnClick().equals("")) {
 											  			onClick = " onClick=\"" + visualizzaAjaxStatus  + "postVersion_" + image.getOnClick() + "\"";
 													  }
+											  		
+											  		if (!image.getUrl().equals("")) {
+											  			image.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+													}
 			                					%>
 			                					<a class="text-action-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" <%=onClick %> >
 			                						<span class="icon-box">

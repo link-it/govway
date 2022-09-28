@@ -156,7 +156,7 @@ public class ErogazioniVerificaCertificati  extends Action {
 			
 			String alias = apsHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
 			
-			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
 			boolean gestioneErogatori = false;
 			if(tipologia!=null) {
@@ -953,21 +953,21 @@ public class ErogazioniVerificaCertificati  extends Action {
 					
 					String userLogin = ServletUtils.getUserLoginFromSession(session);	
 					
-					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 					
 					int idLista = Liste.SERVIZI;
 					
 					// poiche' esistono filtri che hanno necessita di postback salvo in sessione
 					List<AccordoServizioParteSpecifica> lista = null;
 					if(!ServletUtils.isSearchDone(apsHelper)) {
-						lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  AccordoServizioParteSpecifica.class);
+						lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista,  AccordoServizioParteSpecifica.class);
 					}
 					
 					ricerca = apsHelper.checkSearchParameters(idLista, ricerca);
 					
 					apsHelper.clearFiltroSoggettoByPostBackProtocollo(0, ricerca, idLista);
 										
-					apsHelper.checkGestione(session, ricerca, idLista, tipologia,true);
+					apsHelper.checkGestione(request, session, ricerca, idLista, tipologia,true);
 					
 					// preparo lista
 					boolean [] permessi = AccordiServizioParteSpecificaUtilities.getPermessiUtente(apsHelper);
@@ -982,34 +982,34 @@ public class ErogazioniVerificaCertificati  extends Action {
 
 					
 					if(!apsHelper.isPostBackFilterElement()) {
-						ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+						ServletUtils.setRisultatiRicercaIntoSession(request, session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 					}
 					
 					apsHelper.prepareErogazioniList(ricerca, lista);
 					
 					// salvo l'oggetto ricerca nella sessione
-					ServletUtils.setSearchObjectIntoSession(session, ricerca);
+					ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 					
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 					return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI, CostantiControlStation.TIPO_OPERAZIONE_VERIFICA_CERTIFICATI);
 				}
 				
 				// verifica richiesta dal dettaglio, torno al dettaglio
 				else { 
 					apsHelper.prepareErogazioneChange(tipoOp, asps, idSoggettoFruitore);
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 					return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
 				}
 				
 			}
 			else {
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI, ForwardParams.OTHER(""));
 				
 			}
 			
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI, ForwardParams.OTHER(""));
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI_VERIFICA_CERTIFICATI, ForwardParams.OTHER(""));
 		}  
 	}
 

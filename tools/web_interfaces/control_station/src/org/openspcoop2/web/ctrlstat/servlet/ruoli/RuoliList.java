@@ -76,14 +76,14 @@ public final class RuoliList extends Action {
 			ruoliHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.RUOLI;
 			
 			// poiche' esistono filtri che hanno necessita di postback salvo in sessione
 			List<Ruolo> lista = null;
 			if(!ServletUtils.isSearchDone(ruoliHelper)) {
-				lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  Ruolo.class);
+				lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista,  Ruolo.class);
 			}
 
 			ricerca = ruoliHelper.checkSearchParameters(idLista, ricerca);
@@ -94,7 +94,7 @@ public final class RuoliList extends Action {
 				boolean filtroSoggetto = false;
 				String filterApiContesto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_API_CONTESTO);
 				if(!Filtri.FILTRO_API_CONTESTO_VALUE_SOGGETTI.equals(filterApiContesto) && ruoliHelper.isSoggettoMultitenantSelezionato()) {
-					List<String> protocolli = ruoliCore.getProtocolli(session,false);
+					List<String> protocolli = ruoliCore.getProtocolli(request, session,false);
 					if(protocolli!=null && protocolli.size()==1) { // dovrebbe essere l'unico caso in cui un soggetto multitenant è selezionato
 						filtroSoggetto = true;
 					}
@@ -112,7 +112,7 @@ public final class RuoliList extends Action {
 			}
 			
 			if(!ruoliHelper.isPostBackFilterElement()) {
-				ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+				ServletUtils.setRisultatiRicercaIntoSession(request, session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 			}
 			
 			ruoliHelper.prepareRuoliList(ricerca, lista);
@@ -123,15 +123,15 @@ public final class RuoliList extends Action {
 			}
 			
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, 
 					RuoliCostanti.OBJECT_NAME_RUOLI,
 					ForwardParams.LIST());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					RuoliCostanti.OBJECT_NAME_RUOLI, ForwardParams.LIST());
 		}
 	}

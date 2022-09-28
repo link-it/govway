@@ -487,7 +487,7 @@ public class PddHelper extends ConsoleHelper {
 	public void preparePddSinglePddList(List<PdDControlStation> lista, ISearch ricerca) throws Exception {
 		try {
 
-			ServletUtils.addListElementIntoSession(this.session, PddCostanti.OBJECT_NAME_PDD_SINGLEPDD);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PddCostanti.OBJECT_NAME_PDD_SINGLEPDD);
 
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
@@ -578,7 +578,7 @@ public class PddHelper extends ConsoleHelper {
 
 	public void preparePddList(List<PdDControlStation> lista, ISearch ricerca) throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, PddCostanti.OBJECT_NAME_PDD);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PddCostanti.OBJECT_NAME_PDD);
 			
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
@@ -609,7 +609,7 @@ public class PddHelper extends ConsoleHelper {
 				ServletUtils.enabledPageDataSearch(this.pd, PddCostanti.LABEL_PORTE_DI_DOMINIO, search);
 			}
 
-			User user = ServletUtils.getUserFromSession(this.session);
+			User user = ServletUtils.getUserFromSession(this.request, this.session);
 			boolean showConfigurazioneSistema = user!=null && user.getPermessi()!=null && user.getPermessi().isSistema() &&
 					this.pddCore.getJmxPdD_aliases()!=null && this.pddCore.getJmxPdD_aliases().size()>0;
 			
@@ -706,10 +706,10 @@ public class PddHelper extends ConsoleHelper {
 			throws Exception {
 		try {
 			
-			ServletUtils.addListElementIntoSession(this.session, PddCostanti.OBJECT_NAME_PDD_SOGGETTI,
+			ServletUtils.addListElementIntoSession(this.request, this.session, PddCostanti.OBJECT_NAME_PDD_SOGGETTI,
 					new Parameter(PddCostanti.PARAMETRO_PDD_ID, id+""));
 			
-			Boolean singlePdD = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+			Boolean singlePdD = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 			
 			int idLista = Liste.PDD_SOGGETTI;
 			int limit = ricerca.getPageSize(idLista);

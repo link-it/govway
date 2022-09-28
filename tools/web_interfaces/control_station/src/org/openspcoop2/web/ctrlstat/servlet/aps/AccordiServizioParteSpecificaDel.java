@@ -75,9 +75,6 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 
 		HttpSession session = request.getSession(true);
 
-		// Salvo il vecchio PageData
-		// PageData pdold = (PageData) session.getAttribute("PageData");
-
 		// Inizializzo PageData
 		PageData pd = new PageData();
 
@@ -96,7 +93,7 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 			PddCore pddCore = new PddCore(apsCore);
 			ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
 			
-			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
 			boolean gestioneErogatori = false;
 			if(tipologia!=null) {
@@ -108,7 +105,7 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 				}
 			}
 						
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request);
 			
 			//User utente = ServletUtils.getUserFromSession(session);
 			
@@ -168,7 +165,7 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 			}// chiudo for
 
 			if(deleteAlmostOneApi) {
-				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.SERVIZI);
+				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.SERVIZI);
 			}
 			
 			// se ci sono messaggio di errore li presento
@@ -176,34 +173,34 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 				pd.setMessage(inUsoMessage.toString());
 			}
 
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
-			PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
+			PermessiUtente pu = ServletUtils.getUserFromSession(request, session).getPermessi();
 
 			boolean [] permessi = new boolean[2];
 			permessi[0] = pu.isServizi();
 			permessi[1] = pu.isAccordiCooperazione();
 			List<AccordoServizioParteSpecifica> lista = null;
 			if(apsCore.isVisioneOggettiGlobale(superUser)){
-				lista = apsCore.soggettiServizioList(null, ricerca,permessi, session);
+				lista = apsCore.soggettiServizioList(null, ricerca,permessi, session, request);
 			}else{
-				lista = apsCore.soggettiServizioList(superUser, ricerca, permessi, session);
+				lista = apsCore.soggettiServizioList(superUser, ricerca, permessi, session, request);
 			}
 
 			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 				apsHelper.prepareErogazioniList(ricerca, lista);
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				return ServletUtils.getStrutsForward(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.DEL());
 			}
 			
 			apsHelper.prepareServiziList(ricerca, lista);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
 					ForwardParams.DEL());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,
 					ForwardParams.DEL());
 		}  

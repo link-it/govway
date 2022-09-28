@@ -89,13 +89,12 @@ public final class PorteDelegateAbilitazione extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
-		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
-
 		try {
 			
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session, request);
+			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
 			String changeAbilitato = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ABILITA);
 //			String idPorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -114,14 +113,14 @@ public final class PorteDelegateAbilitazione extends Action {
 			
 			String idTab = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(!porteDelegateHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
-				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
+				ServletUtils.setObjectIntoSession(request, session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
 			
 			String fromAPIPageInfo = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_API_PAGE_INFO);
 			boolean fromApi = Costanti.CHECK_BOX_ENABLED_TRUE.equalsIgnoreCase(fromAPIPageInfo);
 			
 			// check su oldNomePD
-			PageData pdOld =  ServletUtils.getPageDataFromSession(session);
+			PageData pdOld =  ServletUtils.getPageDataFromSession(request, session);
 			String oldNomePD = pdOld.getHidden(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_OLD_NOME_PD);
 			oldNomePD = (((oldNomePD != null) && !oldNomePD.equals("")) ? oldNomePD : nomePorta);
 			// Preparo il menu
@@ -222,7 +221,7 @@ public final class PorteDelegateAbilitazione extends Action {
 				}
 			}
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 
 			int idLista = -1;
@@ -259,14 +258,14 @@ public final class PorteDelegateAbilitazione extends Action {
 				break;
 			}
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			ForwardParams fwP = porteDelegateHelper.isModalitaCompleta() ? ForwardParams.OTHER("") : PorteDelegateCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE;
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_ABILITAZIONE,fwP);
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_ABILITAZIONE, 
 					ForwardParams.OTHER(""));
 		}  

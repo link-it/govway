@@ -647,6 +647,14 @@ public class ConsoleProperties {
 		return Integer.parseInt(lunghezzaS); 
 	}
 	
+	public boolean isConsoleUtenzeModificaProfiloUtenteDaLinkAggiornaDB() throws UtilsException{
+		return this.readBooleanProperty(true, "console.utenze.modificaProfiloUtenteDaLink.aggiornaInfoSuDb");
+	}
+	
+	public boolean isConsoleUtenzeModificaProfiloUtenteDaFormAggiornaSessione() throws UtilsException{
+		return this.readBooleanProperty(true, "console.utenze.modificaProfiloUtenteDaForm.aggiornaInfoInSessione");
+	}
+	
 	// Applicativi
 	
 	public String getConsoleApplicativiPassword() throws UtilsException{

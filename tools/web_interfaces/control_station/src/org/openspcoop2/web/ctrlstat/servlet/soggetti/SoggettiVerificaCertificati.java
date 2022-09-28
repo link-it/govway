@@ -336,7 +336,7 @@ public class SoggettiVerificaCertificati extends Action {
 					
 					String userLogin = ServletUtils.getUserLoginFromSession(session);	
 					
-					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 					
 					int idLista = Liste.SOGGETTI;
 					
@@ -344,7 +344,7 @@ public class SoggettiVerificaCertificati extends Action {
 					List<Soggetto> lista = null;
 					if(soggettiCore.isRegistroServiziLocale()){
 						if(!ServletUtils.isSearchDone(soggettiHelper)) {
-							lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  Soggetto.class);
+							lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista,  Soggetto.class);
 						}
 					}
 					
@@ -367,7 +367,7 @@ public class SoggettiVerificaCertificati extends Action {
 						}
 						
 						if(!soggettiHelper.isPostBackFilterElement()) {
-							ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+							ServletUtils.setRisultatiRicercaIntoSession(request, session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 						}
 						
 						soggettiHelper.prepareSoggettiList(lista, ricerca);
@@ -382,9 +382,9 @@ public class SoggettiVerificaCertificati extends Action {
 						soggettiHelper.prepareSoggettiConfigList(listaConfig, ricerca);
 					}
 					
-					ServletUtils.setSearchObjectIntoSession(session, ricerca);
+					ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 					
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 					return ServletUtils.getStrutsForwardEditModeFinished(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI_VERIFICA_CERTIFICATI, CostantiControlStation.TIPO_OPERAZIONE_VERIFICA_CERTIFICATI);
 					
 				}
@@ -552,7 +552,7 @@ public class SoggettiVerificaCertificati extends Action {
 						versioniProtocollo.add(versioneProtocollo);
 					}
 
-					List<String> listaTipiProtocollo = soggettiCore.getProtocolli(session);
+					List<String> listaTipiProtocollo = soggettiCore.getProtocolli(request, session);
 									
 					boolean pddOperativa = false;
 					if(soggettoRegistry.getPortaDominio()!=null && !"".equals(soggettoRegistry.getPortaDominio())){
@@ -643,18 +643,18 @@ public class SoggettiVerificaCertificati extends Action {
 					
 					pd.setDati(dati);
 					
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 					return ServletUtils.getStrutsForwardEditModeFinished(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI, ForwardParams.CHANGE());
 					
 				}
 			}
 			else {
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI_VERIFICA_CERTIFICATI, ForwardParams.OTHER(""));
 			}
 			
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI_VERIFICA_CERTIFICATI, ForwardParams.OTHER(""));
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI_VERIFICA_CERTIFICATI, ForwardParams.OTHER(""));
 		}  
 	}
 }

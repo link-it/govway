@@ -77,15 +77,15 @@ public class ConfigurazionePolicyGestioneTokenList extends Action {
 			confHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			String infoType = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
-			String infoTypeSession = ServletUtils.getObjectFromSession(session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+			String infoTypeSession = ServletUtils.getObjectFromSession(request, session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 			if(infoType==null) {
 				infoType = infoTypeSession;
 			}
 			else {
-				ServletUtils.setObjectIntoSession(session, infoType, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+				ServletUtils.setObjectIntoSession(request, session, infoType, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 			}
 			boolean attributeAuthority = ConfigurazioneCostanti.isConfigurazioneAttributeAuthority(infoType);
 			
@@ -103,7 +103,7 @@ public class ConfigurazionePolicyGestioneTokenList extends Action {
 					if(oTipo!=null && oTipo instanceof String) {
 						String tipo = (String) oTipo;
 						Config config = configManager.getConfigurazione(propertiesSourceConfiguration, tipo);
-						ServletUtils.removeConfigurazioneBeanFromSession(session, config.getId());
+						ServletUtils.removeConfigurazioneBeanFromSession(request, session, config.getId());
 					}
 				}
 			}
@@ -126,14 +126,14 @@ public class ConfigurazionePolicyGestioneTokenList extends Action {
 			confHelper.prepareGestorePolicyTokenList(ricerca, lista, idLista); 
 			
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN,
 					ForwardParams.LIST());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN, ForwardParams.LIST());
 		}  
 	}

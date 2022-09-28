@@ -88,11 +88,11 @@ public class About extends Action{
 			pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
 			pd.setDati(dati);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AboutCostanti.OBJECT_NAME_ABOUT, 
 					AboutCostanti.TIPO_OPERAZIONE_ABOUT);
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(LoaderCore.log, e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(LoaderCore.log, e, pd, request, session, gd, mapping, 
 					AboutCostanti.OBJECT_NAME_ABOUT, AboutCostanti.TIPO_OPERAZIONE_ABOUT);
 		}  
 	}

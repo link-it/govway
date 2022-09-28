@@ -25,23 +25,31 @@
 <%
 String iddati = "";
 String ct = request.getContentType();
-if (ct != null && (ct.indexOf("multipart/form-data") != -1)) {
-  iddati = (String) session.getAttribute("iddati");
+if (ct != null && (ct.indexOf(Costanti.MULTIPART) != -1)) {
+  iddati = ServletUtils.getObjectFromSession(request, session, String.class, Costanti.SESSION_ATTRIBUTE_ID_DATI);
 } else {
-  iddati = request.getParameter("iddati");
+  iddati = request.getParameter(Costanti.PARAMETER_NAME_ID_DATI);
 }
-String gdString = "GeneralData";
+String gdString = Costanti.SESSION_ATTRIBUTE_GENERAL_DATA;
 if (iddati != null && !iddati.equals("notdefined"))
   gdString += iddati;
 else
   iddati = "notdefined";
-GeneralData gd = (GeneralData) session.getAttribute(gdString);
+GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
 
 String logoImage = gd.getLogoHeaderImage();
 String logoLink = gd.getLogoHeaderLink();
 String logoTitolo = gd.getLogoHeaderTitolo();
 boolean visualizzaLinkHome = gd.isVisualizzaLinkHome();
 String homeLink = request.getContextPath() + "/messagePage"+".do?dest=home";
+String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
+
+if(tabSessionKey == null)
+	tabSessionKey = "";
+
+if(!tabSessionKey.equals("")){
+	homeLink = homeLink + "&" + Costanti.PARAMETER_TAB_KEY + "=" + tabSessionKey;
+}
 
 // <span class="item-icon \<\%=icon \%\>"></span>
 %>
@@ -128,6 +136,8 @@ String homeLink = request.getContextPath() + "/messagePage"+".do?dest=home";
 																
 																if(l.getUrl().equals("")){
 																	itemClass += " menu-no-pointer";
+																} else {
+																	l.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
 																}
 																
 																if (!l.getLabel().equals("")) {							
@@ -195,7 +205,7 @@ String homeLink = request.getContextPath() + "/messagePage"+".do?dest=home";
 																if(l.getUrl().equals("")){
 																	selected = "true";
 																	labelSelezionato = l.getLabel();
-														  		}
+														  		} 
 																
 																%>
 																	var soggettoItem_<%=i %> = {};
@@ -259,6 +269,8 @@ String homeLink = request.getContextPath() + "/messagePage"+".do?dest=home";
 																
 																if(l.getUrl().equals("")){
 																	itemClass += " menu-no-pointer";
+																} else {
+																	l.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
 																}
 																
 																if (!l.getLabel().equals("")) {							
@@ -334,6 +346,8 @@ String homeLink = request.getContextPath() + "/messagePage"+".do?dest=home";
 															
 															if(l.getUrl().equals("")){
 																itemClass += " menu-no-pointer";
+															} else {
+																l.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
 															}
 															
 															if (!l.getLabel().equals("")) {							

@@ -114,13 +114,13 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 		
-		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
-		Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session);
-		if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
-		Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
-		
 		try {
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
+			
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
+			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session, request);
+			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
+			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
 			
 			String nomeservizioApplicativo = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO);
 			String idsil = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
@@ -243,7 +243,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			String responseInputWaitTime = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 			
 			
-			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			@SuppressWarnings("unused")
 			boolean gestioneErogatori = false;
 			if(tipologia!=null) {
@@ -801,7 +801,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, 
 						ServiziApplicativiCostanti.TIPO_OPERAZIONE_ENDPOINT_RISPOSTA_ASINCRONA);
@@ -863,7 +863,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, 
 						ServiziApplicativiCostanti.TIPO_OPERAZIONE_ENDPOINT_RISPOSTA_ASINCRONA);
@@ -964,7 +964,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			saCore.performUpdateOperation(userLogin, saHelper.smista(), sa);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			
 			List<ServizioApplicativo> lista = null;
 			int idLista = -1;
@@ -977,15 +977,15 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
 					}
 					boolean [] permessi = new boolean[2];
-					PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
+					PermessiUtente pu = ServletUtils.getUserFromSession(request, session).getPermessi();
 					permessi[0] = pu.isServizi();
 					permessi[1] = pu.isAccordiCooperazione();
 					List<AccordoServizioParteSpecifica> listaS = null;
 					AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(saCore);
 					if(apsCore.isVisioneOggettiGlobale(superUser)){
-						listaS = apsCore.soggettiServizioList(null, ricerca,permessi,session);
+						listaS = apsCore.soggettiServizioList(null, ricerca,permessi,session, request);
 					}else{
-						listaS = apsCore.soggettiServizioList(superUser, ricerca,permessi,session);
+						listaS = apsCore.soggettiServizioList(superUser, ricerca,permessi,session, request);
 					}
 					AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 					apsHelper.prepareServiziList(ricerca, listaS);
@@ -1023,13 +1023,13 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				break;
 			}
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, 
 					ServiziApplicativiCostanti.TIPO_OPERAZIONE_ENDPOINT_RISPOSTA_ASINCRONA);
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI,ServiziApplicativiCostanti.TIPO_OPERAZIONE_ENDPOINT_RISPOSTA_ASINCRONA);
 		} 
 

@@ -79,6 +79,7 @@ public abstract class AbstractServletListUtilities extends Action {
 		try {
 
 			HttpSession session = consoleHelper.getSession();
+			HttpServletRequest request = consoleHelper.getRequest();
 			PageData pd = consoleHelper.getPd();
 			ControlStationCore consoleCore = consoleHelper.getCore();
 			
@@ -108,7 +109,7 @@ public abstract class AbstractServletListUtilities extends Action {
 				pTmp = newLista.toArray(new Parameter[1]);
 			}
 			
-			ServletUtils.addListElementIntoSession(session, this.getObjectName(),
+			ServletUtils.addListElementIntoSession(request, session, this.getObjectName(),
 					pTmp);
 
 			int idLista = this.getIdList();

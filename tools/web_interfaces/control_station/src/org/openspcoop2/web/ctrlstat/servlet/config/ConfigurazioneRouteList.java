@@ -75,7 +75,7 @@ public final class ConfigurazioneRouteList extends Action {
 			confHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.ROUTING;
 
@@ -86,15 +86,15 @@ public final class ConfigurazioneRouteList extends Action {
 			confHelper.prepareRoutingList(ricerca, lista);
 
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, 
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ROTTE_ROUTING,
 					ForwardParams.LIST());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ROTTE_ROUTING, ForwardParams.LIST());
 		}
 	}

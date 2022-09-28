@@ -244,7 +244,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, 
 						ProtocolPropertiesCostanti.OBJECT_NAME_PP, ProtocolPropertiesCostanti.TIPO_OPERAZIONE_BINARY_PROPERTY_CHANGE);
@@ -306,7 +306,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 				//cancello il file temporaneo
 				ppHelper.deleteBinaryProtocolPropertyTmpFiles(this.protocolProperties, this.nome, ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping,
 						ProtocolPropertiesCostanti.OBJECT_NAME_PP, ProtocolPropertiesCostanti.TIPO_OPERAZIONE_BINARY_PROPERTY_CHANGE);
@@ -372,12 +372,12 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			// se viene premuto invio
 			gd = generalHelper.initGeneralData(request);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ProtocolPropertiesCostanti.OBJECT_NAME_PP, ProtocolPropertiesCostanti.TIPO_OPERAZIONE_BINARY_PROPERTY_CHANGE);	
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ProtocolPropertiesCostanti.OBJECT_NAME_PP, ProtocolPropertiesCostanti.TIPO_OPERAZIONE_BINARY_PROPERTY_CHANGE);
 		}
 	}

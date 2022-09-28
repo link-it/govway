@@ -77,11 +77,11 @@ public final class ServiziApplicativiProprietaChange extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 		
 		try {
-			Boolean singlePdD = (Boolean) session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+			Boolean singlePdD = ServletUtils.getObjectFromSession(request, session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 			
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
-			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session);
+			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session, request);
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
 			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
 			
@@ -118,7 +118,7 @@ public final class ServiziApplicativiProprietaChange extends Action {
 			}
 			
 			// Tipi protocollo supportati
-			List<String> listaTipiProtocollo = saCore.getProtocolliByFilter(session, true, PddTipologia.OPERATIVO, false);
+			List<String> listaTipiProtocollo = saCore.getProtocolliByFilter(request, session, true, PddTipologia.OPERATIVO, false);
 			String superUser = ServletUtils.getUserLoginFromSession(session);
 			
 			// Prendo la lista di soggetti
@@ -179,7 +179,7 @@ public final class ServiziApplicativiProprietaChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_PROPRIETA,
 						ForwardParams.CHANGE());
@@ -202,7 +202,7 @@ public final class ServiziApplicativiProprietaChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
  
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_PROPRIETA, 
 						ForwardParams.CHANGE());
@@ -227,7 +227,7 @@ public final class ServiziApplicativiProprietaChange extends Action {
 			saCore.performUpdateOperation(userLogin, saHelper.smista(), sa);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.SERVIZI_APPLICATIVI_PROP;
 
@@ -237,12 +237,12 @@ public final class ServiziApplicativiProprietaChange extends Action {
 
 			saHelper.prepareServiziApplicativiProprietaList(sa, ricerca, lista);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_PROPRIETA, 
 					ForwardParams.CHANGE());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_PROPRIETA,
 					ForwardParams.CHANGE());
 		}  

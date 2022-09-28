@@ -62,9 +62,6 @@ public final class ServiziApplicativiDel extends Action {
 
 		HttpSession session = request.getSession(true);
 
-		// Salvo il vecchio PageData
-		// PageData pdold = (PageData) session.getAttribute("PageData");
-
 		// Inizializzo PageData
 		PageData pd = new PageData();
 
@@ -77,7 +74,7 @@ public final class ServiziApplicativiDel extends Action {
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
 			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
-			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session);
+			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session, request);
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
 			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
 			
@@ -128,7 +125,7 @@ public final class ServiziApplicativiDel extends Action {
 				idLista = Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO;
 			}
 			if(deleteAlmostOneApplicativo) {
-				ServletUtils.removeRisultatiRicercaFromSession(session, idLista);
+				ServletUtils.removeRisultatiRicercaFromSession(request, session, idLista);
 			}
 
 			if (inUsoMessage.length()>0) {
@@ -139,7 +136,7 @@ public final class ServiziApplicativiDel extends Action {
 			saHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<ServizioApplicativo> lista = null;
 			
@@ -148,7 +145,7 @@ public final class ServiziApplicativiDel extends Action {
 				
 				boolean filtroSoggetto = false;
 				if(saHelper.isSoggettoMultitenantSelezionato()) {
-					List<String> protocolli = saCore.getProtocolli(session,false);
+					List<String> protocolli = saCore.getProtocolli(request, session,false);
 					if(protocolli!=null && protocolli.size()==1) { // dovrebbe essere l'unico caso in cui un soggetto multitenant è selezionato
 						String protocollo = protocolli.get(0);
 						filtroSoggetto = !saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocollo);  // devono essere fatti vedere anche quelli
@@ -171,12 +168,12 @@ public final class ServiziApplicativiDel extends Action {
 
 			saHelper.prepareServizioApplicativoList(ricerca, lista, useIdSogg);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForward(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, ForwardParams.DEL());
 			
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, ForwardParams.DEL());
 		}
 	}

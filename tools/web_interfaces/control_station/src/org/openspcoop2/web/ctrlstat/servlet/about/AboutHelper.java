@@ -59,7 +59,7 @@ public class AboutHelper extends ConsoleHelper {
 		 
 		IVersionInfo versionInfo = null;
 		try {
-			versionInfo = this.core.getInfoVersion(this.session);
+			versionInfo = this.core.getInfoVersion(this.request, this.session);
 		}catch(Exception e) {
 			ControlStationLogger.getPddConsoleCoreLogger().error("Errore durante la lettura delle informazioni sulla versione: "+e.getMessage(),e);
 		}

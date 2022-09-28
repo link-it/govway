@@ -21,11 +21,15 @@ package org.openspcoop2.web.ctrlstat.servlet.utenti;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +41,8 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.crypt.PasswordGenerator;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -121,7 +127,9 @@ public class UtentiHelper extends ConsoleHelper {
 			String nomesu,String pwsu,String confpwsu,InterfaceType interfaceType,
 			String isServizi,String isDiagnostica,String isReportistica,String isSistema,String isMessaggi,String isUtenti,String isAuditing, String isAccordiCooperazione,
 			String changepwd, String [] modalitaGateway,
-			String isSoggettiAll, String isServiziAll, User oldImgUser, String scadenza, Date dataUltimoAggiornamentoPassword , boolean oldScadenza) throws Exception{
+			String isSoggettiAll, String isServiziAll, User oldImgUser, String scadenza, Date dataUltimoAggiornamentoPassword , boolean oldScadenza, 
+			String profiloDefaultConsoleGestione, String soggettoDefaultConsoleGestione, 
+			String profiloDefaultConsoleMonitoraggio, String soggettoDefaultConsoleMonitoraggio, String homePageMonitoraggio, String intervalloTemporaleReportStatistico) throws Exception{
 
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 		
@@ -397,60 +405,474 @@ public class UtentiHelper extends ConsoleHelper {
 			}
 			
 		}
-
 		
 		
-		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_MODALITA_INTERFACCIA);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_TIPO_GUI);
-		de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
-		boolean permitInterfaceComplete = false;
-		boolean showSelectTipoInterfaccia = true;
-		if(TipoOperazione.CHANGE.equals(tipoOperazione)) {
-			User user = this.utentiCore.getUser(nomesu);
-			permitInterfaceComplete = user.isPermitInterfaceComplete();
-			showSelectTipoInterfaccia = !interfaceType.equals(InterfaceType.COMPLETA);
-		}
+		boolean utenteConsoleEnabled = 
+				ServletUtils.isCheckBoxEnabled(isServizi) ||
+				ServletUtils.isCheckBoxEnabled(isMessaggi) ||
+				ServletUtils.isCheckBoxEnabled(isAuditing) ||
+				ServletUtils.isCheckBoxEnabled(isSistema) ||
+				ServletUtils.isCheckBoxEnabled(isUtenti) ||				
+				ServletUtils.isCheckBoxEnabled(isAccordiCooperazione);
 		
-		if(showSelectTipoInterfaccia) {
-			de.setType(DataElementType.SELECT);
-			String[] tipiInterfacce=null;
-			String[] tipiInterfacceLabel=null;
-			if(permitInterfaceComplete) {
-				tipiInterfacce = new String[3];			
-			}
-			else {
-				tipiInterfacce = new String[2];
-			}
-			tipiInterfacce[0]=InterfaceType.STANDARD.toString();
-			tipiInterfacce[1]=InterfaceType.AVANZATA.toString();
-			if(permitInterfaceComplete) {
-				tipiInterfacce[2]=InterfaceType.COMPLETA.toString();
-			}
-			tipiInterfacceLabel = new String[tipiInterfacce.length];
-			for (int i = 0; i < tipiInterfacce.length; i++) {
-				tipiInterfacceLabel[i] = tipiInterfacce[i].toLowerCase();
-			}
-			de.setValues(tipiInterfacce);
-			de.setLabels(tipiInterfacceLabel);
-			de.setSelected(interfaceType.toString());
+		boolean utenteMonitorEnabled = isDiagnosticaEnabled || isReportisticaEnabled;
+		
+		if(utenteConsoleEnabled || utenteMonitorEnabled) {
+		
+			de = new DataElement();
+			de.setLabel(UtentiCostanti.LABEL_PROFILO_UTENTE);
+			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
+			
+			// se ho selezionato almento un procollo mostro la selezione del protocollo per il profilo utente
+			boolean protocolloSelezionato = false;
+			
+			for (String modalitaI : modalitaGateway) {
+				if(ServletUtils.isCheckBoxEnabled(modalitaI)) {
+					protocolloSelezionato = true;
+					break;
+				}
+			}
+	
+			if(utenteConsoleEnabled) {
+			
+				de = new DataElement();
+				de.setLabel(UtentiCostanti.LABEL_PROFILO_UTENTE_CONSOLE_GESTIONE);
+				de.setType(DataElementType.SUBTITLE);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(UtentiCostanti.LABEL_MODALITA_INTERFACCIA);
+				de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
+				boolean permitInterfaceComplete = false;
+				boolean showSelectTipoInterfaccia = true;
+				if(TipoOperazione.CHANGE.equals(tipoOperazione)) {
+					User user = this.utentiCore.getUser(nomesu);
+					permitInterfaceComplete = user.isPermitInterfaceComplete();
+					showSelectTipoInterfaccia = !interfaceType.equals(InterfaceType.COMPLETA);
+				}
+				
+				if(showSelectTipoInterfaccia) {
+					de.setType(DataElementType.SELECT);
+					String[] tipiInterfacce=null;
+					String[] tipiInterfacceLabel=null;
+					if(permitInterfaceComplete) {
+						tipiInterfacce = new String[3];			
+					}
+					else {
+						tipiInterfacce = new String[2];
+					}
+					tipiInterfacce[0]=InterfaceType.STANDARD.toString();
+					tipiInterfacce[1]=InterfaceType.AVANZATA.toString();
+					if(permitInterfaceComplete) {
+						tipiInterfacce[2]=InterfaceType.COMPLETA.toString();
+					}
+					tipiInterfacceLabel = new String[tipiInterfacce.length];
+					for (int i = 0; i < tipiInterfacce.length; i++) {
+						tipiInterfacceLabel[i] = tipiInterfacce[i].toLowerCase();
+					}
+					de.setValues(tipiInterfacce);
+					de.setLabels(tipiInterfacceLabel);
+					de.setSelected(interfaceType.toString());
+					dati.addElement(de);
+				} else {
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(interfaceType.toString());
+					dati.addElement(de);
+					
+					de = new DataElement();
+					de.setLabel(UtentiCostanti.LABEL_MODALITA_INTERFACCIA);
+					de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI+ "_text");
+					de.setType(DataElementType.TEXT);
+					de.setValue(interfaceType.toString().toLowerCase());
+					dati.addElement(de);
+				}
+				
+				if(!onlyUser) { // selezione di modalita' e soggetto solo se non ho selezionato solo la gestione utenti.
+					if(protocolloSelezionato) {
+						// select list Profilo Interoperabilità
+						List<String> protocolliRegistratiConsole = this.core.getProtocolli();
+						
+						List<String> profiloValues = new ArrayList<String>();
+						List<String> profiloLabels = new ArrayList<String>();
+						for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
+							String protocolloName = protocolliRegistratiConsole.get(i);
+							if(ServletUtils.isCheckBoxEnabled(modalitaGateway[i])) {
+								profiloValues.add(protocolloName);
+								String labelProt = ConsoleHelper._getLabelProtocollo(protocolloName);
+								profiloLabels.add(labelProt);
+							}
+						}
+						
+						if(profiloValues.size() > 1) { // select
+							de = new DataElement();
+							de.setType(DataElementType.SELECT);		
+							de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE);
+							
+							profiloLabels.add(0, UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
+							profiloValues.add(0,UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL);
+							de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
+							de.setValues(profiloValues);
+							de.setLabels(profiloLabels);
+							
+							de.setSelected(profiloDefaultConsoleGestione);
+							de.setPostBack(true);
+							dati.addElement(de);
+							
+						} else { // text
+							de = new DataElement();
+							de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE);
+							de.setType(DataElementType.HIDDEN);			
+							de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
+							de.setValue(profiloDefaultConsoleGestione);
+							dati.addElement(de);
+							
+							de = new DataElement();
+							de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE);
+							de.setType(DataElementType.TEXT);			
+							de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA+ "_txt");
+							
+							String protocolloName = profiloValues.get(0);
+							String labelProt = ConsoleHelper._getLabelProtocollo(protocolloName);
+							de.setValue(labelProt);
+			//				de.setValue(profiloDefaultUtente.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : profiloDefaultUtente);
+							dati.addElement(de);
+						}
+						
+						// select list soggetti
+						if((profiloDefaultConsoleGestione!=null && !UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL.equals(profiloDefaultConsoleGestione)) ||
+								profiloValues.size() == 1) {
+							
+							String profiloDefaultCorrente = (profiloValues.size() == 1) ? profiloValues.get(0) : profiloDefaultConsoleGestione;
+							
+							List<IDSoggetto> idSoggettiOperativi = this.soggettiCore.getIdSoggettiOperativi(profiloDefaultCorrente);
+							
+							// se ho selezionato un profilo e ho almeno due soggetti visualizzo la tendina
+							if(idSoggettiOperativi != null && idSoggettiOperativi.size()>1) {
+								List<String> listaLabel = new ArrayList<>();
+								Map<String, IDSoggetto> mapLabelIds = new HashMap<>();
+								for (IDSoggetto idSoggetto : idSoggettiOperativi) {
+									String labelSoggetto = ConsoleHelper._getLabelNomeSoggetto(idSoggetto);
+									if(!listaLabel.contains(labelSoggetto)) {
+										listaLabel.add(labelSoggetto);
+										mapLabelIds.put(labelSoggetto, idSoggetto);
+									}
+								}
+								
+								// Per ordinare in maniera case insensistive
+								Collections.sort(listaLabel, new Comparator<String>() {
+									 @Override
+									public int compare(String o1, String o2) {
+								           return o1.toLowerCase().compareTo(o2.toLowerCase());
+								        }
+									});
+								
+								List<String> listaValues = new ArrayList<>();
+								
+								for (String label : listaLabel) {
+									listaValues.add(NamingUtils.getSoggettoFromLabel(profiloDefaultCorrente, label).toString());
+								}
+								
+								de = new DataElement();
+								de.setType(DataElementType.SELECT);
+								de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
+								listaLabel.add(0, UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
+								listaValues.add(0,UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL);
+								de.setValues(listaValues);
+								de.setLabels(listaLabel);
+								de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO);
+								de.setSelected(soggettoDefaultConsoleGestione);
+								dati.addElement(de);
+								
+							} else { // se ho un solo soggetto visualizzo il text
+								de = new DataElement();
+								de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
+								de.setType(DataElementType.HIDDEN);
+								de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO);
+								de.setValue(soggettoDefaultConsoleGestione);
+								dati.addElement(de);
+								
+								de = new DataElement();
+								de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
+								de.setType(DataElementType.TEXT);
+								de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO+ "_txt");
+								
+								IDSoggetto idSoggetto = idSoggettiOperativi.get(0);
+								String labelSoggetto = ConsoleHelper._getLabelNomeSoggetto(idSoggetto);
+								de.setValue(labelSoggetto);
+			//					de.setValue(soggettoDefaultUtente.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : soggettoDefaultUtente);
+								dati.addElement(de);
+							}
+							
+						} else {
+							de = new DataElement();
+							de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
+							de.setType(DataElementType.HIDDEN);
+							de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO);
+							de.setValue(soggettoDefaultConsoleGestione);
+							dati.addElement(de); 
+						}
+					} else {
+						de = new DataElement();
+						de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE);
+						de.setType(DataElementType.HIDDEN);			
+						de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
+						de.setValue(profiloDefaultConsoleGestione);
+						dati.addElement(de);
+						
+						de = new DataElement();
+						de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
+						de.setType(DataElementType.HIDDEN);
+						de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO);
+						de.setValue(soggettoDefaultConsoleGestione);
+						dati.addElement(de);
+					}
+				}
+			}
+			
+			// profilo e soggetti govwayMonitor
+			if(utenteMonitorEnabled) {
+				de = new DataElement();
+				de.setLabel(UtentiCostanti.LABEL_PROFILO_UTENTE_CONSOLE_MONITOR);
+				de.setType(DataElementType.SUBTITLE);
+				dati.addElement(de);
+				
+				if(protocolloSelezionato) {
+					// select list Profilo Interoperabilità
+					List<String> protocolliRegistratiConsole = this.core.getProtocolli();
+					
+					List<String> profiloValues = new ArrayList<String>();
+					List<String> profiloLabels = new ArrayList<String>();
+					for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
+						String protocolloName = protocolliRegistratiConsole.get(i);
+						if(ServletUtils.isCheckBoxEnabled(modalitaGateway[i])) {
+							profiloValues.add(protocolloName);
+							String labelProt = ConsoleHelper._getLabelProtocollo(protocolloName);
+							profiloLabels.add(labelProt);
+						}
+					}
+					
+					if(profiloValues.size() > 1) { // select
+						de = new DataElement();
+						de.setType(DataElementType.SELECT);		
+						de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE);
+						
+						profiloLabels.add(0, UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
+						profiloValues.add(0,UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL);
+						de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR);
+						de.setValues(profiloValues);
+						de.setLabels(profiloLabels);
+						
+						de.setSelected(profiloDefaultConsoleMonitoraggio);
+						de.setPostBack(true);
+						dati.addElement(de);
+						
+					} else { // text
+						de = new DataElement();
+						de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE);
+						de.setType(DataElementType.HIDDEN);			
+						de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR);
+						de.setValue(profiloDefaultConsoleMonitoraggio);
+						dati.addElement(de);
+						
+						de = new DataElement();
+						de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE);
+						de.setType(DataElementType.TEXT);			
+						de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR+ "_txt");
+						
+						String protocolloName = profiloValues.get(0);
+						String labelProt = ConsoleHelper._getLabelProtocollo(protocolloName);
+						de.setValue(labelProt);
+	//					de.setValue(profiloDefaultUtente.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : profiloDefaultUtente);
+						dati.addElement(de);
+					}
+					
+					// select list soggetti
+					if((profiloDefaultConsoleMonitoraggio!=null && !UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL.equals(profiloDefaultConsoleMonitoraggio)) ||
+							profiloValues.size() == 1) {
+						
+						String profiloDefaultCorrente = (profiloValues.size() == 1) ? profiloValues.get(0) : profiloDefaultConsoleMonitoraggio;
+						
+						List<IDSoggetto> idSoggettiOperativi = this.soggettiCore.getIdSoggettiOperativi(profiloDefaultCorrente);
+						
+						// se ho selezionato un profilo e ho almeno due soggetti visualizzo la tendina
+						if(idSoggettiOperativi != null && idSoggettiOperativi.size()>1) {
+							List<String> listaLabel = new ArrayList<>();
+							Map<String, IDSoggetto> mapLabelIds = new HashMap<>();
+							for (IDSoggetto idSoggetto : idSoggettiOperativi) {
+								String labelSoggetto = ConsoleHelper._getLabelNomeSoggetto(idSoggetto);
+								if(!listaLabel.contains(labelSoggetto)) {
+									listaLabel.add(labelSoggetto);
+									mapLabelIds.put(labelSoggetto, idSoggetto);
+								}
+							}
+							
+							// Per ordinare in maniera case insensistive
+							Collections.sort(listaLabel, new Comparator<String>() {
+								 @Override
+								public int compare(String o1, String o2) {
+							           return o1.toLowerCase().compareTo(o2.toLowerCase());
+							        }
+								});
+							
+							List<String> listaValues = new ArrayList<>();
+							
+							for (String label : listaLabel) {
+								listaValues.add(NamingUtils.getSoggettoFromLabel(profiloDefaultCorrente, label).toString());
+							}
+							
+							de = new DataElement();
+							de.setType(DataElementType.SELECT);
+							de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
+							listaLabel.add(0, UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
+							listaValues.add(0,UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL);
+							de.setValues(listaValues);
+							de.setLabels(listaLabel);
+							de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR);
+							de.setSelected(soggettoDefaultConsoleMonitoraggio);
+							dati.addElement(de);
+							
+						} else { // se ho un solo soggetto visualizzo il text
+							de = new DataElement();
+							de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
+							de.setType(DataElementType.HIDDEN);
+							de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR);
+							de.setValue(soggettoDefaultConsoleMonitoraggio);
+							dati.addElement(de);
+							
+							de = new DataElement();
+							de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
+							de.setType(DataElementType.TEXT);
+							de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR+ "_txt");
+							
+							IDSoggetto idSoggetto = idSoggettiOperativi.get(0);
+							String labelSoggetto = ConsoleHelper._getLabelNomeSoggetto(idSoggetto);
+							de.setValue(labelSoggetto);
+	//						de.setValue(soggettoDefaultUtente.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : soggettoDefaultUtente);
+							dati.addElement(de);
+						}
+						
+					} else {
+						de = new DataElement();
+						de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
+						de.setType(DataElementType.HIDDEN);
+						de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR);
+						de.setValue(soggettoDefaultConsoleMonitoraggio);
+						dati.addElement(de); 
+					}
+				} else {
+					de = new DataElement();
+					de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE);
+					de.setType(DataElementType.HIDDEN);			
+					de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR);
+					de.setValue(profiloDefaultConsoleMonitoraggio);
+					dati.addElement(de);
+					
+					de = new DataElement();
+					de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
+					de.setType(DataElementType.HIDDEN);
+					de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR);
+					de.setValue(soggettoDefaultConsoleMonitoraggio);
+					dati.addElement(de);
+				}
+				
+				// Home page console di monitoraggio
+				de = new DataElement();
+				de.setType(DataElementType.SELECT);
+				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+				String[] homePageLabels = { UtentiCostanti.LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI, UtentiCostanti.LABEL_VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE };
+				de.setValues(UtentiCostanti.VALUES_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+				de.setLabels(homePageLabels);
+				de.setName(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+				de.setPostBack(true);
+				de.setSelected(homePageMonitoraggio);
+				dati.addElement(de);
+				
+				// select per la selezione dell'intervallo temporale del grafico della home
+				if(homePageMonitoraggio.equals(UtentiCostanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE)) {
+					de = new DataElement();
+					de.setType(DataElementType.SELECT);
+					de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+					String[] intervalloTemporaleLabels = { 
+							UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_NO_GRAFICO, 
+							UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIME_24_ORE, 
+							UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI, 
+							UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_30_GIORNI, 
+							UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMO_ANNO };
+					de.setValues(UtentiCostanti.VALUES_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+					de.setLabels(intervalloTemporaleLabels);
+					de.setName(UtentiCostanti.PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+					de.setSelected(intervalloTemporaleReportStatistico);
+					dati.addElement(de);
+				} else {
+					de = new DataElement();
+					de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+					de.setType(DataElementType.HIDDEN);			
+					de.setName(UtentiCostanti.PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+					de.setValue(intervalloTemporaleReportStatistico);
+					dati.addElement(de);
+				}
+				
+			} else {
+				de = new DataElement();
+				de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE);
+				de.setType(DataElementType.HIDDEN);			
+				de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR);
+				de.setValue(profiloDefaultConsoleMonitoraggio);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
+				de.setType(DataElementType.HIDDEN);
+				de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR);
+				de.setValue(soggettoDefaultConsoleMonitoraggio);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+				de.setType(DataElementType.HIDDEN);			
+				de.setName(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+				de.setValue(homePageMonitoraggio);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+				de.setType(DataElementType.HIDDEN);			
+				de.setName(UtentiCostanti.PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+				de.setValue(intervalloTemporaleReportStatistico);
+				dati.addElement(de);
+			}
 		} else {
-			de.setType(DataElementType.HIDDEN);
-			de.setValue(interfaceType.toString());
+			de = new DataElement();
+			de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE);
+			de.setType(DataElementType.HIDDEN);			
+			de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR);
+			de.setValue(profiloDefaultConsoleMonitoraggio);
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_TIPO_GUI);
-			de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI+ "_text");
-			de.setType(DataElementType.TEXT);
-			de.setValue(interfaceType.toString().toLowerCase());
+			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR);
+			de.setValue(soggettoDefaultConsoleMonitoraggio);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+			de.setType(DataElementType.HIDDEN);			
+			de.setName(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+			de.setValue(homePageMonitoraggio);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+			de.setType(DataElementType.HIDDEN);			
+			de.setName(UtentiCostanti.PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+			de.setValue(intervalloTemporaleReportStatistico);
 			dati.addElement(de);
 		}
+		
+		
 		
 		boolean loginApplication = this.core.isLoginApplication();
 		
@@ -553,7 +975,9 @@ public class UtentiHelper extends ConsoleHelper {
 			String nomesu,String changepwd,String pwsu,String confpwsu,InterfaceType interfaceType,
 			String isServizi,String isDiagnostica,String isReportistica, String isSistema,String isMessaggi,String isUtenti,String isAuditing, String isAccordiCooperazione,
 			boolean scegliSuServizi,
-			String [] uws, boolean scegliSuAccordi,String [] uwp, String [] modalitaGateway) throws Exception{ 
+			String [] uws, boolean scegliSuAccordi,String [] uwp, String [] modalitaGateway, 
+			String profiloDefaultConsoleGestione, String soggettoDefaultConsoleGestione, 
+			String profiloDefaultConsoleMonitoraggio, String soggettoDefaultConsoleMonitoraggio, String homePageMonitoraggio, String intervalloTemporaleReportStatistico) throws Exception{ 
 
 		DataElement de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME);
@@ -586,12 +1010,53 @@ public class UtentiHelper extends ConsoleHelper {
 			dati.addElement(de);
 		}
 
+		de = new DataElement();
+		de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE);
+		de.setType(DataElementType.HIDDEN);			
+		de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
+		de.setValue(profiloDefaultConsoleGestione);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO);
+		de.setValue(soggettoDefaultConsoleGestione);
+		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_TIPO_GUI);
+		de.setLabel(UtentiCostanti.LABEL_MODALITA_INTERFACCIA);
 		de.setValue(interfaceType.toString());
 		de.setType(DataElementType.HIDDEN);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE);
+		de.setType(DataElementType.HIDDEN);			
+		de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR);
+		de.setValue(profiloDefaultConsoleMonitoraggio);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR);
+		de.setValue(soggettoDefaultConsoleMonitoraggio);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+		de.setType(DataElementType.HIDDEN);			
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+		de.setValue(homePageMonitoraggio);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+		de.setType(DataElementType.HIDDEN);			
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+		de.setValue(intervalloTemporaleReportStatistico);
 		dati.addElement(de);
 
 		de = new DataElement();
@@ -718,7 +1183,7 @@ public class UtentiHelper extends ConsoleHelper {
 	}
 
 	public void addUtenteChangeToDati(Vector<DataElement> dati,InterfaceType interfaceType,
-			String changepw, String nomeUtente, String modalitaDisponibili, String soggettiDisponibili) throws DriverUsersDBException{
+			String changepw, String nomeUtente, String profiloSelezionatoUtente, String soggettoSelezionatoUtente) throws Exception{
 
 		DataElement de = new DataElement();
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_FIRST);
@@ -740,31 +1205,14 @@ public class UtentiHelper extends ConsoleHelper {
 		
 		User utente = this.utentiCore.getUser(nomeUtente);
 		
-		de = new DataElement();
-		de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLI_HTML_ESCAPE);
-		if(utente.hasOnlyPermessiUtenti()) {
-			de.setType(DataElementType.HIDDEN);
+		if(!utente.hasOnlyPermessiUtenti()) { // questa sezione viene visualizzata solo se si hanno i diritti
+			de = new DataElement();
+			de.setType(DataElementType.SUBTITLE);
+			de.setLabel(UtentiCostanti.LABEL_PROFILO);
+			dati.addElement(de);
 		}
-		else {
-			de.setType(DataElementType.TEXT);
-		}
-		de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_LIST);
-		de.setValue(modalitaDisponibili);
-		dati.addElement(de);
 		
-		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTI_OPERATIVI);
-		// Il sottoinsieme sui soggetti vale solo per la govwayMonitor
-		//if(utente.hasOnlyPermessiUtenti() || !this.utentiCore.isMultitenant()) {
-		de.setType(DataElementType.HIDDEN);
-//		}
-//		else {
-//			de.setType(DataElementType.TEXT);
-//		}
-		de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_LIST);
-		de.setValue(soggettiDisponibili);
-		dati.addElement(de);
-		
+		// tipo interfaccia
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_MODALITA_INTERFACCIA);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
@@ -788,7 +1236,7 @@ public class UtentiHelper extends ConsoleHelper {
 				
 			} else {
 				de.setType(DataElementType.SELECT);		
-				User user = ServletUtils.getUserFromSession(this.session);
+				User user = ServletUtils.getUserFromSession(this.request, this.session);
 				String[] tipiInterfacce=null;
 				String[] tipiInterfacceLabel=null;
 				if(user.isPermitInterfaceComplete()) {
@@ -812,6 +1260,142 @@ public class UtentiHelper extends ConsoleHelper {
 			}
 		}
 		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE);
+		if(utente.hasOnlyPermessiUtenti()) {
+			de.setType(DataElementType.HIDDEN);
+			de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
+			de.setValue(profiloSelezionatoUtente);
+			dati.addElement(de);
+		}
+		else {
+			List<String> protocolliDispondibili = this.core.getProtocolli(this.request, this.session, true);
+			
+			if(protocolliDispondibili != null && protocolliDispondibili.size() > 1) {
+				de.setType(DataElementType.SELECT);
+				
+				List<String> labelProtocolli = new ArrayList<String>();
+				
+				for (String protocolloDisponibile : ProtocolUtils.orderProtocolli(protocolliDispondibili)) {
+					String labelProt = ConsoleHelper._getLabelProtocollo(protocolloDisponibile);
+					labelProtocolli.add(labelProt);
+				}
+				
+				labelProtocolli.add(0, UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
+				protocolliDispondibili.add(0,UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL);
+				de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
+				de.setValues(protocolliDispondibili);
+				de.setLabels(labelProtocolli);
+				
+				de.setSelected(profiloSelezionatoUtente);
+				de.setPostBack(true);
+				dati.addElement(de);
+			} else {
+				// solo un protocollo visualizzo il testo e basta
+				de.setType(DataElementType.HIDDEN);
+				de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
+				de.setValue(profiloSelezionatoUtente);
+				dati.addElement(de);
+				
+				// visualizzo label
+				de = new DataElement();
+				de.setType(DataElementType.TEXT);
+				de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE);
+				de.setName(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA + "_txt");
+				
+				String labelProt = ConsoleHelper._getLabelProtocollo(protocolliDispondibili.get(0));
+				de.setValue(labelProt);
+//				de.setValue(profiloSelezionatoUtente.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : ConsoleHelper._getLabelProtocollo(profiloSelezionatoUtente));
+				dati.addElement(de);
+				
+			} 
+		}
+		
+		if(utente.hasOnlyPermessiUtenti()) {
+			de = new DataElement();
+			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO);
+			de.setValue(soggettoSelezionatoUtente);
+			dati.addElement(de);
+		} else {
+			List<String> protocolliDispondibili = this.core.getProtocolli(this.request, this.session, true);
+			// selezione del soggetto se disponibile		
+			if((profiloSelezionatoUtente!=null && !UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL.equals(profiloSelezionatoUtente)) 
+					|| protocolliDispondibili.size() == 1) {
+					
+				String profiloDefaultCorrente = (protocolliDispondibili.size() == 1) ? protocolliDispondibili.get(0) : profiloSelezionatoUtente;
+				
+				List<IDSoggetto> idSoggettiOperativi = this.soggettiCore.getIdSoggettiOperativi(profiloDefaultCorrente);
+			
+				// se ho selezionato un profilo e ho almeno due soggetti visualizzo la tendina
+				if(idSoggettiOperativi != null && idSoggettiOperativi.size()>1) {
+					List<String> listaLabel = new ArrayList<>();
+					Map<String, IDSoggetto> mapLabelIds = new HashMap<>();
+					for (IDSoggetto idSoggetto : idSoggettiOperativi) {
+						String labelSoggetto = ConsoleHelper._getLabelNomeSoggetto(idSoggetto);
+						if(!listaLabel.contains(labelSoggetto)) {
+							listaLabel.add(labelSoggetto);
+							mapLabelIds.put(labelSoggetto, idSoggetto);
+						}
+					}
+					
+					// Per ordinare in maniera case insensistive
+					Collections.sort(listaLabel, new Comparator<String>() {
+						 @Override
+						public int compare(String o1, String o2) {
+					           return o1.toLowerCase().compareTo(o2.toLowerCase());
+					        }
+						});
+					
+					List<String> listaValues = new ArrayList<>();
+					
+					for (String label : listaLabel) {
+						listaValues.add(NamingUtils.getSoggettoFromLabel(profiloDefaultCorrente, label).toString());
+					}
+					
+					
+					de = new DataElement();
+					de.setType(DataElementType.SELECT);
+					de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
+					listaLabel.add(0, UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
+					listaValues.add(0,UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL);
+					de.setValues(listaValues);
+					de.setLabels(listaLabel);
+					de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO);
+					de.setSelected(soggettoSelezionatoUtente);
+					dati.addElement(de);
+					
+				} else { // se ho un solo soggetto visualizzo il text
+					de = new DataElement();
+					de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
+					de.setType(DataElementType.HIDDEN);
+					de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO);
+					de.setValue(soggettoSelezionatoUtente);
+					dati.addElement(de);
+					
+					de = new DataElement();
+					de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
+					de.setType(DataElementType.TEXT);
+					de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO+ "_txt");
+					
+					IDSoggetto idSoggetto = idSoggettiOperativi.get(0);
+					String labelSoggetto = ConsoleHelper._getLabelNomeSoggetto(idSoggetto);
+					
+					de.setValue(labelSoggetto);
+//					de.setValue(soggettoSelezionatoUtente.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : soggettoSelezionatoUtente);
+					dati.addElement(de);
+				}
+			} else {
+				de = new DataElement();
+				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO);
+				de.setType(DataElementType.HIDDEN);
+				de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO);
+				de.setValue(soggettoSelezionatoUtente);
+				dati.addElement(de);
+			}
+		}
 		
 		if(this.core.isLoginApplication()) {
 		
@@ -1107,11 +1691,34 @@ public class UtentiHelper extends ConsoleHelper {
 			
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
-			try {
-				InterfaceType.convert(tipoGui, true);
-			}catch(Exception e) {
-				this.pd.setMessage("Tipo dev'essere uno dei seguenti valori: "+InterfaceType.values());
-				return false;
+			// solo per l'utente della govwayConsole
+			boolean utenteConsoleEnabled = 
+					ServletUtils.isCheckBoxEnabled(isServizi) ||
+					ServletUtils.isCheckBoxEnabled(isMessaggi) ||
+					ServletUtils.isCheckBoxEnabled(isAuditing) ||
+					ServletUtils.isCheckBoxEnabled(isSistema) ||
+					ServletUtils.isCheckBoxEnabled(isUtenti) ||				
+					ServletUtils.isCheckBoxEnabled(isAccordiCooperazione);
+			
+			if(utenteConsoleEnabled) {
+				try {
+					InterfaceType.convert(tipoGui, true);
+				}catch(Exception e) {
+					this.pd.setMessage("Tipo dev'essere uno dei seguenti valori: "+InterfaceType.AVANZATA + ", " + InterfaceType.STANDARD + ".");
+					return false;
+				}
+				
+				String homePageMonitoraggio = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+				String intervalloTemporaleHomePageConsoleMonitoraggio = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+
+				if(!Arrays.asList(UtentiCostanti.VALUES_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO).contains(homePageMonitoraggio)) {
+					this.pd.setMessage(UtentiCostanti.LABEL_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO + " contiene un valore non valido.");
+					return false;
+				}
+				if(!Arrays.asList(UtentiCostanti.VALUES_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO).contains(intervalloTemporaleHomePageConsoleMonitoraggio)) {
+					this.pd.setMessage(UtentiCostanti.LABEL_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO + " contiene un valore non valido.");
+					return false;
+				}
 			}
 			
 			// Controllo che le password corrispondano
@@ -1282,7 +1889,7 @@ public class UtentiHelper extends ConsoleHelper {
 			}
 
 			// String cpwd = this.procToCall.cryptPw(oldpw);
-			User user = ServletUtils.getUserFromSession(this.session);
+			User user = ServletUtils.getUserFromSession(this.request, this.session);
 
 			if(user.getPermessi().isUtenti()==false){
 				boolean trovato = this.utentiCore.getUtenzePasswordManager().check(oldpw, user.getPassword());
@@ -1378,7 +1985,7 @@ public class UtentiHelper extends ConsoleHelper {
 
 	public void prepareUtentiList(ISearch ricerca, List<User> lista, boolean singlePdD) throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, UtentiCostanti.OBJECT_NAME_UTENTI);
+			ServletUtils.addListElementIntoSession(this.request, this.session, UtentiCostanti.OBJECT_NAME_UTENTI);
 
 			String userLogin = ServletUtils.getUserLoginFromSession(this.session);
 
@@ -1673,7 +2280,7 @@ public class UtentiHelper extends ConsoleHelper {
 
 	public void prepareUtentiSoggettiList(Search ricerca, List<IDSoggetto> lista, User user) throws Exception{
 		try {
-			ServletUtils.addListElementIntoSession(this.session, UtentiCostanti.OBJECT_NAME_UTENTI_SOGGETTI,
+			ServletUtils.addListElementIntoSession(this.request, this.session, UtentiCostanti.OBJECT_NAME_UTENTI_SOGGETTI,
 					new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, user.getLogin()));
 
 			int idLista = Liste.UTENTI_SOGGETTI;
@@ -1761,7 +2368,7 @@ public class UtentiHelper extends ConsoleHelper {
 	
 	public void prepareUtentiServiziList(Search ricerca, List<IDServizio> lista, User user) throws Exception{
 		try {
-			ServletUtils.addListElementIntoSession(this.session, UtentiCostanti.OBJECT_NAME_UTENTI_SERVIZI,
+			ServletUtils.addListElementIntoSession(this.request, this.session, UtentiCostanti.OBJECT_NAME_UTENTI_SERVIZI,
 					new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, user.getLogin()));
 
 			int idLista = Liste.UTENTI_SERVIZI;
@@ -2032,7 +2639,7 @@ public class UtentiHelper extends ConsoleHelper {
 			String confpw = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD);
 
 			// String cpwd = this.procToCall.cryptPw(oldpw);
-			String userToUpdate = ServletUtils.getObjectFromSession(this.session, String.class, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
+			String userToUpdate = ServletUtils.getObjectFromSession(this.request, this.session, String.class, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
 			
 			User user = this.utentiCore.getUser(userToUpdate);
 
@@ -2122,5 +2729,24 @@ public class UtentiHelper extends ConsoleHelper {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+	
+	public String incapsulaValoreStato(String valoreStato) {
+		if(valoreStato!=null){
+			valoreStato = "{" + valoreStato + "}"; // trasformo in json
+		}
+		return valoreStato;
+	}
+
+	public String extractValoreStato(String valoreStato) {
+		if(valoreStato!=null){
+			if(valoreStato.startsWith("{")){
+				valoreStato = valoreStato.substring(1);
+			}
+			if(valoreStato.endsWith("}")){
+				valoreStato = valoreStato.substring(0, (valoreStato.length()-1) );
+			}
+		}
+		return  valoreStato;
 	}
 }

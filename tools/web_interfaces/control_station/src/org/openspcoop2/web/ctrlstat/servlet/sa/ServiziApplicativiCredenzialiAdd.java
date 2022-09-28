@@ -88,14 +88,14 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 		TipoOperazione tipoOperazione = TipoOperazione.ADD;
 		
 		try {
-			Boolean singlePdD = (Boolean) session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+			Boolean singlePdD = ServletUtils.getObjectFromSession(request, session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
 			
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
 			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
-			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session);
+			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session, request);
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
 			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
 			
@@ -294,7 +294,7 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 			
 			
 			// Tipi protocollo supportati
-			List<String> listaTipiProtocollo = saCore.getProtocolliByFilter(session, true, PddTipologia.OPERATIVO, false);
+			List<String> listaTipiProtocollo = saCore.getProtocolliByFilter(request, session, true, PddTipologia.OPERATIVO, false);
 
 			// Preparo il menu
 			saHelper.makeMenu();
@@ -504,7 +504,7 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_CREDENZIALI, ForwardParams.ADD());
 			}
@@ -553,7 +553,7 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_CREDENZIALI, ForwardParams.ADD());
 			}
@@ -606,12 +606,12 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 
 			saHelper.prepareServizioApplicativoCredenzialiList(sa, id);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_CREDENZIALI, ForwardParams.ADD());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_CREDENZIALI, ForwardParams.ADD());
 		} 
 

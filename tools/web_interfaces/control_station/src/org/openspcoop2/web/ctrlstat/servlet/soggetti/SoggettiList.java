@@ -86,7 +86,7 @@ public final class SoggettiList extends Action {
 			boolean multiTenant = soggettiCore.isMultitenant();
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.SOGGETTI;
 			
@@ -94,7 +94,7 @@ public final class SoggettiList extends Action {
 			List<Soggetto> lista = null;
 			if(soggettiCore.isRegistroServiziLocale()){
 				if(!ServletUtils.isSearchDone(soggettiHelper)) {
-					lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  Soggetto.class);
+					lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista,  Soggetto.class);
 				}
 			}
 			
@@ -118,7 +118,7 @@ public final class SoggettiList extends Action {
 				}
 				
 				if(!soggettiHelper.isPostBackFilterElement()) {
-					ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+					ServletUtils.setRisultatiRicercaIntoSession(request, session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 				}
 				
 				soggettiHelper.prepareSoggettiList(lista, ricerca);
@@ -138,13 +138,13 @@ public final class SoggettiList extends Action {
 				pd.setMessage("Errore durante esportazione: "+msg);
 			}
 
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			return ServletUtils.getStrutsForward(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI, ForwardParams.LIST());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					SoggettiCostanti.OBJECT_NAME_SOGGETTI, ForwardParams.LIST());
 		} 
 	}

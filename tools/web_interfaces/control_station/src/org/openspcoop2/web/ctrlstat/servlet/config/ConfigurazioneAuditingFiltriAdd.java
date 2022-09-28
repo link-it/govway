@@ -144,7 +144,7 @@ public final class ConfigurazioneAuditingFiltriAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping,
 						AuditCostanti.OBJECT_NAME_CONFIGURAZIONE_AUDITING_FILTRI,
@@ -181,7 +181,7 @@ public final class ConfigurazioneAuditingFiltriAdd extends Action {
 				
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, 
 						AuditCostanti.OBJECT_NAME_CONFIGURAZIONE_AUDITING_FILTRI,
@@ -212,7 +212,7 @@ public final class ConfigurazioneAuditingFiltriAdd extends Action {
 			confCore.performCreateOperation(userLogin, confHelper.smista(), f);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<Filtro> lista = null;
 			lista = confCore.filtriList(ricerca);
@@ -220,13 +220,13 @@ public final class ConfigurazioneAuditingFiltriAdd extends Action {
 			ah.prepareFiltriList(ricerca, lista, Liste.FILTRI);
 			pd.setMessage(AuditCostanti.LABEL_AUDIT_CONFIGURAZIONE_MODIFICATA, Costanti.MESSAGE_TYPE_INFO);
 			
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping,
 					AuditCostanti.OBJECT_NAME_CONFIGURAZIONE_AUDITING_FILTRI,
 					ForwardParams.ADD());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AuditCostanti.OBJECT_NAME_CONFIGURAZIONE_AUDITING_FILTRI, ForwardParams.ADD());
 		}
 	}

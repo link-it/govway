@@ -78,7 +78,7 @@ public final class Login extends Action {
 				
 				pd.setMessage(LoginCostanti.MESSAGGIO_INFO_CONTROLLO_CONSISTENZA_DATI_IN_CORSO, Costanti.MESSAGE_TYPE_INFO);
 				
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd, true);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);
 				
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, LoginCostanti.OBJECT_NAME_LOGIN, ForwardParams.LOGIN());
 
@@ -87,7 +87,7 @@ public final class Login extends Action {
 			// Se login = null, devo visualizzare la pagina per l'inserimento dati
 			if (login == null) {
 	
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd, true);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);
 				
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, LoginCostanti.OBJECT_NAME_LOGIN, ForwardParams.LOGIN());
 					
@@ -97,7 +97,7 @@ public final class Login extends Action {
 			boolean isOk = loginHelper.loginCheckData(LoginTipologia.WITH_PASSWORD);
 			if (!isOk) {
 	
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd, true);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);
 				
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, LoginCostanti.OBJECT_NAME_LOGIN, ForwardParams.LOGIN());
 
@@ -107,7 +107,8 @@ public final class Login extends Action {
 			isOk = loginHelper.loginScadenzaPasswordCheckData(LoginTipologia.WITH_PASSWORD);
 			if (!isOk) {
 				
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
+				ServletUtils.setObjectIntoSession(request, session, pd, Costanti.SESSION_ATTRIBUTE_PAGE_DATA_REDIRECT);
 				
 				return ServletUtils.getStrutsForward(mapping, UtentiCostanti.OBJECT_NAME_UTENTE_PASSWORD, ForwardParams.CHANGE());
 
@@ -115,8 +116,8 @@ public final class Login extends Action {
 	
 			LoginCore loginCore = new LoginCore();
 			
-			LoginSessionUtilities.setLoginParametersSession(session, loginCore, login);
-			loginHelper.updateTipoInterfaccia();
+			LoginSessionUtilities.setLoginParametersSession(request, session, loginCore, login);
+//			loginHelper.updateTipoInterfaccia();
 			
 			loginCore.performAuditLogin(login);
 			
@@ -124,7 +125,7 @@ public final class Login extends Action {
 			loginHelper.makeMenu();
 	
 			// Inizializzo parametri di ricerca
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			loginHelper.initializeFilter(ricerca);
 			
 			// Boolean verifico configurazione
@@ -134,13 +135,13 @@ public final class Login extends Action {
 			// in sessione la login dell'utente
 			gd = generalHelper.initGeneralData(request);
 	
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd, true);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);
 	
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, LoginCostanti.OBJECT_NAME_LOGIN, ForwardParams.LOGIN());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					LoginCostanti.OBJECT_NAME_LOGIN, ForwardParams.LOGIN());
 		}
 	}

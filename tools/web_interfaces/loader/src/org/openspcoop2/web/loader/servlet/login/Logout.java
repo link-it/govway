@@ -73,13 +73,13 @@ public final class Logout extends Action {
 			// dalla sessione la login dell'utente
 			gd = generalHelper.initGeneralData(request,Costanti.SERVLET_NAME_LOGIN);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, Costanti.OBJECT_NAME_LOGOUT, ForwardParams.LOGOUT());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(LoaderCore.log, e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(LoaderCore.log, e, pd, request, session, gd, mapping, 
 					Costanti.OBJECT_NAME_LOGOUT, ForwardParams.LOGOUT());
 		}
 	}

@@ -123,7 +123,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 
 			this.idSoggettoErogatoreDelServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
 			if ((this.idSoggettoErogatoreDelServizio == null) || this.idSoggettoErogatoreDelServizio.equals("")) {
-				PageData oldPD = ServletUtils.getPageDataFromSession(session);
+				PageData oldPD = ServletUtils.getPageDataFromSession(request, session);
 
 				this.idSoggettoErogatoreDelServizio = oldPD.getHidden(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
 			}
@@ -239,7 +239,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,
 						AccordiServizioParteSpecificaCostanti.TIPO_OPERAZIONE_WSDL_CHANGE);
@@ -275,7 +275,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI, 
 						AccordiServizioParteSpecificaCostanti.TIPO_OPERAZIONE_WSDL_CHANGE);
@@ -372,12 +372,12 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 
 			pd.disableEditMode(); // altrimenti un successivo invio per aggiornare wsdl (o eliminarlo) non funziona.
 			
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,
 					AccordiServizioParteSpecificaCostanti.TIPO_OPERAZIONE_WSDL_CHANGE);
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,
 					AccordiServizioParteSpecificaCostanti.TIPO_OPERAZIONE_WSDL_CHANGE);
 		}  

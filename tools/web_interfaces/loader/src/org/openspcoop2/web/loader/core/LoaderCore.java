@@ -25,6 +25,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
@@ -77,10 +78,10 @@ public class LoaderCore{
 	private String logoHeaderLink = null;
 	private boolean visualizzaLinkHomeHeader = false;
 	
-	private String getTitleSuffix(HttpSession session) {
+	private String getTitleSuffix(HttpServletRequest request, HttpSession session) {
 		IVersionInfo versionInfo = null;
 		try {
-			versionInfo = getInfoVersion(session);
+			versionInfo = getInfoVersion(request, session);
 		}catch(Exception e) {
 			LoaderCore.log.error("Errore durante la lettura delle informazioni sulla versione: "+e.getMessage(),e);
 		}
@@ -99,8 +100,8 @@ public class LoaderCore{
 	public String getLoaderNomeSintesi() {
 		return this.loaderNomeSintesi;
 	}
-	public String getLoaderNomeEsteso(HttpSession session) {
-		String titleSuffix = getTitleSuffix(session);
+	public String getLoaderNomeEsteso(HttpServletRequest request, HttpSession session) {
+		String titleSuffix = getTitleSuffix(request, session);
 		if(!StringUtils.isEmpty(titleSuffix)){
 			if(!titleSuffix.startsWith(" ")) {
 				titleSuffix = " "+titleSuffix;
@@ -349,15 +350,15 @@ public class LoaderCore{
 	
 	private IVersionInfo versionInfo = null;
 	private Boolean versionInfoRead = null;
-	private synchronized IVersionInfo initInfoVersion(HttpSession session, String tipoDB) throws UtilsException {
+	private synchronized IVersionInfo initInfoVersion(HttpServletRequest request, HttpSession session, String tipoDB) throws UtilsException {
 		
 		if(this.versionInfoRead==null) {
 		
 			try {
-				Boolean versionInfoReadFromSession = ServletUtils.getObjectFromSession(session, Boolean.class, VERSION_INFO_READ);
+				Boolean versionInfoReadFromSession = ServletUtils.getObjectFromSession(request, session, Boolean.class, VERSION_INFO_READ);
 				if(versionInfoReadFromSession!=null) {
 					this.versionInfoRead = versionInfoReadFromSession;
-					this.versionInfo = ServletUtils.getObjectFromSession(session, IVersionInfo.class, VERSION_INFO);
+					this.versionInfo = ServletUtils.getObjectFromSession(request, session, IVersionInfo.class, VERSION_INFO);
 				}
 				else {
 					IVersionInfo vInfo = VersionUtilities.readInfoVersion();
@@ -380,9 +381,9 @@ public class LoaderCore{
 							}catch(Exception eClose){}
 						}
 					}
-					ServletUtils.setObjectIntoSession(session, true, VERSION_INFO_READ);
+					ServletUtils.setObjectIntoSession(request, session, true, VERSION_INFO_READ);
 					if(vInfo!=null) {
-						ServletUtils.setObjectIntoSession(session, vInfo, VERSION_INFO);
+						ServletUtils.setObjectIntoSession(request, session, vInfo, VERSION_INFO);
 					}
 				}
 			}finally {
@@ -394,9 +395,9 @@ public class LoaderCore{
 		return this.versionInfo;
 		
 	}
-	public IVersionInfo getInfoVersion(HttpSession session) throws UtilsException {
+	public IVersionInfo getInfoVersion(HttpServletRequest request, HttpSession session) throws UtilsException {
 		if(this.versionInfoRead==null) {
-			initInfoVersion(session, this.tipoDatabaseRegistroServizi);
+			initInfoVersion(request, session, this.tipoDatabaseRegistroServizi);
 		}
 		return this.versionInfo;
 	}

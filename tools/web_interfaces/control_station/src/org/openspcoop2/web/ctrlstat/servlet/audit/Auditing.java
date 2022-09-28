@@ -113,7 +113,7 @@ public   class Auditing extends Action {
 
 				pd.setLabelBottoneInvia(Costanti.LABEL_MONITOR_BUTTON_FILTRA);
 				
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, 
 						AuditCostanti.OBJECT_NAME_AUDITING, AuditCostanti.TIPO_OPERAZIONE_AUDITING);
@@ -142,14 +142,14 @@ public   class Auditing extends Action {
 
 				pd.setLabelBottoneInvia(Costanti.LABEL_MONITOR_BUTTON_FILTRA);
 				
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, 
 						AuditCostanti.OBJECT_NAME_AUDITING, AuditCostanti.TIPO_OPERAZIONE_AUDITING);
 			}
 
 			// ritorno pagina a lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.AUDIT_REPORT;
 
@@ -168,9 +168,9 @@ public   class Auditing extends Action {
 					contoggetto);
 
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			pd.setLabelBottoneInvia(Costanti.LABEL_MONITOR_BUTTON_FILTRA);
 			
@@ -178,7 +178,7 @@ public   class Auditing extends Action {
 					AuditCostanti.OBJECT_NAME_AUDITING, AuditCostanti.TIPO_OPERAZIONE_AUDITING);
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AuditCostanti.OBJECT_NAME_AUDITING, AuditCostanti.TIPO_OPERAZIONE_AUDITING);
 		}  
 	}

@@ -17,28 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
+<%@page import="org.openspcoop2.web.lib.mvc.Costanti"%>
+<%@page import="org.openspcoop2.web.lib.mvc.ServletUtils"%>
 <%@page import="org.openspcoop2.web.lib.mvc.GeneralData"%>
 <%@page import="org.openspcoop2.web.lib.mvc.GeneralLink"%>
 <%@page import="java.util.Vector"%>
 <%
 String iddati = "";
 String ct = request.getContentType();
-if (ct != null && (ct.indexOf("multipart/form-data") != -1)) {
-  iddati = (String) session.getAttribute("iddati");
+if (ct != null && (ct.indexOf(Costanti.MULTIPART) != -1)) {
+  iddati = ServletUtils.getObjectFromSession(request, session, String.class, Costanti.SESSION_ATTRIBUTE_ID_DATI);
 } else {
-  iddati = request.getParameter("iddati");
+  iddati = request.getParameter(Costanti.PARAMETER_NAME_ID_DATI);
 }
-String gdString = "GeneralData";
+String gdString = Costanti.SESSION_ATTRIBUTE_GENERAL_DATA;
 if (iddati != null && !iddati.equals("notdefined"))
   gdString += iddati;
 else
   iddati = "notdefined";
-GeneralData gd = (GeneralData) session.getAttribute(gdString);
+GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
 Vector<GeneralLink> v = gd.getHeaderLinks();
 
 Vector<GeneralLink> modalitaLinks = gd.getModalitaLinks();
 Vector<GeneralLink> soggettoLinks = gd.getSoggettiLinks();
 
+String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 if(v!= null && v.size() > 1) {
 		
 %>
@@ -109,6 +112,9 @@ $(document).ready(function(){
 	$('#menuUtente_menu span[class*="item-icon"]').click(function() {
 		var destinazione = $( this ).parent().children('span[class*="label"]').children().attr('href');
 		if(destinazione) {
+			// addTabID
+			destinazione = addTabIdParam(destinazione);
+			
 			window.location = destinazione;
 		}
 	});
@@ -116,6 +122,9 @@ $(document).ready(function(){
 	$('#menuUtente_menu div[class*="menu-item"]').click(function() {
 		var destinazione = $( this ).children('span[class*="label"]').children().attr('href');
 		if(destinazione) {
+			// addTabID
+			destinazione = addTabIdParam(destinazione);
+			
 			window.location = destinazione;
 		}
 	});
@@ -166,6 +175,9 @@ $(document).ready(function(){
 			$('#menuModalita_menu span[class*="item-icon"]').click(function() {
 				var destinazione = $( this ).parent().children('span[class*="label"]').children().attr('href');
 				if(destinazione) {
+					// addTabID
+					destinazione = addTabIdParam(destinazione);
+					
 					window.location = destinazione;
 				}
 			});
@@ -173,6 +185,9 @@ $(document).ready(function(){
 			$('#menuModalita_menu div[class*="menu-item"]').click(function() {
 				var destinazione = $( this ).children('span[class*="label"]').children().attr('href');
 				if(destinazione) {
+					// addTabID
+					destinazione = addTabIdParam(destinazione);
+					
 					window.location = destinazione;
 				}
 			});
@@ -223,6 +238,9 @@ if(soggettoLinks!= null && soggettoLinks.size() > 0) {
 			$('#menuSoggetto_menu span[class*="item-icon"]').click(function() {
 				var destinazione = $( this ).parent().children('span[class*="label"]').children().attr('href');
 				if(destinazione) {
+					// addTabID
+					destinazione = addTabIdParam(destinazione);
+					
 					window.location = destinazione;
 				}
 			});
@@ -230,6 +248,9 @@ if(soggettoLinks!= null && soggettoLinks.size() > 0) {
 			$('#menuSoggetto_menu div[class*="menu-item"]').click(function() {
 				var destinazione = $( this ).children('span[class*="label"]').children().attr('href');
 				if(destinazione) {
+					// addTabID
+					destinazione = addTabIdParam(destinazione);
+					
 					window.location = destinazione;
 				}
 			});

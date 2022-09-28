@@ -22,6 +22,8 @@ package org.openspcoop2.web.monitor.core.dao;
 import java.util.Date;
 import java.util.List;
 
+import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.lib.users.dao.UserPassword;
@@ -43,4 +45,8 @@ public interface IUserService extends IService<User, String>{
 	public void savePassword(Long idUser, String login, String newPassword, Date dataAggiornamentoPassword) throws Exception;
 	
 	public void savePasswordStorico(Long idUser, String login, String newPassword, Date dataAggiornamentoPassword, List<UserPassword> storicoPassword) throws Exception;
+	
+	public void salvaModalita(String login, String modalita) throws NotFoundException, ServiceException;
+	
+	public void salvaSoggettoPddMonitor(String login, String soggetto) throws NotFoundException, ServiceException;
 }

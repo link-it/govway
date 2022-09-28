@@ -82,8 +82,6 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 		try{
 
-			// String userLogin = (String) this.session.getAttribute("Login");
-
 			int idInt = 0;
 			if (tipoOp.equals(TipoOperazione.CHANGE)) {
 				idInt = Integer.parseInt(id);
@@ -253,7 +251,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		try {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
-			ServletUtils.addListElementIntoSession(this.session, AccordiCooperazioneCostanti.OBJECT_NAME_ACCORDI_COOPERAZIONE);
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiCooperazioneCostanti.OBJECT_NAME_ACCORDI_COOPERAZIONE);
 
 			int idLista = Liste.ACCORDI_COOPERAZIONE;
 			int limit = ricerca.getPageSize(idLista);
@@ -291,7 +289,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 				ServletUtils.enabledPageDataSearch(this.pd, AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, search);
 			}
 
-			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 			
 //			String gestioneWSBL = ServletUtils.getGestioneWSBLFromSession(this.session);
 //			if(gestioneWSBL == null){
@@ -428,7 +426,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 				if (this.core.isShowPulsantiImportExport()) {
 					
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_COOPERAZIONE, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_COOPERAZIONE, this.request, this.session)){
 					
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 	
@@ -459,7 +457,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		try {
 
 			String id = this.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
-			ServletUtils.addListElementIntoSession(this.session, AccordiCooperazioneCostanti.OBJECT_NAME_AC_PARTECIPANTI,
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiCooperazioneCostanti.OBJECT_NAME_AC_PARTECIPANTI,
 					new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID, id));
 
 			// setto la barra del titolo
@@ -842,14 +840,14 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		//			//de.setRequired(true);
 		//			// version spinner parte da 1
 		//
-		//			this.session.setAttribute(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_VERSION, 
-		//					AccordiCooperazioneCostanti.DEFAULT_VALUE_PARAMETRO_ACCORDI_COOPERAZIONE_VERSION);
+		//			ServletUtils.setObjectIntoSession(request, session, AccordiCooperazioneCostanti.DEFAULT_VALUE_PARAMETRO_ACCORDI_COOPERAZIONE_VERSION,
+		//					AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_VERSION);
 		//			/*}else{
 		//						// version spinner parte da 0
 		//						if(versione==null || "".equals(versione)){
 		//							de.setValue("0");
 		//						}
-		//						this.session.setAttribute("version", "optional");
+		//						ServletUtils.setObjectIntoSession(request, session, "optional", "version");
 		//					}*/
 		//			//			}else
 		//			//				de.setType(DataElementType.HIDDEN);
@@ -919,7 +917,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			throws Exception {
 		try {
 			String id = this.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID);
-			ServletUtils.addListElementIntoSession(this.session, AccordiCooperazioneCostanti.OBJECT_NAME_AC_PARTECIPANTI,
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiCooperazioneCostanti.OBJECT_NAME_AC_PARTECIPANTI,
 					new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID, id));
 			
 			int idLista = Liste.ACCORDI_COOP_PARTECIPANTI;
@@ -996,7 +994,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 	public void prepareAccordiCoopAllegatiList(AccordoCooperazione ac, ISearch ricerca, List<Documento> lista) throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, AccordiCooperazioneCostanti.OBJECT_NAME_AC_ALLEGATI,
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiCooperazioneCostanti.OBJECT_NAME_AC_ALLEGATI,
 					new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_ID, ""+ac.getId()));
 
 

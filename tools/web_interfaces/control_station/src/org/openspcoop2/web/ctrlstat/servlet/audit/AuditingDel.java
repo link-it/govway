@@ -104,7 +104,7 @@ public final class AuditingDel extends Action {
 			auditingHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<Operation> lista = auditingCore.auditOperationList(ricerca,
 					datainizio, datafine, tipooperazione,
@@ -118,12 +118,12 @@ public final class AuditingDel extends Action {
 					utente, statooperazione,
 					contoggetto);
  
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, AuditCostanti.OBJECT_NAME_AUDITING,
 					ForwardParams.DEL());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AuditCostanti.OBJECT_NAME_AUDITING, ForwardParams.DEL());
 		}
 	}

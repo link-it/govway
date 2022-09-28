@@ -63,9 +63,6 @@ public final class ConfigurazioneAuditingFiltriDel extends Action {
 
 		HttpSession session = request.getSession(true);
 
-		// Salvo il vecchio PageData
-		// PageData pdold = (PageData) session.getAttribute("PageData");
-
 		// Inizializzo PageData
 		PageData pd = new PageData();
 
@@ -99,7 +96,7 @@ public final class ConfigurazioneAuditingFiltriDel extends Action {
 			confHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<Filtro> lista = null;
 			lista = confCore.filtriList(ricerca);
@@ -107,12 +104,12 @@ public final class ConfigurazioneAuditingFiltriDel extends Action {
 			ah.prepareFiltriList(ricerca, lista, Liste.FILTRI);
 			pd.setMessage(AuditCostanti.LABEL_AUDIT_CONFIGURAZIONE_MODIFICATA, Costanti.MESSAGE_TYPE_INFO);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, AuditCostanti.OBJECT_NAME_CONFIGURAZIONE_AUDITING_FILTRI,
 					ForwardParams.DEL());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AuditCostanti.OBJECT_NAME_CONFIGURAZIONE_AUDITING_FILTRI, ForwardParams.DEL());
 		} 
 	}

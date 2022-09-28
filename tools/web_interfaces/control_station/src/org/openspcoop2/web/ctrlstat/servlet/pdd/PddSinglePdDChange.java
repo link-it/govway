@@ -93,7 +93,7 @@ public final class PddSinglePdDChange extends Action {
 
 			if ((id == null) || id.equals("")) {
 				pd.setMessage("L'identificativo della porta di dominio &egrave; necessario!");
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				return ServletUtils.getStrutsForwardGeneralError(mapping, PddCostanti.OBJECT_NAME_PDD_SINGLEPDD, ForwardParams.CHANGE());
 			}
 			long idPdd = Long.parseLong(id);
@@ -131,7 +131,7 @@ public final class PddSinglePdDChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, PddCostanti.OBJECT_NAME_PDD_SINGLEPDD, ForwardParams.CHANGE());
 			}
@@ -154,7 +154,7 @@ public final class PddSinglePdDChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, PddCostanti.OBJECT_NAME_PDD_SINGLEPDD, ForwardParams.CHANGE());
 			}
@@ -187,7 +187,7 @@ public final class PddSinglePdDChange extends Action {
 			// effettuo le operazioni
 			pddCore.performUpdateOperation(userLogin, pddHelper.smista(), oggettiDaAggiornare.toArray(new Object[1]));
 
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session,Search.class); 
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session,Search.class); 
 
 			List<PdDControlStation> lista = null;
 			if(pddCore.isVisioneOggettiGlobale(userLogin)){
@@ -198,13 +198,13 @@ public final class PddSinglePdDChange extends Action {
 
 			pddHelper.preparePddSinglePddList(lista, ricerca);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PddCostanti.OBJECT_NAME_PDD_SINGLEPDD, ForwardParams.CHANGE());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					PddCostanti.OBJECT_NAME_PDD_SINGLEPDD, ForwardParams.CHANGE());
 		} 
 	}

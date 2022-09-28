@@ -24,13 +24,13 @@
 <%
 String iddati = "";
 String ct = request.getContentType();
-if (ct != null && (ct.indexOf("multipart/form-data") != -1)) {
-  iddati = (String) session.getAttribute("iddati");
+if (ct != null && (ct.indexOf(Costanti.MULTIPART) != -1)) {
+  iddati = ServletUtils.getObjectFromSession(request, session, String.class, Costanti.SESSION_ATTRIBUTE_ID_DATI);
 } else {
-  iddati = request.getParameter("iddati");
+  iddati = request.getParameter(Costanti.PARAMETER_NAME_ID_DATI);
 }
-String gdString = "GeneralData";
-String pdString = "PageData";
+String gdString = Costanti.SESSION_ATTRIBUTE_GENERAL_DATA;
+String pdString = Costanti.SESSION_ATTRIBUTE_PAGE_DATA;
 if (iddati != null && !iddati.equals("notdefined")) {
   gdString += iddati;
   pdString += iddati;
@@ -38,8 +38,9 @@ if (iddati != null && !iddati.equals("notdefined")) {
 else {
   iddati = "notdefined";
 }
-GeneralData gd = (GeneralData) session.getAttribute(gdString);
-PageData pd = (PageData) session.getAttribute(pdString);
+GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
+PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
+
 %>
 
 <td class="td1PageBody" valign='top'>
@@ -71,6 +72,8 @@ PageData pd = (PageData) session.getAttribute(pdString);
 							   .click(function() {
 								   		<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %> 
 										var val = $(this).children('input[id=url_entry_<%=j %>]').val();
+										// addTabID
+										val = addTabIdParam(val);
 										window.location = val;
 							       });
 						   </script>	
@@ -87,6 +90,8 @@ PageData pd = (PageData) session.getAttribute(pdString);
 							   .click(function() {
 								   		<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
 										var val = $(this).children('input[id=url_entry_<%=j %>]').val();
+										// addTabID
+										val = addTabIdParam(val);
 										window.location = val;
 							       });
 						   </script>

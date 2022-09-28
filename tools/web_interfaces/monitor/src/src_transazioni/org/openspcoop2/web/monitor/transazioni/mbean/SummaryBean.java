@@ -61,11 +61,11 @@ import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.constants.CostantiGrafici;
-import org.openspcoop2.web.monitor.core.constants.NomiTabelle;
 import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.core.Utility;
+import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsService;
 import org.openspcoop2.web.monitor.core.dao.IDynamicUtilsService;
 import org.openspcoop2.web.monitor.core.dao.IUserService;
@@ -98,7 +98,7 @@ import net.sf.json.JSONObject;
  */
 public class SummaryBean implements Serializable{
 
-	private static final String STATO_PERIODO = NomiTabelle.WELCOME_SCREEN.toString();
+	private static final String STATO_PERIODO = Costanti.OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE;
 
 	/**
 	 * 
@@ -159,6 +159,8 @@ public class SummaryBean implements Serializable{
 	private String protocollo;
 	private String protocolloDefault;
 	private List<SelectItem> protocolli= null;
+	
+	private boolean salvaModificheProfiloSuDB = false;
 
 
 	public SummaryBean() {		
@@ -166,6 +168,8 @@ public class SummaryBean implements Serializable{
 
 		try {
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(SummaryBean.log);
+			
+			this.salvaModificheProfiloSuDB = govwayMonitorProperties.isModificaProfiloUtenteDaLinkAggiornaDB();
 
 			this.intervalloRefresh = govwayMonitorProperties.getIntervalloRefreshEsitiLive();
 
@@ -183,9 +187,9 @@ public class SummaryBean implements Serializable{
 			// se la funzionalita' delle statistiche e' abilitata allora visualizzo l'andamento temporale salvato nel bean dell'utente.
 			if(this.funzionalitaStatisticaAbilitata){
 				this.periodoDefault = this.leggiStatoPeriodo();
-				// Comportamento di default, se l'utente non ha uno stato salvato mostro l'ultimo anno.
+				// Comportamento di default, se l'utente non ha uno stato salvato mostro gli ultimi 7 giorni.
 				if(this.periodoDefault == null)
-					this.periodoDefault = CostantiReport.ULTIMO_ANNO;
+					this.periodoDefault = CostantiReport.ULTIMI_7_GIORNI;
 				// scelgo il report
 				this.report = ReportFactory.getInstance().getStatisticaReportManager();
 			}else {
@@ -1367,28 +1371,42 @@ public class SummaryBean implements Serializable{
 //			if(p != null && p.equals(CostantiReport.PERIODO_NOT_SET))
 //				p = null;
 
-			if(p!=null){
-				p = "{" + p + "}"; // trasformo in json
+			p = Utils.incapsulaValoreStato(p);
+			
+			// salvataggio su DB solo se previsto nelle properties
+			if(this.salvaModificheProfiloSuDB) {
+				Stato state = this.userService.getTableState(SummaryBean.STATO_PERIODO,Utility.getLoggedUtente());
+				state.setStato(p);
+				this.userService.saveTableState(SummaryBean.STATO_PERIODO,Utility.getLoggedUtente(), state);
+			} else {
+				// imposto il nuovo valore nell'utenza in sessione
+				for (Stato stato : Utility.getLoggedUtente().getStati()) {
+					if(stato.getOggetto().equals(Costanti.OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE)) {		
+						stato.setStato(p);						
+						break;
+					}
+				}
 			}
-
-			Stato state = this.userService.getTableState(SummaryBean.STATO_PERIODO,Utility.getLoggedUtente());
-			state.setStato(p);
-			this.userService.saveTableState(SummaryBean.STATO_PERIODO,Utility.getLoggedUtente(), state);
 		}
 	}
 
 	public String leggiStatoPeriodo(){
-		Stato state = this.userService.getTableState(SummaryBean.STATO_PERIODO,Utility.getLoggedUtente());
-		String statoPeriodo = state.getStato();
-		if(statoPeriodo!=null){
-			if(statoPeriodo.startsWith("{")){
-				statoPeriodo = statoPeriodo.substring(1);
-			}
-			if(statoPeriodo.endsWith("}")){
-				statoPeriodo = statoPeriodo.substring(0, (statoPeriodo.length()-1) );
+		Stato state = null;
+		// comportamento originale leggo il valore dal db
+		if(this.salvaModificheProfiloSuDB) {
+			state = this.userService.getTableState(SummaryBean.STATO_PERIODO,Utility.getLoggedUtente());
+		} else {
+			// leggo il valore dall'utente in sessione
+			for (Stato stato : Utility.getLoggedUtente().getStati()) {
+				if(stato.getOggetto().equals(Costanti.OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE)) {
+					state = stato;
+					break;
+				}
 			}
 		}
-		return  statoPeriodo;
+
+		String statoPeriodo = state.getStato();
+		return Utils.extractValoreStato(statoPeriodo);
 	}
 
 	public boolean isShowEsitiContesto(){

@@ -116,7 +116,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 		String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
+		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session, request);
 		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 
 		try {
@@ -682,7 +682,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 					
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE,
 						ForwardParams.ADD());
@@ -774,7 +774,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE, 
 						ForwardParams.ADD());
@@ -839,7 +839,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 					identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi);
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.CONFIGURAZIONE_FRUIZIONE;
 
@@ -851,16 +851,16 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			
 			// reset posizione tab
 			if(!apsHelper.isModalitaCompleta())
-				ServletUtils.setObjectIntoSession(session, "0", CostantiControlStation.PARAMETRO_ID_TAB);
+				ServletUtils.setObjectIntoSession(request, session, "0", CostantiControlStation.PARAMETRO_ID_TAB);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			ForwardParams fwP = apsHelper.isModalitaCompleta() ? ForwardParams.ADD() : AccordiServizioParteSpecificaCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE;
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE, fwP);
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE,
 					ForwardParams.ADD());
 		}  

@@ -27,21 +27,21 @@
 <%
 	String iddati = "";
 	String ct = request.getContentType();
-	if (ct != null && (ct.indexOf("multipart/form-data") != -1)) {
-	  iddati = (String) session.getAttribute("iddati");
+	if (ct != null && (ct.indexOf(Costanti.MULTIPART) != -1)) {
+	  iddati = ServletUtils.getObjectFromSession(request, session, String.class, Costanti.SESSION_ATTRIBUTE_ID_DATI);
 	} else {
-	  iddati = request.getParameter("iddati");
+	  iddati = request.getParameter(Costanti.PARAMETER_NAME_ID_DATI);
 	}
-	String gdString = "GeneralData";
-	String pdString = "PageData";
+	String gdString = Costanti.SESSION_ATTRIBUTE_GENERAL_DATA;
+	String pdString = Costanti.SESSION_ATTRIBUTE_PAGE_DATA;
 	if (iddati != null && !iddati.equals("notdefined")) {
 	  gdString += iddati;
 	  pdString += iddati;
 	}
 	else
 	  iddati = "notdefined";
-	GeneralData gd = (GeneralData) session.getAttribute(gdString);
-	PageData pd = (PageData) session.getAttribute(pdString);
+	GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
+	PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
 	
 	Vector<?> datiConGruppi = pd.getDati();
 	Vector<?> dati = (Vector<?>) datiConGruppi.elementAt(0);
@@ -83,6 +83,7 @@
 	
     boolean visualizzaIconeVectorLink = false;
     String numeroEntry = "dettaglio";
+    String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
 <tbody>
 	<% if(titoloSezione != null) { %>
@@ -190,6 +191,8 @@
 																	
 																	%>
 																	var urlD_<%= numeroEntry %> = $("#hidden_title_iconUso_<%= numeroEntry %>").val();
+																	// addTabID
+																	urlD_<%= numeroEntry %> = addTabIdParam(urlD_<%= numeroEntry %>,true);
 												    				// chiamata al servizio
 												    				<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
 												    				
@@ -226,7 +229,10 @@
 																
 																<%= deVisualizzaAjaxStatus %>
 																
-																document.location = '<%= de.getUrl() %>';
+																var val = '<%= de.getUrl() %>';
+												    			// addTabID
+																val = addTabIdParam(val,true);
+																document.location = val;
 																	
 															 });	
 															<%
@@ -342,6 +348,10 @@
 														  		if (!image.getTarget().equals("")) {
 														  			deTarget = " target=\""+ image.getTarget() +"\"";
 														  		}
+														  		
+														  		if (!image.getUrl().equals("")) {
+																	image.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+																}
 													  			
 														  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 						                					%>
@@ -420,6 +430,10 @@
 																	  		if (!image.getTarget().equals("")) {
 																	  			deTarget = " target=\""+ image.getTarget() +"\"";
 																	  		}
+																	  		
+																	  		if (!image.getUrl().equals("")) {
+																				image.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+																			}
 																  			
 																	  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 									                					%>
@@ -503,6 +517,10 @@
 																		  			deTarget = " target=\""+ image.getTarget() +"\"";
 																		  		}
 																		  		
+																		  		if (!image.getUrl().equals("")) {
+																					image.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+																				}
+																		  		
 																		  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 										                					%>
 										                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" onClick="<%= visualizzaAjaxStatus %>return true;">
@@ -574,6 +592,10 @@
 																			  			deTarget = " target=\""+ image.getTarget() +"\"";
 																			  		}
 																			  		
+																			  		if (!image.getUrl().equals("")) {
+																						image.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+																					}
+																			  		
 																			  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 											                					%>
 											                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" onClick="<%= visualizzaAjaxStatus %>return true;">
@@ -620,8 +642,11 @@
 	                                                    String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 	                                                             
 	                                                    if (type.equals("link")){
+	                                                    	if (!de.getUrl().equals("")) {
+																de.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+															}
 	                                                    %>
-															<input type=button onClick="<%= visualizzaAjaxStatus %>window.location.href='<%= de.getUrl() %>'" <%= deTip %> value="<%= de.getValue() %>"/>
+															<input type=button onClick="<%= visualizzaAjaxStatus %>window.location.href=addTabIdParam('<%= de.getUrl() %>',true)" <%= deTip %> value="<%= de.getValue() %>"/>
 								                        <%
                                            				} // if
                                        				} // for
@@ -646,6 +671,9 @@
 											  	String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 											  	
 											  	if (type.equals("link")){
+											  		if (!de.getUrl().equals("")) {
+														de.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+													}
 							        				%>
 							        					<div class="riepilogo-links-button-div">
 							        						<a href="<%= de.getUrl() %>" <%= deTip %> class="riepilogo-links-button" onClick="<%= visualizzaAjaxStatus %>return true;">
@@ -780,6 +808,9 @@
 								        		    			String classLink = "";
 														  		
 								        		    			String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+								        		    			if (!de.getUrl().equals("")) {
+																	de.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+																}
 								                				%>
 								                				<a class="<%= classLink %>" <%= deTip %> href="<%= de.getUrl() %>" type="button" onClick="<%= visualizzaAjaxStatus %>return true;">
 								                					<span class="icon-box">

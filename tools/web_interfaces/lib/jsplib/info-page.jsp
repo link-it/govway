@@ -25,13 +25,13 @@
 <%
 String iddati = "";
 String ct = request.getContentType();
-if (ct != null && (ct.indexOf("multipart/form-data") != -1)) {
-  iddati = (String) session.getAttribute("iddati");
+if (ct != null && (ct.indexOf(Costanti.MULTIPART) != -1)) {
+  iddati = ServletUtils.getObjectFromSession(request, session, String.class, Costanti.SESSION_ATTRIBUTE_ID_DATI);
 } else {
-  iddati = request.getParameter("iddati");
+  iddati = request.getParameter(Costanti.PARAMETER_NAME_ID_DATI);
 }
-String gdString = "GeneralData";
-String pdString = "PageData";
+String gdString = Costanti.SESSION_ATTRIBUTE_GENERAL_DATA;
+String pdString = Costanti.SESSION_ATTRIBUTE_PAGE_DATA;
 if (iddati != null && !iddati.equals("notdefined")) {
   gdString += iddati;
   pdString += iddati;
@@ -39,8 +39,8 @@ if (iddati != null && !iddati.equals("notdefined")) {
 else
   iddati = "notdefined";
 
-GeneralData gd = (GeneralData) session.getAttribute(gdString);
-PageData pd = (PageData) session.getAttribute(pdString);
+GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
+PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
 
 String ghf = request.getParameter("generateHiddenForm");
 Boolean generateHiddenForm = false;
@@ -57,6 +57,7 @@ boolean visualizzaPanelLista =((bottoni != null) && (bottoni.length > 0));
 
 String classDivPanelLista = visualizzaPanelLista  ? "panelLista" : "";
 String classTabellaPanelLista = visualizzaPanelLista  ? "tabella" : "";
+String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
 <td valign="top" class="td2PageBody">
 	<form name="form"  <%=hFormMethod  %> >
@@ -83,6 +84,11 @@ String classTabellaPanelLista = visualizzaPanelLista  ? "tabella" : "";
 												if(type.equals("hidden")){
 													%><input type="hidden" name="<%= de.getName()  %>" value="<%= de.getValue()  %>"/><%
 												}
+											}
+											
+											if(!tabSessionKey.equals("")) {
+												%><input type="hidden" name="<%=Costanti.PARAMETER_TAB_KEY %>" value="<%= tabSessionKey  %>"/><%
+												%><input type="hidden" name="<%=Costanti.PARAMETER_PREV_TAB_KEY %>" value="<%= tabSessionKey %>"/><%
 											}
 										}
 										

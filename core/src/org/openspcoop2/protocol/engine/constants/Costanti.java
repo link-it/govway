@@ -190,8 +190,10 @@ public class Costanti {
 	
 	public final static String CONSOLE_PARAMETRO_APS_PORT_TYPE = "port_type";
 	
+	public static final String CONSOLE_ATTRIBUTO_TAB_SESSION_KEY_PREFIX ="_tabKey_";
+	
 	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VIA_PARAM = Costanti.CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE+"_VIA_PARAM";
-	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE = "tipologiaErogazione";
+	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE = CONSOLE_ATTRIBUTO_TAB_SESSION_KEY_PREFIX + "tipologiaErogazione";
 	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE = "erogazione";
 	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE = "fruizione";
 	public final static String CONSOLE_PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_COMPLETA = "completa";

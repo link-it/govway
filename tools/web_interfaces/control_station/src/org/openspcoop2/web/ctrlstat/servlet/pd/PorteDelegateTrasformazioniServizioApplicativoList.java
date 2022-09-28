@@ -78,7 +78,7 @@ public final class PorteDelegateTrasformazioniServizioApplicativoList extends Ac
 			porteDelegateHelper.makeMenu();
 	
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 	
 			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO;
 	
@@ -89,14 +89,14 @@ public final class PorteDelegateTrasformazioniServizioApplicativoList extends Ac
 	
 			porteDelegateHelper.preparePorteDelegateTrasformazioniServizioApplicativoList(nomePorta, idTrasformazione, ricerca, lista);
 	
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 	
 			// Forward control to the specified success URI
 		 	return ServletUtils.getStrutsForward(mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO,
 		 			ForwardParams.LIST());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO, 
 					ForwardParams.LIST());
 		}  

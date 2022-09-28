@@ -2428,11 +2428,11 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					}
 				}
 				
-				userSession = ServletUtils.getUserFromSession(this.session);
+				userSession = ServletUtils.getUserFromSession(this.request, this.session);
 				originalInterfaceType = userSession.getInterfaceType();
 				// forzo standard
 				userSession.setInterfaceType(interfaceType);
-				this.setTipoInterfaccia(interfaceType);
+				// this.setTipoInterfaccia(interfaceType);
 			
 				String sbustamento = null;
 				String sbustamentoInformazioniProtocolloRichiesta = null;
@@ -2522,11 +2522,11 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					}
 				}
 				
-				userSession = ServletUtils.getUserFromSession(this.session);
+				userSession = ServletUtils.getUserFromSession(this.request, this.session);
 				originalInterfaceType = userSession.getInterfaceType();
 				// forzo standard
 				userSession.setInterfaceType(interfaceType);
-				this.setTipoInterfaccia(interfaceType);
+				// this.setTipoInterfaccia(interfaceType);
 
 				boolean forceEnabled = true; // non ha senso non fornire un connettore
 				
@@ -2557,11 +2557,11 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			InterfaceType originalInterfaceType = null;
 			User userSession = null;
 			try{
-				userSession = ServletUtils.getUserFromSession(this.session);
+				userSession = ServletUtils.getUserFromSession(this.request, this.session);
 				originalInterfaceType = userSession.getInterfaceType();
 				// forzo standard
 				userSession.setInterfaceType(InterfaceType.STANDARD);
-				this.setTipoInterfaccia(InterfaceType.STANDARD);
+			//	this.setTipoInterfaccia(InterfaceType.STANDARD);
 			
 				this.addDatiCredenzialiAccesso(dati, readedDatiConnettori, importInformationMissingException.getMissingInfoDefault(), showSection);
 			}

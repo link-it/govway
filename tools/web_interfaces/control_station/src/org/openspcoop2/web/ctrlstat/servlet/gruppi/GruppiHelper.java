@@ -241,7 +241,7 @@ public class GruppiHelper extends ConsoleHelper{
 	public void prepareGruppiList(ISearch ricerca, List<Gruppo> lista)
 			throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, GruppiCostanti.OBJECT_NAME_GRUPPI);
+			ServletUtils.addListElementIntoSession(this.request, this.session, GruppiCostanti.OBJECT_NAME_GRUPPI);
 			
 			this.pd.setCustomListViewName(GruppiCostanti.GRUPPI_NOME_VISTA_CUSTOM_LISTA);
 
@@ -308,7 +308,7 @@ public class GruppiHelper extends ConsoleHelper{
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.GRUPPO, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.GRUPPO, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 

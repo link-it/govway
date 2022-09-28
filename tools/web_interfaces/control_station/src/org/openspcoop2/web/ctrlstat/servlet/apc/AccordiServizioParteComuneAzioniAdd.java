@@ -265,7 +265,7 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_AZIONI, ForwardParams.ADD());
 			}
@@ -336,7 +336,7 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_AZIONI, ForwardParams.ADD());
 			}
@@ -398,7 +398,7 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.ACCORDI_AZIONI;
 
@@ -406,12 +406,12 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 			List<Azione> lista = apcCore.accordiAzioniList(idAccordo, ricerca);
 			apcHelper.prepareAccordiAzioniList(as, lista, ricerca,id,tipoAccordo);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_AZIONI, ForwardParams.ADD());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_AZIONI, ForwardParams.ADD());
 		} 
 	}

@@ -93,7 +93,7 @@ public final class ConfigurazioneAllarmiHistoryList extends Action {
 			ConfigurazioneAllarmeBean allarme = confCore.getAllarme(idAllarme);
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.CONFIGURAZIONE_ALLARMI_HISTORY;
 
@@ -104,15 +104,15 @@ public final class ConfigurazioneAllarmiHistoryList extends Action {
 			confHelper.prepareAllarmiHistoryList(ricerca, lista, allarme, ruoloPorta, nomePorta, serviceBinding);
 			
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, 
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ALLARMI_HISTORY,
 					ForwardParams.LIST());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ALLARMI_HISTORY, ForwardParams.LIST());
 		}
 	}

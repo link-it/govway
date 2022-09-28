@@ -66,14 +66,12 @@ public final class PorteDelegateList extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 		
-		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
-		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
-		Boolean useIdSogg = parentPD == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_SOGGETTO;
-		
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
-			
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session, request);
+			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
+			Boolean useIdSogg = parentPD == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_SOGGETTO;
 			String idsogg = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 			int soggInt = -1;
 			// Posso arrivare a questa pagina anche dal menu' senza specificare il soggetto
@@ -87,13 +85,13 @@ public final class PorteDelegateList extends Action {
 			parentPD = useIdSogg ? PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_SOGGETTO : PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 
 			// salvo il punto di ingresso
-			ServletUtils.setObjectIntoSession(session, parentPD, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT);
+			ServletUtils.setObjectIntoSession(request, session, parentPD, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT);
 
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
 			
@@ -112,13 +110,13 @@ public final class PorteDelegateList extends Action {
 
 			porteDelegateHelper.preparePorteDelegateList(ricerca, lista,idLista);
 
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward(mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE, ForwardParams.LIST());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE, 
 					ForwardParams.LIST());
 		} 

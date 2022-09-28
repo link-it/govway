@@ -35,6 +35,7 @@ public interface IConsoleHelper {
 
 	public HttpServletRequest getRequest();
 	public HttpSession getSession();
+	public <T> T getAttributeFromSession(String attributeName, Class<T> type);
 	
 	public boolean isEditModeInProgress() throws Exception;
 	public boolean isEditModeFinished() throws Exception;

@@ -266,7 +266,7 @@ public class RuoliHelper extends ConsoleHelper{
 	
 	public void prepareRuoliList(ISearch ricerca, List<Ruolo> lista) throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, RuoliCostanti.OBJECT_NAME_RUOLI);
+			ServletUtils.addListElementIntoSession(this.request, this.session, RuoliCostanti.OBJECT_NAME_RUOLI);
 			
 			boolean modalitaCompleta = this.isModalitaCompleta();
 			
@@ -302,7 +302,7 @@ public class RuoliHelper extends ConsoleHelper{
 				String protocollo = filterProtocollo;
 				if(protocollo==null) {
 					// significa che e' stato selezionato un protocollo nel menu in alto a destra
-					List<String> protocolli = this.core.getProtocolli(this.session);
+					List<String> protocolli = this.core.getProtocolli(this.request, this.session);
 					if(protocolli!=null && protocolli.size()==1) {
 						protocollo = protocolli.get(0);
 					}
@@ -415,7 +415,7 @@ public class RuoliHelper extends ConsoleHelper{
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.RUOLO, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.RUOLO, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 

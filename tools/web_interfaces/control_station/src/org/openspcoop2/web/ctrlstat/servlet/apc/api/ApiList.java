@@ -78,7 +78,7 @@ public class ApiList  extends Action {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			
 			// Controllo i criteri di ricerca e recupero eventuali parametri
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.ACCORDI;
 			
@@ -86,7 +86,7 @@ public class ApiList  extends Action {
 			List<AccordoServizioParteComuneSintetico> lista = null;
 			if(apcCore.isRegistroServiziLocale()){
 				if(!ServletUtils.isSearchDone(apiHelper)) {
-					lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  AccordoServizioParteComuneSintetico.class);
+					lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista,  AccordoServizioParteComuneSintetico.class);
 				}
 			}
 
@@ -101,7 +101,7 @@ public class ApiList  extends Action {
 //			System.out.println("READ: "+org.openspcoop2.utils.Utilities.convertSystemTimeIntoString_millisecondi((after-before), true));
 
 			if(!apiHelper.isPostBackFilterElement()) {
-				ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+				ServletUtils.setRisultatiRicercaIntoSession(request, session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 			}
 			
 //			before = org.openspcoop2.utils.date.DateManager.getTimeMillis();
@@ -115,14 +115,14 @@ public class ApiList  extends Action {
 			}
 			
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			return ServletUtils.getStrutsForward(mapping, ApiCostanti.OBJECT_NAME_APC_API, ForwardParams.LIST());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ApiCostanti.OBJECT_NAME_APC_API, ForwardParams.LIST());
 		}
 	}

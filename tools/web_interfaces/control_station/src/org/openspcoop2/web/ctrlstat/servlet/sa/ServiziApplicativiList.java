@@ -73,7 +73,7 @@ public final class ServiziApplicativiList extends Action {
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
 			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
-			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session);
+			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session, request);
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
 			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
 			
@@ -94,13 +94,13 @@ public final class ServiziApplicativiList extends Action {
 			parentSA = useIdSogg ? ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO : ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
 
 			// salvo il punto di ingresso
-			ServletUtils.setObjectIntoSession(session, parentSA, ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT);
+			ServletUtils.setObjectIntoSession(request, session, parentSA, ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT);
 
 			// Preparo il menu
 			saHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
 						
@@ -117,7 +117,7 @@ public final class ServiziApplicativiList extends Action {
 			
 			// poiche' esistono filtri che hanno necessita di postback salvo in sessione
 			if(!ServletUtils.isSearchDone(saHelper)) {
-				lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  ServizioApplicativo.class);
+				lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista,  ServizioApplicativo.class);
 			}
 			
 			ricerca = saHelper.checkSearchParameters(idLista, ricerca);
@@ -127,7 +127,7 @@ public final class ServiziApplicativiList extends Action {
 			if(!useIdSogg){
 				boolean filtroSoggetto = false;
 				if(saHelper.isSoggettoMultitenantSelezionato()) {
-					List<String> protocolli = saCore.getProtocolli(session,false);
+					List<String> protocolli = saCore.getProtocolli(request, session,false);
 					if(protocolli!=null && protocolli.size()==1) { // dovrebbe essere l'unico caso in cui un soggetto multitenant è selezionato
 						String protocollo = protocolli.get(0);
 						filtroSoggetto = !saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocollo);  // devono essere fatti vedere anche quelli
@@ -151,7 +151,7 @@ public final class ServiziApplicativiList extends Action {
 			}
 			
 			if(!saHelper.isPostBackFilterElement()) {
-				ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+				ServletUtils.setRisultatiRicercaIntoSession(request, session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 			}
 			
 			saHelper.prepareServizioApplicativoList(ricerca, lista, useIdSogg);
@@ -161,13 +161,13 @@ public final class ServiziApplicativiList extends Action {
 				pd.setMessage("Errore durante esportazione: "+msg);
 			}
 			
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForward(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, ForwardParams.LIST());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, ForwardParams.LIST());
 		}
 	}

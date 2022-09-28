@@ -183,5 +183,24 @@ public class Utils {
 
 		return controlRequired;
 	}
+	
+	
+	public static String incapsulaValoreStato(String valoreStato) {
+		if(valoreStato!=null){
+			valoreStato = "{" + valoreStato + "}"; // trasformo in json
+		}
+		return valoreStato;
+	}
 
+	public static String extractValoreStato(String valoreStato) {
+		if(valoreStato!=null){
+			if(valoreStato.startsWith("{")){
+				valoreStato = valoreStato.substring(1);
+			}
+			if(valoreStato.endsWith("}")){
+				valoreStato = valoreStato.substring(0, (valoreStato.length()-1) );
+			}
+		}
+		return  valoreStato;
+	}
 }

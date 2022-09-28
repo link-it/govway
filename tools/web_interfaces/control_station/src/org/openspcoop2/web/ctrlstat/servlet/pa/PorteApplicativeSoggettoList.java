@@ -76,7 +76,7 @@ public final class PorteApplicativeSoggettoList extends Action {
 			porteApplicativeHelper.makeMenu();
 	
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 	
 			int idLista = Liste.PORTE_APPLICATIVE_SOGGETTO;
 	
@@ -87,13 +87,13 @@ public final class PorteApplicativeSoggettoList extends Action {
 	
 			porteApplicativeHelper.preparePorteAppSoggettoList(nomePorta, ricerca, lista);
 	
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SOGGETTO, ForwardParams.LIST());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SOGGETTO, ForwardParams.LIST());
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SOGGETTO, ForwardParams.LIST());
 		}  
 	}
 }

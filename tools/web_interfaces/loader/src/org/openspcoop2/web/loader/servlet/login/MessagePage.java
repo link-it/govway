@@ -100,13 +100,13 @@ public class MessagePage extends Action {
 			// imposto il messaggio da visualizzare
 			pd.setMessage(messageText, messageTitle, mt);
 			
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, Costanti.OBJECT_NAME_MESSAGE_PAGE, ForwardParams.OTHER(""));
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(LoaderCore.getLog(), e, pd, session, gd, mapping, Costanti.OBJECT_NAME_MESSAGE_PAGE, ForwardParams.OTHER(""));
+			return ServletUtils.getStrutsForwardError(LoaderCore.getLog(), e, pd, request, session, gd, mapping, Costanti.OBJECT_NAME_MESSAGE_PAGE, ForwardParams.OTHER(""));
 		}
 	}
 }

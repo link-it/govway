@@ -139,7 +139,7 @@ public final class AccordiCooperazioneAllegatiChange extends Action {
 				
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiCooperazioneCostanti.OBJECT_NAME_AC_ALLEGATI,
 						ForwardParams.CHANGE());
@@ -186,7 +186,7 @@ public final class AccordiCooperazioneAllegatiChange extends Action {
 				
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiCooperazioneCostanti.OBJECT_NAME_AC_ALLEGATI,
 						ForwardParams.CHANGE());
@@ -231,18 +231,18 @@ public final class AccordiCooperazioneAllegatiChange extends Action {
 			acCore.performUpdateOperation(userLogin, acHelper.smista(), ac);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			
 			List<Documento> lista = acCore.accordiCoopAllegatiList(ac.getId().intValue(), ricerca);
 
 			acHelper.prepareAccordiCoopAllegatiList(ac, ricerca, lista);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiCooperazioneCostanti.OBJECT_NAME_AC_ALLEGATI,
 					ForwardParams.CHANGE());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiCooperazioneCostanti.OBJECT_NAME_AC_ALLEGATI, 
 					ForwardParams.CHANGE());
 		}  

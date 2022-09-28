@@ -94,19 +94,19 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 	public void prepareApiList(List<AccordoServizioParteComuneSintetico> lista, ISearch ricerca, String tipoAccordo) throws Exception {
 		try {
 
-			ServletUtils.addListElementIntoSession(this.session, ApiCostanti.OBJECT_NAME_APC_API,
+			ServletUtils.addListElementIntoSession(this.request, this.session, ApiCostanti.OBJECT_NAME_APC_API,
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO, tipoAccordo));
 			
-			ServletUtils.setObjectIntoSession(this.session, Boolean.valueOf(true), ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
+			ServletUtils.setObjectIntoSession(this.request, this.session, Boolean.valueOf(true), ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
 			
 			this.pd.setCustomListViewName(ApiCostanti.APC_API_NOME_VISTA_CUSTOM_LISTA_API);
 			
-			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 			boolean showServiceBinding = true;
 			boolean showResources = true;
 			boolean showServices = true;
 			if( !showProtocolli ) {
-				List<String> l = this.core.getProtocolli(this.session);
+				List<String> l = this.core.getProtocolli(this.request, this.session);
 				if(l.size()>0) {
 					IProtocolFactory<?> p = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(l.get(0));
 					if(p.getManifest().getBinding().getRest()==null) {
@@ -131,7 +131,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			String protocolloS = filterProtocol;
 			if(protocolloS==null) {
 				// significa che e' stato selezionato un protocollo nel menu in alto a destra
-				List<String> protocolli = this.core.getProtocolli(this.session);
+				List<String> protocolli = this.core.getProtocolli(this.request, this.session);
 				if(protocolli!=null && protocolli.size()==1) {
 					protocolloS = protocolli.get(0);
 				}
@@ -424,10 +424,10 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
 					boolean exists = false;
 					if(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE.equals(tipoAccordo)){
-						exists = exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_PARTE_COMUNE, this.session);
+						exists = exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_PARTE_COMUNE, this.request, this.session);
 					}
 					else{
-						exists = exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_COMPOSTO, this.session);
+						exists = exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_COMPOSTO, this.request, this.session);
 					}
 					if(exists){
 
@@ -471,7 +471,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		String tipoProtocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 		String labelASTitle = this.getLabelIdAccordo(tipoProtocollo, idAccordoOLD);
 		
-		ServletUtils.setObjectIntoSession(this.session, Boolean.valueOf(true), ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
+		ServletUtils.setObjectIntoSession(this.request, this.session, Boolean.valueOf(true), ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
 		
 		// setto la barra del titolo
 		List<Parameter> lstParm = new ArrayList<Parameter>();
@@ -508,7 +508,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		String tipoProtocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 		String labelASTitle = this.getLabelIdAccordo(tipoProtocollo, idAccordoOLD);
 		
-		ServletUtils.setObjectIntoSession(this.session, Boolean.valueOf(true), ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
+		ServletUtils.setObjectIntoSession(this.request, this.session, Boolean.valueOf(true), ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
 		
 		String userLogin = ServletUtils.getUserLoginFromSession(this.session);	
 		
@@ -542,7 +542,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		// reset delle cache richiesto dal link nella lista, torno alla lista
 		if(resetElementoCache) {
 			// preparo lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(this.session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(this.request, this.session, Search.class);
 			
 			int idLista = Liste.ACCORDI;
 			
@@ -550,7 +550,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			List<AccordoServizioParteComuneSintetico> lista = null;
 			if(this.apcCore.isRegistroServiziLocale()){
 				if(!ServletUtils.isSearchDone(this)) {
-					lista = ServletUtils.getRisultatiRicercaFromSession(this.session, idLista,  AccordoServizioParteComuneSintetico.class);
+					lista = ServletUtils.getRisultatiRicercaFromSession(this.request, this.session, idLista,  AccordoServizioParteComuneSintetico.class);
 				}
 			}
 
@@ -561,19 +561,19 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			}
 
 			if(!this.isPostBackFilterElement()) {
-				ServletUtils.setRisultatiRicercaIntoSession(this.session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+				ServletUtils.setRisultatiRicercaIntoSession(this.request, this.session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 			}
 			
 			this.prepareApiList(lista, ricerca, tipoAccordo);
 
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(this.session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(this.request, this.session, ricerca);
  
-			ServletUtils.setGeneralAndPageDataIntoSession(this.session, gd, this.pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(this.request, this.session, gd, this.pd);
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ApiCostanti.OBJECT_NAME_APC_API, CostantiControlStation.TIPO_OPERAZIONE_RESET_CACHE_ELEMENTO);
 		} else { // reset richiesto dal dettaglio, torno al dettaglio
 			this.prepareApiChange(tipoOp, as);
-			ServletUtils.setGeneralAndPageDataIntoSession(this.session, gd, this.pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(this.request, this.session, gd, this.pd);
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ApiCostanti.OBJECT_NAME_APC_API, ForwardParams.CHANGE());
 		}
 	}
@@ -590,7 +590,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		
 		IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromAccordo(as);
 		String labelAccordo = getLabelIdAccordo(tipoProtocollo, idAccordo);
-		boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+		boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 		// sezione 1 riepilogo
 		// nome accordo + link edit
 		// nome soggetto referente + link edit

@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.web.monitor.core.report;
 
+import org.openspcoop2.web.monitor.core.constants.Costanti;
+
 /**
  * CostantiReport
  * 
@@ -29,9 +31,9 @@ package org.openspcoop2.web.monitor.core.report;
  */
 public class CostantiReport {
 
-	public static final String ULTIME_24_ORE = "Ultime 24 ore";
-	public static final String ULTIMI_7_GIORNI = "Ultimi 7 giorni";
-	public static final String ULTIMI_30_GIORNI = "Ultimi 30 giorni";
-	public static final String ULTIMO_ANNO = "Ultimo anno";
-	public static final String PERIODO_NOT_SET = "--";
+	public static final String ULTIME_24_ORE = Costanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIME_24_ORE;
+	public static final String ULTIMI_7_GIORNI = Costanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI;
+	public static final String ULTIMI_30_GIORNI = Costanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_30_GIORNI;
+	public static final String ULTIMO_ANNO = Costanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMO_ANNO;
+	public static final String PERIODO_NOT_SET = Costanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_NO_GRAFICO;
 }

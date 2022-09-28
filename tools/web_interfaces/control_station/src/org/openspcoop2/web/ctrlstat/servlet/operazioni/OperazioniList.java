@@ -75,22 +75,22 @@ public class OperazioniList extends Action {
 			// Eseguo la ricerca
 			int idLista = opCore.getIdLista(formBean);
 			
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			ricerca = opHelper.checkSearchParameters(idLista, ricerca);
 			List<Operation> lista = opCore.operationsList(ricerca,formBean,ServletUtils.getUserLoginFromSession(session));
 
 			opHelper.prepareOperazioniList(ricerca, lista);
 
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 		
-			session.setAttribute(OperazioniCostanti.SESSION_ATTRIBUTE_FORM_BEAN, formBean);
+			ServletUtils.setObjectIntoSession(request, session, formBean, OperazioniCostanti.SESSION_ATTRIBUTE_FORM_BEAN);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForward (mapping, OperazioniCostanti.OBJECT_NAME_OPERAZIONI, ForwardParams.LIST());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					OperazioniCostanti.OBJECT_NAME_OPERAZIONI, ForwardParams.LIST());
 		}
 	}

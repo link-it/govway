@@ -74,7 +74,7 @@ public final class Login extends Action {
 			// Se login = null, devo visualizzare la pagina per l'inserimento dati
 			if (userLogin == null) {
 				
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, Costanti.OBJECT_NAME_LOGIN, ForwardParams.LOGIN());
 			}
@@ -83,7 +83,7 @@ public final class Login extends Action {
 			boolean isOk = loaderHelper.loginCheckData(true);
 			if (!isOk) {
 	
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, Costanti.OBJECT_NAME_LOGIN, ForwardParams.LOGIN());
 				
@@ -100,12 +100,12 @@ public final class Login extends Action {
 			// in sessione la login dell'utente
 			gd = generalHelper.initGeneralData(request);
 	
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, Costanti.OBJECT_NAME_LOGIN, ForwardParams.LOGIN());
 			
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(LoaderCore.log, e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(LoaderCore.log, e, pd, request, session, gd, mapping, 
 					Costanti.OBJECT_NAME_LOGIN, ForwardParams.LOGIN());
 		}
 	}
