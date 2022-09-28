@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/oracle/runtimePdD/2022-09-28-patch.sql

@@ -1,3 +1,9 @@
+2022-09-28  Andrea Poli <apoli@link.it>
+
+	Aggiunto indice nel repository dei messaggi per permetterne un scaricamento da MessageBox più efficiente.
+
+	CREATE INDEX MSG_SERV_APPL_GET_IM_MSG_ID ON MSG_SERVIZI_APPLICATIVI (ID_MESSAGGIO,SERVIZIO_APPLICATIVO,INTEGRATION_MANAGER);
+
 2022-07-18  Andrea Poli <apoli@link.it>
 
 	Aggiunta gestione degli applicativi token

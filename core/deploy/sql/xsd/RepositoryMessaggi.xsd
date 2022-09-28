@@ -388,6 +388,11 @@
                             <linkit:sql-table-index-field name="servizio_applicativo"/>
                             <linkit:sql-table-index-field name="integration_manager"/>
                         </linkit:sql-table-index>
+                        <linkit:sql-table-index name="MSG_SERV_APPL_GET_IM_MSG_ID">
+                            <linkit:sql-table-index-field name="id_messaggio"/>
+                            <linkit:sql-table-index-field name="servizio_applicativo"/>
+                            <linkit:sql-table-index-field name="integration_manager"/>
+                        </linkit:sql-table-index>
                         <linkit:sql-table-index name="MSG_SERV_APPL_TIMEOUT">
                             <linkit:sql-table-index-field name="id_messaggio"/>
                             <linkit:sql-table-index-field name="tipo_consegna"/>
