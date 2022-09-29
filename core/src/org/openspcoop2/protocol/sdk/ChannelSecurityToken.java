@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.protocol.sdk;
 
+import java.io.Serializable;
+
 /**     
  * ChannelSecurityToken
  *
@@ -26,6 +28,11 @@ package org.openspcoop2.protocol.sdk;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ChannelSecurityToken extends AbstractSecurityTokenInfo {
+public class ChannelSecurityToken extends AbstractSecurityTokenInfo implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 }

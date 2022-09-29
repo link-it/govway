@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.protocol.sdk;
 
+import java.io.Serializable;
+
 import org.openspcoop2.utils.certificate.CertificateInfo;
 
 /**     
@@ -28,8 +30,13 @@ import org.openspcoop2.utils.certificate.CertificateInfo;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public abstract class AbstractSecurityTokenInfo {
+public abstract class AbstractSecurityTokenInfo implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private CertificateInfo certificate;
 	
 	public CertificateInfo getCertificate() {

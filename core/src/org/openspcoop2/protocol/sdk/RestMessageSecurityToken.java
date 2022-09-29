@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.protocol.sdk;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,8 +38,13 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @author $Author$
  * @version $Rev$, $Date$AuthorizationMessageSecurityToken
  */
-public class RestMessageSecurityToken extends AbstractMessageSecurityToken<String> {
+public class RestMessageSecurityToken extends AbstractMessageSecurityToken<String> implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	public String getHeader() {
 		if(this.token!=null) {
 			String [] split = this.token.split("\\.");

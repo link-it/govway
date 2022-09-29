@@ -19,15 +19,22 @@
  */
 package org.openspcoop2.protocol.sdk;
 
+import java.io.Serializable;
+
 /**     
- * ChannelSecurityToken
+ * AbstractMessageSecurityToken
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AbstractMessageSecurityToken<T> extends AbstractSecurityTokenInfo {
+public class AbstractMessageSecurityToken<T> extends AbstractSecurityTokenInfo implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	protected T token;
 
 	public T getToken() {

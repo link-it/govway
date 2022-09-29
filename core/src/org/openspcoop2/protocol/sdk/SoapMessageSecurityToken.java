@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.protocol.sdk;
 
+import java.io.Serializable;
+
 import javax.xml.soap.SOAPEnvelope;
 
 /**     
@@ -28,6 +30,11 @@ import javax.xml.soap.SOAPEnvelope;
  * @author $Author$
  * @version $Rev$, $Date$AuthorizationMessageSecurityToken
  */
-public class SoapMessageSecurityToken extends AbstractMessageSecurityToken<SOAPEnvelope> {
+public class SoapMessageSecurityToken extends AbstractMessageSecurityToken<SOAPEnvelope> implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 }

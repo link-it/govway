@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.protocol.sdk;
 
+import java.io.Serializable;
+
 /**     
  * SecurityTokenModI
  *
@@ -26,8 +28,13 @@ package org.openspcoop2.protocol.sdk;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SecurityTokenModI {
+public class SecurityTokenModI implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private RestMessageSecurityToken authorization;
 	private RestMessageSecurityToken integrity;
 	private SoapMessageSecurityToken envelope;

@@ -1580,8 +1580,14 @@ public class RegistroServizi  {
 							obj = method.invoke(driver,values[0],values[1],readContenutoAllegati.booleanValue());
 						}
 					}else{
-						method = driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1]);
-						obj = method.invoke(driver,values[0],values[1]);
+						if("getAccordoServizioParteComune".equals(methodName)) {
+							method = driver.getClass().getMethod(methodName,classArgoments[0]);
+							obj = method.invoke(driver,values[0]);
+						}
+						else {
+							method = driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1]);
+							obj = method.invoke(driver,values[0],values[1]);
+						}
 					}
 				}else if(classArgoments.length==3){
 					Method method =  null;
@@ -1721,8 +1727,14 @@ public class RegistroServizi  {
 								obj = method.invoke(driver,values[0],values[1],readContenutoAllegati.booleanValue());
 							}
 						}else{
-							method = driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1]);
-							obj = method.invoke(driver,values[0],values[1]);
+							if("getAccordoServizioParteComune".equals(methodName)) {
+								method = driver.getClass().getMethod(methodName,classArgoments[0]);
+								obj = method.invoke(driver,values[0]);
+							}
+							else {
+								method = driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1]);
+								obj = method.invoke(driver,values[0],values[1]);
+							}
 						}
 						find = true;
 					}else if(classArgoments.length==3){

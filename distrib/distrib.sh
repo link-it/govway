@@ -10,7 +10,7 @@ TRUNK_VERSION=3.3
 TAG_PDD_VERSION_PRODUCT="3"
 TAG_PDD_VERSION_MAJOR="3"
 TAG_PDD_MAJOR_VERSION="${TAG_PDD_VERSION_PRODUCT}.${TAG_PDD_VERSION_MAJOR}"
-TAG_PDD_MINOR_VERSION=7
+TAG_PDD_MINOR_VERSION=8
 TAG_PDD_PATCHLEVEL=
 ramo=tags # tags / branches
 GIT_URL=https://github.com/link-it/govway.git
@@ -304,6 +304,11 @@ mkdir -p ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc
 # ChangeLog
 /bin/cp -f ${WORKING_COPY}/ChangeLog ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc
 /bin/cp -f ${WORKING_COPY}/ChangeLog ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}
+
+# License
+/bin/cp -f ${WORKING_COPY}/LICENSE ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc
+/bin/cp -f ${WORKING_COPY}/COPYING ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc
+/bin/cp -rf ${WORKING_COPY}/third-party-licenses ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}/doc
 
 pushd ${WORKING_COPY}/resources/doc/ >> ${LOG_FILE} 2>&1
 if [ ! -f pdf/GovWay-ManualeUtente.pdf -o "$UPDATE_DOC" == "true" ]

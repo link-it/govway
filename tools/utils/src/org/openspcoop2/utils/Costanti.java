@@ -35,7 +35,7 @@ public class Costanti {
 	public final static String OPENSPCOOP2_LOOKUP = "GOVWAY_LOOKUP";
 	 
     /** Versione beta, es: "b1" */
-    public static final String OPENSPCOOP2_BETA = ".7"; //".0.rc1";
+    public static final String OPENSPCOOP2_BETA = ".8"; //".0.rc1";
     /** Versione di OpenSPCoop */
     public static final String OPENSPCOOP2_VERSION = "3.3"+Costanti.OPENSPCOOP2_BETA;
     /** Versione di OpenSPCoop */
