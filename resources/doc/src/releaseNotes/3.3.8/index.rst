@@ -19,5 +19,6 @@ si può invece far riferimento al file ChangeLog di questa versione.
 	connettori
 	fileTrace
 	modipa
+	console
 	bug
 
