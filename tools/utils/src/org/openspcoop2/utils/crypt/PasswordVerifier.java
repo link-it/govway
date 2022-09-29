@@ -24,6 +24,7 @@ package org.openspcoop2.utils.crypt;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -44,7 +45,9 @@ import org.openspcoop2.utils.regexp.RegularExpressionEngine;
  * @version $Rev$, $Date$
  */
 
-public class PasswordVerifier {
+public class PasswordVerifier implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	private final static String PROPERTY_REGULAR_EXPRESSIONS_PREFIX = "passwordVerifier.regularExpression.";
 	private final static String PROPERTY_LOGIN_CONTAINS = "passwordVerifier.notContainsLogin";

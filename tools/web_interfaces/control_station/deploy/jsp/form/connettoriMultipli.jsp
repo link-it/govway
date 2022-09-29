@@ -747,9 +747,9 @@ function inizializzaSelectFiltro(){
 													                				<input type="hidden" name="<%= deName %>" id="<%= deName %>"  value="<%= de.getValue() %>"/>
 											                					<% } %>
 																			<% 
-																				if(!de.getListaImages().isEmpty()){
-																					for(int idxLink =0; idxLink < de.getListaImages().size() ; idxLink ++ ){
-																						DataElementImage image = de.getListaImages().get(idxLink);
+																				if(!de.getImage().isEmpty()){
+																					for(int idxLink =0; idxLink < de.getImage().size() ; idxLink ++ ){
+																						DataElementImage image = de.getImage().get(idxLink);
 																						String classLink = "";
 																						String deIconName = image.getImage(); 
 											                					
@@ -837,9 +837,9 @@ function inizializzaSelectFiltro(){
 																                				<input type="hidden" name="<%= deName %>" id="<%= deName %>"  value="<%= de.getValue() %>"/>
 														                					<% } %>
 																							 <% 
-																							if(!de.getListaImages().isEmpty()){
-																								for(int idxLink =0; idxLink < de.getListaImages().size() ; idxLink ++ ){
-																									DataElementImage image = de.getListaImages().get(idxLink);
+																							if(!de.getImage().isEmpty()){
+																								for(int idxLink =0; idxLink < de.getImage().size() ; idxLink ++ ){
+																									DataElementImage image = de.getImage().get(idxLink);
 																									String classLink = "";
 																									String deIconName = image.getImage(); 
 														                					
@@ -933,9 +933,9 @@ function inizializzaSelectFiltro(){
 								                          									%>
 																					
 																							<% 
-																								if(!de.getListaImages().isEmpty()){
-																									for(int idxLink =0; idxLink < de.getListaImages().size() ; idxLink ++ ){
-																										DataElementImage image = de.getListaImages().get(idxLink);
+																								if(!de.getImage().isEmpty()){
+																									for(int idxLink =0; idxLink < de.getImage().size() ; idxLink ++ ){
+																										DataElementImage image = de.getImage().get(idxLink);
 																										String classLink = "";
 																										String deIconName = image.getImage(); 
 															                					
@@ -996,9 +996,9 @@ function inizializzaSelectFiltro(){
 																								%>
 																								
 																								<% 
-																									if(!de.getListaImages().isEmpty()){
-																										for(int idxLink =0; idxLink < de.getListaImages().size() ; idxLink ++ ){
-																											DataElementImage image = de.getListaImages().get(idxLink);
+																									if(!de.getImage().isEmpty()){
+																										for(int idxLink =0; idxLink < de.getImage().size() ; idxLink ++ ){
+																											DataElementImage image = de.getImage().get(idxLink);
 																											String classLink = "";
 																											String deIconName = image.getImage(); 
 																                					

@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.ISearch;
@@ -749,7 +749,7 @@ public class ServletUtils {
 		}
 		deDialog.setWidth("800px"); // modifico il default, che è più piccolo e calibrato per la creazione delle credenziali
 		
-		// Inserire sempre la url come primo elemento del body
+		// Inserire sempre la url utilizzando la funzione setUrlElement
 		BodyElement bodyElementURL = new Dialog().new BodyElement();
 		bodyElementURL.setType(DataElementType.HIDDEN);
 		bodyElementURL.setName(Costanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_URL);
@@ -757,7 +757,7 @@ public class ServletUtils {
 		Parameter pTipoOggetto = new Parameter(Costanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_OGGETTO, inUsoType);
 		Parameter pTipoRisposta = new Parameter(Costanti.PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA, Costanti.VALUE_PARAMETRO_INFORMAZIONI_UTILIZZO_OGGETTO_TIPO_RISPOSTA_TEXT);
 		bodyElementURL.setUrl(servletName, pIdOggetto,pTipoOggetto,pTipoRisposta);
-		deDialog.addBodyElement(bodyElementURL);
+		deDialog.setUrlElement(bodyElementURL);
 		
 		// TextArea
 		BodyElement bodyElement = new Dialog().new BodyElement();

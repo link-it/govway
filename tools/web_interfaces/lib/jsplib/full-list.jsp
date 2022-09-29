@@ -307,9 +307,9 @@ if (hidden!=null && !hidden.isEmpty()) {
 										// Tipo image
 										if (de.getType().equals("image")) {
 											
-											if(!de.getListaImages().isEmpty()){
-												for(int idxLink =0; idxLink < de.getListaImages().size() ; idxLink ++ ){
-													DataElementImage image = de.getListaImages().get(idxLink);
+											if(!de.getImage().isEmpty()){
+												for(int idxLink =0; idxLink < de.getImage().size() ; idxLink ++ ){
+													DataElementImage image = de.getImage().get(idxLink);
 													String deIconName = image.getImage(); 
 		                					
 													String deTip = !image.getToolTip().equals("") ? " title=\"" + image.getToolTip() + "\"" : "";
@@ -456,7 +456,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 															String idIconUso = "iconUso_"+i; 
 															String idSpanUso = "spanIconUsoBoxList_"+i;
 															
-															BodyElement urlElement = dialog.getBody().remove(0);
+															BodyElement urlElement = dialog.getUrlElement();
 															
 															request.setAttribute("idFinestraModale_"+i, de.getDialog());
 															

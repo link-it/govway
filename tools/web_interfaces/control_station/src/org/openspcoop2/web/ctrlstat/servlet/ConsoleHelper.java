@@ -664,11 +664,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		Object idTabObj = this.request.getAttribute(Costanti.PARAMETER_TAB_KEY);
 		
 		if(idTabObj == null) {
-			this.log.debug("CHECKTABID: non trovato come attributo");
+			this.log.trace("CHECKTABID: non trovato come attributo");
 			String idTab = this.getParameter(Costanti.PARAMETER_TAB_KEY);
 			
 			if(idTab == null) { // nuovoTab o nuova finestra o primo accesso
-				this.log.debug("CHECKTABID: non trovato come parametro");
+				this.log.trace("CHECKTABID: non trovato come parametro");
 				idTab = UUID.randomUUID().toString().replace("-", "");
 				this.request.setAttribute(Costanti.PARAMETER_TAB_KEY, idTab);
 				this.log.debug("CHECKTABID: generato nuovo id: ["+idTab+"]");
@@ -676,11 +676,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			this.request.setAttribute(Costanti.PARAMETER_TAB_KEY, idTab);
-			this.log.debug("CHECKTABID: trovato come parametro: ["+idTab+"]");
+			this.log.trace("CHECKTABID: trovato come parametro: ["+idTab+"]");
 			return idTab;
 		}
 		
-		this.log.debug("CHECKTABID: trovato come attributo: ["+((String)idTabObj)+"]");
+		this.log.trace("CHECKTABID: trovato come attributo: ["+((String)idTabObj)+"]");
 		return (String) idTabObj;
 	}
 	

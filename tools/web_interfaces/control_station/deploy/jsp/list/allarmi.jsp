@@ -183,7 +183,7 @@ for (int j = 0; j < riga.size(); j++) {
 								String idIconUso = "iconUso_"+numeroEntry; 
 								String idSpanUso = "spanIconUsoBoxList_"+numeroEntry;
 								
-								BodyElement urlElement = dialog.getBody().remove(0);
+								BodyElement urlElement = dialog.getUrlElement();
 								
 								request.setAttribute("idFinestraModale_"+numeroEntry, de.getDialog());
 								

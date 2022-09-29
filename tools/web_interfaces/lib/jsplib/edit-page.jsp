@@ -162,7 +162,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 												String idIconUso = "iconUso_"+numeroEntry; 
 												String idSpanUso = "spanIconUsoBoxList_"+numeroEntry;
 												
-												BodyElement urlElement = dialog.getBody().remove(0);
+												BodyElement urlElement = dialog.getUrlElement();
 												
 												request.setAttribute("idFinestraModale_"+numeroEntry, de.getDialog());
 												
@@ -656,9 +656,9 @@ for (int i = 0; i < dati.size(); i++) {
 		                				
 		                				<% 
 		                					// tasti azione sulla text
-											if(!de.getListaImages().isEmpty()){
-												for(int idxLink =0; idxLink < de.getListaImages().size() ; idxLink ++ ){
-													DataElementImage image = de.getListaImages().get(idxLink);
+											if(!de.getImage().isEmpty()){
+												for(int idxLink =0; idxLink < de.getImage().size() ; idxLink ++ ){
+													DataElementImage image = de.getImage().get(idxLink);
 													String classLink = image.getStyleClass();
 													String deIconName = image.getImage(); 
 		                					
@@ -707,14 +707,14 @@ for (int i = 0; i < dati.size(); i++) {
 								    			<span class="<%=classSpanNoEdit %>"><%= taeditValNoEdit %></span>
 								    			</div><%
 								    	} else {
-								    		String selDataAttributes = !de.getDataAttributes().equals("") ? de.getDataAttributes() : " ";
+								    		String selDataAttributes = !de.getDataAttributesAsString().equals("") ? de.getDataAttributesAsString() : " ";
 								      		%><input type="text" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%= selDataAttributes %> >
 								      		<%
-								      			if(!de.getDataAttributes().equals("")){
+								      			if(!de.getDataAttributesAsString().equals("")){
 								      				
 								      				String [] values = de.getValues();
 								      				
-								      				boolean multiColors = de.getDataAttributesMap().containsKey("colors");
+								      				boolean multiColors = de.getDataAttributes().containsKey("colors");
 								      				
 								      				%>
 								      					<script type="text/javascript">
@@ -1117,7 +1117,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                               							 	String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 			                               								String selSize = " size='"+de.getRows()+"' ";
 			                               								String selEvtOnChange = !de.getOnChange().equals("") ? (" onChange=\"" + visualizzaAjaxStatus + de.getOnChange() + "\" " ) : " ";
-			                               								String selDataAttributes = !de.getDataAttributes().equals("") ? de.getDataAttributes() : " ";
+			                               								String selDataAttributes = !de.getDataAttributesAsString().equals("") ? de.getDataAttributesAsString() : " ";
 			                               								
 			                          									%><select name="<%= deName  %>" <%= selSize %> <%= selEvtOnChange %> class="<%= classInput %>" multiple <%= selDataAttributes %> ><%
 			                          									String [] values = de.getValues();
@@ -1135,8 +1135,8 @@ for (int i = 0; i < dati.size(); i++) {
 			                                        					}
 			                          									%></select>
 			                          									<%
-															      			if(!de.getDataAttributes().equals("")){
-															      				boolean multiColors = de.getDataAttributesMap().containsKey("colors");
+															      			if(!de.getDataAttributesAsString().equals("")){
+															      				boolean multiColors = de.getDataAttributes().containsKey("colors");
 															      				%>
 															      					<script type="text/javascript">
 															      					 /**

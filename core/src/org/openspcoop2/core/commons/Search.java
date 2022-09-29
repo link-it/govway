@@ -47,10 +47,10 @@ public class Search implements Serializable, ISearch {
 	private Map<Integer, Integer> numEntries = null;
 	private Map<Integer, HashMap<String,String>> filter = null;
 
-	private Integer PAGE_SIZE_DEFAULT = 20;
-	private Integer INDEX_DEFAULT = 0;
-	private String SEARCH_DEFAULT = org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED;
-	private Integer NUM_ENTRIES_DEFAULT = 0;
+	private static Integer PAGE_SIZE_DEFAULT = 20;
+	private static Integer INDEX_DEFAULT = 0;
+	private static String SEARCH_DEFAULT = org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED;
+	private static Integer NUM_ENTRIES_DEFAULT = 0;
 	//private String FILTER_DEFAULT = org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED;
 
 	public Search() {
@@ -65,10 +65,10 @@ public class Search implements Serializable, ISearch {
 		this.filter = new HashMap<Integer, HashMap<String,String>>();
 
 		for (int i = 0; i < Liste.getTotaleListe(); i++) {
-			this.pageSize.put(i, this.PAGE_SIZE_DEFAULT);
-			this.indexIniziale.put(i, this.INDEX_DEFAULT);
-			this.searchString.put(i, this.SEARCH_DEFAULT);
-			this.numEntries.put(i, this.NUM_ENTRIES_DEFAULT);
+			this.pageSize.put(i, Search.PAGE_SIZE_DEFAULT);
+			this.indexIniziale.put(i, Search.INDEX_DEFAULT);
+			this.searchString.put(i, Search.SEARCH_DEFAULT);
+			this.numEntries.put(i, Search.NUM_ENTRIES_DEFAULT);
 			this.filter.put(i, new HashMap<String,String>());
 		}
 
@@ -91,9 +91,9 @@ public class Search implements Serializable, ISearch {
 			// massimo
 			// di
 			// default
-			this.indexIniziale.put(i, this.INDEX_DEFAULT);
-			this.searchString.put(i, this.SEARCH_DEFAULT);
-			this.numEntries.put(i, this.NUM_ENTRIES_DEFAULT);
+			this.indexIniziale.put(i, Search.INDEX_DEFAULT);
+			this.searchString.put(i, Search.SEARCH_DEFAULT);
+			this.numEntries.put(i, Search.NUM_ENTRIES_DEFAULT);
 			this.filter.put(i, new HashMap<String,String>());
 		}
 
@@ -184,6 +184,56 @@ public class Search implements Serializable, ISearch {
 			map.remove(filterName);
 		}
 		map.put(filterName, filterValue);
+	}
+
+	@Deprecated
+	public Map<Integer, Integer> getPageSize() {
+		return this.pageSize;
+	}
+
+	@Deprecated
+	public void setPageSize(Map<Integer, Integer> pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	@Deprecated
+	public Map<Integer, Integer> getIndexIniziale() {
+		return this.indexIniziale;
+	}
+
+	@Deprecated
+	public void setIndexIniziale(Map<Integer, Integer> indexIniziale) {
+		this.indexIniziale = indexIniziale;
+	}
+
+	@Deprecated
+	public Map<Integer, String> getSearchString() {
+		return this.searchString;
+	}
+
+	@Deprecated
+	public void setSearchString(Map<Integer, String> searchString) {
+		this.searchString = searchString;
+	}
+
+	@Deprecated
+	public Map<Integer, Integer> getNumEntries() {
+		return this.numEntries;
+	}
+
+	@Deprecated
+	public void setNumEntries(Map<Integer, Integer> numEntries) {
+		this.numEntries = numEntries;
+	}
+
+	@Deprecated
+	public Map<Integer, HashMap<String, String>> getFilter() {
+		return this.filter;
+	}
+
+	@Deprecated
+	public void setFilter(Map<Integer, HashMap<String, String>> filter) {
+		this.filter = filter;
 	}
 
 }

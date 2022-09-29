@@ -25,6 +25,7 @@ package org.openspcoop2.web.lib.mvc;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -683,12 +684,12 @@ public class DataElement implements Serializable {
 		this.image.add(newImage);
 	}
 	
-	public DataElementImage getImage() {
-		if(this.image.isEmpty())
-			return null;
-		return this.image.get(0);
+	@Deprecated
+	public void setImage(List<DataElementImage> image) {
+		this.image = image;
 	}
-	public List<DataElementImage> getListaImages() {
+	
+	public List<DataElementImage> getImage() {
 		return this.image;
 	}
 	
@@ -697,13 +698,6 @@ public class DataElement implements Serializable {
 		this.image.add(icon);
 	}
 
-	public void setImage(String icon) {
-		this.image.clear();
-		DataElementImage newImage = new DataElementImage();
-		newImage.setImage(icon);
-		this.image.add(newImage);
-	}
-	
 	public void addImage(String icon) {
 		DataElementImage newImage = new DataElementImage();
 		newImage.setImage(icon);
@@ -714,11 +708,16 @@ public class DataElement implements Serializable {
 		this.image.add(icon);
 	}
 
-	public Map<String, String> getDataAttributesMap() {
+	public Map<String, String> getDataAttributes() {
 		return this.dataAttributes;
 	}
 	
-	public String getDataAttributes() {
+	@Deprecated
+	public void setDataAttributes(Map<String, String> dataAttributes) {
+		this.dataAttributes = dataAttributes;
+	}
+	
+	public String getDataAttributesAsString() {
 		StringBuilder sb = new StringBuilder();
 		
 		if(!this.dataAttributes.isEmpty()) {
@@ -731,12 +730,12 @@ public class DataElement implements Serializable {
 		return sb.toString();
 	}
 	public void enableTags() {
-		this.getDataAttributesMap().put("role", "tagsinput");
+		this.getDataAttributes().put("role", "tagsinput");
 	}
 	
 	public void enableTags(boolean multicolor) {
-		this.getDataAttributesMap().put("role", "tagsinput");
-		this.getDataAttributesMap().put("colors", "true");
+		this.getDataAttributes().put("role", "tagsinput");
+		this.getDataAttributes().put("colors", "true");
 	}
 
 	public void reloadMinValue(boolean reload) {
@@ -781,6 +780,18 @@ public class DataElement implements Serializable {
 		return this.info;
 	}
 	
+	@Deprecated
+	public void setStatusValues(List<String> v) {
+		this.statusValues = v;
+	}
+	
+	@Deprecated
+	public void setStatusValues(String[] v) {
+		if(v == null || v.length <= 0)
+			this.statusValues = null;
+		
+		this.statusValues = Arrays.asList(v);
+	}
 	
 	private void addStatusValue(String v) {
 		if(this.statusValues==null) {
@@ -825,6 +836,18 @@ public class DataElement implements Serializable {
 		return this.statusToolTips;
 	}
 	
+	@Deprecated
+	public void setStatusToolTips(List<String> v) {
+		this.statusToolTips = v;
+	}
+	@Deprecated
+	public void setStatusToolTips(String[] v) {
+		if(v == null || v.length <= 0)
+			this.statusToolTips = null;
+		
+		this.statusToolTips = Arrays.asList(v);
+	}
+	
 
 	private void addStatusType(String v) {
 		if(this.statusTypes==null) {
@@ -855,6 +878,17 @@ public class DataElement implements Serializable {
 	}
 	public List<String> getStatusTypesAsList() {
 		return this.statusTypes;
+	}
+	@Deprecated
+	public void setStatusTypes(List<String> v) {
+		this.statusTypes = v;
+	}
+	@Deprecated
+	public void setStatusTypes(String[] v) {
+		if(v == null || v.length <= 0)
+			this.statusTypes = null;
+		
+		this.statusTypes = Arrays.asList(v);
 	}
 
 	public void addStatus(String value, CheckboxStatusType type) {

@@ -171,7 +171,7 @@ visualizzaMetadati = vectorRiepilogo.size() > 1;
 								String idIconUso = "iconUso_"+numeroEntry; 
 								String idSpanUso = "spanIconUsoBoxList_"+numeroEntry;
 								
-								BodyElement urlElement = dialog.getBody().remove(0);
+								BodyElement urlElement = dialog.getUrlElement();
 								
 								request.setAttribute("idFinestraModale_"+numeroEntry, de.getDialog());
 								
