@@ -164,8 +164,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 		TipoOperazione tipoOp = TipoOperazione.ADD; 
 
 		try {
-			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, false);
 			ApiHelper apcHelper = new ApiHelper(request, pd, session);
+			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false);
 			
 			this.editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			this.nome = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME);
@@ -267,12 +267,12 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			
 			// Tipi protocollo supportati
 			// Controllo comunque quelli operativi, almeno uno deve esistere
-			List<String> listaTipiProtocollo = apcCore.getProtocolliByFilter(session, true, PddTipologia.OPERATIVO, false, this.isServizioComposto);
+			List<String> listaTipiProtocollo = apcCore.getProtocolliByFilter(request, session, true, PddTipologia.OPERATIVO, false, this.isServizioComposto);
 
 			// primo accesso 
 			this.tipoProtocollo =  apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
 			if(this.tipoProtocollo == null){
-				this.tipoProtocollo = apcCore.getProtocolloDefault(session, listaTipiProtocollo);
+				this.tipoProtocollo = apcCore.getProtocolloDefault(request, session, listaTipiProtocollo);
 			}
 			
 			String nuovaVersioneTmp = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE);
@@ -422,7 +422,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			if(listaTipiProtocollo.size()<=0) {
 				boolean msg = true;
 				if(this.isServizioComposto) {
-					List<String> listaTipiProtocolloSenzaAccordiCooperazione = apcCore.getProtocolliByFilter(session, true, PddTipologia.OPERATIVO, false, false);
+					List<String> listaTipiProtocolloSenzaAccordiCooperazione = apcCore.getProtocolliByFilter(request, session, true, PddTipologia.OPERATIVO, false, false);
 					if(listaTipiProtocolloSenzaAccordiCooperazione.size()>0) {
 						pd.setMessage("Non risultano registrati accordi di cooperazione", Costanti.MESSAGE_TYPE_INFO);
 						msg = false;
@@ -444,7 +444,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, 
 						ForwardParams.ADD());
@@ -630,7 +630,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					this.scadenza= "";
 					this.privato = false;
 					if(this.tipoProtocollo == null){
-						this.tipoProtocollo = apcCore.getProtocolloDefault(session, listaTipiProtocollo);
+						this.tipoProtocollo = apcCore.getProtocolloDefault(request, session, listaTipiProtocollo);
 					}
 					this.referente= "";
 
@@ -690,7 +690,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC,
 						ForwardParams.ADD());
@@ -786,7 +786,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping,
 						AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, ForwardParams.ADD());
@@ -982,7 +982,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 
 					pd.setDati(dati);
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, ForwardParams.ADD());
 
@@ -1011,27 +1011,27 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			boolean incomplete = apcHelper.setMessageWarningStatoConsistenzaAccordo(true, as);
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			if(incomplete || apcCore.isSetSearchAfterAdd()) {
-				apcCore.setSearchAfterAdd(Liste.ACCORDI, as.getNome(), session, ricerca);
+				apcCore.setSearchAfterAdd(Liste.ACCORDI, as.getNome(), request, session, ricerca);
 			}
 			
 			List<AccordoServizioParteComuneSintetico> lista = AccordiServizioParteComuneUtilities.accordiList(apcCore, userLogin, ricerca, this.tipoAccordo);
 
 			if(isModalitaVistaApiCustom) {
 				apcHelper.prepareApiList(lista, ricerca, this.tipoAccordo); 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ApiCostanti.OBJECT_NAME_APC_API, ForwardParams.ADD());
 			}
 			
 			apcHelper.prepareAccordiList(lista, ricerca, this.tipoAccordo);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, ForwardParams.ADD());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, ForwardParams.ADD());
 		} 
 

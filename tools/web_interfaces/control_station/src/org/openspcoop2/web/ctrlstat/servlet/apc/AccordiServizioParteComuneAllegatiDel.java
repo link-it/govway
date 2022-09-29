@@ -62,9 +62,6 @@ public final class AccordiServizioParteComuneAllegatiDel extends Action {
 
 		HttpSession session = request.getSession(true);
 
-		// Salvo il vecchio PageData
-		// PageData pdold = (PageData) session.getAttribute("PageData");
-
 		// Inizializzo PageData
 		PageData pd = new PageData();
 
@@ -108,17 +105,17 @@ public final class AccordiServizioParteComuneAllegatiDel extends Action {
 			AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComuneAllegati(as, userLogin, apcCore, apcHelper, idAllegati);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			List<Documento> lista = apcCore.accordiAllegatiList(as.getId().intValue(), ricerca);
 
 			apcHelper.prepareAccordiAllegatiList(as, ricerca, lista,tipoAccordo);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_ALLEGATI, ForwardParams.DEL());
 			
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_ALLEGATI, ForwardParams.DEL());
 		}
 	}

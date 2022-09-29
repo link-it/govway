@@ -1,3 +1,17 @@
+2022-09-29  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole, GovWayMonitor]
+	Risolto Bug OP-1343
+	È adesso consentito l'utilizzo della console di gestione in contemporanea su più tab di un browser.
+	Durante l'intervento è stato modificato il criterio di selezione dei profili di interoperabilità e dei soggetti operativi dal menù in alto a destra:
+	- la selezione dal menù a tendine impatta solamente sul tab su cui si sta operando
+	- la selezione non è persistente e non verrà mantenuta dopo un logout;
+	- dopo un login, il profilo di interoperabilità e il soggetto operativo proposto sono quelli associati per default all'utente, modificabili accedendo al 'Profilo Utente'.
+	Gli stessi criteri sono stati riportati, solamente nella console di gestione, per la modalità di utilizzo dell'interfaccia (standard/avanzata).
+	Infine nella console di monitoraggio è adesso possibile definire la homepage visualizzata una volta effettuato il login, selezionandola tra le seguenti due voci:
+	- pagina di ricerca delle transazioni
+	- report statistico; in questo caso viene consentito anche di definire l'intervallo temporale di default.    
+
 2022-09-27  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, ApiRsConfigurazione, ProtocolloModIPA]

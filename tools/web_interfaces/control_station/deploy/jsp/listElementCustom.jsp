@@ -22,8 +22,7 @@
 <%@ page session="true" import="java.util.*, org.openspcoop2.web.lib.mvc.*" %>
 
 <%
-ListElement listElement = 
-	  (org.openspcoop2.web.lib.mvc.ListElement) session.getAttribute("ListElement");
+ListElement listElement = ServletUtils.getObjectFromSession(request, session, ListElement.class, Costanti.SESSION_ATTRIBUTE_LIST_ELEMENT);
 
 String nomeServlet = listElement.getOggetto();
 String nomeServletAdd = nomeServlet+"Add.do";

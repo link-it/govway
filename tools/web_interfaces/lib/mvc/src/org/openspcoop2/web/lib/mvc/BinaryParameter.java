@@ -20,6 +20,7 @@
 
 package org.openspcoop2.web.lib.mvc;
 
+import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,12 @@ import org.apache.commons.lang.StringUtils;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class BinaryParameter {
+public class BinaryParameter implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private String name;
 	private byte[] value;

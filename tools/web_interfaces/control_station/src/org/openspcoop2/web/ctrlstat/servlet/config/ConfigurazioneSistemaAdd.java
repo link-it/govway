@@ -152,7 +152,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 						
 						//pd.disableEditMode();
 						
-						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+						ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 						return ServletUtils.getStrutsForwardEditModeInProgress(mapping,
 								ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_SISTEMA, 
@@ -290,7 +290,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 					
 					//pd.disableEditMode();
 					
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 		
 					return ServletUtils.getStrutsForwardEditModeInProgress(mapping,
 							ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_SISTEMA, 
@@ -867,7 +867,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 			// Il livello di log è modificabile!
 			pd.disableOnlyButton();
 			
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeInProgress(mapping,
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_SISTEMA, 
@@ -875,7 +875,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 			
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_SISTEMA, ForwardParams.ADD());
 		}
 	}

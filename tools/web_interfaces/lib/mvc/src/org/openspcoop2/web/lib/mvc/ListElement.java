@@ -20,6 +20,7 @@
 
 package org.openspcoop2.web.lib.mvc;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -32,8 +33,12 @@ import java.util.Set;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ListElement {
+public class ListElement implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String oggetto; 
 	private Map<String,Object> parameters = new HashMap<String,Object>();
 
@@ -45,58 +50,58 @@ public class ListElement {
 	}
 
 	public void addParameter(String key, Object object) {
-		this.parameters.put(key, object);
+		this.getParameters().put(key, object);
 	}
 	public Object getParameter(String key) {
-		if (this.parameters != null)
-			return this.parameters.get(key);
+		if (this.getParameters() != null)
+			return this.getParameters().get(key);
 		else
 			return null;
 	}
 	public Object removeParameter(String key) {
-		if (this.parameters != null)
-			return this.parameters.remove(key);
+		if (this.getParameters() != null)
+			return this.getParameters().remove(key);
 		else
 			return null;
 	}
 	public Object getParameter(int index) {
-		if (this.parameters != null) {
-			Set<?> keySet = this.parameters.keySet();
+		if (this.getParameters() != null) {
+			Set<?> keySet = this.getParameters().keySet();
 			Iterator<?> it = keySet.iterator();
 			int contatore = 0;
 			while (it.hasNext()) {
 				String key = (String) it.next();
 				if (contatore == index)
-					return this.parameters.get(key);
+					return this.getParameters().get(key);
 				contatore++;
 			}
 		}
 		return null;
 	}
 	public Object removeParameter(int index) {
-		if (this.parameters != null) {
-			Set<?> keySet = this.parameters.keySet();
+		if (this.getParameters() != null) {
+			Set<?> keySet = this.getParameters().keySet();
 			Iterator<?> it = keySet.iterator();
 			int contatore = 0;
 			while (it.hasNext()) {
 				String key = (String) it.next();
 				if (contatore == index)
-					return this.parameters.remove(key);
+					return this.getParameters().remove(key);
 				contatore++;
 			}
 		}
 		return null;
 	}
 	public int sizeParameter() {
-		return this.parameters.size();
+		return this.getParameters().size();
 	}
 	// Ritorna una stringa contenente tutti i parametri codificati
 	// per essere inseriti come parametri di una url. Ad esempio:
 	// nome1=valore1&nome2=valore2&.....
 	public String formatParametersURL() {
 		StringBuilder formatParBuf = new StringBuilder();
-		if (this.parameters != null) {
-			Set<?> keySet = this.parameters.keySet();
+		if (this.getParameters() != null) {
+			Set<?> keySet = this.getParameters().keySet();
 			Iterator<?> it = keySet.iterator();
 			boolean firstEl = true;
 			while (it.hasNext()) {
@@ -104,17 +109,26 @@ public class ListElement {
 				if (firstEl) {
 					formatParBuf.append(key)
 					.append("=")
-					.append(this.parameters.get(key));
+					.append(this.getParameters().get(key));
 					firstEl = false;
 				} else {
 					formatParBuf.append("&")
 					.append(key)
 					.append("=")
-					.append(this.parameters.get(key));
+					.append(this.getParameters().get(key));
 				}
 			}
 		}
 		return formatParBuf.toString();
+	}
+	
+	@Deprecated
+	public Map<String,Object> getParameters() {
+		return this.parameters;
+	}
+	@Deprecated
+	public void setParameters(Map<String,Object> parameters) {
+		this.parameters = parameters;
 	}
 	
 }

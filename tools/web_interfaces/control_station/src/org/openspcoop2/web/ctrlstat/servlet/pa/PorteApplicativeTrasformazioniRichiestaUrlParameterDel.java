@@ -60,9 +60,6 @@ public class PorteApplicativeTrasformazioniRichiestaUrlParameterDel extends Acti
 
 		HttpSession session = request.getSession(true);
 
-		// Salvo il vecchio PageData
-		// PageData pdold = (PageData) session.getAttribute("PageData");
-
 		// Inizializzo PageData
 		PageData pd = new PageData();
 
@@ -129,7 +126,7 @@ public class PorteApplicativeTrasformazioniRichiestaUrlParameterDel extends Acti
 			porteApplicativeHelper.makeMenu();
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			
 			int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRI; 
 			
@@ -139,13 +136,13 @@ public class PorteApplicativeTrasformazioniRichiestaUrlParameterDel extends Acti
 			
 			porteApplicativeHelper.preparePorteAppTrasformazioniRichiestaUrlParameterList(nomePorta, trasformazioneAggiornata.getId(), ricerca, lista); 
 			
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, 
 					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO,
 					ForwardParams.DEL());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_RICHIESTA_PARAMETRO, ForwardParams.DEL());
 		} 
 	}

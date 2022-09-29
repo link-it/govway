@@ -106,7 +106,7 @@ public class PorteApplicativeMTOMResponseDel  extends Action {
 			porteApplicativeHelper.makeMenu();
 	
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 	
 			int idLista = Liste.PORTE_APPLICATIVE_MTOM_RESPONSE;
 	
@@ -116,13 +116,13 @@ public class PorteApplicativeMTOMResponseDel  extends Action {
 	
 			porteApplicativeHelper.preparePorteApplicativeMTOMResponseList(pde.getNome(), ricerca, lista);
 	
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			// Forward control to the specified success URI
 		 	return ServletUtils.getStrutsForward(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE,
 		 			ForwardParams.DEL());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_MTOM_RESPONSE, 
 					ForwardParams.DEL());
 		}

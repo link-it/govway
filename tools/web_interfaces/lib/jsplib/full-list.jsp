@@ -25,21 +25,22 @@
 <%
 String iddati = "";
 String ct = request.getContentType();
-if (ct != null && (ct.indexOf("multipart/form-data") != -1)) {
-  iddati = (String) session.getAttribute("iddati");
+if (ct != null && (ct.indexOf(Costanti.MULTIPART) != -1)) {
+  iddati = ServletUtils.getObjectFromSession(request, session, String.class, Costanti.SESSION_ATTRIBUTE_ID_DATI);
 } else {
-  iddati = request.getParameter("iddati");
+  iddati = request.getParameter(Costanti.PARAMETER_NAME_ID_DATI);
 }
-String gdString = "GeneralData";
-String pdString = "PageData";
+String gdString = Costanti.SESSION_ATTRIBUTE_GENERAL_DATA;
+String pdString = Costanti.SESSION_ATTRIBUTE_PAGE_DATA;
 if (iddati != null && !iddati.equals("notdefined")) {
   gdString += iddati;
   pdString += iddati;
 }
 else
   iddati = "notdefined";
-GeneralData gd = (GeneralData) session.getAttribute(gdString);
-PageData pd = (PageData) session.getAttribute(pdString);
+GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
+PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
+String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
 
 <td valign="top" class="td2PageBody">
@@ -255,6 +256,10 @@ if (hidden!=null && !hidden.isEmpty()) {
 								  			deTip = " title=\"" + tip + "\"";
 								  		}
 								  		
+								  		if (!de.getUrl().equals("")) {
+											de.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+										}
+								  		
 								  		if(de.isVisualizzaLinkApriNuovaFinestra()) { // stringa senza link e icona sulla dx
 								  			String deIconName = de.getIcon(); 
 								  			if(de.getToolTip()!=null && !"".equals(de.getToolTip())){
@@ -302,9 +307,9 @@ if (hidden!=null && !hidden.isEmpty()) {
 										// Tipo image
 										if (de.getType().equals("image")) {
 											
-											if(!de.getListaImages().isEmpty()){
-												for(int idxLink =0; idxLink < de.getListaImages().size() ; idxLink ++ ){
-													DataElementImage image = de.getListaImages().get(idxLink);
+											if(!de.getImage().isEmpty()){
+												for(int idxLink =0; idxLink < de.getImage().size() ; idxLink ++ ){
+													DataElementImage image = de.getImage().get(idxLink);
 													String deIconName = image.getImage(); 
 		                					
 													String deTip = !image.getToolTip().equals("") ? " title=\"" + image.getToolTip() + "\"" : "";
@@ -314,6 +319,9 @@ if (hidden!=null && !hidden.isEmpty()) {
 											  			deTarget = " target=\""+ image.getTarget() +"\"";
 											  		}
 										  			
+											  		if (!image.getUrl().equals("")) {
+											  			image.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+													}
 											  		String deUrl = !image.getUrl().equals("") ? image.getUrl() : "";
 											  		String deOnClick = !image.getOnClick().equals("") ? image.getOnClick() : "";
 											  		
@@ -389,6 +397,8 @@ if (hidden!=null && !hidden.isEmpty()) {
 									  				String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 									  				// tipo link
 										      		if (!de.getUrl().equals("")) { 
+									      				de.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+										      			
 										      			String deTarget = " ";
 												  		if (!de.getTarget().equals("")) {
 												  			deTarget = " target=\""+ de.getTarget() +"\"";
@@ -446,7 +456,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 															String idIconUso = "iconUso_"+i; 
 															String idSpanUso = "spanIconUsoBoxList_"+i;
 															
-															BodyElement urlElement = dialog.getBody().remove(0);
+															BodyElement urlElement = dialog.getUrlElement();
 															
 															request.setAttribute("idFinestraModale_"+i, de.getDialog());
 															
@@ -470,6 +480,9 @@ if (hidden!=null && !hidden.isEmpty()) {
 													    			console.log(idx);
 													    			if(idx) {
 													    				var url = $("#hidden_title_iconUso_"+ idx).val();
+													    				
+													    				//addTabID
+													    				url = addTabIdParam(url,true);
 													    				// chiamata al servizio
 													    				<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
 													    				

@@ -115,17 +115,17 @@ public final class AccordiCooperazionePartecipantiDel extends Action {
 			acCore.performUpdateOperation(userLogin, acHelper.smista(), ac);
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			
 			List<IDSoggetto> lista = acCore.accordiCoopPartecipantiList(ac.getId(),ricerca);
 
 			acHelper.prepareAccordiCoopPartecipantiList(ac,lista,ricerca);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			return ServletUtils.getStrutsForward(mapping, AccordiCooperazioneCostanti.OBJECT_NAME_AC_PARTECIPANTI , ForwardParams.DEL());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiCooperazioneCostanti.OBJECT_NAME_AC_PARTECIPANTI, 
 					ForwardParams.DEL());
 		} 

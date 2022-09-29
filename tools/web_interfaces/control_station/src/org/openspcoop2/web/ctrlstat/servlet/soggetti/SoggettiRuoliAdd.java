@@ -159,7 +159,7 @@ public final class SoggettiRuoliAdd extends Action {
 				
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping,
 						SoggettiCostanti.OBJECT_NAME_SOGGETTI_RUOLI, 
@@ -191,7 +191,7 @@ public final class SoggettiRuoliAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, 
 						SoggettiCostanti.OBJECT_NAME_SOGGETTI_RUOLI, 
@@ -209,19 +209,19 @@ public final class SoggettiRuoliAdd extends Action {
 			soggettiCore.performUpdateOperation(userLogin, soggettiHelper.smista(), soggettoRegistry);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<String> lista = soggettiCore.soggettiRuoliList(idSogg, ricerca);
 					
 			soggettiHelper.prepareRuoliList(ricerca, lista);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping,
 					SoggettiCostanti.OBJECT_NAME_SOGGETTI_RUOLI,
 					ForwardParams.ADD());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					SoggettiCostanti.OBJECT_NAME_SOGGETTI_RUOLI, ForwardParams.ADD());
 		}
 	}

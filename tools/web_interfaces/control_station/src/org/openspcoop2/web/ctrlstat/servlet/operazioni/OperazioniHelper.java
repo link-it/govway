@@ -76,7 +76,7 @@ public class OperazioniHelper extends ConsoleHelper{
 			Parameter pOperazione = new Parameter(OperazioniCostanti.PARAMETRO_OPERAZIONI_OPERAZIONE, formBean.getTipo());
 			Parameter pDetail = new Parameter(OperazioniCostanti.PARAMETRO_OPERAZIONI_METHOD, OperazioniCostanti.DEFAULT_VALUE_FORM_BEAN_METHOD_DETAILS);
 
-			ServletUtils.addListElementIntoSession(this.session, OperazioniCostanti.OBJECT_NAME_OPERAZIONI, pOperazione, pUtente);
+			ServletUtils.addListElementIntoSession(this.request, this.session, OperazioniCostanti.OBJECT_NAME_OPERAZIONI, pOperazione, pUtente);
 
 			int idLista =  this.operazioniCore.getIdLista(formBean); 
 			int limit = ricerca.getPageSize(idLista);
@@ -151,7 +151,7 @@ public class OperazioniHelper extends ConsoleHelper{
 					e.addElement(de);
 
 					// Colonna Utente
-					User user = ServletUtils.getUserFromSession(this.session);
+					User user = ServletUtils.getUserFromSession(this.request, this.session);
 					if(user.getPermessi().isUtenti()){
 						de = new DataElement();
 						de.setValue(op.getSuperUser());
@@ -205,7 +205,7 @@ public class OperazioniHelper extends ConsoleHelper{
 	private List<String> getListaLabel(OperazioniFormBean formBean) {
 		List<String> listaLabel= 	new ArrayList<String>();
 
-		User user = ServletUtils.getUserFromSession(this.session);
+		User user = ServletUtils.getUserFromSession(this.request, this.session);
 		
 		String operazione = formBean.getTipo();
 		// Label comuni
@@ -231,7 +231,7 @@ public class OperazioniHelper extends ConsoleHelper{
 
 	public void showForm(String azione, String soglia, OperazioniFormBean formBean ) throws Exception {
 		try {
-			User user = ServletUtils.getUserFromSession(this.session);
+			User user = ServletUtils.getUserFromSession(this.request, this.session);
 			PermessiUtente permessi = user.getPermessi();
 			boolean hasPermessiUtenti = permessi.isUtenti();
 
@@ -356,7 +356,7 @@ public class OperazioniHelper extends ConsoleHelper{
 			List<User> userList = new ArrayList<User>();
 			String utenteTmp = null;
 			HttpSession session = this.request.getSession(true);
-			User user = ServletUtils.getUserFromSession(session);
+			User user = ServletUtils.getUserFromSession(this.request, session);
 			PermessiUtente permessi = user.getPermessi();
 
 			if(permessi.isUtenti()) {

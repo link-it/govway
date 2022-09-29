@@ -990,7 +990,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_MODE_CORRELAZIONE_APPLICATIVA = "mode";
 	public final static String PARAMETRO_ID_CORRELAZIONE= "idcorr";
 		
-	public final static String ATTRIBUTO_CONFIGURAZIONE_PARENT = "portaPar";
+	public final static String ATTRIBUTO_CONFIGURAZIONE_PARENT = Costanti.SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "portaPar";
 	public final static int ATTRIBUTO_CONFIGURAZIONE_PARENT_NONE = 0;
 	public final static int ATTRIBUTO_CONFIGURAZIONE_PARENT_SOGGETTO = 1;
 	public final static int ATTRIBUTO_CONFIGURAZIONE_PARENT_CONFIGURAZIONE = 2;

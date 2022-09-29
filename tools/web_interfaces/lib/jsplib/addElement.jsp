@@ -23,10 +23,10 @@
 
 <html>
 <%
-String iddati = request.getParameter("iddati");
-String params = (String) request.getAttribute("params");
-String gdString = "GeneralData";
-String pdString = "PageData";
+String iddati = request.getParameter(Costanti.PARAMETER_NAME_ID_DATI);
+String params = (String) request.getAttribute(Costanti.PARAMETER_NAME_PARAMS);
+String gdString = Costanti.SESSION_ATTRIBUTE_GENERAL_DATA;
+String pdString = Costanti.SESSION_ATTRIBUTE_PAGE_DATA;
 if (iddati != null && !iddati.equals("notdefined")) {
   gdString += iddati;
   pdString += iddati;
@@ -37,10 +37,11 @@ else {
 
 if(params == null) params="";
 
-GeneralData gd = (GeneralData) session.getAttribute(gdString);
-PageData pd = (PageData) session.getAttribute(pdString);
+GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
+PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
 String customListViewName = pd.getCustomListViewName();
 boolean includiMenuLateraleSx = pd.isIncludiMenuLateraleSx();
+String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
 
 <head>
@@ -100,6 +101,12 @@ function CheckDati() {
 		if(hiddenInfo > -1) {
 			document.form.elements[k].value = '';
 		}
+  }
+  
+  // aggiungo parametro idTab
+  if(tabValue != ''){
+  	addHidden(document.form, tabSessionKey , tabValue);
+  	addHidden(document.form, prevTabSessionKey , tabValue);
   }
 
   document.form.submit();

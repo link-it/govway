@@ -23,6 +23,7 @@
 
 package org.openspcoop2.web.lib.mvc;
 
+import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,8 +44,12 @@ import org.openspcoop2.web.lib.mvc.DataElement.STATO_APERTURA_SEZIONI;
  * @version $Rev$, $Date$
  * 
  */
-public class PageData {
+public class PageData implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	String pageDescription;
 	String search;
 	String searchDescription;
@@ -68,8 +73,8 @@ public class PageData {
 	boolean addButton;
 	boolean removeButton;
 	boolean select;
-	List<DataElement> filter_names = null;
-	List<DataElement> filter_values = null;
+	List<DataElement> filterNames = null;
+	List<DataElement> filterValues = null;
 	int pageSize, index, numEntries;
 	boolean mostraLinkHome = false;
 	List<String> linkHomeLabels = null;
@@ -91,7 +96,7 @@ public class PageData {
 	boolean includiMenuLateraleSx = true;
 	
 	private boolean paginazione = true;
-		
+	
 	public PageData() {
 		this.pageDescription = "";
 		this.search = "auto";
@@ -372,23 +377,23 @@ public class PageData {
 	}
 	
 	public void addFilter(String name, String label, String valueSelected, String [] values, String [] labels, boolean postBack, int size, boolean disabilitaFiltroRisultati) throws Exception{
-		if(this.filter_names == null) {
-			this.filter_names = new ArrayList<DataElement>();
-			this.filter_values = new ArrayList<DataElement>();
+		if(this.filterNames == null) {
+			this.filterNames = new ArrayList<DataElement>();
+			this.filterValues = new ArrayList<DataElement>();
 		}
 		
 		DataElement deName = new DataElement();
 		deName.setType(DataElementType.HIDDEN);
-		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filter_names.size()));
+		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filterNames.size()));
 		if(name==null) {
 			throw new Exception("Name not found");
 		}
 		deName.setValue(name);
-		this.filter_names.add(deName);
+		this.filterNames.add(deName);
 		
 		DataElement deValue = new DataElement();
 		deValue.setType(DataElementType.SELECT);
-		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filter_values.size()));
+		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filterValues.size()));
 		if(label==null) {
 			throw new Exception("Label not found");
 		}
@@ -404,55 +409,55 @@ public class PageData {
 		deValue.setPostBack(postBack);
 		if(disabilitaFiltroRisultati)
 			deValue.disabilitaFiltroOpzioniSelect();
-		this.filter_values.add(deValue);
+		this.filterValues.add(deValue);
 		
 	}
 	
 	public void addTextFilter(String name, String label, String value, int size) throws Exception{
-		if(this.filter_names == null) {
-			this.filter_names = new ArrayList<DataElement>();
-			this.filter_values = new ArrayList<DataElement>();
+		if(this.filterNames == null) {
+			this.filterNames = new ArrayList<DataElement>();
+			this.filterValues = new ArrayList<DataElement>();
 		}
 		
 		DataElement deName = new DataElement();
 		deName.setType(DataElementType.HIDDEN);
-		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filter_names.size()));
+		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filterNames.size()));
 		if(name==null) {
 			throw new Exception("Name not found");
 		}
 		deName.setValue(name);
-		this.filter_names.add(deName);
+		this.filterNames.add(deName);
 		
 		DataElement deValue = new DataElement();
 		deValue.setType(DataElementType.TEXT_EDIT);
-		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filter_values.size()));
+		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filterValues.size()));
 		if(label==null) {
 			throw new Exception("Label not found");
 		}
 		deValue.setLabel(label);
 		deValue.setValue(value);
 		deValue.setSize(size);
-		this.filter_values.add(deValue);
+		this.filterValues.add(deValue);
 	}
 	
 	public void addTextAreaFilter(String name, String label, String value, int size, Integer rows, Integer cols) throws Exception{
-		if(this.filter_names == null) {
-			this.filter_names = new ArrayList<DataElement>();
-			this.filter_values = new ArrayList<DataElement>();
+		if(this.filterNames == null) {
+			this.filterNames = new ArrayList<DataElement>();
+			this.filterValues = new ArrayList<DataElement>();
 		}
 		
 		DataElement deName = new DataElement();
 		deName.setType(DataElementType.HIDDEN);
-		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filter_names.size()));
+		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filterNames.size()));
 		if(name==null) {
 			throw new Exception("Name not found");
 		}
 		deName.setValue(name);
-		this.filter_names.add(deName);
+		this.filterNames.add(deName);
 		
 		DataElement deValue = new DataElement();
 		deValue.setType(DataElementType.TEXT_AREA);
-		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filter_values.size()));
+		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filterValues.size()));
 		if(label==null) {
 			throw new Exception("Label not found");
 		}
@@ -464,27 +469,27 @@ public class PageData {
 		if(cols != null)
 			deValue.setCols(cols.intValue());
 		
-		this.filter_values.add(deValue);
+		this.filterValues.add(deValue);
 	}
 	
 	public void addNumberFilter(String name, String label, String value, int size, Integer min, Integer max) throws Exception{
-		if(this.filter_names == null) {
-			this.filter_names = new ArrayList<DataElement>();
-			this.filter_values = new ArrayList<DataElement>();
+		if(this.filterNames == null) {
+			this.filterNames = new ArrayList<DataElement>();
+			this.filterValues = new ArrayList<DataElement>();
 		}
 		
 		DataElement deName = new DataElement();
 		deName.setType(DataElementType.HIDDEN);
-		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filter_names.size()));
+		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filterNames.size()));
 		if(name==null) {
 			throw new Exception("Name not found");
 		}
 		deName.setValue(name);
-		this.filter_names.add(deName);
+		this.filterNames.add(deName);
 		
 		DataElement deValue = new DataElement();
 		deValue.setType(DataElementType.NUMBER);
-		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filter_values.size()));
+		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filterValues.size()));
 		if(label==null) {
 			throw new Exception("Label not found");
 		}
@@ -493,27 +498,27 @@ public class PageData {
 		deValue.setSize(size);
 		deValue.setMinValue(min);
 		deValue.setMaxValue(max);
-		this.filter_values.add(deValue);
+		this.filterValues.add(deValue);
 	}
 	
 	public void addCheckboxFilter(String name, String label, String value, int size) throws Exception{
-		if(this.filter_names == null) {
-			this.filter_names = new ArrayList<DataElement>();
-			this.filter_values = new ArrayList<DataElement>();
+		if(this.filterNames == null) {
+			this.filterNames = new ArrayList<DataElement>();
+			this.filterValues = new ArrayList<DataElement>();
 		}
 		
 		DataElement deName = new DataElement();
 		deName.setType(DataElementType.HIDDEN);
-		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filter_names.size()));
+		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filterNames.size()));
 		if(name==null) {
 			throw new Exception("Name not found");
 		}
 		deName.setValue(name);
-		this.filter_names.add(deName);
+		this.filterNames.add(deName);
 		
 		DataElement deValue = new DataElement();
 		deValue.setType(DataElementType.CHECKBOX);
-		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filter_values.size()));
+		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filterValues.size()));
 		if(label==null) {
 			throw new Exception("Label not found");
 		}
@@ -521,42 +526,42 @@ public class PageData {
 		deValue.setValue(value);
 		deValue.setSelected(value);
 		deValue.setSize(size);
-		this.filter_values.add(deValue);
+		this.filterValues.add(deValue);
 	}
 	
 	public void addSubtitleFilter(String name, String label, boolean visualizzaSottosezioneAperta) throws Exception{
-		if(this.filter_names == null) {
-			this.filter_names = new ArrayList<DataElement>();
-			this.filter_values = new ArrayList<DataElement>();
+		if(this.filterNames == null) {
+			this.filterNames = new ArrayList<DataElement>();
+			this.filterValues = new ArrayList<DataElement>();
 		}
 		
 		// devo salvare anche l'elemento name perche' la jsp naviga sia names che values contemporaneamente per posizione.
 		DataElement deName = new DataElement();
 		deName.setType(DataElementType.HIDDEN);
-		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filter_names.size()));
+		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filterNames.size()));
 		if(name==null) {
 			throw new Exception("Name not found");
 		}
 		deName.setValue(name);
-		this.filter_names.add(deName);
+		this.filterNames.add(deName);
 		
 		DataElement deValue = new DataElement();
 		deValue.setType(DataElementType.SUBTITLE);
-		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filter_values.size()));
+		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filterValues.size()));
 		if(label==null) {
 			throw new Exception("Label not found");
 		}
 		deValue.setLabel(label);
 		deValue.setStatoAperturaSezioni(visualizzaSottosezioneAperta ? STATO_APERTURA_SEZIONI.APERTO : STATO_APERTURA_SEZIONI.CHIUSO);
-		this.filter_values.add(deValue);
+		this.filterValues.add(deValue);
 	}
 	
 	
 	public void impostaAperturaSubtitle(String name, Boolean visualizzaSottosezioneAperta, String postbackElementName) {
-		if(this.filter_names != null) {
+		if(this.filterNames != null) {
 			int idxSubtitle = -1;
-			for (int i = 0; i < this.filter_names.size(); i++) {
-				if(name.equals(this.filter_names.get(i).getValue())) {
+			for (int i = 0; i < this.filterNames.size(); i++) {
+				if(name.equals(this.filterNames.get(i).getValue())) {
 					idxSubtitle = i;
 					break;
 				}
@@ -568,8 +573,8 @@ public class PageData {
 				if(idxSubtitle > -1) {
 					List<DataElement> filter_values_to_check = new ArrayList<DataElement>();
 					
-					for (int i = idxSubtitle + 1; i < this.filter_names.size(); i++) {
-						DataElement de = this.filter_values.get(i);
+					for (int i = idxSubtitle + 1; i < this.filterNames.size(); i++) {
+						DataElement de = this.filterValues.get(i);
 						if(de.getType().equals("subtitle")) {
 							// ho trovato un'altra sezione mi fermo
 							break;
@@ -596,10 +601,10 @@ public class PageData {
 	}
 	
 	public void updateSubtitleFilter(String name, boolean visualizzaSottosezioneAperta) {
-		if(this.filter_names != null) {
-			for (int i = 0; i < this.filter_names.size(); i++) {
-				if(name.equals(this.filter_names.get(i).getValue())) {
-					this.filter_values.get(i).setStatoAperturaSezioni(visualizzaSottosezioneAperta ? STATO_APERTURA_SEZIONI.APERTO : STATO_APERTURA_SEZIONI.CHIUSO);
+		if(this.filterNames != null) {
+			for (int i = 0; i < this.filterNames.size(); i++) {
+				if(name.equals(this.filterNames.get(i).getValue())) {
+					this.filterValues.get(i).setStatoAperturaSezioni(visualizzaSottosezioneAperta ? STATO_APERTURA_SEZIONI.APERTO : STATO_APERTURA_SEZIONI.CHIUSO);
 					break;
 				}
 			}
@@ -607,34 +612,34 @@ public class PageData {
 	}
 	
 	public void addHiddenFilter(String name, String value, int size) throws Exception{
-		if(this.filter_names == null) {
-			this.filter_names = new ArrayList<DataElement>();
-			this.filter_values = new ArrayList<DataElement>();
+		if(this.filterNames == null) {
+			this.filterNames = new ArrayList<DataElement>();
+			this.filterValues = new ArrayList<DataElement>();
 		}
 		
 		DataElement deName = new DataElement();
 		deName.setType(DataElementType.HIDDEN);
-		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filter_names.size()));
+		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filterNames.size()));
 		if(name==null) {
 			throw new Exception("Name not found");
 		}
 		deName.setValue(name);
-		this.filter_names.add(deName);
+		this.filterNames.add(deName);
 		
 		DataElement deValue = new DataElement();
 		deValue.setType(DataElementType.HIDDEN);
-		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filter_values.size()));
+		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filterValues.size()));
 		deValue.setLabel(deValue.getName());
 		deValue.setValue(value);
 		deValue.setSize(size);
-		this.filter_values.add(deValue);
+		this.filterValues.add(deValue);
 	}
 	
 	public void updateFilter(String name, String value) {
-		if(this.filter_names != null) {
-			for (int i = 0; i < this.filter_names.size(); i++) {
-				if(name.equals(this.filter_names.get(i).getValue())) {
-					this.filter_values.get(i).setValue(value);
+		if(this.filterNames != null) {
+			for (int i = 0; i < this.filterNames.size(); i++) {
+				if(name.equals(this.filterNames.get(i).getValue())) {
+					this.filterValues.get(i).setValue(value);
 					break;
 				}
 			}
@@ -642,24 +647,33 @@ public class PageData {
 	}
 	
 	public void removeFilter(String name) {
-		if(this.filter_names != null) {
-			for (int i = 0; i < this.filter_names.size(); i++) {
-				if(name.equals(this.filter_names.get(i).getValue())) {
-					this.filter_names.remove(i);
-					this.filter_values.remove(i);
+		if(this.filterNames != null) {
+			for (int i = 0; i < this.filterNames.size(); i++) {
+				if(name.equals(this.filterNames.get(i).getValue())) {
+					this.filterNames.remove(i);
+					this.filterValues.remove(i);
 					break;
 				}
 			}
 		}
 	}
+	
+	@Deprecated
+	public void setFilterNames(List<DataElement> filterNames) {
+		this.filterNames = filterNames;
+	}
 	public List<DataElement> getFilterNames() {
-		return this.filter_names;
+		return this.filterNames;
+	}
+	@Deprecated
+	public void setFilterValues(List<DataElement> filterValues) {
+		this.filterValues = filterValues;
 	}
 	public List<DataElement> getFilterValues() {
-		return this.filter_values;
+		return this.filterValues;
 	}
 	public boolean hasAlmostOneFilterDefined() {
-		return this.hasAlmostOneFilterDefined(this.filter_values);
+		return this.hasAlmostOneFilterDefined(this.filterValues);
 	}
 	
 	private boolean hasAlmostOneFilterDefined(List<DataElement> filter_values_to_check) {

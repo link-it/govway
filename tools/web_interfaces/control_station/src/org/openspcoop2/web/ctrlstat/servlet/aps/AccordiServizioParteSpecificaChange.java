@@ -411,7 +411,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
 			boolean gestioneCanaliEnabled = gestioneCanali != null && org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(gestioneCanali.getStato());
 			
-			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
 			boolean gestioneErogatori = false;
 			if(tipologia!=null) {
@@ -428,7 +428,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			// La lista degli SA viene filtrata per tipo se sono abilitati gli applicativiServer.
 			String tipoSA = (isApplicativiServerEnabled && gestioneErogatori) ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER : null;
 			
-			PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
+			PermessiUtente pu = ServletUtils.getUserFromSession(request, session).getPermessi();
 
 			boolean soggettoOperativo = true;
 			boolean generaPACheckSoggetto = true; 
@@ -693,7 +693,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 					pd.setDati(dati);
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
 							ForwardParams.CHANGE());
@@ -913,7 +913,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						
 			// setto la barra del titolo
 			List<Parameter> lstParm = apsHelper.getTitoloAps(TipoOperazione.CHANGE, asps, gestioneFruitori, tmpTitle, null, true, tipoSoggettoFruitore, nomeSoggettoFruitore); 
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request);
 			
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
@@ -1379,7 +1379,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
 					}
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 					
 					return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,
 							ForwardParams.CHANGE());
@@ -1578,7 +1578,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
 						ForwardParams.CHANGE());
@@ -1786,7 +1786,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					// disabilito la form
 					pd.disableEditMode();
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
 							ForwardParams.CHANGE());
@@ -1799,7 +1799,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				
 				String superUser = ServletUtils.getUserLoginFromSession(session);
 				
-				Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+				Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 				//				PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
 				//				
@@ -1816,7 +1816,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 				apsHelper.prepareServiziList(ricerca, listaServizi);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 					ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);
@@ -2064,7 +2064,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 					pd.setDati(dati);
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardGeneralError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
 							ForwardParams.CHANGE());
@@ -2082,7 +2082,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			// eseguo l'aggiornamento
 			apsCore.performUpdateOperation(superUser, apsHelper.smista(), oggettiDaAggiornare.toArray());
 
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			//				PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
 			//				
@@ -2093,7 +2093,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			String newUri = IDServizioFactory.getInstance().getUriFromAccordo(asps);
 			String oldUri = IDServizioFactory.getInstance().getUriFromIDServizio(asps.getOldIDServizioForUpdate());
 			if (!newUri.equals(oldUri) || cambiaAPI) {
-				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.SERVIZI);
+				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.SERVIZI);
 			}
 			
 			List<AccordoServizioParteSpecifica> listaServizi = null;
@@ -2105,7 +2105,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 			apsHelper.prepareServiziList(ricerca, listaServizi);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 				ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);
@@ -2115,7 +2115,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,
 					ForwardParams.CHANGE());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,
 					ForwardParams.CHANGE());
 		}  

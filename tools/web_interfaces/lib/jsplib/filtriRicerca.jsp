@@ -24,21 +24,21 @@
 <%
 String iddati = "";
 String ct = request.getContentType();
-if (ct != null && (ct.indexOf("multipart/form-data") != -1)) {
-  iddati = (String) session.getAttribute("iddati");
+if (ct != null && (ct.indexOf(Costanti.MULTIPART) != -1)) {
+  iddati = ServletUtils.getObjectFromSession(request, session, String.class, Costanti.SESSION_ATTRIBUTE_ID_DATI);
 } else {
-  iddati = request.getParameter("iddati");
+  iddati = request.getParameter(Costanti.PARAMETER_NAME_ID_DATI);
 }
-String gdString = "GeneralData";
-String pdString = "PageData";
+String gdString = Costanti.SESSION_ATTRIBUTE_GENERAL_DATA;
+String pdString = Costanti.SESSION_ATTRIBUTE_PAGE_DATA;
 if (iddati != null && !iddati.equals("notdefined")) {
   gdString += iddati;
   pdString += iddati;
 }
 else
   iddati = "notdefined";
-GeneralData gd = (GeneralData) session.getAttribute(gdString);
-PageData pd = (PageData) session.getAttribute(pdString);
+GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
+PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
 
 Vector<GeneralLink> titlelist = pd.getTitleList();
 String titoloSezione = Costanti.LABEL_TITOLO_SEZIONE_DEFAULT;
@@ -71,6 +71,7 @@ boolean mostraComandiHeader = mostraFormHeader || (listaComandi != null && lista
 
 int colFormHeader = (mostraComandiHeader ? 2 : 1);
 String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRicercaNoForm";
+String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
 
 <tr>
@@ -94,6 +95,10 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 									  		if (!de.getTarget().equals("")) {
 									  			deTarget = " target=\""+ de.getTarget() +"\"";
 									  		}
+									  		
+									  		if (!de.getUrl().equals("")) {
+												de.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+											}
 									  		
 									  		String deVisualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 											

@@ -229,7 +229,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		String tmpValidazioneDocumenti = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
 
 		String apiGestioneParziale = apcHelper.getParameter(ApiCostanti.PARAMETRO_APC_API_GESTIONE_PARZIALE);
-		Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, false);
+		Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false);
 		
 		boolean chiediConferma = true;
 		
@@ -302,7 +302,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		AccordiCooperazioneCore acCore = new AccordiCooperazioneCore(apcCore);
 		GruppiCore gruppiCore = new GruppiCore(apcCore);
 		ConfigurazioneCore confCore = new ConfigurazioneCore(apcCore);
-		Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+		Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 		FiltroRicercaGruppi filtroRicerca = new FiltroRicercaGruppi();
 		List<String> elencoGruppi = null;
 
@@ -331,7 +331,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 			used = asps != null && asps.size() > 0;
 
 			// lista dei protocolli supportati
-			listaTipiProtocollo = apcCore.getProtocolliByFilter(session, true, false);
+			listaTipiProtocollo = apcCore.getProtocolliByFilter(request, session, true, false);
 
 			// primo accesso 
 			if(this.tipoProtocollo == null){
@@ -339,7 +339,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 					this.tipoProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 				}
 				else{
-					this.tipoProtocollo = apsCore.getProtocolloDefault(session, listaTipiProtocollo);
+					this.tipoProtocollo = apsCore.getProtocolloDefault(request, session, listaTipiProtocollo);
 				}
 			}
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.tipoProtocollo);
@@ -421,7 +421,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 			}
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, ForwardParams.CHANGE());
 		}
 
@@ -595,7 +595,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 				} 
 
 			} catch (Exception ex) {
-				return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), ex, pd, session, gd, mapping, 
+				return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), ex, pd, request, session, gd, mapping, 
 						AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, ForwardParams.CHANGE());
 			}
 
@@ -668,7 +668,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 					pd.disableEditMode();
 				}
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, ForwardParams.CHANGE());
@@ -767,7 +767,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 			
 			pd.setDati(dati);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeCheckError(mapping,
 					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, ForwardParams.CHANGE());
@@ -861,7 +861,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 				// disabilito la form
 				pd.disableEditMode();
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, 
 						AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, ForwardParams.CHANGE());	
@@ -967,7 +967,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 				
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, ForwardParams.CHANGE());
 			}
@@ -1115,7 +1115,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 								
 							pd.setDati(dati);
 
-							ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+							ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 							return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, ForwardParams.CHANGE());
 						}
@@ -1147,11 +1147,11 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 			if(gestioneInformazioniGenerali) {
 				if(idNEW.equals(idAccordoOLD)==false){
-					ServletUtils.removeRisultatiRicercaFromSession(session, Liste.ACCORDI);
+					ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.ACCORDI);
 				}
 			}
 			else if(gestioneGruppi || gestioneCanale) {
-				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.ACCORDI);
+				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.ACCORDI);
 			}
 			
 			// preparo lista
@@ -1159,18 +1159,18 @@ public final class AccordiServizioParteComuneChange extends Action {
 			
 			if(isModalitaVistaApiCustom) {
 				apcHelper.prepareApiChange(tipoOp, as); 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ApiCostanti.OBJECT_NAME_APC_API, ForwardParams.CHANGE());
 			}
 			
 			apcHelper.prepareAccordiList(lista, ricerca, this.tipoAccordo);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, ForwardParams.CHANGE());	
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, ForwardParams.CHANGE());
 		} 
 

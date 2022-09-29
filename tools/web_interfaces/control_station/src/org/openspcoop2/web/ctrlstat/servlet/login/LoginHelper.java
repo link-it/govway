@@ -114,7 +114,7 @@ public class LoginHelper extends ConsoleHelper {
 			}
 
 			// setto l utente in sessione
-			ServletUtils.setUserIntoSession(this.session, u);
+			ServletUtils.setUserIntoSession(this.request, this.session, u);
 			
 			return true;
 
@@ -133,7 +133,7 @@ public class LoginHelper extends ConsoleHelper {
 		try{
 		
 			// elimino attributo che abilita il cambio della password
-			ServletUtils.removeObjectFromSession(this.session, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
+			ServletUtils.removeObjectFromSession(this.request, this.session, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
 			// controllo scadenza password
 			PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
 			if(this.utentiCore.isCheckPasswordExpire(passwordVerifier)) {
@@ -142,8 +142,8 @@ public class LoginHelper extends ConsoleHelper {
 					StringBuilder bfMotivazioneErrore = new StringBuilder(); 
 					if(passwordVerifier.isPasswordExpire(u.getLastUpdatePassword(), bfMotivazioneErrore)) {
 						// imposto attributo che abilita il cambio della password
-						ServletUtils.setObjectIntoSession(this.session, login, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
-						ServletUtils.removeUserFromSession(this.session);
+						ServletUtils.setObjectIntoSession(this.request, this.session, login, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
+						ServletUtils.removeUserFromSession(this.request, this.session);
 						this.pd.setMessage(bfMotivazioneErrore.toString(),MessageType.ERROR_SINTETICO);
 						return false;
 					}

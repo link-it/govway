@@ -1,6 +1,6 @@
 .. _mon_accesso_profili:
 
-Profili di autorizzazione
+Profili di Autorizzazione
 -------------------------
 
 Dopo che l'utente ha superato la fase di autenticazione ha la

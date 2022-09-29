@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.core.allarmi.Allarme;
@@ -189,8 +190,8 @@ public class ExporterUtils {
 	}
 
 	
-	public boolean existsAtLeastOneExportMode(ArchiveType archiveType, HttpSession session) throws ProtocolException, DriverRegistroServiziException{
-		List<String> protocolli = this.archiviCore.getProtocolli(session);
+	public boolean existsAtLeastOneExportMode(ArchiveType archiveType, HttpServletRequest request, HttpSession session) throws ProtocolException, DriverRegistroServiziException{
+		List<String> protocolli = this.archiviCore.getProtocolli(request, session);
 		return this.getExportModesWithProtocol(protocolli, archiveType).size()>0;
 	}
 

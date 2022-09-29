@@ -76,7 +76,7 @@ public final class SoggettiProprietaList extends Action {
 			
 			// Preparo la lista
 			SoggettiCore soggettiCore = new SoggettiCore();
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			Soggetto soggettoRegistry = soggettiCore.getSoggettoRegistro(idSogg);
 			
@@ -88,14 +88,14 @@ public final class SoggettiProprietaList extends Action {
 
 			soggettiHelper.prepareSoggettiProprietaList(soggettoRegistry, id, ricerca, lista);
 	
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI_PROPRIETA, 
 					ForwardParams.LIST());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					SoggettiCostanti.OBJECT_NAME_SOGGETTI_PROPRIETA,
 					ForwardParams.LIST());
 		} 

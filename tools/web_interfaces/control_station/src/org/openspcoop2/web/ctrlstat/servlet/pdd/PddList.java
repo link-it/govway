@@ -74,7 +74,7 @@ public final class PddList extends Action {
 			// Preparo il menu
 			pddHelper.makeMenu();
 
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session,Search.class); 
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session,Search.class); 
 
 			int idLista = Liste.PDD;
 
@@ -91,13 +91,13 @@ public final class PddList extends Action {
 			pddHelper.preparePddList(lista, ricerca);
 
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward(mapping, PddCostanti.OBJECT_NAME_PDD, ForwardParams.LIST());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					PddCostanti.OBJECT_NAME_PDD, ForwardParams.LIST());
 		} 
 	}

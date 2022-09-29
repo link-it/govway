@@ -88,7 +88,7 @@ public final class AccordiServizioParteComuneErogatoriList extends Action {
 			apcHelper.makeMenu();
 
 			// Controllo i criteri di ricerca e recupero eventuali parametri
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.ACCORDI_EROGATORI;
 
@@ -99,14 +99,14 @@ public final class AccordiServizioParteComuneErogatoriList extends Action {
 			apcHelper.prepareAccordiErogatoriList(as, lista, ricerca, tipoAccordo);
 
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			return ServletUtils.getStrutsForward(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_EROGATORI, ForwardParams.LIST());
 			
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_EROGATORI, ForwardParams.LIST());
 		}	
 	}

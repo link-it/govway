@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
+<%@ page session="true" import="org.openspcoop2.web.lib.mvc.*" %>
 <%!
 
 public String[] getBrowserInfo(String Information) {
@@ -75,6 +76,25 @@ public String getBrowserVersion(String []info){
 	
 	return null;
 }
+%>
+<%
+String iddati = request.getParameter(Costanti.PARAMETER_NAME_ID_DATI);
+String params = (String) request.getAttribute(Costanti.PARAMETER_NAME_PARAMS);
+String gdString = Costanti.SESSION_ATTRIBUTE_GENERAL_DATA;
+String pdString = Costanti.SESSION_ATTRIBUTE_PAGE_DATA;
+if (iddati != null && !iddati.equals("notdefined")) {
+  gdString += iddati;
+  pdString += iddati;
+}
+else {
+  iddati = "notdefined";
+}
+
+if(params == null) params="";
+
+GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
+PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
+
 %>
 <script type="text/javascript">
 var destElement;
@@ -139,3 +159,51 @@ var browserName = '<%=browsername%>';
 var browserVersione = '<%=browserversion %>';
 </script>
 <% } %>
+
+
+
+<script>
+
+function addTabIdParam(href, addPrevTabParam){
+	
+	if(tabValue != ''){
+		var param = (tabSessionKey + "="+tabValue);
+		
+		if((href != '#' && href.indexOf('#tabs-') == -1)){
+	        if (href.charAt(href.length - 1) === '?') //Very unlikely
+	            href = href + param;
+	        else if (href.indexOf('?') > 0)
+	        	href = href + '&' + param;
+	        else
+	        	href = href + '?' + param;
+	        
+	        if(addPrevTabParam) {
+				var paramPrevTab = (prevTabSessionKey + "="+tabValue);
+				return href + '&' + paramPrevTab;
+			}
+	    }
+	}
+    return href;
+    
+}
+
+<%  
+String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
+if(tabSessionKey == null)
+	tabSessionKey = "";
+%>
+var tabSessionKey = '<%=Costanti.PARAMETER_TAB_KEY %>';
+var prevTabSessionKey = '<%=Costanti.PARAMETER_PREV_TAB_KEY %>';
+var tabValue = '<%=tabSessionKey %>'
+
+if(tabValue != ''){
+    sessionStorage.setItem(tabSessionKey, tabValue);
+}
+
+console.log('IDTab: ['+tabValue+']');
+</script>
+
+
+
+
+

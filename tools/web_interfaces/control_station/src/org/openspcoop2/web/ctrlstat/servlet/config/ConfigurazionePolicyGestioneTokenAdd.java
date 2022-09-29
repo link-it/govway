@@ -93,7 +93,7 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 			
 			String infoType = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 			if(infoType==null) {
-				infoType = ServletUtils.getObjectFromSession(session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+				infoType = ServletUtils.getObjectFromSession(request, session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 			}
 			boolean attributeAuthority = ConfigurazioneCostanti.isConfigurazioneAttributeAuthority(infoType);
 			
@@ -154,13 +154,13 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 				
 				if(postBackElementName != null && postBackElementName.equals(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO)) {
 					// reset di eventuali configurazioni salvate in sessione
-					ServletUtils.removeConfigurazioneBeanFromSession(session, configurazioneBean.getId());
+					ServletUtils.removeConfigurazioneBeanFromSession(request, session, configurazioneBean.getId());
 				}
 				
 				confHelper.aggiornaConfigurazioneProperties(configurazioneBean);
 				
 				configurazioneBean.updateConfigurazione(configurazione);
-				ServletUtils.saveConfigurazioneBeanIntoSession(session, configurazioneBean, configurazioneBean.getId());
+				ServletUtils.saveConfigurazioneBeanIntoSession(request, session, configurazioneBean, configurazioneBean.getId());
 			
 				if(!forceIdEnabled) {
 					tipologia = mapId.getProperty(tipo);
@@ -208,7 +208,7 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 				
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping,
 						ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN, 
@@ -236,7 +236,7 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 				
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN, ForwardParams.ADD());
 			}
@@ -262,7 +262,7 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 			confCore.performCreateOperation(userLogin, confHelper.smista(), policy);
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = attributeAuthority ? Liste.CONFIGURAZIONE_GESTIONE_ATTRIBUTE_AUTHORITY : Liste.CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
 			
@@ -282,16 +282,16 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 			confHelper.prepareGestorePolicyTokenList(ricerca, lista, idLista); 
 			
 			// reset di eventuali configurazioni salvate in sessione
-			ServletUtils.removeConfigurazioneBeanFromSession(session, configurazioneBean.getId());
+			ServletUtils.removeConfigurazioneBeanFromSession(request, session, configurazioneBean.getId());
 			
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN, ForwardParams.ADD());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN, ForwardParams.ADD());
 		}  
 	}

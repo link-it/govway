@@ -38,3 +38,4 @@ manualistica distribuita con il prodotto.
         profili
 	entita
 	processo
+	utente

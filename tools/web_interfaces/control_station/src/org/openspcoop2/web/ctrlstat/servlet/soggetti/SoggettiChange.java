@@ -309,7 +309,7 @@ public final class SoggettiChange extends Action {
 			}
 			
 			// Tipi protocollo supportati
-			List<String> listaTipiProtocollo = soggettiCore.getProtocolli(session);
+			List<String> listaTipiProtocollo = soggettiCore.getProtocolli(request, session);
 			//tipiSoggetti = soggettiCore.getTipiSoggettiGestiti(versioneProtocollo); // all tipi soggetti gestiti
 			// Nella change non e' piu' possibile cambiare il protocollo
 			this.protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(this.tipoprov);
@@ -662,7 +662,7 @@ public final class SoggettiChange extends Action {
 					
 					boolean multiTenant = soggettiCore.isMultitenant();
 					
-					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 					
 					int idLista = Liste.SOGGETTI;
 					
@@ -670,7 +670,7 @@ public final class SoggettiChange extends Action {
 					List<Soggetto> lista = null;
 					if(soggettiCore.isRegistroServiziLocale()){
 						if(!ServletUtils.isSearchDone(soggettiHelper)) {
-							lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  Soggetto.class);
+							lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista,  Soggetto.class);
 						}
 					}
 					
@@ -693,7 +693,7 @@ public final class SoggettiChange extends Action {
 						}
 						
 						if(!soggettiHelper.isPostBackFilterElement()) {
-							ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+							ServletUtils.setRisultatiRicercaIntoSession(request, session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 						}
 						
 						soggettiHelper.prepareSoggettiList(lista, ricerca);
@@ -708,9 +708,9 @@ public final class SoggettiChange extends Action {
 						soggettiHelper.prepareSoggettiConfigList(listaSoggetti, ricerca);
 					}
 						
-					ServletUtils.setSearchObjectIntoSession(session, ricerca);
+					ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 					
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeFinished(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI, ForwardParams.CHANGE());
 				}
@@ -1078,7 +1078,7 @@ public final class SoggettiChange extends Action {
 				
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI, ForwardParams.CHANGE());
 
@@ -1158,7 +1158,7 @@ public final class SoggettiChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI, ForwardParams.CHANGE());
 
@@ -1407,12 +1407,12 @@ public final class SoggettiChange extends Action {
 			soggettiHelper.deleteBinaryParameters(tipoCredenzialiSSLFileCertificato); 
 			
 			// preparo lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 						
 			if (!oldnomeprov.equals(this.nomeprov) || !oldtipoprov.equals(this.tipoprov)) {
-				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.SOGGETTI);
+				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.SOGGETTI);
 				
-				User user = ServletUtils.getUserFromSession(session);
+				User user = ServletUtils.getUserFromSession(request, session);
 				String oldSog = oldtipoprov+"/"+oldnomeprov;
 				if(user!=null && oldSog.equals(user.getSoggettoSelezionatoPddConsole())) {
 					user.setSoggettoSelezionatoPddConsole(this.tipoprov+"/"+this.nomeprov);
@@ -1440,7 +1440,7 @@ public final class SoggettiChange extends Action {
 				generalHelper = new GeneralHelper(session);
 				gd = generalHelper.initGeneralData(request); // re-inizializzo per ricalcolare il menu in alto a destra
 				//}		
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping,
 						ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_GENERALE,
@@ -1474,14 +1474,14 @@ public final class SoggettiChange extends Action {
 				gd = generalHelper.initGeneralData(request); // re-inizializzo per ricalcolare il menu in alto a destra
 				//}
 				
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI, ForwardParams.CHANGE());
 				
 			}
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					SoggettiCostanti.OBJECT_NAME_SOGGETTI, ForwardParams.CHANGE());
 		} 
 	}

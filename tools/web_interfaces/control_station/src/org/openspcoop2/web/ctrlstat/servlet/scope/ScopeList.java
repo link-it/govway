@@ -76,14 +76,14 @@ public final class ScopeList extends Action {
 			scopeHelper.makeMenu();
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.SCOPE;
 
 			// poiche' esistono filtri che hanno necessita di postback salvo in sessione
 			List<Scope> lista = null;
 			if(!ServletUtils.isSearchDone(scopeHelper)) {
-				lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista, Scope.class);
+				lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista, Scope.class);
 			}
 			
 			ricerca = scopeHelper.checkSearchParameters(idLista, ricerca);
@@ -92,7 +92,7 @@ public final class ScopeList extends Action {
 			
 			if(lista==null) {
 				boolean filtroSoggetto = false;
-				List<String> protocolli = scopeCore.getProtocolli(session,false);
+				List<String> protocolli = scopeCore.getProtocolli(request, session,false);
 				if(protocolli!=null && protocolli.size()==1) { // dovrebbe essere l'unico caso in cui un soggetto multitenant è selezionato
 					filtroSoggetto = true;
 				}
@@ -109,7 +109,7 @@ public final class ScopeList extends Action {
 			}
 			
 			if(!scopeHelper.isPostBackFilterElement()) {
-				ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+				ServletUtils.setRisultatiRicercaIntoSession(request, session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 			}
 			
 			scopeHelper.prepareScopeList(ricerca, lista);
@@ -120,15 +120,15 @@ public final class ScopeList extends Action {
 			}
 			
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, 
 					ScopeCostanti.OBJECT_NAME_SCOPE,
 					ForwardParams.LIST());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ScopeCostanti.OBJECT_NAME_SCOPE, ForwardParams.LIST());
 		}
 	}

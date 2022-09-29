@@ -638,7 +638,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			throws Exception {
 		try {
 
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE);
 
 			Boolean contaListe = ServletUtils.getConfigurazioniPersonalizzateFromSession(this.session);
 
@@ -775,7 +775,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					throws Exception {
 		try {
 			Parameter pOaId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, ""+oa.getId());
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_TRACCIAMENTO_APPENDER_PROPERTIES, 
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_TRACCIAMENTO_APPENDER_PROPERTIES, 
 					pOaId);			
 
 			//this.pd.setIndex(offset);
@@ -897,7 +897,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		try {
 
 			Parameter pOdId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, ""+od.getId());
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE_PROPERTIES, 
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE_PROPERTIES, 
 					pOdId);	
 
 			//this.pd.setIndex(offset);
@@ -1021,7 +1021,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public void prepareTracciamentoAppenderList(List<OpenspcoopAppender> lista)
 			throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_TRACCIAMENTO_APPENDER);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_TRACCIAMENTO_APPENDER);
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
 			//this.pd.setIndex(offset);
@@ -1133,7 +1133,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public void prepareDumpAppenderList(List<OpenspcoopAppender> lista)
 			throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_DUMP_APPENDER);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_DUMP_APPENDER);
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
 			//this.pd.setIndex(offset);
@@ -1274,7 +1274,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					throws Exception {
 		try {
 			Parameter pOaId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, ""+oa.getId());
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES, 
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES, 
 					pOaId);			
 
 			//this.pd.setIndex(offset);
@@ -1464,7 +1464,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			String id = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID);
 			Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, id);
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_SYSTEM_PROPERTIES, pId);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_SYSTEM_PROPERTIES, pId);
 
 			int idLista = Liste.SYSTEM_PROPERTIES;
 			int limit = ricerca.getPageSize(idLista);
@@ -1725,7 +1725,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public void prepareRoutingList(ISearch ricerca, List<RoutingTableDestinazione> lista)
 			throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ROTTE_ROUTING);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ROTTE_ROUTING);
 
 			int idLista = Liste.ROUTING;
 			int limit = ricerca.getPageSize(idLista);
@@ -1998,7 +1998,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public void prepareRegistriList(ISearch ricerca, List<AccessoRegistroRegistro> lista)
 			throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_REGISTRI);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_REGISTRI);
 
 			int idLista = Liste.REGISTRI;
 			int limit = ricerca.getPageSize(idLista);
@@ -2076,7 +2076,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	// Prepara la lista delle regole di configurazione del caching risposta
 	public void prepareResponseCachingConfigurazioneRegolaList(ISearch ricerca, List<ResponseCachingConfigurazioneRegola> lista, Integer defaultCacheSeconds) throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA);
 
 			int idLista = Liste.CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA;
 			int limit = ricerca.getPageSize(idLista);
@@ -2685,7 +2685,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public void prepareDiagnosticaAppenderList(List<OpenspcoopAppender> lista)
 			throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_DIAGNOSTICA_APPENDER);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_DIAGNOSTICA_APPENDER);
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
 			//this.pd.setIndex(offset);
@@ -2797,7 +2797,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					throws Exception {
 		try {
 			Parameter pOaId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, ""+oa.getId());
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_DIAGNOSTICA_APPENDER_PROPERTIES, pOaId);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_DIAGNOSTICA_APPENDER_PROPERTIES, pOaId);
 
 
 			//this.pd.setIndex(offset);
@@ -2917,7 +2917,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public void prepareDiagnosticaDatasourceList(List<OpenspcoopSorgenteDati> lista)
 			throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_DIAGNOSTICA_DATASOURCE);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_DIAGNOSTICA_DATASOURCE);
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
 			//this.pd.setIndex(offset);
@@ -3049,7 +3049,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					throws Exception {
 		try {
 			Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, od.getId() + "");
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_DIAGNOSTICA_DATASOURCE_PROPERTIES, pId);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_DIAGNOSTICA_DATASOURCE_PROPERTIES, pId);
 
 			//this.pd.setIndex(offset);
 			//this.pd.setPageSize(limit);
@@ -3977,7 +3977,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			String send = ArchiviCostanti.SERVLET_NAME_PACKAGE_EXPORT+"?"+
 					ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE.name();
-			List<String> protocolli = this.confCore.getProtocolli(this.session, true);
+			List<String> protocolli = this.confCore.getProtocolli(this.request, this.session, true);
 			String protocollo = protocolli.get(0);
 			if(protocollo!=null && !"".equals(protocollo)){
 				send = send + "&" + ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO+"="+ protocollo;
@@ -4139,7 +4139,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			InformazioniProtocollo infoProt = pFactory.getInformazioniProtocol();
 					
-			User user = ServletUtils.getUserFromSession(this.session);
+			User user = ServletUtils.getUserFromSession(this.request, this.session);
 			String userLogin = user.getLogin();
 			
 			if(mapPFactory.size()>1) {
@@ -8285,7 +8285,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	
 	public void prepareConfigurazionePolicyList(Search ricerca, List<ConfigurazionePolicy> lista, int idLista) throws Exception{
 		try {
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY);
 
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
@@ -8365,7 +8365,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIG_POLICY, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIG_POLICY, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -8399,7 +8399,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String labelPerPorta = null;
 			if(RuoloPolicy.DELEGATA.equals(ruoloPorta)) {
 				// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-				Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+				Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 				if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 				
 				IDPortaDelegata idPortaDelegata = new IDPortaDelegata();
@@ -8427,7 +8427,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 			}
 			else {
-				Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session);
+				Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session, this.request);
 				
 				IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
 				idPortaApplicativa.setNome(nomePorta);
@@ -8542,7 +8542,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				lstParamSession.add(parServiceBinding);
 			}
 			
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY, lstParamSession);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY, lstParamSession);
 
 			List<Parameter> lstParamPorta = null;
 			if(ruoloPorta!=null) {
@@ -8971,7 +8971,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if (this.core.isShowPulsantiImportExport() && (nomePorta==null || StringUtils.isEmpty(nomePorta))) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ACTIVE_POLICY, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ACTIVE_POLICY, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -13999,7 +13999,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		boolean protocolloAssociatoFiltroNonSelezionatoUtente = false;
 		if(policy.getFiltro().isEnabled()){
-			protocolliValue = this.confCore.getProtocolli(this.session);
+			protocolliValue = this.confCore.getProtocolli(this.request, this.session);
 			if(policy.getFiltro().getProtocollo()!=null) {
 				// sara' sempre impostato, a meno della prima volta (create policy)
 				if(protocolliValue.contains(policy.getFiltro().getProtocollo())==false) {
@@ -14025,7 +14025,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							protocolloSelezionatoValue = protocolliValue.get(0);
 						}
 						else {
-							protocolloSelezionatoValue = this.confCore.getProtocolloDefault(this.session, protocolliValue);
+							protocolloSelezionatoValue = this.confCore.getProtocolloDefault(this.request, this.session, protocolliValue);
 						}
 					}
 					//protocolli = enrichListConQualsiasi(protocolli); NOTA: In questa versione un protocollo deve essere per forza selezionato.
@@ -14512,7 +14512,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 					else {
 					
-						User user = ServletUtils.getUserFromSession(this.session);
+						User user = ServletUtils.getUserFromSession(this.request, this.session);
 						String userLogin = user.getLogin();
 						
 						List<String> tipiSoggettiGestitiProtocollo = this.soggettiCore.getTipiSoggettiGestitiProtocollo(protocolloSelezionatoValue);
@@ -14666,7 +14666,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						
 						listSA = new ArrayList<>();
 						
-						User user = ServletUtils.getUserFromSession(this.session);
+						User user = ServletUtils.getUserFromSession(this.request, this.session);
 						String userLogin = user.getLogin();
 						
 						// soggetti esterni
@@ -16502,11 +16502,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 	public void prepareGestorePolicyTokenList(Search ricerca, List<GenericProperties> lista, int idLista) throws Exception{
 		try {
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN);
 
 			String infoType = this.getParameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 			if(infoType==null) {
-				infoType = ServletUtils.getObjectFromSession(this.session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+				infoType = ServletUtils.getObjectFromSession(this.request, this.session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 			}
 			Parameter pInfoType = new Parameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE, infoType); 
 			boolean attributeAuthority = ConfigurazioneCostanti.isConfigurazioneAttributeAuthority(infoType);
@@ -16604,7 +16604,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					org.openspcoop2.protocol.sdk.constants.ArchiveType archiveType = attributeAuthority ?
 							org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_ATTRIBUTE_AUTHORITY :
 							org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_TOKEN_POLICY;
-					if(exporterUtils.existsAtLeastOneExportMode(archiveType, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(archiveType, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -16885,7 +16885,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			String infoType = this.getParameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 			if(infoType==null) {
-				infoType = ServletUtils.getObjectFromSession(this.session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
+				infoType = ServletUtils.getObjectFromSession(this.request, this.session, String.class, ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE);
 			}
 			Parameter pInfoType = new Parameter(ConfigurazioneCostanti.PARAMETRO_TOKEN_POLICY_TIPOLOGIA_INFORMAZIONE, infoType); 
 			
@@ -17094,7 +17094,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	// Prepara la lista delle regole di configurazione proxy pass
 	public void prepareProxyPassConfigurazioneRegolaList(ISearch ricerca, List<ConfigurazioneUrlInvocazioneRegola> lista) throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA);
 
 			int idLista = Liste.CONFIGURAZIONE_PROXY_PASS_REGOLA;
 			int limit = ricerca.getPageSize(idLista);
@@ -17232,7 +17232,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_URL_INVOCAZIONE_REGOLA, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -17443,7 +17443,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 	public void prepareCanaleConfigurazioneList(Search ricerca, List<CanaleConfigurazione> lista) throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CANALI);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CANALI);
 
 			int idLista = Liste.CONFIGURAZIONE_CANALI;
 
@@ -17613,7 +17613,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 	public void prepareCanaleNodoConfigurazioneList(Search ricerca, List<CanaleConfigurazioneNodo> lista) throws Exception { 
 		try {
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CANALI_NODI);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CANALI_NODI);
 
 			int idLista = Liste.CONFIGURAZIONE_CANALI_NODI;
 			int limit = ricerca.getPageSize(idLista);
@@ -17845,7 +17845,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	// Prepara la lista dei plugin configurati
 	public void preparePluginsArchiviList(ISearch ricerca, List<RegistroPlugin> lista) throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_PLUGINS_ARCHIVI);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_PLUGINS_ARCHIVI);
 
 			int idLista = Liste.CONFIGURAZIONE_PLUGINS_ARCHIVI;
 			int limit = ricerca.getPageSize(idLista);
@@ -18017,7 +18017,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_PLUGIN_ARCHVIO, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_PLUGIN_ARCHVIO, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -18374,7 +18374,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		try {
 			
 			Parameter pNomeRegistro = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PLUGINS_ARCHIVI_NOME, nome);
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_PLUGINS_ARCHIVI_JAR, pNomeRegistro);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_PLUGINS_ARCHIVI_JAR, pNomeRegistro);
 
 			int idLista = Liste.CONFIGURAZIONE_PLUGINS_ARCHIVI_JAR;
 			int limit = ricerca.getPageSize(idLista);
@@ -18515,7 +18515,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	// Prepara la lista delle classi di plugin configurate
 	public void preparePluginsClassiList(ISearch ricerca, List<Plugin> lista) throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_PLUGINS_CLASSI);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_PLUGINS_CLASSI);
 
 			int idLista = Liste.CONFIGURAZIONE_PLUGINS_CLASSI;
 			int limit = ricerca.getPageSize(idLista);
@@ -18651,7 +18651,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_PLUGIN_CLASSE, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.CONFIGURAZIONE_PLUGIN_CLASSE, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -19010,7 +19010,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				lstParamSession.add(parServiceBinding);
 			}
 			
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ALLARMI, lstParamSession);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ALLARMI, lstParamSession);
 
 			int idLista = Liste.CONFIGURAZIONE_ALLARMI;
 			int limit = ricerca.getPageSize(idLista);
@@ -19103,7 +19103,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if (this.core.isShowPulsantiImportExport()  && (nomePorta==null || StringUtils.isEmpty(nomePorta))) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.ALLARME, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.ALLARME, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -19340,7 +19340,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String labelPerPorta = null;
 			if(RuoloPorta.DELEGATA.equals(ruoloPorta)) {
 				// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-				Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+				Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 				if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 				
 				IDPortaDelegata idPortaDelegata = new IDPortaDelegata();
@@ -19368,7 +19368,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 			}
 			else {
-				Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session);
+				Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session, this.request);
 				
 				IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
 				idPortaApplicativa.setNome(nomePorta);
@@ -21346,7 +21346,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		boolean protocolloAssociatoFiltroNonSelezionatoUtente = false;
 		if(allarme.getFiltro().isEnabled()){
-			protocolliValue = this.confCore.getProtocolli(this.session);
+			protocolliValue = this.confCore.getProtocolli(this.request, this.session);
 			if(allarme.getFiltro().getProtocollo()!=null) {
 				// sara' sempre impostato, a meno della prima volta (create policy)
 				if(protocolliValue.contains(allarme.getFiltro().getProtocollo())==false) {
@@ -21372,7 +21372,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							protocolloSelezionatoValue = protocolliValue.get(0);
 						}
 						else {
-							protocolloSelezionatoValue = this.confCore.getProtocolloDefault(this.session, protocolliValue);
+							protocolloSelezionatoValue = this.confCore.getProtocolloDefault(this.request, this.session, protocolliValue);
 						}
 					}
 					//protocolli = enrichListConQualsiasi(protocolli); NOTA: In questa versione un protocollo deve essere per forza selezionato.
@@ -21860,7 +21860,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 					else {
 					
-						User user = ServletUtils.getUserFromSession(this.session);
+						User user = ServletUtils.getUserFromSession(this.request, this.session);
 						String userLogin = user.getLogin();
 						
 						List<String> tipiSoggettiGestitiProtocollo = this.soggettiCore.getTipiSoggettiGestitiProtocollo(protocolloSelezionatoValue);
@@ -22016,7 +22016,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						
 						listSA = new ArrayList<>();
 						
-						User user = ServletUtils.getUserFromSession(this.session);
+						User user = ServletUtils.getUserFromSession(this.request, this.session);
 						String userLogin = user.getLogin();
 						
 						// soggetti esterni
@@ -23309,34 +23309,29 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return bf.toString();
 	}
 	
-	public void savePluginIntoSession(HttpSession session, Plugin plugin){
-		session.setAttribute(ConfigurazioneCostanti.SESSION_PARAMETRO_OLD_PLUGIN , plugin);
+	public void savePluginIntoSession(HttpServletRequest request, HttpSession session, Plugin plugin){
+		ServletUtils.setObjectIntoSession(request, session, plugin, ConfigurazioneCostanti.SESSION_PARAMETRO_OLD_PLUGIN);
 	}
 	
-	public void removePluginFromSession(HttpSession session){
-		session.removeAttribute(ConfigurazioneCostanti.SESSION_PARAMETRO_OLD_PLUGIN);
+	public void removePluginFromSession(HttpServletRequest request, HttpSession session){
+		ServletUtils.removeObjectFromSession(request, session, ConfigurazioneCostanti.SESSION_PARAMETRO_OLD_PLUGIN);
 	}
 
-	public Plugin readPluginFromSession(HttpSession session){
-		Object obj = session.getAttribute(ConfigurazioneCostanti.SESSION_PARAMETRO_OLD_PLUGIN);
-
-		if(obj == null)
-			return null;
-
-		return (Plugin) obj;
+	public Plugin readPluginFromSession(HttpServletRequest request, HttpSession session){
+		return ServletUtils.getObjectFromSession(request, session, Plugin.class, ConfigurazioneCostanti.SESSION_PARAMETRO_OLD_PLUGIN);
 	}
 	
-	public void saveParametriIntoSession(HttpSession session, List<org.openspcoop2.monitor.sdk.parameters.Parameter<?>> parameters){
-		session.setAttribute(ConfigurazioneCostanti.SESSION_PARAMETRO_OLD_PARAMETRI , parameters);
+	public void saveParametriIntoSession(HttpServletRequest request, HttpSession session, List<org.openspcoop2.monitor.sdk.parameters.Parameter<?>> parameters){
+		ServletUtils.setObjectIntoSession(request, session, parameters, ConfigurazioneCostanti.SESSION_PARAMETRO_OLD_PARAMETRI );
 	}
 	
-	public void removeParametriFromSession(HttpSession session){
-		session.removeAttribute(ConfigurazioneCostanti.SESSION_PARAMETRO_OLD_PARAMETRI);
+	public void removeParametriFromSession(HttpServletRequest request, HttpSession session){
+		ServletUtils.removeObjectFromSession(request, session, ConfigurazioneCostanti.SESSION_PARAMETRO_OLD_PARAMETRI);
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<org.openspcoop2.monitor.sdk.parameters.Parameter<?>> readParametriFromSession(HttpSession session){
-		Object obj = session.getAttribute(ConfigurazioneCostanti.SESSION_PARAMETRO_OLD_PARAMETRI);
+	public List<org.openspcoop2.monitor.sdk.parameters.Parameter<?>> readParametriFromSession(HttpServletRequest request, HttpSession session){
+		Object obj = ServletUtils.getObjectFromSession(request, session, ConfigurazioneCostanti.SESSION_PARAMETRO_OLD_PARAMETRI);
 
 		if(obj == null)
 			return null;
@@ -23366,7 +23361,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				lstParAllarme.add(parServiceBinding);
 			}
 			
-			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ALLARMI_HISTORY);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_ALLARMI_HISTORY);
 
 			int idLista = Liste.CONFIGURAZIONE_ALLARMI_HISTORY;
 			int limit = ricerca.getPageSize(idLista);
@@ -23574,7 +23569,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				lstParamSession.add(parTipologia);
 			}
 			
-			ServletUtils.addListElementIntoSession(this.session, objectName, lstParamSession);
+			ServletUtils.addListElementIntoSession(this.request, this.session, objectName, lstParamSession);
 			
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
@@ -23747,7 +23742,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String labelPerPorta = null;
 			if(TipoPdD.DELEGATA.equals(ruoloPorta)) {
 				// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-				Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+				Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 				if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 				
 				PortaDelegata myPD = this.porteDelegateCore.getPortaDelegata(idPorta);
@@ -23785,7 +23780,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				labelPerPorta = labelHandler;
 			}
 			else {
-				Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session);
+				Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session, this.request);
 				
 				PortaApplicativa myPA = this.porteApplicativeCore.getPortaApplicativa(idPorta);
 				String idporta = myPA.getNome();

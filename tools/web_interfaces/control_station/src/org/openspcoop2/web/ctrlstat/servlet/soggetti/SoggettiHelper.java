@@ -1120,7 +1120,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				this.pd.setCustomListViewName(SoggettiCostanti.SOGGETTI_NOME_VISTA_CUSTOM_LISTA);
 			}
 			
-			ServletUtils.addListElementIntoSession(this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI);
+			ServletUtils.addListElementIntoSession(this.request, this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI);
 
 			boolean multiTenant = this.core.isMultitenant();
 			
@@ -1135,7 +1135,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			String protocolloSel = filterProtocollo;
 			if(protocolloSel==null) {
 				// significa che e' stato selezionato un protocollo nel menu in alto a destra
-				List<String> protocolli = this.core.getProtocolli(this.session);
+				List<String> protocolli = this.core.getProtocolli(this.request, this.session);
 				if(protocolli!=null && protocolli.size()==1) {
 					protocolloSel = protocolli.get(0);
 				}
@@ -1231,7 +1231,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
 			}
 
-			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 
 			setLabelColonne(modalitaCompleta, multiTenant, showProtocolli);
 
@@ -1269,7 +1269,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.SOGGETTO, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.SOGGETTO, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -1649,7 +1649,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 	public void prepareSoggettiConfigList(List<org.openspcoop2.core.config.Soggetto> lista, ISearch ricerca) throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI);
+			ServletUtils.addListElementIntoSession(this.request, this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI);
 
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
@@ -1662,7 +1662,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			String protocolloSel = filterProtocollo;
 			if(protocolloSel==null) {
 				// significa che e' stato selezionato un protocollo nel menu in alto a destra
-				List<String> protocolli = this.core.getProtocolli(this.session);
+				List<String> protocolli = this.core.getProtocolli(this.request, this.session);
 				if(protocolli!=null && protocolli.size()==1) {
 					protocolloSel = protocolli.get(0);
 				}
@@ -1714,7 +1714,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
 			}
 
-			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 			
 			// setto le label delle colonne
 			int totEl = this.isModalitaCompleta() ? 3 : 1;
@@ -1843,7 +1843,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.SOGGETTO, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.SOGGETTO, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -1931,7 +1931,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			String accessDaChangeTmp = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_RUOLI_ACCESSO_DA_CHANGE);
 			boolean accessDaChange = ServletUtils.isCheckBoxEnabled(accessDaChangeTmp);
 
-			ServletUtils.addListElementIntoSession(this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI_RUOLI, 
+			ServletUtils.addListElementIntoSession(this.request, this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI_RUOLI, 
 					new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id),
 					new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_RUOLI_ACCESSO_DA_CHANGE, accessDaChangeTmp));
 
@@ -2056,7 +2056,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			parametersServletSoggettoChange.add(pNomeSoggetto);
 			parametersServletSoggettoChange.add(pTipoSoggetto);
 			
-			ServletUtils.addListElementIntoSession(this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI_CREDENZIALI, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()]));
+			ServletUtils.addListElementIntoSession(this.request, this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI_CREDENZIALI, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()]));
 
 			this.pd.setIndex(0);
 			this.pd.setPageSize(soggettoRegistry.sizeCredenzialiList());
@@ -2369,7 +2369,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			parametersServletSoggettoChange.add(pNomeSoggetto);
 			parametersServletSoggettoChange.add(pTipoSoggetto);
 			
-			ServletUtils.addListElementIntoSession(this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI_PROPRIETA, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()]));
+			ServletUtils.addListElementIntoSession(this.request, this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI_PROPRIETA, parametersServletSoggettoChange.toArray(new Parameter[parametersServletSoggettoChange.size()]));
 
 			// setto la barra del titolo
 			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(soggettoRegistry.getTipo());

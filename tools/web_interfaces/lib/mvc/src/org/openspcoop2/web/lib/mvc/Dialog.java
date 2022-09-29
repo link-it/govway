@@ -43,6 +43,7 @@ public class Dialog implements Serializable{
 	private String headerRiga2;
 	private List<BodyElement> body;
 	private String notaFinale;
+	private BodyElement urlElement;
 	
 	private boolean resizable = false;
 	private boolean draggable = false;
@@ -84,6 +85,10 @@ public class Dialog implements Serializable{
 	public void addBodyElement(BodyElement bodyElement) {
 		this.body.add(bodyElement);
 	}
+	@Deprecated
+	public void setBody(List<BodyElement> body) {
+		this.body = body;
+	}
 	public String getNotaFinale() {
 		return DataElement.checkNull(this.notaFinale);
 	}
@@ -114,6 +119,12 @@ public class Dialog implements Serializable{
 	}
 	public void setWidth(String width) {
 		this.width = width;
+	}	
+	public BodyElement getUrlElement() {
+		return this.urlElement;
+	}
+	public void setUrlElement(BodyElement urlElement) {
+		this.urlElement = urlElement;
 	}
 
 	public class BodyElement extends DataElement  implements Serializable{

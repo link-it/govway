@@ -57,6 +57,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.Permessi;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
+import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.lib.users.dao.UserObjects;
 
@@ -114,9 +115,18 @@ public final class UtentiChange extends Action {
 			String isSoggettiAll = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_ABILITAZIONI_SOGGETTI_ALL);
 			String isServiziAll = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_ABILITAZIONI_SERVIZI_ALL);
 			
+			String tipoModalitaConsoleGestione = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
+			String idSoggettoConsoleGestione = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO);
+			
+			String tipoModalitaConsoleMonitoraggio = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR);
+			String idSoggettoConsoleMonitoraggio = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_MONITOR);
+			
+			String homePageMonitoraggio = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO);
+			String intervalloTemporaleHomePageConsoleMonitoraggio = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO);
+			
 			String scadenza = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_SCADENZA);
 			
-			Boolean singlePdD = (Boolean) session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+			Boolean singlePdD = ServletUtils.getBooleanAttributeFromSession(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD, session, request);
 			
 			List<String> protocolliRegistratiConsole = utentiCore.getProtocolli();
 			
@@ -158,11 +168,106 @@ public final class UtentiChange extends Action {
 				}
 				protocolliSupportati  = oldProtocolliSupportati;
 				first = true;
+				
+				if(tipoModalitaConsoleGestione == null) {
+					tipoModalitaConsoleGestione =  user.getProtocolloSelezionatoPddConsole();
+				}
+				
+				// nessun profilo selezionato imposto all
+				if(tipoModalitaConsoleGestione == null) {
+					tipoModalitaConsoleGestione = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+				}
+				
+				
+				if(idSoggettoConsoleGestione == null) {
+					idSoggettoConsoleGestione = user.getSoggettoSelezionatoPddConsole();
+				}
+				
+				// nessun soggetto selezionato imposto all
+				if(idSoggettoConsoleGestione == null) {
+					idSoggettoConsoleGestione = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+				}
+				
+				if(tipoModalitaConsoleMonitoraggio == null) {
+					tipoModalitaConsoleMonitoraggio =  user.getProtocolloSelezionatoPddMonitor();
+				}
+				
+				// nessun profilo selezionato imposto all
+				if(tipoModalitaConsoleMonitoraggio == null) {
+					tipoModalitaConsoleMonitoraggio = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+				}
+				
+				
+				if(idSoggettoConsoleMonitoraggio == null) {
+					idSoggettoConsoleMonitoraggio = user.getSoggettoSelezionatoPddMonitor();
+				}
+				
+				// nessun soggetto selezionato imposto all
+				if(idSoggettoConsoleMonitoraggio == null) {
+					idSoggettoConsoleMonitoraggio = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+				}
+				
+				List<Stato> stati = user.getStati();
+				
+				if(homePageMonitoraggio == null) {
+					for (Stato stato : stati) {
+						if(stato.getOggetto().equals(UtentiCostanti.OGGETTO_STATO_UTENTE_HOME_PAGE)) {
+							homePageMonitoraggio = utentiHelper.extractValoreStato(stato.getStato());
+							break;
+						}
+					}
+				}
+				
+				// nessuna home page selezionata imposto transazioni
+				if(homePageMonitoraggio == null) {
+					homePageMonitoraggio = UtentiCostanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI;
+				}
+				
+				if(intervalloTemporaleHomePageConsoleMonitoraggio == null) {
+					for (Stato stato : stati) {
+						if(stato.getOggetto().equals(UtentiCostanti.OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE)) {
+							intervalloTemporaleHomePageConsoleMonitoraggio = utentiHelper.extractValoreStato(stato.getStato());
+							break;
+						}
+					}
+				}
+				
+				// nessuna home page selezionata imposto transazioni
+				if(intervalloTemporaleHomePageConsoleMonitoraggio == null) {
+					intervalloTemporaleHomePageConsoleMonitoraggio = UtentiCostanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI;
+				}
 			}
-
 			
 //			tipoGui = (tipoGui==null) ? user.getInterfaceType().toString() : tipoGui;
 			InterfaceType interfaceType = InterfaceType.convert(tipoGui, true);
+			
+			String postBackElementName = utentiHelper.getPostBackElementName();
+			
+			if (postBackElementName != null) {
+				
+				// selezione modalita'
+				if(postBackElementName.startsWith(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX)) {
+					tipoModalitaConsoleGestione = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+					idSoggettoConsoleGestione = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+					tipoModalitaConsoleMonitoraggio = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+					idSoggettoConsoleMonitoraggio = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+				}
+				
+				// cambio del profilo, reset del valore del soggetto
+				if(postBackElementName.equals(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA)) {
+					idSoggettoConsoleGestione = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+				}
+				
+				// cambio del profilo, reset del valore del soggetto
+				if(postBackElementName.equals(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA_MONITOR)) {
+					idSoggettoConsoleMonitoraggio = UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL;
+				}
+				
+				// cambio della home page, reset del valore del grafico
+				if(postBackElementName.equals(UtentiCostanti.PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO)) {
+					intervalloTemporaleHomePageConsoleMonitoraggio = UtentiCostanti.VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_7_GIORNI;
+				}
+			}
 			
 			// Preparo il menu
 			utentiHelper.makeMenu();
@@ -216,7 +321,9 @@ public final class UtentiChange extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.CHANGE, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						changepwd,modalitaScelte, isSoggettiAll, isServiziAll, user, scadenza, dataUltimoAggiornamentoPassword, oldScadenza);
+						changepwd,modalitaScelte, isSoggettiAll, isServiziAll, user, scadenza, dataUltimoAggiornamentoPassword, oldScadenza, 
+						tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio,
+						homePageMonitoraggio, intervalloTemporaleHomePageConsoleMonitoraggio);
 
 				pd.setDati(dati);
 
@@ -231,7 +338,7 @@ public final class UtentiChange extends Action {
 					}
 				}
 				
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());
 
@@ -258,11 +365,13 @@ public final class UtentiChange extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.CHANGE, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						changepwd,modalitaScelte, isSoggettiAll, isServiziAll, user, scadenza, dataUltimoAggiornamentoPassword, oldScadenza);
+						changepwd,modalitaScelte, isSoggettiAll, isServiziAll, user, scadenza, dataUltimoAggiornamentoPassword, oldScadenza, 
+						tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio,
+						homePageMonitoraggio, intervalloTemporaleHomePageConsoleMonitoraggio);
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());
 			}
@@ -334,7 +443,7 @@ public final class UtentiChange extends Action {
 							// Preparo il menu
 							pd.setMessage("Non è possibile eliminare il permesso 'Servizi', poichè non esistono altri utenti con tale permesso");
 	
-							ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+							ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 	
 							return ServletUtils.getStrutsForwardGeneralError(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());	
 	
@@ -403,12 +512,14 @@ public final class UtentiChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				utentiHelper.addChangeUtenteInfoToDati(dati, nomesu, changepwd, pwsu, confpwsu, interfaceType, 
-						isServizi, isDiagnostica, isReportistica, isSistema, isMessaggi, isUtenti, isAuditing,isAccordiCooperazione,paginaSuServizi,  uws, paginaSuAccordi, uwp,modalitaScelte);
+						isServizi, isDiagnostica, isReportistica, isSistema, isMessaggi, isUtenti, isAuditing,isAccordiCooperazione,paginaSuServizi, 
+						uws, paginaSuAccordi, uwp,modalitaScelte, tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio,
+						homePageMonitoraggio, intervalloTemporaleHomePageConsoleMonitoraggio);
 
 				pd.setDati(dati);
 				pd.setMessage(msg,Costanti.MESSAGE_TYPE_INFO);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForward(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE(),UtentiCostanti.STRUTS_FORWARD_INFO);	
 
@@ -442,6 +553,10 @@ public final class UtentiChange extends Action {
 
 				// Modifico i dati dell'utente
 				user.setInterfaceType(InterfaceType.valueOf(tipoGui));
+				user.setProtocolloSelezionatoPddConsole(!tipoModalitaConsoleGestione.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? tipoModalitaConsoleGestione : null);
+				user.setSoggettoSelezionatoPddConsole(!idSoggettoConsoleGestione.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? idSoggettoConsoleGestione : null);
+				user.setProtocolloSelezionatoPddMonitor(!tipoModalitaConsoleMonitoraggio.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? tipoModalitaConsoleMonitoraggio : null);
+				user.setSoggettoSelezionatoPddMonitor(!idSoggettoConsoleMonitoraggio.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? idSoggettoConsoleMonitoraggio : null);
 					
 				String puString = "";
 
@@ -530,6 +645,42 @@ public final class UtentiChange extends Action {
 						if(user.getServizi() != null && !user.getServizi().isEmpty())
 						user.getServizi().clear();
 					}
+					
+					// salvataggio homepage e grafico della console di monitoraggio
+					boolean homePageFound = false;
+					for (Stato stato : user.getStati()) {
+						if(stato.getOggetto().equals(UtentiCostanti.OGGETTO_STATO_UTENTE_HOME_PAGE)) {
+							stato.setStato(utentiHelper.incapsulaValoreStato(homePageMonitoraggio));
+							homePageFound = true;
+							break;
+						}
+					}
+					
+					if(!homePageFound) {
+						Stato statoHomePage = new Stato();
+						statoHomePage.setOggetto(UtentiCostanti.OGGETTO_STATO_UTENTE_HOME_PAGE);
+						statoHomePage.setStato(utentiHelper.incapsulaValoreStato(homePageMonitoraggio));
+						
+						user.getStati().add(statoHomePage);
+					}
+					
+					boolean statoIntevalloTemporaleHomePageFound = false;
+					
+					for (Stato stato : user.getStati()) {
+						if(stato.getOggetto().equals(UtentiCostanti.OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE)) {
+							stato.setStato(utentiHelper.incapsulaValoreStato(intervalloTemporaleHomePageConsoleMonitoraggio));
+							statoIntevalloTemporaleHomePageFound = true;
+							break;
+						}
+					}
+					
+					if(!statoIntevalloTemporaleHomePageFound) {
+						Stato statoIntevalloTemporaleHomePage = new Stato();
+						statoIntevalloTemporaleHomePage.setOggetto(UtentiCostanti.OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE);
+						statoIntevalloTemporaleHomePage.setStato(utentiHelper.incapsulaValoreStato(intervalloTemporaleHomePageConsoleMonitoraggio));
+						
+						user.getStati().add(statoIntevalloTemporaleHomePage);
+					}
 				}
 
 				// Se singleSu != null, devo recuperare gli oggetti
@@ -560,7 +711,7 @@ public final class UtentiChange extends Action {
 								// Preparo il menu
 								pd.setMessage("Non è possibile eliminare il permesso 'Accordi Cooperazione', poichè non esistono altri utenti con tale permesso");
 	
-								ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+								ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 	
 								return ServletUtils.getStrutsForwardGeneralError(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());
 							}
@@ -584,12 +735,15 @@ public final class UtentiChange extends Action {
 				// Se sto modificando l'utente che è anche quello connesso
 				if(userLogin.equals(user.getLogin())){
 
-					LoginSessionUtilities.cleanLoginParametersSession(session);
+					if(utentiCore.isUtenzeModificaProfiloUtenteDaFormAggiornaSessione()) {
+						LoginSessionUtilities.cleanLoginParametersSession(request, session);
 
-					ServletUtils.setUserIntoSession(session, user); // update in sessione.
-					utentiHelper.setTipoInterfaccia(user.getInterfaceType()); // update InterfaceType
-					LoginSessionUtilities.setLoginParametersSession(session, utentiCore, userLogin);
-
+						ServletUtils.setUserIntoSession(request, session, user); // update in sessione.
+//						utentiHelper.setTipoInterfaccia(user.getInterfaceType()); // update InterfaceType
+						LoginSessionUtilities.setLoginParametersSession(request, session, utentiCore, userLogin);
+					} else {
+						ServletUtils.setUserIntoSession(request, session, user); // update in sessione.
+					}
 				}
 
 				boolean isLoggedUser = userLogin.equals(user.getLogin());
@@ -611,7 +765,7 @@ public final class UtentiChange extends Action {
 
 					pd.setMessage("Utente '"+userLogin+"' modificato con successo", Costanti.MESSAGE_TYPE_INFO);
 					
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForward(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE(),UtentiCostanti.STRUTS_FORWARD_PERMESSI_OK);	
 
@@ -627,7 +781,7 @@ public final class UtentiChange extends Action {
 					// Preparo la lista
 					int idLista = Liste.SU;
 
-					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session,Search.class);
+					Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session,Search.class);
 
 					ricerca = utentiHelper.checkSearchParameters(idLista, ricerca);
 
@@ -635,13 +789,13 @@ public final class UtentiChange extends Action {
 
 					utentiHelper.prepareUtentiList(ricerca, lista, singlePdD);
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeFinished(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());
 				}
 			}
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());
 		}
 	}

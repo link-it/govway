@@ -142,7 +142,7 @@ public final class PddAdd extends Action {
 	
 				pd.setDati(dati);
 	
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 	
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, PddCostanti.OBJECT_NAME_PDD, ForwardParams.ADD());
 				
@@ -167,7 +167,7 @@ public final class PddAdd extends Action {
 	
 				pd.setDati(dati);
 	
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 	
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, PddCostanti.OBJECT_NAME_PDD, ForwardParams.ADD());
 				
@@ -206,7 +206,7 @@ public final class PddAdd extends Action {
 
 			pddCore.performCreateOperation(userLogin, pddHelper.smista(), pdd);
 
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session,Search.class); 
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session,Search.class); 
 
 			List<PdDControlStation> lista = null;
 			if(pddCore.isVisioneOggettiGlobale(userLogin)){
@@ -217,13 +217,13 @@ public final class PddAdd extends Action {
 
 			pddHelper.preparePddList(lista, ricerca);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PddCostanti.OBJECT_NAME_PDD, ForwardParams.ADD());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					PddCostanti.OBJECT_NAME_PDD, ForwardParams.ADD());
 		}
 

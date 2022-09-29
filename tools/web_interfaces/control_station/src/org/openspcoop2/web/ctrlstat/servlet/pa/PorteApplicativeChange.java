@@ -128,12 +128,12 @@ public final class PorteApplicativeChange extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, session);
-		if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
-
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte applicative
+			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, session, request);
+			if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
+			
 			String nomePorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA);
 			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			String idsogg = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
@@ -170,7 +170,7 @@ public final class PorteApplicativeChange extends Action {
 			
 			String idTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(!porteApplicativeHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
-				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
+				ServletUtils.setObjectIntoSession(request, session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
 			
 			String serviceBindingS = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SERVICE_BINDING);
@@ -230,7 +230,7 @@ public final class PorteApplicativeChange extends Action {
 			String ctHeaderHttp_retryAfterBackoff = porteApplicativeHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS);
 			
 			// check su oldNomePD
-			PageData pdOld =  ServletUtils.getPageDataFromSession(session);
+			PageData pdOld =  ServletUtils.getPageDataFromSession(request, session);
 			String oldNomePA = pdOld.getHidden(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_OLD_NOME_PA);
 			oldNomePA = (((oldNomePA != null) && !oldNomePA.equals("")) ? oldNomePA : nomePorta);
 			
@@ -687,7 +687,7 @@ public final class PorteApplicativeChange extends Action {
 			
 			List<Parameter> lstParm = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 			
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request);
 //			boolean datiAltroPorta = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_PORTA));
 			boolean datiAltroApi = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_API));
 			boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE));
@@ -981,7 +981,7 @@ public final class PorteApplicativeChange extends Action {
 				// array per la funzione SoggettoVirtuale
 				String[] soggettiList = null;
 				String[] soggettiListLabel = null;
-				Boolean soggVirt = (Boolean) session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_SOGGETTI_VIRTUALI);
+				Boolean soggVirt = ServletUtils.getObjectFromSession(request, session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_SOGGETTI_VIRTUALI);
 				if (soggVirt) {
 					List<IDServizio> list = null;
 					List<IDSoggetto> listSoggetti = new ArrayList<IDSoggetto>();
@@ -1179,7 +1179,7 @@ public final class PorteApplicativeChange extends Action {
 
 
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE,
 						ForwardParams.CHANGE());
@@ -1196,7 +1196,7 @@ public final class PorteApplicativeChange extends Action {
 				// array per la funzione SoggettoVirtuale
 				String[] soggettiList = null;
 				String[] soggettiListLabel = null;
-				Boolean soggVirt = (Boolean) session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_SOGGETTI_VIRTUALI);
+				Boolean soggVirt = ServletUtils.getObjectFromSession(request, session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_SOGGETTI_VIRTUALI);
 				if (soggVirt) {
 					List<IDServizio> list = null;
 					List<IDSoggetto> listSoggetti = new ArrayList<IDSoggetto>();
@@ -1357,7 +1357,7 @@ public final class PorteApplicativeChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE, 
 						ForwardParams.CHANGE());
@@ -1563,7 +1563,7 @@ public final class PorteApplicativeChange extends Action {
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 
 			List<PortaApplicativa> lista = null;
@@ -1579,14 +1579,14 @@ public final class PorteApplicativeChange extends Action {
 					if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 						ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);
 						erogazioniHelper.prepareErogazioneChange(TipoOperazione.CHANGE, asps, null);
-						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+						ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 						return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
 					}
 					
 					idLista = Liste.SERVIZI;
 					ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 					
-					String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+					String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 					if(tipologia!=null) {
 						if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
 							ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
@@ -1594,15 +1594,15 @@ public final class PorteApplicativeChange extends Action {
 					}
 					
 					boolean [] permessi = new boolean[2];
-					PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
+					PermessiUtente pu = ServletUtils.getUserFromSession(request, session).getPermessi();
 					permessi[0] = pu.isServizi();
 					permessi[1] = pu.isAccordiCooperazione();
 					List<AccordoServizioParteSpecifica> listaS = null;
 					String superUser   = ServletUtils.getUserLoginFromSession(session);
 					if(apsCore.isVisioneOggettiGlobale(superUser)){
-						listaS = apsCore.soggettiServizioList(null, ricerca,permessi,session);
+						listaS = apsCore.soggettiServizioList(null, ricerca,permessi,session, request);
 					}else{
-						listaS = apsCore.soggettiServizioList(superUser, ricerca,permessi,session);
+						listaS = apsCore.soggettiServizioList(superUser, ricerca,permessi,session, request);
 					}
 					AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 					apsHelper.prepareServiziList(ricerca, listaS);
@@ -1634,7 +1634,7 @@ public final class PorteApplicativeChange extends Action {
 				break;
 			}
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			ForwardParams fwP = ForwardParams.CHANGE();
 			
@@ -1645,7 +1645,7 @@ public final class PorteApplicativeChange extends Action {
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE, 
 					fwP);
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE,
 					ForwardParams.CHANGE());
 

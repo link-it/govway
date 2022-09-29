@@ -22,6 +22,7 @@
 package org.openspcoop2.utils.crypt;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +41,9 @@ import org.openspcoop2.utils.io.HexBinaryUtilities;
  * @version $Rev$, $Date$
  */
 
-public class PasswordGenerator extends PasswordVerifier {
+public class PasswordGenerator extends PasswordVerifier implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	public static PasswordGenerator DEFAULT;
 	static {

@@ -138,7 +138,7 @@ public final class ServiziApplicativiAdd extends Action {
 
 		try {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(session);
-			Boolean singlePdD = (Boolean) session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+			Boolean singlePdD = ServletUtils.getObjectFromSession(request, session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
 			SoggettiCore soggettiCore = new SoggettiCore(saCore);
@@ -148,7 +148,7 @@ public final class ServiziApplicativiAdd extends Action {
 			boolean isApplicativiServerEnabled = saCore.isApplicativiServerEnabled(saHelper);
 			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
-			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session);
+			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session, request);
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
 			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
 			
@@ -538,7 +538,7 @@ public final class ServiziApplicativiAdd extends Action {
 			
 			
 			// Tipi protocollo supportati
-			List<String> listaTipiProtocollo = saCore.getProtocolliByFilter(session, true, PddTipologia.OPERATIVO, false);
+			List<String> listaTipiProtocollo = saCore.getProtocolliByFilter(request, session, true, PddTipologia.OPERATIVO, false);
 			
 
 			// Preparo il menu
@@ -559,7 +559,7 @@ public final class ServiziApplicativiAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, 
 						ForwardParams.ADD());
@@ -599,7 +599,7 @@ public final class ServiziApplicativiAdd extends Action {
 
 					pd.setDati(dati);
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, 
 							ForwardParams.ADD());
@@ -913,7 +913,7 @@ public final class ServiziApplicativiAdd extends Action {
 				
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, ForwardParams.ADD());
 			}
@@ -1017,7 +1017,7 @@ public final class ServiziApplicativiAdd extends Action {
 								
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, ForwardParams.ADD());
 			}
@@ -1318,7 +1318,7 @@ public final class ServiziApplicativiAdd extends Action {
 
 				saHelper.deleteBinaryParameters(tipoCredenzialiSSLFileCertificato); 
 			} catch (Exception ex) {
-				return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), ex, pd, session, gd, mapping, 
+				return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), ex, pd, request, session, gd, mapping, 
 						ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, ForwardParams.ADD());
 			}
 
@@ -1328,7 +1328,7 @@ public final class ServiziApplicativiAdd extends Action {
 			}
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<ServizioApplicativo> lista = null;
 
@@ -1337,12 +1337,12 @@ public final class ServiziApplicativiAdd extends Action {
 				ricerca = saHelper.checkSearchParameters(idLista, ricerca);
 				
 				if(saCore.isSetSearchAfterAdd()) {
-					saCore.setSearchAfterAdd(idLista, sa.getNome(), session, ricerca);
+					saCore.setSearchAfterAdd(idLista, sa.getNome(), request, session, ricerca);
 				}
 				
 				boolean filtroSoggetto = false;
 				if(saHelper.isSoggettoMultitenantSelezionato()) {
-					List<String> protocolli = saCore.getProtocolli(session,false);
+					List<String> protocolli = saCore.getProtocolli(request, session,false);
 					if(protocolli!=null && protocolli.size()==1) { // dovrebbe essere l'unico caso in cui un soggetto multitenant è selezionato
 						String protocollo = protocolli.get(0);
 						filtroSoggetto = !saCore.isSupportatoAutenticazioneApplicativiEsterniErogazione(protocollo);  // devono essere fatti vedere anche quelli
@@ -1365,12 +1365,12 @@ public final class ServiziApplicativiAdd extends Action {
 
 			saHelper.prepareServizioApplicativoList(ricerca, lista, useIdSogg);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, ForwardParams.ADD());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, ForwardParams.ADD());
 		} 
 

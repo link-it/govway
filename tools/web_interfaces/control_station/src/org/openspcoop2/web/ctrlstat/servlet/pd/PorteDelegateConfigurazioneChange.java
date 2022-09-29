@@ -86,12 +86,11 @@ public class PorteDelegateConfigurazioneChange extends Action {
 		
 		boolean isPortaDelegata = true;
 
-		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
-		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
-
 		try {
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session, request);
+			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE));
 			
 			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -110,7 +109,7 @@ public class PorteDelegateConfigurazioneChange extends Action {
 			
 			String idTab = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(!porteDelegateHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
-				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
+				ServletUtils.setObjectIntoSession(request, session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
 			
 			// Preparo il menu
@@ -175,7 +174,7 @@ public class PorteDelegateConfigurazioneChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping,
 						PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_CONFIGURAZIONE_CHANGE, ForwardParams.OTHER(""));
@@ -197,7 +196,7 @@ public class PorteDelegateConfigurazioneChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping,
 						PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_CONFIGURAZIONE_CHANGE,
@@ -207,7 +206,7 @@ public class PorteDelegateConfigurazioneChange extends Action {
 			mappingFruizionePortaDelegata.setDescrizione(nomeGruppo); 
 			porteDelegateCore.aggiornaDescrizioneMappingFruizionePortaDelegata(mappingFruizionePortaDelegata);
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = -1;
 			List<PortaDelegata> lista = null;
@@ -218,7 +217,7 @@ public class PorteDelegateConfigurazioneChange extends Action {
 				
 				if(datiInvocazione) {
 					
-					String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+					String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 					boolean gestioneFruitori = false;
 					if(tipologia!=null) {
 						if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
@@ -234,7 +233,7 @@ public class PorteDelegateConfigurazioneChange extends Action {
 						ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE);
 						
 						String superUser =   ServletUtils.getUserLoginFromSession(session); 
-						PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
+						PermessiUtente pu = ServletUtils.getUserFromSession(request, session).getPermessi();
 						boolean [] permessi = new boolean[2];
 						permessi[0] = pu.isServizi();
 						permessi[1] = pu.isAccordiCooperazione();
@@ -282,14 +281,14 @@ public class PorteDelegateConfigurazioneChange extends Action {
 				break;
 			}
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			ForwardParams fwP = porteDelegateHelper.isModalitaCompleta() ? ForwardParams.OTHER("") : PorteDelegateCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE;
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_CONFIGURAZIONE_CHANGE, fwP);
 			
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_CONFIGURAZIONE_CHANGE , 
 					ForwardParams.OTHER(""));
 		} 

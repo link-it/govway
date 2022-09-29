@@ -60,9 +60,6 @@ public class PorteDelegateExtendedUtilities {
 	
 	public static List<Parameter> getTitle(Object object, ConsoleHelper consoleHelper) throws Exception {
 		// PortaDelegata pd = (PortaDelegata) object;
-		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, consoleHelper.getSession());
-		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 		//List<Parameter> lstParam = new ArrayList<>();
 		
 		String idSoggettoFruitore = consoleHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
@@ -76,6 +73,10 @@ public class PorteDelegateExtendedUtilities {
 			idFruizione = "";
 		
 		PorteDelegateHelper pdHelper = new PorteDelegateHelper(consoleHelper.getCore(), consoleHelper.getRequest(), consoleHelper.getPd(), consoleHelper.getSession());
+		
+		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, consoleHelper.getSession(), consoleHelper.getRequest());
+		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 		
 		List<Parameter> lstParam = pdHelper.getTitoloPD(parentPD, idSoggettoFruitore, idAsps, idFruizione); 
 		

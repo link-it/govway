@@ -108,7 +108,7 @@ public final class ConfigurazioneAuditing extends Action {
 
 					pd.setDati(dati);
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeCheckError(mapping,
 							AuditCostanti.OBJECT_NAME_CONFIGURAZIONE_AUDITING, AuditCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE_AUDITING
@@ -174,7 +174,7 @@ public final class ConfigurazioneAuditing extends Action {
 
 				pd.setMessage(AuditCostanti.LABEL_AUDIT_CONFIGURAZIONE_MODIFICATA, Costanti.MESSAGE_TYPE_INFO);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping,
 						AuditCostanti.OBJECT_NAME_CONFIGURAZIONE_AUDITING, AuditCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE_AUDITING);
@@ -205,12 +205,12 @@ public final class ConfigurazioneAuditing extends Action {
 			dati.add(ServletUtils.getDataElementForEditModeFinished());
 			pd.setDati(dati);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeInProgress(mapping,
 					AuditCostanti.OBJECT_NAME_CONFIGURAZIONE_AUDITING, AuditCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE_AUDITING);
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AuditCostanti.OBJECT_NAME_CONFIGURAZIONE_AUDITING, AuditCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE_AUDITING);
 		}
 	}

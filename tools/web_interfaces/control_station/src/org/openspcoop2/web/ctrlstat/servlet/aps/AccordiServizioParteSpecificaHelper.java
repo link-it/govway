@@ -847,7 +847,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 		try{
 
-			String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			String tipologia = ServletUtils.getObjectFromSession(this.request, this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
 			boolean gestioneErogatori = false;
 			if(tipologia!=null) {
@@ -1757,8 +1757,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 		try{
 
-			// String userLogin = (String) this.session.getAttribute("Login");
-
 			String ruolo = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RUOLO);
 
 			// Campi obbligatori
@@ -1847,14 +1845,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	}
 	private String getLabelServizioMessaggioErroreDocumentoDuplicato() {
 		String labelServizio = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ALLEGATO_LABEL_SERVIZIO;
-		String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+		String tipologia = ServletUtils.getObjectFromSession(this.request, this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 		boolean gestioneFruitori = false;
 		if(tipologia!=null) {
 			if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
 				gestioneFruitori = true;
 			}
 		}
-		Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session);
+		Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request);
 		if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 			if(gestioneFruitori) {
 				labelServizio = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ALLEGATO_LABEL_FRUIZIONE;
@@ -1877,8 +1875,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			throws Exception {
 
 		try{
-
-			// String userLogin = (String) this.session.getAttribute("Login");
 
 			String ruolo = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RUOLO);
 			String tipoFile = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_FILE  );
@@ -2037,7 +2033,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	public void prepareServiziAllegatiList(AccordoServizioParteSpecifica asps, ISearch ricerca, List<Documento> lista) throws Exception {
 		try {
 			
-			String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			String tipologia = ServletUtils.getObjectFromSession(this.request, this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
 			if(tipologia!=null) {
 				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
@@ -2075,7 +2071,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(pModificaAPI!=null) {
 				listAllegatiSession.add(pModificaAPI);
 			}
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_ALLEGATI, 
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_ALLEGATI, 
 					listAllegatiSession.toArray(new Parameter[1]));
 
 			int idLista = Liste.SERVIZI_ALLEGATI;
@@ -2100,7 +2096,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session);
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request);
 			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 				if(gestioneFruitori) {
 					lstParam.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_FRUIZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
@@ -2258,21 +2254,21 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			throws Exception {
 		try {
 
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS);
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS);
 
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
-			User user = ServletUtils.getUserFromSession(this.session);
+			User user = ServletUtils.getUserFromSession(this.request, this.session);
 
 			Boolean isAccordiCooperazione = user.getPermessi().isAccordiCooperazione();
 			Boolean isServizi = user.getPermessi().isServizi();
 
-			String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			String tipologia = ServletUtils.getObjectFromSession(this.request, this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			
-			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 			boolean showServiceBinding = true;
 			if( !showProtocolli ) {
-				List<String> l = this.core.getProtocolli(this.session);
+				List<String> l = this.core.getProtocolli(this.request, this.session);
 				if(l.size()>0) {
 					IProtocolFactory<?> p = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(l.get(0));
 					if(p.getManifest().getBinding().getRest()==null || p.getManifest().getBinding().getSoap()==null) {
@@ -2574,7 +2570,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				if(showConfigurazionePA) {
 					
 					// Utilizza la configurazione come parent
-					ServletUtils.setObjectIntoSession(this.session, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT);
+					ServletUtils.setObjectIntoSession(this.request, this.session, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT);
 										
 					IDServizio idServizio = this.idServizioFactory.getIDServizioFromAccordo(asps);
 					
@@ -2817,7 +2813,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				if(showConfigurazionePD) {
 					
 					// Utilizza la configurazione come parent
-					ServletUtils.setObjectIntoSession(this.session, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT);
+					ServletUtils.setObjectIntoSession(this.request, this.session, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT);
 										
 					IDServizio idServizio = this.idServizioFactory.getIDServizioFromAccordo(asps);
 					IDSoggetto idFruitore = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
@@ -2990,7 +2986,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -3022,7 +3018,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		try {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 			
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI, 
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI, 
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id));
 
 			int idLista = Liste.SERVIZI_FRUITORI;
@@ -3043,7 +3039,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			String idSoggettoErogatoreDelServizio = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
 			if ((idSoggettoErogatoreDelServizio == null) || idSoggettoErogatoreDelServizio.equals("")) {
-				PageData oldPD = ServletUtils.getPageDataFromSession(this.session);
+				PageData oldPD = ServletUtils.getPageDataFromSession(this.request, this.session);
 
 				idSoggettoErogatoreDelServizio = oldPD.getHidden(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
 
@@ -3166,7 +3162,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				boolean esterno = this.pddCore.isPddEsterna(fruitoreSogg.getPortaDominio());
 
 				// Elimino eventuale configurazione messa come parent (tanto viene re-inserita se entro dentro la lista della configurazione)
-				ServletUtils.removeObjectFromSession(this.session, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT);
+				ServletUtils.removeObjectFromSession(this.request, this.session, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT);
 									
 				IDServizio idServizio = this.idServizioFactory.getIDServizioFromAccordo(asps);
 				
@@ -3241,8 +3237,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			this.pd.setAddButton(true);
 
 			// preparo bottoni
-			// String gestioneWSBL = (String)
-			// this.session.getAttribute("GestioneWSBL");
 			/*
 			 * if(lista!=null && lista.size()>0){
 			 * if (AccordiServizioParteComuneUtilities.getImportaEsporta()) {
@@ -3274,11 +3268,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			IExtendedListServlet extendedServletList = this.core.getExtendedServletPortaApplicativa();
 			
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE,
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_PORTE_APPLICATIVE,
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id),
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, idSoggettoErogatoreDelServizio));
 
-			String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			String tipologia = ServletUtils.getObjectFromSession(this.request, this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			@SuppressWarnings("unused")
 			boolean gestioneErogatori = false;
 			if(tipologia!=null) {
@@ -3288,13 +3282,13 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 			
 			boolean gestioneGruppi = true;
-			String paramGestioneGruppi = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI);
+			String paramGestioneGruppi = ServletUtils.getObjectFromSession(this.request, this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI);
 			if(paramGestioneGruppi!=null && !"".equals(paramGestioneGruppi)) {
 				gestioneGruppi = Boolean.valueOf(paramGestioneGruppi);
 			}
 			
 			boolean gestioneConfigurazioni = true;
-			String paramGestioneConfigurazioni = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI);
+			String paramGestioneConfigurazioni = ServletUtils.getObjectFromSession(this.request, this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI);
 			if(paramGestioneConfigurazioni!=null && !"".equals(paramGestioneConfigurazioni)) {
 				gestioneConfigurazioni = Boolean.valueOf(paramGestioneConfigurazioni);
 			}
@@ -3358,7 +3352,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							}
 						}
 						if(tab>=0) {
-							ServletUtils.setObjectIntoSession(this.session, tab+"", CostantiControlStation.PARAMETRO_ID_TAB);
+							ServletUtils.setObjectIntoSession(this.request, this.session, tab+"", CostantiControlStation.PARAMETRO_ID_TAB);
 						}
 					}
 					
@@ -3391,7 +3385,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 			
 			// Utilizza la configurazione come parent
-			ServletUtils.setObjectIntoSession(this.session, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT);
+			ServletUtils.setObjectIntoSession(this.request, this.session, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT);
 			
 			//questo e' il soggetto virtuale
 			if ((idSoggettoErogatoreDelServizio == null) || idSoggettoErogatoreDelServizio.equals("")) {
@@ -3399,7 +3393,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 			
 			if ((idSoggettoErogatoreDelServizio == null) || idSoggettoErogatoreDelServizio.equals("")) {
-				PageData oldPD = ServletUtils.getPageDataFromSession(this.session);
+				PageData oldPD = ServletUtils.getPageDataFromSession(this.request, this.session);
 
 				idSoggettoErogatoreDelServizio = oldPD.getHidden(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
 			}
@@ -3413,7 +3407,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
 			
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session);
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request);
 			String labelAzioni = this.getLabelAzioni(serviceBindingMessage); 
 			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 				lstParam.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
@@ -4748,7 +4742,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE,
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE,
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, idServizio),
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO, idSoggettoFruitore),
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, idFruzione));
@@ -4765,7 +4759,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
 			// Utilizza la configurazione come parent
-			ServletUtils.setObjectIntoSession(this.session, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT);
+			ServletUtils.setObjectIntoSession(this.request, this.session, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT);
 
 			// Prendo il nome e il tipo del servizio
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idServizio));
@@ -5018,7 +5012,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			Parameter parametroTipoSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE, idSoggettoFruitore.getTipo());
 			Parameter parametroNomeSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE, idSoggettoFruitore.getNome());
 			
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE,
+			ServletUtils.addListElementIntoSession(this.request, this.session, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI_PORTE_DELEGATE,
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, idServizio),
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO, idSoggFruitoreDelServizio),
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, idFruzione),
@@ -5030,7 +5024,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 
-			String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			String tipologia = ServletUtils.getObjectFromSession(this.request, this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
 			if(tipologia!=null) {
 				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
@@ -5039,13 +5033,13 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 			
 			boolean gestioneGruppi = true;
-			String paramGestioneGruppi = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI);
+			String paramGestioneGruppi = ServletUtils.getObjectFromSession(this.request, this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI);
 			if(paramGestioneGruppi!=null && !"".equals(paramGestioneGruppi)) {
 				gestioneGruppi = Boolean.valueOf(paramGestioneGruppi);
 			}
 			
 			boolean gestioneConfigurazioni = true;
-			String paramGestioneConfigurazioni = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI);
+			String paramGestioneConfigurazioni = ServletUtils.getObjectFromSession(this.request, this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI);
 			if(paramGestioneConfigurazioni!=null && !"".equals(paramGestioneConfigurazioni)) {
 				gestioneConfigurazioni = Boolean.valueOf(paramGestioneConfigurazioni);
 			}
@@ -5070,7 +5064,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			this.pd.setSearch("");
 
 			// Utilizza la configurazione come parent
-			ServletUtils.setObjectIntoSession(this.session, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT);
+			ServletUtils.setObjectIntoSession(this.request, this.session, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT);
 			
 			List<MappingFruizionePortaDelegata> listaSenzaFiltro = this.impostaFiltroAzioneMappingFruizione(null, listaParam,ricerca, idLista);
 			
@@ -5107,7 +5101,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							}
 						}
 						if(tab>=0) {
-							ServletUtils.setObjectIntoSession(this.session, tab+"", CostantiControlStation.PARAMETRO_ID_TAB);
+							ServletUtils.setObjectIntoSession(this.request, this.session, tab+"", CostantiControlStation.PARAMETRO_ID_TAB);
 						}
 					}
 					
@@ -5242,7 +5236,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session);
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request);
 			String labelAzioni = this.getLabelAzioni(serviceBindingMessage);
 			if(gestioneFruitori) {
 				if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
@@ -6268,7 +6262,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String autorizzazioneAutenticatiToken, 
 			String autorizzazioneRuoliToken,  String autorizzazioneRuoliTipologiaToken, String autorizzazioneRuoliMatchToken) throws Exception{
 
-		String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+		String tipologia = ServletUtils.getObjectFromSession(this.request, this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 		boolean gestioneFruitori = false;
 		boolean gestioneErogatori = false;
 		if(tipologia!=null) {
@@ -6401,7 +6395,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			versioniValues[i+1] = tmp;
 		}
 
-		User user = ServletUtils.getUserFromSession(this.session);
+		User user = ServletUtils.getUserFromSession(this.request, this.session);
 
 		boolean creaDataElementVersione = this.apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(tipoProtocollo);
 		boolean visualizzaSceltaVersioneServizio = creaDataElementVersione;
@@ -8401,7 +8395,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		
 		boolean showPortiAccesso = this.apcCore.showPortiAccesso(protocollo, serviceBinding, interfaceType);
 		
-		String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+		String tipologia = ServletUtils.getObjectFromSession(this.request, this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 		boolean gestioneFruitori = false;
 		if(tipologia!=null) {
 			if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
@@ -9067,7 +9061,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 				else{
 					// Utilizza la configurazione come parent
-					ServletUtils.setObjectIntoSession(this.session, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT);
+					ServletUtils.setObjectIntoSession(this.request, this.session, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE, PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT);
 					
 					PortaDelegata pd = this.porteDelegateCore.getPortaDelegata(idPD);
 					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE,
@@ -9779,7 +9773,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String autorizzazioneAutenticatiToken, 
 			String autorizzazioneRuoliToken, String autorizzazioneRuoliTipologiaToken, String autorizzazioneRuoliMatchToken) throws Exception{
 		
-		String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+		String tipologia = ServletUtils.getObjectFromSession(this.request, this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 		boolean gestioneFruitori = false;
 		if(tipologia!=null) {
 			if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
@@ -9915,7 +9909,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
 		Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
 		Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
-		Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session);
+		Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request);
 		String labelApsChange = null;
 		
 		List<Parameter> listParametersErogazioniChange = new ArrayList<>();
@@ -9944,7 +9938,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String paramCambiaAPI = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_CAMBIA_API);
 			String paramCambiaErogatore = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_CAMBIA_SOGGETTO_EROGATORE);
 			
-			User user = ServletUtils.getUserFromSession(this.session);
+			User user = ServletUtils.getUserFromSession(this.request, this.session);
 			Boolean isAccordiCooperazione = user.getPermessi().isAccordiCooperazione();
 			Boolean isServizi = user.getPermessi().isServizi();
 			String asLabel = AccordiServizioParteSpecificaCostanti.LABEL_APC_COMPOSTO;

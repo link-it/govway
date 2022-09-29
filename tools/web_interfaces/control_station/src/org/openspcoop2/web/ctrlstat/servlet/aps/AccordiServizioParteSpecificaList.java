@@ -71,15 +71,17 @@ public final class AccordiServizioParteSpecificaList extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		try {
-			ServletUtils.setObjectIntoSession(session, null, ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI);
-			// ctrlstatHelper ch = new ctrlstatHelper (request, pd, con, session);
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+			
+			ServletUtils.setObjectIntoSession(request, session, null, ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI);
+			// ctrlstatHelper ch = new ctrlstatHelper (request, pd, con, session);
+			
 			// Preparo il menu
 			apsHelper.makeMenu();
 			
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.SERVIZI;
 						
@@ -89,19 +91,19 @@ public final class AccordiServizioParteSpecificaList extends Action {
 			if(tipologia==null) {
 				// guardo se sto entrando da altri link fuori dal menu di sinistra
 				// in tal caso e' gia' impostato
-				tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+				tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			}
 			boolean gestioneFruitori = false;
 			boolean gestioneErogatori = false;
 			if(tipologia!=null) {
 				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
-					ServletUtils.setObjectIntoSession(session, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE,
+					ServletUtils.setObjectIntoSession(request, session, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE,
 							AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 					ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
 					gestioneErogatori = true;
 				}
 				else if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
-					ServletUtils.setObjectIntoSession(session, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE,
+					ServletUtils.setObjectIntoSession(request, session, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE,
 							AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 					
 					boolean filtraSoloEsterni = true;
@@ -123,12 +125,12 @@ public final class AccordiServizioParteSpecificaList extends Action {
 					gestioneFruitori = true;
 				}
 				else if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_COMPLETA.equals(tipologia)) {
-					ServletUtils.removeObjectFromSession(session, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+					ServletUtils.removeObjectFromSession(request, session, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 				}
 			}
 			
 			String superUser   = ServletUtils.getUserLoginFromSession(session);
-			PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
+			PermessiUtente pu = ServletUtils.getUserFromSession(request, session).getPermessi();
 			
 			boolean [] permessi = new boolean[2];
 			permessi[0] = pu.isServizi();
@@ -149,14 +151,14 @@ public final class AccordiServizioParteSpecificaList extends Action {
 			}
 			
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
 					ForwardParams.LIST());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,
 					ForwardParams.LIST());
 		}  

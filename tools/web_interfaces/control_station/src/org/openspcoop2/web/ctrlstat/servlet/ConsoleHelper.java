@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.UUID;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -385,6 +386,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		return postbackElementName!=null && postbackElementName.startsWith(Costanti.PARAMETRO_FILTER_VALUE);
 	}
 	
+	@Override
+	public <T> T getAttributeFromSession(String attributeName, Class<T> type){
+		return ServletUtils.getObjectFromSession(this.request, this.session, type, attributeName);
+	}
+	
 	public void clearFiltroSoggettoByPostBackProtocollo(int posizioneFiltroProtocollo, ISearch ricerca, int idLista) throws Exception {
 		String postBackElement = this.getPostBackElementName();
 		if((Costanti.PARAMETRO_FILTER_VALUE+posizioneFiltroProtocollo).equals(postBackElement)) {
@@ -471,32 +477,33 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	
 	/** Modalita Interfaccia */
-	protected InterfaceType tipoInterfaccia = InterfaceType.STANDARD;
+//	protected InterfaceType tipoInterfaccia = InterfaceType.STANDARD;
 	
 	public InterfaceType getTipoInterfaccia() {
-		return this.tipoInterfaccia;
+		User user = ServletUtils.getUserFromSession(this.request, this.session);
+		return user.getInterfaceType();
 	}
-	public void setTipoInterfaccia(InterfaceType tipoInterfaccia) {
-		this.tipoInterfaccia = tipoInterfaccia;
-	}
-	public void updateTipoInterfaccia() {
-		User user = ServletUtils.getUserFromSession(this.session);
-		this.tipoInterfaccia = user.getInterfaceType();
-	}
+//	public void setTipoInterfaccia(InterfaceType tipoInterfaccia) {
+//		this.tipoInterfaccia = tipoInterfaccia;
+//	}
+//	public void updateTipoInterfaccia() {
+//		User user = ServletUtils.getUserFromSession(this.request, this.session);
+//		this.tipoInterfaccia = user.getInterfaceType();
+//	}
 	@Override
 	public boolean isModalitaCompleta() {
-		return InterfaceType.equals(this.tipoInterfaccia, 
+		return InterfaceType.equals(this.getTipoInterfaccia(), 
 				InterfaceType.COMPLETA); 
 	}
 	@Override
 	public boolean isModalitaAvanzata() {
 		// considero anche l'interfaccia completa
-		return InterfaceType.equals(this.tipoInterfaccia, 
+		return InterfaceType.equals(this.getTipoInterfaccia(), 
 				InterfaceType.AVANZATA,InterfaceType.COMPLETA); 
 	}
 	@Override
 	public boolean isModalitaStandard() {
-		return InterfaceType.equals(this.tipoInterfaccia, 
+		return InterfaceType.equals(this.getTipoInterfaccia(), 
 				InterfaceType.STANDARD); 
 	}
 
@@ -506,7 +513,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	@Override
 	public String getSoggettoMultitenantSelezionato() {
-		return ServletUtils.getUserFromSession(this.session).getSoggettoSelezionatoPddConsole();
+		return ServletUtils.getUserFromSession(this.request, this.session).getSoggettoSelezionatoPddConsole();
 	}
 	
 	/** Soggetto Selezionato da govwayMonitor */
@@ -514,7 +521,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return this.core.isMultitenant() && StringUtils.isNotEmpty(this.getSoggettoMultitenantSelezionatoConsoleMonitoraggio());
 	}
 	public String getSoggettoMultitenantSelezionatoConsoleMonitoraggio() {
-		return ServletUtils.getUserFromSession(this.session).getSoggettoSelezionatoPddMonitor();
+		return ServletUtils.getUserFromSession(this.request, this.session).getSoggettoSelezionatoPddMonitor();
 	}
 	
 	private boolean errorInit = false;
@@ -552,10 +559,10 @@ public class ConsoleHelper implements IConsoleHelper {
 		        this.request.setCharacterEncoding(Charset.UTF_8.getValue());
 			}
 			
-			User user = ServletUtils.getUserFromSession(this.session);
-			if(user != null) {
-				this.tipoInterfaccia = user.getInterfaceType();
-			}
+//			User user = ServletUtils.getUserFromSession(this.request, this.session);
+//			if(user != null) {
+//				this.tipoInterfaccia = user.getInterfaceType();
+//			}
 			
 			this.core = core;
 			this.pddCore = new PddCore(this.core);
@@ -640,6 +647,9 @@ public class ConsoleHelper implements IConsoleHelper {
 			}catch(Exception e) {
 				this.size = 50;
 			}
+			
+			// inizializzo l'id tab
+			this.getTabId(); 
 		} catch (Exception e) {
 			this.log.error("Exception ctrlstatHelper: " + e.getMessage(), e);
 			this.errorInit = true;
@@ -648,6 +658,30 @@ public class ConsoleHelper implements IConsoleHelper {
 		this.idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
 		this.idAccordoFactory = IDAccordoFactory.getInstance();
 		this.idServizioFactory = IDServizioFactory.getInstance();
+	}
+	
+	public String getTabId() throws Exception {
+		Object idTabObj = this.request.getAttribute(Costanti.PARAMETER_TAB_KEY);
+		
+		if(idTabObj == null) {
+			this.log.trace("CHECKTABID: non trovato come attributo");
+			String idTab = this.getParameter(Costanti.PARAMETER_TAB_KEY);
+			
+			if(idTab == null) { // nuovoTab o nuova finestra o primo accesso
+				this.log.trace("CHECKTABID: non trovato come parametro");
+				idTab = UUID.randomUUID().toString().replace("-", "");
+				this.request.setAttribute(Costanti.PARAMETER_TAB_KEY, idTab);
+				this.log.debug("CHECKTABID: generato nuovo id: ["+idTab+"]");
+				return idTab;
+			}
+			
+			this.request.setAttribute(Costanti.PARAMETER_TAB_KEY, idTab);
+			this.log.trace("CHECKTABID: trovato come parametro: ["+idTab+"]");
+			return idTab;
+		}
+		
+		this.log.trace("CHECKTABID: trovato come attributo: ["+((String)idTabObj)+"]");
+		return (String) idTabObj;
 	}
 	
 //	public boolean isUseIdSogg() {
@@ -1524,7 +1558,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			User u = this.utentiCore.getUser(userLogin);
 			pu = u.getPermessi();
 
-			Boolean singlePdD = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+			Boolean singlePdD = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 			if(singlePdD==null) {
 				singlePdD = this.core!=null ? this.core.isSinglePdD() : true;
 			}
@@ -1903,7 +1937,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					
 					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 						dimensioneEntries++; // importa
-						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.session)){
+						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.request, this.session)){
 							dimensioneEntries++; // esporta
 							if(isModalitaAvanzata){
 								dimensioneEntries++; // elimina
@@ -1977,7 +2011,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
 								ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT;
 						index++;
-						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.session)){
+						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.request, this.session)){
 							entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
 							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
 							index++;
@@ -2027,7 +2061,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					String[][] entriesUtenti = null;
 					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 						dimensioneEntries++; // importa
-						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.session)){
+						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.request, this.session)){
 							dimensioneEntries++; // esporta
 							if(isModalitaAvanzata){
 								dimensioneEntries++; // elimina
@@ -2072,7 +2106,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
 									ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT;
 							index++;
-							if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.session)){
+							if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.request, this.session)){
 								entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
 								entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
 								index++;
@@ -2128,7 +2162,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					int dimensioneEntries = 1; //  audit
 					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 						dimensioneEntries++; // importa
-						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.session)){
+						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.request, this.session)){
 							dimensioneEntries++; // esporta
 							if(isModalitaAvanzata){
 								dimensioneEntries++; // elimina
@@ -2170,7 +2204,7 @@ public class ConsoleHelper implements IConsoleHelper {
 						entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
 								ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT;
 						index++;
-						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.session)){
+						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.request, this.session)){
 							entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
 							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
 							index++;
@@ -2218,7 +2252,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					String[][] entriesUtenti = null;
 					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 						dimensioneEntries++; // importa
-						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.session)){
+						if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.request, this.session)){
 							dimensioneEntries++; // esporta
 							if(isModalitaAvanzata){
 								dimensioneEntries++; // elimina
@@ -2263,7 +2297,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
 									ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA+"="+ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT;
 							index++;
-							if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.session)){
+							if(exporterUtils.existsAtLeastOneExportMode(ArchiveType.CONFIGURAZIONE, this.request, this.session)){
 								entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
 								entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
 								index++;
@@ -2391,6 +2425,17 @@ public class ConsoleHelper implements IConsoleHelper {
 							newUrl = newUrl + CostantiControlStation.PARAMETRO_RESET_SEARCH;
 							newUrl = newUrl + "=";
 							newUrl = newUrl + Costanti.CHECK_BOX_ENABLED;
+							
+							
+							
+							// aggiungo l'identificativo del tab
+							if(this.getTabId() != null) {
+								newUrl = newUrl + "&";
+								newUrl = newUrl + Costanti.PARAMETER_PREV_TAB_KEY;
+								newUrl = newUrl + "=";
+								newUrl = newUrl + this.getTabId();
+							}
+							
 							voce[1] = newUrl;
 						}
 					}
@@ -11011,7 +11056,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String nomePorta, String objectName, List<Parameter> listaParametriSessione,
 			String labelPerPorta, ServiceBinding serviceBinding, AccordoServizioParteComuneSintetico aspc) throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, objectName,listaParametriSessione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, objectName,listaParametriSessione);
 
 			// setto la barra del titolo
 
@@ -11563,7 +11608,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			boolean isFilterProtocollo = filterProtocollo!=null && !"".equals(filterProtocollo) && !CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo);
 			
-			List<String> protocolli = this.core.getProtocolli(this.session);
+			List<String> protocolli = this.core.getProtocolli(this.request, this.session);
 			if(isFilterProtocollo) {
 				protocolli.clear();
 				protocolli.add(filterProtocollo);
@@ -11600,7 +11645,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			boolean isFilterProtocollo = filterProtocollo!=null && !"".equals(filterProtocollo) && !CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo);
 			
-			List<String> protocolli = this.core.getProtocolli(this.session);
+			List<String> protocolli = this.core.getProtocolli(this.request, this.session);
 			if(isFilterProtocollo) {
 				protocolli.clear();
 				protocolli.add(filterProtocollo);
@@ -11760,7 +11805,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			boolean isFilterSoggetto = filterSoggetto!=null && !"".equals(filterSoggetto) && !CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI.equals(filterSoggetto);
 			boolean isFilterGruppo = filterGruppo!=null && !"".equals(filterGruppo) && !CostantiControlStation.DEFAULT_VALUE_PARAMETRO_GRUPPO_QUALSIASI.equals(filterGruppo);
 			
-			List<String> protocolli = this.core.getProtocolli(this.session);
+			List<String> protocolli = this.core.getProtocolli(this.request, this.session);
 			if(isFilterProtocollo) {
 				protocolli.clear();
 				protocolli.add(filterProtocollo);
@@ -11841,7 +11886,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			boolean isFilterProtocollo = filterProtocollo!=null && !"".equals(filterProtocollo) && !CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI.equals(filterProtocollo);
 			boolean isFilterSoggetto = filterSoggetto!=null && !"".equals(filterSoggetto) && !CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SOGGETTO_QUALSIASI.equals(filterSoggetto);
 						
-			List<String> protocolli = this.core.getProtocolli(this.session);
+			List<String> protocolli = this.core.getProtocolli(this.request, this.session);
 			if(isFilterProtocollo) {
 				protocolli.clear();
 				protocolli.add(filterProtocollo);
@@ -12112,7 +12157,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(this.core.isUsedByApi()) {
 			protocolli = ProtocolFactoryManager.getInstance().getProtocolNamesAsList();
 		}else {
-			protocolli = this.core.getProtocolli(this.session);
+			protocolli = this.core.getProtocolli(this.request, this.session);
 		}
 		if(protocolli!=null && protocolli.size()>0) {
 			if(protocolli.size()==1) {
@@ -12127,7 +12172,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return this.addFilterProtocol(ricerca, idLista, false);
 	}
 	public String addFilterProtocol(ISearch ricerca, int idLista, boolean postBack) throws Exception{
-		List<String> protocolli = this.core.getProtocolli(this.session);
+		List<String> protocolli = this.core.getProtocolli(this.request, this.session);
 		return _addFilterProtocol(ricerca, idLista, protocolli, postBack);
 	}
 	
@@ -12267,7 +12312,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				connettoriList.add(TipiConnettore.HTTPS.toString());
 			}
 			
-			Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
+			Boolean confPers = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
 			if(confPers==null) {
 				confPers = this.core!=null ? this.core.isShowConfigurazioniPersonalizzate() : true;
 			}
@@ -14183,7 +14228,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	/** Gestione Properties MVC */
 	
 	public void aggiornaConfigurazioneProperties(ConfigBean configurazione) throws Exception {
-		ConfigBean oldConfigurazione = ServletUtils.readConfigurazioneBeanFromSession(this.session, configurazione.getId());
+		ConfigBean oldConfigurazione = ServletUtils.readConfigurazioneBeanFromSession(this.request, this.session, configurazione.getId());
 		
 		for (String key : configurazione.getListakeys()) {
 			Boolean oldItemVisible = oldConfigurazione != null ? oldConfigurazione.getItem(key).getVisible() : null;
@@ -14256,7 +14301,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	public boolean hasOnlyPermessiDiagnosticaReportistica(User user) throws Exception {
 		PermessiUtente pu = user.getPermessi();
-		Boolean singlePdD = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+		Boolean singlePdD = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 		if(singlePdD==null) {
 			singlePdD = this.core!=null ? this.core.isSinglePdD() : true;
 		}

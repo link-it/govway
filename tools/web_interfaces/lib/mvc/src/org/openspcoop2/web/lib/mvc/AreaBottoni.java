@@ -23,6 +23,7 @@
 
 package org.openspcoop2.web.lib.mvc;
 
+import java.io.Serializable;
 import java.util.Vector;
 
 /**
@@ -35,7 +36,12 @@ import java.util.Vector;
  * @version $Rev$, $Date$
  * 
  */
-public class AreaBottoni {
+public class AreaBottoni implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
     String title;
     Vector<?> bottoni;

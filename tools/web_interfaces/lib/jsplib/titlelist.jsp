@@ -24,21 +24,21 @@
 <%
 String iddati = "";
 String ct = request.getContentType();
-if (ct != null && (ct.indexOf("multipart/form-data") != -1)) {
-  iddati = (String) session.getAttribute("iddati");
+if (ct != null && (ct.indexOf(Costanti.MULTIPART) != -1)) {
+  iddati = ServletUtils.getObjectFromSession(request, session, String.class, Costanti.SESSION_ATTRIBUTE_ID_DATI);
 } else {
-  iddati = request.getParameter("iddati");
+  iddati = request.getParameter(Costanti.PARAMETER_NAME_ID_DATI);
 }
-String gdString = "GeneralData";
-String pdString = "PageData";
+String gdString = Costanti.SESSION_ATTRIBUTE_GENERAL_DATA;
+String pdString = Costanti.SESSION_ATTRIBUTE_PAGE_DATA;
 if (iddati != null && !iddati.equals("notdefined")) {
   gdString += iddati;
   pdString += iddati;
 }
 else
   iddati = "notdefined";
-GeneralData gd = (GeneralData) session.getAttribute(gdString);
-PageData pd = (PageData) session.getAttribute(pdString);
+GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
+PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
 String showListInfos = request.getParameter("showListInfos");
 Vector<?> v = pd.getDati();
 
@@ -48,7 +48,7 @@ String pageDescription = pd.getPageDescription();
 String messageTitle = pd.getMessageTitle();
 boolean mostraLinkHome = pd.isMostraLinkHome();
 Vector<GeneralLink> titlelist = pd.getTitleList();
-
+String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
 <table style="width:100%;">
 	<tbody>
@@ -67,6 +67,7 @@ Vector<GeneralLink> titlelist = pd.getTitleList();
 						    if (!l.getLabel().equals("")) {
 						    	if (i != titlelist.size()-1) {
 					        		if (!l.getUrl().equals("")) {
+					        		  l.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
 							          //non ultimo con url
 							          %>
 							         	<li><a href="<%= l.getUrl() %>" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;"><span><%= l.getLabel() %></span></a></li>

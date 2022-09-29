@@ -608,7 +608,7 @@ public final class PorteDelegateAdd extends Action {
 				pd.setDati(dati);
 
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE, ForwardParams.ADD());
 				//				(mapping.findForward("AddPortaDelegataForm"));
@@ -670,7 +670,7 @@ public final class PorteDelegateAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE, ForwardParams.ADD());
 			}
@@ -964,7 +964,7 @@ public final class PorteDelegateAdd extends Action {
 			porteDelegateCore.performCreateOperation(userLogin, porteDelegateHelper.smista(), portaDelegata);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.PORTE_DELEGATE_BY_SOGGETTO;
 			ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
@@ -972,12 +972,12 @@ public final class PorteDelegateAdd extends Action {
 
 			porteDelegateHelper.preparePorteDelegateList(ricerca, lista,idLista);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE, ForwardParams.ADD());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE, 
 					ForwardParams.ADD());
 		}  

@@ -50,10 +50,12 @@ import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.IVersionInfo;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.resources.MapReader;
+import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
+import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.dao.DBLoginDAO;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -115,6 +117,8 @@ public class LoginBean extends AbstractLoginBean {
 	
 	private boolean checkPasswordExpire = false;
 	
+	private boolean salvaModificheProfiloSuDB = false;
+	
 	public LoginBean(boolean initDao){
 		super(initDao);
 		this.caricaProperties();
@@ -151,6 +155,8 @@ public class LoginBean extends AbstractLoginBean {
 			}
 			
 			this.checkPasswordExpire = PddMonitorProperties.getInstance(this.log).isCheckPasswordExpire(this.passwordVerifier);
+			
+			this.salvaModificheProfiloSuDB = PddMonitorProperties.getInstance(this.log).isModificaProfiloUtenteDaLinkAggiornaDB();
 
 		} catch (Exception e) {
 			this.log.error("Errore durante la configurazione del logout: " + e.getMessage(),e);
@@ -205,7 +211,7 @@ public class LoginBean extends AbstractLoginBean {
 					this.setSoggettoPddMonitor(this.getLoggedUser().getUtente().getSoggettoSelezionatoPddMonitor());
 					this.setvInfo(this.getLoginDao().readVersionInfo());
 					this.log.info("Utente ["+this.getUsername()+"] autenticato con successo");
-					return "loginSuccess";
+					return LoginBean.getOutcomeLoginSuccess(this.getLoggedUser().getUtente());
 				}else{
 					MessageUtils.addErrorMsg("Il sistema non riesce ad autenticare l'utente "+this.getUsername()+": Username o password non validi.");
 				}
@@ -228,7 +234,7 @@ public class LoginBean extends AbstractLoginBean {
 					this.setLoggedIn(true);
 					this.setvInfo(this.getLoginDao().readVersionInfo());
 					this.log.info("Utente ["+this.getUsername()+"] autenticato con successo");
-					return "loginSuccess";
+					return LoginBean.getOutcomeLoginSuccess(this.getLoggedUser().getUtente());
 				}
 			} catch (ServiceException e) {
 				this.loginErrorMessage = "Si e' verificato un errore durante il login, impossibile autenticare l'utente "+this.getUsername()+"."; 
@@ -278,6 +284,28 @@ public class LoginBean extends AbstractLoginBean {
 			}
 			return null;
 		}
+		
+	}
+	
+	public static String getOutcomeLoginSuccess(User user) {
+		String homePage = null;
+		for (Stato stato : user.getStati()) {
+			if(stato.getOggetto().equals(Costanti.OGGETTO_STATO_UTENTE_HOME_PAGE)) {		
+				homePage = Utils.extractValoreStato(stato.getStato());
+				break;
+			}
+		}
+		
+		if(homePage != null) {
+			if(homePage.equals(Costanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE)) {
+				return "loginSuccess";
+			}
+			else if(homePage.equals(Costanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI)) {
+				return "transazioniStart";
+			}
+		}
+		
+		return "transazioniStart";
 		
 	}
 
@@ -459,7 +487,9 @@ public class LoginBean extends AbstractLoginBean {
 	public String cambiaModalita() {
 		this.getLoggedUser().getUtente().setProtocolloSelezionatoPddMonitor(this.modalita);
 		try {
-			this.loginDao.salvaModalita(this.getLoggedUser().getUtente());
+			if(this.salvaModificheProfiloSuDB) {
+				this.loginDao.salvaModalita(this.getLoggedUser().getUtente());
+			}
 		} catch (NotFoundException | ServiceException e) {
 			String errorMessage = "Si e' verificato un errore durante il cambio della modalita', si prega di riprovare piu' tardi.";
 			this.log.error(e.getMessage(),e);
@@ -723,7 +753,9 @@ public class LoginBean extends AbstractLoginBean {
 		this.getLoggedUser().getUtente().setSoggettoSelezionatoPddMonitor(this.soggettoPddMonitor);
 		
 		try {
-			this.loginDao.salvaSoggettoPddMonitor(this.getLoggedUser().getUtente());
+			if(this.salvaModificheProfiloSuDB) {
+				this.loginDao.salvaSoggettoPddMonitor(this.getLoggedUser().getUtente());
+			}
 		} catch (NotFoundException | ServiceException e) {
 			String errorMessage = "Si e' verificato un errore durante il cambio del soggetto, si prega di riprovare piu' tardi.";
 			this.log.error(e.getMessage(),e);
@@ -748,7 +780,9 @@ public class LoginBean extends AbstractLoginBean {
 		this.getLoggedUser().getUtente().setSoggettoSelezionatoPddMonitor(this.soggettoPddMonitor);
 		
 		try {
-			this.loginDao.salvaSoggettoPddMonitor(this.getLoggedUser().getUtente());
+			if(this.salvaModificheProfiloSuDB) {
+				this.loginDao.salvaSoggettoPddMonitor(this.getLoggedUser().getUtente());
+			}
 		} catch (NotFoundException | ServiceException e) {
 			String errorMessage = "Si e' verificato un errore durante il cambio del soggetto, si prega di riprovare piu' tardi.";
 			this.log.error(e.getMessage(),e);
@@ -841,11 +875,15 @@ public class LoginBean extends AbstractLoginBean {
 		if(protocolliDispondibili.size()==1) {
 			protocolloSelezionato = protocolliDispondibili.get(0); // forzo
 		}
+		return listaSoggettiDisponibiliPerProtocollo(this.getLoggedUser(), protocolloSelezionato);
+	}
+
+	public static List<Soggetto> listaSoggettiDisponibiliPerProtocollo(UserDetailsBean userDetailsBean, String protocolloSelezionato) throws Exception {
 		List<Soggetto> soggettiOperativiDisponibiliUtente = new ArrayList<>();
-		List<Soggetto> soggettiOperativi = DynamicPdDBeanUtils.getInstance(this.log).getListaSoggetti(protocolloSelezionato, TipoPdD.OPERATIVO);
+		List<Soggetto> soggettiOperativi = DynamicPdDBeanUtils.getInstance(LoggerManager.getPddMonitorCoreLogger()).getListaSoggetti(protocolloSelezionato, TipoPdD.OPERATIVO);
 		
 		if(protocolloSelezionato!=null && !"".equals(protocolloSelezionato) && soggettiOperativi != null && !soggettiOperativi.isEmpty()) {
-			List<Soggetto> soggettiAssociatiUtente = Utility.getSoggettiOperativiAssociatiAlProfilo(this.getLoggedUser(), protocolloSelezionato);  
+			List<Soggetto> soggettiAssociatiUtente = Utility.getSoggettiOperativiAssociatiAlProfilo(userDetailsBean, protocolloSelezionato);  
 			
 			if(soggettiAssociatiUtente.isEmpty())
 				return soggettiOperativi;
@@ -1106,7 +1144,7 @@ public class LoginBean extends AbstractLoginBean {
 				this.setLoggedIn(true);
 				this.setvInfo(this.getLoginDao().readVersionInfo());
 				this.log.info("Profilo Utente ["+this.getUsername()+"] caricato con successo");
-				return "loginSuccess";
+				return LoginBean.getOutcomeLoginSuccess(this.getLoggedUser().getUtente());
 			}
 			return "login";
 		} catch (ServiceException e) {

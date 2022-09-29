@@ -451,7 +451,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			List<CanaleConfigurazione> canaleList = gestioneCanali != null ? gestioneCanali.getCanaleList() : new ArrayList<>();
 			boolean gestioneCanaliEnabled = gestioneCanali != null && org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO.equals(gestioneCanali.getStato());
 
-			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
 			boolean gestioneErogatori = false;
 			if(tipologia!=null) {
@@ -513,14 +513,14 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			// Tipi protocollo supportati
 			boolean filtraSoggettiEsistenti = true;
 			boolean filtraAccordiEsistenti = true;
-			List<String> listaTipiProtocollo = apcCore.getProtocolliByFilter(session, filtraSoggettiEsistenti, null, filtraAccordiEsistenti, false, true);
+			List<String> listaTipiProtocollo = apcCore.getProtocolliByFilter(request, session, filtraSoggettiEsistenti, null, filtraAccordiEsistenti, false, true);
 					
 			// Preparo il menu
 			apsHelper.makeMenu();
 
 			if(listaTipiProtocollo.size()<=0) {
 				
-				List<String> _listaTipiProtocolloSoloSoggetti = apcCore.getProtocolliByFilter(session, filtraSoggettiEsistenti, null, !filtraAccordiEsistenti, false, true);			
+				List<String> _listaTipiProtocolloSoloSoggetti = apcCore.getProtocolliByFilter(request, session, filtraSoggettiEsistenti, null, !filtraAccordiEsistenti, false, true);			
 				if(_listaTipiProtocolloSoloSoggetti.size()>0) {
 					pd.setMessage("Non risultano registrate API", Costanti.MESSAGE_TYPE_INFO);
 				}
@@ -540,7 +540,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
 						ForwardParams.ADD());
@@ -548,7 +548,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			
 			this.tipoProtocollo = apsHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
 			if(this.tipoProtocollo == null){
-				this.tipoProtocollo = apsCore.getProtocolloDefault(session, listaTipiProtocollo);
+				this.tipoProtocollo = apsCore.getProtocolloDefault(request, session, listaTipiProtocollo);
 			}
 			
 			boolean connettoreStatic = false;
@@ -607,7 +607,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						// se ancora non ho scelto l'accordo da mostrare quando entro
 						if(accordoPrimoAccesso == -1){
 							//mostro il primo accordo che ha tipo che corrisponde a quello di default
-							if(apcCore.getProtocolloDefault(session,listaTipiProtocollo).equals(soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo()))){
+							if(apcCore.getProtocolloDefault(request, session,listaTipiProtocollo).equals(soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo()))){
 								accordoPrimoAccesso = i;
 							}
 						}
@@ -859,7 +859,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
 						ForwardParams.ADD());
@@ -891,7 +891,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 						pd.setDati(dati);
 
-						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+						ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 						return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
 								ForwardParams.ADD());
@@ -971,7 +971,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 						pd.setDati(dati);
 
-						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+						ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 						return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
 								ForwardParams.ADD());
@@ -1022,7 +1022,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	
 						pd.setDati(dati);
 	
-						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+						ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 	
 						return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
 								ForwardParams.ADD());
@@ -1251,7 +1251,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			String servletList = null;
 			String labelList = null;
 			
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request);
 			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 				servletList = ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST;
 				if(gestioneFruitori) {
@@ -1651,7 +1651,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,
 						ForwardParams.ADD());
@@ -1867,7 +1867,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
 						ForwardParams.ADD());
@@ -2116,7 +2116,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					pd.setDati(dati);
 
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
 							ForwardParams.ADD());
@@ -2238,10 +2238,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			apsHelper.deleteBinaryParameters(this.wsdlimpler,this.wsdlimplfru);
 			apsHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);
 			
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			
 			if(apsCore.isSetSearchAfterAdd()) {
-				apsCore.setSearchAfterAdd(Liste.SERVIZI, asps.getNome(), session, ricerca);
+				apsCore.setSearchAfterAdd(Liste.SERVIZI, asps.getNome(), request, session, ricerca);
 			}
 			
 			boolean [] permessi = AccordiServizioParteSpecificaUtilities.getPermessiUtente(apsHelper);
@@ -2254,20 +2254,20 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			
 			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 				apsHelper.prepareErogazioniList(ricerca, listaAccordi);
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.ADD());
 			}
 
 			apsHelper.prepareServiziList(ricerca, listaAccordi);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, ForwardParams.ADD());
 
 
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,
 					ForwardParams.ADD());
 		}  

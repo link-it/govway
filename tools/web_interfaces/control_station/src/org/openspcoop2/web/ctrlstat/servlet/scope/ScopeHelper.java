@@ -266,7 +266,7 @@ public class ScopeHelper extends ConsoleHelper{
 	public void prepareScopeList(ISearch ricerca, List<Scope> lista)
 			throws Exception {
 		try {
-			ServletUtils.addListElementIntoSession(this.session, ScopeCostanti.OBJECT_NAME_SCOPE);
+			ServletUtils.addListElementIntoSession(this.request, this.session, ScopeCostanti.OBJECT_NAME_SCOPE);
 			
 			boolean modalitaCompleta = this.isModalitaCompleta();
 			
@@ -303,7 +303,7 @@ public class ScopeHelper extends ConsoleHelper{
 				String protocollo = filterProtocollo;
 				if(protocollo==null) {
 					// significa che e' stato selezionato un protocollo nel menu in alto a destra
-					List<String> protocolli = this.core.getProtocolli(this.session);
+					List<String> protocolli = this.core.getProtocolli(this.request, this.session);
 					if(protocolli!=null && protocolli.size()==1) {
 						protocollo = protocolli.get(0);
 					}
@@ -397,7 +397,7 @@ public class ScopeHelper extends ConsoleHelper{
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.SCOPE, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.SCOPE, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 

@@ -23,6 +23,8 @@
 
 package org.openspcoop2.web.lib.mvc;
 
+import java.io.Serializable;
+
 /**
  * GeneralLink
  * 
@@ -33,9 +35,13 @@ package org.openspcoop2.web.lib.mvc;
  * @version $Rev$, $Date$
  * 
  */
-public class GeneralLink {
+public class GeneralLink implements Serializable{
 
-    String label;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	String label;
     String url;
     String target;
     String onclick;
@@ -65,17 +71,12 @@ public class GeneralLink {
     }
     
     public void setUrl(String servletName,Parameter ... parameter) {
-		this.url = servletName;
-		if(parameter!=null && parameter.length>0){
-			this.url = this.url + "?";
-			for (int i = 0; i < parameter.length; i++) {
-				if(i>0){
-					this.url = this.url + "&";
-				}
-				this.url = this.url + parameter[i].toString();
-			}
-		}
+		this.url = DataElement._getUrlValue(servletName, parameter);
 	}
+    
+    public void addParameter(Parameter ... parameter) {
+    	this.url = DataElement._getUrlValue(this.url, parameter);
+    }
 
     public String getUrl() {
 	return this.url;

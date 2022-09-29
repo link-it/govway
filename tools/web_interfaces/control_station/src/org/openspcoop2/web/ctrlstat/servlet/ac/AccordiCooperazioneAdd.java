@@ -140,11 +140,11 @@ public final class AccordiCooperazioneAdd extends Action {
 			acHelper.makeMenu();
 
 			// Tipi protocollo supportati
-			List<String> listaTipiProtocollo = acCore.getProtocolliByFilter(session, true, false);
+			List<String> listaTipiProtocollo = acCore.getProtocolliByFilter(request, session, true, false);
 			
 			// primo accesso inizializzo con il protocollo di default
 			if(this.tipoProtocollo == null){
-				this.tipoProtocollo = acCore.getProtocolloDefault(session, listaTipiProtocollo);
+				this.tipoProtocollo = acCore.getProtocolloDefault(request, session, listaTipiProtocollo);
 			}
 			
 			if(listaTipiProtocollo.size()<=0) {
@@ -157,7 +157,7 @@ public final class AccordiCooperazioneAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiCooperazioneCostanti.OBJECT_NAME_ACCORDI_COOPERAZIONE, 
 						ForwardParams.ADD());
@@ -294,7 +294,7 @@ public final class AccordiCooperazioneAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiCooperazioneCostanti.OBJECT_NAME_ACCORDI_COOPERAZIONE,
 						ForwardParams.ADD());
@@ -358,7 +358,7 @@ public final class AccordiCooperazioneAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiCooperazioneCostanti.OBJECT_NAME_ACCORDI_COOPERAZIONE,
 						ForwardParams.ADD());
@@ -426,7 +426,7 @@ public final class AccordiCooperazioneAdd extends Action {
 
 					pd.setDati(dati);
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiCooperazioneCostanti.OBJECT_NAME_ACCORDI_COOPERAZIONE,
 							ForwardParams.ADD());
@@ -443,7 +443,7 @@ public final class AccordiCooperazioneAdd extends Action {
 			acHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<AccordoCooperazione> listaAC = null;
 			if(acCore.isVisioneOggettiGlobale(userLogin)){
@@ -454,12 +454,12 @@ public final class AccordiCooperazioneAdd extends Action {
 
 			acHelper.prepareAccordiCooperazioneList(listaAC, ricerca);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiCooperazioneCostanti.OBJECT_NAME_ACCORDI_COOPERAZIONE,
 					ForwardParams.ADD());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiCooperazioneCostanti.OBJECT_NAME_ACCORDI_COOPERAZIONE, 
 					ForwardParams.ADD());
 		}  

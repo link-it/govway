@@ -20,5 +20,6 @@ accesso (:numref:`mon_login_fig`).
         :maxdepth: 2
 
         profili
+	utente
 	homepage
 	testata

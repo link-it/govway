@@ -168,11 +168,11 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 		boolean multitenant = this.pddCore.isMultitenant();
 
-//		Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
+//		Boolean confPers = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 		
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+		Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 		if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 		
 		boolean isConfigurazione = parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE; 
@@ -817,7 +817,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			String servletChiamante = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ADD;
 			
 			boolean isSupportatoAutenticazioneSoggetti = true; // sempre nelle porte delegate
-			Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
+			Boolean confPers = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
 			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale,
@@ -2118,7 +2118,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
 			IExtendedListServlet extendedServletList = this.core.getExtendedServletPortaDelegata();
@@ -2144,7 +2144,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				// In teoria non dovrei mai trovarmi qui
 				break;
 			case PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_SOGGETTO:
-				ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE,
+				ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE,
 						new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, id));
 				
 				String soggettoTitle = null;
@@ -2175,7 +2175,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				break;
 			case PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE:
 			default:
-				ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE);
+				ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE);
 				lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PORTE_DELEGATE, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST));
 				if(search.equals("")){
 					this.pd.setSearchDescription("");
@@ -2199,7 +2199,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				ServletUtils.enabledPageDataSearch(this.pd, PorteDelegateCostanti.LABEL_PORTE_DELEGATE, search);
 			}
 
-			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 			
 			// setto le label delle colonne
 			List<String> labelsList= new ArrayList<String>();
@@ -2442,7 +2442,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			throws Exception {
 		try {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -2470,7 +2470,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			if(token!=null) {
 				listP.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TOKEN_AUTHORIZATION, token));
 			}
-			ServletUtils.addListElementIntoSession(this.session,  PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO,
+			ServletUtils.addListElementIntoSession(this.request, this.session,  PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO,
 					listP);
 			
 			boolean isToken = token!=null && !"".equals(token) && Boolean.valueOf(token);
@@ -2596,7 +2596,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			throws Exception {
 		try {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -2624,7 +2624,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			if(token!=null) {
 				listP.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TOKEN_AUTHORIZATION, token));
 			}
-			ServletUtils.addListElementIntoSession(this.session,  PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_RUOLI,
+			ServletUtils.addListElementIntoSession(this.request, this.session,  PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_RUOLI,
 					listP);
 
 			boolean isToken = token!=null && !"".equals(token) && Boolean.valueOf(token);
@@ -2742,7 +2742,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			throws Exception {
 		try {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -2760,7 +2760,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_SCOPE, pId, pIdSoggetto, pIdAsps, pIdFrizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_SCOPE, pId, pIdSoggetto, pIdAsps, pIdFrizione);
 
 			int idLista = Liste.PORTE_DELEGATE_SCOPE;
 			int limit = ricerca.getPageSize(idLista);
@@ -2880,10 +2880,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE, pId, pIdSoggetto, pIdAsps, pIdFrizione); 
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE, pId, pIdSoggetto, pIdAsps, pIdFrizione); 
 
 			int idLista = Liste.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE;
 			int limit = ricerca.getPageSize(idLista);
@@ -2994,14 +2994,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				idFruizione = "";
 
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 
 			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
 			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST, pId, pIdSoggetto, pIdAsps, pIdFrizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST, pId, pIdSoggetto, pIdAsps, pIdFrizione);
 
 			int idLista = Liste.PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA;
 			int limit = ricerca.getPageSize(idLista);
@@ -3203,7 +3203,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		try {
 
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -3221,7 +3221,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST, pId, pIdSoggetto, pIdAsps, pIdFrizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST, pId, pIdSoggetto, pIdAsps, pIdFrizione);
 
 			int idLista = Liste.PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST;
 			int limit = ricerca.getPageSize(idLista);
@@ -3320,7 +3320,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		try {
 
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -3338,7 +3338,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RESPONSE, pId, pIdSoggetto, pIdAsps, pIdFrizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RESPONSE, pId, pIdSoggetto, pIdAsps, pIdFrizione);
 
 			int idLista = Liste.PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RISPOSTA;
 			int limit = ricerca.getPageSize(idLista);
@@ -3460,7 +3460,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		try {
 
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -3478,7 +3478,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_MTOM_REQUEST, pId, pIdSoggetto, pIdAsps, pIdFrizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_MTOM_REQUEST, pId, pIdSoggetto, pIdAsps, pIdFrizione);
 
 			int idLista = Liste.PORTE_DELEGATE_MTOM_REQUEST;
 			int limit = ricerca.getPageSize(idLista);
@@ -3588,10 +3588,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_MTOM_RESPONSE, pId, pIdSoggetto, pIdAsps, pIdFrizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_MTOM_RESPONSE, pId, pIdSoggetto, pIdAsps, pIdFrizione);
 
 			int idLista = Liste.PORTE_DELEGATE_MTOM_RESPONSE;
 			int limit = ricerca.getPageSize(idLista);
@@ -3702,7 +3702,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 			String servizioTmpTile = this.getLabelServizioFruizione(protocollo, new IDSoggetto(tipoSoggettoFruitore, nomeSoggettoFruitore), asps);
 			
-			String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			String tipologia = ServletUtils.getObjectFromSession(this.request, this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
 			if(tipologia!=null) {
 				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
@@ -3719,19 +3719,19 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pNomeSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE, nomeSoggettoFruitore);
 			
 			if(gestioneFruitori) {
-				Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session);
+				Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request);
 				if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 					lstParam.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_FRUIZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
 					lstParam.add(new Parameter(servizioTmpTile, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, 
 							pIdServizio,pNomeServizio, pTipoServizio, pTipoSoggettoFruitore, pNomeSoggettoFruitore));
 					boolean gestioneGruppi = true;
-					String paramGestioneGruppi = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI);
+					String paramGestioneGruppi = ServletUtils.getObjectFromSession(this.request, this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI);
 					if(paramGestioneGruppi!=null && !"".equals(paramGestioneGruppi)) {
 						gestioneGruppi = Boolean.valueOf(paramGestioneGruppi);
 					}
 					
 					boolean gestioneConfigurazioni = true;
-					String paramGestioneConfigurazioni = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI);
+					String paramGestioneConfigurazioni = ServletUtils.getObjectFromSession(this.request, this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI);
 					if(paramGestioneConfigurazioni!=null && !"".equals(paramGestioneConfigurazioni)) {
 						gestioneConfigurazioni = Boolean.valueOf(paramGestioneConfigurazioni);
 					}
@@ -3819,7 +3819,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 	public void preparePorteDelPropList(String nomePorta, Search ricerca, List<Proprieta> lista) throws Exception {
 		try {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -3837,7 +3837,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO, pId, pIdSoggetto, pIdAsps, pIdFruizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO, pId, pIdSoggetto, pIdAsps, pIdFruizione);
 
 			int idLista = Liste.PORTE_DELEGATE_PROP;
 			int limit = ricerca.getPageSize(idLista);
@@ -4039,7 +4039,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 	public void prepareResponseCachingConfigurazioneRegolaList(String nomePorta, ISearch ricerca, List<ResponseCachingConfigurazioneRegola> lista, Integer defaultCacheSeconds) throws Exception {
 		try {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -4057,7 +4057,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA, pId, pIdSoggetto, pIdAsps, pIdFrizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA, pId, pIdSoggetto, pIdAsps, pIdFrizione);
 
 			int idLista = Liste.PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA;
 			int limit = ricerca.getPageSize(idLista);
@@ -4229,7 +4229,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		try {
 			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -4248,7 +4248,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 			Parameter pFromList = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICABILITA_LIST, "true");
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI, 
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI, 
 					pId, pIdSoggetto, pIdAsps, pIdFruizione);
 
 			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI;
@@ -4514,7 +4514,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		try {
 			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -4533,7 +4533,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 			Parameter pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, idTrasformazione+"");
 			
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA, 
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA, 
 					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione);
 			
 
@@ -4744,7 +4744,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 	public void preparePorteDelegateTrasformazioniRispostaHeaderList(String nomePorta,  long idTrasformazione, long idTrasformazioneRisposta,  ISearch ricerca, List<TrasformazioneRegolaParametro> lista) throws Exception {
 		try {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -4763,7 +4763,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 			Parameter pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, idTrasformazione+"");
 			Parameter pIdTrasformazioneRisposta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE_RISPOSTA, idTrasformazioneRisposta + "");
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_HEADER, 
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_HEADER, 
 					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione,pIdTrasformazioneRisposta);
 
 			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_HEADER;
@@ -4901,7 +4901,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 	public void preparePorteDelegateTrasformazioniRichiestaHeaderList(String nomePorta,  long idTrasformazione, ISearch ricerca, List<TrasformazioneRegolaParametro> lista) throws Exception {
 		try {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -4919,7 +4919,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 			Parameter pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, idTrasformazione+"");
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_HEADER, 
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_HEADER, 
 					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione);
 
 			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_HEADER;
@@ -5044,7 +5044,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 	public void preparePorteDelegateTrasformazioniRichiestaUrlParameterList(String nomePorta,  long idTrasformazione, ISearch ricerca, List<TrasformazioneRegolaParametro> lista) throws Exception {
 		try {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -5062,7 +5062,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 			Parameter pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, idTrasformazione+"");
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_PARAMETRO, 
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_PARAMETRO, 
 					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione);
 
 			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_PARAMETRI;
@@ -5190,7 +5190,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			throws Exception {
 		try {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -5225,7 +5225,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				parameters.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICABILITA_LIST, listaTmp));
 			}
 			
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO, 
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO, 
 					parameters);
 
 			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_SERVIZIO_APPLICATIVO;
@@ -5433,7 +5433,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 	public void preparePorteDelegateAutorizzazioneCustomPropList(String nomePorta, Search ricerca, List<Proprieta> lista) throws Exception {
 		try {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -5451,7 +5451,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AUTORIZZAZIONE_CUSTOM_PROPERTIES, pId, pIdSoggetto, pIdAsps, pIdFruizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AUTORIZZAZIONE_CUSTOM_PROPERTIES, pId, pIdSoggetto, pIdAsps, pIdFruizione);
 
 			int idLista = Liste.PORTE_DELEGATE_PROPRIETA_AUTORIZZAZIONE;
 			int limit = ricerca.getPageSize(idLista);
@@ -5597,7 +5597,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				}
 
 				if (giaRegistrato) {
-					Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+					Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 					if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 					if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
 						nomeporta = this.porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(null , null,	portaDelegata);
@@ -5626,7 +5626,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 	public void preparePorteDelegateAutorizzazioneContenutoCustomPropList(String nomePorta, Search ricerca, List<Proprieta> lista) throws Exception {
 		try {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -5644,7 +5644,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES, pId, pIdSoggetto, pIdAsps, pIdFruizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES, pId, pIdSoggetto, pIdAsps, pIdFruizione);
 
 			int idLista = Liste.PORTE_DELEGATE_PROPRIETA_AUTORIZZAZIONE_CONTENUTO;
 			int limit = ricerca.getPageSize(idLista);
@@ -5790,7 +5790,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				}
 
 				if (giaRegistrato) {
-					Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+					Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 					if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 					if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
 						nomeporta = this.porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(null , null,	portaDelegata);
@@ -5819,7 +5819,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 	public void preparePorteDelegateAutenticazioneCustomPropList(String nomePorta, Search ricerca, List<Proprieta> lista) throws Exception {
 		try {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
 			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -5837,7 +5837,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 
-			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AUTENTICAZIONE_CUSTOM_PROPERTIES, pId, pIdSoggetto, pIdAsps, pIdFruizione);
+			ServletUtils.addListElementIntoSession(this.request, this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AUTENTICAZIONE_CUSTOM_PROPERTIES, pId, pIdSoggetto, pIdAsps, pIdFruizione);
 
 			int idLista = Liste.PORTE_DELEGATE_PROPRIETA_AUTENTICAZIONE;
 			int limit = ricerca.getPageSize(idLista);
@@ -5983,7 +5983,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				}
 
 				if (giaRegistrato) {
-					Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+					Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session, this.request);
 					if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 					if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
 						nomeporta = this.porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(null , null,	portaDelegata);

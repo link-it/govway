@@ -63,9 +63,6 @@ public class PorteApplicativeExtendedUtilities {
 	
 	public static List<Parameter> getTitle(Object object, ConsoleHelper consoleHelper) throws Exception {
 		
-		Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, consoleHelper.getSession());
-		if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
-		
 //		PortaApplicativa pa = (PortaApplicativa) object;
 //		String protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(pa.getTipoSoggettoProprietario());
 //		String tmpTitle = consoleHelper.getLabelNomeSoggetto(protocollo, pa.getTipoSoggettoProprietario() , pa.getNomeSoggettoProprietario());
@@ -76,6 +73,9 @@ public class PorteApplicativeExtendedUtilities {
 			idAsps = "";
 		
 		PorteApplicativeHelper paHelper = new PorteApplicativeHelper(consoleHelper.getCore(), consoleHelper.getRequest(), consoleHelper.getPd(), consoleHelper.getSession());
+		
+		Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, consoleHelper.getSession(), consoleHelper.getRequest());
+		if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
 		
 		List<Parameter> list = paHelper.getTitoloPA(parentPA, idsogg, idAsps);
 		

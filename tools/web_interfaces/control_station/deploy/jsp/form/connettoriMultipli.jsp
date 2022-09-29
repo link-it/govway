@@ -24,29 +24,28 @@
 <%
 	String iddati = "";
 	String ct = request.getContentType();
-	if (ct != null && (ct.indexOf("multipart/form-data") != -1)) {
-	  iddati = (String) session.getAttribute("iddati");
+	if (ct != null && (ct.indexOf(Costanti.MULTIPART) != -1)) {
+	  iddati = ServletUtils.getObjectFromSession(request, session, String.class, Costanti.SESSION_ATTRIBUTE_ID_DATI);
 	} else {
-	  iddati = request.getParameter("iddati");
+	  iddati = request.getParameter(Costanti.PARAMETER_NAME_ID_DATI);
 	}
-	String gdString = "GeneralData";
-	String pdString = "PageData";
+	String gdString = Costanti.SESSION_ATTRIBUTE_GENERAL_DATA;
+	String pdString = Costanti.SESSION_ATTRIBUTE_PAGE_DATA;
 	if (iddati != null && !iddati.equals("notdefined")) {
 	  gdString += iddati;
 	  pdString += iddati;
 	}
 	else
 	  iddati = "notdefined";
-	GeneralData gd = (GeneralData) session.getAttribute(gdString);
-	PageData pd = (PageData) session.getAttribute(pdString);
+	GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
+	PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
 	
-	String params = (String) request.getAttribute("params");
+	String params = (String) request.getAttribute(Costanti.PARAMETER_NAME_PARAMS);
 
 	if (params == null)
 		 params="";
 
-	ListElement listElement = 
-		  (org.openspcoop2.web.lib.mvc.ListElement) session.getAttribute("ListElement");
+	ListElement listElement = ServletUtils.getObjectFromSession(request, session, ListElement.class, Costanti.SESSION_ATTRIBUTE_LIST_ELEMENT);
 
 	String nomeServlet = listElement.getOggetto();
 	String nomeServletAdd = nomeServlet+"Add.do";
@@ -62,6 +61,7 @@
 	String classDivNoEdit="divNoEdit";
 	
 	int colSpanLength = 1;
+	String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
 <SCRIPT>
 var nomeServletAdd_Custom = '<%= nomeServletAdd %>';
@@ -148,10 +148,15 @@ function RemoveEntries() {
 //   }
   if (!isHidden && elemToRemove != '') {
     nr = 1;
+    var destinazione;
     if (formatPar != null && formatPar != "")
-        document.location='<%= request.getContextPath() %>/'+nomeServletDel+'?'+formatPar+'&obj='+elemToRemove+'&iddati='+iddati+params+parametroIdConnTab;
+        destinazione='<%= request.getContextPath() %>/'+nomeServletDel+'?'+formatPar+'&obj='+elemToRemove+'&iddati='+iddati+params+parametroIdConnTab;
       else
-        document.location='<%= request.getContextPath() %>/'+nomeServletDel+'?obj='+elemToRemove+'&iddati='+iddati+params+parametroIdConnTab;
+        destinazione='<%= request.getContextPath() %>/'+nomeServletDel+'?obj='+elemToRemove+'&iddati='+iddati+params+parametroIdConnTab;
+
+	//addTabID
+	destinazione = addTabIdParam(destinazione,true);
+	document.location = destinazione;
   }
 };
 
@@ -160,10 +165,15 @@ function AddEntry() {
     return false;
   }
   nr = 1;
+  var destinazione;
   if (formatPar != null && formatPar != "")
- 	  document.location='<%= request.getContextPath() %>/'+nomeServletAdd+'?'+formatPar+'&iddati='+iddati+params;
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletAdd+'?'+formatPar+'&iddati='+iddati+params;
   else
-	  document.location='<%= request.getContextPath() %>/'+nomeServletAdd+'?iddati='+iddati+params;
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletAdd+'?iddati='+iddati+params;
+	  
+	//addTabID
+	destinazione = addTabIdParam(destinazione,true);
+	document.location = destinazione;
 };
 
 function CambiaVisualizzazione(newPageSize) {
@@ -174,10 +184,15 @@ function CambiaVisualizzazione(newPageSize) {
   if (newPageSize == '0') {
     index = 0; 
   }
+  var destinazione;
   if (formatPar != null && formatPar != "")
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+newPageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+newPageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
   else
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+newPageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+newPageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+    
+//addTabID
+	destinazione = addTabIdParam(destinazione,true);
+	document.location = destinazione;
 };
 
 function NextPage() {
@@ -186,10 +201,15 @@ function NextPage() {
   }
   nr = 1;
   index += pageSize;
+  var destinazione;
   if (formatPar != null && formatPar != "")
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
   else
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+    
+//addTabID
+	destinazione = addTabIdParam(destinazione,true);
+	document.location = destinazione;
 };
 
 function PrevPage(pageSize) {
@@ -201,10 +221,15 @@ function PrevPage(pageSize) {
   if (index < 0) {
     index = 0;
   }
+  var destinazione;
   if (formatPar != null && formatPar != "")
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
   else
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+    
+//addTabID
+	destinazione = addTabIdParam(destinazione,true);
+	document.location = destinazione;
 };
 
 function Search(form) {
@@ -238,7 +263,7 @@ function Search(form) {
   // imposto la destinazione
   document.form.action = nomeServletList;
   
-//evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+  //evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
   for (var k=0; k<document.form.elements.length; k++) {
 		var nome = document.form.elements[k].name;
 		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
@@ -248,6 +273,11 @@ function Search(form) {
 		}
   }
       
+  // aggiungo parametro idTab
+  if(tabValue != ''){
+  	addHidden(document.form, tabSessionKey , tabValue);
+  	addHidden(document.form, prevTabSessionKey , tabValue);
+  }
   // form submit
   document.form.submit();
  
@@ -301,7 +331,7 @@ function Reset(form) {
 	   // imposto la destinazione
 	   document.form.action = nomeServletList;
 	   
-	 //evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+	   // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
 	   for (var k=0; k<document.form.elements.length; k++) {
 	 		var nome = document.form.elements[k].name;
 	 		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
@@ -311,13 +341,21 @@ function Reset(form) {
 	 		}
 	   }
 	   
+	   // aggiungo parametro idTab
+	   if(tabValue != ''){
+	   	addHidden(document.form, tabSessionKey , tabValue);
+	   	addHidden(document.form, prevTabSessionKey , tabValue);
+	   }
 	  // form submit
 	  document.form.submit();
 	 
 	};
 
 function Export(url){
-	document.location='<%= request.getContextPath() %>/'+url
+	var destinazione='<%= request.getContextPath() %>/'+url;
+	//addTabID
+	destinazione = addTabIdParam(destinazione,true);
+	document.location = destinazione;
 };
 
 function Esporta(tipo) {
@@ -341,10 +379,14 @@ function Esporta(tipo) {
 
 	if(elemToExport !== '') {
 		<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
-		document.location = "<%= request.getContextPath() %>/export.do?tipoExport="+tipo+"&obj="+elemToExport; 
+		var destinazione = "<%= request.getContextPath() %>/export.do?tipoExport="+tipo+"&obj="+elemToExport; 
+			
+			//addTabID
+			destinazione = addTabIdParam(destinazione,true);
+			document.location = destinazione;
 	} else {
 		$( "#selezioneRichiestaModal" ).dialog( "open" );
-	} 
+	}
 		  
 };
 
@@ -395,8 +437,8 @@ function Change(form,dataElementName,fromFilters) {
 	       addHidden(form, pair[0] , pair[1]);
 	   }
      }
-        
-   //evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
+     
+     // evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
      for (var k=0; k<document.form.elements.length; k++) {
    		var nome = document.form.elements[k].name;
    		var hiddenInfo = nome!=null ? nome.indexOf("__i_hidden") : -1;
@@ -405,6 +447,12 @@ function Change(form,dataElementName,fromFilters) {
    			document.form.elements[k].value = '';
    		}
      }
+        
+  // aggiungo parametro idTab
+  	  if(tabValue != ''){
+  	  	addHidden(document.form, tabSessionKey , tabValue);
+  	    addHidden(document.form, prevTabSessionKey , tabValue);
+  	  }
     // form submit
     document.form.submit();
 }
@@ -414,6 +462,9 @@ function isModificaUrlRicerca(formAction, urlToCheck){
 	if(formAction.indexOf('#') > 0) {
 		formAction = formAction.substring(0, formAction.indexOf('#'));
 	}
+	if(formAction.indexOf('?') > 0) {
+		formAction = formAction.substring(0, formAction.indexOf('?'));
+	}
 	
 	return ieEndsWith(formAction, urlToCheck);
 }
@@ -421,6 +472,7 @@ function isModificaUrlRicerca(formAction, urlToCheck){
 function ieEndsWith(str, suffix){
 	return str.indexOf(suffix, str.length - suffix.length) !== -1;
 }
+
 
 function addHidden(theForm, name, value) {
     // Create a hidden input element, and append it to the form:
@@ -522,14 +574,14 @@ function inizializzaSelectFiltro(){
 <tbody>
 	<!-- filtri di ricerca -->
 	<jsp:include page="/jsplib/filtriRicerca.jsp" flush="true"/>
-	
+
 	<!-- spazio -->
 	<tr> 
 		<td valign=top>
 			<div class="spacer">
 				<%
 					
-					String tabSelezionatoS = ServletUtils.getObjectFromSession(session, String.class, CostantiControlStation.PARAMETRO_ID_CONN_TAB);
+					String tabSelezionatoS = ServletUtils.getObjectFromSession(request, session, String.class, CostantiControlStation.PARAMETRO_ID_CONN_TAB);
 					int tabSelezionato = 0;
 					
 					if(StringUtils.isNotEmpty(tabSelezionatoS)) {
@@ -695,9 +747,9 @@ function inizializzaSelectFiltro(){
 													                				<input type="hidden" name="<%= deName %>" id="<%= deName %>"  value="<%= de.getValue() %>"/>
 											                					<% } %>
 																			<% 
-																				if(!de.getListaImages().isEmpty()){
-																					for(int idxLink =0; idxLink < de.getListaImages().size() ; idxLink ++ ){
-																						DataElementImage image = de.getListaImages().get(idxLink);
+																				if(!de.getImage().isEmpty()){
+																					for(int idxLink =0; idxLink < de.getImage().size() ; idxLink ++ ){
+																						DataElementImage image = de.getImage().get(idxLink);
 																						String classLink = "";
 																						String deIconName = image.getImage(); 
 											                					
@@ -707,6 +759,10 @@ function inizializzaSelectFiltro(){
 																				  		if (!image.getTarget().equals("")) {
 																				  			deTarget = " target=\""+ image.getTarget() +"\"";
 																				  		}
+																				  		
+																				  		if (!image.getUrl().equals("")) {
+																							image.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+																						}
 																				  		
 																				  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 																			  			
@@ -781,9 +837,9 @@ function inizializzaSelectFiltro(){
 																                				<input type="hidden" name="<%= deName %>" id="<%= deName %>"  value="<%= de.getValue() %>"/>
 														                					<% } %>
 																							 <% 
-																							if(!de.getListaImages().isEmpty()){
-																								for(int idxLink =0; idxLink < de.getListaImages().size() ; idxLink ++ ){
-																									DataElementImage image = de.getListaImages().get(idxLink);
+																							if(!de.getImage().isEmpty()){
+																								for(int idxLink =0; idxLink < de.getImage().size() ; idxLink ++ ){
+																									DataElementImage image = de.getImage().get(idxLink);
 																									String classLink = "";
 																									String deIconName = image.getImage(); 
 														                					
@@ -793,6 +849,10 @@ function inizializzaSelectFiltro(){
 																							  		if (!image.getTarget().equals("")) {
 																							  			deTarget = " target=\""+ image.getTarget() +"\"";
 																							  		}
+																							  		
+																							  		if (!image.getUrl().equals("")) {
+																										image.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+																									}
 																							  		
 																							  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 																						  			
@@ -873,9 +933,9 @@ function inizializzaSelectFiltro(){
 								                          									%>
 																					
 																							<% 
-																								if(!de.getListaImages().isEmpty()){
-																									for(int idxLink =0; idxLink < de.getListaImages().size() ; idxLink ++ ){
-																										DataElementImage image = de.getListaImages().get(idxLink);
+																								if(!de.getImage().isEmpty()){
+																									for(int idxLink =0; idxLink < de.getImage().size() ; idxLink ++ ){
+																										DataElementImage image = de.getImage().get(idxLink);
 																										String classLink = "";
 																										String deIconName = image.getImage(); 
 															                					
@@ -885,6 +945,10 @@ function inizializzaSelectFiltro(){
 																								  		if (!image.getTarget().equals("")) {
 																								  			deTarget = " target=\""+ image.getTarget() +"\"";
 																								  		}
+																								  		
+																								  		if (!image.getUrl().equals("")) {
+																											image.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+																										}
 																								  		
 																								  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 																                					%>
@@ -932,9 +996,9 @@ function inizializzaSelectFiltro(){
 																								%>
 																								
 																								<% 
-																									if(!de.getListaImages().isEmpty()){
-																										for(int idxLink =0; idxLink < de.getListaImages().size() ; idxLink ++ ){
-																											DataElementImage image = de.getListaImages().get(idxLink);
+																									if(!de.getImage().isEmpty()){
+																										for(int idxLink =0; idxLink < de.getImage().size() ; idxLink ++ ){
+																											DataElementImage image = de.getImage().get(idxLink);
 																											String classLink = "";
 																											String deIconName = image.getImage(); 
 																                					
@@ -944,6 +1008,10 @@ function inizializzaSelectFiltro(){
 																									  		if (!image.getTarget().equals("")) {
 																									  			deTarget = " target=\""+ image.getTarget() +"\"";
 																									  		}
+																									  		
+																									  		if (!image.getUrl().equals("")) {
+																												image.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+																											}
 																									  		
 																									  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 																	                					%>

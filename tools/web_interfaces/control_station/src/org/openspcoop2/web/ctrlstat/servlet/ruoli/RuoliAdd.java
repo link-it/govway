@@ -109,7 +109,7 @@ public final class RuoliAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping,
 						RuoliCostanti.OBJECT_NAME_RUOLI, 
@@ -132,7 +132,7 @@ public final class RuoliAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, 
 						RuoliCostanti.OBJECT_NAME_RUOLI, 
@@ -157,10 +157,10 @@ public final class RuoliAdd extends Action {
 			ruoliCore.performCreateOperation(userLogin, ruoliHelper.smista(), ruolo);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			if(ruoliCore.isSetSearchAfterAdd()) {
-				ruoliCore.setSearchAfterAdd(Liste.RUOLI, ruolo.getNome(), session, ricerca);
+				ruoliCore.setSearchAfterAdd(Liste.RUOLI, ruolo.getNome(), request, session, ricerca);
 			}
 			
 			List<Ruolo> lista = null;
@@ -172,13 +172,13 @@ public final class RuoliAdd extends Action {
 			
 			ruoliHelper.prepareRuoliList(ricerca, lista);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping,
 					RuoliCostanti.OBJECT_NAME_RUOLI,
 					ForwardParams.ADD());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					RuoliCostanti.OBJECT_NAME_RUOLI, ForwardParams.ADD());
 		}
 	}

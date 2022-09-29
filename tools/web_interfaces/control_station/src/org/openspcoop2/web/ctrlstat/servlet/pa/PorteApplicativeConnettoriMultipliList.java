@@ -79,7 +79,7 @@ public final class PorteApplicativeConnettoriMultipliList extends Action {
 	
 			String idTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(!porteApplicativeHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
-				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
+				ServletUtils.setObjectIntoSession(request, session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
 			
 			PortaApplicativa portaApplicativa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
@@ -88,14 +88,14 @@ public final class PorteApplicativeConnettoriMultipliList extends Action {
 			porteApplicativeHelper.makeMenu();
 	
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 	
 			int idLista = Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI;
 	
 			// poiche' esistono filtri che hanno necessita di postback salvo in sessione
 			List<PortaApplicativaServizioApplicativo> listaFiltrata = null;
 			if(!ServletUtils.isSearchDone(porteApplicativeHelper)) {
-				listaFiltrata = ServletUtils.getRisultatiRicercaFromSession(session, idLista,  PortaApplicativaServizioApplicativo.class);
+				listaFiltrata = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista,  PortaApplicativaServizioApplicativo.class);
 			}
 			
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
@@ -106,7 +106,7 @@ public final class PorteApplicativeConnettoriMultipliList extends Action {
 			}
 			
 			if(!porteApplicativeHelper.isPostBackFilterElement()) {
-				ServletUtils.setRisultatiRicercaIntoSession(session, idLista, listaFiltrata); // salvo poiche' esistono filtri che hanno necessita di postback
+				ServletUtils.setRisultatiRicercaIntoSession(request, session, idLista, listaFiltrata); // salvo poiche' esistono filtri che hanno necessita di postback
 			}
 			
 			if(nomeConnettoreChangeListBreadcump!=null && StringUtils.isNotEmpty(nomeConnettoreChangeListBreadcump)) {
@@ -116,13 +116,13 @@ public final class PorteApplicativeConnettoriMultipliList extends Action {
 				porteApplicativeHelper.preparePorteAppConnettoriMultipliList(nomePorta, ricerca, listaFiltrata, portaApplicativa);
 			}
 	
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI,	ForwardParams.LIST());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI,	ForwardParams.LIST());
 		} 
 	}

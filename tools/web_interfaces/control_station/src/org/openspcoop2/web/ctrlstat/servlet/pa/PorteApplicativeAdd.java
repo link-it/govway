@@ -302,7 +302,7 @@ public final class PorteApplicativeAdd extends Action {
 			// array per la funzione SoggettoVirtuale
 			String[] soggettiList = null;
 			String[] soggettiListLabel = null;
-			Boolean soggVirt = (Boolean) session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_SOGGETTI_VIRTUALI);
+			Boolean soggVirt = ServletUtils.getObjectFromSession(request, session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_GESTIONE_SOGGETTI_VIRTUALI);
 			if (soggVirt) {
 				List<IDServizio> list = null;
 				List<IDSoggetto> listSoggetti = new ArrayList<IDSoggetto>();
@@ -601,7 +601,7 @@ public final class PorteApplicativeAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE,
 						ForwardParams.ADD());
@@ -656,7 +656,7 @@ public final class PorteApplicativeAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE, 
 						ForwardParams.ADD());
@@ -916,7 +916,7 @@ public final class PorteApplicativeAdd extends Action {
 			porteApplicativeCore.performCreateOperation(userLogin, porteApplicativeHelper.smista(), pa);
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.PORTE_APPLICATIVE_BY_SOGGETTO;
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
@@ -924,13 +924,13 @@ public final class PorteApplicativeAdd extends Action {
 
 			porteApplicativeHelper.preparePorteAppList(ricerca, lista, idLista);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE, 
 					ForwardParams.ADD());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE,
 					ForwardParams.ADD());
 		}  

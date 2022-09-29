@@ -73,8 +73,8 @@ public final class AccordiServizioParteComuneDel extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		try {
-			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, false);
 			ApiHelper apcHelper = new ApiHelper(request, pd, session);
+			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, request, false);
 			
 			String objToRemove = apcHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
@@ -85,7 +85,7 @@ public final class AccordiServizioParteComuneDel extends Action {
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
 			
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
 			
@@ -106,7 +106,7 @@ public final class AccordiServizioParteComuneDel extends Action {
 			}// chiudo for
 			
 			if(deleteAlmostOneApi) {
-				ServletUtils.removeRisultatiRicercaFromSession(session, Liste.ACCORDI);
+				ServletUtils.removeRisultatiRicercaFromSession(request, session, Liste.ACCORDI);
 			}
 
 			if (inUsoMessage.length()>0) {
@@ -124,18 +124,18 @@ public final class AccordiServizioParteComuneDel extends Action {
 			
 			if(isModalitaVistaApiCustom) {
 				apcHelper.prepareApiList(lista, ricerca, tipoAccordo); 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				return ServletUtils.getStrutsForward(mapping, ApiCostanti.OBJECT_NAME_APC_API, ForwardParams.DEL());
 			}
 			
 			apcHelper.prepareAccordiList(lista, ricerca, tipoAccordo);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			return ServletUtils.getStrutsForward(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, ForwardParams.DEL());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, ForwardParams.DEL());
 		} 
 

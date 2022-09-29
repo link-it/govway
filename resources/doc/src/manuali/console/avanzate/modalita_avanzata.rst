@@ -21,6 +21,9 @@ l'icona in alto a destra (nella testata della govwayConsole) come mostrato nella
 
     Selezione Modalità Avanzata
 
+.. note::
+    La modifica della modalità attuata tramite il menù a discesa non è persistente e al successivo login verrà nuovamente presentata la modalità di default associata al profilo utente. Per modificarlo si rimanda alla sezione :ref:`console_utente_profilo`.
+
 Operando in modalità avanzata, in ciascuno dei contesti di
 configurazione già descritti in questo manuale, compariranno opzioni
 aggiuntive per le quali sono previsti valori di default nel caso della

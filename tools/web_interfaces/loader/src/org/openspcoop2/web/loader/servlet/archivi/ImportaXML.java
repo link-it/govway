@@ -107,7 +107,7 @@ public final class ImportaXML extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, Costanti.OBJECT_NAME_ARCHIVI_IMPORTA_XML, Costanti.TIPO_OPERAZIONE_ARCHIVI_IMPORTA_XML);
 			}
@@ -135,7 +135,7 @@ public final class ImportaXML extends Action {
 
 				pd.setMessage(Costanti.LABEL_FILE_NON_VALIDO+errorBuffer.toString());
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, Costanti.OBJECT_NAME_ARCHIVI_IMPORTA_XML, Costanti.TIPO_OPERAZIONE_ARCHIVI_IMPORTA_XML);
 			}
@@ -221,7 +221,7 @@ public final class ImportaXML extends Action {
 
 			pd.setDati(dati);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			if(errore!=null)
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, Costanti.OBJECT_NAME_ARCHIVI_IMPORTA_XML, Costanti.TIPO_OPERAZIONE_ARCHIVI_IMPORTA_XML);
@@ -229,7 +229,7 @@ public final class ImportaXML extends Action {
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping, Costanti.OBJECT_NAME_ARCHIVI_IMPORTA_XML, Costanti.TIPO_OPERAZIONE_ARCHIVI_IMPORTA_XML);
 			
 		}catch(Exception e){
-			return ServletUtils.getStrutsForwardError(LoaderCore.log, e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(LoaderCore.log, e, pd, request, session, gd, mapping, 
 					Costanti.OBJECT_NAME_ARCHIVI_IMPORTA_XML, Costanti.TIPO_OPERAZIONE_ARCHIVI_IMPORTA_XML);
 		}
 	}

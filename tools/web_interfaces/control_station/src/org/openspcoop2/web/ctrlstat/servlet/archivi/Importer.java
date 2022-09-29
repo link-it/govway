@@ -130,7 +130,7 @@ public final class Importer extends Action {
 				
 				pd.disableEditMode();
 				
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ArchiviCostanti.OBJECT_NAME_ARCHIVI_IMPORT, 
 						ArchiviCostanti.TIPO_OPERAZIONE_IMPORT);				
@@ -173,11 +173,11 @@ public final class Importer extends Action {
 			}
 			
 			// protocolli supportati
-			List<String> protocolli = archiviCore.getProtocolli(session);
+			List<String> protocolli = archiviCore.getProtocolli(request, session);
 			if(protocolli.size()>1){
 				protocolli = new ArrayList<String>();
 				protocolli.add(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED);
-				protocolli.addAll(archiviCore.getProtocolli(session));
+				protocolli.addAll(archiviCore.getProtocolli(request, session));
 			}
 			this.protocollo = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
 			if("".equals(this.protocollo) || ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED.equals(this.protocollo)){
@@ -402,7 +402,7 @@ public final class Importer extends Action {
 
 				pd.setLabelBottoneInvia(labelBottone);
 				
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, ArchiviCostanti.OBJECT_NAME_ARCHIVI_IMPORT, 
 						ArchiviCostanti.TIPO_OPERAZIONE_IMPORT);
@@ -671,7 +671,7 @@ public final class Importer extends Action {
 					}
 				}
 				
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ArchiviCostanti.OBJECT_NAME_ARCHIVI_IMPORT, 
 						ArchiviCostanti.TIPO_OPERAZIONE_IMPORT);
@@ -738,7 +738,7 @@ public final class Importer extends Action {
 			if(esito!=null && !"".equals(esito)){
 				
 				// Salvo resoconto per fornirlo alla servlet
-				session.setAttribute(ArchiviCostanti.PARAMETRO_DOWNLOAD_RESOCONTO_VALORE, esito);
+				ServletUtils.setObjectIntoSession(request, session, esito, ArchiviCostanti.PARAMETRO_DOWNLOAD_RESOCONTO_VALORE);
 				
 				DataElement saveAs = new DataElement();
 				saveAs.setValue(ArchiviCostanti.LABEL_DOWNLOAD);
@@ -752,13 +752,13 @@ public final class Importer extends Action {
 	
 			pd.setDati(dati);
 			
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ArchiviCostanti.OBJECT_NAME_ARCHIVI_IMPORT, 
 					ArchiviCostanti.TIPO_OPERAZIONE_IMPORT);
 			
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ArchiviCostanti.OBJECT_NAME_ARCHIVI_IMPORT,
 					ArchiviCostanti.TIPO_OPERAZIONE_IMPORT);
 		}

@@ -33,16 +33,19 @@ interesse (per default viene proposto il solo profilo di API Gateway).
 Durante l'utilizzo della Console di Gestione è preferibile selezionare
 il profilo di interoperabilità adeguato in base al tipo di
 configurazioni sui quali si lavora. La selezione del profilo di
-interoperabilità, tramite il menu presente in testata (:numref:`profilo`), comporta la
+interoperabilità, tramite il menù presente in testata (:numref:`profilo`), comporta la
 visualizzazione dei soli elementi dell'interfaccia, e relativi dati,
 attinenti con tale profilo.
 
    .. figure:: ../_figure_console/profiloInteroperabilita.png
-    :scale: 100%
+    :scale: 50%
     :align: center
     :name: profilo
 
     Selezione del profilo di interoperabilità
+
+.. note::
+    La selezione del profilo tramite il menù presente in testata non è persistente e al successivo login verrà nuovamente presentato il profilo di interoperabiltà di default associato al profilo utente. Per modificarlo si rimanda alla sezione :ref:`console_utente_profilo`.
 
 Esiste la possibilità (non consigliata) di operare sulla console
 selezionando il profilo *Tutti*. In tal caso non saranno applicati

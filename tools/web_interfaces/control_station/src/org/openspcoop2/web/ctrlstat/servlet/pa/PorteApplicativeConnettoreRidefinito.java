@@ -87,13 +87,14 @@ public class PorteApplicativeConnettoreRidefinito extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 		
-		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-		Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, session);
-		if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
-
 		try {
 
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
+			
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte applicative
+			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, session, request);
+			if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 			
@@ -107,7 +108,7 @@ public class PorteApplicativeConnettoreRidefinito extends Action {
 			
 			String idTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(!porteApplicativeHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
-				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
+				ServletUtils.setObjectIntoSession(request, session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
 			
 			// Prendo il nome della porta
@@ -193,7 +194,7 @@ public class PorteApplicativeConnettoreRidefinito extends Action {
 					pd.disableOnlyButton();
 				}
 				
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				// Forward control to the specified success URI
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO, 
 						ForwardParams.OTHER(""));
@@ -214,7 +215,7 @@ public class PorteApplicativeConnettoreRidefinito extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping,
 						PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO,
@@ -261,7 +262,7 @@ public class PorteApplicativeConnettoreRidefinito extends Action {
 			porteApplicativeCore.performDeleteOperation(userLogin, porteApplicativeHelper.smista(), listaOggettiDaEliminare.toArray());
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 
 			List<PortaApplicativa> lista = null;
@@ -276,7 +277,7 @@ public class PorteApplicativeConnettoreRidefinito extends Action {
 					idLista = Liste.SERVIZI;
 					ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 					
-					String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+					String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 					if(tipologia!=null) {
 						if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
 							ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
@@ -284,15 +285,15 @@ public class PorteApplicativeConnettoreRidefinito extends Action {
 					}
 					
 					boolean [] permessi = new boolean[2];
-					PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
+					PermessiUtente pu = ServletUtils.getUserFromSession(request, session).getPermessi();
 					permessi[0] = pu.isServizi();
 					permessi[1] = pu.isAccordiCooperazione();
 					List<AccordoServizioParteSpecifica> listaS = null;
 					String superUser   = ServletUtils.getUserLoginFromSession(session);
 					if(apsCore.isVisioneOggettiGlobale(superUser)){
-						listaS = apsCore.soggettiServizioList(null, ricerca,permessi,session);
+						listaS = apsCore.soggettiServizioList(null, ricerca,permessi,session, request);
 					}else{
-						listaS = apsCore.soggettiServizioList(superUser, ricerca,permessi,session);
+						listaS = apsCore.soggettiServizioList(superUser, ricerca,permessi,session, request);
 					}
 					AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 					apsHelper.prepareServiziList(ricerca, listaS);
@@ -324,7 +325,7 @@ public class PorteApplicativeConnettoreRidefinito extends Action {
 				break;
 			}
 			
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			ForwardParams fwP = ForwardParams.OTHER("");
 			if(!porteApplicativeHelper.isModalitaCompleta()) {
@@ -335,7 +336,7 @@ public class PorteApplicativeConnettoreRidefinito extends Action {
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO, fwP);
 			
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO , 
 					ForwardParams.OTHER(""));
 		} 

@@ -125,14 +125,15 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
-		Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session);
-		if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
-		Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
-		Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
 		try {
 
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
+			
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
+			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session, request);
+			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
+			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session, request);
 
 			boolean isModalitaCompleta = saHelper.isModalitaCompleta();
 
@@ -265,7 +266,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			boolean erogazioneServizioApplicativoServerEnabled = ServletUtils.isCheckBoxEnabled(erogazioneServizioApplicativoServerEnabledS);
 			String erogazioneServizioApplicativoServer = saHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_APPLICATIVO_SERVER);
 
-			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneErogatori = false;
 			if(tipologia!=null) {
 				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
@@ -286,7 +287,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			boolean fromConfig = (parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)); 
 			String idTab = saHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(fromConfig && !saHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
-				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
+				ServletUtils.setObjectIntoSession(request, session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
 			
 			// Preparo il menu
@@ -568,7 +569,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					String nomePdd = soggetto.getPortaDominio();
 					if(pddCore.isPddEsterna(nomePdd)){
 						pd.setMessage("Impossibile Effettuare operazioni su Connettore.<br>Questo Servizio Applicativo appartiene ad un Soggetto associato ad una Porta di Dominio con tipo 'esterno'");
-						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+						ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 						return ServletUtils.getStrutsForwardGeneralError(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, 
 								ServiziApplicativiCostanti.TIPO_OPERAZIONE_ENDPOINT_INVOCAZIONE_SERVIZIO);
 					}
@@ -1010,7 +1011,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, 
 						ServiziApplicativiCostanti.TIPO_OPERAZIONE_ENDPOINT_INVOCAZIONE_SERVIZIO);
@@ -1070,7 +1071,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, 
 						ServiziApplicativiCostanti.TIPO_OPERAZIONE_ENDPOINT_INVOCAZIONE_SERVIZIO);
@@ -1261,7 +1262,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				ServiziApplicativiUtilities.checkStatoConnettore(saCore, sa, connis, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 				if(inUsoMessage.length()>0) {
 					pd.setMessage(inUsoMessage.toString());
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 					return ServletUtils.getStrutsForwardGeneralError(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, 
 							ServiziApplicativiCostanti.TIPO_OPERAZIONE_ENDPOINT_INVOCAZIONE_SERVIZIO);
 				}
@@ -1348,7 +1349,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			}
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<ServizioApplicativo> lista = null;
 			int idLista = -1;
@@ -1361,7 +1362,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(saCore);
 						AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
 						erogazioniHelper.prepareErogazioneChange(TipoOperazione.CHANGE, asps, null);
-						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+						ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 						return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
 					}
 
@@ -1371,15 +1372,15 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
 					}
 					boolean [] permessi = new boolean[2];
-					PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
+					PermessiUtente pu = ServletUtils.getUserFromSession(request, session).getPermessi();
 					permessi[0] = pu.isServizi();
 					permessi[1] = pu.isAccordiCooperazione();
 					List<AccordoServizioParteSpecifica> listaS = null;
 					AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(saCore);
 					if(apsCore.isVisioneOggettiGlobale(superUser)){
-						listaS = apsCore.soggettiServizioList(null, ricerca,permessi,session);
+						listaS = apsCore.soggettiServizioList(null, ricerca,permessi,session, request);
 					}else{
-						listaS = apsCore.soggettiServizioList(superUser, ricerca,permessi,session);
+						listaS = apsCore.soggettiServizioList(superUser, ricerca,permessi,session, request);
 					}
 					AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 					apsHelper.prepareServiziList(ricerca, listaS);
@@ -1417,7 +1418,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				break;
 			}
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			ForwardParams fwP = ServiziApplicativiCostanti.TIPO_OPERAZIONE_ENDPOINT_INVOCAZIONE_SERVIZIO;
 			if(fromConfig && !saHelper.isModalitaCompleta()) {
@@ -1427,7 +1428,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI,  fwP);
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, ServiziApplicativiCostanti.TIPO_OPERAZIONE_ENDPOINT_INVOCAZIONE_SERVIZIO);
 		} 
 

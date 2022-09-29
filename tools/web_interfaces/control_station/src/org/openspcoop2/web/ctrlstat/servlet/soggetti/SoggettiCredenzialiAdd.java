@@ -456,7 +456,7 @@ public final class SoggettiCredenzialiAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI_CREDENZIALI, ForwardParams.ADD());
 			}
@@ -495,7 +495,7 @@ public final class SoggettiCredenzialiAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI_CREDENZIALI, ForwardParams.ADD());
 			}
@@ -554,12 +554,12 @@ public final class SoggettiCredenzialiAdd extends Action {
 			
 			soggettiHelper.prepareSoggettiCredenzialiList(soggettoRegistry, id);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI_CREDENZIALI, ForwardParams.ADD());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					SoggettiCostanti.OBJECT_NAME_SOGGETTI_CREDENZIALI, ForwardParams.ADD());
 		}
 	}

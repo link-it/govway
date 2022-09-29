@@ -120,7 +120,7 @@ public final class GruppiChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping,
 						GruppiCostanti.OBJECT_NAME_GRUPPI, 
@@ -144,7 +144,7 @@ public final class GruppiChange extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, 
 						GruppiCostanti.OBJECT_NAME_GRUPPI, 
@@ -182,7 +182,7 @@ public final class GruppiChange extends Action {
 			gruppiCore.performUpdateOperation(userLogin, gruppiHelper.smista(), listOggettiDaAggiornare.toArray());
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			List<Gruppo> lista = null;
 			if(gruppiCore.isVisioneOggettiGlobale(userLogin)){
@@ -193,13 +193,13 @@ public final class GruppiChange extends Action {
 			
 			gruppiHelper.prepareGruppiList(ricerca, lista);
 			
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping,
 					GruppiCostanti.OBJECT_NAME_GRUPPI,
 					ForwardParams.CHANGE());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					GruppiCostanti.OBJECT_NAME_GRUPPI, ForwardParams.CHANGE());
 		}
 	}

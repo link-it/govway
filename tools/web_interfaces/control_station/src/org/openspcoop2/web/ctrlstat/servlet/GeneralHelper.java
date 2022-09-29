@@ -45,7 +45,6 @@ import org.openspcoop2.web.ctrlstat.servlet.about.AboutCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.login.LoginCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
-import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -55,7 +54,6 @@ import org.openspcoop2.web.lib.mvc.GeneralLink;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
-import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.slf4j.Logger;
@@ -79,7 +77,7 @@ public class GeneralHelper {
 	protected HttpSession session;
 	protected ControlStationCore core;
 	protected PddCore pddCore;
-	protected UtentiCore utentiCore;
+//	protected UtentiCore utentiCore;
 	protected SoggettiCore soggettiCore;
 	protected Logger log;
 
@@ -88,7 +86,7 @@ public class GeneralHelper {
 		try {
 			this.core = new ControlStationCore();
 			this.pddCore = new PddCore(this.core);
-			this.utentiCore = new UtentiCore(this.core);
+//			this.utentiCore = new UtentiCore(this.core);
 			this.soggettiCore = new SoggettiCore(this.core);
 		} catch (Exception e) {
 			this.log = ControlStationLogger.getPddConsoleCoreLogger();
@@ -103,7 +101,7 @@ public class GeneralHelper {
 
 	public GeneralData initGeneralData(HttpServletRequest request){
 		String baseUrl = request.getRequestURI();
-		return this.initGeneralData_engine(baseUrl);
+		return this.initGeneralData_engine(request, baseUrl);
 	}
 	public GeneralData initGeneralData(HttpServletRequest request,String servletName){
 		String baseUrl = request.getContextPath();
@@ -112,34 +110,35 @@ public class GeneralHelper {
 		}else{
 			baseUrl = baseUrl + "/" + servletName;
 		}
-		return this.initGeneralData_engine(baseUrl);
+		return this.initGeneralData_engine(request, baseUrl);
 	}
-	@Deprecated
-	public GeneralData initGeneralData(String baseUrl) {
-		return this.initGeneralData_engine(baseUrl);
-	}
-	private GeneralData initGeneralData_engine(String baseUrl) {
+//	@Deprecated
+//	public GeneralData initGeneralData(String baseUrl) {
+//		return this.initGeneralData_engine(baseUrl);
+//	}
+	private GeneralData initGeneralData_engine(HttpServletRequest request, String baseUrl) {
 		String userLogin = ServletUtils.getUserLoginFromSession(this.session);
 		String css = this.core.getConsoleCSS();
 
-		User u = null;
-		try {
-			u = this.utentiCore.getUser(userLogin,false);
-		} catch (DriverUsersDBException dude) {
-			// Se arrivo qui, è successo qualcosa di strano
-			//this.log.error("initGeneralData: " + dude.getMessage(), dude);
-		}
+		// per avere diversi 'profili' utente per i vari tab leggo l'utente dalla sessione del tab
+		User u = ServletUtils.getUserFromSession(request, this.session);
+//		try {
+//			u = this.utentiCore.getUser(userLogin,false);
+//		} catch (DriverUsersDBException dude) {
+//			// Se arrivo qui, è successo qualcosa di strano
+//			//this.log.error("initGeneralData: " + dude.getMessage(), dude);
+//		}
 
 		boolean displayUtente = false;
 		boolean displayLogin = true;
 		boolean displayLogout = true;
-		if ((baseUrl.indexOf("/"+LoginCostanti.SERVLET_NAME_LOGIN) != -1 && userLogin == null) || (baseUrl.indexOf("/"+LoginCostanti.SERVLET_NAME_LOGOUT) != -1)
+		if ((baseUrl.indexOf("/"+LoginCostanti.SERVLET_NAME_LOGIN) != -1 && u == null) || (baseUrl.indexOf("/"+LoginCostanti.SERVLET_NAME_LOGOUT) != -1)
 				|| (baseUrl.indexOf("/"+LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE) != -1)
-				|| (baseUrl.indexOf("/"+UtentiCostanti.SERVLET_NAME_UTENTE_PASSWORD_CHANGE) != -1 && userLogin == null)) {
+				|| (baseUrl.indexOf("/"+UtentiCostanti.SERVLET_NAME_UTENTE_PASSWORD_CHANGE) != -1 && u == null)) {
 			displayLogin = false;
 			displayLogout = false;
 		}
-		if (userLogin != null){
+		if (u != null){
 			displayLogin = false;
 			displayUtente = true;
 		}
@@ -147,7 +146,7 @@ public class GeneralHelper {
 		GeneralData gd = new GeneralData(CostantiControlStation.LABEL_LINKIT_WEB);
 		gd.setProduct(this.core.getConsoleNomeSintesi());
 		gd.setLanguage(this.core.getConsoleLanguage());
-		gd.setTitle(StringEscapeUtils.escapeHtml(this.core.getConsoleNomeEsteso(this.session)));
+		gd.setTitle(StringEscapeUtils.escapeHtml(this.core.getConsoleNomeEsteso(request, this.session)));
 		gd.setLogoHeaderImage(this.core.getLogoHeaderImage());
 		gd.setLogoHeaderLink(this.core.getLogoHeaderLink());
 		gd.setLogoHeaderTitolo(this.core.getLogoHeaderTitolo()); 
@@ -184,6 +183,8 @@ public class GeneralHelper {
 								new Parameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_GUI, InterfaceType.AVANZATA.toString()),
 								new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
 								new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_GUI,Costanti.CHECK_BOX_ENABLED)
+//								,
+//								new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, request.ge)
 								);
 	
 					} else {
@@ -224,11 +225,13 @@ public class GeneralHelper {
 
 			gd.setHeaderLinks(link);
 
-			if(!u.hasOnlyPermessiUtenti())  
-				gd.setModalitaLinks(this.caricaMenuProtocolliUtente(u));
-			
-			if(!u.hasOnlyPermessiUtenti())  // si e' deciso di farlo vedere sempre, sarà senza tendina: && this.core.isMultitenant())  
-				gd.setSoggettiLinks(this.caricaMenuSoggetti(u));
+			if(u != null) { // se ho fatto refresh della pagina dopo che e' scaduta la sessione l'utente e' null
+				if(!u.hasOnlyPermessiUtenti())  
+					gd.setModalitaLinks(this.caricaMenuProtocolliUtente(request, u));
+				
+				if(!u.hasOnlyPermessiUtenti())  // si e' deciso di farlo vedere sempre, sarà senza tendina: && this.core.isMultitenant())  
+					gd.setSoggettiLinks(this.caricaMenuSoggetti(request, u));
+			}
 		}
 
 		return gd;
@@ -278,12 +281,12 @@ public class GeneralHelper {
 		return 50;
 	}
 
-	public Vector<GeneralLink> caricaMenuProtocolliUtente(User u){
+	public Vector<GeneralLink> caricaMenuProtocolliUtente(HttpServletRequest request, User u){
 		Vector<GeneralLink> link = new Vector<GeneralLink>();
 
 		// 1. controllo se ho piu' di un protocollo disponibile per l'utente
 		try {
-			List<String> protocolliDispondibili = this.core.getProtocolli(this.session,true);
+			List<String> protocolliDispondibili = this.core.getProtocolli(request, this.session,true);
 
 			if(protocolliDispondibili != null && protocolliDispondibili.size() > 0) {
 				// prelevo l'eventuale protocollo selezionato
@@ -348,12 +351,12 @@ public class GeneralHelper {
 		return link;
 	}
 
-	public Vector<GeneralLink> caricaMenuSoggetti(User u){
+	public Vector<GeneralLink> caricaMenuSoggetti(HttpServletRequest request, User u){
 		Vector<GeneralLink> link = new Vector<GeneralLink>();
 
 		try {
 			// prelevo l'eventuale protocollo selezionato
-			List<String> protocolliDispondibili = this.core.getProtocolli(this.session,true);
+			List<String> protocolliDispondibili = this.core.getProtocolli(request, this.session,true);
 			String protocolloSelezionato = u.getProtocolloSelezionatoPddConsole();
 			if(protocolliDispondibili.size()==1) {
 				protocolloSelezionato = protocolliDispondibili.get(0); // forzo

@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.web.lib.mvc;
 
+import java.io.Serializable;
+
 /**
  * DataElementImage
  * 
@@ -26,8 +28,13 @@ package org.openspcoop2.web.lib.mvc;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DataElementImage {
+public class DataElementImage implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String image;
 	private String toolTip;
 	private String url;
@@ -57,6 +64,9 @@ public class DataElementImage {
 	public void setUrl(String servletName,Parameter ... parameter) {
 		this.url = DataElement._getUrlValue(servletName, parameter);
 	}
+	public void addParameter(Parameter ... parameter) {
+		this.url = DataElement._getUrlValue(this.url, parameter);
+    }
 	public String getTarget() {
 		return DataElement.checkNull(this.target);
 	}

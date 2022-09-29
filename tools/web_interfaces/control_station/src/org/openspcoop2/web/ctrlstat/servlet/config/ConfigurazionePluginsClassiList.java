@@ -76,14 +76,14 @@ public final class ConfigurazionePluginsClassiList extends Action {
 			confHelper.makeMenu();
 			
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.CONFIGURAZIONE_PLUGINS_CLASSI;
 
 			// poiche' esistono filtri che hanno necessita di postback salvo in sessione
 			List<Plugin> lista = null;
 			if(!ServletUtils.isSearchDone(confHelper)) {
-				lista = ServletUtils.getRisultatiRicercaFromSession(session, idLista, Plugin.class);
+				lista = ServletUtils.getRisultatiRicercaFromSession(request, session, idLista, Plugin.class);
 			}
 			
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
@@ -95,21 +95,21 @@ public final class ConfigurazionePluginsClassiList extends Action {
 			}
 			
 			if(!confHelper.isPostBackFilterElement()) {
-				ServletUtils.setRisultatiRicercaIntoSession(session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
+				ServletUtils.setRisultatiRicercaIntoSession(request, session, idLista, lista); // salvo poiche' esistono filtri che hanno necessita di postback
 			}
 			
 			confHelper.preparePluginsClassiList(ricerca, lista); 
 			
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, 
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_PLUGINS_CLASSI,
 					ForwardParams.LIST());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_PLUGINS_CLASSI, ForwardParams.LIST());
 		}
 	}

@@ -496,7 +496,7 @@ public final class ConfigurazioneGenerale extends Action {
 
 					pd.setDati(dati);
 
-					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 					return ServletUtils.getStrutsForwardEditModeCheckError(mapping, 
 							ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_GENERALE,
@@ -969,7 +969,7 @@ public final class ConfigurazioneGenerale extends Action {
 				generalHelper = new GeneralHelper(session);
 				gd = generalHelper.initGeneralData(request); // re-inizializzo per ricalcolare il menu in alto a destra
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping,
 						ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_GENERALE,
@@ -1549,13 +1549,13 @@ public final class ConfigurazioneGenerale extends Action {
 				pd.setMessage("Errore durante esportazione: "+msg);
 			}
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeInProgress(mapping,
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_GENERALE,
 					ConfigurazioneCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE_GENERALE);
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE_GENERALE);
 		}
 	}

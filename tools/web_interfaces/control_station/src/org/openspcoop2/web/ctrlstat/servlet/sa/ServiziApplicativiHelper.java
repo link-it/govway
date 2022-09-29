@@ -445,7 +445,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		boolean configurazioneStandardNonApplicabile = false;
 		
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
-		Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, this.session);
+		Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, this.session, this.request);
 		if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
 		Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
 
@@ -476,7 +476,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
 	
-			boolean showProtocolli = TipoOperazione.CHANGE.equals(tipoOperazione) && (this.core.countProtocolli(this.session)>1);
+			boolean showProtocolli = TipoOperazione.CHANGE.equals(tipoOperazione) && (this.core.countProtocolli(this.request, this.session)>1);
 			
 			if( (listaTipiProtocollo != null && listaTipiProtocollo.size() > 1) || showProtocolli){
 				if(TipoOperazione.CHANGE.equals(tipoOperazione)){
@@ -2255,20 +2255,20 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			boolean multitenant = this.saCore.isMultitenant();
 			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
-			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, this.session);
+			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, this.session, this.request);
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
 			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
 
 			if(useIdSogg){
 				Parameter pProvider = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, idProvider); 
-				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI,pProvider );
+				ServletUtils.addListElementIntoSession(this.request, this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI,pProvider );
 			}else 
-				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI);
+				ServletUtils.addListElementIntoSession(this.request, this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI);
 
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
 			@SuppressWarnings("unused")
-			Boolean singlePdD = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+			Boolean singlePdD = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 			
 			if(!modalitaCompleta && !useIdSogg) {
 				this.pd.setCustomListViewName(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_NOME_VISTA_CUSTOM_LISTA);
@@ -2318,7 +2318,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				protocolloS = filterProtocollo;
 				if(protocolloS==null) {
 					// significa che e' stato selezionato un protocollo nel menu in alto a destra
-					List<String> protocolli = this.core.getProtocolli(this.session);
+					List<String> protocolli = this.core.getProtocolli(this.request, this.session);
 					if(protocolli!=null && protocolli.size()==1) {
 						protocolloS = protocolli.get(0);
 					}
@@ -2593,7 +2593,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				ServletUtils.enabledPageDataSearch(this.pd, labelApplicativi, search);
 			}
 
-			boolean showProtocolli = this.core.countProtocolli(this.session)>1;
+			boolean showProtocolli = this.core.countProtocolli(this.request, this.session)>1;
 			
 			supportatoAutenticazioneApplicativiEsterni = false;
 			if (lista != null) {
@@ -2635,7 +2635,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				if (this.core.isShowPulsantiImportExport()) {
 
 					ExporterUtils exporterUtils = new ExporterUtils(this.archiviCore);
-					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.SERVIZIO_APPLICATIVO, this.session)){
+					if(exporterUtils.existsAtLeastOneExportMode(org.openspcoop2.protocol.sdk.constants.ArchiveType.SERVIZIO_APPLICATIVO, this.request, this.session)){
 
 						Vector<AreaBottoni> bottoni = new Vector<AreaBottoni>();
 
@@ -3734,7 +3734,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			boolean accessDaChange = ServletUtils.isCheckBoxEnabled(accessDaChangeTmp);
 			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
-			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, this.session);
+			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, this.session, this.request);
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
 			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
 
@@ -3742,9 +3742,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			
 			if(useIdSogg){
 				Parameter pProvider = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, idProvider); 
-				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_RUOLI,pSA,pProvider );
+				ServletUtils.addListElementIntoSession(this.request, this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_RUOLI,pSA,pProvider );
 			}else 
-				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_RUOLI,pSA,
+				ServletUtils.addListElementIntoSession(this.request, this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_RUOLI,pSA,
 						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_ACCESSO_DA_CHANGE, accessDaChangeTmp));
 			
 			int idLista = Liste.SERVIZIO_APPLICATIVO_RUOLI;
@@ -3924,7 +3924,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
 			Parameter pIdsoggErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+asps.getIdSoggetto());
 
-			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session);
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session, this.request);
 			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 				lstParam.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
 				lstParam.add(new Parameter(servizioTmpTile, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, pIdServizio,pNomeServizio, pTipoServizio));
@@ -4077,7 +4077,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String idProvider = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
-			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, this.session);
+			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, this.session, this.request);
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
 			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
 
@@ -4100,9 +4100,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				List<Parameter> parametersServletSAChangeProvider = new ArrayList<Parameter>();
 				parametersServletSAChangeProvider.add(pProvider);
 				parametersServletSAChangeProvider.addAll(parametersServletSAChange);
-				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_CREDENZIALI, parametersServletSAChangeProvider.toArray(new Parameter[parametersServletSAChangeProvider.size()]));
+				ServletUtils.addListElementIntoSession(this.request, this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_CREDENZIALI, parametersServletSAChangeProvider.toArray(new Parameter[parametersServletSAChangeProvider.size()]));
 			}else 
-				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_CREDENZIALI, parametersServletSAChange.toArray(new Parameter[parametersServletSAChange.size()]));
+				ServletUtils.addListElementIntoSession(this.request, this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_CREDENZIALI, parametersServletSAChange.toArray(new Parameter[parametersServletSAChange.size()]));
 
 			// Prendo il soggetto
 			String tmpTitle = null;
@@ -4593,7 +4593,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String idProvider = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
-			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, this.session);
+			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, this.session, this.request);
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
 			Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
 
@@ -4616,9 +4616,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				List<Parameter> parametersServletSAChangeProvider = new ArrayList<Parameter>();
 				parametersServletSAChangeProvider.add(pProvider);
 				parametersServletSAChangeProvider.addAll(parametersServletSAChange);
-				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_PROPRIETA, parametersServletSAChangeProvider.toArray(new Parameter[parametersServletSAChangeProvider.size()]));
+				ServletUtils.addListElementIntoSession(this.request, this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_PROPRIETA, parametersServletSAChangeProvider.toArray(new Parameter[parametersServletSAChangeProvider.size()]));
 			}else 
-				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_PROPRIETA, parametersServletSAChange.toArray(new Parameter[parametersServletSAChange.size()]));
+				ServletUtils.addListElementIntoSession(this.request, this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_PROPRIETA, parametersServletSAChange.toArray(new Parameter[parametersServletSAChange.size()]));
 
 			int idLista = Liste.SERVIZI_APPLICATIVI_PROP;
 			int limit = ricerca.getPageSize(idLista);

@@ -70,9 +70,9 @@ public final class AccordiServizioParteComuneList extends Action {
 
 	
 		try {
-			ServletUtils.removeObjectFromSession(session, ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
-			
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
+			
+			ServletUtils.removeObjectFromSession(request, session, ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
 
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
@@ -83,7 +83,7 @@ public final class AccordiServizioParteComuneList extends Action {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			
 			// Controllo i criteri di ricerca e recupero eventuali parametri
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 
 			int idLista = Liste.ACCORDI;
 
@@ -99,14 +99,14 @@ public final class AccordiServizioParteComuneList extends Action {
 			}
 			
 			// salvo l'oggetto ricerca nella sessione
-			ServletUtils.setSearchObjectIntoSession(session, ricerca);
+			ServletUtils.setSearchObjectIntoSession(request, session, ricerca);
 			
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			
 			return ServletUtils.getStrutsForward(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, ForwardParams.LIST());
 
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, ForwardParams.LIST());
 		}
 	}

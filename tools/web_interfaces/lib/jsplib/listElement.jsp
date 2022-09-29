@@ -21,14 +21,13 @@
 <%@ page session="true" import="java.util.*, org.openspcoop2.web.lib.mvc.*" %>
 <html>
 <%
-String iddati = request.getParameter("iddati");
-String params = (String) request.getAttribute("params");
+String iddati = request.getParameter(Costanti.PARAMETER_NAME_ID_DATI);
+String params = (String) request.getAttribute(Costanti.PARAMETER_NAME_PARAMS);
 
 if (params == null)
 	 params="";
 
-ListElement listElement = 
-	  (org.openspcoop2.web.lib.mvc.ListElement) session.getAttribute("ListElement");
+ListElement listElement = ServletUtils.getObjectFromSession(request, session, ListElement.class, Costanti.SESSION_ATTRIBUTE_LIST_ELEMENT);
 
 String nomeServlet = listElement.getOggetto();
 String nomeServletAdd = nomeServlet+"Add.do";
@@ -37,8 +36,8 @@ String nomeServletList = nomeServlet+"List.do";
 	  
 String formatPar = listElement.formatParametersURL();
 
-String gdString = "GeneralData";
-String pdString = "PageData";
+String gdString = Costanti.SESSION_ATTRIBUTE_GENERAL_DATA;
+String pdString = Costanti.SESSION_ATTRIBUTE_PAGE_DATA;
 if (iddati != null && !iddati.equals("notdefined")) {
   gdString += iddati;
   pdString += iddati;
@@ -47,16 +46,17 @@ else {
   iddati = "notdefined";
 }
 
-GeneralData gd = (GeneralData) session.getAttribute(gdString);
-PageData pd = (PageData) session.getAttribute(pdString);
+GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
+PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
 
-Vector v = pd.getDati();
+Vector<?> v = pd.getDati();
 int n = v.size();
-String search = request.getParameter("search");
+String search = request.getParameter(Costanti.SEARCH_PARAMETER_NAME);
 if (search == null)
   search = "";
 
 String customListViewName = pd.getCustomListViewName();
+String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
 
 <head>
@@ -157,7 +157,11 @@ function RemoveEntries(tipo) {
 	    if(tipo) {
 		paramsString+='&obj_t='+tipo;
 	    }
-	    document.location='<%= request.getContextPath() %>/'+nomeServletDel+paramsString;
+	    var destinazione='<%= request.getContextPath() %>/'+nomeServletDel+paramsString;
+	    
+	 	// addTabID
+		destinazione = addTabIdParam(destinazione,true);
+		document.location = destinazione;
     } else {
     	
     	var deleteForm = document.createElement('FORM');
@@ -191,6 +195,13 @@ function RemoveEntries(tipo) {
    	  deleteForm.action = nomeServletDel;
    	      
    	  document.body.appendChild(deleteForm);
+   	  
+   	  
+   	  // aggiungo parametro idTab
+   	  if(tabValue != ''){
+   	  	addHidden(deleteForm, tabSessionKey , tabValue);
+   	 	addHidden(deleteForm, prevTabSessionKey , tabValue);
+   	  }
    	  // form submit
    	  deleteForm.submit();
     }
@@ -207,10 +218,15 @@ function AddEntry() {
     return false;
   }
   nr = 1;
+  var destinazione;
   if (formatPar != null && formatPar != "")
- 	  document.location='<%= request.getContextPath() %>/'+nomeServletAdd+'?'+formatPar+'&iddati='+iddati+params;
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletAdd+'?'+formatPar+'&iddati='+iddati+params;
   else
-	  document.location='<%= request.getContextPath() %>/'+nomeServletAdd+'?iddati='+iddati+params;
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletAdd+'?iddati='+iddati+params;
+	  
+	//addTabID
+	destinazione = addTabIdParam(destinazione,true);
+	document.location = destinazione;
 };
 
 function CambiaVisualizzazione(newPageSize) {
@@ -221,10 +237,15 @@ function CambiaVisualizzazione(newPageSize) {
   if (newPageSize == '0') {
     index = 0; 
   }
+  var destinazione;
   if (formatPar != null && formatPar != "")
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+newPageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+newPageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
   else
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+newPageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+newPageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+    
+//addTabID
+	destinazione = addTabIdParam(destinazione,true);
+	document.location = destinazione;
 };
 
 function NextPage() {
@@ -233,10 +254,15 @@ function NextPage() {
   }
   nr = 1;
   index += pageSize;
+  var destinazione;
   if (formatPar != null && formatPar != "")
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
   else
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+    
+//addTabID
+	destinazione = addTabIdParam(destinazione,true);
+	document.location = destinazione;
 };
 
 function PrevPage(pageSize) {
@@ -248,10 +274,15 @@ function PrevPage(pageSize) {
   if (index < 0) {
     index = 0;
   }
+  var destinazione;
   if (formatPar != null && formatPar != "")
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?'+formatPar+'&pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
   else
-    document.location='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+	  destinazione='<%= request.getContextPath() %>/'+nomeServletList+'?pageSize='+pageSize+'&index='+index+'&iddati='+iddati+params+'&_searchDone=true';
+    
+//addTabID
+	destinazione = addTabIdParam(destinazione,true);
+	document.location = destinazione;
 };
 
 function Search(form) {
@@ -295,6 +326,11 @@ function Search(form) {
 		}
   }
       
+  // aggiungo parametro idTab
+  if(tabValue != ''){
+  	addHidden(document.form, tabSessionKey , tabValue);
+  	addHidden(document.form, prevTabSessionKey , tabValue);
+  }
   // form submit
   document.form.submit();
  
@@ -358,13 +394,21 @@ function Reset(form) {
 	 		}
 	   }
 	   
+	   // aggiungo parametro idTab
+	   if(tabValue != ''){
+	   	addHidden(document.form, tabSessionKey , tabValue);
+	   	addHidden(document.form, prevTabSessionKey , tabValue);
+	   }
 	  // form submit
 	  document.form.submit();
 	 
 	};
 
 function Export(url){
-	document.location='<%= request.getContextPath() %>/'+url
+	var destinazione='<%= request.getContextPath() %>/'+url;
+	//addTabID
+	destinazione = addTabIdParam(destinazione,true);
+	document.location = destinazione;
 };
 
 function Esporta(tipo) {
@@ -389,7 +433,11 @@ function Esporta(tipo) {
 	if(elemToExport !== '') {
 		<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
 		if(eseguiOperazioniConGET) {
-			document.location = "<%= request.getContextPath() %>/export.do?tipoExport="+tipo+"&obj="+elemToExport;
+			var destinazione = "<%= request.getContextPath() %>/export.do?tipoExport="+tipo+"&obj="+elemToExport;
+			
+			//addTabID
+			destinazione = addTabIdParam(destinazione,true);
+			document.location = destinazione;
 		} else {
 			
 			var exportForm = document.createElement('FORM');
@@ -403,6 +451,12 @@ function Esporta(tipo) {
 	   	 	 exportForm.action = nomeServletExport;
 	   	      
 	   	 	 document.body.appendChild(exportForm);
+	   	 	 
+		   	  // aggiungo parametro idTab
+		   	  if(tabValue != ''){
+		   	  	addHidden(exportForm, tabSessionKey , tabValue);
+		   		addHidden(exportForm, prevTabSessionKey , tabValue);
+		   	  }
 	   	 	 // form submit
 	   	 	 exportForm.submit();
 		}
@@ -470,6 +524,11 @@ function Change(form,dataElementName,fromFilters) {
    		}
      }
         
+  // aggiungo parametro idTab
+  	  if(tabValue != ''){
+  	  	addHidden(document.form, tabSessionKey , tabValue);
+  	    addHidden(document.form, prevTabSessionKey , tabValue);
+  	  }
     // form submit
     document.form.submit();
 }

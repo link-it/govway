@@ -226,7 +226,7 @@ public class AuditHelper {
 			int idLista) throws Exception {
 		try {
 
-			ServletUtils.addListElementIntoSession(this.session, AuditCostanti.OBJECT_NAME_CONFIGURAZIONE_AUDITING_FILTRI);
+			ServletUtils.addListElementIntoSession(this.request, this.session, AuditCostanti.OBJECT_NAME_CONFIGURAZIONE_AUDITING_FILTRI);
 
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
@@ -848,7 +848,7 @@ public class AuditHelper {
 			String contoggetto) throws Exception {
 		try {
 
-			ServletUtils.addListElementIntoSession(this.session, AuditCostanti.OBJECT_NAME_AUDITING);
+			ServletUtils.addListElementIntoSession(this.request, this.session, AuditCostanti.OBJECT_NAME_AUDITING);
 
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);

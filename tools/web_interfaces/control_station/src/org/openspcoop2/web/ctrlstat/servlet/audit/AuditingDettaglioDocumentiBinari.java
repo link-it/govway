@@ -102,11 +102,11 @@ public final class AuditingDettaglioDocumentiBinari extends Action {
 			// Preparo la lista
 			auditingHelper.getAuditHelper().prepareDocBinList(singleOp, pDataInizio, pDataFine, pTipoOperazione, pTipoOggetto, pId, pOldId, pUtente, pStatoOperazione, pContoggetto, pEnd);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, AuditCostanti.OBJECT_NAME_AUDITING_DETTAGLIO, AuditCostanti.TIPO_OPERAZIONE_AUDITING_DETTAGLIO_DOCUMENTI_BINARI);
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					AuditCostanti.OBJECT_NAME_AUDITING_DETTAGLIO, AuditCostanti.TIPO_OPERAZIONE_AUDITING_DETTAGLIO_DOCUMENTI_BINARI);
 		}
 	}

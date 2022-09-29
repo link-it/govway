@@ -202,7 +202,7 @@ public class LoaderHelper {
 		}
 		
 		// setto l utente in sessione
-		ServletUtils.setUserIntoSession(this.session, u);
+		ServletUtils.setUserIntoSession(this.request, this.session, u);
 		return true;
 		
 	}

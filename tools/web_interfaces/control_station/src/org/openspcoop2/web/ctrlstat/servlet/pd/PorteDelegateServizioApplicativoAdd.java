@@ -101,7 +101,7 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 			boolean isToken = tokenList!=null && !"".equals(tokenList) && Boolean.valueOf(tokenList);
 			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
-			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session, request);
 			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 			
 			// Preparo il menu
@@ -253,7 +253,7 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping,
 						PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO, ForwardParams.ADD());
@@ -305,7 +305,7 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
  
 				pd.setDati(dati);
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping,
 						PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO,
@@ -328,7 +328,7 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), pde);
 
 			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(request, session, Search.class);
 			
 			int idLista = Liste.PORTE_DELEGATE_SERVIZIO_APPLICATIVO;
 			if(isToken) {
@@ -344,13 +344,13 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 
 			porteDelegateHelper.preparePorteDelegateServizioApplicativoList(idporta, ricerca, lista);
 
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
 			// Forward control to the specified success URI
 		 	return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO,
 		 			ForwardParams.ADD());
 		} catch (Exception e) {
-			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
+			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, request, session, gd, mapping, 
 					PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO, 
 					ForwardParams.ADD());
 		}  

@@ -3,10 +3,21 @@
 Homepage
 --------
 
-Una volta effettuato l'accesso, viene mostrata la pagina di benvenuto
-(:numref:`mon_homepage_fig`) che permette di visualizzare, tramite un grafico, il volume di
+Una volta effettuato l'accesso, viene mostrata una pagina di benvenuto che dipende dall'impostazione associata al profilo dell'utente (:ref:`mon_accesso_profilo`).
+
+Nel caso sia stato selezionata una homepage che visualizzi la ricerca delle transazioni l'utente viene rediretto alla pagina principale di ricerca descritta nella sezione ':ref:`mon_transazioni`' (:numref:`mon_tipoRicerca_fig2`).
+
+.. figure:: ../_figure_monitoraggio/IndiceStorico.png
+    :scale: 80%
+    :align: center
+    :name: mon_tipoRicerca_fig2
+
+    Ricerca delle Transazioni
+
+
+Se invece come homepage è stato impostato un report statistico verrà visualizzato, tramite un grafico, il volume di
 traffico complessivo, suddiviso in base all'esito delle singole
-comunicazioni. Il grafico può essere modificato specificando alcuni
+comunicazioni (:numref:`mon_homepage_fig`). Il grafico può essere modificato specificando alcuni
 valori tramite gli elementi seguenti:
 
 -  Periodo
@@ -34,8 +45,8 @@ valori tramite gli elementi seguenti:
    registrate. Opzione presente solo nel caso non sia stato selezionato un Soggetto nella testata.
 
 .. figure:: ../_figure_monitoraggio/Homepage.png
-    :scale: 100%
+    :scale: 70%
     :align: center
     :name: mon_homepage_fig
 
-    Pagina di ingresso con statistiche generali sul traffico
+    HomePage con Report Statistico
