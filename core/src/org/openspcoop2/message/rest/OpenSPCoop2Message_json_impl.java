@@ -147,19 +147,19 @@ public class OpenSPCoop2Message_json_impl extends AbstractBaseOpenSPCoop2RestMes
 	
 	@Override
 	public void addSimpleElement(String name, Object value) throws MessageException,MessageNotSupportedException{
-		this._processJsonField(true, null, name, value, true, false);
+		this._processJsonField(true, null, name, value, true, false, false);
 	}
 	@Override
 	public void addSimpleElement(String jsonPath, String name, Object value) throws MessageException,MessageNotSupportedException{
-		this._processJsonField(false, jsonPath, name, value, true, false);
+		this._processJsonField(false, jsonPath, name, value, true, false, false);
 	}
 	@Override
 	public void addObjectElement(String name, Object value) throws MessageException,MessageNotSupportedException{
-		this._processJsonField(true, null, name, toJSONObject(value), true, false);
+		this._processJsonField(true, null, name, toJSONObject(value), true, false, false);
 	}
 	@Override
 	public void addObjectElement(String jsonPath, String name, Object value) throws MessageException,MessageNotSupportedException{
-		this._processJsonField(false, jsonPath, name, toJSONObject(value), true, false);
+		this._processJsonField(false, jsonPath, name, toJSONObject(value), true, false, false);
 	}
 	private net.minidev.json.JSONObject toJSONObject(Object valueParam) throws MessageException {
 		net.minidev.json.JSONObject value = null;
@@ -195,11 +195,11 @@ public class OpenSPCoop2Message_json_impl extends AbstractBaseOpenSPCoop2RestMes
 	
 	@Override
 	public void addArrayElement(String name, Object value) throws MessageException,MessageNotSupportedException{
-		this._processJsonField(true, null, name, toJSONArray(value), true, false);
+		this._processJsonField(true, null, name, toJSONArray(value), true, false, false);
 	}
 	@Override
 	public void addArrayElement(String jsonPath, String name, Object value) throws MessageException,MessageNotSupportedException{
-		this._processJsonField(false, jsonPath, name, toJSONArray(value), true, false);
+		this._processJsonField(false, jsonPath, name, toJSONArray(value), true, false, false);
 	}
 	private net.minidev.json.JSONArray toJSONArray(Object valueParam) throws MessageException {
 		net.minidev.json.JSONArray value = null;
@@ -235,14 +235,23 @@ public class OpenSPCoop2Message_json_impl extends AbstractBaseOpenSPCoop2RestMes
 
 	@Override
 	public void removeElement(String name) throws MessageException,MessageNotSupportedException{
-		this._processJsonField(true, null, name, null, false, true);
+		this._processJsonField(true, null, name, null, false, true, false);
 	}
 	@Override
 	public void removeElement(String jsonPath, String name) throws MessageException,MessageNotSupportedException{
-		this._processJsonField(false, jsonPath, name, null, false, true);
+		this._processJsonField(false, jsonPath, name, null, false, true, false);
 	}
 	
-	public void _processJsonField(boolean rootElement, String jsonPath, String name, Object value, boolean add, boolean remove) throws MessageException {
+	@Override
+	public void replaceValue(String name, Object value) throws MessageException,MessageNotSupportedException{
+		this._processJsonField(true, null, name, value, false, false, true);
+	}
+	@Override
+	public void replaceValue(String jsonPath, String name, Object value) throws MessageException,MessageNotSupportedException{
+		this._processJsonField(false, jsonPath, name, value, false, false, true);
+	}
+	
+	private void _processJsonField(boolean rootElement, String jsonPath, String name, Object value, boolean add, boolean remove, boolean replaceValue) throws MessageException {
 		try {
 			if(!this.hasContent()) {
 				return;
@@ -261,6 +270,10 @@ public class OpenSPCoop2Message_json_impl extends AbstractBaseOpenSPCoop2RestMes
 				if(add) {
 					oNode.appendField(name, value);
 				}
+				else if(replaceValue) {
+					oNode.remove(name);
+					oNode.appendField(name, value);
+				}
 				else {
 					oNode.remove(name);
 				}
@@ -273,6 +286,10 @@ public class OpenSPCoop2Message_json_impl extends AbstractBaseOpenSPCoop2RestMes
 						if(oNodeArray instanceof net.minidev.json.JSONObject) {
 							net.minidev.json.JSONObject oNode = (net.minidev.json.JSONObject) oNodeArray;
 							if(add) {
+								oNode.appendField(name, value);
+							}
+							else if(replaceValue) {
+								oNode.remove(name);
 								oNode.appendField(name, value);
 							}
 							else {

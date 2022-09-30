@@ -45,6 +45,7 @@
 		<testsuite.utils.sql>${testsuite.sql}</testsuite.utils.sql>
 		<testsuite.pdd.core>${testsuite}</testsuite.pdd.core>
 		<testsuite.pdd.core.sql>${testsuite.sql}</testsuite.pdd.core.sql>
+		<testsuite.env.jenkins>false</testsuite.env.jenkins>
 
 		<!-- testsuite gruppi -->
 		<testsuite.utils.group>utils</testsuite.utils.group>

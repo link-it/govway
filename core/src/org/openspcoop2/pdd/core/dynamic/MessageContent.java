@@ -81,6 +81,9 @@ public class MessageContent {
 	public boolean isJson() {
 		return this.restJsonMessage!=null;
 	}
+	public OpenSPCoop2RestJsonMessage getJsonMessage() {
+		return this.restJsonMessage;
+	}
 	public boolean isXml() {
 		return this.soapMessage!=null || this.restXmlMessage!=null;
 	}

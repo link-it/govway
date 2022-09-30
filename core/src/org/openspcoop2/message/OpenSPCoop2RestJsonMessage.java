@@ -45,4 +45,7 @@ public interface OpenSPCoop2RestJsonMessage extends OpenSPCoop2RestMessage<Strin
 	public void removeElement(String name) throws MessageException,MessageNotSupportedException;
 	public void removeElement(String jsonPath, String name) throws MessageException,MessageNotSupportedException;
 	
+	public void replaceValue(String name, Object value) throws MessageException,MessageNotSupportedException;
+	public void replaceValue(String jsonPath, String name, Object value) throws MessageException,MessageNotSupportedException;
+	
 }

@@ -40,6 +40,8 @@ import org.openspcoop2.utils.json.YamlSnakeLimits;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
+import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.slf4j.Logger;
 /**
  * Questa classe si occupa di inizializzare tutte le risorse necessarie al webService.
@@ -158,6 +160,8 @@ public class Startup implements ServletContextListener {
 			Startup.log.info("Inizializzazione Risorse Statiche Console in corso...");
 			try {
 				ServerProperties serverProperties = ServerProperties.getInstance();
+				
+				ConsoleHelper.setTipoInterfacciaAPI(InterfaceType.STANDARD);
 				
 				ControlStationCore.setUtenzePasswordEncryptEngine_apiMode(serverProperties.getUtenzeCryptConfig());
 				

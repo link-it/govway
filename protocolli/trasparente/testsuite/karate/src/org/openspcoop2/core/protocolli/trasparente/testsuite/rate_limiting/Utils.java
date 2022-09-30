@@ -419,7 +419,12 @@ public class Utils {
 					try {
 						assertEquals("PolicyConteggiate["+polInfo.richiesteConteggiate+"]=attese["+conteggiate+"]",conteggiate, polInfo.richiesteConteggiate);
 					}catch(Throwable t) {
-						if(!org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.isJenkins() || !PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG.equals(policyType)) {
+						if(!org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.isJenkins() || 
+								(
+										!PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG.equals(policyType) &&
+										!PolicyGroupByActiveThreadsType.REDISSON_ATOMIC_LONG.equals(policyType) 
+								)
+						) {
 							throw t;
 						}
 						else {

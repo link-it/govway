@@ -1,3 +1,9 @@
+2022-09-30  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta la possibilità di rimuovere elementi o sostituirne i valori utilizzando le keyword 'xPath' e 'jsonPath' all'interno di trasformazioni Freemarker o template.
+	I nuovi metodi sono stati aggiunti alla classe 'org.openspcoop2.pdd.core.dynamic.PatternExtractor'.
+
 2022-09-29  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole, GovWayMonitor]

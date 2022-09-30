@@ -20,6 +20,7 @@
 
 package org.openspcoop2.pdd.core.trasformazioni;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -275,7 +276,91 @@ public class Test {
 	private static final String JSON_RESPONSE = JSON_PREFIX + JSON_RESPONSE_CONTENT + JSON_END;
 	
 	private static final String HELLO_WORLD_PLAIN = "HELLO WORLD!";
-			
+	
+	private static final String SOAP11_PREFIX = 
+			"<soapenv:Envelope xmlns:soapenv=\""+org.openspcoop2.message.constants.Costanti.SOAP_ENVELOPE_NAMESPACE+"\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" " +
+			"xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><soapenv:Body>\n";
+	private static final String SOAP11_END = 
+			"</soapenv:Body></soapenv:Envelope>";
+	
+	private static final String SOAP12_PREFIX = 
+			"<soapenv:Envelope xmlns:soapenv=\""+org.openspcoop2.message.constants.Costanti.SOAP12_ENVELOPE_NAMESPACE+"\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" " +
+			"xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><soapenv:Body>\n";
+	private static final String SOAP12_END = 
+			"</soapenv:Body></soapenv:Envelope>";
+	
+	private static final String ALIMENTAZIONE_CONTESTO_XML_NAMESPACE = "http://govway.org/test";
+	private static final String ALIMENTAZIONE_CONTESTO_XML_XPATH_NAMESPACE = "{http://govway.org/test}";
+	
+	private static final String ALIMENTAZIONE_CONTESTO_XML_TEST = "<prova:test xmlns:prova=\""+ALIMENTAZIONE_CONTESTO_XML_NAMESPACE+"\">\n"+
+			"<prova:inizio>PROVA</prova:inizio>\n"+
+			"<prova:altro><prova:el1>EL1</prova:el1><prova:removeElement>EL1</prova:removeElement></prova:altro>\n"+
+			"<prova:removeElementArray2><prova:el1>EL1</prova:el1><prova:b>EL2</prova:b></prova:removeElementArray2>\n"+
+			"<prova:removeElementArray2><prova:el1>EL1</prova:el1><prova:b>EL2</prova:b></prova:removeElementArray2>\n"+
+			"<prova:modificaValore>PROVA</prova:modificaValore>\n"+
+			"<prova:modificaValoreArray><prova:el1>EL1</prova:el1><prova:b>EL2A</prova:b></prova:modificaValoreArray>\n"+
+			"<prova:modificaValoreArray><prova:el1>EL1</prova:el1><prova:b>EL2B</prova:b></prova:modificaValoreArray>\n"+
+			"</prova:test>";
+	private static final String ALIMENTAZIONE_CONTESTO_XML_TEST_ATTESO = "<prova:test xmlns:prova=\""+ALIMENTAZIONE_CONTESTO_XML_NAMESPACE+"\">\n"+
+			"<prova:inizio>PROVA</prova:inizio>\n"+
+			"<prova:altro><prova:el1>EL1</prova:el1></prova:altro>\n"+
+			"\n"+
+			"\n"+
+			"<prova:modificaValore>VALOREMODIFICATO</prova:modificaValore>\n"+
+			"<prova:modificaValoreArray><prova:el1>EL1</prova:el1><prova:b>VALOREMODIFICATOARRAY</prova:b></prova:modificaValoreArray>\n"+
+			"<prova:modificaValoreArray><prova:el1>EL1</prova:el1><prova:b>VALOREMODIFICATOARRAY</prova:b></prova:modificaValoreArray>\n"+
+			"</prova:test>";
+	
+	private static final String ALIMENTAZIONE_CONTESTO_SOAP11_TEST =  SOAP11_PREFIX + ALIMENTAZIONE_CONTESTO_XML_TEST + "\n" + SOAP11_END;
+	private static final String ALIMENTAZIONE_CONTESTO_SOAP11_TEST_ATTESO = SOAP11_PREFIX + ALIMENTAZIONE_CONTESTO_XML_TEST_ATTESO + "\n" + SOAP11_END;
+	
+	private static final String ALIMENTAZIONE_CONTESTO_SOAP12_TEST =  SOAP12_PREFIX + ALIMENTAZIONE_CONTESTO_XML_TEST + "\n" + SOAP12_END;
+	private static final String ALIMENTAZIONE_CONTESTO_SOAP12_TEST_ATTESO = SOAP12_PREFIX + ALIMENTAZIONE_CONTESTO_XML_TEST_ATTESO + "\n" + SOAP12_END;
+	
+	private static final String ALIMENTAZIONE_CONTESTO_JSON_TEST_ELEMENT_INTERNO = "   {\n"+
+			"   \"internoA\": \"A\",\n"+
+			"   \"internoB\": \"B\",\n"+
+			"   }";
+	private static final String ALIMENTAZIONE_CONTESTO_JSON_TEST_ELEMENT_INTERNO21 = "   {\n"+
+			"   \"internoD\": \"D\",\n"+
+			"   \"internoE\": \"E1\",\n"+
+			"   }";
+	private static final String ALIMENTAZIONE_CONTESTO_JSON_TEST_ELEMENT_INTERNO22 = "   {\n"+
+			"   \"internoD\": \"D\",\n"+
+			"   \"internoE\": \"E2\",\n"+
+			"   }";
+	private static final String ALIMENTAZIONE_CONTESTO_JSON_TEST_ELEMENT_INTERNO23 = "   {\n"+
+			"   \"internoD\": \"D\",\n"+
+			"   \"internoE\": \"E3\",\n"+
+			"   }";
+	private static final String ALIMENTAZIONE_CONTESTO_JSON_TEST = "{\n"+
+			"\"inizio\": \"PROVA\",\n"+
+			"\"removeRootElement\": \"PROVA-ROOT\",\n"+
+			"\"removeRootElementInt\": 3,\n"+
+			"\"altro\": "+ALIMENTAZIONE_CONTESTO_JSON_TEST_ELEMENT_INTERNO+",\n"+
+			"\"removeArraySimple\": [\"1\",\"2\",\"3\"],\n"+
+			"\"removeArraySimpleInt\": [1,2,3],\n"+
+			"\"altroArraySimple\": [\"1\",\"2\",\"3\"],\n"+
+			"\"altroArraySimpleInt\": [1,2,3],\n"+
+			"\"altroArrayComplex\": [\n"+ALIMENTAZIONE_CONTESTO_JSON_TEST_ELEMENT_INTERNO21+
+				",\n"+ALIMENTAZIONE_CONTESTO_JSON_TEST_ELEMENT_INTERNO22+
+				",\n"+ALIMENTAZIONE_CONTESTO_JSON_TEST_ELEMENT_INTERNO23+"\n],\n"+
+			"\"fine\": \"PROVAFINE\",\n"+
+			"\"modificaValore\": \"PROVA\",\n"+
+			"\"modificaValoreInt\": 23,\n"+
+			"}";
+
+	private static final String ALIMENTAZIONE_CONTESTO_JSON_TEST_ATTESO = "{"+
+			"\"inizio\":\"PROVA\","+
+			"\"altroArraySimple\":[\"1\",\"2\",\"3\"],"+
+			"\"modificaValoreInt\":99999999,"+
+			"\"altroArrayComplex\":[{\"internoD\":888888},{\"internoD\":888888},{\"internoD\":888888}],"+
+			"\"fine\":\"PROVAFINE\","+
+			"\"modificaValore\":\"VALOREMODIFICATO\","+
+			"\"altroArraySimpleInt\":[1,2,3],"+
+			"\"altro\":{\"internoA\":\"VALOREMODIFICATOCOMPLEX\"}"+
+			"}";
+	
 	
 	
 	// **** Template GovWay *****
@@ -540,6 +625,45 @@ public class Test {
 	
 	
 	
+	// **** Alimentazione Contesto Template FreeMarker *****
+	
+	private static final String ALIMENTAZIONE_CONTESTO_XML_TEMPLATE_FREEMARKER_REQUEST = 
+			"<#if xpath.match(\"//"+ALIMENTAZIONE_CONTESTO_XML_XPATH_NAMESPACE+"removeElement\")??><#assign tmp=xpath.remove(\"//"+ALIMENTAZIONE_CONTESTO_XML_XPATH_NAMESPACE+"removeElement\")!/></#if>\n"+
+			"<#if xPath.match(\"//"+ALIMENTAZIONE_CONTESTO_XML_XPATH_NAMESPACE+"removeElementArray2\")??><#assign tmp=xPath.removeList(\"//"+ALIMENTAZIONE_CONTESTO_XML_XPATH_NAMESPACE+"removeElementArray2\")!/></#if>\n"+
+			"<#assign tmp=xPath.replaceValueByXPath(\"//"+ALIMENTAZIONE_CONTESTO_XML_XPATH_NAMESPACE+"modificaValore\",\"VALOREMODIFICATO\")!/>\n"+
+			"<#assign tmp=xPath.replaceValuesByXPath(\"//"+ALIMENTAZIONE_CONTESTO_XML_XPATH_NAMESPACE+"modificaValoreArray/"+ALIMENTAZIONE_CONTESTO_XML_XPATH_NAMESPACE+"b\",\"VALOREMODIFICATOARRAY\")!/>";
+	private static final String ALIMENTAZIONE_CONTESTO_XML_TEMPLATE_FREEMARKER_RESPONSE = 
+			ALIMENTAZIONE_CONTESTO_XML_TEMPLATE_FREEMARKER_REQUEST.
+				replaceAll("xpath", "xpathResponse").
+				replaceAll("xPath", "xPathResponse");
+
+	private static final String ALIMENTAZIONE_CONTESTO_SOAP11_TEMPLATE_FREEMARKER_REQUEST = ALIMENTAZIONE_CONTESTO_XML_TEMPLATE_FREEMARKER_REQUEST;  
+	private static final String ALIMENTAZIONE_CONTESTO_SOAP11_TEMPLATE_FREEMARKER_RESPONSE = ALIMENTAZIONE_CONTESTO_XML_TEMPLATE_FREEMARKER_RESPONSE;
+	
+	private static final String ALIMENTAZIONE_CONTESTO_SOAP12_TEMPLATE_FREEMARKER_REQUEST = ALIMENTAZIONE_CONTESTO_XML_TEMPLATE_FREEMARKER_REQUEST;  
+	private static final String ALIMENTAZIONE_CONTESTO_SOAP12_TEMPLATE_FREEMARKER_RESPONSE = ALIMENTAZIONE_CONTESTO_XML_TEMPLATE_FREEMARKER_RESPONSE;  
+	
+	private static final String ALIMENTAZIONE_CONTESTO_JSON_TEMPLATE_FREEMARKER_REQUEST = 
+			"<#if jsonpath.match(\"$.removeRootElement\")??><#assign tmp=jsonpath.removeJsonElement(\"removeRootElement\")!/></#if>\n"+
+			"<#if jsonpath.match(\"$.removeRootElementInt\")??><#assign tmp=jsonpath.removeJsonElement(\"removeRootElementInt\")!/></#if>\n"+
+			"<#if jsonPath.match(\"$.removeArraySimple\")??><#assign tmp=jsonPath.removeJsonElement(\"removeArraySimple\")!/></#if>\n"+
+			"<#if jsonPath.match(\"$.removeArraySimpleInt\")??><#assign tmp=jsonPath.removeJsonElement(\"removeArraySimpleInt\")!/></#if>\n"+
+			"<#assign tmp=jsonPath.removeByJsonPath(\"$.altro\",\"internoB\")!/>\n"+
+			"<#assign tmp=jsonPath.removeByJsonPath(\"$.altroArrayComplex\",\"internoE\")!/>\n"+
+			"<#assign tmp=jsonPath.replaceJsonElementValue(\"modificaValore\",\"VALOREMODIFICATO\")!/>\n"+
+			"<#assign tmp=jsonPath.replaceJsonElementValue(\"modificaValoreInt\",99999999)!/>\n"+
+			"<#assign tmp=jsonPath.replaceValueByJsonPath(\"$.altro\",\"internoA\", \"VALOREMODIFICATOCOMPLEX\" )!/>\n"+
+			"<#assign tmp=jsonPath.replaceValueByJsonPath(\"$.altroArrayComplex\",\"internoD\",888888)!/>";
+	private static final String ALIMENTAZIONE_CONTESTO_JSON_TEMPLATE_FREEMARKER_RESPONSE = 
+			ALIMENTAZIONE_CONTESTO_JSON_TEMPLATE_FREEMARKER_REQUEST.
+				replaceAll("jsonpath", "jsonpathResponse").
+				replaceAll("jsonPath", "jsonPathResponse");
+	
+	
+	
+	
+	
+	
 	// **** Template Velocity *****
 	
 	private static final String JSON_TEMPLATE_VELOCITY_BODY = 	   
@@ -703,6 +827,41 @@ public class Test {
 			"#set ( $cfg3 = ${config[\""+CONFIG3+"\"]} )\n"+
 	        "${context.put(\""+PDDCONTEXT_CONFIG_RES+"\", ${cfg3})}";
 	
+	
+	
+	// **** Alimentazione Contesto Template Velocity *****
+	
+	private static final String ALIMENTAZIONE_CONTESTO_XML_TEMPLATE_VELOCITY_REQUEST = 
+			"#if (${xpath.match(\"//"+ALIMENTAZIONE_CONTESTO_XML_XPATH_NAMESPACE+"removeElement\")})#set($tmp=${xpath.remove(\"//"+ALIMENTAZIONE_CONTESTO_XML_XPATH_NAMESPACE+"removeElement\")})#end\n"+
+			"#if (${xPath.match(\"//"+ALIMENTAZIONE_CONTESTO_XML_XPATH_NAMESPACE+"removeElementArray2\")})#set($tmp=${xPath.removeList(\"//"+ALIMENTAZIONE_CONTESTO_XML_XPATH_NAMESPACE+"removeElementArray2\")})#end\n"+
+			"#set($tmp=${xPath.replaceValueByXPath(\"//"+ALIMENTAZIONE_CONTESTO_XML_XPATH_NAMESPACE+"modificaValore\",\"VALOREMODIFICATO\")})\n"+
+			"#set($tmp=${xPath.replaceValuesByXPath(\"//"+ALIMENTAZIONE_CONTESTO_XML_XPATH_NAMESPACE+"modificaValoreArray/"+ALIMENTAZIONE_CONTESTO_XML_XPATH_NAMESPACE+"b\",\"VALOREMODIFICATOARRAY\")})";
+	private static final String ALIMENTAZIONE_CONTESTO_XML_TEMPLATE_VELOCITY_RESPONSE = 
+			ALIMENTAZIONE_CONTESTO_XML_TEMPLATE_VELOCITY_REQUEST.
+				replaceAll("xpath", "xpathResponse").
+				replaceAll("xPath", "xPathResponse");
+	
+	private static final String ALIMENTAZIONE_CONTESTO_SOAP11_TEMPLATE_VELOCITY_REQUEST = ALIMENTAZIONE_CONTESTO_XML_TEMPLATE_VELOCITY_REQUEST;  
+	private static final String ALIMENTAZIONE_CONTESTO_SOAP11_TEMPLATE_VELOCITY_RESPONSE = ALIMENTAZIONE_CONTESTO_XML_TEMPLATE_VELOCITY_RESPONSE;
+	
+	private static final String ALIMENTAZIONE_CONTESTO_SOAP12_TEMPLATE_VELOCITY_REQUEST = ALIMENTAZIONE_CONTESTO_XML_TEMPLATE_VELOCITY_REQUEST;  
+	private static final String ALIMENTAZIONE_CONTESTO_SOAP12_TEMPLATE_VELOCITY_RESPONSE = ALIMENTAZIONE_CONTESTO_XML_TEMPLATE_VELOCITY_RESPONSE;  
+	
+	private static final String ALIMENTAZIONE_CONTESTO_JSON_TEMPLATE_VELOCITY_REQUEST = 
+			"#if (${jsonpath.match(\"$.removeRootElement\")})#set($tmp=${jsonpath.removeJsonElement(\"removeRootElement\")})#end\n"+
+			"#if (${jsonpath.match(\"$.removeRootElementInt\")})#set($tmp=${jsonpath.removeJsonElement(\"removeRootElementInt\")})#end\n"+
+			"#if (${jsonPath.match(\"$.removeArraySimple\")})#set($tmp=${jsonPath.removeJsonElement(\"removeArraySimple\")})#end\n"+
+			"#if (${jsonPath.match(\"$.removeArraySimpleInt\")})#set($tmp=${jsonPath.removeJsonElement(\"removeArraySimpleInt\")})#end\n"+
+			"#set($tmp=${jsonPath.removeByJsonPath(\"$.altro\",\"internoB\")})\n"+
+			"#set($tmp=${jsonPath.removeByJsonPath(\"$.altroArrayComplex\",\"internoE\")})\n"+
+			"#set($tmp=${jsonPath.replaceJsonElementValue(\"modificaValore\",\"VALOREMODIFICATO\")})\n"+
+			"#set($tmp=${jsonPath.replaceJsonElementValue(\"modificaValoreInt\",99999999)})\n"+
+			"#set($tmp=${jsonPath.replaceValueByJsonPath(\"$.altro\",\"internoA\", \"VALOREMODIFICATOCOMPLEX\" )})\n"+
+			"#set($tmp=${jsonPath.replaceValueByJsonPath(\"$.altroArrayComplex\",\"internoD\",888888)})";
+	private static final String ALIMENTAZIONE_CONTESTO_JSON_TEMPLATE_VELOCITY_RESPONSE = 
+			ALIMENTAZIONE_CONTESTO_JSON_TEMPLATE_VELOCITY_REQUEST.
+				replaceAll("jsonpath", "jsonpathResponse").
+				replaceAll("jsonPath", "jsonPathResponse");
 	
 	
 	// **** Template XSLT *****
@@ -962,10 +1121,12 @@ public class Test {
 		
 		String contentTypeJson = HttpConstants.CONTENT_TYPE_JSON;
 		String contentTypeSoap11 = HttpConstants.CONTENT_TYPE_SOAP_1_1;
-		String contentTypeXml = HttpConstants.CONTENT_TYPE_SOAP_1_1;
+		String contentTypeSoap12 = HttpConstants.CONTENT_TYPE_SOAP_1_2;
+		String contentTypeXml = HttpConstants.CONTENT_TYPE_XML;
 		if(charset!=null) {
 			contentTypeJson+="; charset="+charset.getValue();
 			contentTypeSoap11+="; charset="+charset.getValue();
+			contentTypeSoap12+="; charset="+charset.getValue();
 			contentTypeXml+="; charset="+charset.getValue();
 		}
 		
@@ -1005,6 +1166,42 @@ public class Test {
 		ap2 = xmlMessageResponse.castAsSoap().createAttachmentPart();
 		ap2.setContent(HELLO_WORLD_PLAIN, HttpConstants.CONTENT_TYPE_PLAIN);
 		xmlMessageResponse.castAsSoap().addAttachmentPart(ap2);
+		
+		OpenSPCoop2Message messageRequestPatternExtractorSOAP11 = messageFactory.createMessage(MessageType.SOAP_11, MessageRole.REQUEST, 
+				contentTypeSoap11, convert(ALIMENTAZIONE_CONTESTO_SOAP11_TEST,charset)).getMessage();
+		MessageContent messageRequestContentPatternExtractorSOAP11 = new MessageContent(messageRequestPatternExtractorSOAP11.castAsSoap(),
+				bufferMessage_readOnly, pddContext);
+		OpenSPCoop2Message messageResponsePatternExtractorSOAP11 = messageFactory.createMessage(MessageType.SOAP_11, MessageRole.RESPONSE, 
+				contentTypeSoap11, convert(ALIMENTAZIONE_CONTESTO_SOAP11_TEST,charset)).getMessage();
+		MessageContent messageResponseContentPatternExtractorSOAP11 = new MessageContent(messageResponsePatternExtractorSOAP11.castAsSoap(),
+				bufferMessage_readOnly, pddContext);
+		
+		OpenSPCoop2Message messageRequestPatternExtractorSOAP12 = messageFactory.createMessage(MessageType.SOAP_12, MessageRole.REQUEST, 
+				contentTypeSoap12, convert(ALIMENTAZIONE_CONTESTO_SOAP12_TEST,charset)).getMessage();
+		MessageContent messageRequestContentPatternExtractorSOAP12 = new MessageContent(messageRequestPatternExtractorSOAP12.castAsSoap(),
+				bufferMessage_readOnly, pddContext);
+		OpenSPCoop2Message messageResponsePatternExtractorSOAP12 = messageFactory.createMessage(MessageType.SOAP_12, MessageRole.RESPONSE, 
+				contentTypeSoap12, convert(ALIMENTAZIONE_CONTESTO_SOAP12_TEST,charset)).getMessage();
+		MessageContent messageResponseContentPatternExtractorSOAP12 = new MessageContent(messageResponsePatternExtractorSOAP12.castAsSoap(),
+				bufferMessage_readOnly, pddContext);
+		
+		OpenSPCoop2Message messageRequestPatternExtractorXML = messageFactory.createMessage(MessageType.XML, MessageRole.REQUEST, 
+				contentTypeXml, convert(ALIMENTAZIONE_CONTESTO_XML_TEST,charset)).getMessage();
+		MessageContent messageRequestContentPatternExtractorXML = new MessageContent(messageRequestPatternExtractorXML.castAsRestXml(),
+				bufferMessage_readOnly, pddContext);
+		OpenSPCoop2Message messageResponsePatternExtractorXML = messageFactory.createMessage(MessageType.XML, MessageRole.RESPONSE, 
+				contentTypeXml, convert(ALIMENTAZIONE_CONTESTO_XML_TEST,charset)).getMessage();
+		MessageContent messageResponseContentPatternExtractorXML = new MessageContent(messageResponsePatternExtractorXML.castAsRestXml(),
+				bufferMessage_readOnly, pddContext);
+		
+		OpenSPCoop2Message messageRequestPatternExtractorJSON = messageFactory.createMessage(MessageType.JSON, MessageRole.REQUEST, 
+				contentTypeJson, convert(ALIMENTAZIONE_CONTESTO_JSON_TEST,charset)).getMessage();
+		MessageContent messageRequestContentPatternExtractorJSON = new MessageContent(messageRequestPatternExtractorJSON.castAsRestJson(),
+				bufferMessage_readOnly, pddContext);
+		OpenSPCoop2Message messageResponsePatternExtractorJSON = messageFactory.createMessage(MessageType.JSON, MessageRole.RESPONSE, 
+				contentTypeJson, convert(ALIMENTAZIONE_CONTESTO_JSON_TEST,charset)).getMessage();
+		MessageContent messageResponseContentPatternExtractorJSON = new MessageContent(messageResponsePatternExtractorJSON.castAsRestJson(),
+				bufferMessage_readOnly, pddContext);
 		
 		RicezioneContenutiApplicativiInternalErrorGenerator generator = null;
 		
@@ -1057,6 +1254,83 @@ public class Test {
 				parametriForm,
 				errorHandlerJsonTestAlterazioni);
 		
+		Map<String, Object> dynamicMapRequestCheckPatternExtractorSOAP11 = new HashMap<String, Object>();
+		ErrorHandler errorHandlerRequestCheckPatternExtractorSOAP11 = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, pddContext);
+		DynamicUtils.fillDynamicMapRequest(log, dynamicMapRequestCheckPatternExtractorSOAP11, pddContext, urlInvocazione,
+				messageRequestPatternExtractorSOAP11,
+				messageRequestContentPatternExtractorSOAP11, 
+				busta, 
+				parametriTrasporto, 
+				parametriUrl,
+				parametriForm,
+				errorHandlerRequestCheckPatternExtractorSOAP11);
+		
+		Map<String, Object> dynamicMapResponseCheckPatternExtractorSOAP11 = new HashMap<String, Object>();
+		ErrorHandler errorHandlerResponseCheckPatternExtractorSOAP11 = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_RESPONSE_FAILED, pddContext);
+		DynamicUtils.fillDynamicMapResponse(log, dynamicMapResponseCheckPatternExtractorSOAP11, dynamicMapRequestCheckPatternExtractorSOAP11, pddContext, 
+				messageResponsePatternExtractorSOAP11,
+				messageResponseContentPatternExtractorSOAP11, 
+				busta, parametriTrasportoRisposta,
+				errorHandlerResponseCheckPatternExtractorSOAP11);
+		
+		Map<String, Object> dynamicMapRequestCheckPatternExtractorSOAP12 = new HashMap<String, Object>();
+		ErrorHandler errorHandlerRequestCheckPatternExtractorSOAP12 = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, pddContext);
+		DynamicUtils.fillDynamicMapRequest(log, dynamicMapRequestCheckPatternExtractorSOAP12, pddContext, urlInvocazione,
+				messageRequestPatternExtractorSOAP12,
+				messageRequestContentPatternExtractorSOAP12, 
+				busta, 
+				parametriTrasporto, 
+				parametriUrl,
+				parametriForm,
+				errorHandlerRequestCheckPatternExtractorSOAP12);
+		
+		Map<String, Object> dynamicMapResponseCheckPatternExtractorSOAP12 = new HashMap<String, Object>();
+		ErrorHandler errorHandlerResponseCheckPatternExtractorSOAP12 = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_RESPONSE_FAILED, pddContext);
+		DynamicUtils.fillDynamicMapResponse(log, dynamicMapResponseCheckPatternExtractorSOAP12, dynamicMapRequestCheckPatternExtractorSOAP12, pddContext, 
+				messageResponsePatternExtractorSOAP12,
+				messageResponseContentPatternExtractorSOAP12, 
+				busta, parametriTrasportoRisposta,
+				errorHandlerResponseCheckPatternExtractorSOAP12);
+		
+		Map<String, Object> dynamicMapRequestCheckPatternExtractorXML = new HashMap<String, Object>();
+		ErrorHandler errorHandlerRequestCheckPatternExtractorXML = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, pddContext);
+		DynamicUtils.fillDynamicMapRequest(log, dynamicMapRequestCheckPatternExtractorXML, pddContext, urlInvocazione,
+				messageRequestPatternExtractorXML,
+				messageRequestContentPatternExtractorXML, 
+				busta, 
+				parametriTrasporto, 
+				parametriUrl,
+				parametriForm,
+				errorHandlerRequestCheckPatternExtractorXML);
+		
+		Map<String, Object> dynamicMapResponseCheckPatternExtractorXML = new HashMap<String, Object>();
+		ErrorHandler errorHandlerResponseCheckPatternExtractorXML = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_RESPONSE_FAILED, pddContext);
+		DynamicUtils.fillDynamicMapResponse(log, dynamicMapResponseCheckPatternExtractorXML, dynamicMapRequestCheckPatternExtractorXML, pddContext, 
+				messageResponsePatternExtractorXML,
+				messageResponseContentPatternExtractorXML, 
+				busta, parametriTrasportoRisposta,
+				errorHandlerResponseCheckPatternExtractorXML);
+		
+		Map<String, Object> dynamicMapRequestCheckPatternExtractorJSON = new HashMap<String, Object>();
+		ErrorHandler errorHandlerRequestCheckPatternExtractorJSON = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_REQUEST_FAILED, pddContext);
+		DynamicUtils.fillDynamicMapRequest(log, dynamicMapRequestCheckPatternExtractorJSON, pddContext, urlInvocazione,
+				messageRequestPatternExtractorJSON,
+				messageRequestContentPatternExtractorJSON, 
+				busta, 
+				parametriTrasporto, 
+				parametriUrl,
+				parametriForm,
+				errorHandlerRequestCheckPatternExtractorJSON);
+		
+		Map<String, Object> dynamicMapResponseCheckPatternExtractorJSON = new HashMap<String, Object>();
+		ErrorHandler errorHandlerResponseCheckPatternExtractorJSON = new ErrorHandler(generator, IntegrationFunctionError.TRANSFORMATION_RULE_RESPONSE_FAILED, pddContext);
+		DynamicUtils.fillDynamicMapResponse(log, dynamicMapResponseCheckPatternExtractorJSON, dynamicMapRequestCheckPatternExtractorJSON, pddContext, 
+				messageResponsePatternExtractorJSON,
+				messageResponseContentPatternExtractorJSON, 
+				busta, parametriTrasportoRisposta,
+				errorHandlerResponseCheckPatternExtractorJSON);
+
+		
 		if(tipoTest==null || TipoTrasformazione.TEMPLATE.equals(tipoTest)) {
 		
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.TEMPLATE) , "xml", pddContext, 
@@ -1094,6 +1368,34 @@ public class Test {
 			
 			elaborazioniJson(log, dynamicMapJsonTestAlterazioni,
 					bufferMessage_readOnly, pddContext);
+					
+			verificaPatternExtractor(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.CONTEXT_FREEMARKER_TEMPLATE) , "patternExtractor-xml", pddContext, 
+					dynamicMapRequestCheckPatternExtractorXML, null,  ALIMENTAZIONE_CONTESTO_XML_TEMPLATE_FREEMARKER_REQUEST.getBytes(), 
+					dynamicMapResponseCheckPatternExtractorXML, null,  ALIMENTAZIONE_CONTESTO_XML_TEMPLATE_FREEMARKER_RESPONSE.getBytes(),
+					charset, contentTypeXml,
+					messageRequestPatternExtractorXML, ALIMENTAZIONE_CONTESTO_XML_TEST_ATTESO,
+					messageResponsePatternExtractorXML, ALIMENTAZIONE_CONTESTO_XML_TEST_ATTESO);
+			
+			verificaPatternExtractor(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.CONTEXT_FREEMARKER_TEMPLATE) , "patternExtractor-soap11", pddContext, 
+					dynamicMapRequestCheckPatternExtractorSOAP11, null,  ALIMENTAZIONE_CONTESTO_SOAP11_TEMPLATE_FREEMARKER_REQUEST.getBytes(), 
+					dynamicMapResponseCheckPatternExtractorSOAP11, null,  ALIMENTAZIONE_CONTESTO_SOAP11_TEMPLATE_FREEMARKER_RESPONSE.getBytes(),
+					charset, contentTypeSoap11,
+					messageRequestPatternExtractorSOAP11, ALIMENTAZIONE_CONTESTO_SOAP11_TEST_ATTESO,
+					messageResponsePatternExtractorSOAP11, ALIMENTAZIONE_CONTESTO_SOAP11_TEST_ATTESO);
+			
+			verificaPatternExtractor(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.CONTEXT_FREEMARKER_TEMPLATE) , "patternExtractor-soap12", pddContext, 
+					dynamicMapRequestCheckPatternExtractorSOAP12, null,  ALIMENTAZIONE_CONTESTO_SOAP12_TEMPLATE_FREEMARKER_REQUEST.getBytes(), 
+					dynamicMapResponseCheckPatternExtractorSOAP12, null,  ALIMENTAZIONE_CONTESTO_SOAP12_TEMPLATE_FREEMARKER_RESPONSE.getBytes(),
+					charset, contentTypeSoap12,
+					messageRequestPatternExtractorSOAP12, ALIMENTAZIONE_CONTESTO_SOAP12_TEST_ATTESO,
+					messageResponsePatternExtractorSOAP12, ALIMENTAZIONE_CONTESTO_SOAP12_TEST_ATTESO);
+			
+			verificaPatternExtractor(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.CONTEXT_FREEMARKER_TEMPLATE) , "patternExtractor-json", pddContext, 
+					dynamicMapRequestCheckPatternExtractorJSON, null,  ALIMENTAZIONE_CONTESTO_JSON_TEMPLATE_FREEMARKER_REQUEST.getBytes(), 
+					dynamicMapResponseCheckPatternExtractorJSON, null,  ALIMENTAZIONE_CONTESTO_JSON_TEMPLATE_FREEMARKER_RESPONSE.getBytes(),
+					charset, contentTypeJson,
+					messageRequestPatternExtractorJSON, ALIMENTAZIONE_CONTESTO_JSON_TEST_ATTESO,
+					messageResponsePatternExtractorJSON, ALIMENTAZIONE_CONTESTO_JSON_TEST_ATTESO);
 		}
 		
 		if(tipoTest==null || TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP.equals(tipoTest)) {
@@ -1153,6 +1455,34 @@ public class Test {
 			
 			elaborazioniJson(log, dynamicMapJsonTestAlterazioni,
 					bufferMessage_readOnly, pddContext);
+			
+			verificaPatternExtractor(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE) , "patternExtractor-xml", pddContext, 
+					dynamicMapRequestCheckPatternExtractorXML, null,  ALIMENTAZIONE_CONTESTO_XML_TEMPLATE_VELOCITY_REQUEST.getBytes(), 
+					dynamicMapResponseCheckPatternExtractorXML, null,  ALIMENTAZIONE_CONTESTO_XML_TEMPLATE_VELOCITY_RESPONSE.getBytes(),
+					charset, contentTypeXml,
+					messageRequestPatternExtractorXML, ALIMENTAZIONE_CONTESTO_XML_TEST_ATTESO,
+					messageResponsePatternExtractorXML, ALIMENTAZIONE_CONTESTO_XML_TEST_ATTESO);
+			
+			verificaPatternExtractor(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE) , "patternExtractor-soap11", pddContext, 
+					dynamicMapRequestCheckPatternExtractorSOAP11, null,  ALIMENTAZIONE_CONTESTO_SOAP11_TEMPLATE_VELOCITY_REQUEST.getBytes(), 
+					dynamicMapResponseCheckPatternExtractorSOAP11, null,  ALIMENTAZIONE_CONTESTO_SOAP11_TEMPLATE_VELOCITY_RESPONSE.getBytes(),
+					charset, contentTypeSoap11,
+					messageRequestPatternExtractorSOAP11, ALIMENTAZIONE_CONTESTO_SOAP11_TEST_ATTESO,
+					messageResponsePatternExtractorSOAP11, ALIMENTAZIONE_CONTESTO_SOAP11_TEST_ATTESO);
+			
+			verificaPatternExtractor(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE) , "patternExtractor-soap12", pddContext, 
+					dynamicMapRequestCheckPatternExtractorSOAP12, null,  ALIMENTAZIONE_CONTESTO_SOAP12_TEMPLATE_VELOCITY_REQUEST.getBytes(), 
+					dynamicMapResponseCheckPatternExtractorSOAP12, null,  ALIMENTAZIONE_CONTESTO_SOAP12_TEMPLATE_VELOCITY_RESPONSE.getBytes(),
+					charset, contentTypeSoap12,
+					messageRequestPatternExtractorSOAP12, ALIMENTAZIONE_CONTESTO_SOAP12_TEST_ATTESO,
+					messageResponsePatternExtractorSOAP12, ALIMENTAZIONE_CONTESTO_SOAP12_TEST_ATTESO);
+			
+			verificaPatternExtractor(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE) , "patternExtractor-json", pddContext, 
+					dynamicMapRequestCheckPatternExtractorJSON, null,  ALIMENTAZIONE_CONTESTO_JSON_TEMPLATE_VELOCITY_REQUEST.getBytes(), 
+					dynamicMapResponseCheckPatternExtractorJSON, null,  ALIMENTAZIONE_CONTESTO_JSON_TEMPLATE_VELOCITY_RESPONSE.getBytes(),
+					charset, contentTypeJson,
+					messageRequestPatternExtractorJSON, ALIMENTAZIONE_CONTESTO_JSON_TEST_ATTESO,
+					messageResponsePatternExtractorJSON, ALIMENTAZIONE_CONTESTO_JSON_TEST_ATTESO);
 			
 		}
 		
@@ -2138,6 +2468,74 @@ public class Test {
 		}catch(Exception e) {
 			throw new DynamicException("Operazione fallita (s1:"+s1+") (s2:"+s2+"): "+e.getMessage(),e);
 		}
+	}
+	
+	
+	
+	private static void verificaPatternExtractor(Logger log, OpenSPCoop2MessageFactory messageFactory, TipoTrasformazione tipoTest, String prefix,
+			PdDContext pddContext,
+			Map<String, Object> dynamicMapRequest, MessageContent messageContentRequest, byte[] templateRequest, 
+			Map<String, Object> dynamicMapResponse, MessageContent messageContentResponse, byte[] templateResponse,
+			Charset charset, String contentType,
+			OpenSPCoop2Message messaggioRichiesta, String risultatoAttesoRichiesta,
+			OpenSPCoop2Message messaggioRisposta, String risultatoAttesoRisposta) throws Exception {
+		
+		boolean readCharset = charset!=null;
+		
+		System.out.println("Test ["+tipoTest+"-"+prefix+"] (charset: "+charset+") in corso ...");
+		
+		System.out.println("\trequest ...");
+		@SuppressWarnings("unused")
+		RisultatoTrasformazioneContenuto risultato = null;
+		try {
+			Template templateObject = new Template(tipoTest.getValue(), templateRequest);
+			risultato = GestoreTrasformazioniUtilities.trasformazioneContenuto(log, 
+					tipoTest.getValue(), templateObject, "richiesta", dynamicMapRequest, null, messageContentRequest, pddContext, contentType, readCharset);
+		}catch(Throwable e) {
+			System.out.println("\tTemplate:\n "+new String(templateRequest));
+			Utilities.sleep(1000);
+			throw e;
+		}
+		//String contenuto = risultato.getContenutoAsString(); 
+		// interessa come è stato trasformato il messaggio
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		messaggioRichiesta.writeTo(bout, true);
+		String contenuto = charset!=null ? bout.toString(charset.getValue()) : bout.toString();
+		if(!contenuto.equals(risultatoAttesoRichiesta)) {
+			System.out.println("\tTemplate:\n "+new String(templateRequest));
+			System.out.println("\tOttenuto:\n ["+contenuto+"]");
+			System.out.println("\tAtteso:\n ["+risultatoAttesoRichiesta+"]");
+			Utilities.sleep(1000);
+			throw new Exception("Risultato ottenuto diverso da quello atteso");
+		}
+		System.out.println("\trequest ok");
+		
+		System.out.println("\tresponse ...");
+		risultato = null;
+		try {
+			Template templateObject = new Template(tipoTest.getValue(), templateResponse);
+			risultato = GestoreTrasformazioniUtilities.trasformazioneContenuto(log, 
+					tipoTest.getValue(), templateObject, "risposta", dynamicMapResponse, null, messageContentResponse, pddContext, contentType, readCharset);
+		}catch(Throwable e) {
+			System.out.println("\tTemplate:\n "+new String(templateResponse));
+			Utilities.sleep(1000);
+			throw e;
+		}
+		//contenuto = risultato.getContenutoAsString();
+		// interessa come è stato trasformato il messaggio
+		bout = new ByteArrayOutputStream();
+		messaggioRisposta.writeTo(bout, true);
+		contenuto = charset!=null ? bout.toString(charset.getValue()) : bout.toString();
+		if(!contenuto.equals(risultatoAttesoRisposta)) {
+			System.out.println("\tTemplate:\n "+new String(templateRequest));
+			System.out.println("\tOttenuto:\n ["+contenuto+"]");
+			System.out.println("\tAtteso:\n ["+risultatoAttesoRisposta+"]");
+			Utilities.sleep(1000);
+			throw new Exception("Risultato ottenuto diverso da quello atteso");
+		}
+		System.out.println("\tresponse ok");
+		
+		System.out.println("Test ["+tipoTest+"-"+prefix+"] (charset: "+charset+") completato con successo");
 	}
 	
 }

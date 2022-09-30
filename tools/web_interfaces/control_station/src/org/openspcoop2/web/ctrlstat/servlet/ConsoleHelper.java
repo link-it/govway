@@ -479,7 +479,18 @@ public class ConsoleHelper implements IConsoleHelper {
 	/** Modalita Interfaccia */
 //	protected InterfaceType tipoInterfaccia = InterfaceType.STANDARD;
 	
+	private static InterfaceType tipoInterfacciaAPI = null; // api rest
+	public static InterfaceType getTipoInterfacciaAPI() {
+		return tipoInterfacciaAPI;
+	}
+	public static void setTipoInterfacciaAPI(InterfaceType tipoInterfacciaAPI) {
+		ConsoleHelper.tipoInterfacciaAPI = tipoInterfacciaAPI;
+	}
+
 	public InterfaceType getTipoInterfaccia() {
+		if(tipoInterfacciaAPI!=null) {
+			return tipoInterfacciaAPI;
+		}
 		User user = ServletUtils.getUserFromSession(this.request, this.session);
 		return user.getInterfaceType();
 	}

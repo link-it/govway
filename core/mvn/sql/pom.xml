@@ -105,6 +105,7 @@
 									haltonfailure="${testsuite.haltOnFailure}" groups="${testsuite.pdd.sql.group}">
 									<classfileset dir="build_testunits" includes="**/*.class"/>
 									<jvmarg value="-Dtestng.show.stack.frames=${testsuite.showStackFrames}" />
+									<jvmarg value="-Djenkins=${testsuite.env.jenkins}" />
 									<jvmarg value="-DtipoDatabase=${testsuite.utils.sql.tipoDatabase}" />
 									<jvmarg value="-DconnectionUrl=${testsuite.utils.sql.connectionUrl}" />
                         						<jvmarg value="-Dusername=${testsuite.utils.sql.username}" />

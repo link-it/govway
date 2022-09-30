@@ -22,8 +22,10 @@ package org.openspcoop2.pdd.core.dynamic;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.xml.XMLUtils;
@@ -194,6 +196,8 @@ public class PatternExtractor {
 	public String read(String pattern) throws DynamicException {
 		init();
 		
+		String operazione = "Read (pattern: "+pattern+")";
+		
 		String valore = null;
 		try {
 			if(this.element!=null) {
@@ -205,13 +209,13 @@ public class PatternExtractor {
 			}
 		}
 		catch(XPathNotFoundException e){
-			this.log.debug("Estrazione '"+pattern+"' non ha trovato risultati: "+e.getMessage(),e);
+			this.log.debug(operazione+" failed, results not found: "+e.getMessage(),e);
 		}
 		catch(XPathNotValidException e){
 			throw new DynamicException(e.getMessage(),e);
 		}
 		catch(JsonPathNotFoundException e){
-			this.log.debug("Estrazione '"+pattern+"' non ha trovato risultati: "+e.getMessage(),e);
+			this.log.debug(operazione+" failed, results not found: "+e.getMessage(),e);
 		}
 		catch(JsonPathNotValidException e){
 			throw new DynamicException(e.getMessage(),e);
@@ -222,7 +226,7 @@ public class PatternExtractor {
 			boolean notValid = true;
 			for (Throwable t : e.getExceptions()) {
 				if(t instanceof XPathNotFoundException || t instanceof JsonPathNotFoundException) {
-					this.log.debug("Estrazione ("+index+") '"+pattern+"' fallita: "+t.getMessage(),t);
+					this.log.debug("["+index+"] "+operazione+" failed: "+t.getMessage(),t);
 				}
 				else {
 					notFound = false;
@@ -239,18 +243,20 @@ public class PatternExtractor {
 					throw new DynamicException(e.getMessage(),e);
 				}
 				else {
-					throw new DynamicException("Estrazione '"+pattern+"' fallita: "+e.getMessage(),e);
+					throw new DynamicException(operazione+" failed: "+e.getMessage(),e);
 				}
 			}
 		}
 		catch(Exception e){
-			throw new DynamicException("Estrazione '"+pattern+"' fallita: "+e.getMessage(),e);
+			throw new DynamicException(operazione+" failed: "+e.getMessage(),e);
 		}
 		return valore;
 	}
 	
 	public List<String> readList(String pattern) throws DynamicException {
 		init();
+		
+		String operazione = "ReadList (pattern: "+pattern+")";
 		
 		List<String> valore = null;
 		try {
@@ -264,13 +270,13 @@ public class PatternExtractor {
 			}
 		}
 		catch(XPathNotFoundException e){
-			this.log.debug("Estrazione '"+pattern+"' non ha trovato risultati: "+e.getMessage(),e);
+			this.log.debug(operazione+" failed, results not found: "+e.getMessage(),e);
 		}
 		catch(XPathNotValidException e){
 			throw new DynamicException(e.getMessage(),e);
 		}
 		catch(JsonPathNotFoundException e){
-			this.log.debug("Estrazione '"+pattern+"' non ha trovato risultati: "+e.getMessage(),e);
+			this.log.debug(operazione+" failed, results not found: "+e.getMessage(),e);
 		}
 		catch(JsonPathNotValidException e){
 			throw new DynamicException(e.getMessage(),e);
@@ -281,7 +287,7 @@ public class PatternExtractor {
 			boolean notValid = true;
 			for (Throwable t : e.getExceptions()) {
 				if(t instanceof XPathNotFoundException || t instanceof JsonPathNotFoundException) {
-					this.log.debug("Estrazione ("+index+") '"+pattern+"' fallita: "+t.getMessage(),t);
+					this.log.debug("["+index+"] "+operazione+" failed: "+t.getMessage(),t);
 				}
 				else {
 					notFound = false;
@@ -298,18 +304,57 @@ public class PatternExtractor {
 					throw new DynamicException(e.getMessage(),e);
 				}
 				else {
-					throw new DynamicException("Estrazione '"+pattern+"' fallita: "+e.getMessage(),e);
+					throw new DynamicException(operazione+" failed: "+e.getMessage(),e);
 				}
 			}
 		}
 		catch(Exception e){
-			throw new DynamicException("Estrazione '"+pattern+"' fallita: "+e.getMessage(),e);
+			throw new DynamicException(operazione+" failed: "+e.getMessage(),e);
 		}
 		return valore;
 	}
 	
+	// Lascio per utilizzi in vecchie trasformazioni
+	@Deprecated
 	public void remove(String pattern) throws DynamicException {
+		this._remove(pattern, null);
+	}
+	public void removeByXPath(String pattern) throws DynamicException {
+		if(pattern==null || StringUtils.isEmpty(pattern)) {
+			throw new DynamicException("XPath pattern undefined");
+		}
+		this._remove(pattern, null);
+	}
+	public void removeJsonElement(String name) throws DynamicException {
+		if(name==null || StringUtils.isEmpty(name)) {
+			throw new DynamicException("JsonElement name undefined");
+		}
+		this._remove(null, name);
+	}
+	public void removeByJsonPath(String pattern, String name) throws DynamicException {
+		if(pattern==null || StringUtils.isEmpty(pattern)) {
+			throw new DynamicException("JsonPath pattern undefined");
+		}
+		if(name==null || StringUtils.isEmpty(name)) {
+			throw new DynamicException("JsonElement name undefined");
+		}
+		this._remove(pattern, name);
+	}
+	private void _remove(String pattern, String name) throws DynamicException {
 		init();
+		
+		String opName = "";
+		if(name!=null) {
+			opName="name:"+name+"";
+		}
+		String opPattern = "";
+		if(pattern!=null) {
+			opPattern="pattern:"+pattern+"";
+			if(name!=null) {
+				opPattern+=" ";
+			}
+		}
+		String operazione = "Remove ("+opPattern+""+opName+")";
 		
 		try {
 			this.messageContent.setUpdatable();
@@ -325,18 +370,30 @@ public class PatternExtractor {
 				}
 			}
 			else {
-				String s = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(this.elementJson, pattern, this.log);
-				this.elementJson = this.elementJson.replace(s, "");
+				if(this.messageContent!=null && this.messageContent.isJson() && this.messageContent.getJsonMessage()!=null) {
+					OpenSPCoop2RestJsonMessage json = this.messageContent.getJsonMessage();
+					if(pattern!=null) {
+						json.removeElement(pattern, name);
+					}
+					else {
+						json.removeElement(name);
+					}
+				}
+				else {
+					// retrocompatibilita'
+					String s = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(this.elementJson, pattern, this.log);
+					this.elementJson = this.elementJson.replace(s, "");
+				}
 			}
 		}
 		catch(XPathNotFoundException e){
-			this.log.debug("Rimozione '"+pattern+"' non ha trovato risultati: "+e.getMessage(),e);
+			this.log.debug(operazione+" failed, results not found: "+e.getMessage(),e);
 		}
 		catch(XPathNotValidException e){
 			throw new DynamicException(e.getMessage(),e);
 		}
 		catch(JsonPathNotFoundException e){
-			this.log.debug("Rimozione '"+pattern+"' non ha trovato risultati: "+e.getMessage(),e);
+			this.log.debug(operazione+" failed, results not found: "+e.getMessage(),e);
 		}
 		catch(JsonPathNotValidException e){
 			throw new DynamicException(e.getMessage(),e);
@@ -347,7 +404,7 @@ public class PatternExtractor {
 			boolean notValid = true;
 			for (Throwable t : e.getExceptions()) {
 				if(t instanceof XPathNotFoundException || t instanceof JsonPathNotFoundException) {
-					this.log.debug("Rimozione ("+index+") '"+pattern+"' fallita: "+t.getMessage(),t);
+					this.log.debug("["+index+"] "+operazione+" failed: "+t.getMessage(),t);
 				}
 				else {
 					notFound = false;
@@ -364,17 +421,30 @@ public class PatternExtractor {
 					throw new DynamicException(e.getMessage(),e);
 				}
 				else {
-					throw new DynamicException("Rimozione '"+pattern+"' fallita: "+e.getMessage(),e);
+					throw new DynamicException(operazione+" failed: "+e.getMessage(),e);
 				}
 			}
 		}
 		catch(Exception e){
-			throw new DynamicException("Rimozione '"+pattern+"' fallita: "+e.getMessage(),e);
+			throw new DynamicException(operazione+" failed: "+e.getMessage(),e);
 		}
 	}
 	
+	// Lascio per utilizzi in vecchie trasformazioni
+	@Deprecated
 	public void removeList(String pattern) throws DynamicException {
+		this._removeList(pattern);
+	}
+	public void removeListByXPath(String pattern) throws DynamicException {
+		if(pattern==null || StringUtils.isEmpty(pattern)) {
+			throw new DynamicException("XPath pattern undefined");
+		}
+		this._remove(pattern, null);
+	}
+	private void _removeList(String pattern) throws DynamicException {
 		init();
+		
+		String operazione = "RemoveList (pattern: "+pattern+")";
 		
 		try {
 			this.messageContent.setUpdatable();
@@ -395,6 +465,7 @@ public class PatternExtractor {
 				}
 			}
 			else {
+				// Soluzione deprecata: usare removeByJsonPath
 				List<String> valori = JsonXmlPathExpressionEngine.extractAndConvertResultAsList(this.elementJson, pattern, this.log);
 				if(valori!=null && !valori.isEmpty()) {
 					for (String valore : valori) {
@@ -404,13 +475,13 @@ public class PatternExtractor {
 			}
 		}
 		catch(XPathNotFoundException e){
-			this.log.debug("Rimozione '"+pattern+"' non ha trovato risultati: "+e.getMessage(),e);
+			this.log.debug(operazione+" failed, results not found: "+e.getMessage(),e);
 		}
 		catch(XPathNotValidException e){
 			throw new DynamicException(e.getMessage(),e);
 		}
 		catch(JsonPathNotFoundException e){
-			this.log.debug("Rimozione '"+pattern+"' non ha trovato risultati: "+e.getMessage(),e);
+			this.log.debug(operazione+" failed, results not found: "+e.getMessage(),e);
 		}
 		catch(JsonPathNotValidException e){
 			throw new DynamicException(e.getMessage(),e);
@@ -421,7 +492,7 @@ public class PatternExtractor {
 			boolean notValid = true;
 			for (Throwable t : e.getExceptions()) {
 				if(t instanceof XPathNotFoundException || t instanceof JsonPathNotFoundException) {
-					this.log.debug("Rimozione ("+index+") '"+pattern+"' fallita: "+t.getMessage(),t);
+					this.log.debug("["+index+"] "+operazione+" failed: "+t.getMessage(),t);
 				}
 				else {
 					notFound = false;
@@ -438,12 +509,164 @@ public class PatternExtractor {
 					throw new DynamicException(e.getMessage(),e);
 				}
 				else {
-					throw new DynamicException("Rimozione '"+pattern+"' fallita: "+e.getMessage(),e);
+					throw new DynamicException(operazione+" failed: "+e.getMessage(),e);
 				}
 			}
 		}
 		catch(Exception e){
-			throw new DynamicException("Rimozione '"+pattern+"' fallita: "+e.getMessage(),e);
+			throw new DynamicException(operazione+" failed: "+e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	public void replaceValueByXPath(String pattern, String newValue) throws DynamicException {
+		if(pattern==null || StringUtils.isEmpty(pattern)) {
+			throw new DynamicException("XPath pattern undefined");
+		}
+		if(newValue==null) {
+			throw new DynamicException("New value undefined");
+		}
+		this._replaceValue(pattern, null, newValue);
+	}
+	public void replaceJsonElementValue(String name, Object newValue) throws DynamicException {
+		if(name==null || StringUtils.isEmpty(name)) {
+			throw new DynamicException("JsonElement name undefined");
+		}
+		if(newValue==null) {
+			throw new DynamicException("New value undefined");
+		}
+		this._replaceValue(null, name, newValue);
+	}
+	public void replaceValueByJsonPath(String pattern, String name, Object newValue) throws DynamicException {
+		if(pattern==null || StringUtils.isEmpty(pattern)) {
+			throw new DynamicException("JsonPath pattern undefined");
+		}
+		if(name==null || StringUtils.isEmpty(name)) {
+			throw new DynamicException("JsonElement name undefined");
+		}
+		if(newValue==null) {
+			throw new DynamicException("New value undefined");
+		}
+		this._replaceValue(pattern, name, newValue);
+	}
+	private void _replaceValue(String pattern, String name, Object value) throws DynamicException {
+		init();
+		
+		String opName = "";
+		if(name!=null) {
+			opName=" name:"+name+"";
+		}
+		String operazione = "Replace value (pattern: "+pattern+""+opName+")";
+		
+		try {
+			this.messageContent.setUpdatable();
+			
+			if(this.element!=null) {
+				AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(this.messageFactory);
+				Node n = (Node) xPathEngine.getMatchPattern(this.element, this.dnc, pattern, XPathReturnType.NODE);
+				n.setTextContent(value.toString());
+			}
+			else {
+				if(this.messageContent!=null && this.messageContent.isJson() && this.messageContent.getJsonMessage()!=null) {
+					OpenSPCoop2RestJsonMessage json = this.messageContent.getJsonMessage();
+					if(pattern!=null) {
+						json.replaceValue(pattern, name, value);
+					}
+					else {
+						json.replaceValue(name, value);
+					}
+				}
+			}
+		}
+		catch(XPathNotFoundException e){
+			this.log.debug(operazione+" failed, results not found: "+e.getMessage(),e);
+		}
+		catch(XPathNotValidException e){
+			throw new DynamicException(e.getMessage(),e);
+		}
+		catch(Exception e){
+			throw new DynamicException(operazione+" failed: "+e.getMessage(),e);
+		}
+	}
+	
+	
+	public void replaceValuesByXPath(String pattern, String newValue) throws DynamicException {
+		if(pattern==null || StringUtils.isEmpty(pattern)) {
+			throw new DynamicException("XPath pattern undefined");
+		}
+		if(newValue==null) {
+			throw new DynamicException("New value undefined");
+		}
+		this._replaceValues(pattern, null, newValue);
+	}
+	private void _replaceValues(String pattern, String name, String value) throws DynamicException {
+		init();
+		
+		String opName = "";
+		if(name!=null) {
+			opName=" name:"+name+"";
+		}
+		String operazione = "Replace values (pattern: "+pattern+""+opName+")";
+		
+		try {
+			this.messageContent.setUpdatable();
+			
+			if(this.element!=null) {
+				AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(this.messageFactory);
+				NodeList nList = (NodeList) xPathEngine.getMatchPattern(this.element, this.dnc, pattern, XPathReturnType.NODESET);
+				if(nList!=null && nList.getLength()>0) {
+					for (int i = 0; i < nList.getLength(); i++) {
+						Node n = nList.item(i);
+						n.setTextContent(value);		
+					}
+				}
+			}
+			else {
+				throw new Exception("Unsupported in json structure");
+			}
+		}
+		catch(XPathNotFoundException e){
+			this.log.debug(operazione+" failed, results not found: "+e.getMessage(),e);
+		}
+		catch(XPathNotValidException e){
+			throw new DynamicException(e.getMessage(),e);
+		}
+		catch(JsonPathNotFoundException e){
+			this.log.debug(operazione+" failed, results not found: "+e.getMessage(),e);
+		}
+		catch(JsonPathNotValidException e){
+			throw new DynamicException(e.getMessage(),e);
+		}
+		catch(org.openspcoop2.utils.UtilsMultiException e) {
+			int index = 0;
+			boolean notFound = true;
+			boolean notValid = true;
+			for (Throwable t : e.getExceptions()) {
+				if(t instanceof XPathNotFoundException || t instanceof JsonPathNotFoundException) {
+					this.log.debug("["+index+"] "+operazione+" failed: "+t.getMessage(),t);
+				}
+				else {
+					notFound = false;
+				}
+				
+				if(!(t instanceof XPathNotValidException) && !(t instanceof JsonPathNotValidException)) {
+					notValid = false;
+				}
+				
+				index++;
+			}
+			if(!notFound) {
+				if(notValid) {
+					throw new DynamicException(e.getMessage(),e);
+				}
+				else {
+					throw new DynamicException(operazione+" failed: "+e.getMessage(),e);
+				}
+			}
+		}
+		catch(Exception e){
+			throw new DynamicException(operazione+" failed: "+e.getMessage(),e);
 		}
 	}
 }
