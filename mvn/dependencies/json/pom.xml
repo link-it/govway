@@ -21,7 +21,7 @@
 		<btf.version>1.2</btf.version>
 		<fge_json-schema-validator.version>2.2.10</fge_json-schema-validator.version>
 		<handy-uri-templates.version>2.1.8</handy-uri-templates.version>
-		<jettison.version>1.4.0</jettison.version>
+		<jettison.version>1.5.1</jettison.version>
 		<org.json.json.version>20190722</org.json.json.version>
 		<json-lib.version>2.4-jdk15</json-lib.version>
 		<json-path.version>2.4.0</json-path.version>
