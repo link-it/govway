@@ -21,7 +21,11 @@ Sono stati effettuati i seguenti interventi migliorativi degli aspetti prestazio
 
 Sono stati risolti i seguenti bug:
 
-- la validazione tramite interfaccia OpenAPI falliva erroneamente se veniva attuata la validazione di un 'path parameter' contenente caratteri che erano stati codificati per poter essere trasmessi nella url, poichè non veniva attuata una decodifica prima della validazione del parametro;
+- risolti i seguenti problemi relativi alla validazione di un'interfaccia OpenAPI 3.0:
+
+	- non erano supportati parametri (path/header/query/cookie) definiti tramite complex type (anyOf/allOf/oneOf);
+
+	- la validazione di un 'path parameter', contenente caratteri che erano stati codificati per poter essere trasmessi nella url, falliva erroneamente poichè non veniva attuata una decodifica prima della validazione del parametro;
 
 - l'invocazione di API REST con contenuti XML permettevano di sfruttare la vulnerabilità XXE descritta in:
 
