@@ -63,7 +63,7 @@ Per creare una tag version:
 18. Sistemare docker-compose.yml e database presente in resources/scenari/scenari.zip
    Per farlo, ad esempio se stiamo rilasciando la versione 3.3.1:
    - fare il clone di govway-docker
-   - generare una versione dell'installer semi-definitiva (con master build version) e copiarla dentro la directory compose_bin/ di govway-docker
+   - generare una versione dell'installer semi-definitiva (con master build version)
    - Come utenza root nella radice del progetto govway-docker:
          ./build_image.sh  -t govway:3.3.6-preRilascio -v 3.3.6.build-473a622d4 -d postgresql -l <PATH_ASSOLUTO>/govway-installer-3.3.6.build-473a622d4.tgz
    - Attendere per qualche minuto il completamento del build
@@ -88,7 +88,14 @@ Per creare una tag version:
 	collegarsi alle console e verificare la nuova versione:
 	. https://govway.localdomain/govwayConsole/
 	. https://govway.localdomain/govwayMonitor/
-	Se tutto funziona, provando ad eseguire dei test con PostMan chiudere il tutto con il comando (mandare in background lo starttest precedente):
+	Se tutto funziona, provando ad eseguire dei test con PostMan.
+        Verificare inoltre che dentro l'immagine vi siano le licenze:
+	. docker exec -ti gateway /bin/bash
+        . ls /usr/share/licenses/govway/third-party-licenses/
+        . ls /usr/share/licenses/govway/COPYING
+        . ls /usr/share/licenses/govway/LICENSE
+        . ls /usr/share/licenses/govway/README.txt
+        Alla fine chiudere il tutto con il comando (mandare in background lo starttest precedente):
 	./stoptest.sh
     - Editare nuovamente il file scenari/docker-compose.yml:
 	. Eliminare la direttiva:
