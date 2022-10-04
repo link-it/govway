@@ -52,6 +52,7 @@ import org.openspcoop2.utils.rest.api.ApiSchema;
 import org.openspcoop2.utils.rest.api.ApiSchemaType;
 import org.openspcoop2.utils.rest.entity.BinaryHttpRequestEntity;
 import org.openspcoop2.utils.rest.entity.BinaryHttpResponseEntity;
+import org.openspcoop2.utils.rest.entity.Cookie;
 import org.openspcoop2.utils.rest.entity.DocumentHttpResponseEntity;
 import org.openspcoop2.utils.rest.entity.ElementHttpResponseEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
@@ -109,6 +110,16 @@ public class TestOpenApi3Extended {
 			apiReaderOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi);
 			Api apiOpenApi = apiReaderOpenApi.read();
 			
+			try {
+				apiOpenApi.validate();
+			}catch(ProcessingException pe) {
+				pe.printStackTrace(System.out);
+				throw new Exception(" Documento contenente errori: "+pe.getMessage(), pe);
+			}catch(ParseWarningException warning) {
+				//warning.printStackTrace(System.out);
+				System.out.println("Documento contenente anomalie: "+warning.getMessage());
+			}
+			
 			IApiValidator apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 			OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 			configO.setEmitLogError(logSystemOutError);
@@ -129,6 +140,49 @@ public class TestOpenApi3Extended {
 				apiReaderOpenApi = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
 				apiReaderOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi);
 				apiOpenApi = apiReaderOpenApi.read();
+				
+				try {
+					apiOpenApi.validate();
+					throw new Exception("Atteso errore");
+				}catch(ProcessingException e) {
+					String msgErrore1 = "components.schemas.Pet.discriminator: The discriminator 'pet_type' is not a property of this schema (code: 134)";
+					if(!e.getMessage().contains(msgErrore1)) {
+						throw new Exception("Errore atteso '"+msgErrore1+"' non rilevato",e);
+					}
+					String msgErrore2 = "components.schemas.Pet.discriminator: The discriminator 'pet_type' is required in this schema (code: 135)";
+					if(!e.getMessage().contains(msgErrore2)) {
+						throw new Exception("Errore atteso '"+msgErrore2+"' non rilevato",e);
+					}
+					String msgErrore3 = "components.schemas.Pet2.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
+					if(!e.getMessage().contains(msgErrore3)) {
+						throw new Exception("Errore atteso '"+msgErrore3+"' non rilevato",e);
+					}
+					String msgErrore4 = "components.schemas.Pet3.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
+					if(!e.getMessage().contains(msgErrore4)) {
+						throw new Exception("Errore atteso '"+msgErrore4+"' non rilevato",e);
+					}
+					String msgErrore5 = "components.schemas.Pet5.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
+					if(!e.getMessage().contains(msgErrore5)) {
+						throw new Exception("Errore atteso '"+msgErrore5+"' non rilevato",e);
+					}
+					String msgErrore6 = "components.schemas.Pet6.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
+					if(!e.getMessage().contains(msgErrore6)) {
+						throw new Exception("Errore atteso '"+msgErrore6+"' non rilevato",e);
+					}
+					String msgErrore7 = "components.schemas.Pet7.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
+					if(!e.getMessage().contains(msgErrore7)) {
+						throw new Exception("Errore atteso '"+msgErrore7+"' non rilevato",e);
+					}
+					String msgErrore8 = "components.schemas.Pet8.properties.pet.discriminator: The discriminator 'pet_type' is not required or not a property of the allOf schemas (code: 133)";
+					if(!e.getMessage().contains(msgErrore8)) {
+						throw new Exception("Errore atteso '"+msgErrore8+"' non rilevato",e);
+					}
+//					pe.printStackTrace(System.out);
+//					throw new Exception(" Documento contenente errori: "+pe.getMessage(), pe);
+				}catch(ParseWarningException warning) {
+					//warning.printStackTrace(System.out);
+					System.out.println("Documento contenente anomalie: "+warning.getMessage());
+				}
 				
 				apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 				try {
@@ -185,6 +239,19 @@ public class TestOpenApi3Extended {
 				apiReaderOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi);
 				apiOpenApi = apiReaderOpenApi.read();
 				
+				try {
+					apiOpenApi.validate();
+					throw new Exception("Atteso errore");
+				}catch(ProcessingException e) {
+					String msgErrore = "components.schemas.Pet4.properties.pet.discriminator: The discriminator 'pet_type' is required in this schema (code: 135)";
+					if(!e.getMessage().contains(msgErrore)) {
+						throw new Exception("Errore atteso '"+msgErrore+"' non rilevato",e);
+					}
+				}catch(ParseWarningException warning) {
+					//warning.printStackTrace(System.out);
+					System.out.println("Documento contenente anomalie: "+warning.getMessage());
+				}
+				
 				apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 				try {
 					apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi, configO);
@@ -213,6 +280,16 @@ public class TestOpenApi3Extended {
 				apiReaderOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi);
 				apiOpenApi = apiReaderOpenApi.read();
 				
+				try {
+					apiOpenApi.validate();
+				}catch(ProcessingException pe) {
+					pe.printStackTrace(System.out);
+					throw new Exception(" Documento contenente errori: "+pe.getMessage(), pe);
+				}catch(ParseWarningException warning) {
+					//warning.printStackTrace(System.out);
+					System.out.println("Documento contenente anomalie: "+warning.getMessage());
+				}
+				
 				apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 				try {
 					apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi, configO);
@@ -235,11 +312,12 @@ public class TestOpenApi3Extended {
 					}catch(Exception e) {
 						
 						String erroreInteger1 = "default: Value '1' is incompatible with schema type 'integer' (code: 138)";
-						String erroreInteger2 = "default: Value '32' is incompatible with schema type 'integer' (code: 138)";
-						String erroreInteger3 = "default: Value '3147483647' is incompatible with schema type 'integer' (code: 138)";
+						String erroreInteger2 = "default: Value '32' is incompatible with schema type 'integer/int32' (code: 138)";
+						String erroreInteger3 = "default: Value '3147483647' is incompatible with schema type 'integer/int64' (code: 138)";
 						
 						String erroreNumber1 = "default: Value '1.2' is incompatible with schema type 'number' (code: 138)";
-						String erroreNumber2 = "default: Value '2.3' is incompatible with schema type 'number' (code: 138)";
+						String erroreNumber2 = "default: Value '2.3' is incompatible with schema type 'number/double' (code: 138)";
+						String erroreNumber3 = "default: Value '2.3' is incompatible with schema type 'number/float' (code: 138)";
 						
 						String erroreBoolean = "default: Value 'true' is incompatible with schema type 'boolean' (code: 138)";
 											
@@ -258,6 +336,9 @@ public class TestOpenApi3Extended {
 						}
 						if(!e.getMessage().contains(erroreNumber2)) {
 							throw new Exception("Errore atteso '"+erroreNumber2+"' non rilevato in :"+e.getMessage(),e);
+						}
+						if(!e.getMessage().contains(erroreNumber3)) {
+							throw new Exception("Errore atteso '"+erroreNumber3+"' non rilevato in :"+e.getMessage(),e);
 						}
 						
 						if(!e.getMessage().contains(erroreBoolean)) {
@@ -363,14 +444,25 @@ public class TestOpenApi3Extended {
 		ApiSchema apiSchemaYaml = new ApiSchema("teamdigitale-openapi_definitions.yaml", 
 				Utilities.getAsByteArray(TestOpenApi3Extended.class.getResourceAsStream("/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml")), ApiSchemaType.YAML);
 		
-		String baseUri = "http://petstore.swagger.io/api";
+		//String baseUri = "http://petstore.swagger.io/api";
+		String baseUri = ""; // non va definita
 		
 		IApiReader apiReaderOpenApi = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
 		ApiReaderConfig configOpenApi = new ApiReaderConfig();
 		configOpenApi.setProcessInclude(false);
 		apiReaderOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi, apiSchemaYaml);
 		Api apiOpenApi = apiReaderOpenApi.read();
-				
+			
+		try {
+			apiOpenApi.validate();
+		}catch(ProcessingException pe) {
+			pe.printStackTrace(System.out);
+			throw new Exception(" Documento contenente errori: "+pe.getMessage(), pe);
+		}catch(ParseWarningException warning) {
+			//warning.printStackTrace(System.out);
+			System.out.println("Documento contenente anomalie: "+warning.getMessage());
+		}
+		
 		IApiValidator apiValidatorOpenApi = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
@@ -379,13 +471,16 @@ public class TestOpenApi3Extended {
 		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
 		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
 		apiValidatorOpenApi.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi, configO);
-		
+				
 		
 		byte [] pdf = Utilities.getAsByteArray(TestOpenApi3Extended.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test.pdf"));
 		
 		String xml = "<prova>Hello World</prova>";
 		Document docXml = XMLUtils.getInstance().newDocument(xml.getBytes());
 		Element elementXml = docXml.getDocumentElement();
+		
+		
+		
 		
 		
 
@@ -1152,7 +1247,7 @@ public class TestOpenApi3Extended {
 						break;
 					case swagger_request_validator:
 						if (httpEntityTest11.getContent() != null) {
-							atteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/documenti/norequestresponse/send] No request body is expected but one was found."; 
+							atteso = "[ERROR][REQUEST][POST /documenti/norequestresponse/send] No request body is expected but one was found."; 
 						} else {
 							atteso = "Content-Type '"+contentTypeTest11+"' unsupported"; // swagger-request-validator-unsupported, check risolto da govway
 						}
@@ -1161,6 +1256,7 @@ public class TestOpenApi3Extended {
 					if(!msg.contains(atteso)) {
 						String checkErrore = "Validazione richiesta con content-type '"+contentTypeTest11+"' "+tipoTest+" contenuto terminato con un errore diverso da quello atteso: '"+msg+"'";
 						System.out.println("\t "+checkErrore);
+						System.out.println("\tatteso: "+atteso);
 						throw new Exception(checkErrore);
 					}
 					else {
@@ -1511,7 +1607,7 @@ public class TestOpenApi3Extended {
 					msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date'. (code: 1007)";
 					break;
 				case swagger_request_validator:
-					msgErroreAtteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/documenti/datetest/2020-07-21 @body] [Path '/data'] String \""+valore+"\" is invalid against requested date format(s) yyyy-MM-dd";
+					msgErroreAtteso = "[ERROR][REQUEST][POST /documenti/datetest/2020-07-21 @body] [Path '/data'] String \""+valore+"\" is invalid against requested date format(s) yyyy-MM-dd";
 					break;
 				}	
 				if(!e.getMessage().contains(msgErroreAtteso)) {
@@ -1632,7 +1728,7 @@ public class TestOpenApi3Extended {
 					msgErroreAtteso = "data_documento_header: Value '"+valore+"' does not match format 'date'. (code: 1007)";
 					break;
 				case swagger_request_validator:
-					msgErroreAtteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/documenti/datetest/2020-07-21 @header.data_documento_header] String \""+valore+"\" is invalid against requested date format(s)";
+					msgErroreAtteso = "[ERROR][REQUEST][POST /documenti/datetest/2020-07-21 @header.data_documento_header] String \""+valore+"\" is invalid against requested date format(s)";
 					break;
 				}
 				if(!e.getMessage().contains(msgErroreAtteso)) {
@@ -1754,7 +1850,7 @@ public class TestOpenApi3Extended {
 					msgErroreAtteso = "data_documento_query: Value '"+valore+"' does not match format 'date'. (code: 1007)";
 					break;
 				case swagger_request_validator:
-					msgErroreAtteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/documenti/datetest/2020-07-21 @query.data_documento_query] String \""+valore+"\" is invalid against requested date format(s) ";
+					msgErroreAtteso = "[ERROR][REQUEST][POST /documenti/datetest/2020-07-21 @query.data_documento_query] String \""+valore+"\" is invalid against requested date format(s) ";
 					break;
 				}
 				if(!e.getMessage().contains(msgErroreAtteso)) {
@@ -1823,7 +1919,8 @@ public class TestOpenApi3Extended {
 					msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'data_documento_path' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
 					break;
 				case openapi4j:
-					msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'data_documento_path' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
+					msgErroreAtteso = "data_documento_path: Value '"+valore+"' does not match format 'date'. (code: 1007)\n"
+							+ "From: data_documento_path.<format>";
 					break;
 				case swagger_request_validator:
 					msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'data_documento_path' (expected type 'date'): Found date '"+valore+"' has wrong format (see RFC 3339, section 5.6): Uncorrect format";
@@ -1931,7 +2028,7 @@ public class TestOpenApi3Extended {
 					msgErroreAtteso = "body.data: Value '"+valore+"' does not match format 'date-time'. (code: 1007)";
 					break;
 				case swagger_request_validator:
-					msgErroreAtteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/documenti/datetimetest/2020-07-21T17:32:28Z @body] [Path '/data'] String \""+valore+"\" is invalid against requested ";
+					msgErroreAtteso = "[ERROR][REQUEST][POST /documenti/datetimetest/2020-07-21T17:32:28Z @body] [Path '/data'] String \""+valore+"\" is invalid against requested ";
 					break;
 				}
 				if(!e.getMessage().contains(msgErroreAtteso)) {
@@ -2070,7 +2167,7 @@ public class TestOpenApi3Extended {
 						System.out.println("\t "+tipoTest+" validate, lo swagger-request-validator non rileva l'accezione!!!!");
 						continue;
 					}
-					msgErroreAtteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/documenti/datetimetest/2020-07-21T17:32:28Z @header.datetime_documento_header] String \""+valore+"\" is invalid against requested date format(s) [yyyy-MM-dd'T'HH:mm:ssZ, yyyy-MM-dd'T'HH:mm:ss.[0-9]{1,12}Z]";
+					msgErroreAtteso = "[ERROR][REQUEST][POST /documenti/datetimetest/2020-07-21T17:32:28Z @header.datetime_documento_header] String \""+valore+"\" is invalid against requested date format(s) [yyyy-MM-dd'T'HH:mm:ssZ, yyyy-MM-dd'T'HH:mm:ss.[0-9]{1,12}Z]";
 					break;
 				}
 				if(!e.getMessage().contains(msgErroreAtteso)) {
@@ -2210,7 +2307,7 @@ public class TestOpenApi3Extended {
 						System.out.println("\t "+tipoTest+" validate, lo swagger-request-validator non rileva l'accezione!!!!");
 						continue;
 					}
-					msgErroreAtteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/documenti/datetimetest/2020-07-21T17:32:28Z @query.datetime_documento_query] String \""+valore+"\" is invalid against r";
+					msgErroreAtteso = "[ERROR][REQUEST][POST /documenti/datetimetest/2020-07-21T17:32:28Z @query.datetime_documento_query] String \""+valore+"\" is invalid against r";
 					break;
 				}
 				if(!e.getMessage().contains(msgErroreAtteso)) {
@@ -2285,13 +2382,8 @@ public class TestOpenApi3Extended {
 					}
 					break;
 				case openapi4j:
-					msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'datetime_documento_path' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
-					if(!valore.contains("T")) {
-						msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
-					}
-					else {
-						msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
-					}
+					msgErroreAtteso = "datetime_documento_path: Value '"+valore+"' does not match format 'date-time'. (code: 1007)\n"
+							+ "From: datetime_documento_path.<format>";
 					break;
 				case swagger_request_validator:
 					msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'datetime_documento_path' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
@@ -2988,10 +3080,10 @@ public class TestOpenApi3Extended {
 						break;
 					case swagger_request_validator:
 						if(valore instanceof Integer) {
-							msgErroreAtteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/test-enum-no-yes @body] [Path '/stato1'] Instance value ("+valore+") not found in enum (possible values: [\"SI\",\"NO\""; 
+							msgErroreAtteso = "[ERROR][REQUEST][POST /test-enum-no-yes @body] [Path '/stato1'] Instance value ("+valore+") not found in enum (possible values: [\"SI\",\"NO\""; 
 						}
 						else {
-							msgErroreAtteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/test-enum-no-yes @body] [Path '/stato1'] Instance value (\""+valore.toString().toUpperCase()+"\") not found in enum (possible values: [\"SI\",\"NO\",\"YES\",\"S\",\"N\""; 
+							msgErroreAtteso = "[ERROR][REQUEST][POST /test-enum-no-yes @body] [Path '/stato1'] Instance value (\""+valore.toString().toUpperCase()+"\") not found in enum (possible values: [\"SI\",\"NO\",\"YES\",\"S\",\"N\""; 
 						}
 						break;
 					}
@@ -3018,10 +3110,10 @@ public class TestOpenApi3Extended {
 						break;
 					case swagger_request_validator:
 						if(valore instanceof Integer) {
-							msgErroreAtteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/test-enum-no-yes @body] [Path '/stato1'] Instance value ("+valore+") not found in enum (possible values: [\"SI\",\"NO\",\"YES\",\"S\",\"N\",\"Y\",\"";							
+							msgErroreAtteso = "[ERROR][REQUEST][POST /test-enum-no-yes @body] [Path '/stato1'] Instance value ("+valore+") not found in enum (possible values: [\"SI\",\"NO\",\"YES\",\"S\",\"N\",\"Y\",\"";							
 						}
 						else {
-							msgErroreAtteso = "[ERROR][REQUEST][POST http://petstore.swagger.io/api/test-enum-no-yes @body] [Path '/stato1'] Instance value (\""+valore.toString().toUpperCase()+"\") not found in enum (possible values: [\"SI\",\"NO\",\"YES\",\"S\",\"N\"";							
+							msgErroreAtteso = "[ERROR][REQUEST][POST /test-enum-no-yes @body] [Path '/stato1'] Instance value (\""+valore.toString().toUpperCase()+"\") not found in enum (possible values: [\"SI\",\"NO\",\"YES\",\"S\",\"N\"";							
 						}
 						break;
 					}
@@ -3420,7 +3512,7 @@ public class TestOpenApi3Extended {
 						 * */
 						
 						// Si ottiene un errore simile al seguente: Caused by: org.openspcoop2.utils.rest.ValidatorException: Validation failed.
-						// [ERROR][REQUEST][PATCH http://petstore.swagger.io/api/pets1 @body] Validation loop: schema "#/components/schemas/Cat" visited twice for pointer "" of validated instance
+						// [ERROR][REQUEST][PATCH /pets1 @body] Validation loop: schema "#/components/schemas/Cat" visited twice for pointer "" of validated instance
 						
 						System.out.println("Discriminator con allOf non supportato da swagger-request-validator!");
 						continue;
@@ -3557,6 +3649,23 @@ public class TestOpenApi3Extended {
 		testDynamicPath(openAPILibrary, mergeSpec);
 	
 		System.out.println("Test #27 openapi che usano path dinamici completato\n\n");
+		
+		
+
+		
+		// ** Test per validazione con openapi che usano parametri definiti con schemi composti ... **
+		
+		System.out.println("Test #28 openapi che usano parametri definiti con schemi composti ...");
+		
+		if(!OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
+			testComposedSchemaParameters(openAPILibrary, mergeSpec);
+		}
+		else {
+			System.out.println("SKIP per '"+openAPILibrary+"': validazione complex type nei parametri non supportata");
+		}	
+		System.out.println("Test #28 openapi che usano parametri definiti con schemi composti completato\n\n");
+		
+		
 	}
 
 	
@@ -3805,7 +3914,7 @@ public class TestOpenApi3Extended {
 		System.out.println("Valido richiesta con contenuto corretto..");
 		{
 			TextHttpRequestEntity validRequest = new TextHttpRequestEntity();
-			validRequest.setUrl("documenti/testbase64/"+UUID.randomUUID().toString());	
+			validRequest.setUrl("/documenti/testbase64/"+UUID.randomUUID().toString());	
 			validRequest.setMethod(HttpRequestMethod.POST);
 			validRequest.setContent("Q2lhbyBiYmVsbG8h");
 			Map<String, List<String>> parametersTrasporto = new HashMap<>();
@@ -3820,7 +3929,7 @@ public class TestOpenApi3Extended {
 		System.out.println("Valido richiesta con contenuto non corretto..");
 		{
 			TextHttpRequestEntity invalidRequest = new TextHttpRequestEntity();
-			invalidRequest.setUrl("documenti/testbase64/"+UUID.randomUUID().toString());	
+			invalidRequest.setUrl("/documenti/testbase64/"+UUID.randomUUID().toString());	
 			invalidRequest.setMethod(HttpRequestMethod.POST);
 			invalidRequest.setContent("{ asper");
 			Map<String, List<String>> parametersTrasporto = new HashMap<>();
@@ -3850,7 +3959,7 @@ public class TestOpenApi3Extended {
 		System.out.println("Valido risposta con contenuto corretto..");
 		{
 			TextHttpResponseEntity validResponse = new TextHttpResponseEntity();
-			validResponse.setUrl("documenti/testbase64/"+UUID.randomUUID().toString());	
+			validResponse.setUrl("/documenti/testbase64/"+UUID.randomUUID().toString());	
 			validResponse.setMethod(HttpRequestMethod.POST);
 			validResponse.setStatus(200);
 			validResponse.setContent("Q2lhbyBiYmVsbG8h");
@@ -3867,7 +3976,7 @@ public class TestOpenApi3Extended {
 		
 		{
 			TextHttpResponseEntity invalidResponse = new TextHttpResponseEntity();
-			invalidResponse.setUrl("documenti/testbase64/"+UUID.randomUUID().toString());	
+			invalidResponse.setUrl("/documenti/testbase64/"+UUID.randomUUID().toString());	
 			invalidResponse.setMethod(HttpRequestMethod.POST);
 			invalidResponse.setStatus(200);
 			invalidResponse.setContent("{ asper");
@@ -3910,7 +4019,17 @@ public class TestOpenApi3Extended {
 		configOpenApi4j.setProcessInclude(false);
 		apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi4j);
 		Api apiOpenApi4j = apiReaderOpenApi4j.read();
-								
+					
+		try {
+			apiOpenApi4j.validate();
+		}catch(ProcessingException pe) {
+			pe.printStackTrace(System.out);
+			throw new Exception(" Documento contenente errori: "+pe.getMessage(), pe);
+		}catch(ParseWarningException warning) {
+			//warning.printStackTrace(System.out);
+			System.out.println("Documento contenente anomalie: "+warning.getMessage());
+		}
+		
 		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
 		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
 		configO.setEmitLogError(logSystemOutError);
@@ -3926,7 +4045,7 @@ public class TestOpenApi3Extended {
 			TextHttpRequestEntity requestS1 = new TextHttpRequestEntity();
 			
 			requestS1.setMethod(HttpRequestMethod.GET);
-			requestS1.setUrl("test/"+UUID.randomUUID().toString());	
+			requestS1.setUrl("/test/"+UUID.randomUUID().toString());	
 					
 			try {				
 				apiValidatorOpenApi4j.validate(requestS1);
@@ -3945,7 +4064,7 @@ public class TestOpenApi3Extended {
 			
 			httpResponseTestS1.setStatus(200);		
 			httpResponseTestS1.setMethod(HttpRequestMethod.GET);
-			httpResponseTestS1.setUrl("test/"+UUID.randomUUID().toString());	
+			httpResponseTestS1.setUrl("/test/"+UUID.randomUUID().toString());	
 			Map<String, List<String>> headersS1 = new HashMap<>();
 			TransportUtils.setHeader(headersS1,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
 			httpResponseTestS1.setHeaders(headersS1);
@@ -5580,7 +5699,8 @@ public class TestOpenApi3Extended {
 		parametroTest.add(parameterNonValido);
 		erroreAttesoTest.add(true);
 		erroreAttesoProcessingTest.add(false);
-		erroreAtteso_openapi4j.add("Invalid value 'prova=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_openapi4j.add("dynamic_id: 'prova=fr' does not respect pattern '^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$'. (code: 1025)\n"
+				+ "From: dynamic_id.<pattern>");
 		erroreAtteso_swagger_request.add("Invalid value 'prova=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
 		erroreAtteso_json_schema.add("Invalid value 'prova=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
 		
@@ -5589,9 +5709,10 @@ public class TestOpenApi3Extended {
 		parametroTest.add(parameterNonValido_url_encoded);
 		erroreAttesoTest.add(true);
 		erroreAttesoProcessingTest.add(false);
-		erroreAtteso_openapi4j.add("Invalid value 'prova%3Dfr' (urlDecoded: 'prova=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
-		erroreAtteso_swagger_request.add("Invalid value 'prova%3Dfr' (urlDecoded: 'prova=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
-		erroreAtteso_json_schema.add("Invalid value 'prova%3Dfr' (urlDecoded: 'prova=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_openapi4j.add("dynamic_id: 'prova=fr' does not respect pattern '^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$'. (code: 1025)\n"
+				+ "From: dynamic_id.<pattern>");
+		erroreAtteso_swagger_request.add("Invalid value 'prova=fr' (urlEncoded: 'prova%3Dfr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_json_schema.add("Invalid value 'prova=fr' (urlEncoded: 'prova%3Dfr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
 		
 		
 		tipoTest.add("POST-NON_VALIDO-1");
@@ -5599,7 +5720,8 @@ public class TestOpenApi3Extended {
 		parametroTest.add(parameterNonValido);
 		erroreAttesoTest.add(true);
 		erroreAttesoProcessingTest.add(false);
-		erroreAtteso_openapi4j.add("Invalid value 'prova=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_openapi4j.add("dynamic_id: 'prova=fr' does not respect pattern '^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$'. (code: 1025)\n"
+				+ "From: dynamic_id.<pattern>");
 		erroreAtteso_swagger_request.add("Invalid value 'prova=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
 		erroreAtteso_json_schema.add("Invalid value 'prova=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
 		
@@ -5608,9 +5730,10 @@ public class TestOpenApi3Extended {
 		parametroTest.add(parameterNonValido_url_encoded);
 		erroreAttesoTest.add(true);
 		erroreAttesoProcessingTest.add(false);
-		erroreAtteso_openapi4j.add("Invalid value 'prova%3Dfr' (urlDecoded: 'prova=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
-		erroreAtteso_swagger_request.add("Invalid value 'prova%3Dfr' (urlDecoded: 'prova=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
-		erroreAtteso_json_schema.add("Invalid value 'prova%3Dfr' (urlDecoded: 'prova=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_openapi4j.add("dynamic_id: 'prova=fr' does not respect pattern '^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$'. (code: 1025)\n"
+				+ "From: dynamic_id.<pattern>");
+		erroreAtteso_swagger_request.add("Invalid value 'prova=fr' (urlEncoded: 'prova%3Dfr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_json_schema.add("Invalid value 'prova=fr' (urlEncoded: 'prova%3Dfr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
 		
 		
 		tipoTest.add("PUT-NON_VALIDO-1");
@@ -5618,7 +5741,8 @@ public class TestOpenApi3Extended {
 		parametroTest.add(parameterNonValido);
 		erroreAttesoTest.add(true);
 		erroreAttesoProcessingTest.add(false);
-		erroreAtteso_openapi4j.add("Invalid value 'prova=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_openapi4j.add("dynamic_id: 'prova=fr' does not respect pattern '^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$'. (code: 1025)\n"
+				+ "From: dynamic_id.<pattern>");
 		erroreAtteso_swagger_request.add("Invalid value 'prova=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
 		erroreAtteso_json_schema.add("Invalid value 'prova=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
 		
@@ -5627,9 +5751,10 @@ public class TestOpenApi3Extended {
 		parametroTest.add(parameterNonValido_url_encoded);
 		erroreAttesoTest.add(true);
 		erroreAttesoProcessingTest.add(false);
-		erroreAtteso_openapi4j.add("Invalid value 'prova%3Dfr' (urlDecoded: 'prova=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
-		erroreAtteso_swagger_request.add("Invalid value 'prova%3Dfr' (urlDecoded: 'prova=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
-		erroreAtteso_json_schema.add("Invalid value 'prova%3Dfr' (urlDecoded: 'prova=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_openapi4j.add("dynamic_id: 'prova=fr' does not respect pattern '^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$'. (code: 1025)\n"
+				+ "From: dynamic_id.<pattern>");
+		erroreAtteso_swagger_request.add("Invalid value 'prova=fr' (urlEncoded: 'prova%3Dfr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_json_schema.add("Invalid value 'prova=fr' (urlEncoded: 'prova%3Dfr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
 		
 		
 		
@@ -5638,7 +5763,8 @@ public class TestOpenApi3Extended {
 		parametroTest.add(parameterIllegalForUrl);
 		erroreAttesoTest.add(true);
 		erroreAttesoProcessingTest.add(false);
-		erroreAtteso_openapi4j.add("Invalid value 'prova\\=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_openapi4j.add("dynamic_id: 'prova\\\\=fr' does not respect pattern '^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$'. (code: 1025)\n"
+				+ "From: dynamic_id.<pattern>");
 		erroreAtteso_swagger_request.add("Invalid value 'prova\\=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
 		erroreAtteso_json_schema.add("Invalid value 'prova\\=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
 		
@@ -5647,9 +5773,10 @@ public class TestOpenApi3Extended {
 		parametroTest.add(parameterIllegalForUrl_url_encoded);
 		erroreAttesoTest.add(true);
 		erroreAttesoProcessingTest.add(false);
-		erroreAtteso_openapi4j.add("Invalid value 'prova%5C%3Dfr' (urlDecoded: 'prova\\=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
-		erroreAtteso_swagger_request.add("Invalid value 'prova%5C%3Dfr' (urlDecoded: 'prova\\=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
-		erroreAtteso_json_schema.add("Invalid value 'prova%5C%3Dfr' (urlDecoded: 'prova\\=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_openapi4j.add("dynamic_id: 'prova\\\\=fr' does not respect pattern '^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$'. (code: 1025)\n"
+				+ "From: dynamic_id.<pattern>");
+		erroreAtteso_swagger_request.add("Invalid value 'prova\\=fr' (urlEncoded: 'prova%5C%3Dfr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_json_schema.add("Invalid value 'prova\\=fr' (urlEncoded: 'prova%5C%3Dfr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
 		
 		
 		tipoTest.add("POST-ILLEGAL_CHARACTER-1");
@@ -5657,7 +5784,8 @@ public class TestOpenApi3Extended {
 		parametroTest.add(parameterIllegalForUrl);
 		erroreAttesoTest.add(true);
 		erroreAttesoProcessingTest.add(false);
-		erroreAtteso_openapi4j.add("Invalid value 'prova\\=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_openapi4j.add("dynamic_id: 'prova\\\\=fr' does not respect pattern '^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$'. (code: 1025)\n"
+				+ "From: dynamic_id.<pattern>");
 		erroreAtteso_swagger_request.add("Invalid value 'prova\\=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
 		erroreAtteso_json_schema.add("Invalid value 'prova\\=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
 				
@@ -5666,9 +5794,10 @@ public class TestOpenApi3Extended {
 		parametroTest.add(parameterIllegalForUrl_url_encoded);
 		erroreAttesoTest.add(true);
 		erroreAttesoProcessingTest.add(false);
-		erroreAtteso_openapi4j.add("Invalid value 'prova%5C%3Dfr' (urlDecoded: 'prova\\=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
-		erroreAtteso_swagger_request.add("Invalid value 'prova%5C%3Dfr' (urlDecoded: 'prova\\=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
-		erroreAtteso_json_schema.add("Invalid value 'prova%5C%3Dfr' (urlDecoded: 'prova\\=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_openapi4j.add("dynamic_id: 'prova\\\\=fr' does not respect pattern '^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$'. (code: 1025)\n"
+				+ "From: dynamic_id.<pattern>");
+		erroreAtteso_swagger_request.add("Invalid value 'prova\\=fr' (urlEncoded: 'prova%5C%3Dfr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_json_schema.add("Invalid value 'prova\\=fr' (urlEncoded: 'prova%5C%3Dfr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
 		
 		
 		tipoTest.add("PUT-ILLEGAL_CHARACTER-1");
@@ -5676,7 +5805,8 @@ public class TestOpenApi3Extended {
 		parametroTest.add(parameterIllegalForUrl);
 		erroreAttesoTest.add(true);
 		erroreAttesoProcessingTest.add(false);
-		erroreAtteso_openapi4j.add("Invalid value 'prova\\=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_openapi4j.add("dynamic_id: 'prova\\\\=fr' does not respect pattern '^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$'. (code: 1025)\n"
+				+ "From: dynamic_id.<pattern>");
 		erroreAtteso_swagger_request.add("Invalid value 'prova\\=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
 		erroreAtteso_json_schema.add("Invalid value 'prova\\=fr' in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
 				
@@ -5685,9 +5815,10 @@ public class TestOpenApi3Extended {
 		parametroTest.add(parameterIllegalForUrl_url_encoded);
 		erroreAttesoTest.add(true);
 		erroreAttesoProcessingTest.add(false);
-		erroreAtteso_openapi4j.add("Invalid value 'prova%5C%3Dfr' (urlDecoded: 'prova\\=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
-		erroreAtteso_swagger_request.add("Invalid value 'prova%5C%3Dfr' (urlDecoded: 'prova\\=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
-		erroreAtteso_json_schema.add("Invalid value 'prova%5C%3Dfr' (urlDecoded: 'prova\\=fr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_openapi4j.add("dynamic_id: 'prova\\\\=fr' does not respect pattern '^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$'. (code: 1025)\n"
+				+ "From: dynamic_id.<pattern>");
+		erroreAtteso_swagger_request.add("Invalid value 'prova\\=fr' (urlEncoded: 'prova%5C%3Dfr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
+		erroreAtteso_json_schema.add("Invalid value 'prova\\=fr' (urlEncoded: 'prova%5C%3Dfr') in dynamic path 'dynamic_id' (expected type 'string'): Pattern match failed ('^[A-Za-z0-9\\-\\.\\+_:\\/\\\\]{1,73}$')");
 		
 		
 		
@@ -5782,6 +5913,1323 @@ public class TestOpenApi3Extended {
 			
 			
 		System.out.println("TEST Verifica Format String completato!");
+
+	}
+	
+	
+	
+	private static void testComposedSchemaParameters(OpenAPILibrary openAPILibrary, boolean mergeSpec)
+			throws UtilsException, ProcessingException, URISyntaxException, Exception {
+		System.out.println("#### Verifica ComposedSchemaParameters ####");
+		
+		URL url = TestOpenApi3Extended.class.getResource("/org/openspcoop2/utils/openapi/allegati.yaml");
+					
+		ApiSchema apiSchemaYaml = new ApiSchema("teamdigitale-openapi_definitions.yaml", 
+				Utilities.getAsByteArray(TestOpenApi3Extended.class.getResourceAsStream("/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml")), ApiSchemaType.YAML);
+					
+		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
+		configOpenApi4j.setProcessInclude(false);
+		apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi4j, apiSchemaYaml);
+		
+		Api apiOpenApi4j = apiReaderOpenApi4j.read();
+								
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
+		configO.setEmitLogError(logSystemOutError);
+		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
+		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
+		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
+		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi4j, configO);
+		
+
+	
+	
+		List<String> tipoTest = new ArrayList<String>();
+		List<String> complexTypeTest = new ArrayList<String>();
+		List<String> pathTest = new ArrayList<String>();
+		List<String> queryTest = new ArrayList<String>();
+		List<String> headerTest = new ArrayList<String>();
+		List<String> cookieTest = new ArrayList<String>();
+		List<String> pathInLineTest = new ArrayList<String>();
+		List<String> queryInLineTest = new ArrayList<String>();
+		List<String> headerInLineTest = new ArrayList<String>();
+		List<String> cookieInLineTest = new ArrayList<String>();
+		List<Boolean> erroreAttesoRichiestaTest = new ArrayList<Boolean>();
+		List<Boolean> erroreAttesoRispostaTest = new ArrayList<Boolean>();
+		List<String> msgErroreAttesoTest_openapi4j = new ArrayList<String>();
+		List<String> msgErroreAttesoTest_swagger_request= new ArrayList<String>();
+		List<String> msgErroreAttesoTest_json_schema= new ArrayList<String>();
+		
+		
+		
+		// ######## ANY OF ######################
+		
+		String valoreCorretto1 = "ABCDEFGHILK"; // esattamente 11 caratteri
+		String valoreCorretto2 = "01234"; // da 3 a 5 cifre
+		String valoreNonCorretto1 = "ABCDEFGHILKALTRECIFRE"; // esattamente 11 caratteri
+		String valoreNonCorretto2 = "0123456789aa"; // da 3 a 5 cifre
+		
+		String valoreCorrettoInt1 = "20"; //  maximum: 20
+		String valoreCorrettoInt2 = "53"; // da 50 a 55
+		String valoreNonCorrettoInt = "59"; // da 50 a 55
+		
+		// *** Test1: corretto ***
+		
+		tipoTest.add("OK-1");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(false);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add(null);
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add(null);
+		
+		
+		tipoTest.add("OK-2");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto2);
+		queryTest.add(valoreCorretto2);
+		headerTest.add(valoreCorretto2);
+		cookieTest.add(valoreCorretto2);
+		pathInLineTest.add(valoreCorrettoInt2);
+		queryInLineTest.add(valoreCorrettoInt2);
+		headerInLineTest.add(valoreCorrettoInt2);
+		cookieInLineTest.add(valoreCorrettoInt2);
+		erroreAttesoRichiestaTest.add(false);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add(null);
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add(null);
+		
+		
+		
+		tipoTest.add("ERRORE-PATH-1");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreNonCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_path: '"+valoreNonCorretto1+"' does not respect pattern '^[A-Z]{11}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_path.<anyOf>.<pattern>\n"
+				+ "composed_schema_any_of_path: '"+valoreNonCorretto1+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_path.<anyOf>.<pattern>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in dynamic path 'composed_schema_any_of_path' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
+				+ "Invalid value '"+valoreNonCorretto1+"' in dynamic path 'composed_schema_any_of_path' (expected type 'string'): Pattern match failed ('^[0-9]{3,5}$')");
+		
+		
+		tipoTest.add("ERRORE-PATH-2");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreNonCorretto2);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_path: '"+valoreNonCorretto2+"' does not respect pattern '^[A-Z]{11}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_path.<anyOf>.<pattern>\n"
+				+ "composed_schema_any_of_path: '"+valoreNonCorretto2+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_path.<anyOf>.<pattern>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto2+"' in dynamic path 'composed_schema_any_of_path' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
+				+ "Invalid value '"+valoreNonCorretto2+"' in dynamic path 'composed_schema_any_of_path' (expected type 'string'): Pattern match failed ('^[0-9]{3,5}$')");
+		
+		
+		tipoTest.add("ERRORE-PATH-3");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreNonCorrettoInt);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_path: '"+valoreNonCorrettoInt+"' does not respect pattern '^[A-Z]{11}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_path.<anyOf>.<pattern>\n"
+				+ "composed_schema_any_of_path: Min length is '3', found '2'. (code: 1017)\n"
+				+ "From: composed_schema_any_of_path.<anyOf>.<minLength>\n"
+				+ "composed_schema_any_of_path: '"+valoreNonCorrettoInt+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_path.<anyOf>.<pattern>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in dynamic path 'composed_schema_any_of_path' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
+				+ "Invalid value '"+valoreNonCorrettoInt+"' in dynamic path 'composed_schema_any_of_path' (expected type 'string'): Too short, expected min length '3'");
+		
+		
+		tipoTest.add("ERRORE-PATH-INLINE-1");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreNonCorretto1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_path_inline: Value '"+valoreNonCorretto1+"' does not match format 'int32'. (code: 1007)\n"
+				+ "From: composed_schema_any_of_path_inline.<anyOf>.<format>\n"
+				+ "composed_schema_any_of_path_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
+				+ "From: composed_schema_any_of_path_inline.<anyOf>.<type>\n"
+				+ "composed_schema_any_of_path_inline: Value '"+valoreNonCorretto1+"' does not match format 'int32'. (code: 1007)\n"
+				+ "From: composed_schema_any_of_path_inline.<anyOf>.<format>\n"
+				+ "composed_schema_any_of_path_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
+				+ "From: composed_schema_any_of_path_inline.<anyOf>.<type>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in dynamic path 'composed_schema_any_of_path_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto1+"\"\n"
+				+ "Invalid value '"+valoreNonCorretto1+"' in dynamic path 'composed_schema_any_of_path_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto1+"\"");
+		
+		
+		tipoTest.add("ERRORE-PATH-INLINE-2");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreNonCorretto2);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_path_inline: Value '"+valoreNonCorretto2+"' does not match format 'int32'. (code: 1007)\n"
+				+ "From: composed_schema_any_of_path_inline.<anyOf>.<format>\n"
+				+ "composed_schema_any_of_path_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
+				+ "From: composed_schema_any_of_path_inline.<anyOf>.<type>\n"
+				+ "composed_schema_any_of_path_inline: Value '"+valoreNonCorretto2+"' does not match format 'int32'. (code: 1007)\n"
+				+ "From: composed_schema_any_of_path_inline.<anyOf>.<format>\n"
+				+ "composed_schema_any_of_path_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
+				+ "From: composed_schema_any_of_path_inline.<anyOf>.<type>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto2+"' in dynamic path 'composed_schema_any_of_path_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto2+"\"\n"
+				+ "Invalid value '"+valoreNonCorretto2+"' in dynamic path 'composed_schema_any_of_path_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto2+"\"");		
+		
+		
+		tipoTest.add("ERRORE-PATH-INLINE-3");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreNonCorrettoInt);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_path_inline: Maximum is '20', found '"+valoreNonCorrettoInt+"'. (code: 1010)\n"
+				+ "From: composed_schema_any_of_path_inline.<anyOf>.<maximum>\n"
+				+ "composed_schema_any_of_path_inline: Maximum is '55', found '"+valoreNonCorrettoInt+"'. (code: 1010)\n"
+				+ "From: composed_schema_any_of_path_inline.<anyOf>.<maximum>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in dynamic path 'composed_schema_any_of_path_inline' (expected type 'int32'): Value higher than the maximum '20'\n"
+				+ "Invalid value '"+valoreNonCorrettoInt+"' in dynamic path 'composed_schema_any_of_path_inline' (expected type 'int32'): Value higher than the maximum '55'");
+		
+		
+		
+		
+		tipoTest.add("ERRORE-QUERY-1");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreNonCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_query: '"+valoreNonCorretto1+"' does not respect pattern '^[A-Z]{11}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_query.<anyOf>.<pattern>\n"
+				+ "composed_schema_any_of_query: '"+valoreNonCorretto1+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_query.<anyOf>.<pattern>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in query parameter 'composed_schema_any_of_query' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
+				+ "Invalid value '"+valoreNonCorretto1+"' in query parameter 'composed_schema_any_of_query' (expected type 'string'): Pattern match failed ('^[0-9]{3,5}$')");
+		
+		
+		tipoTest.add("ERRORE-QUERY-2");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreNonCorretto2);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_query: '"+valoreNonCorretto2+"' does not respect pattern '^[A-Z]{11}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_query.<anyOf>.<pattern>\n"
+				+ "composed_schema_any_of_query: '"+valoreNonCorretto2+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_query.<anyOf>.<pattern>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto2+"' in query parameter 'composed_schema_any_of_query' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
+				+ "Invalid value '"+valoreNonCorretto2+"' in query parameter 'composed_schema_any_of_query' (expected type 'string'): Pattern match failed ('^[0-9]{3,5}$')");
+		
+		
+		tipoTest.add("ERRORE-QUERY-3");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreNonCorrettoInt);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_query: '"+valoreNonCorrettoInt+"' does not respect pattern '^[A-Z]{11}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_query.<anyOf>.<pattern>\n"
+				+ "composed_schema_any_of_query: Min length is '3', found '2'. (code: 1017)\n"
+				+ "From: composed_schema_any_of_query.<anyOf>.<minLength>\n"
+				+ "composed_schema_any_of_query: '"+valoreNonCorrettoInt+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_query.<anyOf>.<pattern>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in query parameter 'composed_schema_any_of_query' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
+				+ "Invalid value '"+valoreNonCorrettoInt+"' in query parameter 'composed_schema_any_of_query' (expected type 'string'): Too short, expected min length '3'");
+		
+		
+		tipoTest.add("ERRORE-QUERY-INLINE-1");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreNonCorretto1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_query_inline: Value '"+valoreNonCorretto1+"' does not match format 'int32'. (code: 1007)\n"
+				+ "From: composed_schema_any_of_query_inline.<anyOf>.<format>\n"
+				+ "composed_schema_any_of_query_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
+				+ "From: composed_schema_any_of_query_inline.<anyOf>.<type>\n"
+				+ "composed_schema_any_of_query_inline: Value '"+valoreNonCorretto1+"' does not match format 'int32'. (code: 1007)\n"
+				+ "From: composed_schema_any_of_query_inline.<anyOf>.<format>\n"
+				+ "composed_schema_any_of_query_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
+				+ "From: composed_schema_any_of_query_inline.<anyOf>.<type>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in query parameter 'composed_schema_any_of_query_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto1+"\"\n"
+				+ "Invalid value '"+valoreNonCorretto1+"' in query parameter 'composed_schema_any_of_query_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto1+"\"");
+		
+		
+		tipoTest.add("ERRORE-QUERY-INLINE-2");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreNonCorretto2);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_query_inline: Value '"+valoreNonCorretto2+"' does not match format 'int32'. (code: 1007)\n"
+				+ "From: composed_schema_any_of_query_inline.<anyOf>.<format>\n"
+				+ "composed_schema_any_of_query_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
+				+ "From: composed_schema_any_of_query_inline.<anyOf>.<type>\n"
+				+ "composed_schema_any_of_query_inline: Value '"+valoreNonCorretto2+"' does not match format 'int32'. (code: 1007)\n"
+				+ "From: composed_schema_any_of_query_inline.<anyOf>.<format>\n"
+				+ "composed_schema_any_of_query_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
+				+ "From: composed_schema_any_of_query_inline.<anyOf>.<type>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto2+"' in query parameter 'composed_schema_any_of_query_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto2+"\"\n"
+				+ "Invalid value '"+valoreNonCorretto2+"' in query parameter 'composed_schema_any_of_query_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto2+"\"");		
+		
+		
+		tipoTest.add("ERRORE-QUERY-INLINE-3");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreNonCorrettoInt);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_query_inline: Maximum is '20', found '"+valoreNonCorrettoInt+"'. (code: 1010)\n"
+				+ "From: composed_schema_any_of_query_inline.<anyOf>.<maximum>\n"
+				+ "composed_schema_any_of_query_inline: Maximum is '55', found '"+valoreNonCorrettoInt+"'. (code: 1010)\n"
+				+ "From: composed_schema_any_of_query_inline.<anyOf>.<maximum>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in query parameter 'composed_schema_any_of_query_inline' (expected type 'int32'): Value higher than the maximum '20'\n"
+				+ "Invalid value '"+valoreNonCorrettoInt+"' in query parameter 'composed_schema_any_of_query_inline' (expected type 'int32'): Value higher than the maximum '55'");
+		
+		
+		
+		
+		
+	
+		tipoTest.add("ERRORE-COOKIE-1");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreNonCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_cookie: '"+valoreNonCorretto1+"' does not respect pattern '^[A-Z]{11}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_cookie.<anyOf>.<pattern>\n"
+				+ "composed_schema_any_of_cookie: '"+valoreNonCorretto1+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_cookie.<anyOf>.<pattern>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in cookie 'composed_schema_any_of_cookie' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
+				+ "Invalid value '"+valoreNonCorretto1+"' in cookie 'composed_schema_any_of_cookie' (expected type 'string'): Pattern match failed ('^[0-9]{3,5}$')");
+		
+		
+		tipoTest.add("ERRORE-COOKIE-2");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreNonCorretto2);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_cookie: '"+valoreNonCorretto2+"' does not respect pattern '^[A-Z]{11}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_cookie.<anyOf>.<pattern>\n"
+				+ "composed_schema_any_of_cookie: '"+valoreNonCorretto2+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_cookie.<anyOf>.<pattern>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto2+"' in cookie 'composed_schema_any_of_cookie' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
+				+ "Invalid value '"+valoreNonCorretto2+"' in cookie 'composed_schema_any_of_cookie' (expected type 'string'): Pattern match failed ('^[0-9]{3,5}$')");
+		
+		
+		tipoTest.add("ERRORE-COOKIE-3");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreNonCorrettoInt);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_cookie: '"+valoreNonCorrettoInt+"' does not respect pattern '^[A-Z]{11}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_cookie.<anyOf>.<pattern>\n"
+				+ "composed_schema_any_of_cookie: Min length is '3', found '2'. (code: 1017)\n"
+				+ "From: composed_schema_any_of_cookie.<anyOf>.<minLength>\n"
+				+ "composed_schema_any_of_cookie: '"+valoreNonCorrettoInt+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_cookie.<anyOf>.<pattern>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in cookie 'composed_schema_any_of_cookie' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
+				+ "Invalid value '"+valoreNonCorrettoInt+"' in cookie 'composed_schema_any_of_cookie' (expected type 'string'): Too short, expected min length '3'");
+		
+		
+		tipoTest.add("ERRORE-COOKIE-INLINE-1");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreNonCorretto1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_cookie_inline: Value '"+valoreNonCorretto1+"' does not match format 'int32'. (code: 1007)\n"
+				+ "From: composed_schema_any_of_cookie_inline.<anyOf>.<format>\n"
+				+ "composed_schema_any_of_cookie_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
+				+ "From: composed_schema_any_of_cookie_inline.<anyOf>.<type>\n"
+				+ "composed_schema_any_of_cookie_inline: Value '"+valoreNonCorretto1+"' does not match format 'int32'. (code: 1007)\n"
+				+ "From: composed_schema_any_of_cookie_inline.<anyOf>.<format>\n"
+				+ "composed_schema_any_of_cookie_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
+				+ "From: composed_schema_any_of_cookie_inline.<anyOf>.<type>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in cookie 'composed_schema_any_of_cookie_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto1+"\"\n"
+				+ "Invalid value '"+valoreNonCorretto1+"' in cookie 'composed_schema_any_of_cookie_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto1+"\"");
+		
+		
+		tipoTest.add("ERRORE-COOKIE-INLINE-2");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreNonCorretto2);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_cookie_inline: Value '"+valoreNonCorretto2+"' does not match format 'int32'. (code: 1007)\n"
+				+ "From: composed_schema_any_of_cookie_inline.<anyOf>.<format>\n"
+				+ "composed_schema_any_of_cookie_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
+				+ "From: composed_schema_any_of_cookie_inline.<anyOf>.<type>\n"
+				+ "composed_schema_any_of_cookie_inline: Value '"+valoreNonCorretto2+"' does not match format 'int32'. (code: 1007)\n"
+				+ "From: composed_schema_any_of_cookie_inline.<anyOf>.<format>\n"
+				+ "composed_schema_any_of_cookie_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
+				+ "From: composed_schema_any_of_cookie_inline.<anyOf>.<type>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto2+"' in cookie 'composed_schema_any_of_cookie_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto2+"\"\n"
+				+ "Invalid value '"+valoreNonCorretto2+"' in cookie 'composed_schema_any_of_cookie_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto2+"\"");		
+		
+		
+		tipoTest.add("ERRORE-COOKIE-INLINE-3");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreNonCorrettoInt);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_cookie_inline: Maximum is '20', found '"+valoreNonCorrettoInt+"'. (code: 1010)\n"
+				+ "From: composed_schema_any_of_cookie_inline.<anyOf>.<maximum>\n"
+				+ "composed_schema_any_of_cookie_inline: Maximum is '55', found '"+valoreNonCorrettoInt+"'. (code: 1010)\n"
+				+ "From: composed_schema_any_of_cookie_inline.<anyOf>.<maximum>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in cookie 'composed_schema_any_of_cookie_inline' (expected type 'int32'): Value higher than the maximum '20'\n"
+				+ "Invalid value '"+valoreNonCorrettoInt+"' in cookie 'composed_schema_any_of_cookie_inline' (expected type 'int32'): Value higher than the maximum '55'");
+		
+		
+		
+		
+		
+		tipoTest.add("ERRORE-HEADER-1");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreNonCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(true);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_header: '"+valoreNonCorretto1+"' does not respect pattern '^[A-Z]{11}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_header.<anyOf>.<pattern>\n"
+				+ "composed_schema_any_of_header: '"+valoreNonCorretto1+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_header.<anyOf>.<pattern>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in http header 'composed_schema_any_of_header' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
+				+ "Invalid value '"+valoreNonCorretto1+"' in http header 'composed_schema_any_of_header' (expected type 'string'): Pattern match failed ('^[0-9]{3,5}$')");
+		
+		
+		tipoTest.add("ERRORE-HEADER-2");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreNonCorretto2);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(true);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_header: '"+valoreNonCorretto2+"' does not respect pattern '^[A-Z]{11}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_header.<anyOf>.<pattern>\n"
+				+ "composed_schema_any_of_header: '"+valoreNonCorretto2+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_header.<anyOf>.<pattern>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto2+"' in http header 'composed_schema_any_of_header' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
+				+ "Invalid value '"+valoreNonCorretto2+"' in http header 'composed_schema_any_of_header' (expected type 'string'): Pattern match failed ('^[0-9]{3,5}$')");
+		
+		
+		tipoTest.add("ERRORE-HEADER-3");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreNonCorrettoInt);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(true);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_header: '"+valoreNonCorrettoInt+"' does not respect pattern '^[A-Z]{11}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_header.<anyOf>.<pattern>\n"
+				+ "composed_schema_any_of_header: Min length is '3', found '2'. (code: 1017)\n"
+				+ "From: composed_schema_any_of_header.<anyOf>.<minLength>\n"
+				+ "composed_schema_any_of_header: '"+valoreNonCorrettoInt+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
+				+ "From: composed_schema_any_of_header.<anyOf>.<pattern>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in http header 'composed_schema_any_of_header' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
+				+ "Invalid value '"+valoreNonCorrettoInt+"' in http header 'composed_schema_any_of_header' (expected type 'string'): Too short, expected min length '3'");
+		
+		
+		tipoTest.add("ERRORE-HEADER-INLINE-1");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreNonCorretto1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(true);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_header_inline: Value '"+valoreNonCorretto1+"' does not match format 'int32'. (code: 1007)\n"
+				+ "From: composed_schema_any_of_header_inline.<anyOf>.<format>\n"
+				+ "composed_schema_any_of_header_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
+				+ "From: composed_schema_any_of_header_inline.<anyOf>.<type>\n"
+				+ "composed_schema_any_of_header_inline: Value '"+valoreNonCorretto1+"' does not match format 'int32'. (code: 1007)\n"
+				+ "From: composed_schema_any_of_header_inline.<anyOf>.<format>\n"
+				+ "composed_schema_any_of_header_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
+				+ "From: composed_schema_any_of_header_inline.<anyOf>.<type>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in http header 'composed_schema_any_of_header_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto1+"\"\n"
+				+ "Invalid value '"+valoreNonCorretto1+"' in http header 'composed_schema_any_of_header_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto1+"\"");
+		
+		
+		tipoTest.add("ERRORE-HEADER-INLINE-2");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreNonCorretto2);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(true);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_header_inline: Value '"+valoreNonCorretto2+"' does not match format 'int32'. (code: 1007)\n"
+				+ "From: composed_schema_any_of_header_inline.<anyOf>.<format>\n"
+				+ "composed_schema_any_of_header_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
+				+ "From: composed_schema_any_of_header_inline.<anyOf>.<type>\n"
+				+ "composed_schema_any_of_header_inline: Value '"+valoreNonCorretto2+"' does not match format 'int32'. (code: 1007)\n"
+				+ "From: composed_schema_any_of_header_inline.<anyOf>.<format>\n"
+				+ "composed_schema_any_of_header_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
+				+ "From: composed_schema_any_of_header_inline.<anyOf>.<type>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto2+"' in http header 'composed_schema_any_of_header_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto2+"\"\n"
+				+ "Invalid value '"+valoreNonCorretto2+"' in http header 'composed_schema_any_of_header_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto2+"\"");		
+		
+		
+		tipoTest.add("ERRORE-HEADER-INLINE-3");
+		complexTypeTest.add("any_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreNonCorrettoInt);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(true);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_any_of_header_inline: Maximum is '20', found '"+valoreNonCorrettoInt+"'. (code: 1010)\n"
+				+ "From: composed_schema_any_of_header_inline.<anyOf>.<maximum>\n"
+				+ "composed_schema_any_of_header_inline: Maximum is '55', found '"+valoreNonCorrettoInt+"'. (code: 1010)\n"
+				+ "From: composed_schema_any_of_header_inline.<anyOf>.<maximum>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in http header 'composed_schema_any_of_header_inline' (expected type 'int32'): Value higher than the maximum '20'\n"
+				+ "Invalid value '"+valoreNonCorrettoInt+"' in http header 'composed_schema_any_of_header_inline' (expected type 'int32'): Value higher than the maximum '55'");
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		// ######## ALL OF ######################
+		
+		valoreCorretto1 = "ABCDEFGHILK"; // da 5 a 11 caratteri la prima condizione, min 7 caratteri la seconda
+		String valoreNonCorrettoInAssoluto = "A";
+		String valoreNonCorrettoRegolaDue = "ABCDE";
+		
+		valoreCorrettoInt1 = "50"; //   maximum: 100 la prima condizione, min 50, max 55 la seconda
+		String valoreNonCorrettoIntInAssoluto = "104"; 
+		String valoreNonCorrettoIntRegolaDue = "90";
+		
+		
+		// *** Test1: corretto ***
+		
+		tipoTest.add("OK-1");
+		complexTypeTest.add("all_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(false);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add(null);
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add(null);
+		
+				
+		
+		tipoTest.add("ERRORE-PATH-1");
+		complexTypeTest.add("all_of");
+		pathTest.add(valoreNonCorrettoRegolaDue);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_path: Min length is '7', found '"+valoreNonCorrettoRegolaDue.length()+"'. (code: 1017)\n"
+				+ "From: composed_schema_all_of_path.<allOf>.<minLength>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoRegolaDue+"' in dynamic path 'composed_schema_all_of_path' (expected type 'string'): Too short, expected min length '7'");
+		
+				
+		tipoTest.add("ERRORE-PATH-2");
+		complexTypeTest.add("all_of");
+		pathTest.add(valoreNonCorrettoInAssoluto);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_path: '"+valoreNonCorrettoInAssoluto+"' does not respect pattern '^[A-Z]{5,11}$'. (code: 1025)\n"
+				+ "From: composed_schema_all_of_path.<allOf>.<pattern>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInAssoluto+"' in dynamic path 'composed_schema_all_of_path' (expected type 'string'): Pattern match failed ('^[A-Z]{5,11}$')\n"
+				+ "Invalid value '"+valoreNonCorrettoInAssoluto+"' in dynamic path 'composed_schema_all_of_path' (expected type 'string'): Too short, expected min length '7'");
+	
+		
+		tipoTest.add("ERRORE-PATH-INLINE-1");
+		complexTypeTest.add("all_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreNonCorrettoIntRegolaDue);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_path_inline: Maximum is '55', found '"+valoreNonCorrettoIntRegolaDue+"'. (code: 1010)\n"
+				+ "From: composed_schema_all_of_path_inline.<allOf>.<maximum>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoIntRegolaDue+"' in dynamic path 'composed_schema_all_of_path_inline' (expected type 'int32'): Value higher than the maximum '55'");
+		
+				
+		tipoTest.add("ERRORE-PATH-INLINE-2");
+		complexTypeTest.add("all_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreNonCorrettoIntInAssoluto);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_path_inline: Maximum is '100', found '"+valoreNonCorrettoIntInAssoluto+"'. (code: 1010)\n"
+				+ "From: composed_schema_all_of_path_inline.<allOf>.<maximum>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoIntInAssoluto+"' in dynamic path 'composed_schema_all_of_path_inline' (expected type 'int32'): Value higher than the maximum '100'\n"
+				+ "Invalid value '"+valoreNonCorrettoIntInAssoluto+"' in dynamic path 'composed_schema_all_of_path_inline' (expected type 'int32'): Value higher than the maximum '55'");
+		
+		
+		
+		
+		tipoTest.add("ERRORE-QUERY-1");
+		complexTypeTest.add("all_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreNonCorrettoRegolaDue);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_query: Min length is '7', found '"+valoreNonCorrettoRegolaDue.length()+"'. (code: 1017)\n"
+				+ "From: composed_schema_all_of_query.<allOf>.<minLength>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoRegolaDue+"' in query parameter 'composed_schema_all_of_query' (expected type 'string'): Too short, expected min length '7'");
+		
+				
+		tipoTest.add("ERRORE-QUERY-2");
+		complexTypeTest.add("all_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreNonCorrettoInAssoluto);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_query: '"+valoreNonCorrettoInAssoluto+"' does not respect pattern '^[A-Z]{5,11}$'. (code: 1025)\n"
+				+ "From: composed_schema_all_of_query.<allOf>.<pattern>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInAssoluto+"' in query parameter 'composed_schema_all_of_query' (expected type 'string'): Pattern match failed ('^[A-Z]{5,11}$')\n"
+				+ "Invalid value '"+valoreNonCorrettoInAssoluto+"' in query parameter 'composed_schema_all_of_query' (expected type 'string'): Too short, expected min length '7'");
+	
+		
+		tipoTest.add("ERRORE-QUERY-INLINE-1");
+		complexTypeTest.add("all_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreNonCorrettoIntRegolaDue);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_query_inline: Maximum is '55', found '"+valoreNonCorrettoIntRegolaDue+"'. (code: 1010)\n"
+				+ "From: composed_schema_all_of_query_inline.<allOf>.<maximum>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoIntRegolaDue+"' in query parameter 'composed_schema_all_of_query_inline' (expected type 'int32'): Value higher than the maximum '55'");
+		
+				
+		tipoTest.add("ERRORE-QUERY-INLINE-2");
+		complexTypeTest.add("all_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreNonCorrettoIntInAssoluto);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_query_inline: Maximum is '100', found '"+valoreNonCorrettoIntInAssoluto+"'. (code: 1010)\n"
+				+ "From: composed_schema_all_of_query_inline.<allOf>.<maximum>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoIntInAssoluto+"' in query parameter 'composed_schema_all_of_query_inline' (expected type 'int32'): Value higher than the maximum '100'\n"
+				+ "Invalid value '"+valoreNonCorrettoIntInAssoluto+"' in query parameter 'composed_schema_all_of_query_inline' (expected type 'int32'): Value higher than the maximum '55'");
+		
+		
+		
+		
+		tipoTest.add("ERRORE-COOKIE-1");
+		complexTypeTest.add("all_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreNonCorrettoRegolaDue);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_cookie: Min length is '7', found '"+valoreNonCorrettoRegolaDue.length()+"'. (code: 1017)\n"
+				+ "From: composed_schema_all_of_cookie.<allOf>.<minLength>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoRegolaDue+"' in cookie 'composed_schema_all_of_cookie' (expected type 'string'): Too short, expected min length '7'");
+		
+				
+		tipoTest.add("ERRORE-COOKIE-2");
+		complexTypeTest.add("all_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreNonCorrettoInAssoluto);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_cookie: '"+valoreNonCorrettoInAssoluto+"' does not respect pattern '^[A-Z]{5,11}$'. (code: 1025)\n"
+				+ "From: composed_schema_all_of_cookie.<allOf>.<pattern>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInAssoluto+"' in cookie 'composed_schema_all_of_cookie' (expected type 'string'): Pattern match failed ('^[A-Z]{5,11}$')\n"
+				+ "Invalid value '"+valoreNonCorrettoInAssoluto+"' in cookie 'composed_schema_all_of_cookie' (expected type 'string'): Too short, expected min length '7'");
+	
+		
+		tipoTest.add("ERRORE-COOKIE-INLINE-1");
+		complexTypeTest.add("all_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreNonCorrettoIntRegolaDue);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_cookie_inline: Maximum is '55', found '"+valoreNonCorrettoIntRegolaDue+"'. (code: 1010)\n"
+				+ "From: composed_schema_all_of_cookie_inline.<allOf>.<maximum>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoIntRegolaDue+"' in cookie 'composed_schema_all_of_cookie_inline' (expected type 'int32'): Value higher than the maximum '55'");
+		
+				
+		tipoTest.add("ERRORE-COOKIE-INLINE-2");
+		complexTypeTest.add("all_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreNonCorrettoIntInAssoluto);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_cookie_inline: Maximum is '100', found '"+valoreNonCorrettoIntInAssoluto+"'. (code: 1010)\n"
+				+ "From: composed_schema_all_of_cookie_inline.<allOf>.<maximum>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoIntInAssoluto+"' in cookie 'composed_schema_all_of_cookie_inline' (expected type 'int32'): Value higher than the maximum '100'\n"
+				+ "Invalid value '"+valoreNonCorrettoIntInAssoluto+"' in cookie 'composed_schema_all_of_cookie_inline' (expected type 'int32'): Value higher than the maximum '55'");
+		
+		
+		
+		
+		tipoTest.add("ERRORE-HEADER-1");
+		complexTypeTest.add("all_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreNonCorrettoRegolaDue);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(true);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_header: Min length is '7', found '"+valoreNonCorrettoRegolaDue.length()+"'. (code: 1017)\n"
+				+ "From: composed_schema_all_of_header.<allOf>.<minLength>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoRegolaDue+"' in http header 'composed_schema_all_of_header' (expected type 'string'): Too short, expected min length '7'");
+		
+				
+		tipoTest.add("ERRORE-HEADER-2");
+		complexTypeTest.add("all_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreNonCorrettoInAssoluto);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(true);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_header: '"+valoreNonCorrettoInAssoluto+"' does not respect pattern '^[A-Z]{5,11}$'. (code: 1025)\n"
+				+ "From: composed_schema_all_of_header.<allOf>.<pattern>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInAssoluto+"' in http header 'composed_schema_all_of_header' (expected type 'string'): Pattern match failed ('^[A-Z]{5,11}$')\n"
+				+ "Invalid value '"+valoreNonCorrettoInAssoluto+"' in http header 'composed_schema_all_of_header' (expected type 'string'): Too short, expected min length '7'");
+	
+		
+		tipoTest.add("ERRORE-HEADER-INLINE-1");
+		complexTypeTest.add("all_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreNonCorrettoIntRegolaDue);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(true);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_header_inline: Maximum is '55', found '"+valoreNonCorrettoIntRegolaDue+"'. (code: 1010)\n"
+				+ "From: composed_schema_all_of_header_inline.<allOf>.<maximum>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoIntRegolaDue+"' in http header 'composed_schema_all_of_header_inline' (expected type 'int32'): Value higher than the maximum '55'");
+		
+				
+		tipoTest.add("ERRORE-HEADER-INLINE-2");
+		complexTypeTest.add("all_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreNonCorrettoIntInAssoluto);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(true);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_header_inline: Maximum is '100', found '"+valoreNonCorrettoIntInAssoluto+"'. (code: 1010)\n"
+				+ "From: composed_schema_all_of_header_inline.<allOf>.<maximum>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoIntInAssoluto+"' in http header 'composed_schema_all_of_header_inline' (expected type 'int32'): Value higher than the maximum '100'\n"
+				+ "Invalid value '"+valoreNonCorrettoIntInAssoluto+"' in http header 'composed_schema_all_of_header_inline' (expected type 'int32'): Value higher than the maximum '55'");
+		
+		
+		
+		
+		
+		
+		
+		// ######## ONE OF ######################
+		
+		valoreCorretto1 = "ABCDE"; // da 5 a 11 caratteri la prima condizione, min 7 caratteri la seconda, faccio avere un match solo con la prima
+		valoreNonCorretto1 = "ABCDEFGHILK"; // ha un match con entrambe le regole
+		
+		valoreCorrettoInt1 = "90"; //   maximum: 100 la prima condizione, min 50, max 55 la seconda, faccio avere un match solo con la prima
+		valoreNonCorrettoInt = "50"; // ha un match con entrambe le regole
+		
+		
+		// *** Test1: corretto ***
+		
+		tipoTest.add("OK-1");
+		complexTypeTest.add("one_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(false);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add(null);
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add(null);
+		
+				
+		
+		
+		tipoTest.add("ERRORE-PATH-1");
+		complexTypeTest.add("one_of");
+		pathTest.add(valoreNonCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_one_of_path: More than 1 schema is valid. (code: 1023)\n"
+				+ "From: composed_schema_one_of_path.<oneOf>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in dynamic path 'composed_schema_one_of_path': expected validates the value against exactly one of the subschemas; founded valid in 2 schemas");
+		
+		
+		tipoTest.add("ERRORE-PATH-INLINE-1");
+		complexTypeTest.add("one_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreNonCorrettoInt);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_one_of_path_inline: More than 1 schema is valid. (code: 1023)\n"
+				+ "From: composed_schema_one_of_path_inline.<oneOf>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in dynamic path 'composed_schema_one_of_path_inline': expected validates the value against exactly one of the subschemas; founded valid in 2 schemas");
+		
+		
+		
+		
+		tipoTest.add("ERRORE-QUERY-1");
+		complexTypeTest.add("one_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreNonCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_one_of_query: More than 1 schema is valid. (code: 1023)\n"
+				+ "From: composed_schema_one_of_query.<oneOf>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in query parameter 'composed_schema_one_of_query': expected validates the value against exactly one of the subschemas; founded valid in 2 schemas");
+		
+		
+		tipoTest.add("ERRORE-QUERY-INLINE-1");
+		complexTypeTest.add("one_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreNonCorrettoInt);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_one_of_query_inline: More than 1 schema is valid. (code: 1023)\n"
+				+ "From: composed_schema_one_of_query_inline.<oneOf>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in query parameter 'composed_schema_one_of_query_inline': expected validates the value against exactly one of the subschemas; founded valid in 2 schemas");
+		
+		
+		
+		tipoTest.add("ERRORE-COOKIE-1");
+		complexTypeTest.add("one_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreNonCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_one_of_cookie: More than 1 schema is valid. (code: 1023)\n"
+				+ "From: composed_schema_one_of_cookie.<oneOf>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in cookie 'composed_schema_one_of_cookie': expected validates the value against exactly one of the subschemas; founded valid in 2 schemas");
+		
+		
+		tipoTest.add("ERRORE-COOKIE-INLINE-1");
+		complexTypeTest.add("one_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreNonCorrettoInt);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(false);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_one_of_cookie_inline: More than 1 schema is valid. (code: 1023)\n"
+				+ "From: composed_schema_one_of_cookie_inline.<oneOf>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in cookie 'composed_schema_one_of_cookie_inline': expected validates the value against exactly one of the subschemas; founded valid in 2 schemas");
+		
+		
+		
+		tipoTest.add("ERRORE-HEADER-1");
+		complexTypeTest.add("one_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreNonCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreCorrettoInt1);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(true);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_one_of_header: More than 1 schema is valid. (code: 1023)\n"
+				+ "From: composed_schema_one_of_header.<oneOf>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in http header 'composed_schema_one_of_header': expected validates the value against exactly one of the subschemas; founded valid in 2 schemas");
+		
+		
+		tipoTest.add("ERRORE-HEADER-INLINE-1");
+		complexTypeTest.add("one_of");
+		pathTest.add(valoreCorretto1);
+		queryTest.add(valoreCorretto1);
+		headerTest.add(valoreCorretto1);
+		cookieTest.add(valoreCorretto1);
+		pathInLineTest.add(valoreCorrettoInt1);
+		queryInLineTest.add(valoreCorrettoInt1);
+		headerInLineTest.add(valoreNonCorrettoInt);
+		cookieInLineTest.add(valoreCorrettoInt1);
+		erroreAttesoRichiestaTest.add(true);
+		erroreAttesoRispostaTest.add(true);
+		msgErroreAttesoTest_openapi4j.add("composed_schema_one_of_header_inline: More than 1 schema is valid. (code: 1023)\n"
+				+ "From: composed_schema_one_of_header_inline.<oneOf>");
+		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in http header 'composed_schema_one_of_header_inline': expected validates the value against exactly one of the subschemas; founded valid in 2 schemas");
+		
+		
+		
+		
+				
+		
+				
+		// Esecuzione test
+		
+		
+		for (int i = 0; i < tipoTest.size(); i++) {
+		
+			String tipo = tipoTest.get(i);
+			String complexType = complexTypeTest.get(i);
+			
+			String pathParam = pathTest.get(i);
+			String headerParam = headerTest.get(i);
+			String queryParam = queryTest.get(i);
+			String cookieParam = cookieTest.get(i);
+			
+			String pathInLineParam = pathInLineTest.get(i);
+			String headerInLineParam = headerInLineTest.get(i);
+			String queryInLineParam = queryInLineTest.get(i);
+			String cookieInLineParam = cookieInLineTest.get(i);
+						
+			boolean erroreAttesoRichiesta = erroreAttesoRichiestaTest.get(i);
+			boolean erroreAttesoRisposta = erroreAttesoRispostaTest.get(i);
+			
+			String content = "Hello World";
+			String msgErroreAtteso = null;
+			switch (openAPILibrary) {
+			case openapi4j:
+				msgErroreAtteso = msgErroreAttesoTest_openapi4j.get(i);
+				break;
+			case swagger_request_validator:
+				msgErroreAtteso = msgErroreAttesoTest_swagger_request.get(i);
+				break;
+			case json_schema:
+				msgErroreAtteso = msgErroreAttesoTest_json_schema.get(i);
+				break;
+			default:
+				break;
+			}
+			if(msgErroreAtteso==null) {
+				msgErroreAtteso = "undefined";
+			}
+
+			
+			String path = "/documenti/composed-schema-parameters/"+complexType+"/"+pathParam+"/"+pathInLineParam;
+			HttpRequestMethod method = HttpRequestMethod.POST;
+			String contentType = HttpConstants.CONTENT_TYPE_PLAIN;
+
+			
+			System.out.println("\tTest Richiesta ("+complexType+") ["+tipo+"] path:"+path+" ...");
+			
+			HttpBaseRequestEntity<?> request = new TextHttpRequestEntity();
+			request.setUrl(path);	
+			request.setMethod(method);
+			((TextHttpRequestEntity)request).setContent(content);
+			Map<String, List<String>> parametersTrasporto = new HashMap<>();
+			TransportUtils.addHeader(parametersTrasporto,HttpConstants.CONTENT_TYPE, contentType);
+			TransportUtils.addHeader(parametersTrasporto, "composed_schema_"+complexType+"_header", headerParam);
+			TransportUtils.addHeader(parametersTrasporto, "composed_schema_"+complexType+"_header_inline", headerInLineParam);
+			request.setHeaders(parametersTrasporto);
+			request.setContentType(contentType);
+			Map<String, List<String>> parametersQuery = new HashMap<>();
+			TransportUtils.addHeader(parametersQuery, "composed_schema_"+complexType+"_query", queryParam);
+			TransportUtils.addHeader(parametersQuery, "composed_schema_"+complexType+"_query_inline", queryInLineParam);
+			request.setParameters(parametersQuery);
+			List<Cookie> cookies = new ArrayList<Cookie>();
+			Cookie c1 = new Cookie("composed_schema_"+complexType+"_cookie", cookieParam);
+			Cookie c2 = new Cookie("composed_schema_"+complexType+"_cookie_inline", cookieInLineParam);
+			cookies.add(c1);
+			cookies.add(c2);
+			request.setCookies(cookies);
+								
+			try {				
+				apiValidatorOpenApi4j.validate(request);
+				if(erroreAttesoRichiesta) {
+					if("SKIP".equals(msgErroreAtteso)) {
+						System.out.println("WARN Libreria non supporta ancora correttamente la validazione, si attendeva un errore");
+					}
+					else {
+						throw new Exception("Atteso errore ("+tipo+") '"+msgErroreAtteso+"' non rilevato");
+					}
+				}
+			} catch (ValidatorException e) {
+				if(erroreAttesoRichiesta && e.getMessage()!=null && e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("Errore atteso: "+e.getMessage());
+				}
+				else {
+					throw new Exception("Errore non atteso ("+tipo+"): "+e.getMessage());
+				}
+			}
+			
+			System.out.println("\tTest Richiesta ("+complexType+") ["+tipo+"] path:"+path+" superato");
+		
+			
+			System.out.println("\tTest Risposta ("+complexType+") ["+tipo+"] path:"+path+" ...");
+			
+			HttpBaseResponseEntity<?> response = new TextHttpResponseEntity();
+			((TextHttpResponseEntity)response).setContent(content);
+			
+			response.setStatus(200);		
+			response.setMethod(method);
+			response.setUrl(path);	
+			Map<String, List<String>> responseHeaders = new HashMap<>();
+			TransportUtils.setHeader(responseHeaders,HttpConstants.CONTENT_TYPE, contentType);
+			TransportUtils.addHeader(responseHeaders, "composed_schema_"+complexType+"_header", headerParam);
+			TransportUtils.addHeader(responseHeaders, "composed_schema_"+complexType+"_header_inline", headerInLineParam);
+			response.setHeaders(responseHeaders);
+			response.setContentType(contentType);
+		
+			try {				
+				apiValidatorOpenApi4j.validate(response);
+				if(erroreAttesoRisposta) {
+					if("SKIP".equals(msgErroreAtteso)) {
+						System.out.println("WARN Libreria non supporta ancora correttamente la validazione, si attendeva un errore");
+					}
+					else {
+						throw new Exception("Atteso errore ("+tipo+") '"+msgErroreAtteso+"' non rilevato");
+					}
+				}
+			} catch (ValidatorException e) {
+				if(erroreAttesoRisposta && e.getMessage()!=null && e.getMessage().contains(msgErroreAtteso)) {
+					System.out.println("Errore atteso: "+e.getMessage());
+				}
+				else {
+					throw new Exception("Errore non atteso ("+tipo+"): "+e.getMessage());
+				}
+			}
+			
+			System.out.println("\tTest Risposta ("+complexType+") ["+tipo+"] path:"+path+" superato");
+		}
+			
+			
+		System.out.println("TEST Verifica ComposedSchemaParameters completato!");
 
 	}
 }

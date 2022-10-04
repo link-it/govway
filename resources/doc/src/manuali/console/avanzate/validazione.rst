@@ -18,6 +18,7 @@ Dalla versione 3.3.5.p1 è inoltre possibile utilizzare un ulteriore motore di v
 Se invece si vuole modificare il tipo di validazione effettuata con i motori 'openapi4j' o 'swagger-request-validator' è possibile farlo abilitando (true) o disabilitando (false) la specifica funzionalità registrando una delle seguenti :ref:`configProprieta` (per default tutte le proprietà elencate sono abilitate):
 
 - *validation.openApi.validateAPISpec* (default: true): prima di procedere con la validazione del messaggio, viene controllato che l'interfaccia OpenAPI 3.x sia sintatticamente valida;
+- *validation.openApi.validateRequestPath* (default: true): viene effettuata la validazione dei parametri che definiscono il path della risorsa;
 - *validation.openApi.validateRequestQuery* (default: true): viene effettuata la validazione della query url;
 - *validation.openApi.validateRequestHeaders* (default: true): viene effettuata la validazione degli header http della richiesta;
 - *validation.openApi.validateResponseHeaders* (default: true): viene effettuata la validazione degli header http della risposta;

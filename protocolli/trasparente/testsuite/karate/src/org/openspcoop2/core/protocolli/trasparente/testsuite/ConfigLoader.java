@@ -50,7 +50,7 @@ import com.intuit.karate.FileUtils;
 */
 public class ConfigLoader {
 
-    private static final String propFileName = "testsuite.properties";
+    public static final String propFileName = "testsuite.properties";
     private static final String trasparenteBundlePath = "src/configurazioni-govway/trasparenteTestBundle.zip";
     
     protected static Properties prop = new Properties();

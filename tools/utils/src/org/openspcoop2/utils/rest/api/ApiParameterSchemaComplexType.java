@@ -17,39 +17,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 package org.openspcoop2.utils.rest.api;
 
-import java.io.Serializable;
-
 /**
- * ApiRequestBodyParameter
+ * ApiParameterSchemaComplexType
  *
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public abstract class AbstractApiTypeParameter extends AbstractApiParameter implements Serializable {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	private ApiParameterSchema apiParameterSchema;
+public enum ApiParameterSchemaComplexType {
 
-	public AbstractApiTypeParameter(String name, ApiParameterSchema apiParameterSchema){
-		super(name);
-		this.apiParameterSchema = apiParameterSchema;
-	}
-
-	public ApiParameterSchema getApiParameterSchema() {
-		return this.apiParameterSchema;
-	}
-
-	public void setApiParameterSchema(ApiParameterSchema apiParameterSchema) {
-		this.apiParameterSchema = apiParameterSchema;
-	}
+	// simple - validates the value against one only schema
+	simple,
+	// oneOf – validates the value against exactly one of the subschemas
+	oneOf,
+	// allOf – validates the value against all the subschemas
+	allOf,
+	// anyOf – validates the value against any (one or more) of the subschemas
+	anyOf;
 	
 }

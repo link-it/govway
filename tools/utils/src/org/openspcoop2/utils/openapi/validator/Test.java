@@ -151,7 +151,7 @@ public class Test {
 							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 									"profiloRefInLineByStatus: Value 'APIGatewayERRATO' is not defined in the schema. (code: 1006)" :
 									"Validation failed.\n" + 
-									"[ERROR][REQUEST][GET http://petstore.swagger.io/api/pets/findByStatus @query.profiloRefInLineByStatus] Instance value (\"APIGatewayERRATO\") not found in enum (possible values: [\"APIGateway\",\"SPCoop\",\"FatturaPA\",\"eDelivery\"])";
+									"[ERROR][REQUEST][GET /pets/findByStatus @query.profiloRefInLineByStatus] Instance value (\"APIGatewayERRATO\") not found in enum (possible values: [\"APIGateway\",\"SPCoop\",\"FatturaPA\",\"eDelivery\"])";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"', trovato: "+e.getMessage());
 							}
@@ -180,7 +180,7 @@ public class Test {
 						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 									"soggettoInLineByStatus: 'PROVA_PROVA' does not respect pattern '^[0-9A-Za-z]+$'. (code: 1025)" :
-									"[ERROR][REQUEST][GET http://petstore.swagger.io/api/pets/findByStatus @query.soggettoInLineByStatus] ECMA 262 regex \"^[0-9A-Za-z]+$\" does not match input string \"PROVA_PROVA\"";
+									"[ERROR][REQUEST][GET /pets/findByStatus @query.soggettoInLineByStatus] ECMA 262 regex \"^[0-9A-Za-z]+$\" does not match input string \"PROVA_PROVA\"";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"': "+e.getMessage());
 							}
@@ -209,7 +209,7 @@ public class Test {
 						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 									"soggettoInLineByStatus: Min length is '2', found '1'. (code: 1017)" :
-									"[ERROR][REQUEST][GET http://petstore.swagger.io/api/pets/findByStatus @query.soggettoInLineByStatus] String \"P\" is too short (length: 1, required minimum: 2)";
+									"[ERROR][REQUEST][GET /pets/findByStatus @query.soggettoInLineByStatus] String \"P\" is too short (length: 1, required minimum: 2)";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -239,7 +239,7 @@ public class Test {
 						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 									"soggettoRef: Max length is '255', found '291'. (code: 1012)" :
-									"[ERROR][REQUEST][GET http://petstore.swagger.io/api/pets/findByStatus @query.soggettoRef] String \"P12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890\" is too long (length: 291, maximum allowed: 255)";
+									"[ERROR][REQUEST][GET /pets/findByStatus @query.soggettoRef] String \"P12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890\" is too long (length: 291, maximum allowed: 255)";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -268,7 +268,7 @@ public class Test {
 						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 									"Minimum is '100', found '23'. (code: 1015)" :
-									"[ERROR][REQUEST][GET http://petstore.swagger.io/api/pets/findByStatus @query.esempioNumerico] Numeric instance is lower than the required minimum (minimum: 100, found: 23)"; 
+									"[ERROR][REQUEST][GET /pets/findByStatus @query.esempioNumerico] Numeric instance is lower than the required minimum (minimum: 100, found: 23)"; 
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -297,7 +297,7 @@ public class Test {
 						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 									"esempioNumerico: Excluded maximum is '600', found '600'. (code: 1009)" :
-									"[ERROR][REQUEST][GET http://petstore.swagger.io/api/pets/findByStatus @query.esempioNumerico] Numeric instance is not strictly lower than the required maximum 600"; 
+									"[ERROR][REQUEST][GET /pets/findByStatus @query.esempioNumerico] Numeric instance is not strictly lower than the required maximum 600"; 
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -326,7 +326,7 @@ public class Test {
 						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 									"esempioNumerico: Maximum is '600', found '800'. (code: 1010)" :
-									"[ERROR][REQUEST][GET http://petstore.swagger.io/api/pets/findByStatus @query.esempioNumerico] Numeric instance is greater than the required maximum (maximum: 600, found: 800)"; 
+									"[ERROR][REQUEST][GET /pets/findByStatus @query.esempioNumerico] Numeric instance is greater than the required maximum (maximum: 600, found: 800)"; 
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}
@@ -353,7 +353,7 @@ public class Test {
 						if(OpenAPILibrary.openapi4j.equals(openAPILibrary) || OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
 							String msgErroreAtteso = OpenAPILibrary.openapi4j.equals(openAPILibrary) ?
 									"esempioNumerico: Value '55GG33' does not match format 'int32'. (code: 1007)" :
-									"[ERROR][REQUEST][GET http://petstore.swagger.io/api/pets/findByStatus @query.esempioNumerico] Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])"; 
+									"[ERROR][REQUEST][GET /pets/findByStatus @query.esempioNumerico] Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])"; 
 							if(!e.getMessage().contains(msgErroreAtteso)) {
 								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"':"+e.getMessage());
 							}

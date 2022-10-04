@@ -43,6 +43,7 @@ import org.openspcoop2.utils.rest.IApiReader;
 import org.openspcoop2.utils.rest.ProcessingException;
 import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.rest.api.ApiOperation;
+import org.openspcoop2.utils.rest.api.ApiParameterSchema;
 import org.openspcoop2.utils.rest.api.ApiRequest;
 import org.openspcoop2.utils.rest.api.ApiBodyParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestDynamicPathParameter;
@@ -262,7 +263,9 @@ public class WADLApiReader implements IApiReader {
 									operation.setRequest(new ApiRequest());
 								}
 								for (Param param : lHeaders) {
-									ApiHeaderParameter header = new ApiHeaderParameter(param.getName(),param.getType().toString());
+									ApiParameterSchema apiParameterSchema = new ApiParameterSchema();
+									apiParameterSchema.addType(param.getType().toString(), null);
+									ApiHeaderParameter header = new ApiHeaderParameter(param.getName(),apiParameterSchema);
 									header.setRequired(param.isRequired());
 									operation.getRequest().addHeaderParameter(header);
 								}
@@ -274,7 +277,9 @@ public class WADLApiReader implements IApiReader {
 									operation.setRequest(new ApiRequest());
 								}
 								for (Param param : lQuery) {
-									ApiRequestQueryParameter query = new ApiRequestQueryParameter(param.getName(),param.getType().toString());
+									ApiParameterSchema apiParameterSchema = new ApiParameterSchema();
+									apiParameterSchema.addType(param.getType().toString(), null);
+									ApiRequestQueryParameter query = new ApiRequestQueryParameter(param.getName(),apiParameterSchema);
 									query.setRequired(param.isRequired());
 									operation.getRequest().addQueryParameter(query);
 								}
@@ -289,7 +294,9 @@ public class WADLApiReader implements IApiReader {
 											if(operation.getRequest()==null){
 												operation.setRequest(new ApiRequest());
 											}
-											ApiRequestDynamicPathParameter query = new ApiRequestDynamicPathParameter(param.getName(),param.getType().toString());
+											ApiParameterSchema apiParameterSchema = new ApiParameterSchema();
+											apiParameterSchema.addType(param.getType().toString(), null);
+											ApiRequestDynamicPathParameter query = new ApiRequestDynamicPathParameter(param.getName(),apiParameterSchema);
 											//query.setRequired(param.isRequired());
 											query.setRequired(true);
 											operation.getRequest().addDynamicPathParameter(query);
@@ -336,7 +343,9 @@ public class WADLApiReader implements IApiReader {
 											
 											if(rNodeHttpStatus.getParam()!=null){
 												for (Param param : rNodeHttpStatus.getParam()) {
-													ApiHeaderParameter header = new ApiHeaderParameter(param.getName(),param.getType().toString());
+													ApiParameterSchema apiParameterSchema = new ApiParameterSchema();
+													apiParameterSchema.addType(param.getType().toString(), null);
+													ApiHeaderParameter header = new ApiHeaderParameter(param.getName(),apiParameterSchema);
 													header.setRequired(param.isRequired());
 													apiResponse.addHeaderParameter(header);
 												}
@@ -385,7 +394,9 @@ public class WADLApiReader implements IApiReader {
 											
 											if(rNodeHttpStatus.getParam()!=null){
 												for (Param param : rNodeHttpStatus.getParam()) {
-													ApiHeaderParameter header = new ApiHeaderParameter(param.getName(),param.getType().toString());
+													ApiParameterSchema apiParameterSchema = new ApiParameterSchema();
+													apiParameterSchema.addType(param.getType().toString(), null);
+													ApiHeaderParameter header = new ApiHeaderParameter(param.getName(),apiParameterSchema);
 													header.setRequired(param.isRequired());
 													apiResponse.addHeaderParameter(header);
 												}

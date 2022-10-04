@@ -23,12 +23,14 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite;
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -67,8 +69,27 @@ public class Utils {
 	public static boolean isJenkins() {
 		String j = System.getProperty("jenkins");
 		if(j!=null) {
-			return "true".equalsIgnoreCase(j);
+			if("true".equalsIgnoreCase(j.trim())) {
+				return true;
+			}
 		}
+		
+		try(InputStream inputStream = ConfigLoader.class.getClassLoader().getResourceAsStream(ConfigLoader.propFileName);) {
+			if (inputStream != null) {
+				Properties prop = new Properties();
+				prop.load(inputStream);
+				String pJ = prop.getProperty("jenkins");
+				if(pJ!=null && "true".equalsIgnoreCase(pJ.trim())) {
+					return true;
+				}
+			} else {
+				throw new FileNotFoundException("property file '" + ConfigLoader.propFileName + "' not found in the classpath");
+			}
+		}catch(Throwable t) {
+			System.err.println("Lettura proprieta jenkins da '"+ConfigLoader.propFileName+"' non riuscita: "+t.getMessage());
+			t.printStackTrace(System.out);
+		}
+		
 		return false;
 	}
 	

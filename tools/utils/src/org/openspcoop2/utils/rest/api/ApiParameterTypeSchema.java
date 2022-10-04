@@ -20,36 +20,30 @@
 
 package org.openspcoop2.utils.rest.api;
 
-import java.io.Serializable;
-
 /**
- * ApiRequestBodyParameter
+ * ApiParameterTypeSchema
  *
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public abstract class AbstractApiTypeParameter extends AbstractApiParameter implements Serializable {
+public class ApiParameterTypeSchema {
+
+	private String type;
+	private ApiSchemaTypeRestriction schema;
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	private ApiParameterSchema apiParameterSchema;
-
-	public AbstractApiTypeParameter(String name, ApiParameterSchema apiParameterSchema){
-		super(name);
-		this.apiParameterSchema = apiParameterSchema;
+	public String getType() {
+		return this.type;
 	}
-
-	public ApiParameterSchema getApiParameterSchema() {
-		return this.apiParameterSchema;
+	public void setType(String type) {
+		this.type = type;
 	}
-
-	public void setApiParameterSchema(ApiParameterSchema apiParameterSchema) {
-		this.apiParameterSchema = apiParameterSchema;
+	public ApiSchemaTypeRestriction getSchema() {
+		return this.schema;
+	}
+	public void setSchema(ApiSchemaTypeRestriction schema) {
+		this.schema = schema;
 	}
 	
 }

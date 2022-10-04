@@ -88,8 +88,8 @@ import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.utils.rest.ValidatorException;
+import org.openspcoop2.utils.rest.api.ApiParameterSchema;
 import org.openspcoop2.utils.rest.api.ApiResponse;
-import org.openspcoop2.utils.rest.api.ApiSchemaTypeRestriction;
 import org.openspcoop2.utils.rest.api.ApiUtilities;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -8508,7 +8508,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			if(restrizioni!=null && !"".equals(restrizioni)) {
 				try {
-					ApiSchemaTypeRestriction.toApiSchemaTypeRestriction(restrizioni);
+					//org.openspcoop2.utils.rest.api.ApiSchemaTypeRestriction.toApiSchemaTypeRestriction(restrizioni);
+					ApiParameterSchema.toApiParameterSchema(restrizioni);
 				}catch(Exception e) {
 					this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_RESTRIZIONI+" - "+e.getMessage());
 					return false;

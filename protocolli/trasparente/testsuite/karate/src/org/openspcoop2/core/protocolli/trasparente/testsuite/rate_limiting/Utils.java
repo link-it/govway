@@ -473,6 +473,7 @@ public class Utils {
 		}
 		
 		while(true) {
+			String tmpValueRichiesteAttive = null;
 			try {
 				String jmxPolicyInfo = getPolicy(idPolicy);
 				if (jmxPolicyInfo.equals(PolicyFields.NOPOLICYINFO)) {
@@ -480,16 +481,29 @@ public class Utils {
 				}				
 				logRateLimiting.info(jmxPolicyInfo);
 				Map<String, String> policyValues = parsePolicy(jmxPolicyInfo);
-				assertEquals("0", policyValues.get(PolicyFields.RichiesteAttive));
+				tmpValueRichiesteAttive = policyValues.get(PolicyFields.RichiesteAttive);
+				assertEquals("0", tmpValueRichiesteAttive);
+				tmpValueRichiesteAttive=null;
 				assertEquals(Integer.valueOf(richiesteConteggiate), Integer.valueOf(policyValues.get(PolicyFields.RichiesteConteggiate)));
 	
 				break;
 			} catch (AssertionError e) {
 				if(remainingChecks == 0) {
+					if(tmpValueRichiesteAttive!=null && 
+							(PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE.equals(policyType) || PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE.equals(policyType))) {
+					try {
+						int richiesteAttiveInt = Integer.valueOf(tmpValueRichiesteAttive);
+						if(richiesteAttiveInt<0) {
+							return; // non affidabile hazelcast local/near cache
+						}
+					}catch(Throwable t) {}
+					}
 					throw e;
 				}
-				remainingChecks--;
-				org.openspcoop2.utils.Utilities.sleep(delay);
+				else {
+					remainingChecks--;
+					org.openspcoop2.utils.Utilities.sleep(delay);
+				}
 			}
 		} 
 	}

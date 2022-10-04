@@ -37,11 +37,8 @@ public class ApiRequestDynamicPathParameter extends AbstractApiTypeParameter imp
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public ApiRequestDynamicPathParameter(String name, String type){
-		super(name, type);
-	}
-	public ApiRequestDynamicPathParameter(String name, String type, ApiSchemaTypeRestriction schema){
-		super(name, type, schema);
+	public ApiRequestDynamicPathParameter(String name, ApiParameterSchema apiParameterSchema){
+		super(name, apiParameterSchema);
 	}
 	
 }

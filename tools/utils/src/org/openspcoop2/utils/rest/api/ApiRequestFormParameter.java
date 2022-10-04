@@ -37,11 +37,8 @@ public class ApiRequestFormParameter extends AbstractApiTypeParameter implements
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public ApiRequestFormParameter(String name, String type){
-		super(name, type);
-	}
-	public ApiRequestFormParameter(String name, String type, ApiSchemaTypeRestriction schema){
-		super(name, type, schema);
+	public ApiRequestFormParameter(String name, ApiParameterSchema apiParameterSchema){
+		super(name, apiParameterSchema);
 	}
 	
 }

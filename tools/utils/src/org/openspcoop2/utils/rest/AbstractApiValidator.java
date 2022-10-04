@@ -21,13 +21,18 @@
 package org.openspcoop2.utils.rest;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.rest.api.ApiBodyParameter;
 import org.openspcoop2.utils.rest.api.ApiCookieParameter;
 import org.openspcoop2.utils.rest.api.ApiHeaderParameter;
 import org.openspcoop2.utils.rest.api.ApiOperation;
+import org.openspcoop2.utils.rest.api.ApiParameterSchema;
+import org.openspcoop2.utils.rest.api.ApiParameterSchemaComplexType;
+import org.openspcoop2.utils.rest.api.ApiParameterTypeSchema;
 import org.openspcoop2.utils.rest.api.ApiRequestDynamicPathParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestFormParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestQueryParameter;
@@ -56,7 +61,7 @@ public abstract class AbstractApiValidator   {
 	
 	public abstract void validatePostConformanceCheck(HttpBaseEntity<?> httpEntity,ApiOperation operation,Object ... args) throws ProcessingException,ValidatorException;
 	
-	public abstract void validateValueAsType(ApiParameterType parameterType, String value,String type, ApiSchemaTypeRestriction typeRestriction) throws ProcessingException,ValidatorException;
+	public abstract void validateValueAsType(ApiParameterType parameterType, String value, String type, ApiSchemaTypeRestriction typeRestriction) throws ProcessingException,ValidatorException;
 	
 	public void validate(Api api, HttpBaseEntity<?> httpEntity, Object ... args) throws ProcessingException,ValidatorException{
 		
@@ -196,11 +201,7 @@ public abstract class AbstractApiValidator   {
 						else {
 							for (String value : values) {
 								if(value!=null){
-									try{
-										validateValueAsType(ApiParameterType.header, value,paramHeader.getType(),paramHeader.getSchema());
-									}catch(ValidatorException val){
-										throw new ValidatorException("Invalid value '"+value+"' in http header '"+name+"' (expected type '"+paramHeader.getType()+"'): "+val.getMessage(),val);
-									}
+									validate(paramHeader.getApiParameterSchema(), ApiParameterType.header, name, value, "http header");
 								}	
 							}
 						}
@@ -224,11 +225,7 @@ public abstract class AbstractApiValidator   {
 							}
 						}
 						if(value!=null){
-							try{
-								validateValueAsType(ApiParameterType.cookie, value,paramCookie.getType(),paramCookie.getSchema());
-							}catch(ValidatorException val){
-								throw new ValidatorException("Invalid value '"+value+"' in cookie '"+name+"' (expected type '"+paramCookie.getType()+"'): "+val.getMessage(),val);
-							}
+							validate(paramCookie.getApiParameterSchema(), ApiParameterType.cookie, name, value, "cookie");
 						}
 					}
 				}
@@ -236,14 +233,25 @@ public abstract class AbstractApiValidator   {
 				if(operation.getRequest()!=null &&  operation.getRequest().sizeQueryParameters()>0){
 					for (ApiRequestQueryParameter paramQuery : operation.getRequest().getQueryParameters()) {
 						
-						if(paramQuery.getSchema()!=null && paramQuery.getSchema().isTypeObject()) {
-							if (
-									(paramQuery.getSchema().isStyleQueryForm() && paramQuery.getSchema().isExplodeEnabled())
-									||
-									(paramQuery.getSchema().isStyleQueryDeepObject())
-									) {
-								continue; // i parametri sono esplosi. La validazione viene fatta con json o openapi	
+						// i parametri sono esplosi. La validazione viene fatta con json o openapi	
+						boolean parametriEsplosi = false;
+						if(paramQuery.getApiParameterSchema()!=null && paramQuery.getApiParameterSchema().getSchemas()!=null && !paramQuery.getApiParameterSchema().getSchemas().isEmpty()) {
+							for (ApiParameterTypeSchema schema : paramQuery.getApiParameterSchema().getSchemas()) {
+								// Il controllo basta farlo sul primo.
+								if(schema.getSchema()!=null && schema.getSchema().isTypeObject()) {
+									if (
+											(schema.getSchema().isStyleQueryForm() && schema.getSchema().isExplodeEnabled())
+											||
+											(schema.getSchema().isStyleQueryDeepObject())
+											) {
+										parametriEsplosi = true;
+										break;
+									}
+								}
 							}
+						}
+						if(parametriEsplosi) {
+							continue;
 						}
 						
 						String name = paramQuery.getName();
@@ -256,11 +264,7 @@ public abstract class AbstractApiValidator   {
 						else {
 							for (String value : values) {
 								if(value!=null){
-									try{
-										validateValueAsType(ApiParameterType.query, value,paramQuery.getType(),paramQuery.getSchema());
-									}catch(ValidatorException val){
-										throw new ValidatorException("Invalid value '"+value+"' in query parameter '"+name+"' (expected type '"+paramQuery.getType()+"'): "+val.getMessage(),val);
-									}
+									validate(paramQuery.getApiParameterSchema(), ApiParameterType.query, name, value, "query parameter");
 								}
 							}
 						}
@@ -292,36 +296,28 @@ public abstract class AbstractApiValidator   {
 						}
 						if(find){
 							String valueUrlDecoded = valueFound;
-							try{
-								// il valore può essere url encoded
-								try {
-									// Note that Java’s URLEncoder class encodes space character(" ") into a + sign. 
-									// This is contrary to other languages like Javascript that encode space character into %20.
-									/*
-									 *  URLEncoder is not for encoding URLs, but for encoding parameter names and values for use in GET-style URLs or POST forms. 
-									 *  That is, for transforming plain text into the application/x-www-form-urlencoded MIME format as described in the HTML specification. 
-									 **/
-									//valueUrlDecoded = java.net.URLDecoder.decode(valueFound, org.openspcoop2.utils.resources.Charset.UTF_8.getValue());
-									
-									valueUrlDecoded = UriUtils.decode(valueFound, org.openspcoop2.utils.resources.Charset.UTF_8.getValue());
-									
-									//System.out.println("DOPO '"+valueUrlDecoded+"' PRIMA '"+valueFound+"'");
-									
-								}catch(Throwable e) {
-									//System.out.println("ERRORE");
-									//e.printStackTrace(System.out);
-									// utilizzo valore originale
-									//throw new RuntimeException(e.getMessage(),e);
-								}
-								validateValueAsType(ApiParameterType.path, valueUrlDecoded ,paramDynamicPath.getType(),paramDynamicPath.getSchema());
-							}catch(ValidatorException val){
-								if(valueUrlDecoded!=null && !valueUrlDecoded.equals(valueFound)) {
-									throw new ValidatorException("Invalid value '"+valueFound+"' (urlDecoded: '"+valueUrlDecoded+"') in dynamic path '"+paramDynamicPath.getName()+"' (expected type '"+paramDynamicPath.getType()+"'): "+val.getMessage(),val);
-								}
-								else {
-									throw new ValidatorException("Invalid value '"+valueFound+"' in dynamic path '"+paramDynamicPath.getName()+"' (expected type '"+paramDynamicPath.getType()+"'): "+val.getMessage(),val);
-								}
+							// il valore può essere url encoded
+							try {
+								// Note that Java’s URLEncoder class encodes space character(" ") into a + sign. 
+								// This is contrary to other languages like Javascript that encode space character into %20.
+								/*
+								 *  URLEncoder is not for encoding URLs, but for encoding parameter names and values for use in GET-style URLs or POST forms. 
+								 *  That is, for transforming plain text into the application/x-www-form-urlencoded MIME format as described in the HTML specification. 
+								 **/
+								//valueUrlDecoded = java.net.URLDecoder.decode(valueFound, org.openspcoop2.utils.resources.Charset.UTF_8.getValue());
+								
+								valueUrlDecoded = UriUtils.decode(valueFound, org.openspcoop2.utils.resources.Charset.UTF_8.getValue());
+								
+								//System.out.println("DOPO '"+valueUrlDecoded+"' PRIMA '"+valueFound+"'");
+								
+							}catch(Throwable e) {
+								//System.out.println("ERRORE");
+								//e.printStackTrace(System.out);
+								// utilizzo valore originale
+								//throw new RuntimeException(e.getMessage(),e);
 							}
+							validate(paramDynamicPath.getApiParameterSchema(), ApiParameterType.path, paramDynamicPath.getName(), valueUrlDecoded, "dynamic path",
+									(valueUrlDecoded!=null && !valueUrlDecoded.equals(valueFound)) ? valueFound : null);
 						}
 					}
 				}
@@ -338,11 +334,7 @@ public abstract class AbstractApiValidator   {
 						else {
 							for (String value : values) {
 								if(value!=null){
-									try{
-										validateValueAsType(ApiParameterType.form, value,paramForm.getType(),paramForm.getSchema());
-									}catch(ValidatorException val){
-										throw new ValidatorException("Invalid value '"+value+"' in form parameter '"+name+"' (expected type '"+paramForm.getType()+"'): "+val.getMessage(),val);
-									}
+									validate(paramForm.getApiParameterSchema(), ApiParameterType.form, name, value, "form parameter");
 								}
 							}
 						}
@@ -386,11 +378,7 @@ public abstract class AbstractApiValidator   {
 						else {
 							for (String value : values) {
 								if(value!=null){
-									try{
-										validateValueAsType(ApiParameterType.header, value,paramHeader.getType(),paramHeader.getSchema());
-									}catch(ValidatorException val){
-										throw new ValidatorException("Invalid value '"+value+"' in http header '"+name+"' (expected type '"+paramHeader.getType()+"'): "+val.getMessage(),val);
-									}
+									validate(paramHeader.getApiParameterSchema(), ApiParameterType.header, name, value, "http header");
 								}
 							}
 						}
@@ -414,11 +402,7 @@ public abstract class AbstractApiValidator   {
 							}
 						}
 						if(value!=null){
-							try{
-								validateValueAsType(ApiParameterType.cookie, value,paramCookie.getType(),paramCookie.getSchema());
-							}catch(ValidatorException val){
-								throw new ValidatorException("Invalid value '"+value+"' in cookie '"+name+"' (expected type '"+paramCookie.getType()+"'): "+val.getMessage(),val);
-							}
+							validate(paramCookie.getApiParameterSchema(), ApiParameterType.cookie, name, value, "cookie");
 						}
 					}
 				}
@@ -435,4 +419,102 @@ public abstract class AbstractApiValidator   {
 		
 	}
 	
+	
+	private void validate(ApiParameterSchema apiParameterSchema, ApiParameterType type, String name, String value, String position) throws ValidatorException, ProcessingException {
+		this.validate(apiParameterSchema, type, name, value, position, null);
+	}
+	private void validate(ApiParameterSchema apiParameterSchema, ApiParameterType type, String name, String value, String position, String valueUrlEncoded) throws ValidatorException, ProcessingException {
+		if(apiParameterSchema!=null && apiParameterSchema.getSchemas()!=null && !apiParameterSchema.getSchemas().isEmpty()) {
+			ApiParameterSchemaComplexType ct = apiParameterSchema.getComplexType();
+			if(ct==null) {
+				ct = ApiParameterSchemaComplexType.simple;
+			}
+			
+			String prefixError = "Invalid value '"+value+"' in "+position+" '"+name+"'";
+			if(valueUrlEncoded!=null) {
+				 prefixError = "Invalid value '"+value+"' (urlEncoded: '"+valueUrlEncoded+"') in "+position+" '"+name+"'";
+			}
+			
+			switch (ct) {
+			case simple: // caso speciale con 1 solo
+			case allOf:
+				StringBuilder sbException = new StringBuilder();
+				List<ValidatorException> listValidatorException = new ArrayList<ValidatorException>();
+				for (ApiParameterTypeSchema schema : apiParameterSchema.getSchemas()) {
+					try{
+						validateValueAsType(type, value, schema.getType(),schema.getSchema());
+					}catch(ValidatorException val){
+						String msgError = prefixError+" (expected type '"+schema.getType()+"'): "+val.getMessage();
+						if(sbException.length()>0) {
+							sbException.append("\n");
+						}
+						sbException.append(msgError);
+						listValidatorException.add( new ValidatorException(msgError,val) );
+					}	
+				}
+				if(!listValidatorException.isEmpty()) {
+					UtilsMultiException multi = new UtilsMultiException(listValidatorException.toArray(new ValidatorException[1]));
+					throw new ValidatorException(sbException.toString(), multi);
+				}
+				return;
+				
+			case anyOf:
+				sbException = new StringBuilder();
+				listValidatorException = new ArrayList<ValidatorException>();
+				for (ApiParameterTypeSchema schema : apiParameterSchema.getSchemas()) {
+					try{
+						validateValueAsType(type, value, schema.getType(),schema.getSchema());
+						return; // ne basta una che valida correttamente
+					}catch(ValidatorException val){
+						String msgError = prefixError+" (expected type '"+schema.getType()+"'): "+val.getMessage();
+						if(sbException.length()>0) {
+							sbException.append("\n");
+						}
+						sbException.append(msgError);
+						listValidatorException.add( new ValidatorException(msgError,val) );
+					}	
+				}
+				if(!listValidatorException.isEmpty()) {
+					UtilsMultiException multi = new UtilsMultiException(listValidatorException.toArray(new ValidatorException[1]));
+					throw new ValidatorException(sbException.toString(), multi);
+				}
+				return; //caso che non può accadere
+				
+			case oneOf:
+				sbException = new StringBuilder();
+				listValidatorException = new ArrayList<ValidatorException>();
+				int schemiValidi = 0;
+				for (ApiParameterTypeSchema schema : apiParameterSchema.getSchemas()) {
+					try{
+						validateValueAsType(type, value, schema.getType(),schema.getSchema());
+						schemiValidi++;
+					}catch(ValidatorException val){
+						String msgError = prefixError+" (expected type '"+schema.getType()+"'): "+val.getMessage();
+						if(sbException.length()>0) {
+							sbException.append("\n");
+						}
+						sbException.append(msgError);
+						listValidatorException.add( new ValidatorException(msgError,val) );
+					}	
+				}
+				if(schemiValidi==0) {
+					if(!listValidatorException.isEmpty()) {
+						UtilsMultiException multi = new UtilsMultiException(listValidatorException.toArray(new ValidatorException[1]));
+						throw new ValidatorException(sbException.toString(), multi);
+					}
+					else {
+						throw new ValidatorException(prefixError);
+					}
+				}
+				else if(schemiValidi>1) {
+					throw new ValidatorException(prefixError+": expected validates the value against exactly one of the subschemas; founded valid in "+schemiValidi+" schemas");
+				}
+				return; // deve essere validato rispetto esattamente ad uno schema
+
+			}
+		}
+
+		
+
+	}
 }

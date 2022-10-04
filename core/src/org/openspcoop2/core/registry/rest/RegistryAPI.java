@@ -38,13 +38,14 @@ import org.openspcoop2.utils.rest.api.ApiBodyParameter;
 import org.openspcoop2.utils.rest.api.ApiCookieParameter;
 import org.openspcoop2.utils.rest.api.ApiHeaderParameter;
 import org.openspcoop2.utils.rest.api.ApiOperation;
+import org.openspcoop2.utils.rest.api.ApiParameterSchema;
+import org.openspcoop2.utils.rest.api.ApiParameterSchemaComplexType;
 import org.openspcoop2.utils.rest.api.ApiReference;
 import org.openspcoop2.utils.rest.api.ApiRequest;
 import org.openspcoop2.utils.rest.api.ApiRequestDynamicPathParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestFormParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestQueryParameter;
 import org.openspcoop2.utils.rest.api.ApiResponse;
-import org.openspcoop2.utils.rest.api.ApiSchemaTypeRestriction;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
 /**
@@ -129,21 +130,27 @@ public class RegistryAPI extends Api implements Serializable {
 	private static void initParameterList(List<ResourceParameter> rpList, ApiRequest apiRequest, ApiResponse apiResponse) throws UtilsException {
 		for (ResourceParameter rp : rpList) {
 			
-			ApiSchemaTypeRestriction schema = null;
-			if(rp.getRestrizioni()!=null) {
-				schema = ApiSchemaTypeRestriction.toApiSchemaTypeRestriction(rp.getRestrizioni());
-			}
-			if(schema==null) {
-				schema = new ApiSchemaTypeRestriction();
-				schema.setType(rp.getTipo());
-			}
-			else if(schema.getType()==null) {
-				schema.setType(rp.getTipo());
+//			ApiSchemaTypeRestriction schema = null;
+//			if(rp.getRestrizioni()!=null) {
+//				schema = ApiSchemaTypeRestriction.toApiSchemaTypeRestriction(rp.getRestrizioni());
+//			}
+//			if(schema==null) {
+//				schema = new ApiSchemaTypeRestriction();
+//				schema.setType(rp.getTipo());
+//			}
+//			else if(schema.getType()==null) {
+//				schema.setType(rp.getTipo());
+//			}
+			ApiParameterSchema apiParameterSchema = ApiParameterSchema.toApiParameterSchema(rp.getRestrizioni());
+			if(apiParameterSchema==null) {
+				apiParameterSchema = new ApiParameterSchema();
+				apiParameterSchema.setComplexType(ApiParameterSchemaComplexType.simple);
+				apiParameterSchema.addType(rp.getTipo(), null);
 			}
 			
 			switch (rp.getParameterType()) {
 			case COOKIE:
-				ApiCookieParameter cookie = new ApiCookieParameter(rp.getNome(), rp.getTipo(), schema);
+				ApiCookieParameter cookie = new ApiCookieParameter(rp.getNome(), apiParameterSchema);
 				cookie.setDescription(rp.getDescrizione());
 				cookie.setRequired(rp.isRequired());
 				if(apiRequest!=null) {
@@ -154,19 +161,19 @@ public class RegistryAPI extends Api implements Serializable {
 				}
 				break;
 			case DYNAMIC_PATH:
-				ApiRequestDynamicPathParameter dynamicPath = new ApiRequestDynamicPathParameter(rp.getNome(), rp.getTipo(), schema);
+				ApiRequestDynamicPathParameter dynamicPath = new ApiRequestDynamicPathParameter(rp.getNome(), apiParameterSchema);
 				dynamicPath.setDescription(rp.getDescrizione());
 				dynamicPath.setRequired(rp.isRequired());
 				apiRequest.addDynamicPathParameter(dynamicPath);
 				break;
 			case FORM:
-				ApiRequestFormParameter form = new ApiRequestFormParameter(rp.getNome(), rp.getTipo(), schema);
+				ApiRequestFormParameter form = new ApiRequestFormParameter(rp.getNome(), apiParameterSchema);
 				form.setDescription(rp.getDescrizione());
 				form.setRequired(rp.isRequired());
 				apiRequest.addFormParameter(form);
 				break;
 			case HEADER:
-				ApiHeaderParameter header = new ApiHeaderParameter(rp.getNome(), rp.getTipo(), schema);
+				ApiHeaderParameter header = new ApiHeaderParameter(rp.getNome(), apiParameterSchema);
 				header.setDescription(rp.getDescrizione());
 				header.setRequired(rp.isRequired());
 				if(apiRequest!=null) {
@@ -177,7 +184,7 @@ public class RegistryAPI extends Api implements Serializable {
 				}
 				break;
 			case QUERY:
-				ApiRequestQueryParameter query = new ApiRequestQueryParameter(rp.getNome(), rp.getTipo(), schema);
+				ApiRequestQueryParameter query = new ApiRequestQueryParameter(rp.getNome(), apiParameterSchema);
 				query.setDescription(rp.getDescrizione());
 				query.setRequired(rp.isRequired());
 				apiRequest.addQueryParameter(query);

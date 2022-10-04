@@ -182,8 +182,11 @@ public class SwaggerRequestValidator {
 		// un ERROR, quindi dobbiamo disattivarli selettivamente.
 		// Le chiavi da usare per il LevelResolver sono nel progetto swagger-validator 
 		// sotto src/main/resources/messages.properties
-				
+		
 		// Config Request
+		if (!config.isValidateRequestPath()) {
+			errorLevelResolver.withLevel("validation.request.path.missing", Level.IGNORE);							
+		}
 		if (!config.isValidateRequestQuery()) {
 			errorLevelResolver.withLevel("validation.request.parameter.query", Level.IGNORE);							
 		}

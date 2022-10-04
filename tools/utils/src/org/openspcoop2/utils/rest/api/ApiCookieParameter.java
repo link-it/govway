@@ -37,11 +37,8 @@ public class ApiCookieParameter extends AbstractApiTypeParameter implements Seri
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public ApiCookieParameter(String name, String type){
-		super(name, type);
-	}
-	public ApiCookieParameter(String name, String type, ApiSchemaTypeRestriction schema){
-		super(name, type, schema);
+	public ApiCookieParameter(String name, ApiParameterSchema apiParameterSchema){
+		super(name, apiParameterSchema);
 	}
 	
 }

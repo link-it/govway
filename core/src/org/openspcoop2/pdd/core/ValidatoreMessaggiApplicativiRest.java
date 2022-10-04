@@ -175,6 +175,7 @@ public class ValidatoreMessaggiApplicativiRest {
 					OpenAPILibrary.swagger_request_validator.equals(this.configOpenApiValidator.getOpenApiLibrary())) {
 				this.configOpenApiValidator.setMergeAPISpec(this.op2Properties.isValidazioneContenutiApplicativi_openApi_mergeAPISpec());
 				this.configOpenApiValidator.setValidateAPISpec(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateAPISpec());
+				this.configOpenApiValidator.setValidateRequestPath(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateRequestPath());
 				this.configOpenApiValidator.setValidateRequestQuery(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateRequestQuery());
 				this.configOpenApiValidator.setValidateRequestUnexpectedQueryParam(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateRequestUnexpectedQueryParam());
 				this.configOpenApiValidator.setValidateRequestHeaders(this.op2Properties.isValidazioneContenutiApplicativi_openApi_validateRequestHeaders());
@@ -783,6 +784,20 @@ public class ValidatoreMessaggiApplicativiRest {
 			}
 			else if(disabled.equals(validateAPISpec.trim())) {
 				configOpenApi4j.setValidateAPISpec(false);
+			}
+		}
+		
+		String validateRequestPath = ValidatoreMessaggiApplicativiRest.readValue(proprieta, 
+				openapi4j ? CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_OPENAPI4J_VALIDATE_REQUEST_PATH : CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_SWAGGER_REQUEST_VALIDATOR_VALIDATE_REQUEST_PATH);
+		if(validateRequestPath==null || StringUtils.isEmpty(validateRequestPath)) {
+			validateRequestPath = ValidatoreMessaggiApplicativiRest.readValue(proprieta, CostantiProprieta.VALIDAZIONE_CONTENUTI_PROPERTY_NAME_COMMONS_VALIDATE_REQUEST_PATH);
+		}
+		if(validateRequestPath!=null && !StringUtils.isEmpty(validateRequestPath)) {
+			if(enabled.equals(validateRequestPath.trim())) {
+				configOpenApi4j.setValidateRequestPath(true);
+			}
+			else if(disabled.equals(validateRequestPath.trim())) {
+				configOpenApi4j.setValidateRequestPath(false);
 			}
 		}
 		

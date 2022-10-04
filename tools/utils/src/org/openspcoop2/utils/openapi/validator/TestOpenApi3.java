@@ -62,7 +62,8 @@ public class TestOpenApi3 {
 
 			
 			
-			String baseUri = "http://petstore.swagger.io/api";
+			//String baseUri = "http://petstore.swagger.io/api";
+			String baseUri = ""; // non va definita
 			
 			// yaml inclusi anche da dentro il json
 			ApiSchema apiSchemaYaml = new ApiSchema("test_import.yaml", 

@@ -35,6 +35,7 @@ public class OpenapiLibraryValidatorConfig {
 	
 	private boolean validateAPISpec = true;
 	
+	private boolean validateRequestPath = true;
 	private boolean validateRequestQuery = true;
 	/* utilizzato solo in swagger_request_validator per disabilitare il controllo.
 	 * Da specifica i parametri ulteriori vanno ignorati, mentre la libreria swagger_request_validator li valida
@@ -107,6 +108,14 @@ public class OpenapiLibraryValidatorConfig {
 		this.validateAPISpec = validateAPISpec;
 	}
 
+	public boolean isValidateRequestPath() {
+		return this.validateRequestPath;
+	}
+
+	public void setValidateRequestPath(boolean validateRequestPath) {
+		this.validateRequestPath = validateRequestPath;
+	}
+	
 	public boolean isValidateRequestQuery() {
 		return this.validateRequestQuery;
 	}

@@ -1,3 +1,10 @@
+2022-10-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, ApiRsConfigurazione, Utils]
+	Risolto Bug OP-1451
+	Sia in fase di caricamento che in fase di validazione non venivano supportati OpenAPI con parametri (path/header/query/cookie) definiti tramite complex type (anyOf/allOf/oneOf).
+	È stata inoltre abilitata la validazione dei 'path parameters' tramite la libreria 'Openapi4j'.
+
 2022-09-30  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

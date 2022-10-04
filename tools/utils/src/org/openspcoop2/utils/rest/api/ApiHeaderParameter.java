@@ -37,11 +37,8 @@ public class ApiHeaderParameter extends AbstractApiTypeParameter implements Seri
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public ApiHeaderParameter(String name, String type){
-		super(name, type);
-	}
-	public ApiHeaderParameter(String name, String type, ApiSchemaTypeRestriction schema){
-		super(name, type, schema);
+	public ApiHeaderParameter(String name, ApiParameterSchema apiParameterSchema){
+		super(name, apiParameterSchema);
 	}
 	
 }

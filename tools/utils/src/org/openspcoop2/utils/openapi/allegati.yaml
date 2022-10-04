@@ -42,6 +42,8 @@ tags:
     description: test su vari format string
   - name: dynamic-path
     description: test su path dinamico
+  - name: composed-schema-parameters
+    description: test con parametri con composed schema
     
 paths:
           
@@ -1946,6 +1948,343 @@ paths:
         default:
           $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+  /documenti/composed-schema-parameters/any_of/{composed_schema_any_of_path}/{composed_schema_any_of_path_inline}:
+
+    post:
+      tags:
+        - composed-schema-parameters
+      description: Esempio di parametri composed schema any_of
+      operationId: ComposedSchemaAnyOf
+      parameters:
+      - $ref: '#/components/parameters/composed_schema_any_of_path'
+      - $ref: '#/components/parameters/composed_schema_any_of_header'
+      - $ref: '#/components/parameters/composed_schema_any_of_query'
+      - $ref: '#/components/parameters/composed_schema_any_of_cookie'
+      - name: composed_schema_any_of_path_inline
+        in: path
+        description: Test
+        required: true
+        schema:
+         anyOf:
+           - type: integer
+             format: int32
+             maximum: 20
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      - name: composed_schema_any_of_query_inline
+        in: query
+        description: Test
+        required: true
+        schema:
+         anyOf:
+           - type: integer
+             format: int32
+             maximum: 20
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      - name: composed_schema_any_of_header_inline
+        in: header
+        description: Test
+        required: true
+        schema:
+         anyOf:
+           - type: integer
+             format: int32
+             maximum: 20
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      - name: composed_schema_any_of_cookie_inline
+        in: cookie
+        description: Test
+        required: true
+        schema:
+         anyOf:
+           - type: integer
+             format: int32
+             maximum: 20
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        "200":
+          description: |-
+            Esempio di Risposta
+          content:
+            text/plain:
+              schema:
+                type: string
+          headers:
+             composed_schema_any_of_header:
+               required: true
+               schema:
+                anyOf:
+                - type: string
+                  pattern: '^[A-Z]{11}$'
+                - type: string
+                  pattern: '^[0-9]{3,5}$'
+                  minLength: 3
+             composed_schema_any_of_header_inline:
+               required: true
+               schema:
+                anyOf:
+                - type: integer
+                  format: int32
+                  maximum: 20
+                - type: integer
+                  format: int32
+                  minimum: 50
+                  maximum: 55
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/composed-schema-parameters/all_of/{composed_schema_all_of_path}/{composed_schema_all_of_path_inline}:
+
+    post:
+      tags:
+        - composed-schema-parameters
+      description: Esempio di parametri composed schema all_of
+      operationId: ComposedSchemaAllOf
+      parameters:
+      - $ref: '#/components/parameters/composed_schema_all_of_path'
+      - $ref: '#/components/parameters/composed_schema_all_of_header'
+      - $ref: '#/components/parameters/composed_schema_all_of_query'
+      - $ref: '#/components/parameters/composed_schema_all_of_cookie'
+      - name: composed_schema_all_of_path_inline
+        in: path
+        description: Test
+        required: true
+        schema:
+         allOf:
+           - type: integer
+             format: int32
+             maximum: 100
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      - name: composed_schema_all_of_query_inline
+        in: query
+        description: Test
+        required: true
+        schema:
+         allOf:
+           - type: integer
+             format: int32
+             maximum: 100
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      - name: composed_schema_all_of_header_inline
+        in: header
+        description: Test
+        required: true
+        schema:
+         allOf:
+           - type: integer
+             format: int32
+             maximum: 100
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      - name: composed_schema_all_of_cookie_inline
+        in: cookie
+        description: Test
+        required: true
+        schema:
+         allOf:
+           - type: integer
+             format: int32
+             maximum: 100
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        "200":
+          description: |-
+            Esempio di Risposta
+          content:
+            text/plain:
+              schema:
+                type: string
+          headers:
+             composed_schema_all_of_header:
+               required: true
+               schema:
+                allOf:
+                - type: string
+                  pattern: '^[A-Z]{5,11}$'
+                - type: string
+                  minLength: 7
+             composed_schema_all_of_header_inline:
+               required: true
+               schema:
+                allOf:
+                - type: integer
+                  format: int32
+                  maximum: 100
+                - type: integer
+                  format: int32
+                  minimum: 50
+                  maximum: 55
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/composed-schema-parameters/one_of/{composed_schema_one_of_path}/{composed_schema_one_of_path_inline}:
+
+    post:
+      tags:
+        - composed-schema-parameters
+      description: Esempio di parametri composed schema one_of
+      operationId: ComposedSchemaOneOf
+      parameters:
+      - $ref: '#/components/parameters/composed_schema_one_of_path'
+      - $ref: '#/components/parameters/composed_schema_one_of_header'
+      - $ref: '#/components/parameters/composed_schema_one_of_query'
+      - $ref: '#/components/parameters/composed_schema_one_of_cookie'
+      - name: composed_schema_one_of_path_inline
+        in: path
+        description: Test
+        required: true
+        schema:
+         oneOf:
+           - type: integer
+             format: int32
+             maximum: 100
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      - name: composed_schema_one_of_query_inline
+        in: query
+        description: Test
+        required: true
+        schema:
+         oneOf:
+           - type: integer
+             format: int32
+             maximum: 100
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      - name: composed_schema_one_of_header_inline
+        in: header
+        description: Test
+        required: true
+        schema:
+         oneOf:
+           - type: integer
+             format: int32
+             maximum: 100
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      - name: composed_schema_one_of_cookie_inline
+        in: cookie
+        description: Test
+        required: true
+        schema:
+         oneOf:
+           - type: integer
+             format: int32
+             maximum: 100
+           - type: integer
+             format: int32
+             minimum: 50
+             maximum: 55
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        "200":
+          description: |-
+            Esempio di Risposta
+          content:
+            text/plain:
+              schema:
+                type: string
+          headers:
+             composed_schema_one_of_header:
+               required: true
+               schema:
+                oneOf:
+                - type: string
+                  pattern: '^[A-Z]{5,11}$'
+                - type: string
+                  minLength: 7
+             composed_schema_one_of_header_inline:
+               required: true
+               schema:
+                oneOf:
+                - type: integer
+                  format: int32
+                  maximum: 100
+                - type: integer
+                  format: int32
+                  minimum: 50
+                  maximum: 55
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
 components:
 
   parameters:
@@ -2015,6 +2354,146 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/dynamic_id'
+
+    composed_schema_any_of_path:
+      name: composed_schema_any_of_path
+      in: path
+      description: Test
+      required: true
+      schema:
+         anyOf:
+           - type: string
+             pattern: '^[A-Z]{11}$'
+           - type: string
+             pattern: '^[0-9]{3,5}$'
+             minLength: 3
+    composed_schema_any_of_query:
+      name: composed_schema_any_of_query
+      in: query
+      description: Test
+      required: true
+      schema:
+         anyOf:
+           - type: string
+             pattern: '^[A-Z]{11}$'
+           - type: string
+             pattern: '^[0-9]{3,5}$'
+             minLength: 3
+    composed_schema_any_of_header:
+      name: composed_schema_any_of_header
+      in: header
+      description: Test
+      required: true
+      schema:
+         anyOf:
+           - type: string
+             pattern: '^[A-Z]{11}$'
+           - type: string
+             pattern: '^[0-9]{3,5}$'
+             minLength: 3
+    composed_schema_any_of_cookie:
+      name: composed_schema_any_of_cookie
+      in: cookie
+      description: Test
+      required: true
+      schema:
+         anyOf:
+           - type: string
+             pattern: '^[A-Z]{11}$'
+           - type: string
+             pattern: '^[0-9]{3,5}$'
+             minLength: 3
+
+    composed_schema_all_of_path:
+      name: composed_schema_all_of_path
+      in: path
+      description: Test
+      required: true
+      schema:
+         allOf:
+           - type: string
+             pattern: '^[A-Z]{5,11}$'
+           - type: string
+             minLength: 7
+    composed_schema_all_of_query:
+      name: composed_schema_all_of_query
+      in: query
+      description: Test
+      required: true
+      schema:
+         allOf:
+           - type: string
+             pattern: '^[A-Z]{5,11}$'
+           - type: string
+             minLength: 7
+    composed_schema_all_of_header:
+      name: composed_schema_all_of_header
+      in: header
+      description: Test
+      required: true
+      schema:
+         allOf:
+           - type: string
+             pattern: '^[A-Z]{5,11}$'
+           - type: string
+             minLength: 7
+    composed_schema_all_of_cookie:
+      name: composed_schema_all_of_cookie
+      in: cookie
+      description: Test
+      required: true
+      schema:
+         allOf:
+           - type: string
+             pattern: '^[A-Z]{5,11}$'
+           - type: string
+             minLength: 7
+
+
+    composed_schema_one_of_path:
+      name: composed_schema_one_of_path
+      in: path
+      description: Test
+      required: true
+      schema:
+         oneOf:
+           - type: string
+             pattern: '^[A-Z]{5,11}$'
+           - type: string
+             minLength: 7
+    composed_schema_one_of_query:
+      name: composed_schema_one_of_query
+      in: query
+      description: Test
+      required: true
+      schema:
+         oneOf:
+           - type: string
+             pattern: '^[A-Z]{5,11}$'
+           - type: string
+             minLength: 7
+    composed_schema_one_of_header:
+      name: composed_schema_one_of_header
+      in: header
+      description: Test
+      required: true
+      schema:
+         oneOf:
+           - type: string
+             pattern: '^[A-Z]{5,11}$'
+           - type: string
+             minLength: 7
+    composed_schema_one_of_cookie:
+      name: composed_schema_one_of_cookie
+      in: cookie
+      description: Test
+      required: true
+      schema:
+         oneOf:
+           - type: string
+             pattern: '^[A-Z]{5,11}$'
+           - type: string
+             minLength: 7
         
   schemas:
 

@@ -197,7 +197,7 @@ public abstract class Api extends BaseBean implements Serializable {
 					if(par.getName()==null) {
 						throw new ProcessingException(pRequest+"Name undefined in cookie parameter (position '"+j+"')");
 					}
-					if(par.getType()==null) {
+					if(par.getApiParameterSchema()==null || !par.getApiParameterSchema().isDefined()) {
 						throw new ProcessingException(pRequest+"Type undefined in cookie parameter '"+par.getName()+"'");
 					}
 				}
@@ -207,7 +207,7 @@ public abstract class Api extends BaseBean implements Serializable {
 					if(par.getName()==null) {
 						throw new ProcessingException(pRequest+"Name undefined in dynamic path parameter (position '"+j+"')");
 					}
-					if(par.getType()==null) {
+					if(par.getApiParameterSchema()==null || !par.getApiParameterSchema().isDefined()) {
 						throw new ProcessingException(pRequest+"Type undefined in dynamic path parameter '"+par.getName()+"'");
 					}
 				}
@@ -217,7 +217,7 @@ public abstract class Api extends BaseBean implements Serializable {
 					if(par.getName()==null) {
 						throw new ProcessingException(pRequest+"Name undefined in form parameter (position '"+j+"')");
 					}
-					if(par.getType()==null) {
+					if(par.getApiParameterSchema()==null || !par.getApiParameterSchema().isDefined()) {
 						throw new ProcessingException(pRequest+"Type undefined in form parameter '"+par.getName()+"'");
 					}
 				}
@@ -227,7 +227,7 @@ public abstract class Api extends BaseBean implements Serializable {
 					if(par.getName()==null) {
 						throw new ProcessingException(pRequest+"Name undefined in header parameter (position '"+j+"')");
 					}
-					if(par.getType()==null) {
+					if(par.getApiParameterSchema()==null || !par.getApiParameterSchema().isDefined()) {
 						throw new ProcessingException(pRequest+"Type undefined in header parameter '"+par.getName()+"'");
 					}
 				}
@@ -237,7 +237,7 @@ public abstract class Api extends BaseBean implements Serializable {
 					if(par.getName()==null) {
 						throw new ProcessingException(pRequest+"Name undefined in query parameter (position '"+j+"')");
 					}
-					if(par.getType()==null) {
+					if(par.getApiParameterSchema()==null || !par.getApiParameterSchema().isDefined()) {
 						throw new ProcessingException(pRequest+"Type undefined in query parameter '"+par.getName()+"'");
 					}
 				}
@@ -287,7 +287,7 @@ public abstract class Api extends BaseBean implements Serializable {
 					if(par.getName()==null) {
 						throw new ProcessingException(pResponse+"Name undefined in cookie parameter (position '"+j+"')");
 					}
-					if(par.getType()==null) {
+					if(par.getApiParameterSchema()==null || !par.getApiParameterSchema().isDefined()) {
 						throw new ProcessingException(pResponse+"Type undefined in cookie parameter '"+par.getName()+"'");
 					}
 				}
@@ -297,7 +297,7 @@ public abstract class Api extends BaseBean implements Serializable {
 					if(par.getName()==null) {
 						throw new ProcessingException(pResponse+"Name undefined in header parameter (position '"+j+"')");
 					}
-					if(par.getType()==null) {
+					if(par.getApiParameterSchema()==null || !par.getApiParameterSchema().isDefined()) {
 						throw new ProcessingException(pResponse+"Type undefined in header parameter '"+par.getName()+"'");
 					}
 				}

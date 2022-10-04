@@ -1202,6 +1202,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		try {
 		
 			ValidationData<Void> vData = new ValidationData<>();
+			this.openApi4j.setServers(null); // se lascio la definizione dei server, il validatePath sottostante verifica che la url corrisponda anche con la parte del server
 			OperationValidator val = new OperationValidator(this.openApi4j, pathOpenApi4j, operationOpenApi4j);
 			
 			if(httpEntity instanceof HttpBaseRequestEntity) {
@@ -1210,7 +1211,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 				Request requestOpenApi4j = buildRequestOpenApi4j(httpRequest.getUrl(), httpRequest.getMethod().toString(), 
 						httpRequest.getParameters(), httpRequest.getCookies(), httpRequest.getHeaders(),
 						httpRequest.getContent());
-				//val.validatePath(requestOpenApi4j, vData); LA URL deve corrispondere al base path del server
+				if(this.openApi4jConfig.isValidateRequestPath()) {
+					val.validatePath(requestOpenApi4j, vData); // LA url fornita deve corrispondere alla parte delle risorse SENZA la parte del server
+				}
 				if(this.openApi4jConfig.isValidateRequestQuery()) {
 					val.validateQuery(requestOpenApi4j, vData);
 				}

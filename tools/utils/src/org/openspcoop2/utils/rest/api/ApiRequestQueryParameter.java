@@ -37,11 +37,8 @@ public class ApiRequestQueryParameter extends AbstractApiTypeParameter implement
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public ApiRequestQueryParameter(String name, String type){
-		super(name, type);
-	}
-	public ApiRequestQueryParameter(String name, String type, ApiSchemaTypeRestriction schema){
-		super(name, type, schema);
+	public ApiRequestQueryParameter(String name, ApiParameterSchema apiParameterSchema){
+		super(name, apiParameterSchema);
 	}
 	
 }

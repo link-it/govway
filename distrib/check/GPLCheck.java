@@ -124,7 +124,8 @@ public class GPLCheck {
 							!f.getAbsolutePath().endsWith("example/pdd/client/PD_Invoker/fatturaPA/esempi_altro/Fatturazione elettronica PA - Documentazione Sistema di Interscambio.htm") &&
 							!f.getAbsolutePath().endsWith("tools/utils/src/org/openspcoop2/utils/Costanti.java")  &&
 							!f.getAbsolutePath().contains("distrib/check/")  &&
-							!f.getAbsolutePath().contains("/third-party-licenses/")
+							!f.getAbsolutePath().contains("/third-party-licenses/")  &&
+							!f.getAbsolutePath().contains(TODO)
 							){
 
 						for(int i=0; i<GPL_CHECK.length; i++){

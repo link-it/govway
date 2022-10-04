@@ -1858,6 +1858,7 @@ public class OpenSPCoop2Properties {
 			this.getValidazioneContenutiApplicativi_openApi_jsonValidator();
 			this.getValidazioneContenutiApplicativi_openApi_library();
 			this.isValidazioneContenutiApplicativi_openApi_validateAPISpec();
+			this.isValidazioneContenutiApplicativi_openApi_validateRequestPath();
 			this.isValidazioneContenutiApplicativi_openApi_validateRequestQuery();
 			this.isValidazioneContenutiApplicativi_openApi_validateRequestUnexpectedQueryParam();
 			this.isValidazioneContenutiApplicativi_openApi_validateRequestHeaders();
@@ -19852,6 +19853,32 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_validateAPISpec;
+	}
+	
+	private static Boolean isValidazioneContenutiApplicativi_openApi_validateRequestPath = null;
+	public boolean isValidazioneContenutiApplicativi_openApi_validateRequestPath(){
+
+		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.validateRequestPath";
+		
+		if(OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_validateRequestPath==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_validateRequestPath = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_validateRequestPath = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_validateRequestPath = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_validateRequestPath;
 	}
 	
 	private static Boolean isValidazioneContenutiApplicativi_openApi_validateRequestQuery = null;

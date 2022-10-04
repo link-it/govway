@@ -18239,9 +18239,15 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 
 	public AccordoServizioParteComune getAccordoServizioParteComune(long id) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
-		return getAccordoServizioParteComune(id,null);
+		return getAccordoServizioParteComune(id,false,false,null);
+	}
+	public AccordoServizioParteComune getAccordoServizioParteComune(long id, boolean readContenutoAllegati,boolean readDatiRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		return getAccordoServizioParteComune(id,readContenutoAllegati,readDatiRegistro,null);
 	}
 	public AccordoServizioParteComune getAccordoServizioParteComune(long id,Connection conParam) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		return getAccordoServizioParteComune(id,false,false,conParam);
+	}
+	public AccordoServizioParteComune getAccordoServizioParteComune(long id, boolean readContenutoAllegati,boolean readDatiRegistro,Connection conParam) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		this.log.debug("richiesto getAccordoServizio: " + id);
 		// conrollo consistenza
 		if (id <= 0)
@@ -18332,7 +18338,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		}
 
-		return this.getAccordoServizioParteComune(idAccordo);
+		return this.getAccordoServizioParteComune(idAccordo, readContenutoAllegati, readDatiRegistro);
 	}
 
 	public List<Soggetto> soggettiRegistroListByTipo(String tipoSoggetto,ISearch ricerca) throws DriverRegistroServiziException{

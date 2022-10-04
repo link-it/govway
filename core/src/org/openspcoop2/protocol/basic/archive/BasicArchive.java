@@ -505,9 +505,16 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 								}
 								rp.setDescrizione(cookie.getDescription());
 								rp.setRequired(cookie.isRequired());
-								rp.setTipo(cookie.getType());
-								if(cookie.getSchema()!=null) {
-									rp.setRestrizioni(cookie.getSchema().toString());
+								if(cookie.getApiParameterSchema()!=null) {
+									String type = cookie.getApiParameterSchema().getType();
+									if(type==null) {
+										throw new Exception("Trovato parametro cookie '"+rp.getNome()+"' senza tipo");
+									}
+									rp.setTipo(type);
+									rp.setRestrizioni(cookie.getApiParameterSchema().toString());
+								}
+								else {
+									throw new Exception("Trovato parametro cookie '"+rp.getNome()+"' senza schema");
 								}
 							}							
 						}
@@ -533,9 +540,16 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 								}
 								rp.setDescrizione(dynamicPath.getDescription());
 								rp.setRequired(dynamicPath.isRequired());
-								rp.setTipo(dynamicPath.getType());
-								if(dynamicPath.getSchema()!=null) {
-									rp.setRestrizioni(dynamicPath.getSchema().toString());
+								if(dynamicPath.getApiParameterSchema()!=null) {
+									String type = dynamicPath.getApiParameterSchema().getType();
+									if(type==null) {
+										throw new Exception("Trovato parametro dynamic path '"+rp.getNome()+"' senza tipo");
+									}
+									rp.setTipo(type);
+									rp.setRestrizioni(dynamicPath.getApiParameterSchema().toString());
+								}
+								else {
+									throw new Exception("Trovato parametro dynamic path '"+rp.getNome()+"' senza schema");
 								}
 							}							
 						}
@@ -561,9 +575,16 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 								}
 								rp.setDescrizione(form.getDescription());
 								rp.setRequired(form.isRequired());
-								rp.setTipo(form.getType());
-								if(form.getSchema()!=null) {
-									rp.setRestrizioni(form.getSchema().toString());
+								if(form.getApiParameterSchema()!=null) {
+									String type = form.getApiParameterSchema().getType();
+									if(type==null) {
+										throw new Exception("Trovato parametro form '"+rp.getNome()+"' senza tipo");
+									}
+									rp.setTipo(type);
+									rp.setRestrizioni(form.getApiParameterSchema().toString());
+								}
+								else {
+									throw new Exception("Trovato parametro form '"+rp.getNome()+"' senza schema");
 								}
 							}							
 						}
@@ -589,9 +610,16 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 								}
 								rp.setDescrizione(header.getDescription());
 								rp.setRequired(header.isRequired());
-								rp.setTipo(header.getType());
-								if(header.getSchema()!=null) {
-									rp.setRestrizioni(header.getSchema().toString());
+								if(header.getApiParameterSchema()!=null) {
+									String type = header.getApiParameterSchema().getType();
+									if(type==null) {
+										throw new Exception("Trovato parametro header '"+rp.getNome()+"' senza tipo");
+									}
+									rp.setTipo(type);
+									rp.setRestrizioni(header.getApiParameterSchema().toString());
+								}
+								else {
+									throw new Exception("Trovato parametro header '"+rp.getNome()+"' senza schema");
 								}
 							}							
 						}
@@ -617,9 +645,16 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 								}
 								rp.setDescrizione(query.getDescription());
 								rp.setRequired(query.isRequired());
-								rp.setTipo(query.getType());
-								if(query.getSchema()!=null) {
-									rp.setRestrizioni(query.getSchema().toString());
+								if(query.getApiParameterSchema()!=null) {
+									String type = query.getApiParameterSchema().getType();
+									if(type==null) {
+										throw new Exception("Trovato parametro query '"+rp.getNome()+"' senza tipo");
+									}
+									rp.setTipo(type);
+									rp.setRestrizioni(query.getApiParameterSchema().toString());
+								}
+								else {
+									throw new Exception("Trovato parametro query '"+rp.getNome()+"' senza schema");
 								}
 							}							
 						}
@@ -711,7 +746,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 								for (ApiCookieParameter cookie : apiResponse.getCookieParameters()) {
 									String nome = cookie.getName();
 									if(nome==null) {
-										throw new Exception("Trovato parametro cookie senza nome");
+										throw new Exception("Trovato parametro cookie nella risposta senza nome");
 									}
 									ResourceParameter rp = null;
 									for (ResourceParameter rpCheck : resourceOpenSPCoopResponse.getParameterList()) {
@@ -728,9 +763,16 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 									}
 									rp.setDescrizione(cookie.getDescription());
 									rp.setRequired(cookie.isRequired());
-									rp.setTipo(cookie.getType());
-									if(cookie.getSchema()!=null) {
-										rp.setRestrizioni(cookie.getSchema().toString());
+									if(cookie.getApiParameterSchema()!=null) {
+										String type = cookie.getApiParameterSchema().getType();
+										if(type==null) {
+											throw new Exception("Trovato parametro cookie '"+rp.getNome()+"' nella risposta senza tipo");
+										}
+										rp.setTipo(type);
+										rp.setRestrizioni(cookie.getApiParameterSchema().toString());
+									}
+									else {
+										throw new Exception("Trovato parametro cookie '"+rp.getNome()+"' nella risposta senza schema");
 									}
 								}							
 							}
@@ -739,7 +781,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 								for (ApiHeaderParameter header : apiResponse.getHeaderParameters()) {
 									String nome = header.getName();
 									if(nome==null) {
-										throw new Exception("Trovato parametro header senza nome");
+										throw new Exception("Trovato parametro header nella risposta senza nome");
 									}
 									ResourceParameter rp = null;
 									for (ResourceParameter rpCheck : resourceOpenSPCoopResponse.getParameterList()) {
@@ -756,9 +798,16 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 									}
 									rp.setDescrizione(header.getDescription());
 									rp.setRequired(header.isRequired());
-									rp.setTipo(header.getType());
-									if(header.getSchema()!=null) {
-										rp.setRestrizioni(header.getSchema().toString());
+									if(header.getApiParameterSchema()!=null) {
+										String type = header.getApiParameterSchema().getType();
+										if(type==null) {
+											throw new Exception("Trovato parametro header '"+rp.getNome()+"' nella risposta senza tipo");
+										}
+										rp.setTipo(type);
+										rp.setRestrizioni(header.getApiParameterSchema().toString());
+									}
+									else {
+										throw new Exception("Trovato parametro header '"+rp.getNome()+"' nella risposta senza schema");
 									}
 								}							
 							}
