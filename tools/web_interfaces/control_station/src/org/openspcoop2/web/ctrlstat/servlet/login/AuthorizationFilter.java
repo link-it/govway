@@ -46,6 +46,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.gestori.GestoreConsistenzaDati;
+import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.about.AboutCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
@@ -271,9 +272,11 @@ public final class AuthorizationFilter implements Filter {
 						}
 					}
 				}
-				//else {
-				//	System.out.println("NON ENTRO ["+request.getRequestURI()+"]");
-				//}
+				else {
+					//	System.out.println("NON ENTRO ["+request.getRequestURI()+"]");
+					// genero l'idTab
+					ConsoleHelper.getTabId(log, null, request);
+				}
 			} else {
 				HttpSession session = request.getSession();
 				
@@ -497,9 +500,11 @@ public final class AuthorizationFilter implements Filter {
 						}
 					}
 				} // end isRisorsaProtetta 
-				//else {
-				//	System.out.println("NON ENTRO ["+request.getRequestURI()+"]");
-				//}
+				else {
+					//	System.out.println("NON ENTRO ["+request.getRequestURI()+"]");
+					// genero l'idTab
+					ConsoleHelper.getTabId(log, null, request);
+				}
 			}
 			// allow others filter to be chained
 			chain.doFilter(request, response);

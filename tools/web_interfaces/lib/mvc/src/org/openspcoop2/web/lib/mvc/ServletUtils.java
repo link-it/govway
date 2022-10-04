@@ -21,6 +21,7 @@
 package org.openspcoop2.web.lib.mvc;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.ISearch;
@@ -613,12 +615,37 @@ public class ServletUtils {
 		}
 		
 		Map<String, Object> mapDest = null;
-		if(sessionMap.containsKey(idSessioneTabSrc)) {
-			Map<String, Object> mapSrc = sessionMap.get(idSessioneTabSrc);
-			mapDest = (HashMap<String, Object>) SerializationUtils.clone(((HashMap<String, Object>)mapSrc));
-		} else {
-			mapDest = new HashMap<String, Object>();
+		if(StringUtils.isNotBlank(idSessioneTabSrc)) { // identificativo del tab sorgente definito
+			if(sessionMap.containsKey(idSessioneTabSrc)) { // cerco una sessione da cui copiare altrimenti creo una sessione vuota 
+				Map<String, Object> mapSrc = sessionMap.get(idSessioneTabSrc);
+				mapDest = (HashMap<String, Object>) SerializationUtils.clone(((HashMap<String, Object>)mapSrc));
+			} else {
+				mapDest = new HashMap<String, Object>();
+			}
+		} else { // se non ricevo un id tab provo a cercare l'ultima sessione creata altrimenti creo una sessione vuota
+			Date date = new Date(0l); // imposto una data molto vecchia
+			String idSessionTab = null;
+			
+			for (String idSessioneTmp : sessionMap.keySet()) {
+				Map<String, Object> mapTmp = sessionMap.get(idSessioneTmp);
+				Date dTmp = (Date) mapTmp.get(Costanti.SESSION_ATTRIBUTE_TAB_MAP_CREATION_DATE);
+				
+				if(dTmp.after(date)) { // il tab analizzato e' stato creato dopo
+					date = dTmp; // salvo la data 
+					idSessionTab = idSessioneTmp; // salvo l'id del tab
+				}
+			}
+			
+			if(idSessionTab != null) {
+				Map<String, Object> mapSrc = sessionMap.get(idSessionTab);
+				mapDest = (HashMap<String, Object>) SerializationUtils.clone(((HashMap<String, Object>)mapSrc));
+			} else {
+				mapDest = new HashMap<String, Object>();
+			}
 		}
+		
+		//salvo la data di creazione del tab
+		mapDest.put(Costanti.SESSION_ATTRIBUTE_TAB_MAP_CREATION_DATE, new Date());
 		
 		sessionMap.put(idSessioneTabDest, mapDest);
 		

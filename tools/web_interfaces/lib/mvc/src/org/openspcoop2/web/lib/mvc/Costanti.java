@@ -144,6 +144,7 @@ public class Costanti {
 	
 	public static final String SESSION_ATTRIBUTE_TAB_KEY_PREFIX = org.openspcoop2.protocol.engine.constants.Costanti.CONSOLE_ATTRIBUTO_TAB_SESSION_KEY_PREFIX;
 	public static final String SESSION_ATTRIBUTE_TAB_KEYS_MAP ="_tabKeysMap_";
+	public static final String SESSION_ATTRIBUTE_TAB_MAP_CREATION_DATE = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "creation_date";
 	
 	protected final static String SESSION_ATTRIBUTE_LOGIN = "Login";
 	protected final static String SESSION_ATTRIBUTE_USER = SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "User";

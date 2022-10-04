@@ -672,26 +672,30 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public String getTabId() throws Exception {
-		Object idTabObj = this.request.getAttribute(Costanti.PARAMETER_TAB_KEY);
+		return getTabId(this.log, this, this.request);
+	}
+	
+	public static String getTabId(Logger log, ConsoleHelper helper, HttpServletRequest request) throws Exception {
+		Object idTabObj = request.getAttribute(Costanti.PARAMETER_TAB_KEY);
 		
 		if(idTabObj == null) {
-			this.log.trace("CHECKTABID: non trovato come attributo");
-			String idTab = this.getParameter(Costanti.PARAMETER_TAB_KEY);
+			log.trace("CHECKTABID: non trovato come attributo");
+			String idTab = helper != null ? helper.getParameter(Costanti.PARAMETER_TAB_KEY) : request.getParameter(Costanti.PARAMETER_TAB_KEY);
 			
 			if(idTab == null) { // nuovoTab o nuova finestra o primo accesso
-				this.log.trace("CHECKTABID: non trovato come parametro");
+				log.trace("CHECKTABID: non trovato come parametro");
 				idTab = UUID.randomUUID().toString().replace("-", "");
-				this.request.setAttribute(Costanti.PARAMETER_TAB_KEY, idTab);
-				this.log.debug("CHECKTABID: generato nuovo id: ["+idTab+"]");
+				request.setAttribute(Costanti.PARAMETER_TAB_KEY, idTab);
+				log.debug("CHECKTABID: generato nuovo id: ["+idTab+"]");
 				return idTab;
 			}
 			
-			this.request.setAttribute(Costanti.PARAMETER_TAB_KEY, idTab);
-			this.log.trace("CHECKTABID: trovato come parametro: ["+idTab+"]");
+			request.setAttribute(Costanti.PARAMETER_TAB_KEY, idTab);
+			log.trace("CHECKTABID: trovato come parametro: ["+idTab+"]");
 			return idTab;
 		}
 		
-		this.log.trace("CHECKTABID: trovato come attributo: ["+((String)idTabObj)+"]");
+		log.trace("CHECKTABID: trovato come attributo: ["+((String)idTabObj)+"]");
 		return (String) idTabObj;
 	}
 	
