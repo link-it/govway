@@ -1,10 +1,10 @@
 Miglioramenti alla funzionalità di Autenticazione
 --------------------------------------------------
 
-All'autenticazione https è adesso possibile:
+Per l'autenticazione https è adesso possibile:
 
 - associare un truststore per verificare i certificati client ricevuti;
 
-- definire delle CRL per attuare una verifica anche delle revoche.
+- definire delle CRL per la verifica delle revoche.
 
-Le stesse funzionalità sono adesso disponibili anche per il gestore delle credenziali utilizzabile per recepire i certificati client da un header HTTP.
+Le stesse funzionalità sono state rese disponibili anche per il gestore delle credenziali utilizzabile per l'autenticazione tramite certificati client ottenuti tramite header HTTP.
