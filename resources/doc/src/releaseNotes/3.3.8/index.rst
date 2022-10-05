@@ -18,6 +18,7 @@ si può invece far riferimento al file ChangeLog di questa versione.
 	correlazione
 	connettori
 	fileTrace
+        core
 	modipa
 	console
 	bug
