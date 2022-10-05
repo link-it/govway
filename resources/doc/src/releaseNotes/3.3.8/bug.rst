@@ -25,9 +25,9 @@ Sono stati risolti i seguenti bug:
 
 	- non erano supportati parametri (path/header/query/cookie) definiti tramite complex type (anyOf/allOf/oneOf);
 
-	- la validazione di un 'path parameter', contenente caratteri che erano stati codificati per poter essere trasmessi nella url, falliva erroneamente poichè non veniva attuata una decodifica prima della validazione del parametro;
+	- la validazione di un 'path parameter', contenente caratteri che erano stati codificati per poter essere trasmessi nella url, falliva poichè non veniva attuata una decodifica prima della validazione del parametro;
 
-- l'invocazione di API REST con contenuti XML permettevano di sfruttare la vulnerabilità XXE descritta in:
+- le invocazione di API REST con contenuti XML permettevano di sfruttare la vulnerabilità XXE descritta in:
 
 	- https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
 
@@ -37,20 +37,21 @@ Sono stati risolti i seguenti bug:
 
 - il certificato ottenuto tramite il 'gestore delle credenziali' via header HTTP è adesso disponibile nel contesto per essere acceduto tramite la keyword 'securityToken.channel';
 
-- l'utilizzo dei metodi getJSONObject(...) e getJSONArray(...) dell'utility JsonPathExpressionEngine, creava in presenza di richieste parallele, dei messaggi inconsistenti per via di un utilizzo statico del parser JSONParser che non era 'thread safe';
+- l'utilizzo dei metodi getJSONObject(...) e getJSONArray(...) dell'utility JsonPathExpressionEngine creava, in presenza di richieste parallele, dei messaggi inconsistenti per via di un utilizzo statico del parser JSONParser che non era 'thread safe';
 
-- se in una API SOAP veniva configurata una trasformazione della richiesta (o della risposta) che rispettava la casistica seguente, l'applicazione della trasformazione a runtime produceva l'errore "Trasformazione richiesta fallita: Cannot add fragments which contain elements which are in the SOAP namespace":
+- se per una API SOAP veniva configurata una trasformazione della richiesta (o della risposta) che rientrava nella seguente casistica:
 
-	- il contenuto veniva ridefinito tramite una envelope soap di una versione differente da quello della richiesta originale (es. soap1.1 -> soap 1.2) 
+	- il contenuto veniva ridefinito tramite una envelope soap di una versione differente da quello della richiesta originale (es. soap1.1 -> soap 1.2)
 
-	- veniva definito il nuovo Content Type conforme alla nuova versione dell'envelope (es. application/soap+xml).
+	- veniva definito il nuovo Content Type conforme alla nuova versione dell'envelope (es. application/soap+xml)
 
-
+l'applicazione della trasformazione a runtime produceva l'errore "Trasformazione richiesta fallita: Cannot add fragments which contain elements which are in the SOAP namespace".
+  
 Per la console di gestione sono stati risolti i seguenti bug:
 
 - la creazione di una API REST, tramite l'upload di un openapi, presentava le seguenti problematiche:
 
-	- non veniva create eventuali risorse definite con i metodi 'HEAD' o 'TRACE';
+	- non venivano create eventuali risorse definite con i metodi 'HEAD' o 'TRACE';
 
 	- se venivano definiti erroneamente degli header senza schema, la console riportava un errore non corretto: "[Interfaccia OpenAPI 3] Documento non valido: java.lang.NullPointerException"; 
 
@@ -60,9 +61,9 @@ Per la console di gestione sono stati risolti i seguenti bug:
 
 	- url dei contatti e della licenza (info.contact.url e info.license.url)
 
-- sono stati risolti le seguenti problematiche relative al caricamento di un allegato in una API:
+- sono state risolte le seguenti problematiche relative al caricamento di un allegato in una API:
 
-	- utilizzando Internet Explorer avveniva una errata registrazione dove il nome del documento conteneva il path assoluto;
+	- utilizzando Internet Explorer il nome del documento conteneva il path assoluto;
 
 	- il tipo di specifica semiformale selezionato non veniva preservato quando si caricava un file e veniva riproposto il tipo UML (stesso problema era presente nel caricamento degli allegati di una erogazione o fruizione);
 
@@ -70,11 +71,9 @@ Per la console di gestione sono stati risolti i seguenti bug:
 
 - aggiornate le librerie che consentono di effettuare il parsing di un documento yaml (OpenAPI 3) al fine di non essere più vulnerabile a Denial of Service (DoS) per mancanza di limitazione sulla profondita dei nodi analizzati e collezionati durante il parsing;
 
-- l'utilizzo di molteplici schede all'interno del browser provocava errori durante l'utilizzo della console;
+- l'utilizzo di schede multiple all'interno del browser provocava errori durante l'utilizzo della console;
 
-- utilizzando la funzionalità 'Elimina' per caricare archivi contenenti Policy di Rate Limiting, l'operazione completavano con successo ma l'eliminazione lasciava policy 'zombie' sulla base dati.
-
-
+- utilizzando la funzionalità 'Elimina' per caricare archivi contenenti Policy di Rate Limiting, l'operazione terminava con successo ma l'eliminazione lasciava policy 'zombie' sulla base dati.
 
 Per la console di monitoraggio sono stati risolti i seguenti bug:
 
@@ -82,4 +81,4 @@ Per la console di monitoraggio sono stati risolti i seguenti bug:
 
 - migliorata la documentazione della console di monitoraggio relativa alle informazioni Esito, Richiedente e Dettaglio Errore riportate nel dettaglio di una transazione;
 
-- risolta anomalia presente in tutte le distribuzioni statistiche eccetto quella temporale e per esiti. Quando si selezionava un periodo 'personalizzato', se la scelta precedente del periodo era 'ultime 12 ore' l'impostazione personalizzata delle ore funzionava, altrimenti le date venivano resettate automaticamente dopo l'impostazione dell'ora all'intervallo inferiore o superiore a seconda della data iniziale o finale.
+- risolta anomalia presente in tutte le distribuzioni statistiche eccetto quella temporale e per esiti. Quando si selezionava un periodo 'personalizzato', se la scelta precedente del periodo era diversa da 'ultime 12 ore', le date venivano resettate automaticamente dopo l'impostazione dell'ora all'intervallo inferiore o superiore a seconda della data iniziale o finale.
