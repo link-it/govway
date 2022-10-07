@@ -101,6 +101,8 @@ Examples:
 |applicativo_interno_token_keystore_file.json|
 |applicativo_interno_token_keystore_hsm.json|
 |applicativo_interno_token.json|
+|applicativo_interno_token_solo_clientId.json|
+|applicativo_interno_token_solo_clientIdConKID.json|
 
 
 @Create400_applicativi_interni

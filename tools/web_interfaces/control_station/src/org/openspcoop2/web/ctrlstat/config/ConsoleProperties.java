@@ -305,6 +305,19 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "policyGestioneToken.verificaCertificati");
 	}
 	
+	public List<String> getPolicyGestioneTokenPDND() throws UtilsException{
+		List<String> l = new ArrayList<String>();
+		String p = this.readProperty(false, "policyGestioneToken.policy");
+		if(p!=null && !"".equals(p.trim())){
+			String [] tmp = p.trim().split(",");
+			for (int i = 0; i < tmp.length; i++) {
+				tmp[i] = tmp[i].trim();
+				l.add(tmp[i]);
+			}
+		}
+		return l;
+	}
+	
 	public PropertiesSourceConfiguration getAttributeAuthorityPropertiesSourceConfiguration() throws UtilsException {
 		return _getSourceConfiguration("attributeAuthority", 
 				"attributeAuthority.dir", "attributeAuthority.dir.refresh", 

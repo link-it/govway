@@ -219,13 +219,34 @@
 			      	<property name="policy.retrieveToken.jwt.signature.include.key.id"/>
 			</item>
 			<item type="select" name="jwtAsymmetricSignatureKid" label="Key Id (kid)" reloadOnChange="true" >
-				<conditions>
-					<condition and="false">
+				<conditions and="true">
+					<condition>
 						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+					<condition not="true">
+						<equals name="jwtKeystoreType" value="applicativoModi"/>
 					</condition>
 				</conditions>
 				<values>
 					<value value="false" label="-"/>
+					<value value="true" label="Alias Chiave Privata"/>
+					<value value="client_id" label="Client ID"/>
+					<value value="custom" label="Personalizzato"/>
+				</values>
+			      	<property name="policy.retrieveToken.jwt.signature.include.key.id"/>
+			</item>
+			<item type="select" name="jwtAsymmetricSignatureKidConApplicativoModi" label="Key Id (kid)" reloadOnChange="true" default="applicativoModi">
+				<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+					<condition>
+						<equals name="jwtKeystoreType" value="applicativoModi"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="false" label="-"/>
+					<value value="applicativoModi" label="Definito nell'applicativo ModI"/>
 					<value value="true" label="Alias Chiave Privata"/>
 					<value value="client_id" label="Client ID"/>
 					<value value="custom" label="Personalizzato"/>
@@ -241,6 +262,10 @@
 					<condition and="true">
 						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
 						<equals name="jwtAsymmetricSignatureKid" value="custom"/>
+					</condition>
+					<condition and="true">
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+						<equals name="jwtAsymmetricSignatureKidConApplicativoModi" value="custom"/>
 					</condition>
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.signature.include.key.id.value" />
@@ -327,22 +352,113 @@
 				</condition>
 			</conditions>
 
+			<item type="select" name="jwtClientIdApplicativoModiChoice" label="Client ID" default="applicativoModi" reloadOnChange="true">
+			      	<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+					<condition>
+						<equals name="jwtKeystoreType" value="applicativoModi"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="applicativoModi" label="Definito nell'applicativo ModI"/>
+					<value value="custom" label="Personalizzato"/>
+				</values>
+			      	<property name="policy.retrieveToken.jwt.clientId.mode"/>
+			</item>
+			<item type="text" name="jwtClientIdApplicativoModiChoiceInput" label="" required="true">
+			      	<conditions and="false">
+					<condition>
+						<defined name="jwtClientIdApplicativoModiChoice"/>
+						<equals name="jwtClientIdApplicativoModiChoice" value="custom"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.jwt.clientId" />
+			</item>
 			<item type="text" name="jwtClientId" label="Client ID" required="true">
+			      	<conditions and="false">
+					<condition>
+						<defined name="jwtClientIdApplicativoModiChoice" not="true"/>
+					</condition>
+				</conditions>
 			      	<property name="policy.retrieveToken.jwt.clientId" />
 			</item>
 
 			<item type="text" name="jwtAudience" label="Audience" required="true">
 			    <property name="policy.retrieveToken.jwt.audience" />
 			</item>
-			<item type="text" name="jwtIssuer" label="Issuer" required="false">
-			    <property name="policy.retrieveToken.jwt.issuer" />
+
+			<item type="select" name="jwtIssuerApplicativoModiChoice" label="Issuer" default="applicativoModi" reloadOnChange="true">
+			      	<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+					<condition>
+						<equals name="jwtKeystoreType" value="applicativoModi"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="applicativoModi" label="ClientID dell'applicativo ModI"/>
+					<value value="custom" label="Personalizzato"/>
+				</values>
+			      	<property name="policy.retrieveToken.jwt.issuer.mode"/>
 			</item>
-			<item type="text" name="jwtSubject" label="Subject" required="false">
+			<item type="text" name="jwtIssuerApplicativoModiChoiceInput" label="" required="true">
+			      	<conditions and="false">
+					<condition>
+						<defined name="jwtIssuerApplicativoModiChoice"/>
+						<equals name="jwtIssuerApplicativoModiChoice" value="custom"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.jwt.issuer" />
+			</item>
+			<item type="text" name="jwtIssuer" label="Issuer" required="false">
+			      	<conditions and="false">
+					<condition>
+						<defined name="jwtIssuerApplicativoModiChoice" not="true"/>
+					</condition>
+				</conditions>
+			    	<property name="policy.retrieveToken.jwt.issuer" />
+			</item>
+
+			<item type="select" name="jwtSubjectApplicativoModiChoice" label="Subject" default="applicativoModi" reloadOnChange="true">
+			      	<conditions and="true">
+					<condition>
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+					<condition>
+						<equals name="jwtKeystoreType" value="applicativoModi"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="applicativoModi" label="ClientID dell'applicativo ModI"/>
+					<value value="custom" label="Personalizzato"/>
+				</values>
+			      	<property name="policy.retrieveToken.jwt.subject.mode"/>
+			</item>
+			<item type="text" name="jwtSubjectApplicativoModiChoiceInput" label="" required="true">
+			      	<conditions and="false">
+					<condition>
+						<defined name="jwtSubjectApplicativoModiChoice"/>
+						<equals name="jwtSubjectApplicativoModiChoice" value="custom"/>
+					</condition>
+				</conditions>
 			      	<property name="policy.retrieveToken.jwt.subject" />
 			</item>
-			<item type="text" name="jwtIdentifier" label="Identifier" required="false">
+			<item type="text" name="jwtSubject" label="Subject" required="false">
+			      	<conditions and="false">
+					<condition>
+						<defined name="jwtSubjectApplicativoModiChoice" not="true"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.jwt.subject" />
+			</item>
+
+			<item type="text" name="jwtIdentifier" label="Identifier" required="false" default="${transaction:id}">
 			      	<property name="policy.retrieveToken.jwt.jti" />
 			</item>			
+
 			<item type="number" name="jwtExpTtl" label="Time to Live (secondi)" required="true"
 				note="Indica la validità temporale, in secondi, a partire dalla data di creazione dell'asserzione">
 				<property name="policy.retrieveToken.jwt.expired" />
@@ -383,13 +499,46 @@
 			    <property name="policy.retrieveToken.audience" />
 			</item>
 
-			<item type="text" name="formClientId" label="Client ID" required="false">
-				<conditions>
+			<item type="select" name="formClientIdApplicativoModiChoice" label="Client ID" default="applicativoModi" reloadOnChange="true">
+			      	<conditions and="true">
 					<condition and="false">
 						<selected name="jwtPDND"/>
-					</condition>	
+					</condition>
+					<condition>
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+					<condition>
+						<equals name="jwtKeystoreType" value="applicativoModi"/>
+					</condition>
 				</conditions>
-				<property name="policy.retrieveToken.formClientId" />
+				<values>
+					<value value="applicativoModi" label="ClientID dell'applicativo ModI"/>
+					<value value="custom" label="Personalizzato"/>
+				</values>
+			      	<property name="policy.retrieveToken.formClientId.mode"/>
+			</item>
+			<item type="text" name="formClientIdApplicativoModiChoiceInput" label="" required="true">
+			      	<conditions and="true">
+					<condition and="false">
+						<selected name="jwtPDND"/>
+					</condition>
+					<condition>
+						<defined name="formClientIdApplicativoModiChoice"/>
+						<equals name="formClientIdApplicativoModiChoice" value="custom"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.formClientId" />
+			</item>
+			<item type="text" name="formClientId" label="Client ID" required="false">
+			      	<conditions and="true">
+					<condition and="false">
+						<selected name="jwtPDND"/>
+					</condition>
+					<condition>
+						<defined name="formClientIdApplicativoModiChoice" not="true"/>
+					</condition>
+				</conditions>
+			      	<property name="policy.retrieveToken.formClientId" />
 			</item>
 
 			<item type="text" name="formResource" label="Resource" required="false">

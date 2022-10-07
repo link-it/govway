@@ -29,6 +29,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.token.AbstractDatiInvocazione;
 import org.openspcoop2.pdd.core.token.EsitoGestioneToken;
+import org.openspcoop2.pdd.core.token.EsitoPresenzaToken;
 import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.TokenException;
@@ -77,7 +78,7 @@ public class GestioneToken {
     	
     }
     
-    public EsitoGestioneTokenPortaDelegata validazioneJWTToken(DatiInvocazionePortaDelegata datiInvocazione, String token) throws TokenException { 	
+    public EsitoGestioneTokenPortaDelegata validazioneJWTToken(DatiInvocazionePortaDelegata datiInvocazione, EsitoPresenzaToken token) throws TokenException { 	
     	try {
     	
     		EsitoGestioneTokenPortaDelegata esito = (EsitoGestioneTokenPortaDelegata) GestoreToken.validazioneJWTToken(this.log, datiInvocazione, 
@@ -101,7 +102,7 @@ public class GestioneToken {
     	}  	
     }
     
-    public EsitoGestioneTokenPortaDelegata introspectionToken(DatiInvocazionePortaDelegata datiInvocazione, String token) throws TokenException {
+    public EsitoGestioneTokenPortaDelegata introspectionToken(DatiInvocazionePortaDelegata datiInvocazione, EsitoPresenzaToken token) throws TokenException {
     	try {
         	
     		EsitoGestioneTokenPortaDelegata esito = (EsitoGestioneTokenPortaDelegata) GestoreToken.introspectionToken(this.log, datiInvocazione, 
@@ -126,7 +127,7 @@ public class GestioneToken {
     	}
 	}
 	
-	public EsitoGestioneTokenPortaDelegata userInfoToken(DatiInvocazionePortaDelegata datiInvocazione, String token) throws TokenException {
+	public EsitoGestioneTokenPortaDelegata userInfoToken(DatiInvocazionePortaDelegata datiInvocazione, EsitoPresenzaToken token) throws TokenException {
 		try {
         	
 			EsitoGestioneTokenPortaDelegata esito = (EsitoGestioneTokenPortaDelegata) GestoreToken.userInfoToken(this.log, datiInvocazione, 

@@ -58,26 +58,40 @@ public class ModIConsoleCostanti {
     
     
 	// Condivise
-	
+		
 	public static final String MODIPA_SICUREZZA_CHOICE_LABEL = CostantiLabel.MODIPA_SICUREZZA_CHOICE_LABEL;
 	public static final String MODIPA_SICUREZZA_CHOICE_MESSAGE_LABEL = CostantiLabel.MODIPA_SICUREZZA_CHOICE_MESSAGE_LABEL;
-	public static final String MODIPA_SICUREZZA_CHOICE_TOKEN_LABEL = CostantiLabel.MODIPA_SICUREZZA_CHOICE_TOKEN_LABEL;
-	public static final String MODIPA_SICUREZZA_CHOICE_MESSAGE_TOKEN_LABEL = CostantiLabel.MODIPA_SICUREZZA_CHOICE_MESSAGE_TOKEN_LABEL;
+	public static final String MODIPA_SICUREZZA_CHOICE_TOKEN_PDND_LABEL = CostantiLabel.MODIPA_SICUREZZA_CHOICE_TOKEN_PDND_LABEL;
+	public static final String MODIPA_SICUREZZA_CHOICE_TOKEN_OAUTH_LABEL = CostantiLabel.MODIPA_SICUREZZA_CHOICE_TOKEN_OAUTH_LABEL;
+	public static final String MODIPA_SICUREZZA_CHOICE_MESSAGE_TOKEN_PDND_LABEL = CostantiLabel.MODIPA_SICUREZZA_CHOICE_MESSAGE_TOKEN_PDND_LABEL;
+	public static final String MODIPA_SICUREZZA_CHOICE_MESSAGE_TOKEN_OAUTH_LABEL = CostantiLabel.MODIPA_SICUREZZA_CHOICE_MESSAGE_TOKEN_OAUTH_LABEL;
 	
 	public static final String MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL = CostantiLabel.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL;
-	public static final String MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_ID = "modipaSicurezzaSubTitleId";
+	public static final String MODIPA_SICUREZZA_MESSAGGIO_CERTIFICATO_SUBTITLE_LABEL = CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE_LABEL;
+	public static final String MODIPA_SICUREZZA_MESSAGGIO_CERTIFICATO_SUBTITLE_LABEL_MSG_ERROR = ModIConsoleCostanti.MODIPA_APPLICATIVI_LABEL + " - " + MODIPA_SICUREZZA_MESSAGGIO_CERTIFICATO_SUBTITLE_LABEL;
+	public static final String MODIPA_SICUREZZA_MESSAGGIO_CERTIFICATO_SUBTITLE_ID = "modipaSicurezzaSubTitleId";
+	
+	public static final String MODIPA_SICUREZZA_MESSAGGIO_MODI_AUTH_SUBTITLE_LABEL = CostantiLabel.MODIPA_SICUREZZA_CHOICE_MESSAGE_LABEL;
+	public static final String MODIPA_SICUREZZA_MESSAGGIO_MODI_AUTH_SUBTITLE_ID = "modipaSicurezzaModIAuthSubTitleId";
 	
 	public static final String MODIPA_SICUREZZA_MESSAGGIO_ID = ModICostanti.MODIPA_SICUREZZA_MESSAGGIO;
 	public static final String MODIPA_SICUREZZA_MESSAGGIO_LABEL = "Abilitato";
 	
+	public static final String MODIPA_SICUREZZA_TOKEN_SUBTITLE_LABEL = CostantiLabel.MODIPA_SICUREZZA_TOKEN_SUBTITLE_LABEL;
+	public static final String MODIPA_SICUREZZA_TOKEN_SUBTITLE_ID = "modipaTokenSubTitleId";
+		
 	public static final String MODIPA_SICUREZZA_TOKEN_ID = ModICostanti.MODIPA_SICUREZZA_TOKEN;
 	public static final String MODIPA_SICUREZZA_TOKEN_LABEL = "Abilitato";
 	
 	public static final String MODIPA_SICUREZZA_TOKEN_POLICY_ID = ModICostanti.MODIPA_SICUREZZA_TOKEN_POLICY;
-	public static final String MODIPA_SICUREZZA_TOKEN_POLICY_LABEL = CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY;
+	public static final String MODIPA_SICUREZZA_TOKEN_POLICY_LABEL = CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY_VALIDAZIONE;
+	public static final String MODIPASICUREZZA_TOKEN_POLICY_NOTE = "<b>!!Attenzione!!</b> Per consentire un'identificazione dell'applicativo su API erogate da altri soggetti di dominio interno selezionare una token policy.";
 	
 	public static final String MODIPA_SICUREZZA_TOKEN_CLIENT_ID = ModICostanti.MODIPA_SICUREZZA_TOKEN_CLIENT_ID;
 	public static final String MODIPA_SICUREZZA_TOKEN_CLIENT_LABEL = CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID;
+	
+	public static final String MODIPA_SICUREZZA_TOKEN_KID_ID = ModICostanti.MODIPA_SICUREZZA_TOKEN_KID_ID;
+	public static final String MODIPA_SICUREZZA_TOKEN_KID_LABEL = CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_KID;
 	
 	public static final String MODIPA_KEYSTORE_MODE_LABEL = "Modalità";
 	public static final String MODIPA_KEYSTORE_MODE_ID = ModICostanti.MODIPA_KEYSTORE_MODE;
@@ -129,7 +143,7 @@ public class ModIConsoleCostanti {
 	
 	// Applicativi
 	
-	public static final String MODIPA_APPLICATIVI_LABEL = MODIPA_TITLE_LABEL;
+	public static final String MODIPA_APPLICATIVI_LABEL = MODIPA_TITLE_LABEL + " - "+ CostantiLabel.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL;
 	public static final String MODIPA_APPLICATIVI_ID = "modipaApplicativiTitleId";
 	
 	//public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_LABEL = "Reply Audience/WSA-To";

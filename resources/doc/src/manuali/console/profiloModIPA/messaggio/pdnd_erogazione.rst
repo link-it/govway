@@ -5,7 +5,7 @@ Erogazione (PDND)
 
 Nelle erogazioni, le richieste provengono da amministrazioni esterne al dominio e sono dirette ad applicativi interni. Prima di procedere con l'inoltro della richiesta verso il backend interno, GovWay valida il token di sicurezza ricevuto rispetto al pattern descritto nella sezione :ref:`modipa_pdnd`.
 
-Per la configurazione di una erogazione con un pattern di sicurezza via PDND è necessario registrare una ':ref:`tokenValidazionePolicy`'. Di seguito vengono riportati tutte le informazioni da abilitare/registrare nella policy:
+Per la configurazione di una erogazione con un pattern di sicurezza via PDND è necessario registrare una ':ref:`tokenValidazionePolicy`' con le seguenti caratteristiche:
 
 - Token:
 
@@ -17,7 +17,19 @@ Per la configurazione di una erogazione con un pattern di sicurezza via PDND è 
 
 	- Formato Token: RFC 9068 - JSON Web Token (OAuth2 Access Token) 
 	
-	- TrustStore: selezionare il tipo 'JWT Set' e indicare un path su file system che contiene il certificato di firma della PDND (ottenibile tramite la url '.../.well-known/jwks.json' fornita dalla PDND stessa). Deve infine essere indicato l'alias (il kid) della chiave pubblica utilizzata dalla PDND per firmare i token rilasciati.
+	- TrustStore: deve contenere il certificato utilizzato dalla PDND per firmare i token
+
+Con il prodotto viene fornita built-in la token policy 'PDND' (:numref:`tokenPolicyPDND`) da finalizzare nella sezione 'TrustStore' nei seguenti aspetti:
+
+	- File: deve essere indicato un path su file system che contiene il certificato di firma della PDND ottenibile tramite la url '.../.well-known/jwks.json' fornita dalla PDND stessa;
+
+	- Alias Certificato: deve contenere l'alias (il kid) della chiave pubblica utilizzata dalla PDND per firmare i token rilasciati, corrispondente al valore del claim 'kid' presente nel JWKSet configurato al punto precedente.
+
+.. figure:: ../../_figure_console/tokenPolicyPDND.png
+    :scale: 70%
+    :name: tokenPolicyPDND
+
+    Token Policy PDND
 
 
 Una volta effettuata la registrazione della Token Policy, per utilizzarla in un'erogazione è necessaria attivarla come policy di autenticazione token nel controllo degli accessi come descritto nella sezione :ref:`apiGwGestioneToken`. 

@@ -22,10 +22,23 @@ package org.openspcoop2.pdd.core.token;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.CostantiLabel;
+import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.utils.ModIKeystoreUtils;
+import org.openspcoop2.security.keystore.MerlinKeystore;
+import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 
 /**
  * AttributeAuthorityDynamicParameter
@@ -63,6 +76,12 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	private String formResource;
 	private String parameters;
 	
+	private IDServizioApplicativo idApplicativoRichiedente;
+	private ServizioApplicativo applicativoRichiedente;
+	
+	private String kidApplicativoModI;
+	private ModIKeystoreUtils keystoreApplicativoModI;
+	
 	
 	// static config
 	
@@ -83,6 +102,8 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	private static boolean formClientId_cacheKey;
 	private static boolean formResource_cacheKey;
 	private static boolean parameters_cacheKey; 
+	
+	private static boolean applicativoRichiedente_cacheKey; 
 	
 	private static Boolean init_cacheKey = null;
 	private static synchronized void initCacheKey() {
@@ -107,6 +128,8 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			formResource_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_RESOURCE);
 			parameters_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_PARAMETERS); 
 			
+			applicativoRichiedente_cacheKey = op2Properties.isGestioneRetrieveToken_cacheKey(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FORM_APPLICATIVE_REQUESTER); 
+			
 			init_cacheKey = true;
 		}
 	}
@@ -117,7 +140,9 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	}
 	
 
-	public NegoziazioneTokenDynamicParameters(Map<String, Object> dynamicMap, PdDContext pddContext, PolicyNegoziazioneToken policyNegoziazioneToken) throws Exception {
+	public NegoziazioneTokenDynamicParameters(Map<String, Object> dynamicMap, 
+			PdDContext pddContext, Busta busta, IState state, IProtocolFactory<?> protocolFactory,
+			PolicyNegoziazioneToken policyNegoziazioneToken) throws Exception {
 		super(dynamicMap, pddContext);
 		
 		this.policyNegoziazioneToken = policyNegoziazioneToken;
@@ -150,19 +175,122 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			}
 		}
 		
+		String clientIdApplicativoModI = null;
+		String idApp = null;
+		
 		if(policyNegoziazioneToken.isRfc7523_x509_Grant() || policyNegoziazioneToken.isRfc7523_clientSecret_Grant()) {
 			
-			this.signedJwtIssuer = policyNegoziazioneToken.getJwtIssuer();
+			if(policyNegoziazioneToken.isRfc7523_x509_Grant()) {
+				if(policyNegoziazioneToken.isJwtSignKeystoreApplicativoModI()) {
+					String prefixError = "Il tipo di keystore indicato nella token policy '"+policyNegoziazioneToken.getName()+"' "; 
+					if(busta.getServizioApplicativoFruitore()==null) {
+						throw new Exception(prefixError+"richiede l'autenticazione e l'identificazione di un applicativo fruitore");
+					}
+					if(busta.getTipoMittente()==null || busta.getMittente()==null) {
+						throw new Exception(prefixError+"richiede l'autenticazione e l'identificazione di un applicativo fruitore: dominio non identificato");
+					}
+					
+					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+					
+					this.idApplicativoRichiedente = new IDServizioApplicativo();
+					this.idApplicativoRichiedente.setNome(busta.getServizioApplicativoFruitore());
+					this.idApplicativoRichiedente.setIdSoggettoProprietario(new IDSoggetto(busta.getTipoMittente(), busta.getMittente()));
+					try {
+						this.applicativoRichiedente = configurazionePdDManager.getServizioApplicativo(this.idApplicativoRichiedente);
+					}catch(Throwable t) {
+						throw new Exception(prefixError+"richiede l'autenticazione e l'identificazione di un applicativo fruitore: "+t.getMessage(),t);
+					}
+					
+					if(!org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol())) {
+						throw new Exception(prefixError+"è utilizzabile solamente con il profilo di interoperabilità 'ModI'");
+					}
+					
+					idApp = this.idApplicativoRichiedente.getNome() + " (Soggetto: "+this.idApplicativoRichiedente.getIdSoggettoProprietario().getNome()+")";
+					
+					try {
+						this.keystoreApplicativoModI = new ModIKeystoreUtils(this.applicativoRichiedente, "Token Policy Negoziazione - Signed JWT");
+					}catch(Throwable t) {
+						throw new Exception(prefixError+"non è utilizzabile: "+t.getMessage(),t);
+					}
+				}
+			}
+			
+			if(policyNegoziazioneToken.isJwtSignIncludeKeyIdApplicativoModI()) {
+				String prefixError = "La modalità di generazione del Key Id (kid), indicata nella token policy '"+policyNegoziazioneToken.getName()+"', "; 
+				if(this.applicativoRichiedente==null) {
+					throw new Exception(prefixError+"richiede l'autenticazione e l'identificazione di un applicativo fruitore");
+				}
+				String kidApplicativoModI = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(this.applicativoRichiedente.getProtocolPropertyList(), CostantiDB.MODIPA_SICUREZZA_TOKEN_KID_ID);
+				if(kidApplicativoModI==null || StringUtils.isEmpty(kidApplicativoModI)) {
+					throw new Exception(prefixError+"non è utilizzabile con l'applicativo identificato '"+idApp+
+							"': nella configurazione dell'applicativo non è stato definito un '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_KID+
+							"' nella sezione '"+CostantiLabel.MODIPA_SICUREZZA_TOKEN_SUBTITLE_LABEL+"'");
+				}
+				this.kidApplicativoModI = kidApplicativoModI;
+			}
+			
+			if(policyNegoziazioneToken.isJwtIssuerApplicativoModI()) {
+				String prefixError = "La modalità di generazione dell'Issuer, indicata nella token policy '"+policyNegoziazioneToken.getName()+"', "; 
+				if(this.applicativoRichiedente==null) {
+					throw new Exception(prefixError+"richiede l'autenticazione e l'identificazione di un applicativo fruitore");
+				}
+				clientIdApplicativoModI = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(this.applicativoRichiedente.getProtocolPropertyList(), CostantiDB.MODIPA_SICUREZZA_TOKEN_CLIENT_ID);
+				if(clientIdApplicativoModI==null || StringUtils.isEmpty(clientIdApplicativoModI)) {
+					throw new Exception(prefixError+"non è utilizzabile con l'applicativo identificato '"+idApp+
+							"': nella configurazione dell'applicativo non è stato definito un '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID+
+							"' nella sezione '"+CostantiLabel.MODIPA_SICUREZZA_TOKEN_SUBTITLE_LABEL+"'");
+				}
+				this.signedJwtIssuer = clientIdApplicativoModI;
+			}
+			else {
+				this.signedJwtIssuer = policyNegoziazioneToken.getJwtIssuer();
+			}
 			if(this.signedJwtIssuer!=null && !"".equals(this.signedJwtIssuer) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(this.signedJwtIssuer)) {
 				this.signedJwtIssuer = DynamicUtils.convertDynamicPropertyValue("issuer.gwt", this.signedJwtIssuer, dynamicMap, pddContext, true);	
 			}
 			
-			this.signedJwtClientId = policyNegoziazioneToken.getJwtClientId();
+			
+			if(policyNegoziazioneToken.isJwtClientIdApplicativoModI()) {
+				if(clientIdApplicativoModI==null) {
+					String prefixError = "La modalità di generazione del Client ID, indicata nella token policy '"+policyNegoziazioneToken.getName()+"', "; 
+					if(this.applicativoRichiedente==null) {
+						throw new Exception(prefixError+"richiede l'autenticazione e l'identificazione di un applicativo fruitore");
+					}
+					String clientId = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(this.applicativoRichiedente.getProtocolPropertyList(), CostantiDB.MODIPA_SICUREZZA_TOKEN_CLIENT_ID);
+					if(clientId==null || StringUtils.isEmpty(clientId)) {
+						throw new Exception(prefixError+"non è utilizzabile con l'applicativo identificato '"+idApp+
+								"': nella configurazione dell'applicativo non è stato definito un '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID+
+								"' nella sezione '"+CostantiLabel.MODIPA_SICUREZZA_TOKEN_SUBTITLE_LABEL+"'");
+					}
+				}
+				this.signedJwtClientId = clientIdApplicativoModI;
+			}
+			else {
+				this.signedJwtClientId = policyNegoziazioneToken.getJwtClientId();
+			}
 			if(this.signedJwtClientId!=null && !"".equals(this.signedJwtClientId) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(this.signedJwtClientId)) {
 				this.signedJwtClientId = DynamicUtils.convertDynamicPropertyValue("clientId.gwt", this.signedJwtClientId, dynamicMap, pddContext, true);	
 			}
 			
-			this.signedJwtSubject = policyNegoziazioneToken.getJwtSubject();
+			
+			if(policyNegoziazioneToken.isJwtSubjectApplicativoModI()) {
+				if(clientIdApplicativoModI==null) {
+					String prefixError = "La modalità di generazione del Subject, indicata nella token policy '"+policyNegoziazioneToken.getName()+"', "; 
+					if(this.applicativoRichiedente==null) {
+						throw new Exception(prefixError+"richiede l'autenticazione e l'identificazione di un applicativo fruitore");
+					}
+					String clientId = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(this.applicativoRichiedente.getProtocolPropertyList(), CostantiDB.MODIPA_SICUREZZA_TOKEN_CLIENT_ID);
+					if(clientId==null || StringUtils.isEmpty(clientId)) {
+						throw new Exception(prefixError+"non è utilizzabile con l'applicativo identificato '"+idApp+
+								"': nella configurazione dell'applicativo non è stato definito un '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID+
+								"' nella sezione '"+CostantiLabel.MODIPA_SICUREZZA_TOKEN_SUBTITLE_LABEL+"'");
+					}
+				}
+				this.signedJwtSubject = clientIdApplicativoModI;
+			}
+			else {
+				this.signedJwtSubject = policyNegoziazioneToken.getJwtSubject();
+			}
 			if(this.signedJwtSubject!=null && !"".equals(this.signedJwtSubject) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(this.signedJwtSubject)) {
 				this.signedJwtSubject = DynamicUtils.convertDynamicPropertyValue("subject.gwt", this.signedJwtSubject, dynamicMap, pddContext, true);	
 			}
@@ -218,9 +346,27 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 		}
 		
 		if(policyNegoziazioneToken.isPDND()) {
-			this.formClientId = policyNegoziazioneToken.getFormClientId();
-			if(this.formClientId==null || "".equals(this.formClientId)) {
-				this.formClientId = policyNegoziazioneToken.getJwtClientId();
+			
+			if(policyNegoziazioneToken.isFormClientIdApplicativoModI()) {
+				if(clientIdApplicativoModI==null) {
+					String prefixError = "La modalità di generazione del Client ID nei dati della richiesta, indicata nella token policy '"+policyNegoziazioneToken.getName()+"', "; 
+					if(this.applicativoRichiedente==null) {
+						throw new Exception(prefixError+"richiede l'autenticazione e l'identificazione di un applicativo fruitore");
+					}
+					String clientId = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(this.applicativoRichiedente.getProtocolPropertyList(), CostantiDB.MODIPA_SICUREZZA_TOKEN_CLIENT_ID);
+					if(clientId==null || StringUtils.isEmpty(clientId)) {
+						throw new Exception(prefixError+"non è utilizzabile con l'applicativo identificato '"+idApp+
+								"': nella configurazione dell'applicativo non è stato definito un '"+CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID+
+								"' nella sezione '"+CostantiLabel.MODIPA_SICUREZZA_TOKEN_SUBTITLE_LABEL+"'");
+					}
+				}
+				this.formClientId = clientIdApplicativoModI;
+			}
+			else {
+				this.formClientId = policyNegoziazioneToken.getFormClientId();
+				if(this.formClientId==null || "".equals(this.formClientId)) {
+					this.formClientId = policyNegoziazioneToken.getJwtClientId();
+				}
 			}
 			if(this.formClientId!=null && !"".equals(this.formClientId) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(this.formClientId)) {
 				this.formClientId = DynamicUtils.convertDynamicPropertyValue("formClientId.gwt", this.formClientId, dynamicMap, pddContext, true);	
@@ -372,6 +518,13 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			sb.append("parameters:").append(this.parameters);
 		}
 		
+		if(this.idApplicativoRichiedente!=null && (!cacheKey || applicativoRichiedente_cacheKey)) {
+			if(sb.length()>0) {
+				sb.append(separator);
+			}
+			sb.append("applicativeRequester:").append(this.idApplicativoRichiedente.toFormatString());
+		}
+		
 		return sb.toString();
 	}
 	
@@ -450,4 +603,39 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	public String getParameters() {
 		return this.parameters;
 	}
+	
+	public IDServizioApplicativo getIdApplicativoRichiedente() {
+		return this.idApplicativoRichiedente;
+	}
+	public ServizioApplicativo getApplicativoRichiedente() {
+		return this.applicativoRichiedente;
+	}
+	public String getKidApplicativoModI() {
+		return this.kidApplicativoModI;
+	}
+	public org.openspcoop2.utils.certificate.KeyStore getKeystoreApplicativoModI() throws Exception{
+		if(this.keystoreApplicativoModI.getSecurityMessageKeystorePath()!=null || this.keystoreApplicativoModI.isSecurityMessageKeystoreHSM()) {
+			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(this.keystoreApplicativoModI.getSecurityMessageKeystorePath(), this.keystoreApplicativoModI.getSecurityMessageKeystoreType(), 
+					this.keystoreApplicativoModI.getSecurityMessageKeystorePassword());
+			if(merlinKs==null) {
+				throw new Exception("Accesso al keystore '"+this.keystoreApplicativoModI.getSecurityMessageKeystorePath()+"' non riuscito");
+			}
+			return merlinKs.getKeyStore();
+		}
+		else {
+			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(this.keystoreApplicativoModI.getSecurityMessageKeystoreArchive(), this.keystoreApplicativoModI.getSecurityMessageKeystoreType(), 
+					this.keystoreApplicativoModI.getSecurityMessageKeystorePassword());
+			if(merlinKs==null) {
+				throw new Exception("Accesso al keystore non riuscito");
+			}
+			return merlinKs.getKeyStore();
+		}
+	}
+	public String getKeyAliasApplicativoModI() {
+		return this.keystoreApplicativoModI.getSecurityMessageKeyAlias();
+	}
+	public String getKeyPasswordApplicativoModI() {
+		return this.keystoreApplicativoModI.getSecurityMessageKeyPassword();
+	}
+	
 }

@@ -278,9 +278,33 @@ public final class ServiziApplicativiChange extends Action {
 				
 			String tokenPolicySA = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY);
 			String tokenClientIdSA = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
-			boolean tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN.equals(tipoauthSA);
-			if(tokenWithHttpsEnabledByConfigSA) {
-				tipoauthSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL;
+			
+			boolean tokenWithHttpsEnabledByConfigSA = false;
+			boolean tokenByPDND = false;
+			boolean tokenModiPDNDOauth = false;
+			if(tipoauthSA!=null && !StringUtils.isEmpty(tokenPolicySA)) {
+				tokenByPDND = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND.equals(tipoauthSA) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_PDND.equals(tipoauthSA);
+				tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND.equals(tipoauthSA) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_OAUTH.equals(tipoauthSA);
+				if(tokenWithHttpsEnabledByConfigSA) {
+					tipoauthSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL;
+				}
+				tokenModiPDNDOauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_PDND.equals(tipoauthSA) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_OAUTH.equals(tipoauthSA);
+				if(tokenModiPDNDOauth) {
+					tipoauthSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN;
+				}
+				if(tokenPolicySA==null || StringUtils.isEmpty(tokenPolicySA) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicySA)) {
+					if(tokenByPDND) {
+						tokenPolicySA = saCore.getDefaultPolicyGestioneTokenPDND();
+					}
+				}
+				else {
+					if(!tokenByPDND && (tokenWithHttpsEnabledByConfigSA || tokenModiPDNDOauth) && saCore.isPolicyGestioneTokenPDND(tokenPolicySA)) {
+						tokenPolicySA=null;
+					}
+					else if(tokenByPDND && !saCore.isPolicyGestioneTokenPDND(tokenPolicySA)) {
+						tokenPolicySA = saCore.getDefaultPolicyGestioneTokenPDND();
+					}
+				}
 			}
 						
 			String sbustamentoInformazioniProtocolloRisposta = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RISPOSTA);
@@ -595,6 +619,14 @@ public final class ServiziApplicativiChange extends Action {
 							if(tokenWithHttpsEnabledByConfigSA) {
 								tokenClientIdSA = oldCredenziali.getUser();
 								tokenPolicySA = oldCredenziali.getTokenPolicy();
+								
+								if(!tokenByPDND && saCore.isPolicyGestioneTokenPDND(tokenPolicySA)) {
+									tokenPolicySA=null;
+								}
+								else if(tokenByPDND && !saCore.isPolicyGestioneTokenPDND(tokenPolicySA)) {
+									tokenPolicySA = saCore.getDefaultPolicyGestioneTokenPDND();
+								}
+								
 							}
 							
 						}
@@ -648,6 +680,15 @@ public final class ServiziApplicativiChange extends Action {
 									tokenClientIdSA = oldCredenziali.getUser();
 									tokenPolicySA = oldCredenziali.getTokenPolicy();
 									tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(tipoauthSA) && StringUtils.isNotEmpty(tokenClientIdSA);
+								}
+								
+								if((tokenWithHttpsEnabledByConfigSA || tokenModiPDNDOauth)) {
+									if(!tokenByPDND && saCore.isPolicyGestioneTokenPDND(tokenPolicySA)) {
+										tokenPolicySA=null;
+									}
+									else if(tokenByPDND && !saCore.isPolicyGestioneTokenPDND(tokenPolicySA)) {
+										tokenPolicySA = saCore.getDefaultPolicyGestioneTokenPDND();
+									}
 								}
 							}
 							else {
@@ -1085,7 +1126,24 @@ public final class ServiziApplicativiChange extends Action {
 						principalSA = credenziali.getUser();
 						tokenClientIdSA = credenziali.getUser();
 						tokenPolicySA = credenziali.getTokenPolicy();
+						
 						tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(tipoauthSA) && StringUtils.isNotEmpty(tokenClientIdSA);
+						if(tokenPolicySA!=null && !StringUtils.isEmpty(tokenPolicySA) && !CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicySA)) {
+							if(dominio!=null && SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE.equals(dominio) && 
+									nomeProtocollo!=null && saCore.isProfiloModIPA(nomeProtocollo)) {
+								tokenByPDND=saCore.isPolicyGestioneTokenPDND(tokenPolicySA);
+								tokenModiPDNDOauth=!tokenWithHttpsEnabledByConfigSA;
+							}
+						}
+						
+						if((tokenWithHttpsEnabledByConfigSA || tokenModiPDNDOauth)) {
+							if(!tokenByPDND && saCore.isPolicyGestioneTokenPDND(tokenPolicySA)) {
+								tokenPolicySA=null;
+							}
+							else if(tokenByPDND && !saCore.isPolicyGestioneTokenPDND(tokenPolicySA)) {
+								tokenPolicySA = saCore.getDefaultPolicyGestioneTokenPDND();
+							}
+						}
 						
 						if(credenziali.getCertificate() != null) {
 							tipoCredenzialiSSLFileCertificato.setValue(credenziali.getCertificate());

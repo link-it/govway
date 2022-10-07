@@ -251,7 +251,10 @@ public class ConnettoriCostanti {
 	public final static String AUTENTICAZIONE_TIPO_SSL = CostantiConfigurazione.CREDENZIALE_SSL.toString();
 	public final static String AUTENTICAZIONE_TIPO_PRINCIPAL = CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString();
 	public final static String AUTENTICAZIONE_TIPO_TOKEN = CostantiConfigurazione.CREDENZIALE_TOKEN.toString();
-	public final static String AUTENTICAZIONE_TIPO_SSL_E_TOKEN = AUTENTICAZIONE_TIPO_SSL + "-" + AUTENTICAZIONE_TIPO_TOKEN;
+	public final static String AUTENTICAZIONE_TIPO_TOKEN_PDND = CostantiConfigurazione.CREDENZIALE_TOKEN.toString() + "-PDND";
+	public final static String AUTENTICAZIONE_TIPO_TOKEN_OAUTH = CostantiConfigurazione.CREDENZIALE_TOKEN.toString() + "-OAUTH";
+	public final static String AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND = AUTENTICAZIONE_TIPO_SSL + "-" + AUTENTICAZIONE_TIPO_TOKEN_PDND;
+	public final static String AUTENTICAZIONE_TIPO_SSL_E_TOKEN_OAUTH = AUTENTICAZIONE_TIPO_SSL + "-" + AUTENTICAZIONE_TIPO_TOKEN_OAUTH;
 	public final static String LABEL_AUTENTICAZIONE_TIPO_BASIC = CostantiConfigurazione.LABEL_CREDENZIALE_BASIC;
 	public final static String LABEL_AUTENTICAZIONE_TIPO_APIKEY = CostantiConfigurazione.LABEL_CREDENZIALE_APIKEY;
 	public final static String LABEL_AUTENTICAZIONE_TIPO_SSL = CostantiConfigurazione.LABEL_CREDENZIALE_SSL;
@@ -551,12 +554,16 @@ public class ConnettoriCostanti {
 
 	public final static String [] CREDENZIALI_MODI_ESTERNO_VALUES = new String[] { 
 			ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL,
-			ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN,
-			ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN};
+			ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_PDND,
+			ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_OAUTH,
+			ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND,
+			ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_OAUTH};
 	public final static String [] CREDENZIALI_MODI_ESTERNO_LABELS = new String[] { 
 			CostantiLabel.MODIPA_SICUREZZA_CHOICE_MESSAGE_LABEL,
-			CostantiLabel.MODIPA_SICUREZZA_CHOICE_TOKEN_LABEL,
-			CostantiLabel.MODIPA_SICUREZZA_CHOICE_MESSAGE_TOKEN_LABEL};
+			CostantiLabel.MODIPA_SICUREZZA_CHOICE_TOKEN_PDND_LABEL,
+			CostantiLabel.MODIPA_SICUREZZA_CHOICE_TOKEN_OAUTH_LABEL,
+			CostantiLabel.MODIPA_SICUREZZA_CHOICE_MESSAGE_TOKEN_PDND_LABEL,
+			CostantiLabel.MODIPA_SICUREZZA_CHOICE_MESSAGE_TOKEN_OAUTH_LABEL};
 	
 	public final static int NUMERO_CARATTERI_SUBJECT_DA_VISUALIZZARE_IN_LISTA_CERTIFICATI = 60;
 	

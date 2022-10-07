@@ -2,6 +2,6 @@
     "type": "https://govway.org/handling-errors/403/Authorization.html",
     "title": "Authorization",
     "status": 403,
-    "detail": "Applicativo Mittente ApplicativoBlockingIDA01ExampleClientToken1 (Soggetto: DemoSoggettoFruitore) non autorizzato; il certificato di firma non corrisponde all'applicativo",
+    "detail": "Applicativo Mittente ApplicativoBlockingIDA01ExampleClientToken1 (Soggetto: DemoSoggettoFruitore) non autorizzato; il certificato di firma (subject=\"CN=ExampleAnonymousClient, O=Example, L=Pisa, ST=Italy, C=IT\" issuer=\"CN=ExampleCA, O=Example, L=Pisa, ST=Italy, C=IT\") del security token (Agid-JWT-Signature) non corrisponde all'applicativo",
     "govway_id": "#string"
 }

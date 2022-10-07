@@ -34,6 +34,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.GenericProperties;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -109,7 +110,18 @@ public class ConfigurazionePolicyGestioneTokenDel extends Action {
 					inUsoMessage.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 
 				} else {
-					confCore.performDeleteOperation(userLogin, confHelper.smista(), policy); 
+					
+					if(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION.equals(policy.getTipologia()) && confCore.isPolicyGestioneTokenPDND(policy.getNome())) {
+						String object = "Token Policy";
+						String intestazione = " non eliminabile perch&egrave; :";
+						String separator =  org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
+						String msg = object+" '"+idGP.getNome()+"'" + intestazione+separator;
+						inUsoMessage.append(msg+" definisce la policy di validazione dei token ottenuti dalla PDND");
+						inUsoMessage.append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+					}
+					else {
+						confCore.performDeleteOperation(userLogin, confHelper.smista(), policy);
+					}
 				}
 
 			}// chiudo for

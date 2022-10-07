@@ -1923,7 +1923,7 @@ public class RicezioneContenutiApplicativi {
 							
 								msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken");
 								
-								esitoValidazioneToken = gestioneTokenEngine.validazioneJWTToken(datiInvocazione, esitoPresenzaToken.getToken());
+								esitoValidazioneToken = gestioneTokenEngine.validazioneJWTToken(datiInvocazione, esitoPresenzaToken);
 								if(esitoValidazioneToken.isValido()) {
 									
 									msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken.completataSuccesso");
@@ -1982,7 +1982,7 @@ public class RicezioneContenutiApplicativi {
 								
 								msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken");
 								
-								esitoIntrospectionToken = gestioneTokenEngine.introspectionToken(datiInvocazione, esitoPresenzaToken.getToken());
+								esitoIntrospectionToken = gestioneTokenEngine.introspectionToken(datiInvocazione, esitoPresenzaToken);
 								if(esitoIntrospectionToken.isValido()) {
 									
 									msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken.completataSuccesso");
@@ -2040,7 +2040,7 @@ public class RicezioneContenutiApplicativi {
 								
 								msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken");
 								
-								esitoUserInfoToken = gestioneTokenEngine.userInfoToken(datiInvocazione, esitoPresenzaToken.getToken());
+								esitoUserInfoToken = gestioneTokenEngine.userInfoToken(datiInvocazione, esitoPresenzaToken);
 								if(esitoUserInfoToken.isValido()) {
 									
 									msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken.completataSuccesso");

@@ -44,6 +44,7 @@ import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.modipa.ModIBustaRawContent;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
+import org.openspcoop2.protocol.modipa.constants.ModIHeaderType;
 import org.openspcoop2.protocol.modipa.utils.ModIKeystoreConfig;
 import org.openspcoop2.protocol.modipa.utils.ModIPropertiesUtils;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
@@ -334,7 +335,7 @@ public class ModIImbustamento {
 						if(headerTokenRestIntegrity==null) {
 							String token = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfig, busta, 
 									securityMessageProfile, headerTokenRest, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
-									null, busta.getID(), false, integritaCustom,
+									null, busta.getID(), ModIHeaderType.SINGLE, integritaCustom,
 									dynamicMap);
 							protocolMessage.setBustaRawContent(new ModIBustaRawContent(headerTokenRest, token));
 						}
@@ -365,7 +366,7 @@ public class ModIImbustamento {
 							}
 							String tokenAuthorization = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfig, busta, 
 									securityMessageProfileAuthorization, headerTokenRest, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
-									now, jtiAuthorization, true, integritaCustom,
+									now, jtiAuthorization, ModIHeaderType.BOTH_AUTH, integritaCustom,
 									dynamicMap);
 							
 							// Integrity
@@ -396,7 +397,7 @@ public class ModIImbustamento {
 										false);
 								tokenIntegrity = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfigIntegrity, busta, 
 										securityMessageProfile, headerTokenRestIntegrity, corniceSicurezza, ruoloMessaggio, includiRequestDigest,
-										now, jtiIntegrity, true, integritaCustom,
+										now, jtiIntegrity, ModIHeaderType.BOTH_INTEGRITY, integritaCustom,
 										dynamicMap);
 							}
 							

@@ -240,6 +240,7 @@ public class ProtocolPropertiesUtilities {
 			}
 		}
 		
+		
 		dati.addElement(de);
 
 		return dati;

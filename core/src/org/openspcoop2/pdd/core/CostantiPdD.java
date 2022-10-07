@@ -261,6 +261,8 @@ public class CostantiPdD {
     public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_CLIENT_ID = "form.clientId";
     public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_RESOURCE = "form.resource";
     public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_REQUEST_PARAMETERS = "form.parameters";
+    // Applicativo Richiedente
+    public final static String HEADER_INTEGRAZIONE_TOKEN_FORM_APPLICATIVE_REQUESTER = "applicativeRequester";
     
     /** Attesa attiva di default effettuata per ottenere un lock, in millisecondi */
     public final static long GET_LOCK_ATTESA_ATTIVA = 90 * 1000; // 2 minuti

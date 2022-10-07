@@ -29,6 +29,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.token.AbstractDatiInvocazione;
 import org.openspcoop2.pdd.core.token.EsitoGestioneToken;
+import org.openspcoop2.pdd.core.token.EsitoPresenzaToken;
 import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.TokenException;
@@ -75,7 +76,7 @@ public class GestioneToken {
     	
     }
     
-    public EsitoGestioneTokenPortaApplicativa validazioneJWTToken(DatiInvocazionePortaApplicativa datiInvocazione, String token) throws TokenException {   	
+    public EsitoGestioneTokenPortaApplicativa validazioneJWTToken(DatiInvocazionePortaApplicativa datiInvocazione, EsitoPresenzaToken token) throws TokenException {   	
     	try {
     	
     		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.validazioneJWTToken(this.log, datiInvocazione, 
@@ -98,7 +99,7 @@ public class GestioneToken {
     	} 	
     }
     
-    public EsitoGestioneTokenPortaApplicativa introspectionToken(DatiInvocazionePortaApplicativa datiInvocazione, String token) throws TokenException {
+    public EsitoGestioneTokenPortaApplicativa introspectionToken(DatiInvocazionePortaApplicativa datiInvocazione, EsitoPresenzaToken token) throws TokenException {
     	try {
         	
     		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.introspectionToken(this.log, datiInvocazione, 
@@ -122,7 +123,7 @@ public class GestioneToken {
     	}
 	}
 	
-	public EsitoGestioneTokenPortaApplicativa userInfoToken(DatiInvocazionePortaApplicativa datiInvocazione, String token) throws TokenException {
+	public EsitoGestioneTokenPortaApplicativa userInfoToken(DatiInvocazionePortaApplicativa datiInvocazione, EsitoPresenzaToken token) throws TokenException {
 		try {
         	
     		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.userInfoToken(this.log, datiInvocazione, 

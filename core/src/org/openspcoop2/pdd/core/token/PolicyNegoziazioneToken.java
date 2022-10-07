@@ -159,6 +159,13 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 	public String getAudience() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_AUDIENCE);
 	}
+	public boolean isFormClientIdApplicativoModI() {
+		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORM_CLIENT_ID_MODE);
+		if(mode!=null && Costanti.CHOICE_APPLICATIVO_MODI_VALUE.equals(mode)) {
+			return true;
+		}
+		return false;
+	}
 	public String getFormClientId() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORM_CLIENT_ID);
 	}
@@ -184,14 +191,35 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_FORWARD_MODE_CUSTOM_URL_PARAMETER_NAME);
 	}
 	
+	public boolean isJwtClientIdApplicativoModI() {
+		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLIENT_ID_MODE);
+		if(mode!=null && Costanti.CHOICE_APPLICATIVO_MODI_VALUE.equals(mode)) {
+			return true;
+		}
+		return false;
+	}
 	public String getJwtClientId() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLIENT_ID);
 	}
 	public String getJwtClientSecret() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLIENT_SECRET);
 	}
+	public boolean isJwtIssuerApplicativoModI() {
+		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_ISSUER_MODE);
+		if(mode!=null && Costanti.CHOICE_APPLICATIVO_MODI_VALUE.equals(mode)) {
+			return true;
+		}
+		return false;
+	}
 	public String getJwtIssuer() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_ISSUER);
+	}
+	public boolean isJwtSubjectApplicativoModI() {
+		String mode = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SUBJECT_MODE);
+		if(mode!=null && Costanti.CHOICE_APPLICATIVO_MODI_VALUE.equals(mode)) {
+			return true;
+		}
+		return false;
 	}
 	public String getJwtSubject() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SUBJECT);
@@ -229,6 +257,10 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID);
 		return tmp!=null ? Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_CLIENT_ID.equals(tmp) : false;
 	}
+	public boolean isJwtSignIncludeKeyIdApplicativoModI() {
+		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID);
+		return tmp!=null ? Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_APPLICATIVO_MODI.equals(tmp) : false;
+	}
 	public boolean isJwtSignIncludeKeyIdCustom() {
 		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID);
 		return tmp!=null ? Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_CUSTOM.equals(tmp) : false;
@@ -257,6 +289,9 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 	}
 	public String getJwtSignJoseType() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_JOSE_TYPE);
+	}
+	public boolean isJwtSignKeystoreApplicativoModI() {
+		return Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(getJwtSignKeystoreType());
 	}
 	public String getJwtSignKeystoreType() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_JWT_SIGN_KEYSTORE_TYPE);

@@ -34,7 +34,7 @@ public class ModIApplicativoInterno  implements OneOfApplicativoModi {
   private ModIApplicativoSicurezzaMessaggio sicurezzaMessaggio = null;
   
   @Schema(description = "")
-  private AuthenticationTokenBase token = null;
+  private ModIApplicativoAuthenticationToken token = null;
  /**
    * Get dominio
    * @return dominio
@@ -81,15 +81,15 @@ public class ModIApplicativoInterno  implements OneOfApplicativoModi {
   **/
   @JsonProperty("token")
   @Valid
-  public AuthenticationTokenBase getToken() {
+  public ModIApplicativoAuthenticationToken getToken() {
     return this.token;
   }
 
-  public void setToken(AuthenticationTokenBase token) {
+  public void setToken(ModIApplicativoAuthenticationToken token) {
     this.token = token;
   }
 
-  public ModIApplicativoInterno token(AuthenticationTokenBase token) {
+  public ModIApplicativoInterno token(ModIApplicativoAuthenticationToken token) {
     this.token = token;
     return this;
   }

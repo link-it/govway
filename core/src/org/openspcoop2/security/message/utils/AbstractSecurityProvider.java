@@ -141,6 +141,24 @@ public abstract class AbstractSecurityProvider implements IProvider {
 		return actualValue;
 	}
 	
+	public static String readValue(String identificativo, List<?> items, Map<String, String> mapNameValue) {
+		String value = null;
+		if(items!=null && !items.isEmpty()) {
+			for (Object itemCheck : items) {
+				//System.out.println("CHECK ["+itemCheck.getClass().getName()+"]");
+				if(itemCheck instanceof Item) {
+					Item listItem = (Item) itemCheck;
+					
+					if(identificativo.equals(listItem.getName())) {
+						value = mapNameValue.get(identificativo);
+						break;
+					}
+				}
+			}
+		}
+		return value;
+	}
+	
 	public static String processStoreFile(String type, List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
 		if(items!=null && !items.isEmpty()) {
 			for (Object itemCheck : items) {

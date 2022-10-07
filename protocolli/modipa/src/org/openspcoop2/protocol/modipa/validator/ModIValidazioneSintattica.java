@@ -49,6 +49,7 @@ import org.openspcoop2.protocol.modipa.AbstractModISecurityToken;
 import org.openspcoop2.protocol.modipa.ModIBustaRawContent;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
+import org.openspcoop2.protocol.modipa.constants.ModIHeaderType;
 import org.openspcoop2.protocol.modipa.utils.ModIPropertiesUtils;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.modipa.utils.ModITruststoreConfig;
@@ -161,10 +162,10 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 				ModIValidazioneSintatticaRest validatoreSintatticoRest = null;
 				ModIValidazioneSintatticaSoap validatoreSintatticoSoap = null;
 				if(rest) {
-					validatoreSintatticoRest = new ModIValidazioneSintatticaRest(this.log, this.state, this.context, this.modiProperties, this.validazioneUtils);
+					validatoreSintatticoRest = new ModIValidazioneSintatticaRest(this.log, this.state, this.context, this.protocolFactory, this.modiProperties, this.validazioneUtils);
 				}
 				else {
-					validatoreSintatticoSoap = new ModIValidazioneSintatticaSoap(this.log, this.state, this.context, this.modiProperties, this.validazioneUtils);
+					validatoreSintatticoSoap = new ModIValidazioneSintatticaSoap(this.log, this.state, this.context, this.protocolFactory, this.modiProperties, this.validazioneUtils);
 				}
 				
 				
@@ -382,14 +383,13 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 						Map<String, Object> dynamicMap = new HashMap<String, Object>();
 						
 						if(rest) {
-							boolean headerDuplicati = true;
 							boolean securityHeaderObbligatorio = true;
 							
 							if(headerTokenRestIntegrity==null) {
 								
 								String token = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, headerTokenRest, corniceSicurezza, includiRequestDigest, bustaRitornata, 
 										erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig,
-										buildSecurityTokenInRequest, !headerDuplicati, integritaCustom, securityHeaderObbligatorio,
+										buildSecurityTokenInRequest, ModIHeaderType.SINGLE, integritaCustom, securityHeaderObbligatorio,
 										dynamicMap, datiRichiesta);
 								
 								if(token!=null) {
@@ -425,7 +425,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 								}
 								String tokenAuthorization = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfileAuthorization, headerTokenRest, corniceSicurezza, includiRequestDigest, bustaRitornata, 
 										erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig,
-										buildSecurityTokenInRequest, headerDuplicati, integritaCustom, securityHeaderObbligatorio,
+										buildSecurityTokenInRequest, ModIHeaderType.BOTH_AUTH, integritaCustom, securityHeaderObbligatorio,
 										dynamicMap, datiRichiesta);
 								
 								String audAuthorization = null;
@@ -457,7 +457,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 										false);
 								String tokenIntegrity = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, headerTokenRestIntegrity, corniceSicurezza, includiRequestDigest, bustaRitornata, 
 										erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfigIntegrity,
-										buildSecurityTokenInRequest, headerDuplicati, integritaCustom, securityHeaderIntegrityObbligatorio,
+										buildSecurityTokenInRequest, ModIHeaderType.BOTH_INTEGRITY, integritaCustom, securityHeaderIntegrityObbligatorio,
 										null, null); // gia' inizializzato sopra
 								
 								if(tokenIntegrity!=null) {

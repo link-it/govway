@@ -39,6 +39,7 @@ import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
+import org.openspcoop2.protocol.modipa.constants.ModIHeaderType;
 import org.openspcoop2.protocol.modipa.utils.ModIKeystoreConfig;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.modipa.utils.ModIUtilities;
@@ -403,12 +404,13 @@ public class ModIImbustamentoRest {
 	
 	public String addToken(OpenSPCoop2Message msg, Context context, ModIKeystoreConfig keystoreConfig, ModISecurityConfig securityConfig,
 			Busta busta, String securityMessageProfile, String headerTokenRest, boolean corniceSicurezza, RuoloMessaggio ruoloMessaggio, boolean includiRequestDigest,
-			Long now, String jti, boolean headerDuplicati, boolean integritaCustom,
+			Long now, String jti, ModIHeaderType headerType, boolean integritaCustom,
 			Map<String, Object> dynamicMap) throws Exception {
 		
 		boolean integrita = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) || 
 				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile);
-		
+
+		boolean headerDuplicati = headerType.isHeaderDuplicati();
 		
 		/*
 		 * == realizzo token ==

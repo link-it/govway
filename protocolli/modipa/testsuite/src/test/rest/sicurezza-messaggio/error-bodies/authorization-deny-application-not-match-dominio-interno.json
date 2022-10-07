@@ -2,6 +2,6 @@
     "type": "https://govway.org/handling-errors/403/Authorization.html",
     "title": "Authorization",
     "status": 403,
-    "detail": "Rilevati due token di sicurezza firmati da applicativi differenti: 'ApplicativoBlockingIDA01' e 'ApplicativoBlockingIDA01ExampleClient2'",
+    "detail": "Applicativo Mittente ApplicativoBlockingIDA01ExampleClient2 (Soggetto: DemoSoggettoFruitore) non autorizzato; il certificato di firma (subject=\"CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT\" issuer=\"CN=ExampleCA, O=Example, L=Pisa, ST=Italy, C=IT\") del security token (Agid-JWT-Signature) non corrisponde all'applicativo",
     "govway_id": "#string"
 }

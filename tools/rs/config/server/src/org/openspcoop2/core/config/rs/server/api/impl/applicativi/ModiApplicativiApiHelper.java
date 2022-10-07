@@ -27,8 +27,8 @@ import org.openspcoop2.core.config.rs.server.api.impl.ProtocolPropertiesHelper;
 import org.openspcoop2.core.config.rs.server.model.Applicativo;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationHttps;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationToken;
-import org.openspcoop2.core.config.rs.server.model.AuthenticationTokenBase;
 import org.openspcoop2.core.config.rs.server.model.DominioEnum;
+import org.openspcoop2.core.config.rs.server.model.ModIApplicativoAuthenticationToken;
 import org.openspcoop2.core.config.rs.server.model.ModIApplicativoEsterno;
 import org.openspcoop2.core.config.rs.server.model.ModIApplicativoInterno;
 import org.openspcoop2.core.config.rs.server.model.ModIApplicativoSicurezzaMessaggio;
@@ -184,8 +184,13 @@ public class ModiApplicativiApiHelper {
 					
 					if(mai.getToken()!=null) {
 						p.addProperty(ProtocolPropertiesFactory.newProperty(ModICostanti.MODIPA_SICUREZZA_TOKEN, true));
-						p.addProperty(ProtocolPropertiesFactory.newProperty(ModICostanti.MODIPA_SICUREZZA_TOKEN_POLICY, mai.getToken().getTokenPolicy()));
+						if(mai.getToken().getTokenPolicy()!=null) {
+							p.addProperty(ProtocolPropertiesFactory.newProperty(ModICostanti.MODIPA_SICUREZZA_TOKEN_POLICY, mai.getToken().getTokenPolicy()));
+						}
 						p.addProperty(ProtocolPropertiesFactory.newProperty(ModICostanti.MODIPA_SICUREZZA_TOKEN_CLIENT_ID, mai.getToken().getIdentificativo()));
+						if(mai.getToken().getKid()!=null) {
+							p.addProperty(ProtocolPropertiesFactory.newProperty(ModICostanti.MODIPA_SICUREZZA_TOKEN_KID_ID, mai.getToken().getKid()));
+						}
 					}
 
 				} else {
@@ -320,7 +325,7 @@ public class ModiApplicativiApiHelper {
 
 			if(enabledSicurezzaToken) {
 				
-				AuthenticationTokenBase token = new AuthenticationTokenBase();
+				ModIApplicativoAuthenticationToken token = new ModIApplicativoAuthenticationToken();
 				
 				String tokenPolicy = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_SICUREZZA_TOKEN_POLICY, false);
 				if(tokenPolicy != null) {
@@ -330,6 +335,11 @@ public class ModiApplicativiApiHelper {
 				String identificativo = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_SICUREZZA_TOKEN_CLIENT_ID, false);
 				if(identificativo != null) {
 					token.setIdentificativo(identificativo);
+				}
+				
+				String kid = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_SICUREZZA_TOKEN_KID_ID, false);
+				if(kid != null) {
+					token.setKid(kid);
 				}
 				
 				app.setToken(token);

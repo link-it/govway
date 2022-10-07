@@ -8095,7 +8095,7 @@ public class DBOggettiInUsoUtils  {
 				break;
 			case TOKEN_SA_MODI:
 				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato negli Applicativi (ModI "+CostantiLabel.MODIPA_SICUREZZA_CHOICE_TOKEN_LABEL+"): " + formatList(messages,separator) + separator;
+					msg += "utilizzato negli Applicativi (ModI "+CostantiLabel.MODIPA_SICUREZZA_TOKEN_SUBTITLE_LABEL+"): " + formatList(messages,separator) + separator;
 				}
 				break;
 				

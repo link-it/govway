@@ -1330,13 +1330,32 @@ public class ConnettoriHelper extends ConsoleHelper {
 		}
 
 		boolean tokenWithHttsSupportato = false;
+		boolean tokenModIPDND = false;
 		if(!connettore && dominioEsterno & protocollo!=null) {
 			ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 			tokenWithHttsSupportato = protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportatoAutenticazioneApplicativiHttpsConToken();
+			if(tokenPolicySA!=null && StringUtils.isNotEmpty(tokenPolicySA)) {
+				tokenModIPDND = this.saCore.isPolicyGestioneTokenPDND(tokenPolicySA);
+			}
 		}
 		if(tokenWithHttsSupportato) {
 			if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(tipoauth) && tokenWithHttpsEnabledByConfigSA) {
-				tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN;
+				if(tokenModIPDND) {
+					tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND;
+				}
+				else {
+					tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_OAUTH;
+				}
+			}
+			else {
+				if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN.equals(tipoauth)){
+					if(tokenModIPDND) {
+						tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_PDND;
+					}
+					else {
+						tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_OAUTH;
+					}
+				}
 			}
 		}
 		
@@ -1564,7 +1583,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 					(
 							ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL.equals(tipoauth)
 							||
-							ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN.equals(tipoauth)
+							ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_OAUTH.equals(tipoauth)
+							||
+							ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND.equals(tipoauth)
 					)
 					&& !connettore) {
 				boolean add = ( SoggettiCostanti.SERVLET_NAME_SOGGETTI_ADD.equals(toCall) ||  ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD.equals(toCall));
@@ -2171,15 +2192,27 @@ public class ConnettoriHelper extends ConsoleHelper {
 					(
 							ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN.equals(tipoauth)
 							||
-							(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN.equals(tipoauth))
+							(ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_OAUTH.equals(tipoauth))
+							||
+							(ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_PDND.equals(tipoauth))
+							||
+							(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_OAUTH.equals(tipoauth))
+							||
+							(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND.equals(tipoauth))
 					)
 				) {
 				
-				if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN.equals(tipoauth) || 
+				if( (ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_OAUTH.equals(tipoauth) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND.equals(tipoauth)) 
+						|| 
 						(dominioEsterno && StringUtils.isNotEmpty(protocollo) && isProfiloModIPA(protocollo))) {
 					de = new DataElement();
 					if(dominioEsterno && StringUtils.isNotEmpty(protocollo) && isProfiloModIPA(protocollo)) {
-						de.setLabel(CostantiLabel.MODIPA_SICUREZZA_TOKEN_FIRMA_APPLICATIVO_SUBTITLE_LABEL);
+						if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND.equals(tipoauth) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_PDND.equals(tipoauth)) {
+							de.setLabel(CostantiLabel.MODIPA_SICUREZZA_TOKEN_FIRMA_APPLICATIVO_SUBTITLE_LABEL_PDND);
+						}
+						else {
+							de.setLabel(CostantiLabel.MODIPA_SICUREZZA_TOKEN_FIRMA_APPLICATIVO_SUBTITLE_LABEL);
+						}
 					}
 					else {
 						de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_DESCR);
@@ -2189,10 +2222,39 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 
 				// Token Policy
-				List<GenericProperties> gestorePolicyTokenList = this.confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
+				List<GenericProperties> gestorePolicyTokenList_tmp = this.confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
+				List<GenericProperties> gestorePolicyTokenList = null;
+				boolean valoreNonSelezionato = true;
+				if((ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_PDND.equals(tipoauth))
+						||
+						(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND.equals(tipoauth))) {
+					gestorePolicyTokenList = new ArrayList<GenericProperties>();
+					for (GenericProperties gp : gestorePolicyTokenList_tmp) {
+						if(this.confCore.isPolicyGestioneTokenPDND(gp.getNome())) {
+							gestorePolicyTokenList.add(gp);
+						}
+					}
+					if(!gestorePolicyTokenList.isEmpty()) {
+						valoreNonSelezionato = false;	
+					}
+				}
+				else if((ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_OAUTH.equals(tipoauth))
+						||
+						(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_OAUTH.equals(tipoauth))) {
+					gestorePolicyTokenList = new ArrayList<GenericProperties>();
+					for (GenericProperties gp : gestorePolicyTokenList_tmp) {
+						if(!this.confCore.isPolicyGestioneTokenPDND(gp.getNome())) {
+							gestorePolicyTokenList.add(gp);
+						}
+					}
+				}
+				else {
+					gestorePolicyTokenList = gestorePolicyTokenList_tmp;
+				}
+				
 				String [] policyLabels = null;
 				String [] policyValues = null;
-				if(!TipoOperazione.CHANGE.equals(tipoOperazione)){
+				if(!TipoOperazione.CHANGE.equals(tipoOperazione) && valoreNonSelezionato){
 					policyLabels = new String[gestorePolicyTokenList.size() + 1];
 					policyValues = new String[gestorePolicyTokenList.size() + 1];
 					
@@ -2206,7 +2268,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				for (int i = 0; i < gestorePolicyTokenList.size(); i++) {
 					GenericProperties genericProperties = gestorePolicyTokenList.get(i);
-					if(!TipoOperazione.CHANGE.equals(tipoOperazione)){
+					if(!TipoOperazione.CHANGE.equals(tipoOperazione) && valoreNonSelezionato){
 						policyLabels[(i+1)] = genericProperties.getNome();
 						policyValues[(i+1)] = genericProperties.getNome();
 					}
@@ -4950,9 +5012,15 @@ public class ConnettoriHelper extends ConsoleHelper {
 		
 		String tokenPolicy = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY);
 		String tokenClientId = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
-		boolean tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN.equals(tipoauth);
+		@SuppressWarnings("unused")
+		boolean tokenByPDND = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND.equals(tipoauth) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_PDND.equals(tipoauth);
+		boolean tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND.equals(tipoauth) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_OAUTH.equals(tipoauth);
 		if(tokenWithHttpsEnabledByConfigSA) {
 			tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL;
+		}
+		boolean tokenModiPDNDOauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_PDND.equals(tipoauth) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_OAUTH.equals(tipoauth);
+		if(tokenModiPDNDOauth) {
+			tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN;
 		}
 		
 		if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {

@@ -1478,8 +1478,11 @@ public class DBUtils {
 		
 		// NOTA: logica inserita anche in PorteApplicativeHelper.applicaFiltriRicercaConnettoriMultipli
 		
+		boolean setEndpointtype = false;
+		
 		if(endpointType!=null) {
 			sqlQueryObject.addWhereLikeCondition(CostantiDB.CONNETTORI+".endpointtype", endpointType, false, false, false);
+			setEndpointtype=true;
 		}
 		else if(tipoConnettore!=null) {
 			if(TipiConnettore.CUSTOM.equals(tipoConnettore)) {
@@ -1493,6 +1496,7 @@ public class DBUtils {
 				sql.setANDLogicOperator(true);
 				sql.setNOTBeforeConditions(true);
 				sql.addWhereINCondition(CostantiDB.CONNETTORI+".endpointtype", true, tipiConosciuti.toArray(new String[1]));
+				setEndpointtype=true;
 				sqlQueryObject.addWhereCondition(sql.createSQLConditions());
 			}
 		}
@@ -1535,6 +1539,9 @@ public class DBUtils {
 			}
 			if(!query.isEmpty()) {
 				sqlQueryObject.addWhereCondition(false, query.toArray(new String[1]));
+				if(!setEndpointtype) {
+					sqlQueryObject.addWhereCondition(CostantiDB.CONNETTORI+".endpointtype <> '"+TipiConnettore.DISABILITATO.getNome()+"'");
+				}
 			}
 		}
 		
@@ -1568,64 +1575,109 @@ public class DBUtils {
 			String filtroModIKeystorePath, String filtroModIKeystoreSubject, 
 			Boolean filtroModISicurezzaToken,
 			String filtroModITokenPolicy, String filtroModITokenClientId,
-			String filtroModIAudience) throws Exception {
+			String filtroModIAudience,
+			boolean checkCredenzialiBase) throws Exception {
 		
 		ProprietariProtocolProperty proprietario = ProprietariProtocolProperty.SERVIZIO_APPLICATIVO;
 		String tabellaDB = 	CostantiDB.SERVIZI_APPLICATIVI ;
 		
+		List<ISQLQueryObject> listSqlQueryProtocolProperties = new ArrayList<ISQLQueryObject>();
+		
 		if(filtroModISicurezzaMessaggio!=null) {
-			
 			ISQLQueryObject sql = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
 					tipoDB, CostantiDB.MODIPA_SICUREZZA_MESSAGGIO , null, null, filtroModISicurezzaMessaggio);
-			sqlQueryObject.addWhereExistsCondition(false, sql);
-			
+			listSqlQueryProtocolProperties.add(sql);
 		}
 		
 		if(filtroModIKeystorePath!=null) {
-			
 			ISQLQueryObject sql = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
 					tipoDB, CostantiDB.MODIPA_KEYSTORE_PATH, null, filtroModIKeystorePath, null);
-			sqlQueryObject.addWhereExistsCondition(false, sql);
-			
+			listSqlQueryProtocolProperties.add(sql);
 		}
 		
 		if(filtroModIKeystoreSubject!=null) {
-			
 			ISQLQueryObject sql = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
 					tipoDB, CostantiDB.MODIPA_KEY_CN_SUBJECT, null, filtroModIKeystoreSubject, null);
-			sqlQueryObject.addWhereExistsCondition(false, sql);
-			
+			listSqlQueryProtocolProperties.add(sql);
 		}
 		
 		if(filtroModISicurezzaToken!=null) {
-			
 			ISQLQueryObject sql = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
 					tipoDB, CostantiDB.MODIPA_SICUREZZA_TOKEN , null, null, filtroModISicurezzaToken);
-			sqlQueryObject.addWhereExistsCondition(false, sql);
-			
+			listSqlQueryProtocolProperties.add(sql);
 		}
 		
 		if(filtroModITokenPolicy!=null) {
-			
 			ISQLQueryObject sql = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
 					tipoDB, CostantiDB.MODIPA_SICUREZZA_TOKEN_POLICY, null, filtroModITokenPolicy, null);
-			sqlQueryObject.addWhereExistsCondition(false, sql);
-			
+			listSqlQueryProtocolProperties.add(sql);			
 		}
 		
 		if(filtroModITokenClientId!=null) {
-			
 			ISQLQueryObject sql = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
 					tipoDB, CostantiDB.MODIPA_SICUREZZA_TOKEN_CLIENT_ID, null, filtroModITokenClientId, null);
-			sqlQueryObject.addWhereExistsCondition(false, sql);
-			
+			listSqlQueryProtocolProperties.add(sql);
 		}
 		
 		if(filtroModIAudience!=null) {
-			
 			ISQLQueryObject sql = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
 					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE , null, filtroModIAudience, null);
-			sqlQueryObject.addWhereExistsCondition(false, sql);
+			listSqlQueryProtocolProperties.add(sql);
+		}
+		
+		
+		
+		if(checkCredenzialiBase && 
+				(filtroModIKeystoreSubject!=null || filtroModITokenClientId!=null)) {
+			
+			ISQLQueryObject sqlOr = sqlQueryObject.newSQLQueryObject();
+			sqlOr.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+			sqlOr.setANDLogicOperator(false);
+			
+			// ramo modi
+			ISQLQueryObject sqlModi = sqlQueryObject.newSQLQueryObject();
+			sqlModi.setANDLogicOperator(true);
+			for (ISQLQueryObject sql : listSqlQueryProtocolProperties) {
+				sqlModi.addWhereExistsCondition(false, sql);
+			}
+			sqlOr.addWhereCondition(sqlModi.createSQLConditions());
+			
+			// ramo credenzialiBase
+			ISQLQueryObject sqlCredenzialiBase = sqlQueryObject.newSQLQueryObject();
+			sqlCredenzialiBase.setANDLogicOperator(true);
+			String ssl = "ssl";// --> org.openspcoop2.core.config.constants.CredenzialeTipo.SSL.toString();
+			String token = "token";// --> org.openspcoop2.core.config.constants.CredenzialeTipo.TOKEN.toString();
+			if(filtroModITokenClientId!=null) {
+				sqlCredenzialiBase.addWhereCondition(false,
+						CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = '"+token+"'",
+						CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = '"+ssl+"' AND "+CostantiDB.SERVIZI_APPLICATIVI+".token_policy IS NOT NULL");
+			}
+			else {
+				sqlCredenzialiBase.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = '"+ssl+"'");
+			}
+			if(filtroModITokenClientId!=null) {
+				sqlCredenzialiBase.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".utente", 
+						filtroModITokenClientId, LikeConfig.contains(true,true));
+			}
+			if(filtroModIKeystoreSubject!=null) {
+				sqlCredenzialiBase.addWhereCondition(false, 
+						sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".cn_subject", filtroModIKeystoreSubject, 
+								LikeConfig.contains(true,true)),
+						sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".subject", filtroModIKeystoreSubject, 
+								LikeConfig.contains(true,true)));
+			} 
+			sqlOr.addWhereCondition(sqlCredenzialiBase.createSQLConditions());
+			
+			sqlQueryObject.addWhereCondition(sqlOr.createSQLConditions());
+			
+		}
+		else {
+		
+			if(!listSqlQueryProtocolProperties.isEmpty()) {
+				for (ISQLQueryObject sql : listSqlQueryProtocolProperties) {
+					sqlQueryObject.addWhereExistsCondition(false, sql);
+				}
+			}
 			
 		}
 		

@@ -22,11 +22,11 @@ Then status 200
 And match response == read('requestConHeader.xml')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
-And match header GovWay-TestSuite-GovWay-Application == '<username>'
+And match header GovWay-TestSuite-GovWay-Application == '<applicativo>'
 
 Examples:
-| tipo-test | fruitore | username | password |
-| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient1 | ApplicativoBlockingIDA01ExampleExternalClient1 |
+| tipo-test | fruitore | username | password | applicativo |
+| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient1 | ApplicativoBlockingIDA01ExampleExternalClient1 | ApplicativoBlockingIDA01ExampleExternalClient1SoloCertificato |
 
 
 
@@ -64,14 +64,14 @@ Then status 200
 And match response == read('requestConHeader.xml')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
-And match header GovWay-TestSuite-GovWay-Application == '<username>'
+And match header GovWay-TestSuite-GovWay-Application == '<applicativo>'
 
 Examples:
-| tipo-test | fruitore | username | password |
-| interno | DemoSoggettoFruitore | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 |
-| interno (noToken) | DemoSoggettoFruitore | ApplicativoBlockingIDA01ExampleClient4 | ApplicativoBlockingIDA01ExampleClient4 |
-| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient1 | ApplicativoBlockingIDA01ExampleExternalClient1 |
-| esterno (noToken) | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient4 | ApplicativoBlockingIDA01ExampleExternalClient4 |
+| tipo-test | fruitore | username | password | applicativo |
+| interno | DemoSoggettoFruitore | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 |
+| interno (noToken) | DemoSoggettoFruitore | ApplicativoBlockingIDA01ExampleClient4 | ApplicativoBlockingIDA01ExampleClient4 | ApplicativoBlockingIDA01ExampleClient4 |
+| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient1 | ApplicativoBlockingIDA01ExampleExternalClient1 | ApplicativoBlockingIDA01ExampleExternalClient1SoloCertificato |
+| esterno (noToken) | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient4 | ApplicativoBlockingIDA01ExampleExternalClient4 | ApplicativoBlockingIDA01ExampleExternalClient4 |
 
 
 @autorizzazioneSicurezzaMessaggioPuntualeKo
@@ -91,7 +91,7 @@ And match header Agid-JWT-Signature == '#notpresent'
 Examples:
 | tipo-test | fruitore | username | password | response |
 | interno | DemoSoggettoFruitore | ApplicativoBlockingIDA01ExampleClient2 | ApplicativoBlockingIDA01ExampleClient2 | authorization-deny-ApplicativoBlockingIDA01ExampleClient2.xml |
-| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient2 | ApplicativoBlockingIDA01ExampleExternalClient2 | authorization-deny-ApplicativoBlockingIDA01ExampleExternalClient2.xml |
+| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient2 | ApplicativoBlockingIDA01ExampleExternalClient2 | authorization-deny-ApplicativoBlockingIDA01ExampleExternalClient2SoloCertificato.xml |
 
 
 @autorizzazioneSicurezzaMessaggioRuoliAllOk
@@ -107,12 +107,12 @@ Then status 200
 And match response == read('requestConHeader.xml')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
-And match header GovWay-TestSuite-GovWay-Application == '<username>'
+And match header GovWay-TestSuite-GovWay-Application == '<applicativo>'
 
 Examples:
-| tipo-test | fruitore | username | password |
-| interno | DemoSoggettoFruitore | ApplicativoBlockingIDA01ExampleClient2 | ApplicativoBlockingIDA01ExampleClient2 |
-| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient2 | ApplicativoBlockingIDA01ExampleExternalClient2 |
+| tipo-test | fruitore | username | password | applicativo |
+| interno | DemoSoggettoFruitore | ApplicativoBlockingIDA01ExampleClient2 | ApplicativoBlockingIDA01ExampleClient2 | ApplicativoBlockingIDA01ExampleClient2 |
+| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient2 | ApplicativoBlockingIDA01ExampleExternalClient2 | ApplicativoBlockingIDA01ExampleExternalClient2SoloCertificato |
 
 
 @autorizzazioneSicurezzaMessaggioRuoliAllKoSoloUnRuolo
@@ -132,7 +132,7 @@ And match header Agid-JWT-Signature == '#notpresent'
 Examples:
 | tipo-test | fruitore | username | password | response |
 | interno | DemoSoggettoFruitore | ApplicativoBlockingIDA01ExampleClient3 | ApplicativoBlockingIDA01ExampleClient3 | authorization-roles-deny-ApplicativoBlockingIDA01ExampleClient3.xml |
-| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient3 | ApplicativoBlockingIDA01ExampleExternalClient3 | authorization-roles-deny-ApplicativoBlockingIDA01ExampleExternalClient3.xml |
+| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient3 | ApplicativoBlockingIDA01ExampleExternalClient3 | authorization-roles-deny-ApplicativoBlockingIDA01ExampleExternalClient3SoloCertificato.xml |
 
 
 @autorizzazioneSicurezzaMessaggioRuoliAllKoNessunRuolo
@@ -152,7 +152,7 @@ And match header Agid-JWT-Signature == '#notpresent'
 Examples:
 | tipo-test | fruitore | username | password | response |
 | interno | DemoSoggettoFruitore | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | authorization-roles-deny-ApplicativoBlockingIDA01ExampleClient1.xml |
-| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient1 | ApplicativoBlockingIDA01ExampleExternalClient1 | authorization-roles-deny-ApplicativoBlockingIDA01ExampleExternalClient1.xml |
+| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient1 | ApplicativoBlockingIDA01ExampleExternalClient1 | authorization-roles-deny-ApplicativoBlockingIDA01ExampleExternalClient1SoloCertificato.xml |
 
 
 @autorizzazioneSicurezzaMessaggioRuoliAnyOkSoloUnRuolo
@@ -168,12 +168,12 @@ Then status 200
 And match response == read('requestConHeader.xml')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
-And match header GovWay-TestSuite-GovWay-Application == '<username>'
+And match header GovWay-TestSuite-GovWay-Application == '<applicativo>'
 
 Examples:
-| tipo-test | fruitore | username | password |
-| interno | DemoSoggettoFruitore | ApplicativoBlockingIDA01ExampleClient3 | ApplicativoBlockingIDA01ExampleClient3 |
-| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient3 | ApplicativoBlockingIDA01ExampleExternalClient3 |
+| tipo-test | fruitore | username | password | applicativo |
+| interno | DemoSoggettoFruitore | ApplicativoBlockingIDA01ExampleClient3 | ApplicativoBlockingIDA01ExampleClient3 | ApplicativoBlockingIDA01ExampleClient3 |
+| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient3 | ApplicativoBlockingIDA01ExampleExternalClient3 | ApplicativoBlockingIDA01ExampleExternalClient3SoloCertificato |
 
 
 @autorizzazioneSicurezzaMessaggioRuoliAnyOkTuttiRuoli
@@ -189,12 +189,12 @@ Then status 200
 And match response == read('requestConHeader.xml')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
-And match header GovWay-TestSuite-GovWay-Application == '<username>'
+And match header GovWay-TestSuite-GovWay-Application == '<applicativo>'
 
 Examples:
-| tipo-test | fruitore | username | password |
-| interno | DemoSoggettoFruitore | ApplicativoBlockingIDA01ExampleClient2 | ApplicativoBlockingIDA01ExampleClient2 |
-| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient2 | ApplicativoBlockingIDA01ExampleExternalClient2 |
+| tipo-test | fruitore | username | password | applicativo |
+| interno | DemoSoggettoFruitore | ApplicativoBlockingIDA01ExampleClient2 | ApplicativoBlockingIDA01ExampleClient2 | ApplicativoBlockingIDA01ExampleClient2 |
+| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient2 | ApplicativoBlockingIDA01ExampleExternalClient2 | ApplicativoBlockingIDA01ExampleExternalClient2SoloCertificato |
 
 
 @autorizzazioneSicurezzaMessaggioRuoliAnyKoNessunRuolo
@@ -214,7 +214,7 @@ And match header Agid-JWT-Signature == '#notpresent'
 Examples:
 | tipo-test | fruitore | username | password | response |
 | interno | DemoSoggettoFruitore | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | authorization-roles-deny-notfound-ApplicativoBlockingIDA01ExampleClient1.xml |
-| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient1| ApplicativoBlockingIDA01ExampleExternalClient1 | authorization-roles-deny-notfound-ApplicativoBlockingIDA01ExampleExternalClient1.xml |
+| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient1| ApplicativoBlockingIDA01ExampleExternalClient1 | authorization-roles-deny-notfound-ApplicativoBlockingIDA01ExampleExternalClient1SoloCertificato.xml |
 
 
 
@@ -231,14 +231,14 @@ Then status 200
 And match response == read('requestConHeader.xml')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
-And match header GovWay-TestSuite-GovWay-Application == '<username>'
+And match header GovWay-TestSuite-GovWay-Application == '<applicativo>'
 
 Examples:
-| tipo-test | fruitore | username | password |
-| interno | DemoSoggettoFruitore | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 |
-| interno (noToken) | DemoSoggettoFruitore | ApplicativoBlockingIDA01ExampleClient4 | ApplicativoBlockingIDA01ExampleClient4 |
-| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient1 | ApplicativoBlockingIDA01ExampleExternalClient1 |
-| esterno (noToken) | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient4 | ApplicativoBlockingIDA01ExampleExternalClient4 |
+| tipo-test | fruitore | username | password | applicativo |
+| interno | DemoSoggettoFruitore | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 |
+| interno (noToken) | DemoSoggettoFruitore | ApplicativoBlockingIDA01ExampleClient4 | ApplicativoBlockingIDA01ExampleClient4 | ApplicativoBlockingIDA01ExampleClient4 |
+| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient1 | ApplicativoBlockingIDA01ExampleExternalClient1 | ApplicativoBlockingIDA01ExampleExternalClient1SoloCertificato |
+| esterno (noToken) | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient4 | ApplicativoBlockingIDA01ExampleExternalClient4 | ApplicativoBlockingIDA01ExampleExternalClient4 |
 
 
 
@@ -255,12 +255,12 @@ Then status 200
 And match response == read('requestConHeader.xml')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
-And match header GovWay-TestSuite-GovWay-Application == '<username>'
+And match header GovWay-TestSuite-GovWay-Application == '<applicativo>'
 
 Examples:
-| tipo-test | fruitore | username | password |
-| interno | DemoSoggettoFruitore | ApplicativoBlockingIDA01ExampleClient2 | ApplicativoBlockingIDA01ExampleClient2 |
-| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient2 | ApplicativoBlockingIDA01ExampleExternalClient2 |
+| tipo-test | fruitore | username | password | applicativo |
+| interno | DemoSoggettoFruitore | ApplicativoBlockingIDA01ExampleClient2 | ApplicativoBlockingIDA01ExampleClient2 | ApplicativoBlockingIDA01ExampleClient2 |
+| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient2 | ApplicativoBlockingIDA01ExampleExternalClient2 | ApplicativoBlockingIDA01ExampleExternalClient2SoloCertificato |
 
 
 
@@ -281,4 +281,4 @@ And match header Agid-JWT-Signature == '#notpresent'
 Examples:
 | tipo-test | fruitore | username | password | response |
 | interno | DemoSoggettoFruitore | ApplicativoBlockingIDA01ExampleClient3 | ApplicativoBlockingIDA01ExampleClient3 | authorization-roles-deny-ApplicativoBlockingIDA01ExampleClient3.xml |
-| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient3| ApplicativoBlockingIDA01ExampleExternalClient3 | authorization-roles-deny-ApplicativoBlockingIDA01ExampleExternalClient3.xml |
+| esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient3| ApplicativoBlockingIDA01ExampleExternalClient3 | authorization-roles-deny-ApplicativoBlockingIDA01ExampleExternalClient3SoloCertificato.xml |

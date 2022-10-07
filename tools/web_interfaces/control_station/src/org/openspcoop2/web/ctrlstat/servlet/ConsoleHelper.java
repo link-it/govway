@@ -5383,8 +5383,15 @@ public class ConsoleHelper implements IConsoleHelper {
 					de = new DataElement();
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_OPZIONALE);
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_OPZIONALE);
-					de.setType(DataElementType.CHECKBOX);
-					de.setSelected(ServletUtils.isCheckBoxEnabled(gestioneTokenOpzionale));
+					if(!isPortaDelegata && protocolloParam!=null && this.core.isProfiloModIPA(protocolloParam) &&
+							(!StatoFunzionalita.ABILITATO.getValue().equals(gestioneTokenOpzionale) )
+						) {
+						de.setType(DataElementType.HIDDEN);
+					}
+					else {
+						de.setType(DataElementType.CHECKBOX);
+						de.setSelected(ServletUtils.isCheckBoxEnabled(gestioneTokenOpzionale));
+					}
 					dati.addElement(de);
 					
 					// validazione input
@@ -12546,7 +12553,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		try {
 			
 			String keystoreSubjectValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_KEYSTORE_SUBJECT);
-			String filterSubjectLabel = CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_SUBJECT_MODE_LABEL;
+			String filterSubjectLabel = CostantiLabel.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_X509_SUBJECT_MODE_LABEL;
 			this.pd.addTextFilter(Filtri.FILTRO_MODI_KEYSTORE_SUBJECT, filterSubjectLabel, keystoreSubjectValue, this.getSize());
 			
 		} catch (Exception e) {
@@ -12606,7 +12613,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					filterLabel = CostantiLabel.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_ESTERNO_LABEL;
 				}
 				else {
-					filterLabel = CostantiLabel.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_INTERNO_LABEL;
+					filterLabel = CostantiLabel.MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_INTERNO_LABEL_FILTRO_RICERCA;
 				}
 			}
 			else {
@@ -12700,7 +12707,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			String sicurezzaMessaggioValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO);
 			
-			this.pd.addFilter(Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO, CostantiLabel.MODIPA_API_PROFILO_SICUREZZA_MESSAGGIO_LABEL, sicurezzaMessaggioValue, values, labels, postback, this.getSize());
+			this.pd.addFilter(Filtri.FILTRO_MODI_SICUREZZA_MESSAGGIO, CostantiLabel.MODIPA_SICUREZZA_MESSAGGIO_FIRMA_APPLICATIVO_SUBTITLE_LABEL, sicurezzaMessaggioValue, values, labels, postback, this.getSize());
 			
 			return sicurezzaMessaggioValue;
 			
@@ -12730,7 +12737,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			String sicurezzaMessaggioValue = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_MODI_SICUREZZA_TOKEN);
 			
-			this.pd.addFilter(Filtri.FILTRO_MODI_SICUREZZA_TOKEN, CostantiLabel.MODIPA_SICUREZZA_CHOICE_TOKEN_LABEL, sicurezzaMessaggioValue, values, labels, postback, this.getSize());
+			this.pd.addFilter(Filtri.FILTRO_MODI_SICUREZZA_TOKEN, CostantiLabel.MODIPA_SICUREZZA_TOKEN_SUBTITLE_LABEL, sicurezzaMessaggioValue, values, labels, postback, this.getSize());
 			
 			return sicurezzaMessaggioValue;
 			

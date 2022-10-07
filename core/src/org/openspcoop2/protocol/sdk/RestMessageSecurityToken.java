@@ -45,6 +45,29 @@ public class RestMessageSecurityToken extends AbstractMessageSecurityToken<Strin
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private String httpHeaderName;
+	private String queryParameterName;
+	private String formParameterName;
+
+	public String getQueryParameterName() {
+		return this.queryParameterName;
+	}
+	public void setQueryParameterName(String queryParameterName) {
+		this.queryParameterName = queryParameterName;
+	}
+	public String getFormParameterName() {
+		return this.formParameterName;
+	}
+	public void setFormParameterName(String formParameterName) {
+		this.formParameterName = formParameterName;
+	}
+	public String getHttpHeaderName() {
+		return this.httpHeaderName;
+	}
+	public void setHttpHeaderName(String httpHeaderName) {
+		this.httpHeaderName = httpHeaderName;
+	}
+	
 	public String getHeader() {
 		if(this.token!=null) {
 			String [] split = this.token.split("\\.");

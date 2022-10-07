@@ -853,12 +853,14 @@ public class GestoreToken {
 		
 	public static EsitoGestioneToken validazioneJWTToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
-			String token, boolean portaDelegata) throws Exception {
+			EsitoPresenzaToken esitoPresenzaToken, boolean portaDelegata) throws Exception {
 		
 		EsitoGestioneToken esitoGestioneToken = null;
 		
+		String token = esitoPresenzaToken.getToken();
+		
 		if(GestoreToken.cacheToken==null){
-			esitoGestioneToken = _validazioneJWTToken(log, datiInvocazione, token, portaDelegata, pddContext);
+			esitoGestioneToken = _validazioneJWTToken(log, datiInvocazione, esitoPresenzaToken, token, portaDelegata, pddContext);
 		}
     	else{
     		String policyName = datiInvocazione.getPolicyGestioneToken().getName();
@@ -907,7 +909,7 @@ public class GestoreToken {
 					if(esitoGestioneToken==null) {
 						// Effettuo la query
 						GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
-						esitoGestioneToken = _validazioneJWTToken(log, datiInvocazione, token, portaDelegata, pddContext);
+						esitoGestioneToken = _validazioneJWTToken(log, datiInvocazione, esitoPresenzaToken, token, portaDelegata, pddContext);
 							
 						// Aggiungo la risposta in cache (se esiste una cache)	
 						// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -949,7 +951,7 @@ public class GestoreToken {
 		return esitoGestioneToken;
 	}
 	
-	private static EsitoGestioneToken _validazioneJWTToken(Logger log, AbstractDatiInvocazione datiInvocazione, String token, boolean portaDelegata, PdDContext pddContext) {
+	private static EsitoGestioneToken _validazioneJWTToken(Logger log, AbstractDatiInvocazione datiInvocazione, EsitoPresenzaToken esitoPresenzaToken, String token, boolean portaDelegata, PdDContext pddContext) {
 		EsitoGestioneToken esitoGestioneToken = null;
 		if(portaDelegata) {
 			esitoGestioneToken = new EsitoGestioneTokenPortaDelegata();
@@ -1011,6 +1013,11 @@ public class GestoreToken {
     						restSecurityToken = new RestMessageSecurityToken();
     						restSecurityToken.setCertificate(new CertificateInfo(jsonCompactVerify.getX509Certificate(), "access_token"));
     						restSecurityToken.setToken(token);
+    						if(esitoPresenzaToken!=null) {
+    							restSecurityToken.setHttpHeaderName(esitoPresenzaToken.getHeaderHttp());
+    							restSecurityToken.setQueryParameterName(esitoPresenzaToken.getPropertyUrl());
+    							restSecurityToken.setFormParameterName(esitoPresenzaToken.getPropertyFormBased());
+    						}
     					}
     				}
     				else {
@@ -1090,9 +1097,11 @@ public class GestoreToken {
 	
 	public static EsitoGestioneToken introspectionToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
-			String token, boolean portaDelegata,
+			EsitoPresenzaToken esitoPresenzaToken, boolean portaDelegata,
 			IDSoggetto idDominio, IDServizio idServizio) throws Exception {
 		EsitoGestioneToken esitoGestioneToken = null;
+		
+		String token = esitoPresenzaToken.getToken();
 		
 		if(GestoreToken.cacheToken==null){
 			esitoGestioneToken = _introspectionToken(log, datiInvocazione, 
@@ -1286,9 +1295,11 @@ public class GestoreToken {
 	
 	public static EsitoGestioneToken userInfoToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
-			String token, boolean portaDelegata,
+			EsitoPresenzaToken esitoPresenzaToken, boolean portaDelegata,
 			IDSoggetto idDominio, IDServizio idServizio) throws Exception {
 		EsitoGestioneToken esitoGestioneToken = null;
+		
+		String token = esitoPresenzaToken.getToken();
 		
 		if(GestoreToken.cacheToken==null){
 			esitoGestioneToken = _userInfoToken(log, datiInvocazione, 
@@ -2812,7 +2823,9 @@ public class GestoreToken {
 		}
 		
 		Map<String, Object> dynamicMap = buildDynamicNegoziazioneTokenMap(busta, requestInfo, pddContext, log, policyNegoziazioneToken.getName());
-		NegoziazioneTokenDynamicParameters dynamicParameters = new NegoziazioneTokenDynamicParameters(dynamicMap, pddContext, policyNegoziazioneToken);
+		NegoziazioneTokenDynamicParameters dynamicParameters = new NegoziazioneTokenDynamicParameters(dynamicMap, 
+				pddContext, busta, state, protocolFactory, 
+				policyNegoziazioneToken);
 		
 		if(GestoreToken.cacheToken==null){
 			esitoNegoziazioneToken = _endpointToken(debug, log, policyNegoziazioneToken, 
@@ -3803,36 +3816,52 @@ public class GestoreToken {
 		String keyPassword = null;
 		if(policyNegoziazioneToken.isRfc7523_x509_Grant()) {
 			
-			String keystoreType = policyNegoziazioneToken.getJwtSignKeystoreType();
-			if(keystoreType==null) {
-				throw new Exception("JWT Signature keystore type undefined");
-			}
-			String keystoreFile = policyNegoziazioneToken.getJwtSignKeystoreFile();
-			if(keystoreFile==null) {
-				throw new Exception("JWT Signature keystore file undefined");
-			}
-			String keystorePassword = policyNegoziazioneToken.getJwtSignKeystorePassword();
-			if(keystorePassword==null) {
-				throw new Exception("JWT Signature keystore password undefined");
-			}
-			keyAlias = policyNegoziazioneToken.getJwtSignKeyAlias();
-			if(keyAlias==null) {
-				throw new Exception("JWT Signature key alias undefined");
-			}
-			keyPassword = policyNegoziazioneToken.getJwtSignKeyPassword();
-			if(keyPassword==null) {
-				throw new Exception("JWT Signature key password undefined");
-			}
-			
-			if("jwk".equalsIgnoreCase(keystoreType)) {
-				jwtStore = GestoreKeystoreCache.getJwkSetStore(keystoreFile);
+			if(policyNegoziazioneToken.isJwtSignKeystoreApplicativoModI()) {
+				ks = dynamicParameters.getKeystoreApplicativoModI();
+				if(ks==null) {
+					throw new Exception("JWT Signature keystore undefined");
+				}
+				keyAlias = dynamicParameters.getKeyAliasApplicativoModI();
+				if(keyAlias==null) {
+					throw new Exception("JWT Signature key alias undefined");
+				}
+				keyPassword = dynamicParameters.getKeyPasswordApplicativoModI();
+				if(keyPassword==null) {
+					throw new Exception("JWT Signature key password undefined");
+				}
 			}
 			else {
-				MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreFile, keystoreType, keystorePassword);
-				if(merlinKs==null) {
-					throw new Exception("Accesso al keystore '"+keystoreFile+"' non riuscito");
+				String keystoreType = policyNegoziazioneToken.getJwtSignKeystoreType();
+				if(keystoreType==null) {
+					throw new Exception("JWT Signature keystore type undefined");
 				}
-				ks = merlinKs.getKeyStore();
+				String keystoreFile = policyNegoziazioneToken.getJwtSignKeystoreFile();
+				if(keystoreFile==null) {
+					throw new Exception("JWT Signature keystore file undefined");
+				}
+				String keystorePassword = policyNegoziazioneToken.getJwtSignKeystorePassword();
+				if(keystorePassword==null) {
+					throw new Exception("JWT Signature keystore password undefined");
+				}
+				keyAlias = policyNegoziazioneToken.getJwtSignKeyAlias();
+				if(keyAlias==null) {
+					throw new Exception("JWT Signature key alias undefined");
+				}
+				keyPassword = policyNegoziazioneToken.getJwtSignKeyPassword();
+				if(keyPassword==null) {
+					throw new Exception("JWT Signature key password undefined");
+				}
+				
+				if("jwk".equalsIgnoreCase(keystoreType)) {
+					jwtStore = GestoreKeystoreCache.getJwkSetStore(keystoreFile);
+				}
+				else {
+					MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreFile, keystoreType, keystorePassword);
+					if(merlinKs==null) {
+						throw new Exception("Accesso al keystore '"+keystoreFile+"' non riuscito");
+					}
+					ks = merlinKs.getKeyStore();
+				}
 			}
 		}
 		
@@ -3849,6 +3878,10 @@ public class GestoreToken {
 		else if(policyNegoziazioneToken.isJwtSignIncludeKeyIdCustom()) {
 			String customId = dynamicParameters.getSignedJwtCustomId();
 			jwtHeaders.setKid(customId);
+		}
+		else if(policyNegoziazioneToken.isJwtSignIncludeKeyIdApplicativoModI()) {
+			String clientId = dynamicParameters.getKidApplicativoModI();
+			jwtHeaders.setKid(clientId);
 		}
 		if(policyNegoziazioneToken.isJwtSignIncludeX509Cert()) {
 			jwtHeaders.setAddX5C(true);

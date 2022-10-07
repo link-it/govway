@@ -1,3 +1,18 @@
+2022-10-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, ApiRsConfigurazione, ProtocolloModIPA]
+	Aggiunta funzionalità OP-1449
+	È adesso possibile registrare più applicativi token ModI con lo stesso certificato di firma poichè è cambiata la modalità di identificazione.
+	L'identificazione di un applicativo, con autenticazione token abilitata, avviene esclusivamente rispetto al client id del token, 
+	cercando tra gli applicativi registrati con credenziali 'Authorization PDND' o 'Authorization OAuth' (con o senza Integrity).
+	Se poi è presente anche un token Agid-JWT-Signature, il certificato al suo interno viene verificato essere corrispondente al certificato associato all'applicativo identificato.
+	Nel caso in cui l'autenticazione token non sia abilitata ed un pattern ModI AUTH è previsto, 
+	il certificato presente all'interno del token ModI viene invece usato per identificare un applicativo che lo possiede.
+	L'identificazione avviene cercando applicativi registrati che possiedono solamente il certificato di firma (Authorization ModI).
+	È stata inoltre aggiunta la token policy 'PDND' built-in da finalizzare in fase di configurazione.
+	Infine è adesso possibile, in una policy di tipo 'Signed JWT' se utilizzata con API registrate con profilo di interoperabilità ModI, 
+	firmare l'asserzione e valorizzare i paramtri ClientId e KID utilizzando il keystore e i dati definiti sull'applicativo richiedente.
+
 2022-10-04  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, ApiRsConfigurazione, Utils]

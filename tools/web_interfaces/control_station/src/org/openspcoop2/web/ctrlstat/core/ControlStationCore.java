@@ -847,11 +847,24 @@ public class ControlStationCore {
 	/** PolicyGestioneToken PropertiesSourceConfiguration */
 	private PropertiesSourceConfiguration policyGestioneTokenPropertiesSourceConfiguration = null;
 	private boolean isPolicyGestioneTokenVerificaCertificati = false;
+	private List<String> policyGestioneTokenPDND = null;
 	public PropertiesSourceConfiguration getPolicyGestioneTokenPropertiesSourceConfiguration() {
 		return this.policyGestioneTokenPropertiesSourceConfiguration;
 	}
 	public boolean isPolicyGestioneTokenVerificaCertificati() {
 		return this.isPolicyGestioneTokenVerificaCertificati;
+	}
+	public List<String> getPolicyGestioneTokenPDND(){
+		return this.policyGestioneTokenPDND;
+	}
+	public boolean isPolicyGestioneTokenPDND(String pdnd){
+		return this.policyGestioneTokenPDND!=null && this.policyGestioneTokenPDND.contains(pdnd);
+	}
+	public String getDefaultPolicyGestioneTokenPDND(){
+		if(this.policyGestioneTokenPDND!=null && !this.policyGestioneTokenPDND.isEmpty()) {
+			return this.policyGestioneTokenPDND.get(0);
+		}
+		return null;
 	}
 	
 	/** AttributeAuthority PropertiesSourceConfiguration */
@@ -2362,6 +2375,7 @@ public class ControlStationCore {
 		/** PolicyGestioneToken PropertiesSourceConfiguration */
 		this.policyGestioneTokenPropertiesSourceConfiguration = core.policyGestioneTokenPropertiesSourceConfiguration;
 		this.isPolicyGestioneTokenVerificaCertificati = core.isPolicyGestioneTokenVerificaCertificati; 
+		this.policyGestioneTokenPDND = core.policyGestioneTokenPDND;
 		
 		/** AttributeAuthority PropertiesSourceConfiguration */
 		this.attributeAuthorityPropertiesSourceConfiguration = core.attributeAuthorityPropertiesSourceConfiguration;
@@ -2815,6 +2829,7 @@ public class ControlStationCore {
 			this.messageSecurityPropertiesSourceConfiguration = consoleProperties.getMessageSecurityPropertiesSourceConfiguration();
 			this.policyGestioneTokenPropertiesSourceConfiguration = consoleProperties.getPolicyGestioneTokenPropertiesSourceConfiguration();
 			this.isPolicyGestioneTokenVerificaCertificati = consoleProperties.isPolicyGestioneTokenVerificaCertificati();
+			this.policyGestioneTokenPDND = consoleProperties.getPolicyGestioneTokenPDND();
 			this.attributeAuthorityPropertiesSourceConfiguration = consoleProperties.getAttributeAuthorityPropertiesSourceConfiguration();
 			this.isAttributeAuthorityVerificaCertificati = consoleProperties.isAttributeAuthorityVerificaCertificati(); 
 			this.isControlloTrafficoPolicyGlobaleGroupByApi = consoleProperties.isControlloTrafficoPolicyGlobaleGroupByApi();

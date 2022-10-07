@@ -37,6 +37,8 @@ public class Costanti {
 	public final static String TIPOLOGIA_RETRIEVE = CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE;
 	public final static String ATTRIBUTE_AUTHORITY = CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY;
 	
+	public static final String CHOICE_APPLICATIVO_MODI_VALUE = "applicativoModi";
+	
 	
 	// Context
 		
@@ -246,13 +248,17 @@ public class Costanti {
 	public final static String POLICY_RETRIEVE_TOKEN_SCOPES = "policy.retrieveToken.scope";
 	public final static String POLICY_RETRIEVE_TOKEN_AUDIENCE = "policy.retrieveToken.audience";
 	public final static String POLICY_RETRIEVE_TOKEN_FORM_CLIENT_ID = "policy.retrieveToken.formClientId";
+	public final static String POLICY_RETRIEVE_TOKEN_FORM_CLIENT_ID_MODE = "policy.retrieveToken.formClientId.mode";
 	public final static String POLICY_RETRIEVE_TOKEN_FORM_RESOURCE = "policy.retrieveToken.formResource";
 	public final static String POLICY_RETRIEVE_TOKEN_FORM_PARAMETERS = "policy.retrieveToken.formParameters";
 	public final static String POLICY_RETRIEVE_TOKEN_SAVE_ERROR_IN_CACHE = "policy.retrieveToken.saveErrorInCache";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_ID_MODE= "policy.retrieveToken.jwt.clientId.mode";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_ID= "policy.retrieveToken.jwt.clientId";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_CLIENT_SECRET= "policy.retrieveToken.jwt.clientSecret";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_ISSUER= "policy.retrieveToken.jwt.issuer";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_ISSUER_MODE= "policy.retrieveToken.jwt.issuer.mode";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_SUBJECT= "policy.retrieveToken.jwt.subject";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SUBJECT_MODE= "policy.retrieveToken.jwt.subject.mode";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_IDENTIFIER= "policy.retrieveToken.jwt.jti";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_AUDIENCE= "policy.retrieveToken.jwt.audience";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_EXPIRED_TTL_SECONDS= "policy.retrieveToken.jwt.expired";
@@ -267,6 +273,7 @@ public class Costanti {
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_ALIAS = "true"; // per backward compatibility
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_CLIENT_ID = "client_id";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_CUSTOM = "custom";
+	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_MODE_APPLICATIVO_MODI = CHOICE_APPLICATIVO_MODI_VALUE ;
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_KEY_ID_VALUE = "policy.retrieveToken.jwt.signature.include.key.id.value";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_CERT = "policy.retrieveToken.jwt.signature.include.cert";
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_SIGN_INCLUDE_X509_URL = "policy.retrieveToken.jwt.signature.include.x509url";
@@ -295,6 +302,12 @@ public class Costanti {
 	public final static String POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED = "${undefined}";
 	
 	
+	// VALORE KEYSTORE MODI
+	    	
+    public static final String KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE = "applicativoModi";
+    public static final String KEYSTORE_TYPE_APPLICATIVO_MODI_LABEL = "Definito nell'applicativo ModI";
+	
+	
 	// CLAIMS PDND
 	
 	public final static String PDND_PURPOSE_ID = "purposeId";
@@ -316,10 +329,13 @@ public class Costanti {
 	public final static String ID_RETRIEVE_CLIENT_ID = "autenticazioneEndpointBasicUsername";
 	public final static String ID_RETRIEVE_JWT_KID_VALUE = "jwtSignatureKidValue";
 	public final static String ID_RETRIEVE_JWT_X5U = "jwtSignatureIncludeCertModeX5U";
+	public final static String ID_RETRIEVE_JWT_CLIENT_ID_APPLICATIVO_MODI_CUSTOM = "jwtClientIdApplicativoModiChoiceInput";
 	public final static String ID_RETRIEVE_JWT_CLIENT_ID = "jwtClientId";
 	public final static String ID_RETRIEVE_JWT_AUDIENCE = "jwtAudience";
 	public final static String ID_RETRIEVE_JWT_ISSUER = "jwtIssuer";
+	public final static String ID_RETRIEVE_JWT_ISSUER_APPLICATIVO_MODI_CUSTOM = "jwtIssuerApplicativoModiChoiceInput";
 	public final static String ID_RETRIEVE_JWT_SUBJECT = "jwtSubject";
+	public final static String ID_RETRIEVE_JWT_SUBJECT_APPLICATIVO_MODI_CUSTOM = "jwtSubjectApplicativoModiChoiceInput";
 	public final static String ID_RETRIEVE_JWT_IDENTIFIER = "jwtIdentifier";
 	public final static String ID_RETRIEVE_JWT_CLAIMS = "jwtPayloadClaims";
 	public final static String ID_RETRIEVE_JWT_PURPOSE_ID = "jwtPurposeID";
@@ -327,6 +343,7 @@ public class Costanti {
 	public final static String ID_RETRIEVE_SCOPE = "scope";
 	public final static String ID_RETRIEVE_AUDIENCE = "audience";
 	public final static String ID_RETRIEVE_FORM_CLIENT_ID = "formClientId";
+	public final static String ID_RETRIEVE_FORM_CLIENT_ID_APPLICATIVO_MODI_CUSTOM = "formClientIdApplicativoModiChoiceInput";
 	public final static String ID_RETRIEVE_FORM_RESOURCE = "formResource";
 	public final static String ID_RETRIEVE_FORM_PARAMETERS = "formParameters";
 	
@@ -389,6 +406,7 @@ public class Costanti {
 	public final static String ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE = "jwtKeystoreType";
 	public final static String ID_NEGOZIAZIONE_JWT_KEYSTORE_FILE = "jwtKeystoreFile";
 	public final static String ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD = "jwtKeystorePassword";
+	public final static String ID_NEGOZIAZIONE_JWT_KEYSTORE_ALIAS_PRIVATE_KEY = "jwtAliasChiavePrivata";
 	public final static String ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY = "jwtPasswordChiavePrivata";
 	
 	public final static String ID_AA_JWS_KEYSTORE_TYPE = "aaJWSKeystoreType";

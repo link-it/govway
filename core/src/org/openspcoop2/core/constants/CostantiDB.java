@@ -631,6 +631,8 @@ public final class CostantiDB {
 	
 	public static final String MODIPA_SICUREZZA_TOKEN_CLIENT_ID = "modipaSecurityTokenClientId";
 	
+	public static final String MODIPA_SICUREZZA_TOKEN_KID_ID = "modipaSecurityTokenKID";
+	
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE = "modipaSecurityMessageProfileActionMode";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE = "modipaSecurityMessageConfig";

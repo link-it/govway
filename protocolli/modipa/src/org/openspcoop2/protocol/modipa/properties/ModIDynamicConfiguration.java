@@ -180,8 +180,8 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				configuration.addConsoleItem(titolo );
 				
 				BaseConsoleItem subTitolo = ProtocolPropertiesFactory.newSubTitleItem(
-						ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_ID, 
-						ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL);
+						ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_CERTIFICATO_SUBTITLE_ID, 
+						ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_CERTIFICATO_SUBTITLE_LABEL);
 				configuration.addConsoleItem(subTitolo );
 				
 				BooleanConsoleItem booleanConsoleItem = 
@@ -192,11 +192,16 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				configuration.addConsoleItem(booleanConsoleItem);
 				
 				this.addKeystoreConfig(configuration, false, true, true);
+				
+				BaseConsoleItem subTitoloMODI_AUTH = ProtocolPropertiesFactory.newSubTitleItem(
+						ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_MODI_AUTH_SUBTITLE_ID, 
+						ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_MODI_AUTH_SUBTITLE_LABEL);
+				configuration.addConsoleItem(subTitoloMODI_AUTH);
 			}
 			
 			if(esterno) {
 				BaseConsoleItem subTitolo = ProtocolPropertiesFactory.newSubTitleItem(
-						ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_ID, 
+						ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_CERTIFICATO_SUBTITLE_ID, 
 						ModIConsoleCostanti.MODIPA_API_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_LABEL_PARAMETRI_RISPOSTA);
 				configuration.addConsoleItem(subTitolo );
 			}
@@ -241,8 +246,8 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 						
 			if(!esterno) {
 				BaseConsoleItem subTitolo = ProtocolPropertiesFactory.newSubTitleItem(
-						ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_ID, 
-						ModIConsoleCostanti.MODIPA_SICUREZZA_CHOICE_TOKEN_LABEL);
+						ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_SUBTITLE_ID, 
+						ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_SUBTITLE_LABEL);
 				configuration.addConsoleItem(subTitolo );
 				
 				BooleanConsoleItem booleanConsoleItem = 
@@ -267,7 +272,8 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				
 				String [] policyLabels = null;
 				String [] policyValues = null;
-				if(!ConsoleOperationType.CHANGE.equals(consoleOperationType)){
+				boolean tokenPolicyUndefined = true; // !ConsoleOperationType.CHANGE.equals(consoleOperationType)
+				if(tokenPolicyUndefined){
 					policyLabels = new String[gestorePolicyTokenList.size() + 1];
 					policyValues = new String[gestorePolicyTokenList.size() + 1];
 					
@@ -281,7 +287,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				
 				for (int i = 0; i < gestorePolicyTokenList.size(); i++) {
 					GenericProperties genericProperties = gestorePolicyTokenList.get(i);
-					if(!ConsoleOperationType.CHANGE.equals(consoleOperationType)){
+					if(tokenPolicyUndefined){
 						policyLabels[(i+1)] = genericProperties.getNome();
 						policyValues[(i+1)] = genericProperties.getNome();
 					}
@@ -307,6 +313,14 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 						ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_CLIENT_LABEL);
 				tokenClientIdItem.setRequired(true);
 				configuration.addConsoleItem(tokenClientIdItem);
+				
+				StringConsoleItem tokenKIDItem = (StringConsoleItem) 
+						ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+						ConsoleItemType.TEXT_EDIT,
+						ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_KID_ID, 
+						ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_KID_LABEL);
+				tokenKIDItem.setRequired(false);
+				configuration.addConsoleItem(tokenKIDItem);
 			}
 			
 			return configuration;
@@ -346,10 +360,11 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		
 		if(!esterno && isClient) {
 			
+			ConfigurazioneMultitenant configurazioneMultitenant = null;
+						
 			BooleanProperty booleanModeItemValue = (BooleanProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_ID);
 			if(booleanModeItemValue!=null && booleanModeItemValue.getValue()!=null && booleanModeItemValue.getValue()) {
 				boolean hideSceltaArchivioFilePath = false;
-				ConfigurazioneMultitenant configurazioneMultitenant = null;
 				try {
 					configurazioneMultitenant = configIntegrationReader.getConfigurazioneMultitenant();
 				}
@@ -369,6 +384,12 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				this.updateKeystoreConfig(consoleConfiguration, properties, false, 
 						hideSceltaArchivioFilePath, addHiddenSubjectIssuer,
 						true, configurazioneMultitenant);
+				
+				BaseConsoleItem subTitoloMODI_AUTH = ProtocolPropertiesUtils.getBaseConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_MODI_AUTH_SUBTITLE_ID);
+				if(subTitoloMODI_AUTH!=null) {
+					subTitoloMODI_AUTH.setType(ConsoleItemType.SUBTITLE);
+				}
+
 			}
 			else {
 
@@ -397,21 +418,64 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				if(profiloSicurezzaMessaggioX5UItem!=null) {
 					profiloSicurezzaMessaggioX5UItem.setType(ConsoleItemType.HIDDEN);
 				}
+				
+				BaseConsoleItem subTitoloMODI_AUTH = ProtocolPropertiesUtils.getBaseConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_MODI_AUTH_SUBTITLE_ID);
+				if(subTitoloMODI_AUTH!=null) {
+					subTitoloMODI_AUTH.setType(ConsoleItemType.HIDDEN);
+				}
 			}
 		
 			
 			BooleanProperty booleanModeItemTokenValue = (BooleanProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_ID);
 			if(booleanModeItemTokenValue!=null && booleanModeItemTokenValue.getValue()!=null && booleanModeItemTokenValue.getValue()) {
+				
+				StringProperty tokenPolicyItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_POLICY_ID);
+				
 				AbstractConsoleItem<?> tokenPolicyItem = ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_POLICY_ID);
 				if(tokenPolicyItem!=null) {
-					tokenPolicyItem.setType(ConsoleItemType.SELECT);
-					tokenPolicyItem.setRequired(true);
+					if(configurazioneMultitenant==null) {
+						try {
+							configurazioneMultitenant = configIntegrationReader.getConfigurazioneMultitenant();
+						}
+						catch(RegistryNotFound notFound) {}
+						catch(Exception e) {
+							throw new ProtocolException(e.getMessage(),e);
+						}
+					}
+					
+					if(configurazioneMultitenant!=null &&
+							StatoFunzionalita.ABILITATO.equals(configurazioneMultitenant.getStato()) &&
+							!PortaApplicativaSoggettiFruitori.SOGGETTI_ESTERNI.equals(configurazioneMultitenant.getErogazioneSceltaSoggettiFruitori())) {
+						if(tokenPolicyItemValue==null || tokenPolicyItemValue.getValue()==null || StringUtils.isEmpty(tokenPolicyItemValue.getValue()) || 
+								ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED.equals(tokenPolicyItemValue.getValue())) {
+							tokenPolicyItem.setNote(ModIConsoleCostanti.MODIPASICUREZZA_TOKEN_POLICY_NOTE);
+						}
+						tokenPolicyItem.setType(ConsoleItemType.SELECT);
+						tokenPolicyItem.setRequired(false);
+						tokenPolicyItem.setReloadOnChange(true);
+					}
+					else {
+						tokenPolicyItem.setNote(null);
+						tokenPolicyItem.setType(ConsoleItemType.HIDDEN);
+						tokenPolicyItem.setRequired(false);
+					}
 				}
 				
 				AbstractConsoleItem<?> tokenClientIdItem = ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_CLIENT_ID);
 				if(tokenClientIdItem!=null) {
 					tokenClientIdItem.setType(ConsoleItemType.TEXT_EDIT);
 					tokenClientIdItem.setRequired(true);
+				}
+				
+				AbstractConsoleItem<?> tokenKidItem = ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_KID_ID);
+				if(tokenKidItem!=null) {
+					// verifico se abilitato il certificato
+					if(booleanModeItemValue!=null && booleanModeItemValue.getValue()!=null && booleanModeItemValue.getValue()) {
+						tokenKidItem.setType(ConsoleItemType.TEXT_EDIT);
+					}
+					else {
+						tokenKidItem.setType(ConsoleItemType.HIDDEN);
+					}
 				}
 			}
 			else {
@@ -425,6 +489,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				if(tokenPolicyItem!=null) {
 					tokenPolicyItem.setType(ConsoleItemType.HIDDEN);
 					tokenPolicyItem.setRequired(false);
+					tokenPolicyItem.setNote(null);
 				}
 				
 				
@@ -437,6 +502,16 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				StringProperty tokenClientIdItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_CLIENT_ID);
 				if(tokenClientIdItemValue!=null) {
 					tokenClientIdItemValue.setValue(null);
+				}
+				
+				AbstractConsoleItem<?> tokenKidItem = ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_KID_ID);
+				if(tokenKidItem!=null) {
+					tokenKidItem.setType(ConsoleItemType.HIDDEN);
+				}
+				
+				StringProperty tokenKidItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_KID_ID);
+				if(tokenKidItemValue!=null) {
+					tokenKidItemValue.setValue(null);
 				}
 				
 			}
@@ -550,16 +625,24 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 					try {
 						cert = ModIDynamicConfiguration.readKeystoreConfig(properties, false);
 					}catch(Throwable e) {
-						throw new ProtocolException("Verificare i parametri indicati per il keystore in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL+": "+e.getMessage(),e);
+						throw new ProtocolException("Verificare i parametri indicati per il keystore in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_CERTIFICATO_SUBTITLE_LABEL_MSG_ERROR+": "+e.getMessage(),e);
 					}
 				}
 				else if(verifyCertificateConfig) {
 					try {
 						cert = ModIDynamicConfiguration.readKeystoreConfig(properties, true);
 					}catch(Throwable e) {
-						throw new ProtocolException("Verificare il certificato caricato in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL+": "+e.getMessage(),e);
+						throw new ProtocolException("Verificare il certificato caricato in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_CERTIFICATO_SUBTITLE_LABEL_MSG_ERROR+": "+e.getMessage(),e);
 					}
+				
+				}
 					
+				if(verifyCertificateConfig) { 
+					// il controllo lo devo fare solamente se definisco una modalità per cui consente di fornire a parte il certificato
+					// la modalita 'verifyKeystoreConfig' è associata alla modalità archivio dove si carica il PKCS12.
+					// in questo caso se abilito la validazione sotto indicata, non posso definire 2 applicativi con lo stesso PKCS12, che invece potrebbe dover servire.
+					// Serve in una fase di fruizione, nella fase di erogazione con multitenant, poi verrà identificato uno a casa ma non è evitabile.
+					// In questi casi si consiglia di usare anzi una modalità filesyste o HSM dove si fornirà il certificato in più solo per l'applicativo che deve essere identificato lato erogazione
 					if(cert!=null && cert.getSubject()!=null) {
 						
 						FiltroRicercaServiziApplicativi filtro = IdentificazioneApplicativoMittenteUtils.createFilter(cert.getSubject().toString(), 
@@ -570,7 +653,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 							list = configIntegrationReader.findIdServiziApplicativi(filtro);
 						}catch(RegistryNotFound notFound) {}
 						catch(Throwable t) {
-							throw new ProtocolException("Errore non atteso durante la verfica del certificato caricato in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL+": "+t.getMessage(),t);
+							throw new ProtocolException("Errore non atteso durante la verfica del certificato caricato in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_CERTIFICATO_SUBTITLE_LABEL_MSG_ERROR+": "+t.getMessage(),t);
 						}
 						if(list!=null) {
 							for (IDServizioApplicativo idServizioApplicativoSubjectIssuerCheck : list) {
@@ -581,7 +664,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 									ServizioApplicativo sa = configIntegrationReader.getServizioApplicativo(idServizioApplicativoSubjectIssuerCheck);
 									certificatoCheck = IdentificazioneApplicativoMittenteUtils.readServizioApplicativoByCertificate(sa);
 								}catch(Throwable t) {
-									throw new ProtocolException("Errore non atteso durante la verfica del certificato caricato in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL+": "+t.getMessage(),t);
+									throw new ProtocolException("Errore non atteso durante la verfica del certificato caricato in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_CERTIFICATO_SUBTITLE_LABEL_MSG_ERROR+": "+t.getMessage(),t);
 								}
 								
 								if(certificatoCheck!=null) {
@@ -589,7 +672,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 									if(certificatoCheck instanceof java.security.cert.X509Certificate) {
 										if(cert.equals(((java.security.cert.X509Certificate)certificatoCheck),true)) {
 											if(ConsoleOperationType.ADD.equals(consoleOperationType) || !idServizioApplicativoSubjectIssuerCheck.equals(id)) {
-												throw new ProtocolException("Il certificato caricato in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL+" risulta già assegnato all'applicativo '"+idServizioApplicativoSubjectIssuerCheck.getNome()+"'");
+												throw new ProtocolException("Il certificato caricato in "+ModIConsoleCostanti.MODIPA_SICUREZZA_MESSAGGIO_CERTIFICATO_SUBTITLE_LABEL_MSG_ERROR+" risulta già assegnato all'applicativo '"+idServizioApplicativoSubjectIssuerCheck.getNome()+"'");
 											}
 											
 										}
@@ -690,23 +773,30 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				BooleanProperty booleanModeItemTokenValue = (BooleanProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_ID);
 				if(booleanModeItemTokenValue!=null && booleanModeItemTokenValue.getValue()!=null && booleanModeItemTokenValue.getValue()) {
 					
+					String tokenPolicyName = null;
 					StringProperty tokenPolicyItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_POLICY_ID);
 					if(tokenPolicyItemValue==null || tokenPolicyItemValue.getValue()==null || StringUtils.isEmpty(tokenPolicyItemValue.getValue()) || 
 							ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED.equals(tokenPolicyItemValue.getValue())) {
-						throw new ProtocolException("Deve essere selezionata una "+ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_POLICY_LABEL);
+						// NON e' OBBLIGATORIA!
+						//throw new ProtocolException("Deve essere selezionata una "+ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_POLICY_LABEL);
+					}
+					else {
+						tokenPolicyName = tokenPolicyItemValue.getValue();
 					}
 					
 					// Altrimenti la select list è valorizzata con quelli esistenti
-					GenericProperties gp = null;
-					try {
-						gp = configIntegrationReader.getTokenPolicyValidazione(tokenPolicyItemValue.getValue());
-					}
-					catch(RegistryNotFound notFound) {}
-					catch(RegistryException e) {
-						throw new ProtocolException(ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_POLICY_LABEL+" indicata '"+tokenPolicyItemValue.getValue()+"' non esiste? (errore: "+e.getMessage()+")",e);
-					}
-					if(gp==null) {
-						throw new ProtocolException(ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_POLICY_LABEL+" indicata '"+tokenPolicyItemValue.getValue()+"' non esiste");
+					if(tokenPolicyName!=null) {
+						GenericProperties gp = null;
+						try {
+							gp = configIntegrationReader.getTokenPolicyValidazione(tokenPolicyName);
+						}
+						catch(RegistryNotFound notFound) {}
+						catch(RegistryException e) {
+							throw new ProtocolException(ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_POLICY_LABEL+" indicata '"+tokenPolicyName+"' non esiste? (errore: "+e.getMessage()+")",e);
+						}
+						if(gp==null) {
+							throw new ProtocolException(ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_POLICY_LABEL+" indicata '"+tokenPolicyName+"' non esiste");
+						}
 					}
 										
 					StringProperty tokenClientIdItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_SICUREZZA_TOKEN_CLIENT_ID);
@@ -724,29 +814,31 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 					}
 					
 					ServizioApplicativo sa = null;
-					try {
-						sa = configIntegrationReader.getServizioApplicativoByCredenzialiToken(tokenPolicyItemValue.getValue(), tokenClientIdItemValue.getValue(), tokenWithHttpsEnabled);
-						boolean alreadyExists = false;
-						if(sa!=null) {
-							if(ConsoleOperationType.ADD.equals(consoleOperationType)) {
-								alreadyExists=true;
-							}
-							else {
-								IDServizioApplicativo idSAFind = new IDServizioApplicativo();
-								idSAFind.setIdSoggettoProprietario(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-								idSAFind.setNome(sa.getNome());
-								if(!id.equals(idSAFind)) {
+					if(tokenPolicyName!=null) {
+						try {
+							sa = configIntegrationReader.getServizioApplicativoByCredenzialiToken(tokenPolicyName, tokenClientIdItemValue.getValue(), tokenWithHttpsEnabled);
+							boolean alreadyExists = false;
+							if(sa!=null) {
+								if(ConsoleOperationType.ADD.equals(consoleOperationType)) {
 									alreadyExists=true;
 								}
+								else {
+									IDServizioApplicativo idSAFind = new IDServizioApplicativo();
+									idSAFind.setIdSoggettoProprietario(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+									idSAFind.setNome(sa.getNome());
+									if(!id.equals(idSAFind)) {
+										alreadyExists=true;
+									}
+								}
 							}
+							if(alreadyExists) {
+								String labelSoggetto = NamingUtils.getLabelSoggetto(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+								throw new ProtocolException("L'applicativo "+sa.getNome()+" (soggetto: "+labelSoggetto+") possiede già l'identificativo client indicato");
+							}
+						}catch(RegistryNotFound notFound) {}
+						catch(Exception e) {
+							throw new ProtocolException(e.getMessage(),e);
 						}
-						if(alreadyExists) {
-							String labelSoggetto = NamingUtils.getLabelSoggetto(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-							throw new ProtocolException("L'applicativo "+sa.getNome()+" (soggetto: "+labelSoggetto+") possiede già l'identificativo client indicato");
-						}
-					}catch(RegistryNotFound notFound) {}
-					catch(Exception e) {
-						throw new ProtocolException(e.getMessage(),e);
 					}
 				}
 			}

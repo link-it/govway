@@ -31,6 +31,7 @@ import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.utils.ModIKeystoreUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -42,68 +43,15 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ModIKeystoreConfig {
+public class ModIKeystoreConfig extends ModIKeystoreUtils {
 
-	private String securityMessageKeystoreMode = null;
-	private byte[] securityMessageKeystoreArchive = null;
-	private String securityMessageKeystoreType = null;
-	private boolean securityMessageKeystoreHSM = false;
-	private String securityMessageKeystorePath = null;
-	private String securityMessageKeystorePassword = null;
-	private String securityMessageKeyAlias = null;
-	private String securityMessageKeyPassword = null;
-	
 	public ModIKeystoreConfig(ServizioApplicativo sa, String securityMessageProfile) throws ProtocolException, UtilsException {
-		
-		boolean securityMessageProfileDefinedApplicativo = ProtocolPropertiesUtils.getBooleanValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_SICUREZZA_MESSAGGIO, false);
-		if(!securityMessageProfileDefinedApplicativo) {
-			ProtocolException pe = new ProtocolException("Il profilo di sicurezza richiesto '"+securityMessageProfile+"' non è applicabile poichè l'applicativo mittente "+sa.getNome()+" ("+sa.getNomeSoggettoProprietario()+") non possiede una configurazione dei parametri di sicurezza messaggio");
-			pe.setInteroperabilityError(true);
-			throw pe;
-		}
-		
-		this.securityMessageKeystoreMode = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_MODE);
-		if(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_HSM.equals(this.securityMessageKeystoreMode)) {
-			this.securityMessageKeystoreHSM = true;
-		}
-		else if(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE.equals(this.securityMessageKeystoreMode)) {
-			this.securityMessageKeystoreArchive = ProtocolPropertiesUtils.getRequiredBinaryValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_ARCHIVE);
-		}
-		else {
-			this.securityMessageKeystorePath = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_PATH);
-			
-			try {
-				HttpUtilities.validateUri(this.securityMessageKeystorePath, true);
-			}catch(Exception e) {
-				throw new ProtocolException("["+this.securityMessageKeystorePath+"] "+e.getMessage(),e);
-			}
-		}
-		
-		this.securityMessageKeystoreType = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_TYPE);
-	
-		if(this.securityMessageKeystoreHSM) {
-			this.securityMessageKeystorePath = HSMUtils.KEYSTORE_HSM_PREFIX+this.securityMessageKeystoreType;
-		}
-		
-		if(!this.securityMessageKeystoreHSM) {
-			this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEYSTORE_PASSWORD);
-		}
-		else {
-			this.securityMessageKeystorePassword = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
-		}
-		
-		this.securityMessageKeyAlias = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEY_ALIAS);
-		
-		if(!this.securityMessageKeystoreHSM || HSMUtils.HSM_CONFIGURABLE_KEY_PASSWORD) {
-			this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_KEY_PASSWORD);
-		}
-		else {
-			this.securityMessageKeyPassword = HSMUtils.KEYSTORE_HSM_PRIVATE_KEY_PASSWORD_UNDEFINED;
-		}
-		
+		super(sa, securityMessageProfile);
 	}
 	
 	public ModIKeystoreConfig(boolean fruizione, IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica asps, String securityMessageProfile) throws ProtocolException, UtilsException {
+		
+		super();
 		
 		try {
 			List<ProtocolProperty> listProtocolProperties = ModIPropertiesUtils.getProtocolProperties(fruizione, soggettoFruitore, asps);
@@ -207,35 +155,4 @@ public class ModIKeystoreConfig {
 		
 	}
 	
-	public String getSecurityMessageKeyAlias() {
-		return this.securityMessageKeyAlias;
-	}
-
-	public String getSecurityMessageKeystoreType() {
-		return this.securityMessageKeystoreType;
-	}
-
-	public boolean isSecurityMessageKeystoreHSM() {
-		return this.securityMessageKeystoreHSM;
-	}
-	
-	public String getSecurityMessageKeystoreMode() {
-		return this.securityMessageKeystoreMode;
-	}
-
-	public byte[] getSecurityMessageKeystoreArchive() {
-		return this.securityMessageKeystoreArchive;
-	}
-
-	public String getSecurityMessageKeystorePath() {
-		return this.securityMessageKeystorePath;
-	}
-
-	public String getSecurityMessageKeystorePassword() {
-		return this.securityMessageKeystorePassword;
-	}
-
-	public String getSecurityMessageKeyPassword() {
-		return this.securityMessageKeyPassword;
-	}
 }

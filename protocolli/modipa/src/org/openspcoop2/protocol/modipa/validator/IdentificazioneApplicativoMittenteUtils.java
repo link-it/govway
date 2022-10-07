@@ -24,7 +24,9 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaSoggettiFruitori;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -33,20 +35,26 @@ import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
+import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.certificate.CertificateUtils;
+import org.openspcoop2.utils.certificate.PrincipalType;
 import org.slf4j.Logger;
 
 /**
@@ -59,11 +67,12 @@ import org.slf4j.Logger;
 public class IdentificazioneApplicativoMittenteUtils {
 
 	// invocato in AbstractModIValidazioneSintatticaCommons e di conseguenza in ModIValidazioneSintatticaRest e ModIValidazioneSintatticaSoap durante il trattamento del token di sicurezza
-	public static IDServizioApplicativo identificazioneApplicativoMittenteByX509(Logger log, IState state, X509Certificate x509, Busta busta, Context context) throws Exception {
+	public static IDServizioApplicativo identificazioneApplicativoMittenteByX509(Logger log, IState state, X509Certificate x509, OpenSPCoop2Message msg, Busta busta, 
+			Context context, IProtocolFactory<?> factory) throws Exception {
 		try {
 			
 			/** SICUREZZA MESSAGGIO **/
-						
+									
 			IDSoggetto idSoggettoMittente = null;
 			if(busta.getTipoMittente()!=null && busta.getMittente()!=null) {
 				idSoggettoMittente = new IDSoggetto(busta.getTipoMittente(),busta.getMittente());
@@ -144,9 +153,8 @@ public class IdentificazioneApplicativoMittenteUtils {
 					}
 					// Non ha senso poter identificare entrambi con le stesse credenziali
 					else if(idServizioApplicativo.getIdSoggettoProprietario().equals(idSoggettoMittente)==false) {
-						throw new Exception("Token di sicurezza firmato da un applicativo '"+idServizioApplicativo.getNome()+
-								"' risiedente nel dominio del soggetto '"+idServizioApplicativo.getIdSoggettoProprietario().toString()+"'; il dominio differisce dal soggetto identificato sul canale di trasporto ("+idSoggettoMittente+
-								")");
+						String msgError = ModIUtils.getMessaggioErroreDominioCanaleDifferenteDominioApplicativo(idServizioApplicativo, idSoggettoMittente);
+						throw new Exception(msgError);
 					}
 				}
 				
@@ -196,16 +204,15 @@ public class IdentificazioneApplicativoMittenteUtils {
 				}
 				// Non ha senso poter identificare entrambi con le stesse credenziali
 				else if(idServizioApplicativoToken.getIdSoggettoProprietario().equals(idSoggettoMittente)==false) {
-					String msgError = "Token di sicurezza firmato da un applicativo '"+idServizioApplicativoToken.getNome()+
-							"' risiedente nel dominio del soggetto '"+idServizioApplicativoToken.getIdSoggettoProprietario().toString()+"'; il dominio differisce dal soggetto identificato sul canale di trasporto ("+idSoggettoMittente+
-							")";
+					String msgError = ModIUtils.getMessaggioErroreDominioCanaleDifferenteDominioApplicativo(idServizioApplicativoToken, idSoggettoMittente);
 					errorDetails.append(msgError);
 					throw new Exception(msgError);
 				}
 	    		
 	    		if(idServizioApplicativo!=null) {
 	    			// già identificato anche in token di sicurezza messaggio
-	    			
+	    			// DEPRECATO: non può succedere, poichè se vi è attivo una autenticazione token, viene usata quella per identificare l'applicativo mittente
+	    			// questo caso quindi non può succedere, si lascia il codice per controllo di robustezza
 	    			if(!idServizioApplicativo.equals(idServizioApplicativoToken)) {
 	    				String msgError = "Rilevati due token di sicurezza firmati da applicativi differenti: '"+idServizioApplicativo.getNome()+
 								"' e '"+idServizioApplicativoToken.getNome()+"'";
@@ -234,7 +241,116 @@ public class IdentificazioneApplicativoMittenteUtils {
 			throw e;
 		}
 	}
-	    
+	  
+	
+	public static void checkApplicativoTokenByX509(Logger log, IDServizioApplicativo idServizioApplicativo, 
+			IState state, String tipoToken, CertificateInfo certificatoSicurezzaMessaggio, StringBuilder errorDetails) throws Exception {
+		try {
+			
+			ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+			
+			ServizioApplicativo saToken = configurazionePdDManager.getServizioApplicativo(idServizioApplicativo);
+			
+			String cnSubjectSicurezzaMessaggio = certificatoSicurezzaMessaggio.getSubject().getCN();
+			String subjectSicurezzaMessaggio = certificatoSicurezzaMessaggio.getSubject().toString();
+			String issuerSicurezzaMessaggio = null;
+			if(certificatoSicurezzaMessaggio.getIssuer()!=null) {
+				issuerSicurezzaMessaggio = certificatoSicurezzaMessaggio.getIssuer().toString();
+			}
+			
+			boolean registered = false;
+			if(saToken.getInvocazionePorta()!=null){
+				for(int z=0;z<saToken.getInvocazionePorta().sizeCredenzialiList();z++){
+					
+					if(saToken.getInvocazionePorta().getCredenziali(z).getTipo() == null // default
+							||
+							CostantiConfigurazione.CREDENZIALE_SSL.equals(saToken.getInvocazionePorta().getCredenziali(z).getTipo())){
+						
+						Credenziali c = saToken.getInvocazionePorta().getCredenziali(z);
+						
+						// 1. Prima si cerca per certificato strict
+						// 2. Poi per certificato no strict
+						if(c.getCertificate()!=null) {
+							if(cnSubjectSicurezzaMessaggio.equals(c.getCnSubject())) {
+								Certificate cer = ArchiveLoader.load(ArchiveType.CER, c.getCertificate(), 0, null);
+								boolean strict = true;
+								if(certificatoSicurezzaMessaggio.equals(cer.getCertificate(),strict)) {
+									registered=true;
+									break;
+								}
+								if(certificatoSicurezzaMessaggio.equals(cer.getCertificate(),!strict)) {
+									registered=true;
+									break;
+								}
+							}
+						}
+						
+						// 3. per subject/issuer
+						// 4. solo per subject
+						if(c.getSubject()!=null) {
+						
+							boolean subjectValid = CertificateUtils.sslVerify(c.getSubject(), subjectSicurezzaMessaggio, PrincipalType.subject, log);
+							boolean issuerValid = true;
+							if(subjectValid) {
+								if(c.getIssuer()!=null) {
+									if(issuerSicurezzaMessaggio!=null) {
+										issuerValid = CertificateUtils.sslVerify(c.getIssuer(), issuerSicurezzaMessaggio, PrincipalType.issuer, log);
+									}
+								}
+							}
+							
+							if(subjectValid && issuerValid){
+								registered=true;
+								break;
+							}
+						}
+												
+					}
+					
+				}
+			}
+			
+			// 5. provare a vedere se si tratta di un applicativo interno (multi-tenant)
+			
+			if(!registered) {
+				if(StatoFunzionalita.ABILITATO.equals(configurazionePdDManager.getConfigurazioneMultitenant().getStato()) &&
+						!PortaApplicativaSoggettiFruitori.SOGGETTI_ESTERNI.equals(configurazionePdDManager.getConfigurazioneMultitenant().getErogazioneSceltaSoggettiFruitori())) {
+						
+					java.security.cert.Certificate certificatoCheck = readServizioApplicativoByCertificate(saToken);
+
+					if(certificatoCheck!=null) {
+						//if(certificate.equals(certificatoCheck.getCertificate(),true)) {
+						if(certificatoCheck instanceof java.security.cert.X509Certificate) {
+							if(certificatoSicurezzaMessaggio.equals(((java.security.cert.X509Certificate)certificatoCheck),true)) {
+								registered=true;
+							}
+						}
+					}
+					
+				}
+			}
+			
+			if(!registered) {
+				
+				StringBuilder sb = new StringBuilder();
+				sb.append("subject=\"").append(subjectSicurezzaMessaggio).append("\"");
+				if(issuerSicurezzaMessaggio!=null) {
+					sb.append(" issuer=\"").append(issuerSicurezzaMessaggio).append("\"");
+				}
+				
+				String idApp = idServizioApplicativo.getNome() + " (Soggetto: "+idServizioApplicativo.getIdSoggettoProprietario().getNome()+")";
+				String msgError = "Applicativo Mittente "+idApp+" non autorizzato; il certificato di firma ("+sb.toString()+") del security token ("+tipoToken+") non corrisponde all'applicativo";
+				errorDetails.append(msgError);
+				throw new Exception(msgError);
+			}
+	    	
+		}catch(Exception e) {
+			log.error("Errore durante la verifica del certificato di firma associato all'applicativo token: "+e.getMessage(),e);
+			throw e;
+		}
+	}
+	
+	
 	
 	public static void setInformazioniInBustaAndContext(Logger log, IState state, Busta busta, Context context,
 			IDSoggetto idSoggettoMittente, IDServizioApplicativo idServizioApplicativo) throws Exception {

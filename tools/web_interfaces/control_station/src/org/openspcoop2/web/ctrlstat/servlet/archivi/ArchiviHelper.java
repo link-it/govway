@@ -84,6 +84,7 @@ import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.TipologiaConnettori;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
@@ -2660,9 +2661,31 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		
 		String tokenPolicySA = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY);
 		String tokenClientIdSA = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
-		boolean tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN.equals(tipoauth);
-		if(tokenWithHttpsEnabledByConfigSA) {
-			tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL;
+		
+		boolean tokenWithHttpsEnabledByConfigSA = false;
+		if(tipoauth!=null && !StringUtils.isEmpty(tokenPolicySA)) {
+			boolean tokenByPDND = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND.equals(tipoauth) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_PDND.equals(tipoauth);
+			tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND.equals(tipoauth) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_OAUTH.equals(tipoauth);
+			if(tokenWithHttpsEnabledByConfigSA) {
+				tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL;
+			}
+			boolean tokenModiPDNDOauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_PDND.equals(tipoauth) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_OAUTH.equals(tipoauth);
+			if(tokenModiPDNDOauth) {
+				tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN;
+			}
+			if(tokenPolicySA==null || StringUtils.isEmpty(tokenPolicySA) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicySA)) {
+				if(tokenByPDND) {
+					tokenPolicySA = this.saCore.getDefaultPolicyGestioneTokenPDND();
+				}
+			}
+			else {
+				if(!tokenByPDND && (tokenWithHttpsEnabledByConfigSA || tokenModiPDNDOauth) && this.saCore.isPolicyGestioneTokenPDND(tokenPolicySA)) {
+					tokenPolicySA=null;
+				}
+				else if(tokenByPDND && !this.saCore.isPolicyGestioneTokenPDND(tokenPolicySA)) {
+					tokenPolicySA = this.saCore.getDefaultPolicyGestioneTokenPDND();
+				}
+			}
 		}
 		
 		if(tipoauth==null || tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)){

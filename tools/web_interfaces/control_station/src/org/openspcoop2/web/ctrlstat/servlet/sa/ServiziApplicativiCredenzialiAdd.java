@@ -510,7 +510,7 @@ public final class ServiziApplicativiCredenzialiAdd extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = saHelper.servizioApplicativoCredenzialiCertificatiCheckData(TipoOperazione.CHANGE, idProv, null, 0);
+			boolean isOk = saHelper.servizioApplicativoCredenzialiCertificatiCheckData(TipoOperazione.CHANGE, idProv, sa, 0);
 			
 			if (!isOk) {
 				

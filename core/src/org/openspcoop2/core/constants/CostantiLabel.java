@@ -92,8 +92,10 @@ public final class CostantiLabel {
 	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_DESCR = "Credenziali Token";
 	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_WITH_HTTPS = "Abilitato";
 	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY = "Token Policy";
+	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY_VALIDAZIONE = "Token Policy di Validazione";
 	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID = "Identificativo";
 	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID_SEARCH = "Token ClientId";
+	public final static String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_KID = "Key Id (kid) del Certificato";
    	
     /**
      * PROPRIETA CONNETTORE
@@ -155,14 +157,19 @@ public final class CostantiLabel {
 	public static final String MODIPA_API_PROFILO_CANALE_LABEL = "Sicurezza Canale";
 	public static final String MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC01 = "ID_AUTH_CHANNEL_01";
 	public static final String MODIPA_PROFILO_SICUREZZA_CANALE_LABEL_IDAC02 = "ID_AUTH_CHANNEL_02";
-	
+		
 	public static final String MODIPA_SICUREZZA_CHOICE_LABEL = "Sicurezza Messaggio";
-	public static final String MODIPA_SICUREZZA_CHOICE_MESSAGE_LABEL = "Certificato Mittente";
-	public static final String MODIPA_SICUREZZA_CHOICE_TOKEN_LABEL = "Token OAuth";
-	public static final String MODIPA_SICUREZZA_CHOICE_MESSAGE_TOKEN_LABEL = "Entrambi";
+	public static final String MODIPA_SICUREZZA_CHOICE_MESSAGE_LABEL = "Authorization ModI";
+	public static final String MODIPA_SICUREZZA_CHOICE_TOKEN_PDND_LABEL = "Authorization PDND";
+	public static final String MODIPA_SICUREZZA_CHOICE_TOKEN_OAUTH_LABEL = "Authorization OAuth";
+	public static final String MODIPA_SICUREZZA_CHOICE_MESSAGE_TOKEN_PDND_LABEL = MODIPA_SICUREZZA_CHOICE_TOKEN_PDND_LABEL+" + Integrity";
+	public static final String MODIPA_SICUREZZA_CHOICE_MESSAGE_TOKEN_OAUTH_LABEL = MODIPA_SICUREZZA_CHOICE_TOKEN_OAUTH_LABEL+" + Integrity";
 	
 	public static final String MODIPA_SICUREZZA_MESSAGGIO_FIRMA_APPLICATIVO_SUBTITLE_LABEL = "Certificato";
 	public static final String MODIPA_SICUREZZA_TOKEN_FIRMA_APPLICATIVO_SUBTITLE_LABEL = "Identificativo registrato sull'Authorization Server";
+	public static final String MODIPA_SICUREZZA_TOKEN_FIRMA_APPLICATIVO_SUBTITLE_LABEL_PDND = "ClientId registrato sulla PDND";
+	
+	public static final String MODIPA_SICUREZZA_TOKEN_SUBTITLE_LABEL = "Authorization OAuth";
 	
 	public static final String MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL = "Sicurezza Messaggio";
 	public static final String MODIPA_API_PROFILO_SICUREZZA_MESSAGGIO_LABEL = "Sicurezza Messaggio";
@@ -248,6 +255,7 @@ public final class CostantiLabel {
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_REST_LABEL = "Verifica Audience";
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_AUDIENCE_RISPOSTA_SOAP_LABEL = "Verifica WSAddressing To";
     public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_INTERNO_LABEL = "Identificativo Client";
+    public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_INTERNO_LABEL_FILTRO_RICERCA = MODIPA_SICUREZZA_CHOICE_MESSAGE_LABEL+" ClientId";
     public static final String MODIPA_APPLICATIVI_AUDIENCE_RISPOSTA_INFO_DOMINIO_ESTERNO_LABEL = "Reply Audience/WSA-To";
     public static final String MODIPA_APPLICATIVI_AUDIENCE_WSATO_LABEL = "Audience/WSA-To";
     
@@ -259,7 +267,8 @@ public final class CostantiLabel {
     
     public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE_LABEL = "KeyStore";
     public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_PATH_MODE_LABEL = MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE_LABEL+" Path";
-    public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_SUBJECT_MODE_LABEL = MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE_LABEL+" X.509 Subject";
+    public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_X509_SUBJECT_MODE_LABEL = "X.509 Subject";
+    public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_SUBJECT_MODE_LABEL = MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE_LABEL+" "+MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_X509_SUBJECT_MODE_LABEL;
 
     public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_HTTP_HEADERS_REST_LABEL = "HTTP Headers da firmare";
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SOAP_HEADERS_SOAP_LABEL = "SOAP Headers da firmare";

@@ -29,6 +29,7 @@ import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.mvc.properties.Item;
+import org.openspcoop2.core.mvc.properties.constants.ItemType;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
@@ -504,6 +505,10 @@ public class NegoziazioneTokenProvider implements IProvider {
 //			secret = true;
 //		}
 		
+		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(id)) {
+			l.add(value ? Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE: Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_LABEL);
+		}
+		
 		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(id) ||
 				Costanti.ID_HTTPS_KEYSTORE_TYPE.equals(id)) {
 			trustStore = false;
@@ -563,14 +568,16 @@ public class NegoziazioneTokenProvider implements IProvider {
 			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI);
 			return pInfo;
 		}
-		else if(Costanti.ID_RETRIEVE_JWT_ISSUER.equals(id)
+		else if(Costanti.ID_RETRIEVE_JWT_ISSUER.equals(id) ||
+				Costanti.ID_RETRIEVE_JWT_ISSUER_APPLICATIVO_MODI_CUSTOM.equals(id)
 				) {
 			ProviderInfo pInfo = new ProviderInfo();
 			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_ISSUER);
 			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO);
 			return pInfo;
 		}
-		else if(Costanti.ID_RETRIEVE_JWT_SUBJECT.equals(id)
+		else if(Costanti.ID_RETRIEVE_JWT_SUBJECT.equals(id) ||
+				Costanti.ID_RETRIEVE_JWT_SUBJECT_APPLICATIVO_MODI_CUSTOM.equals(id)
 				) {
 			ProviderInfo pInfo = new ProviderInfo();
 			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_SUBJECT);
@@ -585,6 +592,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 			return pInfo;
 		}
 		else if(Costanti.ID_RETRIEVE_JWT_CLIENT_ID.equals(id) ||
+				Costanti.ID_RETRIEVE_JWT_CLIENT_ID_APPLICATIVO_MODI_CUSTOM.equals(id) ||
 				Costanti.ID_RETRIEVE_JWT_AUDIENCE.equals(id)
 				) {
 			ProviderInfo pInfo = new ProviderInfo();
@@ -592,7 +600,8 @@ public class NegoziazioneTokenProvider implements IProvider {
 			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO);
 			return pInfo;
 		}
-		else if(Costanti.ID_RETRIEVE_FORM_CLIENT_ID.equals(id)
+		else if(Costanti.ID_RETRIEVE_FORM_CLIENT_ID.equals(id) ||
+				Costanti.ID_RETRIEVE_FORM_CLIENT_ID_APPLICATIVO_MODI_CUSTOM.equals(id)
 				) {
 			ProviderInfo pInfo = new ProviderInfo();
 			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_FORM_PARAMETRO_CLIENT_ID);
@@ -633,6 +642,15 @@ public class NegoziazioneTokenProvider implements IProvider {
 				type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
 			}
 			
+			if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
+				String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
+				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue)) {
+					item.setValue(typeValue);
+					item.setType(ItemType.HIDDEN);
+					return item.getValue();
+				}
+			}
+			
 			return AbstractSecurityProvider.processStoreFile(type, items, mapNameValue, item, actualValue);
 		}
 		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD.equals(item.getName()) ||
@@ -647,6 +665,15 @@ public class NegoziazioneTokenProvider implements IProvider {
 				type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
 			}
 			
+			if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
+				String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
+				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue)) {
+					item.setValue("-");
+					item.setType(ItemType.HIDDEN);
+					return item.getValue();
+				}
+			}
+			
 			return AbstractSecurityProvider.processStorePassword(type, items, mapNameValue, item, actualValue);
 		}
 		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName()) ||
@@ -657,7 +684,36 @@ public class NegoziazioneTokenProvider implements IProvider {
 				type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
 			}
 			
+			if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
+				String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
+				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue)) {
+					item.setValue("-");
+					item.setType(ItemType.HIDDEN);
+					return item.getValue();
+				}
+			}
+			
 			return AbstractSecurityProvider.processStoreKeyPassword(type, items, mapNameValue, item, actualValue);
+		}
+		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_ALIAS_PRIVATE_KEY.equals(item.getName()) ) {
+			
+			String type = Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE;
+			
+			if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
+				String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
+				if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue)) {
+					item.setValue("-");
+					item.setType(ItemType.HIDDEN);
+					return item.getValue();
+				}
+				else {
+					item.setType(ItemType.TEXT);
+				}
+			}
+			else {
+				item.setType(ItemType.TEXT);
+			}
+			
 		}
 		
 		return actualValue;

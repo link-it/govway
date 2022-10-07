@@ -267,10 +267,33 @@ public final class ServiziApplicativiAdd extends Action {
 			
 			String tokenPolicySA = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY);
 			String tokenClientIdSA = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
-			boolean tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN.equals(tipoauthSA);
-			if(tokenWithHttpsEnabledByConfigSA) {
-				tipoauthSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL;
+			
+			boolean tokenWithHttpsEnabledByConfigSA = false;
+			if(tipoauthSA!=null && !StringUtils.isEmpty(tokenPolicySA)) {
+				boolean tokenByPDND = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND.equals(tipoauthSA) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_PDND.equals(tipoauthSA);
+				tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND.equals(tipoauthSA) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_OAUTH.equals(tipoauthSA);
+				if(tokenWithHttpsEnabledByConfigSA) {
+					tipoauthSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL;
+				}
+				boolean tokenModiPDNDOauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_PDND.equals(tipoauthSA) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_OAUTH.equals(tipoauthSA);
+				if(tokenModiPDNDOauth) {
+					tipoauthSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN;
+				}
+				if(tokenPolicySA==null || StringUtils.isEmpty(tokenPolicySA) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicySA)) {
+					if(tokenByPDND) {
+						tokenPolicySA = saCore.getDefaultPolicyGestioneTokenPDND();
+					}
+				}
+				else {
+					if(!tokenByPDND && (tokenWithHttpsEnabledByConfigSA || tokenModiPDNDOauth) && saCore.isPolicyGestioneTokenPDND(tokenPolicySA)) {
+						tokenPolicySA=null;
+					}
+					else if(tokenByPDND && !saCore.isPolicyGestioneTokenPDND(tokenPolicySA)) {
+						tokenPolicySA = saCore.getDefaultPolicyGestioneTokenPDND();
+					}
+				}
 			}
+
 			
 			String sbustamentoInformazioniProtocolloRisposta = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RISPOSTA);
 

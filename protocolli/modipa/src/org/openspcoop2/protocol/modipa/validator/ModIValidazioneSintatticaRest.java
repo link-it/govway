@@ -28,6 +28,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -38,12 +41,14 @@ import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.pdd.core.token.parser.TokenUtils;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
+import org.openspcoop2.protocol.modipa.constants.ModIHeaderType;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.modipa.utils.ModITruststoreConfig;
 import org.openspcoop2.protocol.modipa.utils.ModIUtilities;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
 import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
@@ -77,8 +82,9 @@ import com.fasterxml.jackson.databind.node.TextNode;
  */
 public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintatticaCommons{
 
-	public ModIValidazioneSintatticaRest(Logger log, IState state, Context context, ModIProperties modiProperties, ValidazioneUtils validazioneUtils) {
-		super(log, state, context, modiProperties, validazioneUtils);
+	public ModIValidazioneSintatticaRest(Logger log, IState state, Context context, IProtocolFactory<?> factory, 
+			ModIProperties modiProperties, ValidazioneUtils validazioneUtils) {
+		super(log, state, context, factory, modiProperties, validazioneUtils);
 	}
 	
 	
@@ -372,7 +378,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 	public String validateSecurityProfile(OpenSPCoop2Message msg, boolean request, String securityMessageProfile, String headerTokenRest, boolean corniceSicurezza, boolean includiRequestDigest, 
 			Busta busta, List<Eccezione> erroriValidazione,
 			ModITruststoreConfig trustStoreCertificati, ModITruststoreConfig trustStoreSsl, ModISecurityConfig securityConfig,
-			boolean buildSecurityTokenInRequest, boolean headerDuplicati, boolean integritaCustom, boolean securityHeaderObbligatorio,
+			boolean buildSecurityTokenInRequest, ModIHeaderType headerType, boolean integritaCustom, boolean securityHeaderObbligatorio,
 			Map<String, Object> dynamicMapParameter, Busta datiRichiesta) throws Exception {
 		
 		boolean bufferMessage_readOnly = this.modiProperties.isReadByPathBufferEnabled();
@@ -467,6 +473,8 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		
 
 		String prefix = "";
+		boolean headerDuplicati = headerType.isHeaderDuplicati();
+		boolean headerAuthentication = headerType.isUsabledForAuthentication();
 		if(headerDuplicati) {
 			prefix = "[Header '"+headerTokenRest+"'] ";
 		}
@@ -563,7 +571,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		}
 		else {
 			
-			if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+			if(!headerDuplicati || headerAuthentication) {
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_SUBJECT, x509.getSubjectX500Principal().toString());
 				if(x509.getIssuerX500Principal()!=null) {
 					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_X509_ISSUER, x509.getIssuerX500Principal().toString());
@@ -636,8 +644,25 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			}
 			
 			if(request) {
-				if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
-					identificazioneApplicativoMittente(x509,busta);
+				if(!headerDuplicati || headerAuthentication) {
+					
+					if(msg==null || msg.getTransportRequestContext()==null || msg.getTransportRequestContext().getInterfaceName()==null) {
+						throw new Exception("ID Porta non presente");
+					}
+					IDPortaApplicativa idPA = new IDPortaApplicativa();
+					idPA.setNome(msg.getTransportRequestContext().getInterfaceName());
+					PortaApplicativa pa = this.factory.getCachedConfigIntegrationReader(this.state).getPortaApplicativa(idPA);
+					boolean autenticazioneToken = pa!=null && pa.getGestioneToken()!=null && pa.getGestioneToken().getPolicy()!=null && StringUtils.isNotEmpty(pa.getGestioneToken().getPolicy());
+					if(autenticazioneToken) {
+						// l'autenticazione dell'applicativo mittente avviene per token
+						// Il token rappresenta:
+						// - un integrity nel caso PDND + Integrity
+						// - una configurazione errata. In questo caso l'header Authorization non verrà validato con successo (es. certificato x509 non presente nel token).
+						//   Se per caso risultasse corretto non è un problema
+					}
+					else {
+						identificazioneApplicativoMittente(x509,msg,busta);
+					}
 				}
 			}
 		}
@@ -648,12 +673,23 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			
 			RestMessageSecurityToken restSecurityToken = new RestMessageSecurityToken();
 			restSecurityToken.setCertificate(new CertificateInfo(x509, securityTokenHeader));
-			restSecurityToken.setToken(token);		
-			if(HttpConstants.AUTHORIZATION.equalsIgnoreCase(securityTokenHeader)) {
-				securityTokenForContext.setAuthorization(restSecurityToken);
+			restSecurityToken.setToken(token);
+			restSecurityToken.setHttpHeaderName(securityTokenHeader);
+			if(headerDuplicati) {
+				if(headerAuthentication) {
+					securityTokenForContext.setAuthorization(restSecurityToken);
+				}
+				else {
+					securityTokenForContext.setIntegrity(restSecurityToken);	
+				}
 			}
 			else {
-				securityTokenForContext.setIntegrity(restSecurityToken);	
+				if(HttpConstants.AUTHORIZATION.equalsIgnoreCase(securityTokenHeader)) {
+					securityTokenForContext.setAuthorization(restSecurityToken);
+				}
+				else {
+					securityTokenForContext.setIntegrity(restSecurityToken);
+				}
 			}
 			
 		}
@@ -697,7 +733,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 							prefix+"Token con claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT+"' non valido: "+e.getMessage(),e));
 				}
 				String iatValue = DateUtils.getSimpleDateFormatMs().format(iatDate);
-				if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+				if(!headerDuplicati || headerAuthentication) {
 					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT, iatValue);
 				}
 				else {
@@ -726,7 +762,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 							prefix+"Token con claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED+"' non valido: "+e.getMessage(),e));
 				}
 				String expValue = DateUtils.getSimpleDateFormatMs().format(expDate);
-				if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+				if(!headerDuplicati || headerAuthentication) {
 					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP, expValue);
 				}
 				else {
@@ -752,7 +788,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 								prefix+"Token con claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE+"' non valido: "+e.getMessage(),e));
 					}
 					String nbfValue = DateUtils.getSimpleDateFormatMs().format(nbfDate);
-					if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+					if(!headerDuplicati || headerAuthentication) {
 						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_NBF, nbfValue);
 					}
 					else {
@@ -773,7 +809,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 						prefix+"Token senza claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE+"'"));
 				}
 				String audValue = toString(aud);
-				if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+				if(!headerDuplicati || headerAuthentication) {
 					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_AUDIENCE, audValue);
 				}
 				else {
@@ -809,7 +845,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 					String id = toString(jti);
 					boolean addAsIdBusta = true;
 					if(headerDuplicati) {
-						if(HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
+						if(headerAuthentication) {
 							if(!securityConfig.isMultipleHeaderUseJtiAuthorizationAsIdMessaggio()) {
 								String idActual = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_ID);
 								if(idActual==null || !idActual.equals(id)) {

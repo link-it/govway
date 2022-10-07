@@ -429,9 +429,9 @@ public class Utils {
 						}
 						else {
 							// jenkins
-							if( ((polInfo.richiesteConteggiate+1)==conteggiate)
+							if( ((polInfo.richiesteConteggiate)==conteggiate+1)
 									||
-									((polInfo.richiesteConteggiate+2)==conteggiate)) {
+									((polInfo.richiesteConteggiate)==conteggiate+2)) {
 								logRateLimiting.debug("PolicyConteggiate["+polInfo.richiesteConteggiate+"]=attese["+conteggiate+"] con scarto di 2 [tolleranza] ("+tipoRisorsa+"): "+t.getMessage(),t);
 							}
 							else {

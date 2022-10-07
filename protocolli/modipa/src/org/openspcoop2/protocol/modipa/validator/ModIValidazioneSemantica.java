@@ -40,6 +40,7 @@ import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.protocol.basic.validator.ValidazioneSemantica;
+import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.utils.ModIPropertiesUtils;
@@ -48,6 +49,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -56,6 +58,7 @@ import org.openspcoop2.protocol.sdk.validator.ValidazioneSemanticaResult;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneUtils;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 
 
 
@@ -223,6 +226,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				
 				boolean sicurezzaToken = this.context.containsKey(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
 				boolean saIdentificatoByToken = false;
+				boolean saVerificatoBySecurity = false;
 				if(sicurezzaToken) {
 					IDServizioApplicativo idSAbyToken = null;
 					StringBuilder sbError = new StringBuilder();
@@ -240,6 +244,54 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 						}
 					}
 					saIdentificatoByToken = idSAbyToken!=null;
+					
+					if(saIdentificatoByToken) {
+						//	&& !saIdentificatoBySecurity) {
+						// L'identificazione per sicurezza, se c'è abilitata l'autenticazione per token, non dovrebbe esserci mai poichè la funzionalità è stata disabilitata.
+						// Con autenticazione token attiva, gli applicativi anche se presente un x509 non vengono identificati dall'autenticazione https effettuata in AbstractModIValidazioneSintatticaCommons e di conseguenza in ModIValidazioneSintatticaRest e ModIValidazioneSintatticaSoap durante il trattamento del token di sicurezza
+						//
+						// bisogna quindi verificare, se è presente un certificato x509 di firma, che corrisponda a quello registrato nell'applicativo di tipo token identificato
+						
+						SecurityToken securityTokenForContext = SecurityTokenUtilities.readSecurityToken(this.context);
+						if(securityTokenForContext!=null) {
+							try {
+								if(securityTokenForContext.getAuthorization()!=null && securityTokenForContext.getAuthorization().getCertificate()!=null) {
+									sbError = new StringBuilder();
+									String tipoToken = //"Http Header "+
+											(securityTokenForContext.getAuthorization().getHttpHeaderName()!=null ? securityTokenForContext.getAuthorization().getHttpHeaderName() : HttpConstants.AUTHORIZATION);
+									IdentificazioneApplicativoMittenteUtils.checkApplicativoTokenByX509(this.log, idSAbyToken, 
+											state, tipoToken, securityTokenForContext.getAuthorization().getCertificate(), sbError);
+									saVerificatoBySecurity = true;
+								}
+								if(securityTokenForContext.getIntegrity()!=null && securityTokenForContext.getIntegrity().getCertificate()!=null) {
+									sbError = new StringBuilder();
+									String tipoToken = //"Http Header "+
+											(securityTokenForContext.getIntegrity().getHttpHeaderName()!=null ? securityTokenForContext.getIntegrity().getHttpHeaderName() : this.modiProperties.getRestSecurityTokenHeaderModI());
+									IdentificazioneApplicativoMittenteUtils.checkApplicativoTokenByX509(this.log, idSAbyToken, 
+											state, tipoToken, securityTokenForContext.getIntegrity().getCertificate(), sbError);
+									saVerificatoBySecurity = true;
+								}
+								if(securityTokenForContext.getEnvelope()!=null && securityTokenForContext.getEnvelope().getCertificate()!=null) {
+									sbError = new StringBuilder();
+									String tipoToken = "WSSecurity";
+									IdentificazioneApplicativoMittenteUtils.checkApplicativoTokenByX509(this.log, idSAbyToken, 
+											state, tipoToken, securityTokenForContext.getEnvelope().getCertificate(), sbError);
+									saVerificatoBySecurity = true;
+								}
+							}catch(Exception e) {
+								if(sbError!=null && sbError.length()>0) {
+									this.context.addObject(Costanti.ERRORE_AUTORIZZAZIONE, Costanti.ERRORE_TRUE);
+									this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA, 
+											sbError.toString()));
+									return;
+								}
+								else {
+									throw e;
+								}
+							}
+						}
+						
+					}
 				}
 				
 				boolean saFruitoreAnonimo = busta.getServizioApplicativoFruitore()==null || CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(busta.getServizioApplicativoFruitore());
@@ -283,7 +335,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 					if(autorizzazionePerRichiedente || checkRuoloRegistro) {
 						// se utilizzo l'informazione dell'applicativo, tale informazione deve essere consistente rispetto a tutti i criteri di sicurezza
 						if(sicurezzaMessaggio) {
-							if(!saIdentificatoBySecurity) {
+							if(!saIdentificatoBySecurity && !saVerificatoBySecurity) {
 								this.context.addObject(Costanti.ERRORE_AUTORIZZAZIONE, Costanti.ERRORE_TRUE);
 								String idApp = busta.getServizioApplicativoFruitore() + " (Soggetto: "+busta.getMittente()+")";
 								this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA, 
@@ -293,6 +345,8 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 						}
 						if(sicurezzaToken) {
 							if(!saIdentificatoByToken) {
+								// CASO DEPRECATO: questo caso non puo' succedere poiche' nel caso di sicurezza token l'identificazione avviene SOLO per token
+								//                 quindi si rientra nel caso sopra 'Applicativo Mittente non identificato'
 								this.context.addObject(Costanti.ERRORE_AUTORIZZAZIONE, Costanti.ERRORE_TRUE);
 								String idApp = busta.getServizioApplicativoFruitore() + " (Soggetto: "+busta.getMittente()+")";
 								this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA, 

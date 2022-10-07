@@ -29,6 +29,8 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.CostantiLabel;
+import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
@@ -1093,5 +1095,12 @@ public class ModIUtils {
 			}
 		}
 		return null;
+	}
+	
+	public static String getMessaggioErroreDominioCanaleDifferenteDominioApplicativo(IDServizioApplicativo idServizioApplicativoMessaggio, IDSoggetto idSoggettoMittenteCanale) {
+		String msgError = "Token di sicurezza firmato da un applicativo '"+idServizioApplicativoMessaggio.getNome()+
+				"' risiedente nel dominio del soggetto '"+idServizioApplicativoMessaggio.getIdSoggettoProprietario().toString()+"'; il dominio differisce dal soggetto identificato sul canale di trasporto ("+idSoggettoMittenteCanale+
+				")";
+		return msgError;
 	}
 }

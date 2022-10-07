@@ -135,7 +135,7 @@ public class ApplicativiApiHelper {
 		wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE, credenziali.getTipo().toString());
 		if(CredenzialeTipo.SSL.equals(credenziali.getTipo())){
 			if(credenziali.getTokenPolicy()!=null && StringUtils.isNotEmpty(credenziali.getTokenPolicy())){
-				wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE,  ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN);
+				wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE,  ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_OAUTH);
 			}
 		}
 		

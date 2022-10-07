@@ -2,6 +2,6 @@
     "type": "https://govway.org/handling-errors/400/BadRequest.html",
     "title": "BadRequest",
     "status": 400,
-    "detail": "Il servizio richiede una funzionalità non supportata dal protocollo modipa: Il profilo di sicurezza richiesto 'idam01' non è applicabile poichè l'applicativo mittente ApplicativoBlockingNoModipa (DemoSoggettoFruitore) non possiede una configurazione dei parametri di sicurezza messaggio",
+    "detail": "Il servizio richiede una funzionalità non supportata dal protocollo modipa: Il profilo di sicurezza richiesto 'idam01' non è applicabile poichè l'applicativo mittente ApplicativoBlockingNoModipa (DemoSoggettoFruitore) non possiede una configurazione dei parametri di sicurezza messaggio (Keystore)",
     "govway_id": "#uuid"
 }

@@ -2227,7 +2227,7 @@ components:
         sicurezza_messaggio:
            $ref: '#/components/schemas/ModIApplicativoSicurezzaMessaggio'
         token:
-          $ref: '#/components/schemas/AuthenticationTokenBase'
+          $ref: '#/components/schemas/ModIApplicativoAuthenticationToken'
     ModIApplicativoSicurezzaMessaggio:
       type: object      
       required:
@@ -2251,6 +2251,20 @@ components:
         url_x5u:
           type: string
           maxLength: 4000 
+    ModIApplicativoAuthenticationToken:
+      type: object
+      required:
+       - identificativo
+      properties:
+        token_policy:
+          type: string
+          maxLength: 255
+        identificativo:
+          type: string
+          maxLength: 2800
+        kid:
+          type: string
+          maxLength: 4000
 
     # ModI Store
 

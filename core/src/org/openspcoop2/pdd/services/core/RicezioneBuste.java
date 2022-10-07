@@ -231,6 +231,7 @@ import org.openspcoop2.protocol.sdk.validator.IValidatoreErrori;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneSemantica;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.MessageSecurityContextParameters;
 import org.openspcoop2.security.message.constants.SecurityConstants;
@@ -2842,7 +2843,7 @@ public class RicezioneBuste {
 							
 								msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken");
 								
-								esitoValidazioneToken = gestioneTokenEngine.validazioneJWTToken(datiInvocazione, esitoPresenzaToken.getToken());
+								esitoValidazioneToken = gestioneTokenEngine.validazioneJWTToken(datiInvocazione, esitoPresenzaToken);
 								if(esitoValidazioneToken.isValido()) {
 									
 									msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken.completataSuccesso");
@@ -2902,7 +2903,7 @@ public class RicezioneBuste {
 								
 								msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken");
 								
-								esitoIntrospectionToken = gestioneTokenEngine.introspectionToken(datiInvocazione, esitoPresenzaToken.getToken());
+								esitoIntrospectionToken = gestioneTokenEngine.introspectionToken(datiInvocazione, esitoPresenzaToken);
 								if(esitoIntrospectionToken.isValido()) {
 									
 									msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken.completataSuccesso");
@@ -2961,7 +2962,7 @@ public class RicezioneBuste {
 								
 								msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken");
 								
-								esitoUserInfoToken = gestioneTokenEngine.userInfoToken(datiInvocazione, esitoPresenzaToken.getToken());
+								esitoUserInfoToken = gestioneTokenEngine.userInfoToken(datiInvocazione, esitoPresenzaToken);
 								if(esitoUserInfoToken.isValido()) {
 									
 									msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken.completataSuccesso");
@@ -3277,6 +3278,8 @@ public class RicezioneBuste {
 						boolean detailsSet = false;
 						IntegrationFunctionError integrationFunctionError = null;
 						boolean erroreMissmatchSoggettoProtocolloConCredenziali = false;
+						Exception eMissmatchSoggettoProtocolloConCredenziali = null;
+						boolean erroreMissmatchSoggettoProtocolloConCredenziali_authorization = false;
 						try {						
 							EsitoAutenticazionePortaApplicativa esito = 
 									GestoreAutenticazione.verificaAutenticazionePortaApplicativa(tipoAutenticazione,
@@ -3340,9 +3343,22 @@ public class RicezioneBuste {
 									if(soggettoFruitore!=null &&  soggettoFruitore.getNome()!=null && soggettoFruitore.getTipo()!=null) {
 										if(!soggettoFruitore.equals(idSoggettoFruitoreIdentificato)) {
 											erroreMissmatchSoggettoProtocolloConCredenziali = true;
+											if(Costanti.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol()) && bustaRichiesta!=null && bustaRichiesta.getServizioApplicativoFruitore()!=null) {
+												// Sul profilo ModI entrambi le autenticazioni hanno avuto successo, e si tratta di un discorso di autorizzazione
+												// poichè non viene concesso di ricevere un applicativo di un soggetto differente da quello del canale
+												pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, "true");
+												erroreMissmatchSoggettoProtocolloConCredenziali_authorization = true;
+												IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+												idServizioApplicativo.setNome(bustaRichiesta.getServizioApplicativoFruitore());
+												idServizioApplicativo.setIdSoggettoProprietario(soggettoFruitore);
+												String msgError = ModIUtils.getMessaggioErroreDominioCanaleDifferenteDominioApplicativo(idServizioApplicativo, idSoggettoFruitoreIdentificato);
+												eMissmatchSoggettoProtocolloConCredenziali = new Exception(msgError);
+												throw eMissmatchSoggettoProtocolloConCredenziali;
+											}
 											pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, "true");
-											throw new Exception("Identificato un soggetto (tramite profilo di interoperabilità) '"+soggettoFruitore
+											eMissmatchSoggettoProtocolloConCredenziali = new Exception("Identificato un soggetto (tramite profilo di interoperabilità) '"+soggettoFruitore
 													+"' differente da quello identificato tramite il processo di autenticazione '"+idSoggettoFruitoreIdentificato+"'");
+											throw eMissmatchSoggettoProtocolloConCredenziali;
 										}
 									}
 									soggettoFruitore = 	idSoggettoFruitoreIdentificato;
@@ -3478,12 +3494,26 @@ public class RicezioneBuste {
 			
 										OpenSPCoop2Message errorOpenSPCoopMsg = null;
 										if(erroreMissmatchSoggettoProtocolloConCredenziali) {
-											integrationFunctionError = IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS;
+											if(erroreMissmatchSoggettoProtocolloConCredenziali_authorization) {
+												integrationFunctionError = IntegrationFunctionError.AUTHORIZATION;
+											}
+											else {
+												integrationFunctionError = IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS;
+											}
 											parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 											String msgErroreDetailNonValide = eAutenticazione!=null ? eAutenticazione.getMessage() : 
 												"Identificato un soggetto (tramite profilo di interoperabilità) '"+soggettoFruitore+"' registrato con credenziali differenti da quelle ricevute";
-											parametriGenerazioneBustaErrore.
-												setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCredenzialiForniteNonCorrette(msgErroreDetailNonValide));
+											if(eMissmatchSoggettoProtocolloConCredenziali!=null) {
+												msgErroreDetailNonValide = eMissmatchSoggettoProtocolloConCredenziali.getMessage();
+											}
+											if(erroreMissmatchSoggettoProtocolloConCredenziali_authorization) {
+												parametriGenerazioneBustaErrore.
+													setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(msgErroreDetailNonValide, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
+											}
+											else {
+												parametriGenerazioneBustaErrore.
+													setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCredenzialiForniteNonCorrette(msgErroreDetailNonValide));
+											}
 											errorOpenSPCoopMsg = generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
 										}
 										else if(erroreCooperazione!=null){

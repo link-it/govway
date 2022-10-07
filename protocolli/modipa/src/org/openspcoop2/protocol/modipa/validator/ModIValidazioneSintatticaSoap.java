@@ -33,8 +33,11 @@ import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPHeaderElement;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wss4j.dom.WSDataRef;
 import org.apache.wss4j.dom.message.token.Timestamp;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -55,6 +58,7 @@ import org.openspcoop2.protocol.modipa.utils.SOAPInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.SoapMessageSecurityToken;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
@@ -88,8 +92,8 @@ import org.w3c.dom.NodeList;
  */
 public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintatticaCommons{
 
-	public ModIValidazioneSintatticaSoap(Logger log, IState state, Context context, ModIProperties modiProperties, ValidazioneUtils validazioneUtils) {
-		super(log, state, context, modiProperties, validazioneUtils);
+	public ModIValidazioneSintatticaSoap(Logger log, IState state, Context context, IProtocolFactory<?> factory, ModIProperties modiProperties, ValidazioneUtils validazioneUtils) {
+		super(log, state, context, factory, modiProperties, validazioneUtils);
 	}
 
 	public void validateAsyncInteractionProfile(OpenSPCoop2Message msg, boolean request, String asyncInteractionType, String asyncInteractionRole, 
@@ -485,7 +489,20 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			}
 			
 			if(request) {
-				identificazioneApplicativoMittente(x509,busta);
+				if(msg==null || msg.getTransportRequestContext()==null || msg.getTransportRequestContext().getInterfaceName()==null) {
+					throw new Exception("ID Porta non presente");
+				}
+				IDPortaApplicativa idPA = new IDPortaApplicativa();
+				idPA.setNome(msg.getTransportRequestContext().getInterfaceName());
+				PortaApplicativa pa = this.factory.getCachedConfigIntegrationReader(this.state).getPortaApplicativa(idPA);
+				boolean autenticazioneToken = pa!=null && pa.getGestioneToken()!=null && pa.getGestioneToken().getPolicy()!=null && StringUtils.isNotEmpty(pa.getGestioneToken().getPolicy());
+				if(autenticazioneToken) {
+					// l'autenticazione dell'applicativo mittente avviene per token
+					// Il token rappresenta un integrity
+				}
+				else {
+					identificazioneApplicativoMittente(x509,msg,busta);
+				}
 			}
 		}
 		

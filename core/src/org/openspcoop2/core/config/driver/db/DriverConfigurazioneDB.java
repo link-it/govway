@@ -7301,6 +7301,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "issuer", "saIssuer");
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "tipoauth", "saTipoAuth");
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = ?");
+				// I certificati caricati con una token policy potrebbero non dover essere considerati per l'autenticazione https
+				// in futuro se serve gestire il boolean tokenWithHttpsEnabled anche per l'autenticazione https
+				if(!tokenWithHttpsEnabled){
+					sqlQueryObject.addWhereIsNullCondition(CostantiDB.SERVIZI_APPLICATIVI+".token_policy");
+				}
 
 				for (String key : hashSubject.keySet()) {
 					List<String> listValues = hashSubject.get(key);
@@ -7373,6 +7378,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.setANDLogicOperator(true);
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI+".id_servizio_applicativo="+CostantiDB.SERVIZI_APPLICATIVI+".id");
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = ?");
+					// I certificati caricati con una token policy potrebbero non dover essere considerati per l'autenticazione https
+					// in futuro se serve gestire il boolean tokenWithHttpsEnabled anche per l'autenticazione https
+					if(!tokenWithHttpsEnabled){
+						sqlQueryObject.addWhereIsNullCondition(CostantiDB.SERVIZI_APPLICATIVI+".token_policy");
+					}
 					
 					for (String key : hashSubject.keySet()) {
 						List<String> listValues = hashSubject.get(key);
@@ -7464,6 +7474,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".cn_subject = ?");
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".cn_issuer = ?");
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".cert_strict_verification = ?");
+				// I certificati caricati con una token policy potrebbero non dover essere considerati per l'autenticazione https
+				// in futuro se serve gestire il boolean tokenWithHttpsEnabled anche per l'autenticazione https
+				if(!tokenWithHttpsEnabled){
+					sqlQueryObject.addWhereIsNullCondition(CostantiDB.SERVIZI_APPLICATIVI+".token_policy");
+				}
+
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQuery = sqlQueryObject.createSQLQuery();
 
@@ -7522,6 +7538,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI+".cn_subject = ?");
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI+".cn_issuer = ?");
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI+".cert_strict_verification = ?");
+					// I certificati caricati con una token policy potrebbero non dover essere considerati per l'autenticazione https
+					// in futuro se serve gestire il boolean tokenWithHttpsEnabled anche per l'autenticazione https
+					if(!tokenWithHttpsEnabled){
+						sqlQueryObject.addWhereIsNullCondition(CostantiDB.SERVIZI_APPLICATIVI+".token_policy");
+					}
 					sqlQueryObject.setANDLogicOperator(true);
 					sqlQuery = sqlQueryObject.createSQLQuery();
 
@@ -7598,7 +7619,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}
 			case TYPE_TOKEN:{
 
-				//cerco un servizio applicativo che contenga utente e password con autenticazione basi
+				//cerco un servizio applicativo che contenga l'autenticazione token
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 				sqlQueryObject.addSelectField("*");
@@ -19079,6 +19100,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI+".id_servizio_applicativo="+CostantiDB.SERVIZI_APPLICATIVI+".id");
 				}
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = ?");
+				// I certificati caricati con una token policy potrebbero non dover essere considerati per l'autenticazione https
+				// in futuro se serve gestire il boolean tokenWithHttpsEnabled anche per l'autenticazione https
+				boolean tokenWithHttpsEnabled = false;
+				if(!tokenWithHttpsEnabled){
+					sqlQueryObject.addWhereIsNullCondition(CostantiDB.SERVIZI_APPLICATIVI+".token_policy");
+				}
 				
 				Map<String, List<String>> hashSubject = CertificateUtils.getPrincipalIntoMap(subject, PrincipalType.subject);
 				Map<String, List<String>> hashIssuer = null;
@@ -19234,6 +19261,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_CREDENZIALI+".id_servizio_applicativo="+CostantiDB.SERVIZI_APPLICATIVI+".id");
 				}
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = ?");
+				// I certificati caricati con una token policy potrebbero non dover essere considerati per l'autenticazione https
+				// in futuro se serve gestire il boolean tokenWithHttpsEnabled anche per l'autenticazione https
+				boolean tokenWithHttpsEnabled = false;
+				if(!tokenWithHttpsEnabled){
+					sqlQueryObject.addWhereIsNullCondition(CostantiDB.SERVIZI_APPLICATIVI+".token_policy");
+				}
 				sqlQueryObject.addWhereCondition(tabella+".cn_subject = ?");
 				sqlQueryObject.addWhereCondition(tabella+".cn_issuer = ?");
 				//sqlQueryObject.addWhereCondition(tabella+".cert_strict_verification = ?");
@@ -20982,6 +21015,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					}
 					else {
 						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = ?");
+						if(CredenzialeTipo.SSL.equals(credenziale)){
+							// I certificati caricati con una token policy potrebbero non dover essere considerati per l'autenticazione https
+							// in futuro se serve gestire il boolean tokenWithHttpsEnabled anche per l'autenticazione https
+							boolean tokenWithHttpsEnabled = false;
+							if(!tokenWithHttpsEnabled){
+								sqlQueryObject.addWhereIsNullCondition(CostantiDB.SERVIZI_APPLICATIVI+".token_policy");
+							}
+						}
 					}
 					if(CredenzialeTipo.APIKEY.equals(credenziale) && appId!=null) {
 						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".issuer = ?");
@@ -21371,6 +21412,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				filtroModISicurezzaTokenEnabled!=null || 
 				filtroModITokenPolicy!=null || filtroModITokenClientId!=null ||
 				filtroModIAudience!=null;
+		
+		boolean checkCredenzialiBase = false;
+		if( (filterTipoCredenziali==null || "".equals(filterTipoCredenziali)) 
+				&&
+				(filterCredenziale==null || "".equals(filterCredenziale))
+			) {
+			checkCredenzialiBase = true;
+		}
 		
 		String filtroProprietaNome = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_NOME);
 		String filtroProprietaValore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_VALORE);
@@ -21987,7 +22036,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 							filtroModIKeystorePath, filtroModIKeystoreSubject, 
 							filtroModISicurezzaTokenEnabled,
 							filtroModITokenPolicy, filtroModITokenClientId,
-							filtroModIAudience);
+							filtroModIAudience,
+							checkCredenzialiBase);
 				}
 				if(filtroProprieta) {
 					DBUtils.setFiltriProprietaApplicativo(sqlQueryObject, this.tipoDB, 
@@ -22084,7 +22134,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 							filtroModIKeystorePath, filtroModIKeystoreSubject, 
 							filtroModISicurezzaTokenEnabled,
 							filtroModITokenPolicy, filtroModITokenClientId,
-							filtroModIAudience);
+							filtroModIAudience,
+							checkCredenzialiBase);
 				}
 				if(filtroProprieta) {
 					DBUtils.setFiltriProprietaApplicativo(sqlQueryObject, this.tipoDB, 
@@ -22254,7 +22305,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 							filtroModIKeystorePath, filtroModIKeystoreSubject, 
 							filtroModISicurezzaTokenEnabled,
 							filtroModITokenPolicy, filtroModITokenClientId,
-							filtroModIAudience);
+							filtroModIAudience,
+							checkCredenzialiBase);
 				}
 				if(filtroProprieta) {
 					DBUtils.setFiltriProprietaApplicativo(sqlQueryObject, this.tipoDB, 
@@ -22362,7 +22414,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 							filtroModIKeystorePath, filtroModIKeystoreSubject, 
 							filtroModISicurezzaTokenEnabled,
 							filtroModITokenPolicy, filtroModITokenClientId,
-							filtroModIAudience);
+							filtroModIAudience,
+							checkCredenzialiBase);
 				}
 				if(filtroProprieta) {
 					DBUtils.setFiltriProprietaApplicativo(sqlQueryObject, this.tipoDB, 
@@ -22606,6 +22659,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				filtroModITokenPolicy!=null || filtroModITokenClientId!=null || 
 				filtroModIAudience!=null;
 		
+		boolean checkCredenzialiBase = false;
+		if( (filterTipoCredenziali==null || "".equals(filterTipoCredenziali)) 
+				&&
+				(filterCredenziale==null || "".equals(filterCredenziale))
+			) {
+			checkCredenzialiBase = true;
+		}
+		
 		String filtroProprietaNome = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_NOME);
 		String filtroProprietaValore = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROPRIETA_VALORE);
 		if((filtroProprietaNome!=null && "".equals(filtroProprietaNome))) {
@@ -22731,7 +22792,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 							filtroModIKeystorePath, filtroModIKeystoreSubject, 
 							filtroModISicurezzaTokenEnabled,
 							filtroModITokenPolicy, filtroModITokenClientId,
-							filtroModIAudience);
+							filtroModIAudience,
+							checkCredenzialiBase);
 				}
 				if(filtroProprieta) {
 					DBUtils.setFiltriProprietaApplicativo(sqlQueryObject, this.tipoDB, 
@@ -22808,7 +22870,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 							filtroModIKeystorePath, filtroModIKeystoreSubject, 
 							filtroModISicurezzaTokenEnabled,
 							filtroModITokenPolicy, filtroModITokenClientId,
-							filtroModIAudience);
+							filtroModIAudience,
+							checkCredenzialiBase);
 				}
 				if(filtroProprieta) {
 					DBUtils.setFiltriProprietaApplicativo(sqlQueryObject, this.tipoDB, 
@@ -22940,7 +23003,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 							filtroModIKeystorePath, filtroModIKeystoreSubject, 
 							filtroModISicurezzaTokenEnabled,
 							filtroModITokenPolicy, filtroModITokenClientId,
-							filtroModIAudience);
+							filtroModIAudience,
+							checkCredenzialiBase);
 				}
 				if(filtroProprieta) {
 					DBUtils.setFiltriProprietaApplicativo(sqlQueryObject, this.tipoDB, 
@@ -23029,7 +23093,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 							filtroModIKeystorePath, filtroModIKeystoreSubject, 
 							filtroModISicurezzaTokenEnabled,
 							filtroModITokenPolicy, filtroModITokenClientId,
-							filtroModIAudience);
+							filtroModIAudience,
+							checkCredenzialiBase);
 				}
 				if(filtroProprieta) {
 					DBUtils.setFiltriProprietaApplicativo(sqlQueryObject, this.tipoDB, 

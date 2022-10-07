@@ -995,7 +995,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						trovato = true;
 					}
 				}
-				if(!trovato) {
+				if(!trovato && !ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN.equals(tipoauth)) {
 					tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL;
 				}
 				
@@ -1816,9 +1816,15 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 			String tokenPolicy = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_POLICY);
 			String tokenClientId = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
-			boolean tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN.equals(tipoauth);
+			@SuppressWarnings("unused")
+			boolean tokenByPDND = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND.equals(tipoauth) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_PDND.equals(tipoauth);
+			boolean tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND.equals(tipoauth) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_OAUTH.equals(tipoauth);
 			if(tokenWithHttpsEnabledByConfigSA) {
 				tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL;
+			}
+			boolean tokenModiPDNDOauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_PDND.equals(tipoauth) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_OAUTH.equals(tipoauth);
+			if(tokenModiPDNDOauth) {
+				tipoauth = ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN;
 			}
 			
 			// Se sono presenti credenziali, controllo che non siano gia'
@@ -1939,7 +1945,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}
 				*/
 			}
-			else if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
+			else if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL) &&
+					!tokenWithHttpsEnabledByConfigSA // se e' abilitato il token non deve essere controllata l'univocita' del certificato
+					) {
 				String tipoCredenzialiSSLSorgente = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL);
 				if(tipoCredenzialiSSLSorgente == null) {
 					tipoCredenzialiSSLSorgente = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE;
@@ -2097,7 +2105,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			//else per gestire la possibilita' con https 
 			if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN.equals(tipoauth) || tokenWithHttpsEnabledByConfigSA) {
 				
-				if(tokenPolicy==null || StringUtils.isEmpty(tokenPolicy)) {
+				if(tokenPolicy==null || StringUtils.isEmpty(tokenPolicy) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicy)) {
 					this.pd.setMessage("TokenPolicy non indicata");
 				}
 				if(ControlStationCore.isAPIMode()) {
@@ -4359,11 +4367,21 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				issuer = null;
 			}
 			
+			boolean tokenWithHttpsEnabledByConfigSA = false;
+			if(saOld.getInvocazionePorta()!=null && saOld.getInvocazionePorta().sizeCredenzialiList()>0) {
+				Credenziali c = saOld.getInvocazionePorta().getCredenziali(0);
+				if(c!=null && c.getTokenPolicy()!=null && StringUtils.isNotEmpty(c.getTokenPolicy())) {
+					// se entro in questa servlet sono sicuramente con credenziale ssl, se esiste anche token policy abbiamo la combo
+					tokenWithHttpsEnabledByConfigSA = true;
+				}
+			}
+			
+			
 			String details = "";
 			List<ServizioApplicativo> saList = null;
 			String tipoSsl = null;
 			Certificate cSelezionato = null;
-			if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE)) { 
+			if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE)) {
 				saList = this.saCore.servizioApplicativoWithCredenzialiSslList(subject,issuer);
 				tipoSsl = "subject/issuer";
 			}
@@ -4411,7 +4429,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						portaDominio = soggettoToCheck.getPortaDominio();
 			}
 	
-			if(saList!=null) {
+			if(saList!=null &&
+					!tokenWithHttpsEnabledByConfigSA  // se e' abilitato il token non deve essere controllata l'univocita' del certificato
+					) {
 				for (int i = 0; i < saList.size(); i++) {
 					ServizioApplicativo sa = saList.get(i);
 	

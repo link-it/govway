@@ -615,13 +615,10 @@ public class ServletUtils {
 		}
 		
 		Map<String, Object> mapDest = null;
-		if(StringUtils.isNotBlank(idSessioneTabSrc)) { // identificativo del tab sorgente definito
-			if(sessionMap.containsKey(idSessioneTabSrc)) { // cerco una sessione da cui copiare altrimenti creo una sessione vuota 
-				Map<String, Object> mapSrc = sessionMap.get(idSessioneTabSrc);
-				mapDest = (HashMap<String, Object>) SerializationUtils.clone(((HashMap<String, Object>)mapSrc));
-			} else {
-				mapDest = new HashMap<String, Object>();
-			}
+		if(StringUtils.isNotBlank(idSessioneTabSrc) && sessionMap.containsKey(idSessioneTabSrc)) { // identificativo del tab sorgente definito
+			// cerco una sessione da cui copiare altrimenti creo una sessione vuota 
+			Map<String, Object> mapSrc = sessionMap.get(idSessioneTabSrc);
+			mapDest = (HashMap<String, Object>) SerializationUtils.clone(((HashMap<String, Object>)mapSrc));
 		} else { // se non ricevo un id tab provo a cercare l'ultima sessione creata altrimenti creo una sessione vuota
 			Date date = new Date(0l); // imposto una data molto vecchia
 			String idSessionTab = null;

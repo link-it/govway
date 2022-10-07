@@ -10598,7 +10598,7 @@ components:
         sicurezza_messaggio:
           $ref: "#/components/schemas/ModIApplicativoSicurezzaMessaggio"
         token:
-          $ref: "#/components/schemas/AuthenticationTokenBase"
+          $ref: "#/components/schemas/ModIApplicativoAuthenticationToken"
     ModIApplicativoSicurezzaMessaggio:
       required:
       - "keystore"
@@ -10620,6 +10620,20 @@ components:
           maxLength: 4000
           type: "string"
         url_x5u:
+          maxLength: 4000
+          type: "string"
+    ModIApplicativoAuthenticationToken:
+      required:
+      - "identificativo"
+      type: "object"
+      properties:
+        token_policy:
+          maxLength: 255
+          type: "string"
+        identificativo:
+          maxLength: 2800
+          type: "string"
+        kid:
           maxLength: 4000
           type: "string"
     ModITrustStoreDefault:
