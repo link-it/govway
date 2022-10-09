@@ -61,11 +61,11 @@ PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class
 			  		String [][] entries = m.getEntries();
 			  		for (int j = 0; j < entries.length; j++) {
 			  			String deVoceMenuName = "url_entry_"+j;
-			  			String cssClass = "voceMenu";
+			  			String cssClass = "voceMenuRC";
 			  			
 			    		if (entries[j].length == 2) {
 			    			
-			      		%><div class="voceMenu" id="voceMenu_<%=j %>">
+			      		%><div class="voceMenuRC" id="voceMenu_<%=j %>">
 			      			<input id="<%= deVoceMenuName  %>" type="hidden" name="<%= deVoceMenuName  %>" value="<%= entries[j][1]  %>"/>
 							<script type="text/javascript">
 							   $('[id=voceMenu_<%=j %>]')
@@ -83,7 +83,7 @@ PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class
 			      			</div>
 			      		<%
 			    		} else if (entries[j].length == 3) {
-			      		%><div class="voceMenu" id="voceMenu_<%=j %>">
+			      		%><div class="voceMenuRC" id="voceMenu_<%=j %>">
 			      			<input id="<%= deVoceMenuName  %>" type="hidden" name="<%= deVoceMenuName  %>" value="<%= entries[j][1]  %>"/>
 							<script type="text/javascript">
 							   $('[id=voceMenu_<%=j %>]')

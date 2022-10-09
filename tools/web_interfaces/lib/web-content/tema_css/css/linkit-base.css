@@ -474,6 +474,69 @@ div.voceMenu:hover {
 	padding-bottom: 0px;
 }
 
+/* Menu click destro tutta la lunghezza */
+
+.voceMenuRC {
+	color: ${menu.label.color};
+	padding-left: 16px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    position: relative;
+    width: 224px;
+    height: 35px;
+}
+
+div.voceMenuRC:hover {
+	cursor: pointer;
+	background: ${menu.element.hover.background.color};
+	color: ${menu.element.hover.color};
+	border-left: 12px solid ${menu.element.hover.border.color};
+	padding-left: 0px;
+    padding-top: 0px;
+   	padding-bottom: 0px;
+   	font-weight: 600;
+   	position: relative;
+    width: 224px;
+    height: 35px;
+}
+
+.voceMenuRC a{
+	color: ${menu.header.hover.color};
+	text-decoration: none;
+	font-size: 16px;
+	padding: 0px;
+    position: absolute;
+    width: 224px;
+    top: 0px;
+    left: 0px;
+    padding-left: 16px;
+    padding-top: 8px;
+    height: 27px;
+}
+
+.voceMenuRC a:hover{
+	font-weight: 600;
+	color: ${menu.element.hover.color};
+	text-decoration: none;
+	padding: 0px;
+    position: absolute;
+    width: 224px;
+    top: 0px;
+    left: -12px;
+    padding-left: 16px;
+    padding-top: 8px;
+    height: 27px;
+}
+
+.voceMenuRC p{
+	margin: 0px;
+	font-size: 16px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	width: 208px;
+}
+
+
 .spazioSottoTitolo {
 	height: 24px;
 }

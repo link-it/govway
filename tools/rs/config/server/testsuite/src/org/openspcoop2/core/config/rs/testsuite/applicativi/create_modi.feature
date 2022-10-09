@@ -119,7 +119,7 @@ Scenario Outline: Applicativi interni Create 400 con <nome-test>
 Examples:
 | nome-test | error |
 | applicativo_esterno_audience.json | Configurazione \'ModI\' non valida |
-| applicativo_interno_token_policy_inesistente.json | Token Policy indicata \'GoogleNonEsistente\' non esiste |
+| applicativo_interno_token_policy_inesistente.json | Token Policy di Validazione indicata \'GoogleNonEsistente\' non esiste |
 | applicativo_interno_undefined_security.json | Configurazione \'ModI\' non valida: definire almeno una configurazione tra sicurezza messaggio e token |
 
 
