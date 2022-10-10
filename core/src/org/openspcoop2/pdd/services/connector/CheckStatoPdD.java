@@ -42,6 +42,7 @@ import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorseThread;
 import org.openspcoop2.pdd.timers.TimerThresholdThread;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpServletCredential;
 
 /**
@@ -61,12 +62,31 @@ public class CheckStatoPdD extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private static void sendError(HttpServletResponse res, Logger log, String msg, int code) throws IOException {
+		sendError(res, log, msg, code, msg, null);
+	}
+	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, Throwable e) throws IOException {
+		sendError(res, log, msg, code, msg, e);
+	}
+	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, String logMsg) throws IOException {
+		sendError(res, log, msg, code, msg, null);
+	}
+	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, String logMsg, Throwable e) throws IOException {
+		String prefix = "[GovWayCheck] ";
+		if(e!=null) {
+			log.error(prefix+logMsg, e);
+		}
+		else {
+			log.error(prefix+logMsg);
+		}
+		res.setStatus(code);
+		res.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
+		res.getOutputStream().write(msg.getBytes());
+	}
 
 	public static void serializeNotInitializedResponse(HttpServletResponse res, Logger log) throws IOException {
 		String msg = "API Gateway GovWay non inzializzato";
-		log.error("[GovWayCheck] "+msg);
-		res.setStatus(503); // viene volutamente utilizzato il codice 503
-		res.getOutputStream().write(msg.getBytes());
+		sendError(res, log, msg, 503);  // viene volutamente utilizzato il codice 503
 	}
 
 	@Override public void doGet(HttpServletRequest req, HttpServletResponse res)
@@ -93,9 +113,7 @@ public class CheckStatoPdD extends HttpServlet {
 			}
 			if(checkReadEnabled==false){
 				String msg = "Servizio non abilitato";
-				log.error("[GovWayCheck] "+msg);
-				res.setStatus(500);
-				res.getOutputStream().write(msg.getBytes());
+				sendError(res, log, msg, 500); 
 				return;
 			}
 			
@@ -106,16 +124,14 @@ public class CheckStatoPdD extends HttpServlet {
 				HttpServletCredential identity = new HttpServletCredential(req, log);
 				if(username.equals(identity.getUsername())==false){
 					String msg = "Lettura risorsa ["+resourceName+"] non autorizzata";
-					log.error("[GovWayCheck] "+msg+". Richiesta effettuata da username ["+identity.getUsername()+"] sconosciuto");
-					res.setStatus(500);
-					res.getOutputStream().write(msg.getBytes());	
+					String logMsg = msg+". Richiesta effettuata da username ["+identity.getUsername()+"] sconosciuto";
+					sendError(res, log, msg, 500, logMsg); 
 					return;
 				}
 				if(password.equals(identity.getPassword())==false){
 					String msg = "Lettura risorsa ["+resourceName+"] non autorizzata";
-					log.error("[GovWayCheck] "+msg+". Richiesta effettuata da username ["+identity.getUsername()+"] (password errata)");
-					res.setStatus(500);
-					res.getOutputStream().write(msg.getBytes());
+					String logMsg = msg+". Richiesta effettuata da username ["+identity.getUsername()+"] (password errata)";
+					sendError(res, log, msg, 500, logMsg); 
 					return;
 				}
 			}
@@ -134,9 +150,7 @@ public class CheckStatoPdD extends HttpServlet {
 						OpenSPCoop2Startup.gestoreRisorseJMX_staticInstance.setAttribute(resourceName, attributeName, v);	
 					}catch(Exception e){
 						String msg = "Aggiornamento attributo ["+attributeName+"] della risorsa ["+resourceName+"] non riuscita (valore:"+attributeValue+"): "+e.getMessage();
-						log.error("[GovWayCheck] "+msg,e);
-						res.setStatus(500);
-						res.getOutputStream().write(msg.getBytes());	
+						sendError(res, log, msg, 500, e); 	
 						return;
 					}
 				}
@@ -146,18 +160,14 @@ public class CheckStatoPdD extends HttpServlet {
 						res.getOutputStream().write(value.toString().getBytes());	
 					}catch(Exception e){
 						String msg = "Lettura attributo ["+attributeName+"] della risorsa ["+resourceName+"] non riuscita: "+e.getMessage();
-						log.error("[GovWayCheck] "+msg,e);
-						res.setStatus(500);
-						res.getOutputStream().write(msg.getBytes());	
+						sendError(res, log, msg, 500, e); 	
 						return;
 					}
 				}
 			}
 			else if(attributeValue!=null){
 				String msg = "Lettura risorsa ["+resourceName+"] non effettuata, fornito un valore di attributo senza aver indicato il nome";
-				log.error("[GovWayCheck] "+msg);
-				res.setStatus(500);
-				res.getOutputStream().write(msg.getBytes());
+				sendError(res, log, msg, 500); 	
 				return;
 			}
 			else if(methodName!=null){
@@ -174,9 +184,7 @@ public class CheckStatoPdD extends HttpServlet {
 					}
 				}catch(Throwable e) {
 					String msg = "Invocazione metodo ["+methodName+"] della risorsa ["+resourceName+"] non riuscita: "+e.getMessage();
-					log.error("[GovWayCheck] "+msg,e);
-					res.setStatus(500);
-					res.getOutputStream().write(msg.getBytes());
+					sendError(res, log, msg, 500, e); 
 					return;
 				}
 				
@@ -185,17 +193,13 @@ public class CheckStatoPdD extends HttpServlet {
 					res.getOutputStream().write(value.toString().getBytes());	
 				}catch(Exception e){
 					String msg = "Invocazione metodo ["+methodName+"] della risorsa ["+resourceName+"] non riuscita: "+e.getMessage();
-					log.error("[GovWayCheck] "+msg,e);
-					res.setStatus(500);
-					res.getOutputStream().write(msg.getBytes());
+					sendError(res, log, msg, 500, e); 
 					return;
 				}
 			}
 			else{
 				String msg = "Lettura risorsa ["+resourceName+"] non effettuata, nessun attributo o metodo richiesto";
-				log.error("[GovWayCheck] "+msg);
-				res.setStatus(500);
-				res.getOutputStream().write(msg.getBytes());
+				sendError(res, log, msg, 500); 
 				return;
 			}
 			
@@ -208,9 +212,7 @@ public class CheckStatoPdD extends HttpServlet {
 		}
 		if(checkEnabled==false){
 			String msg = "Servizio non abilitato";
-			log.error("[GovWayCheck] "+msg);
-			res.setStatus(500);
-			res.getOutputStream().write(msg.getBytes());
+			sendError(res, log, msg, 500); 
 			return;
 		}
 		
@@ -220,33 +222,23 @@ public class CheckStatoPdD extends HttpServlet {
 		}
 		else if( TimerMonitoraggioRisorseThread.risorseDisponibili == false){
 			String msg = "Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage();
-			log.error("[GovWayCheck] "+msg,TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
-			res.setStatus(500);
-			res.getOutputStream().write(msg.getBytes());	
+			sendError(res, log, msg, 500, TimerMonitoraggioRisorseThread.risorsaNonDisponibile); 
 		}
 		else if( TimerThresholdThread.freeSpace == false){
 			String msg = "Non sono disponibili abbastanza risorse per la gestione della richiesta";
-			log.error("[GovWayCheck] "+msg);
-			res.setStatus(500);
-			res.getOutputStream().write(msg.getBytes());	
+			sendError(res, log, msg, 500); 
 		}
 		else if( Tracciamento.tracciamentoDisponibile == false){
 			String msg = "Tracciatura non disponibile: "+Tracciamento.motivoMalfunzionamentoTracciamento.getMessage();
-			log.error("[GovWayCheck] "+msg,Tracciamento.motivoMalfunzionamentoTracciamento);
-			res.setStatus(500);
-			res.getOutputStream().write(msg.getBytes());	
+			sendError(res, log, msg, 500, Tracciamento.motivoMalfunzionamentoTracciamento); 	
 		}
 		else if( MsgDiagnostico.gestoreDiagnosticaDisponibile == false){
 			String msg = "Sistema di diagnostica non disponibile: "+MsgDiagnostico.motivoMalfunzionamentoDiagnostici.getMessage();
-			log.error("[GovWayCheck] "+msg,MsgDiagnostico.motivoMalfunzionamentoDiagnostici);
-			res.setStatus(500);
-			res.getOutputStream().write(msg.getBytes());	
+			sendError(res, log, msg, 500, MsgDiagnostico.motivoMalfunzionamentoDiagnostici); 		
 		}
 		else if( Dump.sistemaDumpDisponibile == false){
 			String msg = "Sistema di dump dei contenuti applicativi non disponibile: "+Dump.motivoMalfunzionamentoDump.getMessage();
-			log.error("[GovWayCheck] "+msg,Dump.motivoMalfunzionamentoDump);
-			res.setStatus(500);
-			res.getOutputStream().write(msg.getBytes());	
+			sendError(res, log, msg, 500, Dump.motivoMalfunzionamentoDump); 
 		}
 		return;
 

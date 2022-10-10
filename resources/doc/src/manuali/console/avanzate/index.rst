@@ -23,3 +23,4 @@ Funzionalità Avanzate
 	contentBased
 	validazione
 	password
+	health_check

@@ -75,6 +75,28 @@ public class Proxy extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private static void sendError(HttpServletResponse res, Logger log, String msg, int code) throws IOException {
+		sendError(res, log, msg, code, msg, null);
+	}
+	@SuppressWarnings("unused")
+	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, Throwable e) throws IOException {
+		sendError(res, log, msg, code, msg, e);
+	}
+	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, String logMsg) throws IOException {
+		sendError(res, log, msg, code, msg, null);
+	}
+	private static void sendError(HttpServletResponse res, Logger log, String msg, int code, String logMsg, Throwable e) throws IOException {
+		String prefix = "[Proxy] ";
+		if(e!=null) {
+			log.error(prefix+logMsg, e);
+		}
+		else {
+			log.error(prefix+logMsg);
+		}
+		res.setStatus(code);
+		res.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
+		res.getOutputStream().write(msg.getBytes());
+	}
 	
 
 	@Override public void doGet(HttpServletRequest req, HttpServletResponse res)
@@ -97,9 +119,7 @@ public class Proxy extends HttpServlet {
 		}
 		if(proxyEnabled==false){
 			String msg = "Servizio non abilitato";
-			log.error("[Proxy] "+msg);
-			res.setStatus(500);
-			res.getOutputStream().write(msg.getBytes());
+			sendError(res, log, msg, 500); 
 			return;
 		}
 				
@@ -109,9 +129,8 @@ public class Proxy extends HttpServlet {
 			list = DynamicClusterManager.getInstance().getHostnames(log);
 		}catch(Throwable e) {
 			String msg = "Servizio non disponibile";
-			log.error("[Proxy] "+msg+": "+e.getMessage(),e);
-			res.setStatus(500);
-			res.getOutputStream().write(msg.getBytes());
+			String logMsg = msg+": "+e.getMessage();
+			sendError(res, log, msg, 500, logMsg, e); 
 			return;
 		}
 		
@@ -164,16 +183,14 @@ public class Proxy extends HttpServlet {
 				HttpServletCredential identity = new HttpServletCredential(req, log);
 				if(username.equals(identity.getUsername())==false){
 					String msg = "Servizio non autorizzato";
-					log.error("[Proxy] "+msg+". Richiesta effettuata da username ["+identity.getUsername()+"] sconosciuto");
-					res.setStatus(500);
-					res.getOutputStream().write(msg.getBytes());	
+					String logMsg = msg+". Richiesta effettuata da username ["+identity.getUsername()+"] sconosciuto";
+					sendError(res, log, msg, 500, logMsg); 	
 					return;
 				}
 				if(password.equals(identity.getPassword())==false){
 					String msg = "Servizio non autorizzato";
-					log.error("[Proxy] "+msg+". Richiesta effettuata da username ["+identity.getUsername()+"] (password errata)");
-					res.setStatus(500);
-					res.getOutputStream().write(msg.getBytes());
+					String logMsg = msg+". Richiesta effettuata da username ["+identity.getUsername()+"] (password errata)";
+					sendError(res, log, msg, 500, logMsg); 	
 					return;
 				}
 			}
@@ -345,9 +362,9 @@ public class Proxy extends HttpServlet {
 				}
 				
 				if(t!=null) {
-					log.error("[Proxy] error occurs: "+t.getMessage(),t);
-					res.setStatus(500);
-					res.getOutputStream().write(t.getMessage().getBytes());
+					String msg = t.getMessage();
+					String logMsg = "error occurs: "+t.getMessage();
+					sendError(res, log, msg, 500, logMsg, t); 	
 				}
 				else if(httpResponseFailed!=null) {
 					log.debug("Invoke all node complete 'ERROR'");
@@ -363,9 +380,8 @@ public class Proxy extends HttpServlet {
 				}
 				else {
 					String msg = "Servizio non disponibile";
-					log.error("[Proxy] 'CasoNonPrevisto' (url: "+url_t+") "+msg);
-					res.setStatus(500);
-					res.getOutputStream().write(msg.getBytes());
+					String logMsg = "'CasoNonPrevisto' (url: "+url_t+") "+msg;
+					sendError(res, log, msg, 500, logMsg); 	
 				}
 				return;
 			}
@@ -385,9 +401,8 @@ public class Proxy extends HttpServlet {
 					writeResponse(httpResponse, res);
 				}catch(Throwable e) {
 					String msg = "Servizio non disponibile";
-					log.error("[Proxy] "+msg+" (url: "+url+"): "+e.getMessage(),e);
-					res.setStatus(500);
-					res.getOutputStream().write(msg.getBytes());
+					String logMsg = msg+" (url: "+url+"): "+e.getMessage();
+					sendError(res, log, msg, 500, logMsg, e); 	
 					return;
 				}
 			}
@@ -410,9 +425,8 @@ public class Proxy extends HttpServlet {
 				writeResponse(httpResponse, res);
 			}catch(Throwable e) {
 				String msg = "Servizio non disponibile";
-				log.error("[Proxy] "+msg+" (url: "+url+"): "+e.getMessage(),e);
-				res.setStatus(500);
-				res.getOutputStream().write(msg.getBytes());
+				String logMsg = msg+" (url: "+url+"): "+e.getMessage();
+				sendError(res, log, msg, 500, logMsg, e); 	
 				return;
 			}
 		}
