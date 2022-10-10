@@ -1414,6 +1414,15 @@ p.note-checkbox-affiancata {
 
 .spanNoEdit {
 /* 	vertical-align: middle; */
+/* 	font-size: 16px; */
+}
+
+.spanNoEdit16 {
+/* 	vertical-align: middle; */
+	font-size: 16px;
+}
+
+.spanNoEdit16 a{
 	font-size: 16px;
 }
 

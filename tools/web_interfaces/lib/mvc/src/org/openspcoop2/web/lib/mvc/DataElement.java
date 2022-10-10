@@ -255,6 +255,10 @@ public class DataElement implements Serializable {
 		if(DataElementType.SUBTITLE.toString().equals(s)) {
 			this.statoSottosezione = STATO_APERTURA_SEZIONI.DISABILITATO;
 		}
+		// classe css default per gli elementi LINK
+		if(DataElementType.LINK.toString().equals(s)) {
+			this.styleClass = null;
+		}
 	}
 	public String getType() {
 		return DataElement.checkNull(this.type);

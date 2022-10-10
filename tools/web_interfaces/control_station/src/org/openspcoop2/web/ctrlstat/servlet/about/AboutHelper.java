@@ -85,6 +85,7 @@ public class AboutHelper extends ConsoleHelper {
 		de.setLabel(AboutCostanti.LABEL_VERSIONE);
 		de.setType(DataElementType.TEXT);
 		de.setValue(this.core.getProductVersion());
+		de.setStyleClass(Costanti.INPUT_TEXT_DEFAULT_CSS_CLASS_FONT_SIZE_16);
 		dati.addElement(de);
 		
 		// sito
@@ -100,6 +101,7 @@ public class AboutHelper extends ConsoleHelper {
 			de.setValue(CostantiControlStation.LABEL_OPENSPCOOP2_WEB);
 			de.setUrl(CostantiControlStation.LABEL_OPENSPCOOP2_WEB);
 		}
+		de.setStyleClass(Costanti.INPUT_TEXT_DEFAULT_CSS_CLASS_FONT_SIZE_16);
 		dati.addElement(de);
 		
 		// copyright
@@ -112,6 +114,7 @@ public class AboutHelper extends ConsoleHelper {
 		else {
 			de.setValue(AboutCostanti.LABEL_COPYRIGHT_VALUE);
 		}
+		de.setStyleClass(Costanti.INPUT_TEXT_DEFAULT_CSS_CLASS_FONT_SIZE_16);
 		dati.addElement(de);
 		
 		// sito openspcoop

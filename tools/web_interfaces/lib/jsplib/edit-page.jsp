@@ -614,6 +614,7 @@ for (int i = 0; i < dati.size(); i++) {
 	        				String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 	        				String selEvtOnClick = !de.getOnClick().equals("") ? (" onClick=\"" + visualizzaAjaxStatus + de.getOnClick() + "\" " ) : " ";
 	        				String deLabelLink = !de.getLabelLink().equals("") ? de.getLabelLink() : "&nbsp;";
+	        				classSpanNoEdit = de.getStyleClass(); // gestione override classe di default 24/03/2021
 	        				
 	        				String deTarget = " ";
 							if (!de.getTarget().equals("")) {
@@ -627,7 +628,7 @@ for (int i = 0; i < dati.size(); i++) {
 	            			<div class="prop prop-link">
 	            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabelLink %></label>
 	            				<div class="<%=classDivNoEdit %>"> 
-	            					<span><a href="<%= de.getUrl() %>" <%= selEvtOnClick %> <%=deTarget %> ><%= de.getValue() %></a></span>
+	            					<span class="<%=classSpanNoEdit %>"><a href="<%= de.getUrl() %>" <%= selEvtOnClick %> <%=deTarget %> ><%= de.getValue() %></a></span>
 	            				</div>
 	            				<% 
 						      		if(deInfo != null){
