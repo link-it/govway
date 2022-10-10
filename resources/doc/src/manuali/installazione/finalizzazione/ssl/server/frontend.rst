@@ -53,6 +53,15 @@ Per abilitare il processamento degli header inoltrati dal frontend è necessario
                                       
    inserendo al posto di #CLIENT-CERT_HEADER-NAME# il nome dell'header http utilizzato per propagare il certificato x.509 (es. 'SSL_CLIENT_CERT'). Il certificato inserito nell'header http dal frontend può essere stato codificato in base64 e/o tramite url encoding. È possibile effettuare la decodifica abilitando la proprietà 'org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.base64_decode' e/o la proprietà org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.url_decode.
 
+   .. note::
+
+      La modalità sopra descritta consente di attivare la decodifica di certificati codificati solamente in una delle due modalità (urlEncoded o base64). Se GovWay risiede in un'architettura che contiene più frontend http di diversa tipologia può succedere che i vari frontend inoltrino il certificato con codifiche differenti. Per poter supportare questo scenario è possibile abilitare la proprietà 'org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.url_decode'.
+
+      ::
+
+         # Abilitando la seguente opzione, l'header valorizzato con il certificato può essere url encoded o base64 encoded (verranno provate entrambe le decodifiche):
+         org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.url_decode_or_base64_decode=true
+                                      
    Con questa modalità è possibile definire un truststore per verificare nuovamente i certificati ricevuti dal FrontEnd tramite la seguente configurazione:
 
    ::

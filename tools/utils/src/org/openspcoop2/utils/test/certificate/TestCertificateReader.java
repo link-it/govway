@@ -36,7 +36,7 @@ public class TestCertificateReader {
 	private static final String ID_TEST = "CertificateReader";
 	
 	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST})
-	public void testJWK() throws Exception{
+	public void testCertificateReader() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
 		org.openspcoop2.utils.certificate.test.CertificateReaderTest.test();

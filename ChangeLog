@@ -1,3 +1,10 @@
+2022-10-10  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1453
+	Aggiunta la possibilità di decodificare i certificati ricevuti da un frontend http in entrambe le modalità supportate, 
+	prima provando la decodifica 'urlEncoded' ed in caso di fallimento la decodifica 'base64'.
+
 2022-10-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, ApiRsConfigurazione, ProtocolloModIPA]

@@ -265,6 +265,7 @@ public class GestoreCredenzialiEngine {
 		}
 		boolean sslCertificate_urlDecode = false;
 		boolean sslCertificate_base64Decode = false;
+		boolean sslCertificate_urlDecode_or_base64Decode = false;
 		boolean sslCertificate_enrich_BEGIN_END = false;
 		boolean sslCertificate_replace = false;
 		String sslCertificate_replaceSource = null;
@@ -272,6 +273,7 @@ public class GestoreCredenzialiEngine {
 		if(headerNameSSLCertificate!=null) {
 			sslCertificate_urlDecode = configurazione.isHeaderSslCertificateUrlDecode();
 			sslCertificate_base64Decode = configurazione.isHeaderSslCertificateBase64Decode();
+			sslCertificate_urlDecode_or_base64Decode = configurazione.isHeaderSslCertificateUrlDecodeOrBase64Decode();
 			sslCertificate_enrich_BEGIN_END = configurazione.isHeaderSslCertificateEnrich_BEGIN_END();
 			sslCertificate_replace = configurazione.isHeaderSslCertificateReplaceCharacters();
 			if(sslCertificate_replace) {
@@ -481,6 +483,7 @@ public class GestoreCredenzialiEngine {
 				CertificateDecodeConfig config = new CertificateDecodeConfig();
 				config.setUrlDecode(sslCertificate_urlDecode);
 				config.setBase64Decode(sslCertificate_base64Decode);
+				config.setUrlDecode_or_base64Decode(sslCertificate_urlDecode_or_base64Decode);
 				config.setEnrich_BEGIN_END(sslCertificate_enrich_BEGIN_END);
 				config.setReplace(sslCertificate_replace);
 				if(sslCertificate_replace) {

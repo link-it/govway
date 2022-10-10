@@ -32,6 +32,7 @@ import javax.security.auth.x500.X500Principal;
 import org.apache.xml.security.utils.RFC2253Parser;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.Charset;
 import org.slf4j.Logger;
@@ -635,9 +636,41 @@ public class CertificateUtils {
 	}
 	
 	public static Certificate readCertificate(CertificateDecodeConfig config, String certificateParam) throws UtilsException {
-		return readCertificate(config, certificateParam, Charset.UTF_8.getValue());
+		return _readCertificate(config, certificateParam, Charset.UTF_8.getValue());
 	}
 	public static Certificate readCertificate(CertificateDecodeConfig config, String certificateParam, String charset) throws UtilsException {
+		return _readCertificate(config, certificateParam, charset);
+	}
+	
+	private static Certificate _readCertificate(CertificateDecodeConfig config, String certificateParam, String charset) throws UtilsException {
+		if(config.isUrlDecode_or_base64Decode()) {
+			
+			Throwable tUrlDecode = null;
+			try {
+				config.setUrlDecode(true);
+				config.setBase64Decode(false);
+				return _readCertificateEngine(config, certificateParam, charset);
+			}catch(Throwable t) {
+				tUrlDecode = t;
+			}
+			
+			Throwable tBase64Decode = null;
+			try {
+				config.setUrlDecode(false);
+				config.setBase64Decode(true);
+				return _readCertificateEngine(config, certificateParam, charset);
+			}catch(Throwable t) {
+				tBase64Decode = t;
+			}
+			
+			UtilsMultiException uMulti = new UtilsMultiException("Decodifica non riuscita", tUrlDecode, tBase64Decode);
+			throw new UtilsException(uMulti.getMessage(),uMulti);
+		}
+		else {
+			return _readCertificateEngine(config, certificateParam, charset);
+		}
+	}
+	private static Certificate _readCertificateEngine(CertificateDecodeConfig config, String certificateParam, String charset) throws UtilsException {
 		
 		if(certificateParam==null || "".equals(certificateParam)){
 			throw new UtilsException("Certificate non fornito");

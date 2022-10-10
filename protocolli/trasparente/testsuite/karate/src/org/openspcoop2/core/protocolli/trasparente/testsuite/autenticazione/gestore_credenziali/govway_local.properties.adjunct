@@ -47,6 +47,8 @@ org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate=X-Frui
 org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.url_decode=false
 # Indicazione se l'header valorizzato con il certificato è base64 encoded:
 org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.base64_decode=true
+# Abilitando la seguente opzione, l'header valorizzato con il certificato può essere url encoded o base64 encoded (verranno provate entrambe le decodifiche):
+org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.url_decode_or_base64_decode=false
 # Volutamente non lo utilizzo
 #org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.truststore.path=/etc/govway/keys/applicativoCertExampleTrustStore.jks
 #org.openspcoop2.pdd.services.pd.gestoreCredenziali.header.ssl.certificate.truststore.password=123456
@@ -102,6 +104,8 @@ org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.issuer=X-Erogazion
 org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate=X-Erogazione-SSL-Cert
 # Indicazione se l'header valorizzato con il certificato è url encoded:
 org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.url_decode=true
+# Abilitando la seguente opzione, l'header valorizzato con il certificato può essere url encoded o base64 encoded (verranno provate entrambe le decodifiche):
+org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.url_decode_or_base64_decode=false
 # Indicazione se l'header valorizzato con il certificato è base64 encoded:
 org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.base64_decode=false
 org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.replaceCharacters=true

@@ -107,6 +107,7 @@ public class GestoreCredenzialiConfigurazione {
 	private String headerSslCertificate;
 	private boolean headerSslCertificateUrlDecode;
 	private boolean headerSslCertificateBase64Decode;
+	private boolean headerSslCertificateUrlDecodeOrBase64Decode;
 	private boolean headerSslCertificateEnrich_BEGIN_END;
 	private boolean headerSslCertificateReplaceCharacters;
 	private String headerSslCertificateReplaceCharacters_source;
@@ -230,6 +231,14 @@ public class GestoreCredenzialiConfigurazione {
 				this.headerSslCertificateBase64Decode = Boolean.parseBoolean(pValue);
 			}else{
 				this.headerSslCertificateBase64Decode = true;// default a true
+			}
+			
+			pValue = getProperty(p, "header.ssl.certificate.url_decode_or_base64_decode", protocollo, idSoggetto);
+			if(pValue!=null){
+				pValue = pValue.trim();
+				this.headerSslCertificateUrlDecodeOrBase64Decode = Boolean.parseBoolean(pValue);
+			}else{
+				this.headerSslCertificateUrlDecodeOrBase64Decode = true;// default a true
 			}
 			
 			pValue = getProperty(p, "header.ssl.certificate.enrich_BEGIN_END", protocollo, idSoggetto);
@@ -496,6 +505,9 @@ public class GestoreCredenzialiConfigurazione {
 	}
 	public boolean isHeaderSslCertificateBase64Decode() {
 		return this.headerSslCertificateBase64Decode;
+	}
+	public boolean isHeaderSslCertificateUrlDecodeOrBase64Decode() {
+		return this.headerSslCertificateUrlDecodeOrBase64Decode;
 	}
 	public boolean isHeaderSslCertificateEnrich_BEGIN_END() {
 		return this.headerSslCertificateEnrich_BEGIN_END;
