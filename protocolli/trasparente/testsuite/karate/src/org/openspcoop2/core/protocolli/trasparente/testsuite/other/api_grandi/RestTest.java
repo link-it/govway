@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.Utils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -72,7 +73,10 @@ public class RestTest extends ConfigLoader {
 		
 		request.setUrl(url);
 		
-		int tempoMax = 1500; // su oracle e jenkins impiega piu' tempo
+		int tempoMax = 1500; // su oracle impiega piu' tempo
+		if(Utils.isJenkins()) {
+			tempoMax = 2500; 
+		}
 		
 		var responses = org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.makeParallelRequests(request, 10);
 		for (var resp : responses) {

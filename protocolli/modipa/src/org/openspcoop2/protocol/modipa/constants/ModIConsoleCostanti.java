@@ -101,7 +101,7 @@ public class ModIConsoleCostanti {
     public static final String MODIPA_KEYSTORE_MODE_LABEL_PATH = "File System";
     public static final String MODIPA_KEYSTORE_MODE_VALUE_HSM = ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_HSM;
     public static final String MODIPA_KEYSTORE_MODE_LABEL_HSM = "HSM";
-    public static final String MODIPA_KEYSTORE_MODE_DEFAULT_VALUE = MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE;
+    public static final String MODIPA_KEYSTORE_MODE_DEFAULT_VALUE = ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_PATH; //MODIPA_KEYSTORE_MODE_VALUE_ARCHIVE;
     public static final String MODIPA_KEYSTORE_MODE_NOTE_PATH = "<b>!!Attenzione!!</b> La modalità selezionata non consente un'identificazione dell'applicativo su API erogate da altri soggetti di dominio interno.<br/>Per consentire l'identificazione caricare il certificato associato alla chiave privata.";
 	
     public static final String MODIPA_KEYSTORE_ARCHIVE_LABEL = "Archivio";

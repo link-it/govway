@@ -385,10 +385,6 @@
 			      	<property name="policy.retrieveToken.jwt.clientId" />
 			</item>
 
-			<item type="text" name="jwtAudience" label="Audience" required="true">
-			    <property name="policy.retrieveToken.jwt.audience" />
-			</item>
-
 			<item type="select" name="jwtIssuerApplicativoModiChoice" label="Issuer" default="applicativoModi" reloadOnChange="true">
 			      	<conditions and="true">
 					<condition>
@@ -453,6 +449,10 @@
 					</condition>
 				</conditions>
 			      	<property name="policy.retrieveToken.jwt.subject" />
+			</item>
+
+			<item type="text" name="jwtAudience" label="Audience" required="true">
+			    <property name="policy.retrieveToken.jwt.audience" />
 			</item>
 
 			<item type="text" name="jwtIdentifier" label="Identifier" required="false" default="${transaction:id}">

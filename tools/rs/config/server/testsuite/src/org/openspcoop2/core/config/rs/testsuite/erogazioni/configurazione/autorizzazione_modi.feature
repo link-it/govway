@@ -170,7 +170,7 @@ Examples:
 
 
 @ModIAutorizzazioneApplicativiTokenEsterniPuntuale
-Scenario Outline: Controllo accessi autorizzazione applicativi token esterni puntuale per le erogazioni (profilo ModI)
+Scenario Outline: Controllo accessi autorizzazione applicativi token esterni puntuale per le erogazioni (profilo ModI) [<token>]
  
     * def api_modi = read('../<api>')
     * eval randomize(api_modi, ["nome"])
@@ -335,7 +335,6 @@ Examples:
 |applicativo_https.json|credenziali.certificato.subject|api_modi_rest.json|erogazione_modi_rest.json|gestione-token-petstore-disabilitato.json|
 |applicativo_esterno_https_token.json|credenziali.token.identificativo|api_modi_rest.json|erogazione_modi_rest.json|gestione-token-petstore.json|
 |applicativo_esterno_https_token.json|credenziali.token.identificativo|api_modi_rest_no_sicurezza.json|erogazione_petstore.json|gestione-token-petstore.json|
-|applicativo_esterno_https_token.json|credenziali.token.identificativo|api_modi_rest.json|erogazione_modi_rest.json|gestione-token-petstore-disabilitato.json|
 
 
 
@@ -570,4 +569,4 @@ Examples:
 |applicativo_https.json|credenziali.certificato.subject|api_modi_rest_no_sicurezza.json|erogazione_petstore.json|gestione-token-petstore.json|Il tipo di credenziali dell\'Applicativo non sono compatibili con l\'autenticazione impostata nell\'erogazione selezionata|la gestione token richiede che l'applicativo definisca un token|
 |applicativo_https.json|credenziali.certificato.subject|api_modi_rest_no_sicurezza.json|erogazione_petstore.json|gestione-token-petstore-disabilitato.json|Non è possibile registrare alcun applicativo: non è stata riscontrato alcun criterio di sicurezza (messaggio o token)|nessun criterio di sicurezza impostato|
 |applicativo_esterno_https_token.json|credenziali.token.identificativo|api_modi_rest_no_sicurezza.json|erogazione_petstore.json|gestione-token-petstore-disabilitato.json|Non è possibile registrare alcun applicativo: non è stata riscontrato alcun criterio di sicurezza (messaggio o token)|nessun criterio di sicurezza impostato|
-
+|applicativo_esterno_https_token.json|credenziali.token.identificativo|api_modi_rest.json|erogazione_modi_rest.json|gestione-token-petstore-disabilitato.json|Il tipo di credenziali dell\'Applicativo non sono compatibili con l\'autenticazione impostata nell\'erogazione selezionata|autenticazioneToken non impostata e applicativo che contiene anche una credenziale token oltre al certificato|

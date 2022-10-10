@@ -5,12 +5,12 @@ Attivazione della sicurezza messaggio su richiesta/risposta
 
 Insieme all'attivazione di un pattern di sicurezza messaggio è possibile configurarne l'attivazione solamente sulla richiesta o sulla risposta (:numref:`modipa_sicurezza_applicabilita`).
 
-   .. figure:: ../../../_figure_console/modipa_sicurezza_applicabilita.png
-    :scale: 50%
-    :align: center
-    :name: modipa_sicurezza_applicabilita
+.. figure:: ../../../_figure_console/modipa_sicurezza_applicabilita.png
+ :scale: 50%
+ :align: center
+ :name: modipa_sicurezza_applicabilita
 
-    Configurazione dell'applicabilità della sicurezza messaggio
+ Configurazione dell'applicabilità della sicurezza messaggio
 
 Per API REST è possibile anche definire dei criteri di applicabilità della sicurezza messaggio in base a Content-Type o codici di risposta HTTP selezionando la voce 'Personalizza criteri di applicabilità'. La personalizzazione dei criteri consente di differenziare la configurazione tra richiesta e risposta come mostrato nella figura :numref:`modipa_sicurezza_applicabilita_personalizzata`:
 
@@ -18,12 +18,12 @@ Per API REST è possibile anche definire dei criteri di applicabilità della sic
 
 - Risposta:  oltre ad abilitare o disabilitare, è consentito definire una lista di Content-Type e/o una lista di codice di risposta HTTP per i quali verrà attuata la sicurezza messaggio sulla risposta.
 
-   .. figure:: ../../../_figure_console/modipa_sicurezza_applicabilita_personalizzata.png
-    :scale: 50%
-    :align: center
-    :name: modipa_sicurezza_applicabilita_personalizzata
+.. figure:: ../../../_figure_console/modipa_sicurezza_applicabilita_personalizzata.png
+ :scale: 50%
+ :align: center
+ :name: modipa_sicurezza_applicabilita_personalizzata
 
-    Configurazione dell'applicabilità della sicurezza messaggio personalizzata per Content-Type e Codici di Risposta
+ Configurazione dell'applicabilità della sicurezza messaggio personalizzata per Content-Type e Codici di Risposta
 
 La lista di Content-Type per i quali la sicurezza messaggio verrà utilizzata è definibile tramite i seguenti formati:
 

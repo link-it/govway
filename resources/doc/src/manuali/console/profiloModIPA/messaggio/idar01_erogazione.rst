@@ -5,12 +5,12 @@ Erogazione
 
 Nelle erogazioni, le richieste provengono da amministrazioni esterne al dominio e sono dirette ad applicativi interni. Prima di procedere con l'inoltro della richiesta verso il backend interno, GovWay valida il token di sicurezza ricevuto rispetto al pattern associato all'operazione invocata (come descritto nella sezione :ref:`modipa_idar01`): verifica firma, validazione temporale, filtro duplicati, verifica integrità del messaggio ... (:numref:`ErogazioneModIPA2`)
 
-   .. figure:: ../../_figure_console/ErogazioneModIPA.jpg
-    :scale: 70%
-    :align: center
-    :name: ErogazioneModIPA2
+.. figure:: ../../_figure_console/ErogazioneModIPA.jpg
+ :scale: 70%
+ :align: center
+ :name: ErogazioneModIPA2
 
-    Erogazione con Profilo di Interoperabilità 'ModI'
+ Erogazione con Profilo di Interoperabilità 'ModI'
 
 Per la configurazione di erogazioni basate su una API con pattern "ID_AUTH_REST_01" (o "ID_AUTH_SOAP_01"), nella relativa maschera della govwayConsole saranno presenti le sezioni "ModI - Richiesta" e "ModI - Risposta":
 
@@ -20,11 +20,11 @@ Per la configurazione di erogazioni basate su una API con pattern "ID_AUTH_REST_
     + TrustStore Certificati: Riferimento al truststore che contiene le CA, i certificati e le CRL da utilizzare per poter verificare i token di sicurezza ricevuti nelle richieste. È possibile mantenere l'impostazione di default che è stata fornita al momento dell'installazione del prodotto, oppure definire un diverso riferimento (opzione "Ridefinito") fornendo Path, Tipo, Password del TrustStore e CRL.
     + Audience: valore del campo Audience atteso nel token di sicurezza della richiesta.
 
-   .. figure:: ../../_figure_console/modipa_erogazione_richiesta.png
-    :scale: 70%
-    :name: erogazione_richiesta_fig
+.. figure:: ../../_figure_console/modipa_erogazione_richiesta.png
+ :scale: 70%
+ :name: erogazione_richiesta_fig
 
-    Dati per la configurazione della sicurezza messaggio sulla richiesta di una erogazione
+ Dati per la configurazione della sicurezza messaggio sulla richiesta di una erogazione
 
 
 - ModI - Risposta (:numref:`erogazione_risposta_fig`): la maschera prevede la configurazione del meccanismo di firma digitale del messaggio di risposta, e la produzione del relativo token di sicurezza, da inviare all'applicativo mittente:
@@ -35,11 +35,11 @@ Per la configurazione di erogazioni basate su una API con pattern "ID_AUTH_REST_
     + Keystore: il keystore da utilizzare per la firma del messaggio di risposta. È possibile mantenere il riferimento al keystore di default, fornito in fase di installazione del prodotto, oppure indicare un diverso riferimento (opzione "Ridefinito") fornendo il path sul filesystem, o in alternativa direttamente l'archivio, unitamente a Tipo, Password, Alias Chiave Privata e Password Chiave Privata.
     + Time to Live (secondi): validità temporale del token prodotto.
 
-   .. figure:: ../../_figure_console/modipa_erogazione_risposta.png
-    :scale: 70%
-    :name: erogazione_risposta_fig
+.. figure:: ../../_figure_console/modipa_erogazione_risposta.png
+ :scale: 70%
+ :name: erogazione_risposta_fig
 
-    Dati per la configurazione della sicurezza messaggio sulla risposta di una erogazione
+ Dati per la configurazione della sicurezza messaggio sulla risposta di una erogazione
 
 
 Nel contesto dei pattern di sicurezza messaggio è possibile registrare anche gli applicativi dei domini esterni al fine di:
@@ -47,30 +47,30 @@ Nel contesto dei pattern di sicurezza messaggio è possibile registrare anche gl
 1. identificare puntualmente le componenti esterne coinvolte nella comunicazione abilitando le funzionalità di tracciamento e statistica per tali elementi.
 2. abilitare le funzionalità di autorizzazione sugli applicativi identificando puntualmente chi autorizzare dopo il superamento del processo di autenticazione/autorizzazione canale e validazione del token di sicurezza (:numref:`ErogazioneModIPA_autorizzazione`).
 
-   .. figure:: ../../_figure_console/ErogazioneModIPA_autorizzazione.jpg
-    :scale: 70%
-    :align: center
-    :name: ErogazioneModIPA_autorizzazione
+.. figure:: ../../_figure_console/ErogazioneModIPA_autorizzazione.jpg
+ :scale: 70%
+ :align: center
+ :name: ErogazioneModIPA_autorizzazione
 
-    Erogazione con Profilo di Interoperabilità 'ModI' e criteri di autorizzazione puntuali
+ Erogazione con Profilo di Interoperabilità 'ModI' e criteri di autorizzazione puntuali
 
 Per abilitare quanto al punto 1 è sufficiente la sola registrazione degli applicativi esterni coinvolti (:numref:`applicativo_esterno_fig`).
 
-   .. figure:: ../../_figure_console/modipa_applicativo_esterno.png
-    :scale: 70%
-    :name: applicativo_esterno_fig
+.. figure:: ../../_figure_console/modipa_applicativo_esterno.png
+ :scale: 70%
+ :name: applicativo_esterno_fig
 
-    Registrazione di un applicativo esterno
+ Registrazione di un applicativo esterno
 
 Dopo aver indicato il dominio "Esterno" per l'applicativo, sarà necessario selezionare il soggetto che identifica il dominio esterno di riferimento.
 
 La registrazione dell'applicativo esterno comprende anche la sezione con i dati relativi alla sicurezza messaggio (:numref:`applicativo_esterno_upload_fig`).
 
-   .. figure:: ../../_figure_console/modipa_applicativo_esterno_upload.png
-    :scale: 70%
-    :name: applicativo_esterno_upload_fig
+.. figure:: ../../_figure_console/modipa_applicativo_esterno_upload.png
+ :scale: 70%
+ :name: applicativo_esterno_upload_fig
 
-    Dati ModI relativi ad un applicativo esterno con upload del certificato
+ Dati ModI relativi ad un applicativo esterno con upload del certificato
 
 
 I dati da fornire sono:
@@ -89,20 +89,20 @@ I dati da fornire sono:
     + *Issuer*: l’issuer del certificato, nel caso in cui non sia self-signed
     + *Reply Audience/WSA-To*: identificativo dell'applicativo da confrontare con il valore "Audience" eventualmente presente nelle richieste.
 
-   .. figure:: ../../_figure_console/modipa_applicativo_esterno_manuale.png
-    :scale: 50%
-    :name: applicativo_esterno_manuale_fig
+.. figure:: ../../_figure_console/modipa_applicativo_esterno_manuale.png
+ :scale: 50%
+ :name: applicativo_esterno_manuale_fig
 
-    Dati ModI relativi ad un applicativo esterno con configurazione manuale dei dati di sicurezza
+ Dati ModI relativi ad un applicativo esterno con configurazione manuale dei dati di sicurezza
 
 
 Per abilitare le funzionalità di autorizzazione dei singoli applicativi (punto 2 del precedente elenco) si deve procedere alla configurazione della sezione "Controllo Accessi" relativa all'erogazione. Quando attiva la sicurezza messaggio, questa sezione conterrà il form "Autorizzazione Messaggio" (:numref:`erogazione_secMessaggio_fig`). Qui è possibile specificare un elenco puntuale di applicativi (esterni) autorizzati, ad accedere all'erogazione, tra quelli identificati nella fase di verifica del relativo certificato. Gli applicativi esterni saranno selezionabili tra quelli censiti nella sezione "Applicativi" (:numref:`erogazione_secMessaggio_fig`). In alternativa è possibile definire i ruoli che gli applicativi devono possedere.
 
-   .. figure:: ../../_figure_console/modipa_erogazione_secMessaggio.png
-    :scale: 60%
-    :name: erogazione_secMessaggio_fig
+.. figure:: ../../_figure_console/modipa_erogazione_secMessaggio.png
+ :scale: 60%
+ :name: erogazione_secMessaggio_fig
 
-    Autorizzazione di singoli applicativi per l'accesso all'erogazione
+ Autorizzazione di singoli applicativi per l'accesso all'erogazione
 
 .. note::
     L'autorizzazione basata sugli identificativi degli applicativi mittenti del dominio fruitore esterno, è possibile soltanto se è stata effettuata la registrazione degli applicativi interessati, in associazione al soggetto esterno di riferimento.

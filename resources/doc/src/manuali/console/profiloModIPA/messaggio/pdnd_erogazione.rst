@@ -50,14 +50,25 @@ L'adozione del pattern ID_AUTH_REST_01 rilasciato dalla PDND consente alla ricez
 
     Dati ModI relativi ad un applicativo esterno con configurazione sia del certificato di firma che del token PDND
 
+.. note::
 
-Una configurazione simile è attuabile anche sugli applicativi di dominio interno per poterli riconoscere su installazioni Multi-Tenant dove sia il tenant fruitore che quello erogatore viene gestito sullo stesso GovWay (:numref:`tokenFirmaModIAppOAuthFirmaMultiTenant`).
+   La registrazione di applicativo esterno può avvenire anche utilizzando una token Policy differente da quella built-in 'PDND' fornita. Per farlo è possibile utilizzare le voci presenti in 'Sicurezza Messaggio' che sono analoghe a quelle documentate ma relative ad altre token policy di validazioni differenti dalla PDND: 'Authorization OAuth' e 'Authorization OAuth + Integrity'.
+
+
+
+Una configurazione simile è attuabile anche sugli applicativi di dominio interno per poterli riconoscere su installazioni Multi-Tenant (':ref:`console_multitenant`') dove sia il tenant fruitore che quello erogatore viene gestito sullo stesso GovWay (:numref:`tokenFirmaModIAppOAuthFirmaMultiTenant`).
 
 .. figure:: ../../_figure_console/modipa_applicativo_interno_token.png
     :scale: 70%
     :name: tokenFirmaModIAppOAuthFirmaMultiTenant
 
-    Dati ModI relativi ad un applicativo esterno con configurazione sia del certificato di firma che del token PDND
+    Dati ModI relativi ad un applicativo interno con configurazione token PDND
+
+.. figure:: ../../_figure_console/modipa_applicativo_interno_token_cert.png
+    :scale: 70%
+    :name: tokenFirmaModIAppOAuthFirmaMultiTenantKeystore
+
+    Dati ModI relativi ad un applicativo interno con configurazione sia del certificato di firma che del token PDND
 
 Una volta registrati gli applicativi client è possibile attuare criteri di autorizzazione dei singoli applicativi accedendo alla configurazione della sezione "Controllo Accessi" e attivando la sicurezza messaggio. Sarà possibile specificare un elenco puntuale di applicativi autorizzati (:numref:`erogazione_secMessaggio_pdnd_fig`). In alternativa è possibile definire i ruoli che gli applicativi devono possedere.
 

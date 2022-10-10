@@ -10,12 +10,12 @@ Questa funzionalità consente di estendere "INTEGRITY_REST_01" aggiungendo all'i
 
 L'attivazione di questa funzionalità avviene a livello della relativa API, nella sezione "ModI", elemento "Sicurezza Messaggio", selezionando la voce "Informazioni Utente" (:numref:`api_modipaInfoUtente_fig`).
 
-  .. figure:: ../../_figure_console/modipa_api_infoUtente.png
-    :scale: 50%
-    :align: center
-    :name: api_modipaInfoUtente_fig
+.. figure:: ../../_figure_console/modipa_api_infoUtente.png
+  :scale: 50%
+  :align: center
+  :name: api_modipaInfoUtente_fig
 
-    Pattern di sicurezza messaggio "INTEGRITY_REST_01" + Informazioni Utente
+  Pattern di sicurezza messaggio "INTEGRITY_REST_01" + Informazioni Utente
 
 .. note::
     Poichè la funzionalità è una estensione di "INTEGRITY_REST_01", la voce 'Informazioni Utente' compare solamente se è stato selezionato il pattern "INTEGRITY_REST_01 con ID_AUTH_REST_01" o "INTEGRITY_REST_01 con ID_AUTH_REST_02"
@@ -33,21 +33,21 @@ Le informazioni aggiuntive presenti all'interno del token riguardano:
 
 Nella figura :numref:`api_modipaInfoUtente_exampleRest_fig` viene riportato un esempio del payload relativo al token di sicurezza 'ModI' di una API REST, contenente le informazioni aggiuntive sull'utente che ha effettuato la richiesta.
 
-  .. figure:: ../../_figure_console/modipa_api_infoUtente_example_rest.png
-    :scale: 50%
-    :align: center
-    :name: api_modipaInfoUtente_exampleRest_fig
+.. figure:: ../../_figure_console/modipa_api_infoUtente_example_rest.png
+  :scale: 50%
+  :align: center
+  :name: api_modipaInfoUtente_exampleRest_fig
 
-    Payload del Token di Sicurezza REST con pattern "INTEGRITY_REST_01" + Informazioni Utente
+  Payload del Token di Sicurezza REST con pattern "INTEGRITY_REST_01" + Informazioni Utente
 
 Nella figura :numref:`api_modipaInfoUtente_exampleSoap_fig` viene riportato un esempio relativo al token di sicurezza 'ModI' per una API SOAP. Le informazioni aggiuntive sull'utente che ha effettuato la richiesta sono incluse in una Asserziona SAML.
 
-  .. figure:: ../../_figure_console/modipa_api_infoUtente_example_soap.png
-    :scale: 50%
-    :align: center
-    :name: api_modipaInfoUtente_exampleSoap_fig
+.. figure:: ../../_figure_console/modipa_api_infoUtente_example_soap.png
+  :scale: 50%
+  :align: center
+  :name: api_modipaInfoUtente_exampleSoap_fig
 
-    Payload del Token di Sicurezza SOAP con pattern "INTEGRITY_SOAP_01" + Informazioni Utente
+  Payload del Token di Sicurezza SOAP con pattern "INTEGRITY_SOAP_01" + Informazioni Utente
 
 In una fruizione, le informazioni aggiuntive che vengono aggiunte nel token, sono per default attese nella richiesta pervenuta a GovWay sotto forma di header http o parametro della url:
 
@@ -59,9 +59,9 @@ In una fruizione, le informazioni aggiuntive che vengono aggiunte nel token, son
 
 Il comportamento di default, per l'acquisizione dei valori utilizzati per le tre informazioni aggiuntive, può essere personalizzato accedendo nella sezione "ModI" di una fruizione, e modificando le voci "Informazioni Utente" (:numref:`api_modipaInfoUtente_dynamic_fig`) indicando un valore statico o utilizzando le proprietà dinamiche descritte nella sezione :ref:`valoriDinamici`.
 
-  .. figure:: ../../_figure_console/modipa_api_infoUtente_dynamic.png
-    :scale: 50%
-    :align: center
-    :name: api_modipaInfoUtente_dynamic_fig
+.. figure:: ../../_figure_console/modipa_api_infoUtente_dynamic.png
+  :scale: 50%
+  :align: center
+  :name: api_modipaInfoUtente_dynamic_fig
 
-    Personalizzazione dell'acquisizione delle Informazioni Utente
+  Personalizzazione dell'acquisizione delle Informazioni Utente
