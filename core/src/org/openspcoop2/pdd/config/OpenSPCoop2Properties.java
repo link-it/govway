@@ -1896,6 +1896,8 @@ public class OpenSPCoop2Properties {
 			this.getGestioneToken_userInfo_lock_permits();
 			this.getGestioneToken_iatTimeCheck_milliseconds();
 			this.getGestioneToken_iatTimeCheck_futureTolerance_milliseconds();
+			this.isGestioneToken_expTimeCheck();
+			this.getGestioneToken_expTimeCheck_tolerance_milliseconds();
 			this.isGestioneToken_saveSourceTokenInfo();
 			this.getGestioneTokenFormatDate();
 			this.getGestioneTokenHeaderTrasportoJSON();
@@ -20615,6 +20617,59 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.getGestioneToken_iatTimeCheck_futureTolerance_milliseconds;
+	}
+	
+	private static Boolean isGestioneToken_expTimeCheck = null;
+	public boolean isGestioneToken_expTimeCheck(){
+
+		if(OpenSPCoop2Properties.isGestioneToken_expTimeCheck==null){
+			String pName = "org.openspcoop2.pdd.gestioneToken.exp.checkEnabled";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isGestioneToken_expTimeCheck = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isGestioneToken_expTimeCheck = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isGestioneToken_expTimeCheck = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isGestioneToken_expTimeCheck;
+	}
+	
+	private static Boolean getGestioneToken_expTimeCheck_tolerance_milliseconds_read = null;
+	private static Long getGestioneToken_expTimeCheck_tolerance_milliseconds = null;
+	public Long getGestioneToken_expTimeCheck_tolerance_milliseconds() throws Exception{
+
+		String pName = "org.openspcoop2.pdd.gestioneToken.exp.toleranceMilliseconds";
+		if(OpenSPCoop2Properties.getGestioneToken_expTimeCheck_tolerance_milliseconds_read==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.getGestioneToken_expTimeCheck_tolerance_milliseconds = Long.valueOf(value); // gia' millisecondi
+					if(OpenSPCoop2Properties.getGestioneToken_expTimeCheck_tolerance_milliseconds<=0) {
+						// disabilito il controllo
+						OpenSPCoop2Properties.getGestioneToken_expTimeCheck_tolerance_milliseconds=null;
+					}
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				throw e;
+			}
+			
+			OpenSPCoop2Properties.getGestioneToken_expTimeCheck_tolerance_milliseconds_read = true;
+		}
+
+		return OpenSPCoop2Properties.getGestioneToken_expTimeCheck_tolerance_milliseconds;
 	}
 	
 	private static Boolean isGestioneToken_saveSourceTokenInfo = null;

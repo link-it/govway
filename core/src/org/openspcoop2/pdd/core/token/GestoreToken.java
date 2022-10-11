@@ -2305,15 +2305,25 @@ public class GestoreToken {
 		
 		Date now = DateManager.getDate();
 		
-		if(esitoGestioneToken.isValido()) {			
-			if(esitoGestioneToken.getInformazioniToken().getExp()!=null) {				
+		if(esitoGestioneToken.isValido()) {
+			
+			boolean enabled = OpenSPCoop2Properties.getInstance().isGestioneToken_expTimeCheck();
+			
+			if(enabled && esitoGestioneToken.getInformazioniToken().getExp()!=null) {	
+				
+				Date checkNow = now;
+				Long tolerance = OpenSPCoop2Properties.getInstance().getGestioneToken_expTimeCheck_tolerance_milliseconds();
+				if(tolerance!=null && tolerance.longValue()>0) {
+					checkNow = new Date(now.getTime() - tolerance.longValue());
+				}
+
 				/*
 				 *   The "exp" (expiration time) claim identifies the expiration time on
    				 *   or after which the JWT MUST NOT be accepted for processing.  The
    				 *   processing of the "exp" claim requires that the current date/time
    				 *   MUST be before the expiration date/time listed in the "exp" claim.
 				 **/
-				if(!now.before(esitoGestioneToken.getInformazioniToken().getExp())){
+				if(!checkNow.before(esitoGestioneToken.getInformazioniToken().getExp())){
 					esitoGestioneToken.setTokenScaduto();
 					esitoGestioneToken.setDateValide(false);
 					esitoGestioneToken.setDetails("Token expired");

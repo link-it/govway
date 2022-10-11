@@ -134,12 +134,12 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				
 				String exp = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP);
 				if(exp!=null) {
-					checkExp(exp, now, "");
+					checkExp(exp, now, rest, "");
 				}
 				
 				String expIntegrity = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_EXP);
 				if(expIntegrity!=null) {
-					checkExp(expIntegrity, now, prefixIntegrity);
+					checkExp(expIntegrity, now, rest, prefixIntegrity);
 				}
 				
 				String nbf = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_NBF);
@@ -437,7 +437,19 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		}
 	}
 
-	private void checkExp(String exp, Date now, String prefix) throws Exception {
+	private void checkExp(String exp, Date now, boolean rest, String prefix) throws Exception {
+		
+		boolean enabled = true;
+		if(rest) {
+			enabled = this.modiProperties.isRestSecurityTokenClaimsExpTimeCheck();
+		}
+		else {
+			enabled = this.modiProperties.isSoapSecurityTokenTimestampExpiresTimeCheck();
+		}
+		if(!enabled) {
+			return;
+		}
+		
 		if(prefix==null) {
 			prefix="";
 		}
@@ -448,7 +460,18 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 			 *   processing of the "exp" claim requires that the current date/time
 			 *   MUST be before the expiration date/time listed in the "exp" claim.
 		 **/
-		if(!now.before(dateExp)){
+		Date checkNow = now;
+		Long tolerance = null;
+		if(rest) {
+			tolerance = this.modiProperties.getRestSecurityTokenClaimsExpTimeCheck_toleranceMilliseconds();
+		}
+		else {
+			tolerance = this.modiProperties.getSoapSecurityTokenTimestampExpiresTimeCheck_toleranceMilliseconds();
+		}
+		if(tolerance!=null && tolerance.longValue()>0) {
+			checkNow = new Date(now.getTime() - tolerance.longValue());
+		}
+		if(!checkNow.before(dateExp)){
 			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MESSAGGIO_SCADUTO, 
 					prefix+"Token scaduto in data '"+exp+"'"));
 		}

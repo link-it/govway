@@ -1,5 +1,10 @@
 2022-10-11  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, ProtocolloModIPA]
+	Aggiunta la possibilità di disabilitare il controllo di scadenza dei token o la definizione di un intervallo di tolleranza (in ms).
+
+2022-10-11  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Risolto Bug OP-1455
 	Utilizzando la libreria di validazione 'swagger-request-validator' al posto di quella di default 'Openapi4j',
