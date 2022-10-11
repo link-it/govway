@@ -47,6 +47,7 @@ public class JsonXmlPathExpressionEngineTest {
 		
 		
 		String pattern = "$.prova";
+		JsonXmlPathExpressionEngine.validate(pattern, log);
 		String v = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(testJsonSemplice, pattern, log);
 		if(v!=null && !"".equals(v)) {
 			if("test1".equals(v)) {
@@ -62,6 +63,7 @@ public class JsonXmlPathExpressionEngineTest {
 		
 		
 		pattern = "xpath /json2xml/prova/text()";
+		JsonXmlPathExpressionEngine.validate(pattern, log);
 		v = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(testJsonSemplice, pattern, log);
 		if(v!=null && !"".equals(v)) {
 			if("test1".equals(v)) {
@@ -77,6 +79,7 @@ public class JsonXmlPathExpressionEngineTest {
 		
 		
 		pattern = "xpath //prova/text()";
+		JsonXmlPathExpressionEngine.validate(pattern, log);
 		v = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(testJsonSemplice, pattern, log);
 		if(v!=null && !"".equals(v)) {
 			if("test1".equals(v)) {
@@ -92,6 +95,7 @@ public class JsonXmlPathExpressionEngineTest {
 
 		
 		pattern = "xpath /json2xml/*";
+		JsonXmlPathExpressionEngine.validate(pattern, log);
 		v = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(testJsonSemplice, pattern, log);
 		if(v!=null && !"".equals(v)) {
 			if("<prova>test1</prova><prova2>23</prova2>".equals(v)) {
@@ -107,6 +111,7 @@ public class JsonXmlPathExpressionEngineTest {
 		
 		
 		pattern = "xpath local-name(/json2xml/*[last()])";
+		JsonXmlPathExpressionEngine.validate(pattern, log);
 		v = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(testJsonSemplice, pattern, log);
 		if(v!=null && !"".equals(v)) {
 			if("prova2".equals(v)) {
@@ -138,6 +143,7 @@ public class JsonXmlPathExpressionEngineTest {
 				"}";
 		
 		pattern = "xpath namespace(m:http://testNamespace, altro:http://altro) substring-before(local-name(//json2xml/*),\"Request\")";
+		JsonXmlPathExpressionEngine.validate(pattern, log);
 		v = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(testJsonComplessoConNamespace, pattern, log);
 		if(v!=null && !"".equals(v)) {
 			if("NomeAzioneTest".equals(v)) {
@@ -151,6 +157,7 @@ public class JsonXmlPathExpressionEngineTest {
 		}
 		
 		pattern = "xpath substring-before(local-name(//json2xml/*),\"Request\")";
+		JsonXmlPathExpressionEngine.validate(pattern, log);
 		try {
 			v = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(testJsonComplessoConNamespace, pattern, log);
 			throw new Exception("Atteso eccezione");
@@ -164,12 +171,84 @@ public class JsonXmlPathExpressionEngineTest {
 		}
 
 		pattern = "xpath namespace(altro:http://altro) substring-before(local-name(//json2xml/*),\"Request\")";
+		JsonXmlPathExpressionEngine.validate(pattern, log);
 		try {
 			v = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(testJsonComplessoConNamespace, pattern, log);
 			throw new Exception("Atteso eccezione");
 		}catch(Exception e) {
 			if(e.getMessage().contains("The prefix \"m\" for element \"m:NomeAzioneTestRequest\" is not bound")) {
 				System.out.println("Test con namespace, senza dichiarazione dei namespace, completato con successo; riscontrato errore atteso");
+			}
+			else {
+				throw e;
+			}
+		}
+		
+		
+		pattern = "xpath namespace(altro:) substring-before(local-name(//json2xml/*),\"Request\")";
+		try {
+			JsonXmlPathExpressionEngine.validate(pattern, log);
+			throw new Exception("Atteso eccezione");
+		}catch(Exception e) {
+			String msgError = "Espressione '"+pattern+"' da utilizzare non corretta; dichiarazione dei namespace in un formato non corretto: attesa dichiarazione namespace. (altro:) (altro:)";
+			if(e.getMessage().contains(msgError)) {
+				System.out.println("Test validazione pattern errato, caso 1; riscontrato errore atteso");
+			}
+			else {
+				throw e;
+			}
+		}
+		
+		pattern = "xpath namespace(sa) substring-before(local-name(//json2xml/*),\"Request\")";
+		try {
+			JsonXmlPathExpressionEngine.validate(pattern, log);
+			throw new Exception("Atteso eccezione");
+		}catch(Exception e) {
+			String msgError = "Espressione '"+pattern+"' da utilizzare non corretta; dichiarazione dei namespace in un formato non corretto: atteso ':' separator. (sa) (sa)";
+			if(e.getMessage().contains(msgError)) {
+				System.out.println("Test validazione pattern errato, caso 2; riscontrato errore atteso");
+			}
+			else {
+				throw e;
+			}
+		}
+		
+		pattern = "xpath dedee/";
+		try {
+			JsonXmlPathExpressionEngine.validate(pattern, log);
+			throw new Exception("Atteso eccezione");
+		}catch(Exception e) {
+			String msgError = "Trasformazione json2xml 'Mapped' fallita: Validazione dell'xpath indicato [dedee/] fallita: Compilazione dell'espressione XPATH ha causato un errore (A location step was expected following the '/' or '//' token.)";
+			if(e.getMessage().contains(msgError)) {
+				System.out.println("Test validazione pattern errato, caso xpath 1; riscontrato errore atteso");
+			}
+			else {
+				throw e;
+			}
+		}
+		
+		pattern = "xpath namespace(altro:http://altro) altro/TEXT()";
+		try {
+			JsonXmlPathExpressionEngine.validate(pattern, log);
+			throw new Exception("Atteso eccezione");
+		}catch(Exception e) {
+			String msgError = "Trasformazione json2xml 'Mapped' fallita: Validazione dell'xpath indicato [altro/TEXT()] fallita: Compilazione dell'espressione XPATH ha causato un errore (Unknown nodetype: TEXT)";
+			if(e.getMessage().contains(msgError)) {
+				System.out.println("Test validazione pattern errato, caso xpath 2; riscontrato errore atteso");
+			}
+			else {
+				throw e;
+			}
+		}
+		
+		pattern = "$. DE$$";
+		try {
+			JsonXmlPathExpressionEngine.validate(pattern, log);
+			throw new Exception("Atteso eccezione");
+		}catch(Exception e) {
+			String msgError = "Validazione del jsonPath indicato [$. DE$$] fallita: Could not parse token starting at position 2";
+			if(e.getMessage().contains(msgError)) {
+				System.out.println("Test validazione pattern errato, caso jsonpath 1; riscontrato errore atteso");
 			}
 			else {
 				throw e;

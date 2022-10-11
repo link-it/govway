@@ -23,10 +23,13 @@ package org.openspcoop2.utils.xml2json;
 import java.util.List;
 
 import org.codehaus.jettison.mapped.Configuration;
+import org.openspcoop2.utils.json.JsonPathNotValidException;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.openspcoop2.utils.xml.XPathExpressionEngine;
 import org.slf4j.Logger;
+
+import com.jayway.jsonpath.JsonPath;
 
 /**	
  * PathExpressionEngine
@@ -37,6 +40,110 @@ import org.slf4j.Logger;
  */
 public class JsonXmlPathExpressionEngine {
 
+	private static final String PREFIX = "xpath ";
+	private static final String NAMESPACE_PREFIX = "namespace("; // namespace
+	private static final String NAMESPACE_END = ")";
+	
+	public static void validate(String patternParam, Logger log) throws JsonPathNotValidException {
+		
+		boolean json2Xml = false;
+		String pattern = patternParam;
+		String tipo = "Mapped";
+		if(patternParam!=null && patternParam.toLowerCase().startsWith(PREFIX.toLowerCase())) {
+			// default
+			json2Xml = true;
+			pattern = patternParam.substring(PREFIX.length());
+			tipo = "Mapped";
+		}
+		if(pattern==null || "".equals(pattern)) {
+			throw new JsonPathNotValidException("Espressione da utilizzare non fornita");
+		}
+				
+		if(!json2Xml) {
+			try {
+				JsonPath.compile(pattern);
+			} catch(Exception e) {
+				throw new JsonPathNotValidException("Validazione del jsonPath indicato ["+pattern+"] fallita: "+e.getMessage(),e);
+			}
+		}
+		
+		else {
+			try {
+				// Wrappo in un unico elemento radice, altrimenti la conversione xml non riesce
+				
+				pattern = pattern.trim();
+				
+				if(pattern.toLowerCase().startsWith(NAMESPACE_PREFIX)) {
+					pattern = pattern.substring(NAMESPACE_PREFIX.length());
+					if(!pattern.contains(NAMESPACE_END)) {
+						throw new JsonPathNotValidException("Espressione '"+patternParam+"' in un formato non corretto; non è stata riscontrata la chiusura della definizione dei namespace");
+					}
+					int offSet = pattern.indexOf(NAMESPACE_END);
+					String namespaces = pattern.substring(0, offSet);
+					if(offSet<(pattern.length()-1)) {
+						pattern = pattern.substring(offSet+1, pattern.length());
+						pattern = pattern.trim();
+					}
+					else {
+						pattern = null;
+					}
+					
+					if(pattern==null || "".equals(pattern)) {
+						throw new JsonPathNotValidException("Espressione '"+patternParam+"' da utilizzare non fornita dopo la dichiarazione dei namespace");
+					}
+					//System.out.println("NAMESPACE ["+namespaces+"]");
+					//System.out.println("PATTERN ["+pattern+"]");
+
+					if(namespaces!=null && !"".equals(namespaces)) {
+						
+						String [] tmp = namespaces.split(",");
+						if(tmp!=null && tmp.length>0) {
+							for (String namespaceDeclaration : tmp) {
+								if(namespaceDeclaration!=null && !"".equals(namespaceDeclaration)) {
+									if(!namespaceDeclaration.contains(":")) {
+										throw new JsonPathNotValidException("Espressione '"+patternParam+"' da utilizzare non corretta; dichiarazione dei namespace in un formato non corretto: atteso ':' separator. ("+namespaces+") ("+namespaceDeclaration+")");
+									}
+									else {
+										int indexOfPrefix = namespaceDeclaration.indexOf(":");
+										String prefix = namespaceDeclaration.substring(0, indexOfPrefix);
+										String uri = null;
+										if(indexOfPrefix<(namespaceDeclaration.length()-1)) {
+											uri = namespaceDeclaration.substring(indexOfPrefix+1, namespaceDeclaration.length());
+										}
+										else {
+											throw new JsonPathNotValidException("Espressione '"+patternParam+"' da utilizzare non corretta; dichiarazione dei namespace in un formato non corretto: attesa dichiarazione namespace. ("+namespaces+") ("+namespaceDeclaration+")");
+										}
+										prefix = prefix.trim();
+										uri = uri.trim();
+										if(prefix==null || "".equals(prefix)) {
+											throw new JsonPathNotValidException("Espressione '"+patternParam+"' da utilizzare non corretta; dichiarazione dei namespace in un formato non corretto: prefisso non presente. ("+namespaces+") ("+namespaceDeclaration+")");
+										}
+										if(uri==null || "".equals(uri)) {
+											throw new JsonPathNotValidException("Espressione '"+patternParam+"' da utilizzare non corretta; dichiarazione dei namespace in un formato non corretto: dichiarazione namespace non presente. ("+namespaces+") ("+namespaceDeclaration+")");
+										}
+										//System.out.println("prefix ["+prefix+"] uri["+uri+"]");
+									}
+								}
+							}
+						}
+					}
+					
+				}
+				
+				AbstractXPathExpressionEngine engine = new XPathExpressionEngine();
+				engine.validate(pattern);
+				
+			}
+			catch(JsonPathNotValidException e) {
+				throw e;
+			}
+			catch(Exception e) {
+				throw new JsonPathNotValidException("Trasformazione json2xml '"+tipo+"' fallita: "+e.getMessage(),e);
+			}
+		}
+		
+	}
+	
 	
 	public static String extractAndConvertResultAsString(String elementJson, String pattern, Logger log) throws Exception {
 		Object o = _extractAndConvertResultAsString(elementJson, pattern, log, false);
@@ -53,9 +160,6 @@ public class JsonXmlPathExpressionEngine {
 		}
 		return null;
 	}
-	private static final String PREFIX = "xpath ";
-	private static final String NAMESPACE_PREFIX = "namespace("; // namespace
-	private static final String NAMESPACE_END = ")";
 	private static Object _extractAndConvertResultAsString(String elementJson, String patternParam, Logger log, boolean returnAsList) throws Exception {
 			
 		IJson2Xml json2Xml = null;

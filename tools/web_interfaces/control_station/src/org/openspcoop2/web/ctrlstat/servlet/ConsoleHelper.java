@@ -238,7 +238,6 @@ import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.regexp.RegExpException;
@@ -248,6 +247,7 @@ import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml.XPathExpressionEngine;
+import org.openspcoop2.utils.xml2json.JsonXmlPathExpressionEngine;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
@@ -2814,8 +2814,9 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	public boolean checkJsonPath(String pattern, String object) throws Exception{
 		try {
-			JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
-			engine.validate(pattern);
+			//JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
+			//engine.validate(pattern);
+			JsonXmlPathExpressionEngine.validate(pattern, this.log); // per poter validare anche la funzionalità 'Espressioni XPath su messaggi JSON'
 		}catch(Exception e) {
 			this.pd.setMessage("Il campo '"+object+"' non contiene un'espressione json-path valida: "+e.getMessage());
 			return false;
@@ -2831,21 +2832,24 @@ public class ConsoleHelper implements IConsoleHelper {
 		}catch(Exception e) {
 			if(sb.length()>0) {
 				sb.append("<BR/>");
+				sb.append("<BR/>");
 			}
 			sb.append("XPath: "+e.getMessage());
 		}
 		try {
-			JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
-			engine.validate(pattern);
+			//JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
+			//engine.validate(pattern);
+			JsonXmlPathExpressionEngine.validate(pattern, this.log); // per poter validare anche la funzionalità 'Espressioni XPath su messaggi JSON'
 			return true;
 		}catch(Exception e) {
 			if(sb.length()>0) {
+				sb.append("<BR/>");
 				sb.append("<BR/>");
 			}
 			sb.append("JsonPath: "+e.getMessage());
 		}
 		if(sb.length()>0) {
-			this.pd.setMessage("Il campo '"+object+"' non contiene un'espressione valida:"+"<BR/>"+sb.toString());
+			this.pd.setMessage("Il campo '"+object+"' contiene un'espressione non validabile né come XPath né come JsonPath:"+"<BR/><BR/>"+sb.toString());
 			return false;
 		}
 		return true;
