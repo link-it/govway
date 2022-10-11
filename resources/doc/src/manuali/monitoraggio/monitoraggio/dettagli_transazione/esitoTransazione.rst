@@ -5,6 +5,11 @@ Esito di una Transazione
 
 La tabella che segue riporta tutti gli esiti associabili ad una transazione gestita da Govway, così come indicati nel file di properties del prodotto `esiti.properties <https://github.com/link-it/govway/blob/master/core/src/org/openspcoop2/protocol/utils/esiti.properties>`_:
 
+.. table:: Esiti delle Transazioni
+ :class: longtable
+ :widths: 15 10 45 30
+ :name: esitiTransazioneTab
+
  ============================================= ========= =========================================================================================================================================== ================================================= 
   TITOLO                                        CODICE    DESCRIZIONE                                                                                                                                 ID 
  ============================================= ========= =========================================================================================================================================== ================================================= 
@@ -60,6 +65,11 @@ La tabella che segue riporta tutti gli esiti associabili ad una transazione gest
  ============================================= ========= =========================================================================================================================================== ================================================= 
 
 Ciascun esito riportato nella tabella precedente è riconducibile ad una tra le seguenti casistiche:
+
+.. table:: Classi di Esiti delle Transazioni
+ :class: longtable
+ :widths: 50 50
+ :name: classiEsitiTransazioneTab
 
  ================================= ======================================================================= 
  Esito Complessivo                 Codici Corrispondenti                 

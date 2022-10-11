@@ -1,3 +1,19 @@
+2022-10-13  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.3.8
+
+2022-10-11  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	La validazione del pattern speciale 'XPath su messaggi JSON' (https://govway.readthedocs.io/it/latest/console/avanzate/contentBased.html) non era più configurabile sulla console dove veniva segnalato un errore di formato.
+
+2022-10-11  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug sulla consultazione dei messaggi registrati.
+	Se veniva richiesto un download con la funzionalità 'Estrai Contenuti Multipart', 
+	il successivo download di un messaggio non multipart andava in errore.
+
 2022-10-11  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, ProtocolloModIPA]

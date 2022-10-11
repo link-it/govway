@@ -1,7 +1,7 @@
 Espressioni XPath su messaggi JSON
 ----------------------------------------------------------
 
-In diverse funzionalità (:ref:`correlazione`, :ref:`rateLimiting_attivazioneNuovaPolicy`, :ref:`identificazioneAzione` ) è stata documentato la possibilità di utilizzare espressioni jsonPath o XPath per estrarre contenuti dai messaggi JSON o XML in transito sul Gateway.
+In diverse funzionalità (:ref:`correlazione`, :ref:`rateLimiting_attivazioneNuovaPolicy`, :ref:`identificazioneAzione` ) è stata documentata la possibilità di utilizzare espressioni jsonPath o XPath per estrarre contenuti dai messaggi JSON o XML in transito sul Gateway.
 
 L'estrazione dei contenuti da messaggi JSON si basa su espressioni JSONPath che allo stato attuale non hanno la stessa "potenza" delle espressioni XPath. 
 Ad esempio:

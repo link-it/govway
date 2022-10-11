@@ -61,6 +61,8 @@ Per la console di gestione sono stati risolti i seguenti bug:
 
 - l'utilizzo di schede multiple all'interno del browser provocava errori durante l'utilizzo della console;
 
+- la validazione del pattern speciale 'XPath su messaggi JSON' (https://govway.readthedocs.io/it/latest/console/avanzate/contentBased.html) non era più configurabile sulla console dove veniva segnalato un errore di formato;
+
 - utilizzando la funzionalità 'Elimina' per caricare archivi contenenti Policy di Rate Limiting, l'operazione terminava con successo ma l'eliminazione lasciava policy 'zombie' sulla base dati.
 
 Per la console di monitoraggio sono stati risolti i seguenti bug:
@@ -68,5 +70,7 @@ Per la console di monitoraggio sono stati risolti i seguenti bug:
 - l'esito 'API Sospesa' è stato incluso nel gruppo 'Richiesta Scartata';
 
 - migliorata la documentazione della console di monitoraggio relativa alle informazioni Esito, Richiedente e Dettaglio Errore riportate nel dettaglio di una transazione;
+
+- se veniva richiesto un download con la funzionalità 'Estrai Contenuti Multipart', il successivo download di un messaggio non multipart andava in errore;
 
 - risolta anomalia presente in tutte le distribuzioni statistiche eccetto quella temporale e per esiti. Quando si selezionava un periodo 'personalizzato', se la scelta precedente del periodo era diversa da 'ultime 12 ore', le date venivano resettate automaticamente dopo l'impostazione dell'ora all'intervallo inferiore o superiore a seconda della data iniziale o finale.
