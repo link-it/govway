@@ -83,7 +83,7 @@ public class TestOpenApi3Extended {
 	public static void main(String[] args) throws Exception {
 		
 		
-		OpenAPILibrary openAPILibrary = OpenAPILibrary.openapi4j;
+		OpenAPILibrary openAPILibrary = OpenAPILibrary.swagger_request_validator;
 		if(args!=null && args.length>0) {
 			openAPILibrary = OpenAPILibrary.valueOf(args[0]);
 		}
@@ -95,6 +95,7 @@ public class TestOpenApi3Extended {
 		
 		// fix per evitare troppo output su jenkins:
 		logSystemOutError = !OpenAPILibrary.json_schema.equals(openAPILibrary);
+		
 
 
 		// *** TEST per il Parser e validazione dello schema *** //
@@ -3650,19 +3651,12 @@ public class TestOpenApi3Extended {
 	
 		System.out.println("Test #27 openapi che usano path dinamici completato\n\n");
 		
-		
-
-		
 		// ** Test per validazione con openapi che usano parametri definiti con schemi composti ... **
 		
 		System.out.println("Test #28 openapi che usano parametri definiti con schemi composti ...");
 		
-		if(!OpenAPILibrary.swagger_request_validator.equals(openAPILibrary)) {
-			testComposedSchemaParameters(openAPILibrary, mergeSpec);
-		}
-		else {
-			System.out.println("SKIP per '"+openAPILibrary+"': validazione complex type nei parametri non supportata");
-		}	
+		testComposedSchemaParameters(openAPILibrary, mergeSpec);
+		
 		System.out.println("Test #28 openapi che usano parametri definiti con schemi composti completato\n\n");
 		
 		
@@ -5960,6 +5954,7 @@ public class TestOpenApi3Extended {
 		List<Boolean> erroreAttesoRispostaTest = new ArrayList<Boolean>();
 		List<String> msgErroreAttesoTest_openapi4j = new ArrayList<String>();
 		List<String> msgErroreAttesoTest_swagger_request= new ArrayList<String>();
+		List<String> msgErroreAttesoTest_swagger_response= new ArrayList<String>();
 		List<String> msgErroreAttesoTest_json_schema= new ArrayList<String>();
 		
 		
@@ -5991,6 +5986,7 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(false);
 		msgErroreAttesoTest_openapi4j.add(null);
 		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add(null);
 		
 		
@@ -6008,6 +6004,7 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(false);
 		msgErroreAttesoTest_openapi4j.add(null);
 		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add(null);
 		
 		
@@ -6028,10 +6025,11 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_path.<anyOf>.<pattern>\n"
 				+ "composed_schema_any_of_path: '"+valoreNonCorretto1+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
 				+ "From: composed_schema_any_of_path.<anyOf>.<pattern>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Invalid value '"+valoreNonCorretto1+"' in dynamic path 'composed_schema_any_of_path' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
+				+ "Invalid value '"+valoreNonCorretto1+"' in dynamic path 'composed_schema_any_of_path' (expected type 'string'): Pattern match failed ('^[0-9]{3,5}$')");
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in dynamic path 'composed_schema_any_of_path' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
 				+ "Invalid value '"+valoreNonCorretto1+"' in dynamic path 'composed_schema_any_of_path' (expected type 'string'): Pattern match failed ('^[0-9]{3,5}$')");
-		
+		msgErroreAttesoTest_swagger_response.add(null);
 		
 		tipoTest.add("ERRORE-PATH-2");
 		complexTypeTest.add("any_of");
@@ -6049,10 +6047,12 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_path.<anyOf>.<pattern>\n"
 				+ "composed_schema_any_of_path: '"+valoreNonCorretto2+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
 				+ "From: composed_schema_any_of_path.<anyOf>.<pattern>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto2+"' in dynamic path 'composed_schema_any_of_path' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
 				+ "Invalid value '"+valoreNonCorretto2+"' in dynamic path 'composed_schema_any_of_path' (expected type 'string'): Pattern match failed ('^[0-9]{3,5}$')");
-		
+		msgErroreAttesoTest_swagger_request.add(msgErroreAttesoTest_json_schema.get(msgErroreAttesoTest_json_schema.size()-1));
+		msgErroreAttesoTest_swagger_response.add(null);
+
 		
 		tipoTest.add("ERRORE-PATH-3");
 		complexTypeTest.add("any_of");
@@ -6072,9 +6072,11 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_path.<anyOf>.<minLength>\n"
 				+ "composed_schema_any_of_path: '"+valoreNonCorrettoInt+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
 				+ "From: composed_schema_any_of_path.<anyOf>.<pattern>");
-		msgErroreAttesoTest_swagger_request.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in dynamic path 'composed_schema_any_of_path' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
 				+ "Invalid value '"+valoreNonCorrettoInt+"' in dynamic path 'composed_schema_any_of_path' (expected type 'string'): Too short, expected min length '3'");
+		msgErroreAttesoTest_swagger_request.add(msgErroreAttesoTest_json_schema.get(msgErroreAttesoTest_json_schema.size()-1));
+		msgErroreAttesoTest_swagger_response.add(null);
+
 		
 		
 		tipoTest.add("ERRORE-PATH-INLINE-1");
@@ -6097,9 +6099,11 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_path_inline.<anyOf>.<format>\n"
 				+ "composed_schema_any_of_path_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
 				+ "From: composed_schema_any_of_path_inline.<anyOf>.<type>");
-		msgErroreAttesoTest_swagger_request.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in dynamic path 'composed_schema_any_of_path_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto1+"\"\n"
 				+ "Invalid value '"+valoreNonCorretto1+"' in dynamic path 'composed_schema_any_of_path_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto1+"\"");
+		msgErroreAttesoTest_swagger_request.add(msgErroreAttesoTest_json_schema.get(msgErroreAttesoTest_json_schema.size()-1));
+		msgErroreAttesoTest_swagger_response.add(null);
+
 		
 		
 		tipoTest.add("ERRORE-PATH-INLINE-2");
@@ -6122,10 +6126,11 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_path_inline.<anyOf>.<format>\n"
 				+ "composed_schema_any_of_path_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
 				+ "From: composed_schema_any_of_path_inline.<anyOf>.<type>");
-		msgErroreAttesoTest_swagger_request.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto2+"' in dynamic path 'composed_schema_any_of_path_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto2+"\"\n"
 				+ "Invalid value '"+valoreNonCorretto2+"' in dynamic path 'composed_schema_any_of_path_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto2+"\"");		
-		
+		msgErroreAttesoTest_swagger_request.add(msgErroreAttesoTest_json_schema.get(msgErroreAttesoTest_json_schema.size()-1));
+		msgErroreAttesoTest_swagger_response.add(null);
+
 		
 		tipoTest.add("ERRORE-PATH-INLINE-3");
 		complexTypeTest.add("any_of");
@@ -6143,9 +6148,11 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_path_inline.<anyOf>.<maximum>\n"
 				+ "composed_schema_any_of_path_inline: Maximum is '55', found '"+valoreNonCorrettoInt+"'. (code: 1010)\n"
 				+ "From: composed_schema_any_of_path_inline.<anyOf>.<maximum>");
-		msgErroreAttesoTest_swagger_request.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in dynamic path 'composed_schema_any_of_path_inline' (expected type 'int32'): Value higher than the maximum '20'\n"
 				+ "Invalid value '"+valoreNonCorrettoInt+"' in dynamic path 'composed_schema_any_of_path_inline' (expected type 'int32'): Value higher than the maximum '55'");
+		msgErroreAttesoTest_swagger_request.add(msgErroreAttesoTest_json_schema.get(msgErroreAttesoTest_json_schema.size()-1));
+		msgErroreAttesoTest_swagger_response.add(null);
+
 		
 		
 		
@@ -6166,10 +6173,16 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_query.<anyOf>.<pattern>\n"
 				+ "composed_schema_any_of_query: '"+valoreNonCorretto1+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
 				+ "From: composed_schema_any_of_query.<anyOf>.<pattern>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/any_of/ABCDEFGHILK/20 @query.composed_schema_any_of_query] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorretto1+"\"\n"
+				+ "	* /anyOf/1: ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorretto1+"\"	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorretto1+"\"	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorretto1+"\"");
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in query parameter 'composed_schema_any_of_query' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
 				+ "Invalid value '"+valoreNonCorretto1+"' in query parameter 'composed_schema_any_of_query' (expected type 'string'): Pattern match failed ('^[0-9]{3,5}$')");
-		
+		msgErroreAttesoTest_swagger_response.add(null);
+
 		
 		tipoTest.add("ERRORE-QUERY-2");
 		complexTypeTest.add("any_of");
@@ -6187,10 +6200,16 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_query.<anyOf>.<pattern>\n"
 				+ "composed_schema_any_of_query: '"+valoreNonCorretto2+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
 				+ "From: composed_schema_any_of_query.<anyOf>.<pattern>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/any_of/ABCDEFGHILK/20 @query.composed_schema_any_of_query] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorretto2+"\"\n"
+				+ "	* /anyOf/1: ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorretto2+"\"	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorretto2+"\"	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorretto2+"\"");
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto2+"' in query parameter 'composed_schema_any_of_query' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
 				+ "Invalid value '"+valoreNonCorretto2+"' in query parameter 'composed_schema_any_of_query' (expected type 'string'): Pattern match failed ('^[0-9]{3,5}$')");
-		
+		msgErroreAttesoTest_swagger_response.add(null);
+
 		
 		tipoTest.add("ERRORE-QUERY-3");
 		complexTypeTest.add("any_of");
@@ -6210,7 +6229,15 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_query.<anyOf>.<minLength>\n"
 				+ "composed_schema_any_of_query: '"+valoreNonCorrettoInt+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
 				+ "From: composed_schema_any_of_query.<anyOf>.<pattern>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/any_of/ABCDEFGHILK/20 @query.composed_schema_any_of_query] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorrettoInt+"\"\n"
+				+ "	* /anyOf/1: String \""+valoreNonCorrettoInt+"\" is too short (length: 2, required minimum: 3)\n"
+				+ "	* /anyOf/1: ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorrettoInt+"\"	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorrettoInt+"\"	\n"
+				+ "	- [ERROR][] String \""+valoreNonCorrettoInt+"\" is too short (length: 2, required minimum: 3)	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorrettoInt+"\"");
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in query parameter 'composed_schema_any_of_query' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
 				+ "Invalid value '"+valoreNonCorrettoInt+"' in query parameter 'composed_schema_any_of_query' (expected type 'string'): Too short, expected min length '3'");
 		
@@ -6235,7 +6262,13 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_query_inline.<anyOf>.<format>\n"
 				+ "composed_schema_any_of_query_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
 				+ "From: composed_schema_any_of_query_inline.<anyOf>.<type>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/any_of/ABCDEFGHILK/20 @query.composed_schema_any_of_query_inline] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])\n"
+				+ "	* /anyOf/1: Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])	\n"
+				+ "	- [ERROR][] Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])	\n"
+				+ "	- [ERROR][] Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])");
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in query parameter 'composed_schema_any_of_query_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto1+"\"\n"
 				+ "Invalid value '"+valoreNonCorretto1+"' in query parameter 'composed_schema_any_of_query_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto1+"\"");
 		
@@ -6260,7 +6293,13 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_query_inline.<anyOf>.<format>\n"
 				+ "composed_schema_any_of_query_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
 				+ "From: composed_schema_any_of_query_inline.<anyOf>.<type>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/any_of/ABCDEFGHILK/20 @query.composed_schema_any_of_query_inline] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])\n"
+				+ "	* /anyOf/1: Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])	\n"
+				+ "	- [ERROR][] Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])	\n"
+				+ "	- [ERROR][] Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])");
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto2+"' in query parameter 'composed_schema_any_of_query_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto2+"\"\n"
 				+ "Invalid value '"+valoreNonCorretto2+"' in query parameter 'composed_schema_any_of_query_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto2+"\"");		
 		
@@ -6281,7 +6320,13 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_query_inline.<anyOf>.<maximum>\n"
 				+ "composed_schema_any_of_query_inline: Maximum is '55', found '"+valoreNonCorrettoInt+"'. (code: 1010)\n"
 				+ "From: composed_schema_any_of_query_inline.<anyOf>.<maximum>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/any_of/ABCDEFGHILK/20 @query.composed_schema_any_of_query_inline] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: Numeric instance is greater than the required maximum (maximum: 20, found: 59)\n"
+				+ "	* /anyOf/1: Numeric instance is greater than the required maximum (maximum: 55, found: 59)	\n"
+				+ "	- [ERROR][] Numeric instance is greater than the required maximum (maximum: 20, found: 59)	\n"
+				+ "	- [ERROR][] Numeric instance is greater than the required maximum (maximum: 55, found: 59)");
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in query parameter 'composed_schema_any_of_query_inline' (expected type 'int32'): Value higher than the maximum '20'\n"
 				+ "Invalid value '"+valoreNonCorrettoInt+"' in query parameter 'composed_schema_any_of_query_inline' (expected type 'int32'): Value higher than the maximum '55'");
 		
@@ -6306,7 +6351,13 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_cookie.<anyOf>.<pattern>\n"
 				+ "composed_schema_any_of_cookie: '"+valoreNonCorretto1+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
 				+ "From: composed_schema_any_of_cookie.<anyOf>.<pattern>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/any_of/ABCDEFGHILK/20 @cookie.composed_schema_any_of_cookie] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorretto1+"\"\n"
+				+ "	* /anyOf/1: ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorretto1+"\"	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorretto1+"\"	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorretto1+"\"");
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in cookie 'composed_schema_any_of_cookie' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
 				+ "Invalid value '"+valoreNonCorretto1+"' in cookie 'composed_schema_any_of_cookie' (expected type 'string'): Pattern match failed ('^[0-9]{3,5}$')");
 		
@@ -6327,7 +6378,13 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_cookie.<anyOf>.<pattern>\n"
 				+ "composed_schema_any_of_cookie: '"+valoreNonCorretto2+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
 				+ "From: composed_schema_any_of_cookie.<anyOf>.<pattern>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/any_of/ABCDEFGHILK/20 @cookie.composed_schema_any_of_cookie] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorretto2+"\"\n"
+				+ "	* /anyOf/1: ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorretto2+"\"	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorretto2+"\"	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorretto2+"\"");
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto2+"' in cookie 'composed_schema_any_of_cookie' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
 				+ "Invalid value '"+valoreNonCorretto2+"' in cookie 'composed_schema_any_of_cookie' (expected type 'string'): Pattern match failed ('^[0-9]{3,5}$')");
 		
@@ -6350,7 +6407,15 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_cookie.<anyOf>.<minLength>\n"
 				+ "composed_schema_any_of_cookie: '"+valoreNonCorrettoInt+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
 				+ "From: composed_schema_any_of_cookie.<anyOf>.<pattern>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/any_of/ABCDEFGHILK/20 @cookie.composed_schema_any_of_cookie] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorrettoInt+"\"\n"
+				+ "	* /anyOf/1: String \""+valoreNonCorrettoInt+"\" is too short (length: 2, required minimum: 3)\n"
+				+ "	* /anyOf/1: ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorrettoInt+"\"	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorrettoInt+"\"	\n"
+				+ "	- [ERROR][] String \""+valoreNonCorrettoInt+"\" is too short (length: 2, required minimum: 3)	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorrettoInt+"\"");
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in cookie 'composed_schema_any_of_cookie' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
 				+ "Invalid value '"+valoreNonCorrettoInt+"' in cookie 'composed_schema_any_of_cookie' (expected type 'string'): Too short, expected min length '3'");
 		
@@ -6375,7 +6440,13 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_cookie_inline.<anyOf>.<format>\n"
 				+ "composed_schema_any_of_cookie_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
 				+ "From: composed_schema_any_of_cookie_inline.<anyOf>.<type>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/any_of/ABCDEFGHILK/20 @cookie.composed_schema_any_of_cookie_inline] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])\n"
+				+ "	* /anyOf/1: Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])	\n"
+				+ "	- [ERROR][] Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])	\n"
+				+ "	- [ERROR][] Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])");
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in cookie 'composed_schema_any_of_cookie_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto1+"\"\n"
 				+ "Invalid value '"+valoreNonCorretto1+"' in cookie 'composed_schema_any_of_cookie_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto1+"\"");
 		
@@ -6400,7 +6471,13 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_cookie_inline.<anyOf>.<format>\n"
 				+ "composed_schema_any_of_cookie_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
 				+ "From: composed_schema_any_of_cookie_inline.<anyOf>.<type>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/any_of/ABCDEFGHILK/20 @cookie.composed_schema_any_of_cookie_inline] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])\n"
+				+ "	* /anyOf/1: Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])	\n"
+				+ "	- [ERROR][] Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])	\n"
+				+ "	- [ERROR][] Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])");
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto2+"' in cookie 'composed_schema_any_of_cookie_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto2+"\"\n"
 				+ "Invalid value '"+valoreNonCorretto2+"' in cookie 'composed_schema_any_of_cookie_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto2+"\"");		
 		
@@ -6421,7 +6498,13 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_cookie_inline.<anyOf>.<maximum>\n"
 				+ "composed_schema_any_of_cookie_inline: Maximum is '55', found '"+valoreNonCorrettoInt+"'. (code: 1010)\n"
 				+ "From: composed_schema_any_of_cookie_inline.<anyOf>.<maximum>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/any_of/ABCDEFGHILK/20 @cookie.composed_schema_any_of_cookie_inline] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: Numeric instance is greater than the required maximum (maximum: 20, found: 59)\n"
+				+ "	* /anyOf/1: Numeric instance is greater than the required maximum (maximum: 55, found: 59)	\n"
+				+ "	- [ERROR][] Numeric instance is greater than the required maximum (maximum: 20, found: 59)	\n"
+				+ "	- [ERROR][] Numeric instance is greater than the required maximum (maximum: 55, found: 59)");
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in cookie 'composed_schema_any_of_cookie_inline' (expected type 'int32'): Value higher than the maximum '20'\n"
 				+ "Invalid value '"+valoreNonCorrettoInt+"' in cookie 'composed_schema_any_of_cookie_inline' (expected type 'int32'): Value higher than the maximum '55'");
 		
@@ -6445,7 +6528,18 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_header.<anyOf>.<pattern>\n"
 				+ "composed_schema_any_of_header: '"+valoreNonCorretto1+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
 				+ "From: composed_schema_any_of_header.<anyOf>.<pattern>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/any_of/ABCDEFGHILK/20 @header.composed_schema_any_of_header] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorretto1+"\"\n"
+				+ "	* /anyOf/1: ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorretto1+"\"	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorretto1+"\"	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorretto1+"\"");
+		msgErroreAttesoTest_swagger_response.add("Validation failed.\n"
+				+ "[ERROR][RESPONSE][] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorretto1+"\"\n"
+				+ "	* /anyOf/1: ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorretto1+"\"	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorretto1+"\"	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorretto1+"\"");
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in http header 'composed_schema_any_of_header' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
 				+ "Invalid value '"+valoreNonCorretto1+"' in http header 'composed_schema_any_of_header' (expected type 'string'): Pattern match failed ('^[0-9]{3,5}$')");
 		
@@ -6466,7 +6560,17 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_header.<anyOf>.<pattern>\n"
 				+ "composed_schema_any_of_header: '"+valoreNonCorretto2+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
 				+ "From: composed_schema_any_of_header.<anyOf>.<pattern>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/any_of/ABCDEFGHILK/20 @header.composed_schema_any_of_header] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorretto2+"\"\n"
+				+ "	* /anyOf/1: ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorretto2+"\"	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorretto2+"\"	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorretto2+"\"");
+		msgErroreAttesoTest_swagger_response.add("[ERROR][RESPONSE][] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorretto2+"\"\n"
+				+ "	* /anyOf/1: ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorretto2+"\"	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorretto2+"\"	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorretto2+"\"");
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto2+"' in http header 'composed_schema_any_of_header' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
 				+ "Invalid value '"+valoreNonCorretto2+"' in http header 'composed_schema_any_of_header' (expected type 'string'): Pattern match failed ('^[0-9]{3,5}$')");
 		
@@ -6489,7 +6593,22 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_header.<anyOf>.<minLength>\n"
 				+ "composed_schema_any_of_header: '"+valoreNonCorrettoInt+"' does not respect pattern '^[0-9]{3,5}$'. (code: 1025)\n"
 				+ "From: composed_schema_any_of_header.<anyOf>.<pattern>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/any_of/ABCDEFGHILK/20 @header.composed_schema_any_of_header] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorrettoInt+"\"\n"
+				+ "	* /anyOf/1: String \""+valoreNonCorrettoInt+"\" is too short (length: 2, required minimum: 3)\n"
+				+ "	* /anyOf/1: ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorrettoInt+"\"	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorrettoInt+"\"	\n"
+				+ "	- [ERROR][] String \""+valoreNonCorrettoInt+"\" is too short (length: 2, required minimum: 3)	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorrettoInt+"\"");
+		msgErroreAttesoTest_swagger_response.add("Validation failed.\n"
+				+ "[ERROR][RESPONSE][] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorrettoInt+"\"\n"
+				+ "	* /anyOf/1: String \""+valoreNonCorrettoInt+"\" is too short (length: 2, required minimum: 3)\n"
+				+ "	* /anyOf/1: ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorrettoInt+"\"	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[A-Z]{11}$\" does not match input string \""+valoreNonCorrettoInt+"\"	\n"
+				+ "	- [ERROR][] String \""+valoreNonCorrettoInt+"\" is too short (length: 2, required minimum: 3)	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[0-9]{3,5}$\" does not match input string \""+valoreNonCorrettoInt+"\"");
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in http header 'composed_schema_any_of_header' (expected type 'string'): Pattern match failed ('^[A-Z]{11}$')\n"
 				+ "Invalid value '"+valoreNonCorrettoInt+"' in http header 'composed_schema_any_of_header' (expected type 'string'): Too short, expected min length '3'");
 		
@@ -6514,7 +6633,18 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_header_inline.<anyOf>.<format>\n"
 				+ "composed_schema_any_of_header_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
 				+ "From: composed_schema_any_of_header_inline.<anyOf>.<type>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/any_of/ABCDEFGHILK/20 @header.composed_schema_any_of_header_inline] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])\n"
+				+ "	* /anyOf/1: Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])	\n"
+				+ "	- [ERROR][] Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])	\n"
+				+ "	- [ERROR][] Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])");
+		msgErroreAttesoTest_swagger_response.add("Validation failed.\n"
+				+ "[ERROR][RESPONSE][] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])\n"
+				+ "	* /anyOf/1: Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])	\n"
+				+ "	- [ERROR][] Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])	\n"
+				+ "	- [ERROR][] Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])");
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in http header 'composed_schema_any_of_header_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto1+"\"\n"
 				+ "Invalid value '"+valoreNonCorretto1+"' in http header 'composed_schema_any_of_header_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto1+"\"");
 		
@@ -6539,7 +6669,18 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_header_inline.<anyOf>.<format>\n"
 				+ "composed_schema_any_of_header_inline: Type expected 'integer', found 'string'. (code: 1027)\n"
 				+ "From: composed_schema_any_of_header_inline.<anyOf>.<type>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/any_of/ABCDEFGHILK/20 @header.composed_schema_any_of_header_inline] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])\n"
+				+ "	* /anyOf/1: Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])	\n"
+				+ "	- [ERROR][] Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])	\n"
+				+ "	- [ERROR][] Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])");
+		msgErroreAttesoTest_swagger_response.add("Validation failed.\n"
+				+ "[ERROR][RESPONSE][] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])\n"
+				+ "	* /anyOf/1: Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])	\n"
+				+ "	- [ERROR][] Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])	\n"
+				+ "	- [ERROR][] Instance type (string) does not match any allowed primitive type (allowed: [\"integer\"])");
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto2+"' in http header 'composed_schema_any_of_header_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto2+"\"\n"
 				+ "Invalid value '"+valoreNonCorretto2+"' in http header 'composed_schema_any_of_header_inline' (expected type 'int32'): For input string: \""+valoreNonCorretto2+"\"");		
 		
@@ -6560,7 +6701,18 @@ public class TestOpenApi3Extended {
 				+ "From: composed_schema_any_of_header_inline.<anyOf>.<maximum>\n"
 				+ "composed_schema_any_of_header_inline: Maximum is '55', found '"+valoreNonCorrettoInt+"'. (code: 1010)\n"
 				+ "From: composed_schema_any_of_header_inline.<anyOf>.<maximum>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/any_of/ABCDEFGHILK/20 @header.composed_schema_any_of_header_inline] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: Numeric instance is greater than the required maximum (maximum: 20, found: 59)\n"
+				+ "	* /anyOf/1: Numeric instance is greater than the required maximum (maximum: 55, found: 59)	\n"
+				+ "	- [ERROR][] Numeric instance is greater than the required maximum (maximum: 20, found: 59)	\n"
+				+ "	- [ERROR][] Numeric instance is greater than the required maximum (maximum: 55, found: 59)");
+		msgErroreAttesoTest_swagger_response.add("Validation failed.\n"
+				+ "[ERROR][RESPONSE][] Instance failed to match at least one required schema among 2\n"
+				+ "	* /anyOf/0: Numeric instance is greater than the required maximum (maximum: 20, found: 59)\n"
+				+ "	* /anyOf/1: Numeric instance is greater than the required maximum (maximum: 55, found: 59)	\n"
+				+ "	- [ERROR][] Numeric instance is greater than the required maximum (maximum: 20, found: 59)	\n"
+				+ "	- [ERROR][] Numeric instance is greater than the required maximum (maximum: 55, found: 59)");
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in http header 'composed_schema_any_of_header_inline' (expected type 'int32'): Value higher than the maximum '20'\n"
 				+ "Invalid value '"+valoreNonCorrettoInt+"' in http header 'composed_schema_any_of_header_inline' (expected type 'int32'): Value higher than the maximum '55'");
 		
@@ -6606,6 +6758,7 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(false);
 		msgErroreAttesoTest_openapi4j.add(null);
 		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add(null);
 		
 				
@@ -6623,9 +6776,10 @@ public class TestOpenApi3Extended {
 		erroreAttesoRichiestaTest.add(true);
 		erroreAttesoRispostaTest.add(false);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_path: Min length is '7', found '"+valoreNonCorrettoRegolaDue.length()+"'. (code: 1017)\n"
-				+ "From: composed_schema_all_of_path.<allOf>.<minLength>");
-		msgErroreAttesoTest_swagger_request.add(null);
+				+ "From: composed_schema_all_of_path.<allOf>.<minLength>");			
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoRegolaDue+"' in dynamic path 'composed_schema_all_of_path' (expected type 'string'): Too short, expected min length '7'");
+		msgErroreAttesoTest_swagger_request.add(msgErroreAttesoTest_json_schema.get(msgErroreAttesoTest_json_schema.size()-1));
+		msgErroreAttesoTest_swagger_response.add(null);
 		
 				
 		tipoTest.add("ERRORE-PATH-2");
@@ -6642,9 +6796,11 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(false);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_path: '"+valoreNonCorrettoInAssoluto+"' does not respect pattern '^[A-Z]{5,11}$'. (code: 1025)\n"
 				+ "From: composed_schema_all_of_path.<allOf>.<pattern>");
-		msgErroreAttesoTest_swagger_request.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInAssoluto+"' in dynamic path 'composed_schema_all_of_path' (expected type 'string'): Pattern match failed ('^[A-Z]{5,11}$')\n"
 				+ "Invalid value '"+valoreNonCorrettoInAssoluto+"' in dynamic path 'composed_schema_all_of_path' (expected type 'string'): Too short, expected min length '7'");
+		msgErroreAttesoTest_swagger_request.add(msgErroreAttesoTest_json_schema.get(msgErroreAttesoTest_json_schema.size()-1));
+		msgErroreAttesoTest_swagger_response.add(null);
+
 	
 		
 		tipoTest.add("ERRORE-PATH-INLINE-1");
@@ -6661,9 +6817,9 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(false);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_path_inline: Maximum is '55', found '"+valoreNonCorrettoIntRegolaDue+"'. (code: 1010)\n"
 				+ "From: composed_schema_all_of_path_inline.<allOf>.<maximum>");
-		msgErroreAttesoTest_swagger_request.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoIntRegolaDue+"' in dynamic path 'composed_schema_all_of_path_inline' (expected type 'int32'): Value higher than the maximum '55'");
-		
+		msgErroreAttesoTest_swagger_request.add(msgErroreAttesoTest_json_schema.get(msgErroreAttesoTest_json_schema.size()-1));
+		msgErroreAttesoTest_swagger_response.add(null);
 				
 		tipoTest.add("ERRORE-PATH-INLINE-2");
 		complexTypeTest.add("all_of");
@@ -6679,10 +6835,10 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(false);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_path_inline: Maximum is '100', found '"+valoreNonCorrettoIntInAssoluto+"'. (code: 1010)\n"
 				+ "From: composed_schema_all_of_path_inline.<allOf>.<maximum>");
-		msgErroreAttesoTest_swagger_request.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoIntInAssoluto+"' in dynamic path 'composed_schema_all_of_path_inline' (expected type 'int32'): Value higher than the maximum '100'\n"
 				+ "Invalid value '"+valoreNonCorrettoIntInAssoluto+"' in dynamic path 'composed_schema_all_of_path_inline' (expected type 'int32'): Value higher than the maximum '55'");
-		
+		msgErroreAttesoTest_swagger_request.add(msgErroreAttesoTest_json_schema.get(msgErroreAttesoTest_json_schema.size()-1));
+		msgErroreAttesoTest_swagger_response.add(null);		
 		
 		
 		
@@ -6700,10 +6856,14 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(false);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_query: Min length is '7', found '"+valoreNonCorrettoRegolaDue.length()+"'. (code: 1017)\n"
 				+ "From: composed_schema_all_of_query.<allOf>.<minLength>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/all_of/ABCDEFGHILK/50 @query.composed_schema_all_of_query] Instance failed to match all required schemas (matched only 1 out of 2)\n"
+				+ "	* /allOf/1: String \"ABCDE\" is too short (length: "+valoreNonCorrettoRegolaDue.length()+", required minimum: 7)	\n"
+				+ "	- [ERROR][] String \"ABCDE\" is too short (length: "+valoreNonCorrettoRegolaDue.length()+", required minimum: 7)");
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoRegolaDue+"' in query parameter 'composed_schema_all_of_query' (expected type 'string'): Too short, expected min length '7'");
 		
-				
+
 		tipoTest.add("ERRORE-QUERY-2");
 		complexTypeTest.add("all_of");
 		pathTest.add(valoreCorretto1);
@@ -6718,7 +6878,13 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(false);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_query: '"+valoreNonCorrettoInAssoluto+"' does not respect pattern '^[A-Z]{5,11}$'. (code: 1025)\n"
 				+ "From: composed_schema_all_of_query.<allOf>.<pattern>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/all_of/ABCDEFGHILK/50 @query.composed_schema_all_of_query] Instance failed to match all required schemas (matched only 0 out of 2)\n"
+				+ "	* /allOf/0: ECMA 262 regex \"^[A-Z]{5,11}$\" does not match input string \""+valoreNonCorrettoInAssoluto+"\"\n"
+				+ "	* /allOf/1: String \"A\" is too short (length: 1, required minimum: 7)	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[A-Z]{5,11}$\" does not match input string \""+valoreNonCorrettoInAssoluto+"\"	\n"
+				+ "	- [ERROR][] String \"A\" is too short (length: 1, required minimum: 7)");
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInAssoluto+"' in query parameter 'composed_schema_all_of_query' (expected type 'string'): Pattern match failed ('^[A-Z]{5,11}$')\n"
 				+ "Invalid value '"+valoreNonCorrettoInAssoluto+"' in query parameter 'composed_schema_all_of_query' (expected type 'string'): Too short, expected min length '7'");
 	
@@ -6737,7 +6903,11 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(false);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_query_inline: Maximum is '55', found '"+valoreNonCorrettoIntRegolaDue+"'. (code: 1010)\n"
 				+ "From: composed_schema_all_of_query_inline.<allOf>.<maximum>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/all_of/ABCDEFGHILK/50 @query.composed_schema_all_of_query_inline] Instance failed to match all required schemas (matched only 1 out of 2)\n"
+				+ "	* /allOf/1: Numeric instance is greater than the required maximum (maximum: 55, found: "+valoreNonCorrettoIntRegolaDue+")	\n"
+				+ "	- [ERROR][] Numeric instance is greater than the required maximum (maximum: 55, found: "+valoreNonCorrettoIntRegolaDue+")");
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoIntRegolaDue+"' in query parameter 'composed_schema_all_of_query_inline' (expected type 'int32'): Value higher than the maximum '55'");
 		
 				
@@ -6755,7 +6925,13 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(false);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_query_inline: Maximum is '100', found '"+valoreNonCorrettoIntInAssoluto+"'. (code: 1010)\n"
 				+ "From: composed_schema_all_of_query_inline.<allOf>.<maximum>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/all_of/ABCDEFGHILK/50 @query.composed_schema_all_of_query_inline] Instance failed to match all required schemas (matched only 0 out of 2)\n"
+				+ "	* /allOf/0: Numeric instance is greater than the required maximum (maximum: 100, found: "+valoreNonCorrettoIntInAssoluto+")\n"
+				+ "	* /allOf/1: Numeric instance is greater than the required maximum (maximum: 55, found: "+valoreNonCorrettoIntInAssoluto+")	\n"
+				+ "	- [ERROR][] Numeric instance is greater than the required maximum (maximum: 100, found: "+valoreNonCorrettoIntInAssoluto+")	\n"
+				+ "	- [ERROR][] Numeric instance is greater than the required maximum (maximum: 55, found: "+valoreNonCorrettoIntInAssoluto+")");
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoIntInAssoluto+"' in query parameter 'composed_schema_all_of_query_inline' (expected type 'int32'): Value higher than the maximum '100'\n"
 				+ "Invalid value '"+valoreNonCorrettoIntInAssoluto+"' in query parameter 'composed_schema_all_of_query_inline' (expected type 'int32'): Value higher than the maximum '55'");
 		
@@ -6776,7 +6952,11 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(false);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_cookie: Min length is '7', found '"+valoreNonCorrettoRegolaDue.length()+"'. (code: 1017)\n"
 				+ "From: composed_schema_all_of_cookie.<allOf>.<minLength>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/all_of/ABCDEFGHILK/50 @cookie.composed_schema_all_of_cookie] Instance failed to match all required schemas (matched only 1 out of 2)\n"
+				+ "	* /allOf/1: String \"ABCDE\" is too short (length: "+valoreNonCorrettoRegolaDue.length()+", required minimum: 7)	\n"
+				+ "	- [ERROR][] String \"ABCDE\" is too short (length: "+valoreNonCorrettoRegolaDue.length()+", required minimum: 7)");
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoRegolaDue+"' in cookie 'composed_schema_all_of_cookie' (expected type 'string'): Too short, expected min length '7'");
 		
 				
@@ -6794,7 +6974,13 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(false);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_cookie: '"+valoreNonCorrettoInAssoluto+"' does not respect pattern '^[A-Z]{5,11}$'. (code: 1025)\n"
 				+ "From: composed_schema_all_of_cookie.<allOf>.<pattern>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/all_of/ABCDEFGHILK/50 @cookie.composed_schema_all_of_cookie] Instance failed to match all required schemas (matched only 0 out of 2)\n"
+				+ "	* /allOf/0: ECMA 262 regex \"^[A-Z]{5,11}$\" does not match input string \""+valoreNonCorrettoInAssoluto+"\"\n"
+				+ "	* /allOf/1: String \""+valoreNonCorrettoInAssoluto+"\" is too short (length: 1, required minimum: 7)	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[A-Z]{5,11}$\" does not match input string \""+valoreNonCorrettoInAssoluto+"\"	\n"
+				+ "	- [ERROR][] String \""+valoreNonCorrettoInAssoluto+"\" is too short (length: 1, required minimum: 7)");
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInAssoluto+"' in cookie 'composed_schema_all_of_cookie' (expected type 'string'): Pattern match failed ('^[A-Z]{5,11}$')\n"
 				+ "Invalid value '"+valoreNonCorrettoInAssoluto+"' in cookie 'composed_schema_all_of_cookie' (expected type 'string'): Too short, expected min length '7'");
 	
@@ -6813,7 +6999,11 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(false);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_cookie_inline: Maximum is '55', found '"+valoreNonCorrettoIntRegolaDue+"'. (code: 1010)\n"
 				+ "From: composed_schema_all_of_cookie_inline.<allOf>.<maximum>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/all_of/ABCDEFGHILK/50 @cookie.composed_schema_all_of_cookie_inline] Instance failed to match all required schemas (matched only 1 out of 2)\n"
+				+ "	* /allOf/1: Numeric instance is greater than the required maximum (maximum: 55, found: "+valoreNonCorrettoIntRegolaDue+")	\n"
+				+ "	- [ERROR][] Numeric instance is greater than the required maximum (maximum: 55, found: "+valoreNonCorrettoIntRegolaDue+")");
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoIntRegolaDue+"' in cookie 'composed_schema_all_of_cookie_inline' (expected type 'int32'): Value higher than the maximum '55'");
 		
 				
@@ -6831,7 +7021,13 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(false);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_cookie_inline: Maximum is '100', found '"+valoreNonCorrettoIntInAssoluto+"'. (code: 1010)\n"
 				+ "From: composed_schema_all_of_cookie_inline.<allOf>.<maximum>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/all_of/ABCDEFGHILK/50 @cookie.composed_schema_all_of_cookie_inline] Instance failed to match all required schemas (matched only 0 out of 2)\n"
+				+ "	* /allOf/0: Numeric instance is greater than the required maximum (maximum: 100, found: "+valoreNonCorrettoIntInAssoluto+")\n"
+				+ "	* /allOf/1: Numeric instance is greater than the required maximum (maximum: 55, found: "+valoreNonCorrettoIntInAssoluto+")	\n"
+				+ "	- [ERROR][] Numeric instance is greater than the required maximum (maximum: 100, found: "+valoreNonCorrettoIntInAssoluto+")	\n"
+				+ "	- [ERROR][] Numeric instance is greater than the required maximum (maximum: 55, found: "+valoreNonCorrettoIntInAssoluto+")");
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoIntInAssoluto+"' in cookie 'composed_schema_all_of_cookie_inline' (expected type 'int32'): Value higher than the maximum '100'\n"
 				+ "Invalid value '"+valoreNonCorrettoIntInAssoluto+"' in cookie 'composed_schema_all_of_cookie_inline' (expected type 'int32'): Value higher than the maximum '55'");
 		
@@ -6852,7 +7048,14 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(true);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_header: Min length is '7', found '"+valoreNonCorrettoRegolaDue.length()+"'. (code: 1017)\n"
 				+ "From: composed_schema_all_of_header.<allOf>.<minLength>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/all_of/ABCDEFGHILK/50 @header.composed_schema_all_of_header] Instance failed to match all required schemas (matched only 1 out of 2)\n"
+				+ "	* /allOf/1: String \"ABCDE\" is too short (length: "+valoreNonCorrettoRegolaDue.length()+", required minimum: 7)	\n"
+				+ "	- [ERROR][] String \"ABCDE\" is too short (length: "+valoreNonCorrettoRegolaDue.length()+", required minimum: 7)");
+		msgErroreAttesoTest_swagger_response.add("Validation failed.\n"
+				+ "[ERROR][RESPONSE][] Instance failed to match all required schemas (matched only 1 out of 2)\n"
+				+ "	* /allOf/1: String \"ABCDE\" is too short (length: "+valoreNonCorrettoRegolaDue.length()+", required minimum: 7)	\n"
+				+ "	- [ERROR][] String \"ABCDE\" is too short (length: "+valoreNonCorrettoRegolaDue.length()+", required minimum: 7)");
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoRegolaDue+"' in http header 'composed_schema_all_of_header' (expected type 'string'): Too short, expected min length '7'");
 		
 				
@@ -6870,7 +7073,18 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(true);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_header: '"+valoreNonCorrettoInAssoluto+"' does not respect pattern '^[A-Z]{5,11}$'. (code: 1025)\n"
 				+ "From: composed_schema_all_of_header.<allOf>.<pattern>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/all_of/ABCDEFGHILK/50 @header.composed_schema_all_of_header] Instance failed to match all required schemas (matched only 0 out of 2)\n"
+				+ "	* /allOf/0: ECMA 262 regex \"^[A-Z]{5,11}$\" does not match input string \""+valoreNonCorrettoInAssoluto+"\"\n"
+				+ "	* /allOf/1: String \""+valoreNonCorrettoInAssoluto+"\" is too short (length: 1, required minimum: 7)	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[A-Z]{5,11}$\" does not match input string \""+valoreNonCorrettoInAssoluto+"\"	\n"
+				+ "	- [ERROR][] String \""+valoreNonCorrettoInAssoluto+"\" is too short (length: 1, required minimum: 7)");
+		msgErroreAttesoTest_swagger_response.add("Validation failed.\n"
+				+ "[ERROR][RESPONSE][] Instance failed to match all required schemas (matched only 0 out of 2)\n"
+				+ "	* /allOf/0: ECMA 262 regex \"^[A-Z]{5,11}$\" does not match input string \""+valoreNonCorrettoInAssoluto+"\"\n"
+				+ "	* /allOf/1: String \""+valoreNonCorrettoInAssoluto+"\" is too short (length: 1, required minimum: 7)	\n"
+				+ "	- [ERROR][] ECMA 262 regex \"^[A-Z]{5,11}$\" does not match input string \""+valoreNonCorrettoInAssoluto+"\"	\n"
+				+ "	- [ERROR][] String \""+valoreNonCorrettoInAssoluto+"\" is too short (length: 1, required minimum: 7)");
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInAssoluto+"' in http header 'composed_schema_all_of_header' (expected type 'string'): Pattern match failed ('^[A-Z]{5,11}$')\n"
 				+ "Invalid value '"+valoreNonCorrettoInAssoluto+"' in http header 'composed_schema_all_of_header' (expected type 'string'): Too short, expected min length '7'");
 	
@@ -6889,7 +7103,14 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(true);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_header_inline: Maximum is '55', found '"+valoreNonCorrettoIntRegolaDue+"'. (code: 1010)\n"
 				+ "From: composed_schema_all_of_header_inline.<allOf>.<maximum>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/all_of/ABCDEFGHILK/50 @header.composed_schema_all_of_header_inline] Instance failed to match all required schemas (matched only 1 out of 2)\n"
+				+ "	* /allOf/1: Numeric instance is greater than the required maximum (maximum: 55, found: "+valoreNonCorrettoIntRegolaDue+")	\n"
+				+ "	- [ERROR][] Numeric instance is greater than the required maximum (maximum: 55, found: "+valoreNonCorrettoIntRegolaDue+")");
+		msgErroreAttesoTest_swagger_response.add("Validation failed.\n"
+				+ "[ERROR][RESPONSE][] Instance failed to match all required schemas (matched only 1 out of 2)\n"
+				+ "	* /allOf/1: Numeric instance is greater than the required maximum (maximum: 55, found: "+valoreNonCorrettoIntRegolaDue+")	\n"
+				+ "	- [ERROR][] Numeric instance is greater than the required maximum (maximum: 55, found: "+valoreNonCorrettoIntRegolaDue+")");
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoIntRegolaDue+"' in http header 'composed_schema_all_of_header_inline' (expected type 'int32'): Value higher than the maximum '55'");
 		
 				
@@ -6907,7 +7128,18 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(true);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_all_of_header_inline: Maximum is '100', found '"+valoreNonCorrettoIntInAssoluto+"'. (code: 1010)\n"
 				+ "From: composed_schema_all_of_header_inline.<allOf>.<maximum>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/all_of/ABCDEFGHILK/50 @header.composed_schema_all_of_header_inline] Instance failed to match all required schemas (matched only 0 out of 2)\n"
+				+ "	* /allOf/0: Numeric instance is greater than the required maximum (maximum: 100, found: "+valoreNonCorrettoIntInAssoluto+")\n"
+				+ "	* /allOf/1: Numeric instance is greater than the required maximum (maximum: 55, found: "+valoreNonCorrettoIntInAssoluto+")	\n"
+				+ "	- [ERROR][] Numeric instance is greater than the required maximum (maximum: 100, found: "+valoreNonCorrettoIntInAssoluto+")	\n"
+				+ "	- [ERROR][] Numeric instance is greater than the required maximum (maximum: 55, found: "+valoreNonCorrettoIntInAssoluto+")");
+		msgErroreAttesoTest_swagger_response.add("Validation failed.\n"
+				+ "[ERROR][RESPONSE][] Instance failed to match all required schemas (matched only 0 out of 2)\n"
+				+ "	* /allOf/0: Numeric instance is greater than the required maximum (maximum: 100, found: "+valoreNonCorrettoIntInAssoluto+")\n"
+				+ "	* /allOf/1: Numeric instance is greater than the required maximum (maximum: 55, found: "+valoreNonCorrettoIntInAssoluto+")	\n"
+				+ "	- [ERROR][] Numeric instance is greater than the required maximum (maximum: 100, found: "+valoreNonCorrettoIntInAssoluto+")	\n"
+				+ "	- [ERROR][] Numeric instance is greater than the required maximum (maximum: 55, found: "+valoreNonCorrettoIntInAssoluto+")");
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoIntInAssoluto+"' in http header 'composed_schema_all_of_header_inline' (expected type 'int32'): Value higher than the maximum '100'\n"
 				+ "Invalid value '"+valoreNonCorrettoIntInAssoluto+"' in http header 'composed_schema_all_of_header_inline' (expected type 'int32'): Value higher than the maximum '55'");
 		
@@ -6942,6 +7174,7 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(false);
 		msgErroreAttesoTest_openapi4j.add(null);
 		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add(null);
 		
 				
@@ -6961,8 +7194,9 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(false);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_one_of_path: More than 1 schema is valid. (code: 1023)\n"
 				+ "From: composed_schema_one_of_path.<oneOf>");
-		msgErroreAttesoTest_swagger_request.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in dynamic path 'composed_schema_one_of_path': expected validates the value against exactly one of the subschemas; founded valid in 2 schemas");
+		msgErroreAttesoTest_swagger_request.add(msgErroreAttesoTest_json_schema.get(msgErroreAttesoTest_json_schema.size()-1));
+		msgErroreAttesoTest_swagger_response.add(null);
 		
 		
 		tipoTest.add("ERRORE-PATH-INLINE-1");
@@ -6979,9 +7213,9 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(false);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_one_of_path_inline: More than 1 schema is valid. (code: 1023)\n"
 				+ "From: composed_schema_one_of_path_inline.<oneOf>");
-		msgErroreAttesoTest_swagger_request.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in dynamic path 'composed_schema_one_of_path_inline': expected validates the value against exactly one of the subschemas; founded valid in 2 schemas");
-		
+		msgErroreAttesoTest_swagger_request.add(msgErroreAttesoTest_json_schema.get(msgErroreAttesoTest_json_schema.size()-1));
+		msgErroreAttesoTest_swagger_response.add(null);
 		
 		
 		
@@ -6999,7 +7233,9 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(false);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_one_of_query: More than 1 schema is valid. (code: 1023)\n"
 				+ "From: composed_schema_one_of_query.<oneOf>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/one_of/ABCDE/90 @query.composed_schema_one_of_query] Instance failed to match exactly one schema (matched 2 out of 2)");
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in query parameter 'composed_schema_one_of_query': expected validates the value against exactly one of the subschemas; founded valid in 2 schemas");
 		
 		
@@ -7017,7 +7253,9 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(false);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_one_of_query_inline: More than 1 schema is valid. (code: 1023)\n"
 				+ "From: composed_schema_one_of_query_inline.<oneOf>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/one_of/ABCDE/90 @query.composed_schema_one_of_query_inline] Instance failed to match exactly one schema (matched 2 out of 2)");
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in query parameter 'composed_schema_one_of_query_inline': expected validates the value against exactly one of the subschemas; founded valid in 2 schemas");
 		
 		
@@ -7036,7 +7274,9 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(false);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_one_of_cookie: More than 1 schema is valid. (code: 1023)\n"
 				+ "From: composed_schema_one_of_cookie.<oneOf>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/one_of/ABCDE/90 @cookie.composed_schema_one_of_cookie] Instance failed to match exactly one schema (matched 2 out of 2)");
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in cookie 'composed_schema_one_of_cookie': expected validates the value against exactly one of the subschemas; founded valid in 2 schemas");
 		
 		
@@ -7054,7 +7294,9 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(false);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_one_of_cookie_inline: More than 1 schema is valid. (code: 1023)\n"
 				+ "From: composed_schema_one_of_cookie_inline.<oneOf>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/one_of/ABCDE/90 @cookie.composed_schema_one_of_cookie_inline] Instance failed to match exactly one schema (matched 2 out of 2)");
+		msgErroreAttesoTest_swagger_response.add(null);
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in cookie 'composed_schema_one_of_cookie_inline': expected validates the value against exactly one of the subschemas; founded valid in 2 schemas");
 		
 		
@@ -7073,7 +7315,10 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(true);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_one_of_header: More than 1 schema is valid. (code: 1023)\n"
 				+ "From: composed_schema_one_of_header.<oneOf>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/one_of/ABCDE/90 @header.composed_schema_one_of_header] Instance failed to match exactly one schema (matched 2 out of 2)");
+		msgErroreAttesoTest_swagger_response.add("Validation failed.\n"
+				+ "[ERROR][RESPONSE][] Instance failed to match exactly one schema (matched 2 out of 2)");
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorretto1+"' in http header 'composed_schema_one_of_header': expected validates the value against exactly one of the subschemas; founded valid in 2 schemas");
 		
 		
@@ -7091,9 +7336,32 @@ public class TestOpenApi3Extended {
 		erroreAttesoRispostaTest.add(true);
 		msgErroreAttesoTest_openapi4j.add("composed_schema_one_of_header_inline: More than 1 schema is valid. (code: 1023)\n"
 				+ "From: composed_schema_one_of_header_inline.<oneOf>");
-		msgErroreAttesoTest_swagger_request.add(null);
+		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/one_of/ABCDE/90 @header.composed_schema_one_of_header_inline] Instance failed to match exactly one schema (matched 2 out of 2)");
+		msgErroreAttesoTest_swagger_response.add("Validation failed.\n"
+				+ "[ERROR][RESPONSE][] Instance failed to match exactly one schema (matched 2 out of 2)");
 		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in http header 'composed_schema_one_of_header_inline': expected validates the value against exactly one of the subschemas; founded valid in 2 schemas");
 		
+		
+//		tipoTest.add("ERRORE-PATH-MULTI-TYPE-1");
+//		complexTypeTest.add("one_of_multi_type");
+//		pathTest.add(valoreCorretto1);
+//		queryTest.add(valoreCorrettoInt1);
+//		headerTest.add(valoreCorrettoInt1);
+//		cookieTest.add(valoreCorretto1);
+//		pathInLineTest.add(valoreCorrettoInt1);
+//		queryInLineTest.add(valoreCorrettoInt1);
+//		headerInLineTest.add(valoreCorrettoInt1);
+//		cookieInLineTest.add(valoreCorrettoInt1);
+//		erroreAttesoRichiestaTest.add(true);
+//		erroreAttesoRispostaTest.add(true);
+//		msgErroreAttesoTest_openapi4j.add("composed_schema_one_of_header_inline: More than 1 schema is valid. (code: 1023)\n"
+//				+ "From: composed_schema_one_of_header_inline.<oneOf>");
+//		msgErroreAttesoTest_swagger_request.add("Validation failed.\n"
+//				+ "[ERROR][REQUEST][POST /documenti/composed-schema-parameters/one_of/ABCDE/90 @header.composed_schema_one_of_header_inline] Instance failed to match exactly one schema (matched 2 out of 2)");
+//		msgErroreAttesoTest_swagger_response.add("Validation failed.\n"
+//				+ "[ERROR][RESPONSE][] Instance failed to match exactly one schema (matched 2 out of 2)");
+//		msgErroreAttesoTest_json_schema.add("Invalid value '"+valoreNonCorrettoInt+"' in http header 'composed_schema_one_of_header_inline': expected validates the value against exactly one of the subschemas; founded valid in 2 schemas");
 		
 		
 		
@@ -7184,7 +7452,7 @@ public class TestOpenApi3Extended {
 					System.out.println("Errore atteso: "+e.getMessage());
 				}
 				else {
-					throw new Exception("Errore non atteso ("+tipo+"): "+e.getMessage());
+					throw new Exception("Errore non atteso ("+tipo+"): "+e.getMessage() + "\n Errore Invece Atteso: " + msgErroreAtteso);
 				}
 			}
 			
@@ -7192,6 +7460,15 @@ public class TestOpenApi3Extended {
 		
 			
 			System.out.println("\tTest Risposta ("+complexType+") ["+tipo+"] path:"+path+" ...");
+			
+			// Per la libreria swagger_request_validator il messaggio di errore cambia in caso
+			// di richiesta o risposta
+			if (openAPILibrary == OpenAPILibrary.swagger_request_validator) {
+				msgErroreAtteso = msgErroreAttesoTest_swagger_response.get(i);
+				if(msgErroreAtteso==null) {
+					msgErroreAtteso = "undefined";
+				}
+			}
 			
 			HttpBaseResponseEntity<?> response = new TextHttpResponseEntity();
 			((TextHttpResponseEntity)response).setContent(content);
@@ -7221,7 +7498,7 @@ public class TestOpenApi3Extended {
 					System.out.println("Errore atteso: "+e.getMessage());
 				}
 				else {
-					throw new Exception("Errore non atteso ("+tipo+"): "+e.getMessage());
+					throw new Exception("Errore non atteso ("+tipo+"): "+e.getMessage() + "\n Errore Invece Atteso: " + msgErroreAtteso);
 				}
 			}
 			
