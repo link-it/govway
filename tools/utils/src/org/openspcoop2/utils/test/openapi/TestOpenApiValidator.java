@@ -36,6 +36,7 @@ import org.testng.annotations.Test;
 public class TestOpenApiValidator {
 
 	private static final String ID_TEST = "OpenAPI-Validator";
+	private static final String ID_TEST_BIG = "OpenAPI-Validator-BIG";
 	private static boolean mergeSpec = true;
 	
 	@DataProvider(name="openAPIValidatorProvider")
@@ -102,8 +103,23 @@ public class TestOpenApiValidator {
 	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST},dataProvider="openAPI3BigInterfaceValidatorProvider")
 	public void testOpenApi3BigInterfaceValidator(OpenAPILibrary openAPILibrary, boolean mergeSpec) throws Exception{
 		
+		boolean allTestExecution = true;
+		
 		TestLogger.info("Run test '"+ID_TEST+"' (openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ...");
-		org.openspcoop2.utils.openapi.validator.TestInterfaceBigger.main(new String[] {openAPILibrary.toString(), mergeSpec+""});
+		org.openspcoop2.utils.openapi.validator.TestInterfaceBigger.main(new String[] {openAPILibrary.toString(), mergeSpec+"", allTestExecution+""});
+		TestLogger.info("Run test '"+ID_TEST+"' (openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ok");
+		
+	}
+	
+	@Test(groups={Costanti.GRUPPO_UTILS+"."+ID_TEST_BIG},dataProvider="openAPI3BigInterfaceValidatorProvider")
+	public void testOpenApi3BigInterfaceValidatorSingleTest(OpenAPILibrary openAPILibrary, boolean mergeSpec) throws Exception{
+		
+		// Serve per i tempi attesi
+		
+		boolean allTestExecution = false;
+		
+		TestLogger.info("Run test '"+ID_TEST+"' (openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ...");
+		org.openspcoop2.utils.openapi.validator.TestInterfaceBigger.main(new String[] {openAPILibrary.toString(), mergeSpec+"", allTestExecution+""});
 		TestLogger.info("Run test '"+ID_TEST+"' (openAPILibrary:"+openAPILibrary+" mergeSpec:"+mergeSpec+") ok");
 		
 	}

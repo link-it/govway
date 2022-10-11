@@ -3666,6 +3666,23 @@ public class TestOpenApi3Extended {
 		System.out.println("Test #28 openapi che usano parametri definiti con schemi composti completato\n\n");
 		
 		
+		
+		// ** Test per validazione con la presenza di header Accept ... **
+		
+		/*
+		 * Serve principalmente per la libreria swagger request validator che possiede i seguenti bug che sono stati risolti in org.openspcoop2.utils.openapi.validator.Validator.buildSwaggerRequest:
+		 */
+		// BugFix: 
+		// Request Accept header '*; q=.2' is not a valid media type
+		// BugFix2:
+		// Request Accept header '[text/xml]' does not match any defined response types. Must be one of: [text/*, application/*].
+				
+		System.out.println("Test #29 header Accept ...");
+		
+		testAccept(openAPILibrary, mergeSpec);
+	
+		System.out.println("Test #29 header Accept\n\n");
+	
 	}
 
 	
@@ -7230,6 +7247,119 @@ public class TestOpenApi3Extended {
 			
 			
 		System.out.println("TEST Verifica ComposedSchemaParameters completato!");
+
+	}
+	
+	
+	
+	private static void testAccept(OpenAPILibrary openAPILibrary, boolean mergeSpec)
+			throws UtilsException, ProcessingException, URISyntaxException, Exception {
+		System.out.println("#### Verifica Format Accept ####");
+		
+		URL url = TestOpenApi3Extended.class.getResource("/org/openspcoop2/utils/openapi/allegati.yaml");
+					
+		ApiSchema apiSchemaYaml = new ApiSchema("teamdigitale-openapi_definitions.yaml", 
+				Utilities.getAsByteArray(TestOpenApi3Extended.class.getResourceAsStream("/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml")), ApiSchemaType.YAML);
+					
+		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
+		configOpenApi4j.setProcessInclude(false);
+		apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), new File(url.toURI()), configOpenApi4j, apiSchemaYaml);
+		
+		Api apiOpenApi4j = apiReaderOpenApi4j.read();
+								
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
+		configO.setEmitLogError(logSystemOutError);
+		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
+		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
+		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
+		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(TestOpenApi3Extended.class), apiOpenApi4j, configO);
+		
+
+		String path = "/documenti/eef036bf-48af-11ed-97b9-005056ae1884";
+		HttpRequestMethod method = HttpRequestMethod.GET;
+		String contentType = HttpConstants.CONTENT_TYPE_PLAIN;
+
+		List<String> tipoTest = new ArrayList<String>();
+		
+		tipoTest.add("text/xml");
+		tipoTest.add("application/json ");
+		tipoTest.add(" application/json ");
+		tipoTest.add("application/json;q=0.2");
+		tipoTest.add("text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2");
+		tipoTest.add("text/html, image/gif, image/jpeg,*;q=.2,*/*;q=.2");
+		tipoTest.add("text/html, image/gif, image/jpeg, * ; q=.2, */* ; q=.2");
+		tipoTest.add("text/html, image/gif, image/jpeg, *; q= .2, */*; q= .2");
+		tipoTest.add("text/html, image/gif, image/jpeg,*;q= .2,*/*;q= .2");
+		tipoTest.add("text/html, image/gif, image/jpeg, * ; q= .2, */* ; q= .2");
+		tipoTest.add("text/html, image/gif, image/jpeg, *; q=0.5, */*; q=0.5");
+		tipoTest.add("text/html, image/gif, image/jpeg,*;q=0.5,*/*;q=0.5");
+		tipoTest.add("text/html, image/gif, image/jpeg, * ; q=0.5, */* ; q=0.5");
+		tipoTest.add("text/html, image/gif, image/jpeg, *; q= 0.5, */*; q= 0.5");
+		tipoTest.add("text/html, image/gif, image/jpeg,*;q= 0.5,*/*;q= 0.5");
+		tipoTest.add("text/html, image/gif, image/jpeg, * ; q= 0.5, */* ; q= 0.2");
+		
+		for (int i = 0; i < tipoTest.size(); i++) {
+			
+			String tipo = tipoTest.get(i);
+		
+			
+			System.out.println("\tTest Richiesta path:"+path+" ("+tipo+") ...");
+				
+			HttpBaseRequestEntity<?> request = new TextHttpRequestEntity();
+			request.setUrl(path);	
+			request.setMethod(method);
+			Map<String, List<String>> parametersTrasporto = new HashMap<>();
+			TransportUtils.addHeader(parametersTrasporto,HttpConstants.ACCEPT, tipo);
+			request.setHeaders(parametersTrasporto);						
+			try {				
+				apiValidatorOpenApi4j.validate(request);
+			} catch (ValidatorException e) {
+				throw new Exception("Errore non atteso: "+e.getMessage(),e);
+			}
+			
+			// verifico che sia ancora presente
+			String valueHeaderAccept = TransportUtils.getFirstValue(request.getHeaders(),HttpConstants.ACCEPT);
+			if(valueHeaderAccept==null || !valueHeaderAccept.equals(tipo)) {
+				throw new Exception("Header Accept '"+valueHeaderAccept+"' diverso da quello atteso '"+"+valueHeaderAccept+"+"'");
+			}
+			
+			System.out.println("\tTest Richiesta  path:"+path+" ("+tipo+") superato");
+			
+				
+			System.out.println("\tTest Risposta path:"+path+" ("+tipo+") ...");
+				
+			HttpBaseResponseEntity<?> response = new TextHttpResponseEntity();
+			((TextHttpResponseEntity)response).setContent("PROVA");
+			response.setStatus(200);		
+			response.setMethod(method);
+			response.setUrl(path);	
+			Map<String, List<String>> responseHeaders = new HashMap<>();
+			TransportUtils.setHeader(responseHeaders,HttpConstants.CONTENT_TYPE, contentType);
+			TransportUtils.addHeader(responseHeaders,HttpConstants.ACCEPT, tipo);
+			response.setHeaders(responseHeaders);
+			response.setContentType(contentType);
+			
+			try {				
+				apiValidatorOpenApi4j.validate(response);
+			} catch (ValidatorException e) {
+				throw new Exception("Errore non atteso: "+e.getMessage());
+			}
+					
+			// verifico che sia ancora presente
+			valueHeaderAccept = TransportUtils.getFirstValue(response.getHeaders(),HttpConstants.ACCEPT);
+			if(valueHeaderAccept==null || !valueHeaderAccept.equals(tipo)) {
+				throw new Exception("Header Accept '"+valueHeaderAccept+"' diverso da quello atteso '"+"+valueHeaderAccept+"+"'");
+			}
+			
+			System.out.println("\tTest Risposta path:"+path+" ("+tipo+") superato");
+			
+		}
+			
+			
+		System.out.println("TEST Format Accept completato!");
 
 	}
 }

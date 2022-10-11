@@ -78,36 +78,23 @@ public class IntegrationErrorConfiguration implements java.io.Serializable {
 	public MessageType getMessageType(HttpServletTransportRequestContext request, ServiceBinding serviceBinding, MessageType requestMsgType){
 		if(ServiceBinding.REST.equals(serviceBinding) && this.rfc7807!=null) {
 			if(this.rfc7807.isUseAcceptHeader() && request!=null && request.getHeaderValues(HttpConstants.ACCEPT)!=null && !request.getHeaderValues(HttpConstants.ACCEPT).isEmpty()) {
-				boolean asJson = false;
-				boolean asXml = false;
 				List<String> values = request.getHeaderValues(HttpConstants.ACCEPT);
-				for (String value : values) {
-					String [] acceptHeaders = null;
-					if(value.contains(",")) {
-						acceptHeaders = value.split(",");
-						for (int i = 0; i < acceptHeaders.length; i++) {
-							acceptHeaders[i] = acceptHeaders[i].trim();
-						}
-					}
-					else {
-						acceptHeaders = new String [] {value.trim()};
-					}
-					for (String hdr : acceptHeaders) {
-						if(hdr.toLowerCase().endsWith("/x-json") || hdr.toLowerCase().endsWith("/json") || hdr.toLowerCase().endsWith("+json")){
-							asJson = true;
-							break;
-						}
-						else if(hdr.toLowerCase().endsWith("/x-xml") || hdr.toLowerCase().endsWith("/xml") || hdr.toLowerCase().endsWith("+xml")){
-							asXml = true;
-							break;
-						}
-					}
-					if(asJson) {
-						return MessageType.JSON;
-					}
-					else if(asXml) {
-						return MessageType.XML;
-					}
+				// https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
+				/*
+				 * Example from rfc:
+       				Accept: text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c
+				    Verbally, this would be interpreted as "text/html and text/x-c are the preferred media types, but if they do not exist, then send the text/x-dvi entity, and if that does not exist, send the text/plain entity."
+				 **/
+				boolean readQparameter = true;
+				MessageType mt = readMessageTypeFromAccept(values, !readQparameter); // prima priorità a quelli senza q parameter
+				if(mt!=null) {
+					return mt;
+				}
+				
+				// altrimenti esamino quelli con q parameter
+				mt = readMessageTypeFromAccept(values, readQparameter); // prima priorità a quelli senza q parameter
+				if(mt!=null) {
+					return mt;
 				}
 			}
 		}
@@ -148,6 +135,107 @@ public class IntegrationErrorConfiguration implements java.io.Serializable {
 		default:
 			return MessageType.BINARY; // content is null
 		}
+	}
+	
+	private MessageType readMessageTypeFromAccept(List<String> values, boolean readQparameter) {
+		boolean asJson = false;
+		boolean asXml = false;
+		// https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
+		for (String value : values) {
+			String [] acceptHeaders = null;
+			if(value.contains(",")) {
+				acceptHeaders = value.split(",");
+				for (int i = 0; i < acceptHeaders.length; i++) {
+					acceptHeaders[i] = acceptHeaders[i].trim();
+				}
+			}
+			else {
+				acceptHeaders = new String [] {value.trim()};
+			}
+			double asJsonParamterQ = 0;
+			double asXmlParamterQ = 0;
+			for (String hdr : acceptHeaders) {
+				if(readQparameter) {
+					if(hdr.contains(";")) {
+						String [] tmp = hdr.split(";");
+						if(tmp!=null && tmp.length==2) {
+							String mediaType = tmp[0];
+							String q = tmp[1];
+							if(mediaType!=null && q!=null) {
+								q = q.trim();
+								mediaType = mediaType.trim();
+								if(q.contains("=")) {
+									String [] tmpQ = q.split("=");
+									if(tmpQ!=null && tmpQ.length==2) {
+										String qParam = tmpQ[0];
+										String qParamValue = tmpQ[1];
+										if(qParam!=null && "q".equalsIgnoreCase(qParam.trim()) && qParamValue!=null) {
+											double d = 0;
+											try {
+												d = Double.valueOf(qParamValue.trim());
+												if(d>0) {
+													if(isJsonMediaType(mediaType)){
+														if(d>asJsonParamterQ) {
+															asJsonParamterQ = d;
+															asJson = true;
+														}
+													}
+													else if(isXmlMediaType(mediaType)){
+														if(d>asXmlParamterQ) {
+															asXmlParamterQ = d;
+															asXml = true;
+														}
+													}					
+												}
+											}catch(Throwable t) {}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				else {
+					if(isJsonMediaType(hdr)){
+						asJson = true;
+						break;
+					}
+					else if(isXmlMediaType(hdr)){
+						asXml = true;
+						break;
+					}
+				}
+			}
+			
+			if(asJson && asXml && readQparameter) {
+				if(asJsonParamterQ>asXmlParamterQ) {
+					return MessageType.JSON;
+				}
+				else {
+					return MessageType.XML;
+				}
+			}
+			
+			if(asJson) {
+				return MessageType.JSON;
+			}
+			else if(asXml) {
+				return MessageType.XML;
+			}
+		}
+		return null;
+	}
+	private boolean isJsonMediaType(String hdrValue) {
+		if(hdrValue.toLowerCase().endsWith("/x-json") || hdrValue.toLowerCase().endsWith("/json") || hdrValue.toLowerCase().endsWith("+json")){
+			return true;
+		}
+		return false;
+	}
+	private boolean isXmlMediaType(String hdrValue) {
+		if(hdrValue.toLowerCase().endsWith("/x-xml") || hdrValue.toLowerCase().endsWith("/xml") || hdrValue.toLowerCase().endsWith("+xml")){
+			return true;
+		}
+		return false;
 	}
 }
 

@@ -102,6 +102,7 @@ import org.openspcoop2.utils.rest.entity.HttpBaseEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseResponseEntity;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.xml.XMLUtils;
 import org.slf4j.Logger;
@@ -1940,9 +1941,82 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		final SimpleRequest.Builder builder =
                 new SimpleRequest.Builder(fromHttpMethod(request.getMethod()),request.getUrl());
    
-		if(request.getHeaders()!=null && !request.getHeaders().isEmpty()) {
-			request.getHeaders().forEach(builder::withHeader);
+		// BugFix: 
+		// Request Accept header '*; q=.2' is not a valid media type
+		
+		// BugFix2:
+		// Request Accept header '[text/xml]' does not match any defined response types. Must be one of: [text/*, application/*].
+		
+		Map<String, List<String>> hdr = request.getHeaders();
+		if(hdr!=null && !hdr.isEmpty()) {
+			List<String> originalValues = TransportUtils.getValues(hdr, HttpConstants.ACCEPT);
+//			List<String> newList = null;
+//			if(originalValues!=null && !originalValues.isEmpty()) {
+//				newList = new ArrayList<String>();
+//				for (String original : originalValues) {
+//					
+//					String [] acceptHeaders = null;
+//					if(original.contains(",")) {
+//						acceptHeaders = original.split(",");
+//						for (int i = 0; i < acceptHeaders.length; i++) {
+//							acceptHeaders[i] = acceptHeaders[i].trim();
+//						}
+//					}
+//					else {
+//						acceptHeaders = new String [] {original.trim()};
+//					}
+//					StringBuilder sbNewList = new StringBuilder();
+//					for (String hdrCheck : acceptHeaders) {
+//						if(hdrCheck!=null && org.apache.commons.lang.StringUtils.isNotEmpty(hdrCheck.trim())) {
+//							if(hdrCheck.contains(";")) {
+//								String [] tmp = hdrCheck.split(";");
+//								String media = tmp[0];
+//								if(media!=null && org.apache.commons.lang.StringUtils.isNotEmpty(media.trim())) {
+//									if(sbNewList.length()>0) {
+//										sbNewList.append(", ");
+//									}
+//									String v = media.trim();
+//									if(v.equals("*")) {
+//										v = "*/*";
+//									}
+//									sbNewList.append(v);
+//								}
+//							}
+//							else {
+//								if(sbNewList.length()>0) {
+//									sbNewList.append(", ");
+//								}
+//								String v = hdrCheck.trim();
+//								if(v.equals("*")) {
+//									v = "*/*";
+//								}
+//								sbNewList.append(v);
+//							}
+//						}
+//					}
+//					if(sbNewList.length()>0) {
+//						newList.add(sbNewList.toString());
+//					}
+//				}
+//				TransportUtils.removeRawObject(hdr, HttpConstants.ACCEPT);
+//				if(!newList.isEmpty()) {
+//					hdr.put(HttpConstants.ACCEPT, newList);
+//				}
+//			}
+			TransportUtils.removeRawObject(hdr, HttpConstants.ACCEPT); // lo rimuovo direttamente e non lo faccio validare per risolvere BugFix2
+			
+			if(!hdr.isEmpty()) {
+				hdr.forEach(builder::withHeader);
+			}
+			
+			//if(newList!=null) {
+			if(originalValues!=null) {
+				// ripristino
+				//TransportUtils.removeRawObject(hdr, HttpConstants.ACCEPT);
+				hdr.put(HttpConstants.ACCEPT, originalValues);
+			}
 		}
+		
 		if(request.getParameters()!=null && !request.getParameters().isEmpty()) {
 			request.getParameters().forEach(builder::withQueryParam);
 		}

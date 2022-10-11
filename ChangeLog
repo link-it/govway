@@ -1,3 +1,13 @@
+2022-10-11  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1455
+	Utilizzando la libreria di validazione 'swagger-request-validator' al posto di quella di default 'Openapi4j',
+	se la richiesta presentava un header HTTP 'Accept' contenente parametri 'q' si otteneva un errore simile al seguente: "Request Accept header '*; q=.2' is not a valid media type".
+	Se invece l'OpenAPI era definito per ritornare risposte con qualsias subtype (es. application/*), le richieste valide venivano erroneamente rifiutate con un errore simile al seguente:
+	"Request Accept header '[application/xml]' does not match any defined response types. Must be one of: [application/*]."
+	Entrambe i problemi sono stati risolti.
+
 2022-10-10  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

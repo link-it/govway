@@ -81,11 +81,19 @@ public class TestInterfaceBigger {
 			mergeSpec = Boolean.valueOf(args[1]);
 		}
 		
+		boolean allTestExecution = false;
+		if(args!=null && args.length>2) {
+			allTestExecution = Boolean.valueOf(args[2]);
+		}
+		
 		// fix per evitare troppo output su jenkins:
 		logSystemOutError = !OpenAPILibrary.json_schema.equals(openAPILibrary);
 		
-		boolean isJenkins = isJenkins();
-		System.out.println("Jenkins ENV: "+isJenkins);
+		System.out.println("Jenkins ENV: "+isJenkins());
+		System.out.println("allTestExecution: "+allTestExecution);
+		boolean ambienteTestNonPerformante = isJenkins() || allTestExecution;
+		System.out.println("ambienteTestPerformante: "+(!ambienteTestNonPerformante));
+		
 		
 		// ** FHIR
 		{
@@ -107,10 +115,10 @@ public class TestInterfaceBigger {
 			switch (openAPILibrary) {
 			case json_schema:
 			case openapi4j:
-				maxAtteso = isJenkins ? 9000 : 3500; 
+				maxAtteso = ambienteTestNonPerformante ? 9000 : 3500; 
 				break;
 			case swagger_request_validator:
-				maxAtteso = isJenkins ? 9000 : 3500;
+				maxAtteso = ambienteTestNonPerformante ? 9000 : 3500;
 				break;
 			}	
 			System.out.println("\tReader time:"+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
@@ -138,7 +146,7 @@ public class TestInterfaceBigger {
 				maxAtteso = Long.MAX_VALUE;
 				break;
 			case swagger_request_validator:
-				maxAtteso = isJenkins ? 9000 : 3500;
+				maxAtteso = ambienteTestNonPerformante ? 9000 : 3500;
 				break;
 			}			
 			System.out.println("\tInit validator time:"+Utilities.convertSystemTimeIntoString_millisecondi(time, true));
@@ -146,14 +154,14 @@ public class TestInterfaceBigger {
 				throw new Exception("Atteso un tempo inferiore a '"+maxAtteso+"'ms, trovato '"+time+"'ms");
 			}
 			
-			if(!isJenkins) {
+			if(!ambienteTestNonPerformante) {
 				switch (openAPILibrary) {
 				case json_schema:
 				case openapi4j:
 					maxAtteso = 6000;
 					break;
 				case swagger_request_validator:
-					maxAtteso = 1500; // dimezzo
+					maxAtteso = isJenkins() ? 2500 : 1500; // dimezzo
 					break;
 				}	
 			}

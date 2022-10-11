@@ -46,6 +46,8 @@ Per creare una tag version:
     NOTA!!!!! Dentro il file publiccode.yml è presente anche una release date da aggiornare!!!!!!
 
 14. Verificare che con gli stresstest tramite benchmark si ottengano risultati simili o migliori della precedente versione.
+14b. Verifica anche che il seguente test base passi con successo:
+     mvn test -Dcompile=none -Dowasp=none -Dpackage=none -Dtestsuite.pdd.core=none -Dtestsuite.utils.group=utils.OpenAPI-Validator-BIG
 
 15. Validare i sql generati dall'installer su tutti i database (anche mysql e sqlserver) per prevenire eventuali errori di vincoli come unique e index che non vengono creati per la lunghezza delle chiavi.
     Inoltre validare le patch SQL partendo dalla precedente versione per tutti i database, anche qua per prevenire errori di sintassi.

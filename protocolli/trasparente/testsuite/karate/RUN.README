@@ -380,6 +380,9 @@ Di seguito vengono descritti i test del package 'integrazione':
 - 'template', verifica  l'integrazione 'template' che consente di applicare una trasformazione al messaggio.
    ant run_test -Ddelete=false -Dload=false -Dpackage=integrazione.template
 
+- 'accept', verifica  l'utilizzo dell'header 'Accept' per API REST
+   ant run_test -Ddelete=false -Dload=false -Dpackage=integrazione.accept
+
 Di seguito vengono descritti i test del package 'autenticazione':
 
 - 'applicativi_esterni', verifica l'autenticazione degli applicativi di dominio esterno

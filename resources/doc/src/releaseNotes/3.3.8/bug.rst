@@ -21,6 +21,12 @@ Sono stati risolti i seguenti bug:
 
 - l'utilizzo dei metodi getJSONObject(...) e getJSONArray(...) dell'utility JsonPathExpressionEngine creava, in presenza di richieste parallele, dei messaggi inconsistenti per via di un utilizzo statico del parser JSONParser che non era 'thread safe';
 
+- risolti errori di validazione degli header HTTP che si presentavano utilizzando la libreria di validazione 'swagger-request-validator' al posto di quella di default 'Openapi4j':
+
+	- se la richiesta presentava un header HTTP 'Accept' contenente parametri 'q' si otteneva un errore simile al seguente: "Request Accept header '\*; q=.2' is not a valid media type";
+
+	- se l'OpenAPI definiva risposte con qualsiasi subtype (es. application/\*), le richieste valide venivano erroneamente rifiutate con un errore simile al seguente: "Request Accept header '[application/xml]' does not match any defined response types. Must be one of: [application/\*]"
+
 - se per una API SOAP veniva configurata una trasformazione della richiesta (o della risposta) che rientrava nella seguente casistica:
 
 	- il contenuto veniva ridefinito tramite una envelope soap di una versione differente da quello della richiesta originale (es. soap1.1 -> soap 1.2)
