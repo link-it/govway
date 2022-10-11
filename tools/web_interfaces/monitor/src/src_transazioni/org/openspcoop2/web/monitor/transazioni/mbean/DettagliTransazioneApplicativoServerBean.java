@@ -799,9 +799,13 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 			}
 			
 			if(this.exportContenutiMultipart != null && this.exportContenutiMultipart.booleanValue() == true) {
-				SingleFileExporter.exportContenutiMultipart(log, this.dettaglio, dataConsegna, 
-					zip, dirPath, this.transazioniService, this.exportContenuto,
-					DettagliTransazioneApplicativoServerBean.headersAsProperties,DettagliTransazioneApplicativoServerBean.contenutiAsProperties);
+				try {
+					SingleFileExporter.exportContenutiMultipart(log, this.dettaglio, dataConsegna, 
+						zip, dirPath, this.transazioniService, this.exportContenuto,
+						DettagliTransazioneApplicativoServerBean.headersAsProperties,DettagliTransazioneApplicativoServerBean.contenutiAsProperties);
+				}finally {
+					this.exportContenutiMultipart=null;
+				}
 			} else {
 				SingleFileExporter.exportContenuti(log, this.dettaglio, dataConsegna, 
 					zip, dirPath, this.transazioniService, this.exportContenuto,

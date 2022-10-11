@@ -1232,8 +1232,12 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 					response.getOutputStream());
 			
 			if(this.exportContenutiMultipart != null && this.exportContenutiMultipart.booleanValue() == true) {
-				SingleFileExporter.exportContenutiMultipart(log, this.dettaglio, zip, dirPath, this.transazioniService, this.exportContenuto,
+				try {
+					SingleFileExporter.exportContenutiMultipart(log, this.dettaglio, zip, dirPath, this.transazioniService, this.exportContenuto,
 						DettagliBean.headersAsProperties,DettagliBean.contenutiAsProperties);
+				}finally {
+					this.exportContenutiMultipart=null;
+				}
 			} else {
 				SingleFileExporter.exportContenuti(log, this.dettaglio, zip, dirPath, this.transazioniService, this.exportContenuto,
 					DettagliBean.headersAsProperties,DettagliBean.contenutiAsProperties);

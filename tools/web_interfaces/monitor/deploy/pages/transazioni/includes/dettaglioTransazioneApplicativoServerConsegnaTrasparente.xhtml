@@ -255,11 +255,11 @@
                    	</a4j:htmlCommandLink>
                    	<h:outputLabel value="&#160;|&#160;" />	 
                    	<h:commandLink id="exportDumpBinarioResIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliTransazioneApplicativoServerBean.exportContenuti}"
-                   		rendered="#{not dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso}">
+                   		rendered="#{not dettagliTransazioneApplicativoServerBean.hasDumpBinarioMultipartUltimaConsegnaRispostaIngresso}">
                    		<f:setPropertyActionListener value="RispostaIngressoDumpBinario" target="#{dettagliTransazioneApplicativoServerBean.exportContenuto}"/>
 						<h:outputText value="Esporta" />
 					</h:commandLink>
-					<h:commandLink id="exportDumpBinarioMultipartResIngresso-iconLink" styleClass="icon-compress" rendered="#{dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso}"
+					<h:commandLink id="exportDumpBinarioMultipartResIngresso-iconLink" styleClass="icon-compress" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioMultipartUltimaConsegnaRispostaIngresso}"
                    		onclick="preparaFormModale('RispostaIngressoDumpBinario'); Richfaces.showModalPanel('esportaModalPnl'); return false;" >
 						<h:outputText value="Esporta" />
 					</h:commandLink>
