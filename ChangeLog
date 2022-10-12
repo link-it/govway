@@ -2,6 +2,13 @@
 
 	* Rilasciata versione 3.3.8
 
+2022-10-12  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloSDI]
+	La validazione delle fatture includeva lo schema 'xmldsig-core-schema.xsd' il quale definisce un '<!DOCTYPE schema' non più utilizzabile nella configurazione di default di GovWay,
+	dopo la risoluzione della vulnerabilità 'XXE'.
+	Lo schema è stato modificato commentando la parte relativa al '<!DOCTYPE schema'.
+
 2022-10-11  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

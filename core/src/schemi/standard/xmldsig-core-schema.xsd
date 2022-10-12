@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE schema
+<!--
+ In GovWay per default: DOCTYPE is disallowed when the feature "http://apache.org/xml/features/disallow-doctype-decl" set to true.
+ <!DOCTYPE schema
   PUBLIC "-//W3C//DTD XMLSchema 200102//EN" "XMLSchema.dtd"
  [
    <!ATTLIST schema 
@@ -7,7 +9,7 @@
    <!ENTITY dsig 'http://www.w3.org/2000/09/xmldsig#'>
    <!ENTITY % p ''>
    <!ENTITY % s ''>
-  ]>
+  ]> -->
 
 <!-- Schema for XML Signatures
     http://www.w3.org/2000/09/xmldsig#
