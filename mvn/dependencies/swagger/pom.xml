@@ -24,7 +24,7 @@
 		<swagger.parser.v3.gov4j.version>2.1.2-gov4j-1</swagger.parser.v3.gov4j.version>
 		<swagger.version>1.6.6</swagger.version>
 		<swagger.parser.version>1.0.61</swagger.parser.version>
-		<swagger.request-validator.gov4j.version>2.30.0-gov4j-1</swagger.request-validator.gov4j.version>
+		<swagger.request-validator.gov4j.version>2.30.0-gov4j-2</swagger.request-validator.gov4j.version>
 	</properties>
 
 	<dependencies>

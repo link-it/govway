@@ -1901,7 +1901,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		if(response.getHeaders()!=null && !response.getHeaders().isEmpty()) {
 			response.getHeaders().forEach(builder::withHeader);
 		}
-
+		
 		Object content = response.getContent();
 		if(content instanceof String) {
 			builder.withBody( (String) content);
@@ -2019,6 +2019,16 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		
 		if(request.getParameters()!=null && !request.getParameters().isEmpty()) {
 			request.getParameters().forEach(builder::withQueryParam);
+		}
+		if (request.getCookies() != null && !request.getCookies().isEmpty()) {
+			Cookie cookie = request.getCookies().get(0);
+			String cookiesValue = cookie.getName() + HttpConstants.COOKIE_NAME_VALUE_SEPARATOR + cookie.getValue();
+						
+			for (int i = 1; i < request.getCookies().size(); i++) {
+				cookie = request.getCookies().get(i);
+				cookiesValue = cookiesValue + HttpConstants.COOKIE_SEPARATOR+" " + cookie.getName() + HttpConstants.COOKIE_NAME_VALUE_SEPARATOR + cookie.getValue();  
+			}
+			builder.withHeader(HttpConstants.COOKIE, cookiesValue);
 		}
 	                        
 		if(content instanceof String) {

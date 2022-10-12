@@ -272,7 +272,7 @@
 	<archive path="/op2_3.3.dev/lib/swagger/swagger-core-1.6.6.jar"/>
 	<archive path="/op2_3.3.dev/lib/swagger/swagger-models-1.6.6.jar"/>
 	<archive path="/op2_3.3.dev/lib/swagger/swagger-ui-4.1.2.jar"/>
-	<archive path="/op2_3.3.dev/lib/swagger/swagger-request-validator-core-2.30.0-gov4j-1.jar"/>
+	<archive path="/op2_3.3.dev/lib/swagger/swagger-request-validator-core-2.30.0-gov4j-2.jar"/>
 	<!-- testsuite-->
         <archive path="/op2_3.3.dev/lib/testsuite/testng-7.1.0.jar"/>
 	<archive path="/op2_3.3.dev/lib/testsuite/jcommander-1.78.jar"/>
