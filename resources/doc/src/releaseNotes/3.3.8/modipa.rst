@@ -7,4 +7,4 @@ Sono stati apportati i seguenti miglioramenti:
 
 - nel controllo degli accessi, è adesso possibile definire un criterio di autorizzazione basato sui ruoli dell'applicativo richiedente;
 
-- è ora possibile personalizzare il comportamento del pattern 'INTEGRITY_REST_01' nella parte relativa alla gestione dell'integrità (calcolo/verifica Digest, gestione claim 'signed_header'), delegabile alla componente applicativa.
+- è ora possibile personalizzare il comportamento del pattern 'INTEGRITY_REST_01', delegando la parte relativa alla gestione dell'integrità (calcolo/verifica Digest, gestione claim 'signed_header' o simile) alla componente applicativa. Con questa modalità è possibile anche personalizzare il nome dell'header HTTP utilizzato.

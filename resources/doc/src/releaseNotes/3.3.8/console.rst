@@ -3,7 +3,7 @@ Miglioramenti alle Console
 
 È stata migliorata la modalità di selezione dei profili di interoperabilità e dei soggetti operativi:
 
-- a login effettuato, il profilo e il soggetto proposto sono quelli associati per default all'utente e sono modificabili accedendo al 'Profilo Utente';
+- a login effettuato, il profilo e il soggetto proposti sono quelli associati per default all'utente e sono modificabili accedendo al 'Profilo Utente';
 
 - la selezione dal menù a tendine, visualizzato in alto a destra nella console, ha un effetto immediato ma non viene più resa persistente dopo un logout;
 
