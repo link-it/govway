@@ -40,29 +40,33 @@ Per abilitare il processamento degli header inoltrati dal frontend è necessario
                               
    inserendo al posto di #SUBJECT_HEADER-NAME# il nome dell'header http utilizzato per propagare il DN del Subject (es. 'SSL_CLIENT_S_DN') e al posto di #ISSUER_HEADER-NAME# il nome dell'header http utilizzato per propagare il DN dell'Issuer (es. SSL_CLIENT_I_DN). È possibile anche attuare una configurazione dove viene processato solamente il Subject, lasciando commentata la proprietà relativa all'Isssuer. 
 
-#. Nel caso il frontend inserisce in un header http il certificato x.509 del client autenticato, deve essere indicato il nome di tale header tramite la seguente configurazione:
+#. Nel caso il frontend inserisca in un header http il certificato x.509 del client autenticato (es. 'SSL_CLIENT_CERT'), deve essere indicato il nome dell'header, inserendolo al posto di #CLIENT-CERT_HEADER-NAME#, nella seguente configurazione:
 
    ::
 
       # Certificato tramite l'header:
       org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate=#CLIENT-CERT_HEADER-NAME#
+
+   Il certificato inserito nell'header http dal frontend può essere stato codificato in base64 e/o tramite url encoding. È possibile effettuare la decodifica abilitando uno o più delle seguenti proprietà: 
+
+   ::
+
       # Indicazione se l'header valorizzato con il certificato è url encoded:
       org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.url_decode=false
       # Indicazione se l'header valorizzato con il certificato è base64 encoded:
       org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.base64_decode=false
+      # Abilitando la seguente opzione, l'header valorizzato con il certificato può essere url encoded o base64 encoded (verranno provate entrambe le decodifiche):
+      org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.url_decode_or_base64_decode=false
                                       
-   inserendo al posto di #CLIENT-CERT_HEADER-NAME# il nome dell'header http utilizzato per propagare il certificato x.509 (es. 'SSL_CLIENT_CERT'). Il certificato inserito nell'header http dal frontend può essere stato codificato in base64 e/o tramite url encoding. È possibile effettuare la decodifica abilitando la proprietà 'org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.base64_decode' e/o la proprietà org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.url_decode.
+   .. note::
+
+      La proprietà 'url_decode_or_base64_decode' è abilitata per default: deve essere definita con il valore 'false' per poterla disabilitare.
 
    .. note::
 
-      La modalità sopra descritta consente di attivare la decodifica di certificati codificati solamente in una delle due modalità (urlEncoded o base64). Se GovWay risiede in un'architettura che contiene più frontend http di diversa tipologia può succedere che i vari frontend inoltrino il certificato con codifiche differenti. Per poter supportare questo scenario è possibile abilitare la proprietà 'org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.url_decode'.
-
-      ::
-
-         # Abilitando la seguente opzione, l'header valorizzato con il certificato può essere url encoded o base64 encoded (verranno provate entrambe le decodifiche):
-         org.openspcoop2.pdd.services.pa.gestoreCredenziali.header.ssl.certificate.url_decode_or_base64_decode=true
-                                      
-   Con questa modalità è possibile definire un truststore per verificare nuovamente i certificati ricevuti dal FrontEnd tramite la seguente configurazione:
+      Se viene abilitata la proprietà 'url_decode_or_base64_decode', viene provata la decodificata del certificato ricevuto prima tramite urlDecode e successivamente, solamente se la decodifica non va a buon fine, viene provata la modalità base64. Le due modalità vengono quindi utilizzate in alternativa. Se si desidera effettuare entrambe le decodifiche sul certificato (prima urlDecode e a seguire base64Decode), deve essere disabilita la proprietà 'url_decode_or_base64_decode' e devono essere abilitate le due modalità singole 'url_decode' e 'base64_decode'.
+                                
+   La modalità di ricezione di un certificato x.509 in un header HTTP consente anche di definire un truststore per verificare nuovamente i certificati ricevuti dal FrontEnd tramite la seguente configurazione:
 
    ::
 
