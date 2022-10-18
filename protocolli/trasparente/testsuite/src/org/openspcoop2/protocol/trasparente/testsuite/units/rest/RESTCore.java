@@ -455,7 +455,7 @@ public class RESTCore {
 			String restContext) throws TestSuiteException, Exception{
 		
 		TestFileEntry fileEntry = null;
-		if(!"preflight".equals(tipoTest)) {
+		if(!"preflight".equals(tipoTest) && !"empty-payload".equals(tipoTest)) {
 			fileEntry = FileCache.get(tipoTest);
 		}
 
@@ -655,7 +655,7 @@ public class RESTCore {
 			
 			if(!redirect && contenutoRisposta) {
 				if(rispostaOk) {
-					if( (!tipoTest.equals("multi") && !tipoTest.equals("multi-mixed"))) {
+					if( (!tipoTest.equals("multi")) && (!tipoTest.equals("multi-mixed")) && (!tipoTest.equals("empty-payload")) ) {
 						propertiesURLBased.put("destFileContentType", contentType != null ? contentType : fileEntry.getExtRisposta());
 						propertiesURLBased.put("destFile", fileEntry.getFilenameRichiesta());
 					}
@@ -786,6 +786,9 @@ public class RESTCore {
 			}
 			
 			// Controllo risposta
+			if("empty-payload".equals(tipoTest)) {
+				contenutoRisposta = false;
+			}
 			if(!redirect && contenutoRisposta && !authorizationError && !authenticationError){
 				
 				byte[] contentAttesoRisposta = rispostaOk ? fileEntry.getBytesRichiesta(): fileEntry.getBytesRispostaKo();

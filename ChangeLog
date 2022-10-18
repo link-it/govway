@@ -1,3 +1,10 @@
+2022-10-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, Utils]
+	Risolto Bug OP-1461
+	Una richiesta POST senza contenuto e senza ContentType veniva erroneamente riconosciuta come invalida dal CORS Filter e 
+	di conseguenza non veniva generato l'header http 'Access-Control-Allow-Origin' nella risposta richiesto dall'autorizzazione CORS.
+
 2022-10-13  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.8
