@@ -184,7 +184,24 @@ function addTabIdParam(href, addPrevTabParam){
 	    }
 	}
     return href;
-    
+}
+
+function addParamToURL(href, paramKey, paramValue){
+	
+	if(paramValue != ''){
+		var param = (paramKey + "="+paramValue);
+		
+		if((href != '#' && href.indexOf('#tabs-') == -1)){
+	        if (href.charAt(href.length - 1) === '?') //Very unlikely
+	            href = href + param;
+	        else if (href.indexOf('?') > 0)
+	        	href = href + '&' + param;
+	        else
+	        	href = href + '?' + param;
+	        
+	    }
+	}
+    return href;
 }
 
 <%  
@@ -203,7 +220,14 @@ if(tabValue != ''){
 console.log('IDTab: ['+tabValue+']');
 </script>
 
+<script>
+<%String csrfTokenFromSession = ServletUtils.leggiTokenCSRF(request, session);
+if(csrfTokenFromSession == null)
+	csrfTokenFromSession = "";%>
 
+var csrfTokenKey = '<%=Costanti.PARAMETRO_CSRF_TOKEN%>';
+var csrfToken = '<%=csrfTokenFromSession %>';
+</script>
 
 
 

@@ -1176,6 +1176,7 @@ public class ControlStationCore {
 	private Integer viewLunghezzaMassimaInformazione = null;
 	private boolean isSetSearchAfterAdd = false;
 	private boolean elenchiVisualizzaComandoResetCacheSingoloElemento = false;
+	private Integer validitaTokenCsrf = null;
 	
 	public boolean isShowCorrelazioneAsincronaInAccordi() {
 		return this.showCorrelazioneAsincronaInAccordi;
@@ -1293,6 +1294,9 @@ public class ControlStationCore {
 	}
 	public boolean isSetSearchAfterAdd() {
 		return this.isSetSearchAfterAdd;
+	}
+	public Integer getValiditaTokenCsrf() {
+		return this.validitaTokenCsrf;
 	}
 	public boolean showCodaMessage() {
 		return this.isShowJ2eeOptions() || this.isIntegrationManagerEnabled();
@@ -2519,6 +2523,7 @@ public class ControlStationCore {
 		this.viewLunghezzaMassimaInformazione = core.viewLunghezzaMassimaInformazione;
 		this.isSetSearchAfterAdd = core.isSetSearchAfterAdd;
 		this.elenchiVisualizzaComandoResetCacheSingoloElemento = core.elenchiVisualizzaComandoResetCacheSingoloElemento;
+		this.validitaTokenCsrf = core.validitaTokenCsrf;
 
 		/** Motori di Sincronizzazione */
 		this.sincronizzazionePddEngineEnabled = core.sincronizzazionePddEngineEnabled;
@@ -2959,6 +2964,7 @@ public class ControlStationCore {
 			this.viewLunghezzaMassimaInformazione = consoleProperties.getLunghezzaMassimaInformazioneView();
 			this.isSetSearchAfterAdd = consoleProperties.isSetSearchAfterAdd();
 			this.elenchiVisualizzaComandoResetCacheSingoloElemento = consoleProperties.isElenchiAbilitaResetCacheSingoloElemento();
+			this.validitaTokenCsrf = consoleProperties.getValiditaTokenCsrf();
 			
 			// Gestione govwayConsole centralizzata
 			if(this.singlePdD == false){

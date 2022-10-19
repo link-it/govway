@@ -161,6 +161,14 @@ function RemoveEntries(tipo) {
 	    
 	 	// addTabID
 		destinazione = addTabIdParam(destinazione,true);
+	 	
+		destinazione = addParamToURL(destinazione, '<%=Costanti.PARAMETRO_AZIONE %>' , 'removeEntries');
+		
+		//aggiungo parametro csfr
+		if(csrfToken != ''){
+		  destinazione = addParamToURL(destinazione, csrfTokenKey , csrfToken);
+		}
+	 	
 		document.location = destinazione;
     } else {
     	
@@ -170,9 +178,9 @@ function RemoveEntries(tipo) {
     	
     	addHidden(deleteForm, 'obj' , elemToRemove);
     	addHidden(deleteForm, 'iddati' , iddati);
-	if(tipo) {
-		addHidden(deleteForm, 'obj_t' , tipo);
-	}
+		if(tipo) {
+			addHidden(deleteForm, 'obj_t' , tipo);
+		}
     	
     	// formatParams
     	  
@@ -202,6 +210,14 @@ function RemoveEntries(tipo) {
    	  	addHidden(deleteForm, tabSessionKey , tabValue);
    	 	addHidden(deleteForm, prevTabSessionKey , tabValue);
    	  }
+   	  
+   	  addHidden(deleteForm, '<%=Costanti.PARAMETRO_AZIONE %>' , 'removeEntries');
+   	  
+   	  //aggiungo parametro csfr
+	  if(csrfToken != ''){
+	  	addHidden(deleteForm, csrfTokenKey , csrfToken);
+	  }
+   	  
    	  // form submit
    	  deleteForm.submit();
     }

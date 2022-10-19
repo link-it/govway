@@ -156,6 +156,14 @@ function RemoveEntries() {
 
 	//addTabID
 	destinazione = addTabIdParam(destinazione,true);
+	
+	destinazione = addParamToURL(destinazione, '<%=Costanti.PARAMETRO_AZIONE %>' , 'removeEntries');
+	
+	//aggiungo parametro csfr
+	if(csrfToken != ''){
+	  destinazione = addParamToURL(destinazione, csrfTokenKey , csrfToken);
+	}
+	
 	document.location = destinazione;
   }
 };

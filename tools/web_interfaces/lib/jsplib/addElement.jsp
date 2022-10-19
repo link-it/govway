@@ -109,6 +109,8 @@ function CheckDati() {
   	addHidden(document.form, prevTabSessionKey , tabValue);
   }
 
+  addHidden(document.form, '<%=Costanti.PARAMETRO_AZIONE %>' , 'salva');
+
   document.form.submit();
 };
 

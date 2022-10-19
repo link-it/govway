@@ -643,6 +643,8 @@ public class ServletUtils {
 		
 		//salvo la data di creazione del tab
 		mapDest.put(Costanti.SESSION_ATTRIBUTE_TAB_MAP_CREATION_DATE, new Date());
+		// creo il primo token CSFR per il tab
+		mapDest.put(Costanti.SESSION_ATTRIBUTE_CSRF_TOKEN, generaTokenCSRF(idSessioneTabDest));
 		
 		sessionMap.put(idSessioneTabDest, mapDest);
 		
@@ -796,5 +798,44 @@ public class ServletUtils {
 		
 		de.setDialog(deDialog );
 		e.add(de);
+	}
+	
+	public static void generaESalvaTokenCSRF(HttpServletRequest request, HttpSession session) {
+		String tabId = (String) request.getAttribute(Costanti.PARAMETER_TAB_KEY);
+		String nuovoToken = generaTokenCSRF(tabId);
+		setObjectIntoSession(request, session, nuovoToken, Costanti.SESSION_ATTRIBUTE_CSRF_TOKEN);
+	}
+
+	public static String generaTokenCSRF(String sessionTabID) {
+		String nuovoToken = sessionTabID + "_" + System.currentTimeMillis();
+		return nuovoToken;
+	}
+	
+	public static String leggiTokenCSRF(HttpServletRequest request, HttpSession session) {
+		return getObjectFromSession(request, session, String.class, Costanti.SESSION_ATTRIBUTE_CSRF_TOKEN);
+	}
+	
+	public static boolean verificaTokenCSRF(String tokenToCheck, HttpServletRequest request, HttpSession session, Integer validitaTokenCsrf) {
+		// non ho trovato il token nella request non passo il controllo
+		if(tokenToCheck == null) return false;
+		
+		String csfrTokenFromSession = ServletUtils.leggiTokenCSRF(request, session);
+		
+		// controllo che il token coincida per intero con quello salvato in sessione
+		if(!tokenToCheck.equals(csfrTokenFromSession)) return false;
+		
+		// Controllo scadenza del token in base alla soglia impostata nelle properties
+		if(validitaTokenCsrf != null) {
+			String[] split = tokenToCheck.split("_");
+			String millisSToCheck = split[1];
+			
+			long sogliaMS = validitaTokenCsrf.longValue() * 1000;
+			long now = System.currentTimeMillis() ;
+			long rif = sogliaMS + Long.parseLong(millisSToCheck);
+			
+			return now < rif;
+		}
+		
+		return true;
 	}
 }

@@ -42,11 +42,22 @@ PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class
 
 String customListViewName = pd.getCustomListViewName();
 String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
+
+String csrfTokenFromSession = ServletUtils.leggiTokenCSRF(request, session);
+if(csrfTokenFromSession == null)
+	csrfTokenFromSession = "";
 %>
 
 <td valign="top" class="td2PageBody">
 <form name='form' method='post' onSubmit='return false;' id="form">
 
+		<%
+		if(!csrfTokenFromSession.equals("")){
+			%>
+			<input type="hidden" name="<%=Costanti.PARAMETRO_CSRF_TOKEN%>" id="<%=Costanti.PARAMETRO_CSRF_TOKEN%>"  value="<%= csrfTokenFromSession %>"/>
+			<%			
+		}
+		%>
 <%
 Map<String,String> hidden = pd.getHidden();
 if (hidden!=null && !hidden.isEmpty()) {

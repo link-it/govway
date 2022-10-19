@@ -58,6 +58,10 @@ String encTypeS = "";
 if (mime) {
 	encTypeS = "ENCTYPE=\"multipart/form-data\"";
 }
+
+String csrfTokenFromSession = ServletUtils.leggiTokenCSRF(request, session);
+if(csrfTokenFromSession == null)
+	csrfTokenFromSession = "";
 %>
 
 
@@ -65,6 +69,14 @@ if (mime) {
 	<form name="form" <%=encTypeS %> action="<%= gd.getUrl() %>" method="post">
 		<!-- Breadcrumbs -->
 		<jsp:include page="/jsplib/titlelist.jsp" flush="true" />
+		
+		<%
+		if(!csrfTokenFromSession.equals("")){
+			%>
+			<input type="hidden" name="<%=Costanti.PARAMETRO_CSRF_TOKEN%>" id="<%=Costanti.PARAMETRO_CSRF_TOKEN%>"  value="<%= csrfTokenFromSession %>"/>
+			<%			
+		}
+		%>
 
 		<table class="tabella-ext">
 			<% if(customListViewName.equals("erogazione")){ %>

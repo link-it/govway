@@ -46,7 +46,6 @@ PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class
 %>
 
 <%
-
 String vBL = request.getParameter("visualizzaBottoneLogin");
 boolean visualizzaBottoneLogin = false;
 
@@ -68,6 +67,10 @@ String encTypeS = "";
 if (mime) {
 	encTypeS = "ENCTYPE=\"multipart/form-data\"";
 }
+
+String csrfTokenFromSession = ServletUtils.leggiTokenCSRF(request, session);
+if(csrfTokenFromSession == null)
+	csrfTokenFromSession = "";
 %>
 
 
@@ -76,6 +79,13 @@ if (mime) {
 		<!-- Breadcrumbs -->
 		<jsp:include page="/jsplib/titlelist.jsp" flush="true" />
 
+		<%
+		if(!csrfTokenFromSession.equals("")){
+			%>
+			<input type="hidden" name="<%=Costanti.PARAMETRO_CSRF_TOKEN%>" id="<%=Costanti.PARAMETRO_CSRF_TOKEN%>"  value="<%= csrfTokenFromSession %>"/>
+			<%			
+		}
+		%>
 <%
 boolean elementsRequired = false;
 boolean elementsRequiredEnabled = true;

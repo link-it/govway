@@ -1507,6 +1507,10 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "console.setSearchAfterAdd");
 	}
 	
+	public Integer getValiditaTokenCsrf() throws Exception{
+		return this.readIntegerProperty(true, "console.csrf.token.validita");
+	}
+	
 	/* ---------------- Gestione govwayConsole centralizzata ----------------------- */
 
 	public Boolean isGestioneCentralizzata_SincronizzazionePdd() throws UtilsException{

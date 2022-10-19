@@ -58,9 +58,21 @@ boolean visualizzaPanelLista =((bottoni != null) && (bottoni.length > 0));
 String classDivPanelLista = visualizzaPanelLista  ? "panelLista" : "";
 String classTabellaPanelLista = visualizzaPanelLista  ? "tabella" : "";
 String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
+
+String csrfTokenFromSession = ServletUtils.leggiTokenCSRF(request, session);
+if(csrfTokenFromSession == null)
+	csrfTokenFromSession = "";
 %>
 <td valign="top" class="td2PageBody">
 	<form name="form"  <%=hFormMethod  %> >
+		<%
+		if(!csrfTokenFromSession.equals("")){
+			%>
+			<input type="hidden" name="<%=Costanti.PARAMETRO_CSRF_TOKEN%>" id="<%=Costanti.PARAMETRO_CSRF_TOKEN%>"  value="<%= csrfTokenFromSession %>"/>
+			<%			
+		}
+		%>
+	
 		<jsp:include page="/jsplib/titlelist.jsp" flush="true" />
 		<table class="tabella-ext">
 		<!-- Riga tabella -->

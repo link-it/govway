@@ -113,11 +113,25 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 			  	addHidden(document.form, prevTabSessionKey , tabValue);
 			  }
 				
+			  addHidden(document.form, '<%=Costanti.PARAMETRO_AZIONE %>' , 'conferma');
+			  
+			  //aggiungo parametro csfr
+			  if(csrfToken != ''){
+			  	addHidden(document.form, csrfTokenKey , csrfToken);
+			  }
+				
 				document.form.submit();
 			} else {
 				var destinazione = '<%=request.getContextPath()%>/'+nomeServlet_Custom_Ok +params;
 				//addTabID
 				destinazione = addTabIdParam(destinazione,true);
+				
+				destinazione = addParamToURL(destinazione, '<%=Costanti.PARAMETRO_AZIONE %>' , 'conferma');
+				//aggiungo parametro csfr
+				if(csrfToken != ''){
+				  destinazione = addParamToURL(destinazione, csrfTokenKey , csrfToken);
+				}
+				
 				document.location = destinazione;
 			}
 		};
@@ -143,11 +157,25 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 				  	addHidden(document.form, prevTabSessionKey , tabValue);
 				  }
 				
+				  addHidden(document.form, '<%=Costanti.PARAMETRO_AZIONE %>' , 'annulla');
+				  
+				  //aggiungo parametro csfr
+				  if(csrfToken != ''){
+				  	addHidden(document.form, csrfTokenKey , csrfToken);
+				  }
+				
 				document.form.submit();
 			} else {
 				var destinazione = '<%=request.getContextPath()%>/'+nomeServlet_Custom_No +params;
 				//addTabID
 				destinazione = addTabIdParam(destinazione,true);
+				
+				destinazione = addParamToURL(destinazione, '<%=Costanti.PARAMETRO_AZIONE %>' , 'annulla');
+				//aggiungo parametro csfr
+				if(csrfToken != ''){
+				  destinazione = addParamToURL(destinazione, csrfTokenKey , csrfToken);
+				}
+				
 				document.location = destinazione;
 			}
 		};
