@@ -405,14 +405,34 @@ public class Utils {
 					assertTrue("PolicyRichiesteBloccate["+polInfo.richiesteBloccate+"]<=attese["+bloccate+"]", polInfo.richiesteBloccate<=bloccate);
 				}
 				else if(policyType!=null && policyType.isApproximated()) {
-					assertTrue("PolicyConteggiate["+polInfo.richiesteConteggiate+"] = (attese["+conteggiate+"] OR attese-1["+(conteggiate-1)+"] OR attese+1["+(conteggiate+1)+"] OR attese-2["+(conteggiate-2)+"] OR attese+2["+(conteggiate+2)+"])", 
-							( 
-									(polInfo.richiesteConteggiate==conteggiate) || 
-									(polInfo.richiesteConteggiate==(conteggiate-1)) || 
-									(polInfo.richiesteConteggiate==(conteggiate+1)) || 
-									(polInfo.richiesteConteggiate==(conteggiate-2)) || 
-									(polInfo.richiesteConteggiate==(conteggiate+2)) 
-							) );
+					if( (!org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.isJenkins())) {
+						assertTrue("PolicyConteggiate["+polInfo.richiesteConteggiate+"] = (attese["+conteggiate+"] OR intervallo di approssimazione +-2)", 
+								( 
+										(polInfo.richiesteConteggiate==conteggiate) || 
+										(polInfo.richiesteConteggiate==(conteggiate-1)) || 
+										(polInfo.richiesteConteggiate==(conteggiate+1)) || 
+										(polInfo.richiesteConteggiate==(conteggiate-2)) || 
+										(polInfo.richiesteConteggiate==(conteggiate+2))    
+								) );
+					}
+					else {
+						// jenkins (essendo un ambiente con una sola CPU le metriche approssimate non sono facilmente verificabili)
+						assertTrue("PolicyConteggiate["+polInfo.richiesteConteggiate+"] = (attese["+conteggiate+"] OR intervallo di approssimazione +-5)", 
+								( 
+										(polInfo.richiesteConteggiate==conteggiate) || 
+										(polInfo.richiesteConteggiate==(conteggiate-1)) || 
+										(polInfo.richiesteConteggiate==(conteggiate+1)) || 
+										(polInfo.richiesteConteggiate==(conteggiate-2)) || 
+										(polInfo.richiesteConteggiate==(conteggiate+2)) || 
+										(polInfo.richiesteConteggiate==(conteggiate-3)) || 
+										(polInfo.richiesteConteggiate==(conteggiate+3)) || 
+										(polInfo.richiesteConteggiate==(conteggiate-4)) || 
+										(polInfo.richiesteConteggiate==(conteggiate+4)) || 
+										(polInfo.richiesteConteggiate==(conteggiate-5)) || 
+										(polInfo.richiesteConteggiate==(conteggiate+5))   
+								) );
+					}
+					
 					assertTrue("PolicyRichiesteBloccate["+polInfo.richiesteBloccate+"]<=attese["+bloccate+"]", polInfo.richiesteBloccate<=bloccate);
 				}
 				else {
