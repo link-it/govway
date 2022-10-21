@@ -31,6 +31,10 @@
 									object-type="transazione-info"/>
 								<linkit:sql-table object-name="transazione-export"
 									object-type="transazione-export"/>
+								<linkit:sql-table object-name="transazione-esiti"
+									object-type="transazione-esiti"/>
+								<linkit:sql-table object-name="transazione-classe-esiti"
+									object-type="transazione-classe-esiti"/>
 								<linkit:sql-comment><![CDATA[DUMP - DATI]]></linkit:sql-comment>
 								<linkit:sql-table object-name="dump-messaggio"
 									object-type="dump-messaggio"/>
@@ -2325,6 +2329,143 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 			<xsd:enumeration value="error"/>
 		</xsd:restriction>
 	</xsd:simpleType>
+
+
+
+
+	<xsd:element name="transazione-esiti">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface generate="false" crud="false">
+						<linkit:ws-interface generate="false" crud="false"/>
+					</linkit:interface>
+				    <linkit:sql-table-mapping name="transazioni_esiti" sequence-cycle="true"
+				    	comment="Contiene informazioni sulla codifica dei codici di esito di una transazione">
+						<linkit:sql-table-constraint unique="uniq_tr_esiti" index="idx_tr_esiti" />
+						<linkit:sql-table-unique create-index="true">
+							<linkit:sql-table-unique-field name="govway_status"/>
+						</linkit:sql-table-unique>
+						<linkit:sql-table-unique create-index="true">
+							<linkit:sql-table-unique-field name="govway_status_key"/>
+						</linkit:sql-table-unique>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="govway_status" type="xsd:int">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="govway_status"/>
+								<linkit:sql-column-comment><![CDATA[Codice numerico dell'esito della transazione]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Codice numerico dell'esito della transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="govway_status_key" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="govway_status_key"/>
+								<linkit:sql-column-comment><![CDATA[Identificativo dell'esito della transazione]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo dell'esito della transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="govway_status_detail" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="govway_status_detail"/>
+								<linkit:sql-column-comment><![CDATA[Frase dell'errore che identifica l'esito della transazione]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Frase dell'errore che identifica l'esito della transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="govway_status_description" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="govway_status_description"/>
+								<linkit:sql-column-comment><![CDATA[Descrizione dell'esito della transazione]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Descrizione dell'esito della transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="govway_status_class" type="xsd:int">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="govway_status_class"/>
+								<linkit:sql-column-comment><![CDATA[Codice numerico della classe di esiti a cui appartiene la transazione]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Codice numerico della classe di esiti a cui appartiene la transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="transazione-classe-esiti">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface generate="false" crud="false">
+						<linkit:ws-interface generate="false" crud="false"/>
+					</linkit:interface>
+				    <linkit:sql-table-mapping name="transazioni_classe_esiti" sequence-cycle="true"
+				    	comment="Contiene informazioni sulla codifica della classificazione degli esiti di una transazione">
+						<linkit:sql-table-constraint unique="uniq_tr_classe_esiti" index="idx_tr_classe_esiti" />
+						<linkit:sql-table-unique create-index="true">
+							<linkit:sql-table-unique-field name="govway_status"/>
+						</linkit:sql-table-unique>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="govway_status" type="xsd:int">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="govway_status"/>
+								<linkit:sql-column-comment><![CDATA[Codice numerico della classe di appartenenza di un esito della transazione]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Codice numerico della classe di appartenenza di un esito della transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="govway_status_detail" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="govway_status_detail"/>
+								<linkit:sql-column-comment><![CDATA[Descrizione della classe di un esito]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Descrizione della classe di un esito]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
 
 
 

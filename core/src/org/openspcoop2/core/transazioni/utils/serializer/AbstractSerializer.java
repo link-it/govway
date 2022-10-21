@@ -28,6 +28,7 @@ import org.openspcoop2.core.transazioni.DumpHeaderAllegato;
 import org.openspcoop2.core.transazioni.DumpMultipartHeader;
 import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.core.transazioni.IdCredenzialeMittente;
+import org.openspcoop2.core.transazioni.TransazioneClasseEsiti;
 import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.DumpContenuto;
@@ -35,6 +36,7 @@ import org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.TransazioneExtendedInfo;
+import org.openspcoop2.core.transazioni.TransazioneEsiti;
 import org.openspcoop2.core.transazioni.IdDumpMessaggio;
 import org.openspcoop2.core.transazioni.TransazioneInfo;
 import org.openspcoop2.core.transazioni.TransazioneExport;
@@ -714,6 +716,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(IdCredenzialeMittente idCredenzialeMittente,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(IdCredenzialeMittente.class, idCredenzialeMittente, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: transazione-classe-esiti
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>transazioneClasseEsiti</var> of type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>transazioneClasseEsiti</var>
+	 * @param transazioneClasseEsiti Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TransazioneClasseEsiti transazioneClasseEsiti) throws SerializerException {
+		this.objToXml(fileName, TransazioneClasseEsiti.class, transazioneClasseEsiti, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>transazioneClasseEsiti</var> of type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>transazioneClasseEsiti</var>
+	 * @param transazioneClasseEsiti Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TransazioneClasseEsiti transazioneClasseEsiti,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, TransazioneClasseEsiti.class, transazioneClasseEsiti, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>transazioneClasseEsiti</var> of type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * 
+	 * @param file Xml file to serialize the object <var>transazioneClasseEsiti</var>
+	 * @param transazioneClasseEsiti Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TransazioneClasseEsiti transazioneClasseEsiti) throws SerializerException {
+		this.objToXml(file, TransazioneClasseEsiti.class, transazioneClasseEsiti, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>transazioneClasseEsiti</var> of type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * 
+	 * @param file Xml file to serialize the object <var>transazioneClasseEsiti</var>
+	 * @param transazioneClasseEsiti Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TransazioneClasseEsiti transazioneClasseEsiti,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, TransazioneClasseEsiti.class, transazioneClasseEsiti, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>transazioneClasseEsiti</var> of type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * 
+	 * @param out OutputStream to serialize the object <var>transazioneClasseEsiti</var>
+	 * @param transazioneClasseEsiti Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TransazioneClasseEsiti transazioneClasseEsiti) throws SerializerException {
+		this.objToXml(out, TransazioneClasseEsiti.class, transazioneClasseEsiti, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>transazioneClasseEsiti</var> of type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * 
+	 * @param out OutputStream to serialize the object <var>transazioneClasseEsiti</var>
+	 * @param transazioneClasseEsiti Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TransazioneClasseEsiti transazioneClasseEsiti,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, TransazioneClasseEsiti.class, transazioneClasseEsiti, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>transazioneClasseEsiti</var> of type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * 
+	 * @param transazioneClasseEsiti Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TransazioneClasseEsiti transazioneClasseEsiti) throws SerializerException {
+		return this.objToXml(TransazioneClasseEsiti.class, transazioneClasseEsiti, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>transazioneClasseEsiti</var> of type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * 
+	 * @param transazioneClasseEsiti Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TransazioneClasseEsiti transazioneClasseEsiti,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TransazioneClasseEsiti.class, transazioneClasseEsiti, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>transazioneClasseEsiti</var> of type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * 
+	 * @param transazioneClasseEsiti Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TransazioneClasseEsiti transazioneClasseEsiti) throws SerializerException {
+		return this.objToXml(TransazioneClasseEsiti.class, transazioneClasseEsiti, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>transazioneClasseEsiti</var> of type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * 
+	 * @param transazioneClasseEsiti Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TransazioneClasseEsiti transazioneClasseEsiti,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TransazioneClasseEsiti.class, transazioneClasseEsiti, prettyPrint).toString();
 	}
 	
 	
@@ -1540,6 +1660,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(TransazioneExtendedInfo transazioneExtendedInfo,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(TransazioneExtendedInfo.class, transazioneExtendedInfo, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: transazione-esiti
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>transazioneEsiti</var> of type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>transazioneEsiti</var>
+	 * @param transazioneEsiti Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TransazioneEsiti transazioneEsiti) throws SerializerException {
+		this.objToXml(fileName, TransazioneEsiti.class, transazioneEsiti, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>transazioneEsiti</var> of type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>transazioneEsiti</var>
+	 * @param transazioneEsiti Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TransazioneEsiti transazioneEsiti,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, TransazioneEsiti.class, transazioneEsiti, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>transazioneEsiti</var> of type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * 
+	 * @param file Xml file to serialize the object <var>transazioneEsiti</var>
+	 * @param transazioneEsiti Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TransazioneEsiti transazioneEsiti) throws SerializerException {
+		this.objToXml(file, TransazioneEsiti.class, transazioneEsiti, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>transazioneEsiti</var> of type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * 
+	 * @param file Xml file to serialize the object <var>transazioneEsiti</var>
+	 * @param transazioneEsiti Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TransazioneEsiti transazioneEsiti,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, TransazioneEsiti.class, transazioneEsiti, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>transazioneEsiti</var> of type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * 
+	 * @param out OutputStream to serialize the object <var>transazioneEsiti</var>
+	 * @param transazioneEsiti Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TransazioneEsiti transazioneEsiti) throws SerializerException {
+		this.objToXml(out, TransazioneEsiti.class, transazioneEsiti, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>transazioneEsiti</var> of type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * 
+	 * @param out OutputStream to serialize the object <var>transazioneEsiti</var>
+	 * @param transazioneEsiti Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TransazioneEsiti transazioneEsiti,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, TransazioneEsiti.class, transazioneEsiti, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>transazioneEsiti</var> of type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * 
+	 * @param transazioneEsiti Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TransazioneEsiti transazioneEsiti) throws SerializerException {
+		return this.objToXml(TransazioneEsiti.class, transazioneEsiti, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>transazioneEsiti</var> of type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * 
+	 * @param transazioneEsiti Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TransazioneEsiti transazioneEsiti,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TransazioneEsiti.class, transazioneEsiti, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>transazioneEsiti</var> of type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * 
+	 * @param transazioneEsiti Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TransazioneEsiti transazioneEsiti) throws SerializerException {
+		return this.objToXml(TransazioneEsiti.class, transazioneEsiti, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>transazioneEsiti</var> of type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * 
+	 * @param transazioneEsiti Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TransazioneEsiti transazioneEsiti,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TransazioneEsiti.class, transazioneEsiti, prettyPrint).toString();
 	}
 	
 	

@@ -4,6 +4,8 @@ DELETE FROM dump_allegati;
 DELETE FROM dump_header_trasporto;
 DELETE FROM dump_multipart_header;
 DELETE FROM dump_messaggi;
+DELETE FROM transazioni_classe_esiti;
+DELETE FROM transazioni_esiti;
 DELETE FROM transazioni_export;
 DELETE FROM transazioni_info;
 DELETE FROM transazioni_sa;

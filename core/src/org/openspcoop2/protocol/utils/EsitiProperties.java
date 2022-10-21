@@ -154,13 +154,15 @@ public class EsitiProperties {
 			esitiProperties.validaConfigurazione(loader);
 			EsitiProperties.esitiPropertiesMap.put(NO_PROTOCOL_CONFIG, esitiProperties);
 			
-			Enumeration<String> enP = protocols.keys();
-			while (enP.hasMoreElements()) {
-				String protocol = (String) enP.nextElement();
-				IProtocolFactory<?> pf = protocols.get(protocol);
-				
-				EsitiProperties esitiPropertiesByProtocol = new EsitiProperties(confDir,log,pf);
-				EsitiProperties.esitiPropertiesMap.put(protocol, esitiPropertiesByProtocol);
+			if(protocols!=null) {
+				Enumeration<String> enP = protocols.keys();
+				while (enP.hasMoreElements()) {
+					String protocol = (String) enP.nextElement();
+					IProtocolFactory<?> pf = protocols.get(protocol);
+					
+					EsitiProperties esitiPropertiesByProtocol = new EsitiProperties(confDir,log,pf);
+					EsitiProperties.esitiPropertiesMap.put(protocol, esitiPropertiesByProtocol);
+				}
 			}
 						
 		}

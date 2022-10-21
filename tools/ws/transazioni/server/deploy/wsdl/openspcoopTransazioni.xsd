@@ -637,6 +637,47 @@
 
 
 
+	<xsd:element name="transazione-esiti">
+		
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="govway_status" type="xsd:int">
+					
+				</xsd:element>
+				<xsd:element name="govway_status_key" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element name="govway_status_detail" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element name="govway_status_description" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element name="govway_status_class" type="xsd:int">
+					
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="transazione-classe-esiti">
+		
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="govway_status" type="xsd:int">
+					
+				</xsd:element>
+				<xsd:element name="govway_status_detail" type="xsd:string">
+					
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+
+
+
+
 	<!-- ********* DUMP ************* -->
 
 	<xsd:element name="dump-messaggio">

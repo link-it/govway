@@ -66,6 +66,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TransazioneEsiti }
+     */
+    public TransazioneEsiti createTransazioneEsiti() {
+        return new TransazioneEsiti();
+    }
+
+    /**
      * Create an instance of {@link DumpHeaderAllegato }
      */
     public DumpHeaderAllegato createDumpHeaderAllegato() {
@@ -119,6 +126,13 @@ public class ObjectFactory {
      */
     public TransazioneExtendedInfo createTransazioneExtendedInfo() {
         return new TransazioneExtendedInfo();
+    }
+
+    /**
+     * Create an instance of {@link TransazioneClasseEsiti }
+     */
+    public TransazioneClasseEsiti createTransazioneClasseEsiti() {
+        return new TransazioneClasseEsiti();
     }
 
     /**

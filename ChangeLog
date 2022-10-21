@@ -1,5 +1,13 @@
 2022-10-21  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1470
+	Nello schema di tracciamento sono state aggiunte le tabelle 'transazioni_classe_esiti' e 'transazioni_esiti' 
+	che contengono la codifica degli esiti delle transazioni e della loro classificazione fino ad ora disponibile solamente consultando il file di proprietà: 
+	   https://github.com/link-it/govway/blob/master/core/src/org/openspcoop2/protocol/utils/esiti.properties
+
+2022-10-21  Andrea Poli <apoli@link.it>
+
 	* [GovWayMonitor, ApiRsMonitoraggio]
 	Risolto Bug OP-1468
 	L'export CSV delle configurazioni tramite la console o l'api di monitoraggio produceva risultati non deterministici ed incompleti.

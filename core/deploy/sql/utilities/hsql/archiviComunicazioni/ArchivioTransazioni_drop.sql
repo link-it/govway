@@ -1,4 +1,7 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX idx_tr_classe_esiti_1;
+-- DROP INDEX idx_tr_esiti_2;
+-- DROP INDEX idx_tr_esiti_1;
 -- DROP INDEX index_credenziale_mittente_1;
 -- DROP INDEX index_dump_contenuti_1;
 -- DROP INDEX index_dump_header_allegato_1;
@@ -37,6 +40,10 @@ DROP TABLE dump_multipart_header_init_seq;
 DROP TABLE dump_multipart_header;
 DROP TABLE dump_messaggi_init_seq;
 DROP TABLE dump_messaggi;
+DROP TABLE transazioni_classe_esiti_init_seq;
+DROP TABLE transazioni_classe_esiti;
+DROP TABLE transazioni_esiti_init_seq;
+DROP TABLE transazioni_esiti;
 DROP TABLE transazioni_export_init_seq;
 DROP TABLE transazioni_export;
 DROP TABLE transazioni_info;
@@ -51,6 +58,8 @@ DROP SEQUENCE seq_dump_allegati;
 DROP SEQUENCE seq_dump_header_trasporto;
 DROP SEQUENCE seq_dump_multipart_header;
 DROP SEQUENCE seq_dump_messaggi;
+DROP SEQUENCE seq_transazioni_classe_esiti;
+DROP SEQUENCE seq_transazioni_esiti;
 DROP SEQUENCE seq_transazioni_export;
 DROP SEQUENCE seq_transazioni_sa;
 DROP SEQUENCE seq_credenziale_mittente;

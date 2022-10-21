@@ -290,6 +290,51 @@ CREATE TABLE transazioni_export
 
 
 
+CREATE SEQUENCE seq_transazioni_esiti start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 CYCLE;
+
+CREATE TABLE transazioni_esiti
+(
+	-- Codice numerico dell'esito della transazione
+	govway_status INT NOT NULL,
+	-- Identificativo dell'esito della transazione
+	govway_status_key VARCHAR(255) NOT NULL,
+	-- Frase dell'errore che identifica l'esito della transazione
+	govway_status_detail VARCHAR(255) NOT NULL,
+	-- Descrizione dell'esito della transazione
+	govway_status_description VARCHAR(255) NOT NULL,
+	-- Codice numerico della classe di esiti a cui appartiene la transazione
+	govway_status_class INT NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_transazioni_esiti') NOT NULL,
+	-- unique constraints
+	CONSTRAINT uniq_tr_esiti_1 UNIQUE (govway_status),
+	CONSTRAINT uniq_tr_esiti_2 UNIQUE (govway_status_key),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_transazioni_esiti PRIMARY KEY (id)
+);
+
+
+
+
+CREATE SEQUENCE seq_transazioni_classe_esiti start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 CYCLE;
+
+CREATE TABLE transazioni_classe_esiti
+(
+	-- Codice numerico della classe di appartenenza di un esito della transazione
+	govway_status INT NOT NULL,
+	-- Descrizione della classe di un esito
+	govway_status_detail VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_transazioni_classe_esiti') NOT NULL,
+	-- unique constraints
+	CONSTRAINT uniq_tr_classe_esiti_1 UNIQUE (govway_status),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_transazioni_classe_esiti PRIMARY KEY (id)
+);
+
+
+
+
 -- DUMP - DATI
 
 CREATE SEQUENCE seq_dump_messaggi start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 CYCLE;

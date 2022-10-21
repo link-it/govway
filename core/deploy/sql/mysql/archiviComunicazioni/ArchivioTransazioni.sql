@@ -312,6 +312,52 @@ CREATE TABLE transazioni_export
 
 
 
+CREATE TABLE transazioni_esiti
+(
+	-- Codice numerico dell'esito della transazione
+	govway_status INT NOT NULL,
+	-- Identificativo dell'esito della transazione
+	govway_status_key VARCHAR(255) NOT NULL,
+	-- Frase dell'errore che identifica l'esito della transazione
+	govway_status_detail VARCHAR(255) NOT NULL,
+	-- Descrizione dell'esito della transazione
+	govway_status_description VARCHAR(255) NOT NULL,
+	-- Codice numerico della classe di esiti a cui appartiene la transazione
+	govway_status_class INT NOT NULL,
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- unique constraints
+	CONSTRAINT uniq_tr_esiti_1 UNIQUE (govway_status),
+	CONSTRAINT uniq_tr_esiti_2 UNIQUE (govway_status_key),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_transazioni_esiti PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
+
+-- index
+CREATE UNIQUE INDEX idx_tr_esiti_1 ON transazioni_esiti (govway_status);
+CREATE UNIQUE INDEX idx_tr_esiti_2 ON transazioni_esiti (govway_status_key);
+
+
+
+CREATE TABLE transazioni_classe_esiti
+(
+	-- Codice numerico della classe di appartenenza di un esito della transazione
+	govway_status INT NOT NULL,
+	-- Descrizione della classe di un esito
+	govway_status_detail VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- unique constraints
+	CONSTRAINT uniq_tr_classe_esiti_1 UNIQUE (govway_status),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_transazioni_classe_esiti PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
+
+-- index
+CREATE UNIQUE INDEX idx_tr_classe_esiti_1 ON transazioni_classe_esiti (govway_status);
+
+
+
 -- DUMP - DATI
 
 CREATE TABLE dump_messaggi

@@ -302,6 +302,9 @@ public final class CostantiDB {
 	
 	public static final String TRANSAZIONI_EXTENDED_INFO = "transazione_extended_info";
 	
+	public static final String TRANSAZIONI_ESITI = "transazioni_esiti";
+	public static final String TRANSAZIONI_CLASSE_ESITI = "transazioni_classe_esiti";
+	
 	 /*TRANSAZIONI_SERVER_APPLICATIVI*/
     public static final String TRANSAZIONI_APPLICATIVI_SERVER = "transazioni_sa";
     
