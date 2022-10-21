@@ -790,6 +790,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				IExpression expr = this.createPDExpression(this.portaDelegataDAO, this.search, false);
 				IPaginatedExpression pagExpr = this.portaDelegataDAO.toPaginatedExpression(expr);
 				pagExpr.offset(start).limit(limit);
+				pagExpr.addOrder(PortaDelegata.model().NOME);
 
 				setListServiziPD(apiImplSelected, listIDServizio, pagExpr);
 
@@ -798,7 +799,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 					List<ConfigurazioneGenerale> lst = new ArrayList<ConfigurazioneGenerale>();
 
 					for (PortaDelegata portaDelegata : findAll) {
-						ConfigurazioneGenerale dettaglioPD = this.fillDettaglioPD(portaDelegata);
+						ConfigurazioneGenerale dettaglioPD = this.fillDettaglioPD(portaDelegata, false);
 						lst.add(dettaglioPD);
 						
 						List<ConfigurazioneGenerale> findConfigurazioniFiglie = this.findConfigurazioniFiglie(portaDelegata.getNome(),dettaglioPD.getRuolo());
@@ -811,6 +812,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				IExpression expr = this.createPAExpression(this.portaApplicativaDAO, this.search, false);
 				IPaginatedExpression pagExpr = this.portaApplicativaDAO.toPaginatedExpression(expr);
 				pagExpr.offset(start).limit(limit);
+				pagExpr.addOrder(PortaApplicativa.model().NOME);
 
 				setListServiziPA(apiImplSelected, listIDServizio, pagExpr);
 
@@ -819,7 +821,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 					List<ConfigurazioneGenerale> lst = new ArrayList<ConfigurazioneGenerale>();
 
 					for (PortaApplicativa portaApplicativa : findAll) {
-						ConfigurazioneGenerale dettaglioPA = this.fillDettaglioPA(portaApplicativa);
+						ConfigurazioneGenerale dettaglioPA = this.fillDettaglioPA(portaApplicativa, false);
 						lst.add(dettaglioPA);
 						
 						List<ConfigurazioneGenerale> findConfigurazioniFiglie = this.findConfigurazioniFiglie(portaApplicativa.getNome(),dettaglioPA.getRuolo());
@@ -887,7 +889,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 					List<ConfigurazioneGenerale> lst = new ArrayList<ConfigurazioneGenerale>();
 
 					for (PortaDelegata portaDelegata : findAll) {
-						ConfigurazioneGenerale dettaglioPD = this.fillDettaglioPD(portaDelegata);
+						ConfigurazioneGenerale dettaglioPD = this.fillDettaglioPD(portaDelegata, true);
 						lst.add(dettaglioPD);
 					}
 					return lst;
@@ -912,7 +914,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 					List<ConfigurazioneGenerale> lst = new ArrayList<ConfigurazioneGenerale>();
 
 					for (PortaApplicativa portaApplicativa : findAll) {
-						ConfigurazioneGenerale dettaglioPA = this.fillDettaglioPA(portaApplicativa);
+						ConfigurazioneGenerale dettaglioPA = this.fillDettaglioPA(portaApplicativa, true);
 						lst.add(dettaglioPA);
 					}
 
@@ -1034,11 +1036,11 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			if(PddRuolo.DELEGATA.equals(key.getRuolo())){
 				IDBPortaDelegataServiceSearch search = (IDBPortaDelegataServiceSearch) this.portaDelegataDAO;
 				PortaDelegata portaDelegata = search.get(key.getId());
-				configurazione = fillDettaglioPD(portaDelegata);
+				configurazione = fillDettaglioPD(portaDelegata, false);
 			} else {
 				IDBPortaApplicativaServiceSearch search= (IDBPortaApplicativaServiceSearch) this.portaApplicativaDAO;
 				PortaApplicativa portaApplicativa = search.get(key.getId());
-				configurazione = fillDettaglioPA(portaApplicativa);
+				configurazione = fillDettaglioPA(portaApplicativa, false);
 			}
 		} catch (ServiceException e) {
 			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
@@ -1068,7 +1070,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 	}
 
 	@SuppressWarnings("deprecation")
-	private ConfigurazioneGenerale fillDettaglioPD(PortaDelegata portaDelegata)
+	private ConfigurazioneGenerale fillDettaglioPD(PortaDelegata portaDelegata, boolean configurazioniFiglie)
 			throws ServiceException, NotFoundException, MultipleResultException, NotImplementedException,
 			DriverConfigurazioneException, DriverConfigurazioneNotFound, DriverRegistroServiziException,
 			DriverRegistroServiziNotFound, ExpressionNotImplementedException, ExpressionException, ProtocolException {
@@ -1177,7 +1179,12 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			dettaglioPD.setConfigurazioneProfilo(this.readConfigurazioneProfiloFruizione(idServizio, urlInvocazione, identificativiFruizione.getSoggettoFruitore()));
 		}
 		
-		configurazione.setPd(dettaglioPD);
+		boolean datiPortaPrincipale = false;
+		if(!configurazioniFiglie && dettaglioPD.getMappingFruizionePortaDelegataOp2()!=null && dettaglioPD.getMappingFruizionePortaDelegataOp2().isDefault()) {
+			datiPortaPrincipale = true;
+		}
+		
+		configurazione.setPd(dettaglioPD, datiPortaPrincipale);
 		return configurazione;
 	}
 	
@@ -1381,7 +1388,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 	}
 
 	@SuppressWarnings("deprecation")
-	private ConfigurazioneGenerale fillDettaglioPA(PortaApplicativa portaApplicativa) throws ServiceException, NotFoundException,
+	private ConfigurazioneGenerale fillDettaglioPA(PortaApplicativa portaApplicativa, boolean configurazioniFiglie) throws ServiceException, NotFoundException,
 	MultipleResultException, NotImplementedException, ExpressionNotImplementedException, ExpressionException,
 	DriverConfigurazioneException, DriverConfigurazioneNotFound, ProtocolException,
 	DriverRegistroServiziException, DriverRegistroServiziNotFound {
@@ -1483,7 +1490,12 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			dettaglioPA.setConfigurazioneProfilo(this.readConfigurazioneProfiloErogazione(idServizio, urlInvocazione));
 		}
 		
-		configurazione.setPa(dettaglioPA); 
+		boolean datiPortaPrincipale = false;
+		if(!configurazioniFiglie && dettaglioPA.getMappingErogazionePortaApplicativaOp2()!=null && dettaglioPA.getMappingErogazionePortaApplicativaOp2().isDefault()) {
+			datiPortaPrincipale = true;
+		}
+		
+		configurazione.setPa(dettaglioPA, datiPortaPrincipale); 
 		return configurazione;
 	}
 	

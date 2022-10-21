@@ -1,3 +1,9 @@
+2022-10-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor, ApiRsMonitoraggio]
+	Risolto Bug OP-1468
+	L'export CSV delle configurazioni tramite la console o l'api di monitoraggio produceva risultati non deterministici ed incompleti.
+
 2022-10-21  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayMonitor]

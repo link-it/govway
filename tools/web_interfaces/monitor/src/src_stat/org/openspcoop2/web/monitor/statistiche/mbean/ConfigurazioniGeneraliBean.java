@@ -50,6 +50,7 @@ import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGeneralePK;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioniGeneraliSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
 import org.openspcoop2.web.monitor.statistiche.dao.IConfigurazioniGeneraliService;
+import org.openspcoop2.web.monitor.statistiche.utils.IgnoreCaseComp;
 import org.slf4j.Logger;
 
 /**
@@ -300,7 +301,7 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 					}
 				}
 
-				Collections.sort(orderFix);
+				Collections.sort(orderFix, new IgnoreCaseComp()); // per adeguarsi ai db
 				for (String nomeConfigurazione : orderFix) {
 					idReport.add(mapIds.get(nomeConfigurazione));	
 				}
@@ -346,4 +347,5 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 	public boolean isShowFiltroSoggetti() {
 		return Utility.isMultitenantAbilitato();
 	}
+	
 }

@@ -26,6 +26,7 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,6 +87,7 @@ import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPD;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioRateLimiting;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
 import org.openspcoop2.web.monitor.statistiche.utils.ConfigurazioniUtils;
+import org.openspcoop2.web.monitor.statistiche.utils.IgnoreCaseComp;
 import org.slf4j.Logger;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
@@ -610,9 +612,48 @@ public class ConfigurazioniCsvExporter {
 					DettaglioSA dettaglioSA = (listaSA != null && listaSA.size() > 0) ? listaSA.get(0): null;
 					this.addLinePA(dataSource,configurazione, dettaglioSA);
 				} else {
+					// Ordino per nome connettore
+					
+					DettaglioPA dettaglioPA = configurazione.getPa();
+					PortaApplicativa paOp2 = dettaglioPA.getPortaApplicativaOp2(); 
+					
+					List<String> orderFix = new ArrayList<String>();
+					Map<String, DettaglioSA> mapIds = new HashMap<String, DettaglioSA>();
 					for (DettaglioSA dettaglioSA : listaSA) {
-						this.addLinePA(dataSource,configurazione, dettaglioSA);
+						
+						String nomePAConnettore = null;
+						if(dettaglioSA != null) {
+							ServizioApplicativo saOp2 = dettaglioSA.getSaOp2();
+							if(StringUtils.isNotEmpty(saOp2.getNome()) && paOp2.sizeServizioApplicativoList()>0) {
+								for (PortaApplicativaServizioApplicativo pasa : paOp2.getServizioApplicativoList()) {
+									if(saOp2.getNome().equals(pasa.getNome())) {
+										if(pasa.getDatiConnettore()!=null && StringUtils.isNotEmpty(pasa.getDatiConnettore().getNome())) {
+											nomePAConnettore = pasa.getDatiConnettore().getNome();
+										}
+									}
+								}
+							}
+						}
+						nomePAConnettore = (nomePAConnettore==null) ? CostantiConfigurazione.NOME_CONNETTORE_DEFAULT : nomePAConnettore;
+						
+						String checkNome = nomePAConnettore;
+						int index = 1;
+						while(orderFix.contains(checkNome)) {
+							checkNome = nomePAConnettore + "###" + index;
+							index++;
+						}
+						nomePAConnettore = checkNome;
+						
+						orderFix.add(nomePAConnettore);
+						mapIds.put(nomePAConnettore, dettaglioSA);
+						
 					}
+					
+					Collections.sort(orderFix, new IgnoreCaseComp()); // per adeguarsi ai db
+					for (String nomeConnettore : orderFix) {
+						this.addLinePA(dataSource,configurazione, mapIds.get(nomeConnettore));	
+					}
+					
 				}
 			}
 		}//chiudo for configurazioni

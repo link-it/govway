@@ -42,6 +42,8 @@ public class ConfigurazioneGenerale implements Serializable {
 	private String value = null;
 	private String stato = null;
 	
+	private boolean datiPortaPrincipale = false;
+	
 	// informazioni estese per la tabella
 	private String fruitore = null;
 	private String erogatore = null;
@@ -65,6 +67,13 @@ public class ConfigurazioneGenerale implements Serializable {
 		this.dbId = dbId;
 		this.ruolo = ruolo;
 		this.id = new ConfigurazioneGeneralePK(dbId, ruolo); 
+	}
+	
+	public boolean isDatiPortaPrincipale() {
+		return this.datiPortaPrincipale;
+	}
+	public void setDatiPortaPrincipale(boolean datiPortaPrincipale) {
+		this.datiPortaPrincipale = datiPortaPrincipale;
 	}
 	
 	public String getLabel() {
@@ -140,16 +149,18 @@ public class ConfigurazioneGenerale implements Serializable {
 		return this.pa;
 	}
 
-	public void setPa(DettaglioPA pa) {
+	public void setPa(DettaglioPA pa, boolean datiPortaPrincipale) {
 		this.pa = pa;
+		this.datiPortaPrincipale = datiPortaPrincipale;
 	}
 
 	public DettaglioPD getPd() {
 		return this.pd;
 	}
 
-	public void setPd(DettaglioPD pd) {
+	public void setPd(DettaglioPD pd, boolean datiPortaPrincipale) {
 		this.pd = pd;
+		this.datiPortaPrincipale = datiPortaPrincipale;
 	}
 
 	public String getStato() {
