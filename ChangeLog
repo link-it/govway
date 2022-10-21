@@ -1,3 +1,9 @@
+2022-10-21  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug OP-1466
+	Era erroneamente possibile cancellare testo nel contenuto di un messaggio visualizzato nel dettaglio di una transazione.
+
 2022-10-21  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor, Utils]

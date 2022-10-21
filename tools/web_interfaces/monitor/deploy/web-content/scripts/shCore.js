@@ -1189,6 +1189,9 @@ function quickCodeHandler(e)
 	textarea.focus();
 	textarea.select();
 	
+	// evito di poter cancellare il contenuto della textarea
+	textarea.readOnly = true;
+	
 	// set up handler for lost focus
 	attachEvent(textarea, 'blur', function(e)
 	{
