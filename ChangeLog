@@ -3,6 +3,7 @@
 	* [GovWayMonitor, ApiRsMonitoraggio]
 	Risolto Bug OP-1468
 	L'export CSV delle configurazioni tramite la console o l'api di monitoraggio produceva risultati non deterministici ed incompleti.
+	Inoltre non veniva aggiunto l'username in caso di integration manager abilitato.
 
 2022-10-21  Giuliano Pintori <pintori@link.it>
 
