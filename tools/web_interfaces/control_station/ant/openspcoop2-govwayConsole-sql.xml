@@ -351,6 +351,7 @@
 		<if>
 			<equals arg1="${buildSQLSinglePdD_addArchivioComunicazioni}" arg2="true" />
 			<then>
+				<var name="sqlDataFiles" value="${sqlDataFiles} init/archiviComunicazioni/ArchivioTransazioni_data.sql"/>
 				<var name="sqlDataFiles" value="${sqlDataFiles} init/archiviComunicazioni/ArchivioStatistiche_data.sql"/>
 			</then>
 		</if>

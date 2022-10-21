@@ -479,7 +479,7 @@
 			<param name="SQLDirectory" value="${sql}"/>
 			<param name="SQLDestFile" value="${dist}/RepositoryTracceDiagnostici.sql"/>
 			<param name="SQLSourceFiles" value="archiviComunicazioni/ArchivioMessaggiDiagnostici.sql archiviComunicazioni/ArchivioTracce.sql archiviComunicazioni/ArchivioTransazioni.sql archiviComunicazioni/ArchivioEventi.sql"/>
-			<param name="SQLDataFiles" value=""/>
+			<param name="SQLDataFiles" value="init/archiviComunicazioni/ArchivioTransazioni_data.sql"/>
 			<param name="SQLInsertDBInfo" value="" />
 		</antcall>
                 <antcall target="build_sql">
