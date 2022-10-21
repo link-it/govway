@@ -1,3 +1,10 @@
+2022-10-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor, Utils]
+	Risolto Bug OP-1464
+	Utilizzando il database SQLServer la ricerca base nello storico delle transazioni su console GovWayMonitor produceva il seguente errore SQL: 
+	"ERROR <20-10-2022 14:03:03.969> org.openspcoop2.core.commons.search.dao.jdbc.JDBCAccordoServizioParteSpecificaServiceSearch.findAll(348): Ambiguous column name 'tipo_soggetto'."
+
 2022-10-18  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, Utils]
