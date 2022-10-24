@@ -1,0 +1,12 @@
+
+  <!-- Define the default session timeout for your application,
+         in minutes.  From a servlet or JSP page, you can modify
+         the timeout for a particular session dynamically by using
+         HttpSession.getMaxInactiveInterval(). -->
+  <session-config>
+    <cookie-config>
+        <name>JSESSIONID_GW_CONSOLE</name>
+    </cookie-config>
+    <session-timeout>120</session-timeout>
+  </session-config>
+

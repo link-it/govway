@@ -16,8 +16,7 @@
 			<url-pattern>/css/*</url-pattern>
 			<url-pattern>/fonts/*</url-pattern>
 			<url-pattern>/images/*</url-pattern>
-			<url-pattern>/scripts/*</url-pattern>
-			<url-pattern>/a4j/*</url-pattern>
+			<url-pattern>/js/*</url-pattern>
 		</web-resource-collection>
 	</security-constraint>
 
@@ -27,9 +26,9 @@
 
 	<login-config>
 		<auth-method>FORM</auth-method>
-		<realm-name>Autenticazione GovWayMonitor</realm-name>
+		<realm-name>Autenticazione GovWayConsole</realm-name>
 		<form-login-config>
-			<form-login-page>/public/loginAS.jsf</form-login-page>
-			<form-error-page>/public/loginFailed.jsf</form-error-page>
+			<form-login-page>/public/loginAS.jsp</form-login-page>
+			<form-error-page>/public/loginFailure.jsp</form-error-page>
 		</form-login-config>
 	</login-config>

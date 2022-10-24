@@ -303,7 +303,54 @@
 			</then>
 		</if>
 		
-		<war destfile="${dist_govwayConsole}/govwayConsole.war" webxml="${src_govwayConsole}/WEB-INF/web.xml">
+		<!-- Genero il file web.xml -->
+		<delete file="${build_govwayConsole}/webtmp/web.xml" />
+		<delete dir="${build_govwayConsole}/webtmp" />
+		<mkdir dir="${build_govwayConsole}/webtmp" />
+		<concat destfile="${build_govwayConsole}/webtmp/web.xml" append="yes">
+			<filelist dir="${src_govwayConsole}/WEB-INF/web" files="web.xml.start"/>
+		</concat>
+		<concat destfile="${build_govwayConsole}/webtmp/web.xml" append="yes">
+			<filelist dir="${src_govwayConsole}/WEB-INF/web" files="web.xml.filters"/>
+		</concat>
+		<concat destfile="${build_govwayConsole}/webtmp/web.xml" append="yes">
+			<filelist dir="${src_govwayConsole}/WEB-INF/web" files="web.xml.listeners"/>
+		</concat>
+		<concat destfile="${build_govwayConsole}/webtmp/web.xml" append="yes">
+			<filelist dir="${src_govwayConsole}/WEB-INF/web" files="web.xml.servlet"/>
+		</concat>
+		<if>
+			<and>
+	 		 	<equals arg1="${buildWithSecurityContainer}" arg2="true"/>
+		 	</and>
+			<then>
+		   		<concat destfile="${build_govwayConsole}/webtmp/web.xml" append="yes">
+					<filelist dir="${src_govwayConsole}/WEB-INF/web" files="web.xml.secure"/>
+				</concat>
+			</then>
+	    	</if>	
+		<concat destfile="${build_govwayConsole}/webtmp/web.xml" append="yes">
+			<filelist dir="${src_govwayConsole}/WEB-INF/web" files="web.xml.session"/>
+		</concat>	
+		<concat destfile="${build_govwayConsole}/webtmp/web.xml" append="yes">
+			<filelist dir="${src_govwayConsole}/WEB-INF/web" files="web.xml.end"/>
+		</concat>
+
+		<!-- Copia del jboss-web in caso di autenticazione container-->
+		<if>
+			<and>
+				<equals arg1="${buildWithSecurityContainer}" arg2="true"/>
+				<or>
+					<matches string="${as}" pattern="wildfly.*"/>
+					<equals arg1="${as}" arg2="jboss7"/>
+				</or>
+			</and>
+			<then>
+		   		<copy file="${src_govwayConsole}/WEB-INF/jboss-web.xml" todir="${build_govwayConsole}/tmp"/>
+			</then>
+		</if>
+
+		<war destfile="${dist_govwayConsole}/govwayConsole.war" webxml="${build_govwayConsole}/webtmp/web.xml">
 
 			<!-- Informazioni sulla versione -->
 			<fileset dir="${openspcoop2}">
@@ -315,6 +362,7 @@
 			<zipfileset dir="${commons_webcontent}/fonts" prefix="fonts" />
 			<zipfileset dir="${commons_webcontent}/images" prefix="images" />
 			<zipfileset dir="${build_govwayConsole}/tmp_css" prefix="css" />
+			<zipfileset dir="${deploy.dir}/public" prefix="public" />
 
 			<zipfileset dir="${jsp}" prefix="jsp" />
 			<zipfileset dir="${jsplib}" prefix="jsplib" />
@@ -331,6 +379,7 @@
 			</webinf>
 			<webinf dir="${build_govwayConsole}/tmp">
 				<include name="${jboss_deployment_structure}" />
+				<include name="jboss-web.xml" />
 			</webinf>
 			<classes dir="${cfg}">
 				<include name="console.audit.log4j2.properties" />

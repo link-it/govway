@@ -1,0 +1,8 @@
+
+  <!--  PddConsole startup -->
+  <listener>
+         <listener-class>
+                  org.openspcoop2.web.ctrlstat.core.InitListener
+         </listener-class>
+  </listener>
+

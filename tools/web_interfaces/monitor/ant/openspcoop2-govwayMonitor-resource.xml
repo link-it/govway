@@ -101,37 +101,7 @@
 		<!-- web.xml.filters -->
 		<concat destfile="${build_govwayMonitor_war}/WEB-INF/web.xml" append="yes">
 			<filelist dir="${src_webinf_govwayMonitor}/web" files="web.xml.filters"/>
-		</concat>	
-		<if>
-	 		<equals arg1="${buildWithLoginForm}" arg2="true"/>
-            		<then>
-			    	<concat destfile="${build_govwayMonitor_war}/WEB-INF/web.xml" append="yes">
-			    		<filelist dir="${src_webinf_govwayMonitor}/web" files="web.xml.filters.no_secure"/>
-			    	</concat>
-           		</then>
-		</if>		
-		<if>
-		 	<and>
-	 		 	<equals arg1="${buildWithLoginForm}" arg2="false"/>
-		 		<equals arg1="${buildWithSecurityContainer}" arg2="true"/>
-		 	</and>
-           		<then>
-		   		<concat destfile="${build_govwayMonitor_war}/WEB-INF/web.xml" append="yes">
-					<filelist dir="${src_webinf_govwayMonitor}/web" files="web.xml.filters.secure"/>
-				</concat>
-           		</then>
-	    	</if>
-		<if>
-		 	<and>
-	 		 	<equals arg1="${buildWithLoginForm}" arg2="false"/>
-		 		<equals arg1="${buildWithSecurityContainer}" arg2="false"/>
-		 	</and>
-          		<then>
-			  	<concat destfile="${build_govwayMonitor_war}/WEB-INF/web.xml" append="yes">
-					<filelist dir="${src_webinf_govwayMonitor}/web" files="web.xml.filters.no_secure"/>
-				</concat>
-          		</then>
-	    	</if>
+		</concat>
 		<if>
 			<not>
 				<equals arg1="${plugins.classpath.web.xml.filters}" arg2=""/>
@@ -246,8 +216,7 @@
 		<!-- Copia della sezione della sicurezza solo se l'autenticazione e' esterna col container -->
 		<if>
 			<and>
-	 		 	<equals arg1="${buildWithLoginForm}" arg2="false"/>
-		 		<equals arg1="${buildWithSecurityContainer}" arg2="true"/>
+	 		 	<equals arg1="${buildWithSecurityContainer}" arg2="true"/>
 		 	</and>
 			<then>
 		   		<concat destfile="${build_govwayMonitor_war}/WEB-INF/web.xml" append="yes">

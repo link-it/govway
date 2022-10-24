@@ -504,6 +504,38 @@ public final class AuthorizationFilter implements Filter {
 					//	System.out.println("NON ENTRO ["+request.getRequestURI()+"]");
 					// genero l'idTab
 					ConsoleHelper.getTabId(log, null, request);
+					
+					// richiesta una pagina interna libera
+					if ( (urlRichiesta.indexOf(LoginCostanti.LOGIN_AS_JSP) != -1) // pagina di login AS
+							|| (urlRichiesta.indexOf(LoginCostanti.LOGOUT_AS_JSP) != -1) // pagina di logout AS 
+							|| (urlRichiesta.indexOf(LoginCostanti.LOGIN_FAILURE_JSP) != -1) // pagina errori login AS 
+							) {
+						if(generalHelper==null) {
+							try{
+								generalHelper = new GeneralHelper(session);
+							}catch(Exception eClose){
+								ControlStationCore.logError("Errore rilevato durante l'authorizationFilter (reInit General Helper)",eClose);
+							}
+						}
+						
+						// Inizializzo PageData
+						PageData pd = generalHelper.initPageData();
+
+						// Inizializzo GeneralData
+						GeneralData gd = generalHelper.initGeneralData(request,LoginCostanti.SERVLET_NAME_LOGIN);
+						
+						// se l'utente e' loggato faccio vedere il menu'
+						String userLogin = ServletUtils.getUserLoginFromSession(session);
+						if(userLogin != null){
+							try{
+								LoginHelper lH = new LoginHelper(generalHelper.getCore(), request, pd, session);
+								lH.makeMenu();
+							}catch(Exception e){
+								throw new ServletException(e);
+							}
+						}
+						ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);
+					}
 				}
 			}
 			// allow others filter to be chained
@@ -552,6 +584,7 @@ public final class AuthorizationFilter implements Filter {
 				&& (urlRichiesta.indexOf("/"+CostantiControlStation.FONTS_DIR) == -1)
 				&& (urlRichiesta.indexOf("/"+CostantiControlStation.JS_DIR) == -1)
 				&& (urlRichiesta.indexOf("/"+AboutCostanti.SERVLET_NAME_ABOUT) == -1) 
+				&& (urlRichiesta.indexOf("/"+CostantiControlStation.PUBLIC_DIR) == -1) // risorse public
 				) {
 			return true;
 		}

@@ -1,7 +1,7 @@
 .. _apiRest:
 
-Configurazione e Monitoraggio
------------------------------------
+API di Configurazione e Monitoraggio
+------------------------------------
 
 Se nell'installer sono stati selezionati i servizi che espongono API REST per la configurazione e il monitoraggio di GovWay (:numref:`apiREST_fig`) gli indirizzi base per utilizzarli sono:
 

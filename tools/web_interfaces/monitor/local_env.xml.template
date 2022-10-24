@@ -18,8 +18,7 @@
       <property name="buildAsRelease" value="false"/>
       <property name="buildPddMonitor" value="true"/>
       <property name="buildAPI" value="true"/>
-      <property name="buildWithLoginForm" value="true"/>
-      <property name="buildWithSecurityContainer" value="false"/>
+      <property name="buildWithSecurityContainer" value="false"/> <!-- Include nel web.xml le istruzioni per un'autenticazione container: <security-constraint> + <login-config> + <security-role> -->
       <property name="buildJsfAsModule" value="false" />
       <property name="buildSQLSinglePdD_addArchivioComunicazioni" value="true"/>
 

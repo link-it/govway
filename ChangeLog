@@ -1,3 +1,10 @@
+2022-10-24  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor, GovWayConsole]
+	Aggiunta funzionalità OP-1472
+	Rivista documentazione che fornisce le istruzioni per l'integrazione di un IDM esterno delle console di gestione e monitoraggio.
+	Aggiunto supporto per integrare un'autenticazione container: <security-constraint> + <login-config> + <security-role>.
+
 2022-10-21  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
