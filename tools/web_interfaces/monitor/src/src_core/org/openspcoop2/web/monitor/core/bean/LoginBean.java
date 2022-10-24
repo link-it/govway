@@ -58,6 +58,7 @@ import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.dao.DBLoginDAO;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
+import org.openspcoop2.web.monitor.core.filters.CsrfFilter;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
@@ -199,6 +200,7 @@ public class LoginBean extends AbstractLoginBean {
 							if(this.passwordVerifier.isPasswordExpire(user.getLastUpdatePassword(), bfMotivazioneErrore)) {
 								MessageUtils.addErrorMsg(bfMotivazioneErrore.toString());
 								this.userToUpdate = this.getUsername();
+								this.nuovoTokenCsrfListener(null); // genero un token csrf per l'operazione
 								return "utentePasswordChange";
 							}
 						}
@@ -1169,4 +1171,23 @@ public class LoginBean extends AbstractLoginBean {
 	public void resetUserToUpdate() {
 		this.userToUpdate = null;
 	}
+	
+	public String getCsrf() {
+		FacesContext fc = FacesContext.getCurrentInstance();
+		ExternalContext extCtx = fc.getExternalContext();
+		HttpSession session = (HttpSession)extCtx.getSession(false);
+		String tokenCSRF = CsrfFilter.leggiTokenCSRF(session);
+		this.log.debug("Letto Token CSRF: ["+tokenCSRF+"]"); 
+		return tokenCSRF;
+	}
+	
+	public void nuovoTokenCsrfListener(ActionEvent ae) {
+		FacesContext fc = FacesContext.getCurrentInstance();
+		ExternalContext extCtx = fc.getExternalContext();
+		HttpSession session = (HttpSession)extCtx.getSession(false);
+		String nuovoTokenCSRF = CsrfFilter.generaESalvaTokenCSRF(session);
+		this.log.debug("Generato Nuovo Token CSRF: ["+nuovoTokenCSRF+"]");
+	}
+
+	public void setCsrf(String csrf) {}
 }

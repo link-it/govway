@@ -53,6 +53,7 @@
 		<a4j:keepAlive beanName="dettagliBean" />
 		<rich:panel id="panelDiag" styleClass="noborder">
 			<h:form id="formDiag">
+				<input type="hidden" id="_csrfFormDiag" name="_csrf" value="#{loginBean.csrf}"/>
 				<link:dataTable 
 					value="#{diagnosticiDM}" 
 					id="diagnosticiTable"

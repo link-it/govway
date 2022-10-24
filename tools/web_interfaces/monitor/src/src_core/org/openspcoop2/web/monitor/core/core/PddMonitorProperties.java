@@ -1105,6 +1105,10 @@ public class PddMonitorProperties {
 		return Integer.valueOf(this.appProperties.getProperty("console.searchForm.limit",true,true));
 	}
 	
+	public Integer getValiditaTokenCsrf() throws Exception{
+		return Integer.valueOf(this.appProperties.getProperty("console.csrf.token.validita", true, true));
+	}
+	
 	// allarmi
 	
 	public boolean isAllarmiEnabled() throws Exception{

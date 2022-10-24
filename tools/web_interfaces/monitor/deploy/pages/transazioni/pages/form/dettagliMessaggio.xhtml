@@ -112,6 +112,7 @@
 							<h:outputLabel id="diag-iconLabel" value="Diagnostici" styleClass="outputFieldLabel icon-show-diagnostici"/>
 							<h:panelGroup id="panelGroupDiag">
 								<h:form id="formDiag">
+									<input type="hidden" id="_csrfFormDiag" name="_csrf" value="#{loginBean.csrf}"/>
 									<h:panelGrid id="panelDiag" columns="3">
 										<a4j:htmlCommandLink id="diag-iconLink" styleClass="icon-details" action="visualizzaDiagnostici" value="Visualizza">
 				                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{diagnosticiBean.idTransazione}"/>
@@ -166,6 +167,7 @@
 								<h:outputLabel id="req-iconLabel" styleClass="outputFieldLabel icon-show-traccia" value="Traccia" rendered="#{dettagliBean.existsTracciaRichiesta}"/>
 								<h:panelGroup id="panelGroupReq" rendered="#{dettagliBean.existsTracciaRichiesta}">
 									<h:form id="formTracciaReq">
+										<input type="hidden" id="_csrfFormTracciaReq" name="_csrf" value="#{loginBean.csrf}"/>
 										<h:panelGrid id="panelGridTracciaReq" columns="3">
 											<a4j:htmlCommandLink id="tracciaReq-iconLink" 
 		                    						styleClass="icon-details" 
@@ -189,6 +191,7 @@
 								<h:outputLabel id="req-dumpMessaggiIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti Ingresso" rendered="#{dettagliBean.hasDumpRichiestaIngresso or dettagliBean.hasHeaderTrasportoRichiestaIngresso}"/>
 								<h:panelGroup id="panelGroupDumpMessaggiReqIngresso" rendered="#{dettagliBean.hasDumpRichiestaIngresso or dettagliBean.hasHeaderTrasportoRichiestaIngresso}">
 									<h:form id="formDumpMessaggiReqIngresso">
+										<input type="hidden" id="_csrfFormDumpMessaggiReqIngresso" name="_csrf" value="#{loginBean.csrf}"/>
 										<a4j:htmlCommandLink id="dumpMessaggiIngresso-iconLink"
 				                    						 styleClass="icon-details"
 				                    						 value="Visualizza"
@@ -209,6 +212,7 @@
 								<h:outputLabel id="req-dumpMessaggiUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti Uscita" rendered="#{dettagliBean.hasDumpRichiestaUscita or dettagliBean.hasHeaderTrasportoRichiestaUscita}"/>
 								<h:panelGroup id="panelGroupDumpMessaggiReqUscita" rendered="#{dettagliBean.hasDumpRichiestaUscita or dettagliBean.hasHeaderTrasportoRichiestaUscita}">
 									<h:form id="formDumpMessaggiReqUscita">
+										<input type="hidden" id="_csrfFormDumpMessaggiUscita" name="_csrf" value="#{loginBean.csrf}"/>
 										<a4j:htmlCommandLink id="dumpMessaggiUscita-iconLink"
 				                    						 styleClass="icon-details"
 				                    						 value="Visualizza"
@@ -229,6 +233,7 @@
 								<h:outputLabel id="req-dumpBinarioIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Dati Ingresso" rendered="#{dettagliBean.hasDumpBinarioRichiestaIngresso or dettagliBean.hasHeaderTrasportoBinarioRichiestaIngresso}"/>
 								<h:panelGroup id="panelGroupDumpBinarioReqIngresso" rendered="#{dettagliBean.hasDumpBinarioRichiestaIngresso or dettagliBean.hasHeaderTrasportoBinarioRichiestaIngresso}">
 									<h:form id="formDumpBinarioReqIngresso">
+										<input type="hidden" id="_csrfFormDumpBinarioReqIngresso" name="_csrf" value="#{loginBean.csrf}"/>
 										<a4j:htmlCommandLink id="dumpBinarioIngresso-iconLink"
 				                    						 styleClass="icon-details"
 				                    						 value="Visualizza"
@@ -249,6 +254,7 @@
 								<h:outputLabel id="req-dumpBinarioUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Dati Uscita" rendered="#{dettagliBean.hasDumpBinarioRichiestaUscita or dettagliBean.hasHeaderTrasportoBinarioRichiestaUscita}"/>
 								<h:panelGroup id="panelGroupDumpBinarioReqUscita" rendered="#{dettagliBean.hasDumpBinarioRichiestaUscita or dettagliBean.hasHeaderTrasportoBinarioRichiestaUscita}">
 									<h:form id="formDumpBinarioReqUscita">
+										<input type="hidden" id="_csrfFormDumpBinarioReqUscita" name="_csrf" value="#{loginBean.csrf}"/>
 										<a4j:htmlCommandLink id="dumpBinarioUscita-iconLink"
 				                    						 styleClass="icon-details"
 				                    						 value="Visualizza"
@@ -269,6 +275,7 @@
 								<h:outputLabel value="Duplicato" id="bustaDupR-iconLabel" styleClass="outputFieldLabel icon-busta-duplicata" style="font-weight:bold;" 
 												rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta==-1 and not empty dettagliBean.transazioneOriginaleRichiesta}"/>
 								<h:form id="formDuplicaRich" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta==-1 and not empty dettagliBean.transazioneOriginaleRichiesta}">
+									<input type="hidden" id="_csrfFormDuplicaRich" name="_csrf" value="#{loginBean.csrf}"/>
 									<a4j:commandLink id="details"  
 														actionListener="#{dettagliBean.showOriginaleSelected}" 
 														reRender="panelDettaglioTransazione"
@@ -283,7 +290,8 @@
 								<h:outputLabel value="Duplicati" id="bustaDupReq-iconLabel" styleClass="outputFieldLabel icon-busta-duplicata" style="font-weight:bold;" 
 												rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}"/>
 								<h:panelGroup id="panelGroupDuplicatiReq" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}">
-									<h:form id="formDuplicatiReq">										
+									<h:form id="formDuplicatiReq">		
+										<input type="hidden" id="_csrfFormDuplicatiReq" name="_csrf" value="#{loginBean.csrf}"/>								
 										<h:outputLink id="hideDups-iconLink" styleClass="icon-details" value="#" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}" style="display: none;">
 				                    		<h:outputText id="outNascondiDuplicati" value="Nascondi" />
 				                    		<rich:effect id="blindUpHideDups" for="hideDups-iconLink" event="onclick" type="BlindUp" targetId="duplicatiDiv" params="duration:0.8"/>
@@ -306,6 +314,7 @@
 							<rich:spacer id="spacerDuplicatiDivReq" height="5px" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}"/>
 							<h:panelGroup id="duplicatiDiv" layout="block" style="display: none;" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}" switchType="client">
 								<a4j:form id="formDupsReq">
+									<input type="hidden" id="_csrfFormDupsReq" name="_csrf" value="#{loginBean.csrf}"/>
 									<link:dataTable id="dupsReqDt" 
 											value="#{transazioniDuplicatiDMRichiesta}"
 											headerText="Lista Transazioni Duplicate"
@@ -369,6 +378,7 @@
 								<h:outputLabel id="risp-iconLabel" styleClass="outputFieldLabel icon-show-traccia" value="Traccia" rendered="#{dettagliBean.existsTracciaRisposta}"/>
 								<h:panelGroup id="panelGroupIdEgovRisp" rendered="#{dettagliBean.existsTracciaRisposta}">
 									<h:form id="formTracciaResp">
+										<input type="hidden" id="_csrfFormTracciaResp" name="_csrf" value="#{loginBean.csrf}"/>
 										<a4j:htmlCommandLink id="tracciaResp-iconLink" 
 					                   			styleClass="icon-details" 
 					                   			action="visualizzaTraccia" 
@@ -389,6 +399,7 @@
 								<h:outputLabel id="risp-faultCooperazione-iconLabel" styleClass="outputFieldLabel icon-xml" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Fault Ingresso' : 'Fault Uscita'}" rendered="#{not empty dettagliBean.dettaglio.faultCooperazione}"/>
 								<h:panelGroup id="panelGroupFaultCooperazioneRisp" rendered="#{not empty dettagliBean.dettaglio.faultCooperazione}"> <!-- Lo vogliamo sempre, puo' essere utile and !dettagliBean.hasDumpRisposta}" -->
 									<h:form id="formFaultCooperazione">
+										<input type="hidden" id="_csrfFormFaultCooperazione" name="_csrf" value="#{loginBean.csrf}"/>
 	                                        <a4j:htmlCommandLink id="faultCooperazione-iconLink"
 	                                                                         styleClass="icon-details"
 	                                                                         value="Visualizza"
@@ -405,6 +416,7 @@
 								<h:outputLabel id="risp-faultIntegrazione-iconLabel" styleClass="outputFieldLabel icon-xml" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Fault Uscita' : 'Fault Ingresso'}" rendered="#{not empty dettagliBean.dettaglio.faultIntegrazione}"/>
 								<h:panelGroup id="panelGroupFaultIntegrazioneRisp" rendered="#{not empty dettagliBean.dettaglio.faultIntegrazione}"> <!-- Lo vogliamo sempre, puo' essere utile and !dettagliBean.hasDumpRisposta}" -->
 									<h:form id="formFaultIntegrazione">
+										<input type="hidden" id="_csrfFormFaultIntegrazione" name="_csrf" value="#{loginBean.csrf}"/>
 	                                        <a4j:htmlCommandLink id="faultIntegrazione-iconLink"
 	                                                                         styleClass="icon-details"
 	                                                                         value="Visualizza"
@@ -421,6 +433,7 @@
 								<h:outputLabel id="res-dumpMessaggiIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti Ingresso" rendered="#{dettagliBean.hasDumpRispostaIngresso or dettagliBean.hasHeaderTrasportoRispostaIngresso}"/>
 								<h:panelGroup id="panelGroupDumpMessaggiResIngresso" rendered="#{dettagliBean.hasDumpRispostaIngresso or dettagliBean.hasHeaderTrasportoRispostaIngresso}">
 									<h:form id="formDumpMessaggiResIngresso">
+										<input type="hidden" id="_csrfFormDumpMessaggiResIngresso" name="_csrf" value="#{loginBean.csrf}"/>
 										<a4j:htmlCommandLink id="dumpMessaggiResIngresso-iconLink"
 				                    						 styleClass="icon-details"
 				                    						 value="Visualizza"
@@ -441,6 +454,7 @@
 								<h:outputLabel id="res-dumpMessaggiUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti Uscita" rendered="#{dettagliBean.hasDumpRispostaUscita or dettagliBean.hasHeaderTrasportoRispostaUscita}"/>
 								<h:panelGroup id="panelGroupDumpMessaggiResUscita" rendered="#{dettagliBean.hasDumpRispostaUscita or dettagliBean.hasHeaderTrasportoRispostaUscita}">
 									<h:form id="formDumpMessaggiResUscita">
+										<input type="hidden" id="_csrfFormMessaggiResUscita" name="_csrf" value="#{loginBean.csrf}"/>
 										<a4j:htmlCommandLink id="dumpMessaggiResUscita-iconLink"
 				                    						 styleClass="icon-details"
 				                    						 value="Visualizza"
@@ -461,6 +475,7 @@
 								<h:outputLabel id="res-dumpBinarioIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Dati Ingresso" rendered="#{dettagliBean.hasDumpBinarioRispostaIngresso or dettagliBean.hasHeaderTrasportoBinarioRispostaIngresso}"/>
 								<h:panelGroup id="panelGroupDumpBinarioResIngresso" rendered="#{dettagliBean.hasDumpBinarioRispostaIngresso or dettagliBean.hasHeaderTrasportoBinarioRispostaIngresso}">
 									<h:form id="formDumpBinarioResIngresso">
+										<input type="hidden" id="_csrfFormDumpBinarioResIngresso" name="_csrf" value="#{loginBean.csrf}"/>
 										<a4j:htmlCommandLink id="dumpBinarioResIngresso-iconLink"
 				                    						 styleClass="icon-details"
 				                    						 value="Visualizza"
@@ -481,6 +496,7 @@
 								<h:outputLabel id="res-dumpBinarioUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Dati Uscita" rendered="#{dettagliBean.hasDumpBinarioRispostaUscita or dettagliBean.hasHeaderTrasportoBinarioRispostaUscita}"/>
 								<h:panelGroup id="panelGroupDumpBinarioResUscita" rendered="#{dettagliBean.hasDumpBinarioRispostaUscita or dettagliBean.hasHeaderTrasportoBinarioRispostaUscita}">
 									<h:form id="formDumpBinarioResUscita">
+										<input type="hidden" id="_csrfFormDumpBinarioResUscita" name="_csrf" value="#{loginBean.csrf}"/>
 										<a4j:htmlCommandLink id="dumpBinarioResUscita-iconLink"
 				                    						 styleClass="icon-details"
 				                    						 value="Visualizza"
@@ -501,6 +517,7 @@
 								<h:outputLabel value="Duplicato" id="bustaDupResp-iconLabel" styleClass="outputFieldLabel icon-busta-duplicata" style="font-weight:bold;" 
 												rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta==-1 and not empty dettagliBean.transazioneOriginaleRisposta}"/>
 								<h:form id="formDuplicaRisp" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta==-1 and not empty dettagliBean.transazioneOriginaleRisposta}">
+									<input type="hidden" id="_csrfFormDuplicatiRisp" name="_csrf" value="#{loginBean.csrf}"/>
 									<a4j:commandLink id="detailsRisposta"  
 														actionListener="#{dettagliBean.showOriginaleSelected}" 
 														reRender="panelDettaglioTransazione"
@@ -515,7 +532,8 @@
 								<h:outputLabel value="Duplicati" id="bustaDupRes-iconLabel" styleClass="outputFieldLabel icon-busta-duplicata" style="font-weight:bold;" 
 												rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}"/>
 								<h:panelGroup id="panelGroupDuplicatiRes" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}">
-									<h:form id="formDuplicatiRes">										
+									<h:form id="formDuplicatiRes">		
+										<input type="hidden" id="_csrfFormDuplicatiRes" name="_csrf" value="#{loginBean.csrf}"/>								
 										<h:outputLink id="hideDupsResp-iconLink" styleClass="icon-details" value="#" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}" style="display: none;">
 				                    		<h:outputText id="outNascondiDuplicati" value="Nascondi" />
 				                    		<rich:effect id="blindUpHideDups" for="hideDupsResp-iconLink" event="onclick" type="BlindUp" targetId="duplicatiDivResp" params="duration:0.8"/>
@@ -537,6 +555,7 @@
 							<rich:spacer id="spacerDuplicatiDivRes" height="5px" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}"/>
 							<h:panelGroup id="duplicatiDivResp" layout="block" style="display: none;" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}" switchType="client">
 								<a4j:form id="formDupsRes">
+									<input type="hidden" id="_csrfFormDupsRes" name="_csrf" value="#{loginBean.csrf}"/>
 									<link:dataTable id="dupsResDt" 
 											value="#{transazioniDuplicatiDMRisposta}"
 											headerText="Lista Transazioni Duplicate"
@@ -635,6 +654,7 @@
 									rendered="#{not empty dettagliBean.dettaglio.tokenInfo and dettagliBean.attributeInfo}"/>
 								<h:panelGroup id="panelGroupTokenInfo" rendered="#{not empty dettagliBean.dettaglio.tokenInfo}">
 									<h:form id="formTokenInfo">
+										<input type="hidden" id="_csrfFormTokenInfo" name="_csrf" value="#{loginBean.csrf}"/>
 	                                        <a4j:htmlCommandLink id="tokenInfo-iconLink"
 	                                                                         styleClass="icon-details"
 	                                                                         value="Visualizza"

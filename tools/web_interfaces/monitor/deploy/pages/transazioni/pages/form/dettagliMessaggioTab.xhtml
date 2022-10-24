@@ -51,7 +51,10 @@
 			<rich:tabPanel switchType="ajax" selectedTab="#{dettagliBean.selectedTab}">
 				<rich:tab name="infoGenerali">
 					<f:facet name="label">
-						<h:outputText id="outTitleTabInfoGen" value="#{msg['transazioni.dettaglio.tab.informazioniGenerali.titoloTab']}" />
+						<a4j:outputPanel id="outTitleTabInfoGenPnl" styleClass="">
+							<input type="hidden" id="_csrfFormTabPanel" name="_csrf" value="#{loginBean.csrf}"/>
+							<h:outputText id="outTitleTabInfoGen" value="#{msg['transazioni.dettaglio.tab.informazioniGenerali.titoloTab']}" />
+						</a4j:outputPanel>
 				    </f:facet>
 				    <ui:include src="/transazioni/includes/dettaglioMessaggioInformazioniGenerali.xhtml" >
 				    </ui:include>

@@ -27,6 +27,7 @@
 			</script>
 			<rich:panel headerClass="outpanelHeader" id="menuct" rendered="#{loginBean.loggedIn}">
 				<a4j:form id="transazioniForm">
+					<input type="hidden" id="_csrfMenuTransazioniForm" name="_csrf" value="#{loginBean.csrf}"/>
 					<h:inputHidden value="true" id="tf_usaSVG"/> 
 					<rich:panelMenu expandMode="none" mode="server">
 						<rich:panelMenuGroup label="#{msg['menu.monitoraggio.label']}" expanded="true" id="monitoraggioMenuGroup"
@@ -76,6 +77,7 @@
 					</rich:panelMenu>
 				</a4j:form>
 				<a4j:form>
+					<input type="hidden" id="_csrfMenuConfigurazioniForm" name="_csrf" value="#{loginBean.csrf}"/>
 					<rich:panelMenu expandMode="none" mode="server">
 						<rich:panelMenuGroup label="#{msg['menu.configurazione.label']}" expanded="true" id="configurazioneMenuGroup"
 							rendered="#{applicationBean.showSezioneConfigurazione}">

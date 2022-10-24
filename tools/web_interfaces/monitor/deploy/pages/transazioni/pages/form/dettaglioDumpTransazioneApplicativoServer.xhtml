@@ -108,6 +108,7 @@
 			
 			<link:fieldset legend="Messaggio" rendered="#{not empty dettagliDump.dumpMessaggio and (not empty dettagliDump.dumpMessaggio.body or (not empty dettagliDump.dumpMessaggio.contentLength and dettagliDump.dumpMessaggio.contentLength>0) )}" collapsible="false" closed="false">
 				<h:form id="formMessaggioDump">
+					<input type="hidden" id="_csrfFormMessaggioDump" name="_csrf" value="#{loginBean.csrf}"/>
 					<a4j:outputPanel layout="block" style="height: 350px; overflow-y: scroll;" id="xmlPnl2" rendered="#{dettagliDump.visualizzaMessaggio}">
 						<pre class="brush: #{dettagliDump.brush}; toolbar: false;">#{dettagliDump.prettyEnvelop}</pre>
 					</a4j:outputPanel>
@@ -160,6 +161,7 @@
 			
 			<link:fieldset legend="Allegati" rendered="#{not empty dettagliDump.allegati}" collapsible="false" closed="false">
 				<h:form id="formDettagliDump">
+					<input type="hidden" id="_csrfFormDettagliDump" name="_csrf" value="#{loginBean.csrf}"/>
 						<rich:dataTable 
 							value="#{dettagliDump.allegati}"
 							var="allegato"
@@ -285,6 +287,7 @@
 		</p>
 		</a4j:outputPanel>
 		<h:form id="formExportReport" prependId="false">
+			<input type="hidden" id="_csrfFormExportReport" name="_csrf" value="#{loginBean.csrf}"/>
 			<a4j:outputPanel layout="block" id="panelFormExportContainer" ajaxRendered="false">
 				<style> .rich-shuttle-source-items { margin-left :0px;	}	</style>
 				<div class="form-container noborder"> 

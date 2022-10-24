@@ -65,6 +65,7 @@
 			<c:if test="#{distribuzioneServizioSearchForm._value_tipoReport == 'tabella'}">
 				<rich:panel rendered="#{distribuzioneServizioSearchForm._value_tipoReport == 'tabella'}" styleClass="noborder">
 					<h:form>
+						<input type="hidden" id="_csrfFormTabellaReportTabella" name="_csrf" value="#{loginBean.csrf}"/>
 							<link:dataTable 
 								value="#{distribuzionePerServizioDM}"
 								id="table"
@@ -96,6 +97,7 @@
 					</h:form>
 					<rich:panel id="formCmdPanelBarsTbl" styleClass="noborder" bodyClass="nopadding" style="float: left;">
 						<a4j:form id="cmdBarsPanelTbl">
+							<input type="hidden" id="_csrfFormCmdBarsPanelTbl" name="_csrf" value="#{loginBean.csrf}"/>
 							<a4j:commandLink value="#{distribuzionePerServizioBean.prevBtnLabel}" reRender="mainPnlDS">
 								<a4j:actionparam name="dir" value="prev" assignTo="#{distribuzionePerServizioBean.dir}" actionListener="#{distribuzionePerServizioBean.updateChartDateOffset}"/>
 							</a4j:commandLink>
@@ -111,6 +113,7 @@
 					</rich:panel>
 					<rich:panel id="exportCmdPanelTbl" styleClass="noborder" bodyClass="nopadding" style="text-align: right;"  >
 						<h:form id="formExportCmdPanelTbl"  rendered="#{distribuzionePerServizioDM.visualizzaComandiExport}">
+							<input type="hidden" id="_csrfFormExportCmdPanelTbl" name="_csrf" value="#{loginBean.csrf}"/>
 								<h:commandLink id="exportCsvLink" target="_blank" action="#{distribuzionePerServizioBean.esportaCsv}" title="Esporta i risultati in formato CSV">
 									<h:outputText value="CSV" />
 								</h:commandLink>
@@ -188,6 +191,7 @@
 						<h:panelGrid columns="3" id="gridComandi" style="width:100%;" columnClasses="comandi-grafici-align-default,comandi-grafici-align-center,comandi-grafici-align-right"> 
 						<rich:panel id="formCmdPanel" styleClass="noborder" bodyClass="nopadding">
 							<a4j:form id="cmdPanel">
+								<input type="hidden" id="_csrfFormCmdPanel" name="_csrf" value="#{loginBean.csrf}"/>
 								<h:inputHidden value="true" id="usaSVG"/>
 								<a4j:commandLink value="#{distribuzionePerServizioBean.prevBtnLabel}" reRender="scriptPieChartPanel,gridComandi">
 									<a4j:actionparam name="dir" value="prev" assignTo="#{distribuzionePerServizioBean.dir}" actionListener="#{distribuzionePerServizioBean.updateChartDateOffset}"/>
@@ -205,6 +209,7 @@
 						<rich:panel id="formSliderPanel" styleClass="noborder" bodyClass="nopadding">
 								<div class="form-container noborder">
 									<a4j:form rendered="#{distribuzionePerServizioBean.visualizzaComandiExport}" id="formSlider">
+										<input type="hidden" id="_csrfFormSlider" name="_csrf" value="#{loginBean.csrf}"/>
 										<h:inputHidden value="true" id="usaSVG"/>
 										<h:panelGrid columns="2">
 											<h:outputLabel value="Numero Risultati" styleClass="labelSpinnerGraficiSolo" />
@@ -218,6 +223,7 @@
 							</rich:panel>
 						<rich:panel id="exportCmdPanel" styleClass="noborder" bodyClass="nopadding">
 							<h:form id="formExportCmdPanel" rendered="#{distribuzionePerServizioBean.visualizzaComandiExport}" >
+								<input type="hidden" id="_csrfFormExportCmdPanel" name="_csrf" value="#{loginBean.csrf}"/>
 								<h:commandLink id="exportCsvLink" target="_blank" action="#{distribuzionePerServizioBean.esportaCsv}" title="Esporta i risultati in formato CSV">
 									<h:outputText value="CSV" />
 								</h:commandLink>
@@ -248,6 +254,7 @@
 						 //]]>	
 				</script>
 				  <a4j:form >
+				  	<input type="hidden" id="_csrfFormSetSliderJS" name="_csrf" value="#{loginBean.csrf}"/>
 		        	<a4j:jsFunction name="setSlider" reRender="gridComandiBars">
 		            	<a4j:actionparam name="param1" assignTo="#{distribuzionePerServizioBean.initLarghezzaGrafico}"  /> 
 		        	</a4j:jsFunction>
@@ -299,6 +306,7 @@
 						<h:panelGrid columns="3" id="gridComandiBars" style="width:100%;" columnClasses="comandi-grafici-align-default,comandi-grafici-align-center,comandi-grafici-align-right">
 							<rich:panel id="formCmdPanelBars" styleClass="noborder" bodyClass="nopadding">
 								<a4j:form id="cmdBarsPanel">
+									<input type="hidden" id="_csrfFormCmdBarsPanel" name="_csrf" value="#{loginBean.csrf}"/>
 									<h:inputHidden value="true" id="usaSVG"/>
 									<a4j:commandLink value="#{distribuzionePerServizioBean.prevBtnLabel}" reRender="scriptBarChartPanel,gridComandiBars">
 										<a4j:actionparam name="dir" value="prev" assignTo="#{distribuzionePerServizioBean.dir}" actionListener="#{distribuzionePerServizioBean.updateChartDateOffset}"/>
@@ -316,6 +324,7 @@
 							<rich:panel id="formSliderPanelBars" styleClass="noborder" bodyClass="nopadding">
 								<div class="form-container noborder">
 									<a4j:form rendered="#{distribuzionePerServizioBean.visualizzaComandiExport}" id="formSliderBars">
+										<input type="hidden" id="_csrfFormSlidersBars" name="_csrf" value="#{loginBean.csrf}"/>
 										<a4j:outputPanel rendered="#{distribuzioneServizioSearchForm.useGraficiSVG}">
 											<style>
 												div.form-container div.rich-combobox {
@@ -360,6 +369,7 @@
 							</rich:panel>
 							<rich:panel id="exportCmdPanelBars" styleClass="noborder" bodyClass="nopadding">
 								<h:form id="formExportCmdPanelBars" rendered="#{distribuzionePerServizioBean.visualizzaComandiExport}" >
+									<input type="hidden" id="_csrfFormExportCmdPanelBars" name="_csrf" value="#{loginBean.csrf}"/>
 									<h:commandLink id="bars_exportCsvLink" target="_blank" action="#{distribuzionePerServizioBean.esportaCsv}" title="Esporta i risultati in formato CSV">
 										<h:outputText value="CSV" />
 									</h:commandLink>

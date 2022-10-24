@@ -133,6 +133,7 @@
 				<rich:layout id="mainct">
 					<rich:layoutPanel id="navbar" position="top">
 						<a4j:form prependId="false">
+							<input type="hidden" id="_csrfNavbar" name="_csrf" value="#{loginBean.csrf}"/>
 							<div id="breadcrumb-ct">
 								<div id="crumbs"><ui:insert name="navbar"></ui:insert></div>
 							</div>

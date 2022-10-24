@@ -25,6 +25,7 @@
 				<a4j:outputPanel layout="block" styleClass="form-container noborder" style="padding-left:0px;">
 					<a4j:region id="summaryFormRegion" renderRegionOnly="true">
 						<a4j:form>
+							<input type="hidden" id="_csrfSummaryForm" name="_csrf" value="#{loginBean.csrf}"/>
 							<h:inputHidden value="true" id="usaSVG"/> 
 							<a4j:outputPanel id="periodoPnl" ajaxRendered="false" layout="block">
 								<link:prop label="Periodo" labelId="labelPeriodoCombo">

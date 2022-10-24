@@ -25,7 +25,8 @@
 			</f:facet>
 			
 			<a4j:region id="regionPoll"  >
-				<a4j:form id="formPoll" prependId="false">	
+				<a4j:form id="formPoll" prependId="false">
+					<input type="hidden" id="_csrfFormPoll" name="_csrf" value="#{loginBean.csrf}"/>	
 					<h:inputHidden value="true" id="usaSVG"/> 			
 					<a4j:jsFunction id="pollFn" name="poll" limitToList="true" data="#{summaryBean.dataLive}" oncomplete="updateChart(data)"/> 
 					<script type="text/javascript">
@@ -73,6 +74,7 @@
 			</a4j:region>
 			<a4j:outputPanel id="chart">
 				<h:form id="formTransazioni">
+					<input type="hidden" id="_csrfFormJSTransazioni" name="_csrf" value="#{loginBean.csrf}"/>
 					<a4j:jsFunction id="functTransazioni" action="transazioni" name="showTransazioni"/>
 				</h:form>
 				<div id='summaryDivLive'></div>

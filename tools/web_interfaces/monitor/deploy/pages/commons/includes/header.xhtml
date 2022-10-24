@@ -34,6 +34,7 @@
 			            			<c:if test="#{applicationBean.amministratore or applicationBean.operatore}">
 				            			<td class="tdTitoloStatusPdd">
 											<a4j:outputPanel layout="block" rendered="#{statusBean.enable}" id="statusPdd" styleClass="">
+												<input type="hidden" id="_csrfHeader" name="_csrf" value="#{loginBean.csrf}"/>
 												<a href="#{facesContext.externalContext.request.contextPath}/commons/pages/statoPdd.jsf?usaSVG=true" class="titleStatusIconLinkRight">
 													<h:graphicImage value="#{statusBean.iconaStato}" width="16" height="16" id="iconaStatusPdd" style="vertical-align: bottom;" >
 														<rich:toolTip id="toolIconaStatusPdd" for="iconaStatusPdd" mode="client" value="#{statusBean.tooltipIconaStato}" direction="bottom-left"/>
@@ -87,6 +88,9 @@
 				                		<a href="#{facesContext.externalContext.request.contextPath}/commons/pages/welcome.jsf?usaSVG=true" class="titleStatusIconLinkLeft">
 											<h:outputText value="#{loginBean.title}" id="licenseOutputText"  styleClass="appTitle"/>
 										</a>
+										<c:if test="#{!(applicationBean.amministratore or applicationBean.operatore)}">
+				            				<input type="hidden" id="_csrfHeader" name="_csrf" value="#{loginBean.csrf}"/>
+				            			</c:if>
 					                </td>
 					                <td align="right" class="titleRight">
 					                	<c:if test="#{applicationBean.user}">
@@ -188,7 +192,7 @@
 									                	<c:if test="#{!loginBean.showExtendedInfo}">
 											                	<rich:menuItem submitMode="server" value="Informazioni" action="about" />
 											                </c:if>
-										                <rich:menuItem submitMode="server" value="Profilo utente" action="editUser" >
+										                <rich:menuItem submitMode="server" value="Profilo utente" action="editUser" actionListener="#{loginBean.nuovoTokenCsrfListener}" >
 										                	<f:setPropertyActionListener value="#{loginBean.loggedUser.username}" target="#{utentiBean.id}"></f:setPropertyActionListener>
 										                </rich:menuItem>
 										                <rich:menuItem submitMode="server" value="Logout" action="#{loginBean.logout}" actionListener="#{loginBean.logoutListener}"  rendered="#{loginBean.showLogout == 'true'}"/>

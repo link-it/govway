@@ -170,4 +170,12 @@ public class Costanti {
 	public final static String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMI_30_GIORNI = "Ultimi 30 giorni";
 	public final static String VALUE_PARAMETRO_UTENTI_INTERVALLO_TEMPORALE_HOME_PAGE_MONITORAGGIO_ULTIMO_ANNO = "Ultimo anno";
 	
+	/* CSRF */
+	
+	public static final String SESSION_ATTRIBUTE_CSRF_TOKEN =  "csrf";
+	public static final String PARAMETRO_CSRF_TOKEN = "_csrf";
+	public static final String MESSAGGIO_ERRORE_CSRF_TOKEN_NON_VALIDO = "Controllo validità CSRF non superato, l'operazione non verrà eseguita.";
+	// Identificativi tasti salvataggio
+	public static final String ID_BUTTON_SALVA_PROFILO = "salvaProfiloBtn";
+	public static final String ID_BUTTON_SALVA_PASSWORD = "modificaPwd";
 }

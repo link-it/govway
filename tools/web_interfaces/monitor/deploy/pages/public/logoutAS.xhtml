@@ -16,6 +16,7 @@
 		<a4j:outputPanel id="panelForm" layout="block" styleClass="panelLista">
 			<div class="form-container">	
 				<h:form>
+					<input type="hidden" id="_csrfLogoutAS" name="_csrf" value="#{loginBean.csrf}"/>
 					<h:outputText value="Logout effettuato correttamente. " />
 					<h:outputLink  value="#{facesContext.externalContext.request.contextPath}/index.jsp">
 						<h:outputText value="Home" />

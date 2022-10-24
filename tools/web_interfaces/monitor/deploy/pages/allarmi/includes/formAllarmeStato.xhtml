@@ -21,7 +21,7 @@
 		
 		<div class="form-container noborder nopadding">
 			<a4j:form prependId="false">
-			
+				<input type="hidden" id="_csrfFormStatoAllarme" name="_csrf" value="#{loginBean.csrf}"/>
 				<link:fieldset legend="Stato" rendered="#{allarmiBean.editMode}" collapsible="false" closed="false">
 				
 					<link:prop label="Stato Attuale">

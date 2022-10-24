@@ -21,6 +21,7 @@
 		    </f:facet>
 		    <div class="form-container noborder">
 				<h:form prependId="false">
+					<input type="hidden" id="_csrfFormAnalisiStatistica" name="_csrf" value="#{loginBean.csrf}"/>
 					<c:forEach items="#{analisiStatisticaBean.tipiAnalisiStatistica}" var="gruppoAnalisi">
 						<link:fieldset legend="#{gruppoAnalisi.label}" rendered="#{true}" collapsible="false" closed="false">
 							<div class="tipologie">

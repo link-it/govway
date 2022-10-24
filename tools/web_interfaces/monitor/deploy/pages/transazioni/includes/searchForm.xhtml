@@ -10,6 +10,7 @@
     
  <a4j:region renderRegionOnly="true"> 
 		<a4j:outputPanel id="searchPnl" ajaxRendered="false" layout="block">
+			<input type="hidden" id="_csrfFormSearchTransazioni" name="_csrf" value="#{loginBean.csrf}"/>
 			
 			<a4j:outputPanel id="idModalitaRicercaPnl" layout="block" 
 				rendered="#{

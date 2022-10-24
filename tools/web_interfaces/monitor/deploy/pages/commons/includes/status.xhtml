@@ -7,6 +7,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:richx="http://richfaces.org/richx">
 	<a4j:form>
+		<input type="hidden" id="_csrfMainStatus" name="_csrf" value="#{loginBean.csrf}"/>
 		<a4j:status id="mainStatus" layout="block">
 			<f:facet name="start">
 				<h:panelGroup>

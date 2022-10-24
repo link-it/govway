@@ -100,6 +100,7 @@
 			
 			<link:fieldset legend="Messaggio" rendered="#{not empty dettagliDumpMultipart.dumpMessaggio and (not empty dettagliDumpMultipart.dumpMessaggio.body or (dettagliDumpMultipart.dumpMessaggioLength>0) )}" collapsible="false" closed="false">
 				<h:form id="formMessaggioDump">
+					<input type="hidden" id="_csrfFormMessaggioDump" name="_csrf" value="#{loginBean.csrf}"/>
 					<a4j:outputPanel layout="block" style="height: 350px; overflow-y: scroll;" id="xmlPnl2" rendered="#{dettagliDumpMultipart.visualizzaMessaggio}">
 						<pre class="brush: #{dettagliDumpMultipart.brush}; toolbar: false;">#{dettagliDumpMultipart.prettyEnvelop}</pre>
 					</a4j:outputPanel>
@@ -118,6 +119,7 @@
 			
 			<link:fieldset legend="Allegati" rendered="#{not empty dettagliDumpMultipart.allegati}" collapsible="false" closed="false">
 				<h:form id="formDettagliDump">
+					<input type="hidden" id="_csrfFormDettagliDump" name="_csrf" value="#{loginBean.csrf}"/>
 						<rich:dataTable 
 							value="#{dettagliDumpMultipart.allegati}"
 							var="allegato"

@@ -16,6 +16,7 @@
 				label="Eventi" switchType="client">
 				<f:facet name="openMarker">
 					<a4j:outputPanel id="openMarkerPnl" stuleClass="icon-search-box">
+						<input type="hidden" id="_csrfFormTogglePanel" name="_csrf" value="#{loginBean.csrf}"/>
 						<i class="material-icons md-24" id="iconaSearchOpen">&#xE8B6;</i>
 						<rich:toolTip for="openMarkerPnl" value="#{msg['commons.search.filtroRicerca.visualizza.tooltip']}" />
 					</a4j:outputPanel>
@@ -35,6 +36,7 @@
 						<a4j:region id="genSearchPnl" renderRegionOnly="true">
 							<a4j:outputPanel id="searchPnl" ajaxRendered="false"
 								layout="block">
+								<input type="hidden" id="_csrfFormEventiSearchPanel" name="_csrf" value="#{loginBean.csrf}"/>
 								
 								<a4j:outputPanel id="dataCtr" layout="block">
 								
@@ -197,6 +199,7 @@
 				</script>
 				
 				<h:form>
+					<input type="hidden" id="_csrfFormTabellaEventi" name="_csrf" value="#{loginBean.csrf}"/>
 					<link:dataTable value="#{eventiDM}" id="tableEventi"
 						mBean="#{eventiBean}" showSelectAll="false"
 						selectionMapTarget="#{eventiBean.selectedIds[item]}"

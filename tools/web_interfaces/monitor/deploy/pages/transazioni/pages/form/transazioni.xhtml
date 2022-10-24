@@ -20,6 +20,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 		    </f:facet>
 		    <div class="form-container noborder">
 				<h:form prependId="false">
+					<input type="hidden" id="_csrfFormTipoRicerca" name="_csrf" value="#{loginBean.csrf}"/>
 					<c:forEach items="#{transazioniBean.tipiStorico}" var="gruppoStorico">
 						<link:fieldset legend="#{gruppoStorico.label}" rendered="#{true}" collapsible="false" closed="false">
 							<div class="tipologie">

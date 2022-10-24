@@ -87,6 +87,7 @@
 				rendered="#{not empty dettagliBean.dettaglio.tokenInfo and dettagliBean.attributeInfo}"/>
 			<h:panelGroup id="panelGroupTokenInfo" rendered="#{not empty dettagliBean.dettaglio.tokenInfo}">
 				<h:form id="formTokenInfo">
+					<input type="hidden" id="_csrfFormTokeInfo" name="_csrf" value="#{loginBean.csrf}"/>
                           <a4j:htmlCommandLink id="tokenInfo-iconLink"
                                                            styleClass="icon-details"
                                                            value="Visualizza"

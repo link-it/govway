@@ -16,6 +16,7 @@
 			<a4j:outputPanel id="panelForm" layout="block" styleClass="panelLista">
 				<div class="form-container">	
 					<h:form>			
+						<input type="hidden" id="_csrfTimeoutPage" name="_csrf" value="#{loginBean.csrf}"/>
 						<h:outputText value="La tua sessione è scaduta, effettua nuovamente il " escape="true"/>
 						<h:commandLink action="login" value="Login" />
 						<h:outputText value=" " />

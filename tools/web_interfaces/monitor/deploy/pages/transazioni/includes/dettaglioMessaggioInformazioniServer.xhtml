@@ -9,7 +9,8 @@
     <f:loadBundle var="msg" basename="messages" /> 
     
     <a4j:outputPanel layout="block" id="informazioniServer">
-   		<a4j:form id="res" rendered="#{true}" prependId="false">	
+   		<a4j:form id="res" rendered="#{true}" prependId="false">
+   			<input type="hidden" id="_csrfFormRess" name="_csrf" value="#{loginBean.csrf}"/>	
 			<c:if test="#{searchFormTransazioni.visualizzaConsegneMultipleCustomEnabled == false}">
 				<ui:include src="/transazioni/includes/tabellaTransazioniApplicativoServer.xhtml">
 					<ui:param value="#{transazioniApplicativoServerDM}" name="value" />

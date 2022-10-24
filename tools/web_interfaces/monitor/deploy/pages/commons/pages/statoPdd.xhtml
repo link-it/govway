@@ -86,6 +86,7 @@
 			</c:forEach>
 		 	<rich:panel id="panelFormAggiornaStato">
 				<h:form prependId="false" id="formAggiornaStato">
+					<input type="hidden" id="_csrfFormAggiornaStato" name="_csrf" value="#{loginBean.csrf}"/>
 					<a4j:outputPanel id="formPnl" ajaxRendered="false" layout="block" styleClass="form-container">
 						<a4j:outputPanel styleClass="buttonrow" layout="block" id="btnDiv" style="margin-top:0px;">
 							<a4j:commandButton id="aggiornaStatoButton" value="Aggiorna Stato"

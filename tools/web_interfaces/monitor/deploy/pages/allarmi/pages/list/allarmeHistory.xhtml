@@ -32,6 +32,7 @@
 		<div class="spacer"></div>
 		<a4j:outputPanel id="allarmiHistoryTbl" layout="block" styleClass="panelLista">
 			<h:form id="formAllarmi">
+				<input type="hidden" id="_csrfFormAllarmi" name="_csrf" value="#{loginBean.csrf}"/>
 				<link:dataTable value="#{allarmeHistoryDM}" id="tableAllarmeHistory"
 					headerText="Archivio Stati"
 					showSelectAll="false" mBean="#{allarmiHistoryBean}"

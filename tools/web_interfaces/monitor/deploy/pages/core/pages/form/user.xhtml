@@ -22,6 +22,7 @@
 					</f:facet>
 					<h:form id="formRoleUser" prependId="false">
 						<a4j:outputPanel id="formPnl" ajaxRendered="false" layout="block">
+							<input type="hidden" id="_csrfFormPnl" name="_csrf" value="#{loginBean.csrf}"/>
 							<a4j:outputPanel rendered="#{applicationBean.user and applicationBean.showCambiaPassword and utentiBean.showFormCambiaPassword}">
 								<p class="legend" id="pCampiObbligatori">
 									<strong>Note:</strong> (<em>*</em>) Campi obbligatori 

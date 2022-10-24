@@ -155,6 +155,7 @@
 				
 				<f:facet name="closeMarker">
 					<a4j:outputPanel id="closeMarkerPnl" styleClass="icon-search-box">
+						<input type="hidden" id="_csrfFormTogglePanel" name="_csrf" value="#{loginBean.csrf}"/>
 						<i class="material-icons md-24" id="iconaSearchOpen">&#xE8B6;</i>
 						<rich:toolTip for="closeMarkerPnl" value="#{msg['commons.search.filtroRicerca.nascondi.tooltip']}" />
 					</a4j:outputPanel>
@@ -163,7 +164,7 @@
 				<div class="form-container noborder">
 					<h:form>
 						<a4j:outputPanel id="searchPnl" ajaxRendered="false" layout="block">
-						
+							<input type="hidden" id="_csrfFormAllarmiSearchPanel" name="_csrf" value="#{loginBean.csrf}"/>
 							<link:prop label="Tipologia">
 								<rich:comboBox id="tipologiaTransazioniCombo" value="#{searchFormAllarmi.tipologiaAllarme}" 
 										defaultLabel="Seleziona Tipologia Allarme" converter="selectItemConverter"
@@ -262,7 +263,8 @@
 			</rich:simpleTogglePanel>		
 			<div class="spacer"></div>
 			<a4j:outputPanel id="allarmiTbl" layout="block" styleClass="panelLista" rendered="#{allarmiDM.executeQuery}">
-				<h:form>
+				<h:form>	
+					<input type="hidden" id="_csrfFormTabellaAllarmi" name="_csrf" value="#{loginBean.csrf}"/>
 					<link:dataTable value="#{allarmiDM}"
 						id="tableAllarmi"
 						headerText="Lista Allarmi"

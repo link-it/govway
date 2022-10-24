@@ -80,6 +80,7 @@
 	
 							<h:outputLabel id="risp-iconLabel" styleClass="outputFieldLabel icon-show-traccia" value="Traccia" rendered="#{true}"/>
 							<h:form id="formTraccia">
+								<input type="hidden" id="_csrfFormTraccia" name="_csrf" value="#{loginBean.csrf}"/>
 								<h:commandLink id="exportTracce-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.saveTracce}">
 		                    		<f:setPropertyActionListener value="#{dettagliBean.traccia.tipoMessaggio.tipo == 'Risposta'}" target="#{dettagliBean.isRisposta}"/>
 									<h:outputText id="outEsportaTraccia" value="Esporta" />

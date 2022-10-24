@@ -50,6 +50,7 @@
 				rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.faultUltimoErrore}"/>
 			<h:panelGroup rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.faultUltimoErrore}"> 
 				<h:form id="formFaultUE">
+					<input type="hidden" id="_csrfFormFaultUE" name="_csrf" value="#{loginBean.csrf}"/>
                   	<a4j:htmlCommandLink id="faultIntegrazioneUE-iconLink" styleClass="icon-details" value="Visualizza" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.faultUltimoErrore}" action="fault">
                        	<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliTransazioneApplicativoServerBean.protocollo}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliTransazioneApplicativoServerBean.idTransazione}"/>

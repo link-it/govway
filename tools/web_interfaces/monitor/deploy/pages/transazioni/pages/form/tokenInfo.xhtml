@@ -76,6 +76,7 @@
 				</f:facet>
 				<a4j:outputPanel layout="block" style="margin: 0px 0px 16px 0px; padding: 0px 0px 24px 0px;">	
 					<h:form id="formTokenInfo">
+						<input type="hidden" id="_csrfFormTokenInfo" name="_csrf" value="#{loginBean.csrf}"/>
 						<a4j:outputPanel layout="block" style="height: 350px; overflow-y: scroll;" id="jsonPnl2" rendered="#{dettagliBean.visualizzaTokenInfo}">
 							<pre class="brush: json; toolbar: false;">#{dettagliBean.prettyTokenInfo}</pre>
 						</a4j:outputPanel>

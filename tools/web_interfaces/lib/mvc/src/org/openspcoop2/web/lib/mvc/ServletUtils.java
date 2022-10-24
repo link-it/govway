@@ -816,10 +816,13 @@ public class ServletUtils {
 	}
 	
 	public static boolean verificaTokenCSRF(String tokenToCheck, HttpServletRequest request, HttpSession session, Integer validitaTokenCsrf) {
+		String csfrTokenFromSession = ServletUtils.leggiTokenCSRF(request, session);
+		return verificaTokenCSRF(tokenToCheck, csfrTokenFromSession, validitaTokenCsrf);
+	}
+	
+	public static boolean verificaTokenCSRF(String tokenToCheck, String csfrTokenFromSession, Integer validitaTokenCsrf) {
 		// non ho trovato il token nella request non passo il controllo
 		if(tokenToCheck == null) return false;
-		
-		String csfrTokenFromSession = ServletUtils.leggiTokenCSRF(request, session);
 		
 		// controllo che il token coincida per intero con quello salvato in sessione
 		if(!tokenToCheck.equals(csfrTokenFromSession)) return false;
