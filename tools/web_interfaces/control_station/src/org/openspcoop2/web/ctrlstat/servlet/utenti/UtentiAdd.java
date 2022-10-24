@@ -281,7 +281,7 @@ public final class UtentiAdd extends Action {
 			User newU = new User();
 			newU.setLogin(nomesu);
 			newU.setPassword(pwsu);
-			newU.setInterfaceType(InterfaceType.valueOf(tipoGui));
+			newU.setInterfaceType(interfaceType);
 			newU.setProtocolloSelezionatoPddConsole(!tipoModalitaConsoleGestione.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? tipoModalitaConsoleGestione : null);
 			newU.setSoggettoSelezionatoPddConsole(!idSoggettoConsoleGestione.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? idSoggettoConsoleGestione : null);
 			newU.setProtocolloSelezionatoPddMonitor(!tipoModalitaConsoleMonitoraggio.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? tipoModalitaConsoleMonitoraggio : null);

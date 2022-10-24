@@ -53,6 +53,10 @@ if(gd == null) {
 // 	gd.setUrl(ap1 + request.getContextPath() + ap2);
 //   }
 
+String csrfTokenFromSession = ServletUtils.leggiTokenCSRF(request, session);
+if(csrfTokenFromSession == null)
+	csrfTokenFromSession = "";
+
 String contextPath = request.getContextPath(); // '/govwayConsole'
 
 String logoImage = gd.getLogoHeaderImage();
@@ -227,6 +231,13 @@ $(document).ready(function(){
 								</tr>
 							</tbody>
 						</table>
+						<%
+						if(!csrfTokenFromSession.equals("")){
+							%>
+							<input type="hidden" name="<%=Costanti.PARAMETRO_CSRF_TOKEN%>" id="<%=Costanti.PARAMETRO_CSRF_TOKEN%>"  value="<%= csrfTokenFromSession %>"/>
+							<%			
+						}
+						%>
 						<table class="tabella-ext">
 							<!-- Riga tabella -->
 							<tbody>
@@ -292,4 +303,8 @@ $(document).ready(function(){
 </body>
  </html>
  
+<<<<<<< Updated upstream
  
+=======
+ 
+>>>>>>> Stashed changes
