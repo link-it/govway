@@ -1,3 +1,45 @@
+2022-10-24  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor, GovWayConsole]
+	Aggiunta funzionalità OP-1472
+	Rivista documentazione che fornisce le istruzioni per l'integrazione di un IDM esterno delle console di gestione e monitoraggio.
+	Aggiunto supporto per integrare un'autenticazione container: <security-constraint> + <login-config> + <security-role>.
+
+2022-10-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1470
+	Nello schema di tracciamento sono state aggiunte le tabelle 'transazioni_classe_esiti' e 'transazioni_esiti' 
+	che contengono la codifica degli esiti delle transazioni e della loro classificazione fino ad ora disponibile solamente consultando il file di proprietà: 
+	   https://github.com/link-it/govway/blob/master/core/src/org/openspcoop2/protocol/utils/esiti.properties
+
+2022-10-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor, ApiRsMonitoraggio]
+	Risolto Bug OP-1468
+	L'export CSV delle configurazioni tramite la console o l'api di monitoraggio produceva risultati non deterministici ed incompleti.
+	Inoltre non veniva aggiunto l'username in caso di integration manager abilitato.
+
+2022-10-21  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug OP-1466
+	Era erroneamente possibile cancellare testo nel contenuto di un messaggio visualizzato nel dettaglio di una transazione.
+
+2022-10-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor, Utils]
+	Risolto Bug OP-1464
+	Utilizzando il database SQLServer la ricerca base nello storico delle transazioni su console GovWayMonitor produceva il seguente errore SQL: 
+	"ERROR <20-10-2022 14:03:03.969> org.openspcoop2.core.commons.search.dao.jdbc.JDBCAccordoServizioParteSpecificaServiceSearch.findAll(348): Ambiguous column name 'tipo_soggetto'."
+
+2022-10-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, Utils]
+	Risolto Bug OP-1461
+	Una richiesta POST senza contenuto e senza ContentType veniva erroneamente riconosciuta come invalida dal CORS Filter e 
+	di conseguenza non veniva generato l'header http 'Access-Control-Allow-Origin' nella risposta richiesto dall'autorizzazione CORS.
+
 2022-10-13  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.8

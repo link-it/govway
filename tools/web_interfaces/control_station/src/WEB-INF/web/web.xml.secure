@@ -1,0 +1,34 @@
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>AuthenticationContainer</web-resource-name>
+			<url-pattern>/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+                	<role-name>*</role-name>
+		</auth-constraint>
+	</security-constraint>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Public</web-resource-name>
+			<url-pattern>/public/*</url-pattern>
+			<url-pattern>/css/*</url-pattern>
+			<url-pattern>/fonts/*</url-pattern>
+			<url-pattern>/images/*</url-pattern>
+			<url-pattern>/js/*</url-pattern>
+		</web-resource-collection>
+	</security-constraint>
+
+	<security-role>
+		<role-name>*</role-name>
+	</security-role>
+
+	<login-config>
+		<auth-method>FORM</auth-method>
+		<realm-name>Autenticazione GovWayConsole</realm-name>
+		<form-login-config>
+			<form-login-page>/public/loginAS.jsp</form-login-page>
+			<form-error-page>/public/loginFailure.jsp</form-error-page>
+		</form-login-config>
+	</login-config>

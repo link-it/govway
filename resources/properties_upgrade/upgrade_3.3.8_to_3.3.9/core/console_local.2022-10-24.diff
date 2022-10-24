@@ -1,0 +1,54 @@
+diff --git ant/setup/deploy/resources/core/console_local.properties ant/setup/deploy/resources/core/console_local.properties
+index 0c0a697d64..d409b7e402 100644
+--- ant/setup/deploy/resources/core/console_local.properties
++++ ant/setup/deploy/resources/core/console_local.properties
+@@ -7,3 +7,49 @@
+ # Soglia di warning per la scadenza dei certificati
+ verificaCertificati.warning.expirationDays=10
+ # ================================================
++
++# ================================================
++# Integrazione con IdM esterno
++#
++# Abilitando la proprietà 'login.application' l'autenticazione viene gestita dalla 'govwayConsole' che si occuperà di presentare un form all'utente dove poter inserire username e password.
++login.application=true
++# Indicazione se deve essere mostrato il pulsante di 'logout' nell'applicazione.
++logout.mostraButton.enabled=true
++#
++# Disabilitando la proprietà 'login.application' viene utilizzata la classe indicata nella proprietà 'login.tipo' per ottenere il principal dell'utente che sta effettuando l'accesso alla console.
++# NOTA: Il principal deve corrispondere ad uno degli utenti registrati.
++# Deve essere indicata una classe che implementa l'interfaccia 'org.openspcoop2.utils.credential.IPrincipalReader'.
++# In alternativa è possibile utilizzare gli alias alle due implementazioni built-in di seguito descritte.
++#
++# - header (org.openspcoop2.utils.credential.IdentityHttpReader): 
++#   Il principal è atteso all'interno dell'header http 'GovWay-Console-Principal'.
++#   È possibile ridefinire il nome dell'header http da cui estrarre l'identità attraverso la definizione della proprietà 'login.props.header'.
++#login.tipo=header
++#login.props.header=<HTTP-HEADER-NAME>
++#
++# - principal (org.openspcoop2.utils.transport.http.credential.IdentityPrincipalReader): 
++#   Il principal viene recuperato tramite la api 'javax.servlet.http.HttpServletRequest.getUserPrincipal()'.
++#   Richiede un'autenticazione degli utenti configurata a livello di container delegandola all'application server che ospita la console.  
++#   Dovrà quindi essere modificato il file web.xml per definire: <security-constraint> + <login-config> + <security-role>.
++#login.tipo=principal
++#
++# Eventuali proprietà di configurazione da fornire alla classe indicata nella proprietà 'login.tipo' possono essere indicate nella forma seguente.
++#login.props.nomeProp1=val1
++#...
++#login.props.nomePropN=valN
++
++# Nel caso l'applicazione sia integrata all'interno di un'altra console o portale, 
++# è possibile ridefinire le url alle quali verrà rediretto l'utente nei casi in cui non viene autorizzata la normale navigazione.
++# Lasciando le proprietà non valorizzate verranno utilizzati le pagine di default previste dall'applicazione.
++#       
++# Errore interno durante il login
++login.erroreInterno.redirectUrl=
++# Autorizzazione negata
++login.utenteNonAutorizzato.redirectUrl=
++# Utenza non valida
++login.utenteNonValido.redirectUrl=
++# Sessione scaduta
++login.sessioneScaduta.redirectUrl=
++# Pagina successiva all'operazione di logout
++logout.urlDestinazione=
++# ================================================

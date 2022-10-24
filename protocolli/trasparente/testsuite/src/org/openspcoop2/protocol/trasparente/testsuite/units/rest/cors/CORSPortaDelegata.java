@@ -134,6 +134,30 @@ public class CORSPortaDelegata {
 	}
 	
 	/**
+	 * Tests if a POST request is treated as actual request (content type non presente).
+	 */
+	@Test(groups={CostantiTestSuite.ID_GRUPPO_TEST_CORS, CostantiTestSuite.ID_GRUPPO_TEST_CORS_PORTA_DELEGATA, CORSPortaDelegata.ID_GRUPPO,CORSPortaDelegata.ID_GRUPPO+".actualRequestPOSTWithoutContentType"})
+	public void testDoFilterActualPOSTWithoutContentType() throws TestSuiteException, Exception{
+		Repository repository=new Repository();
+		RESTCore restCore = new RESTCore(HttpRequestMethod.POST, RUOLO.PORTA_DELEGATA);
+		restCore.setPortaApplicativaDelegata(CostantiTestSuite.PORTA_DELEGATA_REST_CORS);
+		
+		HashMap<String, String> headersRichiesta = new HashMap<>();
+		headersRichiesta.put(HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN, CostantiTestSuite.TEST_HTTPS_ORIGIN);
+		
+		HttpResponse httpResponse = restCore.invoke("empty-payload", 200, repository, true, true, 
+				null, //HttpConstants.CONTENT_TYPE_JSON, 
+				headersRichiesta);
+		restCore.postInvoke(repository, CostantiTestSuite.REST_TIPO_SERVIZIO, CostantiTestSuite.NOME_SERVIZIO_CORS_REST, CostantiTestSuite.NOME_SERVIZIO_CORS_REST_RISORSA_POST);
+		
+		HashMap<String, String> headersAttesiRisposta = new HashMap<>();
+		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, CostantiTestSuite.TEST_HTTPS_ORIGIN);
+		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_METHODS, null);
+		headersAttesiRisposta.put(HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS, null);
+		restCore.postInvokeCheckHeader(httpResponse, headersAttesiRisposta);				
+	}
+	
+	/**
 	 * Tests if a HEAD request is treated as simple request.
 	 */	
 	@Test(groups={CostantiTestSuite.ID_GRUPPO_TEST_CORS, CostantiTestSuite.ID_GRUPPO_TEST_CORS_PORTA_DELEGATA, CORSPortaDelegata.ID_GRUPPO,CORSPortaDelegata.ID_GRUPPO+".simpleRequestHEAD"})

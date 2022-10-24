@@ -1,0 +1,84 @@
+
+  <!-- Action Servlet Configuration -->
+  <servlet>
+    <servlet-name>action</servlet-name>
+    <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+    <init-param>
+      <param-name>config</param-name>
+      <param-value>/WEB-INF/struts-config.xml</param-value>
+    </init-param>
+    <init-param>
+      <param-name>url</param-name>
+      <param-value>/govwayConsole</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+
+  <!-- Servlet per il download dei documenti -->
+  <servlet>
+    <servlet-name>downloadDocumento</servlet-name>
+    <servlet-class>org.openspcoop2.web.ctrlstat.servlet.archivi.DocumentoExporter</servlet-class>
+  </servlet>
+
+  <!-- Servlet di gestione esportazione allegati -->
+  <servlet>
+    <servlet-name>archiviExporter</servlet-name>
+	<servlet-class>org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviExporter</servlet-class>
+  </servlet>
+  
+  <!-- Servlet di gestione esportazione della configurazione di sistema -->
+  <servlet>
+    <servlet-name>configurazioneSistemaExporter</servlet-name>
+	<servlet-class>org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneSistemaExporter</servlet-class>
+  </servlet>
+  
+  <!-- Servlet per il Download del Resoconto di Importazione -->
+  <servlet>
+    <servlet-name>downloadResoconto</servlet-name>
+	<servlet-class>org.openspcoop2.web.ctrlstat.servlet.archivi.ResocontoExporter</servlet-class>
+  </servlet>
+  
+  <!-- Servlet per il Supporto del servizio di utilizzo degli elementi del registro -->
+  <servlet>
+    <servlet-name>informazioniUtilizzoOggettoRegistro</servlet-name>
+	<servlet-class>org.openspcoop2.web.ctrlstat.servlet.utils.InformazioniUtilizzoOggettoRegistro</servlet-class>
+  </servlet>
+
+
+  <!-- Servlet per il download dei documenti -->
+  <servlet-mapping>
+    <servlet-name>downloadDocumento</servlet-name>
+    <url-pattern>/downloadDocumento</url-pattern>
+  </servlet-mapping>
+
+  <!-- Servlet di gestione esportazione allegati -->
+  <servlet-mapping>
+    <servlet-name>archiviExporter</servlet-name>
+    <url-pattern>/exporterArchivi</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Servlet di gestioneesportazione della configurazione di sistema -->
+  <servlet-mapping>
+    <servlet-name>configurazioneSistemaExporter</servlet-name>
+    <url-pattern>/exporterConfigurazione</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Servlet per il Download del Resoconto di Importazione -->
+  <servlet-mapping>
+    <servlet-name>downloadResoconto</servlet-name>
+	<url-pattern>/downloadResoconto</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Servlet per il Supporto del servizio di utilizzo degli elementi del registro -->
+  <servlet-mapping>
+    <servlet-name>informazioniUtilizzoOggettoRegistro</servlet-name>
+	<url-pattern>/informazioniUtilizzoOggettoRegistro</url-pattern>
+  </servlet-mapping>
+
+  <!-- Action Servlet Mapping -->
+  <servlet-mapping>
+    <servlet-name>action</servlet-name>
+    <url-pattern>*.do</url-pattern>
+  </servlet-mapping>
+

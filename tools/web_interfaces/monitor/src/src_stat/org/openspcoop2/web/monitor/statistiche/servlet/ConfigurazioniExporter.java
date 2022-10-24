@@ -165,20 +165,23 @@ public class ConfigurazioniExporter extends HttpServlet{
 					letti = lstTmp.size();
 					if(letti > 0){
 						lst.addAll(lstTmp);
+						for (ConfigurazioneGenerale configurazioneGenerale : lstTmp) {
+							if(configurazioneGenerale.isDatiPortaPrincipale()) {
+								offset++;
+							}
+						}
 					}
-					offset += letti;
 				}while(letti > 0);
 			} else {
 				for (String idString : ids) {
 					ConfigurazioneGeneralePK key = new ConfigurazioneGeneralePK(idString);
 					ConfigurazioneGenerale findById = service.findById(key);
-					
+					lst.add(findById);
 					
 					List<ConfigurazioneGenerale> findConfigurazioniFiglie = service.findConfigurazioniFiglie(findById.getNome(), findById.getRuolo());
 					if(findConfigurazioniFiglie != null && findConfigurazioniFiglie.size() > 0)
 						lst.addAll(findConfigurazioniFiglie);
 						
-					lst.add(findById);
 				}
 			}
 

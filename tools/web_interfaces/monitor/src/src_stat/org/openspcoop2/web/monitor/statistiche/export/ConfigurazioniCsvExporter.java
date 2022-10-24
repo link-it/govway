@@ -26,6 +26,7 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,11 +40,13 @@ import org.openspcoop2.core.config.ConfigurazioneMessageHandlers;
 import org.openspcoop2.core.config.ConfigurazionePortaHandler;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
+import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.DumpConfigurazioneRegola;
 import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
+import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.MessageSecurity;
 import org.openspcoop2.core.config.MtomProcessor;
 import org.openspcoop2.core.config.MtomProcessorFlow;
@@ -66,6 +69,7 @@ import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
@@ -86,6 +90,7 @@ import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPD;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioRateLimiting;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
 import org.openspcoop2.web.monitor.statistiche.utils.ConfigurazioniUtils;
+import org.openspcoop2.web.monitor.statistiche.utils.IgnoreCaseComp;
 import org.slf4j.Logger;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
@@ -134,6 +139,7 @@ public class ConfigurazioniCsvExporter {
 		CORS
 
 		Token (stato)
+		Token (opzionale)
 		Token (policy)
 		Token (validazione input)
 		Token (introspection)
@@ -338,6 +344,7 @@ public class ConfigurazioniCsvExporter {
   		CORS
   		
 		Token (stato)
+		Token (opzionale)
 		Token (policy)
 		Token (validazione input)
 		Token (introspection)
@@ -610,9 +617,48 @@ public class ConfigurazioniCsvExporter {
 					DettaglioSA dettaglioSA = (listaSA != null && listaSA.size() > 0) ? listaSA.get(0): null;
 					this.addLinePA(dataSource,configurazione, dettaglioSA);
 				} else {
+					// Ordino per nome connettore
+					
+					DettaglioPA dettaglioPA = configurazione.getPa();
+					PortaApplicativa paOp2 = dettaglioPA.getPortaApplicativaOp2(); 
+					
+					List<String> orderFix = new ArrayList<String>();
+					Map<String, DettaglioSA> mapIds = new HashMap<String, DettaglioSA>();
 					for (DettaglioSA dettaglioSA : listaSA) {
-						this.addLinePA(dataSource,configurazione, dettaglioSA);
+						
+						String nomePAConnettore = null;
+						if(dettaglioSA != null) {
+							ServizioApplicativo saOp2 = dettaglioSA.getSaOp2();
+							if(StringUtils.isNotEmpty(saOp2.getNome()) && paOp2.sizeServizioApplicativoList()>0) {
+								for (PortaApplicativaServizioApplicativo pasa : paOp2.getServizioApplicativoList()) {
+									if(saOp2.getNome().equals(pasa.getNome())) {
+										if(pasa.getDatiConnettore()!=null && StringUtils.isNotEmpty(pasa.getDatiConnettore().getNome())) {
+											nomePAConnettore = pasa.getDatiConnettore().getNome();
+										}
+									}
+								}
+							}
+						}
+						nomePAConnettore = (nomePAConnettore==null) ? CostantiConfigurazione.NOME_CONNETTORE_DEFAULT : nomePAConnettore;
+						
+						String checkNome = nomePAConnettore;
+						int index = 1;
+						while(orderFix.contains(checkNome)) {
+							checkNome = nomePAConnettore + "###" + index;
+							index++;
+						}
+						nomePAConnettore = checkNome;
+						
+						orderFix.add(nomePAConnettore);
+						mapIds.put(nomePAConnettore, dettaglioSA);
+						
 					}
+					
+					Collections.sort(orderFix, new IgnoreCaseComp()); // per adeguarsi ai db
+					for (String nomeConnettore : orderFix) {
+						this.addLinePA(dataSource,configurazione, mapIds.get(nomeConnettore));	
+					}
+					
 				}
 			}
 		}//chiudo for configurazioni
@@ -1280,7 +1326,9 @@ public class ConfigurazioniCsvExporter {
 
 				if(saOp2.getInvocazioneServizio().getConnettore()!=null){
 					Connettore connettore = saOp2.getInvocazioneServizio().getConnettore();
-					oneLine.addAll(this.printConnettore(connettore, CostantiConfigurazioni.LABEL_TIPO, saOp2.getInvocazioneServizio().getCredenziali()));
+					oneLine.addAll(this.printConnettore(connettore, CostantiConfigurazioni.LABEL_TIPO, 
+							saOp2.getInvocazioneServizio().getCredenziali(), 
+							saOp2.getInvocazioneServizio().getGetMessage(), saOp2.getInvocazionePorta()));
 				} else {
 					// 15 colonne vuote
 					for (int i = 0; i < 15; i++) {
@@ -1950,7 +1998,9 @@ public class ConfigurazioniCsvExporter {
 		// connettore
 		if(dettaglioPD.getConnettore() !=null){
 			Connettore connettore = dettaglioPD.getConnettore();
-			oneLine.addAll(this.printConnettore(connettore, CostantiConfigurazioni.LABEL_MODALITA_INOLTRO, null));
+			oneLine.addAll(this.printConnettore(connettore, CostantiConfigurazioni.LABEL_MODALITA_INOLTRO, 
+					null, 
+					null, null));
 		} else {
 			// 15 colonne vuote
 			for (int i = 0; i < 15; i++) {
@@ -1985,7 +2035,9 @@ public class ConfigurazioniCsvExporter {
 		14 CONNETTORE_CLIENT_CERTIFICATE
 		15 CONNETTORE_ALTRE_CONFIGURAZIONI
 	 * */
-	public  List<Object> printConnettore(Connettore connettore,String labelTipoConnettore ,InvocazioneCredenziali invCredenziali){
+	public  List<Object> printConnettore(Connettore connettore,String labelTipoConnettore,
+			InvocazioneCredenziali invCredenziali, 
+			StatoFunzionalita integrationManager, InvocazionePorta invocazionePorta){
 		List<Object> oneLine = new ArrayList<Object>();
 		Map<Integer, String> mapProperties = new HashMap<Integer, String>();
 
@@ -1994,13 +2046,26 @@ public class ConfigurazioniCsvExporter {
 		if(TipiConnettore.HTTP.getNome().equals(connettore.getTipo()) || TipiConnettore.HTTPS.getNome().equals(connettore.getTipo())){
 			mapProperties.put(2, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_LOCATION, connettore.getPropertyList()));
 
-			if(invCredenziali!=null){
-				mapProperties.put(4, invCredenziali.getUser());
+			boolean find = false;
+			if(integrationManager!=null && StatoFunzionalita.ABILITATO.equals(integrationManager)) {
+				if(invocazionePorta!=null && invocazionePorta.sizeCredenzialiList()>0) {
+					for (Credenziali c : invocazionePorta.getCredenzialiList()) {
+						if(CredenzialeTipo.BASIC.equals(c.getTipo()) && c.getUser()!=null && StringUtils.isNotEmpty(c.getUser())){
+							find = true;
+							mapProperties.put(4, c.getUser());
+						}
+					}
+				}
 			}
-			else{
-				String username = ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_USERNAME, connettore.getPropertyList());
-				if(username!=null){
-					mapProperties.put(4, username);
+			if(!find) {
+				if(invCredenziali!=null){
+					mapProperties.put(4, invCredenziali.getUser());
+				}
+				else{
+					String username = ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_USERNAME, connettore.getPropertyList());
+					if(username!=null){
+						mapProperties.put(4, username);
+					}
 				}
 			}
 
@@ -2105,6 +2170,33 @@ public class ConfigurazioniCsvExporter {
 		}
 		else if(TipiConnettore.NULLECHO.getNome().equals(connettore.getTipo())){
 			mapProperties.put(2, ConnettoreNULLEcho.LOCATION);
+		}
+		else if(integrationManager!=null && StatoFunzionalita.ABILITATO.equals(integrationManager)) {
+			
+			// confonde e basta. Nel caso di HTTP ci sara' sempre integration manager però con la location http
+			//mapProperties.put(2, "/govway/IntegrationManager/MessageBox");
+			
+			boolean find = false;
+			if(invocazionePorta!=null && invocazionePorta.sizeCredenzialiList()>0) {
+				for (Credenziali c : invocazionePorta.getCredenzialiList()) {
+					if(CredenzialeTipo.BASIC.equals(c.getTipo()) && c.getUser()!=null && StringUtils.isNotEmpty(c.getUser())){
+						find = true;
+						mapProperties.put(4, c.getUser());
+					}
+				}
+			}
+			
+			if(!find) {
+				if(invCredenziali!=null){
+					mapProperties.put(4, invCredenziali.getUser());
+				}
+				else{
+					String username = ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_USERNAME, connettore.getPropertyList());
+					if(username!=null){
+						mapProperties.put(4, username);
+					}
+				}
+			}
 		}
 		else{
 

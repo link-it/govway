@@ -26,6 +26,7 @@ import org.openspcoop2.core.transazioni.DumpHeaderAllegato;
 import org.openspcoop2.core.transazioni.DumpMultipartHeader;
 import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.core.transazioni.IdCredenzialeMittente;
+import org.openspcoop2.core.transazioni.TransazioneClasseEsiti;
 import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.DumpContenuto;
@@ -33,6 +34,7 @@ import org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.TransazioneExtendedInfo;
+import org.openspcoop2.core.transazioni.TransazioneEsiti;
 import org.openspcoop2.core.transazioni.IdDumpMessaggio;
 import org.openspcoop2.core.transazioni.TransazioneInfo;
 import org.openspcoop2.core.transazioni.TransazioneExport;
@@ -363,6 +365,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public IdCredenzialeMittente readIdCredenzialeMittenteFromString(String in) throws DeserializerException {
 		return (IdCredenzialeMittente) this.xmlToObj(in.getBytes(), IdCredenzialeMittente.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: transazione-classe-esiti
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TransazioneClasseEsiti readTransazioneClasseEsiti(String fileName) throws DeserializerException {
+		return (TransazioneClasseEsiti) this.xmlToObj(fileName, TransazioneClasseEsiti.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TransazioneClasseEsiti readTransazioneClasseEsiti(File file) throws DeserializerException {
+		return (TransazioneClasseEsiti) this.xmlToObj(file, TransazioneClasseEsiti.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TransazioneClasseEsiti readTransazioneClasseEsiti(InputStream in) throws DeserializerException {
+		return (TransazioneClasseEsiti) this.xmlToObj(in, TransazioneClasseEsiti.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TransazioneClasseEsiti readTransazioneClasseEsiti(byte[] in) throws DeserializerException {
+		return (TransazioneClasseEsiti) this.xmlToObj(in, TransazioneClasseEsiti.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.TransazioneClasseEsiti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TransazioneClasseEsiti readTransazioneClasseEsitiFromString(String in) throws DeserializerException {
+		return (TransazioneClasseEsiti) this.xmlToObj(in.getBytes(), TransazioneClasseEsiti.class);
 	}	
 	
 	
@@ -804,6 +869,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public TransazioneExtendedInfo readTransazioneExtendedInfoFromString(String in) throws DeserializerException {
 		return (TransazioneExtendedInfo) this.xmlToObj(in.getBytes(), TransazioneExtendedInfo.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: transazione-esiti
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TransazioneEsiti readTransazioneEsiti(String fileName) throws DeserializerException {
+		return (TransazioneEsiti) this.xmlToObj(fileName, TransazioneEsiti.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TransazioneEsiti readTransazioneEsiti(File file) throws DeserializerException {
+		return (TransazioneEsiti) this.xmlToObj(file, TransazioneEsiti.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TransazioneEsiti readTransazioneEsiti(InputStream in) throws DeserializerException {
+		return (TransazioneEsiti) this.xmlToObj(in, TransazioneEsiti.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TransazioneEsiti readTransazioneEsiti(byte[] in) throws DeserializerException {
+		return (TransazioneEsiti) this.xmlToObj(in, TransazioneEsiti.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.TransazioneEsiti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TransazioneEsiti readTransazioneEsitiFromString(String in) throws DeserializerException {
+		return (TransazioneEsiti) this.xmlToObj(in.getBytes(), TransazioneEsiti.class);
 	}	
 	
 	

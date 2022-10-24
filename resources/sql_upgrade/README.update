@@ -3,24 +3,44 @@ L'upgrade del database da una versione alla successiva comporta l'applicazione d
 
 1) Progressione di Versione in Versione
 
-Se tra la nuova versione del software e la precedente sono state rilasciate altre versioni intermedie, le patch sql devono essere applicate in ordine facendo "promuovere" il database di versione in versione fino alla nuova versione del software scelto. 
-Inoltre se la tra versione di partenza e la versione di destinazione è stata rilasciata una versione major (3.majorVersion.minorVersion), dovrà essere utilizzata la directory upgrade_3.<major-1>.x_to_2.<major>.0 come passaggio tra l'ultima patch minor disponibile per la major-1 e la prima patch disponibile per la nuova major. Di seguito verrà fornito un esempio di uno scenario di upgrade che coinvole anche l'upgrade verso una versione major successiva.
-Ad esempio supponiamo uno scenario in cui sia stata installata la versione 3.0.4 e si vuole procedere all'upgrade verso la versione 3.2.3; il tipo di database è postgresql.
-Le patch sql dovranno essere applicate nel seguente ordine:
-- upgrade_3.1.4_to_3.1.5
-- upgrade_3.1.x_to_3.2.0
+Se tra la nuova versione del software e la precedente sono state rilasciate altre versioni intermedie, le patch sql devono essere applicate in ordine facendo "promuovere" il database di versione in versione fino alla versione finale del software scelto. 
+Ad esempio se supponiamo uno scenario in cui sia stata installata la versione 3.2.0 e si vuole procedere all'upgrade verso la versione 3.3.1 le patch sql dovranno essere applicate nel seguente ordine:
 - upgrade_3.2.0_to_3.2.1
 - upgrade_3.2.1_to_3.2.2
-- upgrade_3.2.2_to_3.2.3
+- upgrade_3.2.x_to_3.3.0
+- upgrade_3.3.0_to_3.3.1
+
+NOTA: se tra la versione di partenza e la versione di destinazione è stata rilasciata una versione major, la directory che ne effettua l'upgrade è denominata con la minor della versione di partenza valorizzata con il carattere 'x' (upgrade_3.<major-1>.x_to_2.<major>.0).
 
 
 2) Ordine di Applicabilità delle patch di una Versione
 
 All'interno di ogni directory 'Upgrade_3.x.y_to_3.x.z' sono presenti più patch sql per ogni tipo di database supportato. 
-Le patch interne ad ogni directory devono essere applicate nell'ordine crescente della data indicata nel prefisso: tipoDatabase/<data>-patch.sql
-Infine deve essere applicata (indipendentemente dal tipo di database) la patch 'info-patch.sql'.
-Ad esempio nella directory Upgrade_2.1.x_to_2.2.0 le patch presenti andranno applicate in questo ordine:
-- postgresql/2018-09-24-patch.sql
-- postgresql/2018-11-03-patch.sql
-- info-patch.sql
 
+Le patch interne ad ogni directory devono essere applicate nell'ordine crescente della data indicata nel prefisso: <tipoDatabase>/<data>-<area>-patch.sql
+
+Nel nome del file viene anche indicata l'area di competenza della patch che deve essere ricondotta al corretto schema del database secondo la seguente lista:
+Schema Database | Area
+Runtime         | runtimePdD
+Tracciamento    | archiviComunicazioni
+Statistiche     | informazioniStatistiche
+Configurazione  | tutte le altre aree: configurazionePdD, registroServizi, users, monitoraggio ...
+
+Infine deve essere applicata (indipendentemente dal tipo di database) la patch 'info-patch.sql'.
+
+Di seguito viene riporto come esempio l'applicazione delle patch presenti nella directory upgrade_3.2.1_to_3.2.2, in un'installazione in cui esiste un unico schema dove vengono gestite le informazioni di runtime, le tracce, le statistiche e le configurazioni denominato 'GOVWAY_SCHEMA'. Le patch presenti vanno applicate nel seguente ordine:
+- APPLY <tipoDatabase>/2019-12-24-archiviComunicazioni-patch.sql in GOVWAY_SCHEMA
+- APPLY <tipoDatabase>/2019-12-24-configurazionePdD-patch.sql in GOVWAY_SCHEMA
+- APPLY <tipoDatabase>/2020-02-05-configurazionePdD-patch.sql in GOVWAY_SCHEMA
+- APPLY <tipoDatabase>/2020-02-05-registroServizi-patch.sql in GOVWAY_SCHEMA
+- APPLY info-patch.sql in GOVWAY_SCHEMA
+
+Di seguito viene invece riportato come esempio l'applicazione delle stesse patch esaminate in precedenza, in un'installazione in cui è stato scelto uno schema dedicato alle configurazioni (denominato GOVWAY_CONFIG_SCHEMA). L'applicazione delle patch si suddividerà come segue:
+
+- APPLY <tipoDatabase>/2019-12-24-archiviComunicazioni-patch.sql in GOVWAY_SCHEMA
+- APPLY info-patch.sql in GOVWAY_SCHEMA
+
+- APPLY <tipoDatabase>/2019-12-24-configurazionePdD-patch.sql in GOVWAY_CONFIG_SCHEMA
+- APPLY <tipoDatabase>/2020-02-05-configurazionePdD-patch.sql in GOVWAY_CONFIG_SCHEMA
+- APPLY <tipoDatabase>/2020-02-05-registroServizi-patch.sql in GOVWAY_CONFIG_SCHEMA
+- APPLY info-patch.sql in GOVWAY_CONFIG_SCHEMA

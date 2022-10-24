@@ -1487,6 +1487,7 @@ public class CostantiControlStation {
 	public final static String CSS_DIR = "css";
 	public final static String JS_DIR = "js";
 	public final static String FONTS_DIR = "fonts";
+	public final static String PUBLIC_DIR = "public";
 	public final static String OPERATIONS_DELIMITER = "\n--------------------------------------------\n\n";
 	
 	/** ICONE */

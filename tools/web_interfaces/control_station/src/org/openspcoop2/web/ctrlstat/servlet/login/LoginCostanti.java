@@ -113,6 +113,10 @@ public class LoginCostanti {
 	public final static String LOGIN_JSP = "/jsplib/login.jsp";
 	public final static String INFO_JSP ="/jsplib/info.jsp";
 	
+	public final static String LOGIN_AS_JSP ="/public/loginAS.jsp";
+	public final static String LOGOUT_AS_JSP ="/public/logoutAS.jsp";
+	public final static String LOGIN_FAILURE_JSP ="/public/loginFailure.jsp";
+	
 	/* EVENTO PRESSIONE TASTO LOGIN */
 	public final static String LOGIN_JS_FUNCTION = "CheckDati();return false;";
 

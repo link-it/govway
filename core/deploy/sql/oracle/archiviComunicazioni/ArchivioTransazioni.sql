@@ -337,6 +337,73 @@ end;
 
 
 
+CREATE SEQUENCE seq_transazioni_esiti MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 CYCLE;
+
+CREATE TABLE transazioni_esiti
+(
+	-- Codice numerico dell'esito della transazione
+	govway_status NUMBER NOT NULL,
+	-- Identificativo dell'esito della transazione
+	govway_status_key VARCHAR2(255) NOT NULL,
+	-- Frase dell'errore che identifica l'esito della transazione
+	govway_status_detail VARCHAR2(255) NOT NULL,
+	-- Descrizione dell'esito della transazione
+	govway_status_description VARCHAR2(255) NOT NULL,
+	-- Codice numerico della classe di esiti a cui appartiene la transazione
+	govway_status_class NUMBER NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT uniq_tr_esiti_1 UNIQUE (govway_status),
+	CONSTRAINT uniq_tr_esiti_2 UNIQUE (govway_status_key),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_transazioni_esiti PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_transazioni_esiti
+BEFORE
+insert on transazioni_esiti
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_transazioni_esiti.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_transazioni_classe_esiti MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 CYCLE;
+
+CREATE TABLE transazioni_classe_esiti
+(
+	-- Codice numerico della classe di appartenenza di un esito della transazione
+	govway_status NUMBER NOT NULL,
+	-- Descrizione della classe di un esito
+	govway_status_detail VARCHAR2(255) NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT uniq_tr_classe_esiti_1 UNIQUE (govway_status),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_transazioni_classe_esiti PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_transazioni_classe_esiti
+BEFORE
+insert on transazioni_classe_esiti
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_transazioni_classe_esiti.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
 -- DUMP - DATI
 
 CREATE SEQUENCE seq_dump_messaggi MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 CYCLE;

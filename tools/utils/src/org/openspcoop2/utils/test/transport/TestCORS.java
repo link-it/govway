@@ -61,7 +61,7 @@ public class TestCORS {
 
 	public static void main(String [] args) throws Exception {
 		TestCORS test = new TestCORS();
-		test.testDoFilterNullOrigin();
+		test.testCheckActualNotSimplePostWithoutContentType();
 	}
 	
 	private static final String ID_TEST = "CORS";
@@ -1148,6 +1148,32 @@ public class TestCORS {
 		this.checkActual(request, response);
 		
         TestLogger.info("Run test '"+ID_TEST+".actualNotSimpleHeaders' ok");
+    }
+	
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".actualPostWithoutContentType"})
+	public void testCheckActualNotSimplePostWithoutContentType() throws Exception {
+
+		TestLogger.info("Run test '"+ID_TEST+".actualPostWithoutContentType' ...");
+
+		TestHttpServletRequest request = new TestHttpServletRequest();
+		request.setHeader(HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN,TEST_HTTPS_ORIGIN);
+		request.setMethod(HttpRequestMethod.POST.name());
+		//request.setContentType(HttpConstants.CONTENT_TYPE_JSON);  // senza content-type non e' più simple
+		TestHttpServletResponse response = new TestHttpServletResponse();
+		
+		TestCORSFIlter corsFilter = new TestCORSFIlter();
+		corsFilter.getConfig().setAllowAllOrigin(false);
+		corsFilter.getConfig().addAllowOrigin(TEST_HTTPS_ORIGIN);
+		corsFilter.doFilter(request, response, new TestFilterChain());
+        
+		String trovato = response.getHeader(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN);
+		TestLogger.info("Atteso header '"+HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN+"' ["+TEST_HTTPS_ORIGIN+"] trovato ["+trovato+"]");
+		Assert.assertTrue(trovato!=null);
+		Assert.assertTrue(trovato.equals(TEST_HTTPS_ORIGIN));
+		
+		this.checkActual(request, response);
+		
+        TestLogger.info("Run test '"+ID_TEST+".actualPostWithoutContentType' ok");
     }
 	
 	

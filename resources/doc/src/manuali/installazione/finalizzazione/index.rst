@@ -91,7 +91,7 @@ tematiche:
    Il Cryptographic Token Interface Standard, PKCS#11, definisce interfacce di programmazione native per token crittografici, come acceleratori crittografici hardware e smartcard. 
    Per consentire a GovWay di accedere ai token PKCS#11 nativi è necessario configurare correttamente il provider PKCS#11 e registrarlo tra i token conosciuti da GovWay seguendo le indicazioni descritte nella sezione :ref:`pkcs11Install`. 
 
-#. *Configurazione e Monitoraggio*
+#. *API di Configurazione e Monitoraggio*
 
    GovWay fornisce sia una console che dei servizi che espongono API REST per la sua configurazione e per il monitoraggio.
    L'installer genera per default le console mentre i servizi devono essere selezionati puntualmente dall'utente (:numref:`apiREST_fig`).
@@ -117,6 +117,10 @@ tematiche:
 
    In entrambi i ruoli la configurazione varia a seconda dell'architettura in cui è stato dispiegato GovWay (es. presenza di un Web Server). Indicazioni sulla configurazione vengono fornite nella sezione :ref:`install_ssl_config`.
 
+#. *Integrazione delle Console con IdM esterno*
+
+   Nella sezione :ref:`idmEsterno` vengono fornite indicazioni su come sia possibile delegare l'autenticazione delle utenze ad un IdM esterno da cui ottenere il principal dell'utenza.
+
 #. *Richieste 'application/x-www-form-urlencoded' su WildFly*
 
    Per poter gestire correttamente richieste con Content-Type 'application/x-www-form-urlencoded' su application server 'WildFly', è richiesto di abilitare l'attributo 'allow-non-standard-wrappers' nella configurazione dell'A.S. 
@@ -140,5 +144,6 @@ tematiche:
 	apiRest
 	cluster/index
 	ssl/index
+        idmEsterno
 	wildflyUrlEncoded
 	securityDomainOther

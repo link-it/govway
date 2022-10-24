@@ -1,3 +1,7 @@
+2022-10-13  Andrea Poli <apoli@link.it>
+
+	Aggiunte tabelle transazioni_classe_esiti e transazioni_esiti che contengono la codifica degli esiti delle transazioni e della loro classificazione
+
 2022-09-28  Andrea Poli <apoli@link.it>
 
 	Aggiunto indice nel repository dei messaggi per permetterne un scaricamento da MessageBox più efficiente.

@@ -433,6 +433,13 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 						else
 							first = false;
 						String condizione = it.next();
+						/*System.out.println("=======================");
+						System.out.println("alias: "+this.alias);
+						System.out.println("condizione: "+condizione);
+						System.out.println("KEY: "+(this.alias.containsKey(condizione)));
+						System.out.println("VALUE: "+(this.alias.containsValue(condizione)));
+						System.out.println("DISTINCT: "+(this.isSelectDistinct()));
+						System.out.println("=======================");*/
 						if(this.alias.containsKey(condizione)){
 							if(this.isSelectDistinct()){
 								bf.append(condizione);
@@ -440,7 +447,10 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 							else{
 								bf.append(this.alias.get(condizione));
 							}
-						}else{
+						}else if(this.alias.containsValue(condizione)) {
+							bf.append(condizione);
+						}
+						else{
 							bf.append(this.normalizeField(condizione,false));
 						}
 						boolean sortTypeAsc = this.sortTypeAsc;

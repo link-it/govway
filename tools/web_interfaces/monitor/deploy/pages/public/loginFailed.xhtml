@@ -1,0 +1,52 @@
+<ui:composition template="/templates/form.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:rich="http://richfaces.org/rich"
+      xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:link="http://www.link.it">
+      	<ui:param value="false" name="insertSideBar" />
+      	<ui:param value="Benvenuto. Inserisci le credenziali di accesso." name="title" />
+
+		<ui:define name="navbar">
+		  <div id="errorsPlaceHolder" style="width: 50%;margin-top: 20px;">
+		    <div class="messages-errors">
+		      <div class="messages-title">
+			<span id="infoTitleIcon" class="messages-errors-title-icon">&#160;&#160;</span>
+			<span id="infoTitleMessage" class="messages-title-text">Username o password non validi.</span>
+		      </div>
+		    </div>
+		  </div>
+		</ui:define>
+
+		<ui:define name="body">
+			<style>
+				.rich-page-body {
+    					margin-left: 0px;
+					}
+				#pCampiObbligatori {display: none;	}	
+				#crumbs {height: 100%;	}
+				#submitBtn { margin-left: 20px; }				
+			</style>
+
+			<form id="formLogin" action="j_security_check" method="post">
+				<link:fieldset legend="Login" rendered="#{true}" collapsible="false" closed="false">
+					<link:prop label="Username">
+						<h:inputText label="Username" id="j_username" value="#{loginBean.username}" required="true" styleClass="inputLink"/>
+					</link:prop>
+					
+					<link:prop label="Password">
+						<h:inputSecret label="Password" id="j_password" value="#{loginBean.pwd}" required="true" styleClass="inputLink"/>
+					</link:prop>
+				</link:fieldset>	
+				<div class="buttonrow">
+					<h:commandButton type="submit" id="submitBtn" styleClass="icon-login" value="Login" />
+				</div>
+			</form>
+		
+			
+			
+		</ui:define>
+</ui:composition>
+

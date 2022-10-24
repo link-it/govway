@@ -3,7 +3,7 @@
 Esito di una Transazione
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-La tabella che segue riporta tutti gli esiti associabili ad una transazione gestita da Govway, così come indicati nel file di properties del prodotto `esiti.properties <https://github.com/link-it/govway/blob/master/core/src/org/openspcoop2/protocol/utils/esiti.properties>`_:
+La tabella che segue riporta tutti gli esiti associabili ad una transazione gestita da Govway, così come indicati nel file di properties del prodotto `esiti.properties <https://github.com/link-it/govway/blob/master/core/src/org/openspcoop2/protocol/utils/esiti.properties>`_. Le informazioni definite all'interno del file di proprietà sono disponibili anche nelle tabelle 'transazioni_esiti' e 'transazioni_classe_esiti' dello schema di tracciamento.
 
 .. table:: Esiti delle Transazioni
  :class: longtable

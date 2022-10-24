@@ -587,7 +587,9 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 	                        } else {
 	                            requestType = CORSRequestType.ACTUAL;
 	                        }
-	                    }
+	                    }else {
+                            requestType = CORSRequestType.ACTUAL; // verificato anche con test-cors che questo caso viene considerato come actual
+                        }
 	                } else {
 	                    requestType = CORSRequestType.ACTUAL;
 	                }
