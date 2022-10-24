@@ -374,6 +374,52 @@
 			<param name="value" value="${log_dir}"/>
 		</antcall>
 	
+
+		<if>
+			<equals arg1="${antinstaller_batch_system_out}" arg2="true" />
+			<then>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="#logger.govway_batch_statistiche_orarie_generazione.appenderRef.stdout.ref"/>
+					<param name="value" value="logger.govway_batch_statistiche_orarie_generazione.appenderRef.stdout.ref"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="#logger.govway_batch_statistiche_orarie_generazione_error.appenderRef.stdout.ref"/>
+					<param name="value" value="logger.govway_batch_statistiche_orarie_generazione_error.appenderRef.stdout.ref"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="#logger.govway_batch_statistiche_giornaliere_generazione.appenderRef.stdout.ref"/>
+					<param name="value" value="logger.govway_batch_statistiche_giornaliere_generazione.appenderRef.stdout.ref"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="#logger.govway_batch_statistiche_giornaliere_generazione_error.appenderRef.stdout.ref"/>
+					<param name="value" value="logger.govway_batch_statistiche_giornaliere_generazione_error.appenderRef.stdout.ref"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="#logger.govway_batch_statistiche_settimanali_generazione.appenderRef.stdout.ref"/>
+					<param name="value" value="logger.govway_batch_statistiche_settimanali_generazione.appenderRef.stdout.ref"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="#logger.govway_batch_statistiche_settimanali_generazione_error.appenderRef.stdout.ref"/>
+					<param name="value" value="logger.govway_batch_statistiche_settimanali_generazione_error.appenderRef.stdout.ref"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="#logger.govway_batch_statistiche_mensili_generazione.appenderRef.stdout.ref"/>
+					<param name="value" value="logger.govway_batch_statistiche_mensili_generazione.appenderRef.stdout.ref"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="#logger.govway_batch_statistiche_mensili_generazione_error.appenderRef.stdout.ref"/>
+					<param name="value" value="logger.govway_batch_statistiche_mensili_generazione_error.appenderRef.stdout.ref"/>
+				</antcall>
+			</then>
+		</if>
 	</target>
 		
 </project>

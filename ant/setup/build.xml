@@ -93,8 +93,9 @@
 			antinstaller_stats_db=runtime/log/stats
 			antinstaller_index_statistiche=standard/full
 			antinstaller_console_env=runtime/manager
-			antinstaller_stats_env=runtime/batch
+			antinstaller_stats_env=runtime/batch/runtime_batchPrepared
 			antinstaller_batch_dir=
+			antinstaller_batch_system_out=
 			antinstaller_gestione_nodi=static/dynamic
 
 		Informazioni DataSource
@@ -2518,7 +2519,10 @@
 	<target name="setup_batchStatistiche" depends="_setup_batchStatistiche"/>
 	<target name="_setup_batchStatistiche">
 		<if>
-			<equals arg1="${antinstaller_stats_env}" arg2="batch"/>
+			<or>
+				<equals arg1="${antinstaller_stats_env}" arg2="batch"/>
+				<equals arg1="${antinstaller_stats_env}" arg2="runtime_batchPrepared"/>
+			</or>
 			<then>
 				<mkdir dir="${tmp_batch}" /> 
 				<copy todir="${tmp_batch}/generatoreStatistiche">

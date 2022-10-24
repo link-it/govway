@@ -162,7 +162,19 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 			</else>
 		</if>
 
-		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-009:Gestione dei Nodi:antinstaller_gestione_nodi', '@VALORE@');
+		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-009:Batch logs su SystemOut:antinstaller_batch_system_out', '@VALORE@');
+</concat>
+		<if>
+			<equals arg1="${antinstaller_batch_system_out}" arg2=""/>
+			<then>
+				<replace file="${fileSqlProps}" token="@VALORE@" value="N.D."/>
+			</then>
+			<else>
+				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_batch_system_out}"/>
+			</else>
+		</if>
+
+		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-010:Gestione dei Nodi:antinstaller_gestione_nodi', '@VALORE@');
 </concat>
 		<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_gestione_nodi}"/>
 
@@ -170,7 +182,7 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 			<equals arg1="${antinstaller_gestione_nodi}" arg2="dynamic"/>
 			<then>
 
-				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-010:Gestione dei Nodi - GroupId:antinstaller_gestione_nodi_group_id', '@VALORE@');
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-011:Gestione dei Nodi - GroupId:antinstaller_gestione_nodi_group_id', '@VALORE@');
 </concat>
 				<if>
 					<equals arg1="${antinstaller_gestione_nodi_group_id}" arg2=""/>
@@ -182,11 +194,11 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 					</else>
 				</if>
 
-				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-011:Gestione dei Nodi - Id Gestione:antinstaller_gestione_nodi_numeric_id_mode', '@VALORE@');
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-012:Gestione dei Nodi - Id Gestione:antinstaller_gestione_nodi_numeric_id_mode', '@VALORE@');
 </concat>
 				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_gestione_nodi_numeric_id_mode}"/>
 
-				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-012:Gestione dei Nodi - Id Valore:antinstaller_gestione_nodi_numeric_id_cifre', '@VALORE@');
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-013:Gestione dei Nodi - Id Valore:antinstaller_gestione_nodi_numeric_id_cifre', '@VALORE@');
 </concat>
 				<if>
 					<equals arg1="${antinstaller_gestione_nodi_numeric_id_cifre}" arg2=""/>
@@ -198,7 +210,7 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 					</else>
 				</if>
 
-				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-013:Gestione dei Nodi - Servizio Check Url:antinstaller_gestione_nodi_check_url', '@VALORE@');
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-014:Gestione dei Nodi - Servizio Check Url:antinstaller_gestione_nodi_check_url', '@VALORE@');
 </concat>
 				<if>
 					<equals arg1="${antinstaller_gestione_nodi_check_url}" arg2=""/>
@@ -210,7 +222,7 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 					</else>
 				</if>
 
-				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-014:Gestione dei Nodi - Servizio Check Username:antinstaller_gestione_nodi_check_username', '@VALORE@');
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-015:Gestione dei Nodi - Servizio Check Username:antinstaller_gestione_nodi_check_username', '@VALORE@');
 </concat>
 				<if>
 					<equals arg1="${antinstaller_gestione_nodi_check_username}" arg2=""/>
@@ -222,7 +234,7 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 					</else>
 				</if>
 
-				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-015:Gestione dei Nodi - Servizio Check Password:antinstaller_gestione_nodi_check_password', '@VALORE@');
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-016:Gestione dei Nodi - Servizio Check Password:antinstaller_gestione_nodi_check_password', '@VALORE@');
 </concat>
 				<if>
 					<equals arg1="${antinstaller_gestione_nodi_check_password}" arg2=""/>
@@ -234,7 +246,7 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 					</else>
 				</if>
 
-				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-016:Gestione dei Nodi - Servizio Proxy Url:antinstaller_gestione_nodi_proxy_url', '@VALORE@');
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-017:Gestione dei Nodi - Servizio Proxy Url:antinstaller_gestione_nodi_proxy_url', '@VALORE@');
 </concat>
 				<if>
 					<equals arg1="${antinstaller_gestione_nodi_proxy_url}" arg2=""/>
@@ -246,7 +258,7 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 					</else>
 				</if>
 
-				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-017:Gestione dei Nodi - Servizio Proxy Username:antinstaller_gestione_nodi_proxy_username', '@VALORE@');
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-018:Gestione dei Nodi - Servizio Proxy Username:antinstaller_gestione_nodi_proxy_username', '@VALORE@');
 </concat>
 				<if>
 					<equals arg1="${antinstaller_gestione_nodi_proxy_username}" arg2=""/>
@@ -258,7 +270,7 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 					</else>
 				</if>
 
-				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-018:Gestione dei Nodi - Servizio Proxy Password:antinstaller_gestione_nodi_proxy_password', '@VALORE@');
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '003-019:Gestione dei Nodi - Servizio Proxy Password:antinstaller_gestione_nodi_proxy_password', '@VALORE@');
 </concat>
 				<if>
 					<equals arg1="${antinstaller_gestione_nodi_proxy_password}" arg2=""/>

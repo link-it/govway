@@ -60,6 +60,7 @@
 	<hidden property="antinstaller_gestione_nodi_proxy_password" value=""/>
 
 	<hidden property="antinstaller_batch_dir" value=""/>
+	<hidden property="antinstaller_batch_system_out" value=""/>
 
     </page>
 
@@ -273,6 +274,7 @@
 	<large-select defaultValue="runtime" property="antinstaller_stats_env" displayText="Generazione delle Statistiche">
             <option value="runtime" text="Utilizza stesso ambiente del Runtime"/>
 	    <option value="batch" text="Generazione tramite Applicazione Batch"/>
+            <option value="runtime_batchPrepared" text="Utilizza Runtime, predispone Batch"/>
         </large-select>
 	<large-select defaultValue="statica" property="antinstaller_gestione_nodi" displayText="Gestione dei Nodi">
             <option value="static" text="Statica"/>
@@ -281,6 +283,7 @@
 
 	<!-- Utilizzabile su sistemi di provisioning avanzati -->
 	<hidden property="antinstaller_batch_dir" value=""/>
+	<hidden property="antinstaller_batch_system_out" value=""/>
 
     </page>
 
@@ -317,6 +320,7 @@
 	<large-select defaultValue="runtime" property="antinstaller_stats_env" displayText="Generazione delle Statistiche">
             <option value="runtime" text="Utilizza stesso ambiente del Runtime"/>
 	    <option value="batch" text="Generazione tramite Applicazione Batch"/>
+            <option value="runtime_batchPrepared" text="Utilizza Runtime, predispone Batch"/>
         </large-select>
 	<large-select defaultValue="statica" property="antinstaller_gestione_nodi" displayText="Gestione dei Nodi">
             <option value="static" text="Statica"/>
@@ -325,6 +329,7 @@
 
 	<!-- Utilizzabile su sistemi di provisioning avanzati -->
 	<hidden property="antinstaller_batch_dir" value=""/>
+	<hidden property="antinstaller_batch_system_out" value=""/>
 
     </page>
 
