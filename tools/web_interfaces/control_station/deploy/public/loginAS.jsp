@@ -289,8 +289,5 @@ $(document).ready(function(){
 		</tbody>
 	</table>
 </body>
-<<<<<<< Updated upstream
- </html>
-=======
- </html>
->>>>>>> Stashed changes
+</html>
+ 

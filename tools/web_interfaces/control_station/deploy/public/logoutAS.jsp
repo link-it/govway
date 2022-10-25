@@ -289,5 +289,5 @@ $(document).ready(function(){
 		</tbody>
 	</table>
 </body>
- </html>
+</html>
 
