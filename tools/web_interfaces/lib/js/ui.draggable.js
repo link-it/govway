@@ -571,7 +571,7 @@ $.ui.plugin.add("draggable", "iframeFix", {
 	start: function(event, ui) {
 		var o = $(this).data('draggable').options;
 		$(o.iframeFix === true ? "iframe" : o.iframeFix).each(function() {
-			$('<div class="ui-draggable-iframeFix" style="background: #fff;"></div>')
+			$('<div class="ui-draggable-iframeFix ui-draggable-iframeFix-cspFix"></div>')
 			.css({
 				width: this.offsetWidth+"px", height: this.offsetHeight+"px",
 				position: "absolute", opacity: "0.001", zIndex: 1000

@@ -26,6 +26,7 @@ String params = (String) request.getAttribute(Costanti.PARAMETER_NAME_PARAMS);
 if(params == null) params="";
 GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, Costanti.SESSION_ATTRIBUTE_GENERAL_DATA);
 PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, Costanti.SESSION_ATTRIBUTE_PAGE_DATA);
+String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 
 String message = pd.getMessage();
 String messageType = pd.getMessageType();
@@ -179,7 +180,7 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
 		</div>
 	<% } %>	
 </div>
-<script>
+<script type="text/javascript" nonce="<%= randomNonce %>">
 var idModal = '#'+ '<%= idFinestraModale %>';
 if($( idModal ).length > 0){
 		$( idModal ).dialog({

@@ -39,6 +39,7 @@ else
   iddati = "notdefined";
 GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
 PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
+String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 String showListInfos = request.getParameter("showListInfos");
 Vector<?> v = pd.getDati();
 
@@ -50,7 +51,7 @@ boolean mostraLinkHome = pd.isMostraLinkHome();
 Vector<GeneralLink> titlelist = pd.getTitleList();
 String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
-<table style="width:100%;">
+<table id="crumbs-table">
 	<tbody>
 		<tr>
 			<td colspan="2">
@@ -68,9 +69,19 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 						    	if (i != titlelist.size()-1) {
 					        		if (!l.getUrl().equals("")) {
 					        		  l.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
+					        		  String id = "crumbs_link_" + i;
 							          //non ultimo con url
 							          %>
-							         	<li><a href="<%= l.getUrl() %>" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;"><span><%= l.getLabel() %></span></a></li>
+							         	<li>
+							         		<a id="<%=id %>" href="<%= l.getUrl() %>"><span><%= l.getLabel() %></span></a>
+							         		<script type="text/javascript" nonce="<%= randomNonce %>">
+										      	 $(document).ready(function(){
+														$('#<%=id %>').click(function() {
+															<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS%>return true;
+														});
+													});
+											</script>
+							         	</li>
 							         <%
 							        } else {
 							          //non ultimo ma senza url
@@ -127,7 +138,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 		if (!message.equals("") && !messageType.equals(MessageType.CONFIRM.toString()) && !messageType.equals(MessageType.DIALOG.toString())) {
 		  %>
 		  	<tr>
-				<td style="width: 50%;">
+				<td class="messages-td1">
 		  			<div class="messages-<%=messageType %>">
 			  			<div class="messages-title">
 			  				<span class="messages-<%=messageType %>-title-icon">&nbsp;&nbsp;</span>
@@ -159,7 +170,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 							%>
 		  			</div>
 		  		</td>
-		  		<td style="width: 50%;">
+		  		<td class="messages-td2">
 		  			&nbsp;&nbsp;
 		  		</td>
 			</tr>

@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Vector;
 
 import javax.servlet.http.Cookie;
@@ -801,8 +802,9 @@ public class ServletUtils {
 	}
 	
 	public static void generaESalvaTokenCSRF(HttpServletRequest request, HttpSession session) {
-		String tabId = (String) request.getAttribute(Costanti.PARAMETER_TAB_KEY);
-		String nuovoToken = generaTokenCSRF(tabId);
+//		String tabId = (String) request.getAttribute(Costanti.PARAMETER_TAB_KEY);
+		String uuId = UUID.randomUUID().toString().replace("-", ""); 
+		String nuovoToken = generaTokenCSRF(uuId);
 		setObjectIntoSession(request, session, nuovoToken, Costanti.SESSION_ATTRIBUTE_CSRF_TOKEN);
 	}
 

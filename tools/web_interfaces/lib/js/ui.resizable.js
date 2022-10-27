@@ -36,7 +36,7 @@ $.widget("ui.resizable", $.extend({}, $.ui.mouse, {
 
 			//Create a wrapper element and set the wrapper to the new current internal element
 			this.element.wrap(
-				$('<div class="ui-wrapper" style="overflow: hidden;"></div>').css({
+				$('<div class="ui-wrapper ui-resizable-ui-wrapper-cspFix"></div>').css({
 					position: this.element.css('position'),
 					width: this.element.outerWidth(),
 					height: this.element.outerHeight(),
@@ -423,7 +423,7 @@ $.widget("ui.resizable", $.extend({}, $.ui.mouse, {
 
 		if(this._helper) {
 
-			this.helper = this.helper || $('<div style="overflow:hidden;"></div>');
+			this.helper = this.helper || $('<div class="ui-resizable-ui-wrapper-cspFix"></div>');
 
 			// fix ie6 offset TODO: This seems broken
 			var ie6 = $.browser.msie && $.browser.version < 7, ie6offset = (ie6 ? 1 : 0),

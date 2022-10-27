@@ -42,6 +42,7 @@ PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class
 String customListViewName = pd.getCustomListViewName();
 boolean includiMenuLateraleSx = pd.isIncludiMenuLateraleSx();
 String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
+String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 %>
 
 <head>
@@ -52,38 +53,38 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 <link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
 <link rel="stylesheet" href="css/materialIcons.css" type="text/css">
 <!-- JQuery lib-->
-<script type="text/javascript" src="js/jquery-1.4.js"></script>
+<script type="text/javascript" src="js/jquery-1.4.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
-<script type="text/javascript" src="js/webapps.js"></script>
+<script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
 <!--Funzioni di utilita -->
-<script type="text/javascript">
+<script type="text/javascript" nonce="<%= randomNonce %>">
 var iddati = '<%= iddati %>';
 var params = '<%= params %>';
 var path = '<%= request.getContextPath()%>';
 </script>
-<script type="text/javascript" src="js/PostBack.js"></script>
-<script type="text/javascript" src="js/utils.js"></script>
-<style type="text/css">@import url(css/ui.datepicker.css);</style>
-<script type="text/javascript" src="js/ui.datepicker.js"></script>
-<script type="text/javascript" src="js/ui.datepicker-it.js"></script>
-<script type="text/javascript" src="js/jquery.placement.below.js"></script>
-<style type="text/css">@import url(css/time-picker.css);</style>
-<script type="text/javascript" src="js/jquery.timepicker-table.js"></script>
-<style type="text/css">@import url(css/ui.core.css);</style>
-<style type="text/css">@import url(css/ui.theme.css);</style>
-<style type="text/css">@import url(css/ui.dialog.css);</style>
-<style type="text/css">@import url(css/ui.slider.css);</style>
-<script type="text/javascript" src="js/ui.core.js"></script>
-<script type="text/javascript" src="js/ui.dialog.js"></script>
-<script type="text/javascript" src="js/ui.slider.js"></script>
-<style type="text/css">@import url(css/bootstrap-tagsinput.css);</style>
-<script type="text/javascript" src="js/jquery-on.js"></script>
-<script type="text/javascript" src="js/jquery-promises.js"></script>
-<script type="text/javascript" src="js/typeahead.bundle.js"></script>
-<script type="text/javascript" src="js/bootstrap-tagsinput.js"></script>
-<script type="text/javascript" src="js/jquery.searchabledropdown-1.0.8.min.js"></script>
-<script type="text/javascript" src="js/jquery.context-menu.min.js"></script>
-<script>
+<script type="text/javascript" src="js/PostBack.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/utils.js" nonce="<%= randomNonce %>"></script>
+<link rel="stylesheet" href="css/ui.datepicker.css" type="text/css">
+<script type="text/javascript" src="js/ui.datepicker.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/ui.datepicker-it.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/jquery.placement.below.js" nonce="<%= randomNonce %>"></script>
+<link rel="stylesheet" href="css/time-picker.css" type="text/css">
+<script type="text/javascript" src="js/jquery.timepicker-table.js" nonce="<%= randomNonce %>"></script>
+<link rel="stylesheet" href="css/ui.core.css" type="text/css">
+<link rel="stylesheet" href="css/ui.theme.css" type="text/css">
+<link rel="stylesheet" href="css/ui.dialog.css" type="text/css">
+<link rel="stylesheet" href="css/ui.slider.css" type="text/css">
+<script type="text/javascript" src="js/ui.core.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/ui.dialog.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/ui.slider.js" nonce="<%= randomNonce %>"></script>
+<link rel="stylesheet" href="css/bootstrap-tagsinput.css" type="text/css">
+<script type="text/javascript" src="js/jquery-on.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/jquery-promises.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/typeahead.bundle.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/bootstrap-tagsinput.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/jquery.searchabledropdown-1.0.8.min.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/jquery.context-menu.min.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" nonce="<%= randomNonce %>">
 var nr = 0;
 function CheckDati() {
   if (nr != 0) {
@@ -115,7 +116,7 @@ function CheckDati() {
 };
 
 </script>
-<script type="text/javascript">
+<script type="text/javascript" nonce="<%= randomNonce %>">
 	function customInputNumberChangeEventHandler(e){
 		
 		if (e.target.value == '') {
@@ -333,8 +334,13 @@ function CheckDati() {
 <jsp:include page="/jsp/addElementCustom.jsp" flush="true" />
 <jsp:include page="/jsplib/menuUtente.jsp" flush="true" />
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+<script type="text/javascript" nonce="<%= randomNonce %>">
+$(document).ready(function(){
+	focusText(document.form);
+});
+</script>
 </head>
-<body marginwidth=0 marginheight=0 onLoad="focusText(document.form);">
+<body marginwidth=0 marginheight=0>
 <table class="bodyWrapper">
 	<tbody>
 		<jsp:include page="/jsplib/templateHeader.jsp" flush="true" />

@@ -16,6 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
-
-<script type="text/javascript">
+<%@page import="org.openspcoop2.web.lib.mvc.Costanti"%>
+<% 
+String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE); 
+%>
+<script type="text/javascript" nonce="<%= randomNonce %>">
 </script>

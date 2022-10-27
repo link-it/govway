@@ -368,4 +368,9 @@ public class Costanti {
 	
 	public final static String SA_TIPO_DEFAULT_VALUE = "clientORserver";	
 	
+	/* CSP */
+	public static final String HEADER_NAME_CSP = "Content-Security-Policy";
+	public static final String HEADER_NAME_CSP_REPORT_ONLY = "Content-Security-Policy-Report-Only";
+	public static final String REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE = "_csp_random_nonce";
+	public static final String HEADER_CSP_VALUE = "default-src ''none''; script-src ''nonce-{0}'' ''strict-dynamic''; connect-src ''self''; img-src ''self''; style-src ''self'' ''nonce-{1}''; font-src ''self''; frame-ancestors ''self''; form-action ''self'';";
 }

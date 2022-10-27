@@ -43,6 +43,7 @@ else
   iddati = "notdefined";
 GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
 PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
+String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 %>
 
 <%
@@ -189,7 +190,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 										}
 									}
 					                %>
-				   					<script type="text/javascript">
+				   					<script type="text/javascript" nonce="<%= randomNonce %>">
 										if($("#<%=idSpanMenu %>").length>0){
 											// create context menu
 								            var contextMenu_<%=numeroEntry %> = $('#<%=idSpanMenu %>').contextMenu();
@@ -397,7 +398,7 @@ for (int i = 0; i < dati.size(); i++) {
 	    							if(gestioneAperturaFieldset){
 	    						%>
 	    							<span class="<%=cssClassTitle %>">
-	    								<i class="material-icons md-16" id="<%= deName  %>__icon" style="" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%></i>
+	    								<i class="material-icons md-16" id="<%= deName  %>__icon" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%></i>
 	    							</span>
 	    						<%
 	    							}
@@ -407,7 +408,7 @@ for (int i = 0; i < dati.size(); i++) {
 	    						<%
 	    							if(gestioneAperturaFieldset){
 	    						%>
-	    							<script type="text/javascript">
+	    							<script type="text/javascript" nonce="<%= randomNonce %>">
 			        					$(document).ready(function() {
        									<%
        										boolean sub = de.isVisualizzaSezioneAperta();
@@ -513,7 +514,7 @@ for (int i = 0; i < dati.size(); i++) {
 	  						%>
 	    				<span class="subtitleGroup">
 	       					<span class="subtitleAnchor">
-	       						<i class="material-icons md-16" id="<%= deName  %>__icon" style="" title="<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>"><%= Costanti.ICON_VISUALIZZA_SUBTITLE%></i>
+	       						<i class="material-icons md-16" id="<%= deName  %>__icon" title="<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>"><%= Costanti.ICON_VISUALIZZA_SUBTITLE%></i>
 	       					</span>
 	       					<a id="<%= deName  %>__anchor" name="<%=rowName %>" class="<%=cssClassTitle %>" <%=titoloComandoApertura %>"><%=deLabel %></a>
 	       				</span>
@@ -529,7 +530,7 @@ for (int i = 0; i < dati.size(); i++) {
 						<%
 							if(gestioneAperturaSubTitle){
 						%>
-	        			<script type="text/javascript">
+	        			<script type="text/javascript" nonce="<%= randomNonce %>">
 	       					$(document).ready(function() {
 							<%
 								boolean sub = de.isVisualizzaSezioneAperta();
@@ -622,7 +623,6 @@ for (int i = 0; i < dati.size(); i++) {
 	        		} else { // else note
 	        			if (type.equals("link")){
 	        				String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
-	        				String selEvtOnClick = !de.getOnClick().equals("") ? (" onClick=\"" + visualizzaAjaxStatus + de.getOnClick() + "\" " ) : " ";
 	        				String deLabelLink = !de.getLabelLink().equals("") ? de.getLabelLink() : "&nbsp;";
 	        				classSpanNoEdit = de.getStyleClass(); // gestione override classe di default 24/03/2021
 	        				
@@ -634,11 +634,21 @@ for (int i = 0; i < dati.size(); i++) {
 							if (!de.getUrl().equals("")) {
 								de.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
 							}
+							String id = "form-link_" + i ;
 	        				%>
 	            			<div class="prop prop-link">
 	            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabelLink %></label>
 	            				<div class="<%=classDivNoEdit %>"> 
-	            					<span class="<%=classSpanNoEdit %>"><a href="<%= de.getUrl() %>" <%= selEvtOnClick %> <%=deTarget %> ><%= de.getValue() %></a></span>
+	            					<span class="<%=classSpanNoEdit %>"><a id="<%=id %>" href="<%= de.getUrl() %>" <%=deTarget %> ><%= de.getValue() %></a></span>
+	            					<% if (!de.getOnClick().equals("")) { %>
+		            					<script type="text/javascript" nonce="<%= randomNonce %>">
+									      	 $(document).ready(function(){
+													$('#<%=id %>').click(function() {
+														<%= visualizzaAjaxStatus %><%= de.getOnClick() %>;
+													});
+												});
+										</script>
+									<%  } %>
 	            				</div>
 	            				<% 
 						      		if(deInfo != null){
@@ -682,19 +692,24 @@ for (int i = 0; i < dati.size(); i++) {
 										  			
 											  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 											  		
-											  		String onClick = "";
-											  		if (!image.getOnClick().equals("")) {
-											  			onClick = " onClick=\"" + visualizzaAjaxStatus  + "postVersion_" + image.getOnClick() + "\"";
-													  }
-											  		
 											  		if (!image.getUrl().equals("")) {
 											  			image.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
 													}
+											  		String id = "form-image-link_" + i + "_" + idxLink;
 			                					%>
-			                					<a class="text-action-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" <%=onClick %> >
+			                					<a id="<%=id %>" class="text-action-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" >
 			                						<span class="icon-box">
 														<i class="material-icons md-16"><%= deIconName %></i>
 													</span>
+													<% if (!image.getOnClick().equals("")) { %>
+						            					<script type="text/javascript" nonce="<%= randomNonce %>">
+													      	 $(document).ready(function(){
+																	$('#<%=id %>').click(function() {
+																		<%= visualizzaAjaxStatus %>"postVersion_"<%= image.getOnClick() %>;
+																	});
+																});
+														</script>
+													<%  } %>
 			                					</a>
 			                				<%
 												}// end for-edit-link
@@ -728,7 +743,7 @@ for (int i = 0; i < dati.size(); i++) {
 								      				boolean multiColors = de.getDataAttributes().containsKey("colors");
 								      				
 								      				%>
-								      					<script type="text/javascript">
+								      					<script type="text/javascript" nonce="<%= randomNonce %>">
 								      					
 								      						<% 
 									      						if (values != null) {
@@ -913,8 +928,9 @@ for (int i = 0; i < dati.size(); i++) {
 											      		<% 
 									      				if(bottoneGeneraPassword){
 									      					PasswordGenerator pwdGen = dePwd.getPasswordGenerator();
+									      					String id = "form-gen-pass-link_" + i;
 									      				%>
-									      					<script type="text/javascript">
+									      					<script type="text/javascript" nonce="<%= randomNonce %>">
 									      						var pwdGenerate_<%= deName %>_idx = 0;
 									      						var pwdGenerate_<%= deName %> = [];
 									      					
@@ -934,8 +950,14 @@ for (int i = 0; i < dati.size(); i++) {
 									      						}
 									      					</script>
 									      					<span class="spanButtonGeneraBox">
-								      							<input class="buttonGeneraPassword" type="button" title="<%=dePwd.getTooltipButtonGeneraPassword() %>"
-								      								onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>generaPwd(<%= deName  %>);<%= Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>" value="<%=dePwd.getLabelButtonGeneraPassword() %>">
+								      							<input id="<%=id %>" class="buttonGeneraPassword" type="button" title="<%=dePwd.getTooltipButtonGeneraPassword() %>" value="<%=dePwd.getLabelButtonGeneraPassword() %>">
+								      							<script type="text/javascript" nonce="<%= randomNonce %>">
+															      	 $(document).ready(function(){
+																			$('#<%=id %>').click(function() {
+																				<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>generaPwd(<%= deName  %>);<%= Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>;
+																			});
+																		});
+																</script>
 									      					</span>
 									      				<% } %>	
 											      		<% 
@@ -998,13 +1020,21 @@ for (int i = 0; i < dati.size(); i++) {
 		                            		} else { // else textarea || textarea-noedit
 		                            			if (type.equals("button")){
 		                            				String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+		                            				String id = "form-btn-link_" + i;
 		                            				%>
 		                                			<div class="prop">
 		                                				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
-		                                				<input type="button" onClick="<%= visualizzaAjaxStatus %><%= de.getOnClick() %>" value="<%= de.getValue() %>">
+		                                				<input id="<%=id %>" type="button" value="<%= de.getValue() %>">
 		                                				<% if(!deNote.equals("")){ %>
 									      					<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 									      				<% } %>
+									      				<script type="text/javascript" nonce="<%= randomNonce %>">
+													      	 $(document).ready(function(){
+																	$('#<%=id %>').click(function() {
+																		<%= visualizzaAjaxStatus %><%= de.getOnClick() %>;
+																	});
+																});
+														</script>
 		                                			</div>
 		                                			<%
 		                                		} else { // else button
@@ -1014,6 +1044,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                                					multipleFiles = " multiple ";
 		                                				}
 		                                				
+		                                				String id = "form-file_" + i;
 		                                				%>
 		                                    			<div class="prop">
 		                                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
@@ -1023,13 +1054,20 @@ for (int i = 0; i < dati.size(); i++) {
 		                                    	            	%> 
 		                                    	            	<div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%=fileValue %></span></div><%
 		                                    	      		} else {
-		                                    	          		%><input size='<%= de.getSize() %>' type=file name="<%= deName  %>" class="<%= classInput %>"  <%= multipleFiles  %> 
-											  	<%
-												  if (!de.getOnChange().equals("")) {
-													  	String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
-													    %> onChange="<%= visualizzaAjaxStatus %>postVersion_<%= de.getOnChange() %>"<%
-													  }
-													  %>  	/><%
+		                                    	          		%><input id="<%=id %>" size='<%= de.getSize() %>' type=file name="<%= deName  %>" class="<%= classInput %>"  <%= multipleFiles  %> />
+													  		<% if(!de.getOnChange().equals("")){ 
+													  			String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+													  			String changeHandler = visualizzaAjaxStatus + "postVersion_" + de.getOnChange();
+													  		%>
+												      		<script type="text/javascript" nonce="<%= randomNonce %>">
+																$(document).ready(function(){
+																	$('#<%= id  %>').change(function() {
+																		<%=changeHandler%>
+																	});
+																});
+															</script>
+															<% } %>
+													  <%
 													      		if(deInfo != null){
 													      			String idDivIconInfo = "divIconInfo_"+i;
 													      			String idIconInfo = "iconInfo_"+i; 
@@ -1059,10 +1097,9 @@ for (int i = 0; i < dati.size(); i++) {
 		                                      						%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%= selValNoEdit %></span></div><%
 		                               							} else {
 		                               								String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
-		                               								String selEvtOnChange = !de.getOnChange().equals("") ? (" onChange=\"" + visualizzaAjaxStatus + de.getOnChange() + "\" " ) : " ";
 																	String selTitle = (de.getToolTip()!=null && !de.getToolTip().equals("")) ? ("title='"+de.getToolTip()+"'") : " ";
 		                               								String selId = "select_" + i;
-		                          									%><select id="<%= selId  %>" name="<%= deName  %>" <%= selEvtOnChange %> <%= selTitle %> class="<%= classInput %>"><%
+		                          									%><select id="<%= selId  %>" name="<%= deName  %>" <%= selTitle %> class="<%= classInput %>"><%
 		                          									String [] values = de.getValues();
 		                                        					if (values != null) {
 		                            									String [] labels = de.getLabels();
@@ -1077,8 +1114,19 @@ for (int i = 0; i < dati.size(); i++) {
 		                            									} //end for values
 		                                        					}
 		                          									%></select>
+		                          									<% if(!de.getOnChange().equals("")){ 
+																  			String changeHandler = visualizzaAjaxStatus + de.getOnChange();
+																  		%>
+															      		<script type="text/javascript" nonce="<%= randomNonce %>">
+																			$(document).ready(function(){
+																				$('#<%= selId  %>').change(function() {
+																					<%=changeHandler%>
+																				});
+																			});
+																		</script>
+																		<% } %>
 		                          									
-		                          									<script>
+		                          									<script type="text/javascript" nonce="<%= randomNonce %>">
 			                          									$(document).ready(function() {
 			                          									<%
 			                          										String abilitaSearch = "false";
@@ -1127,10 +1175,9 @@ for (int i = 0; i < dati.size(); i++) {
 			                               							} else {
 			                               							 	String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 			                               								String selSize = " size='"+de.getRows()+"' ";
-			                               								String selEvtOnChange = !de.getOnChange().equals("") ? (" onChange=\"" + visualizzaAjaxStatus + de.getOnChange() + "\" " ) : " ";
 			                               								String selDataAttributes = !de.getDataAttributesAsString().equals("") ? de.getDataAttributesAsString() : " ";
-			                               								
-			                          									%><select name="<%= deName  %>" <%= selSize %> <%= selEvtOnChange %> class="<%= classInput %>" multiple <%= selDataAttributes %> ><%
+			                               								String selId = "select_" + i;
+			                          									%><select id="<%= selId  %>" name="<%= deName  %>" <%= selSize %> class="<%= classInput %>" multiple <%= selDataAttributes %> ><%
 			                          									String [] values = de.getValues();
 			                                        					if (values != null) {
 			                            									String [] labels = de.getLabels();
@@ -1145,11 +1192,22 @@ for (int i = 0; i < dati.size(); i++) {
 			                            									} //end for values
 			                                        					}
 			                          									%></select>
+			                          									<% if(!de.getOnChange().equals("")){ 
+																  			String changeHandler = visualizzaAjaxStatus + de.getOnChange();
+																  		%>
+															      		<script type="text/javascript" nonce="<%= randomNonce %>">
+																			$(document).ready(function(){
+																				$('#<%= selId  %>').change(function() {
+																					<%=changeHandler%>
+																				});
+																			});
+																		</script>
+																		<% } %>
 			                          									<%
 															      			if(!de.getDataAttributesAsString().equals("")){
 															      				boolean multiColors = de.getDataAttributes().containsKey("colors");
 															      				%>
-															      					<script type="text/javascript">
+															      					<script type="text/javascript" nonce="<%= randomNonce %>">
 															      					 /**
 																      				   * Initialize tagsinput behaviour on inputs and selects which have
 																      				   * data-role=tagsinput
@@ -1201,8 +1259,8 @@ for (int i = 0; i < dati.size(); i++) {
 			                                            			<div class="prop">
 			                                            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
 			                                            				<%
+			                                            				String id = "form-checkbox-link_" + i;
 			                                            				String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
-								    									String chkEvtOnClick = !de.getOnClick().equals("") ? (" onClick=\"" + visualizzaAjaxStatus + de.getOnClick() + "\" ") :" ";
 								    									String chkVal = de.getSelected().equals("yes") ? " checked='true' " : " ";
 								    									String disVal = pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton") ? "disabled=\"disabled\"" : "";
 								    									String controlSetClass = deInfo != null ? "controlset-cb-info" : "controlset";
@@ -1215,7 +1273,16 @@ for (int i = 0; i < dati.size(); i++) {
 								    									%>	<table class="<%=controlSetClass %>">
 						    													<tr> 
 						    														<td>
-								   														<input type="checkbox" name="<%= deName  %>" value="yes" <%=chkVal %> <%=chkEvtOnClick %> <%=disVal %> >
+								   														<input id="<%=id %>" type="checkbox" name="<%= deName  %>" value="yes" <%=chkVal %> <%=disVal %> >
+								   														<% if (!de.getOnClick().equals("")) { %>
+															            					<script type="text/javascript" nonce="<%= randomNonce %>">
+																						      	 $(document).ready(function(){
+																										$('#<%=id %>').click(function() {
+																											<%= visualizzaAjaxStatus %><%= de.getOnClick() %>;
+																										});
+																									});
+																							</script>
+																						<%  } %>
 								   													</td>
 								   													<% if(!de.getLabelRight().equals("")){ %>
 								   													<td>
@@ -1382,7 +1449,14 @@ if (visualizzaBottoneLogin) {
 	  %><tr class="buttonrow">
 		  <td colspan="2">
 		  	<div class="buttonrowform">
-				<input type=submit onClick='<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS%>CheckDati();return false;' value="Login" />
+				<input id="loginBtn" type="submit" value="Login"/>
+				<script type="text/javascript" nonce="<%= randomNonce %>">
+					$(document).ready(function(){
+						$('#loginBtn').click(function() {
+							<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS%>CheckDati();return false;
+						});
+					});
+				</script>
 			</div>
 		  </td>
 	  </tr>
@@ -1396,10 +1470,27 @@ if (pd.getMode().equals("view")) {
 			  String [][] bottoni = pd.getBottoni();
 			  if ((bottoni != null) && (bottoni.length > 0)) {
 			    for (int i = 0; i < bottoni.length; i++) {
-			      %><input type=button onClick="<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS%><%= bottoni[i][1] %>" value="<%= bottoni[i][0] %>"/>&nbsp;<%
+			    	String id = "azioneBtn_" + i;
+			      %><input id="<%=id %>" type="button" value="<%= bottoni[i][0] %>"/>&nbsp;
+			      	<script type="text/javascript" nonce="<%= randomNonce %>">
+				      	 $(document).ready(function(){
+								$('#<%=id %>').click(function() {
+									<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS%><%= bottoni[i][1] %>
+								});
+							});
+					</script>
+			      <%
 			    }
 			  } else {
-			    %><input type=button onClick="<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS%>EditPage();" value="Modifica" /><%
+			    %><input id="azioneBtn" type="button" value="Modifica" />
+			      <script type="text/javascript" nonce="<%= randomNonce %>">
+				      $(document).ready(function(){
+							$('#azioneBtn').click(function() {
+								<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS%>EditPage();
+							});
+						});
+				  </script>
+			    <%
 			  }
 		  %></div>
 	  </td>
@@ -1411,18 +1502,34 @@ if (pd.getMode().equals("view")) {
     	<td colspan="2" >&nbsp;</td>
     </tr><%
   } else {
-	  // 	    		<input type=button onClick='document.form.reset();' value="Cancella" />
     %><tr class="buttonrow">
 	    <td colspan="2" >
 	    	<div class="buttonrowform"><%
 			  String [][] bottoni = pd.getBottoni();
 			  if ((bottoni != null) && (bottoni.length > 0)) {
 			    for (int i = 0; i < bottoni.length; i++) {
-			      %><input type=submit onClick="<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS%><%= bottoni[i][1] %>" value="<%= bottoni[i][0] %>"/>&nbsp;<%
+			    	String id = "azioneBtn_" + i;
+			      %><input id="<%=id %>" type="submit" value="<%= bottoni[i][0] %>"/>&nbsp;
+			      <script type="text/javascript" nonce="<%= randomNonce %>">
+				      $(document).ready(function(){
+							$('#<%=id %>').click(function() {
+								<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS%><%= bottoni[i][1] %>
+							});
+						});
+				  </script>
+				  <%
 			    }
 			  } else {
 				  String visualizzaAjax = pd.isShowAjaxStatusBottoneInvia() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
-				  %><input type=submit onClick='<%=visualizzaAjax%>CheckDati();return false;' value="<%=pd.getLabelBottoneInvia() %>" /><%
+				  %><input id="azioneBtn" type="submit" value="<%=pd.getLabelBottoneInvia() %>" />
+				  	<script type="text/javascript" nonce="<%= randomNonce %>">
+						  	$(document).ready(function(){
+								$('#azioneBtn').click(function() {
+									<%=visualizzaAjax%>CheckDati();return false;
+								});
+							});
+					</script>
+				  <%
 			  }
 		  %></div>
 	    </td>

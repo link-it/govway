@@ -21,7 +21,6 @@
 
 <%@page import="org.apache.commons.lang.StringUtils"%>
 <%@ page session="true" import="java.util.Vector, org.openspcoop2.web.lib.mvc.*" %>
-<script type="text/javascript" src="js/autocomplete.js"></script>
 <%
 String iddati = "";
 String ct = request.getContentType();
@@ -36,6 +35,7 @@ if (iddati != null && !iddati.equals("notdefined"))
 else
   iddati = "notdefined";
 GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
+String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 
 String logoImage = gd.getLogoHeaderImage();
 String logoLink = gd.getLogoHeaderLink();
@@ -53,12 +53,13 @@ if(!tabSessionKey.equals("")){
 
 // <span class="item-icon \<\%=icon \%\>"></span>
 %>
+<script type="text/javascript" src="js/autocomplete.js" nonce="<%= randomNonce %>"></script>
 <% if(StringUtils.isNotEmpty(logoImage)){ %>
 <!-- TR Logo -->
 <!-- TR1: Header1 -->
 <tr class="trPageHeaderLogo">
  	<td colspan="2" class="tdPageHeaderLogo">
-		<table style="width:100%;">
+		<table class="tablePageHeader">
 			<tbody>
 				 <tr>
 				 	<td colspan="2" align="left">
@@ -79,7 +80,7 @@ if(!tabSessionKey.equals("")){
 <!-- TR1: Header1 -->
 <tr class="trPageHeader">
  	<td colspan="2" class="tdPageHeader">
-		<table style="width:100%;">
+		<table class="tablePageHeader">
 			<tbody>
 				 <tr>
 				  	<td class="td1PageHeader">
@@ -114,7 +115,7 @@ if(!tabSessionKey.equals("")){
 														<% 
 														if(soggetti.size() > 1){
 														%>
-														<div style="margin: 0px; padding: 0px; border: 0px; position: relative; z-index: 100;">
+														<div class="container-menu-display-none">
 															<div id="menuSoggetto_menu">
 											 				<% 
 													  		GeneralLink l;
@@ -123,6 +124,7 @@ if(!tabSessionKey.equals("")){
 	// 															String icon = l.getIcon();
 																String spanLabelClass= "item-label";
 																String itemClass= "menu-item-no-icon";
+																String id = "soggetto_link_" + i;
 	// 															if(icon!= null && icon.length() > 0){
 	// 																icon = "icon-" + icon;	
 	// 																spanLabelClass = "item-label-with-icon";
@@ -150,22 +152,52 @@ if(!tabSessionKey.equals("")){
 																        		//url+target
 																					if (l.getTarget().equals("_blank")) {
 																          			%>
-																          				<a class="td2PageHeader" onClick="var win = window.open('<%= l.getUrl() %>', '<%= l.getLabel().replace(' ', '_') %>', 'width=900,height=700,resizable=yes,scrollbars=yes');win.focus();return false;" 
-																          					target="<%= l.getTarget() %>" href="<%= l.getUrl() %>" <%= toolTip %> ><%= l.getLabel() %></a>
+																          				<a id="<%=id %>" class="td2PageHeader" target="<%= l.getTarget() %>" href="<%= l.getUrl() %>" <%= toolTip %> ><%= l.getLabel() %></a>
+																          				<script type="text/javascript" nonce="<%= randomNonce %>">
+																					      	 $(document).ready(function(){
+																									$('#<%=id %>').click(function() {
+																										var win = window.open('<%= l.getUrl() %>', '<%= l.getLabel().replace(' ', '_') %>', 'width=900,height=700,resizable=yes,scrollbars=yes');win.focus();return false;
+																									});
+																								});
+																						</script>
 																          			<%
 																					}else if("new".equals(l.getTarget())){
-																					%><a class="td2PageHeader" target="_blank" href="<%= l.getUrl() %>" <%= toolTip %> ><%= l.getLabel() %></a><%
+																					%><a id="<%=id %>" class="td2PageHeader" target="_blank" href="<%= l.getUrl() %>" <%= toolTip %> ><%= l.getLabel() %></a><%
 																					}else {
-																          			%><a class="td2PageHeader" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;" target="<%= l.getTarget() %>" href="<%= l.getUrl() %>" <%= toolTip %> ><%= l.getLabel() %></a><%
+																          			%><a id="<%=id %>" class="td2PageHeader" target="<%= l.getTarget() %>" href="<%= l.getUrl() %>" <%= toolTip %> ><%= l.getLabel() %></a>
+																          				<script type="text/javascript" nonce="<%= randomNonce %>">
+																					      	 $(document).ready(function(){
+																									$('#<%=id %>').click(function() {
+																										<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;
+																									});
+																								});
+																						</script>
+																          			<%
 																					}
 																      			} else {
 																        		//solo url
-																        		%><a class="td2PageHeader" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;" href="<%= l.getUrl() %>" <%= toolTip %> ><%= l.getLabel() %></a><%
+																        		%><a id="<%=id %>" class="td2PageHeader" href="<%= l.getUrl() %>" <%= toolTip %> ><%= l.getLabel() %></a>
+																        			<script type="text/javascript" nonce="<%= randomNonce %>">
+																					      	 $(document).ready(function(){
+																									$('#<%=id %>').click(function() {
+																										<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;
+																									});
+																								});
+																						</script>
+																        		<%
 																      			}
 																			} else {
 																      			if (!l.getOnClick().equals("")) {
-																        		//onClick
-																        		%><a class="td2PageHeader" href="" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %> <%= l.getOnClick() %>; return true;" <%= toolTip %> ><%= l.getLabel() %></a><%
+																        		//l.getOnClick()
+																        		%><a id="<%=id %>" class="td2PageHeader" href="" <%= toolTip %> ><%= l.getLabel() %></a>
+																        			<script type="text/javascript" nonce="<%= randomNonce %>">
+																					      	 $(document).ready(function(){
+																									$('#<%=id %>').click(function() {
+																										<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %><%= l.getOnClick() %>;return true;
+																									});
+																								});
+																						</script>
+																        		<%
 																      			} else {
 																				//solo stringa
 																        		%><span class="td2PageHeader" <%= toolTip %> ><%= l.getLabel() %></span><%
@@ -187,7 +219,7 @@ if(!tabSessionKey.equals("")){
 													// Autocomplete
 													%>
 													<div id="menuSoggettoAutocomplete" class=""> 
-														<script type="text/javascript">
+														<script type="text/javascript" nonce="<%= randomNonce %>">
 													  
 													 		 /*An array containing all the country names in the world:*/
 													  		var soggettiSuggestionList = [];
@@ -224,7 +256,7 @@ if(!tabSessionKey.equals("")){
 														    <input id="menuSoggetto_menuAutocomplete" type="text" name="soggettoAutoComplete" value="<%=labelSelezionato %>">
 														  </div>
 													
-													  <script type="text/javascript">
+													  <script type="text/javascript" nonce="<%= randomNonce %>">
 														  autocomplete(document.getElementById("menuSoggetto_menuAutocomplete"), soggettiSuggestionList);
 													  </script>
 													</div>
@@ -245,14 +277,23 @@ if(!tabSessionKey.equals("")){
 																<span class="modalitaImg"></span>
 															<%
 																}
-															}else {%>
+															}else {
+																String id = "modalita_link_0";
+															%>
 															<span class="modalita">
-																<a class="td2PageHeader" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;"  href="<%= modalitaTitoloLink.getUrl() %>"><%= modalitaTitoloLink.getLabel() %></a>
+																<a id="<%=id %>" class="td2PageHeader" href="<%= modalitaTitoloLink.getUrl() %>"><%= modalitaTitoloLink.getLabel() %></a>
+															 	<script type="text/javascript" nonce="<%= randomNonce %>">
+															      	 $(document).ready(function(){
+																			$('#<%=id %>').click(function() {
+																				<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;
+																			});
+																		});
+																</script>
 															 </span>
 														<% }%>
 													</div>
 													<% if(modalita.size() > 1){%>
-														<div style="margin: 0px; padding: 0px; border: 0px; position: relative; z-index: 100;">
+														<div class="container-menu-display-none">
 															<div id="menuModalita_menu">
 											 				<% 
 													  		GeneralLink l;
@@ -261,6 +302,7 @@ if(!tabSessionKey.equals("")){
 	// 															String icon = l.getIcon();
 																String spanLabelClass= "item-label";
 																String itemClass= "menu-item-no-icon";
+																String id = "modalita_link_" + i;
 	// 															if(icon!= null && icon.length() > 0){
 	// 																icon = "icon-" + icon;	
 	// 																spanLabelClass = "item-label-with-icon";
@@ -283,22 +325,52 @@ if(!tabSessionKey.equals("")){
 																        		//url+target
 																					if (l.getTarget().equals("_blank")) {
 																          			%>
-																          				<a class="td2PageHeader" onClick="var win = window.open('<%= l.getUrl() %>', '<%= l.getLabel().replace(' ', '_') %>', 'width=900,height=700,resizable=yes,scrollbars=yes');win.focus();return false;" 
-																          					target="<%= l.getTarget() %>" href="<%= l.getUrl() %>"><%= l.getLabel() %></a>
+																          				<a id="<%=id %>" class="td2PageHeader" target="<%= l.getTarget() %>" href="<%= l.getUrl() %>"><%= l.getLabel() %></a>
+																          					<script type="text/javascript" nonce="<%= randomNonce %>">
+																						      	 $(document).ready(function(){
+																										$('#<%=id %>').click(function() {
+																											var win = window.open('<%= l.getUrl() %>', '<%= l.getLabel().replace(' ', '_') %>', 'width=900,height=700,resizable=yes,scrollbars=yes');win.focus();return false;
+																										});
+																									});
+																							</script>
 																          			<%
 																					}else if("new".equals(l.getTarget())){
-																					%><a class="td2PageHeader" target="_blank" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
+																					%><a id="<%=id %>" class="td2PageHeader" target="_blank" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
 																					}else {
-																          			%><a class="td2PageHeader" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;"  target="<%= l.getTarget() %>" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
+																          			%><a id="<%=id %>" class="td2PageHeader" target="<%= l.getTarget() %>" href="<%= l.getUrl() %>"><%= l.getLabel() %></a>
+																          				<script type="text/javascript" nonce="<%= randomNonce %>">
+																					      	 $(document).ready(function(){
+																									$('#<%=id %>').click(function() {
+																										<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;
+																									});
+																								});
+																						</script>
+																          			<%
 																					}
 																      			} else {
 																        		//solo url
-																        		%><a class="td2PageHeader" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;"  href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
+																        		%><a id="<%=id %>" class="td2PageHeader" href="<%= l.getUrl() %>"><%= l.getLabel() %></a>
+																        			<script type="text/javascript" nonce="<%= randomNonce %>">
+																				      	 $(document).ready(function(){
+																								$('#<%=id %>').click(function() {
+																									<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;
+																								});
+																							});
+																					</script>
+																        		<%
 																      			}
 																			} else {
 																      			if (!l.getOnClick().equals("")) {
-																        		//onClick
-																        		%><a class="td2PageHeader" href="" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %><%= l.getOnClick() %>; return true;"><%= l.getLabel() %></a><%
+																        		//l.getOnClick()
+																        		%><a id="<%=id %>" class="td2PageHeader" href=""><%= l.getLabel() %></a>
+																        			<script type="text/javascript" nonce="<%= randomNonce %>">
+																				      	 $(document).ready(function(){
+																								$('#<%=id %>').click(function() {
+																									<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %><%= l.getOnClick() %>;return true;
+																								});
+																							});
+																					</script>
+																        		<%
 																      			} else {
 																				//solo stringa
 																        		%><span class="td2PageHeader"><%= l.getLabel() %></span><%
@@ -329,7 +401,7 @@ if(!tabSessionKey.equals("")){
 													
 													</span>
 												</div>
-												<div style="margin: 0px; padding: 0px; border: 0px; position: relative; z-index: 100;">
+												<div class="container-menu-display-none">
 													<div id="menuUtente_menu">
 												  		<% 
 												  		GeneralLink l;
@@ -338,6 +410,7 @@ if(!tabSessionKey.equals("")){
 															String icon = l.getIcon();
 															String spanLabelClass= "item-label";
 															String itemClass= "menu-item";
+															String id = "menuUtente_link_" + i;
 															if(icon!= null && icon.length() > 0){
 																icon = "icon-" + icon;	
 																spanLabelClass = "item-label-with-icon";
@@ -361,22 +434,52 @@ if(!tabSessionKey.equals("")){
 															        		//url+target
 																				if (l.getTarget().equals("_blank")) {
 															          			%>
-															          				<a class="td2PageHeader" onClick="var win = window.open('<%= l.getUrl() %>', '<%= l.getLabel().replace(' ', '_') %>', 'width=900,height=700,resizable=yes,scrollbars=yes');win.focus();return false;" 
-															          					target="<%= l.getTarget() %>" href="<%= l.getUrl() %>"><%= l.getLabel() %></a>
+															          				<a id="<%=id %>" class="td2PageHeader" target="<%= l.getTarget() %>" href="<%= l.getUrl() %>"><%= l.getLabel() %></a>
+														          					<script type="text/javascript" nonce="<%= randomNonce %>">
+																				      	 $(document).ready(function(){
+																								$('#<%=id %>').click(function() {
+																									var win = window.open('<%= l.getUrl() %>', '<%= l.getLabel().replace(' ', '_') %>', 'width=900,height=700,resizable=yes,scrollbars=yes');win.focus();return false;
+																								});
+																							});
+																					</script>
 															          			<%
 																				}else if("new".equals(l.getTarget())){
-																				%><a class="td2PageHeader" target="_blank" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
+																				%><a id="<%=id %>" class="td2PageHeader" target="_blank" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
 																				}else {
-															          			%><a class="td2PageHeader" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;"  target="<%= l.getTarget() %>" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
+															          			%><a id="<%=id %>" class="td2PageHeader" target="<%= l.getTarget() %>" href="<%= l.getUrl() %>"><%= l.getLabel() %></a>
+															          				<script type="text/javascript" nonce="<%= randomNonce %>">
+																					      	 $(document).ready(function(){
+																									$('#<%=id %>').click(function() {
+																										<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;
+																									});
+																								});
+																						</script>
+															          			<%
 																				}
 															      			} else {
 															        		//solo url
-															        		%><a class="td2PageHeader" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;"  href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
+															        		%><a id="<%=id %>" class="td2PageHeader" href="<%= l.getUrl() %>"><%= l.getLabel() %></a>
+															        			<script type="text/javascript" nonce="<%= randomNonce %>">
+																					      	 $(document).ready(function(){
+																									$('#<%=id %>').click(function() {
+																										<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;
+																									});
+																								});
+																						</script>
+																			<%
 															      			}
 																		} else {
 															      			if (!l.getOnClick().equals("")) {
-															        		//onClick
-															        		%><a class="td2PageHeader" href="" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %><%= l.getOnClick() %>; return true;"><%= l.getLabel() %></a><%
+															        		//l.getOnClick()
+															        		%><a id="<%=id %>" class="td2PageHeader" href=""><%= l.getLabel() %></a>
+															        			<script type="text/javascript" nonce="<%= randomNonce %>">
+																					      	 $(document).ready(function(){
+																									$('#<%=id %>').click(function() {
+																										<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %><%= l.getOnClick() %>;return true;
+																									});
+																								});
+																						</script>
+															        		<%
 															      			} else {
 																			//solo stringa
 															        		%><span class="td2PageHeader"><%= l.getLabel() %></span><%

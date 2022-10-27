@@ -41,6 +41,7 @@ else
 
 GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
 PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
+String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 
 String ghf = request.getParameter("generateHiddenForm");
 Boolean generateHiddenForm = false;
@@ -107,7 +108,16 @@ if(csrfTokenFromSession == null)
 										
 										if ((bottoni != null) && (bottoni.length > 0)) {
 										  for (int i = 0; i < bottoni.length; i++) {
-										    %><input type="button" onClick="<%= bottoni[i][1] %>" value="<%= bottoni[i][0] %>"/>&nbsp;<%
+											  String id = "azioneBtn_" + i;
+										    %><input id="<%=id %>" type="button" value="<%= bottoni[i][0] %>"/>&nbsp;
+										    	<script type="text/javascript" nonce="<%= randomNonce %>">
+											      $(document).ready(function(){
+														$('#<%=id %>').click(function() {
+															<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS%><%= bottoni[i][1] %>
+														});
+													});
+											  </script>
+										    <%
 										  }
 										}
 							  			%>

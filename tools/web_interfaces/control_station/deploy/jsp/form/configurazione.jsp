@@ -1,5 +1,5 @@
 <%--
- * GovWay - A customizable API Gateway 
+ * GovWay - A customizable API Gateway
  * https://govway.org
  * 
  * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
@@ -39,6 +39,7 @@
 	  iddati = "notdefined";
 	GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
 	PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
+	String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 	
 	String params = (String) request.getAttribute(Costanti.PARAMETER_NAME_PARAMS);
 
@@ -63,13 +64,13 @@
 	int colSpanLength = 1;
 	String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 %>
-<SCRIPT>
+<SCRIPT type="text/javascript" nonce="<%= randomNonce %>">
 var nomeServletAdd_Custom = '<%= nomeServletAdd %>';
 var nomeServletDel_Custom = '<%= nomeServletDel %>';
 var nomeServletList_Custom = '<%= nomeServletList %>';
 </SCRIPT>
 <jsp:include page="/jsp/listElementCustom.jsp" flush="true" />
-<SCRIPT type="text/javascript">
+<SCRIPT type="text/javascript" nonce="<%= randomNonce %>">
 var iddati = '<%= iddati %>';
 var params = '<%= params %>';
 var nomeServletAdd = nomeServletAdd_Custom;
@@ -505,10 +506,10 @@ if (
 
 </SCRIPT>
 <!--Funzioni di utilita -->
-<script type="text/javascript" src="js/ui.core.js"></script>
-<script type="text/javascript" src="js/ui.dialog.js"></script>
-<script type="text/javascript" src="js/ui.tabs.js"></script>
-<script type="text/javascript">
+<script type="text/javascript" src="js/ui.core.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/ui.dialog.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/ui.tabs.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" nonce="<%= randomNonce %>">
 function togglePanelListaRicerca(panelListaRicercaOpen){
 	if(panelListaRicercaOpen) {
     	$("#searchForm").removeClass('searchFormOff');
@@ -569,9 +570,9 @@ function inizializzaSelectFiltro(){
 		document.form.action = '';
 	 });
 </script>
-<script type="text/javascript" src="js/utils.js"></script>
-<script type="text/javascript" src="js/jquery-on.js"></script>
-<script type="text/javascript" src="js/jquery.searchabledropdown-1.0.8.min.js"></script>
+<script type="text/javascript" src="js/utils.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/jquery-on.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/jquery.searchabledropdown-1.0.8.min.js" nonce="<%= randomNonce %>"></script>
 <tbody>
 	<!-- filtri di ricerca -->
 	<jsp:include page="/jsplib/filtriRicerca.jsp" flush="true"/>
@@ -766,12 +767,20 @@ function inizializzaSelectFiltro(){
 																					}
 																		  			
 																			  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+																			  		String id = "form-image-link_" + i + "_" + idxLink;
 											                					%>
-											                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" onClick="<%= visualizzaAjaxStatus %>return true;">
+											                					<a id="<%=id %>" class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
 											                						<span class="icon-box">
 																						<i class="material-icons md-18"><%= deIconName %></i>
 																					</span>
 											                					</a>
+											                					<script type="text/javascript" nonce="<%= randomNonce %>">
+																			      	 $(document).ready(function(){
+																							$('#<%=id %>').click(function() {
+																								<%= visualizzaAjaxStatus %>return true;
+																							});
+																						});
+																				</script>
 											                				<%
 																				}// end for-edit-link
 																			} // end edit-link
@@ -855,12 +864,20 @@ function inizializzaSelectFiltro(){
 																								}
 																					  			
 																						  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+																						  		String id = "form-image-link_" + i + "_" + idxLink;
 														                					%>
-														                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" onClick="<%= visualizzaAjaxStatus %>return true;">
+														                					<a id="<%=id %>" class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
 														                						<span class="icon-box">
 																									<i class="material-icons md-18"><%= deIconName %></i>
 																								</span>
 														                					</a>
+														                					<script type="text/javascript" nonce="<%= randomNonce %>">
+																						      	 $(document).ready(function(){
+																										$('#<%=id %>').click(function() {
+																											<%= visualizzaAjaxStatus %>return true;
+																										});
+																									});
+																							</script>
 														                				<%
 																							}// end for-edit-link
 																						} // end edit-link
@@ -950,12 +967,20 @@ function inizializzaSelectFiltro(){
 																									}
 																							  		
 																							  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+																							  		String id = "form-image-link_" + i + "_" + idxLink;
 															                					%>
-															                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" onClick="<%= visualizzaAjaxStatus %>return true;">
+															                					<a id="<%=id %>" class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
 															                						<span class="icon-box">
 																										<i class="material-icons md-18"><%= deIconName %></i>
 																									</span>
 															                					</a>
+															                					<script type="text/javascript" nonce="<%= randomNonce %>">
+																							      	 $(document).ready(function(){
+																											$('#<%=id %>').click(function() {
+																												<%= visualizzaAjaxStatus %>return true;
+																											});
+																										});
+																								</script>
 																                				<%
 																								}// end for-edit-link
 																							} // end edit-link
@@ -997,7 +1022,15 @@ function inizializzaSelectFiltro(){
 									
 									//Bottone di Add
 									if (pd.getAddButton()) {
-									  %><input type="button" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>AddEntry()" value='Crea Nuova' /><%
+									  %><input id="aggiungiBtn" type="button" value='Crea Nuova' />
+									  <script type="text/javascript" nonce="<%= randomNonce %>">
+									      	 $(document).ready(function(){
+									      		$('#aggiungiBtn').click(function() {
+														<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>AddEntry();
+													});
+												});
+										</script>
+									<%
 									}
 									
 									%>
@@ -1019,7 +1052,7 @@ function inizializzaSelectFiltro(){
 						%> 
 							<tr>
 						  		<td colspan="<%= colSpanLength %>">&nbsp;
-									<script type="text/javascript">
+									<script type="text/javascript" nonce="<%= randomNonce %>">
 										function checkRemoveButton(idTabSelezionato){
 											var elemToRemove = $("#hiddenIdRemove-" + idTabSelezionato).val();
 											
@@ -1206,8 +1239,8 @@ function inizializzaSelectFiltro(){
 												
 												var htmlDiv = '<div id="tabsNavDiv" class="tabsNavDiv"></div>';
 												
-												var htmlNext = "<a id='nextTab' href='#' class='next-tab mover' rel='next'><i class=\"material-icons md-40\" style=\"line-height: 0.6;\">chevron_right</i></a>";
-												var htmlPrev = "<a id='prevTab' href='#' class='prev-tab mover' rel='prev'><i class=\"material-icons md-40\" style=\"line-height: 0.6;\">chevron_left</i></a>";
+												var htmlNext = "<a id='nextTab' href='#' class='next-tab mover' rel='next'><i class=\"material-icons md-40 line-height-06\">chevron_right</i></a>";
+												var htmlPrev = "<a id='prevTab' href='#' class='prev-tab mover' rel='prev'><i class=\"material-icons md-40 line-height-06\">chevron_left</i></a>";
 												
 												// 1. attacco il div contentitore
 												$tabs.prepend(htmlDiv);

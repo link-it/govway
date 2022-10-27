@@ -17,6 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 <!DOCTYPE html>
+<%@page import="java.text.MessageFormat"%>
+<%@page import="java.util.UUID"%>
 <%@page import="org.openspcoop2.web.ctrlstat.servlet.login.LoginCostanti"%>
 <%@page import="org.openspcoop2.web.ctrlstat.servlet.GeneralHelper"%>
 <%@page import="org.apache.commons.lang3.StringUtils"%>
@@ -73,13 +75,18 @@ if(tabSessionKey == null)
 if(!tabSessionKey.equals("")){
 	homeLink = homeLink + "&" + Costanti.PARAMETER_TAB_KEY + "=" + tabSessionKey;
 }
+
+// Header CSP
+String randomNonce = UUID.randomUUID().toString().replace("-", "");
+request.setAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE, randomNonce);
+response.setHeader(Costanti.HEADER_NAME_CSP, MessageFormat.format(Costanti.HEADER_CSP_VALUE, randomNonce, randomNonce));
 %>
 <html>
 <head>
 <meta charset="UTF-8">
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 <title><%= gd.getTitle() %></title>
-<script type="text/javascript">
+<script type="text/javascript" nonce="<%= randomNonce %>">
 
 var ok = true;
 function white(str){
@@ -104,12 +111,12 @@ function CheckDati() {
 </script>
 <link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
-<script type="text/javascript" src="js/webapps.js"></script>
+<script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
 <!-- JQuery lib-->
-<script type="text/javascript" src="js/jquery-latest.js"></script>
+<script type="text/javascript" src="js/jquery-latest.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/menuUtente.jsp" flush="true" />
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" /> 
-<script>
+<script type="text/javascript" nonce="<%= randomNonce %>">
 
 $(document).ready(function(){
 				
@@ -156,7 +163,7 @@ $(document).ready(function(){
 			<!-- TR1: Header1 -->
 			<tr class="trPageHeaderLogo">
 			 	<td colspan="2" class="tdPageHeaderLogo">
-					<table style="width:100%;">
+					<table class="tablePageHeader">
 						<tbody>
 							 <tr>
 							 	<td colspan="2" align="left">
@@ -177,7 +184,7 @@ $(document).ready(function(){
 			<!-- TR1: Header1 -->
 			<tr class="trPageHeader">
 			 	<td colspan="2" class="tdPageHeader">
-					<table style="width:100%;">
+					<table class="tablePageHeader">
 						<tbody>
 							 <tr>
 							  	<td class="td1PageHeader">
@@ -209,7 +216,7 @@ $(document).ready(function(){
 				<td valign="top" class="td2PageBody">
 					<form name="form" action="<%= contextPath %>/j_security_check" method="post">
 						<!-- Breadcrumbs -->
-						<table style="width:100%;">
+						<table id="crumbs-table">
 							<tbody>
 								<tr>
 									<td colspan="2">
@@ -256,7 +263,14 @@ $(document).ready(function(){
 													<tr class="buttonrow">
 										  				<td colspan="2">
 										  					<div class="buttonrowform">
-																<input type="submit" onclick="visualizzaAjaxStatus();CheckDati();return false;" value="Login">
+										  						<input id="loginBtn" type="submit" value="Login"/>
+																<script type="text/javascript" nonce="<%= randomNonce %>">
+																	$(document).ready(function(){
+																		$('#loginBtn').click(function() {
+																			<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS%>CheckDati();return false;
+																		});
+																	});
+																</script>
 															</div>
 										  				</td>
 									  				</tr>
@@ -278,7 +292,7 @@ $(document).ready(function(){
 							<img src="images/tema_link/logo_link_footer.png" />
 						</a>
 					</div>
-					<div id="ajax_status_div" style="display: none;">
+					<div id="ajax_status_div">
 						<span class="rich-mpnl-mask-div mainStatusStartStyle"></span>
 						<span class="mainStatusStartStyleInner">
 							<img src="images/tema_link/ajax_status.gif">

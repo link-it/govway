@@ -39,6 +39,7 @@ else
   iddati = "notdefined";
 GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
 PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
+String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 
 String csrfTokenFromSession = ServletUtils.leggiTokenCSRF(request, session);
@@ -121,10 +122,19 @@ if(csrfTokenFromSession == null)
 							   		%><a class="<%= stile %>" href="<%= de.getUrl() %>"><%= de.getValue()	%></a><%
 							  	}
 							} else {
+								String id = "table_link_" + i + "_" + j;
 							  	//no url
 								if (!de.getOnClick().equals("")) {
-							    	//onclick
-									%><a class="<%= stile %>" href="" onClick="<%= de.getOnClick() %>"><%=de.getValue() %></a><%
+							    	//getOnClick
+									%><a class="<%= stile %>" href=""><%=de.getValue() %></a>
+										<script type="text/javascript" nonce="<%= randomNonce %>">
+										      	 $(document).ready(function(){
+														$('#<%=id %>').click(function() {
+															<%= de.getOnClick() %>
+														});
+													});
+											</script>
+									<%
 							 	} else {
 							   		//string only
 							   		%><%= de.getValue() %><%
@@ -181,13 +191,37 @@ if(csrfTokenFromSession == null)
 				%><tr>
 					<td colspan="<%= labels.length+1 %>" class="table01footer">
 						<div align="right">
-				  			<input type="button" onClick="SelectAll()" value='Seleziona Tutti'/>
-				  			<input type="button" onClick="DeselectAll()" value='Deseleziona Tutti'/>
+				  			<input id="selTuttiBtn" type="button" value='Seleziona Tutti'/>
+				  			<input id="deselTuttiBtn" type="button" value='Deseleziona Tutti'/>
 				  			<%
 				  			if (pd.getAddButton()) {
-				    		%><input type="button" onClick="AddEntry()" value='Aggiungi'/><%
+				    		%><input id="aggiungiBtn" type="button" value='Aggiungi'/><%
 				  			}
-				  			%><input type="button" onClick="RemoveEntries()" value='Rimuovi Selezionati'/>
+				  			%><input id="rimuoviSelezionatiBtn" type="button" value='Rimuovi Selezionati'/>
+				  			
+				  			<script type="text/javascript" nonce="<%= randomNonce %>">
+						      	 $(document).ready(function(){
+						      			$('#selTuttiBtn').click(function() {
+											SelectAll();
+										});
+										$('#deselTuttiBtn').click(function() {
+											DeselectAll();
+										});
+										<%
+							  			if (pd.getAddButton()) {
+							    		%>
+							    		$('#aggiungiBtn').click(function() {
+							    			AddEntry();
+										});
+										<%
+							  			}
+							  			%>
+							  			$('#rimuoviSelezionatiBtn').click(function() {
+							  				RemoveEntries();
+										});
+									});
+							</script>
+				  			
 				  		</div>
 				  	</td>
 				 </tr><%
@@ -215,9 +249,17 @@ if(csrfTokenFromSession == null)
 				
 			    		for (int b = 0; b < bottoni.size(); b++) {
 			      			DataElement bottone = (DataElement) bottoni.elementAt(b);
+			      			String id = "areaBottonBtn_" + i + "_" + b;
 			      			%>
-			      			<input type="button" onClick="<%= bottone.getOnClick() %>" value='&gt;'/>
+			      			<input id="<%=id %>" type="button" value='&gt;'/>
 			      			<em><%= bottone.getValue() %></em><br/>
+			      			<script type="text/javascript" nonce="<%= randomNonce %>">
+						      	 $(document).ready(function(){
+										$('#<%=id %>').click(function() {
+											<%= bottone.getOnClick() %>
+										});
+									});
+							</script>
 			      			<%
 			    		}
 			    		%></p><%

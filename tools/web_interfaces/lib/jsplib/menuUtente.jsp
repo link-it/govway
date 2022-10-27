@@ -36,6 +36,7 @@ if (iddati != null && !iddati.equals("notdefined"))
 else
   iddati = "notdefined";
 GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
+String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 Vector<GeneralLink> v = gd.getHeaderLinks();
 
 Vector<GeneralLink> modalitaLinks = gd.getModalitaLinks();
@@ -46,7 +47,7 @@ if(v!= null && v.size() > 1) {
 		
 %>
 
-<script type="text/javascript">
+<script type="text/javascript" nonce="<%= randomNonce %>">
 	function IEVersione (){
 	    var ua = window.navigator.userAgent;
 	
@@ -76,7 +77,7 @@ if(v!= null && v.size() > 1) {
 	    return IEVersione() > -1;
 	}
 </script>
-<script type="text/javascript">
+<script type="text/javascript" nonce="<%= randomNonce %>">
 
 //the direct source of the delay function in 1.4+
 jQuery.fn.extend({

@@ -39,6 +39,7 @@ else
   iddati = "notdefined";
 GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
 PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
+String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 
 String customListViewName = pd.getCustomListViewName();
 String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
@@ -116,7 +117,14 @@ if (hidden!=null && !hidden.isEmpty()) {
 													//Bottone Previous
 													if (pd.getIndex() != 0) {
 														%>							
-														<img id="ds_prev_top" src="images/tema_link/go_prev.png" onclick="PrevPage(document.form.limit.options[document.form.limit.selectedIndex].value)" title="Precedente"  class="dsImg" />
+														<img id="ds_prev_top" src="images/tema_link/go_prev.png" title="Precedente"  class="dsImg" />
+														<script type="text/javascript" nonce="<%= randomNonce %>">
+															$(document).ready(function(){
+																$('#ds_prev_top').click(function() {
+																	<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>PrevPage(document.form.limit.options[document.form.limit.selectedIndex].value);
+																});
+															});
+														</script>
 														<%
 													} else{
 														%>
@@ -137,7 +145,14 @@ if (hidden!=null && !hidden.isEmpty()) {
 													  if (pd.getIndex()+pd.getPageSize() < pd.getNumEntries()) {
 														  nextTopDisabled = false;
 													   			%>
-													   			<img id="ds_next_top" src="images/tema_link/go_next.png" onClick="NextPage()" title="Successiva" class="dsImg"/>
+													   			<img id="ds_next_top" src="images/tema_link/go_next.png" title="Successiva" class="dsImg"/>
+													   			<script type="text/javascript" nonce="<%= randomNonce %>">
+																	$(document).ready(function(){
+																		$('#ds_next_top').click(function() {
+																			<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>NextPage();
+																		});
+																	});
+																</script>
 													   			<%
 													  }
 													}
@@ -161,9 +176,16 @@ if (hidden!=null && !hidden.isEmpty()) {
 							<%
 							if (v.size()> 0 && pd.getSelect()) {
 							  %>
-							  <td style="width:16px;">
+							  <td class="tableHeaderChkAll-noList">
 							  	<div align="center">
-							  		<input id="chkAll" type="checkbox" name="chkAll" onclick="checkAll();"/> 
+							  		<input id="chkAll" type="checkbox" name="chkAll"/> 
+							  		<script type="text/javascript" nonce="<%= randomNonce %>">
+										$(document).ready(function(){
+											$('#chkAll').click(function() {
+												checkAll();
+											});
+										});
+									</script> 
 							  	</div>
 							  </td>
 							  <%
@@ -204,9 +226,9 @@ if (hidden!=null && !hidden.isEmpty()) {
 						  	}
 						  	
 							if (pd.getSelect()) {
-								String checkBoxStyle = labels!=null ? "" : "style=\"width:16px;\"" ;
+								String checkBoxStyle = labels!=null ? "" : " tdText-16" ;
 							   %>
-								<td <%=checkBoxStyle %> class="tdText">
+								<td class="tdText<%=checkBoxStyle %>">
 							   		<div align="center">
 							   			<input id='_<% if(idToRemove!=null) out.write(idToRemove);else out.write(""+i); %>' type="checkbox" name="selectcheckbox" value='<% if(idToRemove!=null) out.write(idToRemove);else out.write(""+i); %>'/>
 							   		</div>
@@ -277,7 +299,14 @@ if (hidden!=null && !hidden.isEmpty()) {
 										//Bottone Previous
 										if (pd.getIndex() != 0) {
 											%>							
-											<img id="ds_prev_bottom" src="images/tema_link/go_prev.png" onclick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>PrevPage(document.form.limit.options[document.form.limit.selectedIndex].value)" title="Precedente"  class="dsImg" />
+											<img id="ds_prev_bottom" src="images/tema_link/go_prev.png" title="Precedente"  class="dsImg" />
+											<script type="text/javascript" nonce="<%= randomNonce %>">
+												$(document).ready(function(){
+													$('#ds_prev_bottom').click(function() {
+														<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>PrevPage(document.form.limit.options[document.form.limit.selectedIndex].value);
+													});
+												});
+											</script>
 											<%
 										} else{
 											%>
@@ -288,7 +317,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 										//Scelta numero di entries da visualizzare
 										if ((pd.getNumEntries() > 20) || (pd.getIndex() != 0)) {
 										  %></td>
-											<td><select name="limit" onChange="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>CambiaVisualizzazione(document.form.limit.options[selectedIndex].value)"><%
+											<td><select id="ds_limit_bottom" name="limit"><%
 										  switch (pd.getPageSize()) {
 										    case 20 :
 											%>
@@ -349,7 +378,15 @@ if (hidden!=null && !hidden.isEmpty()) {
 										    	<%
 										    	break;
 										  }
-										  %></select></td>
+										  %></select>
+										  	<script type="text/javascript" nonce="<%= randomNonce %>">
+													$(document).ready(function(){
+														$('#ds_limit_bottom').change(function() {
+															<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>CambiaVisualizzazione(document.form.limit.options[selectedIndex].value);
+														});
+													});
+												</script>
+										  </td>
 											<td><%
 										} else {
 											%></td>
@@ -362,7 +399,14 @@ if (hidden!=null && !hidden.isEmpty()) {
 										  if (pd.getIndex()+pd.getPageSize() < pd.getNumEntries()) {
 											  nextBottomDisabled = false;
 										   			%>
-										   			<img id="ds_next_bottom" src="images/tema_link/go_next.png" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>NextPage()" title="Successiva" class="dsImg"/>
+										   			<img id="ds_next_bottom" src="images/tema_link/go_next.png" title="Successiva" class="dsImg"/>
+										   			<script type="text/javascript" nonce="<%= randomNonce %>">
+														$(document).ready(function(){
+															$('#ds_next_bottom').click(function() {
+																<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>NextPage();
+															});
+														});
+													</script>
 										   			<%
 										  }
 										}
@@ -398,10 +442,18 @@ if (hidden!=null && !hidden.isEmpty()) {
 									  		AreaBottoni area = (AreaBottoni) areaBottoni.elementAt(i);
 									  		Vector<?> bottoni = area.getBottoni();
 									 		for (int b = 0; b < bottoni.size(); b++) {
+									 			String id = "areaBottonBtn_" + i + "_" + b;
 									   			DataElement bottone = (DataElement) bottoni.elementAt(b);
 									   			String visualizzaAjaxStatus = bottone.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 									   			%>
-									   			<input type="button" onClick="<%= visualizzaAjaxStatus %><%= bottone.getOnClick() %>" value='<%= bottone.getValue() %>'/>
+									   			<input id="<%=id %>" type="button" value='<%= bottone.getValue() %>'/>
+									   			<script type="text/javascript" nonce="<%= randomNonce %>">
+											      	 $(document).ready(function(){
+															$('#<%=id %>').click(function() {
+																<%= visualizzaAjaxStatus %><%= bottone.getOnClick() %>;
+															});
+														});
+												</script>
 									   			<%
 									 		}
 										}
@@ -414,7 +466,15 @@ if (hidden!=null && !hidden.isEmpty()) {
 									
 									//Bottone di Add
 									if (pd.getAddButton()) {
-									  %><input type="button" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>AddEntry()" value='Aggiungi' /><%
+									  %><input id="aggiungiBtn" type="button" value='Aggiungi' />
+									  	<script type="text/javascript" nonce="<%= randomNonce %>">
+									      	 $(document).ready(function(){
+									      		$('#aggiungiBtn').click(function() {
+														<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>AddEntry();
+													});
+												});
+										</script>
+									  <%
 									}
 									
 									%>

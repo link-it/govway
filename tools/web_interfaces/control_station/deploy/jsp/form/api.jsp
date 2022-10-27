@@ -42,6 +42,7 @@
 	  iddati = "notdefined";
 	GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
 	PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
+	String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 	
 	Vector<?> datiConGruppi = pd.getDati();
 	Vector<?> dati = (Vector<?>) datiConGruppi.elementAt(0);
@@ -154,7 +155,7 @@
 											}
 										}
 						                %>
-					   					<script type="text/javascript">
+					   					<script type="text/javascript" nonce="<%= randomNonce %>">
 											if($("#<%=idSpanMenu %>").length>0){
 												// create context menu
 									            var contextMenu_<%=numeroEntry %> = $('#<%=idSpanMenu %>').contextMenu();
@@ -351,13 +352,21 @@
 																	image.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
 																}
 													  			
-					                									String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+														  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+														  		String id = "form-image-link_" + i + "_" + idxLink;
 						                					%>
-						                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" onClick="<%= visualizzaAjaxStatus %>return true;">
+						                					<a id="<%=id %>" class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
 						                						<span class="icon-box">
 																	<i class="material-icons md-18"><%= deIconName %></i>
 																</span>
 						                					</a>
+						                					<script type="text/javascript" nonce="<%= randomNonce %>">
+															      	 $(document).ready(function(){
+																			$('#<%=id %>').click(function() {
+																				<%= visualizzaAjaxStatus %>return true;
+																			});
+																		});
+																</script>
 						                				<%
 															}// end for-edit-link
 														} // end edit-link
@@ -434,12 +443,20 @@
 																			}
 																  			
 																	  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+																	  		String id = "form-image-link_" + i + "_" + idxLink;
 									                					%>
-									                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" onClick="<%= visualizzaAjaxStatus %>return true;">
+									                					<a id="<%=id %>" class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
 									                						<span class="icon-box">
 																				<i class="material-icons md-18"><%= deIconName %></i>
 																			</span>
 									                					</a>
+									                					<script type="text/javascript" nonce="<%= randomNonce %>">
+																	      	 $(document).ready(function(){
+																					$('#<%=id %>').click(function() {
+																						<%= visualizzaAjaxStatus %>return true;
+																					});
+																				});
+																		</script>
 									                				<%
 																		}// end for-edit-link
 																	} // end edit-link
@@ -520,12 +537,20 @@
 																				}
 																		  		
 																		  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+																		  		String id = "form-image-link_" + i + "_" + idxLink;
 										                					%>
-										                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" onClick="<%= visualizzaAjaxStatus %>return true;">
+										                					<a id="<%=id %>" class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
 										                						<span class="icon-box">
 																					<i class="material-icons md-18"><%= deIconName %></i>
 																				</span>
 										                					</a>
+										                					<script type="text/javascript" nonce="<%= randomNonce %>">
+																		      	 $(document).ready(function(){
+																						$('#<%=id %>').click(function() {
+																							<%= visualizzaAjaxStatus %>return true;
+																						});
+																					});
+																			</script>
 											                				<%
 																			}// end for-edit-link
 																		} // end edit-link
@@ -583,12 +608,20 @@
 																					}
 																			  		
 																			  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+																			  		String id = "form-image-link_" + i + "_" + idxLink;
 											                					%>
-											                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" onClick="<%= visualizzaAjaxStatus %>return true;">
+											                					<a id="<%=id %>" class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
 											                						<span class="icon-box">
 																						<i class="material-icons md-18"><%= deIconName %></i>
 																					</span>
 											                					</a>
+											                					<script type="text/javascript" nonce="<%= randomNonce %>">
+																			      	 $(document).ready(function(){
+																							$('#<%=id %>').click(function() {
+																								<%= visualizzaAjaxStatus %>return true;
+																							});
+																						});
+																				</script>
 												                				<%
 																				}// end for-edit-link
 																			} // end edit-link
@@ -602,7 +635,7 @@
 															
 														} // end else button
 						                			} // end else multi-select
-						                		} // end else checkbox
+						                		} // end else checkbox					                			
 					                		} // end else text
 											%>
 											
@@ -612,7 +645,7 @@
 				        		} %>	
 								
 								<tr>
-									<td colspan="2" class="tdTextRiepilogo" style="padding-left: 0px; padding-right: 0px;">
+									<td colspan="2" class="tdTextRiepilogo padding-left-0 padding-right-0">
 										<div class="riepilogo-links">
 											
 											<%	
@@ -626,19 +659,32 @@
 											  	String labelStyleClass= de.getLabelStyleClass();
 											  	String iconLink =  de.getIcon();
 											  	String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
-											  	String styleLink = de.getStyle() != null && !de.getStyle().equals("") ? " style=\"" + de.getStyle() + "\"" : "";
-											  	
-											  	
+											  	String id = "form-riepilogo-link_" + i; 
+											  	String cssClassDivStyle = !de.getStyle().equals("") ? "riepilogo-links-button-divStyle-"+i : ""; 
 											  	if (type.equals("link")){
 											  		if (!de.getUrl().equals("")) {
 														de.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
 													}
 							        				%>
-							        					<div class="riepilogo-links-button-div" <%= styleLink %>>
-							        						<a href="<%= de.getUrl() %>" <%= deTip %> class="riepilogo-links-button" onClick="<%= visualizzaAjaxStatus %>return true;">
+							        					<div class="riepilogo-links-button-div <%= cssClassDivStyle %>">
+							        						<% if(!de.getStyle().equals("")){ %>
+																<style type="text/css" nonce="<%= randomNonce %>">
+																	.<%=cssClassDivStyle %> {
+																		<%= de.getStyle() %>
+																	}
+																</style>
+															<% }%>
+							        						<a id="<%=id %>" href="<%= de.getUrl() %>" <%= deTip %> class="riepilogo-links-button">
 									            				<i class="material-icons md-36"><%=iconLink %></i>							            				
 									            				<span class="riepilogo-links-button-text"><%= de.getValue() %></span>
 								            				</a>
+								            				<script type="text/javascript" nonce="<%= randomNonce %>">
+														      	 $(document).ready(function(){
+																		$('#<%=id %>').click(function() {
+																			<%= visualizzaAjaxStatus %>return true;
+																		});
+																	});
+															</script>
 							            				</div>
 							            			<%
 							            		}
@@ -658,10 +704,27 @@
 								  String [][] bottoni = pd.getBottoni();
 								  if ((bottoni != null) && (bottoni.length > 0)) {
 								    for (int i = 0; i < bottoni.length; i++) {
-								      %><input type=button onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %><%= bottoni[i][1] %>" value="<%= bottoni[i][0] %>"/>&nbsp;<%
+								      String id = "areaBottonBtn_" + i;
+								      %><input id="<%=id %>" type=button value="<%= bottoni[i][0] %>"/>&nbsp;
+								      <script type="text/javascript" nonce="<%= randomNonce %>">
+									      	 $(document).ready(function(){
+													$('#<%=id %>').click(function() {
+														<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %><%= bottoni[i][1] %>;
+													});
+												});
+										</script>
+								      <%
 								    }
 								  } else {
-								    %><input type=button onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>EditPage()" value="Edit" /><%
+								    %><input id="modificaBtn" type=button value="Edit" />
+								    <script type="text/javascript" nonce="<%= randomNonce %>">
+								      	 $(document).ready(function(){
+												$('#modificaBtn').click(function() {
+													<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>EditPage();
+												});
+											});
+									</script>
+								    <%
 								  }
 							  %></div>
 						  </td>
@@ -673,8 +736,18 @@
 					    %><tr class="buttonrow">
 						    <td colspan="2" >
 						    	<div class="buttonrowform">
-						    		<input type=submit onClick='<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>CheckDati();return false;' value="Invia" />
-						    		<input type=button onClick='<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>document.form.reset();' value="Cancella" />
+						    		<input id="inviaModificheBtn" type=submit value="Invia" />
+						    		<input id="svuotaFormBtn" type=button value="Cancella" />
+						    		<script type="text/javascript" nonce="<%= randomNonce %>">
+								      	 $(document).ready(function(){
+												$('#inviaModificheBtn').click(function() {
+													<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>CheckDati();return false;
+												});
+												$('#svuotaFormBtn').click(function() {
+													<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>document.form.reset();
+												});
+											});
+									</script>
 						    	</div>
 						    </td>
 					    </tr><%

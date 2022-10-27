@@ -35,6 +35,7 @@ if (iddati != null && !iddati.equals("notdefined"))
 else
   iddati = "notdefined";
 GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
+String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 %>
 <!-- TR4: Footer -->
 <tr class="trPageFooter">
@@ -47,7 +48,7 @@ GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData
 		<jsp:include page="/jsplib/status.jsp" flush="true" />
 	</td>
 </tr>
-<script>
+<script type="text/javascript" nonce="<%= randomNonce %>">
 
 $(document).ready(function(){
 				

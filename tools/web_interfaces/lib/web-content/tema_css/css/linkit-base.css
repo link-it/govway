@@ -351,6 +351,11 @@ div.txtA_div {
 .tdPageHeader {
 } 
 
+.tablePageHeader,
+.tablePageHeaderLogo  {
+	width:100%;
+}
+
 .td1PageHeader {
 	padding: 16px 20px 16px 20px;
 } 
@@ -587,6 +592,14 @@ div.voceMenuRC:hover {
     font-weight: bold;
 }
 
+td.tableHeaderChkAll {
+	width:30px;
+}
+
+td.tableHeaderChkAll-noList {
+	width:16px;
+}
+
 p.legend {
 	margin-bottom: 1em;
 }
@@ -630,6 +643,10 @@ p.legend em {
 	text-align: left;
 	padding: 12px;
 	border: 1px solid ${table.thead.border.color};
+}
+
+.tdText-16 {
+	width: 16px;
 }
 
 /*End Table row*/
@@ -834,8 +851,15 @@ span.tableNoData {
     font-weight: bold;
 }
 
+#ajax_status_div {
+	display: none;
+}
 
 /* BreadCrumbs */
+
+#crumbs-table {
+	width: 100%;
+}
 
 #crumbs {
 	height: 2.3em;
@@ -880,6 +904,11 @@ span.tableNoData {
 
 
 /* Messaggi */
+
+td.messages-td1,
+td.messages-td2 {
+	width: 50%;
+}
 
 div.messages-errors,
 div.messages-errors-sintetico {
@@ -1082,6 +1111,14 @@ span.soggettoImg {
 	text-align: right;
 	white-space: nowrap;
 	padding: 19px 12px 20px 12px;
+}
+
+div.container-menu-display-none {
+	margin: 0px; 
+	padding: 0px; 
+	border: 0px; 
+	position: relative; 
+	z-index: 100;
 }
 
 .ddmenu-label.tastoMenuHover,
@@ -2507,6 +2544,45 @@ div.txtA_div_propDialogInfoUso {
   display: none;
 }
 
+.text-align-center {
+	text-align : center;
+}
 
+.padding-left-0 {
+	padding-left: 0px;
+}
 
+.padding-right-0 {
+	padding-right: 0px;
+}
+
+.line-height-06 {
+	line-height: 0.6;
+}
+
+.color-red-float-left-opacity-055 {
+	color:red;float:left;opacity:.55;
+}
+
+.div-jquery-offset-initialize {
+	position:absolute;
+	top:0;
+	left:0;
+	margin:0;
+	border:5px solid #000;
+	padding:0;
+	width:1px;
+	height:1px;
+}
+
+.table-jquery-offset-initialize {
+	position:absolute;
+	top:0;
+	left:0;
+	margin:0;
+	border:5px solid #000;
+	padding:0;
+	width:1px;
+	height:1px;
+}
 

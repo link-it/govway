@@ -39,22 +39,30 @@ else {
 }
 GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
 PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
+String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 %>
 <html>
 <head>
 	<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 	<link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
 	<link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
-	<script type="text/javascript" src="js/webapps.js"></script>
-	<script type="text/javascript">
+	<script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
+	<script type="text/javascript" nonce="<%= randomNonce %>">
 		function exit() {
 		  window.close();
 		}
 	</script>
 	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+	<!-- JQuery lib-->
+	<script type="text/javascript" src="js/jquery-latest.js" nonce="<%= randomNonce %>"></script>
+	<script type="text/javascript" nonce="<%= randomNonce %>">
+$(document).ready(function(){
+	focusText(document.form);
+});
+</script>
 </head>
 
-<body marginwidth=0 marginheight=0 onLoad="focusText(document.form);">
+<body marginwidth=0 marginheight=0>
 	<form name="form">
 		<table class="bodyWrapper">
 			<tbody>
@@ -62,7 +70,15 @@ PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class
 					<td valign="top" class="td2PageBody">
 						<%= pd.getMessage() %>
 						<br/><br/>
-					<input type=button onClick=exit() value='OK'>&nbsp;</td>
+						<input id="exitBtn" type="button" value="OK">&nbsp;
+						<script type="text/javascript" nonce="<%= randomNonce %>">
+						      $(document).ready(function(){
+									$('#exitBtn').click(function() {
+										exit();
+									});
+								});
+						  </script>
+					</td>
 				</tr>
 			</tbody>
 		</table>

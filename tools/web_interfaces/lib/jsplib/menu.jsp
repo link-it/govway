@@ -66,17 +66,6 @@ PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class
 			    		if (entries[j].length == 2) {
 			    			
 			      		%><div class="voceMenuRC" id="voceMenu_<%=j %>">
-			      			<input id="<%= deVoceMenuName  %>" type="hidden" name="<%= deVoceMenuName  %>" value="<%= entries[j][1]  %>"/>
-							<script type="text/javascript">
-							   $('[id=voceMenu_<%=j %>]')
-							   .click(function() {
-								   		<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %> 
-										var val = $(this).children('input[id=url_entry_<%=j %>]').val();
-										// addTabID
-										val = addTabIdParam(val);
-										window.location = val;
-							       });
-						   </script>	
 		      				<a class='<%= cssClass %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>'>
 		      					<p class='<%= cssClass %>'><%= entries[j][0] %></p>
 		      					</a>
@@ -84,17 +73,6 @@ PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class
 			      		<%
 			    		} else if (entries[j].length == 3) {
 			      		%><div class="voceMenuRC" id="voceMenu_<%=j %>">
-			      			<input id="<%= deVoceMenuName  %>" type="hidden" name="<%= deVoceMenuName  %>" value="<%= entries[j][1]  %>"/>
-							<script type="text/javascript">
-							   $('[id=voceMenu_<%=j %>]')
-							   .click(function() {
-								   		<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
-										var val = $(this).children('input[id=url_entry_<%=j %>]').val();
-										// addTabID
-										val = addTabIdParam(val);
-										window.location = val;
-							       });
-						   </script>
 			      			<a class='<%= cssClass %>' target='<%= entries[j][2] %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>'>
 			      				<p class='<%= cssClass %>'><%= entries[j][0] %></p>
 			      			</a>

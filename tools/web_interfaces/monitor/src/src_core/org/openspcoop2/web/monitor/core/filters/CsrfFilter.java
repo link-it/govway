@@ -14,10 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.web.lib.mvc.ServletUtils;
-import org.openspcoop2.web.monitor.core.bean.LoginBean;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
-import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.slf4j.Logger;
 
@@ -60,11 +58,6 @@ public class CsrfFilter implements Filter {
 			HttpServletResponse response = (HttpServletResponse) res;
 			HttpSession session = request.getSession();
 			
-			LoginBean lb =  Utility.getLoginBeanFromSession(session);
-			
-			boolean isLogged = lb == null ? false : lb.isLoggedIn();
-			
-//			if(isLogged) {
 			String sessionTokenCSRF = CsrfFilter.leggiTokenCSRF(session);
 			CsrfFilter.log.debug("Letto Token CSRF in sessione: ["+sessionTokenCSRF+"]");
 			try {
@@ -97,7 +90,6 @@ public class CsrfFilter implements Filter {
 					CsrfFilter.log.debug("Generato Nuovo Token CSRF: ["+nuovoTokenCSRF+"]");
 				}
 			}
-//			}
 			
 			// faccio proseguire le chiamate ai filtri
 			chain.doFilter(request, response);
