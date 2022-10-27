@@ -1507,8 +1507,13 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "console.setSearchAfterAdd");
 	}
 	
+	/* ----- Gestione vulnerabilita' console ------- */
 	public Integer getValiditaTokenCsrf() throws Exception{
 		return this.readIntegerProperty(true, "console.csrf.token.validita");
+	}
+	
+	public String getCSPHeaderValue() throws UtilsException{
+		return this.readProperty(true, "console.csp.header.value");
 	}
 	
 	/* ---------------- Gestione govwayConsole centralizzata ----------------------- */

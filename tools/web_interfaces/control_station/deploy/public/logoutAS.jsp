@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 <!DOCTYPE html>
+<%@page import="org.openspcoop2.utils.transport.http.HttpConstants"%>
 <%@page import="java.text.MessageFormat"%>
 <%@page import="java.util.UUID"%>
 <%@page import="org.openspcoop2.web.ctrlstat.servlet.login.LoginCostanti"%>
@@ -40,8 +41,8 @@ else
   iddati = "notdefined";
 GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
 
+GeneralHelper generalHelper = new GeneralHelper(session);
 if(gd == null) {
-	GeneralHelper generalHelper = new GeneralHelper(session);
 	PageData pd = generalHelper.initPageData();
 	gd = generalHelper.initGeneralData(request,LoginCostanti.SERVLET_NAME_LOGIN);
 	ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);
@@ -79,7 +80,7 @@ if(!tabSessionKey.equals("")){
 //Header CSP
 String randomNonce = UUID.randomUUID().toString().replace("-", "");
 request.setAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE, randomNonce);
-response.setHeader(Costanti.HEADER_NAME_CSP, MessageFormat.format(Costanti.HEADER_CSP_VALUE, randomNonce, randomNonce));
+response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY, MessageFormat.format(generalHelper.getCore().getCspHeaderValue(), randomNonce, randomNonce));
 %>
 <html>
 <head>

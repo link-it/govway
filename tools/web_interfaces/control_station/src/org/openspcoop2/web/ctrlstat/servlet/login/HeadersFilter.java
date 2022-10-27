@@ -31,9 +31,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
+import org.slf4j.Logger;
 
 /**     
  * HeadersFilter
@@ -45,13 +48,18 @@ import org.openspcoop2.web.lib.mvc.Costanti;
 public class HeadersFilter implements Filter {
 
 	private FilterConfig filterConfig = null;
-//	private static Logger log = ControlStationLogger.getPddConsoleCoreLogger();
+	private ControlStationCore core = null;
+	private static Logger log = ControlStationLogger.getPddConsoleCoreLogger();
 
 	@Override
 	public void init(FilterConfig filterConfig) {
 
 		this.filterConfig = filterConfig;
-
+		try {
+			this.core = new ControlStationCore();
+		} catch (Exception e) {
+			log.error("Errore durante il caricamento iniziale: " + e.getMessage(), e);
+		}
 	}
 
 	@Override
@@ -97,7 +105,7 @@ public class HeadersFilter implements Filter {
 		String uuId = UUID.randomUUID().toString().replace("-", "");
 		request.setAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE, uuId);
 
-		response.setHeader(Costanti.HEADER_NAME_CSP, MessageFormat.format(Costanti.HEADER_CSP_VALUE, uuId, uuId));
-//		response.setHeader(Costanti.HEADER_NAME_CSP_REPORT_ONLY, MessageFormat.format(Costanti.HEADER_CSP_VALUE, uuId, uuId));
+		response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY, MessageFormat.format(this.core.getCspHeaderValue(), uuId, uuId));
+//		response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY_REPORT_ONLY, MessageFormat.format(this.core.getCspHeaderValue(), uuId, uuId));
 	}
 }

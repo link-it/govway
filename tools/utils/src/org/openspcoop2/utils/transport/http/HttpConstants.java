@@ -208,6 +208,10 @@ public class HttpConstants {
 	
 	/** Source */
     public final static String SEPARATOR_SOURCE = ":";
+    
+    /** Content Security Policy */
+	public static final String HEADER_NAME_CONTENT_SECURITY_POLICY = "Content-Security-Policy";
+	public static final String HEADER_NAME_CONTENT_SECURITY_POLICY_REPORT_ONLY = "Content-Security-Policy-Report-Only";
 	
 }
 
