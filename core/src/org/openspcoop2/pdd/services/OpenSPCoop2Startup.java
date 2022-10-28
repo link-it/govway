@@ -3485,16 +3485,6 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
-			/* ----------- Inizializzazione Cache Cleaner ------------ */
-			try{
-				GestoreCacheCleaner.initialize();
-			}catch(Exception e){
-				this.logError("Riscontrato errore durante l'inizializzazione del ripulitore delle cache: "+e.getMessage(),e);
-				return;
-			}
-			
-			
-			
 			
 
 			/* ------------ Jminix StandaloneMiniConsole  ------------ */

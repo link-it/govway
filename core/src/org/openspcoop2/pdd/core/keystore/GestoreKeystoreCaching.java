@@ -121,9 +121,9 @@ public class GestoreKeystoreCaching {
 			else{
 				int dimensione = -1;
 				if(dimensioneCache!=null){
-					dimensione = dimensioneCache.intValue(); // lascio JCS come default abilitato via jmx
+					dimensione = dimensioneCache.intValue();
 				}
-				initCache(CacheType.JCS, dimensione, algoritmoCacheLRU, itemIdleTime, itemLifeSecond, log);
+				initCache(CacheType.JCS, dimensione, algoritmoCacheLRU, itemIdleTime, itemLifeSecond, log); // lascio JCS come default abilitato via jmx
 			}
 		}catch(Exception e){
 			throw new Exception("Abilitazione cache per i dati contenenti i keystore non riuscita: "+e.getMessage(),e);
