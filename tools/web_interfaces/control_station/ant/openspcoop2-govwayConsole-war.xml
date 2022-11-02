@@ -273,11 +273,11 @@
 				<isfalse value="${singlePdD.registroServizi.locale}" />
 			</or>
 			<then>
-				<var name="govwayConsoleRemota_security_neethi" value="neethi-3.1.1.jar" />
+				<var name="govwayConsoleRemota_security_neethi" value="neethi-3.2.0.jar" />
 				<var name="govwayConsoleRemota_httpcore" value="*.jar" />
-				<var name="govwayConsoleRemota_cxf_xmlschema-core" value="xmlschema-core-2.2.5.jar" />
-				<var name="govwayConsoleRemota_cxf_woodstox-core-asl" value="woodstox-core-5.3.0.jar" />
-				<var name="govwayConsoleRemota_cxf_stax2-api" value="stax2-api-4.2.jar" />
+				<var name="govwayConsoleRemota_cxf_xmlschema-core" value="xmlschema-core-2.3.0.jar" />
+				<var name="govwayConsoleRemota_cxf_woodstox-core-asl" value="woodstox-core-6.2.8.jar" />
+				<var name="govwayConsoleRemota_cxf_stax2-api" value="stax2-api-4.2.1.jar" />
 				<if>
 					<matches string="${as}" pattern="wildfly.*"/>
 					<then>
@@ -292,12 +292,12 @@
 		<if>
 			<matches string="${as}" pattern="tomcat.*"/>
 			<then>
-				<unzip src="${required_lib}/shared/mailapi-1.6.4.jar" dest="${build_govwayConsole}/tmp/mailapi"/>
+				<unzip src="${required_lib}/shared/mailapi-1.6.7.jar" dest="${build_govwayConsole}/tmp/mailapi"/>
 				<concat destfile="${build_govwayConsole}/tmp/mailapi/META-INF/mailcap" append="yes">
 					<filelist dir="${data_content_handler_dir}"
 		                           files="mailcap"/>
 				</concat>
-				<jar jarfile="${build_govwayConsole}/tmp/mailapi-1.6.4.gw.jar" manifest="${build_govwayConsole}/tmp/mailapi/META-INF/MANIFEST.MF">
+				<jar jarfile="${build_govwayConsole}/tmp/mailapi-1.6.7.gw.jar" manifest="${build_govwayConsole}/tmp/mailapi/META-INF/MANIFEST.MF">
 					<zipfileset dir="${build_govwayConsole}/tmp/mailapi"/>
 				</jar>
 			</then>
@@ -399,11 +399,11 @@
 				<include name="commons-digester-2.1.jar"/>
 				<include name="commons-discovery-0.5.jar"/>
 				<include name="commons-fileupload-1.4.jar" />
-				<include name="commons-io-2.8.0.jar" />
+				<include name="commons-io-2.11.0.jar" />
 				<include name="commons-lang-2.6.jar" />
-				<include name="commons-codec-1.14.jar"/>
+				<include name="commons-codec-1.15.jar"/>
 				<include name="${commons_logging_jar}"/>
-				<include name="commons-lang3-3.9.jar"/>
+				<include name="commons-lang3-3.12.0.jar"/>
 				<include name="commons-compress-1.21.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayConsole}/shared">
@@ -416,11 +416,12 @@
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>	
-				<include name="xmlunit-1.6.jar" />
-				<include name="snakeyaml-1.32-gov4j-1.jar" />
-				<include name="freemarker-2.3.29.jar" />
-				<include name="joda-time-2.10.5.jar" />
-				<include name="reactive-streams-1.0.3.jar" />
+				<include name="xmlunit-legacy-2.9.0.jar" />
+				<include name="xmlunit-core-2.9.0.jar" />
+				<include name="snakeyaml-1.33-gov4j-1.jar" />
+				<include name="freemarker-2.3.31.jar" />
+				<include name="joda-time-2.12.0.jar" />
+				<include name="reactive-streams-1.0.4.jar" />
 				<include name="${jakarta_activation_jar}"/>
 				<include name="velocity-*.jar"/>
 				<include name="rhino-1.7.14.jar"/>
@@ -444,20 +445,20 @@
 				<include name="jaxb-*.jar" />
 			</lib>
 			<lib dir="${required_lib}/log">
-				<include name="slf4j-api-1.7.30-gov4j-1.jar"/>
+				<include name="slf4j-api-2.0.3-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/javax">
 				<include name="${javax.jms-api-2.0.1.jar}"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="xmlsec-2.1.7.jar"/>
+				<include name="xmlsec-2.3.0.jar"/>
 				<include name="${neethi_jar}" />
 				<include name="${govwayConsoleRemota_security_neethi}"/>
-				<include name="herasaf-xacml-core-1.0.4.RELEASE.jar"/>
-				<include name="bcpkix-jdk15on-1.69.jar"/>
-				<include name="bcprov-ext-jdk15on-1.69.jar"/>
-				<include name="bcutil-jdk15on-1.69.jar"/>
+				<include name="herasaf-xacml-core-2.0.4.jar"/>
+				<include name="bcpkix-jdk18on-1.72.jar"/>
+				<include name="bcprov-ext-jdk18on-1.72.jar"/>
+				<include name="bcutil-jdk18on-1.72.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 			</lib>
 			<lib dir="${required_lib}/httpcore">
@@ -494,7 +495,7 @@
 			</lib>
 			<!-- Mail api esteso con activation data handler openspcoop -->
 			<lib dir="${build_govwayConsole}/tmp">
-				<include name="mailapi-1.6.4.gw.jar" />
+				<include name="mailapi-1.6.7.gw.jar" />
 			</lib>
 			<!-- Plugins -->
 			<lib dir="${plugins_govwayConsole}">

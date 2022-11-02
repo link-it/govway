@@ -132,6 +132,37 @@ public class ServiceIdentificationReader implements IServiceIdentificationReader
 	}
 	
 	@Override
+	public IDSoggetto convertToIDSoggettoFruitore(IDPortaDelegata idPortaDelegata) throws RegistryNotFound{
+		
+		try{
+			if(this.idPD!=null && this.idPD.getIdentificativiFruizione()!=null &&
+					this.idPD.getIdentificativiFruizione().getSoggettoFruitore()!=null){
+				return this.idPD.getIdentificativiFruizione().getSoggettoFruitore();
+			}
+			
+			if(this.pd==null){
+				this.pd = this.configIntegrationReader.getPortaDelegata(idPortaDelegata);
+			}
+			IDSoggetto idS = new IDSoggetto(this.pd.getTipoSoggettoProprietario(), this.pd.getNomeSoggettoProprietario());
+			if(idS.getCodicePorta()==null){
+				idS.setCodicePorta(this.registryReader.getDominio(idS));
+			}
+			
+			return idS;
+		}
+		catch(RegistryNotFound e){
+			this.erroreIntegrazioneNotFound = 
+					ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
+					getErrore401_PortaInesistente(e.getMessage(),idPortaDelegata.getNome(),idPortaDelegata.getNome());
+			throw e;
+		}
+		catch(Exception e){
+			return null;
+		}
+		
+	}
+	
+	@Override
 	public IDServizio convertToIDServizio(IDPortaDelegata idPortaDelegata) throws RegistryNotFound{
 		
 		try{

@@ -82,15 +82,18 @@ import org.openspcoop2.protocol.engine.driver.repository.IGestoreRepository;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.id.serial.InfoStatistics;
@@ -243,7 +246,8 @@ public class GestoreMessaggi  {
 			throw new GestoreMessaggiException("Cache gia' abilitata");
 		else{
 			try{
-				GestoreMessaggi.cacheMappingGestoreMessaggi = new Cache(GestoreMessaggi.GESTORE_MESSAGGI_CACHE_NAME);
+				GestoreMessaggi.cacheMappingGestoreMessaggi = new Cache(CacheType.JCS, GestoreMessaggi.GESTORE_MESSAGGI_CACHE_NAME); // lascio JCS come default abilitato via jmx
+				GestoreMessaggi.cacheMappingGestoreMessaggi.build();
 			}catch(Exception e){
 				throw new GestoreMessaggiException(e.getMessage(),e);
 			}
@@ -259,7 +263,7 @@ public class GestoreMessaggi  {
 					algoritmoCache = CostantiConfigurazione.CACHE_LRU.toString() ;
 				else
 					algoritmoCache = CostantiConfigurazione.CACHE_MRU.toString();
-				GestoreMessaggi.initCacheGestoreMessaggi((int)dimensioneCache,algoritmoCache,itemIdleTime,itemLifeSecond,null,null);
+				GestoreMessaggi.initCacheGestoreMessaggi(CacheType.JCS, (int)dimensioneCache,algoritmoCache,itemIdleTime,itemLifeSecond,null,null); // lascio JCS come default abilitato via jmx
 			}catch(Exception e){
 				throw new GestoreMessaggiException(e.getMessage(),e);
 			}
@@ -331,18 +335,19 @@ public class GestoreMessaggi  {
 			String algoritmoCache = properties.getAlgoritmoCacheGestoreMessaggi();
 			long itemIdleTime = properties.getItemIdleTimeCacheGestoreMessaggi();
 			long itemLifeSecond = properties.getItemLifeSecondCacheGestoreMessaggi();
-			GestoreMessaggi.initCacheGestoreMessaggi(dimensioneCache,algoritmoCache,itemIdleTime,itemLifeSecond,log,logConsole);
+			CacheType cacheType = properties.getCacheType_message();
+			GestoreMessaggi.initCacheGestoreMessaggi(cacheType, dimensioneCache,algoritmoCache,itemIdleTime,itemLifeSecond,log,logConsole);
 		}
 	}
 
-	public static void initCacheGestoreMessaggi(int dimensioneCache,String algoritmoCache,long itemIdleTime,long itemLifeSecond,Logger log,Logger logConsole) throws Exception{
+	public static void initCacheGestoreMessaggi(CacheType cacheType, int dimensioneCache,String algoritmoCache,long itemIdleTime,long itemLifeSecond,Logger log,Logger logConsole) throws Exception{
 
 		if(log!=null)
 			log.info("Inizializzazione cache gestoreMessaggi");
 		if(logConsole!=null)
 			logConsole.info("Inizializzazione cache gestoreMessaggi");
 
-		GestoreMessaggi.cacheMappingGestoreMessaggi = new Cache(GestoreMessaggi.GESTORE_MESSAGGI_CACHE_NAME);
+		GestoreMessaggi.cacheMappingGestoreMessaggi = new Cache(cacheType, GestoreMessaggi.GESTORE_MESSAGGI_CACHE_NAME);
 
 		String msg = null;
 		if( (dimensioneCache>0) ||
@@ -398,15 +403,20 @@ public class GestoreMessaggi  {
 			throw new DriverConfigurazioneException("Parametro errato per l'attributo 'MaxLifeSecond' (Gestore Messaggi): "+error.getMessage());
 		}
 
+		GestoreMessaggi.cacheMappingGestoreMessaggi.build();
 	}
 	
 	
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public static void disableSyncronizedGet() throws UtilsException {
 		if(GestoreMessaggi.cacheMappingGestoreMessaggi==null) {
 			throw new UtilsException("Cache disabled");
 		}
 		GestoreMessaggi.cacheMappingGestoreMessaggi.disableSyncronizedGet();
 	}
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public static boolean isDisableSyncronizedGet() throws UtilsException {
 		if(GestoreMessaggi.cacheMappingGestoreMessaggi==null) {
 			throw new UtilsException("Cache disabled");
@@ -1070,7 +1080,8 @@ public class GestoreMessaggi  {
 					if(contextSerializerParameters!=null && contextSerializerParameters.size()>0){
 						for (String keyword : contextSerializerParameters.keySet()) {
 
-							Object o = this.pddContext.getObject(keyword);
+							MapKey<String> mapKey = org.openspcoop2.utils.Map.newMapKey(keyword);
+							Object o = this.pddContext.getObject(mapKey);
 							if(o==null){
 								continue; // un oggetto puo' essere opzionale in un context
 							}
@@ -1194,7 +1205,8 @@ public class GestoreMessaggi  {
 				if(contextSerializerParameters!=null && contextSerializerParameters.size()>0){
 					for (String keyword : contextSerializerParameters.keySet()) {
 
-						Object o = this.pddContext.getObject(keyword);
+						MapKey<String> mapKey = org.openspcoop2.utils.Map.newMapKey(keyword);
+						Object o = this.pddContext.getObject(mapKey);
 						if(o==null){
 							continue; // un oggetto puo' essere opzionale in un context
 						}
@@ -3218,7 +3230,7 @@ public class GestoreMessaggi  {
 				if(fieldNamesPdDContext_db.length() != 0) 
 					fieldNamesPdDContext_db.append(" , ");
 				fieldNamesPdDContext_db.append("PROTOCOLLO");
-				mapping.put("PROTOCOLLO", org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME);
+				mapping.put("PROTOCOLLO", org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME.getValue());
 				PdDContext pddContext = new PdDContext();
 				if(mapping.size()<=0){
 					return pddContext;
@@ -3237,7 +3249,9 @@ public class GestoreMessaggi  {
 
 					for (String keyDB : mapping.keySet()) {
 						Object object = rs.getObject(keyDB);
-						pddContext.addObject(mapping.get(keyDB), object);
+						String key = mapping.get(keyDB);
+						MapKey<String> mapKey = org.openspcoop2.utils.Map.newMapKey(key);
+						pddContext.addObject(mapKey, object);
 					}
 					
 					String idTransazione = rs.getString("id_transazione");
@@ -7895,7 +7909,7 @@ public class GestoreMessaggi  {
 	 *
 	 * 
 	 */
-	public boolean forcedDeleteMessage() throws GestoreMessaggiException{
+	public boolean forcedDeleteMessage(RequestInfo requestInfo) throws GestoreMessaggiException{
 
 		if(this.openspcoopstate instanceof OpenSPCoopStateful) {
 			StatefulMessage stateful = (this.isRichiesta) ? ((StatefulMessage)this.openspcoopstate.getStatoRichiesta()) 
@@ -7916,7 +7930,7 @@ public class GestoreMessaggi  {
 					String protocol = null;
 					if(this.protocolFactory!=null)
 						protocol = this.protocolFactory.getProtocol();
-					receiverJMS = new JMSReceiver(this.propertiesReader.getIdentitaPortaDefault(protocol),"ForcedDeleteMessage",this.propertiesReader.singleConnection_NodeReceiver(),this.log,idT);
+					receiverJMS = new JMSReceiver(this.propertiesReader.getIdentitaPortaDefault(protocol, requestInfo),"ForcedDeleteMessage",this.propertiesReader.singleConnection_NodeReceiver(),this.log,idT);
 				}
 				if(Costanti.INBOX.equals(this.tipo)){
 					//	rollback messaggio (eventuale profilo + accesso_pdd)

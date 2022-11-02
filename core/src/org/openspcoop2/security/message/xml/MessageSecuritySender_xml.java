@@ -51,7 +51,7 @@ public class MessageSecuritySender_xml extends AbstractRESTMessageSecuritySender
 
 	
      @Override
-	public void process(MessageSecurityContext messageSecurityContext,OpenSPCoop2Message messageParam) throws SecurityException{
+	public void process(MessageSecurityContext messageSecurityContext,OpenSPCoop2Message messageParam, org.openspcoop2.utils.Map<Object> ctx) throws SecurityException{
 		try{ 	
 			
 			if(ServiceBinding.REST.equals(messageParam.getServiceBinding())==false){
@@ -70,7 +70,7 @@ public class MessageSecuritySender_xml extends AbstractRESTMessageSecuritySender
 
 			String[]actions = ((String)messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ACTION)).split(" ");
 			for (int i = 0; i < actions.length; i++) {
-				if(SecurityConstants.ENCRYPT_ACTION.equals(actions[i].trim())){
+				if(SecurityConstants.is_ACTION_ENCRYPTION(actions[i].trim())){
 					encrypt = true;
 				}
 				else if(SecurityConstants.SIGNATURE_ACTION.equals(actions[i].trim())){
@@ -98,7 +98,7 @@ public class MessageSecuritySender_xml extends AbstractRESTMessageSecuritySender
 
 				SignatureBean bean = null;
 				try {
-					bean = KeystoreUtils.getSenderSignatureBean(messageSecurityContext);
+					bean = KeystoreUtils.getSenderSignatureBean(messageSecurityContext,ctx);
 				}catch(Exception e) {
 					throw e;
 				}
@@ -188,7 +188,7 @@ public class MessageSecuritySender_xml extends AbstractRESTMessageSecuritySender
 				XmlEncrypt xmlEncrypt = null;
 				EncryptionBean bean = null;
 				try {
-					bean = KeystoreUtils.getSenderEncryptionBean(messageSecurityContext);
+					bean = KeystoreUtils.getSenderEncryptionBean(messageSecurityContext, ctx);
 				}catch(Exception e) {
 					throw e;
 				}

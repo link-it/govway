@@ -23,12 +23,15 @@ package org.openspcoop2.protocol.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.registry.driver.FiltroRicercaProtocolProperty;
 import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
 import org.openspcoop2.protocol.sdk.properties.BooleanProperty;
 import org.openspcoop2.protocol.sdk.properties.NumberProperty;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.StringProperty;
+import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.MapKey;
 
 /**
  * ProtocolPropertiesUtils
@@ -41,6 +44,30 @@ public class ProtocolUtils {
 
 	// UTILITIES
 
+	public static MapKey<String> protocolToMapKey(String protocollo){
+		if(CostantiLabel.TRASPARENTE_PROTOCOL_NAME.equals(protocollo)) {
+			return CostantiLabel.TRASPARENTE_PROTOCOL_MAP_KEY;
+		}
+		else if(CostantiLabel.MODIPA_PROTOCOL_NAME.equals(protocollo)) {
+			return CostantiLabel.MODIPA_PROTOCOL_MAP_KEY;
+		}
+		else if(CostantiLabel.SPCOOP_PROTOCOL_NAME.equals(protocollo)) {
+			return CostantiLabel.SPCOOP_PROTOCOL_MAP_KEY;
+		}
+		else if(CostantiLabel.AS4_PROTOCOL_NAME.equals(protocollo)) {
+			return CostantiLabel.AS4_PROTOCOL_MAP_KEY;
+		}
+		else if(CostantiLabel.SDI_PROTOCOL_NAME.equals(protocollo)) {
+			return CostantiLabel.SDI_PROTOCOL_MAP_KEY;
+		}
+		else if(CostantiLabel.NO_PROTOCOL_NAME.equals(protocollo)) {
+			return CostantiLabel.NO_PROTOCOL_MAP_KEY;
+		}
+		else {
+			return Map.newMapKey(protocollo);
+		}
+	}
+	
 	public static List<String> orderProtocolli(List<String> protocolliDispondibili){
 		List<String> l = new ArrayList<>();
 		
@@ -52,7 +79,7 @@ public class ProtocolUtils {
 		// trasparente
 		for (int i = 0; i < newL.size(); i++) {
 			String protocollo = newL.get(i);
-			if("trasparente".equals(protocollo)) {
+			if(CostantiLabel.TRASPARENTE_PROTOCOL_NAME.equals(protocollo)) {
 				l.add(newL.remove(i));
 				break;
 			}
@@ -61,7 +88,7 @@ public class ProtocolUtils {
 		// modipa
 		for (int i = 0; i < newL.size(); i++) {
 			String protocollo = newL.get(i);
-			if("modipa".equals(protocollo)) {
+			if(CostantiLabel.MODIPA_PROTOCOL_NAME.equals(protocollo)) {
 				l.add(newL.remove(i));
 				break;
 			}
@@ -70,7 +97,7 @@ public class ProtocolUtils {
 		// spcoop
 		for (int i = 0; i < newL.size(); i++) {
 			String protocollo = newL.get(i);
-			if("spcoop".equals(protocollo)) {
+			if(CostantiLabel.SPCOOP_PROTOCOL_NAME.equals(protocollo)) {
 				l.add(newL.remove(i));
 				break;
 			}
@@ -79,7 +106,7 @@ public class ProtocolUtils {
 		// edelivery
 		for (int i = 0; i < newL.size(); i++) {
 			String protocollo = newL.get(i);
-			if("as4".equals(protocollo)) {
+			if(CostantiLabel.AS4_PROTOCOL_NAME.equals(protocollo)) {
 				l.add(newL.remove(i));
 				break;
 			}
@@ -88,7 +115,7 @@ public class ProtocolUtils {
 		// fatturazione
 		for (int i = 0; i < newL.size(); i++) {
 			String protocollo = newL.get(i);
-			if("sdi".equals(protocollo)) {
+			if(CostantiLabel.SDI_PROTOCOL_NAME.equals(protocollo)) {
 				l.add(newL.remove(i));
 				break;
 			}

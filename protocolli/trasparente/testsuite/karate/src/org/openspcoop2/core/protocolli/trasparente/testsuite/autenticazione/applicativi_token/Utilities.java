@@ -559,7 +559,7 @@ public class Utilities {
 		String idTransazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		assertNotNull(idTransazione);
 		
-		long esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
+		long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
 		if((msgError!=null && !msgError.equals(Utilities.DIAGNOSTICO_NESSUN_APPLICATIVO_IDENTIFICATO))) {
 			
 			int code = -1;
@@ -568,13 +568,13 @@ public class Utilities {
 			String soapPrefixError = "Client";
 			
 			if(msgError.contains("differente dal soggetto proprietario della porta invocata")) {
-				esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTENTICAZIONE_TOKEN);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTENTICAZIONE_TOKEN);
 				code = 401;
 				error = "AuthenticationFailed";
 				msg = "Authentication Failed";
 			}
 			else if(msgError.contains("non è autorizzato ad invocare il servizio") || msgError.contains("non risulta autorizzato")){
-				esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
 				code = 403;
 				error = "AuthorizationDeny";
 				msg = "Authorization deny";
@@ -584,13 +584,13 @@ public class Utilities {
 				}
 			}
 			else if(msgError.contains("Role") && msgError.contains("not found in")){
-				esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
 				code = 403;
 				error = "AuthorizationMissingRole";
 				msg = "Authorization deny by role";
 			}
 			else if(msgError.contains("unprocessable dynamic value") || msgError.contains("with unexpected value")){
-				esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
 				code = 403;
 				error = "AuthorizationContentDeny";
 				msg = "Unauthorized request content";

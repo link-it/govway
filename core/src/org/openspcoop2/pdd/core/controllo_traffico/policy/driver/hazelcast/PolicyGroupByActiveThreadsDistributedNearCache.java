@@ -22,7 +22,6 @@
 package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast;
 
 import java.util.Date;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
@@ -33,6 +32,7 @@ import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.PolicyDateUtils;
+import org.openspcoop2.utils.Map;
 import org.slf4j.Logger;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -55,7 +55,7 @@ public class PolicyGroupByActiveThreadsDistributedNearCache extends AbstractPoli
 	}
 
 	@Override
-	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx)
+	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx)
 			throws PolicyException {
 		
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
@@ -93,7 +93,7 @@ public class PolicyGroupByActiveThreadsDistributedNearCache extends AbstractPoli
 	
 	@Override
 	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione,
-			IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx) throws PolicyException, PolicyNotFoundException {
+			IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx) throws PolicyException, PolicyNotFoundException {
 		
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
 
@@ -123,7 +123,7 @@ public class PolicyGroupByActiveThreadsDistributedNearCache extends AbstractPoli
 	}
 	
 	@Override
-	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx, 
+	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx, 
 			MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata)
 			throws PolicyException, PolicyNotFoundException {
 		

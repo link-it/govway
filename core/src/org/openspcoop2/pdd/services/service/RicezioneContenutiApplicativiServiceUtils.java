@@ -36,6 +36,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.transazioni.utils.PropertiesSerializator;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
@@ -46,6 +47,7 @@ import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.GestoreRichieste;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
@@ -64,18 +66,19 @@ import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativiContext;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
 import org.openspcoop2.protocol.basic.registry.IdentificazionePortaDelegata;
 import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
-import org.openspcoop2.protocol.engine.RequestInfo;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
-import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.protocol.sdk.constants.IDService;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.sdk.state.RequestInfoConfigUtilities;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
@@ -99,18 +102,18 @@ public class RicezioneContenutiApplicativiServiceUtils {
 				RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance(state);
 				IDPortaDelegata idPD = new IDPortaDelegata();
 				idPD.setNome(requestInfo.getProtocolContext().getInterfaceName());
-				PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD);
+				PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, requestInfo);
 				if (pd != null) {
 					RicezionePropertiesConfig config = new RicezionePropertiesConfig();
 					
 					config.setApiImplementation(configurazionePdDManager.getProprietaConfigurazione(pd));
 					
 					IDSoggetto idSoggettoProprietario = new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario());
-					Soggetto soggetto = registroServiziManager.getSoggetto(idSoggettoProprietario, null);
+					Soggetto soggetto = registroServiziManager.getSoggetto(idSoggettoProprietario, null, requestInfo);
 					config.setSoggettoFruitore(registroServiziManager.getProprietaConfigurazione(soggetto));
 					
 					IDSoggetto idSoggettoErogatore = new IDSoggetto(pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome());
-					Soggetto soggettoErogatore = registroServiziManager.getSoggetto(idSoggettoErogatore, null);
+					Soggetto soggettoErogatore = registroServiziManager.getSoggetto(idSoggettoErogatore, null, requestInfo);
 					config.setSoggettoErogatore(registroServiziManager.getProprietaConfigurazione(soggettoErogatore));
 					
 					return config;
@@ -139,11 +142,20 @@ public class RicezioneContenutiApplicativiServiceUtils {
 				
 		IRegistryReader registryReader = serviceIdentificationReader.getRegistryReader();
 		CachedConfigIntegrationReader configIntegrationReader = (CachedConfigIntegrationReader) serviceIdentificationReader.getConfigIntegrationReader();
+		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance();
 		
 		IDPortaDelegata idPD = null;
 		PortaDelegata pdDefault = null;
 		try{
-			idPD = serviceIdentificationReader.findPortaDelegata(protocolContext, true);
+			if(requestInfo.getRequestConfig()!=null && requestInfo.getRequestConfig().getIdPortaDelegataDefault()!=null) {
+				idPD = requestInfo.getRequestConfig().getIdPortaDelegataDefault();
+			}
+			else {
+				idPD = serviceIdentificationReader.findPortaDelegata(protocolContext, true);
+				if(requestInfo.getRequestConfig()!=null) {
+					requestInfo.getRequestConfig().setIdPortaDelegataDefault(idPD);
+				}
+			}
 		}catch(RegistryNotFound notFound){
 			if(pddContextNullable!=null) {
 				pddContextNullable.addObject(org.openspcoop2.core.constants.Costanti.API_NON_INDIVIDUATA, "true");
@@ -169,34 +181,61 @@ public class RicezioneContenutiApplicativiServiceUtils {
 			// da ora in avanti, avendo localizzato una PD, se avviene un errore genero l'errore stesso
 			protocolContext.setInterfaceName(idPD.getNome());
 			
+			// read IDServizio e IDSoggettoFruitore
 			IDSoggetto idSoggettoFruitore = null;
 			IDServizio idServizio = null;
-			if(idPD.getIdentificativiFruizione()!=null){
-				if(idPD.getIdentificativiFruizione().getSoggettoFruitore()!=null) {
-					idSoggettoFruitore = idPD.getIdentificativiFruizione().getSoggettoFruitore().clone(); // effettuo clone altrimenti nella cache vengono memorizzate le informazioni impostate dopo!
-				}
-				if( idPD.getIdentificativiFruizione().getIdServizio()!=null) {
-					idServizio = idPD.getIdentificativiFruizione().getIdServizio().clone(); // effettuo clone altrimenti nella cache viene memorizzata l'azione impostata dopo!
-				}
+			if(requestInfo.getRequestConfig()!=null && 
+					requestInfo.getRequestConfig().getIdServizio()!=null &&
+					requestInfo.getRequestConfig().getIdFruitore()!=null) {
+				idServizio = requestInfo.getRequestConfig().getIdServizio().clone(); // effettuo clone altrimenti viene cambiato dopo e la modifica potrebbe risultare anche in altri thread
+				idSoggettoFruitore = requestInfo.getRequestConfig().getIdFruitore();
 			}
-			
-			if(generatoreErrore!=null && idSoggettoFruitore!=null){
-				generatoreErrore.updateDominio(idSoggettoFruitore);
-				generatoreErrore.updateInformazioniCooperazione(idSoggettoFruitore, null);
-			}
-			if(idServizio==null){
-				try{
-					idServizio = serviceIdentificationReader.convertToIDServizio(idPD);
-				}catch(RegistryNotFound notFound){
-					logCore.debug("Conversione Dati PortaDelegata in identificativo servizio fallita (notFound): "+notFound.getMessage(),notFound);
-					msgDiag.addKeywordErroreProcessamento(notFound);
-					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"portaDelegataNonEsistente");
-					return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, serviceIdentificationReader.getErroreIntegrazioneNotFound(), 
-							IntegrationFunctionError.API_OUT_UNKNOWN, notFound, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
+			else {
+				if(idPD.getIdentificativiFruizione()!=null){
+					if(idPD.getIdentificativiFruizione().getSoggettoFruitore()!=null) {
+						idSoggettoFruitore = idPD.getIdentificativiFruizione().getSoggettoFruitore().clone(); // effettuo clone altrimenti nella cache vengono memorizzate le informazioni impostate dopo!
+					}
+					if( idPD.getIdentificativiFruizione().getIdServizio()!=null) {
+						idServizio = idPD.getIdentificativiFruizione().getIdServizio().clone(); // effettuo clone altrimenti nella cache viene memorizzata l'azione impostata dopo!
+					}
+				}
+				
+				if(generatoreErrore!=null && idSoggettoFruitore!=null){
+					generatoreErrore.updateDominio(idSoggettoFruitore);
+					generatoreErrore.updateInformazioniCooperazione(idSoggettoFruitore, null);
+				}
+				if(idServizio==null){
+					try{
+						idServizio = serviceIdentificationReader.convertToIDServizio(idPD);
+					}catch(RegistryNotFound notFound){
+						logCore.debug("Conversione Dati PortaDelegata in identificativo servizio fallita (notFound): "+notFound.getMessage(),notFound);
+						msgDiag.addKeywordErroreProcessamento(notFound);
+						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"portaDelegataNonEsistente");
+						return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, serviceIdentificationReader.getErroreIntegrazioneNotFound(), 
+								IntegrationFunctionError.API_OUT_UNKNOWN, notFound, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
+					}
+				}
+				if(idSoggettoFruitore==null){
+					try{
+						idSoggettoFruitore = serviceIdentificationReader.convertToIDSoggettoFruitore(idPD);
+					}catch(RegistryNotFound notFound){
+						logCore.debug("Conversione Dati PortaDelegata in identificativo soggetto fruitore fallita (notFound): "+notFound.getMessage(),notFound);
+						msgDiag.addKeywordErroreProcessamento(notFound);
+						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"portaDelegataNonEsistente");
+						return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, serviceIdentificationReader.getErroreIntegrazioneNotFound(), 
+								IntegrationFunctionError.API_OUT_UNKNOWN, notFound, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
+					}
+				}
+				
+				if(requestInfo.getRequestConfig()!=null) {
+					requestInfo.getRequestConfig().setIdServizio(idServizio);
+					requestInfo.getRequestConfig().setIdFruitore(idSoggettoFruitore);
 				}
 			}
 			
 			if(idServizio!=null){
+				
+				RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance();
 				
 				// Aggiorno service binding rispetto al servizio localizzato
 				try{
@@ -236,21 +275,36 @@ public class RicezioneContenutiApplicativiServiceUtils {
 					}
 				}
 				
-				// provo a leggere anche l'azione
-				// l'eventuale errore lo genero dopo
-				try{
-					idServizio.setAzione(configIntegrationReader.getAzione(configIntegrationReader.getPortaDelegata(idPD), protocolContext, requestInfo.getProtocolFactory(),soapStreamReader));
-				}catch(Exception e){
-					logCore.debug("Azione non trovata: "+e.getMessage(),e);
-				}
-				
 				// PortaDelegata Default
 				try{
-					pdDefault = ConfigurazionePdDManager.getInstance().getPortaDelegata(idPD);
+					if(requestInfo.getRequestConfig()!=null && requestInfo.getRequestConfig().getPortaDelegataDefault()!=null) {
+						pdDefault = requestInfo.getRequestConfig().getPortaDelegataDefault();
+					}
+					else {
+						pdDefault = configurazionePdDManager.getPortaDelegata(idPD, null); // passo null volutamente, per non utilizzare la configurazione
+						if(requestInfo.getRequestConfig()!=null) {
+							requestInfo.getRequestConfig().setPortaDelegataDefault(pdDefault);
+						}
+					}
 				}catch(Exception e){
 					logCore.debug("Recupero porta default fallita: "+e.getMessage(),e);
 				}
 				
+				// Verifico che la modalità di riconoscimento dell'azione sia compatibile
+				RequestInfoConfigUtilities.checkRequestInfoConfig(pdDefault, logCore, integrationServiceBinding, soapStreamReader, requestInfo);
+				// Aggiorno chiave per considerare anche il soapStreamReader
+				GestoreRichieste.updateRequestConfig(logCore, requestInfo, integrationServiceBinding, soapStreamReader);
+				
+				// provo a leggere anche l'azione
+				// l'eventuale errore lo genero dopo
+				try{
+					//PortaDelegata pdSearchAzione = configIntegrationReader.getPortaDelegata(idPD);
+					PortaDelegata pdSearchAzione = pdDefault;
+					idServizio.setAzione(configIntegrationReader.getAzione(pdSearchAzione, protocolContext, requestInfo, requestInfo.getProtocolFactory(),soapStreamReader));
+				}catch(Exception e){
+					logCore.debug("Azione non trovata: "+e.getMessage(),e);
+				}
+								
 				// Lettura eventuale MessageFactory da utilizzare
 				try {
 					if(pdDefault!=null && pdDefault.getOptions()!=null && !StringUtils.isEmpty(pdDefault.getOptions())) {
@@ -268,25 +322,179 @@ public class RicezioneContenutiApplicativiServiceUtils {
 				
 				// Lettura Azione
 				try{
-					if(idServizio.getAzione()!=null) {
-						IdentificazionePortaDelegata identificazione = new IdentificazionePortaDelegata(logCore, pf, null, pdDefault);
-						if(identificazione.find(idServizio.getAzione())) {
-							IDPortaDelegata idPD_action = identificazione.getIDPortaDelegata(idServizio.getAzione());
-							if(idPD_action!=null) {
-								
-								if(pddContextNullable!=null) {
-									pddContextNullable.addObject(CostantiPdD.NOME_PORTA_INVOCATA, idPD.getNome()); // prima di aggiornare la porta delegata
-								}
-								
-								msgDiag.addKeyword(CostantiPdD.KEY_PORTA_DELEGATA, idPD_action.getNome());
-								msgDiag.updatePorta(idPD_action.getNome());
-								protocolContext.setInterfaceName(idPD_action.getNome());
-								idPD = idPD_action;
+					if(requestInfo.getRequestConfig()!=null && requestInfo.getRequestConfig().getIdPortaDelegata()!=null) {
+						idPD = requestInfo.getRequestConfig().getIdPortaDelegata();
+						
+						if(requestInfo.getRequestConfig().getIdPortaDelegataDefault()!=null && !requestInfo.getRequestConfig().getIdPortaDelegataDefault().equals(idPD)) {
+							// pd specifica
+							
+							if(pddContextNullable!=null) {
+								pddContextNullable.addObject(CostantiPdD.NOME_PORTA_INVOCATA, requestInfo.getRequestConfig().getIdPortaDelegataDefault().getNome()); // prima di aggiornare la porta applicativa
 							}
+							
+							msgDiag.addKeyword(CostantiPdD.KEY_PORTA_DELEGATA, idPD.getNome());
+							msgDiag.updatePorta(idPD.getNome(), requestInfo);
+							protocolContext.setInterfaceName(idPD.getNome());
+						}
+					}
+					else {
+						if(idServizio.getAzione()!=null) {
+							IdentificazionePortaDelegata identificazione = new IdentificazionePortaDelegata(logCore, pf, 
+									serviceIdentificationReader.getRegistryReader(), serviceIdentificationReader.getConfigIntegrationReader(), // questi reader sono gia' 'cached'
+									requestInfo, pdDefault);
+							if(identificazione.find(idServizio.getAzione())) {
+								IDPortaDelegata idPD_action = identificazione.getIDPortaDelegata(idServizio.getAzione());
+								if(idPD_action!=null) {
+									
+									if(pddContextNullable!=null) {
+										pddContextNullable.addObject(CostantiPdD.NOME_PORTA_INVOCATA, idPD.getNome()); // prima di aggiornare la porta delegata
+									}
+									
+									msgDiag.addKeyword(CostantiPdD.KEY_PORTA_DELEGATA, idPD_action.getNome());
+									msgDiag.updatePorta(idPD_action.getNome(),requestInfo);
+									protocolContext.setInterfaceName(idPD_action.getNome());
+									idPD = idPD_action;
+								}
+							}
+						}
+						if(idPD!=null && requestInfo.getRequestConfig()!=null) {
+							requestInfo.getRequestConfig().setIdPortaDelegata(idPD);
 						}
 					}
 				}catch(Exception e){
 					logCore.debug("Gestione porta specifica per azione fallita: "+e.getMessage(),e);
+				}
+				
+				// SetPD usato poi successivamente
+				if(idPD!=null && requestInfo.getRequestConfig()!=null && requestInfo.getRequestConfig().getPortaDelegata()==null) {
+					try{
+						PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, null); // passo null volutamente, per non utilizzare la configurazione
+						requestInfo.getRequestConfig().setPortaDelegata(pd);
+					}catch(Exception e){
+						logCore.debug("Recupero porta delegata fallito: "+e.getMessage(),e);
+					}
+				}
+				
+				// Set identità soggetti erogatori usati poi successivamente
+				if(idServizio!=null && idServizio.getSoggettoErogatore()!=null && requestInfo.getRequestConfig()!=null) {
+					if(requestInfo.getRequestConfig().getSoggettoErogatoreRegistry()==null) {
+						try{
+							org.openspcoop2.core.registry.Soggetto soggettoRegistry = registroServiziManager.getSoggetto(idServizio.getSoggettoErogatore(), null, null); // passo null volutamente, per accedere alla configurazione
+							requestInfo.getRequestConfig().setSoggettoErogatoreRegistry(soggettoRegistry);
+						}catch(Exception e){
+							logCore.debug("Recupero soggetto erogatore dal registro fallito: "+e.getMessage(),e);
+						}
+					}
+					if(requestInfo.getRequestConfig().getSoggettoErogatoreConfig()==null) {
+						try{
+							org.openspcoop2.core.config.Soggetto soggettoConfig = configurazionePdDManager.getSoggetto(idServizio.getSoggettoErogatore(), null); // passo null volutamente, per accedere alla configurazione
+							requestInfo.getRequestConfig().setSoggettoErogatoreConfig(soggettoConfig);
+						}catch(Exception e){
+							logCore.debug("Recupero soggetto erogatore dal registro fallito: "+e.getMessage(),e);
+						}
+					}
+					if(requestInfo.getRequestConfig().getSoggettoErogatoreIdentificativoPorta()==null) {
+						try{
+							String idPorta = configurazionePdDManager.getIdentificativoPorta(idServizio.getSoggettoErogatore(), pf, null); // passo null volutamente, per accedere alla configurazione
+							requestInfo.getRequestConfig().setSoggettoErogatoreIdentificativoPorta(idPorta);
+						}catch(Exception e){
+							logCore.debug("Recupero dati soggetto erogatore (identificativoPorta) dal registro fallito: "+e.getMessage(),e);
+						}
+					}
+					if(requestInfo.getRequestConfig().getSoggettoErogatoreSoggettoVirtuale()==null) {
+						try{
+							boolean soggettoVirtuale = configurazionePdDManager.isSoggettoVirtuale(idServizio.getSoggettoErogatore(), null); // passo null volutamente, per accedere alla configurazione
+							requestInfo.getRequestConfig().setSoggettoErogatoreSoggettoVirtuale(soggettoVirtuale);
+						}catch(Exception e){
+							logCore.debug("Recupero dati soggetto erogatore (soggettoVirtuale) dal registro fallito: "+e.getMessage(),e);
+						}
+					}
+					if(requestInfo.getRequestConfig().getSoggettoErogatorePddReaded()==null) {
+						try{
+							if(requestInfo.getRequestConfig().getSoggettoErogatoreRegistry()!=null) {
+								if(requestInfo.getRequestConfig().getSoggettoErogatoreRegistry().getPortaDominio()!=null &&
+										StringUtils.isNotEmpty(requestInfo.getRequestConfig().getSoggettoErogatoreRegistry().getPortaDominio())) {
+									PortaDominio pdd = registroServiziManager.getPortaDominio(requestInfo.getRequestConfig().getSoggettoErogatoreRegistry().getPortaDominio(), null, null); // passo null volutamente, per accedere alla configurazione
+									requestInfo.getRequestConfig().setSoggettoErogatorePddReaded(true);
+									requestInfo.getRequestConfig().setSoggettoErogatorePdd(pdd);
+								}
+								else {
+									requestInfo.getRequestConfig().setSoggettoErogatorePddReaded(true);
+								}
+							}
+						}catch(Exception e){
+							logCore.debug("Recupero dati soggetto erogatore (pdd) dal registro fallito: "+e.getMessage(),e);
+						}
+					}
+					if(requestInfo.getRequestConfig().getSoggettoErogatoreImplementazionePdd()==null) {
+						try{
+							String impl = registroServiziManager.getImplementazionePdD(idServizio.getSoggettoErogatore(), null, null); // passo null volutamente, per accedere alla configurazione
+							requestInfo.getRequestConfig().setSoggettoErogatoreImplementazionePdd(impl);
+						}catch(Exception e){
+							logCore.debug("Recupero dati soggetto erogatore (implementazione pdd) dal registro fallito: "+e.getMessage(),e);
+						}
+					}
+				}
+				
+				// Set identità soggetti fruitori usati poi successivamente
+				if(idSoggettoFruitore!=null && requestInfo.getRequestConfig()!=null) {
+					if(requestInfo.getRequestConfig().getSoggettoFruitoreRegistry()==null) {
+						try{
+							org.openspcoop2.core.registry.Soggetto soggettoRegistry = registroServiziManager.getSoggetto(idSoggettoFruitore, null, null); // passo null volutamente, per accedere alla configurazione
+							requestInfo.getRequestConfig().setSoggettoFruitoreRegistry(soggettoRegistry);
+						}catch(Exception e){
+							logCore.debug("Recupero soggetto fruitore dal registro fallito: "+e.getMessage(),e);
+						}
+					}
+					if(requestInfo.getRequestConfig().getSoggettoFruitoreConfig()==null) {
+						try{
+							org.openspcoop2.core.config.Soggetto soggettoConfig = configurazionePdDManager.getSoggetto(idSoggettoFruitore, null); // passo null volutamente, per accedere alla configurazione
+							requestInfo.getRequestConfig().setSoggettoFruitoreConfig(soggettoConfig);
+						}catch(Exception e){
+							logCore.debug("Recupero soggetto fruitore dal registro fallito: "+e.getMessage(),e);
+						}
+					}
+					if(requestInfo.getRequestConfig().getSoggettoFruitoreIdentificativoPorta()==null) {
+						try{
+							String idPorta = configurazionePdDManager.getIdentificativoPorta(idSoggettoFruitore, pf, null); // passo null volutamente, per accedere alla configurazione
+							requestInfo.getRequestConfig().setSoggettoFruitoreIdentificativoPorta(idPorta);
+						}catch(Exception e){
+							logCore.debug("Recupero dati soggetto fruitore (identificativoPorta) dal registro fallito: "+e.getMessage(),e);
+						}
+					}
+					if(requestInfo.getRequestConfig().getSoggettoFruitoreSoggettoVirtuale()==null) {
+						try{
+							boolean soggettoVirtuale = configurazionePdDManager.isSoggettoVirtuale(idSoggettoFruitore, null); // passo null volutamente, per accedere alla configurazione
+							requestInfo.getRequestConfig().setSoggettoFruitoreSoggettoVirtuale(soggettoVirtuale);
+						}catch(Exception e){
+							logCore.debug("Recupero dati soggetto fruitore (soggettoVirtuale) dal registro fallito: "+e.getMessage(),e);
+						}
+					}
+					if(requestInfo.getRequestConfig().getSoggettoFruitorePddReaded()==null) {
+						try{
+							if(requestInfo.getRequestConfig().getSoggettoFruitoreRegistry()!=null) {
+								if(requestInfo.getRequestConfig().getSoggettoFruitoreRegistry().getPortaDominio()!=null &&
+										StringUtils.isNotEmpty(requestInfo.getRequestConfig().getSoggettoFruitoreRegistry().getPortaDominio())) {
+									PortaDominio pdd = registroServiziManager.getPortaDominio(requestInfo.getRequestConfig().getSoggettoFruitoreRegistry().getPortaDominio(), null, null); // passo null volutamente, per accedere alla configurazione
+									requestInfo.getRequestConfig().setSoggettoFruitorePddReaded(true);
+									requestInfo.getRequestConfig().setSoggettoFruitorePdd(pdd);
+								}
+								else {
+									requestInfo.getRequestConfig().setSoggettoFruitorePddReaded(true);
+								}
+							}
+						}catch(Exception e){
+							logCore.debug("Recupero dati soggetto fruitore (pdd) dal registro fallito: "+e.getMessage(),e);
+						}
+					}
+					if(requestInfo.getRequestConfig().getSoggettoFruitoreImplementazionePdd()==null) {
+						try{
+							String impl = registroServiziManager.getImplementazionePdD(idSoggettoFruitore, null, null); // passo null volutamente, per accedere alla configurazione
+							requestInfo.getRequestConfig().setSoggettoFruitoreImplementazionePdd(impl);
+						}catch(Exception e){
+							logCore.debug("Recupero dati soggetto fruitore (implementazione pdd) dal registro fallito: "+e.getMessage(),e);
+						}
+					}
 				}
 				
 				// updateInformazioniCooperazione
@@ -405,7 +613,6 @@ public class RicezioneContenutiApplicativiServiceUtils {
 				}
 				
 				if(httpServletRequest!=null) {
-					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance();
 					if(pdDefault!=null) {
 						cors = configurazionePdDManager.getConfigurazioneCORS(pdDefault);
 					}

@@ -22,6 +22,7 @@
 
 package org.openspcoop2.protocol.basic.registry;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -29,6 +30,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -38,7 +40,7 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
-import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.slf4j.Logger;
 
@@ -74,10 +76,30 @@ public class IdentificazionePortaApplicativa extends AbstractIdentificazionePort
 			IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		super(urlProtocolContext, log, portaUrlBased, registryReader, configIntegrationReader, protocolFactory);
 	}
-    public IdentificazionePortaApplicativa(Logger log, IProtocolFactory<?> protocolFactory, IState state,
+    /*public IdentificazionePortaApplicativa(Logger log, IProtocolFactory<?> protocolFactory, org.openspcoop2.protocol.sdk.state.IState state,
     		PortaApplicativa pa)
 			throws ProtocolException {
 		super(log, protocolFactory, state);
+		this.pa = pa;
+		IDPortaApplicativa idPA = new IDPortaApplicativa();
+		idPA.setNome(this.pa.getNome());
+		this.identificativoPorta = idPA;
+	}*/
+    public IdentificazionePortaApplicativa(Logger log, IProtocolFactory<?> protocolFactory, 
+    		RegistroServiziManager registroServiziManager, Object configurazioneManager, RequestInfo requestInfo,
+    		PortaApplicativa pa)
+			throws ProtocolException {
+		super(log, protocolFactory, registroServiziManager, configurazioneManager, requestInfo);
+		this.pa = pa;
+		IDPortaApplicativa idPA = new IDPortaApplicativa();
+		idPA.setNome(this.pa.getNome());
+		this.identificativoPorta = idPA;
+	}
+    public IdentificazionePortaApplicativa(Logger log, IProtocolFactory<?> protocolFactory, 
+    		IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, RequestInfo requestInfo,
+    		PortaApplicativa pa)
+			throws ProtocolException {
+		super(log, protocolFactory, registryReader, configIntegrationReader, requestInfo);
 		this.pa = pa;
 		IDPortaApplicativa idPA = new IDPortaApplicativa();
 		idPA.setNome(this.pa.getNome());
@@ -172,9 +194,28 @@ public class IdentificazionePortaApplicativa extends AbstractIdentificazionePort
 				filtroPA.setAzione(action);
 				List<IDPortaApplicativa> list = null;
 				IDPortaApplicativa idPA = null;
+				boolean useRequestInfo = false;
+				boolean addRequestInfo = false;
 				try {
-					list = this.configIntegrationReader.findIdPorteApplicative(filtroPA);
-				}catch(RegistryNotFound notFound) {}
+					useRequestInfo = this.requestInfo!=null && this.requestInfo.getRequestConfig()!=null;
+					if(useRequestInfo) {
+						list = this.requestInfo.getRequestConfig().getPorteApplicativeByFiltroRicerca(filtroPA);
+					}
+					
+					if(list==null) {
+						addRequestInfo = true;
+						list = this.configIntegrationReader.findIdPorteApplicative(filtroPA);
+					}
+										
+				}catch(RegistryNotFound notFound) {
+					list=new ArrayList<>();
+				}
+				
+				if(useRequestInfo && addRequestInfo) {
+					this.requestInfo.getRequestConfig().addPorteApplicativeByFiltroRicerca(filtroPA, list, 
+							this.requestInfo.getIdTransazione());
+				}
+				
 				if(list!=null && list.size()>0) {
 					if(list.size()>1) {
 						throw new Exception("Trovate più porte ("+list.size()+") che corrisponde al filtro?? ("+filtroPA+")");

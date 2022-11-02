@@ -5322,8 +5322,8 @@ public class TestOpenApi3Extended {
 		msgErroreAttesoTest_response_openapi4j.add("body.email.0: Value 'info.it' does not match format 'email'. (code: 1007)");
 		msgErroreAttesoTest_request_swagger_request.add("[ERROR][REQUEST][POST /documenti/format-string @body] [Path '/email/0'] String \"info.it\" is not a valid email address");
 		msgErroreAttesoTest_response_swagger_request.add("[ERROR][RESPONSE][] [Path '/email/0'] String \"info.it\" is not a valid email address");
-		msgErroreAttesoTest_request_json_schema.add("1034 $.email[0]: info.it is an invalid email");
-		msgErroreAttesoTest_response_json_schema.add("1034 $.email[0]: info.it is an invalid email");
+		msgErroreAttesoTest_request_json_schema.add("1009 $.email[0]: does not match the info.it pattern email");
+		msgErroreAttesoTest_response_json_schema.add("1009 $.email[0]: does not match the info.it pattern email");
 		
 		String emailErrata2 = "\"Info\"";
 		String jsonErrateMail2 = "{ \"email\": ["+emailErrata2+"], \"uuid\": ["+uuidCorretti+"], \"uri\":["+uriCorrette+"], \"hostname\":["+hostnameCorretti+"], \"ipv4\":["+ipCorretti+"], \"ipv6\":["+ip6Corretti+"] }";
@@ -5334,8 +5334,8 @@ public class TestOpenApi3Extended {
 		msgErroreAttesoTest_response_openapi4j.add("body.email.0: Value 'Info' does not match format 'email'. (code: 1007)");
 		msgErroreAttesoTest_request_swagger_request.add("[ERROR][REQUEST][POST /documenti/format-string @body] [Path '/email/0'] String \"Info\" is not a valid email address");
 		msgErroreAttesoTest_response_swagger_request.add("[ERROR][RESPONSE][] [Path '/email/0'] String \"Info\" is not a valid email address");
-		msgErroreAttesoTest_request_json_schema.add("1034 $.email[0]: Info is an invalid email");
-		msgErroreAttesoTest_response_json_schema.add("1034 $.email[0]: Info is an invalid email");
+		msgErroreAttesoTest_request_json_schema.add("1009 $.email[0]: does not match the Info pattern email");
+		msgErroreAttesoTest_response_json_schema.add("1009 $.email[0]: does not match the Info pattern email");
 		
 
 		
@@ -5350,8 +5350,8 @@ public class TestOpenApi3Extended {
 		msgErroreAttesoTest_response_openapi4j.add("body.uuid.0: Value '43bdd09-f3ad-11ec-8c78-5254003636a4' does not match format 'uuid'. (code: 1007)");
 		msgErroreAttesoTest_request_swagger_request.add("SKIP");
 		msgErroreAttesoTest_response_swagger_request.add("SKIP");
-		msgErroreAttesoTest_request_json_schema.add("1034 $.uuid[0]: 43bdd09-f3ad-11ec-8c78-5254003636a4 is an invalid uuid");
-		msgErroreAttesoTest_response_json_schema.add("1034 $.uuid[0]: 43bdd09-f3ad-11ec-8c78-5254003636a4 is an invalid uuid");
+		msgErroreAttesoTest_request_json_schema.add("1035 $.uuid[0]: 43bdd09-f3ad-11ec-8c78-5254003636a4 is an invalid uuid");
+		msgErroreAttesoTest_response_json_schema.add("1035 $.uuid[0]: 43bdd09-f3ad-11ec-8c78-5254003636a4 is an invalid uuid");
 		
 		String uuidErrata2 = "\"843bdd09-f3ad-11ec-8c78-5254003636a\""; // manca un numero alla fine
 		String jsonErrateUuid2 = "{ \"email\": ["+emailCorrette+"], \"uuid\": ["+uuidErrata2+"], \"uri\":["+uriCorrette+"], \"hostname\":["+hostnameCorretti+"], \"ipv4\":["+ipCorretti+"], \"ipv6\":["+ip6Corretti+"] }";
@@ -5362,8 +5362,8 @@ public class TestOpenApi3Extended {
 		msgErroreAttesoTest_response_openapi4j.add("body.uuid.0: Value '843bdd09-f3ad-11ec-8c78-5254003636a' does not match format 'uuid'. (code: 1007)");
 		msgErroreAttesoTest_request_swagger_request.add("SKIP");
 		msgErroreAttesoTest_response_swagger_request.add("SKIP");
-		msgErroreAttesoTest_request_json_schema.add("1034 $.uuid[0]: 843bdd09-f3ad-11ec-8c78-5254003636a is an invalid uuid");
-		msgErroreAttesoTest_response_json_schema.add("1034 $.uuid[0]: 843bdd09-f3ad-11ec-8c78-5254003636a is an invalid uuid");
+		msgErroreAttesoTest_request_json_schema.add("1035 $.uuid[0]: 843bdd09-f3ad-11ec-8c78-5254003636a is an invalid uuid");
+		msgErroreAttesoTest_response_json_schema.add("1035 $.uuid[0]: 843bdd09-f3ad-11ec-8c78-5254003636a is an invalid uuid");
 		
 		String uuidErrata3 = "\"843bdd09f3ad11ec8c785254003636a4\""; // manca i trattini
 		String jsonErrateUuid3 = "{ \"email\": ["+emailCorrette+"], \"uuid\": ["+uuidErrata3+"], \"uri\":["+uriCorrette+"], \"hostname\":["+hostnameCorretti+"], \"ipv4\":["+ipCorretti+"], \"ipv6\":["+ip6Corretti+"] }";
@@ -5374,8 +5374,8 @@ public class TestOpenApi3Extended {
 		msgErroreAttesoTest_response_openapi4j.add("body.uuid.0: Value '843bdd09f3ad11ec8c785254003636a4' does not match format 'uuid'. (code: 1007)");
 		msgErroreAttesoTest_request_swagger_request.add("[ERROR][REQUEST][POST /documenti/format-string @body] [Path '/uuid/0'] Input string \"843bdd09f3ad11ec8c785254003636a4\" is not a valid UUID");
 		msgErroreAttesoTest_response_swagger_request.add("[ERROR][RESPONSE][] [Path '/uuid/0'] Input string \"843bdd09f3ad11ec8c785254003636a4\" is not a valid UUID");
-		msgErroreAttesoTest_request_json_schema.add("1034 $.uuid[0]: 843bdd09f3ad11ec8c785254003636a4 is an invalid uuid");
-		msgErroreAttesoTest_response_json_schema.add("1034 $.uuid[0]: 843bdd09f3ad11ec8c785254003636a4 is an invalid uuid");
+		msgErroreAttesoTest_request_json_schema.add("1035 $.uuid[0]: 843bdd09f3ad11ec8c785254003636a4 is an invalid uuid");
+		msgErroreAttesoTest_response_json_schema.add("1035 $.uuid[0]: 843bdd09f3ad11ec8c785254003636a4 is an invalid uuid");
 		
 		
 		

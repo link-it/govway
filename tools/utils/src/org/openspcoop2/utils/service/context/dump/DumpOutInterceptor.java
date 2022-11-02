@@ -21,6 +21,8 @@
 package org.openspcoop2.utils.service.context.dump;
 
 import java.io.OutputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.cxf.common.injection.NoJSR250Annotations;
 import org.apache.cxf.common.util.StringUtils;
@@ -142,7 +144,8 @@ public class DumpOutInterceptor extends org.apache.cxf.ext.logging.LoggingOutInt
 			
 			try {
 			
-				final LogEvent event = new DefaultLogEventMapper().map(this.message);
+				Set<String> sensitiveProtocolHeaders = new HashSet<String>();
+				final LogEvent event = new DefaultLogEventMapper().map(this.message, sensitiveProtocolHeaders);
 				if (shouldLogContent(event)) {
 					copyPayload(cos, event);
 				} else {

@@ -76,7 +76,7 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 	
 
 	@Override
-	public void process(org.openspcoop2.security.message.MessageSecurityContext messageSecurityContext,OpenSPCoop2Message messageParam,Busta busta) throws SecurityException{
+	public void process(org.openspcoop2.security.message.MessageSecurityContext messageSecurityContext,OpenSPCoop2Message messageParam,Busta busta,org.openspcoop2.utils.Map<Object> ctx) throws SecurityException{
 		try{
 			
 			if(ServiceBinding.SOAP.equals(messageParam.getServiceBinding())==false){
@@ -93,7 +93,7 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 
 			String[]actions = ((String)messageSecurityContext.getIncomingProperties().get(SecurityConstants.ACTION)).split(" ");
 			for (int i = 0; i < actions.length; i++) {
-				if(SecurityConstants.ENCRYPT_ACTION.equals(actions[i].trim())){
+				if(SecurityConstants.is_ACTION_ENCRYPTION(actions[i].trim())){
 					decrypt = true;
 				}
 				else if(SecurityConstants.SIGNATURE_ACTION.equals(actions[i].trim())){
@@ -224,7 +224,7 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 			String aliasDecryptPassword = null;
 			boolean decryptionSymmetric = false;
 			if(decrypt){
-				EncryptionBean bean = KeystoreUtils.getReceiverEncryptionBean(messageSecurityContext);
+				EncryptionBean bean = KeystoreUtils.getReceiverEncryptionBean(messageSecurityContext,ctx);
 				
 				decryptionKS = bean.getKeystore();
 				decryptionTrustStoreKS = bean.getTruststore();
@@ -245,7 +245,7 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 			String crlPath = null;
 			if(signature){
 				
-				SignatureBean bean = KeystoreUtils.getReceiverSignatureBean(messageSecurityContext);
+				SignatureBean bean = KeystoreUtils.getReceiverSignatureBean(messageSecurityContext,ctx);
 				
 				signatureKS = bean.getKeystore();
 				signatureTrustStoreKS = bean.getTruststore();
@@ -274,7 +274,7 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 				if(decryptionTrustStoreKS==null){
 					decryptionTrustStoreKS = decryptionKS;
 				}
-				securityConfig_decryption = new org.openspcoop2.security.message.soapbox.SecurityConfig(decryptionKS, decryptionTrustStoreKS, passwordMap_decryption);
+				securityConfig_decryption = new org.openspcoop2.security.message.soapbox.SecurityConfig(decryptionKS, decryptionTrustStoreKS, passwordMap_decryption,ctx);
 				securityConfig_decryption.setSymmetricSharedKey(decryptionSymmetric);
 			}
 			
@@ -294,7 +294,7 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 				if(signatureTrustStoreKS==null){
 					signatureTrustStoreKS = signatureKS;
 				}
-				securityConfig_signature = new org.openspcoop2.security.message.soapbox.SecurityConfig(signatureKS, signatureTrustStoreKS, passwordMap_signature,crlPath);
+				securityConfig_signature = new org.openspcoop2.security.message.soapbox.SecurityConfig(signatureKS, signatureTrustStoreKS, passwordMap_signature,crlPath,ctx);
 			}	
 			
 			
@@ -310,7 +310,7 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 			// Devo rileggerle per eseguire nell'ordine
 			actions = ((String)messageSecurityContext.getIncomingProperties().get(SecurityConstants.ACTION)).split(" ");
 			for (int i = actions.length-1; i >= 0; i--) {
-				if(SecurityConstants.ENCRYPT_ACTION.equals(actions[i].trim())){
+				if(SecurityConstants.is_ACTION_ENCRYPTION(actions[i].trim()) || SecurityConstants.is_ACTION_DECRYPTION(actions[i].trim())){
 					decryptMsgProc.process(securityConfig_decryption, msgSecCtx);
 					//refreshAttachments(message); // per impostare il nuovo contenuto degli attachment, una volta decriptati (non serve se non si imposta il CONTENT_TRANSFER_ENCODING a base64!!)
 				}

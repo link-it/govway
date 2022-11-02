@@ -27,7 +27,7 @@
 	        NOTA: non sembra necessario e fa scaturire un errore sulla testsuite, se utilizzato, simile al seguente: 
 			java.lang.IllegalAccessError: tried to access method org.bouncycastle.asn1.ASN1Primitive.<init>()V from class org.bouncycastle.asn1.ASN1Sequence
 			<resources>
-	                <resource-root path="WEB-INF/lib/bcprov-ext-jdk15on-1.69.jar" use-physical-code-source="true"/>
+	                <resource-root path="WEB-INF/lib/bcprov-ext-jdk18on-1.72.jar" use-physical-code-source="true"/>
 	        </resources>
 		-->
         <dependencies>

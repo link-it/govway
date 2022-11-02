@@ -309,7 +309,7 @@ public class NegoziazioneCacheKeyTest extends ConfigLoader {
 						"\"policy\":\"TestNegoziazioneSignedJWT-PDND\""
 						);
 				String nuovoId = response.getHeaderFirstValue("GovWay-Transaction-ID");
-				long esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
+				long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
 				DBVerifier.verify(nuovoId, esitoExpected, null, "\"transactionId\":\""+nuovoId+"\""); 
 			}
 			else {
@@ -352,7 +352,7 @@ public class NegoziazioneCacheKeyTest extends ConfigLoader {
 						"\"policy\":\"TestNegoziazioneSignedJWT-PDND\""
 						);
 				String nuovoId = response.getHeaderFirstValue("GovWay-Transaction-ID");
-				long esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
+				long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
 				DBVerifier.verify(nuovoId, esitoExpected, null, "\"transactionId\":\""+nuovoId+"\""); 
 			}
 			else {

@@ -34,6 +34,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 
 /**
  * ForwardProxy
@@ -108,7 +109,7 @@ public class ForwardProxy implements Serializable {
 	}
 	
 	
-	public static ForwardProxy getProxyConfigurazione(boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
+	public static ForwardProxy getProxyConfigurazione(boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy, RequestInfo requestInfo) throws DriverConfigurazioneException{
 		
 		try {
 			
@@ -195,9 +196,9 @@ public class ForwardProxy implements Serializable {
 			
 			// primo cerco per tag
 			RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance();
-			AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false);
+			AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false, requestInfo);
 			IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
-			AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(idAccordo, null, false, false);
+			AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(idAccordo, null, false, false, requestInfo);
 			if(aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
 				for (GruppoAccordo gruppo : aspc.getGruppi().getGruppoList()) {
 					// prima per specifica fruizione/erogazione

@@ -96,7 +96,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 				long limitBytes = this.limitBytes.getSogliaKb()*1024; // trasformo kb in bytes
 				this.isResponse = new LimitedInputStream(this.isResponse, limitBytes, 
 						CostantiPdD.PREFIX_LIMITED_RESPONSE,
-						this.getPddContext()!=null ? this.getPddContext().getContext() : null,
+						this.getPddContext(),
 						notifier);
 			}
 		}
@@ -104,7 +104,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			if(timeout>0) {
 				this.isResponse = new TimeoutInputStream(this.isResponse, timeout, 
 						CostantiPdD.PREFIX_TIMEOUT_RESPONSE,
-						this.getPddContext()!=null ? this.getPddContext().getContext() : null);
+						this.getPddContext());
 			}
 		}
 	}

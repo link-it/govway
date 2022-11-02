@@ -470,7 +470,7 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 		try{
 		
 			ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance();
-			configurazioneGenerale = configPdDManager.getConfigurazioneControlloTraffico();
+			configurazioneGenerale = configPdDManager.getConfigurazioneControlloTraffico(null);
 			
 			if(configurazioneGenerale.getControlloTraffico().isControlloMaxThreadsEnabled()) {
 				if(configurazioneGenerale.getControlloTraffico().isControlloMaxThreadsWarningOnly()) {

@@ -25,6 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.token.AbstractDynamicParameters;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 
 /**
  * AttributeAuthorityDynamicParameter
@@ -51,8 +52,10 @@ public class AttributeAuthorityDynamicParameters extends AbstractDynamicParamete
 	
 	private String responseAudience;
 	
-	public AttributeAuthorityDynamicParameters(Map<String, Object> dynamicMap, PdDContext pddContext, PolicyAttributeAuthority policyAttributeAuthority) throws Exception {
-		super(dynamicMap, pddContext);
+	public AttributeAuthorityDynamicParameters(Map<String, Object> dynamicMap, 
+			PdDContext pddContext, RequestInfo requestInfo,
+			PolicyAttributeAuthority policyAttributeAuthority) throws Exception {
+		super(dynamicMap, pddContext, requestInfo);
 		
 		this.policyAttributeAuthority = policyAttributeAuthority;
 		

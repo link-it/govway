@@ -194,7 +194,6 @@ import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULL;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho;
-import org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
@@ -10488,7 +10487,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(proprietaRateLimiting!=null && !proprietaRateLimiting.isEmpty()) {
 			try {
 				PolicyConfiguration config = new PolicyConfiguration(proprietaRateLimiting, this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(), false);
-				if(!Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DEFAULT.equals(config.getSyncMode()) || !Constants.VALUE_HTTP_HEADER_DEFAULT.equals(config.getHttpMode())) {
+				if(!org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_MODALITA_SINCRONIZZAZIONE_DEFAULT.equals(config.getSyncMode()) || !org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_HTTP_HEADER_DEFAULT.equals(config.getHttpMode())) {
 					
 					if(bf.length()>0) {
 						bf.append(", ");
@@ -10499,33 +10498,33 @@ public class ConsoleHelper implements IConsoleHelper {
 						bfTooltips.append("\n");
 					}
 					bfTooltips.append(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING).append(": ");
-					if(!Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DEFAULT.equals(config.getSyncMode())){
-						bfTooltips.append(Constants.LABEL_MODALITA_SINCRONIZZAZIONE).append(" ");
-						if(Constants.VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE.equals(config.getSyncMode())){
-							bfTooltips.append(Constants.LABEL_MODALITA_SINCRONIZZAZIONE_LOCALE);
+					if(!org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_MODALITA_SINCRONIZZAZIONE_DEFAULT.equals(config.getSyncMode())){
+						bfTooltips.append(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_SINCRONIZZAZIONE).append(" ");
+						if(org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE.equals(config.getSyncMode())){
+							bfTooltips.append(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_SINCRONIZZAZIONE_LOCALE);
 						}
-						else if(Constants.VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE_SUDDIVISA_TRA_NODI.equals(config.getSyncMode())){
-							bfTooltips.append(Constants.LABEL_MODALITA_SINCRONIZZAZIONE_LOCALE_SUDDIVISA_TRA_NODI);
+						else if(org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE_SUDDIVISA_TRA_NODI.equals(config.getSyncMode())){
+							bfTooltips.append(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_SINCRONIZZAZIONE_LOCALE_SUDDIVISA_TRA_NODI);
 						}
-						else if(Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA.equals(config.getSyncMode())){
+						else if(org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA.equals(config.getSyncMode())){
 							if(config.getType()!=null) {
 								bfTooltips.append(config.getType().toLabel());
 							}
 							else {
-								bfTooltips.append(Constants.LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA);
+								bfTooltips.append(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA);
 							}
 						}
 						
-						if(!Constants.VALUE_HTTP_HEADER_DEFAULT.equals(config.getHttpMode())){
+						if(!org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_HTTP_HEADER_DEFAULT.equals(config.getHttpMode())){
 							bfTooltips.append(", ");
 						}
 					}
-					if(!Constants.VALUE_HTTP_HEADER_DEFAULT.equals(config.getHttpMode())){
-						bfTooltips.append(Constants.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP);
-						if(Constants.VALUE_HTTP_HEADER_DISABILITATO.equals(config.getHttpMode())){
+					if(!org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_HTTP_HEADER_DEFAULT.equals(config.getHttpMode())){
+						bfTooltips.append(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP);
+						if(org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_HTTP_HEADER_DISABILITATO.equals(config.getHttpMode())){
 							bfTooltips.append(" ").append("disabilitati");
 						}
-						else if(Constants.VALUE_HTTP_HEADER_RIDEFINITO.equals(config.getHttpMode())){
+						else if(org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_HTTP_HEADER_RIDEFINITO.equals(config.getHttpMode())){
 							bfTooltips.append(" ").append("gestione personalizzata");
 						}
 					}
@@ -20341,14 +20340,14 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		
 		DataElement de = new DataElement();
-		de.setName(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_SINCRONIZZAZIONE);
-		de.setLabel(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_SINCRONIZZAZIONE);
+		de.setName(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_SINCRONIZZAZIONE);
+		de.setLabel(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_SINCRONIZZAZIONE);
 		de.setValue(ctModalitaSincronizzazione);
 		if(nascondiSezioneOpzioniAvanzate ){
 			de.setType(DataElementType.HIDDEN);
 		} else {
-			de.setValues(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getVALUES_MODALITA_SINCRONIZZAZIONE(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori()));
-			de.setLabels(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getLABELS_MODALITA_SINCRONIZZAZIONE(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori()));
+			de.setValues(org.openspcoop2.core.controllo_traffico.constants.Costanti.getVALUES_MODALITA_SINCRONIZZAZIONE(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori()));
+			de.setLabels(org.openspcoop2.core.controllo_traffico.constants.Costanti.getLABELS_MODALITA_SINCRONIZZAZIONE(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori()));
 			de.setSelected(ctModalitaSincronizzazione);
 			de.setType(DataElementType.SELECT);
 			de.setPostBack(true);
@@ -20357,14 +20356,14 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		
 		de = new DataElement();
-		de.setName(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP);
-		de.setLabel(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP);
+		de.setName(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP);
+		de.setLabel(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP);
 		de.setValue(ctHeaderHttp);
 		if(nascondiSezioneOpzioniAvanzate ){
 			de.setType(DataElementType.HIDDEN);
 		} else {
-			de.setValues(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUES_MODALITA_GENERAZIONE_HEADER_HTTP);
-			de.setLabels(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABELS_MODALITA_GENERAZIONE_HEADER_HTTP);
+			de.setValues(org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUES_MODALITA_GENERAZIONE_HEADER_HTTP);
+			de.setLabels(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABELS_MODALITA_GENERAZIONE_HEADER_HTTP);
 			de.setSelected(ctHeaderHttp);
 			de.setType(DataElementType.SELECT);
 			de.setPostBack(true);
@@ -20374,10 +20373,10 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		List<String> implValues = null;
 		if(!nascondiSezioneOpzioniAvanzate &&
-				org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA.equals(ctModalitaSincronizzazione)) {
-			implValues = org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getVALUES_MODALITA_IMPLEMENTAZIONE(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori());
+				org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA.equals(ctModalitaSincronizzazione)) {
+			implValues = org.openspcoop2.core.controllo_traffico.constants.Costanti.getVALUES_MODALITA_IMPLEMENTAZIONE(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori());
 				
-			if(implValues.size()>1 || (implValues.size()==1 && org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST.equals(implValues.get(0)))) {
+			if(implValues.size()>1 || (implValues.size()==1 && org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST.equals(implValues.get(0)))) {
 				de = new DataElement();
 				de.setType(DataElementType.SUBTITLE);
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_CONFIGURAZIONE_SICRONIZZAZIONE_DISTRIBUITA);
@@ -20386,11 +20385,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		
 		de = new DataElement();
-		de.setName(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_IMPLEMENTAZIONE);
-		de.setLabel(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_IMPLEMENTAZIONE);
+		de.setName(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_IMPLEMENTAZIONE);
+		de.setLabel(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_IMPLEMENTAZIONE);
 		de.setValue(ctImplementazione);
 		if(nascondiSezioneOpzioniAvanzate || 
-				!org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA.equals(ctModalitaSincronizzazione)){
+				!org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA.equals(ctModalitaSincronizzazione)){
 			de.setType(DataElementType.HIDDEN);
 		} else {
 			if(implValues.size()==1) {
@@ -20400,7 +20399,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			else {
 				de.setValues(implValues);
-				de.setLabels(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getLABELS_MODALITA_IMPLEMENTAZIONE(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori()));
+				de.setLabels(org.openspcoop2.core.controllo_traffico.constants.Costanti.getLABELS_MODALITA_IMPLEMENTAZIONE(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori()));
 				if(ctImplementazione==null || StringUtils.isEmpty(ctImplementazione)) {
 					ctImplementazione = implValues.get(0);
 				}
@@ -20413,16 +20412,16 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		
 		de = new DataElement();
-		de.setName(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_CONTATORI);
-		de.setLabel(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_CONTATORI);
+		de.setName(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_CONTATORI);
+		de.setLabel(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_CONTATORI);
 		de.setValue(ctContatori);
 		if(nascondiSezioneOpzioniAvanzate || 
-				!org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA.equals(ctModalitaSincronizzazione) ||
-				(!org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST.equals(ctImplementazione) &&
-						!org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_MODALITA_IMPLEMENTAZIONE_REDIS.equals(ctImplementazione))){
+				!org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA.equals(ctModalitaSincronizzazione) ||
+				(!org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST.equals(ctImplementazione) &&
+						!org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_MODALITA_IMPLEMENTAZIONE_REDIS.equals(ctImplementazione))){
 			de.setType(DataElementType.HIDDEN);
 		} else {
-			List<String> values = org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getVALUES_MODALITA_CONTATORI(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(),ctImplementazione);
+			List<String> values = org.openspcoop2.core.controllo_traffico.constants.Costanti.getVALUES_MODALITA_CONTATORI(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(),ctImplementazione);
 			if(values==null || values.size()<=0) {
 				de.setType(DataElementType.HIDDEN);
 			}
@@ -20431,7 +20430,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setValue(ctContatori);
 				de.setType(DataElementType.HIDDEN);
 				
-				List<String> labels = org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getLABELS_MODALITA_CONTATORI(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(),ctImplementazione);
+				List<String> labels = org.openspcoop2.core.controllo_traffico.constants.Costanti.getLABELS_MODALITA_CONTATORI(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(),ctImplementazione);
 				String label = ctContatori;
 				if(ctContatori!=null) {
 					if(label!=null && !label.isEmpty() && values.size()==labels.size()) {
@@ -20443,15 +20442,15 @@ public class ConsoleHelper implements IConsoleHelper {
 					}
 				}
 				DataElement deLABEL = new DataElement();
-				deLABEL.setName(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_CONTATORI+"__LABEL");
-				deLABEL.setLabel(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_CONTATORI);
+				deLABEL.setName(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_CONTATORI+"__LABEL");
+				deLABEL.setLabel(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_CONTATORI);
 				deLABEL.setValue(label);
 				deLABEL.setType(DataElementType.TEXT);
 				dati.addElement(deLABEL);
 			}
 			else {
 				de.setValues(values);
-				de.setLabels(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getLABELS_MODALITA_CONTATORI(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(),ctImplementazione));
+				de.setLabels(org.openspcoop2.core.controllo_traffico.constants.Costanti.getLABELS_MODALITA_CONTATORI(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(),ctImplementazione));
 				if(ctContatori==null || StringUtils.isEmpty(ctContatori)) {
 					ctContatori = values.get(0);
 				}
@@ -20464,14 +20463,14 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		
 		de = new DataElement();
-		de.setName(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_TIPOLOGIA);
-		de.setLabel(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_TIPOLOGIA);
+		de.setName(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_TIPOLOGIA);
+		de.setLabel(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_TIPOLOGIA);
 		de.setValue(ctTipologia);
 		if(nascondiSezioneOpzioniAvanzate || 
-				!org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA.equals(ctModalitaSincronizzazione)){
+				!org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA.equals(ctModalitaSincronizzazione)){
 			de.setType(DataElementType.HIDDEN);
 		} else {
-			List<String> values = org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getVALUES_MODALITA_TIPOLOGIA(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(),ctImplementazione, ctContatori);
+			List<String> values = org.openspcoop2.core.controllo_traffico.constants.Costanti.getVALUES_MODALITA_TIPOLOGIA(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(),ctImplementazione, ctContatori);
 			if(values==null || values.size()<=0) {
 				de.setType(DataElementType.HIDDEN);
 			}
@@ -20482,7 +20481,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			else {
 				de.setValues(values);
-				de.setLabels(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.getLABELS_MODALITA_TIPOLOGIA(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(), ctImplementazione, ctContatori));
+				de.setLabels(org.openspcoop2.core.controllo_traffico.constants.Costanti.getLABELS_MODALITA_TIPOLOGIA(this.core.getControlloTrafficoPolicyRateLimitingTipiGestori(), ctImplementazione, ctContatori));
 				if(ctTipologia==null || StringUtils.isEmpty(ctTipologia)) {
 					ctTipologia = values.get(0);
 				}
@@ -20495,7 +20494,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		
 		
-		if(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_HTTP_HEADER_RIDEFINITO.equals(ctHeaderHttp)) {
+		if(org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_HTTP_HEADER_RIDEFINITO.equals(ctHeaderHttp)) {
 			de = new DataElement();
 			de.setType(DataElementType.SUBTITLE);
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_CONFIGURAZIONE_HEADER_HTTP);
@@ -20504,14 +20503,14 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		
 		de = new DataElement();
-		de.setName(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
-		de.setLabel(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
+		de.setName(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
+		de.setLabel(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
 		de.setValue(ctHeaderHttp_limit);
-		if(nascondiSezioneOpzioniAvanzate || !org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_HTTP_HEADER_RIDEFINITO.equals(ctHeaderHttp) ){
+		if(nascondiSezioneOpzioniAvanzate || !org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_HTTP_HEADER_RIDEFINITO.equals(ctHeaderHttp) ){
 			de.setType(DataElementType.HIDDEN);
 		} else {
-			de.setValues(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
-			de.setLabels(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
+			de.setValues(org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
+			de.setLabels(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
 			de.setSelected(ctHeaderHttp_limit);
 			de.setType(DataElementType.SELECT);
 			de.setPostBack(false);
@@ -20520,14 +20519,14 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 			
 		de = new DataElement();
-		de.setName(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
-		de.setLabel(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
+		de.setName(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
+		de.setLabel(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
 		de.setValue(ctHeaderHttp_remaining);
-		if(nascondiSezioneOpzioniAvanzate || !org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_HTTP_HEADER_RIDEFINITO.equals(ctHeaderHttp) ){
+		if(nascondiSezioneOpzioniAvanzate || !org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_HTTP_HEADER_RIDEFINITO.equals(ctHeaderHttp) ){
 			de.setType(DataElementType.HIDDEN);
 		} else {
-			de.setValues(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
-			de.setLabels(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
+			de.setValues(org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
+			de.setLabels(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
 			de.setSelected(ctHeaderHttp_remaining);
 			de.setType(DataElementType.SELECT);
 			de.setPostBack(false);
@@ -20536,14 +20535,14 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		
 		de = new DataElement();
-		de.setName(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
-		de.setLabel(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
+		de.setName(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
+		de.setLabel(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
 		de.setValue(ctHeaderHttp_reset);
-		if(nascondiSezioneOpzioniAvanzate || !org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_HTTP_HEADER_RIDEFINITO.equals(ctHeaderHttp) ){
+		if(nascondiSezioneOpzioniAvanzate || !org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_HTTP_HEADER_RIDEFINITO.equals(ctHeaderHttp) ){
 			de.setType(DataElementType.HIDDEN);
 		} else {
-			de.setValues(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
-			de.setLabels(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
+			de.setValues(org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
+			de.setLabels(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
 			de.setSelected(ctHeaderHttp_reset);
 			de.setType(DataElementType.SELECT);
 			de.setPostBack(false);
@@ -20552,14 +20551,14 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		
 		de = new DataElement();
-		de.setName(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
-		de.setLabel(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
+		de.setName(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
+		de.setLabel(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
 		de.setValue(ctHeaderHttp_retryAfter);
-		if(nascondiSezioneOpzioniAvanzate || !org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_HTTP_HEADER_RIDEFINITO.equals(ctHeaderHttp) ){
+		if(nascondiSezioneOpzioniAvanzate || !org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_HTTP_HEADER_RIDEFINITO.equals(ctHeaderHttp) ){
 			de.setType(DataElementType.HIDDEN);
 		} else {
-			de.setValues(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
-			de.setLabels(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
+			de.setValues(org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
+			de.setLabels(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
 			de.setSelected(ctHeaderHttp_retryAfter);
 			de.setType(DataElementType.SELECT);
 			de.setPostBack(true);
@@ -20569,12 +20568,12 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 
 		de = new DataElement();
-		de.setName(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS);
-		de.setLabel(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS);
+		de.setName(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS);
+		de.setLabel(org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS);
 		de.setValue(ctHeaderHttp_retryAfterBackoff);
 		if(nascondiSezioneOpzioniAvanzate || 
-				!org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_HTTP_HEADER_RIDEFINITO.equals(ctHeaderHttp) || 
-				!org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_HTTP_HEADER_ABILITATO_BACKOFF.equals(ctHeaderHttp_retryAfter) ){
+				!org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_HTTP_HEADER_RIDEFINITO.equals(ctHeaderHttp) || 
+				!org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_HTTP_HEADER_ABILITATO_BACKOFF.equals(ctHeaderHttp_retryAfter) ){
 			de.setType(DataElementType.HIDDEN);
 		} else {
 			de.setType(DataElementType.NUMBER);
@@ -20588,16 +20587,16 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	public boolean validaOpzioniAvanzateRateLimiting(RuoloPolicy ruoloPolicy, String nome) throws Exception {
 	
-		String ctModalitaSincronizzazione = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_SINCRONIZZAZIONE);
-		String ctImplementazione = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_IMPLEMENTAZIONE);
-		String ctContatori = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_CONTATORI);
-		String ctTipologia = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_TIPOLOGIA);
-		String ctHeaderHttp = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP);
-		String ctHeaderHttp_limit = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
-		String ctHeaderHttp_remaining = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
-		String ctHeaderHttp_reset = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
-		String ctHeaderHttp_retryAfter = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
-		String ctHeaderHttp_retryAfterBackoff = this.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS);
+		String ctModalitaSincronizzazione = this.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_SINCRONIZZAZIONE);
+		String ctImplementazione = this.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_IMPLEMENTAZIONE);
+		String ctContatori = this.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_CONTATORI);
+		String ctTipologia = this.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_TIPOLOGIA);
+		String ctHeaderHttp = this.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP);
+		String ctHeaderHttp_limit = this.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
+		String ctHeaderHttp_remaining = this.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
+		String ctHeaderHttp_reset = this.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
+		String ctHeaderHttp_retryAfter = this.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
+		String ctHeaderHttp_retryAfterBackoff = this.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS);
 		
 		return validaOpzioniAvanzateRateLimiting(ruoloPolicy, nome,
 				ctModalitaSincronizzazione, ctImplementazione, ctContatori, ctTipologia,
@@ -20609,17 +20608,17 @@ public class ConsoleHelper implements IConsoleHelper {
 			String ctHeaderHttp, String ctHeaderHttp_limit, String ctHeaderHttp_remaining, String ctHeaderHttp_reset,
 			String ctHeaderHttp_retryAfter, String ctHeaderHttp_retryAfterBackoff) throws Exception {
 		
-		if(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_HTTP_HEADER_RIDEFINITO.equals(ctHeaderHttp) &&
-				org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.VALUE_HTTP_HEADER_ABILITATO_BACKOFF.equals(ctHeaderHttp_retryAfter) ){
+		if(org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_HTTP_HEADER_RIDEFINITO.equals(ctHeaderHttp) &&
+				org.openspcoop2.core.controllo_traffico.constants.Costanti.VALUE_HTTP_HEADER_ABILITATO_BACKOFF.equals(ctHeaderHttp_retryAfter) ){
 			int backoffInt = -1;
 			try{
 				backoffInt = Integer.parseInt(ctHeaderHttp_retryAfterBackoff);
 			}catch(Exception e){
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_DATI_NON_VALIDI_INSERIRE_UN_NUMERO_INTERO_MAGGIORE_DI_ZERO, org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS)); 
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_DATI_NON_VALIDI_INSERIRE_UN_NUMERO_INTERO_MAGGIORE_DI_ZERO, org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS)); 
 				return false;
 			}
 			if(backoffInt <= 0){
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_DATI_NON_VALIDI_INSERIRE_UN_NUMERO_INTERO_MAGGIORE_DI_ZERO, org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS)); 
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_DATI_NON_VALIDI_INSERIRE_UN_NUMERO_INTERO_MAGGIORE_DI_ZERO, org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS)); 
 				return false;
 			}
 		}
@@ -20661,7 +20660,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					oggetto = "sulla fruizione";
 				}
 			}
-			this.pd.setMessage("La "+org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.LABEL_MODALITA_SINCRONIZZAZIONE+
+			this.pd.setMessage("La "+org.openspcoop2.core.controllo_traffico.constants.Costanti.LABEL_MODALITA_SINCRONIZZAZIONE+
 					" selezionata non è utilizzabile poichè non compatibile con alcune metriche associate alle policy attive "+oggetto+": "+sb.toString());
 			return false;
 		}

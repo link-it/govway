@@ -32,13 +32,13 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.date.DateEngineType;
 import org.openspcoop2.utils.id.IDUtilities;
 import org.openspcoop2.utils.resources.Loader;
@@ -55,7 +55,7 @@ import org.slf4j.Logger;
  */
 public class Utilities {
 
-	public static void refreshIdentificativiPorta(Busta busta,IDSoggetto idSoggettoDefault,RegistroServiziManager registroServiziManager,IProtocolFactory<?> protocolFactory){
+	public static void refreshIdentificativiPorta(Busta busta,IDSoggetto idSoggettoDefault,RegistroServiziManager registroServiziManager,IProtocolFactory<?> protocolFactory, RequestInfo requestInfo){
 		if(busta.getMittente()!=null && busta.getTipoMittente()!=null && busta.getIdentificativoPortaMittente()==null){
 			try{
 				if(idSoggettoDefault.getTipo().equals(busta.getTipoMittente()) &&
@@ -63,7 +63,7 @@ public class Utilities {
 					busta.setIdentificativoPortaMittente(idSoggettoDefault.getCodicePorta());
 				}
 				else{
-					busta.setIdentificativoPortaMittente(registroServiziManager.getDominio(new IDSoggetto(busta.getTipoMittente(), busta.getMittente()), null, protocolFactory));
+					busta.setIdentificativoPortaMittente(registroServiziManager.getDominio(new IDSoggetto(busta.getTipoMittente(), busta.getMittente()), null, protocolFactory, requestInfo));
 				}
 			}catch(Exception e){}
 		}
@@ -74,7 +74,7 @@ public class Utilities {
 					busta.setIdentificativoPortaDestinatario(idSoggettoDefault.getCodicePorta());
 				}
 				else{
-					busta.setIdentificativoPortaDestinatario(registroServiziManager.getDominio(new IDSoggetto(busta.getTipoDestinatario(), busta.getDestinatario()), null, protocolFactory));
+					busta.setIdentificativoPortaDestinatario(registroServiziManager.getDominio(new IDSoggetto(busta.getTipoDestinatario(), busta.getDestinatario()), null, protocolFactory, requestInfo));
 				}
 			}catch(Exception e){}
 		}
@@ -87,7 +87,7 @@ public class Utilities {
 						tr.setIdentificativoPortaOrigine(idSoggettoDefault.getCodicePorta());
 					}
 					else{
-						tr.setIdentificativoPortaOrigine(registroServiziManager.getDominio(new IDSoggetto(tr.getTipoOrigine(), tr.getOrigine()), null, protocolFactory));
+						tr.setIdentificativoPortaOrigine(registroServiziManager.getDominio(new IDSoggetto(tr.getTipoOrigine(), tr.getOrigine()), null, protocolFactory, requestInfo));
 					}
 				}catch(Exception e){}
 			}
@@ -98,7 +98,7 @@ public class Utilities {
 						tr.setIdentificativoPortaDestinazione(idSoggettoDefault.getCodicePorta());
 					}
 					else{
-						tr.setIdentificativoPortaDestinazione(registroServiziManager.getDominio(new IDSoggetto(tr.getTipoDestinazione(), tr.getDestinazione()), null, protocolFactory));
+						tr.setIdentificativoPortaDestinazione(registroServiziManager.getDominio(new IDSoggetto(tr.getTipoDestinazione(), tr.getDestinazione()), null, protocolFactory, requestInfo));
 					}
 				}catch(Exception e){}
 			}
@@ -231,14 +231,14 @@ public class Utilities {
 		return isResourceRest;
 	}
 	
-	public static Resource getRestResource(Logger log, IState state, IDServizio idServizio) {
+	public static Resource getRestResource(Logger log, IState state, IDServizio idServizio, RequestInfo requestInfo) {
 		if(idServizio!=null && idServizio.getAzione()!=null && !"".equals(idServizio.getAzione())) {
 			RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance(state);
 			try {
-				AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false);
+				AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false, requestInfo);
 				if(asps.getAccordoServizioParteComune()!=null && !"".equals(asps.getAccordoServizioParteComune())) {
 					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
-					AccordoServizioParteComune as = registroServiziManager.getAccordoServizioParteComune(idAccordo, null, false, false);
+					AccordoServizioParteComune as = registroServiziManager.getAccordoServizioParteComune(idAccordo, null, false, false, requestInfo);
 					for (Resource resourceCheck : as.getResourceList()) {
 						if(resourceCheck.getNome().equals(idServizio.getAzione())){
 							return resourceCheck;

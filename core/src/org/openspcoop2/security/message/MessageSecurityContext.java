@@ -198,8 +198,8 @@ public abstract class MessageSecurityContext{
     /** Process */
 	
 	// incoming
-	protected abstract boolean processIncoming(OpenSPCoop2Message message, Busta busta, Map<String, Object> ctx);
-	public boolean processIncoming(OpenSPCoop2Message message, Busta busta, Map<String, Object> ctx, TempiElaborazione tempiElaborazione) {
+	protected abstract boolean processIncoming(OpenSPCoop2Message message, Busta busta, org.openspcoop2.utils.Map<Object> ctx);
+	public boolean processIncoming(OpenSPCoop2Message message, Busta busta, org.openspcoop2.utils.Map<Object> ctx, TempiElaborazione tempiElaborazione) {
 		MessageRole messageRole = message.getMessageRole();
 		if(MessageRole.REQUEST.equals(messageRole)) {
 			if(tempiElaborazione!=null) {
@@ -229,8 +229,8 @@ public abstract class MessageSecurityContext{
 	}
 
 	// outcoming
-	protected abstract boolean processOutgoing(OpenSPCoop2Message message, Map<String, Object> ctx);
-	public boolean processOutgoing(OpenSPCoop2Message message, Map<String, Object> ctx, TempiElaborazione tempiElaborazione) {
+	protected abstract boolean processOutgoing(OpenSPCoop2Message message, org.openspcoop2.utils.Map<Object> ctx);
+	public boolean processOutgoing(OpenSPCoop2Message message, org.openspcoop2.utils.Map<Object> ctx, TempiElaborazione tempiElaborazione) {
 		MessageRole messageRole = message.getMessageRole();
 		if(MessageRole.REQUEST.equals(messageRole)) {
 			if(tempiElaborazione!=null) {

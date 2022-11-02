@@ -28,6 +28,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneUtils;
 import org.slf4j.Logger;
 
@@ -45,12 +46,14 @@ public class AbstractModIValidazioneSintatticaCommons {
 	protected ValidazioneUtils validazioneUtils;
 	protected IState state;
 	protected Context context;
-	protected  IProtocolFactory<?> factory;
-	public AbstractModIValidazioneSintatticaCommons(Logger log, IState state, Context context,  IProtocolFactory<?> factory, 
+	protected IProtocolFactory<?> factory;
+	protected RequestInfo requestInfo;
+	public AbstractModIValidazioneSintatticaCommons(Logger log, IState state, Context context,  IProtocolFactory<?> factory, RequestInfo requestInfo,
 			ModIProperties modiProperties, ValidazioneUtils validazioneUtils) {
 		this.log = log;
 		this.state = state;
 		this.context = context;
+		this.requestInfo = requestInfo;
 		this.factory = factory;
 		this.modiProperties = modiProperties;
 		this.validazioneUtils = validazioneUtils;
@@ -58,7 +61,7 @@ public class AbstractModIValidazioneSintatticaCommons {
 	
 	protected void identificazioneApplicativoMittente(X509Certificate x509, OpenSPCoop2Message msg, Busta busta) throws Exception {
 		// invocato in ModIValidazioneSintatticaRest e ModIValidazioneSintatticaSoap durante il trattamento del token di sicurezza
-		IdentificazioneApplicativoMittenteUtils.identificazioneApplicativoMittenteByX509(this.log, this.state, x509, msg, busta, this.context, this.factory);
+		IdentificazioneApplicativoMittenteUtils.identificazioneApplicativoMittenteByX509(this.log, this.state, x509, msg, busta, this.context, this.factory, this.requestInfo);
 	}
 		
 }

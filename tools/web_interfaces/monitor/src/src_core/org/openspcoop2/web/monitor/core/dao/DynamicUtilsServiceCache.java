@@ -23,6 +23,7 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.AbstractCacheWrapper;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.cache.CacheType;
 import org.slf4j.Logger;
 
 
@@ -44,7 +45,7 @@ public class DynamicUtilsServiceCache extends AbstractCacheWrapper {
 	
 	public DynamicUtilsServiceCache(String cacheName, Logger log, Integer cacheSize, CacheAlgorithm cacheAlgorithm,
 			Integer itemIdleTimeSeconds, Integer itemLifeTimeSeconds) throws UtilsException {
-		super(cacheName, log, cacheSize, cacheAlgorithm, itemIdleTimeSeconds, itemLifeTimeSeconds);
+		super(CacheType.JCS, cacheName, log, cacheSize, cacheAlgorithm, itemIdleTimeSeconds, itemLifeTimeSeconds); // sulla console per adesso lascio JCS
 	}
 
 	@Override

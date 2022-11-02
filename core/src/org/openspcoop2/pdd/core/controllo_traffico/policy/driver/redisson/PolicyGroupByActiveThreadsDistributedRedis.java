@@ -22,7 +22,6 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
@@ -31,7 +30,7 @@ import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicyMapId;
 import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
 import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
-import org.openspcoop2.core.controllo_traffico.driver.CostantiControlloTraffico;
+import org.openspcoop2.core.controllo_traffico.constants.Costanti;
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreadsInMemory;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
@@ -40,6 +39,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.PolicyDateUtils;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.Map;
 import org.openspcoop2.utils.UtilsException;
 import org.redisson.api.RMap;
 import org.redisson.api.RTransaction;
@@ -99,7 +99,7 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 
 	
 	@Override
-	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx)
+	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx)
 			throws PolicyException {
 		
 		RTransaction transaction = this.redisson.createTransaction(TransactionOptions.defaults());
@@ -139,7 +139,7 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 	
 	@Override
 	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione,
-			IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx) throws PolicyException, PolicyNotFoundException {
+			IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx) throws PolicyException, PolicyNotFoundException {
 		
 		RTransaction transaction = this.redisson.createTransaction(TransactionOptions.defaults());
 		RMap<IDUnivocoGroupByPolicy, DatiCollezionati> map = transaction.getMap(this.mapId);
@@ -167,7 +167,7 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 	}
 
 	@Override
-	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx,
+	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx,
 			MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata)
 			throws PolicyException, PolicyNotFoundException {
 		
@@ -186,9 +186,10 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 			List<Integer> esitiCodeFaultApplicativo = null;
 			try {
 				// In queste tre di sotto pare il logger non venga utilizzato
-				esitiCodeOk = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeOk_senzaFaultApplicativo();
-				esitiCodeKo_senzaFaultApplicativo = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeKo_senzaFaultApplicativo();
-				esitiCodeFaultApplicativo = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeFaultApplicativo();
+				EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(log,dati.getProtocollo());
+				esitiCodeOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
+				esitiCodeKo_senzaFaultApplicativo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
+				esitiCodeFaultApplicativo = esitiProperties.getEsitiCodeFaultApplicativo();
 				datiCollezionati.updateDatiEndRequestApplicabile(
 						log, 	// logger
 						this.activePolicy, ctx, dati,
@@ -213,13 +214,13 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 
 	
 	@Override
-	public Map<IDUnivocoGroupByPolicy, DatiCollezionati> getMapActiveThreads() {
+	public java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> getMapActiveThreads() {
 		return this.distributedMap;
 	}
 
 	
 	@Override
-	public void initMap(Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
+	public void initMap(java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
 		this.distributedMap.putAll(map);		
 	}
 
@@ -283,7 +284,7 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 			IDUnivocoGroupByPolicy datiGroupBy = id;
 			bf.append(separatorGroups);
 			bf.append("\n");
-			bf.append(CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE).append(" ").append(this.type.toLabel());
+			bf.append(Costanti.LABEL_MODALITA_SINCRONIZZAZIONE).append(" ").append(this.type.toLabel());
 			bf.append("\n");
 			bf.append("Criterio di Collezionamento dei Dati\n");
 			bf.append(datiGroupBy.toString(true));

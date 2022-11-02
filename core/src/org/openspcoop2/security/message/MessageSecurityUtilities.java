@@ -84,7 +84,8 @@ public class MessageSecurityUtilities {
 			
 			String a = splitActions[i].trim();
 			
-			if(SecurityConstants.ENCRYPT_ACTION.equals(a) || SecurityConstants.DECRYPT_ACTION.equals(a)){
+			if(SecurityConstants.is_ACTION_ENCRYPTION(a) ||
+					SecurityConstants.is_ACTION_DECRYPTION(a)){
 				if(processEncryptFault){
 					if(bfNewActions.length()>0){
 						bfNewActions.append(" ");

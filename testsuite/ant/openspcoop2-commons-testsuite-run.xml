@@ -7,11 +7,11 @@
 	
 	
 	<!-- estensione di ant (if .... ) -->
-	<taskdef resource="net/sf/antcontrib/antlib.xml">
+	<!--<taskdef resource="net/sf/antcontrib/antlib.xml">
           <classpath>
               <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
           </classpath>
-	</taskdef>
+	</taskdef>-->
 	
 
 	<property name="testngShowStackFrames" value="true"/>
@@ -35,6 +35,7 @@
 		</if>
 
 		<!-- Chiamata per TestNG -->
+		<delete dir="${output}/default"/>
 		<echo message="Avvio testSuite OpenSPCoop (gruppo: ${group}) (haltOnFailure:${testHaltOnFailure})" />
 		<testng classpathref="classpath_run"
             outputdir="${output}/default"
@@ -52,6 +53,7 @@
 				<equals arg1="${group}" arg2="RisorseEsterne"/>
 			</not>
 			<then>
+				<delete dir="${output}/defaultRisorseUtilizzate"/>
 				<echo message="Check risorse utilizzate (gruppo: RisorseEsterne)" />
 				<testng classpathref="classpath_run"
 		            outputdir="${output}/defaultRisorseUtilizzate"
@@ -86,6 +88,7 @@
 		</if>
 
 		<!-- Chiamata per TestNG -->
+		<delete dir="${output}/connectionNew"/>
 		<echo message="Avvio testSuite OpenSPCoop (gruppo: ${group})" />
 		<testng classpathref="classpath_run"
              outputdir="${output}/connectionNew"
@@ -103,6 +106,7 @@
 				<equals arg1="${group}" arg2="RisorseEsterne"/>
 			</not>
 			<then>
+				<delete dir="${output}/defaultRisorseUtilizzate"/>
 				<echo message="Check risorse utilizzate (gruppo: RisorseEsterne)" />
 				<testng classpathref="classpath_run"
 		            outputdir="${output}/defaultRisorseUtilizzate"

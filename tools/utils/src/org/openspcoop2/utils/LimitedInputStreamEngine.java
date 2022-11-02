@@ -23,7 +23,6 @@ package org.openspcoop2.utils;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 
 /**
  * LimitedInputStream
@@ -40,12 +39,12 @@ public class LimitedInputStreamEngine extends FilterInputStream {
 	
 	private InputStream isWrapped = null;
 	private String prefixError = "";
-	private Map<String, Object> ctx;
+	private Map<Object> ctx;
 	private boolean checkDisabled = false;
 
 	private ILimitExceededNotifier notifier;
 	
-	protected LimitedInputStreamEngine(InputStream inputStream, long limitBytes, String prefixError, Map<String, Object> ctx, ILimitExceededNotifier notifier) throws IOException {
+	protected LimitedInputStreamEngine(InputStream inputStream, long limitBytes, String prefixError, Map<Object> ctx, ILimitExceededNotifier notifier) throws IOException {
 		super(inputStream);
 		this.limitBytes = limitBytes;
 		
@@ -74,7 +73,7 @@ public class LimitedInputStreamEngine extends FilterInputStream {
 		}
 		this.limitBytes = limitBytes;
 	}
-	protected void updateContext(Map<String, Object> ctx) {
+	protected void updateContext(Map<Object> ctx) {
 		this.ctx = ctx;
 	}
 	protected void updateNotifier(ILimitExceededNotifier notifier) {

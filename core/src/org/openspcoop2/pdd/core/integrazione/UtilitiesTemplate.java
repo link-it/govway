@@ -36,6 +36,7 @@ import org.openspcoop2.pdd.core.dynamic.Template;
 import org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.slf4j.Logger;
 
 /**
@@ -216,17 +217,22 @@ public class UtilitiesTemplate {
 			}
 			*/
 			
+			RequestInfo requestInfo = null;
+			if(this.context!=null && this.context.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+				requestInfo = (RequestInfo) this.context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+			}
+			
 			ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance();
 			if(fileDefinedInPorta) {
 				if(portaDelegata) {
-					this.template = configurazionePdDManager.getTemplateIntegrazione(idPD, fFile);
+					this.template = configurazionePdDManager.getTemplateIntegrazione(idPD, fFile, requestInfo);
 				}
 				else {
-					this.template = configurazionePdDManager.getTemplateIntegrazione(idPA, fFile);
+					this.template = configurazionePdDManager.getTemplateIntegrazione(idPA, fFile, requestInfo);
 				}
 			}
 			else {
-				this.template = configurazionePdDManager.getTemplateIntegrazione(fFile);
+				this.template = configurazionePdDManager.getTemplateIntegrazione(fFile, requestInfo);
 			}
 			
 		}catch(Exception e) {

@@ -23,6 +23,9 @@ package org.openspcoop2.protocol.sdk.constants;
 
 import java.io.Serializable;
 
+import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.MapKey;
+
 
 /**
  * Contiene i possibili esiti
@@ -88,8 +91,15 @@ public enum EsitoTransazioneName implements Serializable{
 	
 	CUSTOM;
 
+	private MapKey<String> mapKey;
+	
 	EsitoTransazioneName()
 	{
+		this.mapKey = Map.newMapKey("EsitoTransazioneName."+this.name());
+	}
+	
+	public MapKey<String> getMapKey() {
+		return this.mapKey;
 	}
 	
 	public static boolean isPddSpecific(EsitoTransazioneName esitoTransactionName){

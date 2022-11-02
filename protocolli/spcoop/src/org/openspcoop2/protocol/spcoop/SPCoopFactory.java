@@ -102,7 +102,7 @@ public class SPCoopFactory extends BasicFactory<SOAPHeaderElement> {
 			if(staticInstanceConfig.isStaticErrorBuilder()) {
 				staticInstanceErroreApplicativoBuilder = new SPCoopErroreApplicativoBuilder(this);
 			}
-			if(staticInstanceConfig.isStaticEsitoBuilder() && EsitiProperties.isInitializedProtocol(this.getProtocol())) {
+			if(staticInstanceConfig.isStaticEsitoBuilder() && EsitiProperties.isInitializedProtocol(this.getProtocolMapKey())) {
 				staticInstanceEsitoBuilder = new SPCoopEsitoBuilder(this);
 			}
 		}
@@ -111,7 +111,7 @@ public class SPCoopFactory extends BasicFactory<SOAPHeaderElement> {
 	public void initStaticInstance() throws ProtocolException{
 		super.initStaticInstance();
 		if(this.staticInstanceConfig!=null && this.staticInstanceConfig.isStaticEsitoBuilder() && staticInstanceEsitoBuilder==null) {
-			if(EsitiProperties.isInitializedProtocol(this.getProtocol())) {
+			if(EsitiProperties.isInitializedProtocol(this.getProtocolMapKey())) {
 				staticInstanceEsitoBuilder = new SPCoopEsitoBuilder(this);
 			}
 		}

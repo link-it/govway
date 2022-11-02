@@ -30,6 +30,9 @@ import org.openspcoop2.pdd.core.JMSSender;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.mdb.GenericMessage;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.sdk.state.RequestInfoConfigUtilities;
 
 /**
  * Classe utilizzata per la spedizione di messaggi contenuti nell'architettura di OpenSPCoop (versione JMS).
@@ -55,7 +58,19 @@ public class NodeSenderJMS extends AbstractCore implements INodeSender{
 	public void send(Serializable msg, String destinazione, MsgDiagnostico msgDiag,
 			IDSoggetto codicePorta, String idModulo, String idMessaggio, GestoreMessaggi gm)
 			throws NodeException {
+		
+		// Elimino dalla RequestInfo i dati "cached"
+		RequestInfo requestInfoBackup = null;
+		PdDContext pddContext = null;
+		if(msg instanceof GenericMessage) {
+			GenericMessage mm = (GenericMessage) msg;
+			pddContext = mm.getPddContext();
+			if(pddContext!=null) {
+				requestInfoBackup =	RequestInfoConfigUtilities.normalizeRequestInfoBeforeSerialization(pddContext); 
+			}
+		}		
 		try{
+			
 			JMSSender senderJMS = new JMSSender(codicePorta,idModulo,OpenSPCoop2Logger.getLoggerOpenSPCoopCore(), PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, this.getPddContext()));
 			if(senderJMS.send(destinazione,
 					msg,idMessaggio) == false){
@@ -69,6 +84,10 @@ public class NodeSenderJMS extends AbstractCore implements INodeSender{
 		} catch (Exception e) {
 			throw new NodeException(e.getMessage(),e);
 			
+		}finally {
+			if(requestInfoBackup!=null) {
+				RequestInfoConfigUtilities.restoreRequestInfoAfterSerialization(pddContext, requestInfoBackup);
+			}
 		}
 	}
 

@@ -67,7 +67,7 @@ public class MySQLThreshold implements IThreshold {
 		//MsgDiagnostico msgDiag = new MsgDiagnostico(ID_MODULO);
 		try{
 			try{
-				resource = dbManager.getResource(MySQLThreshold.properties.getIdentitaPortaDefault(null), MySQLThreshold.ID_MODULO,null);
+				resource = dbManager.getResource(MySQLThreshold.properties.getIdentitaPortaDefaultWithoutProtocol(), MySQLThreshold.ID_MODULO,null);
 			}catch(Exception e){
 				throw new Exception("Impossibile ottenere una Risorsa dal DBManager",e);
 			}
@@ -122,7 +122,7 @@ public class MySQLThreshold implements IThreshold {
 				if(s!=null) s.close();
 			}catch(SQLException ex){}
 			rs=null;s=null;
-			dbManager.releaseResource(MySQLThreshold.properties.getIdentitaPortaDefault(null), MySQLThreshold.ID_MODULO, resource);
+			dbManager.releaseResource(MySQLThreshold.properties.getIdentitaPortaDefaultWithoutProtocol(), MySQLThreshold.ID_MODULO, resource);
 		}
 		//msgDiag.highDebug("Spazio libero sul TableSpace: "+FreeTableSpace+" Spazio entro la soglia: "+result);
 		return result;

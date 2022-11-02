@@ -421,7 +421,7 @@ public class GestoreTransazioniStateful {
 		}
 		String esitoContesto = (String) oEsitoContesto;
 		
-		tr.setEsitoTransazione(EsitiProperties.getInstance(this.log,protocollo).convertToEsitoTransazione(esito, esitoContesto));
+		tr.setEsitoTransazione(EsitiProperties.getInstanceFromProtocolName(this.log,protocollo).convertToEsitoTransazione(esito, esitoContesto));
 		
 		if(this.debug){
 			this.log.debug("Trovata transazione");

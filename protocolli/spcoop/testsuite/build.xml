@@ -106,9 +106,9 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/testsuite" >
-			<include name="jcommander-1.78.jar"/>
-			<include name="testng-7.1.0.jar"/>
-			<include name="guice-4.2.2.jar"/>
+			<include name="jcommander-1.82.jar"/>
+			<include name="testng-7.6.1.jar"/>
+			<include name="guice-5.1.0.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/axis14" >
 			<include name="*.jar"/>
@@ -124,10 +124,10 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/security" >
-			<include name="bcpkix-jdk15on-1.69.jar"/>
-			<include name="bcprov-ext-jdk15on-1.69.jar"/>
-			<include name="bcutil-jdk15on-1.69.jar"/>
-			<include name="neethi-3.1.1.jar"/>
+			<include name="bcpkix-jdk18on-1.72.jar"/>
+			<include name="bcprov-ext-jdk18on-1.72.jar"/>
+			<include name="bcutil-jdk18on-1.72.jar"/>
+			<include name="neethi-3.2.0.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/shared" >
 			<!-- Includendolo, i test con attachments falliscono poiche' axis14 genera dei messaggi non corretti (ContentLength non appropriato rispetto al messaggio) 
@@ -156,9 +156,13 @@
 	</path>
 	
 	<!-- estensione per testNG -->
-	<taskdef classpathref="classpath_run"
-             name="testng"
-             classname="org.testng.TestNGAntTask"/>
+	<taskdef resource="testngtasks" classpath="${openspcoop2_lib}/testsuite/testng-7.6.1.jar">
+		<classpath>
+			<fileset dir="${openspcoop2_lib}/log" >
+				<include name="*.jar"/>
+			</fileset>
+		</classpath>
+	</taskdef>
 	
 	<!-- Ripulisce la distribuzione -->
 	<target name="clean_testunits">

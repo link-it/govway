@@ -206,7 +206,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 						this.endHeaderOffset = sbActualOffsetStart;
 					}
 					
-					if( (c == '<' || (sbActual!=null && sbActual.toString().startsWith("&lt;"))) 
+					if( (c == '<' || startsWithLessThan(sbActual)) 
 							&& 
 							!cdataFound &&
 							!commentFound) {
@@ -216,7 +216,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 								
 								// devo verificare se ho incontrato un cdata o sto continuando a leggere un header
 								String sPreClosure = sbActual.toString();
-								sbActual.delete(0, sbActual.length());
+								sbActual.setLength(0);
 								sbActualOffsetStart = i+bLetti;
 								
 								if(sPreClosure.startsWith("<![CDATA[")) {
@@ -256,7 +256,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 					if(sbActual!=null) {
 						sbActual.append(c);
 					}
-					if(c == '>' || (sbActual!=null && sbActual.toString().endsWith("&gt;"))) {
+					if(c == '>' || endsWithGreaterThan(sbActual)) {
 						
 						if(sbActual==null) {
 							//NO: gli attachments potrebbero rientrare in questo caso
@@ -277,7 +277,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 								//System.out.println("AGGIUNGO AD HEADER CDATA ["+sbActual.toString()+"]");
 								headerBuilder.append(sbActual.toString());
 							}
-							sbActual.delete(0, sbActual.length());
+							sbActual.setLength(0);
 							sbActualOffsetStart = i+bLetti;
 							//System.out.println("continuo perche CDATA... ");
 							if(s.endsWith("]]>")) {
@@ -297,7 +297,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 								//System.out.println("AGGIUNGO AD HEADER COMMENTO ["+sbActual.toString()+"]");
 								headerBuilder.append(sbActual.toString());
 							}
-							sbActual.delete(0, sbActual.length());
+							sbActual.setLength(0);
 							sbActualOffsetStart = i+bLetti;
 							//System.out.println("continuo perche COMMENTO... ");
 							if(s.endsWith("-->")) {
@@ -313,7 +313,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 									//System.out.println("AGGIUNGO AD HEADER COMMENTO ["+sbActual.toString()+"]");
 									headerBuilder.append(sbActual.toString());
 								}
-								sbActual.delete(0, sbActual.length());
+								sbActual.setLength(0);
 								sbActualOffsetStart = i+bLetti;
 							}
 							else {
@@ -360,7 +360,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 							if(headerClosure!=null) {
 								//System.out.println("AGGIUNGO AD HEADER ["+s+"]");
 								headerBuilder.append(s);
-								sbActual.delete(0, sbActual.length());
+								sbActual.setLength(0);
 								sbActualOffsetStart = i+bLetti;
 								if(s.startsWith(headerClosure)) {
 									headerClosure=null;	
@@ -417,7 +417,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 									this.startHeaderOffset = sbActualOffsetStart;
 								}
 								this.startBodyOffset=sbActualOffsetStart;
-								sbActual.delete(0, sbActual.length());
+								sbActual.setLength(0);
 								sbActualOffsetStart = i+bLetti;
 							}
 							else if(!bodyFound && isOpenedElement(s,":Body")) {
@@ -431,7 +431,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 										this.startHeaderOffset = sbActualOffsetStart;
 									}
 									this.startBodyOffset=sbActualOffsetStart;
-									sbActual.delete(0, sbActual.length());
+									sbActual.setLength(0);
 									sbActualOffsetStart = i+bLetti;
 								}
 								else {
@@ -459,7 +459,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 										this.parsingComplete = true;
 									}
 									else {
-										if(!s.endsWith("&gt;")){
+										if(!endsWithGreaterThan(s)){
 											if(elementAfterBodyBuilder!=null) {
 												//System.out.println("AGGIUNGO A BODY dentro ["+s+"]");
 												elementAfterBodyBuilder.append(s);
@@ -492,7 +492,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 			// svuoto
 			if(sbActual!=null) {
 				if(sbActual.length()>0) {
-					sbActual.delete(0, sbActual.length());
+					sbActual.setLength(0);
 				}
 			}
 			
@@ -751,6 +751,23 @@ public class OpenSPCoop2MessageSoapStreamReader {
 		
 		return;
 		
+	}
+	private boolean endsWithGreaterThan( String s ) {
+		if ( s == null || s.length() < 4 )
+			return false;
+		int startIx = s.length() - 4;
+		return ( s.charAt(startIx) == '&' && s.charAt(startIx + 1) == 'g' && s.charAt(startIx + 2) == 't' && s.charAt(startIx + 3) == ';' );
+	}
+	private boolean endsWithGreaterThan( StringBuilder buffer ) {
+		if ( buffer == null || buffer.length() < 4 )
+			return false;
+		int startIx = buffer.length() - 4;
+		return ( buffer.charAt(startIx) == '&' && buffer.charAt(startIx + 1) == 'g' && buffer.charAt(startIx + 2) == 't' && buffer.charAt(startIx + 3) == ';' );
+	}
+	private boolean startsWithLessThan( StringBuilder buffer ) {
+		if ( buffer == null || buffer.length() < 4 )
+			return false;
+		return ( buffer.charAt(0) == '&' && buffer.charAt(1) == 'l' && buffer.charAt(2) == 't' && buffer.charAt(3) == ';' );
 	}
 	
 	private boolean isOpenedElement(String s, String prefix) {

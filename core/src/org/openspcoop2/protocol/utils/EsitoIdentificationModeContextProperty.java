@@ -20,6 +20,9 @@
 
 package org.openspcoop2.protocol.utils;
 
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.utils.MapKey;
+
 /**
 * EsitoIdentificationModeMessageProperty
 *
@@ -29,6 +32,8 @@ package org.openspcoop2.protocol.utils;
 */
 public class EsitoIdentificationModeContextProperty {
 
+	private EsitoTransazioneName esito;
+	private MapKey<String> mapKey;
 	private String name;
 	private String value;
 	
@@ -43,5 +48,19 @@ public class EsitoIdentificationModeContextProperty {
 	}
 	public void setValue(String value) {
 		this.value = value;
+	}
+	
+	public MapKey<String> getMapKey() {
+		return this.mapKey;
+	}
+	public void setMapKey(MapKey<String> mapKey) {
+		this.mapKey = mapKey;
+	}
+	
+	public EsitoTransazioneName getEsito() {
+		return this.esito;
+	}
+	public void setEsito(EsitoTransazioneName esito) {
+		this.esito = esito;
 	}
 }

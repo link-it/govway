@@ -1754,6 +1754,7 @@
 			<xsd:element name="accesso-dati-gestione-token" type="accesso-dati-gestione-token" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="accesso-dati-keystore" type="accesso-dati-keystore" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="accesso-dati-consegna-applicativi" type="accesso-dati-consegna-applicativi" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="accesso-dati-richieste" type="accesso-dati-richieste" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="multitenant" type="configurazione-multitenant" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="url-invocazione" type="configurazione-url-invocazione" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="validazione-buste" type="validazione-buste" maxOccurs="1" minOccurs="0" />
@@ -1885,6 +1886,13 @@
 	
 	<!-- Informazioni per la consegna agli applicativi -->
 	<xsd:complexType name="accesso-dati-consegna-applicativi">
+		<xsd:sequence>
+			<xsd:element name="cache" type="cache" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<!-- Informazioni per la gestione dei dati delle richieste -->
+	<xsd:complexType name="accesso-dati-richieste">
 		<xsd:sequence>
 			<xsd:element name="cache" type="cache" maxOccurs="1" minOccurs="0"/>
 		</xsd:sequence>

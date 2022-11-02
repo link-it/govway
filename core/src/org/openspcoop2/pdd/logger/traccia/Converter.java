@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.joda.time.DateTime;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.transazioni.DumpAllegato;
@@ -220,7 +221,7 @@ public class Converter {
 			TransazioneEsito esito = new TransazioneEsito();
 			esito.setCodice(transazioneDB.getEsito()+"");
 			try {
-				EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log, transazioneDB.getProtocollo());
+				EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(this.log, transazioneDB.getProtocollo());
 				esito.setDescrizione(esitiProperties.getEsitoLabel(transazioneDB.getEsito()));
 			}catch(Throwable e) {
 				if(this.throwInitProtocol) {
@@ -273,16 +274,16 @@ public class Converter {
 			}
 			if(this.profilo) {
 				ProfiloEnum profilo = ProfiloEnum.APIGATEWAY;
-				if(transazioneDB.getProtocollo().equals("modipa")) {
+				if(transazioneDB.getProtocollo().equals(CostantiLabel.MODIPA_PROTOCOL_NAME)) {
 					profilo = ProfiloEnum.MODIPA;
 				}
-				else if(transazioneDB.getProtocollo().equals("spcoop")) {
+				else if(transazioneDB.getProtocollo().equals(CostantiLabel.SPCOOP_PROTOCOL_NAME)) {
 					profilo = ProfiloEnum.SPCOOP;
 				}
-				else if(transazioneDB.getProtocollo().equals("sdi")) {
+				else if(transazioneDB.getProtocollo().equals(CostantiLabel.SDI_PROTOCOL_NAME)) {
 					profilo = ProfiloEnum.FATTURAPA;
 				}
-				else if(transazioneDB.getProtocollo().equals("as4")) {
+				else if(transazioneDB.getProtocollo().equals(CostantiLabel.AS4_PROTOCOL_NAME)) {
 					profilo = ProfiloEnum.EDELIVERY;
 				}
 				((TransazioneExt)transazione).setProfilo(profilo);

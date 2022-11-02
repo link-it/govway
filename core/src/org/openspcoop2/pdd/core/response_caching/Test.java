@@ -34,9 +34,11 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageType;
-import org.openspcoop2.protocol.engine.RequestInfo;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.protocol.engine.URLProtocolContextImpl;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.slf4j.Logger;
 import org.w3c.dom.Node;
@@ -64,7 +66,7 @@ public class Test {
 		requestInfo.setIdServizio(IDServizioFactory.getInstance().getIDServizioFromValues("gw", "serv", "gw", "RegioneToscana", 1));
 		requestInfo.getIdServizio().setAzione("az");
 		
-		URLProtocolContext protocolContext = new URLProtocolContext(log);
+		URLProtocolContext protocolContext = new URLProtocolContextImpl(log);
 		requestInfo.setProtocolContext(protocolContext);
 		protocolContext.setInterfaceName("nomePortaDelegataXXXX");
 		protocolContext.setFunction("PD");
@@ -90,8 +92,10 @@ public class Test {
 		OpenSPCoop2MessageParseResult pr = messageFactory.createMessage(MessageType.SOAP_11,protocolContext,
 				bin,null);
 		OpenSPCoop2Message msg = pr.getMessage_throwParseException();
-		msg.addContextProperty("CONT1", "V1");
-		msg.addContextProperty("CONT2", "V2");
+		MapKey<String> CONT1 = org.openspcoop2.utils.Map.newMapKey("CONT1");
+		MapKey<String> CONT2 = org.openspcoop2.utils.Map.newMapKey("CONT2");
+		msg.addContextProperty(CONT1, "V1");
+		msg.addContextProperty(CONT2, "V2");
 		
 		HashGenerator generator = new HashGenerator("MD5");
 		//generator = new HashGenerator("SHA-256");

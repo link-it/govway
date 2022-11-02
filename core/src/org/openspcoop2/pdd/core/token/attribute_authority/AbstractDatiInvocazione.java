@@ -22,9 +22,9 @@ package org.openspcoop2.pdd.core.token.attribute_authority;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 
 /**
  * AbstractDatiInvocazione

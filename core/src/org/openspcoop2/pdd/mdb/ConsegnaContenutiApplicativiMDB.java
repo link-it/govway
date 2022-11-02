@@ -49,6 +49,7 @@ import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorseThread;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StatelessMessage;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 
@@ -198,11 +199,17 @@ public class ConsegnaContenutiApplicativiMDB implements MessageDrivenBean, Messa
 				msgDiag.logErroreGenerico(e,"received.getObject(ConsegnaContenutiApplicativiMessage)");
 				return; 
 			}
+			
+			RequestInfo requestInfo = null;
+			if(consegnaContenutiApplicativiMsg.getPddContext()!=null && consegnaContenutiApplicativiMsg.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+				requestInfo = (RequestInfo) consegnaContenutiApplicativiMsg.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+			}
+			
 			if(consegnaContenutiApplicativiMsg.getRichiestaApplicativa()!=null && consegnaContenutiApplicativiMsg.getRichiestaApplicativa().getIdPortaApplicativa()!=null) {
-				msgDiag.updatePorta(consegnaContenutiApplicativiMsg.getRichiestaApplicativa().getIdPortaApplicativa().getNome());
+				msgDiag.updatePorta(consegnaContenutiApplicativiMsg.getRichiestaApplicativa().getIdPortaApplicativa().getNome(), requestInfo);
 			}
 			else if(consegnaContenutiApplicativiMsg.getRichiestaDelegata()!=null && consegnaContenutiApplicativiMsg.getRichiestaDelegata().getIdPortaDelegata()!=null) {
-				msgDiag.updatePorta(TipoPdD.DELEGATA, consegnaContenutiApplicativiMsg.getRichiestaDelegata().getIdPortaDelegata().getNome());
+				msgDiag.updatePorta(TipoPdD.DELEGATA, consegnaContenutiApplicativiMsg.getRichiestaDelegata().getIdPortaDelegata().getNome(), requestInfo);
 			}
 			
 			// ID associato alla richiesta

@@ -77,7 +77,9 @@ import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffi
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.date.DateManager;
@@ -174,7 +176,9 @@ public class DatiStatisticiDAOManager  {
     public RisultatoStatistico readNumeroRichieste(String key,TipoRisorsa tipoRisorsa,
     		TipoFinestra tipoFinestra,TipoPeriodoStatistico tipoPeriodo, Date leftInterval, Date rightInterval,
     		DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy, AttivazionePolicyFiltro filtro,
-    		IState state) throws Exception{
+    		IState state,
+			RequestInfo requestInfo,
+			IProtocolFactory<?> protocolFactory) throws Exception{
 	
     	Resource r = null;
     	boolean useConnectionRuntime = false;
@@ -250,7 +254,7 @@ public class DatiStatisticiDAOManager  {
 			}
 			
 			IExpression expression = this.createWhereExpressionNumeroRichieste(dao, model, tipoRisorsa, leftInterval, rightInterval, 
-					datiTransazione.getTipoPdD(),datiTransazione.getProtocollo(), groupByPolicy, filtro, state);
+					datiTransazione.getTipoPdD(), protocolFactory, datiTransazione.getProtocollo(), groupByPolicy, filtro, state, requestInfo);
 						
 			FunctionField ff = new  FunctionField(model.NUMERO_TRANSAZIONI, Function.SUM, "somma");
 			
@@ -302,12 +306,13 @@ public class DatiStatisticiDAOManager  {
 			TipoRisorsa tipoRisorsa,
 			Date dataInizio, Date dataFine,
 			TipoPdD tipoPdDTransazioneInCorso,
-			String protocollo,
+			IProtocolFactory<?> protocolFactory, String protocollo,
 			IDUnivocoGroupByPolicy groupByPolicy,
 			AttivazionePolicyFiltro filtro,
-			IState state) throws Exception {
+			IState state,
+			RequestInfo requestInfo) throws Exception {
     	
-    	IExpression expr = this.createWhereExpression(dao, model, tipoRisorsa, dataInizio, dataFine, tipoPdDTransazioneInCorso, protocollo, groupByPolicy, filtro, state);
+    	IExpression expr = this.createWhereExpression(dao, model, tipoRisorsa, dataInizio, dataFine, tipoPdDTransazioneInCorso, protocolFactory, protocollo, groupByPolicy, filtro, state, requestInfo);
 
     	expr.isNotNull(model.NUMERO_TRANSAZIONI);
     	
@@ -329,7 +334,9 @@ public class DatiStatisticiDAOManager  {
     		TipoFinestra tipoFinestra,TipoPeriodoStatistico tipoPeriodo, Date leftInterval, Date rightInterval,
     		TipoBanda tipoBanda,
     		DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy, AttivazionePolicyFiltro filtro,
-    		IState state) throws Exception{
+    		IState state,
+			RequestInfo requestInfo,
+			IProtocolFactory<?> protocolFactory) throws Exception{
 	
     	Resource r = null;
     	boolean useConnectionRuntime = false;
@@ -404,7 +411,7 @@ public class DatiStatisticiDAOManager  {
 			}
 			
 			IExpression expression = this.createWhereExpressionBanda(dao, model, tipoRisorsa, leftInterval, rightInterval, 
-					datiTransazione.getTipoPdD(),datiTransazione.getProtocollo(), groupByPolicy, filtro, tipoBanda, state);
+					datiTransazione.getTipoPdD(), protocolFactory, datiTransazione.getProtocollo(), groupByPolicy, filtro, tipoBanda, state, requestInfo);
 						
 			FunctionField ff = null;
 			switch (tipoBanda) {
@@ -468,12 +475,13 @@ public class DatiStatisticiDAOManager  {
 			TipoRisorsa tipoRisorsa,
 			Date dataInizio, Date dataFine,
 			TipoPdD tipoPdDTransazioneInCorso,
-			String protocollo,
+			IProtocolFactory<?> protocolFactory, String protocollo,
 			IDUnivocoGroupByPolicy groupByPolicy, AttivazionePolicyFiltro filtro,
 			TipoBanda tipoBanda,
-			IState state) throws Exception {
+			IState state,
+			RequestInfo requestInfo) throws Exception {
     	
-    	IExpression expr = this.createWhereExpression(dao, model, tipoRisorsa, dataInizio, dataFine, tipoPdDTransazioneInCorso, protocollo, groupByPolicy, filtro, state);
+    	IExpression expr = this.createWhereExpression(dao, model, tipoRisorsa, dataInizio, dataFine, tipoPdDTransazioneInCorso, protocolFactory, protocollo, groupByPolicy, filtro, state, requestInfo);
 
     	switch (tipoBanda) {
 		case COMPLESSIVA:
@@ -499,7 +507,9 @@ public class DatiStatisticiDAOManager  {
     		TipoFinestra tipoFinestra,TipoPeriodoStatistico tipoPeriodo, Date leftInterval, Date rightInterval,
     		TipoLatenza tipoLatenza,
     		DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy, AttivazionePolicyFiltro filtro,
-    		IState state) throws Exception{
+    		IState state,
+			RequestInfo requestInfo,
+			IProtocolFactory<?> protocolFactory) throws Exception{
 	
     	Resource r = null;
     	boolean useConnectionRuntime = false;
@@ -577,7 +587,7 @@ public class DatiStatisticiDAOManager  {
 			}
 			
 			IExpression expression = this.createWhereExpressionLatenza(dao, model, tipoRisorsa, leftInterval, rightInterval, 
-					datiTransazione.getTipoPdD(), datiTransazione.getProtocollo(), groupByPolicy, filtro, tipoLatenza, state);
+					datiTransazione.getTipoPdD(), protocolFactory, datiTransazione.getProtocollo(), groupByPolicy, filtro, tipoLatenza, state, requestInfo);
 						
 			FunctionField ff = null;
 			switch (tipoLatenza) {
@@ -680,12 +690,13 @@ public class DatiStatisticiDAOManager  {
 			TipoRisorsa tipoRisorsa,
 			Date dataInizio, Date dataFine,
 			TipoPdD tipoPdDTransazioneInCorso,
-			String protocollo,
+			IProtocolFactory<?> protocolFactory, String protocollo,
 			IDUnivocoGroupByPolicy groupByPolicy, AttivazionePolicyFiltro filtro,
 			TipoLatenza tipoLatenza,
-			IState state) throws Exception {
+			IState state,
+			RequestInfo requestInfo) throws Exception {
     	
-    	IExpression expr = this.createWhereExpression(dao, model, tipoRisorsa, dataInizio, dataFine, tipoPdDTransazioneInCorso, protocollo, groupByPolicy, filtro, state);
+    	IExpression expr = this.createWhereExpression(dao, model, tipoRisorsa, dataInizio, dataFine, tipoPdDTransazioneInCorso, protocolFactory, protocollo, groupByPolicy, filtro, state, requestInfo);
 
 		int [] esiti = null;
 		if(TipoPdD.DELEGATA.equals(tipoPdDTransazioneInCorso)){
@@ -731,10 +742,11 @@ public class DatiStatisticiDAOManager  {
 			TipoRisorsa tipoRisorsa,
 			Date dataInizio, Date dataFine,
 			TipoPdD tipoPdDTransazioneInCorso,
-			String protocollo,
+			IProtocolFactory<?> protocolFactory, String protocollo,
 			IDUnivocoGroupByPolicy groupByPolicy,
 			AttivazionePolicyFiltro filtro,
-			IState state) throws Exception {
+			IState state,
+			RequestInfo requestInfo) throws Exception {
 
 		IExpression expr = null;
 
@@ -771,16 +783,16 @@ public class DatiStatisticiDAOManager  {
 			break;
 
 		case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
-			expr.in(model.ESITO, EsitiProperties.getInstance(this.daoFactoryLogger,protocollo).getEsitiCodeOk());
+			expr.in(model.ESITO, EsitiProperties.getInstance(this.daoFactoryLogger,protocolFactory).getEsitiCodeOk());
 			break;
 		case NUMERO_RICHIESTE_FALLITE:
-			expr.in(model.ESITO, EsitiProperties.getInstance(this.daoFactoryLogger,protocollo).getEsitiCodeKo_senzaFaultApplicativo());
+			expr.in(model.ESITO, EsitiProperties.getInstance(this.daoFactoryLogger,protocolFactory).getEsitiCodeKo_senzaFaultApplicativo());
 			break;
 		case NUMERO_FAULT_APPLICATIVI:
-			expr.in(model.ESITO, EsitiProperties.getInstance(this.daoFactoryLogger,protocollo).getEsitiCodeFaultApplicativo());
+			expr.in(model.ESITO, EsitiProperties.getInstance(this.daoFactoryLogger,protocolFactory).getEsitiCodeFaultApplicativo());
 			break;
 		case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
-			expr.in(model.ESITO, EsitiProperties.getInstance(this.daoFactoryLogger,protocollo).getEsitiCodeKo());
+			expr.in(model.ESITO, EsitiProperties.getInstance(this.daoFactoryLogger,protocolFactory).getEsitiCodeKo());
 			break;
 		}
 		
@@ -928,7 +940,7 @@ public class DatiStatisticiDAOManager  {
 					if(RuoloPolicy.DELEGATA.equals(filtro.getRuoloPorta())){
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(filtro.getNomePorta());
-						PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD);
+						PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, requestInfo);
 						if(pd!=null && pd.getServizio()!=null && pd.getSoggettoErogatore()!=null) {
 							idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
 									pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(), 
@@ -938,7 +950,7 @@ public class DatiStatisticiDAOManager  {
 					else {
 						IDPortaApplicativa idPA = new IDPortaApplicativa();
 						idPA.setNome(filtro.getNomePorta());
-						PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA);
+						PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, requestInfo);
 						if(pa!=null && pa.getServizio()!=null) {
 							idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
 									pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(), 

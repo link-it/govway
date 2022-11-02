@@ -1621,6 +1621,9 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari  = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD = new HashMap<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaDatiRichieste = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingGlobalConfigCache = new HashMap<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingAPIConfigCache = new HashMap<String, String>();
 	private Map<String, List<String>> jmxPdD_caches = new HashMap<String, List<String>>();
 	private Map<String, List<String>> jmxPdD_caches_prefill = new HashMap<String, List<String>>();
 	private Map<String, String> jmxPdD_cache_type = new HashMap<String, String>();
@@ -2055,6 +2058,15 @@ public class ControlStationCore {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeRisorsaDatiRichieste(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeRisorsaDatiRichieste.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingGlobalConfigCache(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingGlobalConfigCache.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingAPIConfigCache(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingAPIConfigCache.get(alias);
 	}
 	public List<String> getJmxPdD_caches(String alias) {
 		return this.jmxPdD_caches.get(alias);
@@ -2703,6 +2715,9 @@ public class ControlStationCore {
 		this.jmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari = core.jmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari;
 		this.jmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD = core.jmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration = core.jmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration;
+		this.jmxPdD_configurazioneSistema_nomeRisorsaDatiRichieste = core.jmxPdD_configurazioneSistema_nomeRisorsaDatiRichieste;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingGlobalConfigCache = core.jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingGlobalConfigCache;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingAPIConfigCache = core.jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingAPIConfigCache;
 		this.jmxPdD_caches = core.jmxPdD_caches;
 		this.jmxPdD_caches_prefill = core.jmxPdD_caches_prefill;
 		this.jmxPdD_cache_type = core.jmxPdD_cache_type;
@@ -3236,6 +3251,9 @@ public class ControlStationCore {
 					this.jmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_resetConnettoriPrioritari(alias));
 					this.jmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration(alias));
+					this.jmxPdD_configurazioneSistema_nomeRisorsaDatiRichieste.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaDatiRichieste(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingGlobalConfigCache.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingGlobalConfigCache(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingAPIConfigCache.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_removeRateLimitingAPIConfigCache(alias));
 					this.jmxPdD_caches.put(alias, consoleProperties.getJmxPdD_caches(alias));
 					this.jmxPdD_caches_prefill.put(alias, consoleProperties.getJmxPdD_caches_prefill(alias));
 					this.jmxPdD_cache_type.put(alias, consoleProperties.getJmxPdD_cache_type(alias));

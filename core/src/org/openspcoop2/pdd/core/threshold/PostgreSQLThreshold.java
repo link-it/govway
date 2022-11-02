@@ -123,7 +123,7 @@ public class PostgreSQLThreshold implements IThreshold {
 		try{
 			if(datasource==null) {
 				try{
-					resource = dbManager.getResource(PostgreSQLThreshold.properties.getIdentitaPortaDefault(null), PostgreSQLThreshold.ID_MODULO,null);
+					resource = dbManager.getResource(PostgreSQLThreshold.properties.getIdentitaPortaDefaultWithoutProtocol(), PostgreSQLThreshold.ID_MODULO,null);
 				}catch(Exception e){
 					throw new Exception("Impossibile ottenere una Risorsa dal DBManager",e);
 				}
@@ -175,7 +175,7 @@ public class PostgreSQLThreshold implements IThreshold {
 					if(s!=null) s.close();
 					rs=null;s=null;
 					if(datasource==null)
-						dbManager.releaseResource(PostgreSQLThreshold.properties.getIdentitaPortaDefault(null), PostgreSQLThreshold.ID_MODULO, resource);
+						dbManager.releaseResource(PostgreSQLThreshold.properties.getIdentitaPortaDefaultWithoutProtocol(), PostgreSQLThreshold.ID_MODULO, resource);
 					else {
 						if ((connection != null) && (connection.isClosed()==false))
 							connection.close();

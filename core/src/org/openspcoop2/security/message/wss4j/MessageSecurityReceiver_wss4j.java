@@ -29,6 +29,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
@@ -47,6 +48,7 @@ import org.apache.wss4j.dom.handler.WSHandlerConstants;
 import org.apache.wss4j.dom.handler.WSHandlerResult;
 import org.apache.wss4j.dom.message.token.Timestamp;
 import org.apache.wss4j.dom.str.STRParser;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -55,7 +57,9 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.reference.Reference;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.security.keystore.KeystoreConstants;
 import org.openspcoop2.security.message.AbstractSOAPMessageSecurityReceiver;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.SubErrorCodeSecurity;
@@ -81,12 +85,12 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 
 
 	@Override
-	public void process(MessageSecurityContext wssContext,OpenSPCoop2Message messageParam,Busta busta) throws SecurityException{
+	public void process(MessageSecurityContext wssContext,OpenSPCoop2Message messageParam,Busta busta, org.openspcoop2.utils.Map<Object> ctx) throws SecurityException{
 		process(wssContext, messageParam, busta,
-				false, null);
+				false, null, ctx);
 	}
 	public void process(MessageSecurityContext wssContext,OpenSPCoop2Message messageParam,Busta busta,
-			boolean bufferMessage_readOnly, String idTransazione) throws SecurityException{
+			boolean bufferMessage_readOnly, String idTransazione, org.openspcoop2.utils.Map<Object> ctx) throws SecurityException{
 		try{
 			
 			if(ServiceBinding.SOAP.equals(messageParam.getServiceBinding())==false){
@@ -94,6 +98,12 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 			}
 			OpenSPCoop2SoapMessage message = messageParam.castAsSoap();
 			SOAPMessage soapMessage = MessageUtils.getSOAPMessage(message, bufferMessage_readOnly, idTransazione);
+			
+    		RequestInfo requestInfo = null;
+    		if(ctx!=null && ctx.containsKey(Costanti.REQUEST_INFO)) {
+    			requestInfo = (RequestInfo) ctx.get(Costanti.REQUEST_INFO);
+    		}
+			
 			
 			// ** Inizializzo handler CXF **/
 			
@@ -103,7 +113,7 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 			Exchange ex = new ExchangeImpl();
 	        ex.setInMessage(msgCtx);
 			msgCtx.setContent(SOAPMessage.class, soapMessage);
-	        setIncomingProperties(wssContext,inHandler,msgCtx);
+	        setIncomingProperties(wssContext,inHandler,msgCtx,requestInfo);
 	        
 	        
 	        // ** Registro attachments da trattare **/
@@ -274,7 +284,7 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 	}
 
 	
-	private void setIncomingProperties(MessageSecurityContext wssContext,WSS4JInInterceptor interceptor, SoapMessage msgCtx) {
+	private void setIncomingProperties(MessageSecurityContext wssContext,WSS4JInInterceptor interceptor, SoapMessage msgCtx, RequestInfo requestInfo) {
 		Map<String,Object> wssIncomingProperties =  wssContext.getIncomingProperties();
 		if (wssIncomingProperties != null && wssIncomingProperties.size() > 0) {
 			for (String key : wssIncomingProperties.keySet()) {
@@ -298,7 +308,16 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 						String id = key+"_"+IDUtilities.getUniqueSerialNumber("wssSecurity.setIncomingProperties");
 						msgCtx.put(key, id);
 						msgCtx.put(id, oValue);
+						if(oValue!=null && oValue instanceof Properties) {
+							Properties p = (Properties) oValue;
+							p.put(KeystoreConstants.PROPERTY_REQUEST_INFO, requestInfo);
+						}
 					}
+				}
+				else if(SecurityConstants.ENCRYPT_ACTION_OLD.equals(key)) {
+					// backward compatibility per adeguamento costante rispetto a wss4j 2.3.x
+					msgCtx.put(SecurityConstants.ENCRYPTION_ACTION, value);
+					interceptor.setProperty(SecurityConstants.ENCRYPTION_ACTION, value);
 				}
 				else{
 					msgCtx.put(key, value);

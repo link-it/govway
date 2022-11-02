@@ -21,7 +21,6 @@ package org.openspcoop2.pdd.core.handlers.transazioni;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
@@ -67,12 +66,12 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 				Integer threshold = null;
 				
 				if(context!=null && context.getPddContext()!=null){
-					Object maxThreadsObject = context.getPddContext().getObject(GeneratoreMessaggiErrore.TEMPLATE_MAX_THREADS_THRESHOLD);
+					Object maxThreadsObject = context.getPddContext().getObject(GeneratoreMessaggiErrore.PDD_CONTEXT_MAX_THREADS_THRESHOLD);
 					if(maxThreadsObject!=null && maxThreadsObject instanceof Long){
 						maxThreads = (Long) maxThreadsObject;
 					}
 					
-					Object thresholdObject = context.getPddContext().getObject(GeneratoreMessaggiErrore.TEMPLATE_CONTROLLO_TRAFFICO_THRESHOLD);
+					Object thresholdObject = context.getPddContext().getObject(GeneratoreMessaggiErrore.PDD_CONTEXT_CONTROLLO_TRAFFICO_THRESHOLD);
 					if(thresholdObject!=null && maxThreadsObject instanceof Long){
 						threshold = (Integer) thresholdObject;
 					}
@@ -190,9 +189,9 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 											timeStart = DateManager.getTimeMillis();
 										}
 										
-										Map<String, Object> mapContext = null;
-										if(context!=null && context.getPddContext()!=null) {
-											mapContext = context.getPddContext().getContext();
+										org.openspcoop2.utils.Map<Object> mapContext = null;
+										if(context!=null) {
+											mapContext = context.getPddContext();
 										}
 										
 										policyGroupByActiveThreads.

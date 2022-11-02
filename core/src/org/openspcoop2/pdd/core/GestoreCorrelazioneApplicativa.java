@@ -49,14 +49,15 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.protocol.engine.Configurazione;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
@@ -121,6 +122,8 @@ public class GestoreCorrelazioneApplicativa {
 	private Transaction transaction;
 	/** PddContext */
 	private PdDContext pddContext;
+	/** RequestInfo */
+	private RequestInfo requestInfo;
 	
 	private int maxLengthCorrelazioneApplicativa = 255;
 	private int maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_request = -1;
@@ -153,6 +156,9 @@ public class GestoreCorrelazioneApplicativa {
 		this.protocolFactory = protocolFactory;
 		this.transaction = transaction;
 		this.pddContext = pddContext;
+		if(this.pddContext!=null && this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+			this.requestInfo = (RequestInfo) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		}
 		
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		this.maxLengthCorrelazioneApplicativa = op2Properties.getMaxLengthCorrelazioneApplicativa();
@@ -1107,7 +1113,7 @@ public class GestoreCorrelazioneApplicativa {
 		if(this.restResource!=null) {
 			return;
 		}
-		this.restResource = Utilities.getRestResource(this.log, this.state, this.idServizio);
+		this.restResource = Utilities.getRestResource(this.log, this.state, this.idServizio, this.requestInfo);
 	}
 	
 	

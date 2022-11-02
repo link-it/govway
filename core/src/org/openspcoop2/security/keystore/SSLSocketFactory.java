@@ -27,6 +27,7 @@ import java.io.Serializable;
 
 import javax.net.ssl.SSLContext;
 
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.utils.certificate.KeyStore;
@@ -58,17 +59,17 @@ public class SSLSocketFactory implements Serializable {
 		return bf.toString();
 	}
 	
-	public SSLSocketFactory(SSLConfig sslConfig) throws SecurityException{
+	public SSLSocketFactory(RequestInfo requestInfo, SSLConfig sslConfig) throws SecurityException{
 		this.sslConfig = sslConfig;
-		this.initFactory();
+		this.initFactory(requestInfo);
 	}
 	
-	private void checkInit() throws SecurityException{
+	private void checkInit(RequestInfo requestInfo) throws SecurityException{
 		if(this.sslSocketFactory==null) {
-			this.initFactory();
+			this.initFactory(requestInfo);
 		}
 	}
-	private synchronized void initFactory() throws SecurityException{
+	private synchronized void initFactory(RequestInfo requestInfo) throws SecurityException{
 		if(this.sslSocketFactory==null) {
 			try{
 				// Gestione https
@@ -77,7 +78,7 @@ public class SSLSocketFactory implements Serializable {
 					// provo a leggere i keystore dalla cache
 					if(this.sslConfig.getKeyStoreLocation()!=null) {
 						try {
-							KeyStore keystore = GestoreKeystoreCache.getMerlinKeystore(this.sslConfig.getKeyStoreLocation(), 
+							KeyStore keystore = GestoreKeystoreCache.getMerlinKeystore(requestInfo, this.sslConfig.getKeyStoreLocation(), 
 									this.sslConfig.getKeyStoreType(), this.sslConfig.getKeyStorePassword()).getKeyStore();
 							this.sslConfig.setKeyStore(keystore.getKeystore(), keystore.isKeystoreHsm());
 						}catch(Exception e) {
@@ -87,7 +88,7 @@ public class SSLSocketFactory implements Serializable {
 					}
 					if(this.sslConfig.getTrustStoreLocation()!=null) {
 						try {
-							KeyStore truststore = GestoreKeystoreCache.getMerlinTruststore(this.sslConfig.getTrustStoreLocation(), 
+							KeyStore truststore = GestoreKeystoreCache.getMerlinTruststore(requestInfo, this.sslConfig.getTrustStoreLocation(), 
 									this.sslConfig.getTrustStoreType(), this.sslConfig.getTrustStorePassword()).getTrustStore();
 							this.sslConfig.setTrustStore(truststore.getKeystore(), truststore.isKeystoreHsm());
 						}catch(Exception e) {
@@ -97,7 +98,7 @@ public class SSLSocketFactory implements Serializable {
 					}
 					if(this.sslConfig.getTrustStoreCRLsLocation()!=null) {
 						try {
-							this.sslConfig.setTrustStoreCRLs(GestoreKeystoreCache.getCRLCertstore(this.sslConfig.getTrustStoreCRLsLocation()).getCertStore());
+							this.sslConfig.setTrustStoreCRLs(GestoreKeystoreCache.getCRLCertstore(requestInfo, this.sslConfig.getTrustStoreCRLsLocation()).getCertStore());
 						}catch(Exception e) {
 							String msgError = "Lettura CRLs '"+this.sslConfig.getTrustStoreLocation()+"' dalla cache fallita: "+e.getMessage();
 							logError(msgError, e);
@@ -123,8 +124,8 @@ public class SSLSocketFactory implements Serializable {
 		}
 	}
 	
-	public javax.net.ssl.SSLSocketFactory getSslSocketFactory() throws SecurityException {
-		this.checkInit(); // per ripristino da Serializable
+	public javax.net.ssl.SSLSocketFactory getSslSocketFactory(RequestInfo requestInfo) throws SecurityException {
+		this.checkInit(requestInfo); // per ripristino da Serializable
 		return this.sslSocketFactory;
 	}	
 

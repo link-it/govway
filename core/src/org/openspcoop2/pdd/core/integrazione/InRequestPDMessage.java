@@ -23,8 +23,8 @@ package org.openspcoop2.pdd.core.integrazione;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 
 /**
  * InRequestPDMessage

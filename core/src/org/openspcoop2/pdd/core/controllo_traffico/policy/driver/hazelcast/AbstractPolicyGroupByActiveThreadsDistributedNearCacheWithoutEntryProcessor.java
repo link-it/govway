@@ -23,7 +23,6 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
@@ -34,6 +33,7 @@ import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreads
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.PolicyDateUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.Map;
 import org.slf4j.Logger;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -56,7 +56,7 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributedNearCacheWith
 	}
 
 	@Override
-	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx)
+	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx)
 			throws PolicyException {
 		
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
@@ -97,7 +97,7 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributedNearCacheWith
 	
 	@Override
 	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione,
-			IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx) throws PolicyException, PolicyNotFoundException {
+			IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx) throws PolicyException, PolicyNotFoundException {
 		
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
 
@@ -123,7 +123,7 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributedNearCacheWith
 	}
 	
 	@Override
-	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx, 
+	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx, 
 			MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata)
 			throws PolicyException, PolicyNotFoundException {
 		
@@ -142,9 +142,10 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributedNearCacheWith
 				List<Integer> esitiCodeKo_senzaFaultApplicativo = null;
 				List<Integer> esitiCodeFaultApplicativo = null;
 				try {
-					esitiCodeOk = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeOk_senzaFaultApplicativo();
-					esitiCodeKo_senzaFaultApplicativo = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeKo_senzaFaultApplicativo();
-					esitiCodeFaultApplicativo = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeFaultApplicativo();
+					EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(log,dati.getProtocollo());
+					esitiCodeOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
+					esitiCodeKo_senzaFaultApplicativo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
+					esitiCodeFaultApplicativo = esitiProperties.getEsitiCodeFaultApplicativo();
 				}catch(Exception e) {
 					throw new PolicyException(e.getMessage(),e);
 				}
@@ -176,7 +177,7 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributedNearCacheWith
 	}
 	
 	@Override
-	public void initMap(Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
+	public void initMap(java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
 		if(map!=null && map.size()>0){
 			this.distributedMap.putAll(map);
 		}

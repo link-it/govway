@@ -21,7 +21,7 @@
 		<owasp.output.dir>../../dependency-check-result</owasp.output.dir>
 
 		<!-- Versioni condivise dai moduli -->
-		<module.spring.version>5.3.20</module.spring.version>
+		<module.spring.version>5.3.23</module.spring.version>
 	</properties>
 
 	<modules>
@@ -98,8 +98,11 @@
 							<suppressionFiles>
 								<suppressionFile>${owasp.falsePositives.dir}/swagger-codegen-linkit.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/console-back-office.xml</suppressionFile>
-								<suppressionFile>${owasp.falsePositives.dir}/commons-net-echo.xml</suppressionFile>
-								<suppressionFile>${owasp.falsePositives.dir}/dependency-check-false-positive.xml</suppressionFile>
+								<suppressionFile>${owasp.falsePositives.dir}/commons-discovery.xml</suppressionFile>
+								<suppressionFile>${owasp.falsePositives.dir}/snakeyaml.xml</suppressionFile>
+								<suppressionFile>${owasp.falsePositives.dir}/spring-web.xml</suppressionFile>
+								<suppressionFile>${owasp.falsePositives.dir}/spring-security-crypto.xml</suppressionFile>
+								<suppressionFile>${owasp.falsePositives.dir}/xercesImpl.xml</suppressionFile>
 							</suppressionFiles>
 						</configuration>
 						<goals>

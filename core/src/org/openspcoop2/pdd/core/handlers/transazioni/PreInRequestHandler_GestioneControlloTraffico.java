@@ -67,7 +67,7 @@ public class PreInRequestHandler_GestioneControlloTraffico {
 			OpenSPCoop2Properties propertiesReader = OpenSPCoop2Properties.getInstance();
 			logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(propertiesReader.isControlloTrafficoDebug());
 			ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance();
-			configurazioneGenerale = configPdDManager.getConfigurazioneControlloTraffico();
+			configurazioneGenerale = configPdDManager.getConfigurazioneControlloTraffico(context.getRequestInfo());
 			if(configurazioneGenerale.getControlloTraffico()==null){
 				throw new Exception("Impostazione maxThreads non corretta?? ControlloTraffico is null");
 			}
@@ -129,9 +129,9 @@ public class PreInRequestHandler_GestioneControlloTraffico {
 			
 			// salvataggio informazioni lette
 			if(maxThreadsEnabled) {
-				context.getPddContext().addObject(GeneratoreMessaggiErrore.TEMPLATE_MAX_THREADS_THRESHOLD, maxThreads);
+				context.getPddContext().addObject(GeneratoreMessaggiErrore.PDD_CONTEXT_MAX_THREADS_THRESHOLD, maxThreads);
 				if(threshold!=null){
-					context.getPddContext().addObject(GeneratoreMessaggiErrore.TEMPLATE_CONTROLLO_TRAFFICO_THRESHOLD, threshold);
+					context.getPddContext().addObject(GeneratoreMessaggiErrore.PDD_CONTEXT_CONTROLLO_TRAFFICO_THRESHOLD, threshold);
 				}
 			
 				// registro nuovo in thread in ingresso
@@ -222,7 +222,7 @@ public class PreInRequestHandler_GestioneControlloTraffico {
 			if(context.getRequestInfo()!=null && context.getRequestInfo().getProtocolContext()!=null) {
 				nomePorta = context.getRequestInfo().getProtocolContext().getInterfaceName();
 			}
-			MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(context.getTipoPorta(),context.getIdModulo(),nomePorta);
+			MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(context.getTipoPorta(),context.getIdModulo(),nomePorta, context.getRequestInfo());
 			msgDiag.setPddContext(context.getPddContext(), context.getProtocolFactory());
 			if(org.openspcoop2.core.constants.TipoPdD.DELEGATA.equals(context.getTipoPorta())){
 				msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI);

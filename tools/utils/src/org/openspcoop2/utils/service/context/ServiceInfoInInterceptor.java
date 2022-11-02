@@ -21,8 +21,10 @@
 package org.openspcoop2.utils.service.context;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -84,7 +86,8 @@ public class ServiceInfoInInterceptor extends AbstractPhaseInterceptor<Message> 
 			}
 			*/
 			
-			final LogEvent event = new DefaultLogEventMapper().map(message);
+			Set<String> sensitiveProtocolHeaders = new HashSet<String>();
+			final LogEvent event = new DefaultLogEventMapper().map(message, sensitiveProtocolHeaders);
 			
 	
 			IContext ctx = ContextThreadLocal.get();

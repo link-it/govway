@@ -62,12 +62,12 @@ import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.pdd.services.error.AbstractErrorGenerator;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
@@ -642,7 +642,7 @@ public class GestoreTrasformazioni {
 		this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RICHIESTA, labelTrasformazione);
 		this.msgDiag.logPersonalizzato( messageTypeForNotifier!=null ? "trasformazione.processamentoNotificaInCorso" : "trasformazione.processamentoRichiestaInCorso");
 		if(this.pddContext!=null) {
-			this.pddContext.addObject(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RICHIESTA, labelTrasformazione);
+			this.pddContext.addObject(CostantiPdD.TIPO_TRASFORMAZIONE_RICHIESTA, labelTrasformazione);
 		}
 		
 		
@@ -714,9 +714,9 @@ public class GestoreTrasformazioni {
 			}
 			else {
 				Template template = (this.idPA!=null) ? 
-						this.configurazionePdDManager.getTemplateTrasformazioneRichiesta(this.idPA, this.regolaTrasformazione.getNome(), richiesta) 
+						this.configurazionePdDManager.getTemplateTrasformazioneRichiesta(this.idPA, this.regolaTrasformazione.getNome(), richiesta, this.requestInfo) 
 						:
-						this.configurazionePdDManager.getTemplateTrasformazioneRichiesta(this.idPD, this.regolaTrasformazione.getNome(), richiesta);
+						this.configurazionePdDManager.getTemplateTrasformazioneRichiesta(this.idPD, this.regolaTrasformazione.getNome(), richiesta, this.requestInfo);
 				risultato = 
 						GestoreTrasformazioniUtilities.trasformazioneContenuto(this.log, 
 								richiesta.getConversioneTipo(), template, "richiesta", 
@@ -812,9 +812,9 @@ public class GestoreTrasformazioni {
 				trasformazioneSoap_tipoConversione = richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo();
 				
 				trasformazioneSoap_templateConversione = (this.idPA!=null) ? 
-						this.configurazionePdDManager.getTemplateTrasformazioneSoapRichiesta(this.idPA, this.regolaTrasformazione.getNome(), richiesta) 
+						this.configurazionePdDManager.getTemplateTrasformazioneSoapRichiesta(this.idPA, this.regolaTrasformazione.getNome(), richiesta, this.requestInfo) 
 						:
-						this.configurazionePdDManager.getTemplateTrasformazioneSoapRichiesta(this.idPD, this.regolaTrasformazione.getNome(), richiesta);
+						this.configurazionePdDManager.getTemplateTrasformazioneSoapRichiesta(this.idPD, this.regolaTrasformazione.getNome(), richiesta, this.requestInfo);
 			}
 									
 			OpenSPCoop2Message msg = GestoreTrasformazioniUtilities.trasformaMessaggio(this.log, messageP, messageContent, 
@@ -1040,7 +1040,7 @@ public class GestoreTrasformazioni {
 		this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RISPOSTA, labelTrasformazione);
 		this.msgDiag.logPersonalizzato("trasformazione.processamentoRispostaInCorso");
 		if(this.pddContext!=null) {
-			this.pddContext.addObject(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RISPOSTA, labelTrasformazione);
+			this.pddContext.addObject(CostantiPdD.TIPO_TRASFORMAZIONE_RISPOSTA, labelTrasformazione);
 		}
 		
 		
@@ -1077,9 +1077,9 @@ public class GestoreTrasformazioni {
 			}
 			else {
 				Template template = (this.idPA!=null) ? 
-						this.configurazionePdDManager.getTemplateTrasformazioneRisposta(this.idPA, this.regolaTrasformazione.getNome(), trasformazioneRisposta) 
+						this.configurazionePdDManager.getTemplateTrasformazioneRisposta(this.idPA, this.regolaTrasformazione.getNome(), trasformazioneRisposta, this.requestInfo) 
 						:
-						this.configurazionePdDManager.getTemplateTrasformazioneRisposta(this.idPD, this.regolaTrasformazione.getNome(), trasformazioneRisposta);
+						this.configurazionePdDManager.getTemplateTrasformazioneRisposta(this.idPD, this.regolaTrasformazione.getNome(), trasformazioneRisposta, this.requestInfo);
 				risultato = 
 						GestoreTrasformazioniUtilities.trasformazioneContenuto(this.log, 
 								trasformazioneRisposta.getConversioneTipo(), template, "risposta", 
@@ -1188,9 +1188,9 @@ public class GestoreTrasformazioni {
 					trasformazioneSoap_tipoConversione = trasformazioneRisposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo();
 					
 					trasformazioneSoap_templateConversione = (this.idPA!=null) ? 
-							this.configurazionePdDManager.getTemplateTrasformazioneSoapRisposta(this.idPA, this.regolaTrasformazione.getNome(), trasformazioneRisposta) 
+							this.configurazionePdDManager.getTemplateTrasformazioneSoapRisposta(this.idPA, this.regolaTrasformazione.getNome(), trasformazioneRisposta, this.requestInfo) 
 							:
-							this.configurazionePdDManager.getTemplateTrasformazioneSoapRisposta(this.idPD, this.regolaTrasformazione.getNome(), trasformazioneRisposta);
+							this.configurazionePdDManager.getTemplateTrasformazioneSoapRisposta(this.idPD, this.regolaTrasformazione.getNome(), trasformazioneRisposta, this.requestInfo);
 					
 				}
 			}

@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.core.handlers.statistics;
 import java.util.List;
 
 import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -47,7 +48,7 @@ public class StatisticsCollection {
 	private static final int SOGLIA_TEMPORALE = 1000*60*30; // statistiche relative all'ultima mezz'ora.
 	
 	private static Logger log = LoggerWrapperFactory.getLogger(StatisticsCollection.class);
-	private static boolean isEsitoOk(EsitoTransazione esito, String protocollo){
+	private static boolean isEsitoOk(EsitoTransazione esito, IProtocolFactory<?> protocollo){
 		try{
 			List<Integer> esitiOk = EsitiProperties.getInstance(log,protocollo).getEsitiCodeOk();
 			for (Integer esitoOk : esitiOk) {
@@ -328,7 +329,7 @@ public class StatisticsCollection {
 		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PA_out_response = new StatisticSize();
 	}
 		
-	private static void incrementCount(EsitoTransazione esito,String protocollo, StatisticCount statCount){
+	private static void incrementCount(EsitoTransazione esito,IProtocolFactory<?> protocollo, StatisticCount statCount){
 		statCount.numeroTransazioni++;
 		if(isEsitoOk(esito,protocollo)){
 			statCount.numeroTransazioni_esitoOK++;

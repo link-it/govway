@@ -41,6 +41,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.KeyStore;
@@ -71,6 +72,8 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
     	
     	Credenziali credenziali = datiInvocazione.getInfoConnettoreIngresso().getCredenziali();
 		
+    	RequestInfo requestInfo = datiInvocazione.getRequestInfo();
+    	
     	String subject = credenziali.getSubject();
     	String issuer = credenziali.getIssuer();
     	CertificateInfo certificate = null;
@@ -109,7 +112,7 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
     					try {
     						String password = CostantiProprieta.getAutenticazioneHttpsTrustStorePassword(proprieta, op2Properties.getAutenticazioneHttpsPortaApplicativaTruststorePassword());
     						String type = CostantiProprieta.getAutenticazioneHttpsTrustStoreType(proprieta, op2Properties.getAutenticazioneHttpsPortaApplicativaTruststoreType());
-    	    				trustStoreCertificatiX509 = GestoreKeystoreCaching.getMerlinTruststore(path, 
+    	    				trustStoreCertificatiX509 = GestoreKeystoreCaching.getMerlinTruststore(requestInfo, path, 
     	    						type, 
     								password).getTrustStore();
     					}catch(Exception e){
@@ -121,7 +124,7 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
     					String crl = CostantiProprieta.getAutenticazioneHttpsTrustStoreCRLs(proprieta, op2Properties.getAutenticazioneHttpsPortaApplicativaTruststoreCRLs());
         				if(crl!=null) {
     						try {
-    							trustStoreCertificatiX509_crls = GestoreKeystoreCaching.getCRLCertstore(crl).getCertStore();
+    							trustStoreCertificatiX509_crls = GestoreKeystoreCaching.getCRLCertstore(requestInfo, crl).getCertStore();
     						}catch(Exception e){
     							throw new Exception("Richiesta autenticazione ssl del gateway gestore delle credenziali; errore durante la lettura delle CRLs ("+crl+"): "+e.getMessage());
     						}

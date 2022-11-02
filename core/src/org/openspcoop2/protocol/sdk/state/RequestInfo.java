@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.protocol.engine;
+package org.openspcoop2.protocol.sdk.state;
 
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -53,7 +53,35 @@ public class RequestInfo implements java.io.Serializable {
 	private IDServizio idServizio;
 	private String idTransazione;
 	private String messageFactory;
+	private RequestConfig preRequestConfig;
+	private RequestConfig requestConfig;
+	private RequestRateLimitingConfig requestRateLimitingConfig;
+	private RequestThreadContext requestThreadContext;
 	
+	public RequestThreadContext getRequestThreadContext() {
+		return this.requestThreadContext;
+	}
+	public void setRequestThreadContext(RequestThreadContext requestThreadContext) {
+		this.requestThreadContext = requestThreadContext;
+	}
+	public RequestConfig getPreRequestConfig() {
+		return this.preRequestConfig;
+	}
+	public void setPreRequestConfig(RequestConfig preRequestConfig) {
+		this.preRequestConfig = preRequestConfig;
+	}
+	public RequestConfig getRequestConfig() {
+		return this.requestConfig;
+	}
+	public void setRequestConfig(RequestConfig requestConfig) {
+		this.requestConfig = requestConfig;
+	}
+	public RequestRateLimitingConfig getRequestRateLimitingConfig() {
+		return this.requestRateLimitingConfig;
+	}
+	public void setRequestRateLimitingConfig(RequestRateLimitingConfig requestRateLimitingConfig) {
+		this.requestRateLimitingConfig = requestRateLimitingConfig;
+	}
 	public String getMessageFactory() {
 		return this.messageFactory;
 	}

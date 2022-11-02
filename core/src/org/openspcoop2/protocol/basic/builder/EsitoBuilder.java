@@ -21,7 +21,6 @@
 package org.openspcoop2.protocol.basic.builder;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
@@ -52,6 +51,7 @@ import org.openspcoop2.protocol.utils.EsitoIdentificationModeContextProperty;
 import org.openspcoop2.protocol.utils.EsitoIdentificationModeSoapFault;
 import org.openspcoop2.protocol.utils.EsitoTransportContextIdentification;
 import org.openspcoop2.utils.LimitedInputStream;
+import org.openspcoop2.utils.Map;
 import org.openspcoop2.utils.rest.problem.JsonDeserializer;
 import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
 import org.openspcoop2.utils.rest.problem.XmlDeserializer;
@@ -76,7 +76,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 	
 	public EsitoBuilder(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		super(protocolFactory);
-		this.esitiProperties = EsitiProperties.getInstance(this.log, protocolFactory.getProtocol());
+		this.esitiProperties = EsitiProperties.getInstance(this.log, protocolFactory);
 		this.erroreProtocollo = this.esitiProperties.isErroreProtocollo();
 		this.envelopeErroreProtocollo = this.esitiProperties.isEnvelopeErroreProtocollo();
 		this.faultEsterno = this.esitiProperties.isFaultEsterno();
@@ -85,6 +85,10 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 
 	protected String getTipoContext(TransportRequestContext transportRequestContext) throws ProtocolException{
 		String tipoContext = CostantiProtocollo.ESITO_TRANSACTION_CONTEXT_STANDARD;
+	
+		if(this.esitiProperties.isSingleTransactionContextCode()) {
+			return tipoContext;
+		}
 		
 		if(transportRequestContext!=null){
 		
@@ -196,7 +200,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 	public EsitoTransazione getEsito(TransportRequestContext transportRequestContext, 
 			int returnCode, ServiceBinding serviceBinding,	
 			OpenSPCoop2Message message,
-			InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, Map<String, Object> context) throws ProtocolException {
+			InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, Map<Object> context) throws ProtocolException {
 		return getEsito(transportRequestContext,returnCode,serviceBinding,message,null,informazioniErroriInfrastrutturali,context);
 	}
 
@@ -205,7 +209,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			int returnCode, ServiceBinding serviceBinding,	
 			OpenSPCoop2Message message,
 			ProprietaErroreApplicativo erroreApplicativo,
-			InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, Map<String, Object> context)
+			InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, Map<Object> context)
 			throws ProtocolException {
 		try{
 			
@@ -280,14 +284,19 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 						if(l!=null && l.size()>0){
 							for (EsitoIdentificationModeContextProperty esitoIdentificationModeContextProperty : l) {
 								try{
-									Object p = context.get(esitoIdentificationModeContextProperty.getName());
+									Object p = context.get(esitoIdentificationModeContextProperty.getMapKey());
 									if(p!=null && p instanceof String){
 										String pS = (String) p;
 										if(esitoIdentificationModeContextProperty.getValue()==null ||
 												esitoIdentificationModeContextProperty.getValue().equals(pS)){
 											// match
 											
-											EsitoTransazione esito = this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CUSTOM, customCode, tipoContext);
+											EsitoTransazioneName esitoTransazioneName = esitoIdentificationModeContextProperty.getEsito();
+											if(esitoTransazioneName==null) {
+												esitoTransazioneName = EsitoTransazioneName.CUSTOM;
+											}
+											
+											EsitoTransazione esito = this.esitiProperties.convertToEsitoTransazione(esitoTransazioneName, customCode, tipoContext);
 											
 											// ritorno immediatamente se l'esito e' un esito non 'ok'
 											// altrimenti verifico se primo ho avuto un errore che altrimenti ha priorita' rispetto al marcare la transazione con questo esito

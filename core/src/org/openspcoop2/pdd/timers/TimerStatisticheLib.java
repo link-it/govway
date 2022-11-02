@@ -349,7 +349,7 @@ public class TimerStatisticheLib {
 		try{
 
 			dbTransazioniManager = DBTransazioniManager.getInstance();
-			rTransazioni = dbTransazioniManager.getResource(this.op2Properties.getIdentitaPortaDefault(null), TimerStatisticheThread.ID_MODULO, null);
+			rTransazioni = dbTransazioniManager.getResource(this.op2Properties.getIdentitaPortaDefaultWithoutProtocol(), TimerStatisticheThread.ID_MODULO, null);
 			if(rTransazioni==null){
 				throw new Exception("Risorsa al database delle transazioni non disponibile");
 			}
@@ -366,7 +366,7 @@ public class TimerStatisticheLib {
 			}
 			else {
 				dbStatisticheManager = DBStatisticheManager.getInstance();
-				rStatistiche = dbStatisticheManager.getResource(this.op2Properties.getIdentitaPortaDefault(null), TimerStatisticheThread.ID_MODULO, null);
+				rStatistiche = dbStatisticheManager.getResource(this.op2Properties.getIdentitaPortaDefaultWithoutProtocol(), TimerStatisticheThread.ID_MODULO, null);
 				if(rStatistiche==null){
 					throw new Exception("Risorsa al database delle statistiche non disponibile");
 				}
@@ -487,11 +487,11 @@ public class TimerStatisticheLib {
 		}finally{
 			try{
 				if(rTransazioni!=null)
-					dbTransazioniManager.releaseResource(this.op2Properties.getIdentitaPortaDefault(null), TimerStatisticheThread.ID_MODULO, rTransazioni);
+					dbTransazioniManager.releaseResource(this.op2Properties.getIdentitaPortaDefaultWithoutProtocol(), TimerStatisticheThread.ID_MODULO, rTransazioni);
 			}catch(Throwable eClose){}
 			try{
 				if(rStatistiche!=null)
-					dbStatisticheManager.releaseResource(this.op2Properties.getIdentitaPortaDefault(null), TimerStatisticheThread.ID_MODULO, rStatistiche);
+					dbStatisticheManager.releaseResource(this.op2Properties.getIdentitaPortaDefaultWithoutProtocol(), TimerStatisticheThread.ID_MODULO, rStatistiche);
 			}catch(Throwable eClose){}
 			try{
 				if(conConfig!=null)

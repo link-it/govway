@@ -96,7 +96,7 @@ public class TransactionManager {
 		
 		// Risorse
 		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-		IDSoggetto dominio = properties.getIdentitaPortaDefault(null);
+		IDSoggetto dominio = properties.getIdentitaPortaDefaultWithoutProtocol();
 		String idModuloTransaction = TransactionManager.ID_MODULO + "_" + idModulo;
 		
 		DBManager dbManager = DBManager.getInstance();

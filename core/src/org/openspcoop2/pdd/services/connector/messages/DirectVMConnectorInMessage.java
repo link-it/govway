@@ -42,11 +42,12 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.ConnectorUtils;
-import org.openspcoop2.protocol.engine.RequestInfo;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
-import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.protocol.engine.URLProtocolContextImpl;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.constants.IDService;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
@@ -138,10 +139,10 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 			this.pddContext = pddContext;
 			
 			if(this.pddContext!=null){
-				this.setAttribute(CostantiPdD.OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP,this.pddContext);
+				this.setAttribute(CostantiPdD.OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP.getValue(),this.pddContext);
 			}
 						
-			URLProtocolContext urlProtocolContext = new URLProtocolContext(this.log);
+			URLProtocolContext urlProtocolContext = new URLProtocolContextImpl(this.log);
 			
 			Map<String, List<String>> pFormBased = new HashMap<String, List<String>>();
 			pFormBased.putAll(this.parameters);
@@ -165,7 +166,7 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 			this.requestInfo = ConnectorUtils.getRequestInfo(this.protocolFactory, urlProtocolContext);
 			
 			if(this.pddContext!=null){
-				this.setAttribute(Costanti.REQUEST_INFO,this.requestInfo);
+				this.setAttribute(Costanti.REQUEST_INFO.getValue(),this.requestInfo);
 			}
 			
 		}catch(Exception e){
@@ -220,7 +221,7 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	public void updateRequestInfo(RequestInfo requestInfo) throws ConnectorException{
 		this.requestInfo = requestInfo;
 		if(this.pddContext!=null){
-			this.setAttribute(Costanti.REQUEST_INFO,this.requestInfo);
+			this.setAttribute(Costanti.REQUEST_INFO.getValue(),this.requestInfo);
 		}
 	}
 	@Override

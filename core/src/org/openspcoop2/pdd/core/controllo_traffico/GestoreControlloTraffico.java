@@ -160,7 +160,7 @@ public class GestoreControlloTraffico {
 				if(errorSync) {
 					emettiDiagnosticoMaxThreadRaggiunto = true;
 					msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_ACTIVE_THREADS, activeThreadsSyncBeforeIncrement+"");
-					pddContext.addObject(GeneratoreMessaggiErrore.TEMPLATE_ACTIVE_THREADS, activeThreadsSyncBeforeIncrement);
+					pddContext.addObject(GeneratoreMessaggiErrore.PDD_CONTEXT_ACTIVE_THREADS, activeThreadsSyncBeforeIncrement);
 					msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_MAX_THREADS_THRESHOLD, maxThreadsPrimitive+"");
 					
 					//System.out.println("@@@addThread ERR");

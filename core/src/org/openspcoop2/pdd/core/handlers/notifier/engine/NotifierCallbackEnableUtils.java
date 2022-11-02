@@ -44,6 +44,7 @@ import org.openspcoop2.pdd.core.handlers.notifier.NotifierResult;
 import org.openspcoop2.pdd.core.handlers.notifier.NotifierType;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.io.notifier.unblocked.PipedInputOutputStreamHandler;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.slf4j.Logger;
@@ -597,14 +598,19 @@ public class NotifierCallbackEnableUtils {
 			throw new Exception("non è presente ne un identificativo di porta delegata, ne uno di porta applicativa");
 		}
 		
+		RequestInfo requestInfo = null;
+		if(inRequestProtocolContext.getPddContext()!=null && inRequestProtocolContext.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)){
+			requestInfo = (RequestInfo) inRequestProtocolContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		}
+		
 		DumpConfigurazione config = null;
 		ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance(inRequestProtocolContext.getStato());
 		if(inRequestProtocolContext.getIntegrazione().getIdPD()!=null) {
-			PortaDelegata pd = configPdDManager.getPortaDelegata(inRequestProtocolContext.getIntegrazione().getIdPD());
+			PortaDelegata pd = configPdDManager.getPortaDelegata(inRequestProtocolContext.getIntegrazione().getIdPD(), requestInfo);
 			config = configPdDManager.getDumpConfigurazione(pd);
 		}
 		else {
-			PortaApplicativa pa = configPdDManager.getPortaApplicativa(inRequestProtocolContext.getIntegrazione().getIdPA());
+			PortaApplicativa pa = configPdDManager.getPortaApplicativa(inRequestProtocolContext.getIntegrazione().getIdPA(), requestInfo);
 			config = configPdDManager.getDumpConfigurazione(pa);
 		}
 		

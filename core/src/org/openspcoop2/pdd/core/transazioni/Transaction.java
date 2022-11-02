@@ -32,9 +32,9 @@ import org.openspcoop2.monitor.engine.config.TransactionServiceLibrary;
 import org.openspcoop2.pdd.core.token.InformazioniNegoziazioneToken;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.utils.date.DateUtils;
 
@@ -54,6 +54,9 @@ public class Transaction {
 		this.id = id;
 		this.originator = originator;
 		this.gestioneStateful = gestioneStateful;
+	}
+	public String getId() {
+		return this.id;
 	}
 	
 	/** Indicazione se la transazione e' stata gestita (e quindi non piu' ulteriormente arricchibile) tramite le set e add */

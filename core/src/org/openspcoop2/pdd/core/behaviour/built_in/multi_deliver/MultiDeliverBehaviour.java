@@ -47,9 +47,9 @@ import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalFilterResult;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.slf4j.Logger;
 
 /**
@@ -195,7 +195,7 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 				boolean uniqueSA_integrationManager = false;
 				boolean uniqueSA_connettore = false;
 				try {
-					sa = ConfigurazionePdDManager.getInstance().getServizioApplicativo(idSA);
+					sa = ConfigurazionePdDManager.getInstance().getServizioApplicativo(idSA, requestInfo);
 					uniqueSA_integrationManager = ConfigurazionePdDManager.getInstance().invocazioneServizioConGetMessage(sa);
 					uniqueSA_connettore = ConfigurazionePdDManager.getInstance().invocazioneServizioConConnettore(sa);
 				}catch(Exception e) {

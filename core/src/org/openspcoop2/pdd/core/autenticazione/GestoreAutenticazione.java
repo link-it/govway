@@ -87,10 +87,12 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.cache.CacheResponse;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
@@ -201,7 +203,8 @@ public class GestoreAutenticazione {
 			throw new AutenticazioneException("Cache gia' abilitata");
 		else{
 			try{
-				GestoreAutenticazione.cacheAutenticazione = new Cache(GestoreAutenticazione.AUTENTICAZIONE_CACHE_NAME);
+				GestoreAutenticazione.cacheAutenticazione = new Cache(CacheType.JCS, GestoreAutenticazione.AUTENTICAZIONE_CACHE_NAME); // lascio JCS come default abilitato via jmx
+				GestoreAutenticazione.cacheAutenticazione.build();
 			}catch(Exception e){
 				throw new AutenticazioneException(e.getMessage(),e);
 			}
@@ -237,7 +240,7 @@ public class GestoreAutenticazione {
 					itemLifeSecondLong = itemLifeSecond;
 				}
 				
-				GestoreAutenticazione.initCacheAutenticazione(dimensioneCacheInt, algoritmoCache, itemIdleTimeLong, itemLifeSecondLong, null);
+				GestoreAutenticazione.initCacheAutenticazione(CacheType.JCS, dimensioneCacheInt, algoritmoCache, itemIdleTimeLong, itemLifeSecondLong, null); // lascio JCS come default abilitato via jmx
 			}catch(Exception e){
 				throw new AutenticazioneException(e.getMessage(),e);
 			}
@@ -337,14 +340,14 @@ public class GestoreAutenticazione {
 
 	/*----------------- INIZIALIZZAZIONE --------------------*/
 	public static void initialize(Logger log) throws Exception{
-		GestoreAutenticazione.initialize(false, -1,null,-1l,-1l, log);
+		GestoreAutenticazione.initialize(null, false, -1,null,-1l,-1l, log);
 	}
-	public static void initialize(int dimensioneCache,String algoritmoCache,
+	public static void initialize(CacheType cacheType, int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception{
-		GestoreAutenticazione.initialize(true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
+		GestoreAutenticazione.initialize(cacheType, true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
 	}
 
-	private static void initialize(boolean cacheAbilitata,int dimensioneCache,String algoritmoCache,
+	private static void initialize(CacheType cacheType, boolean cacheAbilitata,int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception{
 
 		// Inizializzo log
@@ -352,19 +355,19 @@ public class GestoreAutenticazione {
 		
 		// Inizializzazione Cache
 		if(cacheAbilitata){
-			GestoreAutenticazione.initCacheAutenticazione(dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
+			GestoreAutenticazione.initCacheAutenticazione(cacheType, dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
 		}
 
 	}
 
 
-	public static void initCacheAutenticazione(int dimensioneCache,String algoritmoCache,
+	public static void initCacheAutenticazione(CacheType cacheType, int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception {
 		
 		if(log!=null)
 			log.info("Inizializzazione cache Autenticazione");
 
-		GestoreAutenticazione.cacheAutenticazione = new Cache(GestoreAutenticazione.AUTENTICAZIONE_CACHE_NAME);
+		GestoreAutenticazione.cacheAutenticazione = new Cache(cacheType, GestoreAutenticazione.AUTENTICAZIONE_CACHE_NAME);
 
 		if( (dimensioneCache>0) ||
 				(algoritmoCache != null) ){
@@ -415,14 +418,19 @@ public class GestoreAutenticazione {
 			throw new AutenticazioneException("Parametro errato per l'attributo 'MaxLifeSecond' (Gestore Messaggi): "+error.getMessage(),error);
 		}
 
+		GestoreAutenticazione.cacheAutenticazione.build();
 	}
 	
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public static void disableSyncronizedGet() throws UtilsException {
 		if(GestoreAutenticazione.cacheAutenticazione==null) {
 			throw new UtilsException("Cache disabled");
 		}
 		GestoreAutenticazione.cacheAutenticazione.disableSyncronizedGet();
 	}
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public static boolean isDisableSyncronizedGet() throws UtilsException {
 		if(GestoreAutenticazione.cacheAutenticazione==null) {
 			throw new UtilsException("Cache disabled");
@@ -1024,20 +1032,20 @@ public class GestoreAutenticazione {
     
     public static void updateCredenzialiTrasporto(IDSoggetto dominio, String modulo, String idTransazione, 
     		String tipoAutenticazione, String credential, CredenzialiMittente credenzialiMittente,
-    		IOpenSPCoopState openspcoopState, String identitaChiamante) throws Exception{
+    		IOpenSPCoopState openspcoopState, String identitaChiamante, RequestInfo requestInfo) throws Exception{
     	
     	CredenzialeSearchTrasporto trasportoSearch = new CredenzialeSearchTrasporto(tipoAutenticazione);
     	trasportoSearch.disableConvertToDBValue();
 		CredenzialeTrasporto trasporto = new CredenzialeTrasporto(tipoAutenticazione, credential);
     	credenzialiMittente.setTrasporto(getCredenzialeMittente(dominio, modulo, idTransazione, 
     			trasportoSearch, trasporto, openspcoopState, identitaChiamante,
-				null));
+				null, requestInfo));
     	
     }
     
     public static void updateCredenzialiToken(IDSoggetto dominio, String modulo, String idTransazione, 
     		InformazioniToken informazioniTokenNormalizzate, IDServizioApplicativo idApplicativoToken, CredenzialiMittente credenzialiMittente, 
-    		IOpenSPCoopState openspcoopState, String identitaChiamante) throws Exception{
+    		IOpenSPCoopState openspcoopState, String identitaChiamante, RequestInfo requestInfo) throws Exception{
     	
     	if(informazioniTokenNormalizzate.getIss()!=null) {
     		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.token_issuer);
@@ -1045,7 +1053,7 @@ public class GestoreAutenticazione {
     		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.token_issuer, informazioniTokenNormalizzate.getIss());
     		credenzialiMittente.setToken_issuer(getCredenzialeMittente(dominio, modulo, idTransazione, 
     				tokenSearch, token, openspcoopState, identitaChiamante,
-    				null));
+    				null, requestInfo));
     	}
     	if(informazioniTokenNormalizzate.getClientId()!=null) {
     		if(idApplicativoToken==null) {
@@ -1054,7 +1062,7 @@ public class GestoreAutenticazione {
 	    		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.token_clientId, informazioniTokenNormalizzate.getClientId());
 	    		credenzialiMittente.setToken_clientId(getCredenzialeMittente(dominio, modulo, idTransazione, 
 	    				tokenSearch, token, openspcoopState, identitaChiamante,
-	    				null));
+	    				null, requestInfo));
     		}
     		else {
     			CredenzialeSearchTokenClient tokenSearch = new CredenzialeSearchTokenClient(true, true, true);
@@ -1062,7 +1070,7 @@ public class GestoreAutenticazione {
     			CredenzialeTokenClient token = new CredenzialeTokenClient(informazioniTokenNormalizzate.getClientId(), idApplicativoToken);
     			credenzialiMittente.setToken_clientId(getCredenzialeMittente(dominio, modulo, idTransazione, 
 	    				tokenSearch, token, openspcoopState, identitaChiamante,
-	    				null));
+	    				null, requestInfo));
     		}
     	}
     	if(informazioniTokenNormalizzate.getSub()!=null) {
@@ -1071,7 +1079,7 @@ public class GestoreAutenticazione {
     		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.token_subject, informazioniTokenNormalizzate.getSub());
     		credenzialiMittente.setToken_subject(getCredenzialeMittente(dominio, modulo, idTransazione, 
     				tokenSearch, token, openspcoopState, identitaChiamante,
-    				null));
+    				null, requestInfo));
     	}
     	if(informazioniTokenNormalizzate.getUsername()!=null) {
     		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.token_username);
@@ -1079,7 +1087,7 @@ public class GestoreAutenticazione {
     		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.token_username, informazioniTokenNormalizzate.getUsername());
     		credenzialiMittente.setToken_username(getCredenzialeMittente(dominio, modulo, idTransazione, 
     				tokenSearch, token, openspcoopState, identitaChiamante,
-    				null));
+    				null, requestInfo));
     	}
     	if(informazioniTokenNormalizzate.getUserInfo()!=null && informazioniTokenNormalizzate.getUserInfo().getEMail()!=null) {
     		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.token_eMail);
@@ -1087,49 +1095,49 @@ public class GestoreAutenticazione {
     		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.token_eMail, informazioniTokenNormalizzate.getUserInfo().getEMail());
     		credenzialiMittente.setToken_eMail(getCredenzialeMittente(dominio, modulo, idTransazione, 
     				tokenSearch, token, openspcoopState, identitaChiamante,
-    				null));
+    				null, requestInfo));
     	}
     	
     }
     
     public static CredenzialeMittente convertGruppiToCredenzialiMittenti(IDSoggetto dominio, String modulo, String idTransazione,
     		List<String> gruppiList, IOpenSPCoopState openspcoopState, String identitaChiamante,
-    		StringBuilder sbConflict) throws Exception{
+    		StringBuilder sbConflict, RequestInfo requestInfo) throws Exception{
     	if(gruppiList!=null && !gruppiList.isEmpty()) {
 	    	CredenzialeSearchGruppo gruppiSearch = new CredenzialeSearchGruppo();
 	    	gruppiSearch.disableConvertToDBValue();
 	    	CredenzialeGruppi gruppi = new CredenzialeGruppi(gruppiList);
 	    	return getCredenzialeMittente(dominio, modulo, idTransazione, 
 	    			gruppiSearch, gruppi, openspcoopState, identitaChiamante,
-	    			sbConflict);
+	    			sbConflict, requestInfo);
     	}
     	return null;
     }
     
     public static CredenzialeMittente convertAPIToCredenzialiMittenti(IDSoggetto dominio, String modulo, String idTransazione,
     		String uriAccordoServizio, IOpenSPCoopState openspcoopState, String identitaChiamante,
-    		StringBuilder sbConflict) throws Exception{
+    		StringBuilder sbConflict, RequestInfo requestInfo) throws Exception{
     	if(uriAccordoServizio!=null && !"".equals(uriAccordoServizio)) {
 	    	CredenzialeSearchApi apiSearch = new CredenzialeSearchApi();
 	    	apiSearch.disableConvertToDBValue();
 	    	CredenzialeApi api = new CredenzialeApi(uriAccordoServizio);
 	    	return getCredenzialeMittente(dominio, modulo, idTransazione, 
 	    			apiSearch, api, openspcoopState, identitaChiamante,
-	    			sbConflict);
+	    			sbConflict, requestInfo);
     	}
     	return null;
     }
     
     public static CredenzialeMittente convertEventiToCredenzialiMittenti(IDSoggetto dominio, String modulo, String idTransazione,
     		List<String> eventiList, IOpenSPCoopState openspcoopState, String identitaChiamante,
-    		StringBuilder sbConflict) throws Exception{
+    		StringBuilder sbConflict, RequestInfo requestInfo) throws Exception{
     	if(eventiList!=null && !eventiList.isEmpty()) {
 	    	CredenzialeSearchEvento eventiSearch = new CredenzialeSearchEvento();
 	    	eventiSearch.disableConvertToDBValue();
 	    	CredenzialeEventi eventi = new CredenzialeEventi(eventiList);
 	    	return getCredenzialeMittente(dominio, modulo, idTransazione, 
 	    			eventiSearch, eventi, openspcoopState, identitaChiamante,
-	    			sbConflict);
+	    			sbConflict, requestInfo);
     	}
     	return null;
     }
@@ -1137,7 +1145,7 @@ public class GestoreAutenticazione {
     public static CredenzialeMittente convertClientCredentialToCredenzialiMittenti(IDSoggetto dominio, String modulo, String idTransazione,
     		String socketAddress, String transportAddress, 
     		IOpenSPCoopState openspcoopState, String identitaChiamante,
-    		StringBuilder sbConflict) throws Exception{
+    		StringBuilder sbConflict, RequestInfo requestInfo) throws Exception{
     	boolean socketAddressDefined = socketAddress!=null && !"".equals(socketAddress);
 		boolean transportAddressDefined = transportAddress!=null && !"".equals(transportAddress);
     	if(socketAddressDefined || transportAddressDefined) {
@@ -1146,7 +1154,7 @@ public class GestoreAutenticazione {
 	    	CredenzialeClientAddress clientAddress = new CredenzialeClientAddress(socketAddress, transportAddress);
 	    	return getCredenzialeMittente(dominio, modulo, idTransazione, 
 	    			clientAddressSearch, clientAddress, openspcoopState, identitaChiamante,
-	    			sbConflict);
+	    			sbConflict, requestInfo);
     	}
     	return null;
     }
@@ -1154,7 +1162,7 @@ public class GestoreAutenticazione {
     private static CredenzialeMittente getCredenzialeMittente(IDSoggetto dominio, String modulo, String idTransazione, 
     		AbstractSearchCredenziale searchCredential, AbstractCredenziale credentialParam,
     		IOpenSPCoopState openspcoopState, String identitaChiamante,
-    		StringBuilder sbConflict) throws Exception{
+    		StringBuilder sbConflict, RequestInfo requestInfo) throws Exception{
       	
     	if(dominio==null)
 			throw new AutenticazioneException("(Parametri) dominio non definito");
@@ -1169,8 +1177,6 @@ public class GestoreAutenticazione {
 		      	
 		String credential = credentialParam.getCredenziale();
 		int maxLengthCredenziali = OpenSPCoop2Properties.getInstance().getTransazioniCredenzialiMittenteMaxLength();
-		int maxLifeSeconds = OpenSPCoop2Properties.getInstance().getTransazioniCredenzialiMittenteLifeSeconds();
-		Date scadenzaEntry = new Date(DateManager.getTimeMillis()-(maxLifeSeconds*1000));
 		if(credential.length()>maxLengthCredenziali) {
 			logger.error("Attenzione: credenziale '"+searchCredential.getTipo()+"' ricevuta supera la dimensione massima consentita '"+maxLengthCredenziali+"'. Verrà salvata troncata a tale dimensione. Credenziale: '"+credential+"'");
 			credential = credential.substring(0,maxLengthCredenziali);
@@ -1181,12 +1187,42 @@ public class GestoreAutenticazione {
 			}
 		}
 		
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null;
+		String keyCache = buildCacheKey(searchCredential, credential);
+		
+    	int maxLifeSeconds = OpenSPCoop2Properties.getInstance().getTransazioniCredenzialiMittenteLifeSeconds();
+		Date scadenzaEntry = new Date(DateManager.getTimeMillis()-(maxLifeSeconds*1000));
+		
+		if(useRequestInfo) {
+			CredenzialeMittente c = requestInfo.getRequestConfig().getCredenzialeMittente(searchCredential.getTipoCredenzialeMittente(), keyCache);
+			if(c!=null && c.getOraRegistrazione().after(scadenzaEntry)) {
+				return c; // informazione in cache valida
+			}
+		}
+		
+		CredenzialeMittente c = _getCredenzialeMittente(dominio, modulo, idTransazione, 
+	    		searchCredential, credentialParam,
+	    		openspcoopState, identitaChiamante,
+	    		sbConflict, requestInfo,
+	    		keyCache, scadenzaEntry);
+		
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addCredenzialeMittente(searchCredential.getTipoCredenzialeMittente(), keyCache, c, idTransazione, scadenzaEntry);
+		}
+		
+		return c;
+    }
+    
+    private static CredenzialeMittente _getCredenzialeMittente(IDSoggetto dominio, String modulo, String idTransazione, 
+    		AbstractSearchCredenziale searchCredential, AbstractCredenziale credentialParam,
+    		IOpenSPCoopState openspcoopState, String identitaChiamante,
+    		StringBuilder sbConflict, RequestInfo requestInfo,
+    		String keyCache, Date scadenzaEntry) throws Exception{
+		    	
     	if(GestoreAutenticazione.cacheAutenticazione==null){
     		return _getCredenzialeMittente(dominio, modulo, idTransazione, scadenzaEntry, searchCredential, credentialParam, openspcoopState, identitaChiamante, sbConflict);
 		}
     	else{
-    		String keyCache = buildCacheKey(searchCredential, credential);
-
     		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
 			org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreAutenticazione.cacheAutenticazione.get(keyCache);

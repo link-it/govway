@@ -23,6 +23,8 @@ package org.openspcoop2.pdd.core.token;
 
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.MapKey;
 
 /**     
  * Costanti
@@ -42,16 +44,16 @@ public class Costanti {
 	
 	// Context
 		
-	public final static String PDD_CONTEXT_TOKEN_REALM = "PDD_CONTEXT_TOKEN_REALM";
-	public final static String PDD_CONTEXT_TOKEN_MESSAGE_ERROR_BODY_EMPTY = "PDD_CONTEXT_TOKEN_MESSAGE_ERROR_BODY_EMPTY";
-	public final static String PDD_CONTEXT_TOKEN_MESSAGE_ERROR_GENERIC_MESSAGE = "PDD_CONTEXT_TOKEN_MESSAGE_ERROR_GENERIC_MESSAGE";
-	public final static String PDD_CONTEXT_TOKEN_POSIZIONE = "TOKEN_POSIZIONE";
-	public final static String PDD_CONTEXT_TOKEN_ESITO_VALIDAZIONE = "TOKEN_ESITO_VALIDAZIONE";
-	public final static String PDD_CONTEXT_TOKEN_ESITO_INTROSPECTION = "TOKEN_ESITO_INTROSPECTION";
-	public final static String PDD_CONTEXT_TOKEN_ESITO_USER_INFO = "TOKEN_ESITO_USER_INFO";
-	public final static String PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE = "TOKEN_INFORMAZIONI_NORMALIZZATE";
-	public final static String PDD_CONTEXT_ATTRIBUTI_INFORMAZIONI_NORMALIZZATE = "ATTRIBUTI_INFORMAZIONI_NORMALIZZATE";
-	public final static String MSG_CONTEXT_TOKEN_FORWARD = "TOKEN_FORWARD"; // per salvarlo con il messaggio
+	public final static MapKey<String> PDD_CONTEXT_TOKEN_REALM = Map.newMapKey("PDD_CONTEXT_TOKEN_REALM");
+	public final static MapKey<String> PDD_CONTEXT_TOKEN_MESSAGE_ERROR_BODY_EMPTY = Map.newMapKey("PDD_CONTEXT_TOKEN_MESSAGE_ERROR_BODY_EMPTY");
+	public final static MapKey<String> PDD_CONTEXT_TOKEN_MESSAGE_ERROR_GENERIC_MESSAGE = Map.newMapKey("PDD_CONTEXT_TOKEN_MESSAGE_ERROR_GENERIC_MESSAGE");
+	public final static MapKey<String> PDD_CONTEXT_TOKEN_POSIZIONE = Map.newMapKey("TOKEN_POSIZIONE");
+	public final static MapKey<String> PDD_CONTEXT_TOKEN_ESITO_VALIDAZIONE = Map.newMapKey("TOKEN_ESITO_VALIDAZIONE");
+	public final static MapKey<String> PDD_CONTEXT_TOKEN_ESITO_INTROSPECTION = Map.newMapKey("TOKEN_ESITO_INTROSPECTION");
+	public final static MapKey<String> PDD_CONTEXT_TOKEN_ESITO_USER_INFO = Map.newMapKey("TOKEN_ESITO_USER_INFO");
+	public final static MapKey<String> PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE = Map.newMapKey("TOKEN_INFORMAZIONI_NORMALIZZATE");
+	public final static MapKey<String> PDD_CONTEXT_ATTRIBUTI_INFORMAZIONI_NORMALIZZATE = Map.newMapKey("ATTRIBUTI_INFORMAZIONI_NORMALIZZATE");
+	public final static MapKey<String> MSG_CONTEXT_TOKEN_FORWARD = Map.newMapKey("TOKEN_FORWARD"); // per salvarlo con il messaggio
 	
 	
 	// Token Parser id

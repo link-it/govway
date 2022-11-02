@@ -20,6 +20,8 @@
 
 package org.openspcoop2.pdd.mdb;
 
+import org.openspcoop2.pdd.core.PdDContext;
+
 /**
  * 
  * Messaggio che viene scambiato tra i moduli MDB, raccoglie informazioni incluse in un MessaggioJMS, scambiato attraverso 
@@ -31,4 +33,6 @@ package org.openspcoop2.pdd.mdb;
  */
 public interface GenericMessage extends java.io.Serializable {
 
+	public PdDContext getPddContext();
+	
 }

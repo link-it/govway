@@ -151,8 +151,11 @@ public class SecurityConstants {
     
     public static final String ENABLE_REVOCATION = ConfigurationConstants.ENABLE_REVOCATION;
     
-    public static final String ENCRYPT_ACTION = ConfigurationConstants.ENCRYPT;
-    public static final String DECRYPT_ACTION = "Decrypt";
+    public static final String ENCRYPTION_ACTION = ConfigurationConstants.ENCRYPTION;
+    @SuppressWarnings("deprecation")
+	public static final String ENCRYPT_ACTION_OLD = ConfigurationConstants.ENCRYPT; // modificato costante in wss4j 2.3.x
+    public static final String DECRYPTION_ACTION = "Decryption";  // modificato per adeguamento costante rispetto a wss4j 2.3.x
+    public static final String DECRYPT_ACTION_OLD = "Decrypt";  // modificato per adeguamento costante rispetto a wss4j 2.3.x
     public static final String ENCRYPTION_USER = ConfigurationConstants.ENCRYPTION_USER;
     public static final String ENCRYPTION_PASSWORD = "encryptionPassword";
     public static final String ENCRYPTION_SOAP_FAULT = "encryptionSOAPFault";
@@ -370,22 +373,64 @@ public class SecurityConstants {
 	// Perform a signature action.
 	public static final String ACTION_SIGNATURE = SIGNATURE_ACTION;
 	// Perform a encryption action.
-	public static final String ACTION_ENCRYPT = ENCRYPT_ACTION;
+	public static final String ACTION_ENCRYPTION = ENCRYPTION_ACTION;
+	public static final String ACTION_ENCRYPT_OLD = ENCRYPT_ACTION_OLD;  // modificato costante in wss4j 2.3.x
+	// Perform a decryption action.
+	public static final String ACTION_DECRYPTION = DECRYPTION_ACTION;
+	public static final String ACTION_DECRYPT_OLD = DECRYPT_ACTION_OLD;  // modificato costante in wss4j 2.3.x
 	// Perform a Timestamp action.
 	public static final String ACTION_TIMESTAMP = TIMESTAMP_ACTION;
 	// Perform a Signature action with derived keys.
 	public static final String ACTION_SIGNATURE_DERIVED = ConfigurationConstants.SIGNATURE_DERIVED;
 	// Perform a Encryption action with derived keys.
-	public static final String ACTION_ENCRYPT_DERIVED = ConfigurationConstants.ENCRYPT_DERIVED;
+	public static final String ACTION_ENCRYPTION_DERIVED = ConfigurationConstants.ENCRYPTION_DERIVED;
+	@SuppressWarnings("deprecation")
+	public static final String ACTION_ENCRYPT_DERIVED_OLD = ConfigurationConstants.ENCRYPT_DERIVED;  // modificato costante in wss4j 2.3.x
 	// Perform a Signature action with a kerberos token. Only for StAX code.
 	public static final String ACTION_SIGNATURE_WITH_KERBEROS_TOKEN = ConfigurationConstants.SIGNATURE_WITH_KERBEROS_TOKEN;
 	// Perform a Encryption action with a kerberos token. Only for StAX code.
-	public static final String ACTION_ENCRYPT_WITH_KERBEROS_TOKEN = ConfigurationConstants.ENCRYPT_WITH_KERBEROS_TOKEN;
+	public static final String ACTION_ENCRYPTION_WITH_KERBEROS_TOKEN = ConfigurationConstants.ENCRYPTION_WITH_KERBEROS_TOKEN;
+	@SuppressWarnings("deprecation")
+	public static final String ACTION_ENCRYPT_WITH_KERBEROS_TOKEN_OLD = ConfigurationConstants.ENCRYPT_WITH_KERBEROS_TOKEN;  // modificato costante in wss4j 2.3.x
 	// Add a kerberos token.
 	public static final String ACTION_KERBEROS_TOKEN = ConfigurationConstants.KERBEROS_TOKEN;
 	// Add a "Custom" token from a CallbackHandler
 	public static final String ACTION_CUSTOM_TOKEN = ConfigurationConstants.CUSTOM_TOKEN;
 	
+	public static boolean is_ACTION_ENCRYPTION(String action) {
+		return 
+				SecurityConstants.ACTION_ENCRYPTION.equals(action) || 
+				SecurityConstants.ACTION_ENCRYPT_OLD.equals(action) || 
+				SecurityConstants.ACTION_ENCRYPTION_DERIVED.equals(action) || 
+				SecurityConstants.ACTION_ENCRYPT_DERIVED_OLD.equals(action) || 
+				SecurityConstants.ACTION_ENCRYPTION_WITH_KERBEROS_TOKEN.equals(action) || 
+				SecurityConstants.ACTION_ENCRYPT_WITH_KERBEROS_TOKEN_OLD.equals(action);
+	}
+	public static boolean contains_ACTION_ENCRYPTION(String action) {
+		if(action==null) {
+			return false;
+		}
+		return 
+				action.contains(SecurityConstants.ACTION_ENCRYPTION) || 
+				action.contains(SecurityConstants.ACTION_ENCRYPT_OLD) || 
+				action.contains(SecurityConstants.ACTION_ENCRYPTION_DERIVED) || 
+				action.contains(SecurityConstants.ACTION_ENCRYPT_DERIVED_OLD) || 
+				action.contains(SecurityConstants.ACTION_ENCRYPTION_WITH_KERBEROS_TOKEN) || 
+				action.contains(SecurityConstants.ACTION_ENCRYPT_WITH_KERBEROS_TOKEN_OLD);
+	}
+	public static boolean is_ACTION_DECRYPTION(String action) {
+		return 
+				SecurityConstants.ACTION_DECRYPTION.equals(action) || 
+				SecurityConstants.ACTION_DECRYPT_OLD.equals(action);
+	}
+	public static boolean contains_ACTION_DECRYPTION(String action) {
+		if(action==null) {
+			return false;
+		}
+		return 
+				action.contains(SecurityConstants.ACTION_DECRYPTION) || 
+				action.contains(SecurityConstants.ACTION_DECRYPT_OLD);
+	}
     
     public static final String KEY_IDENTIFIER_BST_DIRECT_REFERENCE = CostantiDB.KEY_IDENTIFIER_BST_DIRECT_REFERENCE;
     public static final String KEY_IDENTIFIER_ISSUER_SERIAL = CostantiDB.KEY_IDENTIFIER_ISSUER_SERIAL;

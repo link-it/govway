@@ -42,7 +42,8 @@ import org.slf4j.Logger;
 public class Commons {
 
 	public static void checkPreConditionsOccupazioneBanda(String idPolicy) {
-		checkPreConditionsOccupazioneBanda(idPolicy, PolicyGroupByActiveThreadsType.LOCAL);
+		checkPreConditionsOccupazioneBanda(idPolicy, 
+			null);	//PolicyGroupByActiveThreadsType.LOCAL); FIX: Devo controllarlo solamente se non e' null. Quando si fa il reset dell'erogazione/fruizione e non passa ancora una richiesta, rimane il motore precedente
 	}
 	public static void checkPreConditionsOccupazioneBanda(String idPolicy, PolicyGroupByActiveThreadsType policyType) {
 		Logger logRateLimiting = LoggerWrapperFactory.getLogger("testsuite.rate_limiting");
@@ -70,7 +71,7 @@ public class Commons {
 				assertEquals("0", policyValues.get(PolicyFields.RichiesteBloccate));
 				
 				if(policyType!=null) {
-					// Devo controllarlo somanete se non e' null. Quando si fa il reset dell'erogazione/fruizione e non passa ancora una richiesta, rimane il motore precedente
+					// Devo controllarlo solamente se non e' null. Quando si fa il reset dell'erogazione/fruizione e non passa ancora una richiesta, rimane il motore precedente
 					assertEquals(policyType.toLabel(), policyValues.get(PolicyFields.Sincronizzazione));
 				}
 				
@@ -87,7 +88,8 @@ public class Commons {
 	}
 
 	public static void checkPostConditionsOccupazioneBanda(String idPolicy) {
-		checkPostConditionsOccupazioneBanda(idPolicy, PolicyGroupByActiveThreadsType.LOCAL);
+		checkPostConditionsOccupazioneBanda(idPolicy, 
+				null);	//PolicyGroupByActiveThreadsType.LOCAL); FIX: Devo controllarlo solamente se non e' null. Quando si fa il reset dell'erogazione/fruizione e non passa ancora una richiesta, rimane il motore precedente
 	}
 	public static void checkPostConditionsOccupazioneBanda(String idPolicy, PolicyGroupByActiveThreadsType policyType) {
 		Logger logRateLimiting = LoggerWrapperFactory.getLogger("testsuite.rate_limiting");
@@ -130,7 +132,7 @@ public class Commons {
 				assertTrue(Double.valueOf(kbContatore) > 5);				
 				
 				if(policyType!=null) {
-					// Devo controllarlo somanete se non e' null. Quando si fa il reset dell'erogazione/fruizione e non passa ancora una richiesta, rimane il motore precedente
+					// Devo controllarlo solamente se non e' null. Quando si fa il reset dell'erogazione/fruizione e non passa ancora una richiesta, rimane il motore precedente
 					assertEquals(policyType.toLabel(), policyValues.get(PolicyFields.Sincronizzazione));
 				}
 				

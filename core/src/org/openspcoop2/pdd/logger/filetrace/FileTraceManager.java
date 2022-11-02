@@ -34,6 +34,7 @@ import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.protocol.sdk.Context;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
@@ -63,7 +64,7 @@ public class FileTraceManager {
 		this.log = log;
 	}
 	
-	public void buildTransazioneInfo(Transazione transazioneDTO, Transaction transaction, 
+	public void buildTransazioneInfo(IProtocolFactory<?> protocolFactory, Transazione transazioneDTO, Transaction transaction, 
 			InformazioniToken informazioniToken,
 			InformazioniAttributi informazioniAttributi,
 			InformazioniNegoziazioneToken informazioniNegoziazioneToken,
@@ -103,7 +104,7 @@ public class FileTraceManager {
 		
 		boolean base64 = true;
 		
-		this.t = new Info(this.log, transazioneDTO, credenzialiMittente, 
+		this.t = new Info(this.log, protocolFactory, transazioneDTO, credenzialiMittente, 
 				informazioniToken,
 				informazioniAttributi,
 				informazioniNegoziazioneToken,
@@ -114,7 +115,7 @@ public class FileTraceManager {
 				rispostaIngresso, rispostaUscita,
 				infoConfigurazione,
 				this.config, !base64);
-		this.tBase64 = new Info(this.log, transazioneDTO, credenzialiMittente, 
+		this.tBase64 = new Info(this.log, protocolFactory, transazioneDTO, credenzialiMittente, 
 				informazioniToken,
 				informazioniAttributi,
 				informazioniNegoziazioneToken,

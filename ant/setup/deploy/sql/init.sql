@@ -69,6 +69,12 @@ UPDATE configurazione set consegna_dimensionecache='10000';
 UPDATE configurazione set consegna_algoritmocache='lru';
 UPDATE configurazione set consegna_lifecache='-1';
 
+-- Configurazione Cache Dati Richieste
+UPDATE configurazione set dati_richieste_statocache='abilitato';
+UPDATE configurazione set dati_richieste_dimensionecache='15000';
+UPDATE configurazione set dati_richieste_algoritmocache='lru';
+UPDATE configurazione set dati_richieste_lifecache='7200';
+
 -- Configurazione CORS
 UPDATE configurazione set cors_stato='abilitato';
 UPDATE configurazione set cors_tipo='gateway';

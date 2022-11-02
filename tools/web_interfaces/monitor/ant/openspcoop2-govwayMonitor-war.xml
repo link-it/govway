@@ -84,12 +84,12 @@
 		<!-- <if>
 			<matches string="${as}" pattern="tomcat.*"/>
 			<then> --> <!-- Aggiungo sempre, serve anche per allarmi -->
-				<unzip src="${required_lib}/shared/mailapi-1.6.4.jar" dest="${build_govwayMonitor}/tmp/mailapi"/>
+				<unzip src="${required_lib}/shared/mailapi-1.6.7.jar" dest="${build_govwayMonitor}/tmp/mailapi"/>
 				<concat destfile="${build_govwayMonitor}/tmp/mailapi/META-INF/mailcap" append="yes">
 					<filelist dir="${data_content_handler_dir}"
 		                           files="mailcap"/>
 				</concat>
-				<jar jarfile="${build_govwayMonitor}/tmp/mailapi-1.6.4.gw.jar" manifest="${build_govwayMonitor}/tmp/mailapi/META-INF/MANIFEST.MF">
+				<jar jarfile="${build_govwayMonitor}/tmp/mailapi-1.6.7.gw.jar" manifest="${build_govwayMonitor}/tmp/mailapi/META-INF/MANIFEST.MF">
 					<zipfileset dir="${build_govwayMonitor}/tmp/mailapi"/>
 				</jar>
 		<!--	</then>
@@ -157,11 +157,11 @@
 				<include name="commons-digester-2.1.jar"/>
 				<include name="commons-discovery-0.5.jar"/>
 				<include name="commons-fileupload-1.4.jar" />
-				<include name="commons-io-2.8.0.jar" />
+				<include name="commons-io-2.11.0.jar" />
 				<include name="commons-lang-2.6.jar" />
 				<include name="${commons_logging_jar}"/>
-				<include name="commons-lang3-3.9.jar"/>
-				<include name="commons-codec-1.14.jar" />
+				<include name="commons-lang3-3.12.0.jar"/>
+				<include name="commons-codec-1.15.jar" />
 				<include name="commons-math3-3.6.1.jar" />
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/shared">
@@ -174,19 +174,20 @@
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>	
-				<include name="xmlunit-1.6.jar" />
-				<include name="snakeyaml-1.32-gov4j-1.jar" />
-				<include name="freemarker-2.3.29.jar" />
-				<include name="jakarta.activation-1.2.1.jar" />
-				<include name="joda-time-2.10.5.jar" />
-				<include name="reactive-streams-1.0.3.jar" />
-				<include name="commons-jcs-core-2.2.1-gov4j-1.jar"/>
+				<include name="xmlunit-legacy-2.9.0.jar" />
+				<include name="xmlunit-core-2.9.0.jar" />
+				<include name="snakeyaml-1.33-gov4j-1.jar" />
+				<include name="freemarker-2.3.31.jar" />
+				<include name="jakarta.activation-1.2.2.jar" />
+				<include name="joda-time-2.12.0.jar" />
+				<include name="reactive-streams-1.0.4.jar" />
+				<include name="commons-jcs3-core-3.1-gov4j-2.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/cxf">
 				<include name="cxf-core-*.jar" />
 				<include name="cxf-rt-*.jar" />
 				<include name="jakarta.ws.rs-api-2.1.6.jar" />
-				<include name="woodstox-core-5.3.0.jar" />
+				<include name="woodstox-core-6.2.8.jar" />
 				<include name="${geronimo_jaxws_spec_jar}" />
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/saaj">
@@ -212,7 +213,7 @@
 				<include name="jaxb-*.jar" />
 			</lib>
 			<lib dir="${required_lib}/log">
-				<include name="slf4j-api-1.7.30-gov4j-1.jar"/>
+				<include name="slf4j-api-2.0.3-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/javax">
@@ -220,11 +221,11 @@
 				<include name="${el-api-1.0.jar}"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="xmlsec-2.1.7.jar"/>
-				<include name="neethi-3.1.1.jar" />
-				<include name="bcpkix-jdk15on-1.69.jar"/>
-				<include name="bcprov-ext-jdk15on-1.69.jar"/>
-				<include name="bcutil-jdk15on-1.69.jar"/>
+				<include name="xmlsec-2.3.0.jar"/>
+				<include name="neethi-3.2.0.jar" />
+				<include name="bcpkix-jdk18on-1.72.jar"/>
+				<include name="bcprov-ext-jdk18on-1.72.jar"/>
+				<include name="bcutil-jdk18on-1.72.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 			</lib>
 			<lib dir="${required_lib}/json">
@@ -243,15 +244,15 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/reports"> <!-- I report CSV vengono anche utilizzati per l'esportazione delle transazioni -->
-				<include name="dynamicreports-core-6.1.0.jar"/>
+				<include name="dynamicreports-core-6.12.1.jar"/>
 				<include name="itext-2.1.7.js7.jar"/>
 				<include name="jcommon-1.0.24.jar"/>
-				<include name="jasperreports-6.11.0.jar"/>
-				<include name="jasperreports-metadata-6.11.0.jar"/>
-				<include name="poi-4.1.2.jar"/>
+				<include name="jasperreports-6.20.0.jar"/>
+				<include name="jasperreports-metadata-6.20.0.jar"/>
+				<include name="poi-5.2.3.jar"/>
 				<include name="SparseBitSet-1.2.jar"/>
-				<include name="net.tascalate.javaflow.api-2.6.1.jar"/>
-				<include name="jfreechart-1.5.0.jar"/>
+				<include name="net.tascalate.javaflow.api-2.7.3.jar"/>
+				<include name="jfreechart-1.5.3.jar"/>
 				<include name="${ecj_jar}"/>
 			</lib>
 			<lib dir="${deploy_govwayMonitor}/modulo-jsf12/com/sun/jsf-impl/mojarra-1.2_15">
@@ -277,7 +278,7 @@
 			</lib>
 			<!-- Mail api esteso con activation data handler openspcoop -->
 			<lib dir="${build_govwayMonitor}/tmp">
-				<include name="mailapi-1.6.4.gw.jar" />
+				<include name="mailapi-1.6.7.gw.jar" />
 			</lib>
 			<!-- Plugins -->
 			<lib dir="${plugins_govwayMonitor}">

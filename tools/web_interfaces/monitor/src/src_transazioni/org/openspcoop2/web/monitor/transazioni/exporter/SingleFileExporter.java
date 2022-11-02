@@ -196,7 +196,7 @@ public class SingleFileExporter implements IExporter{
 			
 			boolean consegnaMultipla = false;
 			try{
-				EsitiProperties esitiProperties = EsitiProperties.getInstance(log, t.getProtocollo());
+				EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(log, t.getProtocollo());
 				EsitoTransazioneName esitoTransactionName = esitiProperties.getEsitoTransazioneName(t.getEsito());
 				if(EsitoTransazioneName.isConsegnaMultipla(esitoTransactionName)) {
 					consegnaMultipla = true;

@@ -204,7 +204,7 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 	    		
 	    		byte[] policy = null; 
 		    	try{
-			    	AccordoServizioParteSpecifica asps = RegistroServiziManager.getInstance().getAccordoServizioParteSpecifica(idServizio, null, true);
+			    	AccordoServizioParteSpecifica asps = RegistroServiziManager.getInstance().getAccordoServizioParteSpecifica(idServizio, null, true, null); // non serve requestInfo tanto ho necessita degli allegati
 			    	for (int i = 0; i < asps.sizeSpecificaSicurezzaList(); i++) {
 						Documento d = asps.getSpecificaSicurezza(i);
 						if(TipiDocumentoSicurezza.XACML_POLICY.getNome().equals(d.getTipo())){

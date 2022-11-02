@@ -45,6 +45,8 @@ import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.protocol.engine.constants.Costanti;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.sdk.state.RequestInfoConfigUtilities;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
@@ -328,41 +330,49 @@ public class SavedMessage implements java.io.Serializable {
 				//Sposto il set del contentType dopo la writeTo del messaggio 
 				//cosi nel caso di attachment lo trovo corretto.
 
-				if(this.saveOnFS){
-					// SAVE IN FILE SYSTEM
-					
-					String saveDir = getBaseDir();
-					if(saveDir==null){
-						String errorMsg = "WorkDir non correttamente inizializzata";		
-						throw new UtilsException(errorMsg);
+				// Elimino dalla RequestInfo i dati "cached"
+				RequestInfo requestInfoBackup = RequestInfoConfigUtilities.normalizeRequestInfoBeforeSerialization(msg);
+				try {
+					if(this.saveOnFS){
+						// SAVE IN FILE SYSTEM
+						
+						String saveDir = getBaseDir();
+						if(saveDir==null){
+							String errorMsg = "WorkDir non correttamente inizializzata";		
+							throw new UtilsException(errorMsg);
+						}
+						
+						// Save bytes message
+						String pathBytes = saveDir + this.keyMsgBytes;
+						this.saveMessageBytes(pathBytes,msg, consumeMessage,false);
+						
+						// Save message context
+						String pathContext = saveDir + this.keyMsgContext;
+						this.saveMessageContext(pathContext,msg,false);
+						
+					}else{
+						// SAVE IN DB
+						
+						// Save bytes message
+						java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
+						msg.writeTo(bout,consumeMessage);
+						bout.flush();
+						bout.close();
+						//System.out.println("---------SALVO RISPOSTA: "+msgByte.toString());
+						this.adapter.setBinaryData(pstmt,5,bout.toByteArray());
+						
+						// Save message context
+						bout = new java.io.ByteArrayOutputStream();
+						msg.serializeResourcesTo(bout);
+						bout.flush();
+						bout.close();
+						//System.out.println("---------SALVO CONTEXT: "+msgByte.toString());
+						this.adapter.setBinaryData(pstmt,6,bout.toByteArray());
 					}
-					
-					// Save bytes message
-					String pathBytes = saveDir + this.keyMsgBytes;
-					this.saveMessageBytes(pathBytes,msg, consumeMessage,false);
-					
-					// Save message context
-					String pathContext = saveDir + this.keyMsgContext;
-					this.saveMessageContext(pathContext,msg,false);
-					
-				}else{
-					// SAVE IN DB
-					
-					// Save bytes message
-					java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
-					msg.writeTo(bout,consumeMessage);
-					bout.flush();
-					bout.close();
-					//System.out.println("---------SALVO RISPOSTA: "+msgByte.toString());
-					this.adapter.setBinaryData(pstmt,5,bout.toByteArray());
-					
-					// Save message context
-					bout = new java.io.ByteArrayOutputStream();
-					msg.serializeResourcesTo(bout);
-					bout.flush();
-					bout.close();
-					//System.out.println("---------SALVO CONTEXT: "+msgByte.toString());
-					this.adapter.setBinaryData(pstmt,6,bout.toByteArray());
+				}finally {
+					if(requestInfoBackup!=null) {
+						RequestInfoConfigUtilities.restoreRequestInfoAfterSerialization(msg, requestInfoBackup);
+					}
 				}
 
 				// Set del contentType nella query
@@ -520,41 +530,49 @@ public class SavedMessage implements java.io.Serializable {
 			}
 			pstmt.setString(index++,contentType);
 			
-			if(this.saveOnFS){
-				// SAVE IN FILE SYSTEM
-				
-				String saveDir = getBaseDir();
-				if(saveDir==null){
-					String errorMsg = "WorkDir non correttamente inizializzata";		
-					throw new UtilsException(errorMsg);
+			// Elimino dalla RequestInfo i dati "cached"
+			RequestInfo requestInfoBackup = RequestInfoConfigUtilities.normalizeRequestInfoBeforeSerialization(msg);
+			try {
+				if(this.saveOnFS){
+					// SAVE IN FILE SYSTEM
+					
+					String saveDir = getBaseDir();
+					if(saveDir==null){
+						String errorMsg = "WorkDir non correttamente inizializzata";		
+						throw new UtilsException(errorMsg);
+					}
+					
+					// Save bytes message
+					String pathBytes = saveDir + this.keyMsgResponseBytes;
+					this.saveMessageBytes(pathBytes,msg, consumeMessage, false);
+					
+					// Save message context
+					String pathContext = saveDir + this.keyMsgResponseContext;
+					this.saveMessageContext(pathContext,msg, false);
+					
+				}else{
+					// SAVE IN DB
+					
+					// Save bytes message
+					java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
+					msg.writeTo(bout,consumeMessage);
+					bout.flush();
+					bout.close();
+					//System.out.println("---------SALVO RISPOSTA: "+msgByte.toString());
+					this.adapter.setBinaryData(pstmt,index++,bout.toByteArray());
+					
+					// Save message context
+					bout = new java.io.ByteArrayOutputStream();
+					msg.serializeResourcesTo(bout);
+					bout.flush();
+					bout.close();
+					//System.out.println("---------SALVO CONTEXT: "+msgByte.toString());
+					this.adapter.setBinaryData(pstmt,index++,bout.toByteArray());
 				}
-				
-				// Save bytes message
-				String pathBytes = saveDir + this.keyMsgResponseBytes;
-				this.saveMessageBytes(pathBytes,msg, consumeMessage, false);
-				
-				// Save message context
-				String pathContext = saveDir + this.keyMsgResponseContext;
-				this.saveMessageContext(pathContext,msg, false);
-				
-			}else{
-				// SAVE IN DB
-				
-				// Save bytes message
-				java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
-				msg.writeTo(bout,consumeMessage);
-				bout.flush();
-				bout.close();
-				//System.out.println("---------SALVO RISPOSTA: "+msgByte.toString());
-				this.adapter.setBinaryData(pstmt,index++,bout.toByteArray());
-				
-				// Save message context
-				bout = new java.io.ByteArrayOutputStream();
-				msg.serializeResourcesTo(bout);
-				bout.flush();
-				bout.close();
-				//System.out.println("---------SALVO CONTEXT: "+msgByte.toString());
-				this.adapter.setBinaryData(pstmt,index++,bout.toByteArray());
+			}finally {
+				if(requestInfoBackup!=null) {
+					RequestInfoConfigUtilities.restoreRequestInfoAfterSerialization(msg, requestInfoBackup);
+				}
 			}
 			
 			pstmt.setString(index++,this.idMessaggio);

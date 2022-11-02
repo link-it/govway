@@ -34,7 +34,8 @@ public abstract class AbstractStreamingHandler extends PipedUnblockedStream impl
 	
 	
 	public AbstractStreamingHandler(Logger log, long sizeBuffer) throws Exception {
-		super(log,sizeBuffer);
+		super();
+		super.init(log,sizeBuffer,-1,"StreamingHandler");
 	}
 
 	public abstract boolean isPrematureEnd() throws UtilsException;

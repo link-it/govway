@@ -45,6 +45,7 @@ import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorseThread;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 
 
@@ -191,11 +192,17 @@ public class ImbustamentoRisposteMDB implements MessageDrivenBean, MessageListen
 				msgDiag.logErroreGenerico(e,"received.getObject(ImbustamentoRisposteMessage)");
 				return; 
 			}
+			
+			RequestInfo requestInfo = null;
+			if(imbustamentoRisposteMsg.getPddContext()!=null && imbustamentoRisposteMsg.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+				requestInfo = (RequestInfo) imbustamentoRisposteMsg.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+			}
+			
 			if(imbustamentoRisposteMsg.getRichiestaApplicativa()!=null && imbustamentoRisposteMsg.getRichiestaApplicativa().getIdPortaApplicativa()!=null) {
-				msgDiag.updatePorta(imbustamentoRisposteMsg.getRichiestaApplicativa().getIdPortaApplicativa().getNome());
+				msgDiag.updatePorta(imbustamentoRisposteMsg.getRichiestaApplicativa().getIdPortaApplicativa().getNome(), requestInfo);
 			}
 			else if(imbustamentoRisposteMsg.getRichiestaDelegata()!=null && imbustamentoRisposteMsg.getRichiestaDelegata().getIdPortaDelegata()!=null) {
-				msgDiag.updatePorta(TipoPdD.DELEGATA, imbustamentoRisposteMsg.getRichiestaDelegata().getIdPortaDelegata().getNome());
+				msgDiag.updatePorta(TipoPdD.DELEGATA, imbustamentoRisposteMsg.getRichiestaDelegata().getIdPortaDelegata().getNome(), requestInfo);
 			}
 			
 			// ID associato alla richiesta

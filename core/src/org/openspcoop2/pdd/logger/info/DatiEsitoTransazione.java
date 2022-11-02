@@ -20,6 +20,10 @@
 
 package org.openspcoop2.pdd.logger.info;
 
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+
 /**
  * DatiEsitoTransazione
  * 
@@ -32,6 +36,7 @@ public class DatiEsitoTransazione {
 
 	private Integer esito;
 	private String protocollo;
+	private IProtocolFactory<?> protocolFactory;
 	
 	private java.lang.String faultIntegrazione;
 	private java.lang.String formatoFaultIntegrazione;
@@ -50,8 +55,21 @@ public class DatiEsitoTransazione {
 	public String getProtocollo() {
 		return this.protocollo;
 	}
+	public IProtocolFactory<?> getProtocolFactory() throws ProtocolException {
+		if(this.protocolFactory!=null) {
+			return this.protocolFactory;
+		}
+		else if(this.protocollo!=null){
+			return ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.protocollo);
+		}
+		return null;
+	}
 	public void setProtocollo(String protocollo) {
 		this.protocollo = protocollo;
+	}
+	public void setProtocollo(IProtocolFactory<?> protocolFactory) {
+		this.protocolFactory = protocolFactory;
+		this.protocollo = this.protocolFactory.getProtocol();
 	}
 	public org.openspcoop2.core.transazioni.constants.PddRuolo getPddRuolo() {
 		return this.pddRuolo;

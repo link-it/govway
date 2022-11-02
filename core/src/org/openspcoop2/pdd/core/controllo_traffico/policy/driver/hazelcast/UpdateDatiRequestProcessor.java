@@ -20,7 +20,6 @@
 
 package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast;
 
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
@@ -28,6 +27,7 @@ import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.Map;
 import org.slf4j.Logger;
 
 import com.hazelcast.core.Offloadable;
@@ -44,9 +44,9 @@ public class UpdateDatiRequestProcessor implements EntryProcessor<IDUnivocoGroup
 	
 	private static final long serialVersionUID = 1L;
 	private final ActivePolicy activePolicy;
-	private final Map<String, Object> ctx;
+	private final Map<Object> ctx;
 
-	public UpdateDatiRequestProcessor(ActivePolicy policy, Map<String, Object> ctx) {
+	public UpdateDatiRequestProcessor(ActivePolicy policy, Map<Object> ctx) {
 		this.activePolicy = policy;		
 		this.ctx = ctx;
 	}

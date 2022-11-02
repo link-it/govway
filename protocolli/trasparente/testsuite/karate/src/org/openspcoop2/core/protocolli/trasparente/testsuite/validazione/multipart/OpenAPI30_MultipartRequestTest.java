@@ -499,13 +499,13 @@ public class OpenAPI30_MultipartRequestTest extends ConfigLoader {
 				
 			}
 			
-			esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
+			esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
 						
 		}
 		else {
 			OpenAPI30_Utils.verifyKo(response);
 			
-			esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_VALIDAZIONE_RICHIESTA);
+			esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_VALIDAZIONE_RICHIESTA);
 		}
 
 		

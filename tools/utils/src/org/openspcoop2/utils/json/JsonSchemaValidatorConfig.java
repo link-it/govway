@@ -21,6 +21,8 @@ package org.openspcoop2.utils.json;
 
 import java.util.List;
 
+import com.networknt.schema.SpecVersion;
+
 /**
  * @author Bussu Giovanni (bussu@link.it)
  * @author  $Author$
@@ -41,6 +43,16 @@ public class JsonSchemaValidatorConfig {
 	private POLITICA_INCLUSIONE_TIPI politicaInclusioneTipi = POLITICA_INCLUSIONE_TIPI.DEFAULT;
 	
 	private List<String> tipi;
+
+	private SpecVersion.VersionFlag jsonSchemaVersion; // se non fornito viene comprenso dallo schema 
+	
+	public SpecVersion.VersionFlag getJsonSchemaVersion() {
+		return this.jsonSchemaVersion;
+	}
+
+	public void setJsonSchemaVersion(SpecVersion.VersionFlag jsonSchemaVersion) {
+		this.jsonSchemaVersion = jsonSchemaVersion;
+	}
 
 	public ADDITIONAL getAdditionalProperties() {
 		return this.additionalProperties;

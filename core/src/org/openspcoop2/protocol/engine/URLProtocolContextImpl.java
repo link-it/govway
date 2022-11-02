@@ -22,12 +22,12 @@ package org.openspcoop2.protocol.engine;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.manifest.constants.Costanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.IDService;
+import org.openspcoop2.protocol.sdk.state.FunctionContextsCustom;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 import org.slf4j.Logger;
 
 /**
@@ -39,7 +39,7 @@ import org.slf4j.Logger;
  */
 
 
-public class URLProtocolContext extends HttpServletTransportRequestContext implements java.io.Serializable {
+public class URLProtocolContextImpl extends org.openspcoop2.protocol.sdk.state.URLProtocolContext implements java.io.Serializable {
 
 
 	/**
@@ -47,57 +47,18 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public static final String PA_FUNCTION = "PA";
-	public static final String PA_FUNCTION_GOVWAY = "in";
-	public static final String PD_FUNCTION = "PD";
-	public static final String PD_FUNCTION_GOVWAY = "out";
-	public static final String PDtoSOAP_FUNCTION = "PDtoSOAP";
-	public static final String PDtoSOAP_FUNCTION_GOVWAY = "out/xml2soap";
-	public static final String IntegrationManager_FUNCTION = "IntegrationManager";
-	public static final String IntegrationManager_ENGINE = "IntegrationManagerEngine";
-	public static final String IntegrationManager_SERVICE_PD = "PD";
-	public static final String IntegrationManager_SERVICE_PD_GOVWAY = "out";
-	public static final String IntegrationManager_SERVICE_MessageBox = "MessageBox";
-	public static final String IntegrationManager_FUNCTION_PD = IntegrationManager_FUNCTION+"/"+IntegrationManager_SERVICE_PD;
-	public static final String IntegrationManager_FUNCTION_MessageBox = IntegrationManager_FUNCTION+"/"+IntegrationManager_SERVICE_MessageBox;
-	public static final String IntegrationManager_ENGINE_FUNCTION_PD = IntegrationManager_ENGINE+"/"+IntegrationManager_SERVICE_PD;
-	public static final String IntegrationManager_ENGINE_FUNCTION_MessageBox = IntegrationManager_ENGINE+"/"+IntegrationManager_SERVICE_MessageBox;
-	public static final String Check_FUNCTION = "check";
-	public static final String Proxy_FUNCTION = "proxy";
-	
-	private IDService idServiceCustom;
-	
-	public IDService getIdServiceCustom() {
-		return this.idServiceCustom;
-	}
-	
-	public boolean isPortaApplicativaService() {
-		if(this.idServiceCustom!=null) {
-			return IDService.PORTA_APPLICATIVA.equals(this.idServiceCustom);
-		}
-		else {
-			return URLProtocolContext.PA_FUNCTION.equals(this.function);
-		}
-	}
-	public boolean isPortaDelegataService() {
-		if(this.idServiceCustom!=null) {
-			return IDService.PORTA_DELEGATA.equals(this.idServiceCustom) || 
-					IDService.PORTA_DELEGATA_INTEGRATION_MANAGER.equals(this.idServiceCustom) || 
-					IDService.PORTA_DELEGATA_XML_TO_SOAP.equals(this.idServiceCustom);
-		}
-		else {
-			return URLProtocolContext.PD_FUNCTION.equals(this.function);
-		}
-	}
-	
-	public URLProtocolContext(Logger logCore) throws UtilsException{
+	public URLProtocolContextImpl(Logger logCore) throws UtilsException{
 		super(logCore);
 	}
-	public URLProtocolContext(HttpServletRequest req,Logger logCore, boolean debug, FunctionContextsCustom customContexts) throws ProtocolException, UtilsException{
-		this(req, logCore, debug, false, customContexts);
+	public URLProtocolContextImpl(HttpServletRequest req,Logger logCore, boolean debug, FunctionContextsCustom customContexts) throws ProtocolException, UtilsException{
+		super(req, logCore, debug, customContexts);
 	}
-	public URLProtocolContext(HttpServletRequest req,Logger logCore, boolean debug, boolean integrationManagerEngine, FunctionContextsCustom customContexts) throws ProtocolException, UtilsException{
-		super(req, logCore, debug);
+	public URLProtocolContextImpl(HttpServletRequest req,Logger logCore, boolean debug, boolean integrationManagerEngine, FunctionContextsCustom customContexts) throws ProtocolException, UtilsException{
+		super(req, logCore, debug, integrationManagerEngine, customContexts);
+	}
+	
+	@Override
+	protected void init(HttpServletRequest req,Logger logCore, boolean debug, boolean integrationManagerEngine, FunctionContextsCustom customContexts) throws ProtocolException, UtilsException{
 				
 		String servletContext = req.getContextPath();
 		String urlInvocazione = req.getRequestURI();
@@ -137,13 +98,13 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 					this.idServiceCustom = idServiceDefaultEmptyContext;
 					switch (idServiceDefaultEmptyContext) {
 					case PORTA_DELEGATA:
-						this.function = URLProtocolContext.PD_FUNCTION_GOVWAY;
+						this.function = org.openspcoop2.protocol.sdk.state.URLProtocolContext.PD_FUNCTION_GOVWAY;
 						break;
 					case PORTA_APPLICATIVA:
-						this.function = URLProtocolContext.PA_FUNCTION_GOVWAY;
+						this.function = org.openspcoop2.protocol.sdk.state.URLProtocolContext.PA_FUNCTION_GOVWAY;
 						break;
 					case PORTA_DELEGATA_XML_TO_SOAP:
-						this.function = URLProtocolContext.PDtoSOAP_FUNCTION_GOVWAY;
+						this.function = org.openspcoop2.protocol.sdk.state.URLProtocolContext.PDtoSOAP_FUNCTION_GOVWAY;
 						break;
 					default:
 						throw new Exception("GovWay [protocol/]service to be used not supplied");
@@ -173,14 +134,14 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 				
 				// Vedo se ho un protocollo prima della funzione o direttamente il protocollo
 				boolean IMengine = false;
-				if(integrationManagerEngine && protocollo.equals(URLProtocolContext.IntegrationManager_ENGINE)) {
+				if(integrationManagerEngine && protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.IntegrationManager_ENGINE)) {
 					if(logCore!=null)
 						logCore.debug("SERVLET INTEGRATION MANAGER SERVICE");
 					function = protocollo;
 					
 					IMengine = true;
 					
-					Object o = getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME);
+					Object o = getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME.getValue());
 					if(o == null || !(o instanceof String)){
 						throw new Exception("Indicazione del protocollo non presente");
 					}
@@ -190,7 +151,7 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 						throw new Exception("Non risulta registrato un protocollo con nome ["+this.protocolName+"]");
 					}
 					
-					o = getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_WEB_CONTEXT);
+					o = getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_WEB_CONTEXT.getValue());
 					if(o == null || !(o instanceof String)){
 						throw new Exception("Indicazione del web context del protocollo non presente");
 					}
@@ -211,7 +172,7 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 					if(functionParameters.startsWith(IntegrationManager_SERVICE_PD)) {
 						function+="_"+IntegrationManager_SERVICE_PD;
 						
-						Object oPD = getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PORTA_DELEGATA);
+						Object oPD = getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PORTA_DELEGATA.getValue());
 						if(oPD == null || !(oPD instanceof String)){
 							throw new Exception("Indicazione della porta delegata non presente");
 						}
@@ -230,12 +191,12 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 	//					}
 					}
 				}
-				else if(protocollo.equals(URLProtocolContext.PA_FUNCTION) || 
-						protocollo.equals(URLProtocolContext.PD_FUNCTION) || 
-						protocollo.equals(URLProtocolContext.PDtoSOAP_FUNCTION) || 
-						protocollo.equals(URLProtocolContext.IntegrationManager_FUNCTION) ||
-						protocollo.equals(URLProtocolContext.Check_FUNCTION) ||
-						protocollo.equals(URLProtocolContext.Proxy_FUNCTION) ||
+				else if(protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.PA_FUNCTION) || 
+						protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.PD_FUNCTION) || 
+						protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.PDtoSOAP_FUNCTION) || 
+						protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.IntegrationManager_FUNCTION) ||
+						protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.Check_FUNCTION) ||
+						protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.Proxy_FUNCTION) ||
 						(customContexts!=null && customContexts.isMatch(protocollo, function))) {
 					// ContextProtocol Empty
 					if(logCore!=null)
@@ -302,12 +263,12 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 					boolean emptyFunction = false;
 					if(casoSpeciale_noProtocollo_noFunction ||
 							(
-									! (function.equals(URLProtocolContext.PA_FUNCTION) || 
-											function.equals(URLProtocolContext.PD_FUNCTION) || 
-											function.equals(URLProtocolContext.PDtoSOAP_FUNCTION) || 
-											function.equals(URLProtocolContext.IntegrationManager_FUNCTION) ||
-											function.equals(URLProtocolContext.Check_FUNCTION) ||
-											function.equals(URLProtocolContext.Proxy_FUNCTION) ||
+									! (function.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.PA_FUNCTION) || 
+											function.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.PD_FUNCTION) || 
+											function.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.PDtoSOAP_FUNCTION) || 
+											function.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.IntegrationManager_FUNCTION) ||
+											function.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.Check_FUNCTION) ||
+											function.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.Proxy_FUNCTION) ||
 										(customContexts!=null && customContexts.isMatch(function, functionParameterForCheckCustom))) 
 									)
 							){
@@ -325,15 +286,15 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 							this.idServiceCustom = idS;
 							switch (idS) {
 							case PORTA_DELEGATA:
-								function = URLProtocolContext.PD_FUNCTION_GOVWAY;
+								function = org.openspcoop2.protocol.sdk.state.URLProtocolContext.PD_FUNCTION_GOVWAY;
 								emptyFunction = true;
 								break;
 							case PORTA_APPLICATIVA:
-								function = URLProtocolContext.PA_FUNCTION_GOVWAY;
+								function = org.openspcoop2.protocol.sdk.state.URLProtocolContext.PA_FUNCTION_GOVWAY;
 								emptyFunction = true;
 								break;
 							case PORTA_DELEGATA_XML_TO_SOAP:
-								function = URLProtocolContext.PDtoSOAP_FUNCTION_GOVWAY;
+								function = org.openspcoop2.protocol.sdk.state.URLProtocolContext.PDtoSOAP_FUNCTION_GOVWAY;
 								emptyFunction = true;
 								break;
 							default:

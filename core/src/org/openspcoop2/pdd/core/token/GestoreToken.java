@@ -96,14 +96,14 @@ import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
 import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.security.keystore.JWKSetStore;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
@@ -112,6 +112,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
@@ -309,7 +310,8 @@ public class GestoreToken {
 			throw new TokenException("Cache gia' abilitata");
 		else{
 			try{
-				GestoreToken.cacheToken = new Cache(GestoreToken.TOKEN_CACHE_NAME);
+				GestoreToken.cacheToken = new Cache(CacheType.JCS, GestoreToken.TOKEN_CACHE_NAME); // lascio JCS come default abilitato via jmx
+				GestoreToken.cacheToken.build();
 			}catch(Exception e){
 				throw new TokenException(e.getMessage(),e);
 			}
@@ -345,7 +347,7 @@ public class GestoreToken {
 					itemLifeSecondLong = itemLifeSecond;
 				}
 				
-				GestoreToken.initCacheToken(dimensioneCacheInt, algoritmoCache, itemIdleTimeLong, itemLifeSecondLong, null);
+				GestoreToken.initCacheToken(CacheType.JCS, dimensioneCacheInt, algoritmoCache, itemIdleTimeLong, itemLifeSecondLong, null); // lascio JCS come default abilitato via jmx
 			}catch(Exception e){
 				throw new TokenException(e.getMessage(),e);
 			}
@@ -501,14 +503,16 @@ public class GestoreToken {
 
 	/*----------------- INIZIALIZZAZIONE --------------------*/
 	public static void initialize(Logger log) throws Exception{
-		GestoreToken.initialize(false, -1,null,-1l,-1l, log);
+		GestoreToken.initialize(null, false, -1,null,-1l,-1l, log);
 	}
-	public static void initialize(int dimensioneCache,String algoritmoCache,
+	public static void initialize(CacheType cacheType,
+			int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception{
-		GestoreToken.initialize(true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
+		GestoreToken.initialize(cacheType, true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
 	}
 
-	private static void initialize(boolean cacheAbilitata,int dimensioneCache,String algoritmoCache,
+	private static void initialize(CacheType cacheType,
+			boolean cacheAbilitata,int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception{
 
 		// Inizializzo log
@@ -516,19 +520,19 @@ public class GestoreToken {
 				
 		// Inizializzazione Cache
 		if(cacheAbilitata){
-			GestoreToken.initCacheToken(dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
+			GestoreToken.initCacheToken(cacheType, dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
 		}
 
 	}
 
 
-	public static void initCacheToken(int dimensioneCache,String algoritmoCache,
+	public static void initCacheToken(CacheType cacheType, int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception {
 		
 		if(log!=null)
 			log.info("Inizializzazione cache Token");
 
-		GestoreToken.cacheToken = new Cache(GestoreToken.TOKEN_CACHE_NAME);
+		GestoreToken.cacheToken = new Cache(cacheType, GestoreToken.TOKEN_CACHE_NAME);
 
 		if( (dimensioneCache>0) ||
 				(algoritmoCache != null) ){
@@ -578,16 +582,21 @@ public class GestoreToken {
 			throw new TokenException("Parametro errato per l'attributo 'MaxLifeSecond' (Gestore Messaggi): "+error.getMessage(),error);
 		}
 
+		GestoreToken.cacheToken.build();
 	}
 	
 	
 
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public static void disableSyncronizedGet() throws UtilsException {
 		if(GestoreToken.cacheToken==null) {
 			throw new UtilsException("Cache disabled");
 		}
 		GestoreToken.cacheToken.disableSyncronizedGet();
 	}
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public static boolean isDisableSyncronizedGet() throws UtilsException {
 		if(GestoreToken.cacheToken==null) {
 			throw new UtilsException("Cache disabled");
@@ -980,7 +989,7 @@ public class GestoreToken {
     			try {
     				JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
     				Properties p = policyGestioneToken.getProperties().get(Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID);
-    				JOSEUtils.injectKeystore(p, log); // serve per leggere il keystore dalla cache
+    				JOSEUtils.injectKeystore(datiInvocazione.getRequestInfo(), p, log); // serve per leggere il keystore dalla cache
     				if(p.containsKey(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS)) {
     					String alias = p.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS);
     					if(alias!=null && 
@@ -1035,7 +1044,7 @@ public class GestoreToken {
     			try {
     				JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
     				Properties p = policyGestioneToken.getProperties().get(Costanti.POLICY_VALIDAZIONE_JWE_DECRYPT_PROP_REF_ID);
-    				JOSEUtils.injectKeystore(p, log); // serve per leggere il keystore dalla cache
+    				JOSEUtils.injectKeystore(datiInvocazione.getRequestInfo(), p, log); // serve per leggere il keystore dalla cache
     				jsonDecrypt = new JsonDecrypt(p, options);
     				jsonDecrypt.decrypt(token);
     				informazioniToken = new InformazioniToken(SorgenteInformazioniToken.JWT,jsonDecrypt.getDecodedPayload(),tokenParser);
@@ -1228,7 +1237,8 @@ public class GestoreToken {
 				httpResponse = http(log, policyGestioneToken, INTROSPECTION, token,
 						pddContext, protocolFactory,
 						datiInvocazione.getState(), portaDelegata,
-						idDominio, idServizio);
+						idDominio, idServizio,
+						datiInvocazione.getRequestInfo());
 				risposta = httpResponse.getContent();
 				httpResponseCode = httpResponse.getResultHTTPOperation();
 			}catch(Exception e) {
@@ -1425,7 +1435,8 @@ public class GestoreToken {
 				httpResponse = http(log, policyGestioneToken, USER_INFO, token,
 						pddContext, protocolFactory,
 						datiInvocazione.getState(), portaDelegata,
-						idDominio, idServizio);
+						idDominio, idServizio,
+						datiInvocazione.getRequestInfo());
 				risposta = httpResponse.getContent();
 				httpResponseCode = httpResponse.getResultHTTPOperation();
 			}catch(Exception e) {
@@ -1552,7 +1563,7 @@ public class GestoreToken {
 				}
 				
 				if(jwtSecurity!=null) {
-					JOSEUtils.injectKeystore(jwtSecurity, log); // serve per leggere il keystore dalla cache
+					JOSEUtils.injectKeystore(datiInvocazione.getRequestInfo(), jwtSecurity, log); // serve per leggere il keystore dalla cache
 				}
 				
 				forwardValidazioneJWT = policyGestioneToken.isForwardToken_informazioniRaccolte_validazioneJWT();
@@ -1749,8 +1760,8 @@ public class GestoreToken {
 				Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS.equals(forwardInforRaccolteMode)) {
 			
 			OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-			java.util.concurrent.ConcurrentHashMap<String,String> headerNames = null;
-			java.util.concurrent.ConcurrentHashMap<String, Boolean> set = null;
+			Map<String,String> headerNames = null;
+			Map<String, Boolean> set = null;
 			JSONUtils jsonUtils = null;
 			ObjectNode jsonNode = null;
 			boolean op2headers = Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_HEADERS.equals(forwardInforRaccolteMode);
@@ -2458,7 +2469,8 @@ public class GestoreToken {
 	private static HttpResponse http(Logger log, PolicyGestioneToken policyGestioneToken, boolean introspection, String token,
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory, 
 			IState state, boolean delegata,
-			IDSoggetto idDominio, IDServizio idServizio) throws Exception {
+			IDSoggetto idDominio, IDServizio idServizio,
+			RequestInfo requestInfo) throws Exception {
 		
 		// *** Raccola Parametri ***
 		
@@ -2596,16 +2608,16 @@ public class GestoreToken {
 		
 		ForwardProxy forwardProxy = null;
 		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
-		if(configurazionePdDManager.isForwardProxyEnabled()) {
+		if(configurazionePdDManager.isForwardProxyEnabled(requestInfo)) {
 			try {
 				IDGenericProperties policy = new IDGenericProperties();
 				policy.setTipologia(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION);
 				policy.setNome(policyGestioneToken.getName());
 				if(delegata) {
-					forwardProxy = configurazionePdDManager.getForwardProxyConfigFruizione(idDominio, idServizio, policy);
+					forwardProxy = configurazionePdDManager.getForwardProxyConfigFruizione(idDominio, idServizio, policy, requestInfo);
 				}
 				else {
-					forwardProxy = configurazionePdDManager.getForwardProxyConfigErogazione(idDominio, idServizio, policy);
+					forwardProxy = configurazionePdDManager.getForwardProxyConfigErogazione(idDominio, idServizio, policy, requestInfo);
 				}
 			}catch(Exception e) {
 				throw new Exception("Configurazione errata per la funzionalità govway-proxy; "+e.getMessage(),e);
@@ -2834,13 +2846,13 @@ public class GestoreToken {
 		
 		Map<String, Object> dynamicMap = buildDynamicNegoziazioneTokenMap(busta, requestInfo, pddContext, log, policyNegoziazioneToken.getName());
 		NegoziazioneTokenDynamicParameters dynamicParameters = new NegoziazioneTokenDynamicParameters(dynamicMap, 
-				pddContext, busta, state, protocolFactory, 
+				pddContext, requestInfo, busta, state, protocolFactory, 
 				policyNegoziazioneToken);
 		
 		if(GestoreToken.cacheToken==null){
 			esitoNegoziazioneToken = _endpointToken(debug, log, policyNegoziazioneToken, 
 					busta, requestInfo, tipoPdD,
-					dynamicParameters, protocolFactory, idTransazione,
+					dynamicParameters, pddContext, protocolFactory, idTransazione,
 					state, delegata,
 					idDominio, idServizio,
 					rinegozia, previousToken,
@@ -2902,7 +2914,7 @@ public class GestoreToken {
 						GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
 						esitoNegoziazioneToken = _endpointToken(debug, log, policyNegoziazioneToken, 
 								busta, requestInfo, tipoPdD,
-								dynamicParameters, protocolFactory, idTransazione,
+								dynamicParameters, pddContext, protocolFactory, idTransazione,
 								state, delegata,
 								idDominio, idServizio,
 								rinegozia, previousToken,
@@ -3007,7 +3019,7 @@ public class GestoreToken {
 	
 	private static EsitoNegoziazioneToken _endpointToken(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken,
 			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD,
-			NegoziazioneTokenDynamicParameters dynamicParameters, IProtocolFactory<?> protocolFactory,String idTransazione,
+			NegoziazioneTokenDynamicParameters dynamicParameters, PdDContext pddContext, IProtocolFactory<?> protocolFactory,String idTransazione,
 			IState state, boolean delegata,
 			IDSoggetto idDominio, IDServizio idServizio,
 			boolean rinegozia, InformazioniNegoziazioneToken previousToken,
@@ -3084,7 +3096,7 @@ public class GestoreToken {
 				if(refreshModeEnabled) {
 					esito = _invoke_endpointToken(debug, log, policyNegoziazioneToken,
 							busta, requestInfo, tipoPdD,
-							dynamicParameters, protocolFactory, idTransazione,
+							dynamicParameters, pddContext, protocolFactory, idTransazione,
 							state, delegata,
 							idDominio, idServizio,
 							refreshModeEnabled, previousToken,
@@ -3117,7 +3129,7 @@ public class GestoreToken {
 		}
 		return _invoke_endpointToken(debug, log, policyNegoziazioneToken,
 				busta, requestInfo, tipoPdD,
-				dynamicParameters, protocolFactory, idTransazione,
+				dynamicParameters, pddContext, protocolFactory, idTransazione,
 				state, delegata,
 				idDominio, idServizio,
 				false, null,
@@ -3128,7 +3140,7 @@ public class GestoreToken {
 	
 	private static EsitoNegoziazioneToken _invoke_endpointToken(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken,
 			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD,
-			NegoziazioneTokenDynamicParameters dynamicParameters, IProtocolFactory<?> protocolFactory,String idTransazione,
+			NegoziazioneTokenDynamicParameters dynamicParameters, PdDContext pddContext, IProtocolFactory<?> protocolFactory,String idTransazione,
 			IState state, boolean delegata,
 			IDSoggetto idDominio, IDServizio idServizio,
 			boolean refreshModeEnabled, InformazioniNegoziazioneToken previousToken,
@@ -3151,7 +3163,7 @@ public class GestoreToken {
 			try {
 				httpResponse = http(debug, log, policyNegoziazioneToken,
 						busta, requestInfo, tipoPdD,
-						dynamicParameters, protocolFactory, idTransazione,
+						dynamicParameters, pddContext, protocolFactory, idTransazione,
 						state, delegata,
 						idDominio, idServizio,
 						esitoNegoziazioneToken,
@@ -3340,7 +3352,7 @@ public class GestoreToken {
 	
 	public static HttpResponse http(boolean debug, Logger log, PolicyNegoziazioneToken policyNegoziazioneToken,
 			Busta busta, RequestInfo requestInfo, TipoPdD tipoPdD,
-			NegoziazioneTokenDynamicParameters dynamicParameters, IProtocolFactory<?> protocolFactory, String idTransazione,
+			NegoziazioneTokenDynamicParameters dynamicParameters, PdDContext pddContext, IProtocolFactory<?> protocolFactory, String idTransazione,
 			IState state, boolean delegata,
 			IDSoggetto idDominio, IDServizio idServizio,
 			EsitoNegoziazioneToken esitoNegoziazioneToken,
@@ -3410,16 +3422,16 @@ public class GestoreToken {
 		
 		ForwardProxy forwardProxy = null;
 		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
-		if(configurazionePdDManager.isForwardProxyEnabled()) {
+		if(configurazionePdDManager.isForwardProxyEnabled(requestInfo)) {
 			try {
 				IDGenericProperties policy = new IDGenericProperties();
 				policy.setTipologia(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE);
 				policy.setNome(policyNegoziazioneToken.getName());
 				if(delegata) {
-					forwardProxy = configurazionePdDManager.getForwardProxyConfigFruizione(idDominio, idServizio, policy);
+					forwardProxy = configurazionePdDManager.getForwardProxyConfigFruizione(idDominio, idServizio, policy, requestInfo);
 				}
 				else {
-					forwardProxy = configurazionePdDManager.getForwardProxyConfigErogazione(idDominio, idServizio, policy);
+					forwardProxy = configurazionePdDManager.getForwardProxyConfigErogazione(idDominio, idServizio, policy, requestInfo);
 				}
 			}catch(Exception e) {
 				throw new Exception("Configurazione errata per la funzionalità govway-proxy; "+e.getMessage(),e);
@@ -3510,8 +3522,9 @@ public class GestoreToken {
 		if(policyNegoziazioneToken.isRfc7523_x509_Grant() || policyNegoziazioneToken.isRfc7523_clientSecret_Grant()) {
 			String jwt = buildJwt(policyNegoziazioneToken,
 					busta, tipoPdD,
-					dynamicParameters);
-			String signedJwt = signJwt(policyNegoziazioneToken, jwt, contentType, dynamicParameters);
+					dynamicParameters,
+					protocolFactory, requestInfo, pddContext);
+			String signedJwt = signJwt(policyNegoziazioneToken, jwt, contentType, dynamicParameters, pddContext, requestInfo);
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_ASSERTION, signedJwt);
 			if(datiRichiesta!=null) {
 				boolean infoNormalizzate = properties.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_transazioniRegistrazioneInformazioniNormalizzate();
@@ -3646,7 +3659,8 @@ public class GestoreToken {
 	
 	private static String buildJwt(PolicyNegoziazioneToken policyNegoziazioneToken,
 			Busta busta, TipoPdD tipoPdD,
-			NegoziazioneTokenDynamicParameters dynamicParameters) throws Exception {
+			NegoziazioneTokenDynamicParameters dynamicParameters, 
+			IProtocolFactory<?> protocolFactory, RequestInfo requestInfo, PdDContext pddContext) throws Exception {
 		
 		// https://datatracker.ietf.org/doc/html/rfc7523
 		
@@ -3668,7 +3682,7 @@ public class GestoreToken {
 				issuer = busta.getMittente();
 			}
 			else {
-				issuer = op2Properties.getIdentitaPortaDefault(null).getNome();
+				issuer = op2Properties.getIdentitaPortaDefault(protocolFactory!=null ? protocolFactory.getProtocol() : null, requestInfo).getNome();
 			}
 		}
 		if(!Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(issuer)) {
@@ -3813,7 +3827,8 @@ public class GestoreToken {
 	}
 	
 	private static String signJwt(PolicyNegoziazioneToken policyNegoziazioneToken, String payload, String contentType,
-			NegoziazioneTokenDynamicParameters dynamicParameters) throws Exception {
+			NegoziazioneTokenDynamicParameters dynamicParameters,
+			PdDContext pddContext, RequestInfo requestInfo) throws Exception {
 		
 		String signAlgo = policyNegoziazioneToken.getJwtSignAlgorithm();
 		if(signAlgo==null) {
@@ -3863,10 +3878,10 @@ public class GestoreToken {
 				}
 				
 				if("jwk".equalsIgnoreCase(keystoreType)) {
-					jwtStore = GestoreKeystoreCache.getJwkSetStore(keystoreFile);
+					jwtStore = GestoreKeystoreCache.getJwkSetStore(requestInfo, keystoreFile);
 				}
 				else {
-					MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreFile, keystoreType, keystorePassword);
+					MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo, keystoreFile, keystoreType, keystorePassword);
 					if(merlinKs==null) {
 						throw new Exception("Accesso al keystore '"+keystoreFile+"' non riuscito");
 					}
@@ -3983,21 +3998,24 @@ public class GestoreToken {
 		
 		Map<String, Object> dynamicMap = buildDynamicAAMap(message, busta, requestInfo, pddContext, log,
 				policyAttributeAuthority.getName(), datiInvocazione);
-		AttributeAuthorityDynamicParameters dynamicParameters = new AttributeAuthorityDynamicParameters(dynamicMap, pddContext, policyAttributeAuthority);
+		AttributeAuthorityDynamicParameters dynamicParameters = new AttributeAuthorityDynamicParameters(dynamicMap, pddContext, requestInfo, policyAttributeAuthority);
 		
 		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(datiInvocazione.getState());
 		
 		if(GestoreToken.cacheToken==null){
 						
 			boolean addIdAndDate = true;
-			String request = buildDynamicAARequest(configurazionePdDManager, message, busta, requestInfo, log, policyAttributeAuthority, dynamicParameters, addIdAndDate);
+			String request = buildDynamicAARequest(configurazionePdDManager, message, busta, 
+					protocolFactory, requestInfo, pddContext,
+					log, policyAttributeAuthority, dynamicParameters, addIdAndDate);
 			
 			esitoRecuperoAttributi = _readAttributes(log, policyAttributeAuthority, 
 					protocolFactory,
 					dynamicParameters,
 					request, portaDelegata,
 					datiInvocazione.getState(),
-					idDominio, idServizio);
+					idDominio, idServizio,
+					requestInfo);
 			
 			if(esitoRecuperoAttributi!=null && esitoRecuperoAttributi.isValido()) {
 				// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone) 
@@ -4014,7 +4032,9 @@ public class GestoreToken {
     		boolean addIdAndDate = true;
     		
     		// Aggiungo anche la richiesta poichè può venire costruita con freemarker o template e quindi può essere dinamica a sua volta (non considero però le date)
-    		String requestKeyCache = buildDynamicAARequest(configurazionePdDManager, message, busta, requestInfo, log, policyAttributeAuthority, dynamicParameters, !addIdAndDate);
+    		String requestKeyCache = buildDynamicAARequest(configurazionePdDManager, message, busta, 
+    				protocolFactory, requestInfo, pddContext,
+    				log, policyAttributeAuthority, dynamicParameters, !addIdAndDate);
     		
     		String aaName = policyAttributeAuthority.getName();
     		String keyCache = buildCacheKeyRecuperoAttributi(aaName, funzione, portaDelegata, dynamicParameters, requestKeyCache);
@@ -4067,7 +4087,9 @@ public class GestoreToken {
 						String request = null;
 						if(policyAttributeAuthority.isRequestDynamicPayloadJwt()) {
 							// ricostruisco per considerare le date
-							request = buildDynamicAARequest(configurazionePdDManager, message, busta, requestInfo, log, policyAttributeAuthority, dynamicParameters, addIdAndDate);
+							request = buildDynamicAARequest(configurazionePdDManager, message, busta,
+									protocolFactory, requestInfo, pddContext,
+									log, policyAttributeAuthority, dynamicParameters, addIdAndDate);
 						}
 						else {
 							request = requestKeyCache;
@@ -4078,7 +4100,8 @@ public class GestoreToken {
 								dynamicParameters,
 								request, portaDelegata,
 								datiInvocazione.getState(),
-								idDominio, idServizio);
+								idDominio, idServizio,
+								requestInfo);
 							
 						// Aggiungo la risposta in cache (se esiste una cache)	
 						// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -4171,7 +4194,8 @@ public class GestoreToken {
 			AttributeAuthorityDynamicParameters dynamicParameters,
 			String request, boolean portaDelegata,
 			IState state,
-			IDSoggetto idDominio, IDServizio idServizio) {
+			IDSoggetto idDominio, IDServizio idServizio,
+			RequestInfo requestInfo) {
 		EsitoRecuperoAttributi esitoRecuperoAttributi = null;
 		if(portaDelegata) {
 			esitoRecuperoAttributi = new EsitoRecuperoAttributiPortaDelegata();
@@ -4198,7 +4222,8 @@ public class GestoreToken {
 						dynamicParameters,
 						request,
 						state, portaDelegata,
-						idDominio, idServizio);
+						idDominio, idServizio,
+						requestInfo);
 				risposta = httpResponse.getContent();
 				httpResponseCode = httpResponse.getResultHTTPOperation();
 			}catch(Exception e) {
@@ -4216,7 +4241,7 @@ public class GestoreToken {
 	    			try {
 	    				JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
 	    				Properties p = policyAttributeAuthority.getProperties().get(org.openspcoop2.pdd.core.token.attribute_authority.Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID);
-	    				JOSEUtils.injectKeystore(p, log); // serve per leggere il keystore dalla cache
+	    				JOSEUtils.injectKeystore(requestInfo, p, log); // serve per leggere il keystore dalla cache
 	    				jsonCompactVerify = new JsonVerifySignature(p, options);
 	    				if(jsonCompactVerify.verify(new String(risposta))) {
 	    					if(tokenParser instanceof BasicRetrieveAttributeAuthorityResponseParser) {
@@ -4433,7 +4458,7 @@ public class GestoreToken {
 	
 	private static String buildDynamicAARequest(ConfigurazionePdDManager configurazionePdDManager,
 			OpenSPCoop2Message message, Busta busta, 
-			RequestInfo requestInfo, Logger log, 
+			IProtocolFactory<?> protocolFactory, RequestInfo requestInfo, PdDContext pddContext, Logger log, 
 			PolicyAttributeAuthority policyAttributeAuthority,
 			AttributeAuthorityDynamicParameters dynamicParameters,
 			boolean addIdAndDate) throws Exception {
@@ -4446,12 +4471,14 @@ public class GestoreToken {
 				request = dynamicParameters.getRequestDynamicPayloadTemplate();
 			}
 			else {
-				request = buildAAJwt(policyAttributeAuthority, dynamicParameters, addIdAndDate);
+				request = buildAAJwt(policyAttributeAuthority, dynamicParameters, 
+						protocolFactory, requestInfo, pddContext,
+						addIdAndDate);
 			}
 		}
 		else if(policyAttributeAuthority.isRequestDynamicPayloadFreemarkerTemplate()) {
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			Template template = configurazionePdDManager.getTemplateAttributeAuthorityRequest(policyAttributeAuthority.getName(), dynamicContent.getBytes());
+			Template template = configurazionePdDManager.getTemplateAttributeAuthorityRequest(policyAttributeAuthority.getName(), dynamicContent.getBytes(), requestInfo);
 			DynamicUtils.convertFreeMarkerTemplate(template, dynamicParameters.getDynamicMap(), bout);
 			bout.flush();
 			bout.close();
@@ -4463,7 +4490,7 @@ public class GestoreToken {
 		}
 		else if(policyAttributeAuthority.isRequestDynamicPayloadVelocityTemplate()) {
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			Template template = configurazionePdDManager.getTemplateAttributeAuthorityRequest(policyAttributeAuthority.getName(), dynamicContent.getBytes());
+			Template template = configurazionePdDManager.getTemplateAttributeAuthorityRequest(policyAttributeAuthority.getName(), dynamicContent.getBytes(), requestInfo);
 			DynamicUtils.convertVelocityTemplate(template, dynamicParameters.getDynamicMap(), bout);
 			bout.flush();
 			bout.close();
@@ -4488,6 +4515,7 @@ public class GestoreToken {
 	
 	private static String buildAAJwt(PolicyAttributeAuthority policyAttributeAuthority, 
 			AttributeAuthorityDynamicParameters dynamicParameters,
+			IProtocolFactory<?> protocolFactory, RequestInfo requestInfo, PdDContext pddContext,
 			boolean addIdAndDate) throws Exception {
 		
 		// https://datatracker.ietf.org/doc/html/rfc7523
@@ -4503,7 +4531,7 @@ public class GestoreToken {
 		
 		String issuer = dynamicParameters.getIssuer();
 		if(issuer==null || "".equals(issuer)) {
-			issuer = op2Properties.getIdentitaPortaDefault(null).getNome();
+			issuer = op2Properties.getIdentitaPortaDefault(protocolFactory!=null ? protocolFactory.getProtocol() : null, requestInfo).getNome();
 		}
 		jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUER, issuer);
 		
@@ -4689,7 +4717,8 @@ public class GestoreToken {
 			AttributeAuthorityDynamicParameters dynamicParameters,
 			String request,
 			IState state, boolean delegata,
-			IDSoggetto idDominio, IDServizio idServizio) throws Exception {
+			IDSoggetto idDominio, IDServizio idServizio,
+			RequestInfo requestInfo) throws Exception {
 		
 		// *** Raccola Parametri ***
 		
@@ -4743,16 +4772,16 @@ public class GestoreToken {
 		
 		ForwardProxy forwardProxy = null;
 		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
-		if(configurazionePdDManager.isForwardProxyEnabled()) {
+		if(configurazionePdDManager.isForwardProxyEnabled(requestInfo)) {
 			try {
 				IDGenericProperties policy = new IDGenericProperties();
 				policy.setTipologia(CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY);
 				policy.setNome(policyAttributeAuthority.getName());
 				if(delegata) {
-					forwardProxy = configurazionePdDManager.getForwardProxyConfigFruizione(idDominio, idServizio, policy);
+					forwardProxy = configurazionePdDManager.getForwardProxyConfigFruizione(idDominio, idServizio, policy, requestInfo);
 				}
 				else {
-					forwardProxy = configurazionePdDManager.getForwardProxyConfigErogazione(idDominio, idServizio, policy);
+					forwardProxy = configurazionePdDManager.getForwardProxyConfigErogazione(idDominio, idServizio, policy, requestInfo);
 				}
 			}catch(Exception e) {
 				throw new Exception("Configurazione errata per la funzionalità govway-proxy; "+e.getMessage(),e);
@@ -4809,7 +4838,7 @@ public class GestoreToken {
 		
 		String requestPayload = request;
 		if(policyAttributeAuthority.isRequestJws()) {
-			requestPayload = signAAJwt(policyAttributeAuthority, request, contentType);
+			requestPayload = signAAJwt(policyAttributeAuthority, request, contentType, requestInfo);
 		}
 		if(policyAttributeAuthority.isRequestPositionBearer()) {
 			if(transportRequestContext.getHeaders()==null) {
@@ -4902,7 +4931,8 @@ public class GestoreToken {
 		
 	}
 	
-	private static String signAAJwt(PolicyAttributeAuthority policyAttributeAuthority, String payload, String contentType) throws Exception {
+	private static String signAAJwt(PolicyAttributeAuthority policyAttributeAuthority, String payload, String contentType,
+			RequestInfo requestInfo) throws Exception {
 		
 		String signAlgo = policyAttributeAuthority.getRequestJwtSignAlgorithm();
 		if(signAlgo==null) {
@@ -4935,10 +4965,10 @@ public class GestoreToken {
 		KeyStore ks = null;
 		JWKSetStore jwtStore = null;
 		if("jwk".equalsIgnoreCase(keystoreType)) {
-			jwtStore = GestoreKeystoreCache.getJwkSetStore(keystoreFile);
+			jwtStore = GestoreKeystoreCache.getJwkSetStore(requestInfo, keystoreFile);
 		}
 		else {
-			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreFile, keystoreType, keystorePassword);
+			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo, keystoreFile, keystoreType, keystorePassword);
 			if(merlinKs==null) {
 				throw new Exception("Accesso al keystore '"+keystoreFile+"' non riuscito");
 			}

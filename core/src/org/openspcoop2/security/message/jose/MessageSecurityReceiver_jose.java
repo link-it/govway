@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Properties;
 
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
@@ -35,6 +36,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.CRLCertstore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
@@ -71,12 +73,12 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 	private JsonDecrypt jsonDecrypt = null;
 
 	@Override
-	public void process(MessageSecurityContext messageSecurityContext,OpenSPCoop2Message messageParam,Busta busta) throws SecurityException{
+	public void process(MessageSecurityContext messageSecurityContext,OpenSPCoop2Message messageParam,Busta busta,org.openspcoop2.utils.Map<Object> ctx) throws SecurityException{
 		process(messageSecurityContext, messageParam, busta,
-				false, null);
+				false, null, ctx);
 	}
 	public void process(MessageSecurityContext messageSecurityContext,OpenSPCoop2Message messageParam,Busta busta,
-			boolean bufferMessage_readOnly, String idTransazione) throws SecurityException{
+			boolean bufferMessage_readOnly, String idTransazione,org.openspcoop2.utils.Map<Object> ctx) throws SecurityException{
 		
 		boolean signatureProcess = false;
 		boolean encryptProcess = false;
@@ -90,6 +92,11 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 			}
 			OpenSPCoop2RestJsonMessage restJsonMessage = messageParam.castAsRestJson();
 			
+    		RequestInfo requestInfo = null;
+    		if(ctx!=null && ctx.containsKey(Costanti.REQUEST_INFO)) {
+    			requestInfo = (RequestInfo) ctx.get(Costanti.REQUEST_INFO);
+    		}
+    		
 			
 			
 			// ********** Leggo operazioni ***************
@@ -98,7 +105,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 
 			String[]actions = ((String)messageSecurityContext.getIncomingProperties().get(SecurityConstants.ACTION)).split(" ");
 			for (int i = 0; i < actions.length; i++) {
-				if(SecurityConstants.ENCRYPT_ACTION.equals(actions[i].trim()) || SecurityConstants.DECRYPT_ACTION.equals(actions[i].trim())){
+				if(SecurityConstants.is_ACTION_ENCRYPTION(actions[i].trim()) || SecurityConstants.is_ACTION_DECRYPTION(actions[i].trim())){
 					encrypt = true;
 				}
 				else if(SecurityConstants.SIGNATURE_ACTION.equals(actions[i].trim())){
@@ -145,12 +152,12 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				}
 				if(bean!=null) {
 					Properties signatureProperties = bean.getProperties();
-					JOSEUtils.injectKeystore(signatureProperties, messageSecurityContext.getLog()); // serve per leggere il keystore dalla cache
+					JOSEUtils.injectKeystore(requestInfo, signatureProperties, messageSecurityContext.getLog()); // serve per leggere il keystore dalla cache
 					this.jsonVerifierSignature = new JsonVerifySignature(signatureProperties, options);	
 				}
 				else if(useHeaders) {
-					KeyStore trustStore = JOSEUtils.readTrustStoreJwtX509Cert(messageSecurityContext.getIncomingProperties());
-					KeyStore trustStoreSsl = JOSEUtils.readTrustStoreSsl(messageSecurityContext.getIncomingProperties());
+					KeyStore trustStore = JOSEUtils.readTrustStoreJwtX509Cert(requestInfo, messageSecurityContext.getIncomingProperties());
+					KeyStore trustStoreSsl = JOSEUtils.readTrustStoreSsl(requestInfo, messageSecurityContext.getIncomingProperties());
 					// La versione con le properties non usa le cache: Properties trustStoreSsl = JOSEUtils.toSslConfigJwtUrlHeader(messageSecurityContext.getIncomingProperties());
 					this.jsonVerifierSignature = new JsonVerifySignature(trustStoreSsl, trustStore, options);
 				}
@@ -160,7 +167,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					JWKSet signatureJWKSet = null;
 					String aliasSignatureUser = null;
 					try {
-						bean = KeystoreUtils.getReceiverSignatureBean(messageSecurityContext);
+						bean = KeystoreUtils.getReceiverSignatureBean(messageSecurityContext, ctx);
 					}catch(Exception e) {
 						// Lancio come messaggio eccezione precedente
 						if(notFound!=null) {
@@ -222,7 +229,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					signatureCRL = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_CRL);	
 				}
 				if(signatureCRL!=null && !"".equals(signatureCRL)) {
-					CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(signatureCRL);
+					CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(requestInfo, signatureCRL);
 					if(crlCertstore==null) {
 						throw new Exception("Process CRL '"+signatureCRL+"' failed");
 					}
@@ -231,7 +238,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				
 				String httpsCRL = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_CRL);
 				if(httpsCRL!=null && !"".equals(httpsCRL)) {
-					CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(httpsCRL);
+					CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(requestInfo, httpsCRL);
 					if(crlCertstore==null) {
 						throw new Exception("Process CRL '"+httpsCRL+"' failed");
 					}
@@ -285,11 +292,11 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				}
 				if(bean!=null) {
 					Properties encryptionProperties = bean.getProperties();
-					JOSEUtils.injectKeystore(encryptionProperties, messageSecurityContext.getLog()); // serve per leggere il keystore dalla cache
+					JOSEUtils.injectKeystore(requestInfo, encryptionProperties, messageSecurityContext.getLog()); // serve per leggere il keystore dalla cache
 					this.jsonDecrypt = new JsonDecrypt(encryptionProperties, options);	
 				}
 				else if(useHeaders) {
-					KeyStore trustStoreSsl = JOSEUtils.readTrustStoreSsl(messageSecurityContext.getIncomingProperties());
+					KeyStore trustStoreSsl = JOSEUtils.readTrustStoreSsl(requestInfo, messageSecurityContext.getIncomingProperties());
 					// La versione con le properties non usa le cache: Properties trustStoreSsl = JOSEUtils.toSslConfigJwtUrlHeader(messageSecurityContext.getIncomingProperties());
 					if(JOSEUtils.isJWKSetKeystore(messageSecurityContext.getIncomingProperties())) {
 						JsonWebKeys jsonWebKeys = null;
@@ -300,8 +307,8 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 						this.jsonDecrypt = new JsonDecrypt(trustStoreSsl, jsonWebKeys, options);
 					}
 					else {
-						KeyStore trustStore = JOSEUtils.readTrustStoreJwtX509Cert(messageSecurityContext.getIncomingProperties());
-						KeyStore keyStore = JOSEUtils.readKeyStoreJwtX509Cert(messageSecurityContext.getIncomingProperties());
+						KeyStore trustStore = JOSEUtils.readTrustStoreJwtX509Cert(requestInfo, messageSecurityContext.getIncomingProperties());
+						KeyStore keyStore = JOSEUtils.readKeyStoreJwtX509Cert(requestInfo, messageSecurityContext.getIncomingProperties());
 						HashMap<String, String> keystore_mapAliasPassword = JOSEUtils.readJwtX509Cert_mapAliasPassword(messageSecurityContext.getIncomingProperties());						
 						this.jsonDecrypt = new JsonDecrypt(trustStoreSsl, trustStore, keyStore, keystore_mapAliasPassword, options);
 					}
@@ -313,7 +320,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					String aliasEncryptUser = null;
 					String aliasEncryptPassword = null;
 					try {
-						bean = KeystoreUtils.getReceiverEncryptionBean(messageSecurityContext);
+						bean = KeystoreUtils.getReceiverEncryptionBean(messageSecurityContext, ctx);
 					}catch(Exception e) {
 						// Lancio come messaggio eccezione precedente
 						if(notFound!=null) {
@@ -374,7 +381,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				
 				String encryptionCRL = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_CRL);
 				if(encryptionCRL!=null && !"".equals(encryptionCRL)) {
-					CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(encryptionCRL);
+					CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(requestInfo, encryptionCRL);
 					if(crlCertstore==null) {
 						throw new Exception("Process CRL '"+encryptionCRL+"' failed");
 					}
@@ -383,7 +390,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				
 				String httpsCRL = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_CRL);
 				if(httpsCRL!=null && !"".equals(httpsCRL)) {
-					CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(httpsCRL);
+					CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(requestInfo, httpsCRL);
 					if(crlCertstore==null) {
 						throw new Exception("Process CRL '"+httpsCRL+"' failed");
 					}

@@ -116,7 +116,7 @@ public class RepositoryGestioneStateful {
 	private static void invokeGestoreTransazioniStateful(StatefulObject s,TransactionDB transactionDB)throws TransactionStatefulNotSupportedException {
 		Resource dbResource = null;
 		DBTransazioniManager dbManager = DBTransazioniManager.getInstance();
-		IDSoggetto idDominio = openspcoopProperties.getIdentitaPortaDefault(s.getProtocollo());
+		IDSoggetto idDominio = openspcoopProperties.getIdentitaPortaDefault(s.getProtocollo(), null);
 		Connection con = null;
 		try{
 			dbResource = dbManager.getResource(idDominio, ID_MODULO, null);
@@ -152,7 +152,7 @@ public class RepositoryGestioneStateful {
 	private static TransactionDB invokeGestoreTransazioniStateful_readTransactionDB(String protocollo, String idTransazione)throws TransactionStatefulNotSupportedException {
 		Resource dbResource = null;
 		DBTransazioniManager dbManager = DBTransazioniManager.getInstance();
-		IDSoggetto idDominio = openspcoopProperties.getIdentitaPortaDefault(protocollo);
+		IDSoggetto idDominio = openspcoopProperties.getIdentitaPortaDefault(protocollo, null);
 		Connection con = null;
 		try{
 			dbResource = dbManager.getResource(idDominio, ID_MODULO+".read", null);

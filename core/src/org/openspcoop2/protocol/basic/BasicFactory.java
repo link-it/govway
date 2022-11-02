@@ -21,9 +21,6 @@
 package org.openspcoop2.protocol.basic;
 
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.protocol.basic.archive.BasicArchive;
@@ -45,6 +42,7 @@ import org.openspcoop2.protocol.basic.validator.ValidazioneSemantica;
 import org.openspcoop2.protocol.basic.validator.ValidazioneSintattica;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.registry.CachedRegistryReader;
+import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.InformazioniProtocollo;
@@ -58,11 +56,15 @@ import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneAccordi;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneDocumenti;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.protocol.utils.ProtocolUtils;
+import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.MapKey;
 import org.slf4j.Logger;
 
 
@@ -77,6 +79,7 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 	private static final long serialVersionUID = 1L;
 	
 	private String protocol;
+	private MapKey<String> protocolMapKey;
 	private InformazioniProtocollo informazioniProtocollo;
 	protected Logger log;
 	protected Logger logProtocol;
@@ -89,6 +92,7 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 	@Override
 	public void init(Logger log,String protocol,ConfigurazionePdD configPdD,Openspcoop2 manifest) throws ProtocolException{
 		this.protocol = protocol;
+		this.protocolMapKey = ProtocolUtils.protocolToMapKey(this.protocol);
 		this.log = log;
 		this.configPdD = configPdD;
 		this.manifest = manifest;
@@ -110,33 +114,33 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 			this.staticInstanceConfig = staticInstanceConfig;
 			if(staticInstanceConfig.isStaticConfig()) {
 				if(staticInstanceTraduttore==null) {
-					staticInstanceTraduttore = new HashMap<String, org.openspcoop2.protocol.sdk.config.ITraduttore>();
+					staticInstanceTraduttore = new Map<org.openspcoop2.protocol.sdk.config.ITraduttore>();
 				}
 				createTraduttore();
 				if(staticInstanceProtocolIntegrationConfiguration==null) {
-					staticInstanceProtocolIntegrationConfiguration = new HashMap<String, org.openspcoop2.protocol.sdk.config.IProtocolIntegrationConfiguration>();
+					staticInstanceProtocolIntegrationConfiguration = new Map<org.openspcoop2.protocol.sdk.config.IProtocolIntegrationConfiguration>();
 				}
 				createProtocolIntegrationConfiguration();
 			}
 			if(staticInstanceConfig.isStaticErrorBuilder()) {
 				if(staticInstanceErroreApplicativoBuilder==null) {
-					staticInstanceErroreApplicativoBuilder = new HashMap<String, org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder>();
+					staticInstanceErroreApplicativoBuilder = new Map<org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder>();
 				}
 				createErroreApplicativoBuilder();
 			}
-			if(staticInstanceConfig.isStaticEsitoBuilder() && EsitiProperties.isInitializedProtocol(this.getProtocol())) {
+			if(staticInstanceConfig.isStaticEsitoBuilder() && EsitiProperties.isInitializedProtocol(this.getProtocolMapKey())) {
 				if(staticInstanceEsitoBuilder==null) {
-					staticInstanceEsitoBuilder = new HashMap<String, org.openspcoop2.protocol.sdk.builder.IEsitoBuilder>();
+					staticInstanceEsitoBuilder = new Map<org.openspcoop2.protocol.sdk.builder.IEsitoBuilder>();
 				}
 				createEsitoBuilder();
 			}
 		}
 	}
 	public void initStaticInstance() throws ProtocolException{
-		if(this.staticInstanceConfig!=null && this.staticInstanceConfig.isStaticEsitoBuilder() && EsitiProperties.isInitializedProtocol(this.getProtocol()) && 
-				(staticInstanceEsitoBuilder==null || !staticInstanceEsitoBuilder.containsKey(this.getProtocol()))) {
+		if(this.staticInstanceConfig!=null && this.staticInstanceConfig.isStaticEsitoBuilder() && EsitiProperties.isInitializedProtocol(this.getProtocolMapKey()) && 
+				(staticInstanceEsitoBuilder==null || !staticInstanceEsitoBuilder.containsKey(this.getProtocolMapKey()))) {
 			if(staticInstanceEsitoBuilder==null) {
-				staticInstanceEsitoBuilder = new HashMap<String, org.openspcoop2.protocol.sdk.builder.IEsitoBuilder>();
+				staticInstanceEsitoBuilder = new Map<org.openspcoop2.protocol.sdk.builder.IEsitoBuilder>();
 			}
 			createEsitoBuilder();
 		}
@@ -174,6 +178,11 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 	}
 		
 	@Override
+	public MapKey<String> getProtocolMapKey() {
+		return this.protocolMapKey;
+	}
+	
+	@Override
 	public InformazioniProtocollo getInformazioniProtocol() {
 		return this.informazioniProtocollo;
 	}
@@ -196,41 +205,45 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 		return new BustaBuilder<BustaRawType>(this, state);
 	}
 	
-	private static Map<String, org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder> staticInstanceErroreApplicativoBuilder = null;
+	private static Map<org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder> staticInstanceErroreApplicativoBuilder = null;
 	@Override
 	public org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder createErroreApplicativoBuilder()  throws ProtocolException {
 		if(staticInstanceErroreApplicativoBuilder!=null) {
-			if(!staticInstanceErroreApplicativoBuilder.containsKey(this.getProtocol())) {
-				initErroreApplicativoBuilder(this.getProtocol());
+			org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder builder = staticInstanceErroreApplicativoBuilder.get(this.getProtocolMapKey());
+			if(builder==null) {
+				initErroreApplicativoBuilder(this.getProtocolMapKey());
+				builder = staticInstanceErroreApplicativoBuilder.get(this.getProtocolMapKey());
 			}
-			return staticInstanceErroreApplicativoBuilder.get(this.getProtocol());
+			return builder;
 		}
 		else {
 			return new ErroreApplicativoBuilder(this);
 		}
 	}
-	private synchronized void initErroreApplicativoBuilder(String protocol) throws ProtocolException {
-		if(!staticInstanceErroreApplicativoBuilder.containsKey(protocol)) {
-			staticInstanceErroreApplicativoBuilder.put(protocol, new ErroreApplicativoBuilder(this));
+	private synchronized void initErroreApplicativoBuilder(MapKey<String> protocolMapKey) throws ProtocolException {
+		if(!staticInstanceErroreApplicativoBuilder.containsKey(protocolMapKey)) {
+			staticInstanceErroreApplicativoBuilder.put(protocolMapKey, new ErroreApplicativoBuilder(this));
 		}
 	}
 	
-	private static Map<String, org.openspcoop2.protocol.sdk.builder.IEsitoBuilder> staticInstanceEsitoBuilder = null;
+	private static Map<org.openspcoop2.protocol.sdk.builder.IEsitoBuilder> staticInstanceEsitoBuilder = null;
 	@Override
 	public org.openspcoop2.protocol.sdk.builder.IEsitoBuilder createEsitoBuilder()  throws ProtocolException{
 		if(staticInstanceEsitoBuilder!=null) {
-			if(!staticInstanceEsitoBuilder.containsKey(this.getProtocol())) {
-				initEsitoBuilder(this.getProtocol());
+			org.openspcoop2.protocol.sdk.builder.IEsitoBuilder builder = staticInstanceEsitoBuilder.get(this.getProtocolMapKey());
+			if(builder==null) {
+				initEsitoBuilder(this.getProtocolMapKey());
+				builder = staticInstanceEsitoBuilder.get(this.getProtocolMapKey());
 			}
-			return staticInstanceEsitoBuilder.get(this.getProtocol());
+			return builder;
 		}
 		else {
 			return new EsitoBuilder(this);
 		}
 	}
-	private synchronized void initEsitoBuilder(String protocol) throws ProtocolException {
-		if(!staticInstanceEsitoBuilder.containsKey(protocol)) {
-			staticInstanceEsitoBuilder.put(protocol, new EsitoBuilder(this));
+	private synchronized void initEsitoBuilder(MapKey<String> protocolMapKey) throws ProtocolException {
+		if(!staticInstanceEsitoBuilder.containsKey(protocolMapKey)) {
+			staticInstanceEsitoBuilder.put(protocolMapKey, new EsitoBuilder(this));
 		}
 	}
 	
@@ -325,41 +338,45 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 	
 	/* ** CONFIG ** */
 	
-	private static Map<String, org.openspcoop2.protocol.sdk.config.ITraduttore> staticInstanceTraduttore = null;
+	private static Map<org.openspcoop2.protocol.sdk.config.ITraduttore> staticInstanceTraduttore = null;
 	@Override
 	public org.openspcoop2.protocol.sdk.config.ITraduttore createTraduttore()  throws ProtocolException{
 		if(staticInstanceTraduttore!=null) {
-			if(!staticInstanceTraduttore.containsKey(this.getProtocol())) {
-				initTraduttore(this.getProtocol());
+			org.openspcoop2.protocol.sdk.config.ITraduttore traduttore = staticInstanceTraduttore.get(this.getProtocolMapKey()); 
+			if(traduttore==null) {
+				initTraduttore(this.getProtocolMapKey());
+				traduttore = staticInstanceTraduttore.get(this.getProtocolMapKey()); 
 			}
-			return staticInstanceTraduttore.get(this.getProtocol());
+			return traduttore;
 		}
 		else {
 			return new BasicTraduttore(this);
 		}
 	}
-	private synchronized void initTraduttore(String protocol) throws ProtocolException {
-		if(!staticInstanceTraduttore.containsKey(protocol)) {
-			staticInstanceTraduttore.put(protocol, new BasicTraduttore(this));
+	private synchronized void initTraduttore(MapKey<String> protocolMapKey) throws ProtocolException {
+		if(!staticInstanceTraduttore.containsKey(protocolMapKey)) {
+			staticInstanceTraduttore.put(protocolMapKey, new BasicTraduttore(this));
 		}
 	}
 	
-	private static Map<String, org.openspcoop2.protocol.sdk.config.IProtocolIntegrationConfiguration> staticInstanceProtocolIntegrationConfiguration = null;
+	private static Map<org.openspcoop2.protocol.sdk.config.IProtocolIntegrationConfiguration> staticInstanceProtocolIntegrationConfiguration = null;
 	@Override
 	public IProtocolIntegrationConfiguration createProtocolIntegrationConfiguration() throws ProtocolException{
 		if(staticInstanceProtocolIntegrationConfiguration!=null) {
-			if(!staticInstanceProtocolIntegrationConfiguration.containsKey(this.getProtocol())) {
-				initProtocolIntegrationConfiguration(this.getProtocol());
+			IProtocolIntegrationConfiguration config = staticInstanceProtocolIntegrationConfiguration.get(this.getProtocolMapKey()); 
+			if(config==null) {
+				initProtocolIntegrationConfiguration(this.getProtocolMapKey());
+				config = staticInstanceProtocolIntegrationConfiguration.get(this.getProtocolMapKey()); 
 			}
-			return staticInstanceProtocolIntegrationConfiguration.get(this.getProtocol());
+			return config;
 		}
 		else {
 			return new BasicProtocolIntegrationConfiguration(this);
 		}
 	}
-	private synchronized void initProtocolIntegrationConfiguration(String protocol) throws ProtocolException {
-		if(!staticInstanceProtocolIntegrationConfiguration.containsKey(protocol)) {
-			staticInstanceProtocolIntegrationConfiguration.put(protocol, new BasicProtocolIntegrationConfiguration(this));
+	private synchronized void initProtocolIntegrationConfiguration(MapKey<String> protocolMapKey) throws ProtocolException {
+		if(!staticInstanceProtocolIntegrationConfiguration.containsKey(protocolMapKey)) {
+			staticInstanceProtocolIntegrationConfiguration.put(protocolMapKey, new BasicProtocolIntegrationConfiguration(this));
 		}
 	}
 
@@ -383,9 +400,17 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 		}
 	}
 	@Override
-	public IRegistryReader getCachedRegistryReader(IState state) throws ProtocolException{
+	public IRegistryReader getCachedRegistryReader(IState state, RequestInfo requestInfo) throws ProtocolException{
 		try{
-			return new CachedRegistryReader(this.log, this, state);
+			return new CachedRegistryReader(this.log, this, state, requestInfo);
+		}catch(Exception e){
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public IRegistryReader getCachedRegistryReader(Object registryReader, RequestInfo requestInfo) throws ProtocolException{
+		try{
+			return new CachedRegistryReader(this.log, this, (RegistroServiziManager)registryReader, requestInfo);
 		}catch(Exception e){
 			throw new ProtocolException(e.getMessage(),e);
 		}
@@ -399,11 +424,22 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 		}
 	}
 	@Override
-	public IConfigIntegrationReader getCachedConfigIntegrationReader(IState state) throws ProtocolException{
+	public IConfigIntegrationReader getCachedConfigIntegrationReader(IState state, RequestInfo requestInfo) throws ProtocolException{
 		try{
 			Class<?> c = Class.forName("org.openspcoop2.pdd.config.CachedConfigIntegrationReader");
-			return (IConfigIntegrationReader) c.getConstructor(Logger.class,IProtocolFactory.class,IState.class).
-				newInstance(this.log,this,state);
+			return (IConfigIntegrationReader) c.getConstructor(Logger.class,IProtocolFactory.class,IState.class,RequestInfo.class).
+				newInstance(this.log,this,state,requestInfo);
+		}catch(Exception e){
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public IConfigIntegrationReader getCachedConfigIntegrationReader(Object configReader, RequestInfo requestInfo) throws ProtocolException{
+		try{
+			Class<?> cConfigurazionePdDManager = Class.forName("org.openspcoop2.pdd.config.ConfigurazionePdDManager");
+			Class<?> c = Class.forName("org.openspcoop2.pdd.config.CachedConfigIntegrationReader");
+			return (IConfigIntegrationReader) c.getConstructor(Logger.class,IProtocolFactory.class,cConfigurazionePdDManager,RequestInfo.class).
+				newInstance(this.log,this,configReader,requestInfo);
 		}catch(Exception e){
 			throw new ProtocolException(e.getMessage(),e);
 		}

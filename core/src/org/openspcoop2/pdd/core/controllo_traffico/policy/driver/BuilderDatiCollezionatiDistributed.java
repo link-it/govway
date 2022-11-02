@@ -23,7 +23,6 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy.driver;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
@@ -40,6 +39,7 @@ import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.Rediss
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.counters.DatiCollezionatiDistributedLongAdder;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.counters.DatiCollezionatiDistributedRedisAtomicLong;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.Map;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 
@@ -79,7 +79,7 @@ public class BuilderDatiCollezionatiDistributed {
 	private final RedissonClient  redisson;
 	
 	
-	private static final Map<PolicyGroupByActiveThreadsType, BuilderDatiCollezionatiDistributed> builderCache = new HashMap<>();
+	private static final java.util.Map<PolicyGroupByActiveThreadsType, BuilderDatiCollezionatiDistributed> builderCache = new HashMap<>();
 	private static final List<PolicyGroupByActiveThreadsType> policyAmmesse = List.of(
 			PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG, 
 			PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC,
@@ -140,7 +140,7 @@ public class BuilderDatiCollezionatiDistributed {
 	}
 	
 	
-	public DatiCollezionati build(Date updatePolicyDate, IDUnivocoGroupByPolicyMapId id, ActivePolicy activePolicy, Map<String, Object> ctx) {
+	public DatiCollezionati build(Date updatePolicyDate, IDUnivocoGroupByPolicyMapId id, ActivePolicy activePolicy, Map<Object> ctx) {
 		DatiCollezionati ret;
 		
 		Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(OpenSPCoop2Properties.getInstance().isControlloTrafficoDebug());

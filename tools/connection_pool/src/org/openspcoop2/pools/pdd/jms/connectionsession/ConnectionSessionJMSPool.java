@@ -24,6 +24,7 @@ package org.openspcoop2.pools.pdd.jms.connectionsession;
 
 import org.slf4j.Logger;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -274,7 +275,7 @@ public class ConnectionSessionJMSPool implements java.io.Serializable  {
 			configPool.setBlockWhenExhausted(true);
 		}
 		if(configuration.getWhen_exhausted_blockingTimeout()>0){
-			configPool.setMaxWaitMillis(configuration.getWhen_exhausted_blockingTimeout()); //Default: -1L
+			configPool.setMaxWait(Duration.ofMillis(configuration.getWhen_exhausted_blockingTimeout())); //Default: -1L
 		}
 
 		// When testOnBorrow is set, the pool will attempt to validate each object before it is returned from the borrowObject() method. 
@@ -295,13 +296,17 @@ public class ConnectionSessionJMSPool implements java.io.Serializable  {
 			// - timeBetweenEvictionRunsMillis,  indicates how long the eviction thread should sleep before 
 			// "runs" of examining idle objects. 
 			//   When non-positive, no eviction thread will be launched.
-			configPool.setTimeBetweenEvictionRunsMillis(configuration.getIdle_timeBetweenEvictionRuns()) ; //Default: -1L
+			if(configuration.getIdle_timeBetweenEvictionRuns()>0) {
+				configPool.setTimeBetweenEvictionRuns(Duration.ofMillis(configuration.getIdle_timeBetweenEvictionRuns())) ; //Default: -1L
+			}
 			// - numTestsPerEvictionRun, The default number of objects to examine per run in the idle object evictor.
 			configPool.setNumTestsPerEvictionRun(configuration.getIdle_numTestsPerEvictionRun()); //Default: 3
 			// - minEvictableIdleTimeMillis,  specifies the minimum amount of time that an object may sit idle in the pool 
 			// before it is eligable for eviction due to idle time. 
 			// When non-positive, no object will be dropped from the pool due to idle time alone.
-			configPool.setMinEvictableIdleTimeMillis(configuration.getIdle_idleObjectTimeout()); //Default: 1800000L
+			if(configuration.getIdle_idleObjectTimeout()>0) {
+				configPool.setMinEvictableIdleTime(Duration.ofMillis(configuration.getIdle_idleObjectTimeout())); //Default: 1800000L
+			}
 			// - testWhileIdle, indicates whether or not idle objects should be validated using the factory's 
 			// PoolableObjectFactory.validateObject(java.lang.Object) method. Objects that fail to validate will be dropped from the pool.
 			configPool.setTestWhileIdle(configuration.isIdle_validateObject()); //Default: false

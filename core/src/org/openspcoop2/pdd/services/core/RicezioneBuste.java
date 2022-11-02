@@ -61,6 +61,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.id.IdentificativiErogazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
@@ -93,6 +94,7 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.EJBUtils;
 import org.openspcoop2.pdd.core.GestoreCorrelazioneApplicativa;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
+import org.openspcoop2.pdd.core.GestoreRichieste;
 import org.openspcoop2.pdd.core.IntegrationContext;
 import org.openspcoop2.pdd.core.MTOMProcessor;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -175,8 +177,6 @@ import org.openspcoop2.pdd.timers.TimerThresholdThread;
 import org.openspcoop2.pdd.timers.TipoLock;
 import org.openspcoop2.protocol.basic.registry.IdentificazionePortaApplicativa;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.engine.RequestInfo;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.builder.Imbustamento;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.History;
@@ -223,8 +223,11 @@ import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.dump.DumpException;
+import org.openspcoop2.protocol.sdk.state.RequestFruitore;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.state.StatelessMessage;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.protocol.sdk.tracciamento.EsitoElaborazioneMessaggioTracciato;
 import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
 import org.openspcoop2.protocol.sdk.validator.IValidatoreErrori;
@@ -237,6 +240,7 @@ import org.openspcoop2.security.message.MessageSecurityContextParameters;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Loader;
@@ -506,21 +510,21 @@ public class RicezioneBuste {
 		
 		try{
 			if(context!=null  && this.msgContext.getIntegrazione()!=null){
-				if(context.containsKey(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RICHIESTA)){
+				if(context.containsKey(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RICHIESTA)){
 					this.msgContext.getIntegrazione().setTipoProcessamentoMtomXopRichiesta(
-							(String)context.getObject(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RICHIESTA));
+							(String)context.getObject(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RICHIESTA));
 				}
-				if(context.containsKey(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RISPOSTA)){
+				if(context.containsKey(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RISPOSTA)){
 					this.msgContext.getIntegrazione().setTipoProcessamentoMtomXopRisposta(
-							(String)context.getObject(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RISPOSTA));
+							(String)context.getObject(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RISPOSTA));
 				}
-				if(context.containsKey(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA)){
+				if(context.containsKey(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RICHIESTA)){
 					this.msgContext.getIntegrazione().setTipoMessageSecurityRichiesta(
-							(String)context.getObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA));
+							(String)context.getObject(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RICHIESTA));
 				}
-				if(context.containsKey(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA)){
+				if(context.containsKey(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RISPOSTA)){
 					this.msgContext.getIntegrazione().setTipoMessageSecurityRisposta(
-							(String)context.getObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA));
+							(String)context.getObject(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RISPOSTA));
 				}
 			}
 		}catch(Exception e){
@@ -545,7 +549,7 @@ public class RicezioneBuste {
 						if(urlProtocolContext!=null && urlProtocolContext.getInterfaceName()!=null) {
 							IDPortaApplicativa identificativoPortaApplicativa = new IDPortaApplicativa();
 							identificativoPortaApplicativa.setNome(urlProtocolContext.getInterfaceName());
-							PortaApplicativa portaApplicativa = configurazionePdDReader.getPortaApplicativa_SafeMethod(identificativoPortaApplicativa);
+							PortaApplicativa portaApplicativa = configurazionePdDReader.getPortaApplicativa_SafeMethod(identificativoPortaApplicativa, this.msgContext.getRequestInfo());
 							if(portaApplicativa!=null) {
 								DumpConfigurazione dumpConfig = configurazionePdDReader.getDumpConfigurazione(portaApplicativa);
 								internalObjects.put(CostantiPdD.DUMP_CONFIG, dumpConfig);
@@ -650,7 +654,7 @@ public class RicezioneBuste {
 					}
 					Map<String, List<String>> propertiesTrasporto = outResponseContext.getResponseHeaders();
 					ServicesUtils.setGovWayHeaderResponse(msgRisposta, OpenSPCoop2Properties.getInstance(),
-							propertiesTrasporto, logCore, false, outResponseContext.getPddContext(), this.msgContext.getRequestInfo().getProtocolContext());
+							propertiesTrasporto, logCore, false, outResponseContext.getPddContext(), this.msgContext.getRequestInfo());
 					dumpApplicativo.dumpRispostaUscita(msgRisposta, 
 							inRequestContext.getConnettore().getUrlProtocolContext(), 
 							outResponseContext.getResponseHeaders());
@@ -704,7 +708,7 @@ public class RicezioneBuste {
 				identificativoPortaApplicativa.setNome(urlProtocolContext.getInterfaceName());
 				PortaApplicativa portaApplicativa = null;
 				try {
-					portaApplicativa = configurazionePdDReader.getPortaApplicativa_SafeMethod(identificativoPortaApplicativa);
+					portaApplicativa = configurazionePdDReader.getPortaApplicativa_SafeMethod(identificativoPortaApplicativa, this.msgContext.getRequestInfo());
 				}catch(Exception e) {}
 				if(portaApplicativa!=null) {
 					// Aggiorno tutti
@@ -715,9 +719,9 @@ public class RicezioneBuste {
 					}
 					dominio = new IDSoggetto(portaApplicativa.getTipoSoggettoProprietario(), portaApplicativa.getNomeSoggettoProprietario());
 					try {
-						dominio.setCodicePorta(RegistroServiziManager.getInstance().getDominio(dominio, null, protocolFactory));
+						dominio.setCodicePorta(RegistroServiziManager.getInstance().getDominio(dominio, null, protocolFactory, this.msgContext.getRequestInfo()));
 					}catch(Exception e) {
-						dominio = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory.getProtocol());
+						dominio = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory.getProtocol(), this.msgContext.getRequestInfo());
 					}
 				}
 			}
@@ -732,7 +736,7 @@ public class RicezioneBuste {
 			}
 		}
 		if(dominio==null) {
-			dominio = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory.getProtocol());
+			dominio = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory.getProtocol(), this.msgContext.getRequestInfo());
 		}
 		
 		Dump dumpApplicativo = null;
@@ -1067,7 +1071,7 @@ public class RicezioneBuste {
 		else{
 			nomePorta = inRequestContext.getConnettore().getUrlProtocolContext().getFunctionParameters() + "_urlInvocazione("+ inRequestContext.getConnettore().getUrlProtocolContext().getUrlInvocazione_formBased() + ")";
 		}
-		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.APPLICATIVA,identitaPdD,this.msgContext.getIdModulo(),nomePorta);
+		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.APPLICATIVA,identitaPdD,this.msgContext.getIdModulo(),nomePorta,requestInfo,configurazionePdDReader);
 		this.msgContext.setMsgDiagnostico(msgDiag); // aggiorno msg diagnostico
 		msgDiag.setPddContext(inRequestContext.getPddContext(), protocolFactory);
 		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE);
@@ -1135,9 +1139,9 @@ public class RicezioneBuste {
 		}
 		
 		// Refresh reader
-		registroServiziReader.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
-		configurazionePdDReader.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
-		msgDiag.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+		registroServiziReader = registroServiziReader.refreshState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+		configurazionePdDReader = configurazionePdDReader.refreshState(registroServiziReader);
+		msgDiag.updateState(configurazionePdDReader);
 
 		// Dati precedentemente raccolti
 		String servizioApplicativoFruitore = null;
@@ -1249,7 +1253,7 @@ public class RicezioneBuste {
 				idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(), busta.getServizio(), 
 						busta.getTipoDestinatario(), busta.getDestinatario(), 
 						busta.getVersioneServizio());
-				idServizio.getSoggettoErogatore().setCodicePorta(registroServiziReader.getDominio(idServizio.getSoggettoErogatore(), null, protocolFactory));
+				idServizio.getSoggettoErogatore().setCodicePorta(registroServiziReader.getDominio(idServizio.getSoggettoErogatore(), null, protocolFactory, requestInfo));
 				idServizio.setAzione(busta.getAzione());
 				requestInfo.setIdServizio(idServizio);
 				
@@ -1270,7 +1274,7 @@ public class RicezioneBuste {
 					RicezioneBusteServiceUtils.updatePortaApplicativaRequestInfo(requestInfo, logCore, 
 							requestMessage,
 							this.generatoreErrore, 
-							ServicesUtils.getServiceIdentificationReader(logCore, requestInfo), msgDiag, 
+							ServicesUtils.getServiceIdentificationReader(logCore, requestInfo, registroServiziReader, configurazionePdDReader), msgDiag, 
 							urlProtocolContext, idPA,
 							pddContext);
 					//requestInfo.getProtocolContext().setInterfaceName(pa.getNome());
@@ -1337,7 +1341,7 @@ public class RicezioneBuste {
 			try{
 				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				idPA.setNome(requestInfo.getProtocolContext().getInterfaceName());
-				pa = configurazionePdDReader.getPortaApplicativa_SafeMethod(idPA);
+				pa = configurazionePdDReader.getPortaApplicativa_SafeMethod(idPA, requestInfo);
 				// NOTA: la pa potra' essere null nei casi di profili asincroni
 			}catch(Exception e){
 				setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
@@ -1349,7 +1353,7 @@ public class RicezioneBuste {
 			}
 		}
 		if(pa!=null){
-			msgDiag.updatePorta(pa.getNome());
+			msgDiag.updatePorta(pa.getNome(), requestInfo);
 		}
 
 		
@@ -1368,7 +1372,7 @@ public class RicezioneBuste {
 		boolean existsSoggetto = false;
 		try{
 			if(idServizio!=null && idServizio.getSoggettoErogatore()!=null) {
-				existsSoggetto = configurazionePdDReader.existsSoggetto(idServizio.getSoggettoErogatore());
+				existsSoggetto = configurazionePdDReader.existsSoggetto(idServizio.getSoggettoErogatore(), requestInfo);
 			}
 		}catch(Exception e){
 			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
@@ -1397,7 +1401,7 @@ public class RicezioneBuste {
 			if(routerFunctionActive){
 				functionAsRouter = true;	
 				try{
-					identitaPdD = configurazionePdDReader.getRouterIdentity(protocolFactory);
+					identitaPdD = configurazionePdDReader.getRouterIdentity(protocolFactory, requestInfo);
 				}catch(Exception e){
 					setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -1413,7 +1417,7 @@ public class RicezioneBuste {
 			msgDiag.mediumDebug("Raccolta identita porta di dominio...");
 			String dominio = null;
 			try{
-				dominio = configurazionePdDReader.getIdentificativoPorta(idServizio.getSoggettoErogatore(),protocolFactory);
+				dominio = configurazionePdDReader.getIdentificativoPorta(idServizio.getSoggettoErogatore(),protocolFactory, requestInfo);
 				if(dominio==null){
 					throw new Exception("Dominio is null");
 				}
@@ -1594,9 +1598,9 @@ public class RicezioneBuste {
 					}
 					else {
 						try {
-							AccordoServizioParteSpecifica asps = registroServiziReader.getAccordoServizioParteSpecifica(idServizio, null, false);
+							AccordoServizioParteSpecifica asps = registroServiziReader.getAccordoServizioParteSpecifica(idServizio, null, false, requestInfo);
 							if(asps!=null) {
-								AccordoServizioParteComune aspc = registroServiziReader.getAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), null, false, false);
+								AccordoServizioParteComune aspc = registroServiziReader.getAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), null, false, false, requestInfo);
 								if(aspc!=null) {
 									String canaleApi = aspc.getCanale();
 									if(canaleApi!=null && !"".equals(canaleApi)) {
@@ -1703,7 +1707,7 @@ public class RicezioneBuste {
 					idServizio.setAzione(requestInfo.getIdServizio().getAzione());
 				}
 				else{
-					idServizio.setAzione(configurazionePdDReader.getAzione(pa, urlProtocolContext, requestMessage, null,
+					idServizio.setAzione(configurazionePdDReader.getAzione(pa, urlProtocolContext, requestInfo, requestMessage, null,
 							headerIntegrazioneRichiesta, this.msgContext.getIdModulo().endsWith(IntegrationManager.ID_MODULO), protocolFactory));
 				}
 				requestInfo.setIdServizio(idServizio);
@@ -1750,7 +1754,9 @@ public class RicezioneBuste {
 		msgDiag.mediumDebug("Lettura azione associato alla PA invocata...");
 		if(idServizio!=null && idServizio.getAzione()!=null && pa!=null) {
 			// verifico se esiste una porta applicativa piu' specifica
-			IdentificazionePortaApplicativa identificazione = new IdentificazionePortaApplicativa(logCore, protocolFactory, openspcoopstate.getStatoRichiesta(), pa);
+			IdentificazionePortaApplicativa identificazione = new IdentificazionePortaApplicativa(logCore, protocolFactory, 
+					registroServiziReader, configurazionePdDReader, requestInfo,
+					pa);
 			String action = idServizio.getAzione();
 			if(identificazione.find(action)) {
 				IDPortaApplicativa idPA_action = identificazione.getIDPortaApplicativa(action);
@@ -1760,7 +1766,7 @@ public class RicezioneBuste {
 										
 					pa = identificazione.getPortaApplicativa(action);
 					msgDiag.addKeyword(CostantiPdD.KEY_PORTA_APPLICATIVA, pa.getNome());
-					msgDiag.updatePorta(pa.getNome());
+					msgDiag.updatePorta(pa.getNome(), requestInfo);
 					if(requestMessage.getTransportRequestContext()!=null) {
 						requestMessage.getTransportRequestContext().setInterfaceName(pa.getNome());
 					}
@@ -1901,7 +1907,7 @@ public class RicezioneBuste {
 			// Aggiorno domini dei soggetti se completamente ricostruiti tramite url mapping differente da plugin based
 			if(soggettoFruitore!=null && soggettoFruitore.getTipo()!=null && soggettoFruitore.getNome()!=null){
 				try {
-					soggettoFruitore.setCodicePorta(registroServiziReader.getDominio(soggettoFruitore, nomeRegistroForSearch, protocolFactory));
+					soggettoFruitore.setCodicePorta(registroServiziReader.getDominio(soggettoFruitore, nomeRegistroForSearch, protocolFactory, requestInfo));
 				} catch (Exception e) {
 					//e.printStackTrace();
 				}
@@ -1925,7 +1931,7 @@ public class RicezioneBuste {
 					idSoggetto = idServizio.getSoggettoErogatore();
 				}
 				else {
-					idSoggetto = propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol());
+					idSoggetto = propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol(), requestInfo);
 				}
 				id = 
 					imbustamento.buildID(idSoggetto, 
@@ -1941,7 +1947,7 @@ public class RicezioneBuste {
 			// InfoServizio (NOTA: lasciare per ultimo)
 			if(is.isStaticBasedIdentificationMode_InfoProtocol()){
 				if(identitaServizioValida) {
-					infoServizio = registroServiziReader.getInfoServizio(soggettoFruitore, idServizio,nomeRegistroForSearch,true, true);
+					infoServizio = registroServiziReader.getInfoServizio(soggettoFruitore, idServizio,nomeRegistroForSearch,true, true, requestInfo);
 				}
 				else {
 					infoServizio = new Servizio(); // se l'id servizio non e' valido poi viene segnalato dal motore della validazione
@@ -1961,7 +1967,7 @@ public class RicezioneBuste {
 					try {
 						if(is.isStaticBasedIdentificationMode_InfoProtocol()){
 							if(identitaServizioValida) {
-								infoServizio = registroServiziReader.getInfoServizio(soggettoFruitore, idServizio,nomeRegistroForSearch,true, false);
+								infoServizio = registroServiziReader.getInfoServizio(soggettoFruitore, idServizio,nomeRegistroForSearch,true, false, requestInfo);
 							}
 						}
 					}catch(Exception eGetInfoServizio) {
@@ -2018,9 +2024,9 @@ public class RicezioneBuste {
 						if(idServizio!=null && idServizio.getAzione()!=null) {
 							try {
 								RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance();
-								AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false);
+								AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false, requestInfo);
 								if(asps!=null) {
-									AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), null, false, false);
+									AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), null, false, false, requestInfo);
 									if(aspc!=null && org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(aspc.getServiceBinding())) {
 										if(aspc.sizeResourceList()>0) {
 											for (Resource resource : aspc.getResourceList()) {
@@ -2174,7 +2180,7 @@ public class RicezioneBuste {
 				){
 					try{
 						String dominioTmp = configurazionePdDReader.getIdentificativoPorta(new IDSoggetto(erroreIntestazione.getTipoDestinatario(),
-								erroreIntestazione.getDestinatario()),protocolFactory);
+								erroreIntestazione.getDestinatario()),protocolFactory, requestInfo);
 						if(dominioTmp!=null){
 							identitaPdD.setCodicePorta(dominioTmp);
 							identitaPdD.setTipo(erroreIntestazione.getTipoDestinatario());
@@ -2189,14 +2195,14 @@ public class RicezioneBuste {
 				// Imposto i domini corretti, se sono stati impostati dei mittenti e tipi mittenti esistenti
 				if(erroreIntestazione.getMittente()!=null && erroreIntestazione.getTipoMittente()!=null){
 					try{
-						String dominio = registroServiziReader.getDominio(new IDSoggetto(erroreIntestazione.getTipoMittente(), erroreIntestazione.getMittente()), null, protocolFactory);
+						String dominio = registroServiziReader.getDominio(new IDSoggetto(erroreIntestazione.getTipoMittente(), erroreIntestazione.getMittente()), null, protocolFactory, requestInfo);
 						if(dominio!=null)
 							erroreIntestazione.setIdentificativoPortaMittente(dominio);
 					}catch(Exception e){}
 				}
 				if(erroreIntestazione.getDestinatario()!=null && erroreIntestazione.getTipoDestinatario()!=null){
 					try{
-						String dominio = registroServiziReader.getDominio(new IDSoggetto(erroreIntestazione.getTipoDestinatario(), erroreIntestazione.getDestinatario()), null, protocolFactory);
+						String dominio = registroServiziReader.getDominio(new IDSoggetto(erroreIntestazione.getTipoDestinatario(), erroreIntestazione.getDestinatario()), null, protocolFactory, requestInfo);
 						if(dominio!=null)
 							erroreIntestazione.setIdentificativoPortaDestinatario(dominio);
 					}catch(Exception e){}
@@ -2224,7 +2230,7 @@ public class RicezioneBuste {
 							this.msgContext.getIdModulo(),
 							inRequestContext.getPddContext(),
 							this.msgContext.getTipoPorta(),msgDiag.getPorta(),
-							openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+							configurazionePdDReader);
 					
 					erroreIntestazione.setServizioApplicativoFruitore(servizioApplicativoFruitore);
 					String dettaglioErrore = null;
@@ -2276,7 +2282,7 @@ public class RicezioneBuste {
 							this.msgContext.getIdModulo(),
 							inRequestContext.getPddContext(),
 							this.msgContext.getTipoPorta(),msgDiag.getPorta(),
-							openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+							configurazionePdDReader);
 					
 					parametriGenerazioneBustaErrore.setTracciamento(tracciamento);
 					parametriGenerazioneBustaErrore.setBusta(erroreIntestazione);
@@ -2512,7 +2518,7 @@ public class RicezioneBuste {
 						servizioApplicativoErogatoreAsincronoSimmetricoRisposta = integrazione.getServizioApplicativo();
 						idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
-						pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+						pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
 						idPD = configurazionePdDReader.convertToIDPortaDelegata(pd); // per aggiungere informazioni sugli identificativi
 						
 					}
@@ -2549,7 +2555,7 @@ public class RicezioneBuste {
 							}
 							idPD = new IDPortaDelegata();
 							idPD.setNome(integrazione.getNomePorta());
-							pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+							pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
 							idPD = configurazionePdDReader.convertToIDPortaDelegata(pd); // per aggiungere informazioni sugli identificativi
 						}
 						
@@ -2566,7 +2572,7 @@ public class RicezioneBuste {
 				// Aggiungo identita servizio applicativi
 				if(pa!=null){
 					idPA = configurazionePdDReader.convertToIDPortaApplicativa(pa);
-					msgDiag.updatePorta(pa.getNome());
+					msgDiag.updatePorta(pa.getNome(), requestInfo);
 					for(int i=0; i<pa.sizeServizioApplicativoList();i++){
 						this.msgContext.getIntegrazione().addServizioApplicativoErogatore(pa.getServizioApplicativo(i).getNome());
 					}
@@ -2627,7 +2633,7 @@ public class RicezioneBuste {
 				this.msgContext.getIdModulo(),
 				inRequestContext.getPddContext(),
 				this.msgContext.getTipoPorta(),msgDiag.getPorta(),
-				openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+				configurazionePdDReader);
 		parametriGenerazioneBustaErrore.setTracciamento(tracciamento);
 		
 		
@@ -2670,7 +2676,7 @@ public class RicezioneBuste {
 								identita = "Gestore delle credenziali di tipo "+RicezioneBuste.tipiGestoriCredenziali[i];
 							}
 							msgDiag.addKeyword(CostantiPdD.KEY_IDENTITA_GESTORE_CREDENZIALI, identita);
-							pddContext.addObject(CostantiPdD.KEY_IDENTITA_GESTORE_CREDENZIALI, identita);
+							pddContext.addObject(org.openspcoop2.core.constants.Costanti.IDENTITA_GESTORE_CREDENZIALI, identita);
 							msgDiag.logPersonalizzato("gestoreCredenziali.nuoveCredenziali");
 							// update credenziali
 							inRequestContext.getConnettore().setCredenziali(credenzialiRitornate);
@@ -2783,10 +2789,10 @@ public class RicezioneBuste {
 					
 					PolicyGestioneToken policyGestioneToken = null;
 					if(pa!=null){
-						policyGestioneToken = configurazionePdDReader.getPolicyGestioneToken(pa);
+						policyGestioneToken = configurazionePdDReader.getPolicyGestioneToken(pa, requestInfo);
 					}
 					else {
-						policyGestioneToken = configurazionePdDReader.getPolicyGestioneToken(pd);
+						policyGestioneToken = configurazionePdDReader.getPolicyGestioneToken(pd, requestInfo);
 					}
 					
 					pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_REALM,
@@ -3205,25 +3211,71 @@ public class RicezioneBuste {
 		/*
 		 * ---------------- Mittente / Autenticazione ---------------------
 		 */
+		RequestFruitore requestFruitoreTrasporto = null;
+		IDServizioApplicativo idSAFruitore = null;
+		ServizioApplicativo sa = null;
+		Soggetto soggettoFruitoreObject = null;
+		
 		boolean soggettoFruitoreIdentificatoTramiteProtocollo = false;
 		if(soggettoFruitore==null && validatore.getSoggettoMittente()!=null) {
 			soggettoFruitoreIdentificatoTramiteProtocollo = true;
 		}
 		soggettoFruitore = validatore.getSoggettoMittente();
-		Soggetto soggettoFruitoreObject = null;
-		if(soggettoFruitore!=null) {
-			try {
-				soggettoFruitoreObject = registroServiziReader.getSoggetto(soggettoFruitore, null);
-				Map<String, String> configProperties = registroServiziReader.getProprietaConfigurazione(soggettoFruitoreObject);
-	            if (configProperties != null && !configProperties.isEmpty()) {
-	            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, configProperties);
-				}	
-			}catch(Throwable t) {}	
-		}
+
+		// ACCEDE DUE VOLTE ALLA CACHE DEI FRUITORI, QUA CON SA NULL E POI SI RIPETE CON SA VALORIZZATO SE E' ATTIVA L'AUTENTICAZIONE
+//		requestFruitore = GestoreRichieste.readFruitore(requestInfo, this.soggettoFruitore, idSAFruitore);
+//		Soggetto soggettoFruitoreObject = null;
+//		if(this.soggettoFruitore!=null) {
+//			try {
+//				soggettoFruitoreObject = this.registroServiziReader.getSoggetto(this.soggettoFruitore, null, requestInfo);
+//				Map<String, String> configProperties = this.registroServiziReader.getProprietaConfigurazione(soggettoFruitoreObject);
+//	            if (configProperties != null && !configProperties.isEmpty()) {
+//	            	this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, configProperties);
+//				}	
+//			}catch(Throwable t) {}	
+//		}
+//		if(useRequestThreadContext && soggettoFruitoreObject!=null) {
+//			try {
+//				requestInfo.getRequestThreadContext().setSoggettoFruitoreRegistry(soggettoFruitoreObject);
+//			}catch(Throwable t) {}	
+//			try {
+//				org.openspcoop2.core.config.Soggetto soggettoConfig = this.configurazionePdDReader.getSoggetto(this.soggettoFruitore, requestInfo); 
+//				requestInfo.getRequestThreadContext().setSoggettoFruitoreConfig(soggettoConfig);
+//			}catch(Throwable t) {}	
+//			try {
+//				String idPorta = this.configurazionePdDReader.getIdentificativoPorta(this.soggettoFruitore, this.protocolFactory, requestInfo);
+//				requestInfo.getRequestThreadContext().setSoggettoFruitoreIdentificativoPorta(idPorta);
+//			}catch(Throwable t) {}	
+//			try {
+//				boolean soggettoVirtualeFRU = this.configurazionePdDReader.isSoggettoVirtuale(this.soggettoFruitore, requestInfo);
+//				requestInfo.getRequestThreadContext().setSoggettoFruitoreSoggettoVirtuale(soggettoVirtualeFRU);
+//			}catch(Throwable t) {}	
+//			try {
+//				if(requestInfo.getRequestThreadContext().getSoggettoFruitoreRegistry()!=null) {
+//					if(requestInfo.getRequestThreadContext().getSoggettoFruitoreRegistry().getPortaDominio()!=null &&
+//							StringUtils.isNotEmpty(requestInfo.getRequestThreadContext().getSoggettoFruitoreRegistry().getPortaDominio())) {
+//						PortaDominio pdd = this.registroServiziReader.getPortaDominio(requestInfo.getRequestThreadContext().getSoggettoFruitoreRegistry().getPortaDominio(), null, requestInfo);
+//						requestInfo.getRequestThreadContext().setSoggettoFruitorePddReaded(true);
+//						requestInfo.getRequestThreadContext().setSoggettoFruitorePdd(pdd);
+//					}
+//					else {
+//						requestInfo.getRequestThreadContext().setSoggettoFruitorePddReaded(true);
+//					}
+//				}
+//			}catch(Throwable t) {}	
+//			try {
+//				String impl = this.registroServiziReader.getImplementazionePdD(this.soggettoFruitore, null, requestInfo);
+//				requestInfo.getRequestConfig().setSoggettoFruitoreImplementazionePdd(impl);
+//			}catch(Throwable t) {}	
+//		}
+
 		boolean soggettoAutenticato = false;
 		boolean supportatoAutenticazioneSoggetti = false;
 		ParametriAutenticazione parametriAutenticazione = null;
 		IDServizioApplicativo idApplicativoToken = null;
+		ServizioApplicativo saApplicativoToken = null;
+		Soggetto soggettoToken = null;
+		RequestFruitore requestFruitoreToken = null;
 		if(functionAsRouter==false){
 			supportatoAutenticazioneSoggetti = protocolFactory.createProtocolConfiguration().isSupportoAutenticazioneSoggetti();
 			String credenzialeTrasporto = null;
@@ -3370,11 +3422,12 @@ public class RicezioneBuste {
 										msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, servizioApplicativoFruitore);
 										this.msgContext.getIntegrazione().setServizioApplicativoFruitore(servizioApplicativoFruitore);
 										
-										IDServizioApplicativo idSAFruitore = new IDServizioApplicativo();
+										idSAFruitore = new IDServizioApplicativo();
 										idSAFruitore.setIdSoggettoProprietario(soggettoFruitore);
 										idSAFruitore.setNome(servizioApplicativoFruitore);
 										try {
-											ServizioApplicativo sa = configurazionePdDReader.getServizioApplicativo(idSAFruitore);
+											requestFruitoreTrasporto = GestoreRichieste.readFruitoreTrasporto(requestInfo, soggettoFruitore, idSAFruitore);
+											sa = configurazionePdDReader.getServizioApplicativo(idSAFruitore, requestInfo);
 											Map<String, String> configProperties = configurazionePdDReader.getProprietaConfigurazione(sa);
 								            if (configProperties != null && !configProperties.isEmpty()) {
 								            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO, configProperties);
@@ -3396,6 +3449,21 @@ public class RicezioneBuste {
 									// evito comunque di ripresentarle nei successivi diagnostici, l'informazione l'ho gia' visualizzata nei diagnostici dell'autenticazione
 									msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, ""); // per evitare di visualizzarle anche nei successivi diagnostici
 									msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI, "");
+									
+									if(soggettoFruitore!=null && soggettoFruitoreObject==null) {
+										try {
+											if(requestFruitoreTrasporto==null) {
+												requestFruitoreTrasporto = GestoreRichieste.readFruitoreTrasporto(requestInfo, soggettoFruitore, idSAFruitore);
+											}
+										}catch(Throwable t) {
+											logCore.error("Errore durante la lettura del soggetto '"+soggettoFruitore+"' dall'oggetto request info: "+t.getMessage(),t);
+										}
+										try {
+											soggettoFruitoreObject = registroServiziReader.getSoggetto(soggettoFruitore, null, requestInfo);
+										}catch(Throwable t) {
+											logCore.error("Errore durante la lettura del soggetto '"+soggettoFruitore+"' dal registro: "+t.getMessage(),t);
+										}
+									}
 									
 									if(soggettoFruitoreIdentificatoTramiteProtocollo &&
 											soggettoFruitore!=null &&  soggettoFruitore.getNome()!=null && soggettoFruitore.getTipo()!=null &&
@@ -3797,15 +3865,16 @@ public class RicezioneBuste {
 								
 								pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN, idApplicativoToken);
 								try {
-									ServizioApplicativo sa = configurazionePdDReader.getServizioApplicativo(idApplicativoToken);
-									Map<String, String> configProperties = configurazionePdDReader.getProprietaConfigurazione(sa);
+									requestFruitoreToken = GestoreRichieste.readFruitoreToken(requestInfo, idApplicativoToken.getIdSoggettoProprietario(), idApplicativoToken);
+									saApplicativoToken = configurazionePdDReader.getServizioApplicativo(idApplicativoToken, requestInfo);
+									Map<String, String> configProperties = configurazionePdDReader.getProprietaConfigurazione(saApplicativoToken);
 						            if (configProperties != null && !configProperties.isEmpty()) {
 						            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO_TOKEN, configProperties);
 									}	
 								}catch(Throwable t) {}	
 								try {
-									Soggetto soggetto = registroServiziReader.getSoggetto(idApplicativoToken.getIdSoggettoProprietario(), null);
-									Map<String, String> configProperties = registroServiziReader.getProprietaConfigurazione(soggetto);
+									soggettoToken = registroServiziReader.getSoggetto(idApplicativoToken.getIdSoggettoProprietario(), null, requestInfo);
+									Map<String, String> configProperties = registroServiziReader.getProprietaConfigurazione(soggettoToken);
 						            if (configProperties != null && !configProperties.isEmpty()) {
 						            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN, configProperties);
 									}	
@@ -3910,12 +3979,12 @@ public class RicezioneBuste {
 				
 					if(credenzialeTrasporto!=null) {
 						GestoreAutenticazione.updateCredenzialiTrasporto(identitaPdD, ID_MODULO, idTransazione, tipoAutenticazione, credenzialeTrasporto, credenzialiMittente, 
-								openspcoopstate, "RicezioneBuste.credenzialiTrasporto");
+								openspcoopstate, "RicezioneBuste.credenzialiTrasporto", requestInfo);
 					}
 					
 					if(informazioniTokenNormalizzate!=null) {
 						GestoreAutenticazione.updateCredenzialiToken(identitaPdD, ID_MODULO, idTransazione, informazioniTokenNormalizzate, idApplicativoToken, credenzialiMittente, 
-								openspcoopstate, "RicezioneBuste.credenzialiToken");
+								openspcoopstate, "RicezioneBuste.credenzialiToken", requestInfo);
 					}
 					
 					transaction.setCredenzialiMittente(credenzialiMittente);
@@ -3957,17 +4026,199 @@ public class RicezioneBuste {
 
 
 		}
+		
+		// ** trasporto **
 		try {
 			pddContext.removeObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE);
 		}catch(Throwable t) {}	
+		// Avendo commentato il pezzo prima dell'autenticazione, non dovrebbe servire neanche questo
+		//requestInfo.getRequestThreadContext().clearSoggettoFruitore();
 		if(soggettoFruitore!=null) {
 			try {
-				soggettoFruitoreObject = registroServiziReader.getSoggetto(soggettoFruitore, null);
-				Map<String, String> configProperties = registroServiziReader.getProprietaConfigurazione(soggettoFruitoreObject);
-	            if (configProperties != null && !configProperties.isEmpty()) {
-	            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, configProperties);
-				}	
-			}catch(Throwable t) {}	
+				if(requestFruitoreTrasporto==null) {
+					requestFruitoreTrasporto = GestoreRichieste.readFruitoreTrasporto(requestInfo, soggettoFruitore, idSAFruitore);
+				}
+			}catch(Throwable t) {
+				logCore.error("Errore durante la lettura del soggetto '"+soggettoFruitore+"' dall'oggetto request info: "+t.getMessage(),t);
+			}
+			if(soggettoFruitoreObject==null) {
+				try {
+					soggettoFruitoreObject = registroServiziReader.getSoggetto(soggettoFruitore, null, requestInfo);
+				}catch(Throwable t) {
+					logCore.error("Errore durante la lettura del soggetto '"+soggettoFruitore+"' dal registro: "+t.getMessage(),t);
+				}
+				if(soggettoFruitoreObject!=null) {
+					try {
+						Map<String, String> configProperties = registroServiziReader.getProprietaConfigurazione(soggettoFruitoreObject);
+			            if (configProperties != null && !configProperties.isEmpty()) {
+			            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, configProperties);
+						}	
+					}catch(Throwable t) {
+						logCore.error("Errore durante la lettura delle proprietà del soggetto '"+soggettoFruitore+"' dal registro: "+t.getMessage(),t);
+					}	
+				}
+			}
+		}
+		if(requestFruitoreTrasporto==null && soggettoFruitoreObject!=null) {
+			
+			RequestFruitore rf = new RequestFruitore(); 
+			
+			rf.setIdSoggettoFruitore(soggettoFruitore);
+			rf.setSoggettoFruitoreRegistry(soggettoFruitoreObject);	
+			try {
+				org.openspcoop2.core.config.Soggetto soggettoConfig = configurazionePdDReader.getSoggetto(soggettoFruitore, requestInfo); 
+				rf.setSoggettoFruitoreConfig(soggettoConfig);
+			}catch(Throwable t) {
+				logCore.error("Errore durante la lettura del soggetto '"+soggettoFruitore+"' dalla configurazione: "+t.getMessage(),t);
+			}	
+			try {
+				String idPorta = configurazionePdDReader.getIdentificativoPorta(soggettoFruitore, protocolFactory, requestInfo);
+				rf.setSoggettoFruitoreIdentificativoPorta(idPorta);
+			}catch(Throwable t) {
+				logCore.error("Errore durante la lettura dell'identificativo porta del soggetto '"+soggettoFruitore+"' dal registro: "+t.getMessage(),t);
+			}	
+			try {
+				boolean soggettoVirtualeFRU = configurazionePdDReader.isSoggettoVirtuale(soggettoFruitore, requestInfo);
+				rf.setSoggettoFruitoreSoggettoVirtuale(soggettoVirtualeFRU);
+			}catch(Throwable t) {
+				logCore.error("Errore durante la lettura dell'indicazione sul soggetto virtuale associato al soggetto '"+soggettoFruitore+"' dal registro: "+t.getMessage(),t);
+			}	
+			try {
+				if(rf!=null) {
+					if(rf.getSoggettoFruitoreRegistry().getPortaDominio()!=null &&
+							StringUtils.isNotEmpty(rf.getSoggettoFruitoreRegistry().getPortaDominio())) {
+						PortaDominio pdd = registroServiziReader.getPortaDominio(rf.getSoggettoFruitoreRegistry().getPortaDominio(), null, requestInfo);
+						rf.setSoggettoFruitorePddReaded(true);
+						rf.setSoggettoFruitorePdd(pdd);
+					}
+					else {
+						rf.setSoggettoFruitorePddReaded(true);
+					}
+				}
+			}catch(Throwable t) {
+				logCore.error("Errore durante la lettura dei dati della pdd del soggetto '"+soggettoFruitore+"' dal registro: "+t.getMessage(),t);
+			}	
+			try {
+				String impl = registroServiziReader.getImplementazionePdD(soggettoFruitore, null, requestInfo);
+				rf.setSoggettoFruitoreImplementazionePdd(impl);
+			}catch(Throwable t) {
+				logCore.error("Errore durante la lettura dell'implementazione pdd del soggetto '"+soggettoFruitore+"' dal registro: "+t.getMessage(),t);
+			}	
+				
+			rf.setIdServizioApplicativoFruitore(idSAFruitore);
+			rf.setServizioApplicativoFruitore(sa);
+			// Supportato solo per ricezione contenuti applicativi, trasporto: rf.setServizioApplicativoFruitoreAnonimo(sa==null);
+			
+			try {
+				GestoreRichieste.saveRequestFruitoreTrasporto(requestInfo, rf);
+			} catch (Throwable e) {
+				logCore.error("Errore durante il salvataggio nella cache e nel thread context delle informazioni sul fruitore trasporto: "+e.getMessage(),e);
+			}
+			
+		}
+		
+		// ** token **
+		if(idApplicativoToken!=null) {
+			try {
+				if(requestFruitoreToken==null) {
+					requestFruitoreToken = GestoreRichieste.readFruitoreToken(requestInfo, idApplicativoToken.getIdSoggettoProprietario(), idApplicativoToken);
+				}
+			}catch(Throwable t) {
+				logCore.error("Errore durante la lettura del fruitore '"+idApplicativoToken+"' dall'oggetto request info: "+t.getMessage(),t);
+			}
+			
+			if(saApplicativoToken==null) {
+				try {
+					saApplicativoToken = configurazionePdDReader.getServizioApplicativo(idApplicativoToken, requestInfo);
+				}catch(Throwable t) {
+					logCore.error("Errore durante la lettura dell'applicativo '"+idApplicativoToken+"' dal registro: "+t.getMessage(),t);
+				}
+				if(saApplicativoToken!=null) {
+					try {
+						Map<String, String> configProperties = configurazionePdDReader.getProprietaConfigurazione(saApplicativoToken);
+						if (configProperties != null && !configProperties.isEmpty()) {
+							pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO_TOKEN, configProperties);
+						}	
+					}catch(Throwable t) {
+						logCore.error("Errore durante la lettura delle proprietà dell'applicativo '"+idApplicativoToken+"' dal registro: "+t.getMessage(),t);
+					}
+				}
+			}
+			
+			if(soggettoToken==null) {
+				try {
+					soggettoToken = registroServiziReader.getSoggetto(idApplicativoToken.getIdSoggettoProprietario(), null, requestInfo);
+				}catch(Throwable t) {
+					logCore.error("Errore durante la lettura del soggetto '"+idApplicativoToken.getIdSoggettoProprietario()+"' dal registro: "+t.getMessage(),t);
+				}
+				if(soggettoToken!=null) {
+					try {
+						Map<String, String> configProperties = registroServiziReader.getProprietaConfigurazione(soggettoToken);
+			            if (configProperties != null && !configProperties.isEmpty()) {
+			            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN, configProperties);
+						}	
+					}catch(Throwable t) {
+						logCore.error("Errore durante la lettura delle proprietà del soggetto '"+idApplicativoToken.getIdSoggettoProprietario()+"' dal registro: "+t.getMessage(),t);
+					}	
+				}
+			}
+		}
+		if(requestFruitoreToken==null && idApplicativoToken!=null && soggettoToken!=null && saApplicativoToken!=null) {
+			
+			RequestFruitore rf = new RequestFruitore(); 
+			
+			rf.setIdSoggettoFruitore(idApplicativoToken.getIdSoggettoProprietario());
+			rf.setSoggettoFruitoreRegistry(soggettoToken);	
+			try {
+				org.openspcoop2.core.config.Soggetto soggettoConfig = configurazionePdDReader.getSoggetto(idApplicativoToken.getIdSoggettoProprietario(), requestInfo); 
+				rf.setSoggettoFruitoreConfig(soggettoConfig);
+			}catch(Throwable t) {
+				logCore.error("Errore durante la lettura del soggetto '"+idApplicativoToken.getIdSoggettoProprietario()+"' dalla configurazione: "+t.getMessage(),t);
+			}	
+			try {
+				String idPorta = configurazionePdDReader.getIdentificativoPorta(idApplicativoToken.getIdSoggettoProprietario(), protocolFactory, requestInfo);
+				rf.setSoggettoFruitoreIdentificativoPorta(idPorta);
+			}catch(Throwable t) {
+				logCore.error("Errore durante la lettura dell'identificativo porta del soggetto '"+idApplicativoToken.getIdSoggettoProprietario()+"' dal registro: "+t.getMessage(),t);
+			}	
+			try {
+				boolean soggettoVirtualeFRU = configurazionePdDReader.isSoggettoVirtuale(idApplicativoToken.getIdSoggettoProprietario(), requestInfo);
+				rf.setSoggettoFruitoreSoggettoVirtuale(soggettoVirtualeFRU);
+			}catch(Throwable t) {
+				logCore.error("Errore durante la lettura dell'indicazione sul soggetto virtuale associato al soggetto '"+idApplicativoToken.getIdSoggettoProprietario()+"' dal registro: "+t.getMessage(),t);
+			}	
+			try {
+				if(rf!=null) {
+					if(rf.getSoggettoFruitoreRegistry().getPortaDominio()!=null &&
+							StringUtils.isNotEmpty(rf.getSoggettoFruitoreRegistry().getPortaDominio())) {
+						PortaDominio pdd = registroServiziReader.getPortaDominio(rf.getSoggettoFruitoreRegistry().getPortaDominio(), null, requestInfo);
+						rf.setSoggettoFruitorePddReaded(true);
+						rf.setSoggettoFruitorePdd(pdd);
+					}
+					else {
+						rf.setSoggettoFruitorePddReaded(true);
+					}
+				}
+			}catch(Throwable t) {
+				logCore.error("Errore durante la lettura dei dati della pdd del soggetto '"+idApplicativoToken.getIdSoggettoProprietario()+"' dal registro: "+t.getMessage(),t);
+			}	
+			try {
+				String impl = registroServiziReader.getImplementazionePdD(idApplicativoToken.getIdSoggettoProprietario(), null, requestInfo);
+				rf.setSoggettoFruitoreImplementazionePdd(impl);
+			}catch(Throwable t) {
+				logCore.error("Errore durante la lettura dell'implementazione pdd del soggetto '"+idApplicativoToken.getIdSoggettoProprietario()+"' dal registro: "+t.getMessage(),t);
+			}	
+				
+			rf.setIdServizioApplicativoFruitore(idApplicativoToken);
+			rf.setServizioApplicativoFruitore(saApplicativoToken);
+			// nel token non ha senso rf.setServizioApplicativoFruitoreAnonimo(saApplicativoToken==null);
+			
+			try {
+				GestoreRichieste.saveRequestFruitoreToken(requestInfo, rf);
+			} catch (Throwable e) {
+				logCore.error("Errore durante il salvataggio nella cache e nel thread context delle informazioni sul fruitore token: "+e.getMessage(),e);
+			}
+			
 		}
 		
 		
@@ -4007,7 +4258,7 @@ public class RicezioneBuste {
 			DirectVMProtocolInfo.setInfoFromContext(pddContext, bustaRichiesta);
 			
 		// Se non impostati, imposto i domini
-		org.openspcoop2.pdd.core.Utilities.refreshIdentificativiPorta(bustaRichiesta, requestInfo.getIdentitaPdD(), registroServiziReader, protocolFactory);
+		org.openspcoop2.pdd.core.Utilities.refreshIdentificativiPorta(bustaRichiesta, requestInfo.getIdentitaPdD(), registroServiziReader, protocolFactory, requestInfo);
 		if(soggettoFruitore != null){
 			if(soggettoFruitore.getCodicePorta()==null){
 				soggettoFruitore.setCodicePorta(bustaRichiesta.getIdentificativoPortaMittente());
@@ -4055,7 +4306,7 @@ public class RicezioneBuste {
 			this.msgContext.getProtocol().setTipoServizio(idServizio.getTipo());
 			this.msgContext.getProtocol().setServizio(idServizio.getNome());
 			this.msgContext.getProtocol().setVersioneServizio(idServizio.getVersione());
-			this.msgContext.getProtocol().setAzione(idServizio.getAzione());
+			this.msgContext.getProtocol().setAzione(idServizio.getAzione()); 
 		}
 		this.msgContext.getProtocol().setIdRichiesta(idMessageRequest);
 		this.msgContext.getProtocol().setProfiloCollaborazione(bustaRichiesta.getProfiloDiCollaborazione(),bustaRichiesta.getProfiloDiCollaborazioneValue());
@@ -4216,7 +4467,7 @@ public class RicezioneBuste {
 						msgDiag.addKeyword(CostantiPdD.KEY_ATTRIBUTE_AUTHORITY_NAME, aa.getNome());
 						msgDiag.addKeyword(CostantiPdD.KEY_ATTRIBUTE_AUTHORITY_ENDPOINT, "-");
 						
-						PolicyAttributeAuthority policyAttributeAuthority = configurazionePdDReader.getPolicyAttributeAuthority(false, aa.getNome());
+						PolicyAttributeAuthority policyAttributeAuthority = configurazionePdDReader.getPolicyAttributeAuthority(false, aa.getNome(), requestInfo);
 						datiInvocazione.setPolicyAttributeAuthority(policyAttributeAuthority);
 				
 						GestoreToken.validazioneConfigurazione(policyAttributeAuthority); // assicura che la configurazione sia corretta
@@ -4324,7 +4575,7 @@ public class RicezioneBuste {
 		try {
 			msgDiag.mediumDebug("Aggiornamento del messaggio");
 			requestMessage = protocolFactory.createProtocolManager().updateOpenSPCoop2MessageRequest(requestMessage, bustaRichiesta,
-					protocolFactory.getCachedRegistryReader(openspcoopstate.getStatoRichiesta()));
+					protocolFactory.getCachedRegistryReader(registroServiziReader, requestInfo));
 		} catch (Exception e) {
 			// Emetto log, non ancora emesso
 			if(validatore.getBusta()!=null && 
@@ -4553,16 +4804,16 @@ public class RicezioneBuste {
 		boolean validazioneIDBustaCompleta = true;
 		try{
 			if(soggettoFruitore!=null){
-				implementazionePdDMittente = registroServiziReader.getImplementazionePdD(soggettoFruitore, null);
+				implementazionePdDMittente = registroServiziReader.getImplementazionePdD(soggettoFruitore, null, requestInfo);
 			}
 			if(idServizio!=null && idServizio.getSoggettoErogatore()!=null){
-				implementazionePdDDestinatario = registroServiziReader.getImplementazionePdD(idServizio.getSoggettoErogatore(), null);
+				implementazionePdDDestinatario = registroServiziReader.getImplementazionePdD(idServizio.getSoggettoErogatore(), null, requestInfo);
 			}
 			if(soggettoFruitore!=null){
-				idPdDMittente = registroServiziReader.getIdPortaDominio(soggettoFruitore, null);
+				idPdDMittente = registroServiziReader.getIdPortaDominio(soggettoFruitore, null, requestInfo);
 			}
 			if(idServizio!=null && idServizio.getSoggettoErogatore()!=null){
-				idPdDDestinatario = registroServiziReader.getIdPortaDominio(idServizio.getSoggettoErogatore(), null);
+				idPdDDestinatario = registroServiziReader.getIdPortaDominio(idServizio.getSoggettoErogatore(), null, requestInfo);
 			}
 			parametriGenerazioneBustaErrore.setImplementazionePdDMittente(implementazionePdDMittente);
 			parametriGenerazioneBustaErrore.setImplementazionePdDDestinatario(implementazionePdDDestinatario);
@@ -5131,7 +5382,7 @@ public class RicezioneBuste {
 			/* ----------- Validazione Semantica (viene anche applicata la sicurezza) ------------ */
 			
 			msgDiag.logPersonalizzato("validazioneSemantica.beforeSecurity");
-			boolean presenzaRichiestaProtocollo = validatore.validazioneSemantica_beforeMessageSecurity(requestInfo.getProtocolServiceBinding(),false, null);
+			boolean presenzaRichiestaProtocollo = validatore.validazioneSemantica_beforeMessageSecurity(requestInfo.getProtocolServiceBinding(),false, null, requestInfo);
 			
 			if(validatore.isRilevatiErroriDuranteValidazioneSemantica()==false){
 				
@@ -5184,7 +5435,7 @@ public class RicezioneBuste {
 					
 						String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityContext.getIncomingProperties());
 						msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
-						pddContext.addObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
+						pddContext.addObject(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
 						
 						msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaInCorso");
 						
@@ -5209,7 +5460,7 @@ public class RicezioneBuste {
 				if(validatore.isRilevatiErroriDuranteValidazioneSemantica()==false){
 					
 					msgDiag.logPersonalizzato("validazioneSemantica.afterSecurity");
-					presenzaRichiestaProtocollo = validatore.validazioneSemantica_afterMessageSecurity(proprietaManifestAttachments, validazioneIDBustaCompleta);
+					presenzaRichiestaProtocollo = validatore.validazioneSemantica_afterMessageSecurity(proprietaManifestAttachments, validazioneIDBustaCompleta, requestInfo);
 			
 				}
 			}
@@ -6008,7 +6259,7 @@ public class RicezioneBuste {
 				IDSoggetto idSoggettoMittentePerAutorizzazione = getIDSoggettoMittentePerAutorizzazione(idServizio, soggettoFruitore, functionAsRouter, bustaRichiesta, ruoloBustaRicevuta, supportatoAutenticazioneSoggetti);
 				Soggetto soggettoMittentePerAutorizzazione = null;
 				if(idSoggettoMittentePerAutorizzazione!=null){
-					soggettoMittentePerAutorizzazione = registroServiziReader.getSoggetto(idSoggettoMittentePerAutorizzazione, null);
+					soggettoMittentePerAutorizzazione = registroServiziReader.getSoggetto(idSoggettoMittentePerAutorizzazione, null, requestInfo);
 				}
 
 				String tipoMessaggio = "messaggio";
@@ -6583,7 +6834,7 @@ public class RicezioneBuste {
 					IDSoggetto idSoggettoMittentePerAutorizzazione = getIDSoggettoMittentePerAutorizzazione(idServizio, soggettoFruitore, functionAsRouter, bustaRichiesta, ruoloBustaRicevuta, supportatoAutenticazioneSoggetti);
 					Soggetto soggettoMittentePerAutorizzazione = null;
 					if(idSoggettoMittentePerAutorizzazione!=null){
-						soggettoMittentePerAutorizzazione = registroServiziReader.getSoggetto(idSoggettoMittentePerAutorizzazione, null);
+						soggettoMittentePerAutorizzazione = registroServiziReader.getSoggetto(idSoggettoMittentePerAutorizzazione, null, requestInfo);
 					}
 					
 					String tipoMessaggio = "messaggio";
@@ -7438,10 +7689,10 @@ public class RicezioneBuste {
 							((OpenSPCoopStateless)openspcoopstate).setUseConnection(false);
 							*/
 							// update states
-							registroServiziReader.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
-							configurazionePdDReader.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
-							tracciamento.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
-							msgDiag.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+							registroServiziReader = registroServiziReader.refreshState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+							configurazionePdDReader = configurazionePdDReader.refreshState(registroServiziReader);
+							tracciamento.updateState(configurazionePdDReader);
+							msgDiag.updateState(configurazionePdDReader);
 						}
 					}
 
@@ -7518,10 +7769,10 @@ public class RicezioneBuste {
 
 
 		// refresh risorse con nuovi stati
-		configurazionePdDReader.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
-		registroServiziReader.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
-		tracciamento.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
-		msgDiag.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+		registroServiziReader = registroServiziReader.refreshState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+		configurazionePdDReader = configurazionePdDReader.refreshState(registroServiziReader);
+		tracciamento.updateState(configurazionePdDReader);
+		msgDiag.updateState(configurazionePdDReader);
 
 		
 		
@@ -7652,9 +7903,9 @@ public class RicezioneBuste {
 					// aggiorno pddContext
 					pddContext = ricezioneBusteMSG.getPddContext();
 					if(pddContext!=null){
-						List<String> enumPddContext = pddContext.keys();
+						List<MapKey<String>> enumPddContext = pddContext.keys();
 						if(enumPddContext!=null && !enumPddContext.isEmpty()) {
-							for (String key : enumPddContext) {
+							for (MapKey<String> key : enumPddContext) {
 								//System.out.println("AGGIORNO KEY BUSTE ["+key+"]");
 								this.msgContext.getPddContext().addObject(key, pddContext.getObject(key));
 							}
@@ -7868,7 +8119,7 @@ public class RicezioneBuste {
 						tras.setTipoDestinazione(bustaRisposta.getTipoDestinatario());
 					}
 					try{
-						String dominio = registroServiziReader.getDominio(new IDSoggetto(tras.getTipoDestinazione(),tras.getDestinazione()), null, protocolFactory);
+						String dominio = registroServiziReader.getDominio(new IDSoggetto(tras.getTipoDestinazione(),tras.getDestinazione()), null, protocolFactory, requestInfo);
 						tras.setIdentificativoPortaDestinazione(dominio);
 					}catch(Exception e){}
 					
@@ -8077,7 +8328,7 @@ public class RicezioneBuste {
 							
 							String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityContext.getOutgoingProperties());
 							msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
-							pddContext.addObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
+							pddContext.addObject(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
 							
 							msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaInCorso");
 							
@@ -8087,7 +8338,7 @@ public class RicezioneBuste {
 								responseMessage = responseMessage.normalizeToSaajImpl();
 							}
 							
-							if(messageSecurityContext.processOutgoing(responseMessage,pddContext.getContext(),
+							if(messageSecurityContext.processOutgoing(responseMessage,pddContext,
 									transaction!=null ? transaction.getTempiElaborazione() : null) == false){
 								
 								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , messageSecurityContext.getMsgErrore() );
@@ -8925,7 +9176,7 @@ public class RicezioneBuste {
 				if(integrazione.getNomePorta()!=null){
 					IDPortaDelegata idPD = new IDPortaDelegata();
 					idPD.setNome(integrazione.getNomePorta());
-					PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+					PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
 					flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 					flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
 				}
@@ -8968,7 +9219,7 @@ public class RicezioneBuste {
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
-						pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+						pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
 					}
 					flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 					flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
@@ -9013,7 +9264,7 @@ public class RicezioneBuste {
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
-						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
 						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForSender(pd, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext);
 						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForSender(pd);
 
@@ -9025,7 +9276,7 @@ public class RicezioneBuste {
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
-						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
 						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
 						flowProperties.tipoMessaggio = RuoloMessaggio.RISPOSTA;
@@ -9038,7 +9289,7 @@ public class RicezioneBuste {
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
-						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
 						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
 						flowProperties.tipoMessaggio = RuoloMessaggio.RISPOSTA;
@@ -9116,7 +9367,7 @@ public class RicezioneBuste {
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
-						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
 						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
 						flowProperties.tipoMessaggio = RuoloMessaggio.RISPOSTA;
@@ -9129,7 +9380,7 @@ public class RicezioneBuste {
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
-						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
 						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
 						flowProperties.tipoMessaggio = RuoloMessaggio.RISPOSTA;
@@ -9280,7 +9531,7 @@ public class RicezioneBuste {
 					Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 					IDPortaDelegata idPD = new IDPortaDelegata();
 					idPD.setNome(integrazione.getNomePorta());
-					PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+					PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, requestInfo);
 					flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForSender(pd, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext);
 					flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForSender(pd);
 

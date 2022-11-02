@@ -19,22 +19,17 @@
  */
 package org.openspcoop2.security.message.signature;
 
-import java.io.IOException;
+import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.xml.security.c14n.CanonicalizationException;
-import org.apache.xml.security.c14n.InvalidCanonicalizerException;
 import org.apache.xml.security.c14n.implementations.Canonicalizer20010315ExclOmitComments;
 import org.apache.xml.security.signature.XMLSignatureInput;
-import org.apache.xml.security.transforms.Transform;
-import org.apache.xml.security.transforms.TransformationException;
 import org.apache.xml.security.transforms.implementations.TransformC14NExclusive;
 import org.apache.xml.security.transforms.params.InclusiveNamespaces;
 import org.apache.xml.security.utils.XMLUtils;
 import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
+import org.w3c.dom.Node;
 
 /**
  * XMLSecAttachmentTextXMLContentTransform
@@ -46,36 +41,26 @@ import org.xml.sax.SAXException;
 public class XMLSecAttachmentTextXMLContentTransform extends TransformC14NExclusive {
 
 	@Override
-	public XMLSignatureInput enginePerformTransform(XMLSignatureInput xmlsignatureinput,
-			OutputStream outputstream, Transform transform) throws CanonicalizationException {
-		return performTransform_engine(xmlsignatureinput, outputstream, transform);
-	}
-
-	@Override
-	public XMLSignatureInput enginePerformTransform(XMLSignatureInput xmlsignatureinput,
-			Transform transform) throws CanonicalizationException, InvalidCanonicalizerException, TransformationException, IOException, ParserConfigurationException, SAXException {
-		return performTransform_engine(xmlsignatureinput, null, transform);
-	}
-
-	private XMLSignatureInput performTransform_engine(XMLSignatureInput xmlsignatureinput,
-			OutputStream outputstream,
-			Transform transform) throws CanonicalizationException {
+	protected XMLSignatureInput enginePerformTransform(XMLSignatureInput xmlsignatureinput,
+			OutputStream outputstream, Element transformElement, String baseURI, boolean secureValidation) throws CanonicalizationException {
 		
 		try{		
 	        XMLSignatureInput xmlsignatureinput1 = null;
 	        String s = null;
-	        if(transform.length("http://www.w3.org/2001/10/xml-exc-c14n#", "InclusiveNamespaces") == 1)
+	        if(length("http://www.w3.org/2001/10/xml-exc-c14n#", "InclusiveNamespaces", transformElement) == 1)
 	        {
-	            Element element = XMLUtils.selectNode(transform.getElement().getFirstChild(), 
+	            Element element = XMLUtils.selectNode(transformElement.getFirstChild(), 
 	            		"http://www.w3.org/2001/10/xml-exc-c14n#", "InclusiveNamespaces", 0);
-	            s = (new InclusiveNamespaces(element, transform.getBaseURI())).getInclusiveNamespaces();
+	            s = (new InclusiveNamespaces(element, baseURI)).getInclusiveNamespaces();
 	        }
 	        Canonicalizer20010315ExclOmitComments canonicalizer20010315exclomitcomments = 
 	        		new Canonicalizer20010315ExclOmitComments();
-	        if(outputstream != null)
-	            canonicalizer20010315exclomitcomments.setWriter(outputstream);
 	        xmlsignatureinput.setNeedsToBeExpanded(true);
-	        byte abyte0[] = canonicalizer20010315exclomitcomments.engineCanonicalize(xmlsignatureinput, s);
+	        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+	        canonicalizer20010315exclomitcomments.engineCanonicalize(xmlsignatureinput, s, bout, secureValidation);
+	        bout.flush();
+	        bout.close();
+	        byte abyte0[] = bout.toByteArray();
 	        xmlsignatureinput1 = new XMLSignatureInput(abyte0);
 	        if(outputstream != null)
 	            xmlsignatureinput1.setOutputStream(outputstream);
@@ -84,4 +69,17 @@ public class XMLSecAttachmentTextXMLContentTransform extends TransformC14NExclus
 			throw new CanonicalizationException(e);
 		}
 	}
+	
+    private int length(String namespace, String localname, Element transformElement) {
+        int number = 0;
+        Node sibling = transformElement.getFirstChild();
+        while (sibling != null) {        
+            if (localname.equals(sibling.getLocalName())
+                && namespace.equals(sibling.getNamespaceURI())) {
+                number++;
+            }
+            sibling = sibling.getNextSibling();
+        }
+        return number;
+    }
 }

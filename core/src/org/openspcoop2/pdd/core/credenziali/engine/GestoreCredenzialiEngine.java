@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.utils.WWWAuthenticateErrorCode;
@@ -42,6 +43,7 @@ import org.openspcoop2.protocol.sdk.ChannelSecurityToken;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateDecodeConfig;
 import org.openspcoop2.utils.certificate.CertificateUtils;
@@ -95,9 +97,13 @@ public class GestoreCredenzialiEngine {
 	private String identita = null;
 	private boolean portaApplicativa = false;
 	private Context context;
+	private RequestInfo requestInfo;
 	public GestoreCredenzialiEngine(boolean portaApplicativa, Context context){
 		this.portaApplicativa = portaApplicativa;
 		this.context = context;
+		if(this.context!=null && this.context.containsKey(Costanti.REQUEST_INFO)) {
+			this.requestInfo = (RequestInfo) this.context.get(Costanti.REQUEST_INFO);
+		}
 	}
 
 	
@@ -245,7 +251,7 @@ public class GestoreCredenzialiEngine {
 		KeyStore trustStoreCertificatiX509 = null;
 		if(configurazione.getHeaderSslCertificateTrustStorePath()!=null) {
 			try {
-				trustStoreCertificatiX509 = GestoreKeystoreCaching.getMerlinTruststore(configurazione.getHeaderSslCertificateTrustStorePath(), 
+				trustStoreCertificatiX509 = GestoreKeystoreCaching.getMerlinTruststore(this.requestInfo, configurazione.getHeaderSslCertificateTrustStorePath(), 
 						configurazione.getHeaderSslCertificateTrustStoreType(), 
 						configurazione.getHeaderSslCertificateTrustStorePassword()).getTrustStore();
 			}catch(Exception e){
@@ -257,7 +263,7 @@ public class GestoreCredenzialiEngine {
 		if(trustStoreCertificatiX509!=null) {
 			if(configurazione.getHeaderSslCertificateCrlX509()!=null) {
 				try {
-					trustStoreCertificatiX509_crls = GestoreKeystoreCaching.getCRLCertstore(configurazione.getHeaderSslCertificateCrlX509()).getCertStore();
+					trustStoreCertificatiX509_crls = GestoreKeystoreCaching.getCRLCertstore(this.requestInfo, configurazione.getHeaderSslCertificateCrlX509()).getCertStore();
 				}catch(Exception e){
 					throw new GestoreCredenzialiException("Richiesta autenticazione ssl del gateway gestore delle credenziali; errore durante la lettura delle CRLs ("+configurazione.getHeaderSslCertificateCrlX509()+"): "+e.getMessage());
 				}

@@ -291,14 +291,23 @@ public class PolicyUtilities {
 				bf.append("SAFruitore");
 			}
 			
+			if(groupBy.getToken()!=null && StringUtils.isNotEmpty(groupBy.getToken())){
+				if(bf.length()>0){
+					bf.append(", ");
+				}
+				bf.append("Token: ").append(groupBy.getToken());
+			}
+			
 			if(groupBy.isInformazioneApplicativaEnabled()){
 				if(bf.length()>0){
 					bf.append(", ");
 				}
 				bf.append("Chiave-Tipo: ");
 				bf.append(groupBy.getInformazioneApplicativaTipo());
-				bf.append(", Chiave-Criterio: ");
-				bf.append(groupBy.getInformazioneApplicativaNome());
+				if(groupBy.getInformazioneApplicativaNome()!=null) {
+					bf.append(", Chiave-Criterio: ");
+					bf.append(groupBy.getInformazioneApplicativaNome());
+				}
 				if(datiGroupBy!=null) {
 					bf.append(", Chiave-Valore: ");
 					bf.append(datiGroupBy.getValoreKey());
@@ -388,14 +397,23 @@ public class PolicyUtilities {
 				bf.append(datiGroupBy.getServizioApplicativoToken());
 			}
 			
+			if(groupBy.getToken()!=null && StringUtils.isNotEmpty(groupBy.getToken())){
+				if(bf.length()>0){
+					bf.append(", ");
+				}
+				bf.append("Token: ").append(groupBy.getToken());
+			}
+			
 			if(groupBy.isInformazioneApplicativaEnabled()){
 				if(bf.length()>0){
 					bf.append(", ");
 				}
 				bf.append("Chiave-Tipo: ");
 				bf.append(groupBy.getInformazioneApplicativaTipo());
-				bf.append(", Chiave-Criterio: ");
-				bf.append(groupBy.getInformazioneApplicativaNome());
+				if(groupBy.getInformazioneApplicativaNome()!=null) {
+					bf.append(", Chiave-Criterio: ");
+					bf.append(groupBy.getInformazioneApplicativaNome());
+				}
 				bf.append(", Chiave-Valore: ");
 				bf.append(datiGroupBy.getValoreKey());
 			}
@@ -408,6 +426,7 @@ public class PolicyUtilities {
 		return bf.toString();
 	}
 	
+	/*
 	public static IDUnivocoGroupByPolicy toIDUnivocoGroupByPolicy(String stringGroupBy) {
 		IDUnivocoGroupByPolicy id = new IDUnivocoGroupByPolicy();
 		if(stringGroupBy==null || stringGroupBy.equals("") || stringGroupBy.equals("Disabilitato")) {
@@ -445,6 +464,21 @@ public class PolicyUtilities {
 			else if(tmp.startsWith("ApplicativoToken: ")) {
 				id.setServizioApplicativoToken(tmp.substring("ApplicativoToken: ".length()));
 			}
+			else if(tmp.startsWith("TokenSubject: ")) {
+				id.setTokenSubject(tmp.substring("TokenSubject: ".length()));
+			}
+			else if(tmp.startsWith("TokenIssuer: ")) {
+				id.setTokenIssuer(tmp.substring("TokenIssuer: ".length()));
+			}
+			else if(tmp.startsWith("TokenClientId: ")) {
+				id.setTokenClientId(tmp.substring("TokenClientId: ".length()));
+			}
+			else if(tmp.startsWith("TokenUsername: ")) {
+				id.setTokenUsername(tmp.substring("TokenUsername: ".length()));
+			}
+			else if(tmp.startsWith("TokenEMail: ")) {
+				id.setTokenEMail(tmp.substring("TokenEMail: ".length()));
+			}
 			else if(tmp.startsWith("Chiave-Tipo: ")) {
 				id.setTipoKey(tmp.substring("Chiave-Tipo: ".length()));
 			}
@@ -458,6 +492,7 @@ public class PolicyUtilities {
 		
 		return id;
 	}
+	*/
 	
 	public static String buildIdConfigurazioneEventoPerPolicy(ActivePolicy activePolicy, IDUnivocoGroupByPolicy datiGroupBy, String API) {
 		AttivazionePolicy attivazionePolicy = activePolicy.getInstanceConfiguration();
@@ -584,9 +619,11 @@ public class PolicyUtilities {
 		return datiGruppo;
 	}
 	
+	/*
 	public static IDUnivocoGroupByPolicy extractIDUnivocoGroupByPolicyFromIdConfigurazioneEvento(String idConfigurazioneEvento) {
 		return toIDUnivocoGroupByPolicy(extractIDUnivocoGroupByPolicyFromIdConfigurazioneEventoAsString(idConfigurazioneEvento));
 	}
+	*/
 	
 	public static String getNomeActivePolicy(String alias, String id) {
 		if(alias==null || "".equals(alias)) {

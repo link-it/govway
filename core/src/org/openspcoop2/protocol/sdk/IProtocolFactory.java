@@ -43,6 +43,7 @@ import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
@@ -52,6 +53,7 @@ import org.openspcoop2.protocol.sdk.validator.IValidazioneConSchema;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneDocumenti;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneSemantica;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica;
+import org.openspcoop2.utils.MapKey;
 
 /**
  * L'implementazione di questa classe fornisce alla Porta di Dominio 
@@ -72,6 +74,7 @@ public interface IProtocolFactory<BustaRawType> extends Serializable {
 	/* ** INFO SERVIZIO ** */
 	
 	public String getProtocol();
+	public MapKey<String> getProtocolMapKey();
 	public InformazioniProtocollo getInformazioniProtocol();
 	public ConfigurazionePdD getConfigurazionePdD();
 	public Openspcoop2 getManifest();
@@ -131,8 +134,10 @@ public interface IProtocolFactory<BustaRawType> extends Serializable {
 	/* ** REGISTRY  ** */
 	
 	public IRegistryReader getRegistryReader(IDriverRegistroServiziGet driver) throws ProtocolException;
-	public IRegistryReader getCachedRegistryReader(IState state) throws ProtocolException;
+	public IRegistryReader getCachedRegistryReader(IState state, RequestInfo requestInfo) throws ProtocolException;
+	public IRegistryReader getCachedRegistryReader(Object registryReader, RequestInfo requestInfo) throws ProtocolException;
 	public IConfigIntegrationReader getConfigIntegrationReader(IDriverConfigurazioneGet driver) throws ProtocolException;
-	public IConfigIntegrationReader getCachedConfigIntegrationReader(IState state) throws ProtocolException;
+	public IConfigIntegrationReader getCachedConfigIntegrationReader(IState state, RequestInfo requestInfo) throws ProtocolException;
+	public IConfigIntegrationReader getCachedConfigIntegrationReader(Object configReader, RequestInfo requestInfo) throws ProtocolException;
 	
 }

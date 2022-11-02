@@ -26,9 +26,9 @@ import java.util.Date;
 
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
-import org.openspcoop2.protocol.engine.RequestInfo;
-import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
+import org.openspcoop2.protocol.sdk.constants.IDService;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.id.UniqueIdentifierException;
 
 /**

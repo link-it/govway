@@ -22,10 +22,9 @@
 package org.openspcoop2.protocol.sdk;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.MapKey;
 
 /**
  * Context
@@ -35,75 +34,24 @@ import java.util.Map;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Context implements Serializable {
+public class Context extends org.openspcoop2.utils.Map<Object> implements Serializable {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -2577197242840238762L;
 	
-	protected Map<String, Object> ctx = new HashMap<String, Object>();
 	
-	public Map<String, Object> getContext() {
-		return this.ctx;
-	}
-
-	public boolean isEmpty() {
-		return this.ctx.isEmpty();
-	}
+	// STATIC
 	
-	public void addObject(String key,Object o){
-		if(key!=null && o!=null)
-			this.ctx.put(key, o);
-	}
-	
-	public Object getObject(String key){
-		if(key!=null)
-			return this.ctx.get(key);
-		else
-			return null;
-	}
-	
-	public Object removeObject(String key){
-		if(key!=null)
-			return this.ctx.remove(key);
-		else
-			return null;
-	}
-	
-	public List<String> keys(){
-		List<String> keys = null;
-		if(!this.ctx.isEmpty()) {
-			keys = new ArrayList<String>();
-			for (String key : this.ctx.keySet()) {
-				keys.add(key);
-			}
-		}
-		return keys;
-	}
-	
-	public boolean containsKey(String key){
-		return this.ctx.containsKey(key);
-	}
-	
-	public void addAll(Context pddContext,boolean overwriteIfExists){
-		List<String> keys = pddContext.keys();
-		if(keys!=null) {
-			for (String key : keys) {
-				if(this.containsKey(key)){
-					if(overwriteIfExists){
-						this.removeObject(key);
-						this.addObject(key, pddContext.getObject(key));
-					}
-				}
-				else{
-					this.addObject(key, pddContext.getObject(key));
-				}
-			}
-		}
-	}
-	
+	@Deprecated
 	public static String getValue(String key,Context pddContext){
+		if(key==null) {
+			return null;
+		}
+		return getValue(Map.newMapKey(key), pddContext);
+	}
+	public static String getValue(MapKey<String> key,Context pddContext){
 		String value = null;
 		if(pddContext!=null){
 			Object o = pddContext.getObject(key);

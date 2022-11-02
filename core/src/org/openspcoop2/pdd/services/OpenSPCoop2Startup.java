@@ -59,6 +59,7 @@ import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.AccessoDatiKeystore;
+import org.openspcoop2.core.config.AccessoDatiRichieste;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -108,6 +109,7 @@ import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.FileSystemSerializer;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
+import org.openspcoop2.pdd.core.GestoreRichieste;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.StatoServiziPdD;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
@@ -186,6 +188,7 @@ import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
+import org.openspcoop2.protocol.sdk.state.RequestThreadContext;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
@@ -204,8 +207,10 @@ import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.digest.MessageDigestFactory;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
+import org.openspcoop2.utils.id.UniversallyUniqueIdentifierProducer;
 import org.openspcoop2.utils.id.serial.InfoStatistics;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
+import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStreamFactory;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.json.YamlSnakeLimits;
@@ -302,7 +307,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	
 	/** Clustered Rate Limiting Timer */
 	private static TimerClusteredRateLimitingLocalCache timerClusteredRateLimitingLocalCache;
-	
+		
+	/** UUIDProducer */
+	private UniversallyUniqueIdentifierProducer universallyUniqueIdentifierProducer;
 	
 	/** indicazione se è un server j2ee */
 	private boolean serverJ2EE = false;
@@ -502,9 +509,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
-			
-			
-			
+				
 			/*
 			 * Nella classe ./src/main/java/com/sun/xml/messaging/saaj/soap/EnvelopeFactory.java 
 			 * viene inizializzato un pool di sax parser che vengono usati per parsare il messaggio.
@@ -591,9 +596,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	        			
 			/* ------------ 
 			 * Inizializzazione Resource Bundle:
-			 * - org/apache/xml/security/resource/xmlsecurity_en.properties (xmlsec-2.1.7.jar)
-			 * - org/apache/xml/security/resource/xmlsecurity_de.properties (xmlsec-2.1.7.jar)
-			 * - messages/wss4j_errors.properties (wss4j-ws-security-common-2.2.2.jar)
+			 * - org/apache/xml/security/resource/xmlsecurity_en.properties (xmlsec-2.3.0.jar)
+			 * - org/apache/xml/security/resource/xmlsecurity_de.properties (xmlsec-2.3.0.jar)
+			 * - messages/wss4j_errors.properties (wss4j-ws-security-common-2.4.1.jar)
 			 * 
 			 * L'inizializzazione di questa classe DEVE essere all'inizio altrimenti si puo' incorrere in errori tipo il seguente:
 			 * Caused by: org.apache.wss4j.common.ext.WSSecurityException: No message with ID "noUserCertsFound" found in resource bundle "org/apache/xml/security/resource/xmlsecurity"
@@ -603,7 +608,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			 * per risolvere l'id. Tale classe utilizza normalmente il properties 'org/apache/xml/security/resource/xmlsecurity_en.properties'
 			 * Mentre l'id 'noUserCertsFound' e' dentro il properties 'messages/wss4j_errors.properties'
 			 * Pero' xmlsec permette di inizializzare il resource bundle da usare anche grazie ad un metodo dove viene fornito l'intero resource bundle.
-			 * Questo avviene in xmlsec-2.1.7/src/main/java/org/apache/xml/security/utils/I18n.java metodo init(ResourceBundle resourceBundle)
+			 * Questo avviene in xmlsec-2.3.0/src/main/java/org/apache/xml/security/utils/I18n.java metodo init(ResourceBundle resourceBundle)
 			 * L'inizializzazione avviene pero' solamente una volta. Quindi se qualche altra libreria l'inizializza prima, poi il metodo init diventa una nop.
 			 * Tale init viene quindi richiamata dalla classe org.apache.wss4j.dom.engine.WSSConfig.init che prepara un resource bundle
 			 * contenente sia il contenuto originale del properties 'org/apache/xml/security/resource/xmlsecurity_en.properties' che 
@@ -698,6 +703,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				logSaaj.severe("SAAJ0511.soap.cannot.create.envelope"); // serve per caricare il logger con il local string
 				OpenSPCoop2Startup.log.info("Il logger utilizzato nel package '"+com.sun.xml.messaging.saaj.util.LogDomainConstants.MODULE_TOPLEVEL_DOMAIN+"' e' stato disabilitato");
 			}
+			
+			RequestThreadContext.log = OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori();
 
 			
 			
@@ -796,6 +803,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					Cache.disableSyncronizedGetAsDefault();
 				}
 				OpenSPCoop2Startup.log.info("Cache.disableSyncronizedGetAsDefault: "+Cache.isDisableSyncronizedGetAsDefault());
+				Cache.DEBUG_CACHE=propertiesReader.isConfigurazioneCache_debug();
+				OpenSPCoop2Startup.log.info("Cache.DEBUG: "+Cache.DEBUG_CACHE);
+				GestoreRichieste.useCache=propertiesReader.isConfigurazioneCache_requestManager_useCache();
+				OpenSPCoop2Startup.log.info("Cache.requestManager.useCache: "+GestoreRichieste.useCache);
+				
 				
 				// MessageFactory
 				OpenSPCoop2MessageFactory.setMessageFactoryImpl(classNameReader.getOpenSPCoop2MessageFactory(propertiesReader.getOpenspcoop2MessageFactory()));
@@ -846,6 +858,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					}
 					OpenSPCoop2Startup.log.info("Registrati ulteriori '"+MessageImpl.alternativeAcceptedContentType1_2.size()+"' content-type associabili ai messaggi SOAP 1.2: "+sbCT.toString());
 					
+				}
+				
+				// PipeUnblockedStream
+				if(propertiesReader.getPipedUnblockedStreamClassName()!=null) {
+					PipedUnblockedStreamFactory.setImplementation(propertiesReader.getPipedUnblockedStreamClassName());
 				}
 				
 				// RestMultipartLazy
@@ -1286,7 +1303,6 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}
 					}
 					UniqueIdentifierManager.inizializzaUniqueIdentifierManager(propertiesReader.useIDManagerWithThreadLocal(),classClusterID,paramsObject);
-					
 					OpenSPCoop2Startup.log.info("UUID Generator: "+classClusterID);
 					
 					if(propertiesReader.generazioneDateCasualiLogAbilitato()){
@@ -1295,6 +1311,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 								OpenSPCoop2Startup.log);
 						OpenSPCoop2Startup.log.info("Abilitata generazione date casuali");
 					}
+					
+					// BufferProducer avviato in fondo allo startup
 				}
 								
 			}catch(Exception e){
@@ -1333,7 +1351,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			boolean isInitializeConfig = ConfigurazionePdDReader.initialize(accessoConfigurazione,logCore,OpenSPCoop2Startup.log,localConfig,
 					propertiesReader.getJNDIName_DataSource(), false,
 					propertiesReader.isDSOp2UtilsEnabled(), propertiesReader.isRisorseJMXAbilitate(),
-					propertiesReader.isConfigurazioneCache_ConfigPrefill(), propertiesReader.getCryptConfigAutenticazioneApplicativi());
+					propertiesReader.isConfigurazioneCache_ConfigPrefill(), propertiesReader.getCryptConfigAutenticazioneApplicativi(),
+					propertiesReader.getCacheType_config());
 			if(isInitializeConfig == false){
 				this.logError("Riscontrato errore durante l'inizializzazione della configurazione di OpenSPCoop.");
 				return;
@@ -1492,7 +1511,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}
 					}
 
-					GestoreAutorizzazione.initialize(dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+					GestoreAutorizzazione.initialize(propertiesReader.getCacheType_authorization(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
 				}
 				else{
 					GestoreAutorizzazione.initialize(logCore);
@@ -1543,7 +1562,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}
 					}
 
-					GestoreAutenticazione.initialize(dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+					GestoreAutenticazione.initialize(propertiesReader.getCacheType_authentication(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
 				}
 				else{
 					GestoreAutenticazione.initialize(logCore);
@@ -1595,7 +1614,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}
 					}
 
-					GestoreToken.initialize(dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+					GestoreToken.initialize(propertiesReader.getCacheType_token(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
 				}
 				else{
 					GestoreToken.initialize(logCore);
@@ -1651,7 +1670,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}
 					}
 
-					GestoreCacheResponseCaching.initialize(dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+					GestoreCacheResponseCaching.initialize(propertiesReader.getCacheType_responseCaching(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
 				}
 				else{
 					GestoreCacheResponseCaching.initialize(logCore);
@@ -1719,7 +1738,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}
 					}
 
-					GestoreKeystoreCaching.initialize(dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+					GestoreKeystoreCaching.initialize(propertiesReader.getCacheType_keystore(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
 					
 					if(itemCrlLifeSecond>0) {
 						GestoreKeystoreCaching.setCacheCrlLifeSeconds(itemCrlLifeSecond, logCore);
@@ -1738,7 +1757,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					
 				}
 			}catch(Exception e){
-				msgDiag.logStartupError(e,"Gestore Response Caching");
+				msgDiag.logStartupError(e,"Gestore Keystore Caching");
 				return;
 			}
 			
@@ -1788,7 +1807,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}
 					}
 
-					GestoreLoadBalancerCaching.initialize(dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+					GestoreLoadBalancerCaching.initialize(propertiesReader.getCacheType_loadBalancer(), dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
 				}
 				else{
 					GestoreLoadBalancerCaching.initialize(logCore);
@@ -1802,6 +1821,59 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			
+			
+			
+			
+			/* ----------- Inizializzazione Gestore Richieste ------------ */
+			
+			try{
+				AccessoDatiRichieste gestoreRichiesteCacheConfig = configurazionePdDManager.getAccessoDatiRichieste();
+				if(gestoreRichiesteCacheConfig!=null && gestoreRichiesteCacheConfig.getCache()!=null){
+					
+					int dimensioneCache = -1;
+					if(gestoreRichiesteCacheConfig.getCache().getDimensione()!=null){
+						try{
+							dimensioneCache = Integer.parseInt(gestoreRichiesteCacheConfig.getCache().getDimensione());
+						}catch(Exception e){
+							throw new Exception("Parametro 'dimensioneCache' errato per la cache di accesso ai dati delle richieste");
+						}
+					}
+					
+					String algoritmo = null;
+					if(gestoreRichiesteCacheConfig.getCache().getAlgoritmo()!=null){
+						algoritmo = gestoreRichiesteCacheConfig.getCache().getAlgoritmo().toString();
+					}
+					
+					long idleTime = -1;
+					if(gestoreRichiesteCacheConfig.getCache().getItemIdleTime()!=null){
+						try{
+							idleTime = Integer.parseInt(gestoreRichiesteCacheConfig.getCache().getItemIdleTime());
+						}catch(Exception e){
+							throw new Exception("Parametro 'idleTime' errato per la cache di accesso ai dati delle richieste");
+						}
+					}
+					
+					long itemLifeSecond = -1;
+					if(gestoreRichiesteCacheConfig.getCache().getItemLifeSecond()!=null){
+						try{
+							itemLifeSecond = Integer.parseInt(gestoreRichiesteCacheConfig.getCache().getItemLifeSecond());
+						}catch(Exception e){
+							throw new Exception("Parametro 'itemLifeSecond' errato per la cache di accesso ai dati delle richieste");
+						}
+					}
+					
+					GestoreRichieste.initCacheGestoreRichieste(propertiesReader.getCacheType_requestManager(), dimensioneCache, algoritmo,
+							idleTime, itemLifeSecond, logCore);
+					
+				}
+				else{
+					GestoreRichieste.initialize(logCore);					
+				}
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Gestore DatiRichieste Caching");
+				return;
+			}
 			
 			
 			
@@ -1906,6 +1978,21 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 			
+			
+			
+			
+			
+			
+			/* ------------- Verifica Proprieta' di OpenSPCoop che richiedono l'inizializzazione del ProtocolFactoryManager --------------- */
+			if(o!=null){
+				if(propertiesReader.validaConfigurazioneDopoInizializzazioneProtocolManager((java.lang.ClassLoader)o[0]) == false){
+					return;
+				}
+			}else{
+				if(propertiesReader.validaConfigurazioneDopoInizializzazioneProtocolManager(null) == false){
+					return;
+				}
+			}
 			
 			
 			
@@ -2032,7 +2119,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						logCore,OpenSPCoop2Startup.log,propertiesReader.isControlloRisorseRegistriRaggiungibilitaTotale(),
 						propertiesReader.isReadObjectStatoBozza(),propertiesReader.getJNDIName_DataSource(),
 						propertiesReader.isDSOp2UtilsEnabled(), propertiesReader.isRisorseJMXAbilitate(),
-						propertiesReader.isConfigurazioneCache_RegistryPrefill(), propertiesReader.getCryptConfigAutenticazioneSoggetti());
+						propertiesReader.isConfigurazioneCache_RegistryPrefill(), propertiesReader.getCryptConfigAutenticazioneSoggetti(),
+						propertiesReader.getCacheType_registry());
 			if(isInitializeRegistro == false){
 				msgDiag.logStartupError("Inizializzazione fallita","Accesso registro/i dei servizi");
 				return;
@@ -2071,7 +2159,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					Object oRegistry = RegistroServiziReader.getDriverRegistroServizi().values().iterator().next();
 					if( (oConfig instanceof DriverConfigurazioneDB) && (oRegistry instanceof DriverRegistroServiziDB) ) {
 						PreLoadingConfig preLoading = new PreLoadingConfig(logCore, logCore, propertiesReader.getDefaultProtocolName(),
-								propertiesReader.getIdentitaPortaDefault(propertiesReader.getDefaultProtocolName()));
+								propertiesReader.getIdentitaPortaDefault(propertiesReader.getDefaultProtocolName(), null));
 						
 						TimerLock timerLock = new TimerLock(TipoLock.STARTUP);
 						InfoStatistics semaphore_statistics = null;
@@ -2094,7 +2182,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						
 						OpenSPCoopStateful openspcoopstate = new OpenSPCoopStateful();
 						try {
-							openspcoopstate.initResource(propertiesReader.getIdentitaPortaDefault(null),ID_MODULO, null);
+							openspcoopstate.initResource(propertiesReader.getIdentitaPortaDefaultWithoutProtocol(),ID_MODULO, null);
 							Connection connectionDB = ((StateMessage)openspcoopstate.getStatoRichiesta()).getConnectionDB();
 						
 							String causa = "Preloading Configuration";
@@ -2434,9 +2522,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				
 				// Cache ControlloTraffico DatiStatistici
 				try{
-					ConfigurazioneGenerale configurazioneControlloTraffico = configurazionePdDManager.getConfigurazioneControlloTraffico();
+					ConfigurazioneGenerale configurazioneControlloTraffico = configurazionePdDManager.getConfigurazioneControlloTraffico(null);
 					if(configurazioneControlloTraffico.getCache()!=null && configurazioneControlloTraffico.getCache().isCache()){
-						GestoreCacheControlloTraffico.abilitaCache(configurazioneControlloTraffico.getCache().getSize(),
+						GestoreCacheControlloTraffico.initializeCache(propertiesReader.getCacheType_trafficControl(),configurazioneControlloTraffico.getCache().getSize(),
 								CacheAlgorithm.LRU.equals(configurazioneControlloTraffico.getCache().getAlgorithm()),
 								configurazioneControlloTraffico.getCache().getIdleTime(), 
 								configurazioneControlloTraffico.getCache().getLifeTime(), 
@@ -2447,11 +2535,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					msgDiag.logStartupError(e,"Inizializzazione Cache ControlloTraffico");
 					return;
 				}
-				
+					
 				// Gestore dei Dati Statistici
 				org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico confControlloTraffico = null;
 				try{
 					confControlloTraffico = propertiesReader.getConfigurazioneControlloTraffico();
+
 					DatiStatisticiDAOManager.initialize(confControlloTraffico);
 				}catch(Exception e){
 					msgDiag.logStartupError(e,"Inizializzazione Gestori Dati Statistici del ControlloTraffico");
@@ -2711,7 +2800,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						msgDiag.logStartupError(e,"RisorsaJMX - Controllo del Traffico");
 					}
 				}
-				
+				// MBean GestoreRichieste
+				try{
+					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanGestioneRichieste();
+				}catch(Exception e){
+					msgDiag.logStartupError(e,"RisorsaJMX - gestione richieste");
+				}
 			}
 
 
@@ -2779,6 +2873,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				informazioniStatoPortaCache_gestoreConsegnaApplicativi.setStatoCache(infoGestoreConsegnaApplicativi.printStatCache());
 			}
 			informazioniStatoPortaCache.add(informazioniStatoPortaCache_gestoreConsegnaApplicativi);
+			
+			org.openspcoop2.pdd.core.jmx.GestoreRichieste infoGestoreRichieste = new org.openspcoop2.pdd.core.jmx.GestoreRichieste();
+			InformazioniStatoPortaCache informazioniStatoPortaCache_gestoreRichieste = new InformazioniStatoPortaCache(CostantiPdD.JMX_GESTORE_RICHIESTE, infoGestoreRichieste.isCacheAbilitata());
+			if(infoGestoreRichieste.isCacheAbilitata()){
+				informazioniStatoPortaCache_gestoreRichieste.setStatoCache(infoGestoreRichieste.printStatCache());
+			}
+			informazioniStatoPortaCache.add(informazioniStatoPortaCache_gestoreRichieste);
 			
 			org.openspcoop2.pdd.core.jmx.RepositoryMessaggi infoRepositoryMessaggi = new org.openspcoop2.pdd.core.jmx.RepositoryMessaggi();
 			InformazioniStatoPortaCache informazioniStatoPortaCache_repositoryMessaggi = new InformazioniStatoPortaCache(CostantiPdD.JMX_REPOSITORY_MESSAGGI, infoRepositoryMessaggi.isCacheAbilitata());
@@ -3462,6 +3563,20 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			/*----------- Buffer UUID --------------*/
+			try{
+				if(UniqueIdentifierManager.isBufferSupported() && propertiesReader.getIDManagerBufferSize()>0) {
+					UniversallyUniqueIdentifierProducer.initialize(propertiesReader.getIDManagerBufferSize(), OpenSPCoop2Logger.getLoggerOpenSPCoopTimers());
+					OpenSPCoop2Startup.this.universallyUniqueIdentifierProducer = UniversallyUniqueIdentifierProducer.getInstance();
+					OpenSPCoop2Startup.this.universallyUniqueIdentifierProducer.start();
+					OpenSPCoop2Startup.log.info("Thread per la produzione di un buffer di uuid avviato correttamente");
+				}
+			}catch(Exception e){
+				this.logError("Riscontrato errore durante l'inizializzazione del thread che produce e mantiene in un buffer gli uuid: "+e.getMessage(),e);
+				return;
+			}
+			
+			
 			
 			
 			/* ----------- Inizializzazione Cache Cleaner ------------ */
@@ -3943,6 +4058,14 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		// L'errore puo' avvenire poiche' lo shutdown puo' anche disattivare il datasource
 		boolean logErrorConnection = false;
 		TimerUtils.relaseLockTimers(properties, ID_MODULO, OpenSPCoop2Logger.getLoggerOpenSPCoopTimers(), logErrorConnection);
+		
+		// UniversallyUniqueIdentifierProducer (fermo dopo lo stop di tutte le altre attivita)
+		try{
+			if(OpenSPCoop2Startup.this.universallyUniqueIdentifierProducer!=null){
+				OpenSPCoop2Startup.this.universallyUniqueIdentifierProducer.setStop(true);
+				OpenSPCoop2Startup.this.universallyUniqueIdentifierProducer.waitShutdown();
+			}
+		}catch(Throwable e){}
 		
 		// DataManger
 		DateManager.close();

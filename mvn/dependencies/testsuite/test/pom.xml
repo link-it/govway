@@ -17,15 +17,16 @@
 
 		<jar.group.name>testsuite</jar.group.name>
 		
-		<jcommander.version>1.78</jcommander.version>
-		<guice.version>4.2.2</guice.version>
-		<testng.version>7.1.0</testng.version>
+		<jcommander.version>1.82</jcommander.version>
+		<guice.version>5.1.0</guice.version>
+		<jquery.version>3.6.0</jquery.version>
+		<testng.version>7.6.1</testng.version>
 		<junit.version>4.13.2</junit.version>
 		<karate.version>0.9.6</karate.version>
 		<hamcrest.version>1.3</hamcrest.version>
 		<picocli.version>4.2.0</picocli.version>
 		<spring.version>${module.spring.version}</spring.version>
-		<logback.version>1.2.10</logback.version>
+		<logback.version>1.4.4</logback.version>
 
 	</properties>
 
@@ -48,6 +49,19 @@
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
 			<version>${guice.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>jquery</artifactId>
+			<version>${jquery.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

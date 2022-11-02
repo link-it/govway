@@ -38,6 +38,8 @@ import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.CryptoFactory;
 import org.apache.wss4j.common.saml.bean.Version;
 import org.opensaml.saml.saml2.core.NameIDType;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.security.keystore.KeystoreConstants;
 import org.openspcoop2.utils.Utilities;
 
 /**
@@ -63,7 +65,7 @@ public class SAMLBuilderConfig {
 			semaphore.release("addSamlConfig");
 		}
 	}
-	public static SAMLBuilderConfig getSamlConfig(String properties) throws IOException {
+	public static SAMLBuilderConfig getSamlConfig(String properties, RequestInfo requestInfo) throws IOException {
 		InputStream is = null;
 		try{
 			File f = new File(properties);
@@ -77,7 +79,7 @@ public class SAMLBuilderConfig {
 				throw new IOException("SAMLPropFile ["+properties+"]: not found"); 
 			}
 			try{
-				return getSamlConfig(Utilities.getAsProperties(is));
+				return getSamlConfig(Utilities.getAsProperties(is), requestInfo);
 			}catch(Exception e){
 				throw new IOException("SAMLPropFile ["+properties+"]: "+e.getMessage(),e); 
 			}		
@@ -90,7 +92,7 @@ public class SAMLBuilderConfig {
 			}catch(Exception eClose){}
 		}
 	}
-	public static SAMLBuilderConfig getSamlConfig(Properties p) throws IOException {
+	public static SAMLBuilderConfig getSamlConfig(Properties p, RequestInfo requestInfoParam) throws IOException {
 		
 		String propertiesName = p.getProperty(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_CONFIG_NAME);
     	if(propertiesName!=null){
@@ -102,13 +104,19 @@ public class SAMLBuilderConfig {
     		throw new IOException("SAML Config Builder: property ["+SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_CONFIG_NAME+"] not found");
     	}
 		
+    	RequestInfo requestInfo = null;
+    	if(!cacheConfig) {
+    		// altrimenti la configurazione verrà riutilizzata su più richieste
+    		requestInfo = requestInfoParam;
+    	}
+    	
     	if(cacheConfig) {
 			if(SAML_CACHE_CONFIG.containsKey(propertiesName)){
 				return SAML_CACHE_CONFIG.get(propertiesName);
 			}
     	}
 		try{
-			SAMLBuilderConfig config = new SAMLBuilderConfig(p);
+			SAMLBuilderConfig config = new SAMLBuilderConfig(p, requestInfo);
 			if(cacheConfig) {
 				addSamlConfig(propertiesName,config);
 			}
@@ -157,6 +165,8 @@ public class SAMLBuilderConfig {
 	
 	
 	// ---- INSTANCE -----
+	
+	private RequestInfo requestInfo;
 	
 	private Properties p;	
 	
@@ -224,8 +234,9 @@ public class SAMLBuilderConfig {
 	// Attribute
 	private List<SAMLBuilderConfigAttribute> attributes = new ArrayList<SAMLBuilderConfigAttribute>();
 	
-	public SAMLBuilderConfig(Properties p) throws IOException{
+	public SAMLBuilderConfig(Properties p, RequestInfo requestInfo) throws IOException{
 		this.p = p;
+		this.requestInfo = requestInfo;
 		
 		// Usage keystore caching
 		this.useKeystoreCache = isTrue(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_USE_KEYSTORE_CACHE, false);
@@ -782,6 +793,9 @@ public class SAMLBuilderConfig {
 				Properties p = SAMLUtilities.convertToMerlinProperties(this.signAssertionCryptoPropCustomKeystoreType, 
 						this.signAssertionCryptoPropCustomKeystoreFile, this.signAssertionCryptoPropCustomKeystorePassword,
 						this.useKeystoreCache);
+				if(this.requestInfo!=null) {
+					p.put(KeystoreConstants.PROPERTY_REQUEST_INFO, this.requestInfo);
+				}
 				this.signAssertionCrypto = CryptoFactory.getInstance(p);
 			}
 			else {
@@ -857,6 +871,9 @@ public class SAMLBuilderConfig {
 				Properties p = SAMLUtilities.convertToMerlinProperties(this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreType, 
 						this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreFile, this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystorePassword,
 						this.useKeystoreCache);
+				if(this.requestInfo!=null) {
+					p.put(KeystoreConstants.PROPERTY_REQUEST_INFO, this.requestInfo);
+				}
 				this.subjectConfirmationMethod_holderOfKey_crypto = CryptoFactory.getInstance(p);
 			}
 			else {

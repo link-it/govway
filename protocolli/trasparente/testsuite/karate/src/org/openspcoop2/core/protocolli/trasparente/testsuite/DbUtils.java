@@ -30,9 +30,9 @@ import java.util.stream.Collectors;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
+import org.openspcoop2.core.controllo_traffico.constants.Costanti;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils;
-import org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
@@ -225,19 +225,19 @@ public class DbUtils {
     private Map<String, String> fillMapPolicyGroupByActiveThreadsType(PolicyGroupByActiveThreadsType type) {
     	Map<String, String> map = new HashMap<String, String>();
     	if(type!=null) {
-    		map.put(Constants.GESTORE, type.name());
-    		map.put(Constants.GESTORE_CONFIG_DATE, DateManager.getTimeMillis()+"");
+    		map.put(Costanti.GESTORE, type.name());
+    		map.put(Costanti.GESTORE_CONFIG_DATE, DateManager.getTimeMillis()+"");
     		
     		boolean distribuita = false;
     		switch (type){
 			case LOCAL:
-				map.put(Constants.MODALITA_SINCRONIZZAZIONE, Constants.VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE);
+				map.put(Costanti.MODALITA_SINCRONIZZAZIONE, Costanti.VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE);
 				break;
 			case LOCAL_DIVIDED_BY_NODES:
-				map.put(Constants.MODALITA_SINCRONIZZAZIONE, Constants.VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE_SUDDIVISA_TRA_NODI);
+				map.put(Costanti.MODALITA_SINCRONIZZAZIONE, Costanti.VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE_SUDDIVISA_TRA_NODI);
 				break;
 			default:
-				map.put(Constants.MODALITA_SINCRONIZZAZIONE, Constants.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA);
+				map.put(Costanti.MODALITA_SINCRONIZZAZIONE, Costanti.VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA);
 				distribuita = true;
 				break;
 			}
@@ -245,7 +245,7 @@ public class DbUtils {
     		if(distribuita) {
     			switch (type){
     			case DATABASE:
-    				map.put(Constants.MODALITA_IMPLEMENTAZIONE, Constants.VALUE_MODALITA_IMPLEMENTAZIONE_DATABASE);
+    				map.put(Costanti.MODALITA_IMPLEMENTAZIONE, Costanti.VALUE_MODALITA_IMPLEMENTAZIONE_DATABASE);
     				break;
     			case HAZELCAST_MAP:
     			case HAZELCAST_LOCAL_CACHE:
@@ -256,12 +256,12 @@ public class DbUtils {
     			case HAZELCAST_ATOMIC_LONG:
     			case HAZELCAST_ATOMIC_LONG_ASYNC:
     			case HAZELCAST_REPLICATED_MAP:
-    				map.put(Constants.MODALITA_IMPLEMENTAZIONE, Constants.VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST);
+    				map.put(Costanti.MODALITA_IMPLEMENTAZIONE, Costanti.VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST);
     				break;
     			case REDISSON_MAP:
     			case REDISSON_ATOMIC_LONG:
     			case REDISSON_LONGADDER:
-    				map.put(Constants.MODALITA_IMPLEMENTAZIONE, Constants.VALUE_MODALITA_IMPLEMENTAZIONE_REDIS);
+    				map.put(Costanti.MODALITA_IMPLEMENTAZIONE, Costanti.VALUE_MODALITA_IMPLEMENTAZIONE_REDIS);
     				break;
     			default:
     				break;
@@ -272,42 +272,42 @@ public class DbUtils {
     			switch (type){
     			// esatti
     			case HAZELCAST_ATOMIC_LONG:
-    				map.put(Constants.MODALITA_CONTATORI, Constants.VALUE_MODALITA_CONTATORI_EXACT);
-    				map.put(Constants.MODALITA_TIPOLOGIA, Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG);
+    				map.put(Costanti.MODALITA_CONTATORI, Costanti.VALUE_MODALITA_CONTATORI_EXACT);
+    				map.put(Costanti.MODALITA_TIPOLOGIA, Costanti.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG);
     				break;
     			case HAZELCAST_MAP:
-    				map.put(Constants.MODALITA_CONTATORI, Constants.VALUE_MODALITA_CONTATORI_EXACT);
-    				map.put(Constants.MODALITA_TIPOLOGIA, Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC);
+    				map.put(Costanti.MODALITA_CONTATORI, Costanti.VALUE_MODALITA_CONTATORI_EXACT);
+    				map.put(Costanti.MODALITA_TIPOLOGIA, Costanti.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC);
     				break;
     			// approssimati
     			case HAZELCAST_PNCOUNTER:
-    				map.put(Constants.MODALITA_CONTATORI, Constants.VALUE_MODALITA_CONTATORI_APPROXIMATED);
-    				map.put(Constants.MODALITA_TIPOLOGIA, Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER);
+    				map.put(Costanti.MODALITA_CONTATORI, Costanti.VALUE_MODALITA_CONTATORI_APPROXIMATED);
+    				map.put(Costanti.MODALITA_TIPOLOGIA, Costanti.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER);
     				break;
     			case HAZELCAST_ATOMIC_LONG_ASYNC:
-    				map.put(Constants.MODALITA_CONTATORI, Constants.VALUE_MODALITA_CONTATORI_APPROXIMATED);
-    				map.put(Constants.MODALITA_TIPOLOGIA, Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC);
+    				map.put(Costanti.MODALITA_CONTATORI, Costanti.VALUE_MODALITA_CONTATORI_APPROXIMATED);
+    				map.put(Costanti.MODALITA_TIPOLOGIA, Costanti.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC);
     				break;
     			case HAZELCAST_LOCAL_CACHE:
-    				map.put(Constants.MODALITA_CONTATORI, Constants.VALUE_MODALITA_CONTATORI_APPROXIMATED);
-    				map.put(Constants.MODALITA_TIPOLOGIA, Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE);
+    				map.put(Costanti.MODALITA_CONTATORI, Costanti.VALUE_MODALITA_CONTATORI_APPROXIMATED);
+    				map.put(Costanti.MODALITA_TIPOLOGIA, Costanti.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE);
     				break;
     			case HAZELCAST_NEAR_CACHE:
-    				map.put(Constants.MODALITA_CONTATORI, Constants.VALUE_MODALITA_CONTATORI_APPROXIMATED);
-    				map.put(Constants.MODALITA_TIPOLOGIA, Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE);
+    				map.put(Costanti.MODALITA_CONTATORI, Costanti.VALUE_MODALITA_CONTATORI_APPROXIMATED);
+    				map.put(Costanti.MODALITA_TIPOLOGIA, Costanti.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE);
     				break;
     			// inconsistenti
     			case HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP:
-    				map.put(Constants.MODALITA_CONTATORI, Constants.VALUE_MODALITA_CONTATORI_INCONSISTENT);
-    				map.put(Constants.MODALITA_TIPOLOGIA, Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC);
+    				map.put(Costanti.MODALITA_CONTATORI, Costanti.VALUE_MODALITA_CONTATORI_INCONSISTENT);
+    				map.put(Costanti.MODALITA_TIPOLOGIA, Costanti.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC);
     				break;
     			case HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP:
-    				map.put(Constants.MODALITA_CONTATORI, Constants.VALUE_MODALITA_CONTATORI_INCONSISTENT);
-    				map.put(Constants.MODALITA_TIPOLOGIA, Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC);
+    				map.put(Costanti.MODALITA_CONTATORI, Costanti.VALUE_MODALITA_CONTATORI_INCONSISTENT);
+    				map.put(Costanti.MODALITA_TIPOLOGIA, Costanti.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC);
     				break;
     			case HAZELCAST_REPLICATED_MAP:
-    				map.put(Constants.MODALITA_CONTATORI, Constants.VALUE_MODALITA_CONTATORI_INCONSISTENT);
-    				map.put(Constants.MODALITA_TIPOLOGIA, Constants.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REPLICATED_MAP);
+    				map.put(Costanti.MODALITA_CONTATORI, Costanti.VALUE_MODALITA_CONTATORI_INCONSISTENT);
+    				map.put(Costanti.MODALITA_TIPOLOGIA, Costanti.VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REPLICATED_MAP);
     				break;
     			default:
     				break;
@@ -318,17 +318,17 @@ public class DbUtils {
     			switch (type){
     			// esatti
     			case REDISSON_ATOMIC_LONG:
-    				map.put(Constants.MODALITA_CONTATORI, Constants.VALUE_MODALITA_CONTATORI_EXACT);
-    				map.put(Constants.MODALITA_TIPOLOGIA, Constants.VALUE_MODALITA_TIPOLOGIA_REDIS_CONTATORI_ATOMIC_LONG);
+    				map.put(Costanti.MODALITA_CONTATORI, Costanti.VALUE_MODALITA_CONTATORI_EXACT);
+    				map.put(Costanti.MODALITA_TIPOLOGIA, Costanti.VALUE_MODALITA_TIPOLOGIA_REDIS_CONTATORI_ATOMIC_LONG);
     				break;
     			case REDISSON_MAP:
-    				map.put(Constants.MODALITA_CONTATORI, Constants.VALUE_MODALITA_CONTATORI_EXACT);
-    				map.put(Constants.MODALITA_TIPOLOGIA, Constants.VALUE_MODALITA_TIPOLOGIA_REDIS_REDDISSON_MAP);
+    				map.put(Costanti.MODALITA_CONTATORI, Costanti.VALUE_MODALITA_CONTATORI_EXACT);
+    				map.put(Costanti.MODALITA_TIPOLOGIA, Costanti.VALUE_MODALITA_TIPOLOGIA_REDIS_REDDISSON_MAP);
     				break;
     			// inconsistenti
     			case REDISSON_LONGADDER:
-    				map.put(Constants.MODALITA_CONTATORI, Constants.VALUE_MODALITA_CONTATORI_INCONSISTENT);
-    				map.put(Constants.MODALITA_TIPOLOGIA, Constants.VALUE_MODALITA_TIPOLOGIA_REDIS_CONTATORI_LONGADDER);
+    				map.put(Costanti.MODALITA_CONTATORI, Costanti.VALUE_MODALITA_CONTATORI_INCONSISTENT);
+    				map.put(Costanti.MODALITA_TIPOLOGIA, Costanti.VALUE_MODALITA_TIPOLOGIA_REDIS_CONTATORI_LONGADDER);
     				break;
     			default:
     				break;
@@ -355,7 +355,7 @@ public class DbUtils {
     	}
     	
     	String delete = "delete from "+CostantiDB.PORTE_APPLICATIVE_RATE_LIMITING_PROP+" rt WHERE rt.id_porta="+idPorta+" AND rt.nome IN ('"+
-    			Constants.GESTORE+"','"+Constants.GESTORE_CONFIG_DATE+"','"+Constants.MODALITA_SINCRONIZZAZIONE+"','"+Constants.MODALITA_IMPLEMENTAZIONE+"','"+Constants.MODALITA_CONTATORI+"','"+Constants.MODALITA_TIPOLOGIA+"')";
+    			Costanti.GESTORE+"','"+Costanti.GESTORE_CONFIG_DATE+"','"+Costanti.MODALITA_SINCRONIZZAZIONE+"','"+Costanti.MODALITA_IMPLEMENTAZIONE+"','"+Costanti.MODALITA_CONTATORI+"','"+Costanti.MODALITA_TIPOLOGIA+"')";
     	int rows = this.update(delete);
     	logger.info("Delete '"+delete+"': "+rows+" rows");
     	
@@ -368,7 +368,7 @@ public class DbUtils {
 			}
     	}
     	
-//    	String s = "select nome, valore from "+CostantiDB.PORTE_APPLICATIVE_RATE_LIMITING_PROP+" rt WHERE rt.id_porta="+idPorta+" AND rt.nome='"+Constants.GESTORE+"'";
+//    	String s = "select nome, valore from "+CostantiDB.PORTE_APPLICATIVE_RATE_LIMITING_PROP+" rt WHERE rt.id_porta="+idPorta+" AND rt.nome='"+Costanti.GESTORE+"'";
 //    	logger.info(select);
 //    	result = readRow(s);
 //    	for (String key : result.keySet()) {
@@ -393,7 +393,7 @@ public class DbUtils {
     	}
     	
     	String delete = "delete from "+CostantiDB.PORTE_DELEGATE_RATE_LIMITING_PROP+" rt WHERE rt.id_porta="+idPorta+" AND rt.nome IN ('"+
-    			Constants.GESTORE+"','"+Constants.GESTORE_CONFIG_DATE+"','"+Constants.MODALITA_SINCRONIZZAZIONE+"','"+Constants.MODALITA_IMPLEMENTAZIONE+"','"+Constants.MODALITA_CONTATORI+"','"+Constants.MODALITA_TIPOLOGIA+"')";
+    			Costanti.GESTORE+"','"+Costanti.GESTORE_CONFIG_DATE+"','"+Costanti.MODALITA_SINCRONIZZAZIONE+"','"+Costanti.MODALITA_IMPLEMENTAZIONE+"','"+Costanti.MODALITA_CONTATORI+"','"+Costanti.MODALITA_TIPOLOGIA+"')";
     	int rows = this.update(delete);
     	logger.info("Delete '"+delete+"': "+rows+" rows");
     	

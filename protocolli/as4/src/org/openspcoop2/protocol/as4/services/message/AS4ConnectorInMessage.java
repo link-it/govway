@@ -46,11 +46,12 @@ import org.openspcoop2.pdd.services.core.RicezioneBuste;
 import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.engine.RequestInfo;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
-import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.protocol.engine.URLProtocolContextImpl;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.constants.IDService;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
@@ -119,7 +120,7 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 			this.pddContext = new PdDContext();
 			
 						
-			URLProtocolContext urlProtocolContext = new URLProtocolContext(this.log);
+			URLProtocolContext urlProtocolContext = new URLProtocolContextImpl(this.log);
 			
 			Map<String, List<String>> pFormBased = new HashMap<String, List<String>>();
 			pFormBased.putAll(this.parameters);
@@ -145,7 +146,7 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 			this.requestInfo = ConnectorUtils.getRequestInfo(this.protocolFactory, urlProtocolContext);
 			
 			if(this.pddContext!=null){
-				this.setAttribute(Costanti.REQUEST_INFO,this.requestInfo);
+				this.setAttribute(Costanti.REQUEST_INFO.getValue(),this.requestInfo);
 			}
 			
 			this.message.setTransportRequestContext(urlProtocolContext);
@@ -198,7 +199,7 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 	public void updateRequestInfo(RequestInfo requestInfo) throws ConnectorException{
 		this.requestInfo = requestInfo;
 		if(this.pddContext!=null){
-			this.setAttribute(Costanti.REQUEST_INFO,this.requestInfo);
+			this.setAttribute(Costanti.REQUEST_INFO.getValue(),this.requestInfo);
 		}
 	}
 	@Override

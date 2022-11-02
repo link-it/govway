@@ -20,8 +20,6 @@
 
 package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast;
 
-import java.util.Map;
-
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
@@ -29,6 +27,7 @@ import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
+import org.openspcoop2.utils.Map;
 import org.slf4j.Logger;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -50,7 +49,7 @@ public class PolicyGroupByActiveThreadsDistributedNoCache extends AbstractPolicy
 
 	
 	@Override
-	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx)
+	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx)
 			throws PolicyException {
 		
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
@@ -61,7 +60,7 @@ public class PolicyGroupByActiveThreadsDistributedNoCache extends AbstractPolicy
 	
 	@Override
 	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione,
-			IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx) throws PolicyException, PolicyNotFoundException {
+			IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx) throws PolicyException, PolicyNotFoundException {
 		
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
 
@@ -74,7 +73,7 @@ public class PolicyGroupByActiveThreadsDistributedNoCache extends AbstractPolicy
 	
 	
 	@Override
-	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx, 
+	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx, 
 			MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata)
 			throws PolicyException, PolicyNotFoundException {
 

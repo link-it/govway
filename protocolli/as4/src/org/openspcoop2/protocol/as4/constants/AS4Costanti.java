@@ -24,6 +24,8 @@ package org.openspcoop2.protocol.as4.constants;
 
 import org.openspcoop2.protocol.sdk.archive.ArchiveMode;
 import org.openspcoop2.protocol.sdk.archive.ArchiveModeType;
+import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.MapKey;
 
 /**
  * Classe dove sono fornite le stringhe costanti, definite dalla specifica del protocollo AS4, 
@@ -122,8 +124,8 @@ public class AS4Costanti {
 	public static final String JMS_NOTIFICA_NOTIFICATION_TYPE = "NOTIFICATION_TYPE";
 	
 	
-	public final static String AS4_CONTEXT_USER_MESSAGE = "AS4_CONTEXT_USER_MESSAGE";
-	public final static String AS4_CONTEXT_CONTENT = "AS4_CONTEXT_CONTENT";
+	public final static MapKey<String> AS4_CONTEXT_USER_MESSAGE = Map.newMapKey("AS4_CONTEXT_USER_MESSAGE");
+	public final static MapKey<String> AS4_CONTEXT_CONTENT = Map.newMapKey("AS4_CONTEXT_CONTENT");
 
 	
 	/** Properties per oggetto Busta */

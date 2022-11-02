@@ -9779,6 +9779,98 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	}
 	
 	
+	@Override
+	public AccessoDatiRichieste getAccessoDatiRichieste() throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		String sqlQuery = "";
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("getAccessoDatiRichieste");
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoDatiRichieste] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			AccessoDatiRichieste accessoDatiRichieste = new AccessoDatiRichieste();
+			Cache cache = null;
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE);
+			sqlQueryObject.addSelectField("*");
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+
+			this.log.debug("eseguo query : " + sqlQuery);
+
+			rs = stm.executeQuery();
+
+			if (rs.next()) {
+				String tmpCache = rs.getString("dati_richieste_statocache");
+				if (CostantiConfigurazione.ABILITATO.equals(tmpCache)) {
+					cache = new Cache();
+
+					String tmpDim = rs.getString("dati_richieste_dimensionecache");
+					if (tmpDim != null && !tmpDim.equals(""))
+						cache.setDimensione(tmpDim);
+
+					String tmpAlg = rs.getString("dati_richieste_algoritmocache");
+					if (tmpAlg.equalsIgnoreCase("LRU"))
+						cache.setAlgoritmo(CostantiConfigurazione.CACHE_LRU);
+					else
+						cache.setAlgoritmo(CostantiConfigurazione.CACHE_MRU);
+
+					String tmpIdle = rs.getString("dati_richieste_idlecache");
+					String tmpLife = rs.getString("dati_richieste_lifecache");
+					
+					if (tmpIdle != null && !tmpIdle.equals(""))
+						cache.setItemIdleTime(tmpIdle);
+					if (tmpLife != null && !tmpLife.equals(""))
+						cache.setItemLifeSecond(tmpLife);
+
+					accessoDatiRichieste.setCache(cache);
+
+				}
+				rs.close();
+				stm.close();
+			}
+
+			return accessoDatiRichieste;
+
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoDatiRichieste] SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoDatiRichieste] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	
 
 	public void createAccessoDatiAutorizzazione(AccessoDatiAutorizzazione accessoDatiAutorizzazione) throws DriverConfigurazioneException {
 
@@ -13325,6 +13417,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		// - AccessoDatiConsegnaApplicativi
 		try{
 			config.setAccessoDatiConsegnaApplicativi(getAccessoDatiConsegnaApplicativi());
+		}catch (Exception e) {}
+		
+		// - AccessoDatiRichieste
+		try{
+			config.setAccessoDatiRichieste(getAccessoDatiRichieste());
 		}catch (Exception e) {}
 
 

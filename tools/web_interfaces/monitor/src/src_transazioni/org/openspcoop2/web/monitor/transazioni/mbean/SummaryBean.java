@@ -263,7 +263,7 @@ public class SummaryBean implements Serializable{
 		}
 		
 		try {
-			this.esitiProperties = EsitiProperties.getInstance(SummaryBean.log, this.protocolloDefault);
+			this.esitiProperties = EsitiProperties.getInstanceFromProtocolName(SummaryBean.log, this.protocolloDefault);
 		} catch (Exception e) {
 			SummaryBean.log.error("Errore durante la creazione del form: " + e.getMessage(),e);
 		}

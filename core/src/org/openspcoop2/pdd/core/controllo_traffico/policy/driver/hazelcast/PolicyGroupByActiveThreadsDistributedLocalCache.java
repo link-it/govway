@@ -21,7 +21,6 @@
 package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
@@ -31,6 +30,7 @@ import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.PolicyGroupByActiveThreads;
+import org.openspcoop2.utils.Map;
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
 
@@ -57,7 +57,7 @@ public class PolicyGroupByActiveThreadsDistributedLocalCache  extends AbstractPo
 	
 
 	@Override
-	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx)
+	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx)
 			throws PolicyException {
 		
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
@@ -71,7 +71,7 @@ public class PolicyGroupByActiveThreadsDistributedLocalCache  extends AbstractPo
 
 	@Override
 	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione,
-			IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx) throws PolicyException, PolicyNotFoundException {
+			IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx) throws PolicyException, PolicyNotFoundException {
 
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
 		
@@ -83,7 +83,7 @@ public class PolicyGroupByActiveThreadsDistributedLocalCache  extends AbstractPo
 
 	
 	@Override
-	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx,
+	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx,
 			MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata)
 			throws PolicyException, PolicyNotFoundException {
 		
@@ -102,10 +102,10 @@ public class PolicyGroupByActiveThreadsDistributedLocalCache  extends AbstractPo
 	
 	
 	@Override
-	public void initMap(Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
+	public void initMap(java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
 		super.initMap(map);
 		
-		Map<IDUnivocoGroupByPolicy, DatiCollezionati> newMap = new HashMap<>();
+		java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> newMap = new HashMap<>();
 		for (var e: map.entrySet()) {
 			newMap.put(augmentIDUnivoco(e.getKey()), e.getValue());
 		}

@@ -38,10 +38,8 @@ public class UniversallyUniqueIdentifierGenerator extends AbstractUniversallyUni
 //  Tutti gli UUID generati in questa classe sono quindi di tipo 4.
 	
 	@Override
-	public IUniqueIdentifier newID() throws UniqueIdentifierException {
-		UniversallyUniqueIdentifier uuidOpenSPCoop = new UniversallyUniqueIdentifier();
-		uuidOpenSPCoop.setUuid(UUID.randomUUID());
-		return uuidOpenSPCoop;
+	protected UUID generateUUID() {
+		return UUID.randomUUID();
 	}
 
 }

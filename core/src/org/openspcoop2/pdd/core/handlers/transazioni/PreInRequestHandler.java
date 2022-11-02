@@ -33,7 +33,7 @@ import org.openspcoop2.pdd.core.transazioni.TransactionDeletedException;
 import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
-import org.openspcoop2.protocol.engine.RequestInfo;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;

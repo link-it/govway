@@ -56,6 +56,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.message.constants.SignatureDigestAlgorithm;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.digest.DigestEncoding;
@@ -591,7 +592,7 @@ public class ModISecurityConfig {
 		
 	}
 	
-	public ModISecurityConfig(OpenSPCoop2Message msg, IProtocolFactory<?> protocolFactory, IState state, IDSoggetto soggettoFruitore, 
+	public ModISecurityConfig(OpenSPCoop2Message msg, IProtocolFactory<?> protocolFactory, IState state, RequestInfo requestInfo, IDSoggetto soggettoFruitore, 
 			AccordoServizioParteComune aspc, AccordoServizioParteSpecifica aspsParam, ServizioApplicativo sa, boolean rest, boolean fruizione, boolean request,
 			Boolean multipleHeaderAuthorizationConfig) throws ProtocolException {
 		
@@ -681,7 +682,7 @@ public class ModISecurityConfig {
 						}
 					}
 					
-					IConfigIntegrationReader configReader = protocolFactory.getCachedConfigIntegrationReader(state);
+					IConfigIntegrationReader configReader = protocolFactory.getCachedConfigIntegrationReader(state, requestInfo);
 					CanaliConfigurazione canaliConfigurazione = configReader.getCanaliConfigurazione();
 					String canaleApi = null;
 					if(aspc!=null) {
@@ -707,7 +708,8 @@ public class ModISecurityConfig {
 							rest ? org.openspcoop2.message.constants.ServiceBinding.REST : org.openspcoop2.message.constants.ServiceBinding.SOAP,
 									msg.getTransportRequestContext().getInterfaceName(),
 									new IDSoggetto(aspsParam.getTipoSoggettoErogatore(), aspsParam.getNomeSoggettoErogatore()),
-									tags, canale);		 
+									tags, canale, 
+									requestInfo);		 
 					String prefixGatewayUrl = urlInvocazioneApi.getBaseUrl();
 					String contesto = urlInvocazioneApi.getContext();
 					this.audience = Utilities.buildUrl(prefixGatewayUrl, contesto);

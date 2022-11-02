@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.core.autenticazione;
 
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 
 /**
  * AbstractDatiInvocazione
@@ -36,6 +37,8 @@ public abstract class AbstractDatiInvocazione {
 	
 	private IState state;
 	
+	private RequestInfo requestInfo;
+	
 	public InfoConnettoreIngresso getInfoConnettoreIngresso() {
 		return this.infoConnettoreIngresso;
 	}
@@ -49,6 +52,13 @@ public abstract class AbstractDatiInvocazione {
 	}
 	public void setState(IState state) {
 		this.state = state;
+	}
+	
+	public RequestInfo getRequestInfo() {
+		return this.requestInfo;
+	}
+	public void setRequestInfo(RequestInfo requestInfo) {
+		this.requestInfo = requestInfo;
 	}
 	
 	public String getKeyCache(){

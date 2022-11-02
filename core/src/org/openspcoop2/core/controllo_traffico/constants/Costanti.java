@@ -20,6 +20,11 @@
 
 package org.openspcoop2.core.controllo_traffico.constants;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
+
 /**
  * Costanti 
  *
@@ -53,4 +58,401 @@ public class Costanti {
 	public final static String POLICY_GLOBALE = "Globale";
 	public final static String POLICY_API = "API";
 	
+	
+	public final static String GESTORE = "ctGestore";
+	public final static String GESTORE_HAZELCAST_MAP_BACKWARD_COMPATIBILITY = "HAZELCAST";
+	
+	public final static String GESTORE_CONFIG_DATE = "ctGestoreConfigDate";
+	
+	public final static String MODALITA_SINCRONIZZAZIONE = "ctSyncMode";
+	
+	public final static String VALUE_MODALITA_SINCRONIZZAZIONE_DEFAULT = "default";
+	public final static String VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE = "locale";
+	public final static String VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE_SUDDIVISA_TRA_NODI = "localePiuNodi";
+	public final static String VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA = "distribuita";
+	public final static List<String> getVALUES_MODALITA_SINCRONIZZAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati){
+		return _getMODALITA_SINCRONIZZAZIONE(tipiSupportati, true);
+	}
+	
+	public final static String LABEL_MODALITA_SINCRONIZZAZIONE = "Sincronizzazione";	
+	public final static String LABEL_MODALITA_SINCRONIZZAZIONE_DEFAULT = "Default";
+	public final static String LABEL_MODALITA_SINCRONIZZAZIONE_LOCALE = "Locale";
+	public final static String LABEL_MODALITA_SINCRONIZZAZIONE_LOCALE_SUDDIVISA_TRA_NODI = "Locale - Quota divisa sui nodi";
+	public final static String LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA = "Distribuita";
+	
+	public final static List<String> getLABELS_MODALITA_SINCRONIZZAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati){
+		return _getMODALITA_SINCRONIZZAZIONE(tipiSupportati, false);
+	} 
+	
+	private final static List<String> _getMODALITA_SINCRONIZZAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati, boolean values){
+		boolean locale = false;
+		boolean localeNodi = false;
+		boolean distribuita = false;
+		for (PolicyGroupByActiveThreadsType tipo : tipiSupportati) {
+			if(PolicyGroupByActiveThreadsType.LOCAL.equals(tipo)) {
+				locale = true;
+			}
+			else if(PolicyGroupByActiveThreadsType.LOCAL_DIVIDED_BY_NODES.equals(tipo)) {
+				localeNodi = true;
+			}
+			else {
+				distribuita = true;
+			}
+		}
+		List<String> l = new ArrayList<String>();
+		l.add(values ? VALUE_MODALITA_SINCRONIZZAZIONE_DEFAULT : LABEL_MODALITA_SINCRONIZZAZIONE_DEFAULT);
+		if(locale) {
+			l.add(values ? VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE : LABEL_MODALITA_SINCRONIZZAZIONE_LOCALE);
+		}
+		if(localeNodi) {
+			l.add(values ? VALUE_MODALITA_SINCRONIZZAZIONE_LOCALE_SUDDIVISA_TRA_NODI : LABEL_MODALITA_SINCRONIZZAZIONE_LOCALE_SUDDIVISA_TRA_NODI);
+		}
+		if(distribuita) {
+			l.add(values ? VALUE_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA : LABEL_MODALITA_SINCRONIZZAZIONE_DISTRIBUITA);
+		}
+		return l;
+	}
+	
+	
+	public final static String MODALITA_IMPLEMENTAZIONE = "ctImpl";
+	
+	public final static String VALUE_MODALITA_IMPLEMENTAZIONE_DATABASE = "database";
+	public final static String VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST = "hazelcast";
+	public final static String VALUE_MODALITA_IMPLEMENTAZIONE_REDIS = "redis";
+	public final static List<String> getVALUES_MODALITA_IMPLEMENTAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati){
+		return _getMODALITA_IMPLEMENTAZIONE(tipiSupportati, true);
+	}
+	
+	public final static String LABEL_MODALITA_IMPLEMENTAZIONE = "Implementazione";
+	
+	public final static String LABEL_MODALITA_IMPLEMENTAZIONE_DATABASE = "embedded";
+	public final static String LABEL_MODALITA_IMPLEMENTAZIONE_HAZELCAST = "hazelcast";
+	public final static String LABEL_MODALITA_IMPLEMENTAZIONE_REDIS = "redis";	
+	public final static List<String> getLABELS_MODALITA_IMPLEMENTAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati){
+		return _getMODALITA_IMPLEMENTAZIONE(tipiSupportati, false);
+	}
+	
+	private final static List<String> _getMODALITA_IMPLEMENTAZIONE(List<PolicyGroupByActiveThreadsType> tipiSupportati, boolean values){
+		boolean database = false;
+		boolean hazelcast = false;
+		boolean redis = false;
+		for (PolicyGroupByActiveThreadsType tipo : tipiSupportati) {
+			if(PolicyGroupByActiveThreadsType.DATABASE.equals(tipo)) {
+				database = true;
+			}
+			else if(tipo.isHazelcast()) {
+				hazelcast = true;
+			}
+			else if(tipo.isRedis()) {
+				redis = true;
+			}
+		}
+		List<String> l = new ArrayList<String>();
+		if(hazelcast) {
+			l.add(values ? VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST : LABEL_MODALITA_IMPLEMENTAZIONE_HAZELCAST);
+		}
+		if(redis) {
+			l.add(values ? VALUE_MODALITA_IMPLEMENTAZIONE_REDIS : LABEL_MODALITA_IMPLEMENTAZIONE_REDIS);
+		}
+		if(database) {
+			l.add(values ? VALUE_MODALITA_IMPLEMENTAZIONE_DATABASE : LABEL_MODALITA_IMPLEMENTAZIONE_DATABASE);
+		}
+		return l;
+	}
+	
+	
+	
+	public final static String MODALITA_CONTATORI = "ctCount";
+	
+	public final static String VALUE_MODALITA_CONTATORI_EXACT = "exact";
+	public final static String VALUE_MODALITA_CONTATORI_APPROXIMATED = "approximated";
+	public final static String VALUE_MODALITA_CONTATORI_INCONSISTENT = "inconsistent";
+	public final static List<String> getVALUES_MODALITA_CONTATORI(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl){
+		return _getMODALITA_CONTATORI(tipiSupportati, impl, true);
+	}
+	
+	public final static String LABEL_MODALITA_CONTATORI = "Misurazione";
+	
+	public final static String LABEL_MODALITA_CONTATORI_EXACT = "esatta";
+	public final static String LABEL_MODALITA_CONTATORI_APPROXIMATED = "approssimata";
+	public final static String LABEL_MODALITA_CONTATORI_INCONSISTENT = "inconsistente";
+	public final static List<String> getLABELS_MODALITA_CONTATORI(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl){
+		return _getMODALITA_CONTATORI(tipiSupportati, impl, false);
+	}
+	
+	private final static List<String> _getMODALITA_CONTATORI(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, boolean values){
+		boolean exact = false;
+		boolean approximated = false;
+		boolean inconsistent = false;
+		if(VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST.equals(impl)) {
+			for (PolicyGroupByActiveThreadsType tipo : tipiSupportati) {
+				if(!tipo.isHazelcast()) {
+					continue;
+				}
+				
+				if(tipo.isExact()) {
+					exact = true;
+				}
+				else if(tipo.isApproximated()) {
+					approximated = true;
+				}
+				else if(tipo.isInconsistent()) {
+					inconsistent = true;
+				}
+			}
+		}
+		else if(VALUE_MODALITA_IMPLEMENTAZIONE_REDIS.equals(impl)) {
+			for (PolicyGroupByActiveThreadsType tipo : tipiSupportati) {
+				if(!tipo.isRedis()) {
+					continue;
+				}
+				
+				if(tipo.isExact()) {
+					exact = true;
+				}
+				else if(tipo.isApproximated()) {
+					approximated = true;
+				}
+				else if(tipo.isInconsistent()) {
+					inconsistent = true;
+				}
+			}
+		}
+		List<String> l = new ArrayList<String>();
+		if(exact) {
+			l.add(values ? VALUE_MODALITA_CONTATORI_EXACT : LABEL_MODALITA_CONTATORI_EXACT);
+		}
+		if(approximated) {
+			l.add(values ? VALUE_MODALITA_CONTATORI_APPROXIMATED : LABEL_MODALITA_CONTATORI_APPROXIMATED);
+		}
+		if(inconsistent) {
+			l.add(values ? VALUE_MODALITA_CONTATORI_INCONSISTENT : LABEL_MODALITA_CONTATORI_INCONSISTENT);
+		}
+		return l;
+	}
+	
+	
+	
+	
+	public final static String MODALITA_TIPOLOGIA = "ctEngineType";
+	
+	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC = "full-sync";
+	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE = "near-cache";
+	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE = "local-cache";
+	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC = "remote-sync";
+	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC = "remote-async";
+	public static final String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REPLICATED_MAP = "replicated-map";
+	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG = "atomic-long-counters";
+	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC = "atomic-long-async-counters";
+	public final static String VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER = "pn-counters";	
+	
+	public final static String VALUE_MODALITA_TIPOLOGIA_REDIS_REDDISSON_MAP = "redisson-map";
+	public static final String VALUE_MODALITA_TIPOLOGIA_REDIS_CONTATORI_ATOMIC_LONG = "atomic-long-counters";
+	public static final String VALUE_MODALITA_TIPOLOGIA_REDIS_CONTATORI_LONGADDER = "longadder-counters";
+	
+	public final static List<String> getVALUES_MODALITA_TIPOLOGIA(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, String counter){
+		return _getMODALITA_TIPOLOGIA(tipiSupportati, impl, counter, true);
+	}
+	
+	public final static String LABEL_MODALITA_TIPOLOGIA = "Algoritmo";
+	
+	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC = "map";
+	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE = "near-cache";
+	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE = "local-cache";
+	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC = "remote-sync";
+	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC = "remote-async";
+	public static final String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REPLICATED_MAP = "replicated-map";
+	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG = "atomic-long-counters";
+	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC = "atomic-long-async-counters";
+	public final static String LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER = "pn-counters";
+	
+	public final static String LABEL_MODALITA_TIPOLOGIA_REDIS_REDDISSON = "map";
+	public static final String LABEL_MODALITA_TIPOLOGIA_REDIS_CONTATORI_ATOMIC_LONG = "atomic-long-counters";
+	public static final String LABEL_MODALITA_TIPOLOGIA_REDIS_CONTATORI_LONGADDER = "longadder-counters";
+
+
+	public final static List<String> getLABELS_MODALITA_TIPOLOGIA(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, String counter){
+		return _getMODALITA_TIPOLOGIA(tipiSupportati, impl, counter, false);
+	}
+	
+	private final static List<String> _getMODALITA_TIPOLOGIA(List<PolicyGroupByActiveThreadsType> tipiSupportati, String impl, String counter, boolean values){
+		List<String> l = new ArrayList<String>();
+		if(VALUE_MODALITA_IMPLEMENTAZIONE_HAZELCAST.equals(impl)) {
+			for (PolicyGroupByActiveThreadsType tipo : tipiSupportati) {
+				if(VALUE_MODALITA_CONTATORI_EXACT.equals(counter)) {
+					if(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG: LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG);
+					}
+					else if(PolicyGroupByActiveThreadsType.HAZELCAST_MAP.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC : LABEL_MODALITA_TIPOLOGIA_HAZELCAST_FULL_SYNC);
+					} 
+				}
+				else if(VALUE_MODALITA_CONTATORI_APPROXIMATED.equals(counter)) {
+					if(PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER: LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_PNCOUNTER);
+					}
+					else if(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC: LABEL_MODALITA_TIPOLOGIA_HAZELCAST_CONTATORI_ATOMIC_LONG_ASYNC);
+					}
+					else if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE : LABEL_MODALITA_TIPOLOGIA_HAZELCAST_NEAR_CACHE);
+					}
+					else if(PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE : LABEL_MODALITA_TIPOLOGIA_HAZELCAST_LOCAL_CACHE);
+					}
+				}
+				else if(VALUE_MODALITA_CONTATORI_INCONSISTENT.equals(counter)) {
+					if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC : LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_SYNC);
+					}
+					else if(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC : LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REMOTE_ASYNC);
+					}
+					else if(PolicyGroupByActiveThreadsType.HAZELCAST_REPLICATED_MAP.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_HAZELCAST_REPLICATED_MAP : LABEL_MODALITA_TIPOLOGIA_HAZELCAST_REPLICATED_MAP);
+					}
+				}
+			}
+		}
+		else if(VALUE_MODALITA_IMPLEMENTAZIONE_REDIS.equals(impl)) {
+			for (PolicyGroupByActiveThreadsType tipo : tipiSupportati) {
+				if(VALUE_MODALITA_CONTATORI_EXACT.equals(counter)) {
+					if(PolicyGroupByActiveThreadsType.REDISSON_ATOMIC_LONG.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_REDIS_CONTATORI_ATOMIC_LONG : LABEL_MODALITA_TIPOLOGIA_REDIS_CONTATORI_ATOMIC_LONG);
+					}
+					else if(PolicyGroupByActiveThreadsType.REDISSON_MAP.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_REDIS_REDDISSON_MAP : LABEL_MODALITA_TIPOLOGIA_REDIS_REDDISSON);
+					}
+				}
+				else if(VALUE_MODALITA_CONTATORI_INCONSISTENT.equals(counter)) {
+					/*
+					 * Si potrebbe pensare che debba finire in approximatedModes come per il PNCounter 
+					 * Non è così poichè per il PNCounter abbiamo le versioni incrementAndGet e addAndGet e in questo caso invece no, si fa prima l'increment e poi si ottiene il valore tramite sum(). 
+					 * Una volta che lo si recupera tramite la 'sum()' potrebbero essere tornati anche risultati derivanti da altre richieste in corso.
+					 **/
+					if(PolicyGroupByActiveThreadsType.REDISSON_LONGADDER.equals(tipo)) {
+						l.add(values ? VALUE_MODALITA_TIPOLOGIA_REDIS_CONTATORI_LONGADDER: LABEL_MODALITA_TIPOLOGIA_REDIS_CONTATORI_LONGADDER);
+					}
+				}
+			}
+		}
+		return l;
+	}
+	
+
+	
+	
+	
+	// HTTP HEADERS
+	
+	public final static String VALUE_HTTP_HEADER_DEFAULT = "default";
+	public final static String VALUE_HTTP_HEADER_DISABILITATO = "disabilitato";
+	public final static String VALUE_HTTP_HEADER_ABILITATO = "abilitato";
+	public final static String VALUE_HTTP_HEADER_ABILITATO_NO_WINDOWS = "noWindows";
+	public final static String VALUE_HTTP_HEADER_ABILITATO_WINDOWS = "windows";
+	public final static String VALUE_HTTP_HEADER_ABILITATO_NO_BACKOFF = "noBackoff";
+	public final static String VALUE_HTTP_HEADER_ABILITATO_BACKOFF = "backoff";
+	public final static String VALUE_HTTP_HEADER_RIDEFINITO = "ridefinito";
+	
+	public final static String LABEL_HTTP_HEADER_DEFAULT = "Default";
+	public final static String LABEL_HTTP_HEADER_DISABILITATO = "Disabilitato";
+	public final static String LABEL_HTTP_HEADER_ABILITATO = "Abilitato";
+	public final static String LABEL_HTTP_HEADER_ABILITATO_NO_WINDOWS = "Abilitato (senza finestra temporale)";
+	public final static String LABEL_HTTP_HEADER_ABILITATO_WINDOWS = "Abilitato (con finestra temporale)";
+	public final static String LABEL_HTTP_HEADER_ABILITATO_NO_BACKOFF = "Abilitato (senza backoff)";
+	public final static String LABEL_HTTP_HEADER_ABILITATO_BACKOFF = "Abilitato (con backoff)";
+	public final static String LABEL_HTTP_HEADER_RIDEFINITO = "Ridefinito";
+	
+	
+	public final static String MODALITA_GENERAZIONE_HEADER_HTTP = "ctHttpMode";	
+	public final static List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP = new ArrayList<String>();
+	static {
+		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP.add(VALUE_HTTP_HEADER_DEFAULT);
+		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP.add(VALUE_HTTP_HEADER_DISABILITATO);
+		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP.add(VALUE_HTTP_HEADER_RIDEFINITO);
+	}
+	
+	public final static String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP = "HTTP Headers";	
+	public final static List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP = new ArrayList<String>();
+	static {
+		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP.add(LABEL_HTTP_HEADER_DEFAULT);
+		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP.add(LABEL_HTTP_HEADER_DISABILITATO);
+		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP.add(LABEL_HTTP_HEADER_RIDEFINITO);
+	}
+	
+	
+	public final static String MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT = "ctHttpQuota";	
+	public final static List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT = new ArrayList<String>();
+	static {
+		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT.add(VALUE_HTTP_HEADER_DEFAULT);
+		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT.add(VALUE_HTTP_HEADER_ABILITATO_NO_WINDOWS);
+		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT.add(VALUE_HTTP_HEADER_ABILITATO_WINDOWS);
+		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT.add(VALUE_HTTP_HEADER_DISABILITATO);
+	}
+	
+	public final static String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT = "Limiti di Quota";	
+	public final static List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT = new ArrayList<String>();
+	static {
+		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT.add(LABEL_HTTP_HEADER_DEFAULT);
+		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT.add(LABEL_HTTP_HEADER_ABILITATO_NO_WINDOWS);
+		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT.add(LABEL_HTTP_HEADER_ABILITATO_WINDOWS);
+		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT.add(LABEL_HTTP_HEADER_DISABILITATO);
+	}
+	
+
+	public final static String MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING = "ctHttpRemaining";	
+	public final static List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING = new ArrayList<String>();
+	static {
+		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING.add(VALUE_HTTP_HEADER_DEFAULT);
+		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING.add(VALUE_HTTP_HEADER_ABILITATO);
+		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING.add(VALUE_HTTP_HEADER_DISABILITATO);
+	}
+	
+	public final static String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING = "Rimanenza della Quota";	
+	public final static List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING = new ArrayList<String>();
+	static {
+		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING.add(LABEL_HTTP_HEADER_DEFAULT);
+		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING.add(LABEL_HTTP_HEADER_ABILITATO);
+		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING.add(LABEL_HTTP_HEADER_DISABILITATO);
+	}
+	
+	
+	public final static String MODALITA_GENERAZIONE_HEADER_HTTP_RESET = "ctHttpReset";	
+	public final static List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RESET = new ArrayList<String>();
+	static {
+		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RESET.add(VALUE_HTTP_HEADER_DEFAULT);
+		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RESET.add(VALUE_HTTP_HEADER_ABILITATO);
+		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RESET.add(VALUE_HTTP_HEADER_DISABILITATO);
+	}
+	
+	public final static String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RESET = "Reset della Quota (secondi)";	
+	public final static List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RESET = new ArrayList<String>();
+	static {
+		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RESET.add(LABEL_HTTP_HEADER_DEFAULT);
+		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RESET.add(LABEL_HTTP_HEADER_ABILITATO);
+		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RESET.add(LABEL_HTTP_HEADER_DISABILITATO);
+	}
+	
+	
+	public final static String MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER = "ctHttpRetryAfter";	
+	public final static List<String> VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER = new ArrayList<String>();
+	static {
+		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER.add(VALUE_HTTP_HEADER_DEFAULT);
+		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER.add(VALUE_HTTP_HEADER_ABILITATO_NO_BACKOFF);
+		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER.add(VALUE_HTTP_HEADER_ABILITATO_BACKOFF);
+		VALUES_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER.add(VALUE_HTTP_HEADER_DISABILITATO);
+	}
+	
+	public final static String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER = "Retry-After";	
+	public final static List<String> LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER = new ArrayList<String>();
+	static {
+		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER.add(LABEL_HTTP_HEADER_DEFAULT);
+		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER.add(LABEL_HTTP_HEADER_ABILITATO_NO_BACKOFF);
+		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER.add(LABEL_HTTP_HEADER_ABILITATO_BACKOFF);
+		LABELS_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER.add(LABEL_HTTP_HEADER_DISABILITATO);
+	}
+	
+	public final static String MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS = "ctHttpRetryAfterBackoff";	
+	
+	public final static String LABEL_MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS = "Backoff (secondi)";	
 }

@@ -51,9 +51,12 @@ public class SignatureSenderProvider extends KeyStoreSecurityProvider {
 		
 		Properties p = mapProperties.get("signaturePropRefId");
 		if(p!=null && p.size()>0) {
-			String file = p.getProperty("rs.security.keystore.file");
-			if(file!=null && StringUtils.isNotEmpty(file)) {
-				InputValidationUtils.validateTextAreaInput(file, "Signature - KeyStore - File");
+			if(!p.containsKey("rs.security.keystore") && !p.containsKey("rs.security.keystore.jwkset")) {
+				// altrimenti è stato fatto inject del keystore
+				String file = p.getProperty("rs.security.keystore.file");
+				if(file!=null && StringUtils.isNotEmpty(file)) {
+					InputValidationUtils.validateTextAreaInput(file, "Signature - KeyStore - File");
+				}
 			}
 		}
 		

@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.protocol.basic.BasicFactory;
-import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.engine.mapping.InformazioniServizioURLMapping;
 import org.openspcoop2.protocol.manifest.DefaultIntegrationError;
 import org.openspcoop2.protocol.manifest.Integration;
@@ -59,10 +58,13 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ContestoCodificaEccezione;
+import org.openspcoop2.protocol.sdk.constants.IDService;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
+import org.openspcoop2.protocol.sdk.state.FunctionContextsCustom;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
@@ -1103,7 +1105,7 @@ public class ProtocolFactoryManager {
 		
 		URLProtocolContext urlProtocolContext = null;
 		try {
-			urlProtocolContext = new URLProtocolContext(request, this.log, true, customContexts);
+			urlProtocolContext = new URLProtocolContextImpl(request, this.log, true, customContexts);
 		} catch (Exception e) {
 			throw new ProtocolException("Impossibile recuperare il nome del contesto dalla request: ServletContext["+request.getContextPath()+"] RequestURI["+request.getRequestURI()+"]",e);
 		}

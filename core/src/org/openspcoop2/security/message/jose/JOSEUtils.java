@@ -37,6 +37,7 @@ import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.CRLCertstore;
 import org.openspcoop2.security.keystore.MerlinKeystore;
@@ -429,24 +430,24 @@ public class JOSEUtils {
 		}
 		return properties;
 	}
-	public static KeyStore readTrustStoreSsl(Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
+	public static KeyStore readTrustStoreSsl(RequestInfo requestInfo, Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
 		Properties properties = new Properties();
 		properties.putAll(propertiesParam);
-		return readTrustStoreSsl(properties);
+		return readTrustStoreSsl(requestInfo, properties);
 	}
-	public static KeyStore readTrustStoreSsl(Properties properties) throws SecurityException, UtilsException {
-		return _readTrustStore(properties, SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_FILE, 
+	public static KeyStore readTrustStoreSsl(RequestInfo requestInfo, Properties properties) throws SecurityException, UtilsException {
+		return _readTrustStore(requestInfo, properties, SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_FILE, 
 				SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_TYPE, 
 				SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_PASSWORD);
 	}
 
-	public static KeyStore readTrustStoreJwtX509Cert(Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
+	public static KeyStore readTrustStoreJwtX509Cert(RequestInfo requestInfo, Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
 		Properties properties = new Properties();
 		properties.putAll(propertiesParam);
-		return readTrustStoreJwtX509Cert(properties);
+		return readTrustStoreJwtX509Cert(requestInfo, properties);
 	}
-	public static KeyStore readTrustStoreJwtX509Cert(Properties properties) throws SecurityException, UtilsException {
-		return _readTrustStore(properties, SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_FILE, 
+	public static KeyStore readTrustStoreJwtX509Cert(RequestInfo requestInfo, Properties properties) throws SecurityException, UtilsException {
+		return _readTrustStore(requestInfo, properties, SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_FILE, 
 				SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_TYPE, 
 				SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_PASSWORD);
 	}
@@ -488,13 +489,13 @@ public class JOSEUtils {
 		return null;
 	}
 	
-	public static KeyStore readKeyStoreJwtX509Cert(Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
+	public static KeyStore readKeyStoreJwtX509Cert(RequestInfo requestInfo, Map<String, Object> propertiesParam) throws SecurityException, UtilsException {
 		Properties properties = new Properties();
 		properties.putAll(propertiesParam);
-		return readKeyStoreJwtX509Cert(properties);
+		return readKeyStoreJwtX509Cert(requestInfo, properties);
 	}
-	public static KeyStore readKeyStoreJwtX509Cert(Properties properties) throws SecurityException, UtilsException {
-		return _readTrustStore(properties, SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_FILE, 
+	public static KeyStore readKeyStoreJwtX509Cert(RequestInfo requestInfo, Properties properties) throws SecurityException, UtilsException {
+		return _readTrustStore(requestInfo, properties, SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_FILE, 
 				SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_TYPE, 
 				SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_PASSWORD);
 	}
@@ -541,7 +542,7 @@ public class JOSEUtils {
 		}
 	}
 		
-	private static KeyStore _readTrustStore(Properties properties, String file, String type, String password) throws SecurityException, UtilsException {
+	private static KeyStore _readTrustStore(RequestInfo requestInfo, Properties properties, String file, String type, String password) throws SecurityException, UtilsException {
 		
 		KeyStore keystore = null;
 		
@@ -568,14 +569,14 @@ public class JOSEUtils {
 				}
 				keystorePassword = keystorePassword.trim();
 				
-				keystore = GestoreKeystoreCache.getMerlinTruststore(keystoreFile, keystoreType, keystorePassword).getTrustStore();
+				keystore = GestoreKeystoreCache.getMerlinTruststore(requestInfo, keystoreFile, keystoreType, keystorePassword).getTrustStore();
 			}
 		}
 		
 		return keystore;
 	}
 	
-	public static void injectKeystore(Properties properties, Logger log) {
+	public static void injectKeystore(RequestInfo requestInfo, Properties properties, Logger log) {
 		
 		if(log==null) {
 			log = LoggerWrapperFactory.getLogger(JOSEUtils.class);
@@ -612,14 +613,14 @@ public class JOSEUtils {
 							if(trustStoreSslTypeProperty==null) {
 								throw new Exception("TrustStore ssl type undefined");
 							}
-							trustStoreSsl = GestoreKeystoreCache.getMerlinTruststore(trustStoreSslProperty, trustStoreSslTypeProperty, trustStoreSslPasswordProperty);
+							trustStoreSsl = GestoreKeystoreCache.getMerlinTruststore(requestInfo, trustStoreSslProperty, trustStoreSslTypeProperty, trustStoreSslPasswordProperty);
 						}
 						
 						String _trustStoreSslCrlProperty =  RSSecurityConstants.RSSEC_KEY_STORE+".crl.ssl";
 						String trustStoreSslCrlProperty =  properties.getProperty(_trustStoreSslCrlProperty);
 						CRLCertstore crlStore = null;
 						if(trustStoreSslCrlProperty!=null) {
-							crlStore = GestoreKeystoreCache.getCRLCertstore(trustStoreSslCrlProperty);
+							crlStore = GestoreKeystoreCache.getCRLCertstore(requestInfo, trustStoreSslCrlProperty);
 						}
 						
 						String _trustStoreSslConnectionTimeoutProperty =  RSSecurityConstants.RSSEC_KEY_STORE+".ssl.connectionTimeout";
@@ -636,27 +637,27 @@ public class JOSEUtils {
 						if(connectionTimeout!=null && readTimeout!=null) {
 							if(trustStoreSsl!=null) {
 								if(crlStore!=null) {
-									content = GestoreKeystoreCache.getHttpStore(file, connectionTimeout, readTimeout, trustStoreSsl, crlStore).getStoreBytes();
+									content = GestoreKeystoreCache.getHttpStore(requestInfo, file, connectionTimeout, readTimeout, trustStoreSsl, crlStore).getStoreBytes();
 								}
 								else {
-									content = GestoreKeystoreCache.getHttpStore(file, connectionTimeout, readTimeout, trustStoreSsl).getStoreBytes();
+									content = GestoreKeystoreCache.getHttpStore(requestInfo, file, connectionTimeout, readTimeout, trustStoreSsl).getStoreBytes();
 								}
 							}
 							else {
-								content = GestoreKeystoreCache.getHttpStore(file, connectionTimeout, readTimeout).getStoreBytes();
+								content = GestoreKeystoreCache.getHttpStore(requestInfo, file, connectionTimeout, readTimeout).getStoreBytes();
 							}
 						}
 						else {
 							if(trustStoreSsl!=null) {
 								if(crlStore!=null) {
-									content = GestoreKeystoreCache.getHttpStore(file, trustStoreSsl, crlStore).getStoreBytes();
+									content = GestoreKeystoreCache.getHttpStore(requestInfo, file, trustStoreSsl, crlStore).getStoreBytes();
 								}
 								else {
-									content = GestoreKeystoreCache.getHttpStore(file, trustStoreSsl).getStoreBytes();
+									content = GestoreKeystoreCache.getHttpStore(requestInfo, file, trustStoreSsl).getStoreBytes();
 								}
 							}
 							else {
-								content = GestoreKeystoreCache.getHttpStore(file).getStoreBytes();
+								content = GestoreKeystoreCache.getHttpStore(requestInfo, file).getStoreBytes();
 							}
 						}
 					}catch(Throwable e) {
@@ -692,7 +693,7 @@ public class JOSEUtils {
 					if("jwk".equalsIgnoreCase(type)) {
 						String jwkSet = null;
 						try {
-							jwkSet = GestoreKeystoreCache.getJwkSetStore(file).getJwkSetContent();
+							jwkSet = GestoreKeystoreCache.getJwkSetStore(requestInfo, file).getJwkSetContent();
 						}catch(Throwable e) {
 							log.error("Errore durante l'accesso al jwk set '"+file+"': "+e.getMessage(),e);
 						}
@@ -705,7 +706,7 @@ public class JOSEUtils {
 					else {
 						java.security.KeyStore keystore = null;
 						try {
-							MerlinKeystore merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(file, type, password);
+							MerlinKeystore merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(requestInfo, file, type, password);
 							if(merlinKeystore==null) {
 								throw new Exception("Keystore '"+file+"' undefined");
 							}

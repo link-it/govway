@@ -44,11 +44,11 @@ import org.openspcoop2.pdd.core.controllo_traffico.LimitExceededNotifier;
 import org.openspcoop2.pdd.core.controllo_traffico.SogliaDimensioneMessaggio;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
-import org.openspcoop2.protocol.engine.RequestInfo;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
-import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.constants.IDService;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.LimitedInputStream;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TimeoutInputStream;
@@ -131,10 +131,10 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 		this.repositoryFile = repositoryFile;
 		
 		if(this._timeoutIS!=null && this.context!=null) {
-			this._timeoutIS.updateContext(this.context.getContext());
+			this._timeoutIS.updateContext(this.context);
 		}
 		if(this._limitedIS!=null && this.context!=null) {
-			this._limitedIS.updateContext(this.context.getContext());
+			this._limitedIS.updateContext(this.context);
 		}
 	}
 	
@@ -192,14 +192,14 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			long limitBytes = this.requestLimitSize.getSogliaKb()*1024; // trasformo kb in bytes
 			this._limitedIS = new LimitedInputStream(this.is, limitBytes,
 					CostantiPdD.PREFIX_LIMITED_REQUEST,
-					this.context!=null ? this.context.getContext() : null,
+					this.context,
 					notifier);
 			this.is = this._limitedIS;
 		}
 		if(this.is!=null && this.requestReadTimeout>0) {
 			this._timeoutIS = new TimeoutInputStream(this.is, this.requestReadTimeout,
 					CostantiPdD.PREFIX_TIMEOUT_REQUEST,
-					this.context!=null ? this.context.getContext() : null);
+					this.context);
 			this.is = this._timeoutIS;
 		}
 		return this.is;
@@ -282,6 +282,11 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 				if(this.buffered) {
 					return null; // deve essere chiamato prima
 				}
+				
+				if(this.soapReader!=null) {
+					return this.soapReader;
+				}
+				
 				String contentType = getContentType();
 				if(contentType!=null) {
 					this.soapReader = new OpenSPCoop2MessageSoapStreamReader(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), contentType, 

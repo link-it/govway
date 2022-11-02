@@ -103,8 +103,10 @@ import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.KeystoreParams;
@@ -833,13 +835,15 @@ public class RegistroServiziReader {
 	public static boolean initialize(AccessoRegistro accessoRegistro,Logger aLog,Logger aLogconsole,
 			boolean raggiungibilitaTotale, boolean readObjectStatoBozza, 
 			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX, 
-			boolean prefillCache, CryptConfig cryptConfigSoggetti){
+			boolean prefillCache, CryptConfig cryptConfigSoggetti,
+			CacheType cacheType){
 
 		try {
 			RegistroServiziReader.registroServiziReader = 
 				new RegistroServiziReader(accessoRegistro,aLog,aLogconsole,raggiungibilitaTotale,readObjectStatoBozza,
 						jndiNameDatasourcePdD,useOp2UtilsDatasource,bindJMX, 
-						prefillCache, cryptConfigSoggetti);	
+						prefillCache, cryptConfigSoggetti,
+						cacheType);	
 			return RegistroServiziReader.initialize;
 		}
 		catch(Exception e) {
@@ -862,7 +866,7 @@ public class RegistroServiziReader {
 	 *
 	 * @return Istanza del Reader del Registro
 	 */
-	protected static RegistroServiziReader getInstance(){
+	public static RegistroServiziReader getInstance(){
 		return RegistroServiziReader.registroServiziReader;
 	}
 
@@ -889,7 +893,8 @@ public class RegistroServiziReader {
 	public RegistroServiziReader(AccessoRegistro accessoRegistro,Logger aLog,
 			Logger aLogconsole,boolean raggiungibilitaTotale, boolean readObjectStatoBozza, 
 			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX, 
-			boolean prefillCache, CryptConfig cryptConfigSoggetti)throws DriverRegistroServiziException{
+			boolean prefillCache, CryptConfig cryptConfigSoggetti,
+			CacheType cacheType)throws DriverRegistroServiziException{
 		try{
 			if(aLog!=null)
 				this.log = aLog;
@@ -897,7 +902,8 @@ public class RegistroServiziReader {
 				this.log = LoggerWrapperFactory.getLogger(RegistroServiziReader.class);
 			this.registroServizi = new RegistroServizi(accessoRegistro,this.log,aLogconsole,raggiungibilitaTotale,readObjectStatoBozza,
 					jndiNameDatasourcePdD, useOp2UtilsDatasource, bindJMX, 
-					prefillCache, cryptConfigSoggetti);
+					prefillCache, cryptConfigSoggetti,
+					cacheType);
 			RegistroServiziReader.initialize = true;
 		}catch(Exception e){
 			RegistroServiziReader.initialize = false;
@@ -1397,7 +1403,7 @@ public class RegistroServiziReader {
 	
 	/* ********  P R O F I L O   D I   G E S T I O N E  ******** */ 
 	
-	protected String getProfiloGestioneFruizioneServizio(Connection connectionPdD,IDServizio idServizio,String nomeRegistro) 
+	protected String getProfiloGestioneFruizioneServizio(Connection connectionPdD,IDServizio idServizio,String nomeRegistro, RequestInfo requestInfo) 
 		throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		
 		String profilo = null;
@@ -1413,7 +1419,10 @@ public class RegistroServiziReader {
 		} 
 		if(profilo == null){
 			// vedo se il soggetto erogatore ha un profilo
-			Soggetto soggettoErogatore =  this.registroServizi.getSoggetto(connectionPdD,nomeRegistro, idServizio.getSoggettoErogatore());
+			Soggetto soggettoErogatore = RegistroServiziManager._getSoggettoFromRequestInfo(idServizio.getSoggettoErogatore(), requestInfo);
+			if (soggettoErogatore == null){
+				soggettoErogatore =  this.registroServizi.getSoggetto(connectionPdD,nomeRegistro, idServizio.getSoggettoErogatore());
+			}
 			if (soggettoErogatore == null){
 				throw new DriverRegistroServiziNotFound("getProfiloGestioneFruizioneServizio, soggettoErogatore ["+idServizio.getSoggettoErogatore()+"] non definito (o non registrato)");
 			}
@@ -1422,13 +1431,16 @@ public class RegistroServiziReader {
 		return profilo;
 	}
 	
-	protected String getProfiloGestioneErogazioneServizio(Connection connectionPdD,IDSoggetto idFruitore,IDServizio idServizio,String nomeRegistro) 
+	protected String getProfiloGestioneErogazioneServizio(Connection connectionPdD,IDSoggetto idFruitore,IDServizio idServizio,String nomeRegistro, RequestInfo requestInfo) 
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		
 		String profilo = null;
 		
 		// vedo se il soggetto fruitore ha un profilo
-		Soggetto soggettoFruitore =  this.registroServizi.getSoggetto(connectionPdD,nomeRegistro, idFruitore);
+		Soggetto soggettoFruitore = RegistroServiziManager._getSoggettoFromRequestInfo(idFruitore, requestInfo);
+		if(soggettoFruitore==null) {
+			soggettoFruitore = this.registroServizi.getSoggetto(connectionPdD,nomeRegistro, idFruitore);
+		}
 		if (soggettoFruitore == null){
 			throw new DriverRegistroServiziNotFound("getProfiloGestioneErogazioneServizio, soggettoFruitore ["+idFruitore+"] non definito (o non registrato)");
 		}
@@ -1437,15 +1449,18 @@ public class RegistroServiziReader {
 		return profilo;
 	}
 	
-	protected String getProfiloGestioneSoggetto(Connection connectionPdD,IDSoggetto idSoggetto,String nomeRegistro) 
+	protected String getProfiloGestioneSoggetto(Connection connectionPdD,IDSoggetto idSoggetto,String nomeRegistro, RequestInfo requestInfo) 
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		
 		// Profilo di gestione
 		String profilo = null;
 		
 		// vedo se il soggetto fruitore ha un profilo
-		Soggetto soggetto =  this.registroServizi.getSoggetto(connectionPdD, nomeRegistro, idSoggetto);
-		if (idSoggetto == null){
+		Soggetto soggetto = RegistroServiziManager._getSoggettoFromRequestInfo(idSoggetto, requestInfo);
+		if (soggetto == null){
+			soggetto =  this.registroServizi.getSoggetto(connectionPdD, nomeRegistro, idSoggetto);
+		}
+		if (soggetto == null){
 			throw new DriverRegistroServiziNotFound("getProfiloGestioneSoggetto, Soggetto ["+idSoggetto+"] non definito (o non registrato)");
 		}
 		profilo = soggetto.getVersioneProtocollo();
@@ -2374,24 +2389,24 @@ public class RegistroServiziReader {
 		
 	}
 	
-	protected Documento getAllegato(Connection connectionPdD, IDAccordo idAccordo, String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServizi.getAllegato(connectionPdD, null, idAccordo, nome);
+	protected Documento getAllegato(Connection connectionPdD, IDAccordo idAccordo, String nome, RequestInfo requestInfo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getAllegato(connectionPdD, null, idAccordo, nome, requestInfo);
 	}
-	protected Documento getSpecificaSemiformale(Connection connectionPdD, IDAccordo idAccordo, TipiDocumentoSemiformale tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServizi.getSpecificaSemiformale(connectionPdD, null, idAccordo, tipo, nome);
+	protected Documento getSpecificaSemiformale(Connection connectionPdD, IDAccordo idAccordo, TipiDocumentoSemiformale tipo, String nome, RequestInfo requestInfo)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getSpecificaSemiformale(connectionPdD, null, idAccordo, tipo, nome, requestInfo);
 	}
 	
-	protected Documento getAllegato(Connection connectionPdD, IDServizio idASPS, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServizi.getAllegato(connectionPdD, null, idASPS, nome);
+	protected Documento getAllegato(Connection connectionPdD, IDServizio idASPS, String nome, RequestInfo requestInfo)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getAllegato(connectionPdD, null, idASPS, nome, requestInfo);
 	}
-	protected Documento getSpecificaSemiformale(Connection connectionPdD, IDServizio idASPS, TipiDocumentoSemiformale tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServizi.getSpecificaSemiformale(connectionPdD, null, idASPS, tipo, nome);
+	protected Documento getSpecificaSemiformale(Connection connectionPdD, IDServizio idASPS, TipiDocumentoSemiformale tipo, String nome, RequestInfo requestInfo)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getSpecificaSemiformale(connectionPdD, null, idASPS, tipo, nome, requestInfo);
 	}
-	protected Documento getSpecificaSicurezza(Connection connectionPdD, IDServizio idASPS, TipiDocumentoSicurezza tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServizi.getSpecificaSicurezza(connectionPdD, null, idASPS, tipo, nome);
+	protected Documento getSpecificaSicurezza(Connection connectionPdD, IDServizio idASPS, TipiDocumentoSicurezza tipo, String nome, RequestInfo requestInfo)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getSpecificaSicurezza(connectionPdD, null, idASPS, tipo, nome, requestInfo);
 	}
-	protected Documento getSpecificaLivelloServizio(Connection connectionPdD, IDServizio idASPS, TipiDocumentoLivelloServizio tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServizi.getSpecificaLivelloServizio(connectionPdD, null, idASPS, tipo, nome);
+	protected Documento getSpecificaLivelloServizio(Connection connectionPdD, IDServizio idASPS, TipiDocumentoLivelloServizio tipo, String nome, RequestInfo requestInfo)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getSpecificaLivelloServizio(connectionPdD, null, idASPS, tipo, nome, requestInfo);
 	}
 	
 

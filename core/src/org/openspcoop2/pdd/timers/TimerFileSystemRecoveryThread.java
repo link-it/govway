@@ -253,7 +253,7 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 	    	Resource r = null;
 			try{
 				dbManager = DBTransazioniManager.getInstance();
-				r = dbManager.getResource(this.properties.getIdentitaPortaDefault(null), ID_MODULO, null);
+				r = dbManager.getResource(this.properties.getIdentitaPortaDefaultWithoutProtocol(), ID_MODULO, null);
 				if(r==null){
 					throw new Exception("Risorsa al database non disponibile");
 				}
@@ -289,7 +289,7 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 			}finally{
 				try{
 					if(r!=null)
-						dbManager.releaseResource(this.properties.getIdentitaPortaDefault(null), ID_MODULO, r);
+						dbManager.releaseResource(this.properties.getIdentitaPortaDefaultWithoutProtocol(), ID_MODULO, r);
 				}catch(Exception eClose){}
 			}
 			

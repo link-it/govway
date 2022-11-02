@@ -1207,18 +1207,18 @@ public class RestTest extends ConfigLoader {
 		assertNotNull(idTransazione);
 			
 		int httpCodeError = 413;
-		long esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA);
+		long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA);
 		String errorCode = REQUEST_SIZE_EXCEEDED;
 		String errorMessage = REQUEST_SIZE_EXCEEDED_MESSAGE;
 		String nomePolicy = "DimensioneMassimaMessaggi";
 		if(!expectedError) {
-			esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
+			esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
 		}
 		if(headerTest!=null && headerTest.equals("Risposta")) {
 			nomePolicy = "Risposta50K";
 			if(expectedError) {
 				httpCodeError = 502;
-				esitoExpected = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA);
+				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA);
 				errorCode = RESPONSE_SIZE_EXCEEDED;
 				errorMessage = RESPONSE_SIZE_EXCEEDED_MESSAGE;
 			}

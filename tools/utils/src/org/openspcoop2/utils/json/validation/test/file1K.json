@@ -1,7 +1,7 @@
 {
 "name" : "aaa", 
 "photoUrls": ["http:localhost:8080/a","http:localhost:8080/b"], 
-"costante" : "valoreCostante2",
+"costante" : "valoreCostante",
 "tipo" : "rest",
 "formato" : "Wadl"
 }

@@ -63,7 +63,6 @@ import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceConfig;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceManager;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
 import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
@@ -71,6 +70,7 @@ import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
@@ -410,7 +410,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 					case DELEGATA:
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(transaction.getRequestInfo().getProtocolContext().getInterfaceName());
-						PortaDelegata pd = this.configPdDManager.getPortaDelegata_SafeMethod(idPD);
+						PortaDelegata pd = this.configPdDManager.getPortaDelegata_SafeMethod(idPD, transaction.getRequestInfo());
 						if(pd!=null && pd.getTracciamento()!=null && pd.getTracciamento().getEsiti()!=null) {
 							esitiConfig = pd.getTracciamento().getEsiti();
 						}
@@ -432,7 +432,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 					case APPLICATIVA:
 						IDPortaApplicativa idPA = new IDPortaApplicativa();
 						idPA.setNome(transaction.getRequestInfo().getProtocolContext().getInterfaceName());
-						PortaApplicativa pa = this.configPdDManager.getPortaApplicativa_SafeMethod(idPA);
+						PortaApplicativa pa = this.configPdDManager.getPortaApplicativa_SafeMethod(idPA, transaction.getRequestInfo());
 						if(pa!=null && pa.getTracciamento()!=null && pa.getTracciamento().getEsiti()!=null) {
 							esitiConfig = pa.getTracciamento().getEsiti();
 						}
@@ -472,7 +472,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				if(context.getEsito()!=null){
 					
 					// EsitiProperties
-					EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log, context.getProtocolFactory().getProtocol());
+					EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log, context.getProtocolFactory());
 					List<Integer> tmpEsitiOk = esitiProperties.getEsitiCodeOk();
 					List<String> esitiOk = new ArrayList<>();
 					if(tmpEsitiOk!=null && tmpEsitiOk.size()>0){
@@ -548,12 +548,16 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 		Transazione transazioneDTO = null;
 		try{
 			
-			IDSoggetto idDominio = this.openspcoopProperties.getIdentitaPortaDefault(context.getProtocolFactory().getProtocol());
+			RequestInfo requestInfo = null;
+			if(context.getPddContext()!=null && context.getPddContext().containsKey(Costanti.REQUEST_INFO)){
+				requestInfo = (RequestInfo) context.getPddContext().getObject(Costanti.REQUEST_INFO);
+			}
+			
+			IDSoggetto idDominio = this.openspcoopProperties.getIdentitaPortaDefault(context.getProtocolFactory().getProtocol(), requestInfo); 
 			if(context.getProtocollo()!=null && context.getProtocollo().getDominio()!=null && !context.getProtocollo().getDominio().equals(idDominio)){
 				idDominio = context.getProtocollo().getDominio();
 			}
-			else if(context.getPddContext()!=null && context.getPddContext().containsKey(Costanti.REQUEST_INFO)){
-				RequestInfo requestInfo = (RequestInfo) context.getPddContext().getObject(Costanti.REQUEST_INFO);
+			else if(requestInfo!=null){
 				if(requestInfo!=null && requestInfo.getIdentitaPdD()!=null && !requestInfo.getIdentitaPdD().equals(idDominio)){
 					idDominio = requestInfo.getIdentitaPdD();
 				}
@@ -1178,7 +1182,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 			}
 			FileTraceConfig config = FileTraceConfig.getConfig(fileTraceConfig, fileTraceConfigGlobal);
 			fileTraceManager = new FileTraceManager(this.log, config);
-			fileTraceManager.buildTransazioneInfo(transazioneDTO, transaction, 
+			fileTraceManager.buildTransazioneInfo(context.getProtocolFactory(), transazioneDTO, transaction, 
 					informazioniToken,
 					informazioniAttributi,
 					informazioniNegoziazioneToken,

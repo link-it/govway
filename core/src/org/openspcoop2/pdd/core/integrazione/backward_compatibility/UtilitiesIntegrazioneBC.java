@@ -35,6 +35,7 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -51,7 +52,7 @@ import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazioneBusta;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazioneException;
 import org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazione;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.protocol.engine.constants.Costanti;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.xml.XSDResourceResolver;
@@ -371,23 +372,23 @@ public class UtilitiesIntegrazioneBC {
 	
 	// ***** INSTANCE *****
 
-	private List<String> keywordsIntegrazione = null;
+	private List<MapKey<String>> keywordsIntegrazione = null;
 	
-	private java.util.concurrent.ConcurrentHashMap<String, String> keyValueIntegrazioneTrasporto = null;
-	private java.util.concurrent.ConcurrentHashMap<String, Boolean> keySetEnabled_HeaderIntegrazioneTrasporto = null;
-	private java.util.concurrent.ConcurrentHashMap<String, Boolean> keyReadEnabled_HeaderIntegrazioneTrasporto = null;
+	private Map<MapKey<String>, String> keyValueIntegrazioneTrasporto = null;
+	private Map<MapKey<String>, Boolean> keySetEnabled_HeaderIntegrazioneTrasporto = null;
+	private Map<MapKey<String>, Boolean> keyReadEnabled_HeaderIntegrazioneTrasporto = null;
 	
-	private java.util.concurrent.ConcurrentHashMap<String, String> keyValueIntegrazioneUrlBased = null;
-	private java.util.concurrent.ConcurrentHashMap<String, Boolean> keySetEnabled_HeaderIntegrazioneUrlBased = null;
-	private java.util.concurrent.ConcurrentHashMap<String, Boolean> keyReadEnabled_HeaderIntegrazioneUrlBased = null;
+	private Map<MapKey<String>, String> keyValueIntegrazioneUrlBased = null;
+	private Map<MapKey<String>, Boolean> keySetEnabled_HeaderIntegrazioneUrlBased = null;
+	private Map<MapKey<String>, Boolean> keyReadEnabled_HeaderIntegrazioneUrlBased = null;
 	
-	private java.util.concurrent.ConcurrentHashMap<String, String> keyValueIntegrazioneSoap = null;
-	private java.util.concurrent.ConcurrentHashMap<String, Boolean> keySetEnabled_HeaderIntegrazioneSoap = null;
-	private java.util.concurrent.ConcurrentHashMap<String, Boolean> keyReadEnabled_HeaderIntegrazioneSoap = null;
+	private Map<MapKey<String>, String> keyValueIntegrazioneSoap = null;
+	private Map<MapKey<String>, Boolean> keySetEnabled_HeaderIntegrazioneSoap = null;
+	private Map<MapKey<String>, Boolean> keyReadEnabled_HeaderIntegrazioneSoap = null;
 	
 	private OpenSPCoop2Properties openspcoopProperties = null;
-	private java.util.concurrent.ConcurrentHashMap<String, ValidatoreXSD> validatoreXSD_soap11_map = new java.util.concurrent.ConcurrentHashMap<String, ValidatoreXSD>();
-	private java.util.concurrent.ConcurrentHashMap<String, ValidatoreXSD> validatoreXSD_soap12_map = new java.util.concurrent.ConcurrentHashMap<String, ValidatoreXSD>();
+	private Map<String, ValidatoreXSD> validatoreXSD_soap11_map = new HashMap<String, ValidatoreXSD>();
+	private Map<String, ValidatoreXSD> validatoreXSD_soap12_map = new HashMap<String, ValidatoreXSD>();
 	
 	private Map<String, String> govway2openspcoop_Mapping_trasparente_soggetto = null;
 	private Map<String, String> govway2openspcoop_Mapping_trasparente_servizio = null;
@@ -645,13 +646,13 @@ public class UtilitiesIntegrazioneBC {
 	
 	private String normalizeOpenSPCoop2GovWay_tipoSoggetto(String tipoSoggetto, String protocollo) {
 		String tipo = null;
-		if(protocollo!=null && Costanti.TRASPARENTE_PROTOCOL_NAME.equals(protocollo) && this.openspcoop2govway_Mapping_trasparente_soggetto!=null) {
+		if(protocollo!=null && CostantiLabel.TRASPARENTE_PROTOCOL_NAME.equals(protocollo) && this.openspcoop2govway_Mapping_trasparente_soggetto!=null) {
 			tipo = this.openspcoop2govway_Mapping_trasparente_soggetto.get(tipoSoggetto);
 		}
-		else if(protocollo!=null && Costanti.SPCOOP_PROTOCOL_NAME.equals(protocollo) && this.openspcoop2govway_Mapping_spcoop_soggetto!=null) {
+		else if(protocollo!=null && CostantiLabel.SPCOOP_PROTOCOL_NAME.equals(protocollo) && this.openspcoop2govway_Mapping_spcoop_soggetto!=null) {
 			tipo = this.openspcoop2govway_Mapping_spcoop_soggetto.get(tipoSoggetto);
 		}
-		else if(protocollo!=null && Costanti.SDI_PROTOCOL_NAME.equals(protocollo) && this.openspcoop2govway_Mapping_sdi_soggetto!=null) {
+		else if(protocollo!=null && CostantiLabel.SDI_PROTOCOL_NAME.equals(protocollo) && this.openspcoop2govway_Mapping_sdi_soggetto!=null) {
 			tipo = this.openspcoop2govway_Mapping_sdi_soggetto.get(tipoSoggetto);
 		}
 		if(tipo!=null && StringUtils.isNotEmpty(tipo)) {
@@ -661,13 +662,13 @@ public class UtilitiesIntegrazioneBC {
 	}
 	private String normalizeOpenSPCoop2GovWay_tipoServizio(String tipoServizio, String protocollo) {
 		String tipo = null;
-		if(protocollo!=null && Costanti.TRASPARENTE_PROTOCOL_NAME.equals(protocollo) && this.openspcoop2govway_Mapping_trasparente_servizio!=null) {
+		if(protocollo!=null && CostantiLabel.TRASPARENTE_PROTOCOL_NAME.equals(protocollo) && this.openspcoop2govway_Mapping_trasparente_servizio!=null) {
 			tipo = this.openspcoop2govway_Mapping_trasparente_servizio.get(tipoServizio);
 		}
-		else if(protocollo!=null && Costanti.SPCOOP_PROTOCOL_NAME.equals(protocollo) && this.openspcoop2govway_Mapping_spcoop_servizio!=null) {
+		else if(protocollo!=null && CostantiLabel.SPCOOP_PROTOCOL_NAME.equals(protocollo) && this.openspcoop2govway_Mapping_spcoop_servizio!=null) {
 			tipo = this.openspcoop2govway_Mapping_spcoop_servizio.get(tipoServizio);
 		}
-		else if(protocollo!=null && Costanti.SDI_PROTOCOL_NAME.equals(protocollo) && this.openspcoop2govway_Mapping_sdi_servizio!=null) {
+		else if(protocollo!=null && CostantiLabel.SDI_PROTOCOL_NAME.equals(protocollo) && this.openspcoop2govway_Mapping_sdi_servizio!=null) {
 			tipo = this.openspcoop2govway_Mapping_sdi_servizio.get(tipoServizio);
 		}
 		if(tipo!=null && StringUtils.isNotEmpty(tipo)) {
@@ -678,13 +679,13 @@ public class UtilitiesIntegrazioneBC {
 	
 	private String normalizeGovWay2OpenSPCoop_tipoSoggetto(String tipoSoggetto, String protocollo) {
 		String tipo = null;
-		if(protocollo!=null && Costanti.TRASPARENTE_PROTOCOL_NAME.equals(protocollo) && this.govway2openspcoop_Mapping_trasparente_soggetto!=null) {
+		if(protocollo!=null && CostantiLabel.TRASPARENTE_PROTOCOL_NAME.equals(protocollo) && this.govway2openspcoop_Mapping_trasparente_soggetto!=null) {
 			tipo = this.govway2openspcoop_Mapping_trasparente_soggetto.get(tipoSoggetto);
 		}
-		else if(protocollo!=null && Costanti.SPCOOP_PROTOCOL_NAME.equals(protocollo) && this.govway2openspcoop_Mapping_spcoop_soggetto!=null) {
+		else if(protocollo!=null && CostantiLabel.SPCOOP_PROTOCOL_NAME.equals(protocollo) && this.govway2openspcoop_Mapping_spcoop_soggetto!=null) {
 			tipo = this.govway2openspcoop_Mapping_spcoop_soggetto.get(tipoSoggetto);
 		}
-		else if(protocollo!=null && Costanti.SDI_PROTOCOL_NAME.equals(protocollo) && this.govway2openspcoop_Mapping_sdi_soggetto!=null) {
+		else if(protocollo!=null && CostantiLabel.SDI_PROTOCOL_NAME.equals(protocollo) && this.govway2openspcoop_Mapping_sdi_soggetto!=null) {
 			tipo = this.govway2openspcoop_Mapping_sdi_soggetto.get(tipoSoggetto);
 		}
 		if(tipo!=null && StringUtils.isNotEmpty(tipo)) {
@@ -694,13 +695,13 @@ public class UtilitiesIntegrazioneBC {
 	}
 	private String normalizeGovWay2OpenSPCoop_tipoServizio(String tipoServizio, String protocollo) {
 		String tipo = null;
-		if(protocollo!=null && Costanti.TRASPARENTE_PROTOCOL_NAME.equals(protocollo) && this.govway2openspcoop_Mapping_trasparente_servizio!=null) {
+		if(protocollo!=null && CostantiLabel.TRASPARENTE_PROTOCOL_NAME.equals(protocollo) && this.govway2openspcoop_Mapping_trasparente_servizio!=null) {
 			tipo = this.govway2openspcoop_Mapping_trasparente_servizio.get(tipoServizio);
 		}
-		else if(protocollo!=null && Costanti.SPCOOP_PROTOCOL_NAME.equals(protocollo) && this.govway2openspcoop_Mapping_spcoop_servizio!=null) {
+		else if(protocollo!=null && CostantiLabel.SPCOOP_PROTOCOL_NAME.equals(protocollo) && this.govway2openspcoop_Mapping_spcoop_servizio!=null) {
 			tipo = this.govway2openspcoop_Mapping_spcoop_servizio.get(tipoServizio);
 		}
-		else if(protocollo!=null && Costanti.SDI_PROTOCOL_NAME.equals(protocollo) && this.govway2openspcoop_Mapping_sdi_servizio!=null) {
+		else if(protocollo!=null && CostantiLabel.SDI_PROTOCOL_NAME.equals(protocollo) && this.govway2openspcoop_Mapping_sdi_servizio!=null) {
 			tipo = this.govway2openspcoop_Mapping_sdi_servizio.get(tipoServizio);
 		}
 		if(tipo!=null && StringUtils.isNotEmpty(tipo)) {
@@ -722,7 +723,7 @@ public class UtilitiesIntegrazioneBC {
 					
 					if(key!=null){
 						
-						for (String keywordIntegrazione : this.keywordsIntegrazione) {
+						for (MapKey<String> keywordIntegrazione : this.keywordsIntegrazione) {
 							String header = normalizeX_((String)this.keyValueIntegrazioneTrasporto.get(keywordIntegrazione));
 							if(key.equalsIgnoreCase(header)) {
 								
@@ -812,7 +813,7 @@ public class UtilitiesIntegrazioneBC {
 
 					if(key!=null){
 						
-						for (String keywordIntegrazione : this.keywordsIntegrazione) {
+						for (MapKey<String> keywordIntegrazione : this.keywordsIntegrazione) {
 							if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(keywordIntegrazione))) {
 								
 								if(this.keyReadEnabled_HeaderIntegrazioneUrlBased.get(keywordIntegrazione)) {

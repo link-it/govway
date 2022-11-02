@@ -24,9 +24,9 @@ import java.io.OutputStream;
 
 import org.apache.xml.security.c14n.CanonicalizationException;
 import org.apache.xml.security.signature.XMLSignatureInput;
-import org.apache.xml.security.transforms.Transform;
 import org.apache.xml.security.transforms.TransformationException;
 import org.apache.xml.security.transforms.implementations.TransformBase64Decode;
+import org.w3c.dom.Element;
 
 /**
  * XMLSecAttachmentBase64ContentTransform
@@ -38,17 +38,9 @@ import org.apache.xml.security.transforms.implementations.TransformBase64Decode;
 public class XMLSecAttachmentBase64ContentTransform extends TransformBase64Decode {
 
 	@Override
-	protected XMLSignatureInput enginePerformTransform(XMLSignatureInput arg0,
-			OutputStream arg1, Transform arg2) throws IOException,
-			CanonicalizationException, TransformationException {
-		return super.enginePerformTransform(arg0, arg1, arg2);
-	}
-
-	@Override
-	protected XMLSignatureInput enginePerformTransform(XMLSignatureInput arg0,
-			Transform arg1) throws IOException, CanonicalizationException,
-			TransformationException {
-		return super.enginePerformTransform(arg0, arg1);
+	protected XMLSignatureInput enginePerformTransform(XMLSignatureInput xmlsignatureinput,
+			OutputStream outputstream, Element transformElement, String baseURI, boolean secureValidation) throws IOException, CanonicalizationException, TransformationException {
+		return super.enginePerformTransform(xmlsignatureinput, outputstream, transformElement, baseURI, secureValidation);
 	}
 	
 }

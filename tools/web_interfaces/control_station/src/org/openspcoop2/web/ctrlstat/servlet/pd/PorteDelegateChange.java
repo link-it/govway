@@ -268,16 +268,16 @@ public final class PorteDelegateChange extends Action {
 			}
 			
 			// RateLimiting
-			String ctModalitaSincronizzazione = porteDelegateHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_SINCRONIZZAZIONE);
-			String ctImplementazione = porteDelegateHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_IMPLEMENTAZIONE);
-			String ctContatori = porteDelegateHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_CONTATORI);
-			String ctTipologia = porteDelegateHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_TIPOLOGIA);
-			String ctHeaderHttp = porteDelegateHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP);
-			String ctHeaderHttp_limit = porteDelegateHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
-			String ctHeaderHttp_remaining = porteDelegateHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
-			String ctHeaderHttp_reset = porteDelegateHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
-			String ctHeaderHttp_retryAfter = porteDelegateHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
-			String ctHeaderHttp_retryAfterBackoff = porteDelegateHelper.getParameter(org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS);
+			String ctModalitaSincronizzazione = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_SINCRONIZZAZIONE);
+			String ctImplementazione = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_IMPLEMENTAZIONE);
+			String ctContatori = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_CONTATORI);
+			String ctTipologia = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_TIPOLOGIA);
+			String ctHeaderHttp = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP);
+			String ctHeaderHttp_limit = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_LIMIT);
+			String ctHeaderHttp_remaining = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_REMAINING);
+			String ctHeaderHttp_reset = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RESET);
+			String ctHeaderHttp_retryAfter = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER);
+			String ctHeaderHttp_retryAfterBackoff = porteDelegateHelper.getParameter(org.openspcoop2.core.controllo_traffico.constants.Costanti.MODALITA_GENERAZIONE_HEADER_HTTP_RETRY_AFTER_BACKOFF_SECONDS);
 
 			
 			// Prendo la porta delegata

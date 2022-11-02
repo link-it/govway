@@ -22,6 +22,7 @@
 
 package org.openspcoop2.protocol.as4.services;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.jms.MapMessage;
@@ -41,6 +42,7 @@ import org.openspcoop2.protocol.as4.services.message.AS4ConnectorInMessage;
 import org.openspcoop2.protocol.as4.services.message.AS4ConnectorOutMessage;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.threads.RunnableLogger;
 
 /**
@@ -59,6 +61,8 @@ public class RicezioneBusteConnector extends AbstractRicezioneConnector{
 	
 	@Override
 	protected void check(Message mapParam) throws Exception {
+
+		Date dataAccettazioneRichiesta = DateManager.getDate();
 		
 		MapMessage map = null;
 		if(mapParam instanceof MapMessage) {
@@ -109,7 +113,7 @@ public class RicezioneBusteConnector extends AbstractRicezioneConnector{
 		RicezioneBusteService ricezioneBuste = new RicezioneBusteService(generatoreErrore);
 		
 		try{
-			ricezioneBuste.process(as4In, as4Out);
+			ricezioneBuste.process(as4In, as4Out, dataAccettazioneRichiesta);
 		}catch(Exception e){
 			ConnectorUtils.getErrorLog().error("RicezioneBusteConnector.process error: "+e.getMessage(),e);
 			throw new ServletException(e.getMessage(),e);

@@ -23,6 +23,7 @@ package org.openspcoop2.utils.id;
 
 import java.net.NetworkInterface;
 import java.util.Enumeration;
+import java.util.UUID;
 
 import com.fasterxml.uuid.EthernetAddress;
 import com.fasterxml.uuid.Generators;
@@ -46,7 +47,7 @@ public class UniversallyUniqueIdentifierV1Generator extends AbstractUniversallyU
 
 	// Generators are fully thread-safe, so a single instance may be shared among multiple threads.
 	private TimeBasedGenerator uuidv1 = Generators.timeBasedGenerator();
-	
+
 	@Override
 	public void init(Object... o) throws UniqueIdentifierException {
 		if(o!=null && o.length>0 && o[0]!=null) {
@@ -103,14 +104,14 @@ public class UniversallyUniqueIdentifierV1Generator extends AbstractUniversallyU
 			}catch(Throwable e) {
 				throw new UniqueIdentifierException("MacAddress identification failed: "+e.getMessage(),e);
 			}
+			//initUUIDProducer( this.uuidv1 );
+			//this.uuidKey = this.uuidv1.getClass().getName();
 		}
 	}
-	
+
 	@Override
-	public IUniqueIdentifier newID() throws UniqueIdentifierException {
-		UniversallyUniqueIdentifier uuidOpenSPCoop = new UniversallyUniqueIdentifier();
-		uuidOpenSPCoop.setUuid(this.uuidv1.generate());
-		return uuidOpenSPCoop;
+	protected UUID generateUUID() {
+		return this.uuidv1.generate();
 	}
 
 }

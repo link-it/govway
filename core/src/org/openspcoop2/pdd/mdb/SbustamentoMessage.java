@@ -344,6 +344,7 @@ public class SbustamentoMessage implements GenericMessage {
 		this.implementazionePdDSoggettoDestinatario = implementazionePdDSoggettoDestinatario;
 	}
 	
+	@Override
 	public PdDContext getPddContext() {
 		return this.pddContext;
 	}

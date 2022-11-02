@@ -223,7 +223,7 @@ public class TimerGestoreBusteNonRiscontrateLib {
 
 		try {
 
-			openspcoopState.initResource(this.propertiesReader.getIdentitaPortaDefault(null),TimerGestoreBusteNonRiscontrate.ID_MODULO, null);
+			openspcoopState.initResource(this.propertiesReader.getIdentitaPortaDefaultWithoutProtocol(),TimerGestoreBusteNonRiscontrate.ID_MODULO, null);
 			Connection connectionDB = ((StateMessage)openspcoopState.getStatoRichiesta()).getConnectionDB();
 
 
@@ -344,7 +344,7 @@ public class TimerGestoreBusteNonRiscontrateLib {
 										IDSoggetto identitaPdD = null;
 										String dominioRD = null;
 										try{
-											dominioRD = this.configurazionePdDReader.getIdentificativoPorta(soggettoBustaNonRiscontrata,protocolFactory);
+											dominioRD = this.configurazionePdDReader.getIdentificativoPorta(soggettoBustaNonRiscontrata,protocolFactory,null);
 											if(dominioRD==null){
 												throw new Exception("Dominio is null");
 											}
@@ -352,7 +352,7 @@ public class TimerGestoreBusteNonRiscontrateLib {
 											this.msgDiag.logErroreGenerico(e,"BustaNonRiscontrata getDominio("+soggettoBustaNonRiscontrata+")");
 										}
 										if(dominioRD==null){
-											identitaPdD = this.propertiesReader.getIdentitaPortaDefault(null);
+											identitaPdD = this.propertiesReader.getIdentitaPortaDefaultWithoutProtocol();
 										}else{
 											identitaPdD = new IDSoggetto(bustaToSend.getTipoMittente(),
 													bustaToSend.getMittente(),dominioRD);
@@ -371,7 +371,7 @@ public class TimerGestoreBusteNonRiscontrateLib {
 										erroreAppl.setDominio(identitaPdD.getCodicePorta());
 		
 										// RichiestaDelegata
-										IDPortaDelegata idPD = this.configurazionePdDReader.getIDPortaDelegata(infoIntegrazione.getNomePorta(), protocolFactory);
+										IDPortaDelegata idPD = this.configurazionePdDReader.getIDPortaDelegata(infoIntegrazione.getNomePorta(), null, protocolFactory);
 	                                    RichiestaDelegata richiestaDelegata = new RichiestaDelegata(
 	                                            idPD,infoIntegrazione.getServizioApplicativo(),
 	                                            infoIntegrazione.getIdModuloInAttesa(),erroreAppl,identitaPdD);
@@ -391,7 +391,7 @@ public class TimerGestoreBusteNonRiscontrateLib {
 	                                            IDServizioApplicativo idSA = new IDServizioApplicativo();
 	                                            idSA.setNome(servizioApplicativo);
 	                                            idSA.setIdSoggettoProprietario(richiestaDelegata.getIdSoggettoFruitore());
-	                                            sa = this.configurazionePdDReader.getServizioApplicativo(idSA);
+	                                            sa = this.configurazionePdDReader.getServizioApplicativo(idSA, null);
 	                                        }
 										}catch (Exception e) {
 											if( !(e instanceof DriverConfigurazioneNotFound) || !(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(servizioApplicativo)) ){
@@ -399,18 +399,18 @@ public class TimerGestoreBusteNonRiscontrateLib {
 											}
 										}
 		
-										String implementazioneMittente = this.registroServiziReader.getImplementazionePdD(new IDSoggetto(bustaToSend.getTipoMittente(),bustaToSend.getMittente()), null);
-										String implementazioneDestinatario = this.registroServiziReader.getImplementazionePdD(new IDSoggetto(bustaToSend.getTipoDestinatario(),bustaToSend.getDestinatario()), null);
+										String implementazioneMittente = this.registroServiziReader.getImplementazionePdD(new IDSoggetto(bustaToSend.getTipoMittente(),bustaToSend.getMittente()), null, null);
+										String implementazioneDestinatario = this.registroServiziReader.getImplementazionePdD(new IDSoggetto(bustaToSend.getTipoDestinatario(),bustaToSend.getDestinatario()), null, null);
 		
 										// Gestione errore del servizio applicativo
 										this.configurazionePdDReader.aggiornaProprietaGestioneErrorePD(erroreAppl,sa);
 		
 										// Profilo Gestione
-										String profiloGestione = this.registroServiziReader.getProfiloGestioneFruizioneServizio(servizioBusta, null);
+										String profiloGestione = this.registroServiziReader.getProfiloGestioneFruizioneServizio(servizioBusta, null, null);
 										richiestaDelegata.setProfiloGestione(profiloGestione);
 		
 										// Identificazione modalita di gestione (oneway 11 o 10)
-										PortaDelegata pd = this.configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+										PortaDelegata pd = this.configurazionePdDReader.getPortaDelegata_SafeMethod(idPD, null);
 										boolean oneWayStateless = this.configurazionePdDReader.isModalitaStateless(pd, bustaToSend.getProfiloDiCollaborazione());
 										boolean oneWayVersione11 = this.propertiesReader.isGestioneOnewayStateful_1_1() && !oneWayStateless;
 		
@@ -450,7 +450,7 @@ public class TimerGestoreBusteNonRiscontrateLib {
 												}
 		
 												nodeSender.send(inoltroMSG, InoltroBuste.ID_MODULO, this.msgDiag, 
-														this.propertiesReader.getIdentitaPortaDefault(null),TimerGestoreBusteNonRiscontrate.ID_MODULO, bustaToSend.getID(), gestoreMsg);
+														this.propertiesReader.getIdentitaPortaDefaultWithoutProtocol(),TimerGestoreBusteNonRiscontrate.ID_MODULO, bustaToSend.getID(), gestoreMsg);
 											}catch(Exception e){
 												this.msgDiag.logErroreGenerico(e,"GenericLib.nodeSender.send(InoltroBuste)");
 												this.logTimer.error("Spedizione->InoltroBuste non riuscita",e);
@@ -641,7 +641,7 @@ public class TimerGestoreBusteNonRiscontrateLib {
 										IDSoggetto identitaPdD = null;
 										String dominioRD = null;
 										try{
-											dominioRD = this.configurazionePdDReader.getIdentificativoPorta(soggettoBustaNonRiscontrata,protocolFactory);
+											dominioRD = this.configurazionePdDReader.getIdentificativoPorta(soggettoBustaNonRiscontrata,protocolFactory,null);
 											if(dominioRD==null){
 												throw new Exception("Dominio is null");
 											}
@@ -650,7 +650,7 @@ public class TimerGestoreBusteNonRiscontrateLib {
 											this.logTimer.error("ErroreBustaAsincrona getDominio("+soggettoBustaNonRiscontrata+"): "+e.getMessage(),e);
 										}
 										if(dominioRD==null){
-											identitaPdD = this.propertiesReader.getIdentitaPortaDefault(null);
+											identitaPdD = this.propertiesReader.getIdentitaPortaDefaultWithoutProtocol();
 										}else{
 											identitaPdD = new IDSoggetto(bustaToSend.getTipoMittente(),
 													bustaToSend.getMittente(),dominioRD);
@@ -669,7 +669,7 @@ public class TimerGestoreBusteNonRiscontrateLib {
 										erroreAppl.setDominio(identitaPdD.getCodicePorta());
 		
 										// RichiestaDelegata
-	                                    IDPortaDelegata idPD = this.configurazionePdDReader.getIDPortaDelegata(infoIntegrazione.getNomePorta(), protocolFactory);
+	                                    IDPortaDelegata idPD = this.configurazionePdDReader.getIDPortaDelegata(infoIntegrazione.getNomePorta(), null, protocolFactory);
 	                                    RichiestaDelegata richiestaDelegata = new RichiestaDelegata(idPD,infoIntegrazione.getServizioApplicativo(),
 	                                                    infoIntegrazione.getIdModuloInAttesa(),erroreAppl,identitaPdD);
 										richiestaDelegata.setScenario(infoIntegrazione.getScenario());
@@ -688,7 +688,7 @@ public class TimerGestoreBusteNonRiscontrateLib {
 	                                            IDServizioApplicativo idSA = new IDServizioApplicativo();
 	                                            idSA.setNome(servizioApplicativo);
 	                                            idSA.setIdSoggettoProprietario(richiestaDelegata.getIdSoggettoFruitore());
-	                                            sa = this.configurazionePdDReader.getServizioApplicativo(idSA);
+	                                            sa = this.configurazionePdDReader.getServizioApplicativo(idSA, null);
 	                                        }
 										}catch (Exception e) {
 											if( !(e instanceof DriverConfigurazioneNotFound) || !(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(servizioApplicativo)) ){
@@ -725,7 +725,7 @@ public class TimerGestoreBusteNonRiscontrateLib {
 												}
 		
 												nodeSender.send(inoltroMSG, InoltroBuste.ID_MODULO, this.msgDiag, 
-														this.propertiesReader.getIdentitaPortaDefault(null),TimerGestoreBusteNonRiscontrate.ID_MODULO, bustaToSend.getID(), gestoreMsg);
+														this.propertiesReader.getIdentitaPortaDefaultWithoutProtocol(),TimerGestoreBusteNonRiscontrate.ID_MODULO, bustaToSend.getID(), gestoreMsg);
 											}catch(Exception e){
 												this.msgDiag.logErroreGenerico(e,"Asincrono GenericLib.nodeSender.send(InoltroBuste)");
 												this.logTimer.error("Spedizione->InoltroBuste non riuscita",e);

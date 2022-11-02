@@ -39,7 +39,6 @@ public class ServerCallback implements CallbackHandler {
 
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void handle(Callback[] callbacks) throws IOException,
 	UnsupportedCallbackException {
 		System.out.println("Callback");
@@ -47,7 +46,7 @@ public class ServerCallback implements CallbackHandler {
 			WSPasswordCallback pwcb = (WSPasswordCallback)callbacks[i];
 			String id = pwcb.getIdentifier();
 			switch (pwcb.getUsage()) {
-			case WSPasswordCallback.USERNAME_TOKEN_UNKNOWN:
+			case WSPasswordCallback.USERNAME_TOKEN:
 
 				// used when plaintext password in message
 				if (!"libuser".equals(id) || !"books".equals(pwcb.getPassword())) {

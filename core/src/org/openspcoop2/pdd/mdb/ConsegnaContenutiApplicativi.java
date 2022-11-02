@@ -138,7 +138,6 @@ import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.ConsegnaInOrdine;
 import org.openspcoop2.protocol.engine.validator.ValidazioneSintattica;
@@ -156,8 +155,10 @@ import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.LimitExceededIOException;
 import org.openspcoop2.utils.LimitedInputStream;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.TimeoutIOException;
 import org.openspcoop2.utils.TimeoutInputStream;
 import org.openspcoop2.utils.Utilities;
@@ -393,7 +394,14 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			}
 			
 			try {
-				GestoreConsegnaMultipla.getInstance().safeUpdateConsegna(transazioneApplicativoServer, idApplicativa, openspcoopstate);
+				RequestInfo requestInfo = null;
+				if(consegnaContenutiApplicativiMsg!=null) {
+					PdDContext pddContext = consegnaContenutiApplicativiMsg.getPddContext();
+					if(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+						requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+					}
+				}
+				GestoreConsegnaMultipla.getInstance().safeUpdateConsegna(transazioneApplicativoServer, idApplicativa, openspcoopstate, requestInfo);
 			}catch(Throwable t) {
 				this.log.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
 			}
@@ -427,6 +435,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		PdDContext pddContext = consegnaContenutiApplicativiMsg.getPddContext();
 		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext);
 				
+		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		
 		/* Protocol Factory */
 		IProtocolFactory<?> protocolFactory = null;
 		try{
@@ -465,10 +475,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		TipoPdD tipoPdD = TipoPdD.APPLICATIVA;
 		if(msgDiag.getPorta()==null) {
 			if(richiestaApplicativa!=null && richiestaApplicativa.getIdPortaApplicativa()!=null) {
-				msgDiag.updatePorta(tipoPdD, richiestaApplicativa.getIdPortaApplicativa().getNome());
+				msgDiag.updatePorta(tipoPdD, richiestaApplicativa.getIdPortaApplicativa().getNome(), requestInfo);
 			}
 			else if(richiestaDelegata!=null && richiestaDelegata.getIdPortaDelegata()!=null) {
-				msgDiag.updatePorta(TipoPdD.DELEGATA, richiestaDelegata.getIdPortaDelegata().getNome());
+				msgDiag.updatePorta(TipoPdD.DELEGATA, richiestaDelegata.getIdPortaDelegata().getNome(), requestInfo);
 			}
 		}
 		
@@ -621,7 +631,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		}
 		boolean soggettoVirtuale = false;
 		try{
-			soggettoVirtuale = configurazionePdDManager.isSoggettoVirtuale( identitaPdD );
+			soggettoVirtuale = configurazionePdDManager.isSoggettoVirtuale( identitaPdD, requestInfo );
 		}catch(Exception e){
 			msgDiag.logErroreGenerico(e, "isSoggettoVirtuale("+identitaPdD+")");
 			esito.setEsitoInvocazione(false); 
@@ -662,7 +672,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			idPA = richiestaApplicativa.getIdPortaApplicativa();
 			try{
 				msgDiag.mediumDebug("getPortaApplicativa...");
-				pa = configurazionePdDManager.getPortaApplicativa(idPA);
+				pa = configurazionePdDManager.getPortaApplicativa(idPA, requestInfo);
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "RichiestaApplicativa.getPortaApplicativa");
 				esito.setEsitoInvocazione(false); 
@@ -674,7 +684,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				IDServizioApplicativo idSA = new IDServizioApplicativo();
 				idSA.setNome(richiestaApplicativa.getServizioApplicativo());
 				idSA.setIdSoggettoProprietario(richiestaApplicativa.getIDServizio().getSoggettoErogatore());
-				sa = configurazionePdDManager.getServizioApplicativo(idSA);
+				sa = configurazionePdDManager.getServizioApplicativo(idSA, requestInfo);
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "RichiestaApplicativa.getServizioApplicativo");
 				esito.setEsitoInvocazione(false); 
@@ -687,7 +697,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			idPD = richiestaDelegata.getIdPortaDelegata();
 			try{
 				msgDiag.mediumDebug("getPortaDelegata...");
-				pd = configurazionePdDManager.getPortaDelegata(idPD);
+				pd = configurazionePdDManager.getPortaDelegata(idPD, requestInfo);
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "RichiestaDelegata.getPortaApplicativa");
 				esito.setEsitoInvocazione(false); 
@@ -699,7 +709,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				IDServizioApplicativo idSA = new IDServizioApplicativo();
 				idSA.setNome(richiestaDelegata.getServizioApplicativo());
 				idSA.setIdSoggettoProprietario(richiestaDelegata.getIdSoggettoFruitore());
-				sa = configurazionePdDManager.getServizioApplicativo(idSA);
+				sa = configurazionePdDManager.getServizioApplicativo(idSA, requestInfo);
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "RichiestaDelegata.getServizioApplicativo");
 				esito.setEsitoInvocazione(false); 
@@ -791,7 +801,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		if(localForward && pd==null){
 			try{
 				msgDiag.mediumDebug("getPortaDelegata...");
-				pd = configurazionePdDManager.getPortaDelegata(richiestaDelegata.getIdPortaDelegata());
+				pd = configurazionePdDManager.getPortaDelegata(richiestaDelegata.getIdPortaDelegata(), requestInfo);
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "RichiestaDelegata.getPortaApplicativa");
 				esito.setEsitoInvocazione(false); 
@@ -977,8 +987,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				localForwardParameter.setIdRequest(idMessaggioConsegna);
 				localForwardParameter.setImplementazionePdDDestinatario(implementazionePdDDestinatario);
 				localForwardParameter.setImplementazionePdDMittente(implementazionePdDMittente);
-				localForwardParameter.setIdPdDMittente(registroServiziManager.getIdPortaDominio(soggettoFruitore, null));
-				localForwardParameter.setIdPdDDestinatario(registroServiziManager.getIdPortaDominio(idServizio.getSoggettoErogatore(), null));
+				localForwardParameter.setIdPdDMittente(registroServiziManager.getIdPortaDominio(soggettoFruitore, null, requestInfo));
+				localForwardParameter.setIdPdDDestinatario(registroServiziManager.getIdPortaDominio(idServizio.getSoggettoErogatore(), null, requestInfo));
 				localForwardParameter.setMsgDiag(msgDiag);
 				localForwardParameter.setOpenspcoopstate(openspcoopstate);
 				localForwardParameter.setPddContext(pddContext);
@@ -1005,9 +1015,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		/* ------------------ Connessione al DB  --------------- */
 		msgDiag.mediumDebug("Richiesta connessione al database per la gestione della richiesta...");
 		openspcoopstate.initResource(identitaPdD, ConsegnaContenutiApplicativi.ID_MODULO,idTransazione,dbManagerSource);
-		registroServiziManager.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
-		configurazionePdDManager.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
-		msgDiag.updateState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+		registroServiziManager.refreshState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+		configurazionePdDManager = configurazionePdDManager.refreshState(registroServiziManager);
+		msgDiag.updateState(configurazionePdDManager);
 		
 
 
@@ -1102,7 +1112,6 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		msgRequest.setPortaDiTipoStateless(portaDiTipoStateless);
 		
 		// RequestInfo
-		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		if(requestInfo==null || idTransazione==null) {
 			// devo leggerlo dal messaggio
 			try {
@@ -1234,12 +1243,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA.equals(scenarioCooperazione) ){
 			try{
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getConsegnaRispostaAsincrona) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
-				connettoreMsg = configurazionePdDManager.getConsegnaRispostaAsincrona(sa,richiestaDelegata);
+				connettoreMsg = configurazionePdDManager.getConsegnaRispostaAsincrona(sa,richiestaDelegata, requestInfo);
 				if(Costanti.SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI.equals(scenarioCooperazione)){
 					connettoreMsg.setCheckPresenzaHeaderPrimaSbustamento(true);
 				}
 				if(connettoreMsg!=null){
-					connettoreMsg.initPolicyGestioneToken(configurazionePdDManager);
+					connettoreMsg.initPolicyGestioneToken(configurazionePdDManager, requestInfo);
 				}
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaConGetMessage) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
 				integrationManager = configurazionePdDManager.consegnaRispostaAsincronaConGetMessage(sa);
@@ -1263,9 +1272,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		else if(Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_POLLING.equals(scenarioCooperazione)){
 			try{
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getConsegnaRispostaAsincrona) [AsincronoAsimmetricoPolling]...");
-				connettoreMsg = configurazionePdDManager.getConsegnaRispostaAsincrona(sa,richiestaApplicativa);
+				connettoreMsg = configurazionePdDManager.getConsegnaRispostaAsincrona(sa,richiestaApplicativa, requestInfo);
 				if(connettoreMsg!=null){
-					connettoreMsg.initPolicyGestioneToken(configurazionePdDManager);
+					connettoreMsg.initPolicyGestioneToken(configurazionePdDManager, requestInfo);
 				}
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaConGetMessage) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
 				integrationManager = configurazionePdDManager.consegnaRispostaAsincronaConGetMessage(sa);
@@ -1286,9 +1295,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		}else{
 			try{
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getInvocazioneServizio)...");
-				connettoreMsg = configurazionePdDManager.getInvocazioneServizio(sa,richiestaApplicativa);
+				connettoreMsg = configurazionePdDManager.getInvocazioneServizio(sa,richiestaApplicativa, requestInfo);
 				if(connettoreMsg!=null){
-					connettoreMsg.initPolicyGestioneToken(configurazionePdDManager);
+					connettoreMsg.initPolicyGestioneToken(configurazionePdDManager, requestInfo);
 				}
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaConGetMessage) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
 				integrationManager = configurazionePdDManager.invocazioneServizioConGetMessage(sa);
@@ -1327,9 +1336,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			connettoreMsg.setDataConsegnaTransazioneApplicativoServer(dataConsegna);
 		}
 		ForwardProxy forwardProxy = null;
-		if(configurazionePdDManager.isForwardProxyEnabled()) {
+		if(configurazionePdDManager.isForwardProxyEnabled(requestInfo)) {
 			try {
-				forwardProxy = configurazionePdDManager.getForwardProxyConfigErogazione(identitaPdD, idServizio, null);
+				forwardProxy = configurazionePdDManager.getForwardProxyConfigErogazione(identitaPdD, idServizio, null, requestInfo);
 			}catch(Exception e) {
 				msgDiag.logErroreGenerico(e, "Configurazione ForwardProxy (sa:"+servizioApplicativo+")");
 				ejbUtils.rollbackMessage("Configurazione del connettore errata per la funzionalità govway-proxy; sa ["+servizioApplicativo+"]",servizioApplicativo, esito);
@@ -2479,17 +2488,17 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					// Poichè il campo a disposizione è uno solo per la risposta, e l'impostazione di cosa salvare viene dedotta da quanto indicato su ogni connettore
 					// la console dovrà poi consentire di indicare solamente 1 opzione tra risposta originale e risposta trasformata tra tutti i connettori multipli
 					
-					List<String> contextInResponse = new ArrayList<String>();
-					Iterator<String> it = responseMessage.keysContextProperty();
+					List<MapKey<String>> contextInResponse = new ArrayList<MapKey<String>>();
+					Iterator<MapKey<String>> it = responseMessage.keysContextProperty();
 					while (it.hasNext()) {
-						String key = (String) it.next();
+						MapKey<String> key = (MapKey<String>) it.next();
 						contextInResponse.add(key);
 					}
 					
 					if(consegnaMessageTrasformato!=null) {
 						it = consegnaMessageTrasformato.keysContextProperty();
 						while (it.hasNext()) {
-							String key = (String) it.next();
+							MapKey<String> key = (MapKey<String>) it.next();
 							if(!contextInResponse.contains(key)) {
 								Object v = consegnaMessageTrasformato.getContextProperty(key);
 								//System.out.println("ADD ["+key+"] ["+v.getClass().getName()+"] ["+v+"]");
@@ -2688,7 +2697,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					responseMessage = protocolFactory.createProtocolManager().updateOpenSPCoop2MessageResponse(responseMessage, 
 							bustaRichiesta, nParams,
 							consegnaMessagePrimaTrasformazione.getTransportRequestContext(),transportResponseContext,
-							protocolFactory.getCachedRegistryReader(openspcoopstate.getStatoRichiesta()),
+							protocolFactory.getCachedRegistryReader(openspcoopstate.getStatoRichiesta(), requestInfo),
 							true);
 				}
 			} catch (Exception e) {

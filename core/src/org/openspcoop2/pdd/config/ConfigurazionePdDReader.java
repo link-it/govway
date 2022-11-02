@@ -48,6 +48,7 @@ import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.AccessoDatiKeystore;
+import org.openspcoop2.core.config.AccessoDatiRichieste;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.Cache;
@@ -163,7 +164,6 @@ import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.pdd.core.controllo_traffico.DimensioneMessaggiConfigurationUtils;
 import org.openspcoop2.pdd.core.controllo_traffico.SoglieDimensioneMessaggi;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.InterceptorPolicyUtilities;
-import org.openspcoop2.pdd.core.controllo_traffico.policy.config.Constants;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.dynamic.Template;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
@@ -177,7 +177,6 @@ import org.openspcoop2.pdd.core.token.attribute_authority.PolicyAttributeAuthori
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
 import org.openspcoop2.protocol.engine.mapping.ModalitaIdentificazioneAzione;
 import org.openspcoop2.protocol.engine.mapping.OperationFinder;
@@ -192,10 +191,13 @@ import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.NameValue;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.crypt.CryptConfig;
@@ -591,12 +593,14 @@ public class ConfigurazionePdDReader {
 										String check = FiltroRicercaPorteDelegate.PREFIX_PORTA_DELEGANTE + nomePorta + FiltroRicercaPorteDelegate.SUFFIX_PORTA_DELEGANTE;
 										if(msg.contains(check)){
 											keyForClean.add(key);
+											break;
 										}
 										else {
 											if(nomePorta_normalized!=null) {
 												String check_normalized = FiltroRicercaPorteDelegate.PREFIX_PORTA_DELEGANTE + nomePorta_normalized + FiltroRicercaPorteDelegate.SUFFIX_PORTA_DELEGANTE;
 												if(msg.contains(check_normalized)){
 													keyForClean.add(key);
+													break;
 												}
 											}
 										}
@@ -731,12 +735,14 @@ public class ConfigurazionePdDReader {
 										String check = FiltroRicercaPorteApplicative.PREFIX_PORTA_DELEGANTE + nomePorta + FiltroRicercaPorteApplicative.SUFFIX_PORTA_DELEGANTE;
 										if(msg.contains(check)){
 											keyForClean.add(key);
+											break;
 										}
 										else {
 											if(nomePorta_normalized!=null) {
 												String check_normalized = FiltroRicercaPorteApplicative.PREFIX_PORTA_DELEGANTE + nomePorta_normalized + FiltroRicercaPorteApplicative.SUFFIX_PORTA_DELEGANTE;
 												if(msg.contains(check_normalized)){
 													keyForClean.add(key);
+													break;
 												}
 											}
 										}
@@ -1011,12 +1017,14 @@ public class ConfigurazionePdDReader {
 	public static boolean initialize(AccessoConfigurazionePdD accessoConfigurazione,Logger aLog,Logger aLogconsole,Properties localProperties, 
 			String jndiNameDatasourcePdD, boolean forceDisableCache,
 			boolean useOp2UtilsDatasource, boolean bindJMX, 
-			boolean prefillCache, CryptConfig configApplicativi){
+			boolean prefillCache, CryptConfig configApplicativi,
+			CacheType cacheType){
 
 		try {
 			ConfigurazionePdDReader.configurazionePdDReader = new ConfigurazionePdDReader(accessoConfigurazione,aLog,aLogconsole,localProperties,jndiNameDatasourcePdD, 
 					forceDisableCache, useOp2UtilsDatasource, bindJMX, 
-					prefillCache, configApplicativi);	
+					prefillCache, configApplicativi,
+					cacheType);	
 			return ConfigurazionePdDReader.initialize;
 		}
 		catch(Exception e) {
@@ -1072,7 +1080,8 @@ public class ConfigurazionePdDReader {
 	public ConfigurazionePdDReader(AccessoConfigurazionePdD accessoConfigurazione,Logger aLog,Logger aLogconsole,Properties localProperties, 
 			String jndiNameDatasourcePdD, boolean forceDisableCache,
 			boolean useOp2UtilsDatasource, boolean bindJMX, 
-			boolean prefillCache, CryptConfig configApplicativi)throws DriverConfigurazioneException{
+			boolean prefillCache, CryptConfig configApplicativi,
+			CacheType cacheType)throws DriverConfigurazioneException{
 		try{
 			if(aLog!=null)
 				this.log = aLog;
@@ -1080,7 +1089,8 @@ public class ConfigurazionePdDReader {
 				this.log = LoggerWrapperFactory.getLogger(ConfigurazionePdDReader.class);
 			this.configurazionePdD = new ConfigurazionePdD(accessoConfigurazione,this.log,aLogconsole,localProperties,jndiNameDatasourcePdD, forceDisableCache,
 					useOp2UtilsDatasource, bindJMX, 
-					prefillCache, configApplicativi);
+					prefillCache, configApplicativi,
+					cacheType);
 
 			// OpenSPCoop Properties
 			this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
@@ -1231,7 +1241,7 @@ public class ConfigurazionePdDReader {
 	 * @return Il dominio del Soggetto.
 	 * 
 	 */
-	protected String getIdentificativoPorta(Connection connectionPdD, IDSoggetto idSoggetto,IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+	protected String getIdentificativoPorta(Connection connectionPdD, IDSoggetto idSoggetto,IProtocolFactory<?> protocolFactory, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		Soggetto soggetto = this.configurazionePdD.getSoggetto(connectionPdD,idSoggetto);
 		if(soggetto == null)
 			throw new DriverConfigurazioneNotFound("Soggetto["+idSoggetto.toString()+"] per lettura Dominio non trovato");
@@ -1247,7 +1257,7 @@ public class ConfigurazionePdDReader {
 				}
 			}else{
 				OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-				return properties.getIdentificativoPortaDefault(protocolFactory.getProtocol());
+				return properties.getIdentificativoPortaDefault(protocolFactory.getProtocol(), requestInfo);
 			}
 		}
 	}
@@ -1290,6 +1300,11 @@ public class ConfigurazionePdDReader {
 		return false;
 	}
 
+	protected Soggetto getSoggetto(Connection connectionPdD, IDSoggetto idSoggetto)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{  
+		Soggetto soggetto = this.configurazionePdD.getSoggetto(connectionPdD, idSoggetto);
+		return soggetto;
+	}
+	
 	/**
 	 * Restituisce l'indicazione se la PdD gestisce il soggetto indicato
 	 *
@@ -1345,8 +1360,8 @@ public class ConfigurazionePdDReader {
 	 * @return Il connettore da utilizzare per la spedizione della busta.
 	 * 
 	 */
-	protected Connettore getForwardRoute(Connection connectionPdD, RegistroServiziManager registroServiziManager ,IDSoggetto idSoggettoDestinatario,boolean functionAsRouter) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return getForwardRoute(connectionPdD,registroServiziManager,null,this.buildIDServizioWithOnlySoggetto(idSoggettoDestinatario),functionAsRouter);
+	protected Connettore getForwardRoute(Connection connectionPdD, RegistroServiziManager registroServiziManager ,IDSoggetto idSoggettoDestinatario,boolean functionAsRouter, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return getForwardRoute(connectionPdD,registroServiziManager,null,this.buildIDServizioWithOnlySoggetto(idSoggettoDestinatario),functionAsRouter, requestInfo);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -1373,7 +1388,7 @@ public class ConfigurazionePdDReader {
 	 * @return Il connettore da utilizzare per la spedizione della busta.
 	 * 
 	 */
-	protected Connettore getForwardRoute(Connection connectionPdD, RegistroServiziManager registroServiziManager , IDSoggetto idSoggettoMittente, IDServizio idServizio,boolean functionAsRouter) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected Connettore getForwardRoute(Connection connectionPdD, RegistroServiziManager registroServiziManager , IDSoggetto idSoggettoMittente, IDServizio idServizio,boolean functionAsRouter, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 
 		if(idServizio == null)
@@ -1429,11 +1444,11 @@ public class ConfigurazionePdDReader {
 			Connettore connettoreDominio = null;
 			try{
 				if(idSoggettoMittente!=null && idServizio.getNome()!=null){
-					connettoreDominio = registroServiziManager.getConnettore(idSoggettoMittente,idServizio,null); // null=allRegistri
+					connettoreDominio = registroServiziManager.getConnettore(idSoggettoMittente,idServizio,null, requestInfo); // null=allRegistri
 					if(!functionAsRouter)
-						setPDUrlPrefixRewriter(connectionPdD,connettoreDominio, idSoggettoMittente);
+						setPDUrlPrefixRewriter(connectionPdD,connettoreDominio, idSoggettoMittente, requestInfo);
 				}else{
-					connettoreDominio = registroServiziManager.getConnettore(idServizio.getSoggettoErogatore(),null); // null=allRegistri
+					connettoreDominio = registroServiziManager.getConnettore(idServizio.getSoggettoErogatore(),null, requestInfo); // null=allRegistri
 				}
 			}catch(DriverRegistroServiziNotFound e){
 				throw new DriverConfigurazioneNotFound("getForwardRoute[RoutingTable Non Abilitata], ricerca nel RegistroServizi effettuata: "+e.getMessage(),e);
@@ -1477,11 +1492,11 @@ public class ConfigurazionePdDReader {
 
 							// Utilizzo del registro con l'identita reale della busta
 							if(idSoggettoMittente!=null && idServizio.getNome()!=null){
-								connettoreDominio = registroServiziManager.getConnettore(idSoggettoMittente,idServizio,route.getRegistro().getNome());
+								connettoreDominio = registroServiziManager.getConnettore(idSoggettoMittente,idServizio,route.getRegistro().getNome(), requestInfo);
 								if(!functionAsRouter)
-									setPDUrlPrefixRewriter(connectionPdD,connettoreDominio, idSoggettoMittente);
+									setPDUrlPrefixRewriter(connectionPdD,connettoreDominio, idSoggettoMittente, requestInfo);
 							}else{
-								connettoreDominio = registroServiziManager.getConnettore(idServizio.getSoggettoErogatore(),route.getRegistro().getNome());
+								connettoreDominio = registroServiziManager.getConnettore(idServizio.getSoggettoErogatore(),route.getRegistro().getNome(), requestInfo);
 							}
 							// Registro da utilizzare anche per l'imbustamento
 							if(connettoreDominio!=null && !CostantiConfigurazione.NONE.equals(connettoreDominio.getTipo()) &&
@@ -1496,7 +1511,7 @@ public class ConfigurazionePdDReader {
 							IDSoggetto gateway = new IDSoggetto(route.getGateway().getTipo(),
 									route.getGateway().getNome());
 							soggettoGateway = " [Gateway:"+gateway.toString()+"]";
-							connettoreDominio = registroServiziManager.getConnettore(gateway,null); //null=allRegistri
+							connettoreDominio = registroServiziManager.getConnettore(gateway,null, requestInfo); //null=allRegistri
 							// Rotta diversa dalla destinazione della busta per l'elemento trasmissione
 							if(connettoreDominio!=null && !CostantiConfigurazione.NONE.equals(connettoreDominio.getTipo()) &&
 									!CostantiConfigurazione.DISABILITATO.equals(connettoreDominio.getTipo())){
@@ -1543,11 +1558,11 @@ public class ConfigurazionePdDReader {
 
 						// Utilizzo del registro con l'identita reale della busta
 						if(idSoggettoMittente!=null && idServizio.getNome()!=null){
-							connettoreDominio = registroServiziManager.getConnettore(idSoggettoMittente,idServizio,route.getRegistro().getNome());
+							connettoreDominio = registroServiziManager.getConnettore(idSoggettoMittente,idServizio,route.getRegistro().getNome(), requestInfo);
 							if(!functionAsRouter)
-								setPDUrlPrefixRewriter(connectionPdD,connettoreDominio, idSoggettoMittente);
+								setPDUrlPrefixRewriter(connectionPdD,connettoreDominio, idSoggettoMittente, requestInfo);
 						}else{
-							connettoreDominio = registroServiziManager.getConnettore(idServizio.getSoggettoErogatore(),route.getRegistro().getNome());
+							connettoreDominio = registroServiziManager.getConnettore(idServizio.getSoggettoErogatore(),route.getRegistro().getNome(), requestInfo);
 						}
 						// Registro da utilizzare anche per l'imbustamento
 						if(connettoreDominio!=null && !CostantiConfigurazione.NONE.equals(connettoreDominio.getTipo()) && 
@@ -1561,7 +1576,7 @@ public class ConfigurazionePdDReader {
 						IDSoggetto gateway = new IDSoggetto(route.getGateway().getTipo(),
 								route.getGateway().getNome());
 						soggettoGateway = " [Gateway:"+gateway.toString()+"]";
-						connettoreDominio = registroServiziManager.getConnettore(gateway,null);//null=allRegistri
+						connettoreDominio = registroServiziManager.getConnettore(gateway,null, requestInfo);//null=allRegistri
 						// Rotta diversa dalla destinazione della busta per l'elemento trasmissione
 						if(connettoreDominio!=null && !CostantiConfigurazione.NONE.equals(connettoreDominio.getTipo()) &&
 								!CostantiConfigurazione.DISABILITATO.equals(connettoreDominio.getTipo())){
@@ -1601,10 +1616,10 @@ public class ConfigurazionePdDReader {
 	 * @return Il nome di un registro dei servizi da utilizzare per effettuare il processo di imbustamento.
 	 * 
 	 */
-	protected String getRegistroForImbustamento(Connection connectionPdD, RegistroServiziManager registroServiziManager , IDSoggetto idSoggettoMittente, IDServizio idServizio,boolean functionAsRouter)throws DriverConfigurazioneException{
+	protected String getRegistroForImbustamento(Connection connectionPdD, RegistroServiziManager registroServiziManager , IDSoggetto idSoggettoMittente, IDServizio idServizio,boolean functionAsRouter, RequestInfo requestInfo)throws DriverConfigurazioneException{
 		Connettore conn = null;
 		try {
-			conn = getForwardRoute(connectionPdD,registroServiziManager,idSoggettoMittente,idServizio,functionAsRouter);
+			conn = getForwardRoute(connectionPdD,registroServiziManager,idSoggettoMittente,idServizio,functionAsRouter, requestInfo);
 		}catch(DriverConfigurazioneNotFound e){}
 		if(conn!=null)
 			return conn.getNomeRegistro();
@@ -1654,7 +1669,7 @@ public class ConfigurazionePdDReader {
 	 * @return idSoggetto Identita
 	 * 
 	 */
-	protected IDSoggetto getRouterIdentity(Connection connectionPdD,IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected IDSoggetto getRouterIdentity(Connection connectionPdD,IProtocolFactory<?> protocolFactory, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Per essere configurata come Router, una PdD deve possedere una tabella di routing:
 		RoutingTable routingTable = null;
@@ -1688,7 +1703,7 @@ public class ConfigurazionePdDReader {
 				}
 			else{
 				OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-				codicePorta = properties.getIdentificativoPortaDefault(protocolFactory.getProtocol());
+				codicePorta = properties.getIdentificativoPortaDefault(protocolFactory.getProtocol(), requestInfo);
 			}
 		}
 		return new IDSoggetto(router.getTipo(),router.getNome(),codicePorta);
@@ -1706,16 +1721,56 @@ public class ConfigurazionePdDReader {
 
 	/* ********  URLPrefixRewriter  ******** */
 
-	protected void setPDUrlPrefixRewriter(Connection connectionPdD, org.openspcoop2.core.config.Connettore connettore, IDSoggetto idSoggettoFruitore) throws DriverConfigurazioneNotFound,DriverConfigurazioneException{
+	protected void setPDUrlPrefixRewriter(Connection connectionPdD, org.openspcoop2.core.config.Connettore connettore, IDSoggetto idSoggettoFruitore, RequestInfo requestInfo) throws DriverConfigurazioneNotFound,DriverConfigurazioneException{
 		if(idSoggettoFruitore==null)
 			return;
-		Soggetto soggettoFruitore = this.configurazionePdD.getSoggetto(connectionPdD,idSoggettoFruitore);
+		
+		Soggetto soggettoFruitore = null;
+		if( requestInfo!=null && requestInfo.getRequestConfig()!=null && idSoggettoFruitore!=null) {
+			if( requestInfo.getRequestConfig().getSoggettoFruitoreConfig()!=null &&
+					idSoggettoFruitore.getTipo().equals(requestInfo.getRequestConfig().getSoggettoFruitoreConfig().getTipo()) &&
+					idSoggettoFruitore.getNome().equals(requestInfo.getRequestConfig().getSoggettoFruitoreConfig().getNome())	) {
+				soggettoFruitore = requestInfo.getRequestConfig().getSoggettoFruitoreConfig();
+			}
+		}
+		if(soggettoFruitore==null) {
+			soggettoFruitore = this.configurazionePdD.getSoggetto(connectionPdD,idSoggettoFruitore);
+		}
 		setUrlPrefixRewriter(soggettoFruitore.getPdUrlPrefixRewriter(),"pdUrlPrefixRewriter", connettore);
 	}
-	protected void setPAUrlPrefixRewriter(Connection connectionPdD, org.openspcoop2.core.config.Connettore connettore, IDSoggetto idSoggettoErogatore) throws DriverConfigurazioneNotFound,DriverConfigurazioneException{
+	protected void setPAUrlPrefixRewriter(Connection connectionPdD, org.openspcoop2.core.config.Connettore connettore, IDSoggetto idSoggettoErogatore, RequestInfo requestInfo) throws DriverConfigurazioneNotFound,DriverConfigurazioneException{
 		if(idSoggettoErogatore==null)
 			return;
-		Soggetto soggettoErogatore = this.configurazionePdD.getSoggetto(connectionPdD,idSoggettoErogatore);
+		
+		Soggetto soggettoErogatore = null;
+		if( requestInfo!=null && requestInfo.getRequestConfig()!=null && idSoggettoErogatore!=null) {
+			if(requestInfo.getRequestConfig().getSoggettoErogatoreConfig()!=null &&
+					idSoggettoErogatore.getTipo().equals(requestInfo.getRequestConfig().getSoggettoErogatoreConfig().getTipo()) &&
+					idSoggettoErogatore.getNome().equals(requestInfo.getRequestConfig().getSoggettoErogatoreConfig().getNome())	) {
+				soggettoErogatore = requestInfo.getRequestConfig().getSoggettoErogatoreConfig();
+			}
+		}
+		if(soggettoErogatore==null) {
+			if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null && requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo()!=null) {
+				if(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig()!=null && idSoggettoErogatore!=null && 
+						idSoggettoErogatore.getTipo().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig().getTipo()) && 
+						idSoggettoErogatore.getNome().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig().getNome())) {
+					soggettoErogatore = requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig();
+				}
+			}
+		}
+		if(soggettoErogatore==null) {
+			if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null && requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo()!=null) {
+				if(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig()!=null && idSoggettoErogatore!=null && 
+						idSoggettoErogatore.getTipo().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig().getTipo()) && 
+						idSoggettoErogatore.getNome().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig().getNome())) {
+					soggettoErogatore = requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig();
+				}
+			}
+		}
+		if(soggettoErogatore==null) {
+			soggettoErogatore = this.configurazionePdD.getSoggetto(connectionPdD,idSoggettoErogatore);
+		}
 		setUrlPrefixRewriter(soggettoErogatore.getPaUrlPrefixRewriter(),"paUrlPrefixRewriter", connettore);
 	}
 	private void setUrlPrefixRewriter(String urlPrefix,String funzione,org.openspcoop2.core.config.Connettore connettore) throws DriverConfigurazioneNotFound,DriverConfigurazioneException{
@@ -1862,7 +1917,7 @@ public class ConfigurazionePdDReader {
 			return false;
 	}
 
-	protected String getAzione(RegistroServiziManager registroServiziManager,PortaDelegata pd,URLProtocolContext urlProtocolContext,
+	protected String getAzione(RegistroServiziManager registroServiziManager,PortaDelegata pd,URLProtocolContext urlProtocolContext,RequestInfo requestInfo,
 			OpenSPCoop2Message message, OpenSPCoop2MessageSoapStreamReader soapStreamReader, HeaderIntegrazione headerIntegrazione, boolean readFirstHeaderIntegrazione,
 			IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException, IdentificazioneDinamicaException { 
 
@@ -1896,7 +1951,7 @@ public class ConfigurazionePdDReader {
 
 			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
 			
-			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, message, soapStreamReader, soggettoErogatore, idServizio, 
+			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, requestInfo, message, soapStreamReader, soggettoErogatore, idServizio, 
 					readFirstHeaderIntegrazione, azioneHeaderIntegrazione, protocolFactory, modalitaIdentificazione, 
 					pattern, forceRegistryBased, forcePluginBased, this.log, false,
 					bufferMessage_readOnly, 
@@ -2532,11 +2587,16 @@ public class ConfigurazionePdDReader {
 	}
 	
 	protected SoglieDimensioneMessaggi getSoglieLimitedInputStream(Connection connectionPdD,PortaDelegata pd, String azione, String idModulo,
-			PdDContext pddContext, URLProtocolContext urlProtocolContext,
+			PdDContext pddContext, RequestInfo requestInfo, 
 			IProtocolFactory<?> protocolFactory, Logger log) throws DriverConfigurazioneException{
 		
 		if(!this.openspcoopProperties.isControlloTrafficoEnabled()){
 			return null;
+		}
+		
+		URLProtocolContext urlProtocolContext = null;
+		if(requestInfo!=null) {
+			urlProtocolContext = requestInfo.getProtocolContext();
 		}
 		
 		TipoPdD tipoPdD = null;
@@ -2563,7 +2623,7 @@ public class ConfigurazionePdDReader {
 			idPD.setNome(nomePorta);
 		}
 		else {
-			idDominio = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory!=null ? protocolFactory.getProtocol() : null);
+			idDominio = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory!=null ? protocolFactory.getProtocol() : null, requestInfo);
 		}
 		 
 		IState state = null;
@@ -2577,7 +2637,7 @@ public class ConfigurazionePdDReader {
 					idDominio, soggettoFruitore, idServizio, idAccordo,
 					idPD, idPA,
 					servizioApplicativoFruitore, serviziApplicativiErogatori);
-			return DimensioneMessaggiConfigurationUtils.readSoglieDimensioneMessaggi(tipoPdD, nomePorta, datiTransazione, log, urlProtocolContext, pddContext, protocolFactory);
+			return DimensioneMessaggiConfigurationUtils.readSoglieDimensioneMessaggi(tipoPdD, nomePorta, datiTransazione, log, urlProtocolContext, requestInfo, pddContext, protocolFactory);
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
@@ -2718,21 +2778,21 @@ public class ConfigurazionePdDReader {
 		return pd.getExtendedInfoList();
 	}
 
-	protected Template getTemplateTrasformazioneRichiesta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdD.getTemplateTrasformazioneRichiesta(connectionPdD, idPD, nomeTrasformazione, richiesta);
+	protected Template getTemplateTrasformazioneRichiesta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateTrasformazioneRichiesta(connectionPdD, idPD, nomeTrasformazione, richiesta, requestInfo);
 	}
-	protected Template getTemplateTrasformazioneSoapRichiesta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdD.getTemplateTrasformazioneSoapRichiesta(connectionPdD, idPD, nomeTrasformazione, richiesta);
+	protected Template getTemplateTrasformazioneSoapRichiesta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateTrasformazioneSoapRichiesta(connectionPdD, idPD, nomeTrasformazione, richiesta, requestInfo);
 	}
-	protected Template getTemplateTrasformazioneRisposta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdD.getTemplateTrasformazioneRisposta(connectionPdD, idPD, nomeTrasformazione, risposta);
+	protected Template getTemplateTrasformazioneRisposta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateTrasformazioneRisposta(connectionPdD, idPD, nomeTrasformazione, risposta, requestInfo);
 	}
-	protected Template getTemplateTrasformazioneSoapRisposta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdD.getTemplateTrasformazioneSoapRisposta(connectionPdD, idPD, nomeTrasformazione, risposta);
+	protected Template getTemplateTrasformazioneSoapRisposta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateTrasformazioneSoapRisposta(connectionPdD, idPD, nomeTrasformazione, risposta, requestInfo);
 	}
 	
-	protected Template getTemplateIntegrazione(Connection connectionPdD,IDPortaDelegata idPD, File file) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdD.getTemplateIntegrazione(connectionPdD, idPD, file);
+	protected Template getTemplateIntegrazione(Connection connectionPdD,IDPortaDelegata idPD, File file, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateIntegrazione(connectionPdD, idPD, file, requestInfo);
 	}
 
 
@@ -2866,7 +2926,7 @@ public class ConfigurazionePdDReader {
 			return false;
 	}
 
-	protected String getAzione(RegistroServiziManager registroServiziManager,PortaApplicativa pa,URLProtocolContext urlProtocolContext,
+	protected String getAzione(RegistroServiziManager registroServiziManager,PortaApplicativa pa,URLProtocolContext urlProtocolContext, RequestInfo requestInfo,
 			OpenSPCoop2Message message, OpenSPCoop2MessageSoapStreamReader soapStreamReader, HeaderIntegrazione headerIntegrazione, boolean readFirstHeaderIntegrazione,
 			IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException, IdentificazioneDinamicaException { 
 
@@ -2899,7 +2959,7 @@ public class ConfigurazionePdDReader {
 
 			boolean bufferMessage_readOnly =  OpenSPCoop2Properties.getInstance().isReadByPathBufferEnabled();
 			
-			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, message, soapStreamReader, soggettoErogatore, idServizio, 
+			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, requestInfo, message, soapStreamReader, soggettoErogatore, idServizio, 
 					readFirstHeaderIntegrazione, azioneHeaderIntegrazione, protocolFactory, modalitaIdentificazione, 
 					pattern, forceRegistryBased, forcePluginBased, this.log, true,
 					bufferMessage_readOnly, 
@@ -3452,7 +3512,7 @@ public class ConfigurazionePdDReader {
 
 	protected boolean autorizzazioneTrasportoRoles(RegistroServiziManager registroServiziManager, 
 			PortaApplicativa pa, org.openspcoop2.core.registry.Soggetto soggetto, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
-			PdDContext pddContext,
+			PdDContext pddContext, RequestInfo requestInfo,
 			boolean checkRuoloRegistro, boolean checkRuoloEsterno,
 			StringBuilder details) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 
@@ -3469,7 +3529,7 @@ public class ConfigurazionePdDReader {
 		return _autorizzazioneRoles(registroServiziManager,
 				soggetto, sa, 
 				infoConnettoreIngresso, true,
-				pddContext,
+				pddContext, requestInfo,
 				checkRuoloRegistro, checkRuoloEsterno,
 				details,
 				pa.getRuoli().getMatch(), pa.getRuoli(),
@@ -3478,7 +3538,7 @@ public class ConfigurazionePdDReader {
 	
 	protected boolean autorizzazioneTokenRoles(RegistroServiziManager registroServiziManager, 
 			PortaApplicativa pa, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
-			PdDContext pddContext,
+			PdDContext pddContext,  RequestInfo requestInfo,
 			boolean checkRuoloRegistro, boolean checkRuoloEsterno,
 			StringBuilder details) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 
@@ -3497,7 +3557,7 @@ public class ConfigurazionePdDReader {
 		return _autorizzazioneRoles(registroServiziManager,
 				null, sa, 
 				infoConnettoreIngresso, true,
-				pddContext,
+				pddContext, requestInfo,
 				checkRuoloRegistro, checkRuoloEsterno,
 				details,
 				pa.getAutorizzazioneToken().getRuoli().getMatch(), pa.getAutorizzazioneToken().getRuoli(),
@@ -3507,7 +3567,7 @@ public class ConfigurazionePdDReader {
 	public static boolean _autorizzazioneRoles(RegistroServiziManager registroServiziManager,
 			org.openspcoop2.core.registry.Soggetto soggetto, ServizioApplicativo sa, 
 			InfoConnettoreIngresso infoConnettoreIngresso, boolean readInfoConnettoreIngresso,
-			Context pddContext,
+			Context pddContext, RequestInfo requestInfo,
 			boolean checkRuoloRegistro, boolean checkRuoloEsterno,
 			StringBuilder details,
 			RuoloTipoMatch ruoloMatch, AutorizzazioneRuoli autorizzazioneRuoli,
@@ -3605,7 +3665,7 @@ public class ConfigurazionePdDReader {
 			if(!trovato && checkRuoloEsterno){
 				String nomeRuoloDaVerificare = ruolo.getNome();
 				try {
-					org.openspcoop2.core.registry.Ruolo ruoloRegistro = registroServiziManager.getRuolo(ruolo.getNome(), null);
+					org.openspcoop2.core.registry.Ruolo ruoloRegistro = registroServiziManager.getRuolo(ruolo.getNome(), null, requestInfo);
 					if( (RuoloTipologia.ESTERNO.equals(ruoloRegistro.getTipologia()) || RuoloTipologia.QUALSIASI.equals(ruoloRegistro.getTipologia())) &&
 							ruoloRegistro.getNomeEsterno()!=null && 
 							!"".equals(ruoloRegistro.getNomeEsterno())) {
@@ -3785,11 +3845,16 @@ public class ConfigurazionePdDReader {
 	}
 	
 	protected SoglieDimensioneMessaggi getSoglieLimitedInputStream(Connection connectionPdD,PortaApplicativa pa, String azione, String idModulo,
-			PdDContext pddContext, URLProtocolContext urlProtocolContext,
+			PdDContext pddContext, RequestInfo requestInfo,
 			IProtocolFactory<?> protocolFactory, Logger log) throws DriverConfigurazioneException{
 		
 		if(!this.openspcoopProperties.isControlloTrafficoEnabled()){
 			return null;
+		}
+		
+		URLProtocolContext urlProtocolContext = null;
+		if(requestInfo!=null) {
+			urlProtocolContext = requestInfo.getProtocolContext();
 		}
 		
 		TipoPdD tipoPdD = null;
@@ -3815,7 +3880,7 @@ public class ConfigurazionePdDReader {
 			idPA.setNome(nomePorta);
 		}
 		else {
-			idDominio = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory!=null ? protocolFactory.getProtocol() : null);
+			idDominio = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory!=null ? protocolFactory.getProtocol() : null, requestInfo);
 		}
 		 
 		IState state = null;
@@ -3829,7 +3894,7 @@ public class ConfigurazionePdDReader {
 					idDominio, soggettoFruitore, idServizio, idAccordo,
 					idPD, idPA,
 					servizioApplicativoFruitore, serviziApplicativiErogatori);
-			return DimensioneMessaggiConfigurationUtils.readSoglieDimensioneMessaggi(tipoPdD, nomePorta, datiTransazione, log, urlProtocolContext, pddContext, protocolFactory);
+			return DimensioneMessaggiConfigurationUtils.readSoglieDimensioneMessaggi(tipoPdD, nomePorta, datiTransazione, log, urlProtocolContext, requestInfo, pddContext, protocolFactory);
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
@@ -3971,28 +4036,28 @@ public class ConfigurazionePdDReader {
 		return pa.getExtendedInfoList();
 	}
 
-	protected Template getTemplateTrasformazioneRichiesta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdD.getTemplateTrasformazioneRichiesta(connectionPdD, idPA, nomeTrasformazione, richiesta);
+	protected Template getTemplateTrasformazioneRichiesta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateTrasformazioneRichiesta(connectionPdD, idPA, nomeTrasformazione, richiesta, requestInfo);
 	}
-	protected Template getTemplateTrasformazioneSoapRichiesta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdD.getTemplateTrasformazioneSoapRichiesta(connectionPdD, idPA, nomeTrasformazione, richiesta);
+	protected Template getTemplateTrasformazioneSoapRichiesta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateTrasformazioneSoapRichiesta(connectionPdD, idPA, nomeTrasformazione, richiesta, requestInfo);
 	}
-	protected Template getTemplateTrasformazioneRisposta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdD.getTemplateTrasformazioneRisposta(connectionPdD, idPA, nomeTrasformazione, risposta);
+	protected Template getTemplateTrasformazioneRisposta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateTrasformazioneRisposta(connectionPdD, idPA, nomeTrasformazione, risposta, requestInfo);
 	}
-	protected Template getTemplateTrasformazioneSoapRisposta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdD.getTemplateTrasformazioneSoapRisposta(connectionPdD, idPA, nomeTrasformazione, risposta);
-	}
-	
-	protected Template getTemplateConnettoreMultiploSticky(Connection connectionPdD,IDPortaApplicativa idPA, byte[] template) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdD.getTemplateConnettoreMultiploSticky(connectionPdD, idPA, template);
-	}
-	protected Template getTemplateConnettoreMultiploCondizionale(Connection connectionPdD,IDPortaApplicativa idPA, String nomeRegola, byte[] template) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdD.getTemplateConnettoreMultiploCondizionale(connectionPdD, idPA, nomeRegola, template);
+	protected Template getTemplateTrasformazioneSoapRisposta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateTrasformazioneSoapRisposta(connectionPdD, idPA, nomeTrasformazione, risposta, requestInfo);
 	}
 	
-	protected Template getTemplateIntegrazione(Connection connectionPdD,IDPortaApplicativa idPA, File file) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdD.getTemplateIntegrazione(connectionPdD, idPA, file);
+	protected Template getTemplateConnettoreMultiploSticky(Connection connectionPdD,IDPortaApplicativa idPA, byte[] template, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateConnettoreMultiploSticky(connectionPdD, idPA, template, requestInfo);
+	}
+	protected Template getTemplateConnettoreMultiploCondizionale(Connection connectionPdD,IDPortaApplicativa idPA, String nomeRegola, byte[] template, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateConnettoreMultiploCondizionale(connectionPdD, idPA, nomeRegola, template, requestInfo);
+	}
+	
+	protected Template getTemplateIntegrazione(Connection connectionPdD,IDPortaApplicativa idPA, File file, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateIntegrazione(connectionPdD, idPA, file, requestInfo);
 	}
 	
 	
@@ -4156,7 +4221,7 @@ public class ConfigurazionePdDReader {
 
 	protected boolean autorizzazioneTrasportoRoles(RegistroServiziManager registroServiziManager, 
 			PortaDelegata pd, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
-			PdDContext pddContext,
+			PdDContext pddContext, RequestInfo requestInfo,
 			boolean checkRuoloRegistro, boolean checkRuoloEsterno,
 			StringBuilder details) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{ 
 
@@ -4173,7 +4238,7 @@ public class ConfigurazionePdDReader {
 		return _autorizzazioneRoles(registroServiziManager,
 				null, sa, 
 				infoConnettoreIngresso, true,
-				pddContext,
+				pddContext, requestInfo,
 				checkRuoloRegistro, checkRuoloEsterno,
 				details,
 				pd.getRuoli().getMatch(), pd.getRuoli(),
@@ -4183,7 +4248,7 @@ public class ConfigurazionePdDReader {
 	
 	protected boolean autorizzazioneTokenRoles(RegistroServiziManager registroServiziManager, 
 			PortaDelegata pd, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
-			PdDContext pddContext,
+			PdDContext pddContext, RequestInfo requestInfo,
 			boolean checkRuoloRegistro, boolean checkRuoloEsterno,
 			StringBuilder details) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{ 
 
@@ -4202,7 +4267,7 @@ public class ConfigurazionePdDReader {
 		return _autorizzazioneRoles(registroServiziManager,
 				null, sa, 
 				infoConnettoreIngresso, true,
-				pddContext,
+				pddContext, requestInfo,
 				checkRuoloRegistro, checkRuoloEsterno,
 				details,
 				pd.getAutorizzazioneToken().getRuoli().getMatch(), pd.getAutorizzazioneToken().getRuoli(),
@@ -4363,7 +4428,7 @@ public class ConfigurazionePdDReader {
 			return false;
 	}
 
-	protected ConnettoreMsg getInvocazioneServizio(Connection connectionPdD,ServizioApplicativo sa,RichiestaApplicativa richiestaApplicativa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected ConnettoreMsg getInvocazioneServizio(Connection connectionPdD,ServizioApplicativo sa,RichiestaApplicativa richiestaApplicativa, RequestInfo requestInfo)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Servizio applicativo
 		if(sa.getInvocazioneServizio()==null)
@@ -4373,13 +4438,57 @@ public class ConfigurazionePdDReader {
 
 		// Soggetto Erogatore
 		IDSoggetto aSoggetto = richiestaApplicativa.getIDServizio().getSoggettoErogatore();
-		Soggetto soggetto = this.configurazionePdD.getSoggetto(connectionPdD,aSoggetto);
+		Soggetto soggetto = null;
+		if( requestInfo!=null && requestInfo.getRequestConfig()!=null && aSoggetto!=null) {
+			if(requestInfo.getRequestConfig().getSoggettoErogatoreConfig()!=null &&
+					aSoggetto.getTipo().equals(requestInfo.getRequestConfig().getSoggettoErogatoreConfig().getTipo()) &&
+					aSoggetto.getNome().equals(requestInfo.getRequestConfig().getSoggettoErogatoreConfig().getNome())	) {
+				soggetto = requestInfo.getRequestConfig().getSoggettoErogatoreConfig();
+			}
+			else if( requestInfo.getRequestConfig().getSoggettoFruitoreConfig()!=null &&
+					aSoggetto.getTipo().equals(requestInfo.getRequestConfig().getSoggettoFruitoreConfig().getTipo()) &&
+					aSoggetto.getNome().equals(requestInfo.getRequestConfig().getSoggettoFruitoreConfig().getNome())	) {
+				soggetto = requestInfo.getRequestConfig().getSoggettoFruitoreConfig();
+			}
+		}
+		if(soggetto==null) {
+			if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null && requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo()!=null) {
+				if(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig()!=null && aSoggetto!=null && 
+						aSoggetto.getTipo().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig().getTipo()) && 
+						aSoggetto.getNome().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig().getNome())) {
+					soggetto = requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig();
+				}
+			}
+		}
+		if(soggetto==null) {
+			if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null && requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo()!=null) {
+				if(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig()!=null && aSoggetto!=null && 
+						aSoggetto.getTipo().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig().getTipo()) && 
+						aSoggetto.getNome().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig().getNome())) {
+					soggetto = requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig();
+				}
+			}
+		}
+		if(soggetto==null) {
+			soggetto = this.configurazionePdD.getSoggetto(connectionPdD,aSoggetto);
+		}
 		if(soggetto==null)
 			throw new DriverConfigurazioneNotFound("[getInvocazioneServizio] Soggetto erogatore non trovato");
 
 
 		// Porta Applicativa
-		PortaApplicativa pa = this.configurazionePdD.getPortaApplicativa(connectionPdD,richiestaApplicativa.getIdPortaApplicativa());
+		PortaApplicativa pa = null;
+		if(requestInfo!=null && requestInfo.getRequestConfig()!=null && richiestaApplicativa.getIdPortaApplicativa()!=null && richiestaApplicativa.getIdPortaApplicativa().getNome()!=null) {
+			if( requestInfo.getRequestConfig().getPortaApplicativa()!=null && richiestaApplicativa.getIdPortaApplicativa().getNome().equals(requestInfo.getRequestConfig().getPortaApplicativa().getNome())) {
+				pa = requestInfo.getRequestConfig().getPortaApplicativa();
+			}
+			else if( requestInfo.getRequestConfig().getPortaApplicativaDefault()!=null && richiestaApplicativa.getIdPortaApplicativa().getNome().equals(requestInfo.getRequestConfig().getPortaApplicativaDefault().getNome())) {
+				pa = requestInfo.getRequestConfig().getPortaApplicativaDefault();
+			}
+		}
+		if(pa==null) {
+			pa = this.configurazionePdD.getPortaApplicativa(connectionPdD,richiestaApplicativa.getIdPortaApplicativa());
+		}
 
 
 		// CONNETTORE
@@ -4398,7 +4507,7 @@ public class ConfigurazionePdDReader {
 			}
 
 			// urlPrefixRewriter
-			setPAUrlPrefixRewriter(connectionPdD,connettore, aSoggetto);
+			setPAUrlPrefixRewriter(connectionPdD,connettore, aSoggetto, requestInfo);
 
 			// Properties connettore
 			properties = new java.util.HashMap<String,String>();
@@ -4551,7 +4660,7 @@ public class ConfigurazionePdDReader {
 			return false;
 	}
 
-	protected ConnettoreMsg getConsegnaRispostaAsincrona(Connection connectionPdD,ServizioApplicativo sa,RichiestaDelegata idPD)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected ConnettoreMsg getConsegnaRispostaAsincrona(Connection connectionPdD,ServizioApplicativo sa,RichiestaDelegata idPD, RequestInfo requestInfo)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Servizio applicativo
 		if(sa.getRispostaAsincrona()==null)
@@ -4561,7 +4670,40 @@ public class ConfigurazionePdDReader {
 
 		// Soggetto che possiede il connettore
 		IDSoggetto aSoggetto = idPD.getIdSoggettoFruitore();
-		Soggetto soggetto = this.configurazionePdD.getSoggetto(connectionPdD,aSoggetto);
+		Soggetto soggetto = null;
+		if( requestInfo!=null && requestInfo.getRequestConfig()!=null && aSoggetto!=null) {
+			if(requestInfo.getRequestConfig().getSoggettoErogatoreConfig()!=null &&
+					aSoggetto.getTipo().equals(requestInfo.getRequestConfig().getSoggettoErogatoreConfig().getTipo()) &&
+					aSoggetto.getNome().equals(requestInfo.getRequestConfig().getSoggettoErogatoreConfig().getNome())	) {
+				soggetto = requestInfo.getRequestConfig().getSoggettoErogatoreConfig();
+			}
+			else if( requestInfo.getRequestConfig().getSoggettoFruitoreConfig()!=null &&
+					aSoggetto.getTipo().equals(requestInfo.getRequestConfig().getSoggettoFruitoreConfig().getTipo()) &&
+					aSoggetto.getNome().equals(requestInfo.getRequestConfig().getSoggettoFruitoreConfig().getNome())	) {
+				soggetto = requestInfo.getRequestConfig().getSoggettoFruitoreConfig();
+			}
+		}
+		if(soggetto==null) {
+			if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null && requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo()!=null) {
+				if(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig()!=null && aSoggetto!=null && 
+						aSoggetto.getTipo().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig().getTipo()) && 
+						aSoggetto.getNome().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig().getNome())) {
+					soggetto = requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig();
+				}
+			}
+		}
+		if(soggetto==null) {
+			if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null && requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo()!=null) {
+				if(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig()!=null && aSoggetto!=null && 
+						aSoggetto.getTipo().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig().getTipo()) && 
+						aSoggetto.getNome().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig().getNome())) {
+					soggetto = requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig();
+				}
+			}
+		}
+		if(soggetto==null) {
+			soggetto = this.configurazionePdD.getSoggetto(connectionPdD,aSoggetto);
+		}
 		if(soggetto==null)
 			throw new DriverConfigurazioneNotFound("[getConsegnaRispostaAsincrona] Soggetto non trovato");
 
@@ -4582,7 +4724,7 @@ public class ConfigurazionePdDReader {
 			}
 
 			// urlPrefixRewriter
-			setPAUrlPrefixRewriter(connectionPdD,connettore, aSoggetto);
+			setPAUrlPrefixRewriter(connectionPdD,connettore, aSoggetto, requestInfo);
 
 			// set properties
 			properties = new java.util.HashMap<String,String>();
@@ -4627,7 +4769,7 @@ public class ConfigurazionePdDReader {
 		return connettoreMsg;
 	}
 
-	protected ConnettoreMsg getConsegnaRispostaAsincrona(Connection connectionPdD,ServizioApplicativo sa,RichiestaApplicativa richiestaApplicativa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected ConnettoreMsg getConsegnaRispostaAsincrona(Connection connectionPdD,ServizioApplicativo sa,RichiestaApplicativa richiestaApplicativa, RequestInfo requestInfo)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		//		 Servizio applicativo
 		if(sa.getRispostaAsincrona()==null)
@@ -4637,13 +4779,57 @@ public class ConfigurazionePdDReader {
 
 		// Soggetto che contiene il connettore
 		IDSoggetto aSoggetto = richiestaApplicativa.getIDServizio().getSoggettoErogatore();
-		Soggetto soggetto = this.configurazionePdD.getSoggetto(connectionPdD,aSoggetto);
+		Soggetto soggetto = null;
+		if( requestInfo!=null && requestInfo.getRequestConfig()!=null && aSoggetto!=null) {
+			if(requestInfo.getRequestConfig().getSoggettoErogatoreConfig()!=null &&
+					aSoggetto.getTipo().equals(requestInfo.getRequestConfig().getSoggettoErogatoreConfig().getTipo()) &&
+					aSoggetto.getNome().equals(requestInfo.getRequestConfig().getSoggettoErogatoreConfig().getNome())	) {
+				soggetto = requestInfo.getRequestConfig().getSoggettoErogatoreConfig();
+			}
+			else if( requestInfo.getRequestConfig().getSoggettoFruitoreConfig()!=null &&
+					aSoggetto.getTipo().equals(requestInfo.getRequestConfig().getSoggettoFruitoreConfig().getTipo()) &&
+					aSoggetto.getNome().equals(requestInfo.getRequestConfig().getSoggettoFruitoreConfig().getNome())	) {
+				soggetto = requestInfo.getRequestConfig().getSoggettoFruitoreConfig();
+			}
+		}
+		if(soggetto==null) {
+			if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null && requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo()!=null) {
+				if(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig()!=null && aSoggetto!=null && 
+						aSoggetto.getTipo().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig().getTipo()) && 
+						aSoggetto.getNome().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig().getNome())) {
+					soggetto = requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig();
+				}
+			}
+		}
+		if(soggetto==null) {
+			if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null && requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo()!=null) {
+				if(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig()!=null && aSoggetto!=null && 
+						aSoggetto.getTipo().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig().getTipo()) && 
+						aSoggetto.getNome().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig().getNome())) {
+					soggetto = requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig();
+				}
+			}
+		}
+		if(soggetto==null) {
+			soggetto = this.configurazionePdD.getSoggetto(connectionPdD,aSoggetto);
+		}
 		if(soggetto==null)
 			throw new DriverConfigurazioneNotFound("[getConsegnaRispostaAsincrona] Soggetto non trovato");
 
 
 		// Porta Applicativa
-		PortaApplicativa pa = this.configurazionePdD.getPortaApplicativa(connectionPdD,richiestaApplicativa.getIdPortaApplicativa());
+		PortaApplicativa pa = null;
+		if(requestInfo!=null && requestInfo.getRequestConfig()!=null && richiestaApplicativa.getIdPortaApplicativa()!=null && richiestaApplicativa.getIdPortaApplicativa().getNome()!=null) {
+			if( requestInfo.getRequestConfig().getPortaApplicativa()!=null && richiestaApplicativa.getIdPortaApplicativa().getNome().equals(requestInfo.getRequestConfig().getPortaApplicativa().getNome())) {
+				pa = requestInfo.getRequestConfig().getPortaApplicativa();
+			}
+			else if( requestInfo.getRequestConfig().getPortaApplicativaDefault()!=null && richiestaApplicativa.getIdPortaApplicativa().getNome().equals(requestInfo.getRequestConfig().getPortaApplicativaDefault().getNome())) {
+				pa = requestInfo.getRequestConfig().getPortaApplicativaDefault();
+			}
+		}
+		if(pa==null) {
+			pa = this.configurazionePdD.getPortaApplicativa(connectionPdD,richiestaApplicativa.getIdPortaApplicativa());
+		}
 
 
 		// CONNETTORE
@@ -4662,7 +4848,7 @@ public class ConfigurazionePdDReader {
 			}
 
 			// urlPrefixRewriter
-			setPAUrlPrefixRewriter(connectionPdD,connettore, aSoggetto);
+			setPAUrlPrefixRewriter(connectionPdD,connettore, aSoggetto, requestInfo);
 
 			// Properties connettore
 			properties = new java.util.HashMap<String,String>();
@@ -6058,6 +6244,46 @@ public class ConfigurazionePdDReader {
 		 */
 
 		return ConfigurazionePdDReader.accessoDatiKeystore;
+	}
+	
+	/**
+	 * Restituisce le informazioni necessarie alla porta di dominio per accedere ai dati di gestione delle richieste
+	 *
+	 * @return informazioni
+	 * 
+	 */
+	private static AccessoDatiRichieste accessoDatiRichieste = null;
+	private static Boolean accessoDatiRichiesteLetto = false;
+	protected AccessoDatiRichieste getAccessoDatiRichieste(Connection connectionPdD){
+
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.accessoDatiRichiesteLetto==false){
+			AccessoDatiRichieste tmp = null;
+			try{
+				tmp = this.configurazionePdD.getAccessoDatiRichieste(connectionPdD);
+			}catch(DriverConfigurazioneNotFound e){
+				this.log.debug("getAccessoDatiRichieste (not found): "+e.getMessage());
+			}catch(Exception e){
+				this.log.error("getAccessoDatiRichieste",e);
+			}
+
+			ConfigurazionePdDReader.accessoDatiRichieste = tmp;
+			ConfigurazionePdDReader.accessoDatiRichiesteLetto = true;
+		}
+
+		/*
+		if(ConfigurazionePdDReader.accessoDatiRichieste.getCache()==null){
+			System.out.println("ACCESSO_DATI_RICHIESTE CACHE DISABILITATA");
+		}else{
+			System.out.println("ACCESSO_DATI_RICHIESTE CACHE ABILITATA");
+			System.out.println("ACCESSO_DATI_RICHIESTE CACHE ALGORITMO: "+ConfigurazionePdDReader.accessoDatiRichieste.getCache().getAlgoritmo());
+			System.out.println("ACCESSO_DATI_RICHIESTE CACHE DIMENSIONE: "+ConfigurazionePdDReader.accessoDatiRichieste.getCache().getDimensione());
+			System.out.println("ACCESSO_DATI_RICHIESTE CACHE ITEM IDLE: "+ConfigurazionePdDReader.accessoDatiRichieste.getCache().getItemIdleTime());
+			System.out.println("ACCESSO_DATI_RICHIESTE CACHE ITEM LIFE SECOND: "+ConfigurazionePdDReader.accessoDatiRichieste.getCache().getItemLifeSecond());
+			System.out.println("ACCESSO_DATI_RICHIESTE CACHE ITEM LIFE SECOND: "+ConfigurazionePdDReader.accessoDatiRichieste.getCrlItemLifeSecond());
+		}
+		 */
+
+		return ConfigurazionePdDReader.accessoDatiRichieste;
 	}
 
 	/**
@@ -7686,7 +7912,8 @@ public class ConfigurazionePdDReader {
 	
 	public UrlInvocazioneAPI getConfigurazioneUrlInvocazione(Connection connectionPdD, 
 			IProtocolFactory<?> protocolFactory, RuoloContesto ruolo, ServiceBinding serviceBinding, String interfaceName, IDSoggetto soggettoOperativo,
-			AccordoServizioParteComune aspc) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+			AccordoServizioParteComune aspc,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		
 		List<String> tags = new ArrayList<String>();
 		if(aspc!=null && aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
@@ -7700,12 +7927,13 @@ public class ConfigurazionePdDReader {
 			canaleApi = aspc.getCanale();
 		}
 
-		return getConfigurazioneUrlInvocazione(connectionPdD, protocolFactory, ruolo, serviceBinding, interfaceName, soggettoOperativo, tags, canaleApi);
+		return getConfigurazioneUrlInvocazione(connectionPdD, protocolFactory, ruolo, serviceBinding, interfaceName, soggettoOperativo, tags, canaleApi, requestInfo);
 	}	
 	public UrlInvocazioneAPI getConfigurazioneUrlInvocazione(Connection connectionPdD, 
 			IProtocolFactory<?> protocolFactory, RuoloContesto ruolo, ServiceBinding serviceBinding, String interfaceName, IDSoggetto soggettoOperativo,
 			List<String> tags, 
-			String canaleApi) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+			String canaleApi,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		Configurazione config = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
 
@@ -7717,21 +7945,41 @@ public class ConfigurazionePdDReader {
 		String canale = null;
 		if(config.getGestioneCanali()!=null && StatoFunzionalita.ABILITATO.equals(config.getGestioneCanali().getStato()) && config.getGestioneCanali().sizeCanaleList()>0) {
 			if(RuoloContesto.PORTA_APPLICATIVA.equals(ruolo)) {
+				IDPortaApplicativa idPA = new IDPortaApplicativa();
+				idPA.setNome(interfaceName);
 				PortaApplicativa pa = null;
-				try {
-					IDPortaApplicativa idPA = new IDPortaApplicativa();
-					idPA.setNome(interfaceName);
-					pa = this.configurazionePdD.getPortaApplicativa(connectionPdD, idPA);
-				}catch(DriverConfigurazioneNotFound notFound) {}
+				if(requestInfo!=null && requestInfo.getRequestConfig()!=null && interfaceName!=null) {
+					if( requestInfo.getRequestConfig().getPortaApplicativa()!=null && idPA.getNome().equals(requestInfo.getRequestConfig().getPortaApplicativa().getNome())) {
+						pa = requestInfo.getRequestConfig().getPortaApplicativa();
+					}
+					else if( requestInfo.getRequestConfig().getPortaApplicativaDefault()!=null && idPA.getNome().equals(requestInfo.getRequestConfig().getPortaApplicativaDefault().getNome())) {
+						pa = requestInfo.getRequestConfig().getPortaApplicativaDefault();
+					}
+				}
+				if(pa==null) {
+					try {
+						pa = this.configurazionePdD.getPortaApplicativa(connectionPdD, idPA);
+					}catch(DriverConfigurazioneNotFound notFound) {}
+				}
 				canale = CanaliUtils.getCanale(config.getGestioneCanali(), canaleApi, pa);
 			}
 			else {
+				IDPortaDelegata idPD = new IDPortaDelegata();
+				idPD.setNome(interfaceName);
 				PortaDelegata pd = null;
-				try {
-					IDPortaDelegata idPD = new IDPortaDelegata();
-					idPD.setNome(interfaceName);
-					pd = this.configurazionePdD.getPortaDelegata(connectionPdD, idPD);
-				}catch(DriverConfigurazioneNotFound notFound) {}
+				if(requestInfo!=null && requestInfo.getRequestConfig()!=null && interfaceName!=null) {
+					if( requestInfo.getRequestConfig().getPortaDelegata()!=null && idPD.getNome().equals(requestInfo.getRequestConfig().getPortaDelegata().getNome())) {
+						pd = requestInfo.getRequestConfig().getPortaDelegata();
+					}
+					else if( requestInfo.getRequestConfig().getPortaDelegataDefault()!=null && idPD.getNome().equals(requestInfo.getRequestConfig().getPortaDelegata().getNome())) {
+						pd = requestInfo.getRequestConfig().getPortaDelegata();
+					}
+				}
+				if(pd==null) {
+					try {
+						pd = this.configurazionePdD.getPortaDelegata(connectionPdD, idPD);
+					}catch(DriverConfigurazioneNotFound notFound) {}
+				}
 				canale = CanaliUtils.getCanale(config.getGestioneCanali(), canaleApi, pd);
 			}
 		}
@@ -7752,7 +8000,7 @@ public class ConfigurazionePdDReader {
 		if(this.configurazionePdD.getDriverConfigurazionePdD() instanceof DriverConfigurazioneDB) {
 			DriverConfigurazioneDB driver = (DriverConfigurazioneDB) this.configurazionePdD.getDriverConfigurazionePdD();
 			
-			List<String> listPD =  driver.porteDelegateRateLimitingValoriUnivoci(Constants.GESTORE);
+			List<String> listPD =  driver.porteDelegateRateLimitingValoriUnivoci(org.openspcoop2.core.controllo_traffico.constants.Costanti.GESTORE);
 			if(listPD!=null && !listPD.isEmpty()) {
 				for (String type : listPD) {
 					PolicyGroupByActiveThreadsType typeE = PolicyGroupByActiveThreadsType.valueOf(type);
@@ -7762,12 +8010,12 @@ public class ConfigurazionePdDReader {
 				}
 			}
 			
-			List<String> listPA =  driver.porteApplicativeRateLimitingValoriUnivoci(Constants.GESTORE);
+			List<String> listPA =  driver.porteApplicativeRateLimitingValoriUnivoci(org.openspcoop2.core.controllo_traffico.constants.Costanti.GESTORE);
 			if(listPA!=null && !listPA.isEmpty()) {
 				for (String type : listPA) {
 					PolicyGroupByActiveThreadsType typeE = null;
 					// per backward
-					if(Constants.GESTORE_HAZELCAST_MAP_BACKWARD_COMPATIBILITY.equalsIgnoreCase(type)) {
+					if(org.openspcoop2.core.controllo_traffico.constants.Costanti.GESTORE_HAZELCAST_MAP_BACKWARD_COMPATIBILITY.equalsIgnoreCase(type)) {
 						typeE = PolicyGroupByActiveThreadsType.HAZELCAST_MAP;
 					}
 					else {
@@ -8000,12 +8248,12 @@ public class ConfigurazionePdDReader {
 		}
 	}
 
-	protected Template getTemplateAttributeAuthorityRequest(Connection connectionPdD, String attributeAuthorityName, byte[] template) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdD.getTemplateAttributeAuthorityRequest(connectionPdD, attributeAuthorityName, template);
+	protected Template getTemplateAttributeAuthorityRequest(Connection connectionPdD, String attributeAuthorityName, byte[] template, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateAttributeAuthorityRequest(connectionPdD, attributeAuthorityName, template, requestInfo);
 	}
 	
-	protected Template getTemplateIntegrazione(Connection connectionPdD,File file) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdD.getTemplateIntegrazione(connectionPdD, file);
+	protected Template getTemplateIntegrazione(Connection connectionPdD,File file, RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getTemplateIntegrazione(connectionPdD, file, requestInfo);
 	}
 
 
@@ -8115,11 +8363,11 @@ public class ConfigurazionePdDReader {
 	public boolean isForwardProxyEnabled() {
 		return this.configurazionePdD.isForwardProxyEnabled();
 	}
-	public ForwardProxy getForwardProxyConfigFruizione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
-		return this.configurazionePdD.getForwardProxyConfigFruizione(dominio, idServizio, policy);
+	public ForwardProxy getForwardProxyConfigFruizione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy, RequestInfo requestInfo) throws DriverConfigurazioneException{
+		return this.configurazionePdD.getForwardProxyConfigFruizione(dominio, idServizio, policy, requestInfo);
 	}
-	public ForwardProxy getForwardProxyConfigErogazione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy ) throws DriverConfigurazioneException{
-		return this.configurazionePdD.getForwardProxyConfigErogazione(dominio, idServizio, policy);
+	public ForwardProxy getForwardProxyConfigErogazione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy, RequestInfo requestInfo) throws DriverConfigurazioneException{
+		return this.configurazionePdD.getForwardProxyConfigErogazione(dominio, idServizio, policy, requestInfo);
 	}
 	
 	

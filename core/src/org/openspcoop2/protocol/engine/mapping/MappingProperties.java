@@ -28,13 +28,13 @@ import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
-import org.openspcoop2.protocol.engine.FunctionContextCustom;
-import org.openspcoop2.protocol.engine.FunctionContextsCustom;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.IDService;
+import org.openspcoop2.protocol.sdk.state.FunctionContextCustom;
+import org.openspcoop2.protocol.sdk.state.FunctionContextsCustom;
 
 /**
  * Service Mappings
@@ -69,7 +69,7 @@ public class MappingProperties {
 		String urlWithoutContext = null;
 		
 		List<String> paContexts = new ArrayList<String>();
-		if(IDService.PORTA_APPLICATIVA.equals(idService)){
+		if(IDService.PORTA_APPLICATIVA.equals(idService) || IDService.PORTA_APPLICATIVA_NIO.equals(idService)){
 			paContexts.add("/PA");
 			if(customContexts!=null) {
 				List<FunctionContextCustom> list = customContexts.getContexts();

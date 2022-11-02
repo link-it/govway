@@ -40,7 +40,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.DBUtils;
@@ -106,11 +105,8 @@ import org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrate;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.pdd.timers.TimerGestorePuliziaMessaggiAnomali;
 import org.openspcoop2.pdd.timers.TimerGestoreRepositoryBuste;
-import org.openspcoop2.protocol.engine.FunctionContextCustom;
-import org.openspcoop2.protocol.engine.FunctionContextsCustom;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.Costanti;
-import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.engine.driver.IFiltroDuplicati;
 import org.openspcoop2.protocol.engine.driver.repository.GestoreRepositoryFactory;
 import org.openspcoop2.protocol.engine.driver.repository.IGestoreRepository;
@@ -123,18 +119,24 @@ import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.FaultIntegrationGenericInfoMode;
+import org.openspcoop2.protocol.sdk.constants.IDService;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
+import org.openspcoop2.protocol.sdk.state.FunctionContextCustom;
+import org.openspcoop2.protocol.sdk.state.FunctionContextsCustom;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.SemaphoreType;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.VersionUtilities;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.date.DateEngineType;
 import org.openspcoop2.utils.date.DateUtils;
@@ -580,6 +582,22 @@ public class OpenSPCoop2Properties {
 			this.isConfigurazioneCache_accessiSynchronized();
 			this.isConfigurazioneCache_transactionContext_accessiSynchronized();
 			
+			this.getCacheType_config();
+			this.getCacheType_registry();
+			this.getCacheType_authentication();
+			this.getCacheType_authorization();
+			this.getCacheType_responseCaching();
+			this.getCacheType_token();
+			this.getCacheType_keystore();
+			this.getCacheType_loadBalancer();
+			this.getCacheType_trafficControl();
+			this.getCacheType_message();
+			this.getCacheType_requestManager();
+			
+			this.isConfigurazioneCache_debug();
+			
+			this.isConfigurazioneCache_requestManager_useCache();
+			
 			if(this.isConfigurazionePluginsEnabled()) {
 				this.isConfigurazionePluginsDebug();
 				this.getConfigurazionePluginsSeconds();
@@ -957,6 +975,14 @@ public class OpenSPCoop2Properties {
 				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.identificativoPorta'.");
 				return false;
 			}
+			/*
+			 * Controllo spostato sotto, in attesa che venga inizializzato il ProtocolFactoryManager
+			Enumeration<String> protocolli = ProtocolFactoryManager.getInstance().getProtocolFactories().keys();
+			while (protocolli.hasMoreElements()) {
+				String protocollo = (String) protocolli.nextElement();
+				getIdentitaPortaDefault(protocollo, null);
+			}	
+			*/		
 
 			// Check tipi di default: urlBased, trasporto, soap
 			List<String> headerDefault = new ArrayList<>();
@@ -1170,6 +1196,14 @@ public class OpenSPCoop2Properties {
 			getAutorizzazioneContenuti_lock_permits();
 			getAutorizzazioneContenuti_lock_permits("tipoNonEsistente");
 
+			// ByPass
+			// Controllo spostato sotto, in attesa che venga inizializzato il ProtocolFactoryManager
+			/*protocolli = ProtocolFactoryManager.getInstance().getProtocolFactories().keys();
+			while (protocolli.hasMoreElements()) {
+				String protocollo = (String) protocolli.nextElement();
+				getBypassFilterMustUnderstandProperties(protocollo);
+			}*/
+			
 			// GestoreRepositoryBuste
 			if( this.getGestoreRepositoryBuste() == null  ){
 				return false;
@@ -1593,6 +1627,7 @@ public class OpenSPCoop2Properties {
 				}
 				useIDManagerWithThreadLocal();
 				getIDManagerParameters();
+				getIDManagerBufferSize();
 				try{
 					IUniqueIdentifierGenerator uniqueIdentifier = (IUniqueIdentifierGenerator) loaderOpenSPCoop.newInstance(tipoIdManger);
 					uniqueIdentifier.toString();
@@ -1748,6 +1783,13 @@ public class OpenSPCoop2Properties {
 						return false;
 					} 
 				}
+			}
+			
+			// PipedUnblockedVersion
+			try{
+				this.getPipedUnblockedStreamClassName();
+			}catch(Exception e){
+				return false; // log registrato nel metodo
 			}
 			
 			// FormUrlEncodedFilter
@@ -2267,7 +2309,31 @@ public class OpenSPCoop2Properties {
 			return false;
 		}
 	}
-
+	
+	public boolean validaConfigurazioneDopoInizializzazioneProtocolManager(java.lang.ClassLoader loader) {	
+		try{  
+			
+			// IdentitaPdD
+			Enumeration<String> protocolli = ProtocolFactoryManager.getInstance().getProtocolFactories().keys();
+			while (protocolli.hasMoreElements()) {
+				String protocollo = (String) protocolli.nextElement();
+				getIdentitaPortaDefault(protocollo, null);
+			}	
+			
+			// ByPass
+			protocolli = ProtocolFactoryManager.getInstance().getProtocolFactories().keys();
+			while (protocolli.hasMoreElements()) {
+				String protocollo = (String) protocolli.nextElement();
+				getBypassFilterMustUnderstandProperties(protocollo);
+			}
+			
+			return true;
+			
+		}catch(java.lang.Exception e) {
+			this.log.error("Riscontrato errore durante la validazione lettura della proprieta' di openspcoop: "+e.getMessage(),e);
+			return false;
+		}
+	}
 
 	private boolean _validateHandlersBuiltIn(ClassNameProperties className, Loader loaderOpenSPCoop) {
 		// InitHandlerBuiltIn
@@ -2852,13 +2918,13 @@ public class OpenSPCoop2Properties {
 
 	private boolean checkTipiIntegrazioneGestioneToken(){
 		
-		java.util.concurrent.ConcurrentHashMap<?,?> prop = this.getKeyValue_gestioneTokenHeaderIntegrazioneTrasporto();
+		Map<?,?> prop = this.getKeyValue_gestioneTokenHeaderIntegrazioneTrasporto();
 		if ( prop == null ){
 			this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.keyword.*'.");
 			return false;
 		}
 		
-		java.util.concurrent.ConcurrentHashMap<String, Boolean> propSetPD_trasporto = null;
+		Map<String, Boolean> propSetPD_trasporto = null;
 		try {
 			propSetPD_trasporto = this.getKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneTrasporto();
 		}catch(Exception e) {
@@ -2866,7 +2932,7 @@ public class OpenSPCoop2Properties {
 			return false;
 		}
 		
-		java.util.concurrent.ConcurrentHashMap<String, Boolean> propSetPD_json = null;
+		Map<String, Boolean> propSetPD_json = null;
 		try {
 			propSetPD_json = this.getKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneJson();
 		}catch(Exception e) {
@@ -2874,7 +2940,7 @@ public class OpenSPCoop2Properties {
 			return false;
 		}
 		
-		java.util.concurrent.ConcurrentHashMap<String, Boolean> propSetPA_trasporto = null;
+		Map<String, Boolean> propSetPA_trasporto = null;
 		try {
 			propSetPA_trasporto = this.getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneTrasporto();
 		}catch(Exception e) {
@@ -2882,7 +2948,7 @@ public class OpenSPCoop2Properties {
 			return false;
 		}
 		
-		java.util.concurrent.ConcurrentHashMap<String, Boolean> propSetPA_json = null;
+		Map<String, Boolean> propSetPA_json = null;
 		try {
 			propSetPA_json = this.getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneJson();
 		}catch(Exception e) {
@@ -2923,8 +2989,11 @@ public class OpenSPCoop2Properties {
 		return true;
 	}
 
-	public List<String> getKeywordsIntegrazione(){
-		List<String> keywords = new ArrayList<>();
+	public List<MapKey<String>> getKeywordsIntegrazione(){
+		return _getKeywordsIntegrazione(false);
+	}
+	private List<MapKey<String>> _getKeywordsIntegrazione(boolean all){
+		List<MapKey<String>> keywords = new ArrayList<>();
 		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE);
 		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE);
 		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO);
@@ -2943,6 +3012,10 @@ public class OpenSPCoop2Properties {
 		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO_TOKEN);
 		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE);
 		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_PROTOCOL_INFO);
+		if(all) {
+			keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_INFO);
+			keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_USER_AGENT);
+		}
 		return keywords;
 	}
 
@@ -2953,15 +3026,15 @@ public class OpenSPCoop2Properties {
 					CostantiConfigurazione.HEADER_INTEGRAZIONE_URL_BASED.equals(tipiIntegrazione[i]) ||
 							CostantiConfigurazione.HEADER_INTEGRAZIONE_SOAP.equals(tipiIntegrazione[i]) ){
 				
-				java.util.concurrent.ConcurrentHashMap<?,?> propGovWay = null;
-				java.util.concurrent.ConcurrentHashMap<?,?> propOpenSPCoop2 = null;
-				java.util.concurrent.ConcurrentHashMap<?,?> propOpenSPCoop1 = null;
-				java.util.concurrent.ConcurrentHashMap<String, Boolean> propSetRequestPD = null;
-				java.util.concurrent.ConcurrentHashMap<String, Boolean> propSetResponsePD = null;
-				java.util.concurrent.ConcurrentHashMap<String, Boolean> propReadPD = null;
-				java.util.concurrent.ConcurrentHashMap<String, Boolean> propSetRequestPA = null;
-				java.util.concurrent.ConcurrentHashMap<String, Boolean> propSetResponsePA = null;
-				java.util.concurrent.ConcurrentHashMap<String, Boolean> propReadPA = null;
+				Map<MapKey<String>,String> propGovWay = null;
+				Map<MapKey<String>,String> propOpenSPCoop2 = null;
+				Map<MapKey<String>,String> propOpenSPCoop1 = null;
+				Map<MapKey<String>, Boolean> propSetRequestPD = null;
+				Map<MapKey<String>, Boolean> propSetResponsePD = null;
+				Map<MapKey<String>, Boolean> propReadPD = null;
+				Map<MapKey<String>, Boolean> propSetRequestPA = null;
+				Map<MapKey<String>, Boolean> propSetResponsePA = null;
+				Map<MapKey<String>, Boolean> propReadPA = null;
 				String tipo = "";
 				if(CostantiConfigurazione.HEADER_INTEGRAZIONE_TRASPORTO.equals(tipiIntegrazione[i])){
 					if ( this.getKeyValue_HeaderIntegrazioneTrasporto() == null ){
@@ -3088,170 +3161,170 @@ public class OpenSPCoop2Properties {
 					tipo=CostantiConfigurazione.HEADER_INTEGRAZIONE_SOAP;
 				}
 				
-				List<String> keywords = this.getKeywordsIntegrazione();
-				for (String keyword : keywords) {
+				List<MapKey<String>> keywords = this.getKeywordsIntegrazione();
+				for (MapKey<String> mapkey : keywords) {
 					
-					if(CostantiPdD.HEADER_INTEGRAZIONE_PROTOCOL_INFO.equals(keyword)) {
+					if(CostantiPdD.HEADER_INTEGRAZIONE_PROTOCOL_INFO.equals(mapkey)) {
 						continue; // gestito sotto come caso eccezionale
 					}
 					
-					if( propGovWay.get(keyword) == null){
+					if( propGovWay.get(mapkey) == null){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+
-								keyword+"'.");
+								mapkey+"'.");
 						return false;
 					}
-					if( propOpenSPCoop2.get(keyword) == null){
+					if( propOpenSPCoop2.get(mapkey) == null){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2."+tipo+".keyword."+
-								keyword+"'.");
+								mapkey+"'.");
 						return false;
 					}
-					if( propOpenSPCoop1.get(keyword) == null){
+					if( propOpenSPCoop1.get(mapkey) == null){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1."+tipo+".keyword."+
-								keyword+"'.");
+								mapkey.toString()+"'.");
 						return false;
 					}
 					if(CostantiConfigurazione.HEADER_INTEGRAZIONE_URL_BASED.equals(tipiIntegrazione[i])){
-						if( propSetRequestPD.containsKey(keyword) == false){
+						if( propSetRequestPD.containsKey(mapkey) == false){
 							this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.enabled."+
-									keyword+"'.");
+									mapkey+"'.");
 							return false;
 						}
 					}
 					else {
-						if( propSetRequestPD.containsKey(keyword) == false){
+						if( propSetRequestPD.containsKey(mapkey) == false){
 							this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.request.enabled."+
-									keyword+"'.");
+									mapkey+"'.");
 							return false;
 						}
-						if( propSetResponsePD.containsKey(keyword) == false){
+						if( propSetResponsePD.containsKey(mapkey) == false){
 							this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
-									keyword+"'.");
+									mapkey+"'.");
 							return false;
 						}
 					}
-					if( propReadPD.containsKey(keyword) == false){
+					if( propReadPD.containsKey(mapkey) == false){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.read.enabled."+
-								keyword+"'.");
+								mapkey+"'.");
 						return false;
 					}
 					if(CostantiConfigurazione.HEADER_INTEGRAZIONE_URL_BASED.equals(tipiIntegrazione[i])){
-						if( propSetRequestPA.containsKey(keyword) == false){
+						if( propSetRequestPA.containsKey(mapkey) == false){
 							this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.enabled."+
-									keyword+"'.");
+									mapkey+"'.");
 							return false;
 						}
 					}
 					else {
-						if( propSetRequestPA.containsKey(keyword) == false){
+						if( propSetRequestPA.containsKey(mapkey) == false){
 							this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.request.enabled."+
-									keyword+"'.");
+									mapkey+"'.");
 							return false;
 						}
-						if( propSetResponsePA.containsKey(keyword) == false){
+						if( propSetResponsePA.containsKey(mapkey) == false){
 							this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.response.enabled."+
-									keyword+"'.");
+									mapkey+"'.");
 							return false;
 						}
 					}
-					if( propReadPA.containsKey(keyword) == false){
+					if( propReadPA.containsKey(mapkey) == false){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.read.enabled."+
-								keyword+"'.");
+								mapkey+"'.");
 						return false;
 					}
 				}
 				
-				String keyword = CostantiPdD.HEADER_INTEGRAZIONE_INFO;
+				MapKey<String> mapkey = CostantiPdD.HEADER_INTEGRAZIONE_INFO;
 				if(CostantiConfigurazione.HEADER_INTEGRAZIONE_URL_BASED.equals(tipiIntegrazione[i])){
-					if( propSetRequestPD.containsKey(keyword) == false){
+					if( propSetRequestPD.containsKey(mapkey) == false){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.enabled."+
-								keyword+"'.");
+								mapkey+"'.");
 						return false;
 					}
-					if( propSetRequestPA.containsKey(keyword) == false){
+					if( propSetRequestPA.containsKey(mapkey) == false){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.enabled."+
-								keyword+"'.");
+								mapkey+"'.");
 						return false;
 					}
 				}
 				else {
-					if( propSetRequestPD.containsKey(keyword) == false){
+					if( propSetRequestPD.containsKey(mapkey) == false){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.request.enabled."+
-								keyword+"'.");
+								mapkey+"'.");
 						return false;
 					}
-					if( propSetResponsePD.containsKey(keyword) == false){
+					if( propSetResponsePD.containsKey(mapkey) == false){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
-								keyword+"'.");
+								mapkey+"'.");
 						return false;
 					}
-					if( propSetRequestPA.containsKey(keyword) == false){
+					if( propSetRequestPA.containsKey(mapkey) == false){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.request.enabled."+
-								keyword+"'.");
+								mapkey+"'.");
 						return false;
 					}
-					if( propSetResponsePA.containsKey(keyword) == false){
+					if( propSetResponsePA.containsKey(mapkey) == false){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.response.enabled."+
-								keyword+"'.");
+								mapkey+"'.");
 						return false;
 					}
 				}
 				
 				if(CostantiConfigurazione.HEADER_INTEGRAZIONE_TRASPORTO.equals(tipo)) {
-					keyword = CostantiPdD.HEADER_INTEGRAZIONE_USER_AGENT;
-					if( propSetRequestPD.containsKey(keyword) == false){
+					mapkey = CostantiPdD.HEADER_INTEGRAZIONE_USER_AGENT;
+					if( propSetRequestPD.containsKey(mapkey) == false){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.request.enabled."+
-								keyword+"'.");
+								mapkey+"'.");
 						return false;
 					}
-					if( propSetResponsePD.containsKey(keyword) == false){
+					if( propSetResponsePD.containsKey(mapkey) == false){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
-								keyword+"'.");
+								mapkey+"'.");
 						return false;
 					}
-					if( propSetRequestPA.containsKey(keyword) == false){
+					if( propSetRequestPA.containsKey(mapkey) == false){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.request.enabled."+
-								keyword+"'.");
+								mapkey+"'.");
 						return false;
 					}
-					if( propSetResponsePA.containsKey(keyword) == false){
+					if( propSetResponsePA.containsKey(mapkey) == false){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.response.enabled."+
-								keyword+"'.");
+								mapkey+"'.");
 						return false;
 					}
 				}
 				
-				keyword = CostantiPdD.HEADER_INTEGRAZIONE_PROTOCOL_INFO;
+				mapkey = CostantiPdD.HEADER_INTEGRAZIONE_PROTOCOL_INFO;
 				if(CostantiConfigurazione.HEADER_INTEGRAZIONE_URL_BASED.equals(tipiIntegrazione[i])){
-					if( propSetRequestPD.containsKey(keyword) == false){
+					if( propSetRequestPD.containsKey(mapkey) == false){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.enabled."+
-								keyword+"'.");
+								mapkey+"'.");
 						return false;
 					}
-					if( propSetRequestPA.containsKey(keyword) == false){
+					if( propSetRequestPA.containsKey(mapkey) == false){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.enabled."+
-								keyword+"'.");
+								mapkey+"'.");
 						return false;
 					}
 				}
 				else {
-					if( propSetRequestPD.containsKey(keyword) == false){
+					if( propSetRequestPD.containsKey(mapkey) == false){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.request.enabled."+
-								keyword+"'.");
+								mapkey+"'.");
 						return false;
 					}
-					if( propSetResponsePD.containsKey(keyword) == false){
+					if( propSetResponsePD.containsKey(mapkey) == false){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
-								keyword+"'.");
+								mapkey+"'.");
 						return false;
 					}
-					if( propSetRequestPA.containsKey(keyword) == false){
+					if( propSetRequestPA.containsKey(mapkey) == false){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.request.enabled."+
-								keyword+"'.");
+								mapkey+"'.");
 						return false;
 					}
-					if( propSetResponsePA.containsKey(keyword) == false){
+					if( propSetResponsePA.containsKey(mapkey) == false){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.response.enabled."+
-								keyword+"'.");
+								mapkey+"'.");
 						return false;
 					}
 				}
@@ -3979,8 +4052,160 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isConfigurazioneCache_transactionContext_accessiSynchronized;
 	}
 
+	private static CacheType readCacheType_config = null;
+	public CacheType getCacheType_config() {
+		if(readCacheType_config==null) {
+			readCacheType_config = readCacheType("org.openspcoop2.pdd.cache.impl.config");
+		}
+		return readCacheType_config;
+	}
+	
+	private static CacheType readCacheType_registry = null;
+	public CacheType getCacheType_registry() {
+		if(readCacheType_registry==null) {
+			readCacheType_registry = readCacheType("org.openspcoop2.pdd.cache.impl.registry");
+		}
+		return readCacheType_registry;
+	}
+	
+	private static CacheType readCacheType_authentication = null;
+	public CacheType getCacheType_authentication() {
+		if(readCacheType_authentication==null) {
+			readCacheType_authentication = readCacheType("org.openspcoop2.pdd.cache.impl.authentication");
+		}
+		return readCacheType_authentication;
+	}
+	
+	private static CacheType readCacheType_authorization = null;
+	public CacheType getCacheType_authorization() {
+		if(readCacheType_authorization==null) {
+			readCacheType_authorization = readCacheType("org.openspcoop2.pdd.cache.impl.authorization");
+		}
+		return readCacheType_authorization;
+	}
+	
+	private static CacheType readCacheType_responseCaching = null;
+	public CacheType getCacheType_responseCaching() {
+		if(readCacheType_responseCaching==null) {
+			readCacheType_responseCaching = readCacheType("org.openspcoop2.pdd.cache.impl.responseCaching");
+		}
+		return readCacheType_responseCaching;
+	}
 
+	private static CacheType readCacheType_token = null;
+	public CacheType getCacheType_token() {
+		if(readCacheType_token==null) {
+			readCacheType_token = readCacheType("org.openspcoop2.pdd.cache.impl.token");
+		}
+		return readCacheType_token;
+	}
+	
+	private static CacheType readCacheType_keystore = null;
+	public CacheType getCacheType_keystore() {
+		if(readCacheType_keystore==null) {
+			readCacheType_keystore = readCacheType("org.openspcoop2.pdd.cache.impl.keystore");
+		}
+		return readCacheType_keystore;
+	}
+	
+	private static CacheType readCacheType_loadBalancer = null;
+	public CacheType getCacheType_loadBalancer() {
+		if(readCacheType_loadBalancer==null) {
+			readCacheType_loadBalancer = readCacheType("org.openspcoop2.pdd.cache.impl.loadBalancer");
+		}
+		return readCacheType_loadBalancer;
+	}
+	
+	private static CacheType readCacheType_trafficControl = null;
+	public CacheType getCacheType_trafficControl() {
+		if(readCacheType_trafficControl==null) {
+			readCacheType_trafficControl = readCacheType("org.openspcoop2.pdd.cache.impl.trafficControl");
+		}
+		return readCacheType_trafficControl;
+	}
+	
+	private static CacheType readCacheType_message = null;
+	public CacheType getCacheType_message() {
+		if(readCacheType_message==null) {
+			readCacheType_message = readCacheType("org.openspcoop2.pdd.cache.impl.message");
+		}
+		return readCacheType_message;
+	}
+	
+	private static CacheType readCacheType_requestManager = null;
+	public CacheType getCacheType_requestManager() {
+		if(readCacheType_requestManager==null) {
+			readCacheType_requestManager = readCacheType("org.openspcoop2.pdd.cache.impl.requestManager");
+		}
+		return readCacheType_requestManager;
+	}
+	
+	
+	public CacheType readCacheType(String pName){
+		try{  
+			String value = this.reader.getValue_convertEnvProperties(pName); 
 
+			if(value!=null){
+				value = value.trim();
+				return CacheType.valueOf(value);
+			}else{
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CacheType.JCS);
+				return CacheType.JCS;
+			}
+
+		}catch(java.lang.Exception e) {
+			this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CacheType.JCS+", errore:"+e.getMessage(),e);
+			return CacheType.JCS;
+		}
+	}
+
+	private static Boolean isConfigurazioneCache_debug = null;
+	public boolean isConfigurazioneCache_debug(){
+		if(OpenSPCoop2Properties.isConfigurazioneCache_debug==null){
+			String pName = "org.openspcoop2.pdd.cache.debug";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isConfigurazioneCache_debug = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isConfigurazioneCache_debug = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isConfigurazioneCache_debug = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isConfigurazioneCache_debug;
+	}
+	
+	private static Boolean isConfigurazioneCache_requestManager_useCache = null;
+	public boolean isConfigurazioneCache_requestManager_useCache(){
+		if(OpenSPCoop2Properties.isConfigurazioneCache_requestManager_useCache==null){
+			String pName = "org.openspcoop2.pdd.cache.impl.requestManager.useCache";
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isConfigurazioneCache_requestManager_useCache = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isConfigurazioneCache_requestManager_useCache = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isConfigurazioneCache_requestManager_useCache = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isConfigurazioneCache_requestManager_useCache;
+	}
 
 
 	
@@ -8141,8 +8366,8 @@ public class OpenSPCoop2Properties {
 
 	// protocol mapping
 	
-	private static ConcurrentHashMap<String,String> identificativoPortaDefault_mappingProtocol = new ConcurrentHashMap<String, String>();
-	public String getIdentificativoPortaDefault(String protocol){
+	private static Map<String,String> identificativoPortaDefault_mappingProtocol = new HashMap<String, String>();
+	private String _getIdentificativoPortaDefault(String protocol){
 		
 		if(protocol==null){
 			return getIdentificativoPortaDefault();
@@ -8169,8 +8394,8 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.identificativoPortaDefault_mappingProtocol.get(protocol);
 	}
 
-	private static ConcurrentHashMap<String,String> nomePortaDefault_mappingProtocol = new ConcurrentHashMap<String, String>();
-	public String getNomePortaDefault(String protocol){
+	private static Map<String,String> nomePortaDefault_mappingProtocol = new HashMap<String, String>();
+	private String _getNomePortaDefault(String protocol){
 		
 		if(protocol==null){
 			return getNomePortaDefault();
@@ -8197,8 +8422,8 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.nomePortaDefault_mappingProtocol.get(protocol);
 	}
 	
-	private static ConcurrentHashMap<String,String> tipoPortaDefault_mappingProtocol = new ConcurrentHashMap<String, String>();
-	public String getTipoPortaDefault(String protocol){
+	private static Map<String,String> tipoPortaDefault_mappingProtocol = new HashMap<String, String>();
+	private String _getTipoPortaDefault(String protocol){
 		
 		if(protocol==null){
 			return getTipoPortaDefault();
@@ -8225,17 +8450,31 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.tipoPortaDefault_mappingProtocol.get(protocol);
 	}
 
-	private static ConcurrentHashMap<String,IDSoggetto> identitaPortaDefault_mappingProtocol = new ConcurrentHashMap<String, IDSoggetto>();
-	public IDSoggetto getIdentitaPortaDefault(String protocol){
+	public IDSoggetto getIdentitaPortaDefaultWithoutProtocol(){
+		return getIdentitaPortaDefault();
+	}
+	
+	private static Map<String,IDSoggetto> identitaPortaDefault_mappingProtocol = new HashMap<String, IDSoggetto>();
+	public IDSoggetto getIdentitaPortaDefault(String protocol, RequestInfo requestInfo){
+		
+		if(requestInfo!=null && requestInfo.getRequestConfig()!=null && requestInfo.getRequestConfig().getDominioDefault()!=null) {
+			IDSoggetto identitaPortaDefault = requestInfo.getRequestConfig().getDominioDefault();
+			
+			IDSoggetto idNew = new IDSoggetto();
+			idNew.setCodicePorta(identitaPortaDefault.getCodicePorta());
+			idNew.setNome(identitaPortaDefault.getNome());
+			idNew.setTipo(identitaPortaDefault.getTipo());
+			return idNew;
+		}
 		
 		if(protocol==null){
 			return getIdentitaPortaDefault();
 		}
 		
 		if(OpenSPCoop2Properties.identitaPortaDefault_mappingProtocol.containsKey(protocol)==false){
-			String pdd = getIdentificativoPortaDefault(protocol);
-			String nome = getNomePortaDefault(protocol);
-			String tipo = getTipoPortaDefault(protocol);
+			String pdd = _getIdentificativoPortaDefault(protocol);
+			String nome = _getNomePortaDefault(protocol);
+			String tipo = _getTipoPortaDefault(protocol);
 			if(tipo!=null && nome!=null && pdd!=null){
 				IDSoggetto identitaPortaDefault = new IDSoggetto(tipo,nome,pdd);
 				identitaPortaDefault_mappingProtocol.put(protocol, identitaPortaDefault);
@@ -8245,6 +8484,11 @@ public class OpenSPCoop2Properties {
 		IDSoggetto identitaPortaDefault = OpenSPCoop2Properties.identitaPortaDefault_mappingProtocol.get(protocol);
 		
 		if(identitaPortaDefault!=null){
+			
+			if(requestInfo!=null && requestInfo.getRequestConfig()!=null && requestInfo.getRequestConfig().getDominioDefault()==null) {
+				requestInfo.getRequestConfig().setDominioDefault(identitaPortaDefault);
+			}
+			
 			IDSoggetto idNew = new IDSoggetto();
 			idNew.setCodicePorta(identitaPortaDefault.getCodicePorta());
 			idNew.setNome(identitaPortaDefault.getNome());
@@ -8254,6 +8498,13 @@ public class OpenSPCoop2Properties {
 		else{
 			return null;
 		}
+	}
+	public String getIdentificativoPortaDefault(String protocol, RequestInfo requestInfo){
+		IDSoggetto identitaPortaDefault = getIdentitaPortaDefault(protocol, requestInfo);
+		if(identitaPortaDefault!=null) {
+			return identitaPortaDefault.getCodicePorta();
+		}
+		return null;
 	}
 
 
@@ -8437,17 +8688,17 @@ public class OpenSPCoop2Properties {
 	 * @return proprieta' che localizzano gli header element su cui deve essere applicato il filtro bypass.
 	 * 
 	 */
-	private static java.util.concurrent.ConcurrentHashMap<String,List<NameValue>> mapGetBypassFilterMustUnderstandProperties = null;
+	private static Map<String,List<NameValue>> mapGetBypassFilterMustUnderstandProperties = null;
 	public List<NameValue> getBypassFilterMustUnderstandProperties(String protocol) {
 		if(OpenSPCoop2Properties.mapGetBypassFilterMustUnderstandProperties==null){
 			initBypassFilterMustUnderstandProperties();
 		}
 		return OpenSPCoop2Properties.mapGetBypassFilterMustUnderstandProperties.get(protocol);
 	}
-	public void initBypassFilterMustUnderstandProperties(){
+	private void initBypassFilterMustUnderstandProperties(){
 		if(OpenSPCoop2Properties.mapGetBypassFilterMustUnderstandProperties==null){
 			
-			OpenSPCoop2Properties.mapGetBypassFilterMustUnderstandProperties = new java.util.concurrent.ConcurrentHashMap<String, List<NameValue>>();
+			OpenSPCoop2Properties.mapGetBypassFilterMustUnderstandProperties = new HashMap<String, List<NameValue>>();
 			
 			List<NameValue> resultList = new ArrayList<NameValue>();
 			try{ 
@@ -10258,8 +10509,8 @@ public class OpenSPCoop2Properties {
 	 * 
 	 * @return  Restituisce l'elenco dei tipi di integrazione da gestire lato PortaDelegata specifici per protocollo
 	 */
-	private static ConcurrentHashMap<String, String[]> tipoIntegrazionePD_perProtocollo = new ConcurrentHashMap<String, String[]>();
-	private static ConcurrentHashMap<String, Boolean> tipoIntegrazionePD_perProtocollo_notExists = new ConcurrentHashMap<String, Boolean>();
+	private static Map<String, String[]> tipoIntegrazionePD_perProtocollo = new HashMap<String, String[]>();
+	private static Map<String, Boolean> tipoIntegrazionePD_perProtocollo_notExists = new HashMap<String, Boolean>();
 	public String[] getTipoIntegrazionePD(String protocollo) {
 		
 		if( 
@@ -10295,8 +10546,8 @@ public class OpenSPCoop2Properties {
 	 * 
 	 * @return  Restituisce l'elenco dei tipi di integrazione da gestire lato PortaApplicativa specifici per protocollo
 	 */
-	private static ConcurrentHashMap<String, String[]> tipoIntegrazionePA_perProtocollo = new ConcurrentHashMap<String, String[]>();
-	private static ConcurrentHashMap<String, Boolean> tipoIntegrazionePA_perProtocollo_notExists = new ConcurrentHashMap<String, Boolean>();
+	private static Map<String, String[]> tipoIntegrazionePA_perProtocollo = new HashMap<String, String[]>();
+	private static Map<String, Boolean> tipoIntegrazionePA_perProtocollo_notExists = new HashMap<String, Boolean>();
 	public String[] getTipoIntegrazionePA(String protocollo) {
 		
 		if( 
@@ -10510,6 +10761,25 @@ public class OpenSPCoop2Properties {
 	}
 	
 	
+
+
+	private <T> Map<MapKey<String>, T> _convertMapToCostantiIntegrazione(Map<String, T> map) throws Exception{
+		List<MapKey<String>> keywordsIntegrazione = _getKeywordsIntegrazione(true);
+		Map<MapKey<String>, T> newMap = new HashMap<MapKey<String>, T>();
+		for (String key : map.keySet()) {
+			boolean find = false;
+			for (MapKey<String> mapKey : keywordsIntegrazione) {
+				if(key.equals(mapKey.getValue())){
+					newMap.put(mapKey, map.get(key));
+					find = true;
+				}
+			}
+			if(!find) {
+				throw new Exception("Chiave '"+key+"' sconosciuta, non risulta essere una keyword di integrazione");
+			}
+		}
+		return newMap;
+	}
 	
 	/**
 	 * Restituisce le proprieta' che identificano gli header di integrazione in caso di 'trasporto' 
@@ -10517,13 +10787,13 @@ public class OpenSPCoop2Properties {
 	 * @return Restituisce le proprieta' che identificano gli header di integrazione in caso di 'trasporto'
 	 *  
 	 */
-	private static java.util.concurrent.ConcurrentHashMap<String, String> keyValue_HeaderIntegrazioneTrasporto = null;
-	public java.util.concurrent.ConcurrentHashMap<String, String> getKeyValue_HeaderIntegrazioneTrasporto() {	
+	private static Map<MapKey<String>, String> keyValue_HeaderIntegrazioneTrasporto = null;
+	public Map<MapKey<String>, String> getKeyValue_HeaderIntegrazioneTrasporto() {	
 		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto==null){
 
 			try{ 
 
-				OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto = this.reader.readPropertiesAsConcurrentHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.trasporto.keyword.");
+				OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto = _convertMapToCostantiIntegrazione(this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.trasporto.keyword."));
 			
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.trasporto.keyword.*': "+e.getMessage(),e);
@@ -10534,13 +10804,15 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto;
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, String> keyValue_HeaderIntegrazioneTrasporto_backwardCompatibility_openspcoop2 = null;
-	public java.util.concurrent.ConcurrentHashMap<String, String> getKeyValue_HeaderIntegrazioneTrasporto_backwardCompatibility_openspcoop2() {	
+	private static Map<MapKey<String>, String> keyValue_HeaderIntegrazioneTrasporto_backwardCompatibility_openspcoop2 = null;
+	public Map<MapKey<String>, String> getKeyValue_HeaderIntegrazioneTrasporto_backwardCompatibility_openspcoop2() {	
 		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto_backwardCompatibility_openspcoop2==null){
 
 			try{ 
 
-				OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto_backwardCompatibility_openspcoop2 = this.reader.readPropertiesAsConcurrentHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.trasporto.keyword.");
+				OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto_backwardCompatibility_openspcoop2 = 
+						_convertMapToCostantiIntegrazione(
+								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.trasporto.keyword."));
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.trasporto.keyword.*': "+e.getMessage(),e);
@@ -10551,13 +10823,15 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto_backwardCompatibility_openspcoop2;
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, String> keyValue_HeaderIntegrazioneTrasporto_backwardCompatibility_openspcoop1 = null;
-	public java.util.concurrent.ConcurrentHashMap<String, String> getKeyValue_HeaderIntegrazioneTrasporto_backwardCompatibility_openspcoop1() {	
+	private static Map<MapKey<String>, String> keyValue_HeaderIntegrazioneTrasporto_backwardCompatibility_openspcoop1 = null;
+	public Map<MapKey<String>, String> getKeyValue_HeaderIntegrazioneTrasporto_backwardCompatibility_openspcoop1() {	
 		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto_backwardCompatibility_openspcoop1==null){
 
 			try{ 
 
-				OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto_backwardCompatibility_openspcoop1 = this.reader.readPropertiesAsConcurrentHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.trasporto.keyword.");
+				OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto_backwardCompatibility_openspcoop1 =  
+						_convertMapToCostantiIntegrazione(
+								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.trasporto.keyword."));
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.trasporto.keyword.*': "+e.getMessage(),e);
@@ -10568,9 +10842,9 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto_backwardCompatibility_openspcoop1;
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> keyValue_HeaderIntegrazioneTrasporto_setPD_request = null;
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> keyValue_HeaderIntegrazioneTrasporto_setPD_response = null;
-	public java.util.concurrent.ConcurrentHashMap<String, Boolean> getKeyPDSetEnabled_HeaderIntegrazioneTrasporto(boolean request) throws Exception {	
+	private static Map<MapKey<String>, Boolean> keyValue_HeaderIntegrazioneTrasporto_setPD_request = null;
+	private static Map<MapKey<String>, Boolean> keyValue_HeaderIntegrazioneTrasporto_setPD_response = null;
+	public Map<MapKey<String>, Boolean> getKeyPDSetEnabled_HeaderIntegrazioneTrasporto(boolean request) throws Exception {	
 				
 		if( (request && OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto_setPD_request==null)
 			||
@@ -10586,12 +10860,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				prop = this.reader.readProperties_convertEnvProperties(pName);
-				if(request) {
-					keyValue_HeaderIntegrazioneTrasporto_setPD_request = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
-				}
-				else {
-					keyValue_HeaderIntegrazioneTrasporto_setPD_response = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
-				}
+				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -10600,16 +10869,17 @@ public class OpenSPCoop2Properties {
 						String value = prop.getProperty(key);
 						try {
 							boolean b = Boolean.parseBoolean(value);
-							if(request) {
-								keyValue_HeaderIntegrazioneTrasporto_setPD_request.put(key, b);
-							}
-							else {
-								keyValue_HeaderIntegrazioneTrasporto_setPD_response.put(key, b);
-							}
+							_tmp.put(key, b);
 						}catch(Exception e) {
 							throw new Exception("Rilevato errore durante il parsing della property '"+pName+"."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
+				}
+				if(request) {
+					keyValue_HeaderIntegrazioneTrasporto_setPD_request = _convertMapToCostantiIntegrazione(_tmp);
+				}
+				else {
+					keyValue_HeaderIntegrazioneTrasporto_setPD_response = _convertMapToCostantiIntegrazione(_tmp);
 				}
 				
 			}catch(java.lang.Exception e) {
@@ -10626,15 +10896,15 @@ public class OpenSPCoop2Properties {
 		}
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> keyValue_HeaderIntegrazioneTrasporto_readPD = null;
-	public java.util.concurrent.ConcurrentHashMap<String, Boolean> getKeyPDReadEnabled_HeaderIntegrazioneTrasporto() throws Exception {	
+	private static Map<MapKey<String>, Boolean> keyValue_HeaderIntegrazioneTrasporto_readPD = null;
+	public Map<MapKey<String>, Boolean> getKeyPDReadEnabled_HeaderIntegrazioneTrasporto() throws Exception {	
 		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto_readPD==null){
 
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
 				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.trasporto.pd.read.enabled.");
-				keyValue_HeaderIntegrazioneTrasporto_readPD = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
+				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -10643,12 +10913,13 @@ public class OpenSPCoop2Properties {
 						String value = prop.getProperty(key);
 						try {
 							boolean b = Boolean.parseBoolean(value);
-							keyValue_HeaderIntegrazioneTrasporto_readPD.put(key, b);
+							_tmp.put(key, b);
 						}catch(Exception e) {
 							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.trasporto.pd.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
+				keyValue_HeaderIntegrazioneTrasporto_readPD = _convertMapToCostantiIntegrazione(_tmp);
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.trasporto.pd.read.enabled.*': "+e.getMessage(),e);
@@ -10659,9 +10930,9 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto_readPD;
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> keyValue_HeaderIntegrazioneTrasporto_setPA_request = null;
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> keyValue_HeaderIntegrazioneTrasporto_setPA_response = null;
-	public java.util.concurrent.ConcurrentHashMap<String, Boolean> getKeyPASetEnabled_HeaderIntegrazioneTrasporto(boolean request) throws Exception {
+	private static Map<MapKey<String>, Boolean> keyValue_HeaderIntegrazioneTrasporto_setPA_request = null;
+	private static Map<MapKey<String>, Boolean> keyValue_HeaderIntegrazioneTrasporto_setPA_response = null;
+	public Map<MapKey<String>, Boolean> getKeyPASetEnabled_HeaderIntegrazioneTrasporto(boolean request) throws Exception {
 				
 		if( (request && OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto_setPA_request==null)
 				||
@@ -10677,12 +10948,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				prop = this.reader.readProperties_convertEnvProperties(pName);
-				if(request) {
-					keyValue_HeaderIntegrazioneTrasporto_setPA_request = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
-				}
-				else {
-					keyValue_HeaderIntegrazioneTrasporto_setPA_response = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
-				}
+				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -10692,15 +10958,21 @@ public class OpenSPCoop2Properties {
 						try {
 							boolean b = Boolean.parseBoolean(value);
 							if(request) {
-								keyValue_HeaderIntegrazioneTrasporto_setPA_request.put(key, b);
+								_tmp.put(key, b);
 							}
 							else {
-								keyValue_HeaderIntegrazioneTrasporto_setPA_response.put(key, b);
+								_tmp.put(key, b);
 							}
 						}catch(Exception e) {
 							throw new Exception("Rilevato errore durante il parsing della property '"+pName+"."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
+				}
+				if(request) {
+					keyValue_HeaderIntegrazioneTrasporto_setPA_request = _convertMapToCostantiIntegrazione(_tmp);
+				}
+				else {
+					keyValue_HeaderIntegrazioneTrasporto_setPA_response = _convertMapToCostantiIntegrazione(_tmp);
 				}
 				
 			}catch(java.lang.Exception e) {
@@ -10717,15 +10989,15 @@ public class OpenSPCoop2Properties {
 		}
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> keyValue_HeaderIntegrazioneTrasporto_readPA = null;
-	public java.util.concurrent.ConcurrentHashMap<String, Boolean> getKeyPAReadEnabled_HeaderIntegrazioneTrasporto() throws Exception {	
+	private static Map<MapKey<String>, Boolean> keyValue_HeaderIntegrazioneTrasporto_readPA = null;
+	public Map<MapKey<String>, Boolean> getKeyPAReadEnabled_HeaderIntegrazioneTrasporto() throws Exception {	
 		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto_readPA==null){
 
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
 				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.trasporto.pa.read.enabled.");
-				keyValue_HeaderIntegrazioneTrasporto_readPA = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
+				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -10734,13 +11006,14 @@ public class OpenSPCoop2Properties {
 						String value = prop.getProperty(key);
 						try {
 							boolean b = Boolean.parseBoolean(value);
-							keyValue_HeaderIntegrazioneTrasporto_readPA.put(key, b);
+							_tmp.put(key, b);
 						}catch(Exception e) {
 							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.trasporto.pa.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
-				
+				keyValue_HeaderIntegrazioneTrasporto_readPA = _convertMapToCostantiIntegrazione(_tmp);
+								
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.trasporto.pa.read.enabled.*': "+e.getMessage(),e);
 				throw e;
@@ -10756,13 +11029,15 @@ public class OpenSPCoop2Properties {
 	 * @return Restituisce le proprieta' che identificano gli header di integrazione in caso di 'urlBased'.
 	 *  
 	 */
-	private static java.util.concurrent.ConcurrentHashMap<String, String> keyValue_HeaderIntegrazioneUrlBased = null;
-	public java.util.concurrent.ConcurrentHashMap<String, String> getKeyValue_HeaderIntegrazioneUrlBased() {	
+	private static Map<MapKey<String>, String> keyValue_HeaderIntegrazioneUrlBased = null;
+	public Map<MapKey<String>, String> getKeyValue_HeaderIntegrazioneUrlBased() {	
 		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased==null){
 
 			try{ 
 
-				OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased = this.reader.readPropertiesAsConcurrentHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.keyword.");
+				OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased = 
+						_convertMapToCostantiIntegrazione(
+								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.keyword."));
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.urlBased.keyword.*': "+e.getMessage(),e);
@@ -10773,13 +11048,15 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased;
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, String> keyValue_HeaderIntegrazioneUrlBased_backwardCompatibility_openspcoop2 = null;
-	public java.util.concurrent.ConcurrentHashMap<String, String> getKeyValue_HeaderIntegrazioneUrlBased_backwardCompatibility_openspcoop2() {	
+	private static Map<MapKey<String>, String> keyValue_HeaderIntegrazioneUrlBased_backwardCompatibility_openspcoop2 = null;
+	public Map<MapKey<String>, String> getKeyValue_HeaderIntegrazioneUrlBased_backwardCompatibility_openspcoop2() {	
 		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_backwardCompatibility_openspcoop2==null){
 
 			try{ 
 
-				OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_backwardCompatibility_openspcoop2 = this.reader.readPropertiesAsConcurrentHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.urlBased.keyword.");
+				OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_backwardCompatibility_openspcoop2 =  
+						_convertMapToCostantiIntegrazione(
+								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.urlBased.keyword."));
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.urlBased.keyword.*': "+e.getMessage(),e);
@@ -10790,13 +11067,15 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_backwardCompatibility_openspcoop2;
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, String> keyValue_HeaderIntegrazioneUrlBased_backwardCompatibility_openspcoop1 = null;
-	public java.util.concurrent.ConcurrentHashMap<String, String> getKeyValue_HeaderIntegrazioneUrlBased_backwardCompatibility_openspcoop1() {	
+	private static Map<MapKey<String>, String> keyValue_HeaderIntegrazioneUrlBased_backwardCompatibility_openspcoop1 = null;
+	public Map<MapKey<String>, String> getKeyValue_HeaderIntegrazioneUrlBased_backwardCompatibility_openspcoop1() {	
 		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_backwardCompatibility_openspcoop1==null){
 
 			try{ 
 
-				OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_backwardCompatibility_openspcoop1 = this.reader.readPropertiesAsConcurrentHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.urlBased.keyword.");
+				OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_backwardCompatibility_openspcoop1 =  
+						_convertMapToCostantiIntegrazione(
+								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.urlBased.keyword."));
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.urlBased.keyword.*': "+e.getMessage(),e);
@@ -10807,15 +11086,15 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_backwardCompatibility_openspcoop1;
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> keyValue_HeaderIntegrazioneUrlBased_setPD = null;
-	public java.util.concurrent.ConcurrentHashMap<String, Boolean> getKeyPDSetEnabled_HeaderIntegrazioneUrlBased() throws Exception {	
+	private static Map<MapKey<String>, Boolean> keyValue_HeaderIntegrazioneUrlBased_setPD = null;
+	public Map<MapKey<String>, Boolean> getKeyPDSetEnabled_HeaderIntegrazioneUrlBased() throws Exception {	
 		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_setPD==null){
 
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
 				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.pd.set.request.enabled.");
-				keyValue_HeaderIntegrazioneUrlBased_setPD = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
+				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -10824,12 +11103,13 @@ public class OpenSPCoop2Properties {
 						String value = prop.getProperty(key);
 						try {
 							boolean b = Boolean.parseBoolean(value);
-							keyValue_HeaderIntegrazioneUrlBased_setPD.put(key, b);
+							_tmp.put(key, b);
 						}catch(Exception e) {
 							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.urlBased.pd.set.request.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
+				keyValue_HeaderIntegrazioneUrlBased_setPD = _convertMapToCostantiIntegrazione(_tmp);
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.urlBased.pd.set.request.enabled*': "+e.getMessage(),e);
@@ -10840,15 +11120,15 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_setPD;
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> keyValue_HeaderIntegrazioneUrlBased_readPD = null;
-	public java.util.concurrent.ConcurrentHashMap<String, Boolean> getKeyPDReadEnabled_HeaderIntegrazioneUrlBased() throws Exception {	
+	private static Map<MapKey<String>, Boolean> keyValue_HeaderIntegrazioneUrlBased_readPD = null;
+	public Map<MapKey<String>, Boolean> getKeyPDReadEnabled_HeaderIntegrazioneUrlBased() throws Exception {	
 		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_readPD==null){
 
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
 				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.pd.read.enabled.");
-				keyValue_HeaderIntegrazioneUrlBased_readPD = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
+				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -10857,13 +11137,14 @@ public class OpenSPCoop2Properties {
 						String value = prop.getProperty(key);
 						try {
 							boolean b = Boolean.parseBoolean(value);
-							keyValue_HeaderIntegrazioneUrlBased_readPD.put(key, b);
+							_tmp.put(key, b);
 						}catch(Exception e) {
 							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.urlBased.pd.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
-				
+				keyValue_HeaderIntegrazioneUrlBased_readPD = _convertMapToCostantiIntegrazione(_tmp);
+								
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.urlBased.pd.read.enabled.*': "+e.getMessage(),e);
 				throw e;
@@ -10873,15 +11154,15 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_readPD;
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> keyValue_HeaderIntegrazioneUrlBased_setPA = null;
-	public java.util.concurrent.ConcurrentHashMap<String, Boolean> getKeyPASetEnabled_HeaderIntegrazioneUrlBased() throws Exception {	
+	private static Map<MapKey<String>, Boolean> keyValue_HeaderIntegrazioneUrlBased_setPA = null;
+	public Map<MapKey<String>, Boolean> getKeyPASetEnabled_HeaderIntegrazioneUrlBased() throws Exception {	
 		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_setPA==null){
 
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
 				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.pa.set.request.enabled.");
-				keyValue_HeaderIntegrazioneUrlBased_setPA = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
+				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -10890,12 +11171,13 @@ public class OpenSPCoop2Properties {
 						String value = prop.getProperty(key);
 						try {
 							boolean b = Boolean.parseBoolean(value);
-							keyValue_HeaderIntegrazioneUrlBased_setPA.put(key, b);
+							_tmp.put(key, b);
 						}catch(Exception e) {
 							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.urlBased.pa.set.request.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
+				keyValue_HeaderIntegrazioneUrlBased_setPA = _convertMapToCostantiIntegrazione(_tmp);
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.urlBased.pa.set.request.enabled*': "+e.getMessage(),e);
@@ -10906,15 +11188,15 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_setPA;
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> keyValue_HeaderIntegrazioneUrlBased_readPA = null;
-	public java.util.concurrent.ConcurrentHashMap<String, Boolean> getKeyPAReadEnabled_HeaderIntegrazioneUrlBased() throws Exception {	
+	private static Map<MapKey<String>, Boolean> keyValue_HeaderIntegrazioneUrlBased_readPA = null;
+	public Map<MapKey<String>, Boolean> getKeyPAReadEnabled_HeaderIntegrazioneUrlBased() throws Exception {	
 		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_readPA==null){
 
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
 				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.pa.read.enabled.");
-				keyValue_HeaderIntegrazioneUrlBased_readPA = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
+				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -10923,12 +11205,13 @@ public class OpenSPCoop2Properties {
 						String value = prop.getProperty(key);
 						try {
 							boolean b = Boolean.parseBoolean(value);
-							keyValue_HeaderIntegrazioneUrlBased_readPA.put(key, b);
+							_tmp.put(key, b);
 						}catch(Exception e) {
 							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.urlBased.pa.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
+				keyValue_HeaderIntegrazioneUrlBased_readPA = _convertMapToCostantiIntegrazione(_tmp);
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.urlBased.pa.read.enabled.*': "+e.getMessage(),e);
@@ -10945,13 +11228,15 @@ public class OpenSPCoop2Properties {
 	 * @return Restituisce le proprieta' che identificano gli header di integrazione in caso di 'soap'.
 	 *  
 	 */
-	private static java.util.concurrent.ConcurrentHashMap<String, String> keyValue_HeaderIntegrazioneSoap = null;
-	public java.util.concurrent.ConcurrentHashMap<String, String> getKeyValue_HeaderIntegrazioneSoap() {	
+	private static Map<MapKey<String>, String> keyValue_HeaderIntegrazioneSoap = null;
+	public Map<MapKey<String>, String> getKeyValue_HeaderIntegrazioneSoap() {	
 		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap==null){
 
 			try{ 
 
-				OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap = this.reader.readPropertiesAsConcurrentHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.keyword.");
+				OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap =  
+						_convertMapToCostantiIntegrazione(
+								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.keyword."));
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.soap.keyword.*': "+e.getMessage(),e);
@@ -10962,13 +11247,15 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap;
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, String> keyValue_HeaderIntegrazioneSoap_backwardCompatibility_openspcoop2 = null;
-	public java.util.concurrent.ConcurrentHashMap<String, String> getKeyValue_HeaderIntegrazioneSoap_backwardCompatibility_openspcoop2() {	
+	private static Map<MapKey<String>, String> keyValue_HeaderIntegrazioneSoap_backwardCompatibility_openspcoop2 = null;
+	public Map<MapKey<String>, String> getKeyValue_HeaderIntegrazioneSoap_backwardCompatibility_openspcoop2() {	
 		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap_backwardCompatibility_openspcoop2==null){
 
 			try{ 
 
-				OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap_backwardCompatibility_openspcoop2 = this.reader.readPropertiesAsConcurrentHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.soap.keyword.");
+				OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap_backwardCompatibility_openspcoop2 =  
+						_convertMapToCostantiIntegrazione(
+								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.soap.keyword."));
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2.soap.keyword.*': "+e.getMessage(),e);
@@ -10979,13 +11266,15 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap_backwardCompatibility_openspcoop2;
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, String> keyValue_HeaderIntegrazioneSoap_backwardCompatibility_openspcoop1 = null;
-	public java.util.concurrent.ConcurrentHashMap<String, String> getKeyValue_HeaderIntegrazioneSoap_backwardCompatibility_openspcoop1() {	
+	private static Map<MapKey<String>, String> keyValue_HeaderIntegrazioneSoap_backwardCompatibility_openspcoop1 = null;
+	public Map<MapKey<String>, String> getKeyValue_HeaderIntegrazioneSoap_backwardCompatibility_openspcoop1() {	
 		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap_backwardCompatibility_openspcoop1==null){
 
 			try{ 
 
-				OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap_backwardCompatibility_openspcoop1 = this.reader.readPropertiesAsConcurrentHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.soap.keyword.");
+				OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap_backwardCompatibility_openspcoop1 =  
+						_convertMapToCostantiIntegrazione(
+								this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.soap.keyword."));
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1.soap.keyword.*': "+e.getMessage(),e);
@@ -10996,9 +11285,9 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap_backwardCompatibility_openspcoop1;
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> keyValue_HeaderIntegrazioneSoap_setPD_request = null;
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> keyValue_HeaderIntegrazioneSoap_setPD_response = null;
-	public java.util.concurrent.ConcurrentHashMap<String, Boolean> getKeyPDSetEnabled_HeaderIntegrazioneSoap(boolean request) throws Exception {
+	private static Map<MapKey<String>, Boolean> keyValue_HeaderIntegrazioneSoap_setPD_request = null;
+	private static Map<MapKey<String>, Boolean> keyValue_HeaderIntegrazioneSoap_setPD_response = null;
+	public Map<MapKey<String>, Boolean> getKeyPDSetEnabled_HeaderIntegrazioneSoap(boolean request) throws Exception {
 		
 		if( (request && OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap_setPD_request==null)
 				||
@@ -11014,12 +11303,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				prop = this.reader.readProperties_convertEnvProperties(pName);
-				if(request) {
-					keyValue_HeaderIntegrazioneSoap_setPD_request = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
-				}
-				else {
-					keyValue_HeaderIntegrazioneSoap_setPD_response = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
-				}
+				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -11028,16 +11312,17 @@ public class OpenSPCoop2Properties {
 						String value = prop.getProperty(key);
 						try {
 							boolean b = Boolean.parseBoolean(value);
-							if(request) {
-								keyValue_HeaderIntegrazioneSoap_setPD_request.put(key, b);
-							}
-							else {
-								keyValue_HeaderIntegrazioneSoap_setPD_response.put(key, b);
-							}
+							_tmp.put(key, b);
 						}catch(Exception e) {
 							throw new Exception("Rilevato errore durante il parsing della property '"+pName+"."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
+				}
+				if(request) {
+					keyValue_HeaderIntegrazioneSoap_setPD_request = _convertMapToCostantiIntegrazione(_tmp);
+				}
+				else {
+					keyValue_HeaderIntegrazioneSoap_setPD_response = _convertMapToCostantiIntegrazione(_tmp);
 				}
 				
 			}catch(java.lang.Exception e) {
@@ -11054,15 +11339,15 @@ public class OpenSPCoop2Properties {
 		}
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> keyValue_HeaderIntegrazioneSoap_readPD = null;
-	public java.util.concurrent.ConcurrentHashMap<String, Boolean> getKeyPDReadEnabled_HeaderIntegrazioneSoap() throws Exception {	
+	private static Map<MapKey<String>, Boolean> keyValue_HeaderIntegrazioneSoap_readPD = null;
+	public Map<MapKey<String>, Boolean> getKeyPDReadEnabled_HeaderIntegrazioneSoap() throws Exception {	
 		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap_readPD==null){
 
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
 				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.pd.read.enabled.");
-				keyValue_HeaderIntegrazioneSoap_readPD = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
+				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -11071,12 +11356,13 @@ public class OpenSPCoop2Properties {
 						String value = prop.getProperty(key);
 						try {
 							boolean b = Boolean.parseBoolean(value);
-							keyValue_HeaderIntegrazioneSoap_readPD.put(key, b);
+							_tmp.put(key, b);
 						}catch(Exception e) {
 							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.soap.pd.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
+				keyValue_HeaderIntegrazioneSoap_readPD = _convertMapToCostantiIntegrazione(_tmp);
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.soap.pd.read.enabled.*': "+e.getMessage(),e);
@@ -11087,9 +11373,9 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap_readPD;
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> keyValue_HeaderIntegrazioneSoap_setPA_request = null;
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> keyValue_HeaderIntegrazioneSoap_setPA_response = null;
-	public java.util.concurrent.ConcurrentHashMap<String, Boolean> getKeyPASetEnabled_HeaderIntegrazioneSoap(boolean request) throws Exception {	
+	private static Map<MapKey<String>, Boolean> keyValue_HeaderIntegrazioneSoap_setPA_request = null;
+	private static Map<MapKey<String>, Boolean> keyValue_HeaderIntegrazioneSoap_setPA_response = null;
+	public Map<MapKey<String>, Boolean> getKeyPASetEnabled_HeaderIntegrazioneSoap(boolean request) throws Exception {	
 		if( (request && OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap_setPA_request==null)
 				||
 				(!request && OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap_setPA_response==null)
@@ -11104,12 +11390,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				prop = this.reader.readProperties_convertEnvProperties(pName);
-				if(request) {
-					keyValue_HeaderIntegrazioneSoap_setPA_request = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
-				}
-				else {
-					keyValue_HeaderIntegrazioneSoap_setPA_response = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
-				}
+				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -11119,15 +11400,21 @@ public class OpenSPCoop2Properties {
 						try {
 							boolean b = Boolean.parseBoolean(value);
 							if(request) {
-								keyValue_HeaderIntegrazioneSoap_setPA_request.put(key, b);
+								_tmp.put(key, b);
 							}
 							else {
-								keyValue_HeaderIntegrazioneSoap_setPA_response.put(key, b);
+								_tmp.put(key, b);
 							}
 						}catch(Exception e) {
 							throw new Exception("Rilevato errore durante il parsing della property '"+pName+"."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
+				}
+				if(request) {
+					keyValue_HeaderIntegrazioneSoap_setPA_request = _convertMapToCostantiIntegrazione(_tmp);
+				}
+				else {
+					keyValue_HeaderIntegrazioneSoap_setPA_response = _convertMapToCostantiIntegrazione(_tmp);
 				}
 				
 			}catch(java.lang.Exception e) {
@@ -11144,15 +11431,15 @@ public class OpenSPCoop2Properties {
 		}
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> keyValue_HeaderIntegrazioneSoap_readPA = null;
-	public java.util.concurrent.ConcurrentHashMap<String, Boolean> getKeyPAReadEnabled_HeaderIntegrazioneSoap() throws Exception {	
+	private static Map<MapKey<String>, Boolean> keyValue_HeaderIntegrazioneSoap_readPA = null;
+	public Map<MapKey<String>, Boolean> getKeyPAReadEnabled_HeaderIntegrazioneSoap() throws Exception {	
 		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap_readPA==null){
 
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
 				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.pa.read.enabled.");
-				keyValue_HeaderIntegrazioneSoap_readPA = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
+				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -11161,13 +11448,14 @@ public class OpenSPCoop2Properties {
 						String value = prop.getProperty(key);
 						try {
 							boolean b = Boolean.parseBoolean(value);
-							keyValue_HeaderIntegrazioneSoap_readPA.put(key, b);
+							_tmp.put(key, b);
 						}catch(Exception e) {
 							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.soap.pa.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
 						}
 					}
 				}
-				
+				keyValue_HeaderIntegrazioneSoap_readPA = _convertMapToCostantiIntegrazione(_tmp);
+								
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.soap.pa.read.enabled.*': "+e.getMessage(),e);
 				throw e;
@@ -17993,6 +18281,30 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.listIDManagerParameters;
 	}
 	
+	private static Integer getIDManagerBufferSize = null;
+	public int getIDManagerBufferSize(){
+
+		String pName = "org.openspcoop2.pdd.idGenerator.buffer";
+		if(OpenSPCoop2Properties.getIDManagerBufferSize==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.getIDManagerBufferSize = Integer.valueOf(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=-1");
+					OpenSPCoop2Properties.getIDManagerBufferSize = -1;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=-1, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getIDManagerBufferSize = -1;
+			}
+		}
+
+		return OpenSPCoop2Properties.getIDManagerBufferSize;
+	}
 	
 	
 	
@@ -18953,14 +19265,36 @@ public class OpenSPCoop2Properties {
 				OpenSPCoop2Properties.notifierInputStreamCallback = this.reader.getValue("org.openspcoop2.pdd.notifierInputStream.tipo");
 				if(OpenSPCoop2Properties.notifierInputStreamCallback!=null){
 					OpenSPCoop2Properties.notifierInputStreamCallback = OpenSPCoop2Properties.notifierInputStreamCallback.trim();
-					OpenSPCoop2Properties.notifierInputStreamCallbackRead = true;
 				}
+				OpenSPCoop2Properties.notifierInputStreamCallbackRead = true;
 			} catch(java.lang.Exception e) {
 				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.notifierInputStream.tipo' non impostata correttamente,  errore:"+e.getMessage(),e);
 				throw new Exception("Proprieta' di openspcoop 'org.openspcoop2.pdd.notifierInputStream.tipo' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return OpenSPCoop2Properties.notifierInputStreamCallback;
+	}
+	
+	
+	/* ------------- PipeUnblockedVersion  ---------------------*/
+	
+	private static String pipedUnblockedStreamClassName = null;		
+	private static Boolean pipedUnblockedStreamClassNameRead = null;		
+	public String getPipedUnblockedStreamClassName() throws Exception{
+		if(OpenSPCoop2Properties.pipedUnblockedStreamClassNameRead==null){
+			String pName = "org.openspcoop2.pdd.pipedUnblockedStream.className";
+			try{ 
+				OpenSPCoop2Properties.pipedUnblockedStreamClassName = this.reader.getValue(pName);
+				if(OpenSPCoop2Properties.pipedUnblockedStreamClassName!=null){
+					OpenSPCoop2Properties.pipedUnblockedStreamClassName = OpenSPCoop2Properties.pipedUnblockedStreamClassName.trim();
+				}
+				OpenSPCoop2Properties.pipedUnblockedStreamClassNameRead = true;
+			} catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
+				throw new Exception("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
+			} 
+		}
+		return OpenSPCoop2Properties.pipedUnblockedStreamClassName;
 	}
 	
 	
@@ -20775,13 +21109,13 @@ public class OpenSPCoop2Properties {
 	 * @return Restituisce le proprieta' che identificano gli header di integrazione in caso di 'trasporto'
 	 *  
 	 */
-	private static java.util.concurrent.ConcurrentHashMap<String, String> keyValue_gestioneTokenHeaderIntegrazioneTrasporto = null;
-	public java.util.concurrent.ConcurrentHashMap<String, String> getKeyValue_gestioneTokenHeaderIntegrazioneTrasporto() {	
+	private static Map<String, String> keyValue_gestioneTokenHeaderIntegrazioneTrasporto = null;
+	public Map<String, String> getKeyValue_gestioneTokenHeaderIntegrazioneTrasporto() {	
 		if(OpenSPCoop2Properties.keyValue_gestioneTokenHeaderIntegrazioneTrasporto==null){
 
 			try{ 
 
-				OpenSPCoop2Properties.keyValue_gestioneTokenHeaderIntegrazioneTrasporto = this.reader.readPropertiesAsConcurrentHashMap_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.keyword.");
+				OpenSPCoop2Properties.keyValue_gestioneTokenHeaderIntegrazioneTrasporto = this.reader.readPropertiesAsHashMap_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.keyword.");
 				
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.keyword.*': "+e.getMessage(),e);
@@ -20792,15 +21126,15 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.keyValue_gestioneTokenHeaderIntegrazioneTrasporto;
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD = null;
-	public java.util.concurrent.ConcurrentHashMap<String, Boolean> getKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneTrasporto() throws Exception {	
+	private static Map<String, Boolean> keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD = null;
+	public Map<String, Boolean> getKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneTrasporto() throws Exception {	
 		if(OpenSPCoop2Properties.keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD==null){
 
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
 				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.pd.set.enabled.");
-				keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
+				keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -20826,15 +21160,15 @@ public class OpenSPCoop2Properties {
 	}
 
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA = null;
-	public java.util.concurrent.ConcurrentHashMap<String, Boolean> getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneTrasporto() throws Exception {	
+	private static Map<String, Boolean> keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA = null;
+	public Map<String, Boolean> getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneTrasporto() throws Exception {	
 		if(OpenSPCoop2Properties.keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA==null){
 
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
 				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.pa.set.enabled.");
-				keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
+				keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -20859,15 +21193,15 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA;
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> keyValue_gestioneTokenHeaderIntegrazioneJson_setPD = null;
-	public java.util.concurrent.ConcurrentHashMap<String, Boolean> getKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneJson() throws Exception {	
+	private static Map<String, Boolean> keyValue_gestioneTokenHeaderIntegrazioneJson_setPD = null;
+	public Map<String, Boolean> getKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneJson() throws Exception {	
 		if(OpenSPCoop2Properties.keyValue_gestioneTokenHeaderIntegrazioneJson_setPD==null){
 
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
 				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.json.pd.set.enabled.");
-				keyValue_gestioneTokenHeaderIntegrazioneJson_setPD = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
+				keyValue_gestioneTokenHeaderIntegrazioneJson_setPD = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -20893,15 +21227,15 @@ public class OpenSPCoop2Properties {
 	}
 
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> keyValue_gestioneTokenHeaderIntegrazioneJson_setPA = null;
-	public java.util.concurrent.ConcurrentHashMap<String, Boolean> getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneJson() throws Exception {	
+	private static Map<String, Boolean> keyValue_gestioneTokenHeaderIntegrazioneJson_setPA = null;
+	public Map<String, Boolean> getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneJson() throws Exception {	
 		if(OpenSPCoop2Properties.keyValue_gestioneTokenHeaderIntegrazioneJson_setPA==null){
 
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
 				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.json.pa.set.enabled.");
-				keyValue_gestioneTokenHeaderIntegrazioneJson_setPA = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
+				keyValue_gestioneTokenHeaderIntegrazioneJson_setPA = new HashMap<String, Boolean>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -21041,14 +21375,14 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.gestioneTokenHeaderIntegrazioneTrasporto_roleSeparator;
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, String> getCustomClaims_name_gestioneTokenHeaderIntegrazione = null;
+	private static Map<String, String> getCustomClaims_name_gestioneTokenHeaderIntegrazione = null;
 	public String getCustomClaimsName_gestioneTokenHeaderIntegrazione(String claimName) throws Exception {	
 		if(OpenSPCoop2Properties.getCustomClaims_name_gestioneTokenHeaderIntegrazione==null){
 
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				getCustomClaims_name_gestioneTokenHeaderIntegrazione = new java.util.concurrent.ConcurrentHashMap<String, String>();
+				getCustomClaims_name_gestioneTokenHeaderIntegrazione = new HashMap<String, String>();
 				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
 				if(prop!=null && !prop.isEmpty()) {
 					Enumeration<?> en = prop.keys();
@@ -21079,14 +21413,14 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getCustomClaims_name_gestioneTokenHeaderIntegrazione.get(claimName);
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, String> getCustomClaims_headerName_gestioneTokenHeaderIntegrazioneTrasporto = null;
+	private static Map<String, String> getCustomClaims_headerName_gestioneTokenHeaderIntegrazioneTrasporto = null;
 	public String getCustomClaimsHeaderName_gestioneTokenHeaderIntegrazioneTrasporto(String claimName) throws Exception {	
 		if(OpenSPCoop2Properties.getCustomClaims_headerName_gestioneTokenHeaderIntegrazioneTrasporto==null){
 
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				getCustomClaims_headerName_gestioneTokenHeaderIntegrazioneTrasporto = new java.util.concurrent.ConcurrentHashMap<String, String>();
+				getCustomClaims_headerName_gestioneTokenHeaderIntegrazioneTrasporto = new HashMap<String, String>();
 				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
 				if(prop!=null && !prop.isEmpty()) {
 					Enumeration<?> en = prop.keys();
@@ -21117,14 +21451,14 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getCustomClaims_headerName_gestioneTokenHeaderIntegrazioneTrasporto.get(claimName);
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD = null;
+	private static Map<String, Boolean> getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD = null;
 	public Boolean getCustomClaimsKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneTrasporto(String claimName) throws Exception {	
 		if(OpenSPCoop2Properties.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD==null){
 
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
+				getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD = new HashMap<String, Boolean>();
 				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
 				if(prop!=null && !prop.isEmpty()) {
 					Enumeration<?> en = prop.keys();
@@ -21161,14 +21495,14 @@ public class OpenSPCoop2Properties {
 	}
 
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA = null;
+	private static Map<String, Boolean> getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA = null;
 	public Boolean getCustomClaimsKeyPASetEnabled_gestioneTokenHeaderIntegrazioneTrasporto(String claimName) throws Exception {	
 		if(OpenSPCoop2Properties.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA==null){
 
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
+				getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA = new HashMap<String, Boolean>();
 				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
 				if(prop!=null && !prop.isEmpty()) {
 					Enumeration<?> en = prop.keys();
@@ -21204,14 +21538,14 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA.get(claimName);
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, String> getCustomClaims_jsonPropertyName_gestioneTokenHeaderIntegrazioneJson = null;
+	private static Map<String, String> getCustomClaims_jsonPropertyName_gestioneTokenHeaderIntegrazioneJson = null;
 	public String getCustomClaimsJsonPropertyName_gestioneTokenHeaderIntegrazioneJson(String claimName) throws Exception {	
 		if(OpenSPCoop2Properties.getCustomClaims_jsonPropertyName_gestioneTokenHeaderIntegrazioneJson==null){
 
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				getCustomClaims_jsonPropertyName_gestioneTokenHeaderIntegrazioneJson = new java.util.concurrent.ConcurrentHashMap<String, String>();
+				getCustomClaims_jsonPropertyName_gestioneTokenHeaderIntegrazioneJson = new HashMap<String, String>();
 				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
 				if(prop!=null && !prop.isEmpty()) {
 					Enumeration<?> en = prop.keys();
@@ -21242,14 +21576,14 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getCustomClaims_jsonPropertyName_gestioneTokenHeaderIntegrazioneJson.get(claimName);
 	}
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPD = null;
+	private static Map<String, Boolean> getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPD = null;
 	public Boolean getCustomClaimsKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneJson(String claimName) throws Exception {	
 		if(OpenSPCoop2Properties.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPD==null){
 
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPD = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
+				getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPD = new HashMap<String, Boolean>();
 				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
 				if(prop!=null && !prop.isEmpty()) {
 					Enumeration<?> en = prop.keys();
@@ -21286,14 +21620,14 @@ public class OpenSPCoop2Properties {
 	}
 
 	
-	private static java.util.concurrent.ConcurrentHashMap<String, Boolean> getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPA = null;
+	private static Map<String, Boolean> getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPA = null;
 	public Boolean getCustomClaimsKeyPASetEnabled_gestioneTokenHeaderIntegrazioneJson(String claimName) throws Exception {	
 		if(OpenSPCoop2Properties.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPA==null){
 
 			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPA = new java.util.concurrent.ConcurrentHashMap<String, Boolean>();
+				getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPA = new HashMap<String, Boolean>();
 				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
 				if(prop!=null && !prop.isEmpty()) {
 					Enumeration<?> en = prop.keys();
@@ -21880,9 +22214,9 @@ public class OpenSPCoop2Properties {
 	
 	/* ------------- REST / SOAP Trasporto Utils ---------------------*/
 	
-	private void _list_add(List<String> tmp, List<String> addList) {
+	private void _list_add(List<MapKey<String>> tmp, List<MapKey<String>> addList) {
 		if(tmp!=null && tmp.size()>0) {
-			for (String hdr : tmp) {
+			for (MapKey<String> hdr : tmp) {
 				if(addList.contains(hdr)==false) {
 					addList.add(hdr);
 				}
@@ -22256,11 +22590,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getSOAPServicesBlackListInternalUrlParametersRead = null;
-	private static List<String> getSOAPServicesBlackListInternalUrlParametersList = null;
-	private List<String> getSOAPServicesBlackListInternalUrlParameters() {	
+	private static List<MapKey<String>> getSOAPServicesBlackListInternalUrlParametersList = null;
+	private List<MapKey<String>> getSOAPServicesBlackListInternalUrlParameters() {	
 		if(OpenSPCoop2Properties.getSOAPServicesBlackListInternalUrlParametersRead==null){
 			try{ 
-				getSOAPServicesBlackListInternalUrlParametersList = new ArrayList<String>();
+				getSOAPServicesBlackListInternalUrlParametersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.urlParameters.blackList.internal");
 				if(name!=null){
@@ -22268,7 +22602,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getSOAPServicesBlackListInternalUrlParametersList.add(split[i].trim());
+							getSOAPServicesBlackListInternalUrlParametersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -22282,11 +22616,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getSOAPServicesBlackListUrlParametersRead = null;
-	private static List<String> getSOAPServicesBlackListUrlParametersList = null;
-	private List<String> getSOAPServicesBlackListUrlParameters() {	
+	private static List<MapKey<String>> getSOAPServicesBlackListUrlParametersList = null;
+	private List<MapKey<String>> getSOAPServicesBlackListUrlParameters() {	
 		if(OpenSPCoop2Properties.getSOAPServicesBlackListUrlParametersRead==null){
 			try{ 
-				getSOAPServicesBlackListUrlParametersList = new ArrayList<String>();
+				getSOAPServicesBlackListUrlParametersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.urlParameters.blackList");
 				if(name!=null){
@@ -22294,7 +22628,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getSOAPServicesBlackListUrlParametersList.add(split[i].trim());
+							getSOAPServicesBlackListUrlParametersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -22308,11 +22642,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getSOAPServicesWhiteListUrlParametersRead = null;
-	private static List<String> getSOAPServicesWhiteListUrlParametersList = null;
-	private List<String> getSOAPServicesWhiteListUrlParameters() {	
+	private static List<MapKey<String>> getSOAPServicesWhiteListUrlParametersList = null;
+	private List<MapKey<String>> getSOAPServicesWhiteListUrlParameters() {	
 		if(OpenSPCoop2Properties.getSOAPServicesWhiteListUrlParametersRead==null){
 			try{ 
-				getSOAPServicesWhiteListUrlParametersList = new ArrayList<String>();
+				getSOAPServicesWhiteListUrlParametersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.urlParameters.whiteList");
 				if(name!=null){
@@ -22320,7 +22654,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getSOAPServicesWhiteListUrlParametersList.add(split[i].trim());
+							getSOAPServicesWhiteListUrlParametersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -22335,21 +22669,33 @@ public class OpenSPCoop2Properties {
 	
 	private List<String> _getSOAPServicesBlackListUrlParameters() {	
 		
-		List<String> blackList = new ArrayList<>();
-		List<String> tmp = this.getSOAPServicesBlackListInternalUrlParameters();
+		List<MapKey<String>> blackList = new ArrayList<>();
+		List<MapKey<String>> tmp = this.getSOAPServicesBlackListInternalUrlParameters();
 		this._list_add(tmp, blackList);
 		tmp = this.getSOAPServicesBlackListUrlParameters();
 		this._list_add(tmp, blackList);
 		
-		return blackList;
+		List<String> l = new ArrayList<String>();
+		if(!blackList.isEmpty()) {
+			for (MapKey<String> key : blackList) {
+				l.add(key.getValue());
+			}
+		}
+		return l;
 	}
 	private List<String> _getSOAPServicesWhiteListUrlParameters() {	
 		
-		List<String> whiteList = new ArrayList<>();
-		List<String> tmp = this.getSOAPServicesWhiteListUrlParameters();
+		List<MapKey<String>> whiteList = new ArrayList<>();
+		List<MapKey<String>> tmp = this.getSOAPServicesWhiteListUrlParameters();
 		this._list_add(tmp, whiteList);
 		
-		return whiteList;
+		List<String> l = new ArrayList<String>();
+		if(!whiteList.isEmpty()) {
+			for (MapKey<String> key : whiteList) {
+				l.add(key.getValue());
+			}
+		}
+		return l;
 	}
 	public ForwardConfig getSOAPServicesUrlParametersForwardConfig() {
 		ForwardConfig f = new ForwardConfig();
@@ -22389,11 +22735,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getSOAPServicesBlackListBothInternalHeadersRead = null;
-	private static List<String> getSOAPServicesBlackListBothInternalHeadersList = null;
-	private List<String> getSOAPServicesBlackListBothInternalHeaders() {	
+	private static List<MapKey<String>> getSOAPServicesBlackListBothInternalHeadersList = null;
+	private List<MapKey<String>> getSOAPServicesBlackListBothInternalHeaders() {	
 		if(OpenSPCoop2Properties.getSOAPServicesBlackListBothInternalHeadersRead==null){
 			try{ 
-				getSOAPServicesBlackListBothInternalHeadersList = new ArrayList<String>();
+				getSOAPServicesBlackListBothInternalHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.internal.both");
 				if(name!=null){
@@ -22401,7 +22747,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getSOAPServicesBlackListBothInternalHeadersList.add(split[i].trim());
+							getSOAPServicesBlackListBothInternalHeadersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -22415,11 +22761,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getSOAPServicesBlackListRequestInternalHeadersRead = null;
-	private static List<String> getSOAPServicesBlackListRequestInternalHeadersList = null;
-	private List<String> getSOAPServicesBlackListRequestInternalHeaders() {	
+	private static List<MapKey<String>> getSOAPServicesBlackListRequestInternalHeadersList = null;
+	private List<MapKey<String>> getSOAPServicesBlackListRequestInternalHeaders() {	
 		if(OpenSPCoop2Properties.getSOAPServicesBlackListRequestInternalHeadersRead==null){
 			try{ 
-				getSOAPServicesBlackListRequestInternalHeadersList = new ArrayList<String>();
+				getSOAPServicesBlackListRequestInternalHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.internal.request");
 				if(name!=null){
@@ -22427,7 +22773,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getSOAPServicesBlackListRequestInternalHeadersList.add(split[i].trim());
+							getSOAPServicesBlackListRequestInternalHeadersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -22441,11 +22787,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getSOAPServicesBlackListResponseInternalHeadersRead = null;
-	private static List<String> getSOAPServicesBlackListResponseInternalHeadersList = null;
-	private List<String> getSOAPServicesBlackListResponseInternalHeaders() {	
+	private static List<MapKey<String>> getSOAPServicesBlackListResponseInternalHeadersList = null;
+	private List<MapKey<String>> getSOAPServicesBlackListResponseInternalHeaders() {	
 		if(OpenSPCoop2Properties.getSOAPServicesBlackListResponseInternalHeadersRead==null){
 			try{ 
-				getSOAPServicesBlackListResponseInternalHeadersList = new ArrayList<String>();
+				getSOAPServicesBlackListResponseInternalHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.internal.response");
 				if(name!=null){
@@ -22453,7 +22799,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getSOAPServicesBlackListResponseInternalHeadersList.add(split[i].trim());
+							getSOAPServicesBlackListResponseInternalHeadersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -22467,11 +22813,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getSOAPServicesBlackListBothHeadersRead = null;
-	private static List<String> getSOAPServicesBlackListBothHeadersList = null;
-	private List<String> getSOAPServicesBlackListBothHeaders() {	
+	private static List<MapKey<String>> getSOAPServicesBlackListBothHeadersList = null;
+	private List<MapKey<String>> getSOAPServicesBlackListBothHeaders() {	
 		if(OpenSPCoop2Properties.getSOAPServicesBlackListBothHeadersRead==null){
 			try{ 
-				getSOAPServicesBlackListBothHeadersList = new ArrayList<String>();
+				getSOAPServicesBlackListBothHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.both");
 				if(name!=null){
@@ -22479,7 +22825,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getSOAPServicesBlackListBothHeadersList.add(split[i].trim());
+							getSOAPServicesBlackListBothHeadersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -22493,11 +22839,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getSOAPServicesBlackListRequestHeadersRead = null;
-	private static List<String> getSOAPServicesBlackListRequestHeadersList = null;
-	private List<String> getSOAPServicesBlackListRequestHeaders() {	
+	private static List<MapKey<String>> getSOAPServicesBlackListRequestHeadersList = null;
+	private List<MapKey<String>> getSOAPServicesBlackListRequestHeaders() {	
 		if(OpenSPCoop2Properties.getSOAPServicesBlackListRequestHeadersRead==null){
 			try{ 
-				getSOAPServicesBlackListRequestHeadersList = new ArrayList<String>();
+				getSOAPServicesBlackListRequestHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.request");
 				if(name!=null){
@@ -22505,7 +22851,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getSOAPServicesBlackListRequestHeadersList.add(split[i].trim());
+							getSOAPServicesBlackListRequestHeadersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -22519,11 +22865,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getSOAPServicesBlackListResponseHeadersRead = null;
-	private static List<String> getSOAPServicesBlackListResponseHeadersList = null;
-	private List<String> getSOAPServicesBlackListResponseHeaders() {	
+	private static List<MapKey<String>> getSOAPServicesBlackListResponseHeadersList = null;
+	private List<MapKey<String>> getSOAPServicesBlackListResponseHeaders() {	
 		if(OpenSPCoop2Properties.getSOAPServicesBlackListResponseHeadersRead==null){
 			try{ 
-				getSOAPServicesBlackListResponseHeadersList = new ArrayList<String>();
+				getSOAPServicesBlackListResponseHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.response");
 				if(name!=null){
@@ -22531,7 +22877,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getSOAPServicesBlackListResponseHeadersList.add(split[i].trim());
+							getSOAPServicesBlackListResponseHeadersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -22545,11 +22891,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getSOAPServicesWhiteListBothHeadersRead = null;
-	private static List<String> getSOAPServicesWhiteListBothHeadersList = null;
-	private List<String> getSOAPServicesWhiteListBothHeaders() {	
+	private static List<MapKey<String>> getSOAPServicesWhiteListBothHeadersList = null;
+	private List<MapKey<String>> getSOAPServicesWhiteListBothHeaders() {	
 		if(OpenSPCoop2Properties.getSOAPServicesWhiteListBothHeadersRead==null){
 			try{ 
-				getSOAPServicesWhiteListBothHeadersList = new ArrayList<String>();
+				getSOAPServicesWhiteListBothHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.whiteList.both");
 				if(name!=null){
@@ -22557,7 +22903,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getSOAPServicesWhiteListBothHeadersList.add(split[i].trim());
+							getSOAPServicesWhiteListBothHeadersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -22571,11 +22917,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getSOAPServicesWhiteListRequestHeadersRead = null;
-	private static List<String> getSOAPServicesWhiteListRequestHeadersList = null;
-	private List<String> getSOAPServicesWhiteListRequestHeaders() {	
+	private static List<MapKey<String>> getSOAPServicesWhiteListRequestHeadersList = null;
+	private List<MapKey<String>> getSOAPServicesWhiteListRequestHeaders() {	
 		if(OpenSPCoop2Properties.getSOAPServicesWhiteListRequestHeadersRead==null){
 			try{ 
-				getSOAPServicesWhiteListRequestHeadersList = new ArrayList<String>();
+				getSOAPServicesWhiteListRequestHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.whiteList.request");
 				if(name!=null){
@@ -22583,7 +22929,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getSOAPServicesWhiteListRequestHeadersList.add(split[i].trim());
+							getSOAPServicesWhiteListRequestHeadersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -22597,11 +22943,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getSOAPServicesWhiteListResponseHeadersRead = null;
-	private static List<String> getSOAPServicesWhiteListResponseHeadersList = null;
-	private List<String> getSOAPServicesWhiteListResponseHeaders() {	
+	private static List<MapKey<String>> getSOAPServicesWhiteListResponseHeadersList = null;
+	private List<MapKey<String>> getSOAPServicesWhiteListResponseHeaders() {	
 		if(OpenSPCoop2Properties.getSOAPServicesWhiteListResponseHeadersRead==null){
 			try{ 
-				getSOAPServicesWhiteListResponseHeadersList = new ArrayList<String>();
+				getSOAPServicesWhiteListResponseHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.soap.headers.whiteList.response");
 				if(name!=null){
@@ -22609,7 +22955,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getSOAPServicesWhiteListResponseHeadersList.add(split[i].trim());
+							getSOAPServicesWhiteListResponseHeadersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -22624,8 +22970,8 @@ public class OpenSPCoop2Properties {
 	
 	private List<String> getSOAPServicesBlackListHeaders(boolean request) {	
 		
-		List<String> blackList = new ArrayList<>();
-		List<String> tmp = this.getSOAPServicesBlackListBothInternalHeaders();
+		List<MapKey<String>> blackList = new ArrayList<>();
+		List<MapKey<String>> tmp = this.getSOAPServicesBlackListBothInternalHeaders();
 		this._list_add(tmp, blackList);
 		tmp = this.getSOAPServicesBlackListBothHeaders();
 		this._list_add(tmp, blackList);
@@ -22643,12 +22989,18 @@ public class OpenSPCoop2Properties {
 			this._list_add(tmp, blackList);
 		}
 		
-		return blackList;
+		List<String> l = new ArrayList<String>();
+		if(!blackList.isEmpty()) {
+			for (MapKey<String> key : blackList) {
+				l.add(key.getValue());
+			}
+		}
+		return l;
 	}
 	private List<String> getSOAPServicesWhiteListHeaders(boolean request) {	
 		
-		List<String> whiteList = new ArrayList<>();
-		List<String> tmp = this.getSOAPServicesWhiteListBothHeaders();
+		List<MapKey<String>> whiteList = new ArrayList<>();
+		List<MapKey<String>> tmp = this.getSOAPServicesWhiteListBothHeaders();
 		this._list_add(tmp, whiteList);
 		if(request) {
 			tmp = this.getSOAPServicesWhiteListRequestHeaders();
@@ -22659,7 +23011,13 @@ public class OpenSPCoop2Properties {
 			this._list_add(tmp, whiteList);
 		}
 		
-		return whiteList;
+		List<String> l = new ArrayList<String>();
+		if(!whiteList.isEmpty()) {
+			for (MapKey<String> key : whiteList) {
+				l.add(key.getValue());
+			}
+		}
+		return l;
 	}
 	public ForwardConfig getSOAPServicesHeadersForwardConfig(boolean request) {
 		ForwardConfig f = new ForwardConfig();
@@ -23052,11 +23410,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getRESTServicesBlackListInternalUrlParametersRead = null;
-	private static List<String> getRESTServicesBlackListInternalUrlParametersList = null;
-	private List<String> getRESTServicesBlackListInternalUrlParameters() {	
+	private static List<MapKey<String>> getRESTServicesBlackListInternalUrlParametersList = null;
+	private List<MapKey<String>> getRESTServicesBlackListInternalUrlParameters() {	
 		if(OpenSPCoop2Properties.getRESTServicesBlackListInternalUrlParametersRead==null){
 			try{ 
-				getRESTServicesBlackListInternalUrlParametersList = new ArrayList<String>();
+				getRESTServicesBlackListInternalUrlParametersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.urlParameters.blackList.internal");
 				if(name!=null){
@@ -23064,7 +23422,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getRESTServicesBlackListInternalUrlParametersList.add(split[i].trim());
+							getRESTServicesBlackListInternalUrlParametersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -23078,11 +23436,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getRESTServicesBlackListUrlParametersRead = null;
-	private static List<String> getRESTServicesBlackListUrlParametersList = null;
-	private List<String> getRESTServicesBlackListUrlParameters() {	
+	private static List<MapKey<String>> getRESTServicesBlackListUrlParametersList = null;
+	private List<MapKey<String>> getRESTServicesBlackListUrlParameters() {	
 		if(OpenSPCoop2Properties.getRESTServicesBlackListUrlParametersRead==null){
 			try{ 
-				getRESTServicesBlackListUrlParametersList = new ArrayList<String>();
+				getRESTServicesBlackListUrlParametersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.urlParameters.blackList");
 				if(name!=null){
@@ -23090,7 +23448,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getRESTServicesBlackListUrlParametersList.add(split[i].trim());
+							getRESTServicesBlackListUrlParametersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -23104,11 +23462,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getRESTServicesWhiteListUrlParametersRead = null;
-	private static List<String> getRESTServicesWhiteListUrlParametersList = null;
-	private List<String> getRESTServicesWhiteListUrlParameters() {	
+	private static List<MapKey<String>> getRESTServicesWhiteListUrlParametersList = null;
+	private List<MapKey<String>> getRESTServicesWhiteListUrlParameters() {	
 		if(OpenSPCoop2Properties.getRESTServicesWhiteListUrlParametersRead==null){
 			try{ 
-				getRESTServicesWhiteListUrlParametersList = new ArrayList<String>();
+				getRESTServicesWhiteListUrlParametersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.urlParameters.whiteList");
 				if(name!=null){
@@ -23116,7 +23474,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getRESTServicesWhiteListUrlParametersList.add(split[i].trim());
+							getRESTServicesWhiteListUrlParametersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -23131,21 +23489,33 @@ public class OpenSPCoop2Properties {
 		
 	private List<String> _getRESTServicesBlackListUrlParameters() {	
 		
-		List<String> blackList = new ArrayList<>();
-		List<String> tmp = this.getRESTServicesBlackListInternalUrlParameters();
+		List<MapKey<String>> blackList = new ArrayList<>();
+		List<MapKey<String>> tmp = this.getRESTServicesBlackListInternalUrlParameters();
 		this._list_add(tmp, blackList);
 		tmp = this.getRESTServicesBlackListUrlParameters();
 		this._list_add(tmp, blackList);
 		
-		return blackList;
+		List<String> l = new ArrayList<String>();
+		if(!blackList.isEmpty()) {
+			for (MapKey<String> key : blackList) {
+				l.add(key.getValue());
+			}
+		}
+		return l;
 	}
 	private List<String> _getRESTServicesWhiteListUrlParameters() {	
 		
-		List<String> whiteList = new ArrayList<>();
-		List<String> tmp = this.getRESTServicesWhiteListUrlParameters();
+		List<MapKey<String>> whiteList = new ArrayList<>();
+		List<MapKey<String>> tmp = this.getRESTServicesWhiteListUrlParameters();
 		this._list_add(tmp, whiteList);
 		
-		return whiteList;
+		List<String> l = new ArrayList<String>();
+		if(!whiteList.isEmpty()) {
+			for (MapKey<String> key : whiteList) {
+				l.add(key.getValue());
+			}
+		}
+		return l;
 	}
 	public ForwardConfig getRESTServicesUrlParametersForwardConfig() {
 		ForwardConfig f = new ForwardConfig();
@@ -23185,11 +23555,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getRESTServicesBlackListBothInternalHeadersRead = null;
-	private static List<String> getRESTServicesBlackListBothInternalHeadersList = null;
-	private List<String> getRESTServicesBlackListBothInternalHeaders() {	
+	private static List<MapKey<String>> getRESTServicesBlackListBothInternalHeadersList = null;
+	private List<MapKey<String>> getRESTServicesBlackListBothInternalHeaders() {	
 		if(OpenSPCoop2Properties.getRESTServicesBlackListBothInternalHeadersRead==null){
 			try{ 
-				getRESTServicesBlackListBothInternalHeadersList = new ArrayList<String>();
+				getRESTServicesBlackListBothInternalHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.internal.both");
 				if(name!=null){
@@ -23197,7 +23567,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getRESTServicesBlackListBothInternalHeadersList.add(split[i].trim());
+							getRESTServicesBlackListBothInternalHeadersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -23211,11 +23581,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getRESTServicesBlackListRequestInternalHeadersRead = null;
-	private static List<String> getRESTServicesBlackListRequestInternalHeadersList = null;
-	private List<String> getRESTServicesBlackListRequestInternalHeaders() {	
+	private static List<MapKey<String>> getRESTServicesBlackListRequestInternalHeadersList = null;
+	private List<MapKey<String>> getRESTServicesBlackListRequestInternalHeaders() {	
 		if(OpenSPCoop2Properties.getRESTServicesBlackListRequestInternalHeadersRead==null){
 			try{ 
-				getRESTServicesBlackListRequestInternalHeadersList = new ArrayList<String>();
+				getRESTServicesBlackListRequestInternalHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.internal.request");
 				if(name!=null){
@@ -23223,7 +23593,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getRESTServicesBlackListRequestInternalHeadersList.add(split[i].trim());
+							getRESTServicesBlackListRequestInternalHeadersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -23237,11 +23607,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getRESTServicesBlackListResponseInternalHeadersRead = null;
-	private static List<String> getRESTServicesBlackListResponseInternalHeadersList = null;
-	private List<String> getRESTServicesBlackListResponseInternalHeaders() {	
+	private static List<MapKey<String>> getRESTServicesBlackListResponseInternalHeadersList = null;
+	private List<MapKey<String>> getRESTServicesBlackListResponseInternalHeaders() {	
 		if(OpenSPCoop2Properties.getRESTServicesBlackListResponseInternalHeadersRead==null){
 			try{ 
-				getRESTServicesBlackListResponseInternalHeadersList = new ArrayList<String>();
+				getRESTServicesBlackListResponseInternalHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.internal.response");
 				if(name!=null){
@@ -23249,7 +23619,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getRESTServicesBlackListResponseInternalHeadersList.add(split[i].trim());
+							getRESTServicesBlackListResponseInternalHeadersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -23263,11 +23633,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getRESTServicesBlackListBothHeadersRead = null;
-	private static List<String> getRESTServicesBlackListBothHeadersList = null;
-	private List<String> getRESTServicesBlackListBothHeaders() {	
+	private static List<MapKey<String>> getRESTServicesBlackListBothHeadersList = null;
+	private List<MapKey<String>> getRESTServicesBlackListBothHeaders() {	
 		if(OpenSPCoop2Properties.getRESTServicesBlackListBothHeadersRead==null){
 			try{ 
-				getRESTServicesBlackListBothHeadersList = new ArrayList<String>();
+				getRESTServicesBlackListBothHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.both");
 				if(name!=null){
@@ -23275,7 +23645,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getRESTServicesBlackListBothHeadersList.add(split[i].trim());
+							getRESTServicesBlackListBothHeadersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -23289,11 +23659,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getRESTServicesBlackListRequestHeadersRead = null;
-	private static List<String> getRESTServicesBlackListRequestHeadersList = null;
-	private List<String> getRESTServicesBlackListRequestHeaders() {	
+	private static List<MapKey<String>> getRESTServicesBlackListRequestHeadersList = null;
+	private List<MapKey<String>> getRESTServicesBlackListRequestHeaders() {	
 		if(OpenSPCoop2Properties.getRESTServicesBlackListRequestHeadersRead==null){
 			try{ 
-				getRESTServicesBlackListRequestHeadersList = new ArrayList<String>();
+				getRESTServicesBlackListRequestHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.request");
 				if(name!=null){
@@ -23301,7 +23671,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getRESTServicesBlackListRequestHeadersList.add(split[i].trim());
+							getRESTServicesBlackListRequestHeadersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -23315,11 +23685,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getRESTServicesBlackListResponseHeadersRead = null;
-	private static List<String> getRESTServicesBlackListResponseHeadersList = null;
-	private List<String> getRESTServicesBlackListResponseHeaders() {	
+	private static List<MapKey<String>> getRESTServicesBlackListResponseHeadersList = null;
+	private List<MapKey<String>> getRESTServicesBlackListResponseHeaders() {	
 		if(OpenSPCoop2Properties.getRESTServicesBlackListResponseHeadersRead==null){
 			try{ 
-				getRESTServicesBlackListResponseHeadersList = new ArrayList<String>();
+				getRESTServicesBlackListResponseHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.response");
 				if(name!=null){
@@ -23327,7 +23697,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getRESTServicesBlackListResponseHeadersList.add(split[i].trim());
+							getRESTServicesBlackListResponseHeadersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -23341,11 +23711,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getRESTServicesWhiteListBothHeadersRead = null;
-	private static List<String> getRESTServicesWhiteListBothHeadersList = null;
-	private List<String> getRESTServicesWhiteListBothHeaders() {	
+	private static List<MapKey<String>> getRESTServicesWhiteListBothHeadersList = null;
+	private List<MapKey<String>> getRESTServicesWhiteListBothHeaders() {	
 		if(OpenSPCoop2Properties.getRESTServicesWhiteListBothHeadersRead==null){
 			try{ 
-				getRESTServicesWhiteListBothHeadersList = new ArrayList<String>();
+				getRESTServicesWhiteListBothHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.whiteList.both");
 				if(name!=null){
@@ -23353,7 +23723,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getRESTServicesWhiteListBothHeadersList.add(split[i].trim());
+							getRESTServicesWhiteListBothHeadersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -23367,11 +23737,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getRESTServicesWhiteListRequestHeadersRead = null;
-	private static List<String> getRESTServicesWhiteListRequestHeadersList = null;
-	private List<String> getRESTServicesWhiteListRequestHeaders() {	
+	private static List<MapKey<String>> getRESTServicesWhiteListRequestHeadersList = null;
+	private List<MapKey<String>> getRESTServicesWhiteListRequestHeaders() {	
 		if(OpenSPCoop2Properties.getRESTServicesWhiteListRequestHeadersRead==null){
 			try{ 
-				getRESTServicesWhiteListRequestHeadersList = new ArrayList<String>();
+				getRESTServicesWhiteListRequestHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.whiteList.request");
 				if(name!=null){
@@ -23379,7 +23749,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getRESTServicesWhiteListRequestHeadersList.add(split[i].trim());
+							getRESTServicesWhiteListRequestHeadersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -23393,11 +23763,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static Boolean getRESTServicesWhiteListResponseHeadersRead = null;
-	private static List<String> getRESTServicesWhiteListResponseHeadersList = null;
-	private List<String> getRESTServicesWhiteListResponseHeaders() {	
+	private static List<MapKey<String>> getRESTServicesWhiteListResponseHeadersList = null;
+	private List<MapKey<String>> getRESTServicesWhiteListResponseHeaders() {	
 		if(OpenSPCoop2Properties.getRESTServicesWhiteListResponseHeadersRead==null){
 			try{ 
-				getRESTServicesWhiteListResponseHeadersList = new ArrayList<String>();
+				getRESTServicesWhiteListResponseHeadersList = new ArrayList<MapKey<String>>();
 				String name = null;
 				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.rest.headers.whiteList.response");
 				if(name!=null){
@@ -23405,7 +23775,7 @@ public class OpenSPCoop2Properties {
 					String [] split = name.split(",");
 					if(split!=null){
 						for (int i = 0; i < split.length; i++) {
-							getRESTServicesWhiteListResponseHeadersList.add(split[i].trim());
+							getRESTServicesWhiteListResponseHeadersList.add(org.openspcoop2.utils.Map.newMapKey(split[i].trim()));
 						}
 					}
 				}
@@ -23420,8 +23790,8 @@ public class OpenSPCoop2Properties {
 	
 	private List<String> getRESTServicesBlackListHeaders(boolean request) {	
 		
-		List<String> blackList = new ArrayList<>();
-		List<String> tmp = this.getRESTServicesBlackListBothInternalHeaders();
+		List<MapKey<String>> blackList = new ArrayList<MapKey<String>>();
+		List<MapKey<String>> tmp = this.getRESTServicesBlackListBothInternalHeaders();
 		this._list_add(tmp, blackList);
 		tmp = this.getRESTServicesBlackListBothHeaders();
 		this._list_add(tmp, blackList);
@@ -23439,12 +23809,18 @@ public class OpenSPCoop2Properties {
 			this._list_add(tmp, blackList);
 		}
 		
-		return blackList;
+		List<String> l = new ArrayList<String>();
+		if(!blackList.isEmpty()) {
+			for (MapKey<String> key : blackList) {
+				l.add(key.getValue());
+			}
+		}
+		return l;
 	}
 	private List<String> getRESTServicesWhiteListHeaders(boolean request) {	
 		
-		List<String> whiteList = new ArrayList<>();
-		List<String> tmp = this.getRESTServicesWhiteListBothHeaders();
+		List<MapKey<String>> whiteList = new ArrayList<>();
+		List<MapKey<String>> tmp = this.getRESTServicesWhiteListBothHeaders();
 		this._list_add(tmp, whiteList);
 		if(request) {
 			tmp = this.getRESTServicesWhiteListRequestHeaders();
@@ -23455,7 +23831,13 @@ public class OpenSPCoop2Properties {
 			this._list_add(tmp, whiteList);
 		}
 		
-		return whiteList;
+		List<String> l = new ArrayList<String>();
+		if(!whiteList.isEmpty()) {
+			for (MapKey<String> key : whiteList) {
+				l.add(key.getValue());
+			}
+		}
+		return l;
 	}
 	public ForwardConfig getRESTServicesHeadersForwardConfig(boolean request) {
 		ForwardConfig f = new ForwardConfig();
@@ -25339,7 +25721,7 @@ public class OpenSPCoop2Properties {
 	private static Map<String, int[]> getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata = new HashMap<>();
 	private int[] getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata(String protocollo) throws Exception{
 		if(OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata.containsKey(protocollo)==false){
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log,protocollo);
+			EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(this.log,protocollo);
 			try{
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.calcoloLatenza.portaDelegata.esitiConsiderati");
 				if(value!=null){
@@ -25392,7 +25774,7 @@ public class OpenSPCoop2Properties {
 	private static Map<String, int[]> getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa = new HashMap<>();
 	private int[] getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa(String protocollo) throws Exception{
 		if(OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa.containsKey(protocollo)==false){
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log,protocollo);
+			EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(this.log,protocollo);
 			try{
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.calcoloLatenza.portaApplicativa.esitiConsiderati");
 				if(value!=null){
@@ -25532,7 +25914,7 @@ public class OpenSPCoop2Properties {
 	private static Map<String, int[]> getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy = new HashMap<>();
 	private int[] getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy(String protocollo) throws Exception{
 		if(getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy.containsKey(protocollo) == false){
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log, protocollo);
+			EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(this.log, protocollo);
 			try{
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.violazionePolicy.esitiConsiderati");
 				if(value!=null){

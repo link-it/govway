@@ -26,7 +26,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
@@ -36,11 +35,12 @@ import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicyMapId
 import org.openspcoop2.core.controllo_traffico.beans.IDatiCollezionatiDistributed;
 import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
 import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
-import org.openspcoop2.core.controllo_traffico.driver.CostantiControlloTraffico;
+import org.openspcoop2.core.controllo_traffico.constants.Costanti;
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreadsInMemory;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.Map;
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
 
@@ -57,7 +57,7 @@ public class PolicyGroupByActiveThreadsDistributedCounters implements Serializab
 
 	private final org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("PolicyGroupByActiveThreadsDistributedCounters"); // usato solo in creazione e quando si accede a tutta la mappa
 		
-	private final Map<IDUnivocoGroupByPolicy, DatiCollezionati> mapActiveThreads = new HashMap<IDUnivocoGroupByPolicy, DatiCollezionati>();
+	private final java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> mapActiveThreads = new HashMap<IDUnivocoGroupByPolicy, DatiCollezionati>();
 	
 	private String uniqueIdMap_idActivePolicy;
 	@SuppressWarnings("unused")
@@ -84,13 +84,13 @@ public class PolicyGroupByActiveThreadsDistributedCounters implements Serializab
 		return this.activePolicy;
 	}
 	@Override
-	public Map<IDUnivocoGroupByPolicy, DatiCollezionati> getMapActiveThreads(){
+	public java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> getMapActiveThreads(){
 		return this.mapActiveThreads;
 	}
 
 
 	@Override
-	public void initMap(Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
+	public void initMap(java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
 		this.lock.acquireThrowRuntime("initMap");
 		try {
 			if(map!=null && !map.isEmpty()) {
@@ -153,7 +153,7 @@ public class PolicyGroupByActiveThreadsDistributedCounters implements Serializab
 	}
 
 
-	private DatiCollezionati initStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicyMapId datiGroupByMapId, Map<String, Object> ctx) throws PolicyException{
+	private DatiCollezionati initStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicyMapId datiGroupByMapId, Map<Object> ctx) throws PolicyException{
 		this.lock.acquireThrowRuntime("initStartRequest");
 		DatiCollezionati datiCollezionati = null;
 		try {
@@ -184,7 +184,7 @@ public class PolicyGroupByActiveThreadsDistributedCounters implements Serializab
 		}
 	}
 	@Override
-	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx) throws PolicyException{
+	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx) throws PolicyException{
 
 		IDUnivocoGroupByPolicyMapId datiGroupByMapId = augmentIDUnivoco(datiGroupBy);
 		DatiCollezionati datiCollezionati = this.mapActiveThreads.get(datiGroupByMapId);
@@ -203,7 +203,7 @@ public class PolicyGroupByActiveThreadsDistributedCounters implements Serializab
 
 
 	@Override
-	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx) throws PolicyException,PolicyNotFoundException{
+	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx) throws PolicyException,PolicyNotFoundException{
 
 		IDUnivocoGroupByPolicyMapId datiGroupByMapId = augmentIDUnivoco(datiGroupBy);
 		DatiCollezionati datiCollezionati = this.mapActiveThreads.get(datiGroupByMapId);
@@ -225,7 +225,7 @@ public class PolicyGroupByActiveThreadsDistributedCounters implements Serializab
 
 
 	@Override
-	public void registerStopRequest(Logger log, String idTransazione,IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx, 
+	public void registerStopRequest(Logger log, String idTransazione,IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx, 
 			MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata) throws PolicyException,PolicyNotFoundException{
 
 		IDUnivocoGroupByPolicyMapId datiGroupByMapId = augmentIDUnivoco(datiGroupBy);
@@ -241,9 +241,10 @@ public class PolicyGroupByActiveThreadsDistributedCounters implements Serializab
 			List<Integer> esitiCodeKo_senzaFaultApplicativo = null;
 			List<Integer> esitiCodeFaultApplicativo = null;
 			try {
-				esitiCodeOk = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeOk_senzaFaultApplicativo();
-				esitiCodeKo_senzaFaultApplicativo = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeKo_senzaFaultApplicativo();
-				esitiCodeFaultApplicativo = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeFaultApplicativo();
+				EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(log,dati.getProtocollo());
+				esitiCodeOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
+				esitiCodeKo_senzaFaultApplicativo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
+				esitiCodeFaultApplicativo = esitiProperties.getEsitiCodeFaultApplicativo();
 			}catch(Exception e) {
 				throw new PolicyException(e.getMessage(),e);
 			}
@@ -298,7 +299,7 @@ public class PolicyGroupByActiveThreadsDistributedCounters implements Serializab
 				for (IDUnivocoGroupByPolicy datiGroupBy : this.mapActiveThreads.keySet()) {
 					bf.append(separatorGroups);
 					bf.append("\n");
-					bf.append(CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE).append(" ").append(this.builderDatiCollezionati.tipoPolicy.toLabel());
+					bf.append(Costanti.LABEL_MODALITA_SINCRONIZZAZIONE).append(" ").append(this.builderDatiCollezionati.tipoPolicy.toLabel());
 					bf.append("\n");
 					bf.append("Criterio di Collezionamento dei Dati\n");
 					bf.append(datiGroupBy.toString(true));

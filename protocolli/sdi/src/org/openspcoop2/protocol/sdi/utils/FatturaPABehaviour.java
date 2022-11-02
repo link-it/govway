@@ -41,7 +41,6 @@ import org.openspcoop2.pdd.core.behaviour.BehaviourResponseTo;
 import org.openspcoop2.pdd.core.behaviour.StatoFunzionalita;
 import org.openspcoop2.pdd.core.behaviour.built_in.DefaultBehaviour;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdi.SDIFactory;
 import org.openspcoop2.protocol.sdi.builder.SDIBustaBuilder;
 import org.openspcoop2.protocol.sdi.builder.SDIImbustamento;
@@ -54,6 +53,7 @@ import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**

@@ -52,6 +52,7 @@ import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.GestoreRichieste;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.IConnettore;
 import org.openspcoop2.pdd.core.connettori.RepositoryConnettori;
@@ -86,10 +87,7 @@ import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativiContext;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
 import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
-import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
@@ -97,7 +95,10 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.protocol.sdk.constants.IDService;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.LimitExceededIOException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TimeoutIOException;
@@ -122,18 +123,21 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 
 	private RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore;
 	
-	public RicezioneContenutiApplicativiHTTPtoSOAPService(RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore){
-		this.generatoreErrore = generatoreErrore;
-		this.generatoreErrore.setForceMessageTypeResponse(MessageType.XML); // forzo xml
-		if(this.generatoreErrore.getProprietaErroreAppl()!=null) {
-			this.generatoreErrore.getProprietaErroreAppl().setFaultAsXML(true); // siamo in una richiesta http senza SOAP, un SoapFault non ha senso
+	public static void forceXmlResponse(RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore) {
+		generatoreErrore.setForceMessageTypeResponse(MessageType.XML); // forzo xml
+		if(generatoreErrore.getProprietaErroreAppl()!=null) {
+			generatoreErrore.getProprietaErroreAppl().setFaultAsXML(true); // siamo in una richiesta http senza SOAP, un SoapFault non ha senso
 		}
 	}
 	
-	public void process(ConnectorInMessage req, ConnectorOutMessage res) throws ConnectorException {
+	public RicezioneContenutiApplicativiHTTPtoSOAPService(RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore){
+		this.generatoreErrore = generatoreErrore;
+		RicezioneContenutiApplicativiHTTPtoSOAPService.forceXmlResponse(this.generatoreErrore);
+	}
+	
+	public void process(ConnectorInMessage req, ConnectorOutMessage res, Date dataAccettazioneRichiesta) throws ConnectorException {
 		
 		// Timestamp
-		Date dataAccettazioneRichiesta = DateManager.getDate();
 		Date dataIngressoRichiesta = null;
 		
 		// IDModulo
@@ -241,7 +245,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		// PddContext from servlet
 		Object oPddContextFromServlet = null;
 		try{
-			oPddContextFromServlet = req.getAttribute(CostantiPdD.OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP);
+			oPddContextFromServlet = req.getAttribute(CostantiPdD.OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP.getValue());
 		}catch(Exception e){
 			logCore.error("req.getAttribute("+CostantiPdD.OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP+") error: "+e.getMessage(),e);
 		}
@@ -253,7 +257,8 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		// Identifico Servizio per comprendere correttamente il messageType
 		ServiceIdentificationReader serviceIdentificationReader = null;
 		try{
-			serviceIdentificationReader = ServicesUtils.getServiceIdentificationReader(logCore, requestInfo);
+			serviceIdentificationReader = ServicesUtils.getServiceIdentificationReader(logCore, requestInfo,
+					configPdDManager.getRegistroServiziManager(), configPdDManager);
 		}catch(Exception e){
 			String msg = "Inizializzazione RegistryReader fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
 			logCore.error(msg,e);
@@ -268,27 +273,50 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		// Provo a creare un context (per l'id di transazione nei diagnostici)
 		RicezioneContenutiApplicativiContext context = null;
 		IProtocolFactory<?> protocolFactory = null;
+		String idTransazione = null;
 		try {
 			context = new RicezioneContenutiApplicativiContext(idModuloAsService,dataAccettazioneRichiesta,requestInfo);
 			protocolFactory = req.getProtocolFactory();
-			String idTransazione = (String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
-			if(openSPCoopProperties.isTransazioniEnabled()) {
-				TransactionContext.createTransaction(idTransazione,"RicezioneContenutiApplicativiHTTPtoSOAP.1");
-			}
-			requestInfo.setIdTransazione(idTransazione);
-			
-			req.setThresholdContext((context!=null ? context.getPddContext(): null), 
-					openSPCoopProperties.getDumpBinario_inMemoryThreshold(), openSPCoopProperties.getDumpBinario_repository());
-			
+			idTransazione = (String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 		}catch(Throwable e) {
 			context = null;
 			protocolFactory = null;
 			// non loggo l'errore tanto poi provo a ricreare il context subito dopo e li verra' registrato l'errore
 		}
+
+		try{
+			GestoreRichieste.readRequestConfig(requestInfo);
+		}catch(Exception e){
+			String msg = "GestoreRichieste readRequestConfig fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
+			logCore.error(msg,e);
+			ConnectorDispatcherErrorInfo cInfo = ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore,
+					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO),
+						IntegrationFunctionError.INTERNAL_REQUEST_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+			RicezioneContenutiApplicativiServiceUtils.emitTransaction(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
+			return;
+		}
+		
+		if(idTransazione!=null) {
+			try {
+				if(openSPCoopProperties.isTransazioniEnabled()) {
+					TransactionContext.createTransaction(idTransazione,"RicezioneContenutiApplicativiHTTPtoSOAP.1");
+				}
+				requestInfo.setIdTransazione(idTransazione);
+				
+				req.setThresholdContext((context!=null ? context.getPddContext(): null), 
+						openSPCoopProperties.getDumpBinario_inMemoryThreshold(), openSPCoopProperties.getDumpBinario_repository());
+			
+			}catch(Throwable e) {
+				context = null;
+				protocolFactory = null;
+				// non loggo l'errore tanto poi provo a ricreare il context subito dopo e li verra' registrato l'errore
+			}
+		}
 		
 		// Logger dei messaggi diagnostici
 		String nomePorta = requestInfo.getProtocolContext().getInterfaceName();
-		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA,idModulo,nomePorta);
+		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA,idModulo,nomePorta,requestInfo);
 		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI);
 		if(context!=null && protocolFactory!=null) {
 			msgDiag.setPddContext(context.getPddContext(), protocolFactory);
@@ -332,7 +360,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
 				IDPortaDelegata idPD = new IDPortaDelegata();
 				idPD.setNome(requestInfo.getProtocolContext().getInterfaceName());
-				pd = configPdDManager.getPortaDelegata_SafeMethod(idPD);
+				pd = configPdDManager.getPortaDelegata_SafeMethod(idPD, requestInfo);
 			}
 
 			// Limited
@@ -344,7 +372,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			String azione = (requestInfo!=null && requestInfo.getIdServizio()!=null) ? requestInfo.getIdServizio().getAzione() : null;
 			SoglieDimensioneMessaggi limitedInputStream = configPdDManager.getSoglieLimitedInputStream(pd, azione, idModulo,
 					(context!=null && context.getPddContext()!=null) ? context.getPddContext() : null, 
-					(requestInfo!=null) ? requestInfo.getProtocolContext() : null,
+					requestInfo,
 					protocolFactory, logCore);
 			if(limitedInputStream!=null) {
 				req.setRequestLimitedStream(limitedInputStream.getRichiesta());
@@ -818,7 +846,13 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			}
 		}
 		finally{
-			
+
+			try {
+				GestoreRichieste.saveRequestConfig(requestInfo);
+			}catch(Throwable e) {
+				logCore.error("Errore durante il salvataggio dei dati della richiesta: "+e.getMessage(),e);
+			}			
+
 			if((requestMessage!=null && requestMessage.getParseException() != null) || 
 					(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION))){
 				pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
@@ -920,7 +954,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			context.setResponseHeaders(new HashMap<String,List<String>>());
 		}
 		ServicesUtils.setGovWayHeaderResponse(responseMessage, openSPCoopProperties,
-				context.getResponseHeaders(), logCore, true, context.getPddContext(), requestInfo.getProtocolContext());
+				context.getResponseHeaders(), logCore, true, context.getPddContext(), requestInfo);
 		if(context.getResponseHeaders()!=null){
 			Iterator<String> keys = context.getResponseHeaders().keySet().iterator();
 			while (keys.hasNext()) {
@@ -1081,7 +1115,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), 
 							statoServletResponse, requestInfo.getIntegrationServiceBinding(),
 							responseMessage, context.getProprietaErroreAppl(),informazioniErrori,
-							(pddContext!=null ? pddContext.getContext() : null));
+							pddContext);
 					
 					// httpHeaders
 					res.sendResponseHeaders(responseMessage);					
@@ -1131,7 +1165,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), 
 							statoServletResponse, requestInfo.getIntegrationServiceBinding(),
 							responseMessage, context.getProprietaErroreAppl(), informazioniErrori,
-							(pddContext!=null ? pddContext.getContext() : null));
+							pddContext);
 					
 					// contenuto
 					Utilities.printFreeMemory("RicezioneContenutiApplicativiDirect - Pre scrittura risposta");
@@ -1215,7 +1249,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), 
 						statoServletResponse, requestInfo.getIntegrationServiceBinding(),
 						responseMessage, context.getProprietaErroreAppl(),informazioniErrori,
-						(pddContext!=null ? pddContext.getContext() : null));
+						pddContext);
 				
 				if(response!=null) {
 					sendInvoked = true;
@@ -1238,7 +1272,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), 
 						statoServletResponse, requestInfo.getIntegrationServiceBinding(),
 						responseMessage, context.getProprietaErroreAppl(),informazioniErrori,
-						(pddContext!=null ? pddContext.getContext() : null));
+						pddContext);
 				// carico-vuoto
 			}
 			
@@ -1311,7 +1345,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 						esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(),
 								statoServletResponse, requestInfo.getIntegrationServiceBinding(),
 								null, context.getProprietaErroreAppl(), informazioniErrori_error,
-								(pddContext!=null ? pddContext.getContext() : null));
+								pddContext);
 					}
 					
 					// content type
@@ -1437,7 +1471,6 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		String location = "...";
 		try{
 			IConnettore c = null;
-			String idTransazione = null;
 			if(context!=null && context.getPddContext()!=null && context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) {
 				idTransazione = (String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 			}

@@ -95,10 +95,12 @@ import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.cache.CacheResponse;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
@@ -182,7 +184,8 @@ public class RegistroServizi  {
 			throw new DriverRegistroServiziException("Cache gia' abilitata");
 		else{
 			try{
-				this.cache = new Cache(CostantiRegistroServizi.CACHE_REGISTRO_SERVIZI);
+				this.cache = new Cache(CacheType.JCS, CostantiRegistroServizi.CACHE_REGISTRO_SERVIZI);  // lascio JCS come default abilitato via jmx
+				this.cache.build();
 			}catch(Exception e){
 				throw new DriverRegistroServiziException(e.getMessage(),e);
 			}
@@ -208,7 +211,7 @@ public class RegistroServizi  {
 				if(itemLifeSecond!=null){
 					configurazioneCache.setItemLifeSecond(itemLifeSecond+"");
 				}
-				initCacheRegistriServizi(configurazioneCache,null,false, cryptConfigSoggetti);
+				initCacheRegistriServizi(CacheType.JCS, configurazioneCache,null,false, cryptConfigSoggetti);  // lascio JCS come default abilitato via jmx
 			}catch(Exception e){
 				throw new DriverRegistroServiziException(e.getMessage(),e);
 			}
@@ -321,7 +324,8 @@ public class RegistroServizi  {
 	public RegistroServizi(AccessoRegistro accessoRegistro,Logger alog,
 			Logger alogConsole,boolean raggiungibilitaTotale, boolean readObjectStatoBozza, 
 			String jndiNameDatasourcePdD, boolean useOp2UtilsDatasource, boolean bindJMX, 
-			boolean prefillCache, CryptConfig cryptConfigSoggetti)throws DriverRegistroServiziException{
+			boolean prefillCache, CryptConfig cryptConfigSoggetti,
+			CacheType cacheType)throws DriverRegistroServiziException{
 
 		try{ 
 			this.driverRegistroServizi = new java.util.HashMap<String,IDriverRegistroServiziGet>();
@@ -470,7 +474,7 @@ public class RegistroServizi  {
 
 			// Inizializzazione della Cache
 			if(accessoRegistro.getCache()!=null){
-				initCacheRegistriServizi(accessoRegistro.getCache(),alogConsole,prefillCache, cryptConfigSoggetti);
+				initCacheRegistriServizi(cacheType, accessoRegistro.getCache(),alogConsole,prefillCache, cryptConfigSoggetti);
 			}
 
 		}catch(Exception e){
@@ -521,8 +525,8 @@ public class RegistroServizi  {
 
 
 
-	private void initCacheRegistriServizi(org.openspcoop2.core.config.Cache configurazioneCache,Logger alogConsole, boolean prefillCache, CryptConfig cryptConfigSoggetti) throws Exception{
-		this.cache = new Cache(CostantiRegistroServizi.CACHE_REGISTRO_SERVIZI);
+	private void initCacheRegistriServizi(CacheType cacheType, org.openspcoop2.core.config.Cache configurazioneCache,Logger alogConsole, boolean prefillCache, CryptConfig cryptConfigSoggetti) throws Exception{
+		this.cache = new Cache(cacheType, CostantiRegistroServizi.CACHE_REGISTRO_SERVIZI);
 
 		if( (configurazioneCache.getDimensione()!=null) ||
 				(configurazioneCache.getAlgoritmo() != null) ){
@@ -685,17 +689,23 @@ public class RegistroServizi  {
 
 		}
 		
+		this.cache.build();
+		
 		if(prefillCache){
 			this.prefillCache(null,alogConsole, cryptConfigSoggetti);
 		}
 	}
 
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public void disableSyncronizedGet() throws UtilsException {
 		if(this.cache==null) {
 			throw new UtilsException("Cache disabled");
 		}
 		this.cache.disableSyncronizedGet();
 	}
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public boolean isDisableSyncronizedGet() throws UtilsException {
 		if(this.cache==null) {
 			throw new UtilsException("Cache disabled");
@@ -2739,20 +2749,50 @@ public class RegistroServizi  {
 		return key.toString();
 	}
 	
-	protected Documento getAllegato(Connection connectionPdD, String nomeRegistro, IDAccordo idAccordo, String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	protected Documento getAllegato(Connection connectionPdD, String nomeRegistro, IDAccordo idAccordo, String nome,
+			RequestInfo requestInfo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return _getAllegatoAccordoServizioParteComune(connectionPdD, nomeRegistro, "getAllegato", 
 				idAccordo,
-				RuoliDocumento.allegato, null, nome);
+				RuoliDocumento.allegato, null, nome,
+				requestInfo);
 	}
-	protected Documento getSpecificaSemiformale(Connection connectionPdD, String nomeRegistro, IDAccordo idAccordo, TipiDocumentoSemiformale tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	protected Documento getSpecificaSemiformale(Connection connectionPdD, String nomeRegistro, IDAccordo idAccordo, TipiDocumentoSemiformale tipo, String nome,
+			RequestInfo requestInfo)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return _getAllegatoAccordoServizioParteComune(connectionPdD, nomeRegistro, "getSpecificaSemiformale", 
 				idAccordo,
-				RuoliDocumento.specificaSemiformale, tipo, nome);
+				RuoliDocumento.specificaSemiformale, tipo, nome,
+				requestInfo);
 	}
 	
 	private Documento _getAllegatoAccordoServizioParteComune(Connection connectionPdD, String nomeRegistro, String nomeMetodo, 
 			IDAccordo idAccordo,
-			RuoliDocumento ruolo, Object tipo, String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+			RuoliDocumento ruolo, Object tipo, String nome,
+			RequestInfo requestInfo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+					
+		String key = getKeyGetAllegatoAccordoServizioParteComune(idAccordo, ruolo, tipo, nome);   
+		
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null;
+		if(useRequestInfo) {
+			Documento doc = requestInfo.getRequestConfig().getAllegatoApi(key);
+			if(doc!=null) {
+				return doc;
+			}
+		}
+		
+		Documento doc = _getAllegatoAccordoServizioParteComune(connectionPdD, nomeRegistro, nomeMetodo, 
+				idAccordo,
+				ruolo, tipo, nome,
+				key);
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addAllegatoApi(key, doc, 
+					requestInfo!=null ? requestInfo.getIdTransazione() : null);
+		}
+		return doc;
+	}
+	private Documento _getAllegatoAccordoServizioParteComune(Connection connectionPdD, String nomeRegistro, String nomeMetodo, 
+			IDAccordo idAccordo,
+			RuoliDocumento ruolo, Object tipo, String nome,
+			String key) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		
 		// Raccolta dati
 		if(idAccordo == null || ruolo==null || nome == null)
@@ -2764,9 +2804,7 @@ public class RegistroServizi  {
 		}
 
 		// se e' attiva una cache provo ad utilizzarla
-		String key = null;	
 		if(this.cache!=null){
-			key = getKeyGetAllegatoAccordoServizioParteComune(idAccordo, ruolo, tipo, nome);   
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -2820,30 +2858,64 @@ public class RegistroServizi  {
 		return key.toString();
 	}
 	
-	protected Documento getAllegato(Connection connectionPdD, String nomeRegistro, IDServizio idServizio, String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	protected Documento getAllegato(Connection connectionPdD, String nomeRegistro, IDServizio idServizio, String nome,
+			RequestInfo requestInfo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return _getAllegatoAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, "getAllegato", 
 				idServizio,
-				RuoliDocumento.allegato, null, nome);
+				RuoliDocumento.allegato, null, nome,
+				requestInfo);
 	}
-	protected Documento getSpecificaSemiformale(Connection connectionPdD, String nomeRegistro, IDServizio idServizio, TipiDocumentoSemiformale tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	protected Documento getSpecificaSemiformale(Connection connectionPdD, String nomeRegistro, IDServizio idServizio, TipiDocumentoSemiformale tipo, String nome,
+			RequestInfo requestInfo)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return _getAllegatoAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, "getSpecificaSemiformale", 
 				idServizio,
-				RuoliDocumento.specificaSemiformale, tipo, nome);
+				RuoliDocumento.specificaSemiformale, tipo, nome,
+				requestInfo);
 	}
-	protected Documento getSpecificaSicurezza(Connection connectionPdD, String nomeRegistro,  IDServizio idServizio, TipiDocumentoSicurezza tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	protected Documento getSpecificaSicurezza(Connection connectionPdD, String nomeRegistro,  IDServizio idServizio, TipiDocumentoSicurezza tipo, String nome,
+			RequestInfo requestInfo)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return _getAllegatoAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, "getSpecificaSicurezza", 
 				idServizio,
-				RuoliDocumento.specificaSicurezza, tipo, nome);
+				RuoliDocumento.specificaSicurezza, tipo, nome,
+				requestInfo);
 	}
-	protected Documento getSpecificaLivelloServizio(Connection connectionPdD, String nomeRegistro,  IDServizio idServizio, TipiDocumentoLivelloServizio tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	protected Documento getSpecificaLivelloServizio(Connection connectionPdD, String nomeRegistro,  IDServizio idServizio, TipiDocumentoLivelloServizio tipo, String nome,
+			RequestInfo requestInfo)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return _getAllegatoAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, "getSpecificaLivelloServizio", 
 				idServizio,
-				RuoliDocumento.specificaSicurezza, tipo, nome);
+				RuoliDocumento.specificaSicurezza, tipo, nome,
+				requestInfo);
 	}
 	
 	private Documento _getAllegatoAccordoServizioParteSpecifica(Connection connectionPdD, String nomeRegistro, String nomeMetodo, 
 			IDServizio idServizio,
-			RuoliDocumento ruolo, Object tipo, String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+			RuoliDocumento ruolo, Object tipo, String nome,
+			RequestInfo requestInfo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+	
+		String key = getKeyGetAllegatoAccordoServizioParteSpecifica(idServizio, ruolo, tipo, nome);  
+	
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null;
+		if(useRequestInfo) {
+			Documento doc = requestInfo.getRequestConfig().getAllegatoServizio(key);
+			if(doc!=null) {
+				return doc;
+			}
+		}
+	
+		Documento doc = _getAllegatoAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, nomeMetodo, 
+				idServizio,
+				ruolo, tipo, nome,
+				key);
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addAllegatoServizio(key, doc, 
+					requestInfo!=null ? requestInfo.getIdTransazione() : null);
+		}
+		return doc;
+	}
+	private Documento _getAllegatoAccordoServizioParteSpecifica(Connection connectionPdD, String nomeRegistro, String nomeMetodo, 
+			IDServizio idServizio,
+			RuoliDocumento ruolo, Object tipo, String nome,
+			String key) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		
 		// Raccolta dati
 		if(idServizio == null || ruolo==null || nome == null)
@@ -2855,9 +2927,7 @@ public class RegistroServizi  {
 		}
 
 		// se e' attiva una cache provo ad utilizzarla
-		String key = null;	
 		if(this.cache!=null){
-			key = getKeyGetAllegatoAccordoServizioParteSpecifica(idServizio, ruolo, tipo, nome);   
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){

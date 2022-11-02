@@ -54,6 +54,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.keystore.KeystoreConstants;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
@@ -259,7 +260,8 @@ public class ModIImbustamentoSoap {
 	public SOAPEnvelope addSecurity(OpenSPCoop2Message msg, Context context, ModIKeystoreConfig keystoreConfig, ModISecurityConfig securityConfig,
 			Busta busta, String securityMessageProfile, boolean corniceSicurezza, RuoloMessaggio ruoloMessaggio, boolean includiRequestDigest,
 			boolean signAttachments,
-			Map<String, Object> dynamicMap) throws Exception {
+			Map<String, Object> dynamicMap,
+			RequestInfo requestInfo) throws Exception {
 	
 		ModIProperties modIProperties = ModIProperties.getInstance();
 	
@@ -489,6 +491,7 @@ public class ModIImbustamentoSoap {
 		else {
 			pKeystore.put(KeystoreConstants.PROPERTY_KEYSTORE_ARCHIVE, keystoreConfig.getSecurityMessageKeystoreArchive());
 		}
+		pKeystore.put(KeystoreConstants.PROPERTY_REQUEST_INFO, requestInfo);
 		secProperties.put(SecurityConstants.SIGNATURE_PROPERTY_REF_ID, pKeystore);
 		
 		secProperties.put(SecurityConstants.SIGNATURE_USER, keystoreConfig.getSecurityMessageKeyAlias());
@@ -499,12 +502,12 @@ public class ModIImbustamentoSoap {
 		messageSecurityContext.setOutgoingProperties(secProperties, false);
 				
 		// firma
-		wss4jSignature.process(messageSecurityContext, msg);
+		wss4jSignature.process(messageSecurityContext, msg, context);
 		
 		// Aggiungo a traccia informazioni sul certificato utilizzato
 		KeyStore ks = null;
 		if(keystoreConfig.getSecurityMessageKeystorePath()!=null) {
-			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreConfig.getSecurityMessageKeystorePath(), keystoreConfig.getSecurityMessageKeystoreType(), 
+			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo, keystoreConfig.getSecurityMessageKeystorePath(), keystoreConfig.getSecurityMessageKeystoreType(), 
 					keystoreConfig.getSecurityMessageKeystorePassword());
 			if(merlinKs==null) {
 				throw new Exception("Accesso al keystore '"+keystoreConfig.getSecurityMessageKeystorePath()+"' non riuscito");
@@ -512,7 +515,7 @@ public class ModIImbustamentoSoap {
 			ks = merlinKs.getKeyStore();
 		}
 		else {
-			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreConfig.getSecurityMessageKeystoreArchive(), keystoreConfig.getSecurityMessageKeystoreType(), 
+			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo, keystoreConfig.getSecurityMessageKeystoreArchive(), keystoreConfig.getSecurityMessageKeystoreType(), 
 					keystoreConfig.getSecurityMessageKeystorePassword());
 			if(merlinKs==null) {
 				throw new Exception("Accesso al keystore non riuscito");

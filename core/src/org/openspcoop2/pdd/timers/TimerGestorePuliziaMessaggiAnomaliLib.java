@@ -143,7 +143,7 @@ public class TimerGestorePuliziaMessaggiAnomaliLib{
 
 		try {
 
-			openspcoopstate.initResource(this.propertiesReader.getIdentitaPortaDefault(null), TimerGestorePuliziaMessaggiAnomali.ID_MODULO, null);
+			openspcoopstate.initResource(this.propertiesReader.getIdentitaPortaDefaultWithoutProtocol(), TimerGestorePuliziaMessaggiAnomali.ID_MODULO, null);
 			Connection connectionDB = ((StateMessage)openspcoopstate.getStatoRichiesta()).getConnectionDB();
 			
 

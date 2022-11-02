@@ -22,6 +22,7 @@
 
 package org.openspcoop2.protocol.basic.registry;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -29,6 +30,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -38,7 +40,7 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
-import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.slf4j.Logger;
 
@@ -75,10 +77,30 @@ public class IdentificazionePortaDelegata extends AbstractIdentificazionePorta {
 			IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		super(urlProtocolContext, log, portaUrlBased, registryReader, configIntegrationReader, protocolFactory);
 	}
-    public IdentificazionePortaDelegata(Logger log, IProtocolFactory<?> protocolFactory, IState state,
+    /*public IdentificazionePortaDelegata(Logger log, IProtocolFactory<?> protocolFactory, org.openspcoop2.protocol.sdk.state.IState state,
     		PortaDelegata pd)
 			throws ProtocolException {
 		super(log, protocolFactory, state);
+		this.pd = pd;
+		IDPortaDelegata idPD = new IDPortaDelegata();
+		idPD.setNome(this.pd.getNome());
+		this.identificativoPorta = idPD;
+	}*/
+    public IdentificazionePortaDelegata(Logger log, IProtocolFactory<?> protocolFactory, 
+    		RegistroServiziManager registroServiziManager, Object configurazioneManager, RequestInfo requestInfo,
+    		PortaDelegata pd)
+			throws ProtocolException {
+		super(log, protocolFactory, registroServiziManager, configurazioneManager, requestInfo);
+		this.pd = pd;
+		IDPortaDelegata idPD = new IDPortaDelegata();
+		idPD.setNome(this.pd.getNome());
+		this.identificativoPorta = idPD;
+	}
+    public IdentificazionePortaDelegata(Logger log, IProtocolFactory<?> protocolFactory, 
+    		IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, RequestInfo requestInfo,
+    		PortaDelegata pd)
+			throws ProtocolException {
+		super(log, protocolFactory, registryReader, configIntegrationReader, requestInfo);
 		this.pd = pd;
 		IDPortaDelegata idPD = new IDPortaDelegata();
 		idPD.setNome(this.pd.getNome());
@@ -173,9 +195,28 @@ public class IdentificazionePortaDelegata extends AbstractIdentificazionePorta {
 				filtroPD.setAzione(action);
 				List<IDPortaDelegata> list = null;
 				IDPortaDelegata idPD = null;
+				boolean useRequestInfo = false;
+				boolean addRequestInfo = false;
 				try {
-					list = this.configIntegrationReader.findIdPorteDelegate(filtroPD);
-				}catch(RegistryNotFound notFound) {}
+					useRequestInfo = this.requestInfo!=null && this.requestInfo.getRequestConfig()!=null;
+					if(useRequestInfo) {
+						list = this.requestInfo.getRequestConfig().getPorteDelegateByFiltroRicerca(filtroPD);
+					}
+					
+					if(list==null) {
+						addRequestInfo = true;
+						list = this.configIntegrationReader.findIdPorteDelegate(filtroPD);
+					}
+										
+				}catch(RegistryNotFound notFound) {
+					list=new ArrayList<>();
+				}
+				
+				if(useRequestInfo && addRequestInfo) {
+					this.requestInfo.getRequestConfig().addPorteDelegateByFiltroRicerca(filtroPD, list, 
+							this.requestInfo.getIdTransazione());
+				}
+				
 				if(list!=null && list.size()>0) {
 					if(list.size()>1) {
 						throw new Exception("Trovate più porte ("+list.size()+") che corrisponde al filtro?? ("+filtroPD+")");

@@ -17,16 +17,16 @@
 
 		<jar.group.name>reports</jar.group.name>
 		
-		<dynamicreports.version>6.1.0</dynamicreports.version>
-		<ecj.version>4.4.2</ecj.version>
+		<dynamicreports.version>6.12.1</dynamicreports.version>
+		<ecj.version>3.31.0</ecj.version>
 		<itext.version>2.1.7.js7</itext.version>
-		<jasperreports.version>6.11.0</jasperreports.version>
+		<jasperreports.version>6.20.0</jasperreports.version>
 		<jcommon.version>1.0.24</jcommon.version>
 		<jdtcore.version>3.2.0.v_658</jdtcore.version>
-		<jfreechart.version>1.5.0</jfreechart.version>
-		<poi.version>4.1.2</poi.version>
+		<jfreechart.version>1.5.3</jfreechart.version>
+		<poi.version>5.2.3</poi.version>
 		<SparseBitSet.version>1.2</SparseBitSet.version>
-		<net.tascalate.javaflow.version>2.6.1</net.tascalate.javaflow.version>
+		<net.tascalate.javaflow.version>2.7.3</net.tascalate.javaflow.version>
 
 	</properties>
 
@@ -141,7 +141,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.eclipse.jdt.core.compiler</groupId>
+			<groupId>org.eclipse.jdt</groupId>
 			<artifactId>ecj</artifactId>
 			<version>${ecj.version}</version>
 			<exclusions>

@@ -54,6 +54,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.CRLCertstore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
@@ -85,21 +87,28 @@ public class SecurityConfig extends org.adroitlogic.soapbox.SecurityConfig {
 	
 	private KeyStore identityStore = null;
 	
-	public SecurityConfig(org.openspcoop2.utils.certificate.KeyStore identityStore, org.openspcoop2.utils.certificate.KeyStore trustStore, Map<String, String> keyPasswords)
+	public SecurityConfig(org.openspcoop2.utils.certificate.KeyStore identityStore, org.openspcoop2.utils.certificate.KeyStore trustStore, Map<String, String> keyPasswords,
+			org.openspcoop2.utils.Map<Object> ctx)
 	        throws KeyStoreException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, CertificateException {
-		this(identityStore, trustStore, keyPasswords, null);
+		this(identityStore, trustStore, keyPasswords, null,
+				ctx);
 	}
-    public SecurityConfig(org.openspcoop2.utils.certificate.KeyStore identityStore, org.openspcoop2.utils.certificate.KeyStore trustStore, Map<String, String> keyPasswords,String crlPath)
+    public SecurityConfig(org.openspcoop2.utils.certificate.KeyStore identityStore, org.openspcoop2.utils.certificate.KeyStore trustStore, Map<String, String> keyPasswords,String crlPath,
+    		org.openspcoop2.utils.Map<Object> ctx)
         throws KeyStoreException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, CertificateException {
     	this(identityStore!=null? identityStore.getKeystore() : null, 
 				trustStore!=null ? trustStore.getKeystore() : null, 
-						keyPasswords, crlPath);
+						keyPasswords, crlPath,
+						ctx);
     }
-	public SecurityConfig(KeyStore identityStore, KeyStore trustStore, Map<String, String> keyPasswords)
+	public SecurityConfig(KeyStore identityStore, KeyStore trustStore, Map<String, String> keyPasswords,
+			org.openspcoop2.utils.Map<Object> ctx)
 	        throws KeyStoreException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, CertificateException {
-		this(identityStore, trustStore, keyPasswords, null);
+		this(identityStore, trustStore, keyPasswords, null,
+				ctx);
 	}
-    public SecurityConfig(KeyStore identityStore, KeyStore trustStore, Map<String, String> keyPasswords,String crlPath)
+    public SecurityConfig(KeyStore identityStore, KeyStore trustStore, Map<String, String> keyPasswords,String crlPath,
+    		org.openspcoop2.utils.Map<Object> ctx)
         throws KeyStoreException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, CertificateException {
 
     	super(identityStore, trustStore, keyPasswords);
@@ -117,7 +126,12 @@ public class SecurityConfig extends org.adroitlogic.soapbox.SecurityConfig {
 
         if(crlPath!=null){
 	        try{
-	        	CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(crlPath);
+	    		RequestInfo requestInfo = null;
+	    		if(ctx!=null && ctx.containsKey(Costanti.REQUEST_INFO)) {
+	    			requestInfo = (RequestInfo) ctx.get(Costanti.REQUEST_INFO);
+	    		}
+	        	
+	        	CRLCertstore crlCertstore = GestoreKeystoreCache.getCRLCertstore(requestInfo, crlPath);
 	        	this.validatorParams.addCertStore(crlCertstore.getCertStore());
 		        this.validatorParams.setRevocationEnabled(true);
 		        this.validatorParams.setDate(DateManager.getDate());

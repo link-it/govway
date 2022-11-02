@@ -26,8 +26,8 @@ import java.io.OutputStream;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.xml.security.c14n.CanonicalizationException;
+import org.apache.xml.security.c14n.InvalidCanonicalizerException;
 import org.apache.xml.security.signature.XMLSignatureInput;
-import org.apache.xml.security.transforms.Transform;
 import org.apache.xml.security.transforms.TransformSpi;
 import org.apache.xml.security.transforms.TransformationException;
 import org.bouncycastle.util.encoders.Base64;
@@ -63,15 +63,13 @@ public class XMLSecAttachmentContentTransform extends TransformSpi {
 	
 	
 	// con jar: metro2.2-webservices_xwss_com_sun_org_jdk1.5.jar
-	
-    @Override
-	protected org.apache.xml.security.signature.XMLSignatureInput enginePerformTransform(
-			org.apache.xml.security.signature.XMLSignatureInput xmlSignatureInput,
-			OutputStream out, Transform transform) throws IOException,
-			org.apache.xml.security.c14n.CanonicalizationException,
-			org.apache.xml.security.c14n.InvalidCanonicalizerException,
+
+	@Override
+	protected XMLSignatureInput enginePerformTransform(org.apache.xml.security.signature.XMLSignatureInput xmlSignatureInput, 
+			OutputStream out, 
+			Element transformElement, String baseURI, boolean secureValidation) throws IOException, CanonicalizationException, InvalidCanonicalizerException,
 			TransformationException, ParserConfigurationException, SAXException {
-    	
+
     	//System.out.println("XMLSignatureInput METRO 1");
     	if("text/xml".equals(xmlSignatureInput.getMIMEType())){
 			
@@ -79,7 +77,7 @@ public class XMLSecAttachmentContentTransform extends TransformSpi {
     		XMLSecAttachmentTextXMLContentTransform t =
 					new XMLSecAttachmentTextXMLContentTransform();
 			try {
-				return t.enginePerformTransform(getTextXMLSignatureInput(xmlSignatureInput), out, transform);
+				return t.enginePerformTransform(getTextXMLSignatureInput(xmlSignatureInput), out, transformElement, baseURI, secureValidation);
 			} catch (XMLException e) {
 				throw new SAXException(e.getMessage(),e);
 			}
@@ -90,40 +88,7 @@ public class XMLSecAttachmentContentTransform extends TransformSpi {
 			XMLSecAttachmentBase64ContentTransform t =
 					new XMLSecAttachmentBase64ContentTransform();
 			try {
-				return t.enginePerformTransform(getBase64SignatureInput(xmlSignatureInput), out, transform);
-			} catch (Exception e) {
-				throw new SAXException(e.getMessage(),e);
-			}
-		}
-	}
-
-	@Override
-	protected org.apache.xml.security.signature.XMLSignatureInput enginePerformTransform(
-			org.apache.xml.security.signature.XMLSignatureInput xmlSignatureInput,
-			Transform transform) throws IOException,
-			org.apache.xml.security.c14n.CanonicalizationException,
-			org.apache.xml.security.c14n.InvalidCanonicalizerException,
-			TransformationException, ParserConfigurationException, SAXException {
-		
-		//System.out.println("XMLSignatureInput METRO 2");
-		if("text/xml".equals(xmlSignatureInput.getMIMEType())){
-			
-			//System.out.println("XMLContent METRO 2");
-			XMLSecAttachmentTextXMLContentTransform t =
-					new XMLSecAttachmentTextXMLContentTransform();
-			try {
-				return t.enginePerformTransform(getTextXMLSignatureInput(xmlSignatureInput), transform);
-			} catch (XMLException e) {
-				throw new SAXException(e.getMessage(),e);
-			}
-		}
-		else{
-			
-			//System.out.println("Base64Content METRO 2");
-			XMLSecAttachmentBase64ContentTransform t =
-					new XMLSecAttachmentBase64ContentTransform();
-			try {
-				return t.enginePerformTransform(getBase64SignatureInput(xmlSignatureInput), transform);
+				return t.enginePerformTransform(getBase64SignatureInput(xmlSignatureInput), out, transformElement, baseURI, secureValidation);
 			} catch (Exception e) {
 				throw new SAXException(e.getMessage(),e);
 			}

@@ -46,6 +46,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 
 
@@ -199,7 +200,13 @@ public class SbustamentoRisposteMDB implements MessageDrivenBean, MessageListene
 				return; 
 			}	
 			if(sbustamentoRisposteMsg.getRichiestaDelegata()!=null && sbustamentoRisposteMsg.getRichiestaDelegata().getIdPortaDelegata()!=null) {
-				msgDiag.updatePorta(sbustamentoRisposteMsg.getRichiestaDelegata().getIdPortaDelegata().getNome());	
+				
+				RequestInfo requestInfo = null;
+				if(sbustamentoRisposteMsg.getPddContext()!=null && sbustamentoRisposteMsg.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+					requestInfo = (RequestInfo) sbustamentoRisposteMsg.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+				}
+				
+				msgDiag.updatePorta(sbustamentoRisposteMsg.getRichiestaDelegata().getIdPortaDelegata().getNome(),requestInfo);	
 			}
 			
 			// ID associato alla richiesta

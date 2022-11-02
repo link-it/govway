@@ -57,7 +57,7 @@ public abstract class MessageSecurityReceiver{
 		this.messageSecurityContext = messageSecurityContext;
 	}
 
-	protected abstract boolean process(OpenSPCoop2Message message,Busta busta);
+	protected abstract boolean process(OpenSPCoop2Message message,Busta busta,org.openspcoop2.utils.Map<Object> ctx);
 		
 	
 	/**

@@ -56,10 +56,10 @@ import org.openspcoop2.pdd.core.dynamic.Template;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -113,7 +113,7 @@ public class ConditionalUtils  {
 					idServizio.setAzione(busta.getAzione());
 				}catch(Throwable t) {}
 				if(idServizio!=null) {
-					restResource = Utilities.getRestResource(log, state, idServizio);
+					restResource = Utilities.getRestResource(log, state, idServizio, requestInfo);
 				}
 			}
 			
@@ -315,7 +315,7 @@ public class ConditionalUtils  {
 					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setNome(pa.getNome());
-					Template template = configurazionePdDManager.getTemplateConnettoreMultiploCondizionale(idPA, nomeRegola, patternSelettore.getBytes());
+					Template template = configurazionePdDManager.getTemplateConnettoreMultiploCondizionale(idPA, nomeRegola, patternSelettore.getBytes(), requestInfo);
 					DynamicUtils.convertFreeMarkerTemplate(template, dynamicMap, bout);
 					bout.flush();
 					bout.close();
@@ -347,7 +347,7 @@ public class ConditionalUtils  {
 					configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
 					idPA = new IDPortaApplicativa();
 					idPA.setNome(pa.getNome());
-					template = configurazionePdDManager.getTemplateConnettoreMultiploCondizionale(idPA, nomeRegola, patternSelettore.getBytes());
+					template = configurazionePdDManager.getTemplateConnettoreMultiploCondizionale(idPA, nomeRegola, patternSelettore.getBytes(), requestInfo);
 					DynamicUtils.convertVelocityTemplate(template, dynamicMap, bout);
 					bout.flush();
 					bout.close();

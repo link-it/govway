@@ -24,6 +24,7 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -34,9 +35,11 @@ import org.openspcoop2.core.config.driver.FiltroRicercaProtocolProperty;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.core.GestoreRichieste;
 import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
@@ -46,6 +49,8 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestFruitore;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
@@ -68,7 +73,7 @@ public class IdentificazioneApplicativoMittenteUtils {
 
 	// invocato in AbstractModIValidazioneSintatticaCommons e di conseguenza in ModIValidazioneSintatticaRest e ModIValidazioneSintatticaSoap durante il trattamento del token di sicurezza
 	public static IDServizioApplicativo identificazioneApplicativoMittenteByX509(Logger log, IState state, X509Certificate x509, OpenSPCoop2Message msg, Busta busta, 
-			Context context, IProtocolFactory<?> factory) throws Exception {
+			Context context, IProtocolFactory<?> factory, RequestInfo requestInfo) throws Exception {
 		try {
 			
 			/** SICUREZZA MESSAGGIO **/
@@ -80,71 +85,25 @@ public class IdentificazioneApplicativoMittenteUtils {
 			
 			IDServizioApplicativo idServizioApplicativo = null;
 			
-			ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
-			
 			if(x509!=null) {
-			
+				
 				CertificateInfo certificate = new CertificateInfo(x509, "applicativoMittente");
-				String subject = x509.getSubjectX500Principal().toString();
-				String issuer = null;
-				if(x509.getIssuerX500Principal()!=null) {
-					issuer = x509.getIssuerX500Principal().toString();
-				}
-				
-				// NOTA: il fatto di essersi registrati come strict o come non strict è insito nella registrazione dell'applicativo
-				
-				// 1. Prima si cerca per certificato strict
-				if(certificate!=null) {
-					idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(certificate, true);
-				}
-				if(idServizioApplicativo==null) {
-					// 2. Poi per certificato no strict
-					if(certificate!=null) {
-						idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(certificate, false);
-					}	
-				}
-				if(idServizioApplicativo==null) {
-					// 3. per subject/issuer
-					idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(subject, issuer);	
-				}
-				if(idServizioApplicativo==null) {
-					// 4. solo per subject
-					idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(subject, null);	
-				}
-				if(idServizioApplicativo==null) {
-					// 5. provare a vedere se si tratta di un applicativo interno (multi-tenant)
-					
-					if(StatoFunzionalita.ABILITATO.equals(configurazionePdDManager.getConfigurazioneMultitenant().getStato()) &&
-							!PortaApplicativaSoggettiFruitori.SOGGETTI_ESTERNI.equals(configurazionePdDManager.getConfigurazioneMultitenant().getErogazioneSceltaSoggettiFruitori())) {
-						
-						FiltroRicercaServiziApplicativi filtro = createFilter(subject, issuer);
-										
-						List<IDServizioApplicativo> list = null;
-						try {
-							list = configurazionePdDManager.getAllIdServiziApplicativi(filtro);
-						}catch(DriverConfigurazioneNotFound notFound) {}
-						if(list!=null) {
-							for (IDServizioApplicativo idServizioApplicativoSubjectIssuerCheck : list) {
-								// Possono esistere piu' sil che hanno un CN con subject e issuer.
-								
-								ServizioApplicativo sa = configurazionePdDManager.getServizioApplicativo(idServizioApplicativoSubjectIssuerCheck);
-									
-								java.security.cert.Certificate certificatoCheck = readServizioApplicativoByCertificate(sa);
-	
-								if(certificatoCheck!=null) {
-									//if(certificate.equals(certificatoCheck.getCertificate(),true)) {
-									if(certificatoCheck instanceof java.security.cert.X509Certificate) {
-										if(certificate.equals(((java.security.cert.X509Certificate)certificatoCheck),true)) {
-											idServizioApplicativo = idServizioApplicativoSubjectIssuerCheck;
-											break;
-										}
-									}
-								}
-								
-							}
-						}
+			
+				RequestFruitore requestFruitoreToken = null;
+				String certificateKey = null;
+				try {
+					certificateKey = GestoreRichieste.toCertificateKey(certificate);
+					if(certificateKey!=null) {
+						requestFruitoreToken = GestoreRichieste.readFruitoreTokenModI(requestInfo, certificateKey);
 					}
-	
+				}catch(Throwable t) {}	
+				
+				if(certificateKey!=null && requestFruitoreToken!=null && requestFruitoreToken.getCertificateKey()!=null && 
+						requestFruitoreToken.getCertificateKey().equals(certificateKey)) {
+					idServizioApplicativo = requestFruitoreToken.getIdServizioApplicativoFruitore();
+				}
+				else {
+					idServizioApplicativo = _identificazioneApplicativoMittenteByX509(state, requestInfo, certificate);
 				}
 				
 				if(idServizioApplicativo!=null) {
@@ -158,11 +117,82 @@ public class IdentificazioneApplicativoMittenteUtils {
 					}
 				}
 				
+				if(certificateKey!=null && requestFruitoreToken==null && idServizioApplicativo!=null) {
+					
+					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+					RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance(state);					
+					
+					RequestFruitore rf = new RequestFruitore(); 
+					
+					rf.setIdSoggettoFruitore(idServizioApplicativo.getIdSoggettoProprietario());
+					try {
+						org.openspcoop2.core.registry.Soggetto soggettoRegistry = registroServiziManager.getSoggetto(idServizioApplicativo.getIdSoggettoProprietario(), null, requestInfo); 
+						rf.setSoggettoFruitoreRegistry(soggettoRegistry);
+					}catch(Throwable t) {
+						log.error("Errore durante la lettura del soggetto '"+idServizioApplicativo.getIdSoggettoProprietario()+"' dal registro: "+t.getMessage(),t);
+					}	
+					try {
+						org.openspcoop2.core.config.Soggetto soggettoConfig = configurazionePdDManager.getSoggetto(idServizioApplicativo.getIdSoggettoProprietario(), requestInfo); 
+						rf.setSoggettoFruitoreConfig(soggettoConfig);
+					}catch(Throwable t) {
+						log.error("Errore durante la lettura del soggetto '"+idServizioApplicativo.getIdSoggettoProprietario()+"' dalla configurazione: "+t.getMessage(),t);
+					}	
+					try {
+						String idPorta = configurazionePdDManager.getIdentificativoPorta(idServizioApplicativo.getIdSoggettoProprietario(), factory, requestInfo);
+						rf.setSoggettoFruitoreIdentificativoPorta(idPorta);
+					}catch(Throwable t) {
+						log.error("Errore durante la lettura dell'identificativo porta del soggetto '"+idServizioApplicativo.getIdSoggettoProprietario()+"' dal registro: "+t.getMessage(),t);
+					}	
+					try {
+						boolean soggettoVirtualeFRU = configurazionePdDManager.isSoggettoVirtuale(idServizioApplicativo.getIdSoggettoProprietario(), requestInfo);
+						rf.setSoggettoFruitoreSoggettoVirtuale(soggettoVirtualeFRU);
+					}catch(Throwable t) {
+						log.error("Errore durante la lettura dell'indicazione sul soggetto virtuale associato al soggetto '"+idServizioApplicativo.getIdSoggettoProprietario()+"' dal registro: "+t.getMessage(),t);
+					}	
+					try {
+						if(rf!=null) {
+							if(rf.getSoggettoFruitoreRegistry().getPortaDominio()!=null &&
+									StringUtils.isNotEmpty(rf.getSoggettoFruitoreRegistry().getPortaDominio())) {
+								PortaDominio pdd = registroServiziManager.getPortaDominio(rf.getSoggettoFruitoreRegistry().getPortaDominio(), null, requestInfo);
+								rf.setSoggettoFruitorePddReaded(true);
+								rf.setSoggettoFruitorePdd(pdd);
+							}
+							else {
+								rf.setSoggettoFruitorePddReaded(true);
+							}
+						}
+					}catch(Throwable t) {
+						log.error("Errore durante la lettura dei dati della pdd del soggetto '"+idServizioApplicativo.getIdSoggettoProprietario()+"' dal registro: "+t.getMessage(),t);
+					}	
+					try {
+						String impl = registroServiziManager.getImplementazionePdD(idServizioApplicativo.getIdSoggettoProprietario(), null, requestInfo);
+						rf.setSoggettoFruitoreImplementazionePdd(impl);
+					}catch(Throwable t) {
+						log.error("Errore durante la lettura dell'implementazione pdd del soggetto '"+idServizioApplicativo.getIdSoggettoProprietario()+"' dal registro: "+t.getMessage(),t);
+					}	
+						
+					rf.setIdServizioApplicativoFruitore(idServizioApplicativo);
+					try {
+						org.openspcoop2.core.config.ServizioApplicativo sa = configurazionePdDManager.getServizioApplicativo(idServizioApplicativo, requestInfo);
+						rf.setServizioApplicativoFruitore(sa);
+					}catch(Throwable t) {
+						log.error("Errore durante la lettura del servizio applicativo '"+idServizioApplicativo+"' dalla configurazione: "+t.getMessage(),t);
+					}
+					// nel token non ha senso rf.setServizioApplicativoFruitoreAnonimo(saApplicativoToken==null);
+					
+					try {
+						rf.setCertificateKey(certificateKey);
+						GestoreRichieste.saveRequestFruitoreTokenModI(requestInfo, rf);
+					} catch (Throwable e) {
+						log.error("Errore durante il salvataggio nella cache e nel thread context delle informazioni sul fruitore token ModI: "+e.getMessage(),e);
+					}
+					
+				}
 			}
 			
 	    	/** IMPOSTAZIONI */
 	    	
-	    	setInformazioniInBustaAndContext(log, state, busta, context,
+	    	setInformazioniInBustaAndContext(log, state, busta, context, requestInfo,
 	    			idSoggettoMittente, idServizioApplicativo);
 			
 	    	return idServizioApplicativo;
@@ -173,9 +203,79 @@ public class IdentificazioneApplicativoMittenteUtils {
 		}
 	}
 			
+	private static IDServizioApplicativo _identificazioneApplicativoMittenteByX509(IState state, RequestInfo requestInfo, CertificateInfo certificate) throws Exception {
+			
+		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+								
+		String subject = certificate.getCertificate().getSubjectX500Principal().toString();
+		String issuer = null;
+		if(certificate.getCertificate().getIssuerX500Principal()!=null) {
+			issuer = certificate.getCertificate().getIssuerX500Principal().toString();
+		}
+		
+		IDServizioApplicativo idServizioApplicativo = null;
+		
+		// NOTA: il fatto di essersi registrati come strict o come non strict è insito nella registrazione dell'applicativo
+		
+		// 1. Prima si cerca per certificato strict
+		if(certificate!=null) {
+			idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(certificate, true);
+		}
+		if(idServizioApplicativo==null) {
+			// 2. Poi per certificato no strict
+			if(certificate!=null) {
+				idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(certificate, false);
+			}	
+		}
+		if(idServizioApplicativo==null) {
+			// 3. per subject/issuer
+			idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(subject, issuer);	
+		}
+		if(idServizioApplicativo==null) {
+			// 4. solo per subject
+			idServizioApplicativo = configurazionePdDManager.getIdServizioApplicativoByCredenzialiSsl(subject, null);	
+		}
+		if(idServizioApplicativo==null) {
+			// 5. provare a vedere se si tratta di un applicativo interno (multi-tenant)
+			
+			if(StatoFunzionalita.ABILITATO.equals(configurazionePdDManager.getConfigurazioneMultitenant().getStato()) &&
+					!PortaApplicativaSoggettiFruitori.SOGGETTI_ESTERNI.equals(configurazionePdDManager.getConfigurazioneMultitenant().getErogazioneSceltaSoggettiFruitori())) {
+				
+				FiltroRicercaServiziApplicativi filtro = createFilter(subject, issuer);
+								
+				List<IDServizioApplicativo> list = null;
+				try {
+					list = configurazionePdDManager.getAllIdServiziApplicativi(filtro);
+				}catch(DriverConfigurazioneNotFound notFound) {}
+				if(list!=null) {
+					for (IDServizioApplicativo idServizioApplicativoSubjectIssuerCheck : list) {
+						// Possono esistere piu' sil che hanno un CN con subject e issuer.
+						
+						ServizioApplicativo sa = configurazionePdDManager.getServizioApplicativo(idServizioApplicativoSubjectIssuerCheck, requestInfo);
+							
+						java.security.cert.Certificate certificatoCheck = readServizioApplicativoByCertificate(sa, requestInfo);
+
+						if(certificatoCheck!=null) {
+							//if(certificate.equals(certificatoCheck.getCertificate(),true)) {
+							if(certificatoCheck instanceof java.security.cert.X509Certificate) {
+								if(certificate.equals(((java.security.cert.X509Certificate)certificatoCheck),true)) {
+									idServizioApplicativo = idServizioApplicativoSubjectIssuerCheck;
+									break;
+								}
+							}
+						}
+						
+					}
+				}
+			}
+
+		}
+			
+		return idServizioApplicativo;
+	}
 			
 			
-	public static IDServizioApplicativo identificazioneApplicativoMittenteByToken(Logger log, IState state, Busta busta, Context context, StringBuilder errorDetails) throws Exception {
+	public static IDServizioApplicativo identificazioneApplicativoMittenteByToken(Logger log, IState state, Busta busta, Context context, RequestInfo requestInfo, StringBuilder errorDetails) throws Exception {
 		try {	
 			
 			// letto tramite la sicurezza messaggio nella validazione sintattica
@@ -231,7 +331,7 @@ public class IdentificazioneApplicativoMittenteUtils {
 	    	
 	    	/** IMPOSTAZIONI */
 	    	
-	    	setInformazioniInBustaAndContext(log, state, busta, context,
+	    	setInformazioniInBustaAndContext(log, state, busta, context, requestInfo,
 	    			idSoggettoMittente, idServizioApplicativo);
 	    	
 	    	return idServizioApplicativo;
@@ -244,12 +344,13 @@ public class IdentificazioneApplicativoMittenteUtils {
 	  
 	
 	public static void checkApplicativoTokenByX509(Logger log, IDServizioApplicativo idServizioApplicativo, 
-			IState state, String tipoToken, CertificateInfo certificatoSicurezzaMessaggio, StringBuilder errorDetails) throws Exception {
+			IState state, RequestInfo requestInfo, 
+			String tipoToken, CertificateInfo certificatoSicurezzaMessaggio, StringBuilder errorDetails) throws Exception {
 		try {
 			
 			ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
 			
-			ServizioApplicativo saToken = configurazionePdDManager.getServizioApplicativo(idServizioApplicativo);
+			ServizioApplicativo saToken = configurazionePdDManager.getServizioApplicativo(idServizioApplicativo, requestInfo);
 			
 			String cnSubjectSicurezzaMessaggio = certificatoSicurezzaMessaggio.getSubject().getCN();
 			String subjectSicurezzaMessaggio = certificatoSicurezzaMessaggio.getSubject().toString();
@@ -316,7 +417,7 @@ public class IdentificazioneApplicativoMittenteUtils {
 				if(StatoFunzionalita.ABILITATO.equals(configurazionePdDManager.getConfigurazioneMultitenant().getStato()) &&
 						!PortaApplicativaSoggettiFruitori.SOGGETTI_ESTERNI.equals(configurazionePdDManager.getConfigurazioneMultitenant().getErogazioneSceltaSoggettiFruitori())) {
 						
-					java.security.cert.Certificate certificatoCheck = readServizioApplicativoByCertificate(saToken);
+					java.security.cert.Certificate certificatoCheck = readServizioApplicativoByCertificate(saToken, requestInfo);
 
 					if(certificatoCheck!=null) {
 						//if(certificate.equals(certificatoCheck.getCertificate(),true)) {
@@ -352,7 +453,7 @@ public class IdentificazioneApplicativoMittenteUtils {
 	
 	
 	
-	public static void setInformazioniInBustaAndContext(Logger log, IState state, Busta busta, Context context,
+	public static void setInformazioniInBustaAndContext(Logger log, IState state, Busta busta, Context context, RequestInfo requestInfo,
 			IDSoggetto idSoggettoMittente, IDServizioApplicativo idServizioApplicativo) throws Exception {
 		try {
 						
@@ -363,7 +464,7 @@ public class IdentificazioneApplicativoMittenteUtils {
 				try {
 					if(!context.containsKey(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE)) {
 						RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance(state);
-						Soggetto soggetto = registroServiziManager.getSoggetto(idSoggettoMittente, null);
+						Soggetto soggetto = registroServiziManager.getSoggetto(idSoggettoMittente, null, requestInfo);
 						Map<String, String> configProperties = registroServiziManager.getProprietaConfigurazione(soggetto);
 			            if (configProperties != null && !configProperties.isEmpty()) {
 			            	context.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE, configProperties);
@@ -385,7 +486,7 @@ public class IdentificazioneApplicativoMittenteUtils {
 				try {
 					if(!context.containsKey(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO)) {
 						ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
-						ServizioApplicativo sa = configurazionePdDManager.getServizioApplicativo(idServizioApplicativo);
+						ServizioApplicativo sa = configurazionePdDManager.getServizioApplicativo(idServizioApplicativo, requestInfo);
 						Map<String, String> configProperties = configurazionePdDManager.getProprietaConfigurazione(sa);
 			            if (configProperties != null && !configProperties.isEmpty()) {
 			            	context.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO, configProperties);
@@ -421,7 +522,7 @@ public class IdentificazioneApplicativoMittenteUtils {
 		return filtro;
 	}
 	
-	public static java.security.cert.Certificate readServizioApplicativoByCertificate(ServizioApplicativo sa) throws Exception {
+	public static java.security.cert.Certificate readServizioApplicativoByCertificate(ServizioApplicativo sa, RequestInfo requestInfo) throws Exception {
 		if(sa!=null && sa.sizeProtocolPropertyList()>0) {
 					
 			java.security.cert.Certificate certificatoCheck = null;
@@ -452,7 +553,7 @@ public class IdentificazioneApplicativoMittenteUtils {
 					else {
 						archiveType = ArchiveType.PKCS12;
 					}
-					MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreBytes, archiveType.name(), 
+					MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo, keystoreBytes, archiveType.name(), 
 							keystorePassword);
 					certificatoCheck = merlinKs.getCertificate(keyAlias);
 				}

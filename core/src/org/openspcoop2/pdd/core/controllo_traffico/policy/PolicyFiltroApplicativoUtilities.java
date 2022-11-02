@@ -33,7 +33,7 @@ import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.pdd.core.controllo_traffico.plugins.Dati;
 import org.openspcoop2.pdd.core.controllo_traffico.plugins.IRateLimiting;
 import org.openspcoop2.pdd.core.handlers.InRequestProtocolContext;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;

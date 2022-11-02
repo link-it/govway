@@ -100,20 +100,20 @@
 				<include name="jaxb-*.jar" />
 			</lib>
 			<lib dir="${openspcoop2.lib}/security">
-				<include name="neethi-3.1.1.jar"/>
-				<include name="xmlsec-2.1.7.jar"/>
+				<include name="neethi-3.2.0.jar"/>
+				<include name="xmlsec-2.3.0.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/swagger">
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/shared">
-				<include name="reactive-streams-1.0.3.jar"/>
-				<include name="reflections-0.9.12.jar"/>
-				<include name="joda-time-2.10.5.jar"/>
+				<include name="reactive-streams-1.0.4.jar"/>
+				<include name="reflections-0.10.2.jar"/>
+				<include name="joda-time-2.12.0.jar"/>
 				<include name="wsdl4j-1.6.3.jar"/>
-				<include name="guava-30.1.1-jre.jar"/>
-				<include name="snakeyaml-1.32-gov4j-1.jar"/>
-				<include name="javassist-3.12.1.GA.jar"/>
+				<include name="guava-31.1-jre.jar"/>
+				<include name="snakeyaml-1.33-gov4j-1.jar"/>
+				<include name="javassist-3.29.2-GA.jar"/>
 				<include name="ezmorph-1.0.6.jar" />
 				<include name="xom-1.2.11.jar" />
 				<include name="${xerces_jar}"/>
@@ -133,28 +133,28 @@
 			</lib>
 			<lib dir="${openspcoop2.lib}/commons">
 				<include name="commons-lang-2.6.jar"/>
-				<include name="commons-lang3-3.9.jar"/>
+				<include name="commons-lang3-3.12.0.jar"/>
 				<include name="commons-beanutils-1.9.4.jar"/>
 				<include name="commons-collections-3.2.2.jar"/>
 				<include name="commons-collections4-4.4.jar" />
 				<include name="commons-digester-2.1.jar"/>
-				<include name="commons-io-2.8.0.jar"/>
-				<include name="commons-codec-1.14.jar"/>
+				<include name="commons-io-2.11.0.jar"/>
+				<include name="commons-codec-1.15.jar"/>
 				<include name="commons-math3-3.6.1.jar" />
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/log">
-				<include name="slf4j-api-1.7.30-gov4j-1.jar"/>
+				<include name="slf4j-api-2.0.3-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/saaj">
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/security">
-				<include name="herasaf-xacml-core-1.0.4.RELEASE.jar"/>
-				<include name="bcpkix-jdk15on-1.69.jar"/>
-				<include name="bcprov-ext-jdk15on-1.69.jar"/>
-				<include name="bcutil-jdk15on-1.69.jar"/>
+				<include name="herasaf-xacml-core-2.0.4.jar"/>
+				<include name="bcpkix-jdk18on-1.72.jar"/>
+				<include name="bcprov-ext-jdk18on-1.72.jar"/>
+				<include name="bcutil-jdk18on-1.72.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/faces">
@@ -170,15 +170,15 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/reports">
-				<include name="dynamicreports-core-6.1.0.jar"/>
+				<include name="dynamicreports-core-6.12.1.jar"/>
 				<include name="itext-2.1.7.js7.jar"/>
 				<include name="jcommon-1.0.24.jar"/>
-				<include name="jasperreports-6.11.0.jar"/>
-				<include name="jasperreports-metadata-6.11.0.jar"/>
-				<include name="poi-4.1.2.jar"/>
+				<include name="jasperreports-6.20.0.jar"/>
+				<include name="jasperreports-metadata-6.20.0.jar"/>
+				<include name="poi-5.2.3.jar"/>
 				<include name="SparseBitSet-1.2.jar"/>
-				<include name="net.tascalate.javaflow.api-2.6.1.jar"/>
-				<include name="jfreechart-1.5.0.jar"/>
+				<include name="net.tascalate.javaflow.api-2.7.3.jar"/>
+				<include name="jfreechart-1.5.3.jar"/>
 				<include name="${ecj_jar}"/>
 			</lib>
 			<classes dir="${build_govwayMonitorApiRS}/properties">

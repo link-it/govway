@@ -1,30 +1,51 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
    <suppress>
       <notes><![CDATA[
-      file name: swagger-codegen-cli-3.0.18-gov4j-3.jar e swagger-codegen-cli-3.0.18.jar vengono utilizzati solamente per generare codice da OpenAPI. Non vengono utilizzati dal Gateway a runtime.
+      file name: swagger-codegen-cli-3.0.18-gov4j-3.jar 
+      Viene utilizzato solamente durante lo sviluppo e non a runtime dal Gateway.
       ]]></notes>
-      <filePath regex="true">.*swagger-codegen-cli-3\.0\.18.*\.jar/(Java/gradle-wrapper.jar|META-INF/maven/.*/.*/pom.xml|.*/.*/.*/js/.*\.js)</filePath>
+      <filePath regex="true">.*swagger-codegen-cli-3.0.18-gov4j-3.jar.*</filePath>
       <cvssBelow>10</cvssBelow>
    </suppress>
    <suppress>
       <notes><![CDATA[
-      file name: swagger-codegen-cli-3.0.18.jar: handlebars-v4.0.4.js (vengono utilizzati solamente per generare codice da OpenAPI. Non vengono utilizzati dal Gateway a runtime.)
+      file name: swagger-codegen-cli-3.0.18.jar
+      Viene utilizzato solamente durante lo sviluppo e non a runtime dal Gateway.
+      ]]></notes>
+      <filePath regex="true">.*swagger-codegen-cli-3.0.18.jar.*</filePath>
+      <cvssBelow>10</cvssBelow>
+   </suppress>
+   <!-- Le configurazioni sottostanti sono state prese tramite il pulsante 'suppress' nell'output html, relativamente all'entry senza un id di vulnerabilità cpe:* -->
+   <suppress>
+      <notes><![CDATA[
+      file name: swagger-codegen-cli-3.0.18-gov4j-3.jar: handlebars-v4.0.4.js
+      Viene utilizzato solamente durante lo sviluppo e non a runtime dal Gateway.
       ]]></notes>
       <packageUrl regex="true">^pkg:javascript/handlebars@.*$</packageUrl>
       <vulnerabilityName>A prototype pollution vulnerability in handlebars is exploitable if an attacker can control the template</vulnerabilityName>
    </suppress>
    <suppress>
       <notes><![CDATA[
-      file name: swagger-codegen-cli-3.0.18.jar: handlebars-v4.0.4.js (vengono utilizzati solamente per generare codice da OpenAPI. Non vengono utilizzati dal Gateway a runtime.)
+      file name: swagger-codegen-cli-3.0.18-gov4j-3.jar: handlebars-v4.0.4.js
+      Viene utilizzato solamente durante lo sviluppo e non a runtime dal Gateway.
       ]]></notes>
       <packageUrl regex="true">^pkg:javascript/handlebars@.*$</packageUrl>
-      <vulnerabilityName>Disallow calling helperMissing and blockHelperMissing directly</vulnerabilityName>
+      <vulnerabilityName>Denial of service</vulnerabilityName>
    </suppress>
    <suppress>
       <notes><![CDATA[
-      file name: swagger-codegen-cli-3.0.18.jar: handlebars-v4.0.4.js (vengono utilizzati solamente per generare codice da OpenAPI. Non vengono utilizzati dal Gateway a runtime.)
+      file name: swagger-codegen-cli-3.0.18-gov4j-3.jar: handlebars-v4.0.4.js
+      Viene utilizzato solamente durante lo sviluppo e non a runtime dal Gateway.
       ]]></notes>
       <packageUrl regex="true">^pkg:javascript/handlebars@.*$</packageUrl>
       <vulnerabilityName>Prototype pollution</vulnerabilityName>
+   </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: swagger-codegen-cli-3.0.18-gov4j-3.jar: handlebars-v4.0.4.js
+      Viene utilizzato solamente durante lo sviluppo e non a runtime dal Gateway.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:javascript/handlebars@.*$</packageUrl>
+      <vulnerabilityName>Disallow calling helperMissing and blockHelperMissing directly</vulnerabilityName>
    </suppress>
 </suppressions>

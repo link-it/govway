@@ -105,6 +105,14 @@ public abstract class InstanceProperties {
 		return Utilities.convertToConcurrentHashMap(readProperties_convertEnvProperties(prefix));
 	}
 	
+	public java.util.HashMap<String, String> readPropertiesAsHashMap (String prefix)throws UtilsException{
+		return Utilities.convertToHashMap(readProperties(prefix));
+	}
+	
+	public java.util.HashMap<String, String> readPropertiesAsHashMap_convertEnvProperties (String prefix)throws UtilsException{
+		return Utilities.convertToHashMap(readProperties_convertEnvProperties(prefix));
+	}
+	
 	public String convertEnvProperties(String value)throws UtilsException{
 		return this.propertiesOriginale.convertEnvProperties(value);
 	}

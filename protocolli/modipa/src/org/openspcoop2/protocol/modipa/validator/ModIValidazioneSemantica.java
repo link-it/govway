@@ -53,6 +53,7 @@ import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSemanticaResult;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneUtils;
@@ -114,6 +115,11 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 
 	private void valida(OpenSPCoop2Message msg,Busta busta, RuoloBusta tipoBusta, IProtocolFactory<?> factory, IState state) throws ProtocolException{
 		try{
+			
+			RequestInfo requestInfo = null;
+			if(this.context!=null && this.context.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+				requestInfo = (RequestInfo) this.context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+			}
 			
 			boolean isRichiesta = RuoloBusta.RICHIESTA.equals(tipoBusta);
 			
@@ -218,7 +224,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				}
 				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				idPA.setNome(msg.getTransportRequestContext().getInterfaceName());
-				PortaApplicativa pa = factory.getCachedConfigIntegrationReader(state).getPortaApplicativa(idPA);
+				PortaApplicativa pa = factory.getCachedConfigIntegrationReader(state, requestInfo).getPortaApplicativa(idPA);
 				
 				
 				/** Identificazione Mittente by LineeGuida e Token */
@@ -231,7 +237,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 					IDServizioApplicativo idSAbyToken = null;
 					StringBuilder sbError = new StringBuilder();
 					try {
-						idSAbyToken = IdentificazioneApplicativoMittenteUtils.identificazioneApplicativoMittenteByToken(this.log, state, busta, this.context, sbError);
+						idSAbyToken = IdentificazioneApplicativoMittenteUtils.identificazioneApplicativoMittenteByToken(this.log, state, busta, this.context, requestInfo, sbError);
 					}catch(Exception e) {
 						if(sbError!=null && sbError.length()>0) {
 							this.context.addObject(Costanti.ERRORE_AUTORIZZAZIONE, Costanti.ERRORE_TRUE);
@@ -260,7 +266,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 									String tipoToken = //"Http Header "+
 											(securityTokenForContext.getAuthorization().getHttpHeaderName()!=null ? securityTokenForContext.getAuthorization().getHttpHeaderName() : HttpConstants.AUTHORIZATION);
 									IdentificazioneApplicativoMittenteUtils.checkApplicativoTokenByX509(this.log, idSAbyToken, 
-											state, tipoToken, securityTokenForContext.getAuthorization().getCertificate(), sbError);
+											state, requestInfo, tipoToken, securityTokenForContext.getAuthorization().getCertificate(), sbError);
 									saVerificatoBySecurity = true;
 								}
 								if(securityTokenForContext.getIntegrity()!=null && securityTokenForContext.getIntegrity().getCertificate()!=null) {
@@ -268,14 +274,14 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 									String tipoToken = //"Http Header "+
 											(securityTokenForContext.getIntegrity().getHttpHeaderName()!=null ? securityTokenForContext.getIntegrity().getHttpHeaderName() : this.modiProperties.getRestSecurityTokenHeaderModI());
 									IdentificazioneApplicativoMittenteUtils.checkApplicativoTokenByX509(this.log, idSAbyToken, 
-											state, tipoToken, securityTokenForContext.getIntegrity().getCertificate(), sbError);
+											state, requestInfo, tipoToken, securityTokenForContext.getIntegrity().getCertificate(), sbError);
 									saVerificatoBySecurity = true;
 								}
 								if(securityTokenForContext.getEnvelope()!=null && securityTokenForContext.getEnvelope().getCertificate()!=null) {
 									sbError = new StringBuilder();
 									String tipoToken = "WSSecurity";
 									IdentificazioneApplicativoMittenteUtils.checkApplicativoTokenByX509(this.log, idSAbyToken, 
-											state, tipoToken, securityTokenForContext.getEnvelope().getCertificate(), sbError);
+											state, requestInfo, tipoToken, securityTokenForContext.getEnvelope().getCertificate(), sbError);
 									saVerificatoBySecurity = true;
 								}
 							}catch(Exception e) {
@@ -386,13 +392,13 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
     					IDServizioApplicativo idSA = new IDServizioApplicativo();
     					idSA.setIdSoggettoProprietario(new IDSoggetto(busta.getTipoMittente(), busta.getMittente()));
     					idSA.setNome(busta.getServizioApplicativoFruitore());
-    					sa = factory.getCachedConfigIntegrationReader(state).getServizioApplicativo(idSA);
+    					sa = factory.getCachedConfigIntegrationReader(state,requestInfo).getServizioApplicativo(idSA);
     				}
     				boolean authRuoli = ConfigurazionePdDReader._autorizzazioneRoles(
     								RegistroServiziManager.getInstance(state),
     								null, sa, 
     								null, false, 
-    								this.context,
+    								this.context, requestInfo,
     								checkRuoloRegistro, checkRuoloEsterno,
     								detailsBufferRuoli,
     								pa.getAutorizzazioneToken().getRuoli().getMatch(), pa.getAutorizzazioneToken().getRuoli(),

@@ -18,14 +18,14 @@
  *
  */
 
-package org.openspcoop2.protocol.engine;
+package org.openspcoop2.protocol.sdk.state;
 
 import java.util.HashMap;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.IDService;
 
 /**
  * URL Protocol Context
@@ -119,8 +119,11 @@ public class FunctionContextCustom implements java.io.Serializable {
 	
 	private static void checkIDService(IDService idService) throws ProtocolException {
 		if(!IDService.PORTA_DELEGATA.equals(idService) &&
+				!IDService.PORTA_DELEGATA_NIO.equals(idService) &&
 				!IDService.PORTA_DELEGATA_XML_TO_SOAP.equals(idService) &&
+				!IDService.PORTA_DELEGATA_XML_TO_SOAP_NIO.equals(idService) &&
 				!IDService.PORTA_APPLICATIVA.equals(idService) &&
+				!IDService.PORTA_APPLICATIVA_NIO.equals(idService) &&
 				!IDService.INTEGRATION_MANAGER_SOAP.equals(idService) ) {
 			throw new ProtocolException("IDService '"+idService+"' unsupported");
 		}

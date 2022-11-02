@@ -107,9 +107,9 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/testsuite" >
-			<include name="jcommander-1.78.jar"/>
-			<include name="testng-7.1.0.jar"/>
-			<include name="guice-4.2.2.jar"/>
+			<include name="jcommander-1.82.jar"/>
+			<include name="testng-7.6.1.jar"/>
+			<include name="guice-5.1.0.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/axis14" >
 			<include name="*.jar"/>
@@ -125,10 +125,10 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/security" >
-			<include name="bcpkix-jdk15on-1.69.jar"/>
-			<include name="bcprov-ext-jdk15on-1.69.jar"/>
-			<include name="bcutil-jdk15on-1.69.jar"/>
-			<include name="neethi-3.1.1.jar"/>
+			<include name="bcpkix-jdk18on-1.72.jar"/>
+			<include name="bcprov-ext-jdk18on-1.72.jar"/>
+			<include name="bcutil-jdk18on-1.72.jar"/>
+			<include name="neethi-3.2.0.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/shared" >
 			<!-- Devono essere esclusi i jar di saxon, altrimenti non partono i server mtom:

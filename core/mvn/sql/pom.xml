@@ -99,6 +99,8 @@
 									</fileset>
 								</unzip>
 
+								<delete dir="${testsuite.output}"/>
+
 								<echo message="Avvio TestSuite (gruppo: ${testsuite.pdd.sql.group}) (haltOnFailure:${testsuite.haltOnFailure})" />
 								<testng classpathref="classpath_run"
 									outputdir="${testsuite.output}"

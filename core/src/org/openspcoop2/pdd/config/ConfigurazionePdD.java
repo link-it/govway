@@ -39,6 +39,7 @@ import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.AccessoDatiKeystore;
+import org.openspcoop2.core.config.AccessoDatiRichieste;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.Credenziali;
@@ -106,11 +107,13 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.cache.CacheResponse;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
@@ -163,6 +166,7 @@ public class ConfigurazionePdD  {
 	private static AccessoDatiAutenticazione accessoDatiAutenticazione = null;
 	private static AccessoDatiGestioneToken accessoDatiGestioneToken = null;
 	private static AccessoDatiKeystore accessoDatiKeystore = null;
+	private static AccessoDatiRichieste accessoDatiRichieste = null;
 	/** ConfigurazioneDinamica */
 	private boolean configurazioneDinamica = false;
 
@@ -240,7 +244,8 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneException("Cache gia' abilitata");
 		else{
 			try{
-				this.cache = new Cache(CostantiConfigurazione.CACHE_CONFIGURAZIONE_PDD);
+				this.cache = new Cache(CacheType.JCS, CostantiConfigurazione.CACHE_CONFIGURAZIONE_PDD); // lascio JCS come default abilitato via jmx
+				this.cache.build();
 			}catch(Exception e){
 				throw new DriverConfigurazioneException(e.getMessage(),e);
 			}
@@ -267,7 +272,7 @@ public class ConfigurazionePdD  {
 				if(itemLifeSecond!=null){
 					configurazioneCache.setItemLifeSecond(itemLifeSecond+"");
 				}
-				initCacheConfigurazione(configurazioneCache, null, false, config);
+				initCacheConfigurazione(CacheType.JCS, configurazioneCache, null, false, config); // lascio JCS come default abilitato via jmx
 			}catch(Exception e){
 				throw new DriverConfigurazioneException(e.getMessage(),e);
 			}
@@ -377,7 +382,8 @@ public class ConfigurazionePdD  {
 	 */
 	public ConfigurazionePdD(AccessoConfigurazionePdD accessoConfigurazione,Logger alog,Logger alogConsole,Properties localProperties, 
 			String jndiNameDatasourcePdD, boolean forceDisableCache, boolean useOp2UtilsDatasource, boolean bindJMX, 
-			boolean prefillCache, CryptConfig configApplicativi)throws DriverConfigurazioneException{
+			boolean prefillCache, CryptConfig configApplicativi,
+			CacheType cacheType)throws DriverConfigurazioneException{
 
 		try{ 
 			// Inizializzo OpenSPCoopProperties
@@ -453,7 +459,7 @@ public class ConfigurazionePdD  {
 			}catch(DriverConfigurazioneNotFound notFound){}
 			if(accessoDatiConfigurazione!=null && accessoDatiConfigurazione.getCache()!=null){
 				if(forceDisableCache==false){
-					initCacheConfigurazione(accessoDatiConfigurazione.getCache(),alogConsole, 
+					initCacheConfigurazione(cacheType, accessoDatiConfigurazione.getCache(),alogConsole, 
 							prefillCache, configApplicativi);
 				}
 			}
@@ -467,9 +473,9 @@ public class ConfigurazionePdD  {
 		}
 	}
 
-	private void initCacheConfigurazione(org.openspcoop2.core.config.Cache configurazioneCache,Logger alogConsole, 
+	private void initCacheConfigurazione(CacheType cacheType, org.openspcoop2.core.config.Cache configurazioneCache,Logger alogConsole, 
 			boolean prefillCache, CryptConfig configApplicativi)throws Exception{
-		this.cache = new Cache(CostantiConfigurazione.CACHE_CONFIGURAZIONE_PDD);
+		this.cache = new Cache(cacheType, CostantiConfigurazione.CACHE_CONFIGURAZIONE_PDD);
 
 		String msg = null;
 		if( (configurazioneCache.getDimensione()!=null) ||
@@ -625,17 +631,23 @@ public class ConfigurazionePdD  {
 
 		}
 		
+		this.cache.build();
+		
 		if(prefillCache){
 			this.prefillCache(null,alogConsole, configApplicativi);
 		}
 	}
 
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public void disableSyncronizedGet() throws UtilsException {
 		if(this.cache==null) {
 			throw new UtilsException("Cache disabled");
 		}
 		this.cache.disableSyncronizedGet();
 	}
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public boolean isDisableSyncronizedGet() throws UtilsException {
 		if(this.cache==null) {
 			throw new UtilsException("Cache disabled");
@@ -1214,6 +1226,13 @@ public class ConfigurazionePdD  {
 		try{
 			this.cache.remove(_getKey_getAccessoDatiKeystore());
 			this.getAccessoDatiKeystore(connectionPdD);
+		}
+		catch(DriverConfigurazioneNotFound notFound){}
+		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
+		try{
+			this.cache.remove(_getKey_getAccessoDatiRichieste());
+			this.getAccessoDatiRichieste(connectionPdD);
 		}
 		catch(DriverConfigurazioneNotFound notFound){}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
@@ -2546,7 +2565,8 @@ public class ConfigurazionePdD  {
 		String prefixPD = _getKey_getPortaDelegata(idPD);
 		return prefixPD+"_getTemplate_"+source.name()+"_"+identificativo;
 	}
-	public Template getTemplateTrasformazioneRichiesta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public Template getTemplateTrasformazioneRichiesta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		TipoTrasformazione tipoTrasformazione = null;
 		if(richiesta.getConversioneTipo()!=null) {
 			tipoTrasformazione = TipoTrasformazione.toEnumConstant(richiesta.getConversioneTipo());
@@ -2554,9 +2574,11 @@ public class ConfigurazionePdD  {
 		if(tipoTrasformazione==null || (!tipoTrasformazione.isTemplateFreemarker() && !tipoTrasformazione.isTemplateVelocity())) {
 			return new Template(nomeTrasformazione, richiesta.getConversioneTemplate());
 		}
-		return _getTemplate(connectionPdD, idPD, "getTemplateTrasformazioneRichiesta", TemplateSource.TRASFORMAZIONE_RICHIESTA, nomeTrasformazione, richiesta.getConversioneTemplate());
+		return _getTemplate(connectionPdD, idPD, "getTemplateTrasformazioneRichiesta", TemplateSource.TRASFORMAZIONE_RICHIESTA, nomeTrasformazione, richiesta.getConversioneTemplate(),
+				requestInfo);
 	}
-	public Template getTemplateTrasformazioneSoapRichiesta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public Template getTemplateTrasformazioneSoapRichiesta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		TipoTrasformazione tipoTrasformazione = null;
 		if(richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo()!=null) {
 			tipoTrasformazione = TipoTrasformazione.toEnumConstant(richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo());
@@ -2564,9 +2586,11 @@ public class ConfigurazionePdD  {
 		if(tipoTrasformazione==null || (!tipoTrasformazione.isTemplateFreemarker() && !tipoTrasformazione.isTemplateVelocity())) {
 			return new Template(nomeTrasformazione, richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate());
 		}
-		return _getTemplate(connectionPdD, idPD, "getTemplateTrasformazioneSoapRichiesta", TemplateSource.TRASFORMAZIONE_SOAP_RICHIESTA, nomeTrasformazione, richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate());
+		return _getTemplate(connectionPdD, idPD, "getTemplateTrasformazioneSoapRichiesta", TemplateSource.TRASFORMAZIONE_SOAP_RICHIESTA, nomeTrasformazione, richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate(),
+				requestInfo);
 	}
-	public Template getTemplateTrasformazioneRisposta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public Template getTemplateTrasformazioneRisposta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		TipoTrasformazione tipoTrasformazione = null;
 		if(risposta.getConversioneTipo()!=null) {
 			tipoTrasformazione = TipoTrasformazione.toEnumConstant(risposta.getConversioneTipo());
@@ -2574,9 +2598,11 @@ public class ConfigurazionePdD  {
 		if(tipoTrasformazione==null || (!tipoTrasformazione.isTemplateFreemarker() && !tipoTrasformazione.isTemplateVelocity())) {
 			return new Template(nomeTrasformazione, risposta.getConversioneTemplate());
 		}
-		return _getTemplate(connectionPdD, idPD, "getTemplateTrasformazioneRisposta", TemplateSource.TRASFORMAZIONE_RISPOSTA, nomeTrasformazione+"@@"+risposta.getNome(), risposta.getConversioneTemplate());
+		return _getTemplate(connectionPdD, idPD, "getTemplateTrasformazioneRisposta", TemplateSource.TRASFORMAZIONE_RISPOSTA, nomeTrasformazione+"@@"+risposta.getNome(), risposta.getConversioneTemplate(),
+				requestInfo);
 	}
-	public Template getTemplateTrasformazioneSoapRisposta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public Template getTemplateTrasformazioneSoapRisposta(Connection connectionPdD,IDPortaDelegata idPD, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		TipoTrasformazione tipoTrasformazione = null;
 		if(risposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo()!=null) {
 			tipoTrasformazione = TipoTrasformazione.toEnumConstant(risposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo());
@@ -2584,10 +2610,32 @@ public class ConfigurazionePdD  {
 		if(tipoTrasformazione==null || (!tipoTrasformazione.isTemplateFreemarker() && !tipoTrasformazione.isTemplateVelocity())) {
 			return new Template(nomeTrasformazione, risposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate());
 		}
-		return _getTemplate(connectionPdD, idPD, "getTemplateTrasformazioneSoapRisposta", TemplateSource.TRASFORMAZIONE_SOAP_RISPOSTA, nomeTrasformazione+"@@"+risposta.getNome(), risposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate());
+		return _getTemplate(connectionPdD, idPD, "getTemplateTrasformazioneSoapRisposta", TemplateSource.TRASFORMAZIONE_SOAP_RISPOSTA, nomeTrasformazione+"@@"+risposta.getNome(), risposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate(),
+				requestInfo);
 	}
 
-	private Template _getTemplate(Connection connectionPdD,IDPortaDelegata idPD, String nomeMetodo, TemplateSource templateSource, String identificativo, byte[] templateBytes) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	private Template _getTemplate(Connection connectionPdD,IDPortaDelegata idPD, String nomeMetodo, TemplateSource templateSource, String identificativo, byte[] templateBytes,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		String key = getKey_getPortaDelegataTemplate(idPD, templateSource, identificativo);
+		
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null;
+		if(useRequestInfo) {
+			Object o = requestInfo.getRequestConfig().getTemplate(key);
+			if(o!=null && o instanceof Template) {
+				return (Template) o;
+			}
+		}
+		
+		Template template = _getTemplate(connectionPdD,idPD, nomeMetodo, templateSource, identificativo, templateBytes, key);
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addTemplate(key, template, 
+					requestInfo!=null ? requestInfo.getIdTransazione() : null);
+		}
+		return template;
+	}
+	private Template _getTemplate(Connection connectionPdD,IDPortaDelegata idPD, String nomeMetodo, TemplateSource templateSource, String identificativo, byte[] templateBytes,
+			String key) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		
 		// Raccolta dati
 		if(idPD == null)
@@ -2595,10 +2643,8 @@ public class ConfigurazionePdD  {
 		if(idPD.getNome()==null)
 			throw new DriverConfigurazioneException("["+nomeMetodo+"]: Parametro non definito (idPD.getNome() is null)");
 
-		// se e' attiva una cache provo ad utilizzarla
-		String key = null;	
+		// se e' attiva una cache provo ad utilizzarla	
 		if(this.cache!=null) {
-			key = getKey_getPortaDelegataTemplate(idPD, templateSource, identificativo);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -2663,15 +2709,36 @@ public class ConfigurazionePdD  {
 	}  
 	
 	
-	public Template getTemplateIntegrazione(Connection connectionPdD,IDPortaDelegata idPD, File file) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return _getTemplate(connectionPdD, idPD, "getTemplateIntegrazione", TemplateSource.INTEGRAZIONE, file);
+	public Template getTemplateIntegrazione(Connection connectionPdD,IDPortaDelegata idPD, File file,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return _getTemplate(connectionPdD, idPD, "getTemplateIntegrazione", TemplateSource.INTEGRAZIONE, file,
+				requestInfo);
 	}
-	private Template _getTemplate(Connection connectionPdD,IDPortaDelegata idPD, String nomeMetodo, TemplateSource templateSource, File file) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	private Template _getTemplate(Connection connectionPdD,IDPortaDelegata idPD, String nomeMetodo, TemplateSource templateSource, File file,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		String key = getKey_getPortaDelegataTemplate(idPD, templateSource, file.getAbsolutePath());
+		
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null;
+		if(useRequestInfo) {
+			Object o = requestInfo.getRequestConfig().getTemplate(key);
+			if(o!=null && o instanceof Template) {
+				return (Template) o;
+			}
+		}
+		
+		Template template = _getTemplate(connectionPdD, idPD, nomeMetodo, templateSource, file, key);
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addTemplate(key, template, 
+					requestInfo!=null ? requestInfo.getIdTransazione() : null);
+		}
+		return template;
+	}
+	private Template _getTemplate(Connection connectionPdD,IDPortaDelegata idPD, String nomeMetodo, TemplateSource templateSource, File file,
+			String key) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		
 		// se e' attiva una cache provo ad utilizzarla
-		String key = null;	
 		if(this.cache!=null) {
-			key = getKey_getPortaDelegataTemplate(idPD, templateSource, file.getAbsolutePath());
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -3320,7 +3387,8 @@ public class ConfigurazionePdD  {
 		String prefixPA = _getKey_getPortaApplicativa(idPA);
 		return prefixPA+"_getTemplate_"+source.name()+"_"+identificativo;
 	}
-	public Template getTemplateTrasformazioneRichiesta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public Template getTemplateTrasformazioneRichiesta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		TipoTrasformazione tipoTrasformazione = null;
 		if(richiesta.getConversioneTipo()!=null) {
 			tipoTrasformazione = TipoTrasformazione.toEnumConstant(richiesta.getConversioneTipo());
@@ -3328,9 +3396,11 @@ public class ConfigurazionePdD  {
 		if(tipoTrasformazione==null || (!tipoTrasformazione.isTemplateFreemarker() && !tipoTrasformazione.isTemplateVelocity())) {
 			return new Template(nomeTrasformazione, richiesta.getConversioneTemplate());
 		}
-		return _getTemplate(connectionPdD, idPA, "getTemplateTrasformazioneRichiesta", TemplateSource.TRASFORMAZIONE_RICHIESTA, nomeTrasformazione, richiesta.getConversioneTemplate());
+		return _getTemplate(connectionPdD, idPA, "getTemplateTrasformazioneRichiesta", TemplateSource.TRASFORMAZIONE_RICHIESTA, nomeTrasformazione, richiesta.getConversioneTemplate(),
+				requestInfo);
 	}
-	public Template getTemplateTrasformazioneSoapRichiesta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public Template getTemplateTrasformazioneSoapRichiesta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRichiesta richiesta,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		TipoTrasformazione tipoTrasformazione = null;
 		if(richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo()!=null) {
 			tipoTrasformazione = TipoTrasformazione.toEnumConstant(richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo());
@@ -3338,9 +3408,11 @@ public class ConfigurazionePdD  {
 		if(tipoTrasformazione==null || (!tipoTrasformazione.isTemplateFreemarker() && !tipoTrasformazione.isTemplateVelocity())) {
 			return new Template(nomeTrasformazione, richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate());
 		}
-		return _getTemplate(connectionPdD, idPA, "getTemplateTrasformazioneSoapRichiesta", TemplateSource.TRASFORMAZIONE_SOAP_RICHIESTA, nomeTrasformazione, richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate());
+		return _getTemplate(connectionPdD, idPA, "getTemplateTrasformazioneSoapRichiesta", TemplateSource.TRASFORMAZIONE_SOAP_RICHIESTA, nomeTrasformazione, richiesta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate(),
+				requestInfo);
 	}
-	public Template getTemplateTrasformazioneRisposta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public Template getTemplateTrasformazioneRisposta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		TipoTrasformazione tipoTrasformazione = null;
 		if(risposta.getConversioneTipo()!=null) {
 			tipoTrasformazione = TipoTrasformazione.toEnumConstant(risposta.getConversioneTipo());
@@ -3348,9 +3420,11 @@ public class ConfigurazionePdD  {
 		if(tipoTrasformazione==null || (!tipoTrasformazione.isTemplateFreemarker() && !tipoTrasformazione.isTemplateVelocity())) {
 			return new Template(nomeTrasformazione, risposta.getConversioneTemplate());
 		}
-		return _getTemplate(connectionPdD, idPA, "getTemplateTrasformazioneRisposta", TemplateSource.TRASFORMAZIONE_RISPOSTA, nomeTrasformazione+"@@"+risposta.getNome(), risposta.getConversioneTemplate());
+		return _getTemplate(connectionPdD, idPA, "getTemplateTrasformazioneRisposta", TemplateSource.TRASFORMAZIONE_RISPOSTA, nomeTrasformazione+"@@"+risposta.getNome(), risposta.getConversioneTemplate(),
+				requestInfo);
 	}
-	public Template getTemplateTrasformazioneSoapRisposta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public Template getTemplateTrasformazioneSoapRisposta(Connection connectionPdD,IDPortaApplicativa idPA, String nomeTrasformazione, TrasformazioneRegolaRisposta risposta,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		TipoTrasformazione tipoTrasformazione = null;
 		if(risposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo()!=null) {
 			tipoTrasformazione = TipoTrasformazione.toEnumConstant(risposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo());
@@ -3358,17 +3432,43 @@ public class ConfigurazionePdD  {
 		if(tipoTrasformazione==null || (!tipoTrasformazione.isTemplateFreemarker() && !tipoTrasformazione.isTemplateVelocity())) {
 			return new Template(nomeTrasformazione, risposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate());
 		}
-		return _getTemplate(connectionPdD, idPA, "getTemplateTrasformazioneSoapRisposta", TemplateSource.TRASFORMAZIONE_SOAP_RISPOSTA, nomeTrasformazione+"@@"+risposta.getNome(), risposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate());
+		return _getTemplate(connectionPdD, idPA, "getTemplateTrasformazioneSoapRisposta", TemplateSource.TRASFORMAZIONE_SOAP_RISPOSTA, nomeTrasformazione+"@@"+risposta.getNome(), risposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate(),
+				requestInfo);
 	}
 	
-	public Template getTemplateConnettoreMultiploSticky(Connection connectionPdD,IDPortaApplicativa idPA, byte[] template) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return _getTemplate(connectionPdD, idPA, "getTemplateConnettoreMultiploSticky", TemplateSource.CONNETTORI_MULTIPLI_STICKY, "sticky", template);
+	public Template getTemplateConnettoreMultiploSticky(Connection connectionPdD,IDPortaApplicativa idPA, byte[] template,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return _getTemplate(connectionPdD, idPA, "getTemplateConnettoreMultiploSticky", TemplateSource.CONNETTORI_MULTIPLI_STICKY, "sticky", template,
+				requestInfo);
 	}
-	public Template getTemplateConnettoreMultiploCondizionale(Connection connectionPdD,IDPortaApplicativa idPA, String nomeRegola, byte[] template) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return _getTemplate(connectionPdD, idPA, "getTemplateConnettoreMultiploCondizionale", TemplateSource.CONNETTORI_MULTIPLI_CONSEGNA_CONDIZIONALE, (nomeRegola!=null ? nomeRegola : "___default___"), template);
+	public Template getTemplateConnettoreMultiploCondizionale(Connection connectionPdD,IDPortaApplicativa idPA, String nomeRegola, byte[] template,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return _getTemplate(connectionPdD, idPA, "getTemplateConnettoreMultiploCondizionale", TemplateSource.CONNETTORI_MULTIPLI_CONSEGNA_CONDIZIONALE, (nomeRegola!=null ? nomeRegola : "___default___"), template,
+				requestInfo);
 	}
 	
-	private Template _getTemplate(Connection connectionPdD,IDPortaApplicativa idPA, String nomeMetodo, TemplateSource templateSource, String identificativo, byte[] templateBytes) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	private Template _getTemplate(Connection connectionPdD,IDPortaApplicativa idPA, String nomeMetodo, TemplateSource templateSource, String identificativo, byte[] templateBytes,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		String key = getKey_getPortaApplicativaTemplate(idPA, templateSource, identificativo);
+	
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null;
+		if(useRequestInfo) {
+			Object o = requestInfo.getRequestConfig().getTemplate(key);
+			if(o!=null && o instanceof Template) {
+				return (Template) o;
+			}
+		}
+	
+		Template template = _getTemplate(connectionPdD, idPA, nomeMetodo, templateSource, identificativo, templateBytes, key);
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addTemplate(key, template, 
+					requestInfo!=null ? requestInfo.getIdTransazione() : null);
+		}
+		return template;
+	}
+	private Template _getTemplate(Connection connectionPdD,IDPortaApplicativa idPA, String nomeMetodo, TemplateSource templateSource, String identificativo, byte[] templateBytes,
+		String key) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		
 		// Raccolta dati
 		if(idPA == null)
@@ -3377,9 +3477,7 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneException("["+nomeMetodo+"]: Parametro non definito (idPA.getNome() is null)");
 
 		// se e' attiva una cache provo ad utilizzarla
-		String key = null;	
 		if(this.cache!=null) {
-			key = getKey_getPortaApplicativaTemplate(idPA, templateSource, identificativo);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -3443,15 +3541,36 @@ public class ConfigurazionePdD  {
 
 	}  
 	
-	public Template getTemplateIntegrazione(Connection connectionPdD,IDPortaApplicativa idPA, File file) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return _getTemplate(connectionPdD, idPA, "getTemplateIntegrazione", TemplateSource.INTEGRAZIONE, file);
+	public Template getTemplateIntegrazione(Connection connectionPdD,IDPortaApplicativa idPA, File file,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return _getTemplate(connectionPdD, idPA, "getTemplateIntegrazione", TemplateSource.INTEGRAZIONE, file,
+				requestInfo);
 	}
-	private Template _getTemplate(Connection connectionPdD,IDPortaApplicativa idPA, String nomeMetodo, TemplateSource templateSource, File file) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	private Template _getTemplate(Connection connectionPdD,IDPortaApplicativa idPA, String nomeMetodo, TemplateSource templateSource, File file,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+			
+		String key = getKey_getPortaApplicativaTemplate(idPA, templateSource, file.getAbsolutePath());
 		
-		// se e' attiva una cache provo ad utilizzarla
-		String key = null;	
-		if(this.cache!=null) {
-			key = getKey_getPortaApplicativaTemplate(idPA, templateSource, file.getAbsolutePath());
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null;
+		if(useRequestInfo) {
+			Object o = requestInfo.getRequestConfig().getTemplate(key);
+			if(o!=null && o instanceof Template) {
+				return (Template) o;
+			}
+		}
+		
+		Template template = _getTemplate(connectionPdD, idPA, nomeMetodo, templateSource, file, key);
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addTemplate(key, template, 
+					requestInfo!=null ? requestInfo.getIdTransazione() : null);
+		}
+		return template;
+	}
+	private Template _getTemplate(Connection connectionPdD,IDPortaApplicativa idPA, String nomeMetodo, TemplateSource templateSource, File file,
+			String key) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		// se e' attiva una cache provo ad utilizzarla	
+		if(this.cache!=null) { 
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -4271,6 +4390,57 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("[getAccessoDatiKeystore] Configurazione di accesso ai dati di gestione keystore non trovata");
 		}
 	} 
+	
+	
+	
+	private String _getKey_getAccessoDatiRichieste(){
+		return "getAccessoDatiRichieste";
+	}
+	public AccessoDatiRichieste getAccessoDatiRichieste(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		// Se e' attiva una configurazione statica, la utilizzo.
+		if(this.configurazioneDinamica==false){
+			if(ConfigurazionePdD.accessoDatiRichieste!=null)
+				return ConfigurazionePdD.accessoDatiRichieste;
+		}
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = _getKey_getAccessoDatiRichieste();
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((AccessoDatiRichieste) response.getObject());
+				}
+			}
+		}
+			
+		// Algoritmo CACHE
+		AccessoDatiRichieste object = null;
+		if(this.cache!=null){
+			object = (AccessoDatiRichieste) this.getObjectCache(key,"getAccessoDatiRichieste",connectionPdD,ConfigurazionePdDType.config);
+		}else{
+			object = (AccessoDatiRichieste) this.getObject("getAccessoDatiRichieste",connectionPdD,ConfigurazionePdDType.config);
+		}
+		
+		if(object!=null){
+			// Se e' attiva una configurazione statica, la utilizzo.
+			if(this.configurazioneDinamica==false){
+				ConfigurazionePdD.accessoDatiRichieste = object;
+			}
+			return object;
+		}
+		else{
+			throw new DriverConfigurazioneNotFound("[getAccessoDatiRichieste] Configurazione di accesso ai dati di gestione delle richieste non trovata");
+		}
+	} 
 
 
 
@@ -4659,16 +4829,37 @@ public class ConfigurazionePdD  {
 		return "configurazioneGW_getTemplate_"+source.name()+"_"+identificativo;
 	}
 	
-	public Template getTemplateAttributeAuthorityRequest(Connection connectionPdD, String attributeAuthorityName, byte[] template) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return _getTemplate(connectionPdD, "getTemplateAttributeAuthorityRequest", TemplateSource.ATTRIBUTE_AUTHORITY_REQUEST, attributeAuthorityName, template);
+	public Template getTemplateAttributeAuthorityRequest(Connection connectionPdD, String attributeAuthorityName, byte[] template,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return _getTemplate(connectionPdD, "getTemplateAttributeAuthorityRequest", TemplateSource.ATTRIBUTE_AUTHORITY_REQUEST, attributeAuthorityName, template,
+				requestInfo);
 	}
 	
-	private Template _getTemplate(Connection connectionPdD, String nomeMetodo, TemplateSource templateSource, String identificativo, byte[] templateBytes) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	private Template _getTemplate(Connection connectionPdD, String nomeMetodo, TemplateSource templateSource, String identificativo, byte[] templateBytes,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+				
+		String key = getKey_getTemplate(templateSource, identificativo);
+			
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null;
+		if(useRequestInfo) {
+			Object o = requestInfo.getRequestConfig().getTemplate(key);
+			if(o!=null && o instanceof Template) {
+				return (Template) o;
+			}
+		}
+			
+		Template template = _getTemplate(connectionPdD, nomeMetodo, templateSource, identificativo, templateBytes, key);
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addTemplate(key, template, 
+					requestInfo!=null ? requestInfo.getIdTransazione() : null);
+		}
+		return template;
+	}
+	private Template _getTemplate(Connection connectionPdD, String nomeMetodo, TemplateSource templateSource, String identificativo, byte[] templateBytes,
+			String key) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		
 		// se e' attiva una cache provo ad utilizzarla
-		String key = null;	
 		if(this.cache!=null) {
-			key = getKey_getTemplate(templateSource, identificativo);
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -4732,15 +4923,36 @@ public class ConfigurazionePdD  {
 
 	}  
 	
-	public Template getTemplateIntegrazione(Connection connectionPdD,File file) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return _getTemplate(connectionPdD, "getTemplateIntegrazione", TemplateSource.INTEGRAZIONE, file);
+	public Template getTemplateIntegrazione(Connection connectionPdD,File file,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return _getTemplate(connectionPdD, "getTemplateIntegrazione", TemplateSource.INTEGRAZIONE, file,
+				requestInfo);
 	}
-	private Template _getTemplate(Connection connectionPdD,String nomeMetodo, TemplateSource templateSource, File file) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	private Template _getTemplate(Connection connectionPdD,String nomeMetodo, TemplateSource templateSource, File file,
+			RequestInfo requestInfo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+				
+		String key = getKey_getTemplate(templateSource, file.getAbsolutePath());
+				
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null;
+		if(useRequestInfo) {
+			Object o = requestInfo.getRequestConfig().getTemplate(key);
+			if(o!=null && o instanceof Template) {
+				return (Template) o;
+			}
+		}
+				
+		Template template = _getTemplate(connectionPdD, nomeMetodo, templateSource, file, key);
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addTemplate(key, template, 
+					requestInfo!=null ? requestInfo.getIdTransazione() : null);
+		}
+		return template;
+	}
+	private Template _getTemplate(Connection connectionPdD,String nomeMetodo, TemplateSource templateSource, File file,
+			String key) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		
 		// se e' attiva una cache provo ad utilizzarla
-		String key = null;	
 		if(this.cache!=null) {
-			key = getKey_getTemplate(templateSource, file.getAbsolutePath());
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -5854,11 +6066,11 @@ public class ConfigurazionePdD  {
 	
 	
 	
-	public ForwardProxy getForwardProxyConfigFruizione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
-		return getForwardProxyConfig(true, dominio, idServizio, policy);
+	public ForwardProxy getForwardProxyConfigFruizione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy, RequestInfo requestInfo) throws DriverConfigurazioneException{
+		return getForwardProxyConfig(true, dominio, idServizio, policy, requestInfo);
 	}
-	public ForwardProxy getForwardProxyConfigErogazione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
-		return getForwardProxyConfig(false, dominio, idServizio, policy);
+	public ForwardProxy getForwardProxyConfigErogazione(IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy, RequestInfo requestInfo) throws DriverConfigurazioneException{
+		return getForwardProxyConfig(false, dominio, idServizio, policy, requestInfo);
 	}
 	
 	protected static String PREFIX_FORWARD_PROXY = "ForwardProxy_";
@@ -5868,7 +6080,7 @@ public class ConfigurazionePdD  {
 	protected static String _toKey_ForwardProxyConfigSuffix(IDServizio idServizio) {
 		return idServizio.toString(false);
 	}
-	protected static String _toKey_ForwardProxyConfigSuffix(IDGenericProperties policy) {
+	public static String _toKey_ForwardProxyConfigSuffix(IDGenericProperties policy) {
 		return "policy_"+policy.getTipologia()+"_"+policy.getNome();
 	}
 	public static String _getKey_ForwardProxyConfig(boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy){ 
@@ -5880,7 +6092,7 @@ public class ConfigurazionePdD  {
 		}
 		return key;
 	}
-	private ForwardProxy getForwardProxyConfig(boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
+	private ForwardProxy getForwardProxyConfig(boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy, RequestInfo requestInfo) throws DriverConfigurazioneException{
 		
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
@@ -5900,9 +6112,9 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		ForwardProxy config = null;
 		if(this.cache!=null){
-			config = getForwardProxyConfigCache(key, fruizione, dominio, idServizio, policy);
+			config = getForwardProxyConfigCache(key, fruizione, dominio, idServizio, policy, requestInfo);
 		}else{
-			config = getForwardProxyConfigEngine(fruizione, dominio, idServizio, policy);
+			config = getForwardProxyConfigEngine(fruizione, dominio, idServizio, policy, requestInfo);
 		}
 
 		return config;
@@ -5910,7 +6122,7 @@ public class ConfigurazionePdD  {
 	} 
 	
 	private static org.openspcoop2.utils.Semaphore semaphore_getForwardProxyConfigCache = new org.openspcoop2.utils.Semaphore("ConfigurazionePdD_ForwardProxyConfig");
-	private ForwardProxy getForwardProxyConfigCache(String keyCache,boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
+	private ForwardProxy getForwardProxyConfigCache(String keyCache,boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy, RequestInfo requestInfo) throws DriverConfigurazioneException{
 
 		semaphore_getForwardProxyConfigCache.acquireThrowRuntime("getForwardProxyConfigCache");
 		ForwardProxy obj = null;
@@ -5944,7 +6156,7 @@ public class ConfigurazionePdD  {
 
 			// Effettuo le query nella mia gerarchia di registri.
 			this.log.debug("oggetto con chiave ["+keyCache+"] (methodo:"+methodName+") ricerco nella configurazione...");
-			obj = getForwardProxyConfigEngine(fruizione, dominio, idServizio, policy);
+			obj = getForwardProxyConfigEngine(fruizione, dominio, idServizio, policy, requestInfo);
 
 			// Aggiungo la risposta in cache (se esiste una cache)	
 			// Se ho una eccezione aggiungo in cache solo una not found
@@ -5974,10 +6186,10 @@ public class ConfigurazionePdD  {
 		return obj;
 	}
 	
-	private ForwardProxy getForwardProxyConfigEngine(boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy) throws DriverConfigurazioneException{
+	private ForwardProxy getForwardProxyConfigEngine(boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy, RequestInfo requestInfo) throws DriverConfigurazioneException{
 		
 		try {
-			return ForwardProxy.getProxyConfigurazione(fruizione, dominio, idServizio, policy);
+			return ForwardProxy.getProxyConfigurazione(fruizione, dominio, idServizio, policy, requestInfo);
 		}catch(Exception e){
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}

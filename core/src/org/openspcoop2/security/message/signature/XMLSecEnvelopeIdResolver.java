@@ -61,11 +61,6 @@ public class XMLSecEnvelopeIdResolver extends ResourceResolverSpi {
 //    	this.xmlUtils = XMLUtils.getInstance();
     }
 
-    @Override
-	public boolean engineIsThreadSafe() {
-        return true;
-    }
-
 	@SuppressWarnings("deprecation")
 	public XMLSignatureInput engineResolve(Attr uri, String BaseURI) throws ResourceResolverException {
 

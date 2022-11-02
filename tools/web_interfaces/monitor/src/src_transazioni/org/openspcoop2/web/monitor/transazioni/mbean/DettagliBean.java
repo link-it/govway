@@ -1279,7 +1279,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 			this.diagnosticiBean.setNomeServizioApplicativo(null);
 			
 			try {
-				EsitiProperties esitiProperties = EsitiProperties.getInstance(log, trBean.getProtocollo());
+				EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(log, trBean.getProtocollo());
 				EsitoTransazioneName esitoTransactionName = esitiProperties.getEsitoTransazioneName(trBean.getEsito());
 				if(EsitoTransazioneName.isConsegnaMultipla(esitoTransactionName)) {
 					this.diagnosticiBean.setForceNomeServizioApplicativoNull(true);

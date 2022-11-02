@@ -17,7 +17,7 @@
 
 		<jar.group.name>wss4j</jar.group.name>
 		
-		<wss4j.version>2.2.4</wss4j.version>
+		<wss4j.version>2.4.1</wss4j.version>
 
 	</properties>
 

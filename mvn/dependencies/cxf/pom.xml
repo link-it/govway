@@ -17,14 +17,14 @@
 
 		<jar.group.name>cxf</jar.group.name>
 		
-		<asm.version>7.1</asm.version>
-		<cxf.version>3.3.5</cxf.version>
-		<cxf.gov4j.version>3.3.5-gov4j-1</cxf.gov4j.version>
+		<asm.version>9.3</asm.version>
+		<cxf.version>3.5.4</cxf.version>
+		<cxf.gov4j.version>3.5.4-gov4j-1</cxf.gov4j.version>
 		<javax.ws.rs.api.cxf.version>2.1.6</javax.ws.rs.api.cxf.version>
-		<stax2.api.version>4.2</stax2.api.version>
-		<woodstock.core.version>5.3.0</woodstock.core.version>
+		<stax2.api.version>4.2.1</stax2.api.version>
+		<woodstock.core.version>6.2.8</woodstock.core.version>
 		<xml.resolver.version>1.2</xml.resolver.version>
-		<xmlschema.core.version>2.2.5</xmlschema.core.version>
+		<xmlschema.core.version>2.3.0</xmlschema.core.version>
 
 	</properties>
 

@@ -87,7 +87,7 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 			int esitoIntegrationManagerSingolo = -1;
 			boolean esitiLetti = false;
 			try {
-				EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log, transazioneApplicativoServer.getProtocollo());
+				EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(this.log, transazioneApplicativoServer.getProtocollo());
 				esitoConsegnaMultipla = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA);
 				esitoConsegnaMultiplaInCorso = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_IN_CORSO);
 				esitoConsegnaMultiplaFallita = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA);

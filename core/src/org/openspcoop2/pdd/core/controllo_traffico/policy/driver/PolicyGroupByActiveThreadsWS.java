@@ -21,7 +21,6 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy.driver;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
@@ -30,6 +29,7 @@ import org.openspcoop2.core.controllo_traffico.driver.CostantiServizioControlloT
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreads;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
+import org.openspcoop2.utils.Map;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -55,10 +55,10 @@ public class PolicyGroupByActiveThreadsWS implements IPolicyGroupByActiveThreads
 	}
 	
 	@Override
-	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx)
+	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx)
 			throws PolicyException {
 		try{
-			Map<String, List<String>> p = new HashMap<String, List<String>>();
+			java.util.Map<String, List<String>> p = new HashMap<String, List<String>>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, this.activeId);
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_GROUP_BY_ID, IDUnivocoGroupByPolicy.serialize(datiGroupBy));
 			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_REGISTER_START_REQUEST, this.log);
@@ -80,10 +80,10 @@ public class PolicyGroupByActiveThreadsWS implements IPolicyGroupByActiveThreads
 	}
 
 	@Override
-	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx)
+	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx)
 			throws PolicyException, PolicyNotFoundException {
 		try{
-			Map<String, List<String>> p = new HashMap<String, List<String>>();
+			java.util.Map<String, List<String>> p = new HashMap<String, List<String>>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, this.activeId);
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_GROUP_BY_ID, IDUnivocoGroupByPolicy.serialize(datiGroupBy));
 			String url = TransportUtils.buildUrlWithParameters(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_UPDATE_START_REQUEST, this.log);
@@ -105,10 +105,10 @@ public class PolicyGroupByActiveThreadsWS implements IPolicyGroupByActiveThreads
 	}
 
 	@Override
-	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx, MisurazioniTransazione dati,
+	public void registerStopRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx, MisurazioniTransazione dati,
 			boolean isApplicabile, boolean isViolata) throws PolicyException, PolicyNotFoundException {
 		try{
-			Map<String, List<String>> p = new HashMap<String, List<String>>();
+			java.util.Map<String, List<String>> p = new HashMap<String, List<String>>();
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, this.activeId);
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_GROUP_BY_ID, IDUnivocoGroupByPolicy.serialize(datiGroupBy));
 			TransportUtils.setHeader(p,CostantiServizioControlloTraffico.PARAMETER_MISURAZIONI_TRANSAZIONE, MisurazioniTransazione.serialize(dati));

@@ -25,6 +25,7 @@ import java.sql.Connection;
 import org.slf4j.Logger;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.AbstractCacheWrapper;
+import org.openspcoop2.utils.cache.CacheType;
 
 /**
  * Cache
@@ -36,7 +37,7 @@ import org.openspcoop2.utils.cache.AbstractCacheWrapper;
 public class ExampleConfigCacheWrapper extends AbstractCacheWrapper {
 
 	public ExampleConfigCacheWrapper(boolean initializeCache, Logger log) throws UtilsException {
-		super("config", initializeCache, log);
+		super(CacheType.JCS, "config", initializeCache, log);
 	}
 
 	@Override

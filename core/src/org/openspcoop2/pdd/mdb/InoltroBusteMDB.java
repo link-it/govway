@@ -47,6 +47,7 @@ import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorseThread;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 
 
@@ -208,7 +209,13 @@ public class InoltroBusteMDB implements MessageDrivenBean, MessageListener {
 				return; 
 			}	
 			if(inoltroBusteMsg.getRichiestaDelegata()!=null && inoltroBusteMsg.getRichiestaDelegata().getIdPortaDelegata()!=null) {
-				msgDiag.updatePorta(inoltroBusteMsg.getRichiestaDelegata().getIdPortaDelegata().getNome());
+				
+				RequestInfo requestInfo = null;
+				if(inoltroBusteMsg.getPddContext()!=null && inoltroBusteMsg.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+					requestInfo = (RequestInfo) inoltroBusteMsg.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+				}
+				
+				msgDiag.updatePorta(inoltroBusteMsg.getRichiestaDelegata().getIdPortaDelegata().getNome(), requestInfo);
 			}
 			
 			// ID associato alla richiesta 

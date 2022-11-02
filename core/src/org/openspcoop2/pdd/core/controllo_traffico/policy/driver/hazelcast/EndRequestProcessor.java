@@ -22,7 +22,6 @@
 package org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
@@ -32,6 +31,7 @@ import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.Map;
 import org.slf4j.Logger;
 
 import com.hazelcast.core.Offloadable;
@@ -53,11 +53,11 @@ public class EndRequestProcessor implements EntryProcessor<IDUnivocoGroupByPolic
 	private final ActivePolicy activePolicy;
 	
 	private final MisurazioniTransazione dati;
-	private final Map<String, Object> ctx;
+	private final Map<Object> ctx;
 	private final boolean isApplicabile;
 	private final boolean isViolata;
 
-	public EndRequestProcessor(ActivePolicy policy, Map<String, Object> ctx, MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata) {
+	public EndRequestProcessor(ActivePolicy policy, Map<Object> ctx, MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata) {
 		this.activePolicy = policy;
 		this.ctx = ctx;
 		this.dati = dati;
@@ -84,9 +84,10 @@ public class EndRequestProcessor implements EntryProcessor<IDUnivocoGroupByPolic
 			List<Integer> esitiCodeFaultApplicativo = null;
 			try {
 				// In queste tre di sotto pare il logger non venga utilizzato
-				esitiCodeOk = EsitiProperties.getInstance(log,this.dati.getProtocollo()).getEsitiCodeOk_senzaFaultApplicativo();
-				esitiCodeKo_senzaFaultApplicativo = EsitiProperties.getInstance(log,this.dati.getProtocollo()).getEsitiCodeKo_senzaFaultApplicativo();
-				esitiCodeFaultApplicativo = EsitiProperties.getInstance(log,this.dati.getProtocollo()).getEsitiCodeFaultApplicativo();
+				EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(log,this.dati.getProtocollo()); 
+				esitiCodeOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
+				esitiCodeKo_senzaFaultApplicativo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
+				esitiCodeFaultApplicativo = esitiProperties.getEsitiCodeFaultApplicativo();
 				datiCollezionati.updateDatiEndRequestApplicabile(
 						log, 	// logger
 						this.activePolicy, this.ctx, this.dati,

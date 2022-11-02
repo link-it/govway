@@ -51,9 +51,12 @@ public class DecryptReceiverProvider extends KeyStoreWithSecretKeySecurityProvid
 		
 		Properties p = mapProperties.get("decryptionPropRefId");
 		if(p!=null && p.size()>0) {
-			String file = p.getProperty("rs.security.keystore.file");
-			if(file!=null && StringUtils.isNotEmpty(file)) {
-				InputValidationUtils.validateTextAreaInput(file, "Decryption - KeyStore - File");
+			if(!p.containsKey("rs.security.keystore") && !p.containsKey("rs.security.keystore.jwkset")) {
+				// altrimenti è stato fatto inject del keystore
+				String file = p.getProperty("rs.security.keystore.file");
+				if(file!=null && StringUtils.isNotEmpty(file)) {
+					InputValidationUtils.validateTextAreaInput(file, "Decryption - KeyStore - File");
+				}
 			}
 		}
 		

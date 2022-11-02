@@ -50,6 +50,9 @@ public abstract class AbstractSearchCredenziale {
 	public String getTipo() {
 		return this.tipo.name();
 	}
+	public TipoCredenzialeMittente getTipoCredenzialeMittente() {
+		return this.tipo;
+	}
 	
 	protected abstract String getExactValueDatabase(String credentialParam, boolean ricercaEsatta) throws UtilsException;
 	

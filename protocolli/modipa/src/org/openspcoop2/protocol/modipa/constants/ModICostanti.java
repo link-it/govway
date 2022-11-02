@@ -29,6 +29,8 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.constants.SignatureAlgorithm;
 import org.openspcoop2.security.message.constants.SignatureC14NAlgorithm;
 import org.openspcoop2.utils.digest.DigestEncoding;
+import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.MapKey;
 
 /**
  * Classe dove sono fornite le stringhe costanti, definite dalla specifica del protocollo ModI, 
@@ -48,10 +50,7 @@ public class ModICostanti {
     public final static String MODIPA_PROPERTIES = "MODIPA_PROPERTIES";
 	
     public final static String MODIPA_USE_BODY_NAMESPACE = "useBodyNamespace";
-    
-    public final static String MODIPA_CONTEXT_REQUEST_DIGEST = "MODIPA_REQUEST_DIGEST";
-    public final static String MODIPA_CONTEXT_X509_AUTHORIZATION = "MODIPA_X509_AUTHORIZATION";
-    
+        
     public final static String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE = "ProfiloInterazione";
     public final static String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX = "ProfiloInterazioneAsincrona-";
     public final static String MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_TIPO = MODIPA_BUSTA_EXT_PROFILO_INTERAZIONE_ASINCRONA_PREFIX+"Tipo";
@@ -102,12 +101,15 @@ public class ModICostanti {
     public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER = "ProfiloSicurezzaMessaggio-CorniceSicurezza-User";
     public final static String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER_IP = "ProfiloSicurezzaMessaggio-CorniceSicurezza-UserIP";
         
-    public final static String MODIPA_OPENSPCOOP2_MSG_CONTEXT_IAT_TTL_CHECK = "IAT_TTL_CHECK";
-    public final static String MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK = "AUDIENCE_CHECK";
-    public final static String MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_INTEGRITY_CHECK = "AUDIENCE_INTEGRITY_CHECK";
-    public final static String MODIPA_OPENSPCOOP2_MSG_CONTEXT_BUILD_SECURITY_REQUEST_TOKEN = "BUILD_SECURITY_REQUEST_TOKEN";
-    public final static String MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_REST = "MODIPA_SBUSTAMENTO_REST";
-    public final static String MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_SOAP = "MODIPA_SBUSTAMENTO_SOAP";
+    public final static MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_IAT_TTL_CHECK = Map.newMapKey("MODIPA_IAT_TTL_CHECK");
+    public final static MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_CHECK = Map.newMapKey("MODIPA_AUDIENCE_CHECK");
+    public final static MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_AUDIENCE_INTEGRITY_CHECK = Map.newMapKey("MODIPA_AUDIENCE_INTEGRITY_CHECK");
+    public final static MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_BUILD_SECURITY_REQUEST_TOKEN = Map.newMapKey("MODIPA_BUILD_SECURITY_REQUEST_TOKEN");
+    public final static MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_REST = Map.newMapKey("MODIPA_SBUSTAMENTO_REST");
+    public final static MapKey<String> MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_SOAP = Map.newMapKey("MODIPA_SBUSTAMENTO_SOAP");
+    
+    public final static MapKey<String> MODIPA_CONTEXT_REQUEST_DIGEST = Map.newMapKey("MODIPA_REQUEST_DIGEST");
+    public final static MapKey<String> MODIPA_CONTEXT_X509_AUTHORIZATION = Map.newMapKey("MODIPA_X509_AUTHORIZATION");
     
     public static final String MODIPA_VALUE_UNDEFINED = Costanti.MODIPA_VALUE_UNDEFINED;
         

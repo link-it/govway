@@ -23,6 +23,7 @@ package org.openspcoop2.protocol.engine;
 import org.openspcoop2.protocol.sdk.ChannelSecurityToken;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.SecurityToken;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 
 /**     
  * SecurityTokenUtilities

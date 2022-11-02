@@ -17,9 +17,9 @@
 
 		<jar.group.name>redis</jar.group.name>
 		
-		<redisson.version>3.17.4</redisson.version>
-		<netty.version>4.1.78.Final</netty.version>
-		<jboss-marshalling.version>2.1.0.Final</jboss-marshalling.version>
+		<redisson.version>3.17.7</redisson.version>
+		<netty.version>4.1.84.Final</netty.version>
+		<jboss-marshalling.version>2.1.1.Final</jboss-marshalling.version>
 	</properties>
 
 	<dependencies>

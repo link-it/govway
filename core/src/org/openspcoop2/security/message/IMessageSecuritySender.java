@@ -32,6 +32,6 @@ import org.openspcoop2.security.SecurityException;
  */
 public interface IMessageSecuritySender {
 
-	public void process(MessageSecurityContext messageSecurityContext,OpenSPCoop2Message message) throws SecurityException;
+	public void process(MessageSecurityContext messageSecurityContext,OpenSPCoop2Message message, org.openspcoop2.utils.Map<Object> ctx) throws SecurityException;
 	
 }

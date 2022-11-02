@@ -242,6 +242,8 @@ public class SoapTest extends ConfigLoader {
 		final Vector<HttpResponse> responsesOk = new Vector<>();
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(maxRequests*requests.length);
 
+		logRateLimiting.info("Inizio invio ...");
+		
 		for (int i = 0; i < maxRequests; i++) {
 
 			Utilities.sleep(200); // essendo la policy 'completata con sucesso' si conta solo dopo aver completato la richiesta, e andando in parallelo potrebbero risultare nei limiti
@@ -249,7 +251,9 @@ public class SoapTest extends ConfigLoader {
 			for(var request : requests) {
 				executor.execute(() -> {
 					try {
+						//String body = new String(request.getContent());
 						logRateLimiting.info(request.getMethod() + " " + request.getUrl());
+						//logRateLimiting.info("Body ["+body+"]");
 						responsesOk.add(HttpUtilities.httpInvoke(request));
 						logRateLimiting.info("Richiesta effettuata..");
 					} catch (UtilsException e) {
@@ -260,6 +264,8 @@ public class SoapTest extends ConfigLoader {
 			}
 		}
 		
+		logRateLimiting.info("Fine primo invio");
+		
 		try {
 			executor.shutdown();
 			executor.awaitTermination(20, TimeUnit.SECONDS);
@@ -267,6 +273,8 @@ public class SoapTest extends ConfigLoader {
 			logRateLimiting.error("Le richieste hanno impiegato più di venti secondi!");
 			throw new RuntimeException(e);
 		}
+		
+		logRateLimiting.info("Analizzo risposte ...");
 		
 		responsesOk.forEach(r -> {
 			logRateLimiting.info("statusCode: " + r.getResultHTTPOperation());

@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.core.token;
 import java.util.Map;
 
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 
 /**
  * DynamicParameter
@@ -34,10 +35,12 @@ public abstract class AbstractDynamicParameters {
 
 	private Map<String, Object> dynamicMap;
 	private PdDContext pddContext;
+	private RequestInfo requestInfo;
 	
-	public AbstractDynamicParameters(Map<String, Object> dynamicMap, PdDContext pddContext) {
+	public AbstractDynamicParameters(Map<String, Object> dynamicMap, PdDContext pddContext, RequestInfo requestInfo) {
 		this.dynamicMap = dynamicMap;
 		this.pddContext = pddContext;
+		this.requestInfo = requestInfo;
 	}
 	
 	public Map<String, Object> getDynamicMap() {
@@ -46,6 +49,10 @@ public abstract class AbstractDynamicParameters {
 
 	public PdDContext getPddContext() {
 		return this.pddContext;
+	}
+	
+	public RequestInfo getRequestInfo() {
+		return this.requestInfo;
 	}
 	
 	@Override

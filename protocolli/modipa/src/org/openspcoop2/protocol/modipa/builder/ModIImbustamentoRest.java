@@ -47,6 +47,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.message.MessageSecurityContext;
@@ -405,7 +406,7 @@ public class ModIImbustamentoRest {
 	public String addToken(OpenSPCoop2Message msg, Context context, ModIKeystoreConfig keystoreConfig, ModISecurityConfig securityConfig,
 			Busta busta, String securityMessageProfile, String headerTokenRest, boolean corniceSicurezza, RuoloMessaggio ruoloMessaggio, boolean includiRequestDigest,
 			Long now, String jti, ModIHeaderType headerType, boolean integritaCustom,
-			Map<String, Object> dynamicMap) throws Exception {
+			Map<String, Object> dynamicMap, RequestInfo requestInfo) throws Exception {
 		
 		boolean integrita = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) || 
 				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile);
@@ -793,7 +794,8 @@ public class ModIImbustamentoRest {
 		SignatureBean signatureBean = new SignatureBean();
 		org.openspcoop2.utils.certificate.KeyStore ks = null;
 		if(keystoreConfig.getSecurityMessageKeystorePath()!=null || keystoreConfig.isSecurityMessageKeystoreHSM()) {
-			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreConfig.getSecurityMessageKeystorePath(), keystoreConfig.getSecurityMessageKeystoreType(), 
+			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo,
+					keystoreConfig.getSecurityMessageKeystorePath(), keystoreConfig.getSecurityMessageKeystoreType(), 
 					keystoreConfig.getSecurityMessageKeystorePassword());
 			if(merlinKs==null) {
 				throw new Exception("Accesso al keystore '"+keystoreConfig.getSecurityMessageKeystorePath()+"' non riuscito");
@@ -801,7 +803,8 @@ public class ModIImbustamentoRest {
 			ks = merlinKs.getKeyStore();
 		}
 		else {
-			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(keystoreConfig.getSecurityMessageKeystoreArchive(), keystoreConfig.getSecurityMessageKeystoreType(), 
+			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(requestInfo,
+					keystoreConfig.getSecurityMessageKeystoreArchive(), keystoreConfig.getSecurityMessageKeystoreType(), 
 					keystoreConfig.getSecurityMessageKeystorePassword());
 			if(merlinKs==null) {
 				throw new Exception("Accesso al keystore non riuscito");
@@ -817,7 +820,7 @@ public class ModIImbustamentoRest {
 		messageSecurityContext.setOutgoingProperties(secProperties, false);
 
 		// firma
-		joseSignature.process(messageSecurityContext, payload);
+		joseSignature.process(messageSecurityContext, payload, context);
 		
 		// Aggiungo a traccia informazioni sul certificato utilizzato
 		Certificate certificate = ks.getCertificate(keystoreConfig.getSecurityMessageKeyAlias());

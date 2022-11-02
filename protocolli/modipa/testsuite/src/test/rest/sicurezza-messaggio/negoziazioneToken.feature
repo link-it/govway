@@ -112,7 +112,7 @@ Then status 503
 * def tid = responseHeaders['GovWay-Transaction-ID'][0]
 * def result = get_diagnostici(tid) 
 
-* match result[0].MESSAGGIO contains 'Il tipo di keystore indicato nella token policy \'MODI-NegoziazioneTokenPDND\' richiede l\'autenticazione e l\'identificazione di un applicativo fruitore: org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound: Nessun Servizio Applicativo trovato.'
+* match result[0].MESSAGGIO contains 'Il tipo di keystore indicato nella token policy \'MODI-NegoziazioneTokenPDND\' richiede l\'autenticazione e l\'identificazione di un applicativo fruitore: Servizio applicativo anonimo'
 
 #* match result contains deep other_checks_risposta2
 

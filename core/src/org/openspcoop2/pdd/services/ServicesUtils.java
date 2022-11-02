@@ -82,16 +82,17 @@ import org.openspcoop2.pdd.services.connector.ConnectorUtils;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorOutMessage;
 import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
-import org.openspcoop2.protocol.engine.RequestInfo;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
-import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.registry.CachedRegistryReader;
+import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
+import org.openspcoop2.protocol.sdk.constants.IDService;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.LimitExceededIOException;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.TimeoutIOException;
@@ -121,9 +122,10 @@ import org.slf4j.Logger;
  */
 public class ServicesUtils {
 	
-	public static ServiceIdentificationReader getServiceIdentificationReader(Logger logCore, RequestInfo requestInfo) throws Exception{
-		IRegistryReader registryReader = new CachedRegistryReader(logCore, requestInfo.getProtocolFactory());
-		IConfigIntegrationReader configIntegrationReader = new CachedConfigIntegrationReader(logCore, requestInfo.getProtocolFactory());
+	public static ServiceIdentificationReader getServiceIdentificationReader(Logger logCore, RequestInfo requestInfo,
+			RegistroServiziManager registroServiziManager, ConfigurazionePdDManager configurazionePdDManager) throws Exception{
+		IRegistryReader registryReader = new CachedRegistryReader(logCore, requestInfo.getProtocolFactory(), registroServiziManager, requestInfo);
+		IConfigIntegrationReader configIntegrationReader = new CachedConfigIntegrationReader(logCore, requestInfo.getProtocolFactory(), configurazionePdDManager, requestInfo);
 		return new ServiceIdentificationReader(registryReader, configIntegrationReader, requestInfo.getProtocolFactory(), logCore);
 	}
 	
@@ -473,7 +475,8 @@ public class ServicesUtils {
 	
 	
 	public static void setGovWayHeaderResponse(OpenSPCoop2Message msg, OpenSPCoop2Properties openspcoopProperties,
-			Map<String, List<String>> propertiesTrasporto, Logger logCore, boolean portaDelegata, PdDContext pddContext, URLProtocolContext protocolContext) {
+			Map<String, List<String>> propertiesTrasporto, Logger logCore, boolean portaDelegata, PdDContext pddContext, RequestInfo requestInfo) {
+				
 		try {						
 			UtilitiesIntegrazione utilitiesIntegrazione = null;
 			if(portaDelegata) {
@@ -483,7 +486,7 @@ public class ServicesUtils {
 				utilitiesIntegrazione = UtilitiesIntegrazione.getInstancePAResponse(logCore);
 			}
 			
-			List<String> idTransazioneValues = TransportUtils.getRawObject(propertiesTrasporto, Costanti.ID_TRANSAZIONE);
+			List<String> idTransazioneValues = TransportUtils.getRawObject(propertiesTrasporto, Costanti.ID_TRANSAZIONE.getValue());
 			
 			if(idTransazioneValues==null || idTransazioneValues.isEmpty()) {
 				String idTransazione = (String) pddContext.getObject(Costanti.ID_TRANSAZIONE);
@@ -506,8 +509,9 @@ public class ServicesUtils {
 		    	}	
 			}
 		}
-		setCORSAllowOrigin(propertiesTrasporto, logCore, portaDelegata, pddContext, protocolContext);
-		
+				
+		setCORSAllowOrigin(propertiesTrasporto, logCore, portaDelegata, pddContext, requestInfo);
+				
 		try {
 			if(propertiesTrasporto!=null && !propertiesTrasporto.isEmpty()) {
 				
@@ -535,7 +539,7 @@ public class ServicesUtils {
 	
 	
 	
-	private static void setCORSAllowOrigin(Map<String, List<String>> propertiesTrasporto, Logger logCore, boolean portaDelegata, PdDContext pddContext, URLProtocolContext protocolContext) {
+	private static void setCORSAllowOrigin(Map<String, List<String>> propertiesTrasporto, Logger logCore, boolean portaDelegata, PdDContext pddContext, RequestInfo requestInfo) {
 		try {
 			
 			Object nomePortaObject = pddContext.getObject(CostantiPdD.NOME_PORTA_INVOCATA);
@@ -546,6 +550,10 @@ public class ServicesUtils {
 			
 			CorsConfigurazione cors = null;
 			HttpServletRequest httpServletRequest = null;
+			URLProtocolContext protocolContext = null;
+			if(requestInfo!=null) {
+				protocolContext = requestInfo.getProtocolContext();
+			}
 			if(protocolContext!=null) {
 				httpServletRequest = protocolContext.getHttpServletRequest();	
 				if(nomePorta==null) {
@@ -559,13 +567,13 @@ public class ServicesUtils {
 					if(portaDelegata) {
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(nomePorta);
-						PortaDelegata pdDefault = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD);
+						PortaDelegata pdDefault = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD, requestInfo);
 						cors = configurazionePdDManager.getConfigurazioneCORS(pdDefault);
 					}
 					else {
 						IDPortaApplicativa idPA = new IDPortaApplicativa();
 						idPA.setNome(nomePorta);
-						PortaApplicativa paDefault = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA);
+						PortaApplicativa paDefault = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA, requestInfo);
 						cors = configurazionePdDManager.getConfigurazioneCORS(paDefault);						
 					}
 				}
@@ -686,7 +694,8 @@ public class ServicesUtils {
 								 requestInfo.getIntegrationServiceBinding(),
 								 requestInfo.getProtocolContext().getInterfaceName(),
 								 requestInfo.getIdentitaPdD(),
-								 aspc);		 
+								 aspc, 
+								 requestInfo);		 
 						String prefixGatewayUrl = urlInvocazioneApi.getBaseUrl();
 						String contesto = urlInvocazioneApi.getContext();
 						prefixGatewayUrl = Utilities.buildUrl(prefixGatewayUrl, contesto);

@@ -1187,7 +1187,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		if(!error) {
 		
-			long esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
+			long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
 			verifyOk(response, 200, contentType);
 						
 			DBVerifier.verify(idTransazione, esitoExpected, null, tokenInfoCheck);
@@ -1195,7 +1195,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		}
 		else {
 			
-			long esitoExpected = EsitiProperties.getInstance(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_INVOCAZIONE);
+			long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_INVOCAZIONE);
 			verifyOk(response, 503, HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);
 			
 			DBVerifier.verify(idTransazione, esitoExpected, diagnostico);

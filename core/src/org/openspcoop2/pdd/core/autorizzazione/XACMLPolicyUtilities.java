@@ -58,9 +58,10 @@ import org.openspcoop2.pdd.core.token.InformazioniTokenUserInfo;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -111,7 +112,7 @@ public class XACMLPolicyUtilities {
 			@SuppressWarnings("unused")
 			boolean numeroPolicyFruizione = false;
 			try{
-				AccordoServizioParteSpecifica asps = RegistroServiziManager.getInstance().getAccordoServizioParteSpecifica(idServizio, null, true);
+				AccordoServizioParteSpecifica asps = RegistroServiziManager.getInstance().getAccordoServizioParteSpecifica(idServizio, null, true, null); // requestInfo non serve poichè devono essere caricati gli allegati
 				for (int i = 0; i < asps.sizeSpecificaSicurezzaList(); i++) {
 					Documento d = asps.getSpecificaSicurezza(i);
 					if(TipiDocumentoSicurezza.XACML_POLICY.getNome().equals(d.getTipo())){
@@ -500,7 +501,7 @@ public class XACMLPolicyUtilities {
 				for (IDRuolo idRuolo : list) {
 					String nomeRuoloDaVerificare = idRuolo.getNome();
 					try {
-						Ruolo ruoloRegistro = registroServiziManager.getRuolo(idRuolo.getNome(), null);
+						Ruolo ruoloRegistro = registroServiziManager.getRuolo(idRuolo.getNome(), null, datiInvocazione.getRequestInfo());
 						if(ruoloRegistro.getNomeEsterno()!=null && !"".equals(ruoloRegistro.getNomeEsterno())) {
 							nomeRuoloDaVerificare = ruoloRegistro.getNomeEsterno();
 						}
@@ -538,7 +539,7 @@ public class XACMLPolicyUtilities {
 			ServizioApplicativo saToken = null;
 			if(checkRuoloRegistro || checkRuoloEsterno) {
 				try {
-					saToken = ConfigurazionePdDManager.getInstance().getServizioApplicativo(idApplicativoToken);
+					saToken = ConfigurazionePdDManager.getInstance().getServizioApplicativo(idApplicativoToken, datiInvocazione.getRequestInfo());
 				}catch(DriverConfigurazioneNotFound notFound) {}
 				catch(Exception e){
 					throw new AutorizzazioneException("E' avvenuto un errore durante la ricerca dell'applicativo token '"+idApplicativoToken+"': "+e.getMessage(),e);
@@ -575,7 +576,7 @@ public class XACMLPolicyUtilities {
 				for (IDRuolo idRuolo : list) {
 					String nomeRuoloDaVerificare = idRuolo.getNome();
 					try {
-						Ruolo ruoloRegistro = registroServiziManager.getRuolo(idRuolo.getNome(), null);
+						Ruolo ruoloRegistro = registroServiziManager.getRuolo(idRuolo.getNome(), null, datiInvocazione.getRequestInfo());
 						if(ruoloRegistro.getNomeEsterno()!=null && !"".equals(ruoloRegistro.getNomeEsterno())) {
 							nomeRuoloDaVerificare = ruoloRegistro.getNomeEsterno();
 						}
@@ -755,7 +756,7 @@ public class XACMLPolicyUtilities {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static Map<String,String> readConfig(PdDContext pddContext, String pName){
+	private static Map<String,String> readConfig(PdDContext pddContext, MapKey<String> pName){
 		Object o = pddContext.getObject(pName);
 		if(o!=null && o instanceof Map<?, ?>) {
 			return (Map<String, String>) o;

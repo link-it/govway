@@ -91,12 +91,12 @@
 		<native2ascii src="${build}/tmpNative2ASCII_src" dest="${build}/tmpNative2ASCII_dest" />
 
 		<!-- Creazione mailapi contenente il corretto mailcap per OpenSPCoopDataHandler -->
-		<unzip src="${required_lib}/shared/mailapi-1.6.4.jar" dest="${build}/tmp/mailapi"/>
+		<unzip src="${required_lib}/shared/mailapi-1.6.7.jar" dest="${build}/tmp/mailapi"/>
 		<concat destfile="${build}/tmp/mailapi/META-INF/mailcap" append="yes">
 			<filelist dir="${data_content_handler_dir}"
                            files="mailcap"/>
 		</concat>
-		<jar jarfile="${build}/tmp/mailapi-1.6.4.gw.jar" manifest="${build}/tmp/mailapi/META-INF/MANIFEST.MF">
+		<jar jarfile="${build}/tmp/mailapi-1.6.7.gw.jar" manifest="${build}/tmp/mailapi/META-INF/MANIFEST.MF">
 			<zipfileset dir="${build}/tmp/mailapi"/>
 		</jar>
 
@@ -177,8 +177,8 @@
 				<equals arg1="${hazelcastLibraries}" arg2="true"/>
 			</or>
 			<then>
-				<var name="hazelcast-all_jar" value="hazelcast-5.1.2.jar" />
-				<var name="hazelcast-hibernate_jar" value="hibernate-core-6.1.1.Final.jar" />
+				<var name="hazelcast-all_jar" value="hazelcast-5.2.0.jar" />
+				<var name="hazelcast-hibernate_jar" value="hibernate-core-6.1.4.Final.jar" />
 				<var name="hazelcast_properties" value="govway.hazelcast*" />
 			</then>
 		</if>
@@ -192,6 +192,16 @@
 				<var name="redis_jar" value="*.jar" />
 			</then>
 		</if>
+		<!-- jminix lib -->
+		<var name="jminix_jar" value="" />
+		<if>
+			<or>
+				<equals arg1="${jminixLibraries}" arg2="true"/>
+			</or>
+			<then>
+				<var name="jminix_jar" value="*.jar" />
+			</then>
+		</if>
 		<war destfile="${openspcoopWeb.warName}" webxml="${openspcoopWeb.webXml}">
 			<!-- Informazioni sulla versione -->
 			<fileset file="${rootDir}/README.txt"/>
@@ -200,6 +210,11 @@
 			<webinf dir="${deploy_web_dir}/web_app/WEB-INF">
 				<exclude name="**/web.xml"/>
 			</webinf>
+
+			<!-- Specifying Logging per CXF -->
+			<zipfileset dir="${src}/META-INF/cxf" prefix="META-INF/cxf">
+				<include name="org.apache.cxf.Logger" />
+			</zipfileset>
 
 			<!-- Librerie di OpenSPCoop -->
 			<lib dir="${dist}">
@@ -210,33 +225,33 @@
 				<include name="openspcoop2_management_registro_search_stub.jar" />
 			</lib>
 			<lib dir="${required_lib}/commons">
-				<include name="commons-codec-1.14.jar"/>
+				<include name="commons-codec-1.15.jar"/>
 				<include name="commons-collections-3.2.2.jar"/>
 				<include name="commons-collections4-4.4.jar"/>
 				<include name="commons-discovery-0.5.jar"/>
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-logging-1.2.jar"/> <!-- (non necessario in A.S.) -->
-				<include name="commons-net-3.6.jar"/>
-				<include name="commons-io-2.8.0.jar"/> <!-- (non necessario in A.S.) -->
-				<include name="commons-validator-1.6.jar"/>
+				<include name="commons-net-3.8.0.jar"/>
+				<include name="commons-io-2.11.0.jar"/> <!-- (non necessario in A.S.) -->
+				<include name="commons-validator-1.7.jar"/>
 				<include name="commons-beanutils-1.9.4.jar"/> <!--jmx mini console -->
-				<include name="commons-lang3-3.9.jar"/>
+				<include name="commons-lang3-3.12.0.jar"/>
 				<include name="commons-compress-1.21.jar"/>
 				<include name="commons-fileupload-1.4.jar"/>
 			</lib>
 			<lib dir="${required_lib}/log">
-				<include name="slf4j-api-1.7.30-gov4j-1.jar"/>
+				<include name="slf4j-api-2.0.3-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="bcprov-ext-jdk15on-1.69.jar"/>
-				<include name="bcpkix-jdk15on-1.69.jar"/>
-				<include name="bcutil-jdk15on-1.69.jar"/>
-				<include name="neethi-3.1.1.jar"/>
-				<include name="xmlsec-2.1.7.jar"/>
-				<include name="cryptacular-1.2.4.jar"/>
+				<include name="bcprov-ext-jdk18on-1.72.jar"/>
+				<include name="bcpkix-jdk18on-1.72.jar"/>
+				<include name="bcutil-jdk18on-1.72.jar"/>
+				<include name="neethi-3.2.0.jar"/>
+				<include name="xmlsec-2.3.0.jar"/>
+				<include name="cryptacular-1.2.5.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
-				<include name="herasaf-xacml-core-1.0.4.RELEASE.jar"/>
+				<include name="herasaf-xacml-core-2.0.4.jar"/>
 			</lib>
 			<lib dir="${required_lib}/wss4j">
 				<include name="*.jar"/>
@@ -250,34 +265,39 @@
 				<include name="jta-1.1.jar"/> <!-- (non necessario in A.S.) -->
 			</lib>
 			<lib dir="${required_lib}/shared">
-				<include name="jakarta.activation-1.2.1.jar"/> <!-- (non necessario in A.S.) -->
+				<include name="jakarta.activation-1.2.2.jar"/> <!-- (non necessario in A.S.) -->
 				<include name="com.springsource.edu.oswego.cs.dl.util.concurrent-1.3.4.jar"/> <!-- (non necessario in A.S.) -->
-				<include name="commons-jcs-core-2.2.1-gov4j-1.jar"/>
+				<include name="commons-jcs3-core-3.1-gov4j-2.jar"/>
 				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="uddi4j-2.0.5.jar"/>
 				<include name="xercesImpl-2.12.2.jar"/>
 				<include name="xml-apis-1.4.01.jar"/>
-				<include name="xalan-2.7.2.jar"/>
-				<include name="serializer-2.7.2.jar"/> 
+				<include name="xalan-2.7.3-rc5.jar"/>
+				<include name="serializer-2.7.3-rc5.jar"/> 
 				<include name="velocity-*.jar"/>
 				<include name="urlrewritefilter-4.0.4.jar"/>
 				<include name="ezmorph-1.0.6.jar" /> <!--jmx mini console -->
 				<include name="xom-1.2.11.jar" /> <!--jmx mini console -->
-				<include name="joda-time-2.10.5.jar" />
-				<include name="guava-30.1.1-jre.jar"/>
-				<include name="java-uuid-generator-3.3.0.jar"/>
-				<include name="freemarker-2.3.29.jar"/>
-				<include name="snakeyaml-1.32-gov4j-1.jar"/>
+				<include name="joda-time-2.12.0.jar" />
+				<include name="guava-31.1-jre.jar"/>
+				<include name="java-uuid-generator-4.0.1.jar"/>
+				<include name="freemarker-2.3.31.jar"/>
+				<include name="snakeyaml-1.33-gov4j-1.jar"/>
 				<include name="rhino-1.7.14.jar"/>
 				<include name="${hazelcast-all_jar}"/>
 				<include name="${hazelcast-hibernate_jar}"/>
-				<!-- NOTA: non includere mai nel runtime Saxon-HE-*.jar poiche' fa agganciare il suo Transformer sostituendosi a Xalan (al massimo vedere di levare la dichiarazione in META-INF) -->
+				<include name="ehcache-3.10.0.jar"/>
+				<!-- NOTA: 
+					non includere mai nel runtime Saxon-HE-*.jar poiche' fa agganciare il suo Transformer sostituendosi a Xalan (al massimo vedere di levare la dichiarazione in META-INF)
+					Anche se con la versione -gov4j-1 del jar il problema dovrebbe essere risolto, poichè elimina la dichiarazione del trasformer sotto META-INF
+					Se si decidesse di riaggiungerlo, aggiungere anche la dipendenza xmlresolver-4.3.0.jar
+				 -->
 			</lib>
 			<lib dir="${required_lib}/redis">
 				<include name="${redis_jar}"/>
 			</lib>
 			<lib dir="${required_lib}/jminix">
-				<include name="*.jar"/>
+				<include name="${jminix_jar}"/>
 			</lib>
 			<lib dir="${required_lib}/cxf">
 				<include name="*.jar" />
@@ -324,7 +344,7 @@
 			</lib>
 			<!-- Mail api esteso con activation data handler openspcoop -->
 			<lib dir="${build}/tmp">
-				<include name="mailapi-1.6.4.gw.jar" />
+				<include name="mailapi-1.6.7.gw.jar" />
 			</lib>
 			<!-- Files di properties richieste dalle applicazioni OpenSPCoop -->
 			<classes dir="${properties_dir}">

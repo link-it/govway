@@ -69,7 +69,7 @@ public class EsitoUtils {
 	private EsitiProperties esitiProperties;
 	public EsitoUtils(Logger logger,String protocollo) throws ProtocolException{
 		this.logger = logger;
-		this.esitiProperties = EsitiProperties.getInstance(this.logger,protocollo);
+		this.esitiProperties = EsitiProperties.getInstanceFromProtocolName(this.logger,protocollo);
 	}
 	
 	public void setExpression(IExpression expr,Integer esitoGruppo, Integer esitoDettaglio, Integer[] esitoDettaglioPersonalizzato, String contesto , boolean escludiRichiesteScartate, 

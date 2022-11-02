@@ -199,6 +199,7 @@ public class ImbustamentoMessage implements GenericMessage {
 		this.implementazionePdDSoggettoDestinatario = implementazionePdDSoggettoDestinatario;
 	}
 	
+	@Override
 	public PdDContext getPddContext() {
 		return this.pddContext;
 	}

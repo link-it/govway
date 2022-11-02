@@ -233,31 +233,31 @@ public class Utils {
 		String idTransazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		assertNotNull(idTransazione);
 		
-		long esitoExpectedFruizione = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
-		long esitoExpectedErogazione = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
+		long esitoExpectedFruizione = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
+		long esitoExpectedErogazione = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
 		if(msgErroreFruizione!=null || msgErroreErogazione!=null) {
 			int code = -1;
 			String error = null;
 			String msg = null;
 			boolean checkErrorTypeGovWay = true;
 			if(operazione.equals(TlsTest.Trust_NoKeyAlias)) {
-				esitoExpectedFruizione = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_APPLICATIVO);
-				esitoExpectedErogazione = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
+				esitoExpectedFruizione = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_APPLICATIVO);
+				esitoExpectedErogazione = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE);
 				code = 403;
 				error = Utils.AUTHORIZATION_DENY;
 				msg = Utils.AUTHORIZATION_DENY_MESSAGE;
 				checkErrorTypeGovWay = false;
 			}
 			else if(operazione.equals(AuthorizationServerValidazioneTest.PKCS11_ValidazioneJWS) && signatureNone) {
-				esitoExpectedFruizione = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_TOKEN);
+				esitoExpectedFruizione = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_TOKEN);
 				code = 401;
 				error = Utils.INVALID_TOKEN;
 				msg = Utils.INVALID_TOKEN_MESSAGE;
 				checkErrorTypeGovWay = true;
 			}
 			else if(api.equals(JoseSecurityTest.apiNONE)) {
-				esitoExpectedFruizione = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_APPLICATIVO);
-				esitoExpectedErogazione = EsitiProperties.getInstance(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_SICUREZZA_MESSAGGIO_RICHIESTA);
+				esitoExpectedFruizione = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_APPLICATIVO);
+				esitoExpectedErogazione = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_SICUREZZA_MESSAGGIO_RICHIESTA);
 				code = 400;
 				error = Utils.BAD_REQUEST;
 				msg = Utils.BAD_REQUEST_MESSAGE;

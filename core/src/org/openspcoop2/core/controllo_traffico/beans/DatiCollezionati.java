@@ -25,7 +25,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.constants.TipoBanda;
@@ -34,6 +33,8 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoFinestra;
 import org.openspcoop2.core.controllo_traffico.constants.TipoLatenza;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
+import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.date.UnitaTemporale;
@@ -76,7 +77,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	
 	// dati di attuazione manuale di un reset dei contatori
 	private Long manuallyResetPolicyTimeMillis = null;
-	private final static String START_PROCESS_REQUEST_TIME_MS = "START_PROCESS_REQUEST_TIME_MS";
+	private final static MapKey<String> START_PROCESS_REQUEST_TIME_MS = Map.newMapKey("START_PROCESS_REQUEST_TIME_MS");
 	
 	// dati iniziali
 	private UnitaTemporale policyDateTypeInterval = null;
@@ -1137,7 +1138,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	}
 	
 	
-	private boolean skipBecauseManuallyResetAfterStartRequest(String source, Map<String, Object> ctx) {
+	private boolean skipBecauseManuallyResetAfterStartRequest(String source, Map<Object> ctx) {
 		if(this.manuallyResetPolicyTimeMillis!=null && ctx!=null) {
 			Object o = ctx.get(START_PROCESS_REQUEST_TIME_MS);
 			if(o==null) {
@@ -1163,10 +1164,10 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 			datiCollezionatiPerPolicyVerifier.activeRequestCounter = this.activeRequestCounter;
 		}
 	}
-	public void registerStartRequest(Logger log, ActivePolicy activePolicy, Map<String, Object> ctx){
+	public void registerStartRequest(Logger log, ActivePolicy activePolicy, Map<Object> ctx){
 		registerStartRequest(log, activePolicy, ctx, null);
 	}
-	public void registerStartRequest(Logger log, ActivePolicy activePolicy, Map<String, Object> ctx, DatiCollezionati datiCollezionatiPerPolicyVerifier){
+	public void registerStartRequest(Logger log, ActivePolicy activePolicy, Map<Object> ctx, DatiCollezionati datiCollezionatiPerPolicyVerifier){
 		
 		if(this.creationDate==null){
 			this.initDatiIniziali(activePolicy);
@@ -1205,10 +1206,10 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 			datiCollezionatiPerPolicyVerifier.policyRequestCounter = this.policyRequestCounter;
 		}
 	}
-	public boolean updateDatiStartRequestApplicabile(Logger log, ActivePolicy activePolicy, Map<String, Object> ctx){
+	public boolean updateDatiStartRequestApplicabile(Logger log, ActivePolicy activePolicy, Map<Object> ctx){
 		return updateDatiStartRequestApplicabile(log, activePolicy, ctx, null);
 	}
-	public boolean updateDatiStartRequestApplicabile(Logger log, ActivePolicy activePolicy, Map<String, Object> ctx, DatiCollezionati datiCollezionatiPerPolicyVerifier){
+	public boolean updateDatiStartRequestApplicabile(Logger log, ActivePolicy activePolicy, Map<Object> ctx, DatiCollezionati datiCollezionatiPerPolicyVerifier){
 		
 		if(skipBecauseManuallyResetAfterStartRequest("updateDatiStartRequestApplicabile", ctx)) {
 			return false;
@@ -1244,7 +1245,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	protected void _registerEndRequest_incrementDegradoPrestazionaleCounter(long latenza) {
 		this.policyDegradoPrestazionaleCounter = this.policyDegradoPrestazionaleCounter + latenza;
 	}
-	public void registerEndRequest(Logger log, ActivePolicy activePolicy, Map<String, Object> ctx, MisurazioniTransazione dati){
+	public void registerEndRequest(Logger log, ActivePolicy activePolicy, Map<Object> ctx, MisurazioniTransazione dati){
 		
 		if(this.creationDate==null){
 			return; // non inizializzato?
@@ -1298,7 +1299,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	protected void _updateDatiEndRequestApplicabile_incrementCounter(long v) {
 		this.policyCounter = this.policyCounter + v;
 	}
-	public void updateDatiEndRequestApplicabile(Logger log, ActivePolicy activePolicy, Map<String, Object> ctx,
+	public void updateDatiEndRequestApplicabile(Logger log, ActivePolicy activePolicy, Map<Object> ctx,
 			MisurazioniTransazione dati,
 			List<Integer> esitiCodeOk, List<Integer> esitiCodeKo_senzaFaultApplicativo, List<Integer> esitiCodeFaultApplicativo, 
 			boolean isViolata) throws PolicyException{

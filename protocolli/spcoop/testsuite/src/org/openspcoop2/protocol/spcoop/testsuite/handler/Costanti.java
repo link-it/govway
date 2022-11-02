@@ -21,6 +21,9 @@
 
 package org.openspcoop2.protocol.spcoop.testsuite.handler;
 
+import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.MapKey;
+
 /**
  * Libreria per handler testsuite
  *
@@ -34,7 +37,7 @@ public class Costanti {
 	
 	public static final String TEST_CONTEXT_GENERA_ERRORE = "TestContext_errore";
 	
-	public static final String TEST_CONTEXT = "TestContext";
+	public static final MapKey<String> TEST_CONTEXT = Map.newMapKey("TestContext");
 	
 	public static final String TEST_CONTEXT_PREFISSO_ERRORE = "[TESTSUITE-HANDLER-ERROR]";
 	

@@ -24,6 +24,8 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.keystore.KeystoreConstants;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.MerlinTruststore;
@@ -47,10 +49,15 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
  */
 public class KeystoreUtils {
 
-	public static EncryptionBean getSenderEncryptionBean(MessageSecurityContext messageSecurityContext) throws Exception {
+	public static EncryptionBean getSenderEncryptionBean(MessageSecurityContext messageSecurityContext, org.openspcoop2.utils.Map<Object> ctx) throws Exception {
 		
 		if(messageSecurityContext.getEncryptionBean()!=null) {
 			return messageSecurityContext.getEncryptionBean();
+		}
+		
+		RequestInfo requestInfo = null;
+		if(ctx!=null && ctx.containsKey(Costanti.REQUEST_INFO)) {
+			requestInfo = (RequestInfo) ctx.get(Costanti.REQUEST_INFO);
 		}
 		
 		JWKSet encryptionJWKSet = null;
@@ -103,7 +110,7 @@ public class KeystoreUtils {
 		// Istanzione truststore
 		// 0. TrustStore
 		if(encryptionTrustStore!=null){
-			MerlinTruststore merlinTruststore = GestoreKeystoreCache.getMerlinTruststore(encryptionTrustStore);
+			MerlinTruststore merlinTruststore = GestoreKeystoreCache.getMerlinTruststore(requestInfo, encryptionTrustStore);
 			encryptionTrustStoreKS = merlinTruststore.getTrustStore();
 		}
 		else if(encryptionTrustStoreProperties!=null){
@@ -112,7 +119,7 @@ public class KeystoreUtils {
 			String storeType = encryptionTrustStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_TYPE);
 			String storePassword = encryptionTrustStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_PASSWORD);
 			if(StringUtils.isNotEmpty(storePath) && StringUtils.isNotEmpty(storeType) && StringUtils.isNotEmpty(storePassword)) {
-				merlinTruststore = GestoreKeystoreCache.getMerlinTruststore(storePath, storeType, storePassword);
+				merlinTruststore = GestoreKeystoreCache.getMerlinTruststore(requestInfo, storePath, storeType, storePassword);
 			}
 			else {
 				merlinTruststore = new MerlinTruststore(encryptionTrustStoreProperties);
@@ -129,7 +136,7 @@ public class KeystoreUtils {
 			}
 		}
 		if(encryptionStore!=null){
-			MerlinKeystore merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(encryptionStore, aliasEncryptPassword);
+			MerlinKeystore merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(requestInfo, encryptionStore, aliasEncryptPassword);
 			encryptionKS = merlinKeystore.getKeyStore();
 		}
 		else if(encryptionStoreProperties!=null){
@@ -138,7 +145,7 @@ public class KeystoreUtils {
 			String storeType = encryptionStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_TYPE);
 			String storePassword = encryptionStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_PASSWORD);
 			if(StringUtils.isNotEmpty(storePath) && StringUtils.isNotEmpty(storeType) && StringUtils.isNotEmpty(storePassword)) {
-				merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(storePath, storeType, storePassword, aliasEncryptPassword);
+				merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(requestInfo, storePath, storeType, storePassword, aliasEncryptPassword);
 			}
 			else {
 				merlinKeystore = new MerlinKeystore(encryptionStoreProperties, aliasEncryptPassword);
@@ -147,7 +154,7 @@ public class KeystoreUtils {
 		}
 		// 2. Multi Property
 		else if(multiEncryptionStore!=null){
-			MultiKeystore multiKeystore = GestoreKeystoreCache.getMultiKeystore(multiEncryptionStore);
+			MultiKeystore multiKeystore = GestoreKeystoreCache.getMultiKeystore(requestInfo, multiEncryptionStore);
 			if(SecurityConstants.MULTI_USER_KEYWORD_FRUITORE.equals(aliasEncryptUser) && 
 					messageSecurityContext.getIdFruitore()!=null && messageSecurityContext.getIdFruitore().getNome()!=null){
 				String fruitore = messageSecurityContext.getIdFruitore().getNome();
@@ -231,7 +238,7 @@ public class KeystoreUtils {
 						SecurityConstants.ENCRYPTION_SYMMETRIC_KEY_VALUE+"="+encryptionSymmetricKeyValue+"], ma non e' stato indicato l'algoritmo associato tramite la proprieta' "+
 						SecurityConstants.ENCRYPTION_SYMMETRIC_ALGORITHM);
 			}
-			SymmetricKeystore symmetricKeystore = GestoreKeystoreCache.getSymmetricKeystore(aliasEncryptUser, encryptionSymmetricKeyValue, (String)encryptionSymmetricAlgoritm);
+			SymmetricKeystore symmetricKeystore = GestoreKeystoreCache.getSymmetricKeystore(requestInfo, aliasEncryptUser, encryptionSymmetricKeyValue, (String)encryptionSymmetricAlgoritm);
 			encryptionKS = symmetricKeystore.getKeyStore();
 			aliasEncryptPassword = symmetricKeystore.getPasswordKey();
 		}
@@ -256,10 +263,15 @@ public class KeystoreUtils {
 		
 		return bean;
 	}
-	public static EncryptionBean getReceiverEncryptionBean(MessageSecurityContext messageSecurityContext) throws Exception {
+	public static EncryptionBean getReceiverEncryptionBean(MessageSecurityContext messageSecurityContext, org.openspcoop2.utils.Map<Object> ctx) throws Exception {
 
 		if(messageSecurityContext.getEncryptionBean()!=null) {
 			return messageSecurityContext.getEncryptionBean();
+		}
+		
+		RequestInfo requestInfo = null;
+		if(ctx!=null && ctx.containsKey(Costanti.REQUEST_INFO)) {
+			requestInfo = (RequestInfo) ctx.get(Costanti.REQUEST_INFO);
 		}
 		
 		JWKSet decryptionJWKSet = null;
@@ -312,7 +324,7 @@ public class KeystoreUtils {
 		// Istanzione truststore
 		// 0. TrustStore
 		if(decryptionTrustStore!=null){
-			MerlinTruststore merlinTruststore = GestoreKeystoreCache.getMerlinTruststore(decryptionTrustStore);
+			MerlinTruststore merlinTruststore = GestoreKeystoreCache.getMerlinTruststore(requestInfo, decryptionTrustStore);
 			decryptionTrustStoreKS = merlinTruststore.getTrustStore();
 		}
 		else if(decryptionTrustStoreProperties!=null){
@@ -321,7 +333,7 @@ public class KeystoreUtils {
 			String storeType = decryptionTrustStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_TYPE);
 			String storePassword = decryptionTrustStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_PASSWORD);
 			if(StringUtils.isNotEmpty(storePath) && StringUtils.isNotEmpty(storeType) && StringUtils.isNotEmpty(storePassword)) {
-				merlinTruststore = GestoreKeystoreCache.getMerlinTruststore(storePath, storeType, storePassword);
+				merlinTruststore = GestoreKeystoreCache.getMerlinTruststore(requestInfo, storePath, storeType, storePassword);
 			}
 			else {
 				merlinTruststore = new MerlinTruststore(decryptionTrustStoreProperties);
@@ -338,7 +350,7 @@ public class KeystoreUtils {
 			}
 		}
 		if(decryptionStore!=null){
-			MerlinKeystore merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(decryptionStore, aliasDecryptPassword);
+			MerlinKeystore merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(requestInfo, decryptionStore, aliasDecryptPassword);
 			decryptionKS = merlinKeystore.getKeyStore();
 		}
 		else if(decryptionStoreProperties!=null){
@@ -347,7 +359,7 @@ public class KeystoreUtils {
 			String storeType = decryptionStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_TYPE);
 			String storePassword = decryptionStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_PASSWORD);
 			if(StringUtils.isNotEmpty(storePath) && StringUtils.isNotEmpty(storeType) && StringUtils.isNotEmpty(storePassword)) {
-				merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(storePath, storeType, storePassword, aliasDecryptPassword);
+				merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(requestInfo, storePath, storeType, storePassword, aliasDecryptPassword);
 			}
 			else {
 				merlinKeystore = new MerlinKeystore(decryptionStoreProperties, aliasDecryptPassword);
@@ -356,7 +368,7 @@ public class KeystoreUtils {
 		}
 		// 2. Multi Property
 		else if(multiDecryptionStore!=null){
-			MultiKeystore multiKeystore = GestoreKeystoreCache.getMultiKeystore(multiDecryptionStore);
+			MultiKeystore multiKeystore = GestoreKeystoreCache.getMultiKeystore(requestInfo, multiDecryptionStore);
 			if(SecurityConstants.MULTI_USER_KEYWORD_FRUITORE.equals(aliasDecryptUser) && 
 					messageSecurityContext.getIdFruitore()!=null && messageSecurityContext.getIdFruitore().getNome()!=null){
 				String fruitore = messageSecurityContext.getIdFruitore().getNome();
@@ -441,7 +453,7 @@ public class KeystoreUtils {
 
 						SecurityConstants.DECRYPTION_SYMMETRIC_ALGORITHM);
 			}
-			SymmetricKeystore symmetricKeystore = GestoreKeystoreCache.getSymmetricKeystore(aliasDecryptUser, decryptionSymmetricKeyValue, (String)decryptionSymmetricAlgoritm);
+			SymmetricKeystore symmetricKeystore = GestoreKeystoreCache.getSymmetricKeystore(requestInfo, aliasDecryptUser, decryptionSymmetricKeyValue, (String)decryptionSymmetricAlgoritm);
 			decryptionKS = symmetricKeystore.getKeyStore();
 			aliasDecryptPassword = symmetricKeystore.getPasswordKey();
 		}
@@ -466,10 +478,15 @@ public class KeystoreUtils {
 		return bean;
 	}
 
-	public static SignatureBean getSenderSignatureBean(MessageSecurityContext messageSecurityContext) throws Exception {
+	public static SignatureBean getSenderSignatureBean(MessageSecurityContext messageSecurityContext, org.openspcoop2.utils.Map<Object> ctx) throws Exception {
 
 		if(messageSecurityContext.getSignatureBean()!=null) {
 			return messageSecurityContext.getSignatureBean();
+		}
+		
+		RequestInfo requestInfo = null;
+		if(ctx!=null && ctx.containsKey(Costanti.REQUEST_INFO)) {
+			requestInfo = (RequestInfo) ctx.get(Costanti.REQUEST_INFO);
 		}
 		
 		JWKSet signatureJWKSet = null;
@@ -511,7 +528,7 @@ public class KeystoreUtils {
 		// Istanzione truststore
 		// 0. TrustStore
 		if(signatureTrustStore!=null){
-			MerlinTruststore merlinTruststore = GestoreKeystoreCache.getMerlinTruststore(signatureTrustStore);
+			MerlinTruststore merlinTruststore = GestoreKeystoreCache.getMerlinTruststore(requestInfo, signatureTrustStore);
 			signatureTrustStoreKS = merlinTruststore.getTrustStore();
 		}
 		else if(signatureTrustStoreProperties!=null) {
@@ -520,7 +537,7 @@ public class KeystoreUtils {
 			String storeType = signatureTrustStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_TYPE);
 			String storePassword = signatureTrustStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_PASSWORD);
 			if(StringUtils.isNotEmpty(storePath) && StringUtils.isNotEmpty(storeType) && StringUtils.isNotEmpty(storePassword)) {
-				merlinTruststore = GestoreKeystoreCache.getMerlinTruststore(storePath, storeType, storePassword);
+				merlinTruststore = GestoreKeystoreCache.getMerlinTruststore(requestInfo, storePath, storeType, storePassword);
 			}
 			else {
 				merlinTruststore = new MerlinTruststore(signatureTrustStoreProperties);
@@ -537,7 +554,7 @@ public class KeystoreUtils {
 			}
 		}
 		if(signatureStore!=null){	
-			MerlinKeystore merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(signatureStore, aliasSignaturePassword);
+			MerlinKeystore merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(requestInfo, signatureStore, aliasSignaturePassword);
 			signatureKS = merlinKeystore.getKeyStore();
 		}
 		else if(signatureStoreProperties!=null) {
@@ -546,7 +563,7 @@ public class KeystoreUtils {
 			String storeType = signatureStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_TYPE);
 			String storePassword = signatureStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_PASSWORD);
 			if(StringUtils.isNotEmpty(storePath) && StringUtils.isNotEmpty(storeType) && StringUtils.isNotEmpty(storePassword)) {
-				merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(storePath, storeType, storePassword, aliasSignaturePassword);
+				merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(requestInfo, storePath, storeType, storePassword, aliasSignaturePassword);
 			}
 			else {
 				merlinKeystore = new MerlinKeystore(signatureStoreProperties, aliasSignaturePassword);
@@ -555,7 +572,7 @@ public class KeystoreUtils {
 		}
 		// 2. Multi Property
 		else if(multiSignatureStore!=null){
-			MultiKeystore multiKeystore = GestoreKeystoreCache.getMultiKeystore(multiSignatureStore);
+			MultiKeystore multiKeystore = GestoreKeystoreCache.getMultiKeystore(requestInfo, multiSignatureStore);
 			if(SecurityConstants.MULTI_USER_KEYWORD_FRUITORE.equals(aliasSignatureUser) && 
 					messageSecurityContext.getIdFruitore()!=null && messageSecurityContext.getIdFruitore().getNome()!=null){
 				String fruitore = messageSecurityContext.getIdFruitore().getNome();
@@ -649,10 +666,15 @@ public class KeystoreUtils {
 		return bean;
 
 	}	
-	public static SignatureBean getReceiverSignatureBean(MessageSecurityContext messageSecurityContext) throws Exception {
+	public static SignatureBean getReceiverSignatureBean(MessageSecurityContext messageSecurityContext, org.openspcoop2.utils.Map<Object> ctx) throws Exception {
 
 		if(messageSecurityContext.getSignatureBean()!=null) {
 			return messageSecurityContext.getSignatureBean();
+		}
+		
+		RequestInfo requestInfo = null;
+		if(ctx!=null && ctx.containsKey(Costanti.REQUEST_INFO)) {
+			requestInfo = (RequestInfo) ctx.get(Costanti.REQUEST_INFO);
 		}
 		
 		JWKSet signatureJWKSet = null;
@@ -698,7 +720,7 @@ public class KeystoreUtils {
 		// Istanzione truststore
 		// 0. TrustStore
 		if(signatureTrustStore!=null){
-			MerlinTruststore merlinTruststore = GestoreKeystoreCache.getMerlinTruststore(signatureTrustStore);
+			MerlinTruststore merlinTruststore = GestoreKeystoreCache.getMerlinTruststore(requestInfo, signatureTrustStore);
 			signatureTrustStoreKS = merlinTruststore.getTrustStore();
 		}
 		else if(signatureTrustStoreProperties!=null) {
@@ -707,7 +729,7 @@ public class KeystoreUtils {
 			String storeType = signatureTrustStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_TYPE);
 			String storePassword = signatureTrustStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_PASSWORD);
 			if(StringUtils.isNotEmpty(storePath) && StringUtils.isNotEmpty(storeType) && StringUtils.isNotEmpty(storePassword)) {
-				merlinTruststore = GestoreKeystoreCache.getMerlinTruststore(storePath, storeType, storePassword);
+				merlinTruststore = GestoreKeystoreCache.getMerlinTruststore(requestInfo, storePath, storeType, storePassword);
 			}
 			else {
 				merlinTruststore = new MerlinTruststore(signatureTrustStoreProperties);
@@ -722,7 +744,7 @@ public class KeystoreUtils {
 			if(aliasSignaturePassword==null){
 				throw new Exception(SecurityConstants.SIGNATURE_PASSWORD+" non fornita");
 			}
-			MerlinKeystore merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(signatureStore, aliasSignaturePassword);
+			MerlinKeystore merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(requestInfo, signatureStore, aliasSignaturePassword);
 			signatureKS = merlinKeystore.getKeyStore();
 		}
 		else if(signatureStoreProperties!=null) {
@@ -731,7 +753,7 @@ public class KeystoreUtils {
 			String storeType = signatureStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_TYPE);
 			String storePassword = signatureStoreProperties.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_PASSWORD);
 			if(StringUtils.isNotEmpty(storePath) && StringUtils.isNotEmpty(storeType) && StringUtils.isNotEmpty(storePassword)) {
-				merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(storePath, storeType, storePassword, aliasSignaturePassword);
+				merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(requestInfo, storePath, storeType, storePassword, aliasSignaturePassword);
 			}
 			else {
 				merlinKeystore = new MerlinKeystore(signatureStoreProperties, aliasSignaturePassword);
@@ -740,7 +762,7 @@ public class KeystoreUtils {
 		}
 		// 2. Multi Property
 		else if(multiSignatureStore!=null){
-			MultiKeystore multiKeystore = GestoreKeystoreCache.getMultiKeystore(multiSignatureStore);
+			MultiKeystore multiKeystore = GestoreKeystoreCache.getMultiKeystore(requestInfo, multiSignatureStore);
 			if(SecurityConstants.MULTI_USER_KEYWORD_FRUITORE.equals(aliasSignatureUser) && 
 					messageSecurityContext.getIdFruitore()!=null && messageSecurityContext.getIdFruitore().getNome()!=null){
 				String fruitore = messageSecurityContext.getIdFruitore().getNome();

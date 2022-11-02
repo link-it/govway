@@ -21,6 +21,7 @@ package org.openspcoop2.pdd.core.keystore;
 
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.CRLCertstore;
 import org.openspcoop2.security.keystore.MerlinKeystore;
@@ -32,6 +33,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.transport.http.SSLConfig;
 import org.slf4j.Logger;
 
@@ -105,7 +107,8 @@ public class GestoreKeystoreCaching {
 			if(cache!=null)
 				throw new Exception("Cache gia' abilitata");
 			else{
-				cache = new Cache(KEYSTORE_CACHE_NAME);
+				cache = new Cache(CacheType.JCS, KEYSTORE_CACHE_NAME); // lascio JCS come default abilitato via jmx
+				cache.build();
 			}
 		}catch(Exception e){
 			throw new Exception("Abilitazione cache per i dati contenenti i keystore non riuscita: "+e.getMessage(),e);
@@ -120,7 +123,7 @@ public class GestoreKeystoreCaching {
 				if(dimensioneCache!=null){
 					dimensione = dimensioneCache.intValue();
 				}
-				initCache(dimensione, algoritmoCacheLRU, itemIdleTime, itemLifeSecond, log);
+				initCache(CacheType.JCS, dimensione, algoritmoCacheLRU, itemIdleTime, itemLifeSecond, log); // lascio JCS come default abilitato via jmx
 			}
 		}catch(Exception e){
 			throw new Exception("Abilitazione cache per i dati contenenti i keystore non riuscita: "+e.getMessage(),e);
@@ -195,29 +198,29 @@ public class GestoreKeystoreCaching {
 	/*----------------- INIZIALIZZAZIONE --------------------*/
 
 	public static void initialize(Logger log) throws Exception{
-		GestoreKeystoreCaching.initialize(false, -1,null,-1l,-1l, log);
+		GestoreKeystoreCaching.initialize(null, false, -1,null,-1l,-1l, log);
 	}
-	public static void initialize(int dimensioneCache,String algoritmoCache,
+	public static void initialize(CacheType cacheType, int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception{
-		GestoreKeystoreCaching.initialize(true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
+		GestoreKeystoreCaching.initialize(cacheType, true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
 	}
 
-	private static void initialize(boolean cacheAbilitata,int dimensioneCache,String algoritmoCache,
+	private static void initialize(CacheType cacheType, boolean cacheAbilitata,int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception{
 
 		// Inizializzazione Cache
 		if(cacheAbilitata){
-			GestoreKeystoreCaching.initCache(dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
+			GestoreKeystoreCaching.initCache(cacheType, dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
 		}
 
 	}
-	private static void initCache(Integer dimensioneCache,String algoritmoCache,Long itemIdleTime,Long itemLifeSecond,Logger alog) throws Exception{
-		initCache(dimensioneCache, CostantiConfigurazione.CACHE_LRU.toString().equalsIgnoreCase(algoritmoCache), itemIdleTime, itemLifeSecond, alog);
+	private static void initCache(CacheType cacheType, Integer dimensioneCache,String algoritmoCache,Long itemIdleTime,Long itemLifeSecond,Logger alog) throws Exception{
+		initCache(cacheType, dimensioneCache, CostantiConfigurazione.CACHE_LRU.toString().equalsIgnoreCase(algoritmoCache), itemIdleTime, itemLifeSecond, alog);
 	}
 	
-	private static void initCache(Integer dimensioneCache,boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond,Logger alog) throws Exception{
+	private static void initCache(CacheType cacheType, Integer dimensioneCache,boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond,Logger alog) throws Exception{
 		
-		cache = new Cache(KEYSTORE_CACHE_NAME);
+		cache = new Cache(cacheType, KEYSTORE_CACHE_NAME);
 	
 		// dimensione
 		if(dimensioneCache!=null && dimensioneCache>0){
@@ -272,6 +275,7 @@ public class GestoreKeystoreCaching {
 			throw new Exception(msg,error);
 		}
 		
+		cache.build();
 		
 		// impostazione di JCS nel gestore delle cache dei keystore 
 		
@@ -279,12 +283,16 @@ public class GestoreKeystoreCaching {
 	}
 	
 
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public static void disableSyncronizedGet() throws UtilsException {
 		if(cache==null) {
 			throw new UtilsException("Cache disabled");
 		}
 		cache.disableSyncronizedGet();
 	}
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public static boolean isDisableSyncronizedGet() throws UtilsException {
 		if(cache==null) {
 			throw new UtilsException("Cache disabled");
@@ -334,44 +342,44 @@ public class GestoreKeystoreCaching {
 	
 	/* ********************** ENGINE ************************** */
 	
-	public static MerlinTruststore getMerlinTruststore(String propertyFilePath) throws SecurityException{
-		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getMerlinTruststore(propertyFilePath);
+	public static MerlinTruststore getMerlinTruststore(RequestInfo requestInfo, String propertyFilePath) throws SecurityException{
+		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getMerlinTruststore(requestInfo, propertyFilePath);
 	}
-	public static MerlinTruststore getMerlinTruststore(String pathStore,String tipoStore,String passwordStore) throws SecurityException{
-		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getMerlinTruststore(pathStore, tipoStore, passwordStore);
-	}
-	
-	
-	public static MerlinKeystore getMerlinKeystore(String propertyFilePath) throws SecurityException{
-		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getMerlinKeystore(propertyFilePath);
-	}
-	public static MerlinKeystore getMerlinKeystore(String propertyFilePath,String passwordPrivateKey) throws SecurityException{
-		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getMerlinKeystore(propertyFilePath, passwordPrivateKey);
-	}
-	public static MerlinKeystore getMerlinKeystore(String pathStore,String tipoStore,String passwordStore) throws SecurityException{
-		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getMerlinKeystore(pathStore, tipoStore, passwordStore);
-	}
-	public static MerlinKeystore getMerlinKeystore(String pathStore,String tipoStore,String passwordStore,String passwordPrivateKey) throws SecurityException{
-		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getMerlinKeystore(pathStore, tipoStore, passwordStore, passwordPrivateKey);
+	public static MerlinTruststore getMerlinTruststore(RequestInfo requestInfo, String pathStore,String tipoStore,String passwordStore) throws SecurityException{
+		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getMerlinTruststore(requestInfo, pathStore, tipoStore, passwordStore);
 	}
 	
 	
-	public static SymmetricKeystore getSymmetricKeystore(String alias,String key,String algoritmo) throws SecurityException{
-		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getSymmetricKeystore(key, alias, algoritmo);
+	public static MerlinKeystore getMerlinKeystore(RequestInfo requestInfo, String propertyFilePath) throws SecurityException{
+		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getMerlinKeystore(requestInfo, propertyFilePath);
+	}
+	public static MerlinKeystore getMerlinKeystore(RequestInfo requestInfo, String propertyFilePath,String passwordPrivateKey) throws SecurityException{
+		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getMerlinKeystore(requestInfo, propertyFilePath, passwordPrivateKey);
+	}
+	public static MerlinKeystore getMerlinKeystore(RequestInfo requestInfo, String pathStore,String tipoStore,String passwordStore) throws SecurityException{
+		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getMerlinKeystore(requestInfo, pathStore, tipoStore, passwordStore);
+	}
+	public static MerlinKeystore getMerlinKeystore(RequestInfo requestInfo, String pathStore,String tipoStore,String passwordStore,String passwordPrivateKey) throws SecurityException{
+		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getMerlinKeystore(requestInfo, pathStore, tipoStore, passwordStore, passwordPrivateKey);
 	}
 	
 	
-	public static MultiKeystore getMultiKeystore(String propertyFilePath) throws SecurityException{
-		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getMultiKeystore(propertyFilePath);
+	public static SymmetricKeystore getSymmetricKeystore(RequestInfo requestInfo, String alias,String key,String algoritmo) throws SecurityException{
+		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getSymmetricKeystore(requestInfo, key, alias, algoritmo);
 	}
 	
 	
-	public static CRLCertstore getCRLCertstore(String crlPath) throws SecurityException{
-		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getCRLCertstore(crlPath);
+	public static MultiKeystore getMultiKeystore(RequestInfo requestInfo, String propertyFilePath) throws SecurityException{
+		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getMultiKeystore(requestInfo, propertyFilePath);
 	}
 	
 	
-	public static SSLSocketFactory getSSLSocketFactory(SSLConfig sslConfig) throws SecurityException{
-		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getSSLSocketFactory(sslConfig);
+	public static CRLCertstore getCRLCertstore(RequestInfo requestInfo,String crlPath) throws SecurityException{
+		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getCRLCertstore(requestInfo,crlPath);
+	}
+	
+	
+	public static SSLSocketFactory getSSLSocketFactory(RequestInfo requestInfo,SSLConfig sslConfig) throws SecurityException{
+		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getSSLSocketFactory(requestInfo,sslConfig);
 	}
 }

@@ -45,6 +45,7 @@ import org.openspcoop2.pdd.logger.info.DatiMittente;
 import org.openspcoop2.pdd.logger.info.InfoEsitoTransazioneFormatUtils;
 import org.openspcoop2.pdd.logger.info.InfoMittenteFormatUtils;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
@@ -69,6 +70,7 @@ import org.slf4j.Logger;
  */
 public class Info {
 	
+	private IProtocolFactory<?> protocolFactory;
 	private org.openspcoop2.core.transazioni.Transazione transazione;
 	private EsitiProperties esitiProperties;
 	private CredenzialiMittente credenzialiMittente;
@@ -110,6 +112,7 @@ public class Info {
 	private Map<String, String> properties = new HashMap<String, String>();
 	
 	public Info(Logger log,
+			IProtocolFactory<?> protocolFactory,
 			org.openspcoop2.core.transazioni.Transazione transazione, 
 			CredenzialiMittente credenzialiMittente,
 			InformazioniToken informazioniToken,
@@ -124,8 +127,9 @@ public class Info {
 			FileTraceConfig config,
 			boolean base64) throws ProtocolException {
 		this.log = log;
+		this.protocolFactory = protocolFactory;
 		this.transazione = transazione;
-		this.esitiProperties = EsitiProperties.getInstance(log, transazione.getProtocollo());
+		this.esitiProperties = EsitiProperties.getInstance(log, this.protocolFactory);
 		this.credenzialiMittente = credenzialiMittente;
 		this.informazioniToken = informazioniToken;
 		this.informazioniAttributi = informazioniAttributi;
@@ -460,7 +464,7 @@ public class Info {
 			datiEsitoTransazione = new DatiEsitoTransazione();
 			
 			datiEsitoTransazione.setEsito(this.getResultAsInt());
-			datiEsitoTransazione.setProtocollo(this.getProfile());
+			datiEsitoTransazione.setProtocollo(this.protocolFactory);
 			
 			datiEsitoTransazione.setFaultIntegrazione(this._getFaultIntegrazione(null));
 			datiEsitoTransazione.setFormatoFaultIntegrazione(this._getFormatoFaultIntegrazione(null));

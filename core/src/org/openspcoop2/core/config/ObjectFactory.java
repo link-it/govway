@@ -332,6 +332,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link AccessoDatiRichieste }
+     */
+    public AccessoDatiRichieste createAccessoDatiRichieste() {
+        return new AccessoDatiRichieste();
+    }
+
+    /**
      * Create an instance of {@link MtomProcessor }
      */
     public MtomProcessor createMtomProcessor() {

@@ -20,13 +20,12 @@
 
 package org.openspcoop2.protocol.sdk.builder;
 
-import java.util.Map;
-
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.utils.Map;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 
 /**
@@ -60,7 +59,7 @@ public interface IEsitoBuilder extends IComponentFactory {
 	public EsitoTransazione getEsito(TransportRequestContext transportRequestContext, 
 			int returnCode, ServiceBinding serviceBinding,			
 			OpenSPCoop2Message message,
-			InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, Map<String, Object> context) throws ProtocolException;
+			InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, Map<Object> context) throws ProtocolException;
 		
 	/**
 	 * Calcola l'esito della transazione utilizzando le informazioni fornite
@@ -77,6 +76,6 @@ public interface IEsitoBuilder extends IComponentFactory {
 			int returnCode, ServiceBinding serviceBinding,
 			OpenSPCoop2Message message,
 			ProprietaErroreApplicativo erroreApplicativo,
-			InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, Map<String, Object> context) throws ProtocolException;
+			InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, Map<Object> context) throws ProtocolException;
 
 }

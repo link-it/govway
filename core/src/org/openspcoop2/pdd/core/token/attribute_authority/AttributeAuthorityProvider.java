@@ -230,8 +230,11 @@ public class AttributeAuthorityProvider implements IProvider {
 				throw new ProviderValidationException("La validazione di una risposta JWS richiede una configurazione del TrustStore; configurazione non riscontrata");
 			}
 			
-			String file = p.getProperty("rs.security.keystore.file");
-			InputValidationUtils.validateTextAreaInput(file, "Risposta - TrustStore - File");
+			if(!p.containsKey("rs.security.keystore") && !p.containsKey("rs.security.keystore.jwkset")) {
+				// altrimenti è stato fatto inject del keystore
+				String file = p.getProperty("rs.security.keystore.file");
+				InputValidationUtils.validateTextAreaInput(file, "Risposta - TrustStore - File");
+			}
 		}
 	}
 

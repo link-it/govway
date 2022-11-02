@@ -625,7 +625,7 @@ org.openspcoop2.pdd.cluster_id.numeric.dinamico.cifre=CIFREIDMESSAGGIO]]></repla
 							<classpath>
 								<path id="classpath_run">
 									<fileset dir="${deploy_sw}" includes="**/openspcoop2_utils_*.jar"/>
-									<fileset dir="${deploy_sw}" includes="jars/commons-codec-1.14.jar"/>
+									<fileset dir="${deploy_sw}" includes="jars/commons-codec-1.15.jar"/>
 									<fileset dir="${deploy_sw}" includes="jars/commons-lang-2.6.jar"/>
 							   	</path>				
 							</classpath>
@@ -652,7 +652,7 @@ org.openspcoop2.pdd.cluster_id.numeric.dinamico.cifre=CIFREIDMESSAGGIO]]></repla
 							<classpath>
 								<path id="classpath_run">
 									<fileset dir="${deploy_sw}" includes="**/openspcoop2_utils_*.jar"/>
-									<fileset dir="${deploy_sw}" includes="jars/commons-codec-1.14.jar"/>
+									<fileset dir="${deploy_sw}" includes="jars/commons-codec-1.15.jar"/>
 									<fileset dir="${deploy_sw}" includes="jars/commons-lang-2.6.jar"/>
 							   	</path>				
 							</classpath>
@@ -2013,17 +2013,17 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="_RELEASE." value="-${antinstaller_versione_attuale_con_p_level}."/>
 
 		<!-- replace jar in cui e' stato corretto il manifest -->
-		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="jaxb-impl-2.3.2.jar" value="jaxb-impl-2.3.2.gw.jar"/>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="jaxb-impl-2.3.7.jar" value="jaxb-impl-2.3.7.gw.jar"/>
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
-			<replacetoken><![CDATA[jaxb-impl-2.3.2.ja
+			<replacetoken><![CDATA[jaxb-impl-2.3.7.ja
  r]]></replacetoken>
-			<replacevalue><![CDATA[jaxb-impl-2.3.2.gw.jar
+			<replacevalue><![CDATA[jaxb-impl-2.3.7.gw.jar
  ]]></replacevalue>
 		</replace>
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
-			<replacetoken><![CDATA[jaxb-impl-2.3.2.j
+			<replacetoken><![CDATA[jaxb-impl-2.3.7.j
  ar]]></replacetoken>
-			<replacevalue><![CDATA[jaxb-impl-2.3.2.gw.jar
+			<replacevalue><![CDATA[jaxb-impl-2.3.7.gw.jar
  ]]></replacevalue>
 		</replace>	
 
@@ -2041,51 +2041,55 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
  ]]></replacevalue>
 		</replace>		
 
-		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="jaxb-xjc-2.3.2.jar" value="jaxb-xjc-2.3.2.gw.jar"/>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="jaxb-xjc-2.3.7.jar" value="jaxb-xjc-2.3.7.gw.jar"/>
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
-			<replacetoken><![CDATA[jaxb-xjc-2.3.2.ja
+			<replacetoken><![CDATA[jaxb-xjc-2.3.7.ja
  r]]></replacetoken>
-			<replacevalue><![CDATA[jaxb-xjc-2.3.2.gw.jar
+			<replacevalue><![CDATA[jaxb-xjc-2.3.7.gw.jar
  ]]></replacevalue>
 		</replace>
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
-			<replacetoken><![CDATA[jaxb-xjc-2.3.2.j
+			<replacetoken><![CDATA[jaxb-xjc-2.3.7.j
  ar]]></replacetoken>
-			<replacevalue><![CDATA[jaxb-xjc-2.3.2.gw.jar
+			<replacevalue><![CDATA[jaxb-xjc-2.3.7.gw.jar
  ]]></replacevalue>
 		</replace>		
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
+			<replacetoken><![CDATA[ axb-xjc-2.3.7.jar ]]></replacetoken>
+			<replacevalue><![CDATA[ axb-xjc-2.3.7.gw.jar ]]></replacevalue>
+		</replace>
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
 			<replacetoken><![CDATA[jaxb
- -xjc-2.3.2.jar]]></replacetoken>
-			<replacevalue><![CDATA[jaxb-xjc-2.3.2.gw.jar
+ -xjc-2.3.7.jar]]></replacetoken>
+			<replacevalue><![CDATA[jaxb-xjc-2.3.7.gw.jar
  ]]></replacevalue>
 		</replace>
 
-		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="xalan-2.7.2.jar" value="xalan-2.7.2.gw.jar"/>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="xalan-2.7.3-rc5.jar" value="xalan-2.7.3-rc5.gw.jar"/>
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
-			<replacetoken><![CDATA[xalan-2.7.2.ja
+			<replacetoken><![CDATA[xalan-2.7.3-rc5.ja
  r]]></replacetoken>
-			<replacevalue><![CDATA[xalan-2.7.2.gw.jar
+			<replacevalue><![CDATA[xalan-2.7.3-rc5.gw.jar
  ]]></replacevalue>
 		</replace>
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
-			<replacetoken><![CDATA[xalan-2.7.2.j
+			<replacetoken><![CDATA[xalan-2.7.3-rc5.j
  ar]]></replacetoken>
-			<replacevalue><![CDATA[xalan-2.7.2.gw.jar
+			<replacevalue><![CDATA[xalan-2.7.3-rc5.gw.jar
  ]]></replacevalue>
 		</replace>		
 
-		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="serializer-2.7.2.jar" value="serializer-2.7.2.gw.jar"/>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="serializer-2.7.3-rc5.jar" value="serializer-2.7.3-rc5.gw.jar"/>
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
-			<replacetoken><![CDATA[serializer-2.7.2.ja
+			<replacetoken><![CDATA[serializer-2.7.3-rc5.ja
  r]]></replacetoken>
-			<replacevalue><![CDATA[serializer-2.7.2.gw.jar
+			<replacevalue><![CDATA[serializer-2.7.3-rc5.gw.jar
  ]]></replacevalue>
 		</replace>
 		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF">
-			<replacetoken><![CDATA[serializer-2.7.2.j
+			<replacetoken><![CDATA[serializer-2.7.3-rc5.j
  ar]]></replacetoken>
-			<replacevalue><![CDATA[serializer-2.7.2.gw.jar
+			<replacevalue><![CDATA[serializer-2.7.3-rc5.gw.jar
  ]]></replacevalue>
 		</replace>		
 

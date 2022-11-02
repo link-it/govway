@@ -23,8 +23,8 @@ package org.openspcoop2.pdd.core.handlers;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Context;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.slf4j.Logger;
 
 /**

@@ -24,20 +24,20 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupBy;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
-import org.openspcoop2.core.controllo_traffico.driver.CostantiControlloTraffico;
+import org.openspcoop2.core.controllo_traffico.constants.Costanti;
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreadsInMemory;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.PolicyDateUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.Map;
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
 
@@ -55,7 +55,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Map<IDUnivocoGroupByPolicy, DatiCollezionati> mapActiveThreads = new HashMap<IDUnivocoGroupByPolicy, DatiCollezionati>();
+	private java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> mapActiveThreads = new HashMap<IDUnivocoGroupByPolicy, DatiCollezionati>();
 	
 	//private final Boolean semaphore = Boolean.valueOf(false);
 	private final org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("PolicyGroupByActiveThreads");
@@ -74,17 +74,17 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 		return this.activePolicy;
 	}
 	@Override
-	public Map<IDUnivocoGroupByPolicy, DatiCollezionati> getMapActiveThreads(){
+	public java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> getMapActiveThreads(){
 		return this.mapActiveThreads;
 	}
 	
 	
-	public void setMapActiveThreads(Map<IDUnivocoGroupByPolicy, DatiCollezionati> value) {
+	public void setMapActiveThreads(java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> value) {
 		this.mapActiveThreads = value;
 	}
 	
 	@Override
-	public void initMap(Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
+	public void initMap(java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
 		//synchronized (this.semaphore) {
 		this.lock.acquireThrowRuntime("initMap");
 		try {
@@ -119,7 +119,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	}
 	
 	@Override
-	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx) throws PolicyException{
+	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx) throws PolicyException{
 				
 		DatiCollezionati datiCollezionatiReaded = null;
 		//System.out.println("<"+idTransazione+">registerStartRequest ...");
@@ -164,7 +164,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	}
 	
 	@Override
-	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx) throws PolicyException,PolicyNotFoundException{
+	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx) throws PolicyException,PolicyNotFoundException{
 		
 		DatiCollezionati datiCollezionatiReaded = null;
 		//System.out.println("<"+idTransazione+">updateDatiStartRequestApplicabile ...");
@@ -206,7 +206,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	}
 	
 	@Override
-	public void registerStopRequest(Logger log, String idTransazione,IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx, 
+	public void registerStopRequest(Logger log, String idTransazione,IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx, 
 			MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata) throws PolicyException,PolicyNotFoundException{
 		//System.out.println("<"+idTransazione+">registerStopRequest ...");
 		//synchronized (this.semaphore) {
@@ -230,9 +230,10 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 					List<Integer> esitiCodeKo_senzaFaultApplicativo = null;
 					List<Integer> esitiCodeFaultApplicativo = null;
 					try {
-						esitiCodeOk = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeOk_senzaFaultApplicativo();
-						esitiCodeKo_senzaFaultApplicativo = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeKo_senzaFaultApplicativo();
-						esitiCodeFaultApplicativo = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeFaultApplicativo();
+						EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(log,dati.getProtocollo());
+						esitiCodeOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
+						esitiCodeKo_senzaFaultApplicativo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
+						esitiCodeFaultApplicativo = esitiProperties.getEsitiCodeFaultApplicativo();
 					}catch(Exception e) {
 						throw new PolicyException(e.getMessage(),e);
 					}
@@ -292,7 +293,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 				for (IDUnivocoGroupByPolicy datiGroupBy : this.mapActiveThreads.keySet()) {
 					bf.append(separatorGroups);
 					bf.append("\n");
-					bf.append(CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE).append(" ").append(this.tipoGestore.toLabel());
+					bf.append(Costanti.LABEL_MODALITA_SINCRONIZZAZIONE).append(" ").append(this.tipoGestore.toLabel());
 					bf.append("\n");
 					bf.append("Criterio di Collezionamento dei Dati\n");
 					bf.append(datiGroupBy.toString(true));

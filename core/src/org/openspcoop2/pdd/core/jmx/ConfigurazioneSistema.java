@@ -1205,7 +1205,7 @@ class VersioneBaseDatiChecker implements Callable<String>{
 		}
 		DBManager dbManager = DBManager.getInstance();
 		Resource resource = null;
-		IDSoggetto dominio = this.openspcoopProperties.getIdentitaPortaDefault(null);
+		IDSoggetto dominio = this.openspcoopProperties.getIdentitaPortaDefaultWithoutProtocol();
 		String modulo = this.getClass().getName();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -1294,7 +1294,7 @@ class InformazioniDatabaseChecker implements Callable<String>{
 		}
 		DBManager dbManager = DBManager.getInstance();
 		Resource resource = null;
-		IDSoggetto dominio = this.openspcoopProperties.getIdentitaPortaDefault(null);
+		IDSoggetto dominio = this.openspcoopProperties.getIdentitaPortaDefaultWithoutProtocol();
 		String modulo = this.getClass().getName();
 		StringBuilder bf = new StringBuilder();
 

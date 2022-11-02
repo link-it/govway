@@ -232,6 +232,7 @@ public class ConsegnaContenutiApplicativiMessage implements GenericMessage {
 		return this.implementazionePdDSoggettoDestinatario;
 	}
 	
+	@Override
 	public PdDContext getPddContext() {
 		return this.pddContext;
 	}

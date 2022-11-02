@@ -106,7 +106,7 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 	
 	/* UTILITY */
 	
-	private String buildKeyCacheFromBytes(byte[] keystore) throws SecurityException {
+	public static String buildKeyCacheFromBytes(byte[] keystore) throws SecurityException {
 		if(keystore==null) {
 			throw new SecurityException("Keystore undefined");
 		}

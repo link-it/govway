@@ -53,6 +53,7 @@ import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
 import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneUtils;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.MessageSecurityContextParameters;
@@ -82,9 +83,9 @@ import com.fasterxml.jackson.databind.node.TextNode;
  */
 public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintatticaCommons{
 
-	public ModIValidazioneSintatticaRest(Logger log, IState state, Context context, IProtocolFactory<?> factory, 
+	public ModIValidazioneSintatticaRest(Logger log, IState state, Context context, IProtocolFactory<?> factory, RequestInfo requestInfo, 
 			ModIProperties modiProperties, ValidazioneUtils validazioneUtils) {
-		super(log, state, context, factory, modiProperties, validazioneUtils);
+		super(log, state, context, factory, requestInfo, modiProperties, validazioneUtils);
 	}
 	
 	
@@ -532,7 +533,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				}
 			}
 			messageSecurityContext.setIncomingProperties(secProperties, false);
-			joseSignature.process(messageSecurityContext, msgToken, busta);
+			joseSignature.process(messageSecurityContext, msgToken, busta, this.context);
 			joseSignature.detachSecurity(messageSecurityContext, msgToken.castAsRest());
 			
 			ModIRESTSecurity restSecurity = (ModIRESTSecurity) msg.getContextProperty(ModICostanti.MODIPA_OPENSPCOOP2_MSG_CONTEXT_SBUSTAMENTO_REST);
@@ -651,7 +652,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 					}
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setNome(msg.getTransportRequestContext().getInterfaceName());
-					PortaApplicativa pa = this.factory.getCachedConfigIntegrationReader(this.state).getPortaApplicativa(idPA);
+					PortaApplicativa pa = this.factory.getCachedConfigIntegrationReader(this.state, this.requestInfo).getPortaApplicativa(idPA);
 					boolean autenticazioneToken = pa!=null && pa.getGestioneToken()!=null && pa.getGestioneToken().getPolicy()!=null && StringUtils.isNotEmpty(pa.getGestioneToken().getPolicy());
 					if(autenticazioneToken) {
 						// l'autenticazione dell'applicativo mittente avviene per token

@@ -36,6 +36,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.ModIKeystoreUtils;
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
@@ -141,9 +142,9 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	
 
 	public NegoziazioneTokenDynamicParameters(Map<String, Object> dynamicMap, 
-			PdDContext pddContext, Busta busta, IState state, IProtocolFactory<?> protocolFactory,
+			PdDContext pddContext, RequestInfo requestInfo, Busta busta, IState state, IProtocolFactory<?> protocolFactory,
 			PolicyNegoziazioneToken policyNegoziazioneToken) throws Exception {
-		super(dynamicMap, pddContext);
+		super(dynamicMap, pddContext, requestInfo);
 		
 		this.policyNegoziazioneToken = policyNegoziazioneToken;
 		
@@ -196,7 +197,7 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 					this.idApplicativoRichiedente.setNome(busta.getServizioApplicativoFruitore());
 					this.idApplicativoRichiedente.setIdSoggettoProprietario(new IDSoggetto(busta.getTipoMittente(), busta.getMittente()));
 					try {
-						this.applicativoRichiedente = configurazionePdDManager.getServizioApplicativo(this.idApplicativoRichiedente);
+						this.applicativoRichiedente = configurazionePdDManager.getServizioApplicativo(this.idApplicativoRichiedente, this.getRequestInfo());
 					}catch(Throwable t) {
 						throw new Exception(prefixError+"richiede l'autenticazione e l'identificazione di un applicativo fruitore: "+t.getMessage(),t);
 					}
@@ -615,7 +616,7 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	}
 	public org.openspcoop2.utils.certificate.KeyStore getKeystoreApplicativoModI() throws Exception{
 		if(this.keystoreApplicativoModI.getSecurityMessageKeystorePath()!=null || this.keystoreApplicativoModI.isSecurityMessageKeystoreHSM()) {
-			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(this.keystoreApplicativoModI.getSecurityMessageKeystorePath(), this.keystoreApplicativoModI.getSecurityMessageKeystoreType(), 
+			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(this.getRequestInfo(), this.keystoreApplicativoModI.getSecurityMessageKeystorePath(), this.keystoreApplicativoModI.getSecurityMessageKeystoreType(), 
 					this.keystoreApplicativoModI.getSecurityMessageKeystorePassword());
 			if(merlinKs==null) {
 				throw new Exception("Accesso al keystore '"+this.keystoreApplicativoModI.getSecurityMessageKeystorePath()+"' non riuscito");
@@ -623,7 +624,7 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			return merlinKs.getKeyStore();
 		}
 		else {
-			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(this.keystoreApplicativoModI.getSecurityMessageKeystoreArchive(), this.keystoreApplicativoModI.getSecurityMessageKeystoreType(), 
+			MerlinKeystore merlinKs = GestoreKeystoreCache.getMerlinKeystore(this.getRequestInfo(), this.keystoreApplicativoModI.getSecurityMessageKeystoreArchive(), this.keystoreApplicativoModI.getSecurityMessageKeystoreType(), 
 					this.keystoreApplicativoModI.getSecurityMessageKeystorePassword());
 			if(merlinKs==null) {
 				throw new Exception("Accesso al keystore non riuscito");

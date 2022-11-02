@@ -27,6 +27,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
@@ -81,7 +82,8 @@ public class GestoreCacheResponseCaching {
 			if(cache!=null)
 				throw new Exception("Cache gia' abilitata");
 			else{
-				cache = new Cache(RESPONSE_CACHING_CACHE_NAME);
+				cache = new Cache(CacheType.JCS, RESPONSE_CACHING_CACHE_NAME);  // lascio JCS come default abilitato via jmx
+				cache.build();
 			}
 		}catch(Exception e){
 			throw new Exception("Abilitazione cache per i dati contenenti le risposte salvate non riuscita: "+e.getMessage(),e);
@@ -96,7 +98,7 @@ public class GestoreCacheResponseCaching {
 				if(dimensioneCache!=null){
 					dimensione = dimensioneCache.intValue();
 				}
-				initCache(dimensione, algoritmoCacheLRU, itemIdleTime, itemLifeSecond, log);
+				initCache(CacheType.JCS, dimensione, algoritmoCacheLRU, itemIdleTime, itemLifeSecond, log);  // lascio JCS come default abilitato via jmx
 			}
 		}catch(Exception e){
 			throw new Exception("Abilitazione cache per i dati contenenti le risposte salvate non riuscita: "+e.getMessage(),e);
@@ -171,29 +173,29 @@ public class GestoreCacheResponseCaching {
 	/*----------------- INIZIALIZZAZIONE --------------------*/
 
 	public static void initialize(Logger log) throws Exception{
-		GestoreCacheResponseCaching.initialize(false, -1,null,-1l,-1l, log);
+		GestoreCacheResponseCaching.initialize(null, false, -1,null,-1l,-1l, log);
 	}
-	public static void initialize(int dimensioneCache,String algoritmoCache,
+	public static void initialize(CacheType cacheType, int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception{
-		GestoreCacheResponseCaching.initialize(true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
+		GestoreCacheResponseCaching.initialize(cacheType, true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
 	}
 
-	private static void initialize(boolean cacheAbilitata,int dimensioneCache,String algoritmoCache,
+	private static void initialize(CacheType cacheType, boolean cacheAbilitata,int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception{
 
 		// Inizializzazione Cache
 		if(cacheAbilitata){
-			GestoreCacheResponseCaching.initCache(dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
+			GestoreCacheResponseCaching.initCache(cacheType, dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
 		}
 
 	}
-	private static void initCache(Integer dimensioneCache,String algoritmoCache,Long itemIdleTime,Long itemLifeSecond,Logger alog) throws Exception{
-		initCache(dimensioneCache, CostantiConfigurazione.CACHE_LRU.toString().equalsIgnoreCase(algoritmoCache), itemIdleTime, itemLifeSecond, alog);
+	private static void initCache(CacheType cacheType, Integer dimensioneCache,String algoritmoCache,Long itemIdleTime,Long itemLifeSecond,Logger alog) throws Exception{
+		initCache(cacheType, dimensioneCache, CostantiConfigurazione.CACHE_LRU.toString().equalsIgnoreCase(algoritmoCache), itemIdleTime, itemLifeSecond, alog);
 	}
 	
-	private static void initCache(Integer dimensioneCache,boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond,Logger alog) throws Exception{
+	private static void initCache(CacheType cacheType, Integer dimensioneCache,boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond,Logger alog) throws Exception{
 		
-		cache = new Cache(RESPONSE_CACHING_CACHE_NAME);
+		cache = new Cache(cacheType, RESPONSE_CACHING_CACHE_NAME);
 	
 		// dimensione
 		if(dimensioneCache!=null && dimensioneCache>0){
@@ -248,15 +250,20 @@ public class GestoreCacheResponseCaching {
 			throw new Exception(msg,error);
 		}
 		
+		cache.build();
 	}
 	
 	
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public static void disableSyncronizedGet() throws UtilsException {
 		if(cache==null) {
 			throw new UtilsException("Cache disabled");
 		}
 		cache.disableSyncronizedGet();
 	}
+	@SuppressWarnings("deprecation")
+	@Deprecated
 	public static boolean isDisableSyncronizedGet() throws UtilsException {
 		if(cache==null) {
 			throw new UtilsException("Cache disabled");

@@ -20,6 +20,7 @@
 
 package org.openspcoop2.security.keystore.cache;
 
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.SSLSocketFactory;
 import org.openspcoop2.utils.transport.http.SSLConfig;
@@ -39,12 +40,16 @@ public class SSLSocketFactoryCache extends AbstractKeystoreCache<SSLSocketFactor
 		if(params==null){
 			throw new SecurityException("Params is null");
 		}
-		if(params.length==1){
-			if( ! (params[0] instanceof SSLConfig) ){
-				throw new SecurityException("Param[0] must be SSLConfig");
+		if(params.length==2){
+			if( ! (params[0] instanceof RequestInfo) ){
+				throw new SecurityException("Param[0] must be RequestInfo");
 			}
-			SSLConfig sslConfig = (SSLConfig) params[0];
-			return new SSLSocketFactory(sslConfig);
+			RequestInfo requestInfo = (RequestInfo) params[0];
+			if( ! (params[1] instanceof SSLConfig) ){
+				throw new SecurityException("Param[1] must be SSLConfig");
+			}
+			SSLConfig sslConfig = (SSLConfig) params[1];
+			return new SSLSocketFactory(requestInfo,sslConfig);
 		}
 		else{
 			throw new SecurityException("Params [lenght:"+params.length+"] not supported");

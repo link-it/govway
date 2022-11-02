@@ -1,0 +1,227 @@
+{
+"$schema": "http://json-schema.org/draft-07/schema#",
+"definitions" : {
+  "FormatoSoapEnum": {
+    "type": "string",
+    "enum": [
+      "Wsdl1.1"
+    ],
+    "default": "Wsdl1.1"
+  },
+  "FormatoRestEnum": {
+    "type": "string",
+    "enum": [
+      "Wadl",
+      "Swagger2.0",
+      "OpenApi3.0"
+    ],
+    "default": "OpenApi3.0"
+  },
+  "TipoApiEnum": {
+    "type": "string",
+    "example": "rest",
+    "enum": [
+      "soap",
+      "rest"
+    ]
+  },
+  "Order" : {
+    "type" : "object",
+    "properties" : {
+      "id" : {
+        "type" : "integer",
+        "format" : "int64"
+      },
+      "petId" : {
+        "type" : "integer",
+        "format" : "int64"
+      },
+      "quantity" : {
+        "type" : "integer",
+        "format" : "int32"
+      },
+      "shipDate" : {
+        "type" : "string",
+        "format" : "date-time"
+      },
+      "status" : {
+        "type" : "string",
+        "description" : "Order Status",
+        "enum" : [ "placed", "approved", "delivered" ]
+      },
+      "complete" : {
+        "type" : "boolean",
+        "default" : false
+      }
+    },
+    "xml" : {
+      "name" : "Order"
+    }
+  },
+  "Category" : {
+    "type" : "object",
+    "properties" : {
+      "id" : {
+        "type" : "integer",
+        "format" : "int64"
+      },
+      "name" : {
+        "type" : "string"
+      }
+    },
+    "xml" : {
+      "name" : "Category"
+    }
+  },
+  "EsempioAllOf": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/components/schemas/User"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "username" : {
+		      "type" : "string"
+		    },
+		    "firstName" : {
+		      "type" : "string"
+		    }
+          }
+        }
+      ]
+    },
+  "User" : {
+    "type" : "object",
+    "properties" : {
+      "id" : {
+        "type" : "integer",
+        "format" : "int64"
+      },
+      "username" : {
+        "type" : "string"
+      },
+      "firstName" : {
+        "type" : "string"
+      },
+      "lastName" : {
+        "type" : "string"
+      },
+      "email" : {
+        "type" : "string"
+      },
+      "password" : {
+        "type" : "string"
+      },
+      "phone" : {
+        "type" : "string"
+      },
+      "userStatus" : {
+        "type" : "integer",
+        "format" : "int32",
+        "description" : "User Status"
+      }
+    },
+    "xml" : {
+      "name" : "User"
+    }
+  },
+  "Tag" : {
+    "type" : "object",
+    "properties" : {
+      "id" : {
+        "type" : "integer",
+        "format" : "int64"
+      },
+      "name" : {
+        "type" : "string"
+      }
+    },
+    "xml" : {
+      "name" : "Tag"
+    }
+  },
+  "Pet" : {
+    "type" : "object",
+    "required" : [ "name", "photoUrls" ],
+    "properties" : {
+      "id" : {
+        "type" : "integer",
+        "format" : "int64"
+      },
+      "category" : {
+        "$ref" : "#/definitions/Category"
+      },
+      "name" : {
+        "type" : "string",
+        "example" : "doggie"
+      },
+      "photoUrls" : {
+        "type" : "array",
+        "items" : {
+          "type" : "string"
+        }
+      },
+      "tags" : {
+        "type" : "array",
+        "items" : {
+          "$ref" : "#/definitions/Tag"
+        }
+      },
+      "status" : {
+        "type" : "string",
+        "description" : "pet status in the store",
+        "enum" : [ "available", "pending", "sold" ]
+      },
+      "costante" : {
+      	"const" : "valoreCostante"
+      },
+      "tipo": {
+        "$ref": "#/definitions/TipoApiEnum"
+      },
+      "formato": {
+        "type": "string",
+        "example": {
+          "formato": "OpenApi3.0"
+        },
+        "discriminator": {
+          "propertyName": "tipo",
+          "mapping": {
+            "soap": "#/definitions/FormatoSoapEnum",
+            "rest": "#/definitions/FormatoRestEnum"
+          }
+        },
+        "oneOf": [
+          {
+            "$ref": "#/definitions/FormatoSoapEnum"
+          },
+          {
+            "$ref": "#/definitions/FormatoRestEnum"
+          }
+        ]
+      }
+    },
+    "additionalProperties" : false,
+    "xml" : {
+      "name" : "Pet"
+    }
+  },
+  "ApiResponse" : {
+    "type" : "object",
+    "properties" : {
+      "code" : {
+        "type" : "integer",
+        "format" : "int32"
+      },
+      "type" : {
+        "type" : "string"
+      },
+      "message" : {
+        "type" : "string"
+      }
+    }
+  }
+}, 
+"anyOf": [{"$ref": "#/definitions/Pet"}]
+}

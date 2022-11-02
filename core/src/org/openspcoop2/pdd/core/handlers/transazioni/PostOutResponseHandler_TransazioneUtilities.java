@@ -51,6 +51,7 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.EJBUtils;
@@ -82,6 +83,7 @@ import org.openspcoop2.protocol.sdk.builder.IBustaBuilder;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.date.DateManager;
@@ -222,10 +224,14 @@ public class PostOutResponseHandler_TransazioneUtilities {
 
 			IBustaBuilder<?> protocolBustaBuilder = protocolFactory.createBustaBuilder(context.getStato());
 
+			RequestInfo requestInfo = null;
+			if(context.getPddContext()!=null && context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+				requestInfo = (RequestInfo) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+			}
 
 			Transazione transactionDTO = new Transazione();
 
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.logger, context.getProtocolFactory().getProtocol());
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.logger, protocolFactory);
 						
 			// ** Consegna Multipla **
 			// NOTA: l'esito deve essere compreso solo dopo aver capito se le notifiche devono essere consegna o meno poichè le notifiche stesse si basano sullo stato di come è terminata la transazione sincrona
@@ -254,7 +260,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				if(transaction!=null && transaction.getRequestInfo()!=null && transaction.getRequestInfo().getProtocolContext()!=null){
 					nomePorta = transaction.getRequestInfo().getProtocolContext().getInterfaceName();
 				}
-				msgDiag = MsgDiagnostico.newInstance(context.getTipoPorta(),idDominio, context.getIdModulo(), nomePorta, context.getStato());
+				msgDiag = MsgDiagnostico.newInstance(context.getTipoPorta(),idDominio, context.getIdModulo(), nomePorta, requestInfo, context.getStato());
 			}
 			if(consegnaMultipla_profiloSincrono && configurazione_consegnaMultipla_profiloSincrono!=null &&
 					context.getEsito()!=null && context.getEsito().getCode()!=null) {
@@ -766,7 +772,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					try {
 						IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(transactionDTO.getTipoServizio(), transactionDTO.getNomeServizio(), 
 							transactionDTO.getTipoSoggettoErogatore(), transactionDTO.getNomeSoggettoErogatore(), transactionDTO.getVersioneServizio());
-						AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false);
+						AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false, requestInfo);
 						idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
 					}catch(Throwable e) {
 						// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
@@ -785,7 +791,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			
 			if(idAccordo!=null) {
 				try {
-					AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(idAccordo, null, false, false);
+					AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(idAccordo, null, false, false, requestInfo);
 					if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(aspc.getServiceBinding())) {
 						transactionDTO.setTipoApi(TipoAPI.REST.getValoreAsInt());
 					}
@@ -824,7 +830,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 							}
 							CredenzialeMittente credGruppi = GestoreAutenticazione.convertGruppiToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, gruppi, 
 									null, "PostOutResponse.gruppi",
-									sbConflict);
+									sbConflict, requestInfo);
 							if(sbConflict!=null && sbConflict.length()>0) {
 								conflict = sbConflict.toString();
 							}
@@ -857,7 +863,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					}
 					CredenzialeMittente credAPI = GestoreAutenticazione.convertAPIToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, transactionDTO.getUriAccordoServizio(), 
 							null, "PostOutResponse.api",
-							sbConflict);
+							sbConflict, requestInfo);
 					if(sbConflict!=null && sbConflict.length()>0) {
 						conflict = sbConflict.toString();
 					}
@@ -1089,7 +1095,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			}
 			
 			if(context.getPddContext()!=null){
-				Object operazioneIM = context.getPddContext().getObject(CostantiPdD.KEY_TIPO_OPERAZIONE_IM);
+				Object operazioneIM = context.getPddContext().getObject(CostantiPdD.TIPO_OPERAZIONE_IM);
 				if(operazioneIM!=null && operazioneIM instanceof String){
 					String op = (String) operazioneIM;
 					transactionDTO.setOperazioneIm(op);
@@ -1345,7 +1351,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					CredenzialeMittente credClientAddress =GestoreAutenticazione.convertClientCredentialToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, 
 							transactionDTO.getSocketClientAddress(), transactionDTO.getTransportClientAddress(), 
 							null, "PostOutResponse.clientAddress",
-							sbConflict); 
+							sbConflict, requestInfo); 
 					if(sbConflict!=null && sbConflict.length()>0) {
 						conflict = sbConflict.toString();
 					}
@@ -1452,7 +1458,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					}
 					CredenzialeMittente credEventi = GestoreAutenticazione.convertEventiToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, eventiGestione, 
 							null, "PostOutResponse.eventi",
-							sbConflict);
+							sbConflict, requestInfo);
 					if(sbConflict!=null && sbConflict.length()>0) {
 						conflict = sbConflict.toString();
 					}
@@ -1563,7 +1569,8 @@ public class PostOutResponseHandler_TransazioneUtilities {
 								repositoryBuste, msgRequest, null, 
 								context.getProtocolFactory(), idDominio, nomePorta, messaggiInConsegna,
 								spedizioneConsegnaContenuti,
-								context.getPddContext());
+								context.getPddContext(),
+								ConfigurazionePdDManager.getInstance());
 						
 						if(times!=null) {
 							long timeEnd =  DateManager.getTimeMillis();

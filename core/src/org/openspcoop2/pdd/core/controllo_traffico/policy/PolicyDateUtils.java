@@ -21,10 +21,11 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
 
 import org.openspcoop2.core.controllo_traffico.constants.TipoFinestra;
 import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.date.DateUtils;
 
 /**     
@@ -67,18 +68,18 @@ public class PolicyDateUtils {
 		return bf.toString();
 	}	
 	
-	private final static String RATE_LIMITING_GESTORE_POLICY_CONFIG_DATE = "RATE_LIMITING_GESTORE_POLICY_CONFIG_DATE";
-	public static void setGestorePolicyConfigDateIntoContext(Map<String, Object> ctx, Long gestorePolicyConfigDate) {
+	private final static MapKey<String> RATE_LIMITING_GESTORE_POLICY_CONFIG_DATE = Map.newMapKey("RATE_LIMITING_GESTORE_POLICY_CONFIG_DATE");
+	public static void setGestorePolicyConfigDateIntoContext(Map<Object> ctx, Long gestorePolicyConfigDate) {
 		if(ctx!=null && gestorePolicyConfigDate!=null && gestorePolicyConfigDate>0) {
 			ctx.put(RATE_LIMITING_GESTORE_POLICY_CONFIG_DATE, gestorePolicyConfigDate);
 		}
 	}
-	public static void removeGestorePolicyConfigDateIntoContext(Map<String, Object> ctx) {
+	public static void removeGestorePolicyConfigDateIntoContext(Map<Object> ctx) {
 		if(ctx!=null ) {
 			ctx.remove(RATE_LIMITING_GESTORE_POLICY_CONFIG_DATE);
 		}
 	}
-	public static Date readGestorePolicyConfigDateIntoContext(Map<String, Object> ctx) {
+	public static Date readGestorePolicyConfigDateIntoContext(Map<Object> ctx) {
 		if(ctx!=null ) {
 			Object o = ctx.get(RATE_LIMITING_GESTORE_POLICY_CONFIG_DATE);
 			if(o!=null && o instanceof Long) {

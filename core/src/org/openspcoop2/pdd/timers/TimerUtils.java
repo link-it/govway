@@ -206,7 +206,7 @@ public class TimerUtils {
 				Resource resource = null;
 				DBManager dbManager = DBManager.getInstance();
 				try {
-					resource = dbManager.getResource(propertiesReader.getIdentitaPortaDefault(null), ID_MODULO, null, false);
+					resource = dbManager.getResource(propertiesReader.getIdentitaPortaDefaultWithoutProtocol(), ID_MODULO, null, false);
 					
 					for (TipoLock tipoLock : tipiRuntime) {
 						_lock(propertiesReader, (Connection)resource.getResource(), tipoLock, logCore, release);
@@ -237,7 +237,7 @@ public class TimerUtils {
 				}
 				finally {
 					if(dbManager!=null) {
-						dbManager.releaseResource(propertiesReader.getIdentitaPortaDefault(null), ID_MODULO, resource, false);
+						dbManager.releaseResource(propertiesReader.getIdentitaPortaDefaultWithoutProtocol(), ID_MODULO, resource, false);
 					}
 				}
 			}
@@ -257,10 +257,10 @@ public class TimerUtils {
 					}
 					try {
 						if(dbTransazioniManager!=null) {
-							resource = dbTransazioniManager.getResource(propertiesReader.getIdentitaPortaDefault(null), ID_MODULO, null, false);
+							resource = dbTransazioniManager.getResource(propertiesReader.getIdentitaPortaDefaultWithoutProtocol(), ID_MODULO, null, false);
 						}
 						else {
-							resource = dbStatisticheManager.getResource(propertiesReader.getIdentitaPortaDefault(null), ID_MODULO, null, false);
+							resource = dbStatisticheManager.getResource(propertiesReader.getIdentitaPortaDefaultWithoutProtocol(), ID_MODULO, null, false);
 						}
 						
 						for (TipoLock tipoLock : tipiStatistiche) {
@@ -280,10 +280,10 @@ public class TimerUtils {
 					}
 					finally {
 						if(dbTransazioniManager!=null) {
-							dbTransazioniManager.releaseResource(propertiesReader.getIdentitaPortaDefault(null), ID_MODULO, resource, false);
+							dbTransazioniManager.releaseResource(propertiesReader.getIdentitaPortaDefaultWithoutProtocol(), ID_MODULO, resource, false);
 						}
 						else {
-							dbStatisticheManager.releaseResource(propertiesReader.getIdentitaPortaDefault(null), ID_MODULO, resource, false);
+							dbStatisticheManager.releaseResource(propertiesReader.getIdentitaPortaDefaultWithoutProtocol(), ID_MODULO, resource, false);
 						}
 					}
 				}

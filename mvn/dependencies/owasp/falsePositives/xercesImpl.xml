@@ -1,0 +1,19 @@
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+   <suppress>
+      <notes><![CDATA[
+      file name: xercesImpl-2.12.2.jar
+      La vulnerabilità rilevata è oggetto di discussione e aperture di segnalazioni, poichè non presente nel database nvd.nist.gov e quindi non può essere una CVE.
+      Sembra invece rilevata da Sonatype OSSIndex come riportato dal frammento delle discussioni sotto riportate "the intelligence that this CVE (still) applies to version 2.12.2 comes from the security analysts of Sonatype OSSINDEX, not from the NVD datastreams":
+      - https://github.com/jeremylong/DependencyCheck/issues/4614
+      - https://github.com/OSSIndex/vulns/issues/316
+      In particolare 'https://ossindex.sonatype.org/vulnerability/sonatype-2017-0348' non ha poi una evidenza nel blog esistente (il link https://blogs.securiteam.com/index.php/archives/3271 non esiste).
+      Il contenuto del blog, quando era esistente, viene riportato nell'issue '4614' di jeremylong, dove si può ipotizzare che la problematica rilevata sia sul metodo XMLEntityManager.setupCurrentEntity() che non dispone di un meccanismo di timeout. L'utilizzo del metodo indicato non è utilizzato su GovWay.
+      Nella discussione inoltre si fa riferimento alla vulnerabilità descritta in 'https://security.snyk.io/vuln/SNYK-JAVA-XERCES-31497' che consentiva di attuare attacchi DOS.
+      La libreria viene utilizzata per espressioni xpath configurate solamente sulla console dagli amministratori. Non vengono utilizzate espressioni fornite in input dinamicamente nelle richieste gestite dal Gateway.
+      Inoltre nella validazione viene disabilitato l'accesso a risorse esterne (DTDs.enabled=false).
+      Per i motivi descritti sopra si ritiene la vulnerabilità un falso positivo.
+      ]]></notes>
+      <packageUrl regex="true">^pkg:maven/xerces/xercesImpl@.*$</packageUrl>
+      <vulnerabilityName>CVE-2017-10355</vulnerabilityName>
+   </suppress>
+</suppressions>

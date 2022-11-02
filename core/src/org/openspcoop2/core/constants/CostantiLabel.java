@@ -22,6 +22,8 @@
 
 package org.openspcoop2.core.constants;
 
+import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
@@ -36,18 +38,26 @@ public final class CostantiLabel {
 
     public static final String TRASPARENTE_PROTOCOL_NAME = "trasparente";
     public static final String TRASPARENTE_PROTOCOL_LABEL = "API Gateway";
+    public static final MapKey<String> TRASPARENTE_PROTOCOL_MAP_KEY = Map.newMapKey(TRASPARENTE_PROTOCOL_NAME);
     
     public static final String SPCOOP_PROTOCOL_NAME = "spcoop";
     public static final String SPCOOP_PROTOCOL_LABEL = "SPCoop";
+    public static final MapKey<String> SPCOOP_PROTOCOL_MAP_KEY = Map.newMapKey(SPCOOP_PROTOCOL_NAME);
     
     public static final String MODIPA_PROTOCOL_NAME = "modipa";
     public static final String MODIPA_PROTOCOL_LABEL = "ModI";
+    public static final MapKey<String> MODIPA_PROTOCOL_MAP_KEY = Map.newMapKey(MODIPA_PROTOCOL_NAME);
     
     public static final String SDI_PROTOCOL_NAME = "sdi";
     public static final String SDI_PROTOCOL_LABEL = "Fatturazione Elettronica";
+    public static final MapKey<String> SDI_PROTOCOL_MAP_KEY = Map.newMapKey(SDI_PROTOCOL_NAME);
     
     public static final String AS4_PROTOCOL_NAME = "as4";
     public static final String AS4_PROTOCOL_LABEL = "eDelivery";
+    public static final MapKey<String> AS4_PROTOCOL_MAP_KEY = Map.newMapKey(AS4_PROTOCOL_NAME);
+    
+    public static final String NO_PROTOCOL_NAME = "__noprotocol";
+    public static final MapKey<String> NO_PROTOCOL_MAP_KEY = Map.newMapKey(NO_PROTOCOL_NAME);
 	
     
     /**

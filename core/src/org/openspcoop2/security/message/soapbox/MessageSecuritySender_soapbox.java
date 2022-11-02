@@ -67,7 +67,7 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 
 	
 	@Override
-	public void process(org.openspcoop2.security.message.MessageSecurityContext messageSecurityContext,OpenSPCoop2Message messageParam) throws SecurityException{
+	public void process(org.openspcoop2.security.message.MessageSecurityContext messageSecurityContext,OpenSPCoop2Message messageParam, org.openspcoop2.utils.Map<Object> ctx) throws SecurityException{
 		try{ 	
 
 			if(ServiceBinding.SOAP.equals(messageParam.getServiceBinding())==false){
@@ -86,7 +86,7 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 
 			String[]actions = ((String)messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ACTION)).split(" ");
 			for (int i = 0; i < actions.length; i++) {
-				if(SecurityConstants.ENCRYPT_ACTION.equals(actions[i].trim())){
+				if(SecurityConstants.is_ACTION_ENCRYPTION(actions[i].trim())){
 					encrypt = true;
 				}
 				else if(SecurityConstants.SIGNATURE_ACTION.equals(actions[i].trim())){
@@ -293,7 +293,7 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 			String aliasEncryptPassword = null;
 			if(encrypt){
 				
-				EncryptionBean bean = KeystoreUtils.getSenderEncryptionBean(messageSecurityContext);
+				EncryptionBean bean = KeystoreUtils.getSenderEncryptionBean(messageSecurityContext, ctx);
 				
 				encryptionKS = bean.getKeystore();
 				encryptionTrustStoreKS = bean.getTruststore();
@@ -316,7 +316,7 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 			String aliasSignaturePassword = null;
 			if(signature){
 			
-				SignatureBean bean = KeystoreUtils.getSenderSignatureBean(messageSecurityContext);
+				SignatureBean bean = KeystoreUtils.getSenderSignatureBean(messageSecurityContext, ctx);
 				
 				signatureKS = bean.getKeystore();
 				signatureTrustStoreKS = bean.getTruststore();
@@ -383,7 +383,7 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 				if(encryptionTrustStoreKS==null){
 					encryptionTrustStoreKS = encryptionKS;
 				}
-				securityConfig_encryption = new org.openspcoop2.security.message.soapbox.SecurityConfig(encryptionKS, encryptionTrustStoreKS, passwordMap_encryption);
+				securityConfig_encryption = new org.openspcoop2.security.message.soapbox.SecurityConfig(encryptionKS, encryptionTrustStoreKS, passwordMap_encryption,ctx);
 				securityConfig_encryption.setSymmetricSharedKey(encryptionSymmetric);
 			}
 
@@ -408,7 +408,7 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 				if(signatureTrustStoreKS==null){
 					signatureTrustStoreKS = signatureKS;
 				}
-				securityConfig_signature = new org.openspcoop2.security.message.soapbox.SecurityConfig(signatureKS, signatureTrustStoreKS, passwordMap_signature);
+				securityConfig_signature = new org.openspcoop2.security.message.soapbox.SecurityConfig(signatureKS, signatureTrustStoreKS, passwordMap_signature,ctx);
 			}				
 			
 
@@ -425,7 +425,7 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 			actions = ((String)messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ACTION)).split(" ");
 			boolean actionSignatureOrEncryptDo = false;
 			for (int i = 0; i < actions.length; i++) {
-				if(SecurityConstants.ENCRYPT_ACTION.equals(actions[i].trim())){
+				if(SecurityConstants.is_ACTION_ENCRYPTION(actions[i].trim())){
 					if(actionSignatureOrEncryptDo){
 						// Refresh serve anche per la encrypt ??
 						//byte[]xmlCifrato=this.xmlUtils.toByteArray(msgSecCtx.getDocument().getDocumentElement());

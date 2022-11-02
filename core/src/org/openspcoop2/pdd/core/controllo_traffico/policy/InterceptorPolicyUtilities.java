@@ -46,10 +46,11 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.InRequestProtocolContext;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.slf4j.Logger;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
@@ -289,13 +290,18 @@ public class InterceptorPolicyUtilities {
 		datiTransazione.setSoggettoFruitore(soggettoFruitore);
 		datiTransazione.setIdServizio(idServizio);
 		
+		RequestInfo requestInfo = null;
+		if(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+			requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		}
+		
 		RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance(state);
 		if(idAccordo!=null) {
 			datiTransazione.setIdAccordoServizioParteComune(idAccordo);
 		}
 		else {
 			try {
-				AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false);
+				AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false, requestInfo);
 				datiTransazione.setIdAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
 			}catch(Exception e) {
 				//System.out.println("["+(String) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)+"] Errore: "+e.getMessage());
@@ -305,7 +311,7 @@ public class InterceptorPolicyUtilities {
 		}
 		if(datiTransazione.getIdAccordoServizioParteComune()!=null) {
 			try {
-				AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(datiTransazione.getIdAccordoServizioParteComune(), null, false, false);
+				AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(datiTransazione.getIdAccordoServizioParteComune(), null, false, false, requestInfo);
 				if(aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
 					List<String> tags = new ArrayList<String>();
 					for (GruppoAccordo gruppoAccordo : aspc.getGruppi().getGruppoList()) {
@@ -420,7 +426,7 @@ public class InterceptorPolicyUtilities {
 		return registerThread;
 	}
 	
-	public static boolean filter(AttivazionePolicyFiltro filtro, DatiTransazione datiTransazione, IState state) throws Exception{
+	public static boolean filter(AttivazionePolicyFiltro filtro, DatiTransazione datiTransazione, IState state, RequestInfo requestInfo) throws Exception{
 		
 		if(filtro.isEnabled()){
 						
@@ -482,7 +488,7 @@ public class InterceptorPolicyUtilities {
 						RegistroServiziManager registroManager = RegistroServiziManager.getInstance(state);
 						Soggetto soggetto = null;
 						try {
-							soggetto = registroManager.getSoggetto(idFruitore, null);
+							soggetto = registroManager.getSoggetto(idFruitore, null, requestInfo);
 						}catch(DriverRegistroServiziNotFound notFound) {}
 						if(soggetto!=null && soggetto.getRuoli()!=null) {
 							for (int i = 0; i < soggetto.getRuoli().sizeRuoloList(); i++) {
@@ -503,7 +509,7 @@ public class InterceptorPolicyUtilities {
 						ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance(state);
 						ServizioApplicativo sa = null;
 						try {
-							sa = configPdDManager.getServizioApplicativo(idSA);
+							sa = configPdDManager.getServizioApplicativo(idSA, requestInfo);
 						}catch(DriverConfigurazioneNotFound nofFound) {}
 						if(sa!=null && sa.getInvocazionePorta()!=null && sa.getInvocazionePorta().getRuoli()!=null) {
 							for (int i = 0; i < sa.getInvocazionePorta().getRuoli().sizeRuoloList(); i++) {
@@ -524,7 +530,7 @@ public class InterceptorPolicyUtilities {
 						RegistroServiziManager registroManager = RegistroServiziManager.getInstance(state);
 						Soggetto soggetto = null;
 						try {
-							soggetto = registroManager.getSoggetto(datiTransazione.getIdServizioApplicativoToken().getIdSoggettoProprietario(), null);
+							soggetto = registroManager.getSoggetto(datiTransazione.getIdServizioApplicativoToken().getIdSoggettoProprietario(), null, requestInfo);
 						}catch(DriverRegistroServiziNotFound notFound) {}
 						if(soggetto!=null && soggetto.getRuoli()!=null) {
 							for (int i = 0; i < soggetto.getRuoli().sizeRuoloList(); i++) {
@@ -539,7 +545,7 @@ public class InterceptorPolicyUtilities {
 					ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance(state);
 					ServizioApplicativo sa = null;
 					try {
-						sa = configPdDManager.getServizioApplicativo(datiTransazione.getIdServizioApplicativoToken());
+						sa = configPdDManager.getServizioApplicativo(datiTransazione.getIdServizioApplicativoToken(), requestInfo);
 					}catch(DriverConfigurazioneNotFound nofFound) {}
 					if(sa!=null && sa.getInvocazionePorta()!=null && sa.getInvocazionePorta().getRuoli()!=null) {
 						for (int i = 0; i < sa.getInvocazionePorta().getRuoli().sizeRuoloList(); i++) {
@@ -603,7 +609,7 @@ public class InterceptorPolicyUtilities {
 				}
 				IDSoggetto idErogatore = new IDSoggetto(datiTransazione.getIdServizio().getSoggettoErogatore().getTipo(), datiTransazione.getIdServizio().getSoggettoErogatore().getNome());
 				RegistroServiziManager registroManager = RegistroServiziManager.getInstance(state);
-				Soggetto soggetto = registroManager.getSoggetto(idErogatore, null);
+				Soggetto soggetto = registroManager.getSoggetto(idErogatore, null, requestInfo);
 				boolean foundRuolo = false;
 				if(soggetto.getRuoli()!=null) {
 					for (int i = 0; i < soggetto.getRuoli().sizeRuoloList(); i++) {

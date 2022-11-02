@@ -31,6 +31,8 @@ import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.utils.ErroriProperties;
+import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
 
@@ -148,7 +150,7 @@ public class GeneratoreMessaggiErrore {
 	
 	/* ***** EVENTI UTILI PER RICONOSCERE L'ESITO DELLA TRANSAZIONE ****** */
 	
-	private final static String PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE = "controlloTrafficoViolazione";
+	public final static MapKey<String> PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE = Map.newMapKey("controlloTrafficoViolazione");
 	
 	private final static String PDD_CONTEXT_VALUE_GENERIC_ERROR = "controlloTrafficoGenericError";
 	public static void addPddContextInfo_ControlloTrafficoGenericError(PdDContext pddContext){
@@ -180,6 +182,18 @@ public class GeneratoreMessaggiErrore {
 		}
 	}
 	
+	public final static MapKey<String> PDD_CONTEXT_MAX_THREADS_THRESHOLD = Map.newMapKey("CT_MAX_THREADS_THRESHOLD"); // numero massimo di richieste simultanee configurate sul sistema
+	public final static MapKey<String> PDD_CONTEXT_CONTROLLO_TRAFFICO_THRESHOLD = Map.newMapKey("CT_THRESHOLD"); // soglia in % che indica quando attivare il controllo del traffico
+	
+	public final static MapKey<String> PDD_CONTEXT_ACTIVE_THREADS = Map.newMapKey("CT_ACTIVE_THREADS"); // threads attivi
+	public final static MapKey<String> PDD_CONTEXT_NUMERO_POLICY = Map.newMapKey("CT_POLICIES"); // numero di policy configurate
+	public final static MapKey<String> PDD_CONTEXT_NUMERO_POLICY_DISABILITATE = Map.newMapKey("CT_DISABLED_POLICIES"); // numero di policy disabilitate
+	public final static MapKey<String> PDD_CONTEXT_NUMERO_POLICY_FILTRATE = Map.newMapKey("CT_FILTERED_POLICIES"); // numero di policy filtrate
+	public final static MapKey<String> PDD_CONTEXT_NUMERO_POLICY_NON_APPLICATE = Map.newMapKey("CT_NOT_APPLICABLED_POLICIES"); // numero di policy non applicabili
+	public final static MapKey<String> PDD_CONTEXT_NUMERO_POLICY_RISPETTATE = Map.newMapKey("CT_RESPECTED_POLICIES"); // numero di policy rispettate
+	public final static MapKey<String> PDD_CONTEXT_NUMERO_POLICY_VIOLATE = Map.newMapKey("CT_VIOLATED_POLICIES"); // numero di policy violate
+	public final static MapKey<String> PDD_CONTEXT_NUMERO_POLICY_VIOLATE_WARNING_ONLY = Map.newMapKey("CT_VIOLATED_WARNING_ONLY_POLICIES"); // numero di policy violate in warning only mode
+	public final static MapKey<String> PDD_CONTEXT_NUMERO_POLICY_IN_ERRORE = Map.newMapKey("CT_ERROR_POLICIES"); // numero di policy la cui verifica ha provocato un errore
 	
 	
 	/* ***** FAULT ****** */

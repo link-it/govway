@@ -59,7 +59,6 @@ import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.core.transazioni.TransactionDeletedException;
 import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.dump.Attachment;
 import org.openspcoop2.protocol.sdk.dump.BodyMultipartInfo;
@@ -67,7 +66,9 @@ import org.openspcoop2.protocol.sdk.dump.DumpException;
 import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
@@ -115,7 +116,9 @@ public class Dump {
 	private TipoPdD tipoPdD;
 	/** PdDContext */
 	private PdDContext pddContext;
-
+	/** RequestInfo */
+	private RequestInfo requestInfo = null;
+	
 	/** OpenSPCoopProperties */
 	private OpenSPCoop2Properties properties = null;
 
@@ -134,8 +137,8 @@ public class Dump {
 	private String idTransazione = null;
 	
 	/** Stati */
-	private IState statoRichiesta;
-	private IState statoRisposta;
+	private StateMessage statoRichiesta;
+	private StateMessage statoRisposta;
 	
 	/** Transaction */
 	private Transaction transactionNullable = null;
@@ -170,7 +173,7 @@ public class Dump {
 		this(dominio, modulo, null, null, null, tipoPdD, nomePorta, pddContext,statoRichiesta,statoRisposta,dumpConfigurazione);
 	}
 	public Dump(IDSoggetto dominio, String modulo, String idMessaggio, IDSoggetto fruitore, IDServizio servizio, 
-			TipoPdD tipoPdD, String nomePorta, PdDContext pddContext,IState statoRichiesta,IState statoRisposta,
+			TipoPdD tipoPdD, String nomePorta, PdDContext pddContext,IState stateParam,IState responseStateParam,
 			DumpConfigurazione dumpConfigurazione) throws DumpException{
 		this.dominio = dominio;
 		this.idModulo = modulo;
@@ -188,8 +191,12 @@ public class Dump {
 		this.tipoPdD = tipoPdD;
 		this.pddContext = pddContext;
 		this.properties = OpenSPCoop2Properties.getInstance();
-		this.statoRichiesta = statoRichiesta;
-		this.statoRisposta = statoRisposta;
+		if(stateParam!=null && stateParam instanceof StateMessage){
+			this.statoRichiesta = (StateMessage) stateParam;
+		}
+		if(responseStateParam!=null && responseStateParam instanceof StateMessage){
+			this.statoRisposta = (StateMessage) responseStateParam;
+		}
 		
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		
@@ -197,7 +204,11 @@ public class Dump {
 		this.dumpHeaderWhiteList = op2Properties.getDumpHeaderWhiteList();
 		this.dumpHeaderBlackList = op2Properties.getDumpHeaderBlackList();
 		
-		this.msgDiagErroreDump = MsgDiagnostico.newInstance(this.tipoPdD,dominio,modulo,nomePorta,this.statoRichiesta,this.statoRisposta);
+		if(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+			this.requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		}
+		
+		this.msgDiagErroreDump = MsgDiagnostico.newInstance(this.tipoPdD,dominio,modulo,nomePorta,this.requestInfo,this.statoRichiesta,this.statoRisposta);
 		this.msgDiagErroreDump.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO);
 		
 		this.idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
@@ -212,7 +223,7 @@ public class Dump {
 			throw new DumpException("Errore durante l'inizializzazione del ProtocolFactoryManager...",e);
 		}
 		if(this.dominio==null){
-			this.dominio=op2Properties.getIdentitaPortaDefault(protocol);
+			this.dominio=op2Properties.getIdentitaPortaDefault(protocol, this.requestInfo);
 		}
 		
 		try{
@@ -227,23 +238,15 @@ public class Dump {
 
 	private Connection getConnectionFromState(boolean richiesta){
 		if(richiesta){
-			if(this.statoRichiesta!=null && this.statoRichiesta instanceof StateMessage){
-				boolean validConnection = false;
-				try{
-					validConnection = !((StateMessage)this.statoRichiesta).getConnectionDB().isClosed();
-				}catch(Exception e){}
-				if(validConnection)
-					return ((StateMessage)this.statoRichiesta).getConnectionDB();
+			Connection c = StateMessage.getConnection(this.statoRichiesta);
+			if(c!=null) {
+				return c;
 			}
 		}
 		else{
-			if(this.statoRisposta!=null && this.statoRisposta instanceof StateMessage){
-				boolean validConnection = false;
-				try{
-					validConnection = !((StateMessage)this.statoRisposta).getConnectionDB().isClosed();
-				}catch(Exception e){}
-				if(validConnection)
-					return ((StateMessage)this.statoRisposta).getConnectionDB();
+			Connection c = StateMessage.getConnection(this.statoRisposta);
+			if(c!=null) {
+				return c;
 			}
 		}
 		return null;
@@ -802,7 +805,7 @@ public class Dump {
 					messaggio.setIdTransazione(this.transazioneApplicativoServer.getIdTransazione());
 					messaggio.setServizioApplicativoErogatore(this.transazioneApplicativoServer.getServizioApplicativoErogatore());
 					messaggio.setDataConsegna(this.dataConsegnaTransazioneApplicativoServer);
-					GestoreConsegnaMultipla.getInstance().safeSave(messaggio, this.idPortaApplicativa, this.statoRichiesta!=null ? this.statoRichiesta : this.statoRisposta);
+					GestoreConsegnaMultipla.getInstance().safeSave(messaggio, this.idPortaApplicativa, this.statoRichiesta!=null ? this.statoRichiesta : this.statoRisposta, this.requestInfo);
 				}catch(Throwable t) {
 					String msgError = "Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage();
 					this.loggerDump.error(msgError,t);

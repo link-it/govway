@@ -213,7 +213,7 @@ public class StatsSearchForm extends BaseSearchForm{
 	@Override
 	protected List<Integer> getEsitiOrderLabel() throws Exception {
 		if(this.tipoStatistica!=null && this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_ERRORI)) {
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(StatsSearchForm.log, getSafeProtocol());
+			EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(StatsSearchForm.log, getSafeProtocol());
 			List<Integer> esiti = esitiProperties.getEsitiCodeOrderLabel(); // mantengo l'ordine
 			List<Integer> esitiOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
 			if(esiti!=null && !esiti.isEmpty()) {

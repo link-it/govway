@@ -249,7 +249,7 @@ public class CommonConsegnaMultipla {
 	
 	private static EsitiProperties getEsitiProperties() {
 		try {
-			return EsitiProperties.getInstance(ConfigLoader.getLoggerCore(), CommonConsegnaMultipla.PROTOCOL_NAME);
+			return EsitiProperties.getInstanceFromProtocolName(ConfigLoader.getLoggerCore(), CommonConsegnaMultipla.PROTOCOL_NAME);
 		} catch (ProtocolException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);

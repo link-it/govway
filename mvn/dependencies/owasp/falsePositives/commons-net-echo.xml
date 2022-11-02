@@ -1,9 +1,0 @@
-<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
-   <suppress>
-      <notes><![CDATA[
-      file name: commons-net-3.6.jar; il protocollo 'echo', la cui implementazione è vulnerabile a 'CVE-2015-8007', non viene utilizzata dal gateway.
-      ]]></notes>
-      <filePath regex="true">.*commons-net-3.6.jar</filePath>
-      <cvssBelow>10</cvssBelow>
-   </suppress>
-</suppressions>

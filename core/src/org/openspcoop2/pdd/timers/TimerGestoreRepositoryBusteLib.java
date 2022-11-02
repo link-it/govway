@@ -144,7 +144,7 @@ public class TimerGestoreRepositoryBusteLib {
 		OpenSPCoopStateful openspcoopstate = new OpenSPCoopStateful();
 		try {
 
-			openspcoopstate.initResource(this.propertiesReader.getIdentitaPortaDefault(null), TimerGestoreRepositoryBuste.ID_MODULO, null);
+			openspcoopstate.initResource(this.propertiesReader.getIdentitaPortaDefaultWithoutProtocol(), TimerGestoreRepositoryBuste.ID_MODULO, null);
 			Connection connectionDB = ((StateMessage)openspcoopstate.getStatoRichiesta()).getConnectionDB();
 
 			// Messaggi da eliminare 

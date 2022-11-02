@@ -136,6 +136,8 @@ public class FormatReader {
 	}
 	private void init(Properties properties) throws UtilsException{
 		
+		CSVFormat.Builder builder = null;
+		
 		// format
 		if(properties.containsKey(CSV_FORMAT)){
 			String input = properties.getProperty(CSV_FORMAT).trim();
@@ -143,40 +145,40 @@ public class FormatReader {
 			boolean found = false;
 			for (int i = 0; i < p.length; i++) {
 				if(p[i].toString().equalsIgnoreCase(input)){
-					this.format = p[i].getFormat();
+					builder = CSVFormat.Builder.create( p[i].getFormat() ); 
 					found=true;
 					break;
 				}
 			}
 			
 			if(!found)
-				this.format = CSVFormat.DEFAULT;
+				builder = CSVFormat.Builder.create( CSVFormat.DEFAULT );
 			
 		}
 		else{
-			this.format = CSVFormat.DEFAULT;
+			builder = CSVFormat.Builder.create( CSVFormat.DEFAULT );
 		}
 		
 		// behaviour
 		
 		Boolean allowMissingColumnsNames = getBooleanProperty(properties, CSV_ALLOW_MISSING_COLUMN_NAMES);
 		if(allowMissingColumnsNames!=null){
-			this.format = this.format.withAllowMissingColumnNames(allowMissingColumnsNames);
+			builder.setAllowMissingColumnNames(allowMissingColumnsNames);
 		}
 		
 		Character commentMarker = getCharProperty(properties, CSV_COMMENT_MARKER);
 		if(commentMarker!=null){
-			this.format = this.format.withCommentMarker(commentMarker);
+			builder.setCommentMarker(commentMarker);
 		}
 		
 		Character delimiter = getCharProperty(properties, CSV_DELIMITER);
 		if(delimiter!=null){
-			this.format = this.format.withDelimiter(delimiter);
+			builder.setDelimiter(delimiter);
 		}
 		
 		Character escape = getCharProperty(properties, CSV_ESCAPE);
 		if(escape!=null){
-			this.format = this.format.withEscape(escape);
+			builder.setEscape(escape);
 		}
 		
 		Boolean withHeader = getBooleanProperty(properties, CSV_WITH_HEADER);
@@ -184,36 +186,36 @@ public class FormatReader {
 			if(withHeader){
 				String [] h = getArrayStringProperty(properties, CSV_HEADER);
 				if(h!=null && h.length>0)
-					this.format = this.format.withHeader(h);
+					builder.setHeader(h);
 				else
-					this.format = this.format.withHeader();
+					builder.setHeader();
 			}
 		}
 		else{
 			String [] h = getArrayStringProperty(properties, CSV_HEADER);
 			if(h!=null && h.length>0){
-				this.format = this.format.withHeader(h);
+				builder.setHeader(h);
 			}
 		}
 		
 		Boolean withIgnoreEmptyLines = getBooleanProperty(properties, CSV_WITH_IGNORE_EMPTY_LINES);
 		if(withIgnoreEmptyLines!=null){
-			this.format = this.format.withIgnoreEmptyLines(withIgnoreEmptyLines);
+			builder.setIgnoreEmptyLines(withIgnoreEmptyLines);
 		}
 		
 		Boolean withIgnoreSurroundingSpaces = getBooleanProperty(properties, CSV_WITH_IGNORE_SURROUNDING_SPACES);
 		if(withIgnoreSurroundingSpaces!=null){
-			this.format = this.format.withIgnoreSurroundingSpaces(withIgnoreSurroundingSpaces);
+			builder.setIgnoreSurroundingSpaces(withIgnoreSurroundingSpaces);
 		}
 		
 		String withNullString = getProperty(properties, CSV_WITH_NULL_STRING);
 		if(withNullString!=null){
-			this.format = this.format.withNullString(withNullString);
+			builder.setNullString(withNullString);
 		}
 		
 		Character withQuote = getCharProperty(properties, CSV_WITH_QUOTE);
 		if(withQuote!=null){
-			this.format = this.format.withQuote(withQuote);
+			builder.setQuote(withQuote);
 		}
 		
 		String withQuoteMode = getProperty(properties, CSV_WITH_QUOTE_MODE);
@@ -222,7 +224,7 @@ public class FormatReader {
 			boolean found = false;
 			for (int i = 0; i < q.length; i++) {
 				if(q[i].toString().equalsIgnoreCase(withQuoteMode)){
-					this.format = this.format.withQuoteMode(q[i]);
+					builder.setQuoteMode(q[i]);
 					found = true;
 					break;
 				}
@@ -234,18 +236,20 @@ public class FormatReader {
 		
 		Character withRecordSeparator = getCharProperty(properties, CSV_WITH_RECORD_SEPARATOR);
 		if(withRecordSeparator!=null){
-			this.format = this.format.withRecordSeparator(withRecordSeparator);
+			builder.setRecordSeparator(withRecordSeparator);
 		}
 		
 		Boolean withSkipHeaderRecord = getBooleanProperty(properties, CSV_WITH_SKIP_HEADER_RECORD);
 		if(withSkipHeaderRecord!=null){
-			this.format = this.format.withSkipHeaderRecord(withSkipHeaderRecord);
+			builder.setSkipHeaderRecord(withSkipHeaderRecord);
 		}
 		
 		Boolean skipEmptyRecord = getBooleanProperty(properties, CSV_SKIP_EMPTY_RECORD);
 		if(skipEmptyRecord!=null){
 			this.skipEmptyRecord = skipEmptyRecord;
 		}
+		
+		this.format = builder.build();
 	}
 	
 	public Format getFormat() {

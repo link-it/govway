@@ -21,6 +21,8 @@
 package org.openspcoop2.utils.service.context;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.cxf.common.injection.NoJSR250Annotations;
 import org.apache.cxf.ext.logging.event.DefaultLogEventMapper;
@@ -69,7 +71,8 @@ public class ServiceInfoOutInterceptor extends AbstractPhaseInterceptor<Message>
 		}
 		*/
 		
-		final LogEvent event = new DefaultLogEventMapper().map(message);
+		Set<String> sensitiveProtocolHeaders = new HashSet<String>();
+		final LogEvent event = new DefaultLogEventMapper().map(message, sensitiveProtocolHeaders);
 		
 		IContext ctx = ContextThreadLocal.get();
 	

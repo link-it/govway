@@ -132,7 +132,10 @@ public class WSSUtilities {
 			
 			if(wssContext.isFunctionAsClient() == false){
 				
-				if ( action.contains(SecurityConstants.ENCRYPT_ACTION) && wssProperties.containsKey(SecurityConstants.ENCRYPTION_PARTS) ){
+				if ( (SecurityConstants.contains_ACTION_ENCRYPTION(action) || SecurityConstants.contains_ACTION_DECRYPTION(action)) 
+						&& 
+						wssProperties.containsKey(SecurityConstants.ENCRYPTION_PARTS) 
+					){
 					
 					String attach = "{"+SecurityConstants.NAMESPACE_ATTACH+"}";
 					String attachAll = attach+"{"+SecurityConstants.ATTACHMENT_INDEX_ALL+"}";

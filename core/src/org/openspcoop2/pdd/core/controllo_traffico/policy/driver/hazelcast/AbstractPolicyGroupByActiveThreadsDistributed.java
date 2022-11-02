@@ -29,7 +29,7 @@ import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicyMapId;
 import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
-import org.openspcoop2.core.controllo_traffico.driver.CostantiControlloTraffico;
+import org.openspcoop2.core.controllo_traffico.constants.Costanti;
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreadsInMemory;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
@@ -226,7 +226,7 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributed implements I
 					
 			bf.append(separatorGroups);
 			bf.append("\n");
-			bf.append(CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE).append(" ").append(this.type.toLabel());
+			bf.append(Costanti.LABEL_MODALITA_SINCRONIZZAZIONE).append(" ").append(this.type.toLabel());
 			bf.append("\n");
 			bf.append("Criterio di Collezionamento dei Dati\n");
 			bf.append(datiGroupBy.toString(true));

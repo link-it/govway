@@ -122,8 +122,11 @@ public class TokenProvider implements IProvider {
 					throw new ProviderValidationException("Non è stata fornita una configurazione per effettuare la validazione JWS");
 				}
 				
-				String file = p.getProperty("rs.security.keystore.file");
-				InputValidationUtils.validateTextAreaInput(file, "Validazione JWT - TrustStore - File");
+				if(!p.containsKey("rs.security.keystore") && !p.containsKey("rs.security.keystore.jwkset")) {
+					// altrimenti è stato fatto inject del keystore
+					String file = p.getProperty("rs.security.keystore.file");
+					InputValidationUtils.validateTextAreaInput(file, "Validazione JWT - TrustStore - File");
+				}
 			}
 			else if(Costanti.POLICY_TOKEN_TYPE_JWE.equals(tokenType)) {
 				Properties p = mapProperties.get(Costanti.POLICY_VALIDAZIONE_JWE_DECRYPT_PROP_REF_ID);
@@ -131,8 +134,11 @@ public class TokenProvider implements IProvider {
 					throw new ProviderValidationException("Non è stata fornita una configurazione per effettuare la validazione JWE");
 				}
 				
-				String file = p.getProperty("rs.security.keystore.file");
-				InputValidationUtils.validateTextAreaInput(file, "Validazione JWT - KeyStore - File");
+				if(!p.containsKey("rs.security.keystore") && !p.containsKey("rs.security.keystore.jwkset")) {
+					// altrimenti è stato fatto inject del keystore
+					String file = p.getProperty("rs.security.keystore.file");
+					InputValidationUtils.validateTextAreaInput(file, "Validazione JWT - KeyStore - File");
+				}
 			}
 			
 			String parserType = pDefault.getProperty(Costanti.POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE);
@@ -671,8 +677,11 @@ public class TokenProvider implements IProvider {
 						throw new ProviderValidationException("La modalità di forward, delle informazioni raccolte, selezionata richiede una configurazione per poter attuare la firma JWS; configurazione non riscontrata");
 					}
 					
-					String file = p.getProperty("rs.security.keystore.file");
-					InputValidationUtils.validateTextAreaInput(file, "Token Forward - JWS KeyStore - File");
+					if(!p.containsKey("rs.security.keystore") && !p.containsKey("rs.security.keystore.jwkset")) {
+						// altrimenti è stato fatto inject del keystore
+						String file = p.getProperty("rs.security.keystore.file");
+						InputValidationUtils.validateTextAreaInput(file, "Token Forward - JWS KeyStore - File");
+					}
 				}
 				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE.equals(mode) 
 							) {
@@ -681,8 +690,11 @@ public class TokenProvider implements IProvider {
 						throw new ProviderValidationException("La modalità di forward, delle informazioni raccolte, selezionata richiede una configurazione per poter attuare la cifratura JWE; configurazione non riscontrata");
 					}
 					
-					String file = p.getProperty("rs.security.keystore.file");
-					InputValidationUtils.validateTextAreaInput(file, "Token Forward - JWE KeyStore - File");
+					if(!p.containsKey("rs.security.keystore") && !p.containsKey("rs.security.keystore.jwkset")) {
+						// altrimenti è stato fatto inject del keystore
+						String file = p.getProperty("rs.security.keystore.file");
+						InputValidationUtils.validateTextAreaInput(file, "Token Forward - JWE KeyStore - File");
+					}
 				}
 				
 			}

@@ -65,6 +65,7 @@ import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSintatticaResult;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneUtils;
@@ -130,8 +131,13 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 						datiRichiesta.getTipoDestinatario(), datiRichiesta.getDestinatario(), 
 						datiRichiesta.getVersioneServizio());
 				
-				IRegistryReader registryReader = this.getProtocolFactory().getCachedRegistryReader(this.state);
-				IConfigIntegrationReader configIntegrationReader = this.getProtocolFactory().getCachedConfigIntegrationReader(this.state);
+				RequestInfo requestInfo = null;
+				if(this.context!=null && this.context.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+					requestInfo = (RequestInfo) this.context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+				}
+				
+				IRegistryReader registryReader = this.getProtocolFactory().getCachedRegistryReader(this.state, requestInfo);
+				IConfigIntegrationReader configIntegrationReader = this.getProtocolFactory().getCachedConfigIntegrationReader(this.state, requestInfo);
 				
 				AccordoServizioParteSpecifica asps = registryReader.getAccordoServizioParteSpecifica(idServizio);
 				
@@ -162,10 +168,10 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 				ModIValidazioneSintatticaRest validatoreSintatticoRest = null;
 				ModIValidazioneSintatticaSoap validatoreSintatticoSoap = null;
 				if(rest) {
-					validatoreSintatticoRest = new ModIValidazioneSintatticaRest(this.log, this.state, this.context, this.protocolFactory, this.modiProperties, this.validazioneUtils);
+					validatoreSintatticoRest = new ModIValidazioneSintatticaRest(this.log, this.state, this.context, this.protocolFactory, requestInfo, this.modiProperties, this.validazioneUtils);
 				}
 				else {
-					validatoreSintatticoSoap = new ModIValidazioneSintatticaSoap(this.log, this.state, this.context, this.protocolFactory, this.modiProperties, this.validazioneUtils);
+					validatoreSintatticoSoap = new ModIValidazioneSintatticaSoap(this.log, this.state, this.context, this.protocolFactory, requestInfo, this.modiProperties, this.validazioneUtils);
 				}
 				
 				
@@ -256,7 +262,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 							
 							try {
 								replyTo = ModIUtilities.getReplyToFruizione(idServizio.getSoggettoErogatore(), idSoggettoMittente, aspc, nomePortType, azione, 
-										registryReader, configIntegrationReader, this.protocolFactory, this.state);
+										registryReader, configIntegrationReader, this.protocolFactory, this.state, requestInfo);
 							}catch(Exception e) {
 								throw new Exception("Configurazione presente nel registro non corretta: "+e.getMessage(),e);
 							}
@@ -331,7 +337,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 							}
 						}
 	
-						ModISecurityConfig securityConfig = new ModISecurityConfig(msg, this.protocolFactory, this.state, idSoggettoMittente, 
+						ModISecurityConfig securityConfig = new ModISecurityConfig(msg, this.protocolFactory, this.state, requestInfo, idSoggettoMittente, 
 								aspc, asps, sa, rest, fruizione, request,
 								multipleHeaderAuthorizationConfig);
 						ModITruststoreConfig trustStoreCertificati = new ModITruststoreConfig(fruizione, idSoggettoMittente, asps, false);
@@ -452,7 +458,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 								// Integrity
 								// !! Nel caso di 2 header, quello integrity è obbligatorio solo se c'è un payload, altrimenti se presente viene validato, altrimenti non da errore.
 								boolean securityHeaderIntegrityObbligatorio = msg.castAsRest().hasContent();
-								ModISecurityConfig securityConfigIntegrity = new ModISecurityConfig(msg, this.protocolFactory, this.state, idSoggettoMittente, 
+								ModISecurityConfig securityConfigIntegrity = new ModISecurityConfig(msg, this.protocolFactory, this.state, requestInfo, idSoggettoMittente, 
 										aspc, asps, sa, rest, fruizione, request,
 										false);
 								String tokenIntegrity = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, headerTokenRestIntegrity, corniceSicurezza, includiRequestDigest, bustaRitornata, 
@@ -501,7 +507,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 							SOAPEnvelope token = validatoreSintatticoSoap.validateSecurityProfile(msg, request, securityMessageProfile, corniceSicurezza, includiRequestDigest, signAttachments, bustaRitornata, 
 									erroriValidazione, trustStoreCertificati, securityConfig,
 									buildSecurityTokenInRequest,
-									dynamicMap, datiRichiesta );
+									dynamicMap, datiRichiesta, requestInfo );
 							
 							if(token!=null) {
 								

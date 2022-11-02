@@ -28,8 +28,8 @@ package org.openspcoop2.utils.cache;
  */
 public enum CacheAlgorithm {
 
-	LRU("org.apache.commons.jcs.engine.memory.lru.LRUMemoryCache"),
-	MRU("org.apache.commons.jcs.engine.memory.mru.MRUMemoryCache");
+	LRU(org.apache.commons.jcs3.engine.memory.lru.LRUMemoryCache.class.getName()),
+	MRU(org.apache.commons.jcs3.engine.memory.mru.MRUMemoryCache.class.getName());
 	
 	private String algorithm;
 	

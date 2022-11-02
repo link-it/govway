@@ -41,6 +41,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.IBustaBuilder;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
@@ -58,6 +59,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 	private OpenSPCoop2Properties openspcoop2Properties;
 	
 	private String idTransazione = null;
+	private RequestInfo requestInfo = null;
 	
 	private org.openspcoop2.protocol.engine.driver.FiltroDuplicati filtroDuplicatiProtocol;
 		
@@ -107,9 +109,15 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			this.filtroDuplicatiProtocol.init(context);
 		}
 		else {
-			this.idTransazione = (String) ((PdDContext)context).getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+			PdDContext pddContext = (PdDContext)context;
+			
+			this.idTransazione = (String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 			if(this.idTransazione==null){
 				throw new ProtocolException("Id di transazione non fornito");
+			}
+			
+			if(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+				this.requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 			}
 			
 			if(this.initDsResource==null && this.connection==null){
@@ -406,7 +414,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 				}else{
 					//System.out.println("[FILTRO] esisteTransazione idBustaRichiesta["+idBustaRichiesta+"] idBustaRisposta["+idBustaRisposta+"] BY DATASOURCE");
 					dbManager = DBTransazioniManager.getInstance();
-					r = dbManager.getResource(this.openspcoop2Properties.getIdentitaPortaDefault(protocolFactory.getProtocol()), idModulo, this.idTransazione);
+					r = dbManager.getResource(this.openspcoop2Properties.getIdentitaPortaDefault(protocolFactory.getProtocol(), this.requestInfo), idModulo, this.idTransazione);
 					if(r==null){
 						throw new Exception("Risorsa al database non disponibile");
 					}
@@ -433,7 +441,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			if(this.isDirectConnection==false){
 				try{
 					if(r!=null)
-						dbManager.releaseResource(this.openspcoop2Properties.getIdentitaPortaDefault(protocolFactory.getProtocol()), idModulo, r);
+						dbManager.releaseResource(this.openspcoop2Properties.getIdentitaPortaDefault(protocolFactory.getProtocol(), this.requestInfo), idModulo, r);
 				}catch(Exception eClose){}
 			}
 		}
@@ -476,7 +484,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 				}else{
 					//System.out.println("[FILTRO] esisteTransazione idBustaRichiesta["+idBustaRichiesta+"] idBustaRisposta["+idBustaRisposta+"] BY DATASOURCE");
 					dbManager = DBTransazioniManager.getInstance();
-					r = dbManager.getResource(this.openspcoop2Properties.getIdentitaPortaDefault(protocolFactory.getProtocol()), idModulo, this.idTransazione);
+					r = dbManager.getResource(this.openspcoop2Properties.getIdentitaPortaDefault(protocolFactory.getProtocol(), this.requestInfo), idModulo, this.idTransazione);
 					if(r==null){
 						throw new Exception("Risorsa al database non disponibile");
 					}
@@ -586,7 +594,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			if(this.isDirectConnection==false){
 				try{
 					if(r!=null)
-						dbManager.releaseResource(this.openspcoop2Properties.getIdentitaPortaDefault(protocolFactory.getProtocol()), idModulo, r);
+						dbManager.releaseResource(this.openspcoop2Properties.getIdentitaPortaDefault(protocolFactory.getProtocol(), this.requestInfo), idModulo, r);
 				}catch(Exception eClose){}
 			}
 		}

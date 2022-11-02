@@ -22,6 +22,8 @@ package org.openspcoop2.pdd.services;
 
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.MapKey;
 
 /**
  * DirectVMProtocolInfo
@@ -32,9 +34,9 @@ import org.openspcoop2.protocol.sdk.Busta;
  */
 public class DirectVMProtocolInfo {
 
-	private static final String ID = "DirectVM-IDTransazione";
-	private static final String ID_MESSAGGIO_RICHIESTA = "DirectVM-IDMessaggioRichiesta";
-	private static final String ID_MESSAGGIO_RISPOSTA = "DirectVM-IDMessaggioRisposta";
+	public static final MapKey<String> ID = Map.newMapKey("DirectVM-IDTransazione");
+	public static final MapKey<String> ID_MESSAGGIO_RICHIESTA = Map.newMapKey("DirectVM-IDMessaggioRichiesta");
+	public static final MapKey<String> ID_MESSAGGIO_RISPOSTA = Map.newMapKey("DirectVM-IDMessaggioRisposta");
 	
 	private String idTransazione;
 	private String idMessaggioRichiesta;
@@ -74,13 +76,13 @@ public class DirectVMProtocolInfo {
 	
 	public void setInfo(Busta busta){
 		if(this.idTransazione!=null){
-			busta.addProperty(ID, this.idTransazione);
+			busta.addProperty(ID.getValue(), this.idTransazione);
 		}
 		if(this.idMessaggioRichiesta!=null){
-			busta.addProperty(ID_MESSAGGIO_RICHIESTA, this.idMessaggioRichiesta);
+			busta.addProperty(ID_MESSAGGIO_RICHIESTA.getValue(), this.idMessaggioRichiesta);
 		}
 		if(this.idMessaggioRisposta!=null){
-			busta.addProperty(ID_MESSAGGIO_RISPOSTA, this.idMessaggioRisposta);
+			busta.addProperty(ID_MESSAGGIO_RISPOSTA.getValue(), this.idMessaggioRisposta);
 		}
 	}
 	
@@ -88,17 +90,17 @@ public class DirectVMProtocolInfo {
 		
 		Object oIdTransazione = pddContext.getObject(ID);
 		if(oIdTransazione!=null){
-			busta.addProperty(ID, (String) oIdTransazione);
+			busta.addProperty(ID.getValue(), (String) oIdTransazione);
 		}
 		
 		Object oIdMessaggioRichiesta = pddContext.getObject(ID_MESSAGGIO_RICHIESTA);
 		if(oIdMessaggioRichiesta!=null){
-			busta.addProperty(ID_MESSAGGIO_RICHIESTA, (String) oIdMessaggioRichiesta);
+			busta.addProperty(ID_MESSAGGIO_RICHIESTA.getValue(), (String) oIdMessaggioRichiesta);
 		}
 		
 		Object oIdMessaggioRisposta = pddContext.getObject(ID_MESSAGGIO_RISPOSTA);
 		if(oIdMessaggioRisposta!=null){
-			busta.addProperty(ID_MESSAGGIO_RISPOSTA, (String) oIdMessaggioRisposta);
+			busta.addProperty(ID_MESSAGGIO_RISPOSTA.getValue(), (String) oIdMessaggioRisposta);
 		}
 	}
 }

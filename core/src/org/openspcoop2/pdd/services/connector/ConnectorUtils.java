@@ -35,13 +35,14 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.engine.RequestInfo;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
-import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.protocol.engine.URLProtocolContextImpl;
 import org.openspcoop2.protocol.manifest.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
+import org.openspcoop2.protocol.sdk.constants.IDService;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
@@ -110,7 +111,7 @@ public class ConnectorUtils {
 		requestInfo.setProtocolServiceBinding(protocolServiceBinding);
 		requestInfo.setIntegrationServiceBinding(integrationServiceBinding);
 		requestInfo.setBindingConfig(bindingConfig);
-		requestInfo.setIdentitaPdD(op2Properties!=null ? op2Properties.getIdentitaPortaDefault(pf.getProtocol()) : null );
+		requestInfo.setIdentitaPdD(op2Properties!=null ? op2Properties.getIdentitaPortaDefault(pf.getProtocol(), requestInfo) : null );
 		
 		return requestInfo;
 	}
@@ -294,7 +295,7 @@ public class ConnectorUtils {
 		String function = null;
 		String parameters = null;
 		try{
-			URLProtocolContext protocolContext = new URLProtocolContext(req, logCore, true, (op2Properties!=null ? op2Properties.getCustomContexts() : null));
+			URLProtocolContext protocolContext = new URLProtocolContextImpl(req, logCore, true, (op2Properties!=null ? op2Properties.getCustomContexts() : null));
 			String url = protocolContext.getUrlInvocazione_formBased();
 			if(url.endsWith("?wsdl=")){
 				// richiesta di un wsdl

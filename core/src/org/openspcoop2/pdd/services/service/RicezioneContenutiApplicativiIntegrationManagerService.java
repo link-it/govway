@@ -79,11 +79,9 @@ import org.openspcoop2.pdd.services.skeleton.IntegrationManagerMessage;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManagerUtility;
 import org.openspcoop2.pdd.services.skeleton.ProtocolHeaderInfo;
 import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.protocol.engine.URLProtocolContextImpl;
 import org.openspcoop2.protocol.engine.constants.Costanti;
-import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
@@ -91,9 +89,13 @@ import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.protocol.sdk.constants.IDService;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.utils.LimitExceededIOException;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.TimeoutIOException;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
@@ -142,7 +144,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		RequestInfo requestInfo = null;
 		try{
 			// Request Info
-			URLProtocolContext urlProtocolContext = new URLProtocolContext(req,logCore,true,true,openSPCoopProperties.getCustomContexts());
+			URLProtocolContext urlProtocolContext = new URLProtocolContextImpl(req,logCore,true,true,openSPCoopProperties.getCustomContexts());
 			urlProtocolContext.setInterfaceName(portaDelegata);
 			requestInfo = ConnectorUtils.getRequestInfo(protocolFactory, urlProtocolContext);
 		}catch(Exception e){
@@ -198,7 +200,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		// Identifico Servizio per comprendere correttamente il messageType
 		ServiceIdentificationReader serviceIdentificationReader = null;
 		try{
-			serviceIdentificationReader = ServicesUtils.getServiceIdentificationReader(logCore, requestInfo);
+			serviceIdentificationReader = ServicesUtils.getServiceIdentificationReader(logCore, requestInfo,
+					configPdDManager.getRegistroServiziManager(), configPdDManager);
 		}catch(Exception e){
 			String msgError = "Inizializzazione RegistryReader fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
 			logCore.error(msgError,e);
@@ -228,7 +231,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		
 		// Logger dei messaggi diagnostici
 		String nomePorta = portaDelegata;
-		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA,IntegrationManager.ID_MODULO,nomePorta);
+		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA,IntegrationManager.ID_MODULO,nomePorta,requestInfo,configPdDManager);
 		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER);
 		msgDiag.addKeyword(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione);
 		if(context!=null && protocolFactory!=null) {
@@ -310,7 +313,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			if(requestInfo!=null && requestInfo.getProtocolContext()!=null && requestInfo.getProtocolContext().getInterfaceName()!=null) {
 				IDPortaDelegata idPD = new IDPortaDelegata();
 				idPD.setNome(requestInfo.getProtocolContext().getInterfaceName());
-				pd = configPdDManager.getPortaDelegata_SafeMethod(idPD);
+				pd = configPdDManager.getPortaDelegata_SafeMethod(idPD, requestInfo);
 			}
 			try{
 				msgDiag.mediumDebug("Lettura configurazione dump ...");
@@ -374,7 +377,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 	            	context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_EROGATORE, rConfig.getSoggettoErogatore());
 	            }
 			}
-			context.getPddContext().addObject(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione);
+			context.getPddContext().addObject(CostantiPdD.TIPO_OPERAZIONE_IM, tipoOperazione);
 			context.setTipoPorta(TipoPdD.DELEGATA);
 			msgDiag.setPddContext(context.getPddContext(), protocolFactory);
 			
@@ -583,7 +586,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			
 			
 			// Parametri della porta delegata invocata
-			urlProtocolContext = new URLProtocolContext(logCore);
+			urlProtocolContext = new URLProtocolContextImpl(logCore);
 			urlProtocolContext.setInterfaceName(portaDelegata);
 			urlProtocolContext.setFunctionParameters(portaDelegata);
 			urlProtocolContext.setRequestURI(portaDelegata);
@@ -609,8 +612,9 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				}
 				
 				stato = new OpenSPCoopStateful();
-				stato.initResource(openSPCoopProperties.getIdentitaPortaDefault(protocolFactory.getProtocol()),IntegrationManager.ID_MODULO,idTransazione);
-				msgDiag.updateState(stato.getStatoRichiesta(),stato.getStatoRisposta());
+				stato.initResource(openSPCoopProperties.getIdentitaPortaDefault(protocolFactory.getProtocol(), requestInfo),IntegrationManager.ID_MODULO,idTransazione);
+				configPdDManager = configPdDManager.refreshState(stato.getStatoRichiesta(),stato.getStatoRisposta());
+				msgDiag.updateState(configPdDManager);
 				
 				// Leggo Messaggio
 				try{
@@ -698,7 +702,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 					if(portaDelegata!=null) {							
 						IDPortaDelegata identificativoPortaDelegata = new IDPortaDelegata();
 						identificativoPortaDelegata.setNome(portaDelegata);
-						PortaDelegata portaDelegataObject = configurazionePdDReader.getPortaDelegata_SafeMethod(identificativoPortaDelegata);
+						PortaDelegata portaDelegataObject = configurazionePdDReader.getPortaDelegata_SafeMethod(identificativoPortaDelegata, requestInfo);
 						if(portaDelegataObject!=null) {
 							dumpConfig = configurazionePdDReader.getDumpConfigurazione(portaDelegataObject);
 						}
@@ -707,7 +711,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 						dumpConfig = ConfigurazionePdDManager.getInstance().getDumpConfigurazionePortaDelegata();
 					}
 					
-					Dump dumpApplicativo = new Dump(openSPCoopProperties.getIdentitaPortaDefault(protocolFactory.getProtocol()),
+					Dump dumpApplicativo = new Dump(openSPCoopProperties.getIdentitaPortaDefault(protocolFactory.getProtocol(), requestInfo),
 							IntegrationManager.ID_MODULO,TipoPdD.DELEGATA,portaDelegata,context.getPddContext(),
 							null,null,
 							dumpConfig);
@@ -882,7 +886,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			Map<String, List<String>> headerIntegrazioneRisposta = context.getResponseHeaders();
 			ProtocolHeaderInfo protocolHeaderInfoResponse = null; 
 			if(headerIntegrazioneRisposta!=null){
-				java.util.concurrent.ConcurrentHashMap<String,String> keyValue = openSPCoopProperties.getKeyValue_HeaderIntegrazioneTrasporto();
+				Map<MapKey<String>,String> keyValue = openSPCoopProperties.getKeyValue_HeaderIntegrazioneTrasporto();
 				protocolHeaderInfoResponse = new ProtocolHeaderInfo();
 
 				protocolHeaderInfoResponse.setID(TransportUtils.getFirstValue(headerIntegrazioneRisposta,keyValue.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_MESSAGGIO)));
@@ -910,7 +914,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 						200, requestInfo.getIntegrationServiceBinding(),
 						 msgResponse, 
 						context.getProprietaErroreAppl(), informazioniErrori, 
-						(context.getPddContext()!=null ? context.getPddContext().getContext() : null));			
+						context.getPddContext()!=null ? context.getPddContext() : null);			
 												
 				IntegrationManagerException exc = null;
 				try{
@@ -989,7 +993,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 								500, requestInfo.getIntegrationServiceBinding(),
 								msgResponse, 
 								context.getProprietaErroreAppl(), informazioniErrori, 
-								(context.getPddContext()!=null ? context.getPddContext().getContext() : null));		
+								(context.getPddContext()!=null ? context.getPddContext() : null));		
 					}
 				}	
 				if(exc!=null){
@@ -1034,7 +1038,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 								500, requestInfo.getIntegrationServiceBinding(),
 								msgResponse, 
 								context.getProprietaErroreAppl(), informazioniErrori, 
-								(context.getPddContext()!=null ?context.getPddContext().getContext() : null));		
+								(context.getPddContext()!=null ?context.getPddContext() : null));		
 					}
 				}
 				
@@ -1055,7 +1059,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 						200, requestInfo.getIntegrationServiceBinding(),
 						msgResponse, 
 						context.getProprietaErroreAppl(), informazioniErrori, 
-						(context.getPddContext()!=null ? context.getPddContext().getContext() : null));	
+						(context.getPddContext()!=null ? context.getPddContext() : null));	
 				// ok oneway
 				
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"integrationManager.consegnaRispostaApplicativaVuota");

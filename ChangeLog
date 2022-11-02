@@ -1,3 +1,11 @@
+2022-11-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-1476
+	Aggiornate librerie 3parti alle ultime versioni disponibili.
+	Aggiunta cache 'GestoreRichieste' con lo scopo di minimizzare l'accesso concorrente alle cache per motivi di performance.
+	Introdotti interventi minori rilvolti al miglioramento delle performance.
+
 2022-10-24  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayMonitor, GovWayConsole]

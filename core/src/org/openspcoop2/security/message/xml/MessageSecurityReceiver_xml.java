@@ -61,7 +61,7 @@ public class MessageSecurityReceiver_xml extends AbstractRESTMessageSecurityRece
 	private XmlDecrypt xmlDecrypt = null;
 
 	@Override
-	public void process(MessageSecurityContext messageSecurityContext,OpenSPCoop2Message messageParam,Busta busta) throws SecurityException{
+	public void process(MessageSecurityContext messageSecurityContext,OpenSPCoop2Message messageParam,Busta busta,org.openspcoop2.utils.Map<Object> ctx) throws SecurityException{
 		
 		boolean signatureProcess = false;
 		boolean encryptProcess = false;
@@ -83,7 +83,7 @@ public class MessageSecurityReceiver_xml extends AbstractRESTMessageSecurityRece
 
 			String[]actions = ((String)messageSecurityContext.getIncomingProperties().get(SecurityConstants.ACTION)).split(" ");
 			for (int i = 0; i < actions.length; i++) {
-				if(SecurityConstants.ENCRYPT_ACTION.equals(actions[i].trim()) || SecurityConstants.DECRYPT_ACTION.equals(actions[i].trim())){
+				if(SecurityConstants.is_ACTION_ENCRYPTION(actions[i].trim()) || SecurityConstants.is_ACTION_DECRYPTION(actions[i].trim())){
 					encrypt = true;
 				}
 				else if(SecurityConstants.SIGNATURE_ACTION.equals(actions[i].trim())){
@@ -110,7 +110,7 @@ public class MessageSecurityReceiver_xml extends AbstractRESTMessageSecurityRece
 							
 				SignatureBean bean = null;
 				try {
-					bean = KeystoreUtils.getReceiverSignatureBean(messageSecurityContext);
+					bean = KeystoreUtils.getReceiverSignatureBean(messageSecurityContext,ctx);
 				}catch(Exception e) {
 					throw e;
 				}
@@ -153,7 +153,7 @@ public class MessageSecurityReceiver_xml extends AbstractRESTMessageSecurityRece
 							
 				EncryptionBean bean = null;
 				try {
-					bean = KeystoreUtils.getReceiverEncryptionBean(messageSecurityContext);
+					bean = KeystoreUtils.getReceiverEncryptionBean(messageSecurityContext,ctx);
 				}catch(Exception e) {
 					throw e;
 				}

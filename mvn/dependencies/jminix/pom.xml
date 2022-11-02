@@ -19,7 +19,6 @@
 		
 		<jminix.gov4j.version>1.2.0-gov4j-1</jminix.gov4j.version>
 		<org.restlet.version>2.4.0</org.restlet.version>
-		<httpserver.version>20070405</httpserver.version>
 
 	</properties>
 
@@ -75,18 +74,6 @@
 			<groupId>org.restlet.jee</groupId>
 			<artifactId>org.restlet.ext.velocity</artifactId>
 			<version>${org.restlet.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>com.sun.net.httpserver</groupId>
-			<artifactId>http</artifactId>
-			<version>${httpserver.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

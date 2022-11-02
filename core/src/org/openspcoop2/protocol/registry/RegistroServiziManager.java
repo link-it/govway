@@ -22,7 +22,6 @@ package org.openspcoop2.protocol.registry;
 
 import java.io.Serializable;
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -66,10 +65,13 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.crypt.CryptConfig;
@@ -84,52 +86,117 @@ import org.slf4j.Logger;
  */
 public class RegistroServiziManager {
 
+	private static RegistroServiziManager staticInstanceWithoutState = null;
+	private static synchronized void initStaticInstanceWithoutState(){
+		if(staticInstanceWithoutState == null) {
+			staticInstanceWithoutState = new RegistroServiziManager();
+			staticInstanceWithoutState.singleInstance = true;
+		}
+	}
 
 	public static RegistroServiziManager getInstance(){
-		return new RegistroServiziManager();
+		//return new RegistroServiziManager();
+		if(staticInstanceWithoutState == null) {
+			if(RegistroServiziReader.getInstance()==null) {
+				return new RegistroServiziManager(); // succede all'avvio
+			}
+			initStaticInstanceWithoutState();
+		}
+		return staticInstanceWithoutState;
 	}
-	public static RegistroServiziManager getInstance(IState ... state){
-		return new RegistroServiziManager(state);
+	public static RegistroServiziManager getInstance(IState state){
+		if(state!=null && state instanceof StateMessage) {
+			return getInstance((StateMessage)state);
+		}
+		return getInstance();
+	}
+	public static RegistroServiziManager getInstance(StateMessage state){
+		if(state!=null) {
+			return new RegistroServiziManager(state);
+		}
+		return getInstance();
+	}
+	public static RegistroServiziManager getInstance(IState requestStateParam, IState responseStateParam){
+		StateMessage requestState = null;
+		StateMessage responseState = null;
+		if(requestStateParam!=null && requestStateParam instanceof StateMessage) {
+			requestState = (StateMessage) requestStateParam;
+		}
+		if(responseStateParam!=null && responseStateParam instanceof StateMessage) {
+			responseState = (StateMessage) responseStateParam;
+		}
+		if(requestState!=null || responseState!=null) {
+			return new RegistroServiziManager(requestState,responseState);
+		}
+		return getInstance();
+	}
+	public static RegistroServiziManager getInstance(StateMessage requestState, StateMessage responseState){
+		if(requestState!=null || responseState!=null) {
+			return new RegistroServiziManager(requestState,responseState);
+		}
+		return getInstance();
 	}
 
-	
+
+	private boolean singleInstance = false;
 	private RegistroServiziReader registroServiziReader = null;
-	private List<StateMessage> stati = new ArrayList<StateMessage>();
-	
-	
-	public RegistroServiziManager(IState ... state){
-		this.registroServiziReader = RegistroServiziReader.getInstance();
-		if(state!=null){
-			for (int i = 0; i < state.length; i++) {
-				if(state[i] instanceof StateMessage){
-					this.stati.add((StateMessage)state[i]);
-				}
-			}
-		}
+	private StateMessage state = null;
+	private StateMessage responseState = null;
+
+	public StateMessage getState() {
+		return this.state;
+	}
+	public StateMessage getResponseState() {
+		return this.responseState;
 	}
 	
-	public void updateState(IState ... state){
-		this.stati.clear();
-		if(state!=null){
-			for (int i = 0; i < state.length; i++) {
-				if(state[i] instanceof StateMessage){
-					this.stati.add((StateMessage)state[i]);
-				}
-			}
+	public RegistroServiziManager(){
+		this.registroServiziReader = RegistroServiziReader.getInstance();	
+	}
+	public RegistroServiziManager(StateMessage state){
+		this();
+		this.state = state;
+	}
+	public RegistroServiziManager(StateMessage requestState, StateMessage responseState){
+		this();
+		this.state = requestState;
+		this.responseState = responseState;
+	}
+	
+	public RegistroServiziManager refreshState(IState requestStateParam, IState responseStateParam) {
+		StateMessage requestState = null;
+		StateMessage responseState = null;
+		if(requestStateParam!=null && requestStateParam instanceof StateMessage) {
+			requestState = (StateMessage) requestStateParam;
 		}
+		if(responseStateParam!=null && responseStateParam instanceof StateMessage) {
+			responseState = (StateMessage) responseStateParam;
+		}
+		return refreshState(requestState, responseState);
+	}
+	public RegistroServiziManager refreshState(StateMessage requestState, StateMessage responseState) {
+		if(requestState==null && responseState==null) {
+			return getInstance(); // senza stato
+		}
+		if(this.singleInstance) {
+			return RegistroServiziManager.getInstance(requestState, responseState); // inizialmente era senza stato, ora serve
+		}
+		this.state = requestState;
+		this.responseState = responseState;
+		return this;
 	}
 	
 	private Connection getConnection() {
-		if(this.stati.size()>0){
-			for (StateMessage state : this.stati) {
-				boolean validConnection = false;
-				if(state.getConnectionDB()!=null) {
-					try{
-						validConnection = !state.getConnectionDB().isClosed();
-					}catch(Exception e){}
-				}
-				if(validConnection)
-					return state.getConnectionDB();
+		if(this.state!=null) {
+			Connection c = StateMessage.getConnection(this.state);
+			if(c!=null) {
+				return c;
+			}
+		}
+		if(this.responseState!=null) {
+			Connection c = StateMessage.getConnection(this.responseState);
+			if(c!=null) {
+				return c;
 			}
 		}
 		return null;
@@ -169,76 +236,219 @@ public class RegistroServiziManager {
 	
 	/* ********  P R O F I L O   D I   G E S T I O N E  ******** */ 
 	
-	public String getProfiloGestioneFruizioneServizio(IDServizio idServizio,String nomeRegistro) 
+	public String getProfiloGestioneFruizioneServizio(IDServizio idServizio,String nomeRegistro, RequestInfo requestInfo) 
 		throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getProfiloGestioneFruizioneServizio(this.getConnection(), idServizio, nomeRegistro);
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && idServizio!=null && idServizio.equals(requestInfo.getRequestConfig().getIdServizio(), false);
+		if(useRequestInfo) {
+			if(requestInfo.getRequestConfig().getServizioVersioneProtocollo()!=null) {
+				return requestInfo.getRequestConfig().getServizioVersioneProtocollo();
+			}
+		}
+		String v = this.registroServiziReader.getProfiloGestioneFruizioneServizio(this.getConnection(), idServizio, nomeRegistro, requestInfo);
+		if(useRequestInfo) {
+			if(requestInfo.getRequestConfig().getServizioVersioneProtocollo()==null) {
+				requestInfo.getRequestConfig().setServizioVersioneProtocollo(v);
+			}
+		}
+		return v;
 	}
 	
-	public String getProfiloGestioneErogazioneServizio(IDSoggetto idFruitore,IDServizio idServizio,String nomeRegistro) 
+	public String getProfiloGestioneErogazioneServizio(IDSoggetto idFruitore,IDServizio idServizio,String nomeRegistro, RequestInfo requestInfo) 
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getProfiloGestioneErogazioneServizio(this.getConnection(), idFruitore, idServizio, nomeRegistro);
+		// accendendo all'implementazione sottostante si puo' vedere come il parametro idServizio non viene usato
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && idFruitore!=null;
+		boolean useRequestInfoSoggettoFruitore = false;
+		boolean useRequestInfoSoggettoErogatore = false;
+		if(useRequestInfo) {
+			useRequestInfoSoggettoFruitore = useRequestInfo && requestInfo.getRequestConfig().getIdFruitore()!=null && 
+					requestInfo.getRequestConfig().getIdFruitore().equals(idFruitore);
+			if(useRequestInfoSoggettoFruitore) {
+				if(requestInfo.getRequestConfig().getSoggettoFruitoreVersioneProtocollo()!=null) {
+					return requestInfo.getRequestConfig().getSoggettoFruitoreVersioneProtocollo();
+				}
+			}
+			else {
+				useRequestInfoSoggettoErogatore = useRequestInfo && requestInfo.getRequestConfig().getIdServizio()!=null && 
+					requestInfo.getRequestConfig().getIdServizio().getSoggettoErogatore()!=null &&
+					requestInfo.getRequestConfig().getIdServizio().getSoggettoErogatore().equals(idFruitore);
+				if(useRequestInfoSoggettoErogatore) {
+					if(requestInfo.getRequestConfig().getSoggettoErogatoreVersioneProtocollo()!=null) {
+						return requestInfo.getRequestConfig().getSoggettoErogatoreVersioneProtocollo();
+					}
+				}
+			}
+		}
+		String v = this.registroServiziReader.getProfiloGestioneErogazioneServizio(this.getConnection(), idFruitore, idServizio, nomeRegistro, requestInfo);
+		if(useRequestInfoSoggettoFruitore) {
+			if(requestInfo.getRequestConfig().getSoggettoFruitoreVersioneProtocollo()==null) {
+				requestInfo.getRequestConfig().setSoggettoFruitoreVersioneProtocollo(v);
+			}
+		}
+		else if(useRequestInfoSoggettoErogatore) {
+			if(requestInfo.getRequestConfig().getSoggettoErogatoreVersioneProtocollo()==null) {
+				requestInfo.getRequestConfig().setSoggettoErogatoreVersioneProtocollo(v);
+			}
+		}
+		return v;
 	}
 	
-	public String getProfiloGestioneSoggetto(IDSoggetto idSoggetto,String nomeRegistro) 
+	public String getProfiloGestioneSoggetto(IDSoggetto idSoggetto,String nomeRegistro, RequestInfo requestInfo) 
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getProfiloGestioneSoggetto(this.getConnection(), idSoggetto, nomeRegistro);
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && idSoggetto!=null;
+		boolean useRequestInfoSoggettoFruitore = false;
+		boolean useRequestInfoSoggettoErogatore = false;
+		if(useRequestInfo) {
+			useRequestInfoSoggettoFruitore = useRequestInfo && requestInfo.getRequestConfig().getIdFruitore()!=null && 
+					requestInfo.getRequestConfig().getIdFruitore().equals(idSoggetto);
+			if(useRequestInfoSoggettoFruitore) {
+				if(requestInfo.getRequestConfig().getSoggettoFruitoreVersioneProtocollo()!=null) {
+					return requestInfo.getRequestConfig().getSoggettoFruitoreVersioneProtocollo();
+				}
+			}
+			else {
+				useRequestInfoSoggettoErogatore = useRequestInfo && requestInfo.getRequestConfig().getIdServizio()!=null && 
+					requestInfo.getRequestConfig().getIdServizio().getSoggettoErogatore()!=null &&
+					requestInfo.getRequestConfig().getIdServizio().getSoggettoErogatore().equals(idSoggetto);
+				if(useRequestInfoSoggettoErogatore) {
+					if(requestInfo.getRequestConfig().getSoggettoErogatoreVersioneProtocollo()!=null) {
+						return requestInfo.getRequestConfig().getSoggettoErogatoreVersioneProtocollo();
+					}
+				}
+			}
+		}
+		String v = this.registroServiziReader.getProfiloGestioneSoggetto(this.getConnection(), idSoggetto, nomeRegistro, requestInfo);
+		if(useRequestInfoSoggettoFruitore) {
+			if(requestInfo.getRequestConfig().getSoggettoFruitoreVersioneProtocollo()==null) {
+				requestInfo.getRequestConfig().setSoggettoFruitoreVersioneProtocollo(v);
+			}
+		}
+		else if(useRequestInfoSoggettoErogatore) {
+			if(requestInfo.getRequestConfig().getSoggettoErogatoreVersioneProtocollo()==null) {
+				requestInfo.getRequestConfig().setSoggettoErogatoreVersioneProtocollo(v);
+			}
+		}
+		return v;
 	}
 	
 	
 	/* ********  R I C E R C A   I N F O     S E R V I Z I  ******** */ 
 	
-	public Servizio getInfoServizio(IDSoggetto idSoggetto, IDServizio idService,String nomeRegistro, boolean verificaEsistenzaServizioAzioneCorrelato, boolean throwAzioneNotFound)
+	public Servizio getInfoServizio(IDSoggetto idSoggetto, IDServizio idService,String nomeRegistro, boolean verificaEsistenzaServizioAzioneCorrelato, boolean throwAzioneNotFound,
+			RequestInfo requestInfo)
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound,DriverRegistroServiziAzioneNotFound,DriverRegistroServiziPortTypeNotFound,DriverRegistroServiziCorrelatoNotFound{
-		return this.registroServiziReader.getInfoServizio(this.getConnection(), idSoggetto, idService, nomeRegistro, verificaEsistenzaServizioAzioneCorrelato, throwAzioneNotFound);
+		if(requestInfo!=null && requestInfo.getRequestConfig()!=null && idService!=null && requestInfo.getRequestConfig().getInfoServizio()!=null) {
+			if(requestInfo.getRequestConfig().getInfoServizio().getIDServizio().equals(idService)) {
+				return requestInfo.getRequestConfig().getInfoServizio();
+			}
+		}
+		Servizio s = this.registroServiziReader.getInfoServizio(this.getConnection(), idSoggetto, idService, nomeRegistro, verificaEsistenzaServizioAzioneCorrelato, throwAzioneNotFound);
+		if(requestInfo!=null && requestInfo.getRequestConfig()!=null && requestInfo.getRequestConfig().getInfoServizio()==null) {
+			requestInfo.getRequestConfig().setInfoServizio(s);
+		}
+		return s;
 	}
 	
-	public Servizio getInfoServizioCorrelato(IDSoggetto idSoggetto,IDServizio idService,String nomeRegistro, boolean throwAzioneNotFound) 
+	public Servizio getInfoServizioCorrelato(IDSoggetto idSoggetto,IDServizio idService,String nomeRegistro, boolean throwAzioneNotFound,
+			RequestInfo requestInfo) 
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound,DriverRegistroServiziAzioneNotFound,DriverRegistroServiziPortTypeNotFound,DriverRegistroServiziCorrelatoNotFound{
-		return this.registroServiziReader.getInfoServizioCorrelato(this.getConnection(), idSoggetto, idService, nomeRegistro, throwAzioneNotFound);
+		if(requestInfo!=null && requestInfo.getRequestConfig()!=null && idService!=null && requestInfo.getRequestConfig().getInfoServizioCorrelato()!=null) {
+			if(requestInfo.getRequestConfig().getInfoServizioCorrelato().getIDServizio().equals(idService)) {
+				return requestInfo.getRequestConfig().getInfoServizioCorrelato();
+			}
+		}
+		Servizio s = this.registroServiziReader.getInfoServizioCorrelato(this.getConnection(), idSoggetto, idService, nomeRegistro, throwAzioneNotFound);
+		if(requestInfo!=null && requestInfo.getRequestConfig()!=null && requestInfo.getRequestConfig().getInfoServizioCorrelato()==null) {
+			requestInfo.getRequestConfig().setInfoServizioCorrelato(s);
+		}
+		return s;
 	}
 	
-	public Servizio getInfoServizioAzioneCorrelata(IDSoggetto idSoggetto,IDServizio idService,String nomeRegistro, boolean throwAzioneNotFound) 
+	public Servizio getInfoServizioAzioneCorrelata(IDSoggetto idSoggetto,IDServizio idService,String nomeRegistro, boolean throwAzioneNotFound,
+			RequestInfo requestInfo) 
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound,DriverRegistroServiziAzioneNotFound,DriverRegistroServiziPortTypeNotFound,DriverRegistroServiziCorrelatoNotFound{
-		return this.registroServiziReader.getInfoServizioAzioneCorrelata(this.getConnection(), idSoggetto, idService, nomeRegistro, throwAzioneNotFound);
+		if(requestInfo!=null && requestInfo.getRequestConfig()!=null && idService!=null && requestInfo.getRequestConfig().getInfoServizioAzioneCorrelata()!=null) {
+			if(requestInfo.getRequestConfig().getInfoServizioAzioneCorrelata().getIDServizio().equals(idService)) {
+				return requestInfo.getRequestConfig().getInfoServizioAzioneCorrelata();
+			}
+		}
+		Servizio s = this.registroServiziReader.getInfoServizioAzioneCorrelata(this.getConnection(), idSoggetto, idService, nomeRegistro, throwAzioneNotFound);
+		if(requestInfo!=null && requestInfo.getRequestConfig()!=null && requestInfo.getRequestConfig().getInfoServizioAzioneCorrelata()==null) {
+			requestInfo.getRequestConfig().setInfoServizioAzioneCorrelata(s);
+		}
+		return s;
 	}
 	
 	public Allegati getAllegati(IDServizio idASPS)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return this.registroServiziReader.getAllegati(this.getConnection(), idASPS);
 	}
 	
-	public Documento getAllegato(IDAccordo idAccordo, String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getAllegato(this.getConnection(), idAccordo, nome);
+	public Documento getAllegato(IDAccordo idAccordo, String nome, RequestInfo requestInfo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getAllegato(this.getConnection(), idAccordo, nome, requestInfo);
 	}
-	public Documento getSpecificaSemiformale(IDAccordo idAccordo, TipiDocumentoSemiformale tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getSpecificaSemiformale(this.getConnection(), idAccordo, tipo, nome);
-	}
-	
-	public Documento getAllegato(IDServizio idASPS, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getAllegato(this.getConnection(), idASPS, nome);
-	}
-	public Documento getSpecificaSemiformale(IDServizio idASPS, TipiDocumentoSemiformale tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getSpecificaSemiformale(this.getConnection(), idASPS, tipo, nome);
-	}
-	public Documento getSpecificaSicurezza(IDServizio idASPS, TipiDocumentoSicurezza tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getSpecificaSicurezza(this.getConnection(), idASPS, tipo, nome);
-	}
-	public Documento getSpecificaLivelloServizio(IDServizio idASPS, TipiDocumentoLivelloServizio tipo, String nome)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getSpecificaLivelloServizio(this.getConnection(), idASPS, tipo, nome);
+	public Documento getSpecificaSemiformale(IDAccordo idAccordo, TipiDocumentoSemiformale tipo, String nome, RequestInfo requestInfo)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getSpecificaSemiformale(this.getConnection(), idAccordo, tipo, nome, requestInfo);
 	}
 	
-	public org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getWsdlAccordoServizio(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD, boolean readDatiRegistro)
+	public Documento getAllegato(IDServizio idASPS, String nome, RequestInfo requestInfo)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getAllegato(this.getConnection(), idASPS, nome, requestInfo);
+	}
+	public Documento getSpecificaSemiformale(IDServizio idASPS, TipiDocumentoSemiformale tipo, String nome, RequestInfo requestInfo)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getSpecificaSemiformale(this.getConnection(), idASPS, tipo, nome, requestInfo);
+	}
+	public Documento getSpecificaSicurezza(IDServizio idASPS, TipiDocumentoSicurezza tipo, String nome, RequestInfo requestInfo)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getSpecificaSicurezza(this.getConnection(), idASPS, tipo, nome, requestInfo);
+	}
+	public Documento getSpecificaLivelloServizio(IDServizio idASPS, TipiDocumentoLivelloServizio tipo, String nome, RequestInfo requestInfo)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getSpecificaLivelloServizio(this.getConnection(), idASPS, tipo, nome, requestInfo);
+	}
+	
+	public org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getWsdlAccordoServizio(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD, boolean readDatiRegistro, RequestInfo requestInfo)
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getWsdlAccordoServizio(this.getConnection(), idService, infoWsdlSource,buildSchemaXSD, readDatiRegistro);
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && idService!=null && infoWsdlSource!=null;
+		if(useRequestInfo) {
+			org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper w = requestInfo.getRequestConfig().getAsWrapper_soap(infoWsdlSource, buildSchemaXSD, readDatiRegistro);
+			if(w!=null) {
+				return w;
+			}
+		}
+		org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper w = this.registroServiziReader.getWsdlAccordoServizio(this.getConnection(), idService, infoWsdlSource,buildSchemaXSD, readDatiRegistro);
+		if(useRequestInfo && requestInfo.getRequestConfig().getAsWrapper_soap(infoWsdlSource, buildSchemaXSD, readDatiRegistro)==null) {
+			requestInfo.getRequestConfig().setAsWrapper_soap(w, infoWsdlSource, buildSchemaXSD, readDatiRegistro,
+					requestInfo!=null ? requestInfo.getIdTransazione() : null);
+		}
+		return w;
 	}
 	
-	public org.openspcoop2.core.registry.rest.AccordoServizioWrapper getRestAccordoServizio(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD, boolean processIncludeForOpenApi, boolean readDatiRegistro)
+	public org.openspcoop2.core.registry.rest.AccordoServizioWrapper getRestAccordoServizio(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD, boolean processIncludeForOpenApi, boolean readDatiRegistro, RequestInfo requestInfo)
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getRestAccordoServizio(this.getConnection(), idService, infoWsdlSource,buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro);
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && idService!=null && infoWsdlSource!=null;
+		if(useRequestInfo) {
+			org.openspcoop2.core.registry.rest.AccordoServizioWrapper w = requestInfo.getRequestConfig().getAsWrapper_rest(infoWsdlSource, buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro);
+			if(w!=null) {
+				return w;
+			}
+		}
+		org.openspcoop2.core.registry.rest.AccordoServizioWrapper w = this.registroServiziReader.getRestAccordoServizio(this.getConnection(), idService, infoWsdlSource,buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro);
+		if(useRequestInfo && requestInfo.getRequestConfig().getAsWrapper_rest(infoWsdlSource, buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro)==null) {
+			requestInfo.getRequestConfig().setAsWrapper_rest(w, infoWsdlSource, buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro,
+					requestInfo!=null ? requestInfo.getIdTransazione() : null);
+		}
+		return w;
 	}
 	
-	public org.openspcoop2.core.registry.constants.ServiceBinding getServiceBinding(IDServizio idService)
+	public org.openspcoop2.core.registry.constants.ServiceBinding getServiceBinding(IDServizio idService, RequestInfo requestInfo)
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getServiceBinding(this.getConnection(), idService);
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && idService!=null;
+		if(useRequestInfo) {
+			if( requestInfo.getRequestConfig().getServiceBinding()!=null) {
+				return requestInfo.getRequestConfig().getServiceBinding();
+			}
+		}
+		org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding = this.registroServiziReader.getServiceBinding(this.getConnection(), idService);
+		if(useRequestInfo && requestInfo.getRequestConfig().getServiceBinding()==null) {
+			requestInfo.getRequestConfig().setServiceBinding(serviceBinding);
+		}
+		return serviceBinding;
 	}
 	
 	public EsitoAutorizzazioneRegistro isFruitoreServizioAutorizzato(String pdd,String servizioApplicativo,IDSoggetto soggetto,IDServizio servizio)
@@ -249,32 +459,155 @@ public class RegistroServiziManager {
 	
 	/* ********  C O N N E T T O R I  ******** */ 
 
-	public org.openspcoop2.core.config.Connettore getConnettore(IDSoggetto idSoggetto,IDServizio idService,String nomeRegistro) 
+	public org.openspcoop2.core.config.Connettore getConnettore(IDSoggetto idSoggetto,IDServizio idService,String nomeRegistro, RequestInfo requestInfo) 
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getConnettore(this.getConnection(), idSoggetto, idService, nomeRegistro);
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && idSoggetto!=null && idService!=null &&
+				requestInfo.getRequestConfig().getIdFruitore()!=null && idSoggetto.equals(requestInfo.getRequestConfig().getIdFruitore()) &&
+				requestInfo.getRequestConfig().getIdServizio()!=null && idService.equals(requestInfo.getRequestConfig().getIdServizio(),false);
+		if(useRequestInfo) {
+			if(requestInfo.getRequestConfig().getConnettoreFrutoreServizio()!=null) {
+				return requestInfo.getRequestConfig().getConnettoreFrutoreServizio();
+			}
+		}
+		org.openspcoop2.core.config.Connettore c = this.registroServiziReader.getConnettore(this.getConnection(), idSoggetto, idService, nomeRegistro);
+		if(useRequestInfo) {
+			if(requestInfo.getRequestConfig().getConnettoreFrutoreServizio()==null) {
+				requestInfo.getRequestConfig().setConnettoreFrutoreServizio(c);
+			}
+		}
+		return c;
 	}
 	
-	public org.openspcoop2.core.config.Connettore getConnettore(IDSoggetto idSoggetto,String nomeRegistro) 
+	public org.openspcoop2.core.config.Connettore getConnettore(IDSoggetto idSoggetto,String nomeRegistro, RequestInfo requestInfo) 
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getConnettore(this.getConnection(), idSoggetto, nomeRegistro);
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && idSoggetto!=null &&
+				requestInfo.getRequestConfig().getIdServizio()!=null &&  
+				requestInfo.getRequestConfig().getIdServizio().getSoggettoErogatore()!=null &&  
+				requestInfo.getRequestConfig().getIdServizio().getSoggettoErogatore().equals(idSoggetto);
+		if(useRequestInfo) {
+			if(requestInfo.getRequestConfig().getConnettoreSoggettoErogatore()!=null) {
+				return requestInfo.getRequestConfig().getConnettoreSoggettoErogatore();
+			}
+		}
+		org.openspcoop2.core.config.Connettore c = this.registroServiziReader.getConnettore(this.getConnection(), idSoggetto, nomeRegistro);
+		if(useRequestInfo) {
+			if(requestInfo.getRequestConfig().getConnettoreSoggettoErogatore()==null) {
+				requestInfo.getRequestConfig().setConnettoreSoggettoErogatore(c);
+			}
+		}
+		return c;
 	}
 	
 	
 	/* ********  VALIDAZIONE  ******** */ 
 
-	public String getDominio(IDSoggetto idSoggetto,String nomeRegistro,IProtocolFactory<?> protocolFactory) 
+	public String getDominio(IDSoggetto idSoggetto,String nomeRegistro,IProtocolFactory<?> protocolFactory, RequestInfo requestInfo) 
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && idSoggetto!=null;
+		if(useRequestInfo) {
+			if( requestInfo.getRequestConfig().getSoggettoErogatoreConfig()!=null && requestInfo.getRequestConfig().getSoggettoErogatoreIdentificativoPorta()!=null &&
+				idSoggetto.getTipo().equals(requestInfo.getRequestConfig().getSoggettoErogatoreConfig().getTipo()) &&
+					idSoggetto.getNome().equals(requestInfo.getRequestConfig().getSoggettoErogatoreConfig().getNome())	) {
+				return requestInfo.getRequestConfig().getSoggettoErogatoreIdentificativoPorta();
+			}
+			else if( requestInfo.getRequestConfig().getSoggettoFruitoreConfig()!=null && requestInfo.getRequestConfig().getSoggettoFruitoreIdentificativoPorta()!=null &&
+				idSoggetto.getTipo().equals(requestInfo.getRequestConfig().getSoggettoFruitoreConfig().getTipo()) &&
+					idSoggetto.getNome().equals(requestInfo.getRequestConfig().getSoggettoFruitoreConfig().getNome())	) {
+				return requestInfo.getRequestConfig().getSoggettoFruitoreIdentificativoPorta();
+			}
+		}
+		if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null && requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo()!=null) {
+			if(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig()!=null && 
+					requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreIdentificativoPorta()!=null &&
+					idSoggetto.getTipo().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig().getTipo()) && 
+					idSoggetto.getNome().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig().getNome())) {
+				return requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreIdentificativoPorta();
+			}
+		}
+		if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null && requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo()!=null) {
+			if(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig()!=null && 
+					requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreIdentificativoPorta()!=null &&
+					idSoggetto.getTipo().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig().getTipo()) && 
+					idSoggetto.getNome().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig().getNome())) {
+				return requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreIdentificativoPorta();
+			}
+		}
 		return this.registroServiziReader.getDominio(this.getConnection(), idSoggetto, nomeRegistro, protocolFactory);
+		// il set viene effettuato nei service utils per comprendere se si tratta di fruitore o erogatore
 	}
 	
-	public String getImplementazionePdD(IDSoggetto idSoggetto,String nomeRegistro) 
+	public String getImplementazionePdD(IDSoggetto idSoggetto,String nomeRegistro, RequestInfo requestInfo) 
 			throws DriverRegistroServiziException{
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && idSoggetto!=null;
+		if(useRequestInfo) {
+			if( requestInfo.getRequestConfig().getSoggettoErogatoreConfig()!=null && requestInfo.getRequestConfig().getSoggettoErogatoreImplementazionePdd()!=null &&
+				idSoggetto.getTipo().equals(requestInfo.getRequestConfig().getSoggettoErogatoreConfig().getTipo()) &&
+					idSoggetto.getNome().equals(requestInfo.getRequestConfig().getSoggettoErogatoreConfig().getNome())	) {
+				return requestInfo.getRequestConfig().getSoggettoErogatoreImplementazionePdd();
+			}
+			else if( requestInfo.getRequestConfig().getSoggettoFruitoreConfig()!=null && requestInfo.getRequestConfig().getSoggettoFruitoreImplementazionePdd()!=null && 
+				idSoggetto.getTipo().equals(requestInfo.getRequestConfig().getSoggettoFruitoreConfig().getTipo()) &&
+					idSoggetto.getNome().equals(requestInfo.getRequestConfig().getSoggettoFruitoreConfig().getNome())	) {
+				return requestInfo.getRequestConfig().getSoggettoFruitoreImplementazionePdd();
+			}
+		}
+		if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null && requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo()!=null) {
+			if(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig()!=null && 
+					requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreImplementazionePdd()!=null &&
+					idSoggetto.getTipo().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig().getTipo()) && 
+					idSoggetto.getNome().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig().getNome())) {
+				return requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreImplementazionePdd();
+			}
+		}
+		if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null && requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo()!=null) {
+			if(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig()!=null && 
+					requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreImplementazionePdd()!=null &&
+					idSoggetto.getTipo().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig().getTipo()) && 
+					idSoggetto.getNome().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig().getNome())) {
+				return requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreImplementazionePdd();
+			}
+		}
 		return this.registroServiziReader.getImplementazionePdD(this.getConnection(), idSoggetto, nomeRegistro);
+		// il set viene effettuato nei service utils per comprendere se si tratta di fruitore o erogatore
 	}
 	
-	public String getIdPortaDominio(IDSoggetto idSoggetto,String nomeRegistro) 
+	public String getIdPortaDominio(IDSoggetto idSoggetto,String nomeRegistro, RequestInfo requestInfo) 
 			throws DriverRegistroServiziException{
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && idSoggetto!=null;
+		if(useRequestInfo) {
+			if( requestInfo.getRequestConfig().getSoggettoErogatoreConfig()!=null && requestInfo.getRequestConfig().getSoggettoErogatorePddReaded()!=null && 
+				requestInfo.getRequestConfig().getSoggettoErogatorePddReaded() &&
+				idSoggetto.getTipo().equals(requestInfo.getRequestConfig().getSoggettoErogatoreConfig().getTipo()) &&
+					idSoggetto.getNome().equals(requestInfo.getRequestConfig().getSoggettoErogatoreConfig().getNome())	) {
+				return requestInfo.getRequestConfig().getSoggettoErogatorePdd()!=null ? requestInfo.getRequestConfig().getSoggettoErogatorePdd().getNome() : null;
+			}
+			else if( requestInfo.getRequestConfig().getSoggettoFruitoreConfig()!=null && requestInfo.getRequestConfig().getSoggettoFruitorePddReaded()!=null && 
+					requestInfo.getRequestConfig().getSoggettoFruitorePddReaded() && 
+				idSoggetto.getTipo().equals(requestInfo.getRequestConfig().getSoggettoFruitoreConfig().getTipo()) &&
+					idSoggetto.getNome().equals(requestInfo.getRequestConfig().getSoggettoFruitoreConfig().getNome())	) {
+				return requestInfo.getRequestConfig().getSoggettoFruitorePdd()!=null ? requestInfo.getRequestConfig().getSoggettoFruitorePdd().getNome() : null;
+			}
+		}
+		if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null && requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo()!=null) {
+			if( requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig()!=null && 
+					requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitorePddReaded()!=null && 
+					requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitorePddReaded() &&
+					idSoggetto.getTipo().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig().getTipo()) &&
+						idSoggetto.getNome().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreConfig().getNome())	) {
+					return requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitorePdd()!=null ? requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitorePdd().getNome() : null;
+				}
+		}
+		if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null && requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo()!=null) {
+			if( requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig()!=null && 
+					requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitorePddReaded()!=null && 
+					requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitorePddReaded() &&
+					idSoggetto.getTipo().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig().getTipo()) &&
+						idSoggetto.getNome().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreConfig().getNome())	) {
+					return requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitorePdd()!=null ? requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitorePdd().getNome() : null;
+				}
+		}
 		return this.registroServiziReader.getIdPortaDominio(this.getConnection(), idSoggetto, nomeRegistro);
+		// il set viene effettuato nei service utils per comprendere se si tratta di fruitore o erogatore
 	}
 	
 	public RisultatoValidazione validaServizio(IDSoggetto soggettoFruitore,IDServizio idService,String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziPortTypeNotFound{
@@ -375,34 +708,149 @@ public class RegistroServiziManager {
 	
 	/* ********  R I C E R C A  E L E M E N T I   P R I M I T I V I  ******** */
 	
-	public PortaDominio getPortaDominio(String nome,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	public PortaDominio getPortaDominio(String nome,String nomeRegistro, RequestInfo requestInfo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && nome!=null;
+		if(useRequestInfo) {
+			if( requestInfo.getRequestConfig().getSoggettoErogatorePdd()!=null &&
+					nome.equals(requestInfo.getRequestConfig().getSoggettoErogatorePdd().getNome())	) {
+				return requestInfo.getRequestConfig().getSoggettoErogatorePdd();
+			}
+			else if( requestInfo.getRequestConfig().getSoggettoFruitorePdd()!=null &&
+					nome.equals(requestInfo.getRequestConfig().getSoggettoFruitorePdd().getNome())	) {
+				return requestInfo.getRequestConfig().getSoggettoFruitorePdd();
+			}
+		}
+		if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null && requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo()!=null) {
+			if( requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitorePdd()!=null &&
+					nome.equals(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitorePdd().getNome())	) {
+				return requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitorePdd();
+			}
+		}
+		if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null && requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo()!=null) {
+			if( requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitorePdd()!=null &&
+					nome.equals(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitorePdd().getNome())	) {
+				return requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitorePdd();
+			}
+		}
 		return this.registroServiziReader.getPortaDominio(this.getConnection(), nome, nomeRegistro);
+		// il set viene effettuato nei service utils per comprendere se si tratta di fruitore o erogatore
 	}
 
-	public Ruolo getRuolo(String nome,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getRuolo(this.getConnection(), nome, nomeRegistro);
+	public Ruolo getRuolo(String nome,String nomeRegistro, RequestInfo requestInfo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && nome!=null;
+		if(useRequestInfo) {
+			Ruolo ruolo = requestInfo.getRequestConfig().getRuolo(nome);
+			if(ruolo!=null) {
+				return ruolo;
+			}
+		}
+		Ruolo r = this.registroServiziReader.getRuolo(this.getConnection(), nome, nomeRegistro);
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addRuolo(nome, r, 
+					requestInfo!=null ? requestInfo.getIdTransazione() : null);
+		}
+		return r;
 	}
-	public Ruolo getRuolo(IDRuolo idRuolo,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.getRuolo(idRuolo.getNome(), nomeRegistro);
+	public Ruolo getRuolo(IDRuolo idRuolo,String nomeRegistro, RequestInfo requestInfo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.getRuolo(idRuolo.getNome(), nomeRegistro, requestInfo);
 	}
 	
-	public Scope getScope(String nome,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getScope(this.getConnection(), nome, nomeRegistro);
+	public Scope getScope(String nome,String nomeRegistro, RequestInfo requestInfo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && nome!=null;
+		if(useRequestInfo) {
+			Scope scope = requestInfo.getRequestConfig().getScope(nome);
+			if(scope!=null) {
+				return scope;
+			}
+		}
+		Scope s = this.registroServiziReader.getScope(this.getConnection(), nome, nomeRegistro);
+		if(useRequestInfo) {
+			requestInfo.getRequestConfig().addScope(nome, s, 
+					requestInfo!=null ? requestInfo.getIdTransazione() : null);
+		}
+		return s;
 	}
-	public Scope getScope(IDScope idScope,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.getScope(idScope.getNome(), nomeRegistro);
+	public Scope getScope(IDScope idScope,String nomeRegistro, RequestInfo requestInfo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.getScope(idScope.getNome(), nomeRegistro, requestInfo);
 	}
 
-	public Soggetto getSoggetto(IDSoggetto idSoggetto,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	public Soggetto getSoggetto(IDSoggetto idSoggetto,String nomeRegistro, RequestInfo requestInfo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		Soggetto soggetto = _getSoggettoFromRequestInfo(idSoggetto, requestInfo);
+		if(soggetto!=null) {
+			return soggetto;
+		}
 		return this.registroServiziReader.getSoggetto(this.getConnection(), idSoggetto, nomeRegistro);
 	}
+	static Soggetto _getSoggettoFromRequestInfo(IDSoggetto idSoggetto, RequestInfo requestInfo) {
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && idSoggetto!=null;
+		if(useRequestInfo) {
+			if( requestInfo.getRequestConfig().getSoggettoErogatoreRegistry()!=null &&
+				idSoggetto.getTipo().equals(requestInfo.getRequestConfig().getSoggettoErogatoreRegistry().getTipo()) &&
+					idSoggetto.getNome().equals(requestInfo.getRequestConfig().getSoggettoErogatoreRegistry().getNome())	) {
+				return requestInfo.getRequestConfig().getSoggettoErogatoreRegistry();
+			}
+			else if( requestInfo.getRequestConfig().getSoggettoFruitoreRegistry()!=null &&
+				idSoggetto.getTipo().equals(requestInfo.getRequestConfig().getSoggettoFruitoreRegistry().getTipo()) &&
+					idSoggetto.getNome().equals(requestInfo.getRequestConfig().getSoggettoFruitoreRegistry().getNome())	) {
+				return requestInfo.getRequestConfig().getSoggettoFruitoreRegistry();
+			}
+		}
+		if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null && requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo()!=null) {
+			if(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreRegistry()!=null && idSoggetto!=null && 
+					idSoggetto.getTipo().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreRegistry().getTipo()) && 
+					idSoggetto.getNome().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreRegistry().getNome())) {
+				return requestInfo.getRequestThreadContext().getRequestFruitoreTrasportoInfo().getSoggettoFruitoreRegistry();
+			}
+		}
+		if(requestInfo!=null && requestInfo.getRequestThreadContext()!=null && requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo()!=null) {
+			if(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreRegistry()!=null && idSoggetto!=null && 
+					idSoggetto.getTipo().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreRegistry().getTipo()) && 
+					idSoggetto.getNome().equals(requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreRegistry().getNome())) {
+				return requestInfo.getRequestThreadContext().getRequestFruitoreTokenInfo().getSoggettoFruitoreRegistry();
+			}
+		}
+		return null;
+	} 
 	
-	public AccordoServizioParteComune getAccordoServizioParteComune(IDAccordo idAccordo,String nomeRegistro,Boolean readContenutiAllegati,Boolean readDatiRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getAccordoServizioParteComune(this.getConnection(), idAccordo, readContenutiAllegati, readDatiRegistro, nomeRegistro);
+	public AccordoServizioParteComune getAccordoServizioParteComune(IDAccordo idAccordo,String nomeRegistro,Boolean readContenutiAllegati,Boolean readDatiRegistro, RequestInfo requestInfo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && idAccordo!=null && 
+				(readContenutiAllegati==null || readContenutiAllegati==false) &&
+				(readDatiRegistro==null || readDatiRegistro==false);
+		if(useRequestInfo) {
+			if( requestInfo.getRequestConfig().getAspc()!=null) {
+				IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
+				String uriAspc = idAccordoFactory.getUriFromAccordo(requestInfo.getRequestConfig().getAspc());
+				String uriParam = idAccordoFactory.getUriFromIDAccordo(idAccordo);
+				if(uriAspc.equals(uriParam)) {
+					return requestInfo.getRequestConfig().getAspc();
+				}
+			}
+		}
+		AccordoServizioParteComune aspc = this.registroServiziReader.getAccordoServizioParteComune(this.getConnection(), idAccordo, readContenutiAllegati, readDatiRegistro, nomeRegistro);
+		if(useRequestInfo && requestInfo.getRequestConfig().getAspc()==null) {
+			requestInfo.getRequestConfig().setAspc(aspc);
+		}
+		return aspc;
 	}
 	
-	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDServizio idServizio,String nomeRegistro,Boolean readContenutiAllegati) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getAccordoServizioParteSpecifica(this.getConnection(), idServizio, readContenutiAllegati, nomeRegistro);
+	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDServizio idServizio,String nomeRegistro,Boolean readContenutiAllegati, RequestInfo requestInfo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		boolean useRequestInfo = requestInfo!=null && requestInfo.getRequestConfig()!=null && idServizio!=null && 
+				(readContenutiAllegati==null || readContenutiAllegati==false);
+		if(useRequestInfo) {
+			if( requestInfo.getRequestConfig().getAsps()!=null) {
+				IDServizioFactory idServizioFactory = IDServizioFactory.getInstance();
+				String uriAsps = idServizioFactory.getUriFromAccordo(requestInfo.getRequestConfig().getAsps());
+				String uriParam = idServizioFactory.getUriFromIDServizio(idServizio);
+				if(uriAsps.equals(uriParam)) {
+					return requestInfo.getRequestConfig().getAsps();
+				}
+			}
+		}
+		AccordoServizioParteSpecifica asps = this.registroServiziReader.getAccordoServizioParteSpecifica(this.getConnection(), idServizio, readContenutiAllegati, nomeRegistro);
+		if(useRequestInfo && requestInfo.getRequestConfig().getAsps()==null) {
+			requestInfo.getRequestConfig().setAsps(asps);
+		}
+		return asps;
 	}
 	
 	public AccordoCooperazione getAccordoCooperazione(IDAccordoCooperazione idAccordo,String nomeRegistro,Boolean readContenutiAllegati) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{

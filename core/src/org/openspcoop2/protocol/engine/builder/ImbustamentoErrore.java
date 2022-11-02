@@ -33,6 +33,7 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPFault;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -50,7 +51,6 @@ import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.basic.builder.CodeDetailsError;
-import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
@@ -73,6 +73,7 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
 import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.security.message.MessageSecurityContext;
@@ -427,7 +428,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 		if(setSoapPrefixBackwardCompatibilityOpenSPCoop1){
 			if(this.protocolFactory!=null &&
 					this.protocolFactory.getProtocol()!=null &&
-					this.protocolFactory.getProtocol().equals("spcoop")){
+					this.protocolFactory.getProtocol().equals(CostantiLabel.SPCOOP_PROTOCOL_NAME)){
 				if(MessageType.SOAP_11.equals(messageType)){
 					return "soap";
 				}
@@ -1015,13 +1016,13 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,Exception eProcessamento, 
 			MessageType messageType, ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, 
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
-			TempiElaborazione tempiElaborazione){
+			TempiElaborazione tempiElaborazione, RequestInfo requestInfo){
 		return msgErroreProtocollo_Processamento(identitaPdD, tipoPdD, context, 
 				modulo, busta, integrazione, idTransazione, null, errori, null,
 				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, profiloGestione, tipoTempo, generazioneListaTrasmissioni, 
 				eProcessamento, messageType, rfc7807, returnConfig, functionError, 
 				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
-				tempiElaborazione);
+				tempiElaborazione, requestInfo);
 	}
 
 	/**
@@ -1035,13 +1036,13 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,
 			Exception eProcessamento, MessageType messageType, ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, 
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
-			TempiElaborazione tempiElaborazione){ 
+			TempiElaborazione tempiElaborazione, RequestInfo requestInfo){ 
 		return msgErroreProtocollo_Processamento(identitaPdD, tipoPdD, context, 
 				modulo, busta, integrazione, idTransazione, erroreCooperazione, null, null,
 				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, profiloGestione, tipoTempo, generazioneListaTrasmissioni, 
 				eProcessamento, messageType, rfc7807, returnConfig, functionError, 
 				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
-				tempiElaborazione);
+				tempiElaborazione, requestInfo);
 	}
 	
 	public OpenSPCoop2Message msgErroreProtocollo_Processamento(IDSoggetto identitaPdD, TipoPdD tipoPdD,Context context,
@@ -1052,13 +1053,13 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,
 			Exception eProcessamento, MessageType messageType, ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, 
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
-			TempiElaborazione tempiElaborazione){ 
+			TempiElaborazione tempiElaborazione, RequestInfo requestInfo){ 
 		return msgErroreProtocollo_Processamento(identitaPdD, tipoPdD, context, 
 				modulo, busta, integrazione, idTransazione, null, null, erroreIntegrazione,
 				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, profiloGestione, tipoTempo, generazioneListaTrasmissioni, 
 				eProcessamento, messageType, rfc7807, returnConfig, functionError, 
 				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
-				tempiElaborazione);
+				tempiElaborazione, requestInfo);
 	}
 
 	/**
@@ -1073,13 +1074,13 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			TipoOraRegistrazione tipoTempo, boolean generazioneListaTrasmissioni, 
 			Exception eProcessamento, MessageType messageType, ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, 
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
-			TempiElaborazione tempiElaborazione){
+			TempiElaborazione tempiElaborazione, RequestInfo requestInfo){
 
 
 
 		boolean useProblemRFC7807 = rfc7807!=null;
 		try{
-
+			
 			Busta bustaRichiesta = null;
 			if(busta!=null) {
 				bustaRichiesta = busta.clone();
@@ -1172,7 +1173,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 					tras.setDestinazione(busta.getDestinatario());
 					tras.setTipoDestinazione(busta.getTipoDestinatario());
 					try{
-						String dominio = RegistroServiziManager.getInstance(this.state).getDominio(new IDSoggetto(tras.getTipoDestinazione(),tras.getDestinazione()), null, this.protocolFactory);
+						String dominio = RegistroServiziManager.getInstance(this.state).getDominio(new IDSoggetto(tras.getTipoDestinazione(),tras.getDestinazione()), null, this.protocolFactory, requestInfo);
 						tras.setIdentificativoPortaDestinazione(dominio);
 					}catch(Exception e){}
 				}
@@ -1195,14 +1196,14 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			if(messageSecurityPropertiesResponse != null){
 				if(messageSecurityPropertiesResponse.size() > 0){
 					messageSecurityContext.setOutgoingProperties(messageSecurityPropertiesResponse);
-					if(messageSecurityContext.processOutgoing(responseMessage,context.getContext(), tempiElaborazione) == false){
+					if(messageSecurityContext.processOutgoing(responseMessage,context, tempiElaborazione) == false){
 						responseMessage = this.msgErroreProtocollo_Intestazione(identitaPdD, tipoPdD, context, 
 								modulo,	busta, integrazione, idTransazione,
 								ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(messageSecurityContext.getMsgErrore(), messageSecurityContext.getCodiceErrore()),
 								null,null,attesaAttiva,checkInterval,profiloGestione,tipoTempo,generazioneListaTrasmissioni, 
 								messageType, rfc7807, returnConfig, functionError, 
 								setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
-								tempiElaborazione);
+								tempiElaborazione, requestInfo);
 					}
 				}
 			}
@@ -1236,13 +1237,13 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni, 
 			MessageType messageType, ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, 
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
-			TempiElaborazione tempiElaborazione){
+			TempiElaborazione tempiElaborazione, RequestInfo requestInfo){
 		return msgErroreProtocollo_Intestazione(identitaPdD, tipoPdD, context,
 				modulo, busta, integrazione, idTransazione, null, errori,
 				messageSecurityPropertiesResponse,messageSecurityContext,attesaAttiva,checkInterval,
 				profiloGestione,tipoTempo,generazioneListaTrasmissioni, messageType, rfc7807, returnConfig, functionError,
 				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
-				tempiElaborazione);
+				tempiElaborazione, requestInfo);
 	}
 
 	/**
@@ -1262,13 +1263,13 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			TipoOraRegistrazione tipoTempo, boolean generazioneListaTrasmissioni, 
 			MessageType messageType, ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, 
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
-			TempiElaborazione tempiElaborazione){
+			TempiElaborazione tempiElaborazione, RequestInfo requestInfo){
 		return msgErroreProtocollo_Intestazione(identitaPdD, tipoPdD, context,
 				modulo, busta, integrazione, idTransazione, erroreCooperazione,null,
 				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, 
 				profiloGestione, tipoTempo, generazioneListaTrasmissioni, messageType, rfc7807, returnConfig, functionError,
 				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
-				tempiElaborazione);
+				tempiElaborazione, requestInfo);
 	}
 
 	/**
@@ -1283,7 +1284,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			TipoOraRegistrazione tipoTempo, boolean generazioneListaTrasmissioni, 
 			MessageType messageType, ConfigurationRFC7807 rfc7807, IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, 
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
-			TempiElaborazione tempiElaborazione){
+			TempiElaborazione tempiElaborazione, RequestInfo requestInfo){
 
 		boolean useProblemRFC7807 = rfc7807!=null;
 		try{
@@ -1363,7 +1364,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 					tras.setDestinazione(busta.getDestinatario());
 					tras.setTipoDestinazione(busta.getTipoDestinatario());
 					try{
-						String dominio = RegistroServiziManager.getInstance(this.state).getDominio(new IDSoggetto(tras.getTipoDestinazione(),tras.getDestinazione()), null, this.protocolFactory);
+						String dominio = RegistroServiziManager.getInstance(this.state).getDominio(new IDSoggetto(tras.getTipoDestinazione(),tras.getDestinazione()), null, this.protocolFactory, requestInfo);
 						tras.setIdentificativoPortaDestinazione(dominio);
 					}catch(Exception e){}
 				}
@@ -1384,14 +1385,14 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			if(messageSecurityPropertiesResponse != null){
 				if(messageSecurityPropertiesResponse.size() > 0){
 					messageSecurityContext.setOutgoingProperties(messageSecurityPropertiesResponse);
-					if(messageSecurityContext.processOutgoing(responseMessage,context.getContext(), tempiElaborazione) == false){
+					if(messageSecurityContext.processOutgoing(responseMessage,context, tempiElaborazione) == false){
 						responseMessage = this.msgErroreProtocollo_Intestazione(identitaPdD,tipoPdD,context,
 								modulo,	busta, integrazione, idTransazione,
 								ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(messageSecurityContext.getMsgErrore(), messageSecurityContext.getCodiceErrore()),
 								null,null,attesaAttiva,checkInterval,profiloGestione,tipoTempo,generazioneListaTrasmissioni, 
 								messageType, rfc7807, returnConfig, functionError, 
 								setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
-								tempiElaborazione);
+								tempiElaborazione, requestInfo);
 					}
 				}
 			}

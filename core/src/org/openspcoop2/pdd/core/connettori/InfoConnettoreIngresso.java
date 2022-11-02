@@ -22,7 +22,7 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
-import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 
 /**
  * InfoConnettoreIngresso

@@ -62,6 +62,7 @@ import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.threads.IRunnableInstance;
@@ -144,7 +145,7 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 
 			this.log.debug("Riconsegna in corso del messaggio '"+idMsgDaInoltrare+"' per l'applicativo '"+servizioApplicativo+"' ...");
 			
-			openspcoopstateGestore.initResource(this.propertiesReader.getIdentitaPortaDefault(null),TimerConsegnaContenutiApplicativiThread.ID_MODULO, identificativo,
+			openspcoopstateGestore.initResource(this.propertiesReader.getIdentitaPortaDefaultWithoutProtocol(),TimerConsegnaContenutiApplicativiThread.ID_MODULO, identificativo,
 					OpenSPCoopStateDBManager.consegnePreseInCarico);
 				
 			GestoreMessaggi messaggioDaInviare = null;
@@ -158,11 +159,17 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 	
 				IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(bustaToSend.getProtocollo());
 	
+				// Per ottimizzare le chiamate
+				RequestInfo requestInfo = null;
+				// TODO: ottimizzare questa chiamata. Fare una struttura ad hoc poi da riportare in consegna contenuti quando si legge la requestInfo dal Messaggio.
+				//RequestInfo requestInfoForMemoryOptimization = new RequestInfo();
+				//GestoreRichieste.setRequestConfigInMemory(requestInfoForMemoryOptimization);
+				
 				String implementazioneMittente = null;
 				if(bustaToSend.getTipoMittente()!=null && bustaToSend.getMittente()!=null) {
-					implementazioneMittente = this.registroServiziReader.getImplementazionePdD(new IDSoggetto(bustaToSend.getTipoMittente(),bustaToSend.getMittente()), null);
+					implementazioneMittente = this.registroServiziReader.getImplementazionePdD(new IDSoggetto(bustaToSend.getTipoMittente(),bustaToSend.getMittente()), null, requestInfo);
 				}
-				String implementazioneDestinatario = this.registroServiziReader.getImplementazionePdD(new IDSoggetto(bustaToSend.getTipoDestinatario(),bustaToSend.getDestinatario()), null);
+				String implementazioneDestinatario = this.registroServiziReader.getImplementazionePdD(new IDSoggetto(bustaToSend.getTipoDestinatario(),bustaToSend.getDestinatario()), null, requestInfo);
 	
 				messaggioDaInviare = new GestoreMessaggi(openspcoopstateGestore,true,idMsgDaInoltrare,Costanti.INBOX,
 						this.logSql.getLog(),msgDiag,null);
@@ -184,7 +191,7 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 				IDAccordo idAccordo = null;
 				AccordoServizioParteSpecifica asps = null;
 				try{
-					asps = this.registroServiziReader.getAccordoServizioParteSpecifica(servizioBusta, null, false);
+					asps = this.registroServiziReader.getAccordoServizioParteSpecifica(servizioBusta, null, false, requestInfo);
 					idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e,"ConsegnaAsincrona getAccordoServizioParteSpecifica("+servizioBusta+")");
@@ -193,7 +200,7 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 				IDSoggetto identitaPdD = null;
 				String dominioRD = null;
 				try{
-					dominioRD = this.configurazionePdDReader.getIdentificativoPorta(servizioBusta.getSoggettoErogatore(),protocolFactory);
+					dominioRD = this.configurazionePdDReader.getIdentificativoPorta(servizioBusta.getSoggettoErogatore(),protocolFactory, requestInfo);
 					if(dominioRD==null){
 						throw new Exception("Dominio is null");
 					}
@@ -201,13 +208,13 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 					msgDiag.logErroreGenerico(e,"ConsegnaAsincrona getDominio("+servizioBusta.getSoggettoErogatore()+")");
 				}
 				if(dominioRD==null){
-					identitaPdD = this.propertiesReader.getIdentitaPortaDefault(null);
+					identitaPdD = this.propertiesReader.getIdentitaPortaDefault(null, requestInfo);
 				}else{
 					identitaPdD = new IDSoggetto(bustaToSend.getTipoDestinatario(),
 							bustaToSend.getDestinatario(),dominioRD);
 				}
 	
-				IDPortaApplicativa idPA = this.configurazionePdDReader.getIDPortaApplicativa(this.messaggioServizioApplicativo.getNomePorta(), protocolFactory);
+				IDPortaApplicativa idPA = this.configurazionePdDReader.getIDPortaApplicativa(this.messaggioServizioApplicativo.getNomePorta(), requestInfo, protocolFactory);
 				RichiestaApplicativa richiestaApplicativa = new RichiestaApplicativa(soggettoFruitore, identitaPdD, idPA);
 				richiestaApplicativa.setServizioApplicativo(servizioApplicativo);
 				richiestaApplicativa.setIdentitaServizioApplicativoFruitore(bustaToSend.getServizioApplicativoFruitore());
@@ -238,7 +245,7 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 				IdTransazioneApplicativoServer idTransazioneApplicativoServer = new IdTransazioneApplicativoServer();
 				idTransazioneApplicativoServer.setIdTransazione(PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext));
 				idTransazioneApplicativoServer.setServizioApplicativoErogatore(servizioApplicativo);
-				PortaApplicativa pa = this.configurazionePdDReader.getPortaApplicativa_SafeMethod(idPA);
+				PortaApplicativa pa = this.configurazionePdDReader.getPortaApplicativa_SafeMethod(idPA, requestInfo);
 				if(pa!=null && pa.getServizioApplicativoList()!=null) {
 					for (PortaApplicativaServizioApplicativo pasa : pa.getServizioApplicativoList()) {
 						if(pasa.getNome().equals(servizioApplicativo)) {

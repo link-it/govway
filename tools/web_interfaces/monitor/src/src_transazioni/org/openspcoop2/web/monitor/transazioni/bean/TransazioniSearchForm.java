@@ -1093,7 +1093,7 @@ Context, Cloneable {
 	public EsitoTransazione getEsitoTransazione() {
 		if(EsitoUtils.ALL_VALUE != this.getEsitoDettaglio()){
 			try{
-				return EsitiProperties.getInstance(this.getLogger(),this.getProtocollo()).convertToEsitoTransazione( this.getEsitoDettaglio(), this.getEsitoContesto());
+				return EsitiProperties.getInstanceFromProtocolName(this.getLogger(),this.getProtocollo()).convertToEsitoTransazione( this.getEsitoDettaglio(), this.getEsitoContesto());
 			}catch(Exception e){
 				throw new RuntimeException(e.getMessage(),e);
 			}

@@ -30,7 +30,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
@@ -39,7 +38,7 @@ import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupBy;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
 import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
-import org.openspcoop2.core.controllo_traffico.driver.CostantiControlloTraffico;
+import org.openspcoop2.core.controllo_traffico.constants.Costanti;
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreadsInMemory;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyGroupByActiveThreadsType;
@@ -51,8 +50,10 @@ import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.PolicyDateUtils;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.Map;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
@@ -145,11 +146,11 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 	}
 	
 	@Override
-	public Map<IDUnivocoGroupByPolicy, DatiCollezionati> getMapActiveThreads(){
+	public java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> getMapActiveThreads(){
 		
 		PolicyConnessioneRuntime resource = null;
 		try {
-			resource = getConnessione(this.state, this.dominio, "getMapActiveThreads", this.idTransazione);
+			resource = getConnessione(this.state, this.dominio, "getMapActiveThreads", this.idTransazione, null);
 			
 			//checkMap(resource.con);
 			
@@ -162,13 +163,13 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 		}
 		finally {
 			if(resource!=null) {
-				releaseConnessione(resource, this.dominio, "getMapActiveThreads");
+				releaseConnessione(resource, this.dominio, "getMapActiveThreads", null);
 			}
 		}
 	}
 	
 	@Override
-	public void initMap(Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
+	public void initMap(java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
 		
 		// Non serve essendo già persistente, si rischia di salvare una precedente immagine.
 		
@@ -202,7 +203,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 		
 		PolicyConnessioneRuntime resource = null;
 		try {
-			resource = getConnessione(this.state, this.dominio, "resetCounters", this.idTransazione);
+			resource = getConnessione(this.state, this.dominio, "resetCounters", this.idTransazione, null);
 			
 			//checkMap(resource.con);
 			
@@ -215,7 +216,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 		}
 		finally {
 			if(resource!=null) {
-				releaseConnessione(resource, this.dominio, "resetCounters");
+				releaseConnessione(resource, this.dominio, "resetCounters", null);
 			}
 		}
 		
@@ -226,7 +227,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 		
 		PolicyConnessioneRuntime resource = null;
 		try {
-			resource = getConnessione(this.state, this.dominio, "remove", this.idTransazione);
+			resource = getConnessione(this.state, this.dominio, "remove", this.idTransazione, null);
 			
 			//checkMap(resource.con);
 			
@@ -239,19 +240,19 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 		}
 		finally {
 			if(resource!=null) {
-				releaseConnessione(resource, this.dominio, "remove");
+				releaseConnessione(resource, this.dominio, "remove", null);
 			}
 		}
 		
 	}
 	
 	@Override
-	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx) throws PolicyException{
+	public DatiCollezionati registerStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx) throws PolicyException{
 		
 		PolicyConnessioneRuntime resource = null;
 		DatiCollezionati datiCollezionatiReaded = null;
 		try {
-			resource = getConnessione(this.state, this.dominio, "registerStartRequest", idTransazione);
+			resource = getConnessione(this.state, this.dominio, "registerStartRequest", idTransazione, ctx);
 			
 			checkMap(resource.con);
 			
@@ -260,7 +261,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 			
 		}finally {
 			if(resource!=null) {
-				releaseConnessione(resource, this.dominio, "registerStartRequest");
+				releaseConnessione(resource, this.dominio, "registerStartRequest", ctx);
 			}
 		}
 		
@@ -273,12 +274,12 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 	}
 	
 	@Override
-	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx) throws PolicyException,PolicyNotFoundException{
+	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx) throws PolicyException,PolicyNotFoundException{
 		
 		PolicyConnessioneRuntime resource = null;
 		DatiCollezionati datiCollezionatiReaded = null;
 		try {
-			resource = getConnessione(this.state, this.dominio, "updateDatiStartRequestApplicabile", idTransazione);
+			resource = getConnessione(this.state, this.dominio, "updateDatiStartRequestApplicabile", idTransazione, ctx);
 			
 			//checkMap(resource.con);
 			
@@ -287,7 +288,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 			
 		}finally {
 			if(resource!=null) {
-				releaseConnessione(resource, this.dominio, "updateDatiStartRequestApplicabile");
+				releaseConnessione(resource, this.dominio, "updateDatiStartRequestApplicabile", ctx);
 			}
 		}
 		
@@ -300,12 +301,12 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 	}
 	
 	@Override
-	public void registerStopRequest(Logger log, String idTransazione,IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx, 
+	public void registerStopRequest(Logger log, String idTransazione,IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx, 
 			MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata) throws PolicyException,PolicyNotFoundException{
 		
 		PolicyConnessioneRuntime resource = null;
 		try {
-			resource = getConnessione(this.state, this.dominio, "registerStopRequest", idTransazione);
+			resource = getConnessione(this.state, this.dominio, "registerStopRequest", idTransazione, ctx);
 			
 			//checkMap(resource.con);
 			
@@ -314,7 +315,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 			
 		}finally {
 			if(resource!=null) {
-				releaseConnessione(resource, this.dominio, "registerStopRequest");
+				releaseConnessione(resource, this.dominio, "registerStopRequest", ctx);
 			}
 		}
 		
@@ -330,7 +331,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 		
 		PolicyConnessioneRuntime resource = null;
 		try {
-			resource = getConnessione(this.state, this.dominio, "getActiveThreads", this.idTransazione);
+			resource = getConnessione(this.state, this.dominio, "getActiveThreads", this.idTransazione, null);
 			
 			//checkMap(resource.con);
 			
@@ -343,7 +344,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 		}
 		finally {
 			if(resource!=null) {
-				releaseConnessione(resource, this.dominio, "getActiveThreads");
+				releaseConnessione(resource, this.dominio, "getActiveThreads", null);
 			}
 		}
 		
@@ -354,7 +355,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 		
 		PolicyConnessioneRuntime resource = null;
 		try {
-			resource = getConnessione(this.state, this.dominio, "printInfos", this.idTransazione);
+			resource = getConnessione(this.state, this.dominio, "printInfos", this.idTransazione, null);
 			
 			//checkMap(resource.con);
 			
@@ -367,13 +368,13 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 		}
 		finally {
 			if(resource!=null) {
-				releaseConnessione(resource, this.dominio, "printInfos");
+				releaseConnessione(resource, this.dominio, "printInfos", null);
 			}
 		}
 		
 	}
 	
-	private PolicyConnessioneRuntime getConnessione(IState state,IDSoggetto dominio, String funzione, String idTransazione) throws PolicyException {
+	private PolicyConnessioneRuntime getConnessione(IState state,IDSoggetto dominio, String funzione, String idTransazione, Map<Object> ctx) throws PolicyException {
 		
 		DBManager dbManager = null;
 		Resource r = null;
@@ -396,7 +397,18 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 			}
 			
 			if(dominio==null) {
-				dominio = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(null);
+				
+				String protocolName = null;
+				if(ctx!=null && ctx.containsKey(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME)) {
+					protocolName = (String) ctx.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME);
+				}
+				
+				RequestInfo requestInfo = null;
+				if(ctx!=null && ctx.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+					requestInfo = (RequestInfo) ctx.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+				}
+				
+				dominio = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolName, requestInfo);
 			}
 			
 			modulo = "RateLimitingActiveThreadsDB"+"."+funzione;
@@ -424,10 +436,20 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 		
 	}
 	
-	private void releaseConnessione(PolicyConnessioneRuntime p, IDSoggetto dominio, String funzione) {
+	private void releaseConnessione(PolicyConnessioneRuntime p, IDSoggetto dominio, String funzione, Map<Object> ctx) {
 		if(p.r!=null) {
 			if(dominio==null) {
-				dominio = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(null);
+				String protocolName = null;
+				if(ctx!=null && ctx.containsKey(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME)) {
+					protocolName = (String) ctx.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME);
+				}				
+				
+				RequestInfo requestInfo = null;
+				if(ctx!=null && ctx.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+					requestInfo = (RequestInfo) ctx.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+				}
+				
+				dominio = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolName, requestInfo);
 			}
 			DBManager.getInstance().releaseResource(dominio, "RateLimitingActiveThreadsDB"+"."+funzione, p.r);
 		}
@@ -563,7 +585,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 									
 									if(!exist) {
 										
-										Map<IDUnivocoGroupByPolicy, DatiCollezionati> mapActiveThreads = new HashMap<IDUnivocoGroupByPolicy, DatiCollezionati>();
+										java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> mapActiveThreads = new HashMap<IDUnivocoGroupByPolicy, DatiCollezionati>();
 										ByteArrayOutputStream bout = new ByteArrayOutputStream();
 										this.javaSerializer.writeObject(mapActiveThreads, bout);
 										bout.flush();
@@ -683,7 +705,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 		}
 	}
 	
-	private Map<IDUnivocoGroupByPolicy, DatiCollezionati> _getMapActiveThreads(Connection con){
+	private java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> _getMapActiveThreads(Connection con){
 		try {
 			return _updateMap(con, OperationType.getMapActiveThreads,
 					this.log, this.idTransazione, null, null,
@@ -695,7 +717,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 		}
 	}
 	@SuppressWarnings("unused")
-	private void _initMap(Connection con, Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
+	private void _initMap(Connection con, java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
 		try {
 			if(map!=null && map.size()>0){
 				_updateMap(con, OperationType.initMap,
@@ -708,7 +730,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 			throw new RuntimeException(e.getMessage(),e);
 		}
 	}
-	private DatiCollezionati _registerStartRequest(Connection con,Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx) throws PolicyException {
+	private DatiCollezionati _registerStartRequest(Connection con,Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx) throws PolicyException {
 		try {
 			return _updateMap(con, OperationType.registerStartRequest,
 					log, idTransazione, datiGroupBy, ctx,
@@ -719,14 +741,14 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 			throw new PolicyException(e.getMessage(),e);
 		}
 	}
-	private DatiCollezionati _updateDatiStartRequestApplicabile(Connection con,Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx) throws PolicyException,PolicyNotFoundException{
+	private DatiCollezionati _updateDatiStartRequestApplicabile(Connection con,Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx) throws PolicyException,PolicyNotFoundException{
 		return _updateMap(con, OperationType.updateDatiStartRequestApplicabile,
 				log, idTransazione, datiGroupBy, ctx,
 				null, false, false,
 				null,
 				null).datiCollezionatiReaded;
 	}
-	private void _registerStopRequest(Connection con,Logger log, String idTransazione,IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx, 
+	private void _registerStopRequest(Connection con,Logger log, String idTransazione,IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx, 
 			MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata) throws PolicyException,PolicyNotFoundException{
 		_updateMap(con, OperationType.registerStopRequest,
 				log, idTransazione, datiGroupBy, ctx,
@@ -780,10 +802,10 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 	}
 	@SuppressWarnings({ "unchecked"})
 	private UpdateResult _updateMap(Connection con, OperationType opType,
-			Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<String, Object> ctx,
+			Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx,
 			MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata,
 			String separatorGroups,
-			Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) throws PolicyException, PolicyNotFoundException {
+			java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) throws PolicyException, PolicyNotFoundException {
 			
 		UpdateResult updateResult = new UpdateResult();
 		
@@ -871,7 +893,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 					}
 					//System.out.println("@update SELECT ["+opType+"] result:"+exist);
 					
-					Map<IDUnivocoGroupByPolicy, DatiCollezionati> mapActiveThreads = null;
+					java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> mapActiveThreads = null;
 					boolean updateDate = false;
 					if(!exist) {
 						if(!OperationType.getMapActiveThreads.equals(opType) &&
@@ -886,7 +908,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 						Timestamp tCheck = rs.getTimestamp(CT_MAP_COLUMN_UPDATE_TIME);
 						if(this.uniqueIdMap_updateTime.equals(tCheck)) {
 							try(InputStream is = this.jdbcAdapter.getBinaryStream(rs, CT_MAP_COLUMN_VALUE);){
-								mapActiveThreads = (Map<IDUnivocoGroupByPolicy, DatiCollezionati>) this.javaDeserializer.readObject(is, Map.class);
+								mapActiveThreads = (java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati>) this.javaDeserializer.readObject(is, java.util.Map.class);
 							}
 						}
 						else {
@@ -1006,9 +1028,10 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 								//System.out.println("<"+idTransazione+">registerStopRequest registerEndRequest ok");
 								if(isApplicabile){
 									//System.out.println("<"+idTransazione+">registerStopRequest updateDatiEndRequestApplicabile ...");
-									List<Integer> esitiCodeOk = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeOk_senzaFaultApplicativo();
-									List<Integer> esitiCodeKo_senzaFaultApplicativo = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeKo_senzaFaultApplicativo();
-									List<Integer> esitiCodeFaultApplicativo = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeFaultApplicativo();
+									EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(log,dati.getProtocollo());
+									List<Integer> esitiCodeOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
+									List<Integer> esitiCodeKo_senzaFaultApplicativo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
+									List<Integer> esitiCodeFaultApplicativo = esitiProperties.getEsitiCodeFaultApplicativo();
 									datiCollezionati.updateDatiEndRequestApplicabile(log, this.activePolicy, ctx, dati,
 											esitiCodeOk,esitiCodeKo_senzaFaultApplicativo, esitiCodeFaultApplicativo, isViolata);
 									//System.out.println("<"+idTransazione+">registerStopRequest updateDatiEndRequestApplicabile ok");
@@ -1082,7 +1105,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 							for (IDUnivocoGroupByPolicy check : mapActiveThreads.keySet()) {
 								bf.append(separatorGroups);
 								bf.append("\n");
-								bf.append(CostantiControlloTraffico.LABEL_MODALITA_SINCRONIZZAZIONE).append(" ").append(this.tipoGestore.toLabel());
+								bf.append(Costanti.LABEL_MODALITA_SINCRONIZZAZIONE).append(" ").append(this.tipoGestore.toLabel());
 								bf.append("\n");
 								bf.append("Criterio di Collezionamento dei Dati\n");
 								bf.append(check.toString(true));
@@ -1200,7 +1223,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 					transactionUpdateFinished = true;
 				} catch(Throwable e) {
 					//System.out.println("ERRORE UPDATE ("+iteration+"): "+e.getMessage());
-					//log.info("ERROR GET SERIAL SQL ["+e.getMessage()+"]");
+					//log.info("ERROR GET SERIAL SQL ["+e.getMessage()+"]",e);
 					try{
 						if( rs != null )
 							rs.close();
@@ -1281,7 +1304,7 @@ class UpdateResult{
 	DatiCollezionati datiCollezionatiReaded;
 	long counter;
 	String info;
-	Map<IDUnivocoGroupByPolicy, DatiCollezionati> map;
+	java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> map;
 	
 }
 

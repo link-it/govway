@@ -33,6 +33,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.context.MessageContext;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.ParseException;
+import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.io.notifier.NotifierInputStream;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
@@ -120,10 +121,10 @@ public interface OpenSPCoop2Message {
 	
 	/* Context */
 	
-	public void addContextProperty(String property, Object value);
-	public Iterator<String> keysContextProperty();
-	public Object getContextProperty(String property);
-	public Object removeContextProperty(String property);
+	public void addContextProperty(MapKey<String> property, Object value);
+	public Iterator<MapKey<String>> keysContextProperty();
+	public Object getContextProperty(MapKey<String> property);
+	public Object removeContextProperty(MapKey<String> property);
 	
 	public void setTransactionId(String transactionId);
 	public String getTransactionId();

@@ -262,11 +262,11 @@ public class MTOMProcessor {
 		switch (tipo) {
 		case RICHIESTA:
 			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RICHIESTA, this.config.getMtomProcessorType().getValue());
-			this.pddContext.addObject(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RICHIESTA, this.config.getMtomProcessorType().getValue());
+			this.pddContext.addObject(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RICHIESTA, this.config.getMtomProcessorType().getValue());
 			break;
 		case RISPOSTA:
 			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RISPOSTA, this.config.getMtomProcessorType().getValue());
-			this.pddContext.addObject(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RISPOSTA, this.config.getMtomProcessorType().getValue());
+			this.pddContext.addObject(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RISPOSTA, this.config.getMtomProcessorType().getValue());
 			break;
 		}	
 	}
