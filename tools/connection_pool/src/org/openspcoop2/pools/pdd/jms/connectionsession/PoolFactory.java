@@ -281,7 +281,9 @@ public class PoolFactory extends BasePooledObjectFactory<org.openspcoop2.pools.p
 			try{
 				if(con!=null)
 					con.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			throw new OpenSPCoopFactoryException("CreateObject["+e.getMessage()+"]");
 		}
 	}
@@ -447,7 +449,9 @@ public class PoolFactory extends BasePooledObjectFactory<org.openspcoop2.pools.p
 					try{
 						if(sessionTest!=null)
 							sessionTest.close();
-					}catch(Exception eClose){}
+					}catch(Exception eClose){
+						// close
+					}
 				}
 				
 				return true;

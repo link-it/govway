@@ -1713,7 +1713,8 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					if(typeRestriction.getMultipleOf()!=null) {
 						if (numberValue.compareTo(typeRestriction.getMultipleOf()) != 0) {
 						   try{
-							   numberValue.divide(typeRestriction.getMultipleOf(), 0, RoundingMode.UNNECESSARY);
+							   @SuppressWarnings("unused")
+							   BigDecimal bd = numberValue.divide(typeRestriction.getMultipleOf(), 0, RoundingMode.UNNECESSARY);
 						   }
 						   catch(ArithmeticException e) {
 							   throw new ValidatorException("Value is not multiple of '"+typeRestriction.getMultipleOf()+"'");

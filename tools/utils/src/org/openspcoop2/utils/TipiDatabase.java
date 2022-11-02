@@ -113,10 +113,6 @@ public enum TipiDatabase {
 		return false;
 	}
 	
-	public boolean equals(TipiDatabase tipoDatabase){
-
-		return this.toString().equalsIgnoreCase(tipoDatabase.toString());
-	}
 	public boolean equals(String tipoDatabase){	
 		return this.toString().equalsIgnoreCase(tipoDatabase);
 	}

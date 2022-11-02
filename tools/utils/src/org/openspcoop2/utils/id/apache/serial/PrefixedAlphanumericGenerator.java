@@ -56,35 +56,38 @@ public class PrefixedAlphanumericGenerator extends AlphanumericGenerator {
 	/** Prefix. */
     private final String prefix;
 
-
-    public PrefixedAlphanumericGenerator(String prefix, boolean wrap) {
-        super(wrap, DEFAULT_ALPHANUMERIC_IDENTIFIER_SIZE - ((prefix == null) ? 0 : prefix.length()));
-
+    private static int _getSize(String prefix, int size) {
         if (prefix == null) {
             throw new NullPointerException("prefix must not be null");
         }
+    	return size - ((prefix == null) ? 0 : prefix.length());
+    }
+    public PrefixedAlphanumericGenerator(String prefix, boolean wrap) {
+        super(wrap, _getSize(prefix, DEFAULT_ALPHANUMERIC_IDENTIFIER_SIZE));
+
         if (DEFAULT_ALPHANUMERIC_IDENTIFIER_SIZE <= prefix.length()) {
             throw new IllegalArgumentException("size less prefix length must be at least one");
         }
         this.prefix = prefix;
     }
     public PrefixedAlphanumericGenerator(String prefix, boolean wrap, int size) {
-        super(wrap, size - ((prefix == null) ? 0 : prefix.length()));
+        super(wrap, _getSize(prefix, size));
 
-        if (prefix == null) {
-            throw new NullPointerException("prefix must not be null");
-        }
         if (size <= prefix.length()) {
             throw new IllegalArgumentException("size less prefix length must be at least one");
         }
         this.prefix = prefix;
     }
-    public PrefixedAlphanumericGenerator(String prefix, boolean wrap, String initialValue) {
-        super(wrap, (prefix == null) ? initialValue : initialValue.substring(prefix.length()));
-
+    
+    private static String _getInitialValue(String prefix, String initialValue) {
         if (prefix == null) {
             throw new NullPointerException("prefix must not be null");
         }
+    	return (prefix == null) ? initialValue : initialValue.substring(prefix.length());
+    }
+    public PrefixedAlphanumericGenerator(String prefix, boolean wrap, String initialValue) {
+        super(wrap, _getInitialValue(prefix, initialValue));
+
         if (initialValue.length() <= prefix.length()) {
             throw new IllegalArgumentException("size less prefix length must be at least one");
         }

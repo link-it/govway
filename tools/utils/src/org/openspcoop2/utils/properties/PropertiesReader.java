@@ -143,7 +143,10 @@ public class PropertiesReader extends MapReader<Object, Object> {
 			java.util.Enumeration<?> en = prop_tmp.propertyNames();
 			for (; en.hasMoreElements() ;) {
 				String property = (String) en.nextElement();
-				String value = prop_tmp.getProperty(property);
+				String value = null;
+				if(property!=null) {
+					value = prop_tmp.getProperty(property);
+				}
 				if(value!=null){
 					value = value.trim();
 					value = this.convertEnvProperties(value);

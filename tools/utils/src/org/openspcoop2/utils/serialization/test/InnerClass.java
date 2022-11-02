@@ -86,4 +86,9 @@ public class InnerClass implements Serializable {
 			return false;
 		return true;
 	}
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
 }

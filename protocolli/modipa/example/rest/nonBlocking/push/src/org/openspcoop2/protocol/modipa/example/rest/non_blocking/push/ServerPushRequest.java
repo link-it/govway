@@ -25,7 +25,7 @@ import java.io.FileInputStream;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.jaxrs.JacksonJsonProvider;
+import org.openspcoop2.utils.jaxrs.JacksonJsonProviderCustomized;
 
 /**
  * Server
@@ -71,7 +71,7 @@ public class ServerPushRequest {
 		impl.setCorrelationId("X-Correlation-ID");
 		sf.setServiceBean(impl);
 		sf.setAddress(address);
-		sf.setProvider(new JacksonJsonProvider());
+		sf.setProvider(new JacksonJsonProviderCustomized());
 		sf.create();
 		 System.out.println("Server ready..."); 
 		

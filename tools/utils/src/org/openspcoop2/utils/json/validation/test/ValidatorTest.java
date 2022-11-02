@@ -31,6 +31,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.json.IJsonSchemaValidator;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.json.JsonSchemaValidatorConfig;
@@ -66,11 +67,13 @@ public class ValidatorTest {
 	 * 
 	 * */
 	
-	private static final Boolean semaphore = true;
+	private static final Semaphore semaphore = new Semaphore("ValidatorTest");
 	
 	public static void main(String[] args) throws Exception {
 		
-		synchronized (semaphore) { // per i test via junit
+		// per i test via junit
+		semaphore.acquire("ValidatorTest");
+		try {
 			
 			test(SpecVersion.VersionFlag.V4, args);
 			
@@ -90,6 +93,8 @@ public class ValidatorTest {
 			
 			test(SpecVersion.VersionFlag.V202012, args);
 			
+		}finally {
+			semaphore.release("ValidatorTest");
 		}
 		
 	}		

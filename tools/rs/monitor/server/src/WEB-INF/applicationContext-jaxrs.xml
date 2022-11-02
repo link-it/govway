@@ -54,10 +54,10 @@
 	<b:bean id="objectMessageBodyReader" class="org.openspcoop2.utils.jaxrs.ObjectMessageBodyReader"/>
 	
 	<!--  Jackson Provider for JSON/XML -->
-	<b:bean id="jacksonJsonProvider" class="org.openspcoop2.utils.jaxrs.JacksonJsonProvider">
+	<b:bean id="jacksonJsonProvider" class="org.openspcoop2.utils.jaxrs.JacksonJsonProviderCustomized">
 		<b:constructor-arg type="boolean"><b:value>true</b:value></b:constructor-arg> <!-- prettyPrint response serialization -->
 	</b:bean>
-	<b:bean id="jacksonXmlProvider" class="org.openspcoop2.utils.jaxrs.JacksonXmlProvider">
+	<b:bean id="jacksonXmlProvider" class="org.openspcoop2.utils.jaxrs.JacksonXmlProviderCustomized">
 		<b:constructor-arg type="boolean"><b:value>true</b:value></b:constructor-arg> <!-- prettyPrint response serialization -->
 	</b:bean>
 	

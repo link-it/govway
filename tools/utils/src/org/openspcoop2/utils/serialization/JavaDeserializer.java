@@ -66,7 +66,9 @@ public class JavaDeserializer implements IDeserializer {
 				if(ois!=null){
 					ois.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 
@@ -101,7 +103,9 @@ public class JavaDeserializer implements IDeserializer {
 				if(ois!=null){
 					ois.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 

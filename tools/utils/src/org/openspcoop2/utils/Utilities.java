@@ -249,7 +249,9 @@ public class Utilities {
 				if(isr!=null){
 					isr.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -455,7 +457,9 @@ public class Utilities {
 				if(bin!=null){
 					bin.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -475,7 +479,9 @@ public class Utilities {
 				if(is!=null){
 					is.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 
@@ -1201,7 +1207,9 @@ public class Utilities {
 				if(bout!=null){
 					bout.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 
 	}

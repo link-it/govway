@@ -198,7 +198,9 @@ public abstract class AbstractXMLServiceManager<XML> {
 				if(is!=null){
 					is.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 
 		/* ---- Uunmarshall  ---- */

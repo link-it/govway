@@ -105,12 +105,14 @@ public class BrowserUtils {
 			bf =BrowserFamily.SAFARI;
 		}
 
-		browserInfo.setBrowserName(info[0]);
-		try{
-			browserInfo.setVersion(StringUtils.isNotEmpty(info[1]) ? Double.parseDouble(info[1]) : null);
-		}catch(NumberFormatException e){
-			// versione non riconosciuta
-			browserInfo.setVersion(null);
+		if(info!=null) {
+			browserInfo.setBrowserName(info[0]);
+			try{
+				browserInfo.setVersion(StringUtils.isNotEmpty(info[1]) ? Double.parseDouble(info[1]) : null);
+			}catch(NumberFormatException e){
+				// versione non riconosciuta
+				browserInfo.setVersion(null);
+			}
 		}
 		browserInfo.setBrowserFamily(bf); 
 

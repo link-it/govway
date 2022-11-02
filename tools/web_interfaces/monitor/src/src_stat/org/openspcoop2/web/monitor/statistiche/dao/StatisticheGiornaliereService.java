@@ -78,7 +78,7 @@ import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.beans.Union;
 import org.openspcoop2.generic_project.beans.UnionExpression;
 import org.openspcoop2.generic_project.dao.IServiceSearchWithoutId;
-import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities;
+import org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
@@ -643,7 +643,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 				List<Date> dateFound = new ArrayList<Date>();
 				for (Map<String, Object> row : list) {
-					Date data = (Date) row.get(JDBCUtilities.getAlias(model.DATA));
+					Date data = (Date) row.get(GenericJDBCUtilities.getAlias(model.DATA));
 					Date truncDate = null;
 					if(statisticheSettimanaliUtils!=null) {
 						truncDate = statisticheSettimanaliUtils.truncDate(data, false);
@@ -966,7 +966,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			for (Map<String, Object> row : list) {
 
 				Res r = new Res();
-				Date data = (Date) row.get(JDBCUtilities.getAlias(model.DATA));
+				Date data = (Date) row.get(GenericJDBCUtilities.getAlias(model.DATA));
 				r.setId(data != null ? data.getTime() : null);
 				r.setRisultato(data);
 				List<Number> rSommaMediaPesata = new ArrayList<Number>();
@@ -7890,7 +7890,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			// Scorro i risultati per generare gli elementi del grafico.
 			for (Map<String, Object> row : list) {
-				String valoreRisorsa = (String) row.get(JDBCUtilities.getAlias(modelContenuti.RISORSA_VALORE));
+				String valoreRisorsa = (String) row.get(GenericJDBCUtilities.getAlias(modelContenuti.RISORSA_VALORE));
 
 				List<Res> res = null;
 				List<Date> datePerRes = null;
@@ -7908,7 +7908,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 
 
-				Date data = (Date) row.get(JDBCUtilities.getAlias(model.DATA));
+				Date data = (Date) row.get(GenericJDBCUtilities.getAlias(model.DATA));
 
 				//salvo la data trovata
 				if(!listaDateUtilizzate.contains(data))

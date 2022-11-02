@@ -145,6 +145,16 @@ public class TimeBasedAlphanumericIdentifierGenerator extends AbstractStringIden
         return maxLength();
     }
 
+    private static void updateLast(long now) {
+    	last = now;
+    }
+    private static void resetCounter() {
+    	counter = 0;
+    }
+    private static void incrementCounter() {
+    	++counter;
+    }
+    
     @Override
 	public String nextStringIdentifier() throws MaxReachedException {
         long now;
@@ -153,13 +163,13 @@ public class TimeBasedAlphanumericIdentifierGenerator extends AbstractStringIden
             final long diff = now - last;
             // external time correction of more than a second or overflow
             if (diff > 0 || diff < -1000) {
-                last = now;
-                counter = 0;
+            	updateLast(now);
+            	resetCounter();
             } else {
                 if (diff != 0) {
                     now = last; // ignore time shift
                 }
-                ++counter;
+                incrementCounter();
             }
         }
         final String postfix = counter > 0

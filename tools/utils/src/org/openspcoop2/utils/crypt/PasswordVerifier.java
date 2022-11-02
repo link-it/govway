@@ -123,7 +123,9 @@ public class PasswordVerifier implements Serializable {
 				if(is!=null){
 					is.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	public PasswordVerifier(InputStream is) throws UtilsException{

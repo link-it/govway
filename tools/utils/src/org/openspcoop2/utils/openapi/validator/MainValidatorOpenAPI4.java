@@ -91,35 +91,38 @@ public class MainValidatorOpenAPI4 {
 			
 			List<ApiSchema> listApiSchema = null;
 			if(fDir!=null) {
-				for (File fChild : fDir.listFiles()) {
-					if(fChild.exists()==false) {
-						throw new Exception("File '"+fChild.getAbsolutePath()+"' not exists");
-					}
-					if(fChild.canRead()==false) {
-						throw new Exception("File '"+fChild.getAbsolutePath()+"' cannot read");
-					}
-					
-					// evito file master openapi se risiede nella stessa directory
-					if(fChild.getName().equals(f.getName())){
-						continue;
-					}
-					
-					ApiSchema apiSchema = null;
-					if(fChild.getName().toLowerCase().endsWith(".yaml")) {
-						apiSchema= new ApiSchema(fChild.getName(), 
-								FileSystemUtilities.readBytesFromFile(fChild),
-								ApiSchemaType.YAML);
-					}
-					else if(fChild.getName().toLowerCase().endsWith(".json")) {
-						apiSchema= new ApiSchema(fChild.getName(), 
-								FileSystemUtilities.readBytesFromFile(fChild),
-								ApiSchemaType.JSON);
-					}
-					if(apiSchema!=null) {
-						if(listApiSchema==null) {
-							listApiSchema = new ArrayList<ApiSchema>();
+				File[] files = fDir.listFiles();
+				if(files!=null) {
+					for (File fChild : files) {
+						if(fChild.exists()==false) {
+							throw new Exception("File '"+fChild.getAbsolutePath()+"' not exists");
 						}
-						listApiSchema.add(apiSchema);
+						if(fChild.canRead()==false) {
+							throw new Exception("File '"+fChild.getAbsolutePath()+"' cannot read");
+						}
+						
+						// evito file master openapi se risiede nella stessa directory
+						if(fChild.getName().equals(f.getName())){
+							continue;
+						}
+						
+						ApiSchema apiSchema = null;
+						if(fChild.getName().toLowerCase().endsWith(".yaml")) {
+							apiSchema= new ApiSchema(fChild.getName(), 
+									FileSystemUtilities.readBytesFromFile(fChild),
+									ApiSchemaType.YAML);
+						}
+						else if(fChild.getName().toLowerCase().endsWith(".json")) {
+							apiSchema= new ApiSchema(fChild.getName(), 
+									FileSystemUtilities.readBytesFromFile(fChild),
+									ApiSchemaType.JSON);
+						}
+						if(apiSchema!=null) {
+							if(listApiSchema==null) {
+								listApiSchema = new ArrayList<ApiSchema>();
+							}
+							listApiSchema.add(apiSchema);
+						}
 					}
 				}
 			}

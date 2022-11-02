@@ -56,10 +56,17 @@ public enum EnumerationWrapperPrimitiveInt implements IEnumeration {
 	public String toString(){
 		return this.value.toString();
 	}
-	public boolean equals(EnumerationWrapperPrimitiveInt object){
+	public boolean equals(IEnumeration object){
 		if(object==null)
 			return false;
-		return object.getValue() == this.getValue();	
+		if(! (object instanceof EnumerationWrapperPrimitiveInt)) {
+			return false;
+		}
+		EnumerationWrapperPrimitiveInt en = (EnumerationWrapperPrimitiveInt) object;
+		if(en.getValue()==null || this.getValue()==null) {
+			return false; // anomalia
+		}
+		return en.getValue().intValue() == this.getValue().intValue();	
 	}
 	
 		
@@ -117,12 +124,15 @@ public enum EnumerationWrapperPrimitiveInt implements IEnumeration {
 	}
 	
 	public static EnumerationWrapperPrimitiveInt toEnumConstant(java.lang.Integer value){
+		if(value==null) {
+			return null;
+		}
 		EnumerationWrapperPrimitiveInt res = null;
-		if(EnumerationWrapperPrimitiveInt._1.getValue() == value){
+		if(EnumerationWrapperPrimitiveInt._1.getValue().intValue() == value.intValue()){
 			res = EnumerationWrapperPrimitiveInt._1;
-		}else if(EnumerationWrapperPrimitiveInt._2.getValue() == value){
+		}else if(EnumerationWrapperPrimitiveInt._2.getValue().intValue() == value.intValue()){
 			res = EnumerationWrapperPrimitiveInt._2;
-		}else if(EnumerationWrapperPrimitiveInt._3.getValue() == value){
+		}else if(EnumerationWrapperPrimitiveInt._3.getValue().intValue() == value.intValue()){
 			res = EnumerationWrapperPrimitiveInt._3;
 		}
 		return res;

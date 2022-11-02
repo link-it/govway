@@ -62,17 +62,10 @@ public enum Charset implements Serializable , Cloneable {
 	public String toString(){
 		return this.value;
 	}
-	public boolean equals(Charset object){
-		if(object==null)
+	public boolean equals(String value){
+		if(value==null)
 			return false;
-		if(object.getValue()==null)
-			return false;
-		return object.getValue().equals(this.getValue());	
-	}
-	public boolean equals(String object){
-		if(object==null)
-			return false;
-		return object.equals(this.getValue());	
+		return value.equals(this.getValue());	
 	}
 	
 		

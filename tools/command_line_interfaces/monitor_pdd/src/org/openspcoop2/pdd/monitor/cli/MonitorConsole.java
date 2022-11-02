@@ -74,7 +74,9 @@ public class MonitorConsole {
 			try {
 				if (inPropLog4j != null)
 					inPropLog4j.close();
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				// close
+			}
 		}
 		log=LoggerWrapperFactory.getLogger("DRIVER_DB_MONITORAGGIO");	
 		//System.out.println("Logger inizializzato.");
@@ -128,7 +130,9 @@ public class MonitorConsole {
 			try {
 				if (inProp != null)
 					inProp.close();
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				// close
+			}
 		}
 		log.debug("Lettura datasource.properties terminata, jndiName: ["+jndiName+"]");
 	
@@ -216,6 +220,9 @@ public class MonitorConsole {
 			try{
 				scelta=lettura.readLine();
 			}catch(java.io.IOException e){
+				scelta="";
+			}
+			if(scelta==null) {
 				scelta="";
 			}
 			System.out.println();
@@ -326,7 +333,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				servizio="";
 			}
-			if(servizio=="")
+			if(servizio==null) {
+				servizio="";
+			}
+			if(servizio.equals(""))
 				System.out.println("Devi specificare un valore per il filtro per il servizio");
 		}
 		countMessages_engine(servizio,null,null,null,-1,false);
@@ -341,7 +351,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				azione="";
 			}
-			if(azione=="")
+			if(azione==null) {
+				azione="";
+			}
+			if(azione.equals(""))
 				System.out.println("Devi specificare un valore per il filtro per l'azione");
 		}
 		countMessages_engine(null,azione,null,null,-1,false);
@@ -356,7 +369,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				servizio="";
 			}
-			if(servizio=="")
+			if(servizio==null) {
+				servizio="";
+			}
+			if(servizio.equals(""))
 				System.out.println("Devi specificare un valore per il filtro per servizio");
 		}
 		System.out.println("Devi specificare un valore per il filtro per l'azione");
@@ -367,7 +383,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				azione="";
 			}
-			if(azione=="")
+			if(azione==null) {
+				azione="";
+			}
+			if(azione.equals(""))
 				System.out.println("Devi specificare un valore per il filtro per l'azione");
 		}
 		countMessages_engine(servizio,azione,null,null,-1,false);
@@ -381,7 +400,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				filtro="";
 			}
-			if(filtro=="")
+			if(filtro==null) {
+				filtro="";
+			}
+			if(filtro.equals(""))
 				System.out.println("Devi specificare un valore da cercare tra i contenuti applicativi");
 		}
 		countMessages_engine(null,null,filtro,null,-1,false);
@@ -396,7 +418,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				filtro="";
 			}
-			if(filtro=="")
+			if(filtro==null) {
+				filtro="";
+			}
+			if(filtro.equals(""))
 				System.out.println("Devi specificare un valore per lo stato del messaggio tra i seguenti valori: consegna/spedizione/processamento/cancellato");
 		}
 		countMessages_engine(null,null,null,filtro,-1,false);
@@ -412,7 +437,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				filtro="";
 			}
-			if(filtro=="")
+			if(filtro==null) {
+				filtro="";
+			}
+			if(filtro.equals(""))
 				System.out.println("Devi specificare un intero che identifica i messaggi piu' vecchi di x secondi");
 			try{
 				value = Long.parseLong(filtro);
@@ -636,7 +664,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				servizio="";
 			}
-			if(servizio=="")
+			if(servizio==null) {
+				servizio="";
+			}
+			if(servizio.equals(""))
 				System.out.println("Devi specificare un valore per il filtro per il servizio");
 		}
 		listMessages_engine(servizio,null,null,null,-1,-1,-1,false);
@@ -651,7 +682,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				azione="";
 			}
-			if(azione=="")
+			if(azione==null) {
+				azione="";
+			}
+			if(azione.equals(""))
 				System.out.println("Devi specificare un valore per il filtro per l'azione");
 		}
 		listMessages_engine(null,azione,null,null,-1,-1,-1,false);
@@ -666,7 +700,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				servizio="";
 			}
-			if(servizio=="")
+			if(servizio==null) {
+				servizio="";
+			}
+			if(servizio.equals(""))
 				System.out.println("Devi specificare un valore per il filtro per servizio");
 		}
 		System.out.println("Devi specificare un valore per il filtro per l'azione");
@@ -677,7 +714,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				azione="";
 			}
-			if(azione=="")
+			if(azione==null) {
+				azione="";
+			}
+			if(azione.equals(""))
 				System.out.println("Devi specificare un valore per il filtro per l'azione");
 		}
 		listMessages_engine(servizio,azione,null,null,-1,-1,-1,false);
@@ -691,7 +731,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				filtro="";
 			}
-			if(filtro=="")
+			if(filtro==null) {
+				filtro="";
+			}
+			if(filtro.equals(""))
 				System.out.println("Devi specificare un valore da cercare tra i contenuti applicativi");
 		}
 		listMessages_engine(null,null,filtro,null,-1,-1,-1,false);
@@ -706,7 +749,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				filtro="";
 			}
-			if(filtro=="")
+			if(filtro==null) {
+				filtro="";
+			}
+			if(filtro.equals(""))
 				System.out.println("Devi specificare un valore per lo stato del messaggio tra i seguenti valori: consegna/spedizione/processamento/cancellato");
 		}
 		listMessages_engine(null,null,null,filtro,-1,-1,-1,false);
@@ -722,7 +768,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				filtro="";
 			}
-			if(filtro=="")
+			if(filtro==null) {
+				filtro="";
+			}
+			if(filtro.equals(""))
 				System.out.println("Devi specificare un intero che identifica i messaggi piu' vecchi di x secondi");
 			try{
 				value = Long.parseLong(filtro);
@@ -744,7 +793,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				filtro="";
 			}
-			if(filtro=="")
+			if(filtro==null) {
+				filtro="";
+			}
+			if(filtro.equals(""))
 				System.out.println("Devi specificare un intero che identifica un limit");
 			try{
 				limit = Long.parseLong(filtro);
@@ -762,7 +814,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				filtro="";
 			}
-			if(filtro=="")
+			if(filtro==null) {
+				filtro="";
+			}
+			if(filtro.equals(""))
 				System.out.println("Devi specificare un intero che identifica un offset");
 			try{
 				offset = Long.parseLong(filtro);
@@ -920,7 +975,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				id="";
 			}
-			if(id=="")
+			if(id==null) {
+				id="";
+			}
+			if(id.equals(""))
 				System.out.println("Devi specificare un identificatore del messaggio da eliminare");
 		}
 		
@@ -970,7 +1028,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				servizio="";
 			}
-			if(servizio=="")
+			if(servizio==null) {
+				servizio="";
+			}
+			if(servizio.equals(""))
 				System.out.println("Devi specificare un valore per il servizio");
 		}
 		deleteAllMessages_engine(servizio,null,null,null,-1,false);
@@ -985,7 +1046,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				azione="";
 			}
-			if(azione=="")
+			if(azione==null) {
+				azione="";
+			}
+			if(azione.equals(""))
 				System.out.println("Devi specificare un valore per l'azione");
 		}
 		deleteAllMessages_engine(null,azione,null,null,-1,false);
@@ -1000,7 +1064,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				servizio="";
 			}
-			if(servizio=="")
+			if(servizio==null) {
+				servizio="";
+			}
+			if(servizio.equals(""))
 				System.out.println("Devi specificare un valore per il servizio");
 		}
 		System.out.println("Devi specificare un valore per l'azione");
@@ -1011,7 +1078,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				azione="";
 			}
-			if(azione=="")
+			if(azione==null) {
+				azione="";
+			}
+			if(azione.equals(""))
 				System.out.println("Devi specificare un valore per l'azione");
 		}
 		deleteAllMessages_engine(servizio,azione,null,null,-1,false);
@@ -1025,7 +1095,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				filtro="";
 			}
-			if(filtro=="")
+			if(filtro==null) {
+				filtro="";
+			}
+			if(filtro.equals(""))
 				System.out.println("Devi specificare un valore da cercare tra i contenuti applicativi");
 		}
 		deleteAllMessages_engine(null,null,filtro,null,-1,false);
@@ -1039,7 +1112,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				filtro="";
 			}
-			if(filtro=="")
+			if(filtro==null) {
+				filtro="";
+			}
+			if(filtro.equals(""))
 				System.out.println("Devi specificare un valore per lo stato del messaggio tra i seguenti valori: consegna/spedizione/processamento/cancellato");
 		}
 		deleteAllMessages_engine(null,null,null,filtro,-1,false);
@@ -1054,7 +1130,10 @@ public class MonitorConsole {
 			}catch(java.io.IOException e){
 				filtro="";
 			}
-			if(filtro=="")
+			if(filtro==null) {
+				filtro="";
+			}
+			if(filtro.equals(""))
 				System.out.println("Devi specificare un intero che identifica i messaggi piu' vecchi di x secondi");
 			try{
 				value = Long.parseLong(filtro);

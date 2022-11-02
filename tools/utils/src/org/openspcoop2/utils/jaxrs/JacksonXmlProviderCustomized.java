@@ -24,29 +24,29 @@ import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 
 /**	
- * JacksonJsonProvider
+ * JacksonXmlProvider
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class JacksonJsonProvider extends com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider {
+public class JacksonXmlProviderCustomized extends com.fasterxml.jackson.jaxrs.xml.JacksonXMLProvider {
 
 	private static boolean failOnMissingExternalTypeIdProperty = false;
 	public static boolean isFailOnMissingExternalTypeIdProperty() {
-		return JacksonJsonProvider.failOnMissingExternalTypeIdProperty;
+		return JacksonXmlProviderCustomized.failOnMissingExternalTypeIdProperty;
 	}
 	public static void setFailOnMissingExternalTypeIdProperty(boolean failOnMissingExternalTypeIdProperty) {
-		JacksonJsonProvider.failOnMissingExternalTypeIdProperty = failOnMissingExternalTypeIdProperty;
+		JacksonXmlProviderCustomized.failOnMissingExternalTypeIdProperty = failOnMissingExternalTypeIdProperty;
 	}
 
-	public static ObjectMapper getObjectMapper(boolean prettyPrint, TimeZone timeZone) {
-		ObjectMapper mapper = new ObjectMapper();
+	public static XmlMapper getObjectMapper(boolean prettyPrint, TimeZone timeZone) {
+		XmlMapper mapper = new XmlMapper();
 		mapper.setTimeZone(timeZone);
 		mapper.registerModule(new JodaModule());
 		mapper.configure(com.fasterxml.jackson.databind.SerializationFeature.
@@ -56,21 +56,21 @@ public class JacksonJsonProvider extends com.fasterxml.jackson.jaxrs.json.Jackso
 		if(prettyPrint) {
 			mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 		}
-		mapper.configure(DeserializationFeature.FAIL_ON_MISSING_EXTERNAL_TYPE_ID_PROPERTY, JacksonJsonProvider.failOnMissingExternalTypeIdProperty);
+		mapper.configure(DeserializationFeature.FAIL_ON_MISSING_EXTERNAL_TYPE_ID_PROPERTY, JacksonXmlProviderCustomized.failOnMissingExternalTypeIdProperty);
 		return mapper;
 	}
 	
-	public JacksonJsonProvider() {
+	public JacksonXmlProviderCustomized() {
 		super(getObjectMapper(false, TimeZone.getDefault()));
 	}
-	public JacksonJsonProvider(boolean prettyPrint) {
+	public JacksonXmlProviderCustomized(boolean prettyPrint) {
 		super(getObjectMapper(prettyPrint, TimeZone.getDefault()));
 	}
-	
-	public JacksonJsonProvider(String timeZoneId) {
+
+	public JacksonXmlProviderCustomized(String timeZoneId) {
 		super(getObjectMapper(false, TimeZone.getTimeZone(timeZoneId)));
 	}
-	public JacksonJsonProvider(String timeZoneId, boolean prettyPrint) {
+	public JacksonXmlProviderCustomized(String timeZoneId, boolean prettyPrint) {
 		super(getObjectMapper(prettyPrint, TimeZone.getTimeZone(timeZoneId)));
 	}
 	

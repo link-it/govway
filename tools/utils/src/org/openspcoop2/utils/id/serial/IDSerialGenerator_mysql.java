@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.Statement;
 
+import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
 
 /**
@@ -34,11 +35,15 @@ import org.slf4j.Logger;
  */
 public class IDSerialGenerator_mysql {
 
-	public static String generate(Connection conDB,IDSerialGeneratorParameter param, Logger log, InfoStatistics infoStatistics){
+	public static String generate(Connection conDB,IDSerialGeneratorParameter param, Logger log, InfoStatistics infoStatistics) throws UtilsException{
 		
 		Statement stmtUpdate = null;
 		String identificativoUnivoco = null;
 		try{
+			if(conDB==null) {
+				throw new Exception("Connection is null");
+			}
+			
 			String protocollo = param.getProtocollo();
 			
 			// Incremento
@@ -116,8 +121,12 @@ public class IDSerialGenerator_mysql {
 					stmtUpdate.close();
 			} catch(Exception er) {}
 			try{
-				conDB.rollback();
-			} catch(Exception er) {}
+				if(conDB!=null) {
+					conDB.rollback();
+				}
+			} catch(Exception er) {
+				// close
+			}
 		}
 		
 		return identificativoUnivoco;

@@ -138,7 +138,8 @@ public class DBPool {
 			return commonsPoolDataSource;
 						
 		}catch(Exception e){
-			String msgError = "Riscontrato errore durante la creazione del buildCommonsPoolDataSource ["+configuration.getJndiName()+"]: "+e.getMessage();
+			String jndiName = (configuration!=null) ? configuration.getJndiName() : null;
+			String msgError = "Riscontrato errore durante la creazione del buildCommonsPoolDataSource ["+jndiName+"]: "+e.getMessage();
 			throw new OpenSPCoopFactoryException(msgError,e);
 		}
 
@@ -297,7 +298,8 @@ public class DBPool {
 		}catch(OpenSPCoopFactoryException e){
 			throw e;
 		}	catch(Exception e){
-			String msgError = "Riscontrato errore durante la creazione del datasource ["+configuration.getJndiName()+"]: "+e.getMessage();
+			String jndiName = (configuration!=null) ? configuration.getJndiName() : null;
+			String msgError = "Riscontrato errore durante la creazione del datasource ["+jndiName+"]: "+e.getMessage();
 			throw new OpenSPCoopFactoryException(msgError,e);
 		}
 

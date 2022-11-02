@@ -22,6 +22,8 @@ package org.openspcoop2.core.transazioni.constants;
 
 import java.io.Serializable;
 
+import org.openspcoop2.generic_project.beans.IEnumeration;
+
 
 /**     
  * RuoloTransazione
@@ -30,7 +32,7 @@ import java.io.Serializable;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public enum RuoloTransazione implements Serializable{
+public enum RuoloTransazione implements IEnumeration, Serializable{
 
 	INVOCAZIONE_ONEWAY ("1"),
 	INVOCAZIONE_SINCRONA ("2"),
@@ -38,7 +40,8 @@ public enum RuoloTransazione implements Serializable{
 	RISPOSTA_ASINCRONA_SIMMETRICA ("4"),
 	INVOCAZIONE_ASINCRONA_ASIMMETRICA ("5"),
 	RICHIESTA_STATO_ASINCRONA_ASIMMETRICA ("6"),
-	INTEGRATION_MANAGER ("7");
+	INTEGRATION_MANAGER ("7"),
+	CONSEGNA_CONTENUTI_APPLICATIVI ("8");
 
 	private final String valore;
 
@@ -107,16 +110,22 @@ public enum RuoloTransazione implements Serializable{
 			res = RuoloTransazione.RICHIESTA_STATO_ASINCRONA_ASIMMETRICA;
 		} else if(RuoloTransazione.INTEGRATION_MANAGER.toString().equals(val)){
 			res = RuoloTransazione.INTEGRATION_MANAGER;
+		} else if(RuoloTransazione.CONSEGNA_CONTENUTI_APPLICATIVI.toString().equals(val)){
+			res = RuoloTransazione.CONSEGNA_CONTENUTI_APPLICATIVI;
 		} 
 		return res;
 	}
 
+	@Override
+	public Object getValue() {
+		return this.valore;
+	}
 	
 	@Override
 	public String toString(){
 		return this.valore;
 	}
-	public boolean equals(RuoloTransazione esito){
+	public boolean equals(IEnumeration esito){
 		return this.toString().equals(esito.toString());
 	}
 
@@ -149,12 +158,15 @@ public enum RuoloTransazione implements Serializable{
 			//System.out.println("RITORNO ["+RuoloTransazione.RICHIESTA_STATO_ASINCRONA_ASIMMETRICA+"]");
 			return RuoloTransazione.RICHIESTA_STATO_ASINCRONA_ASIMMETRICA;
 		}
+		else if(org.openspcoop2.core.constants.Costanti.SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI.equals(val)){
+			//System.out.println("RITORNO ["+RuoloTransazione.CONSEGNA_CONTENUTI_APPLICATIVI+"]");
+			return RuoloTransazione.CONSEGNA_CONTENUTI_APPLICATIVI;
+		}
 		else {
 			//System.out.println("RITORNO NULL");
 			return null;
 		}
 	}
-
 
 }
 

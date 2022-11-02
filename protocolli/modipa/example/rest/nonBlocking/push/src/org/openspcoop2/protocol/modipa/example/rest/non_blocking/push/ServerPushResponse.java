@@ -25,7 +25,7 @@ import java.io.FileInputStream;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.jaxrs.JacksonJsonProvider;
+import org.openspcoop2.utils.jaxrs.JacksonJsonProviderCustomized;
 
 /**
  * Server
@@ -62,7 +62,7 @@ public class ServerPushResponse {
 		sf.setServiceClass(ServerPushResponseImpl.class);
 		sf.setServiceBean(new ServerPushResponseImpl());
 		sf.setAddress(address);
-		sf.setProvider(new JacksonJsonProvider());
+		sf.setProvider(new JacksonJsonProviderCustomized());
 		sf.create();
 		 System.out.println("Server ready..."); 
 		

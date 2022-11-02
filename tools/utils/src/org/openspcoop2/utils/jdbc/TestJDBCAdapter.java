@@ -217,7 +217,9 @@ public class TestJDBCAdapter {
 		finally{
 	    	try{
 	    		con.close();
-	    	}catch(Exception eClose){}
+	    	}catch(Exception eClose){
+	    		// close
+	    	}
 	    }
 	}
 
@@ -346,7 +348,9 @@ public class TestJDBCAdapter {
 	    	}catch(Exception eClose){}
 	    	try{
 	    		stmtQuery.close();
-	    	}catch(Exception eClose){}
+	    	}catch(Exception eClose){
+	    		// close
+	    	}
 	    }
 	}
 	
@@ -492,7 +496,9 @@ public class TestJDBCAdapter {
 	    	}catch(Exception eClose){}
 	    	try{
 	    		stmtQuery.close();
-	    	}catch(Exception eClose){}
+	    	}catch(Exception eClose){
+	    		// close
+	    	}
 	    }
 	}
 }

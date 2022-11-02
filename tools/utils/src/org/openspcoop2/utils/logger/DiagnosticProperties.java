@@ -37,7 +37,7 @@ import org.openspcoop2.utils.logger.constants.Severity;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DiagnosticProperties {
+public class DiagnosticProperties implements Cloneable{
 
 	private static DiagnosticProperties staticInstance;
 	private static synchronized void initialize(Properties diagnosticProperties, boolean throwExceptionPlaceholderFailedResolution) throws UtilsException{

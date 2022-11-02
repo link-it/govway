@@ -88,6 +88,18 @@ public class UDPTimeDate implements IDate {
 	 */
 	@Override
 	public void init(java.util.Properties properties) throws UtilsException{
+		_init(properties);
+	}
+	
+	private static void _init(java.util.Properties properties) throws UtilsException{
+		if(UDPTimeDate.udpClient==null) {
+			_initSync(properties);
+		}
+	}
+	private static synchronized void _initSync(java.util.Properties properties) throws UtilsException{
+		if(UDPTimeDate.udpClient!=null) {
+			return;
+		}
 		try{
 			UDPTimeDate.udpClient = new TimeUDPClient();
 			

@@ -55,7 +55,7 @@ public enum OutputType implements IEnumeration , Serializable , Cloneable{
 	public String toString(){
 		return this.value;
 	}
-	public boolean equals(OutputType object){
+	public boolean equals(IEnumeration object){
 		if(object==null)
 			return false;
 		if(object.getValue()==null)

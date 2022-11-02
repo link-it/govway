@@ -91,7 +91,9 @@ public class DatabaseProperties {
 			try{
 				if(properties!=null)
 					properties.close();
-			}catch(Exception er){}
+			}catch(Exception er){
+				// close
+			}
 			throw new ServiceException(e.getMessage(),e);
 		}	
 	

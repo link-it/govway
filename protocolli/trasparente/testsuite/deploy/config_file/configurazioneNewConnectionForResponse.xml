@@ -17,6 +17,9 @@
 	  <accesso-dati-gestione-token>
 		<cache dimensione="10000" algoritmo="lru" item-life-second="7200"/>
 	  </accesso-dati-gestione-token>
+	  <accesso-dati-richieste>
+		<cache dimensione="15000" algoritmo="lru" item-life-second="7200"/>
+	  </accesso-dati-richieste>
 
           <!-- Configurazione dell'engine per la validazione delle buste eGov -->
           <validazione-buste stato="abilitato" controllo="rigido" 

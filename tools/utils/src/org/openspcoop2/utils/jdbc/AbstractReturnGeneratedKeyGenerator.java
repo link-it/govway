@@ -93,7 +93,9 @@ public abstract class AbstractReturnGeneratedKeyGenerator implements IKeyGenerat
 		}finally{
 			try{
 				rs.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	

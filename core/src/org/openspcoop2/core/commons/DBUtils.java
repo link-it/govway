@@ -42,7 +42,7 @@ import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
-import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCParameterUtilities;
+import org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCParameterUtilities;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCSqlLogger;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
@@ -94,7 +94,7 @@ public class DBUtils {
 			
 			String sql = sqlQueryObject.createSQLQuery();
 			stm=connection.prepareStatement(sql);
-			JDBCParameterUtilities jdbcParameterUtilities = new JDBCParameterUtilities(TipiDatabase.toEnumConstant(tipoDB));
+			GenericJDBCParameterUtilities jdbcParameterUtilities = new GenericJDBCParameterUtilities(TipiDatabase.toEnumConstant(tipoDB));
 			JDBCObject [] paramsArray = null;
 			if(paramTypes!=null && paramTypes.size()>0){
 				paramsArray = paramTypes.toArray(new JDBCObject[1]);
@@ -1368,7 +1368,7 @@ public class DBUtils {
 			Map<String, String> properties,
 			String tipoDatabase, Logger log) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException{
 		
-		JDBCParameterUtilities jdbcParameterUtilities = new JDBCParameterUtilities(TipiDatabase.toEnumConstant(tipoDatabase));
+		GenericJDBCParameterUtilities jdbcParameterUtilities = new GenericJDBCParameterUtilities(TipiDatabase.toEnumConstant(tipoDatabase));
 		
 		if(properties!=null && properties.size()>0){
 			int i = 0;

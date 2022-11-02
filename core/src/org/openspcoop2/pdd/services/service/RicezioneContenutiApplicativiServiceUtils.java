@@ -188,7 +188,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 					requestInfo.getRequestConfig().getIdServizio()!=null &&
 					requestInfo.getRequestConfig().getIdFruitore()!=null) {
 				idServizio = requestInfo.getRequestConfig().getIdServizio().clone(); // effettuo clone altrimenti viene cambiato dopo e la modifica potrebbe risultare anche in altri thread
-				idSoggettoFruitore = requestInfo.getRequestConfig().getIdFruitore();
+				idSoggettoFruitore = requestInfo.getRequestConfig().getIdFruitore().clone(); // effettuo clone per i motivi sopra
 			}
 			else {
 				if(idPD.getIdentificativiFruizione()!=null){
@@ -200,10 +200,6 @@ public class RicezioneContenutiApplicativiServiceUtils {
 					}
 				}
 				
-				if(generatoreErrore!=null && idSoggettoFruitore!=null){
-					generatoreErrore.updateDominio(idSoggettoFruitore);
-					generatoreErrore.updateInformazioniCooperazione(idSoggettoFruitore, null);
-				}
 				if(idServizio==null){
 					try{
 						idServizio = serviceIdentificationReader.convertToIDServizio(idPD);
@@ -231,6 +227,11 @@ public class RicezioneContenutiApplicativiServiceUtils {
 					requestInfo.getRequestConfig().setIdServizio(idServizio);
 					requestInfo.getRequestConfig().setIdFruitore(idSoggettoFruitore);
 				}
+			}
+			
+			if(generatoreErrore!=null && idSoggettoFruitore!=null){
+				generatoreErrore.updateDominio(idSoggettoFruitore);
+				generatoreErrore.updateInformazioniCooperazione(idSoggettoFruitore, null);
 			}
 			
 			if(idServizio!=null){

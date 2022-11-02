@@ -27,15 +27,15 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
- * AnonymousAuthenticationFilter
+ * AnonymousRoleAuthenticationFilter
  * 
  * @author Giuliano Pintori (pintori@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AnonymousAuthenticationFilter extends org.springframework.security.web.authentication.AnonymousAuthenticationFilter{
+public class AnonymousRoleAuthenticationFilter extends org.springframework.security.web.authentication.AnonymousAuthenticationFilter{
 
-	public AnonymousAuthenticationFilter(String key) {
+	public AnonymousRoleAuthenticationFilter(String key) {
 		super(key, getPrincipalUtenzaAnonima(), getAuthoritiesUtenzaAnonima());
 	}
 	

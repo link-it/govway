@@ -52,7 +52,9 @@ public abstract class AbstractDeserializer {
 				if(fin!=null) {
 					fin.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	public <T> T xmlToObj(byte[] bytes,Class<T> c) throws DeserializerException {

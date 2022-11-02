@@ -64,24 +64,20 @@ public class DataSourceFactory {
 	}
 	
 	public static List<String> getJndiNameDatasources() {
-		if(mapJndiNametoUUID.isEmpty()) {
+		if(mapJndiNametoUUID==null || mapJndiNametoUUID.isEmpty()) {
 			return null;
 		}
 		List<String> l = new ArrayList<>();
-		if(mapJndiNametoUUID!=null && !mapJndiNametoUUID.isEmpty()) {
-			l.addAll(mapJndiNametoUUID.keySet());
-		}
+		l.addAll(mapJndiNametoUUID.keySet());
 		return l;
 	}
 	
 	public static List<String> getApplicativeIdDatasources() {
-		if(mapApplicativeIDtoUUID.isEmpty()) {
+		if(mapApplicativeIDtoUUID==null || mapApplicativeIDtoUUID.isEmpty()) {
 			return null;
 		}
 		List<String> l = new ArrayList<>();
-		if(mapApplicativeIDtoUUID!=null && !mapApplicativeIDtoUUID.isEmpty()) {
-			l.addAll(mapApplicativeIDtoUUID.keySet());
-		}
+		l.addAll(mapApplicativeIDtoUUID.keySet());
 		return l;
 	}
 	

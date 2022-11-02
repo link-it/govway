@@ -113,7 +113,9 @@ public class GestoreJNDI {
 			try{
 				if(ctx!=null)
 					ctx.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 
@@ -200,7 +202,9 @@ public class GestoreJNDI {
 			try{
 				if(currentContext!=null)
 					currentContext.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 
@@ -290,7 +294,9 @@ public class GestoreJNDI {
 			try{
 				if(currentContext!=null)
 					currentContext.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	} 
 

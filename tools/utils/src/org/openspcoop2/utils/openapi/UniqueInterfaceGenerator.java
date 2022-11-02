@@ -85,7 +85,9 @@ public class UniqueInterfaceGenerator {
 		String ext = null;
 		try{
 			ext = fileMaster.substring(fileMaster.lastIndexOf(".")+1,fileMaster.length());
-		}catch(Exception e){}
+		}catch(Exception e){
+			// ext undefined
+		}
 		config.yaml = "yaml".equalsIgnoreCase(ext);
 		HashMap<String,String> attachments = new HashMap<>();
 		File fDir = new File(args[3].trim());
@@ -93,16 +95,18 @@ public class UniqueInterfaceGenerator {
 			throw new Exception("attachmentsDir ["+fDir.getAbsolutePath()+"] is not directory");
 		}
 		File[] files = fDir.listFiles();
-		for (int j = 0; j < files.length; j++) {
-			if(files[j].getName().equals(fMaster.getName())) {
-				continue;
+		if(files!=null) {
+			for (int j = 0; j < files.length; j++) {
+				if(files[j].getName().equals(fMaster.getName())) {
+					continue;
+				}
+				if(files[j].isDirectory()) {
+	                continue;
+	            }
+				//System.out.println("READ ["+files[j]+"] ... ");
+				attachments.put(files[j].getName(), FileSystemUtilities.readFile(files[j]));
+				//System.out.println("READ ["+files[j]+"] ok");
 			}
-			if(files[j].isDirectory()) {
-                continue;
-            }
-			//System.out.println("READ ["+files[j]+"] ... ");
-			attachments.put(files[j].getName(), FileSystemUtilities.readFile(files[j]));
-			//System.out.println("READ ["+files[j]+"] ok");
 		}
 		config.attachments = attachments;
 		
@@ -197,7 +201,9 @@ public class UniqueInterfaceGenerator {
 			if(apiInternal.getComponents()!=null) {
 				if(apiInternal.getComponents().getCallbacks()!=null) {
 					Map<String, Callback> maps = apiInternal.getComponents().getCallbacks();
+					int mapsSize = 0;
 					if(maps!=null && !maps.isEmpty()) {
+						mapsSize = maps.size();
 						Iterator<String> keys = maps.keySet().iterator();
 						while (keys.hasNext()) {
 							String key = (String) keys.next();
@@ -205,11 +211,13 @@ public class UniqueInterfaceGenerator {
 							api.getComponents().addCallbacks(key, value);
 						}
 					}
-					debug(debug,log,"\t"+maps.size()+" callback");
+					debug(debug,log,"\t"+mapsSize+" callback");
 				}
 				if(apiInternal.getComponents().getExamples()!=null) {
 					Map<String, Example> maps = apiInternal.getComponents().getExamples();
+					int mapsSize = 0;
 					if(maps!=null && !maps.isEmpty()) {
+						mapsSize = maps.size();
 						Iterator<String> keys = maps.keySet().iterator();
 						while (keys.hasNext()) {
 							String key = (String) keys.next();
@@ -217,11 +225,13 @@ public class UniqueInterfaceGenerator {
 							api.getComponents().addExamples(key, value);
 						}
 					}
-					debug(debug,log,"\t"+maps.size()+" example");
+					debug(debug,log,"\t"+mapsSize+" example");
 				}
 				if(apiInternal.getComponents().getExtensions()!=null) {
 					Map<String, Object> maps = apiInternal.getComponents().getExtensions();
+					int mapsSize = 0;
 					if(maps!=null && !maps.isEmpty()) {
+						mapsSize = maps.size();
 						Iterator<String> keys = maps.keySet().iterator();
 						while (keys.hasNext()) {
 							String key = (String) keys.next();
@@ -229,11 +239,13 @@ public class UniqueInterfaceGenerator {
 							api.getComponents().addExtension(key, value);
 						}
 					}
-					debug(debug,log,"\t"+maps.size()+" extensions");
+					debug(debug,log,"\t"+mapsSize+" extensions");
 				}
 				if(apiInternal.getComponents().getHeaders()!=null) {
 					Map<String, Header> maps = apiInternal.getComponents().getHeaders();
+					int mapsSize = 0;
 					if(maps!=null && !maps.isEmpty()) {
+						mapsSize = maps.size();
 						Iterator<String> keys = maps.keySet().iterator();
 						while (keys.hasNext()) {
 							String key = (String) keys.next();
@@ -241,11 +253,13 @@ public class UniqueInterfaceGenerator {
 							api.getComponents().addHeaders(key, value);
 						}
 					}
-					debug(debug,log,"\t"+maps.size()+" header");
+					debug(debug,log,"\t"+mapsSize+" header");
 				}
 				if(apiInternal.getComponents().getLinks()!=null) {
 					Map<String, Link> maps = apiInternal.getComponents().getLinks();
+					int mapsSize = 0;
 					if(maps!=null && !maps.isEmpty()) {
+						mapsSize = maps.size();
 						Iterator<String> keys = maps.keySet().iterator();
 						while (keys.hasNext()) {
 							String key = (String) keys.next();
@@ -253,11 +267,13 @@ public class UniqueInterfaceGenerator {
 							api.getComponents().addLinks(key, value);
 						}
 					}
-					debug(debug,log,"\t"+maps.size()+" link");
+					debug(debug,log,"\t"+mapsSize+" link");
 				}
 				if(apiInternal.getComponents().getParameters()!=null) {
 					Map<String, Parameter> maps = apiInternal.getComponents().getParameters();
+					int mapsSize = 0;
 					if(maps!=null && !maps.isEmpty()) {
+						mapsSize = maps.size();
 						Iterator<String> keys = maps.keySet().iterator();
 						while (keys.hasNext()) {
 							String key = (String) keys.next();
@@ -269,11 +285,13 @@ public class UniqueInterfaceGenerator {
 							api.getComponents().addParameters(key, value);
 						}
 					}
-					debug(debug,log,"\t"+maps.size()+" parameter");
+					debug(debug,log,"\t"+mapsSize+" parameter");
 				}
 				if(apiInternal.getComponents().getRequestBodies()!=null) {
 					Map<String, RequestBody> maps = apiInternal.getComponents().getRequestBodies();
+					int mapsSize = 0;
 					if(maps!=null && !maps.isEmpty()) {
+						mapsSize = maps.size();
 						Iterator<String> keys = maps.keySet().iterator();
 						while (keys.hasNext()) {
 							String key = (String) keys.next();
@@ -281,11 +299,13 @@ public class UniqueInterfaceGenerator {
 							api.getComponents().addRequestBodies(key, value);
 						}
 					}
-					debug(debug,log,"\t"+maps.size()+" requestBody");
+					debug(debug,log,"\t"+mapsSize+" requestBody");
 				}
 				if(apiInternal.getComponents().getResponses()!=null) {
 					Map<String, ApiResponse> maps = apiInternal.getComponents().getResponses();
+					int mapsSize = 0;
 					if(maps!=null && !maps.isEmpty()) {
+						mapsSize = maps.size();
 						Iterator<String> keys = maps.keySet().iterator();
 						while (keys.hasNext()) {
 							String key = (String) keys.next();
@@ -293,12 +313,14 @@ public class UniqueInterfaceGenerator {
 							api.getComponents().addResponses(key, value);
 						}
 					}
-					debug(debug,log,"\t"+maps.size()+"] response");
+					debug(debug,log,"\t"+mapsSize+"] response");
 				}
 				if(apiInternal.getComponents().getSchemas()!=null) {
 					@SuppressWarnings("rawtypes")
 					Map<String, Schema> maps = apiInternal.getComponents().getSchemas();
+					int mapsSize = 0;
 					if(maps!=null && !maps.isEmpty()) {
+						mapsSize = maps.size();
 						Iterator<String> keys = maps.keySet().iterator();
 						while (keys.hasNext()) {
 							String key = (String) keys.next();
@@ -310,11 +332,13 @@ public class UniqueInterfaceGenerator {
 							api.getComponents().addSchemas(key, value);
 						}
 					}
-					debug(debug,log,"\t"+maps.size()+" schema");
+					debug(debug,log,"\t"+mapsSize+" schema");
 				}
 				if(apiInternal.getComponents().getSecuritySchemes()!=null) {
 					Map<String, SecurityScheme> maps = apiInternal.getComponents().getSecuritySchemes();
+					int mapsSize = 0;
 					if(maps!=null && !maps.isEmpty()) {
+						mapsSize = maps.size();
 						Iterator<String> keys = maps.keySet().iterator();
 						while (keys.hasNext()) {
 							String key = (String) keys.next();
@@ -322,7 +346,7 @@ public class UniqueInterfaceGenerator {
 							api.getComponents().addSecuritySchemes(key, value);
 						}
 					}
-					debug(debug,log,"\t"+maps.size()+" security schema");
+					debug(debug,log,"\t"+mapsSize+" security schema");
 				}
 			}
 			debug(debug,log,"Merge ["+attachName+"] ok");
@@ -353,7 +377,7 @@ public class UniqueInterfaceGenerator {
 					value.setExplode(null);
 					value.setStyle(null);
 					//debug(debug,log,"PARAMETRO *"+key+"* ["+value.getName()+"] ["+value.getExample()+"] ["+value.getExamples()+"] ref["+value.get$ref()+"] tipo["+value.getClass().getName()+"]");
-					checkSchema(0,"Parameter-"+key, value.getSchema());
+					checkSchema(0,("Parameter-"+key), value.getSchema());
 				}
 			}
 		}
@@ -515,10 +539,10 @@ public class UniqueInterfaceGenerator {
 		return schemaRebuild;
 	}
 	
-	private static void checkSchema(int profondita, String sorgente, Schema<?> schema) {
+	private static int checkSchema(int profondita, String sorgente, Schema<?> schema) {
 		
 		if(profondita>1000) {
-			return; // evitare stack overflow
+			return profondita; // evitare stack overflow
 		}
 		
 		@SuppressWarnings("rawtypes")
@@ -534,9 +558,12 @@ public class UniqueInterfaceGenerator {
 					sorgenteInterno = sorgenteInterno + "schemaProfondita"+profondita;
 				}
 				//debug(debug,log,"SCHEMA ("+sorgente+") *"+key+"* ["+value.getName()+"] ["+value.getType()+"] ["+value.getFormat()+"] ["+value.getExample()+"] ref["+value.get$ref()+"] schema["+value.getClass().getName()+"]");
-				checkSchema((profondita+1),sorgenteInterno,value);
+				@SuppressWarnings("unused")
+				int p = checkSchema((profondita+1),sorgenteInterno,value);
 			}
 		}
+		
+		return profondita;
 	}
 	
 }

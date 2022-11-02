@@ -166,7 +166,9 @@ public class IntegrationManagerClient_cxf {
 			}
 			try{
 				imbustamento = Boolean.parseBoolean(imbustamentoS);
-			}catch(Exception e){}
+			}catch(Exception e){
+				imbustamento=false;
+			}
 			String locationPD =reader.getProperty("openspcoop.PD");
 			if(locationPD != null){
 				locationPD = locationPD.trim();
@@ -339,7 +341,9 @@ public class IntegrationManagerClient_cxf {
 				}
 				
 				// Stampo Risposta
-				printSPCoopMessage(msgResponse);
+				if(msgResponse!=null) {
+					printSPCoopMessage(msgResponse);
+				}
 			}
 
 			

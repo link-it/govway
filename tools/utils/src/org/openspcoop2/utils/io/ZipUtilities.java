@@ -314,7 +314,9 @@ public class ZipUtilities {
 									if(zf!=null){
 										zf.close();
 									}
-								}catch(Exception eClose){}
+								}catch(Exception eClose){
+									// close
+								}
 							}
 						}
 				
@@ -352,7 +354,9 @@ public class ZipUtilities {
 					if(zf!=null){
 						zf.close();
 					}
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 
 		}catch(Exception e){

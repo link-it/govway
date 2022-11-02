@@ -163,7 +163,7 @@ public abstract class Utils {
 		}
 	}
 
-	public static Boolean getBooleanProperty(Properties reader,String name,boolean required) throws Exception{
+	public static Object getBooleanProperty(Properties reader,String name,boolean required) throws Exception{
 		String propAsString = getProperty(reader,name, required);
 
 		if(propAsString != null){

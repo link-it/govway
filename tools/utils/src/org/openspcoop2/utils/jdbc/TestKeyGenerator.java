@@ -274,7 +274,9 @@ public class TestKeyGenerator {
 	    	}catch(Exception eClose){}
 	    	try{
 	    		con.close();
-	    	}catch(Exception eClose){}
+	    	}catch(Exception eClose){
+	    		// close
+	    	}
 	    }
 	}
 	

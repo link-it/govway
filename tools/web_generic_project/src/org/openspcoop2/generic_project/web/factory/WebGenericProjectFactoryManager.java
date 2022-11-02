@@ -121,14 +121,18 @@ public class WebGenericProjectFactoryManager {
 
 		InputStream propertiesStream = null;
 		Properties propertiesReader = new Properties();
-		try{
+		try {
 			propertiesStream = propertiesUrl.openStream();
 			propertiesReader.load(propertiesStream);
 
 		}finally{
 			try{
-				propertiesStream.close();
-			}catch(Exception e){}
+				if(propertiesStream!=null) {
+					propertiesStream.close();
+				}
+			}catch(Exception e){
+				// close
+			}
 		}
 
 		// Leggo le informazioni relative alla classe da instanziare

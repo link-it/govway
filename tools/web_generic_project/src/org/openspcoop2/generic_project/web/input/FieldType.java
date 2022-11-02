@@ -57,7 +57,7 @@ public enum FieldType implements IEnumeration , Serializable , Cloneable{
 	public String toString(){
 		return this.value;
 	}
-	public boolean equals(FieldType object){
+	public boolean equals(IEnumeration object){
 		if(object==null)
 			return false;
 		if(object.getValue()==null)

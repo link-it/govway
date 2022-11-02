@@ -89,6 +89,11 @@ public class AliasField extends ComplexField {
 		}
 	}
 	
+	@Override 
+	public int hashCode() {
+		return super.hashCode();
+	}
+	
 	@Override
 	public String toString(){
 		return toString(0);

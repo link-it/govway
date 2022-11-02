@@ -163,7 +163,7 @@ public class Test {
 				throw new Exception("Resource "+nome+" non contiene cookie parameters");
 		}
 		
-		if(api.getResponses().size() < 0) {
+		if(api.getResponses().isEmpty()) {
 			throw new Exception("Resource "+nome+" non contiene responses");
 		}
 

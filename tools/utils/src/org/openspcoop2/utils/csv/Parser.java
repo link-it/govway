@@ -211,7 +211,9 @@ public class Parser {
 				if(reader!=null){
 					reader.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -234,7 +236,9 @@ public class Parser {
 				if(bin!=null){
 					bin.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -260,7 +264,9 @@ public class Parser {
 				if(fin!=null){
 					fin.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -298,7 +304,9 @@ public class Parser {
 				if(reader!=null){
 					reader.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	public ParserResult parseCsvFile(Format format, Reader reader) throws UtilsException{
@@ -400,7 +408,9 @@ public class Parser {
 							parser.close();
 							parser = null;
 						}
-					}catch(Exception eClose){}
+					}catch(Exception eClose) {
+						// close
+					}
 				}
 				
 				recordBean.setMap(recordMap);
@@ -416,7 +426,9 @@ public class Parser {
 				if(parser!=null){
 					parser.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 	}

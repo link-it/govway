@@ -60,7 +60,9 @@ public class FileSystemUtilities {
 			try{
 				if(fout!=null)
 					fout.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 	public static void copy(InputStream in, OutputStream out) 
@@ -96,10 +98,11 @@ public class FileSystemUtilities {
 			}
 
 			String files[] = srcPath.list();
-
-			for(int i = 0; i < files.length; i++){
-					FileSystemUtilities.copyDirectory(new File(srcPath, files[i]), 
-							new File(dstPath, files[i]));
+			if(files!=null) {
+				for(int i = 0; i < files.length; i++){
+						FileSystemUtilities.copyDirectory(new File(srcPath, files[i]), 
+								new File(dstPath, files[i]));
+				}
 			}
 		}
 		else{

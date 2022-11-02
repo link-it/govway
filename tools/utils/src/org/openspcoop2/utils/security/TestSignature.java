@@ -69,7 +69,7 @@ public class TestSignature {
 		Caused by: java.security.InvalidKeyException: init() failed
 			at jdk.crypto.cryptoki/sun.security.pkcs11.P11Mac.engineInit(P11Mac.java:208)
 			at java.base/javax.crypto.Mac.init(Mac.java:433)
-			at org.openspcoop2.utils.security.HmacJwsSignatureProvider.doCreateJwsSignature(HmacJwsSignatureProvider.java:82)
+			at org.openspcoop2.utils.security.HmacJwsSignatureProviderExtended.doCreateJwsSignature(HmacJwsSignatureProvider.java:82)
 			... 8 more
 		Caused by: sun.security.pkcs11.wrapper.PKCS11Exception: CKR_KEY_TYPE_INCONSISTENT
 			at jdk.crypto.cryptoki/sun.security.pkcs11.wrapper.PKCS11.C_SignInit(Native Method)
@@ -854,7 +854,9 @@ public class TestSignature {
 				if(jwk_symmetric_fKeystore!=null){
 					jwk_symmetric_fKeystore.delete();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 

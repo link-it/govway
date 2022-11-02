@@ -95,7 +95,9 @@ public class MimeTypes {
 				if(is!=null){
 					is.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 	} 
@@ -105,7 +107,9 @@ public class MimeTypes {
 		try{
 			String fileName = file.getName();
 			ext = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length());
-		}catch(Exception e){}
+		}catch(Exception e){
+			// close
+		}
 		if(ext==null){
 			ext = "bin";
 		}

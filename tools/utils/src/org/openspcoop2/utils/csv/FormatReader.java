@@ -25,6 +25,7 @@ import java.util.Properties;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.QuoteMode;
 import org.apache.commons.lang.ArrayUtils;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.UtilsException;
 
 /**
@@ -161,9 +162,9 @@ public class FormatReader {
 		
 		// behaviour
 		
-		Boolean allowMissingColumnsNames = getBooleanProperty(properties, CSV_ALLOW_MISSING_COLUMN_NAMES);
+		BooleanNullable allowMissingColumnsNames = getBooleanProperty(properties, CSV_ALLOW_MISSING_COLUMN_NAMES);
 		if(allowMissingColumnsNames!=null){
-			builder.setAllowMissingColumnNames(allowMissingColumnsNames);
+			builder.setAllowMissingColumnNames(allowMissingColumnsNames.getValue());
 		}
 		
 		Character commentMarker = getCharProperty(properties, CSV_COMMENT_MARKER);
@@ -181,9 +182,9 @@ public class FormatReader {
 			builder.setEscape(escape);
 		}
 		
-		Boolean withHeader = getBooleanProperty(properties, CSV_WITH_HEADER);
+		BooleanNullable withHeader = getBooleanProperty(properties, CSV_WITH_HEADER);
 		if(withHeader!=null){
-			if(withHeader){
+			if(withHeader.getValue()){
 				String [] h = getArrayStringProperty(properties, CSV_HEADER);
 				if(h!=null && h.length>0)
 					builder.setHeader(h);
@@ -198,14 +199,14 @@ public class FormatReader {
 			}
 		}
 		
-		Boolean withIgnoreEmptyLines = getBooleanProperty(properties, CSV_WITH_IGNORE_EMPTY_LINES);
+		BooleanNullable withIgnoreEmptyLines = getBooleanProperty(properties, CSV_WITH_IGNORE_EMPTY_LINES);
 		if(withIgnoreEmptyLines!=null){
-			builder.setIgnoreEmptyLines(withIgnoreEmptyLines);
+			builder.setIgnoreEmptyLines(withIgnoreEmptyLines.getValue());
 		}
 		
-		Boolean withIgnoreSurroundingSpaces = getBooleanProperty(properties, CSV_WITH_IGNORE_SURROUNDING_SPACES);
+		BooleanNullable withIgnoreSurroundingSpaces = getBooleanProperty(properties, CSV_WITH_IGNORE_SURROUNDING_SPACES);
 		if(withIgnoreSurroundingSpaces!=null){
-			builder.setIgnoreSurroundingSpaces(withIgnoreSurroundingSpaces);
+			builder.setIgnoreSurroundingSpaces(withIgnoreSurroundingSpaces.getValue());
 		}
 		
 		String withNullString = getProperty(properties, CSV_WITH_NULL_STRING);
@@ -239,14 +240,14 @@ public class FormatReader {
 			builder.setRecordSeparator(withRecordSeparator);
 		}
 		
-		Boolean withSkipHeaderRecord = getBooleanProperty(properties, CSV_WITH_SKIP_HEADER_RECORD);
+		BooleanNullable withSkipHeaderRecord = getBooleanProperty(properties, CSV_WITH_SKIP_HEADER_RECORD);
 		if(withSkipHeaderRecord!=null){
-			builder.setSkipHeaderRecord(withSkipHeaderRecord);
+			builder.setSkipHeaderRecord(withSkipHeaderRecord.getValue());
 		}
 		
-		Boolean skipEmptyRecord = getBooleanProperty(properties, CSV_SKIP_EMPTY_RECORD);
+		BooleanNullable skipEmptyRecord = getBooleanProperty(properties, CSV_SKIP_EMPTY_RECORD);
 		if(skipEmptyRecord!=null){
-			this.skipEmptyRecord = skipEmptyRecord;
+			this.skipEmptyRecord = skipEmptyRecord.getValue();
 		}
 		
 		this.format = builder.build();
@@ -276,23 +277,23 @@ public class FormatReader {
 		return null;
 	}
 	
-	private Boolean getBooleanProperty(Properties properties,String name) throws UtilsException{
+	private BooleanNullable getBooleanProperty(Properties properties,String name) throws UtilsException{
 		if(properties.containsKey(name)){
 			String tmp = properties.getProperty(name);
 			if(tmp!=null){
 				tmp = tmp.trim();
 				if("true".equalsIgnoreCase(tmp)){
-					return true;
+					return BooleanNullable.TRUE();
 				}
 				else if("false".equalsIgnoreCase(tmp)){
-					return false;
+					return BooleanNullable.FALSE();
 				}
 				else{
 					throw new UtilsException("Valore della proprietà ["+name+"] deve essere un valore booleano, trovato invece ["+tmp+"]");
 				}
 			}
 		}
-		return null;
+		return BooleanNullable.NULL();
 	}
 	
 	private Character getCharProperty(Properties properties,String name) throws UtilsException{

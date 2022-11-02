@@ -63,7 +63,9 @@ public class LoggerPropertiesUtilities {
 					if(fin!=null){
 						fin.close();
 					}
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 		}
 

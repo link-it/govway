@@ -110,6 +110,7 @@ public class RicezioneBusteMessage implements GenericMessage {
 	public String getIdMessaggioSblocco() {
 		return this.idMessaggioSblocco;
 	}
+	@Override
 	public PdDContext getPddContext() {
 		return this.pddContext;
 	}

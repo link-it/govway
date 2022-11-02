@@ -50,6 +50,19 @@ import org.slf4j.Logger;
  */
 public class SemaphoreEngine {
 
+	private static java.util.Random _rnd = null;
+	private static synchronized void initRandom() {
+		if(_rnd==null) {
+			_rnd = new java.util.Random();
+		}
+	}
+	private static java.util.Random getRandom() {
+		if(_rnd==null) {
+			initRandom();
+		}
+		return _rnd;
+	}
+	
 	protected static SemaphoreEngine getSemaphore(SemaphoreMapping mapping, SemaphoreConfiguration config, TipiDatabase databaseType, Logger log) throws UtilsException {
 		return new SemaphoreEngine(mapping, config, databaseType, log);
 	}
@@ -145,7 +158,9 @@ public class SemaphoreEngine {
 			try{
 				if( pstmt != null )
 					pstmt.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 		}
 			
 		if(exist) {
@@ -187,7 +202,9 @@ public class SemaphoreEngine {
 				try{
 					if( pstmt != null )
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 			}
 		}
 		
@@ -610,7 +627,7 @@ public class SemaphoreEngine {
 						}
 					}
 					
-					int sleep = (new java.util.Random()).nextInt(intervalloDestro);
+					int sleep = getRandom().nextInt(intervalloDestro);
 					//System.out.println("Sleep: "+sleep);
 					Utilities.sleep(sleep); // random
 				}catch(Exception eRandom){}

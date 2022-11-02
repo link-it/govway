@@ -45,7 +45,17 @@ public class Generator {
 
 	public static void main(String[] args) throws Exception {
 
-		String usage = "\n\nUse: generator.sh tipo\n\ttipo:"+TipoIntervalloStatistico.toStringArray();
+		StringBuilder bf = new StringBuilder();
+		String [] tipi = TipoIntervalloStatistico.toStringArray();
+		if(tipi!=null) {
+			for (String t : tipi) {
+				if(bf.length()>0) {
+					bf.append(",");
+				}
+				bf.append(t);
+			}
+		}
+		String usage = "\n\nUse: generator.sh tipo\n\ttipo: "+bf.toString();
 		
 		if(args.length<=0) {
 			throw new Exception("ERROR: tipo di statistica da generare non fornito"+usage);

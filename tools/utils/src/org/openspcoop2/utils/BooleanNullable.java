@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2022 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2022 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -17,17 +17,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.generic_project.expression;
+package org.openspcoop2.utils;
 
 /**
- * SortOrder
- * 
- * @author Poli Andrea (apoli@link.it)
+ * BooleanNullable
+ *
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public enum SortOrder {
+public class BooleanNullable {
 
-	ASC ,DESC , UNSORTED ;
+	public static BooleanNullable NULL() {
+		return new BooleanNullable(null);
+	}
+	public static BooleanNullable TRUE() {
+		return new BooleanNullable(Boolean.TRUE);
+	}
+	public static BooleanNullable FALSE() {
+		return new BooleanNullable(Boolean.FALSE);
+	}
 	
+	private Boolean value = null;
+
+	public BooleanNullable(Boolean value) {
+		this.value = value;
+	}
+
+	public Boolean getValue() {
+		return this.value;
+	}
+	public void setValue(Boolean value) {
+		this.value = value;
+	}
 }

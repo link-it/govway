@@ -56,7 +56,7 @@ public enum EnumerationDouble implements IEnumeration {
 	public String toString(){
 		return this.value+"";
 	}
-	public boolean equals(EnumerationDouble object){
+	public boolean equals(IEnumeration object){
 		if(object==null)
 			return false;
 		return object.getValue().toString().equals(this.getValue().toString());	

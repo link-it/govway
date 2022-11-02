@@ -81,6 +81,9 @@ public class ClientTest {
 				tipoDatabase = TipiDatabase.toEnumConstant(args[0].trim());
 			}
 		}
+		if(tipoDatabase==null) {
+			throw new Exception("TipoDatabase non fornito");
+		}
 
 		String url = null;
 		String driver = null;
@@ -88,7 +91,7 @@ public class ClientTest {
 		String password = null;
 		int timeWaitMs = 60000;
 		boolean testIdle=true;
-
+		
 		switch (tipoDatabase) {
 		case POSTGRESQL:
 			url = "jdbc:postgresql://localhost/prova";
@@ -403,7 +406,9 @@ public class ClientTest {
 		}finally{
 			try{
 				con.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			for (int i = 0; i < THREADS; i++) {
 				try{
 					conThreads.get(i).close();
@@ -444,7 +449,9 @@ public class ClientTest {
 		}finally {
 			try{
 				pstmt.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -474,7 +481,9 @@ public class ClientTest {
 		}finally {
 			try{
 				pstmt.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -552,7 +561,9 @@ public class ClientTest {
 			}catch(Exception eClose){}
 			try{
 				pstmt.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 	}

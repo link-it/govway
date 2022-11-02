@@ -69,6 +69,9 @@ public class ClientTest {
 				tipoDatabase = TipiDatabase.toEnumConstant(args[0].trim());
 			}
 		}
+		if(tipoDatabase==null) {
+			throw new Exception("TipoDatabase non fornito");
+		}
 
 		String url = null;
 		String driver = null;
@@ -236,7 +239,9 @@ public class ClientTest {
 			}catch(Exception eClose){}
 			try{
 				con.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	

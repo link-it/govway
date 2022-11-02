@@ -90,6 +90,18 @@ public class NTPDate implements IDate {
 	 */
 	@Override
 	public void init(java.util.Properties properties) throws UtilsException{
+		_init(properties);
+	}
+	
+	private static void _init(java.util.Properties properties) throws UtilsException{
+		if(NTPDate.udpClient==null) {
+			_initSync(properties);
+		}
+	}
+	private static synchronized void _initSync(java.util.Properties properties) throws UtilsException{
+		if(NTPDate.udpClient!=null) {
+			return;
+		}
 		try{
 			NTPDate.udpClient = new NTPUDPClient();
 			

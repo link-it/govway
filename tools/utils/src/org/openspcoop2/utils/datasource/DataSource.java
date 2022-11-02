@@ -335,7 +335,9 @@ class InformazioniDatabaseChecker implements Callable<String>{
 			try{
 				if(c!=null)
 					this.dataSource.closeConnection(c);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	

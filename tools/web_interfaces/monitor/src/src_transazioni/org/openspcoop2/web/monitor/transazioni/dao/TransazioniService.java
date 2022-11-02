@@ -76,7 +76,7 @@ import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.beans.UnixTimestampIntervalField;
 import org.openspcoop2.generic_project.dao.IDBServiceUtilities;
-import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities;
+import org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
@@ -1628,7 +1628,7 @@ public class TransazioniService implements ITransazioniService {
 			
 			this.log.debug("Trovate ["+groupBy.size()+"] consegne [id transazione: " + idTransazione + "],[SA Erogatore: " + saErogatore + "]");
 			for (Map<String, Object> row : groupBy) {
-				Date data = (Date) row.get(JDBCUtilities.getAlias(DumpMessaggio.model().DATA_CONSEGNA_EROGATORE));
+				Date data = (Date) row.get(GenericJDBCUtilities.getAlias(DumpMessaggio.model().DATA_CONSEGNA_EROGATORE));
 				
 				DumpMessaggioBean bean = new DumpMessaggioBean();
 				bean.setDataConsegnaErogatore(data);

@@ -115,7 +115,15 @@ public class BlackListElement implements Serializable {
 		}
 		
 		//stesso nome ed elenco dei parametri con un diverso numero di elementi: return false;
-		if(this.classiParametri.length != ble.getClassiParametri().length){
+		int this_length = -1;
+		if(this.classiParametri!=null) {
+			this_length = this.classiParametri.length;
+		}
+		int ble_length = -1;
+		if(ble.getClassiParametri()!=null) {
+			ble_length = ble.getClassiParametri().length;
+		}
+		if(this_length != ble_length){
 			return false;
 		}
 		
@@ -133,4 +141,8 @@ public class BlackListElement implements Serializable {
 		return true;
 	}
 
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
 }

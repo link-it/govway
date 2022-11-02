@@ -31,7 +31,7 @@ import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.beans.UpdateField;
 import org.openspcoop2.generic_project.beans.UpdateModel;
 
-import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities;
+import org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
@@ -828,7 +828,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdDumpMessaggio id, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 		
-		JDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
+		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model()), 
 				this._getMapTableToPKColumn(), 
 				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
@@ -838,7 +838,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdDumpMessaggio id, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 		
-		JDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
+		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model()), 
 				this._getMapTableToPKColumn(), 
 				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
@@ -848,7 +848,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdDumpMessaggio id, UpdateModel ... updateModels) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 		
-		JDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
+		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model()), 
 				this._getMapTableToPKColumn(), 
 				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
@@ -859,7 +859,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 		java.util.List<Object> ids = new java.util.ArrayList<Object>();
 		ids.add(tableId);
-		JDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
+		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model()), 
 				this._getMapTableToPKColumn(), 
 				ids,
@@ -870,7 +870,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 		java.util.List<Object> ids = new java.util.ArrayList<Object>();
 		ids.add(tableId);
-		JDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
+		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model()), 
 				this._getMapTableToPKColumn(), 
 				ids,
@@ -881,7 +881,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateModel ... updateModels) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 		java.util.List<Object> ids = new java.util.ArrayList<Object>();
 		ids.add(tableId);
-		JDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
+		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model()), 
 				this._getMapTableToPKColumn(), 
 				ids,
@@ -1122,7 +1122,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 	@Override
 	public int nativeUpdate(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, String sql,Object ... param) throws ServiceException,NotImplementedException, Exception {
 	
-		return org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.nativeUpdate(jdbcProperties, log, connection, sqlObject,
+		return org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.nativeUpdate(jdbcProperties, log, connection, sqlObject,
 																							sql,param);
 	
 	}

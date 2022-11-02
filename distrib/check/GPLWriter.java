@@ -113,8 +113,12 @@ public class GPLWriter {
 			}else{
 				if( (profondita++) <= profonditaCheck){
 					File [] fChilds = f.listFiles();
-					for (int i = 0; i < fChilds.length; i++) {
-						writeGPLDichiarazione(fChilds[i],(profondita++));
+					if(fChilds!=null) {
+						for (int i = 0; i < fChilds.length; i++) {
+							if(fChilds[i]!=null) {
+								writeGPLDichiarazione(fChilds[i],(profondita++));
+							}
+						}
 					}
 				}
 			}

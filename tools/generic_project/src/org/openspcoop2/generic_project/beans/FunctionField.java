@@ -450,6 +450,11 @@ public class FunctionField {
 		return true;
 	}
 	
+	@Override 
+	public int hashCode() {
+		return super.hashCode();
+	}
+	
 	@Override
 	public String toString(){
 				

@@ -81,7 +81,7 @@ public enum JsonPathReturnType {
 	public String toString(){
 		return this.valore.toString();
 	}
-	public boolean equals(JsonPathReturnType esito){
+	public boolean equals(QName esito){
 		return this.toString().equals(esito.toString());
 	}
 

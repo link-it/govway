@@ -92,6 +92,11 @@ public class ComplexField implements IField {
 			this.father.equals(f.getFather());
 	}
 	
+	@Override 
+	public int hashCode() {
+		return super.hashCode();
+	}
+	
 	@Override
 	public String toString(){
 		return toString(0);

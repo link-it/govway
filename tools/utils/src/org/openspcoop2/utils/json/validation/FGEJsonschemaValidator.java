@@ -77,33 +77,37 @@ public class FGEJsonschemaValidator implements IJsonSchemaValidator {
 		try {
 			this.schema = this.jsonMapper.readTree(schema);
 
-			switch(config.getAdditionalProperties()) {
-			case DEFAULT:
-				break;
-			case FORCE_DISABLE: ValidationUtils.disableAdditionalProperties(this.jsonMapper, this.schema, true, true);
-				break;
-			case FORCE_STRING: ValidationUtils.disableAdditionalProperties(this.jsonMapper, this.schema, false, true);
-				break;
-			case IF_NULL_DISABLE: ValidationUtils.disableAdditionalProperties(this.jsonMapper, this.schema, true, false);
-				break;
-			case IF_NULL_STRING: ValidationUtils.disableAdditionalProperties(this.jsonMapper, this.schema, false, false);
-				break;
-			default:
-				break;
+			if(config!=null) {
+				switch(config.getAdditionalProperties()) {
+				case DEFAULT:
+					break;
+				case FORCE_DISABLE: ValidationUtils.disableAdditionalProperties(this.jsonMapper, this.schema, true, true);
+					break;
+				case FORCE_STRING: ValidationUtils.disableAdditionalProperties(this.jsonMapper, this.schema, false, true);
+					break;
+				case IF_NULL_DISABLE: ValidationUtils.disableAdditionalProperties(this.jsonMapper, this.schema, true, false);
+					break;
+				case IF_NULL_STRING: ValidationUtils.disableAdditionalProperties(this.jsonMapper, this.schema, false, false);
+					break;
+				default:
+					break;
+				}
 			}
 			
-			switch(config.getPoliticaInclusioneTipi()) {
-			case DEFAULT:
-				break;
-			case ALL: ValidationUtils.addTypes(this.jsonMapper, this.schema, config.getTipi(), true);
-				break;
-			case ANY: ValidationUtils.addTypes(this.jsonMapper, this.schema, config.getTipi(), false);
-				break;
-			default:
-				break;
+			if(config!=null) {
+				switch(config.getPoliticaInclusioneTipi()) {
+				case DEFAULT:
+					break;
+				case ALL: ValidationUtils.addTypes(this.jsonMapper, this.schema, config.getTipi(), true);
+					break;
+				case ANY: ValidationUtils.addTypes(this.jsonMapper, this.schema, config.getTipi(), false);
+					break;
+				default:
+					break;
+				}
 			}
 			
-			if(config.isVerbose()) {
+			if(config!=null && config.isVerbose()) {
 				try {
 					ByteArrayOutputStream bout = new ByteArrayOutputStream();
 					JSONUtils.getInstance(true).writeTo(this.schema, bout);

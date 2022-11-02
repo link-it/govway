@@ -333,6 +333,9 @@ public class ClientTest {
 				tipoDatabase = TipiDatabase.toEnumConstant(args[0].trim());
 			}
 		}
+		if(tipoDatabase==null) {
+			throw new Exception("TipoDatabase non fornito");
+		}
 		
 		String url = null;
 		String driver = null;
@@ -629,7 +632,9 @@ public class ClientTest {
 			}catch(Exception eClose){}
 			try{
 				con.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 
 
@@ -858,7 +863,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -888,6 +895,9 @@ public class ClientTest {
 			info(log,systemOut,"\ntest-"+table+" fromTable:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
+				if(stmtQuery==null) {
+					throw new Exception("Statement is null"); 
+				}
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
@@ -922,7 +932,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -957,6 +969,9 @@ public class ClientTest {
 			info(log,systemOut,"\ntest (Parte1)-"+table+" escapeLike:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
+				if(stmtQuery==null) {
+					throw new Exception("Statement is null"); 
+				}
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
@@ -999,6 +1014,9 @@ public class ClientTest {
 			info(log,systemOut,"\ntestLower (Parte1)-"+table+" escapeLike:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
+				if(stmtQuery==null) {
+					throw new Exception("Statement is null"); 
+				}
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
@@ -1043,6 +1061,9 @@ public class ClientTest {
 			info(log,systemOut,"\ntest (Parte2)-"+table+" escapeLike:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
+				if(stmtQuery==null) {
+					throw new Exception("Statement is null"); 
+				}
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
@@ -1085,6 +1106,9 @@ public class ClientTest {
 			info(log,systemOut,"\ntestLower (Parte2)-"+table+" escapeLike:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
+				if(stmtQuery==null) {
+					throw new Exception("Statement is null"); 
+				}
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
@@ -1134,6 +1158,9 @@ public class ClientTest {
 			info(log,systemOut,"\ntest (Parte1)-"+table+" escapeLike:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
+				if(stmtQuery==null) {
+					throw new Exception("Statement is null"); 
+				}
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
@@ -1176,6 +1203,9 @@ public class ClientTest {
 			info(log,systemOut,"\ntestLower (Parte1)-"+table+" escapeLike:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
+				if(stmtQuery==null) {
+					throw new Exception("Statement is null"); 
+				}
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
@@ -1225,6 +1255,9 @@ public class ClientTest {
 			info(log,systemOut,"\ntest (Parte2)-"+table+" escapeLike:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
+				if(stmtQuery==null) {
+					throw new Exception("Statement is null"); 
+				}
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
@@ -1267,6 +1300,9 @@ public class ClientTest {
 			info(log,systemOut,"\ntestLower (Parte2)-"+table+" escapeLike:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
+				if(stmtQuery==null) {
+					throw new Exception("Statement is null"); 
+				}
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
@@ -1309,7 +1345,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1348,6 +1386,9 @@ public class ClientTest {
 			info(log,systemOut,"\ntest (Parte1)-"+table+" escapeLikeConfig:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
+				if(stmtQuery==null) {
+					throw new Exception("Statement is null"); 
+				}
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
@@ -1394,6 +1435,9 @@ public class ClientTest {
 			info(log,systemOut,"\ntestLower (Parte1)-"+table+" escapeLikeConfig:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
+				if(stmtQuery==null) {
+					throw new Exception("Statement is null"); 
+				}
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
@@ -1442,6 +1486,9 @@ public class ClientTest {
 			info(log,systemOut,"\ntest (Parte2)-"+table+" escapeLikeConfig:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
+				if(stmtQuery==null) {
+					throw new Exception("Statement is null"); 
+				}
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
@@ -1488,6 +1535,9 @@ public class ClientTest {
 			info(log,systemOut,"\ntestLower (Parte2)-"+table+" escapeLikeConfig:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
+				if(stmtQuery==null) {
+					throw new Exception("Statement is null"); 
+				}
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
@@ -1541,6 +1591,9 @@ public class ClientTest {
 			info(log,systemOut,"\ntest (Parte1)-"+table+" escapeLikeConfig:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
+				if(stmtQuery==null) {
+					throw new Exception("Statement is null"); 
+				}
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
@@ -1587,6 +1640,9 @@ public class ClientTest {
 			info(log,systemOut,"\ntestLower (Parte1)-"+table+" escapeLikeConfig:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
+				if(stmtQuery==null) {
+					throw new Exception("Statement is null"); 
+				}
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
@@ -2225,7 +2281,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -2257,6 +2315,9 @@ public class ClientTest {
 			info(log,systemOut,"\ntest0_engine:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
+				if(stmtQuery==null) {
+					throw new Exception("Statement is null"); 
+				}
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				try {
@@ -2333,6 +2394,9 @@ public class ClientTest {
 			info(log,systemOut,"\ntest0_engine:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
+				if(stmtQuery==null) {
+					throw new Exception("Statement is null"); 
+				}
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				try {
@@ -2409,6 +2473,9 @@ public class ClientTest {
 			info(log,systemOut,"\ntest0_engine:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
+				if(stmtQuery==null) {
+					throw new Exception("Statement is null"); 
+				}
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				try {
@@ -2474,7 +2541,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 		
@@ -2534,6 +2603,9 @@ public class ClientTest {
 			info(log,systemOut,"\ntest0_engine:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
+				if(stmtQuery==null) {
+					throw new Exception("Statement is null"); 
+				}
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
@@ -2573,7 +2645,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 		
@@ -2659,7 +2733,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 		
@@ -2747,7 +2823,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 		
@@ -2850,7 +2928,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 		
@@ -2945,7 +3025,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 		
@@ -3062,7 +3144,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 		
@@ -3181,7 +3265,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 
 		
@@ -3308,7 +3394,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 		
@@ -3405,7 +3493,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 		
@@ -3513,7 +3603,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 		
@@ -3623,7 +3715,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 
 	}
@@ -3827,7 +3921,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 		
@@ -3953,7 +4049,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 		
@@ -4070,7 +4168,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 		
@@ -4206,7 +4306,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 		
@@ -4361,7 +4463,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 		
@@ -4563,7 +4667,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 			if(findError==false){
 				throw new Exception("Atteso errore utilizzo select for update non permesso in union");
@@ -4617,6 +4723,9 @@ public class ClientTest {
 			info(log,systemOut,"\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [Normale UnionAll]:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
+				if(stmtQuery==null) {
+					throw new Exception("Statement is null"); 
+				}
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
@@ -4757,7 +4866,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 		
@@ -4800,6 +4911,9 @@ public class ClientTest {
 				info(log,systemOut,"\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [OffSetLimit UnionAll]:\n\t"+test);
 				try{
 					stmtQuery = con.createStatement();
+					if(stmtQuery==null) {
+						throw new Exception("Statement is null"); 
+					}
 					rs = stmtQuery.executeQuery(test);
 					int index = 0;
 					if(rs.next()){
@@ -4929,7 +5043,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 		
@@ -4979,6 +5095,9 @@ public class ClientTest {
 					}
 					
 					stmtQuery = con.createStatement();
+					if(stmtQuery==null) {
+						throw new Exception("Statement is null"); 
+					}
 					rs = stmtQuery.executeQuery(test);
 					int index = 0;
 					if(rs.next()){
@@ -5076,7 +5195,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 		
@@ -5123,6 +5244,9 @@ public class ClientTest {
 					}
 					
 					stmtQuery = con.createStatement();
+					if(stmtQuery==null) {
+						throw new Exception("Statement is null"); 
+					}
 					rs = stmtQuery.executeQuery(test);
 					int index = 0;
 					boolean foundEndsWith10 = false;
@@ -5256,7 +5380,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 		
@@ -5324,11 +5450,12 @@ public class ClientTest {
 			sqlQueryObject.addGroupBy("destinatario");
 
 			try{
-				if(count){
+				/*if(count){
 					info(log,systemOut,"["+tipo.toString()+"] f. OffSetLimit *: \n\t"+sqlQueryObject.createSQLUnionCount(unionAll,"aliasUnion", prepare1, prepare2));
-				}else{
-					info(log,systemOut,"["+tipo.toString()+"] f. OffSetLimit *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
-				}
+				}else{*/
+				// count e' per forza false
+				info(log,systemOut,"["+tipo.toString()+"] f. OffSetLimit *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
+				//}
 				throw new Exception("Attesa eccezione: Non e' possibile usare offset se non e' stato indicato alcun field nella select piu' esterna della union");
 			}catch(SQLQueryObjectException s){
 				if(!s.getMessage().equals(msgOffset))
@@ -5352,11 +5479,12 @@ public class ClientTest {
 			sqlQueryObject.addGroupBy("destinatario");
 
 			try{
-				if(count){
+				/*if(count){
 					info(log,systemOut,"["+tipo.toString()+"] g. OffSet *: \n\t"+sqlQueryObject.createSQLUnionCount(unionAll,"aliasUnion", prepare1, prepare2));
-				}else{
-					info(log,systemOut,"["+tipo.toString()+"] g. OffSet *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
-				}
+				}else{*/
+				// count e' per forza false
+				info(log,systemOut,"["+tipo.toString()+"] g. OffSet *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
+				//}
 				throw new Exception("Attesa eccezione: Non e' possibile usare offset se non e' stato indicato alcun field nella select piu' esterna della union");
 			}catch(SQLQueryObjectException s){
 				if(!s.getMessage().equals(msgOffset))
@@ -5380,11 +5508,12 @@ public class ClientTest {
 			sqlQueryObject.addGroupBy("destinatario");
 
 			try{
-				if(count){
+				/*if(count){
 					info(log,systemOut,"["+tipo.toString()+"] h Limit *: \n\t"+sqlQueryObject.createSQLUnionCount(unionAll,"aliasUnion", prepare1, prepare2));
-				}else{
-					info(log,systemOut,"["+tipo.toString()+"] h Limit *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
-				}
+				}else{*/
+				// count e' per forza false
+				info(log,systemOut,"["+tipo.toString()+"] h Limit *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
+				//}
 				throw new Exception("Attesa eccezione: Non e' possibile usare limit se non e' stato indicato alcun field nella select piu' esterna della union");
 			}catch(SQLQueryObjectException s){
 				if(!s.getMessage().equals(msgLimit) && !s.getMessage().equals(msgOffset)) // alcune implementazione forzano l'offset a 0 se si imposta il limit e non l'offset
@@ -5610,7 +5739,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -6389,7 +6520,9 @@ public class ClientTest {
 					stmtQuery.close();
 					stmtQuery = null;
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 

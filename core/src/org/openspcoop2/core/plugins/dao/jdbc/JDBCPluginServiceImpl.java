@@ -31,7 +31,7 @@ import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.beans.UpdateField;
 import org.openspcoop2.generic_project.beans.UpdateModel;
 
-import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities;
+import org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
@@ -459,7 +459,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdPlugin id, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 		
-		JDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
+		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getPluginFieldConverter().toTable(Plugin.model()), 
 				this._getMapTableToPKColumn(), 
 				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
@@ -469,7 +469,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdPlugin id, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 		
-		JDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
+		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getPluginFieldConverter().toTable(Plugin.model()), 
 				this._getMapTableToPKColumn(), 
 				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
@@ -479,7 +479,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdPlugin id, UpdateModel ... updateModels) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 		
-		JDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
+		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getPluginFieldConverter().toTable(Plugin.model()), 
 				this._getMapTableToPKColumn(), 
 				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject, id),
@@ -490,7 +490,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 		java.util.List<Object> ids = new java.util.ArrayList<Object>();
 		ids.add(tableId);
-		JDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
+		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getPluginFieldConverter().toTable(Plugin.model()), 
 				this._getMapTableToPKColumn(), 
 				ids,
@@ -501,7 +501,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 		java.util.List<Object> ids = new java.util.ArrayList<Object>();
 		ids.add(tableId);
-		JDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
+		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getPluginFieldConverter().toTable(Plugin.model()), 
 				this._getMapTableToPKColumn(), 
 				ids,
@@ -512,7 +512,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, UpdateModel ... updateModels) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 		java.util.List<Object> ids = new java.util.ArrayList<Object>();
 		ids.add(tableId);
-		JDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
+		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getPluginFieldConverter().toTable(Plugin.model()), 
 				this._getMapTableToPKColumn(), 
 				ids,
@@ -703,7 +703,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 	@Override
 	public int nativeUpdate(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, String sql,Object ... param) throws ServiceException,NotImplementedException, Exception {
 	
-		return org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.nativeUpdate(jdbcProperties, log, connection, sqlObject,
+		return org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.nativeUpdate(jdbcProperties, log, connection, sqlObject,
 																							sql,param);
 	
 	}

@@ -8,11 +8,11 @@
 	<import file="${openspcoop2}/ant/commons/api-build.xml" />
 	
 	<!-- estensione di ant (if .... ) -->
-	<taskdef resource="net/sf/antcontrib/antlib.xml">
+	<!--<taskdef resource="net/sf/antcontrib/antlib.xml">
           <classpath>
               <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
           </classpath>
-	</taskdef>
+	</taskdef>-->
 	
 
 	<!-- Compilazione della libreria 'org.openspcoop2.protocol.trasparente.testsuite.*' -->

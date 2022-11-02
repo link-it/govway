@@ -926,7 +926,9 @@ public class TestEncrypt {
 				if(jwk_symmetric_fKeystore!=null){
 					jwk_symmetric_fKeystore.delete();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// delete
+			}
 		}
 	}
 	

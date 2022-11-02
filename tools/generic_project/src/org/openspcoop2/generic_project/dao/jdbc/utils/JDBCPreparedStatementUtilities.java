@@ -54,7 +54,7 @@ public class JDBCPreparedStatementUtilities {
 	private Connection connection;
 	private JDBCSqlLogger sqlLogger;
 	private TipiDatabase tipoDatabase = null;
-	private JDBCParameterUtilities jdbcParameterUtilities = null;
+	private GenericJDBCParameterUtilities jdbcParameterUtilities = null;
 	private Integer queryTimeout = null;
 	
 	public JDBCPreparedStatementUtilities(TipiDatabase tipoDatabase,Logger log,Connection connection) throws SQLQueryObjectException, JDBCAdapterException{
@@ -65,7 +65,7 @@ public class JDBCPreparedStatementUtilities {
 		this.connection = connection;
 		this.sqlLogger = new JDBCSqlLogger(this.log);
 		this.tipoDatabase = tipoDatabase;
-		this.jdbcParameterUtilities = new JDBCParameterUtilities(this.tipoDatabase);
+		this.jdbcParameterUtilities = new GenericJDBCParameterUtilities(this.tipoDatabase);
 		this.queryTimeout = queryTimeout;
 	}
 	
@@ -138,7 +138,9 @@ public class JDBCPreparedStatementUtilities {
 			try{
 				if(pstmt!=null)
 					pstmt.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -163,7 +165,9 @@ public class JDBCPreparedStatementUtilities {
 				if(pstmt!=null){
 					pstmt.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -188,7 +192,9 @@ public class JDBCPreparedStatementUtilities {
 				if(pstmt!=null){
 					pstmt.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -243,7 +249,9 @@ public class JDBCPreparedStatementUtilities {
 				if(pstmt!=null){
 					pstmt.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -297,7 +305,9 @@ public class JDBCPreparedStatementUtilities {
 				if(pstmt!=null){
 					pstmt.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -349,7 +359,9 @@ public class JDBCPreparedStatementUtilities {
 				if(pstmt!=null){
 					pstmt.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -381,7 +393,9 @@ public class JDBCPreparedStatementUtilities {
 				if(pstmt!=null){
 					pstmt.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -413,7 +427,9 @@ public class JDBCPreparedStatementUtilities {
 				if(pstmt!=null){
 					pstmt.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -448,7 +464,9 @@ public class JDBCPreparedStatementUtilities {
 				if(pstmt!=null){
 					pstmt.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	

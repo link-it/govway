@@ -103,7 +103,9 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 						iStream.close();
 					if(httpConn !=null)
 						httpConn.disconnect();
-				} catch(Exception ef) {}
+				} catch(Exception ef) {
+					// close
+				}
 				throw new DriverRisorseSistemaException("Riscontrato errore durante la creazione dell'inputStream della configurazione delle risorse esterne (HTTP) : \n\n"+e.getMessage());
 			}
 			this.lastModified = System.currentTimeMillis();
@@ -137,7 +139,9 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 			try{ 
 				if(httpConn !=null)
 					httpConn.disconnect();
-			} catch(Exception ef) {}
+			} catch(Exception ef) {
+				// close
+			}
 			throw new DriverRisorseSistemaException("Riscontrato errore durante l'unmarshall del file di configurazione: "+e.getMessage());
 		}
 

@@ -29,7 +29,7 @@ import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceCRUDSingleObject;
 import org.openspcoop2.generic_project.beans.UpdateField;
 import org.openspcoop2.generic_project.beans.UpdateModel;
 
-import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities;
+import org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
@@ -206,7 +206,7 @@ public class JDBCConfigurazioneGeneraleServiceImpl extends JDBCConfigurazioneGen
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 		
-		JDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
+		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneGeneraleFieldConverter().toTable(ConfigurazioneGenerale.model()), 
 				this._getMapTableToPKColumn(), 
 				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject),
@@ -216,7 +216,7 @@ public class JDBCConfigurazioneGeneraleServiceImpl extends JDBCConfigurazioneGen
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 		
-		JDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
+		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneGeneraleFieldConverter().toTable(ConfigurazioneGenerale.model()), 
 				this._getMapTableToPKColumn(), 
 				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject),
@@ -226,7 +226,7 @@ public class JDBCConfigurazioneGeneraleServiceImpl extends JDBCConfigurazioneGen
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, UpdateModel ... updateModels) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 		
-		JDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
+		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getConfigurazioneGeneraleFieldConverter().toTable(ConfigurazioneGenerale.model()), 
 				this._getMapTableToPKColumn(), 
 				this._getRootTablePrimaryKeyValues(jdbcProperties, log, connection, sqlQueryObject),
@@ -294,7 +294,7 @@ public class JDBCConfigurazioneGeneraleServiceImpl extends JDBCConfigurazioneGen
 	@Override
 	public int nativeUpdate(JDBCServiceManagerProperties jdbcProperties, Logger log,Connection connection,ISQLQueryObject sqlObject, String sql,Object ... param) throws ServiceException,NotImplementedException, Exception {
 	
-		return org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.nativeUpdate(jdbcProperties, log, connection, sqlObject,
+		return org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.nativeUpdate(jdbcProperties, log, connection, sqlObject,
 																							sql,param);
 	
 	}

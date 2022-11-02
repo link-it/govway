@@ -812,7 +812,7 @@ public class ClientTest {
 		
 		EnumerationDouble valueFromString = (EnumerationDouble) formatter.toObject(stringValue, EnumerationDouble.class);
 		System.out.println("- test EnumerationDouble toObjectFromString["+valueFromString.getValue()+"] PARTENZA["+value.getValue()+"]");
-		System.out.println("- test ["+value.getValue()==valueFromString.getValue()+"]");
+		System.out.println("- test ["+(value.getValue().doubleValue() == valueFromString.getValue().doubleValue())+"]");
 		if(!value.equals(valueFromString)){
 			throw new ExpressionException("Errore, conversione toObjectFromString non effettuata correttamente ()");
 		}

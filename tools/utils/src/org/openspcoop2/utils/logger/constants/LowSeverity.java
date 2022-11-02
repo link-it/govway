@@ -33,10 +33,10 @@ public enum LowSeverity implements Serializable {
 	DEBUG_HIGH, DEBUG_MEDIUM, DEBUG_LOW;
 	
 	public Severity toSeverity(){
-		if(this.name().equals(DEBUG_LOW)){
+		if(this.name().equals(Severity.DEBUG_LOW.name())){
 			return Severity.DEBUG_LOW;
 		}
-		else if(this.name().equals(DEBUG_MEDIUM)){
+		else if(this.name().equals(Severity.DEBUG_MEDIUM.name())){
 			return Severity.DEBUG_MEDIUM;
 		}
 		else{

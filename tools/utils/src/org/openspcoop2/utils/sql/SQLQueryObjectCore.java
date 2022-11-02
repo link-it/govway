@@ -41,6 +41,19 @@ import org.openspcoop2.utils.TipiDatabase;
  */
 public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 
+	private static java.util.Random _rnd = null;
+	private static synchronized void initRandom() {
+		if(_rnd==null) {
+			_rnd = new java.util.Random();
+		}
+	}
+	protected static java.util.Random getRandom() {
+		if(_rnd==null) {
+			initRandom();
+		}
+		return _rnd;
+	}
+	
 	/** List di Field esistenti: i nomi dei fields impostati (se e' stato utilizzato un alias ritorna comunque il nome della colonna) */
 	List<String> fields = new ArrayList<String>();
 	/** List di NomiField esistenti: i nomi dei fields impostati (se e' stato utilizzato un alias ritorna il valore dell'alias) */
@@ -154,7 +167,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		}
 		
 		// Check GroupBy
-		if(this.groupBy.size()>0){
+		if(this.groupBy!=null && this.groupBy.size()>0){
 
 			// verifico che tutte le condizioni di order by siano presente anche nei field di group by
 			if(this.orderBy.size()>0){

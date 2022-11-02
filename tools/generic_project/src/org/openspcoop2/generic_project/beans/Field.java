@@ -77,6 +77,11 @@ public class Field implements IField {
 			this.classType.getName().equals(f.getClassType().getName()) &&
 			this.fieldName.equals(f.getFieldName()) &&
 			this.fieldType.getName().equals(f.getFieldType().getName());
+	}	
+	
+	@Override 
+	public int hashCode() {
+		return super.hashCode();
 	}
 	
 	@Override

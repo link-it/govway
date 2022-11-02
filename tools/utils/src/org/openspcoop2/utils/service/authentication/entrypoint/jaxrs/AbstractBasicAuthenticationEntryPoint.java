@@ -34,7 +34,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.openspcoop2.utils.Costanti;
-import org.openspcoop2.utils.jaxrs.JacksonJsonProvider;
+import org.openspcoop2.utils.jaxrs.JacksonJsonProviderCustomized;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 
@@ -97,7 +97,7 @@ public abstract class AbstractBasicAuthenticationEntryPoint extends BasicAuthent
 				}
 			}
 
-			ObjectMapper mapper = JacksonJsonProvider.getObjectMapper(false, timeZone);
+			ObjectMapper mapper = JacksonJsonProviderCustomized.getObjectMapper(false, timeZone);
 			String fault = mapper.writeValueAsString(response.getEntity());
 			bais = new ByteArrayInputStream(fault.getBytes());
 

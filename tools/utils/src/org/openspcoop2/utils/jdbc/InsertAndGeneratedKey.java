@@ -158,7 +158,9 @@ public class InsertAndGeneratedKey {
 			try{
 				if(stmt!=null)
 					stmt.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 }

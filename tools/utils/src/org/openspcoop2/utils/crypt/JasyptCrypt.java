@@ -37,7 +37,6 @@ import org.slf4j.Logger;
  */
 public class JasyptCrypt implements ICrypt {
 
-	@SuppressWarnings("unused")
 	private Logger log;
 	private JasyptType type;
 	private CryptConfig config;
@@ -216,12 +215,12 @@ class CustomDigesterConfig implements DigesterConfig {
 
 	@Override
 	public Boolean getInvertPositionOfPlainSaltInEncryptionResults() {
-		return null;
+		return false;
 	}
 
 	@Override
 	public Boolean getInvertPositionOfSaltInMessageBeforeDigesting() {
-		return null;
+		return false;
 	}
 
 	@Override
@@ -262,7 +261,7 @@ class CustomDigesterConfig implements DigesterConfig {
 
 	@Override
 	public Boolean getUseLenientSaltSizeCheck() {
-		return null;
+		return false;
 	}
 	
 }

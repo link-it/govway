@@ -61,7 +61,7 @@ public enum EnumerationString implements IEnumeration {
 	public String toString(){
 		return this.value;
 	}
-	public boolean equals(EnumerationString object){
+	public boolean equals(IEnumeration object){
 		if(object==null)
 			return false;
 		if(object.getValue()==null)

@@ -91,7 +91,9 @@ public class Loader {
 				try {
 					if (inPropLog4j != null)
 						inPropLog4j.close();
-				} catch (Exception e) {}
+				} catch (Exception e) {
+					// close
+				}
 			}
 			logCore=LoggerWrapperFactory.getLogger("config_loader.core");	
 			logSql=LoggerWrapperFactory.getLogger("config_loader.sql");	

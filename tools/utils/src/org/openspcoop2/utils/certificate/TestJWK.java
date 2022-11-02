@@ -194,7 +194,9 @@ public class TestJWK {
 				if(fKeystoreJCEKS!=null){
 					fKeystoreJCEKS.delete();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 

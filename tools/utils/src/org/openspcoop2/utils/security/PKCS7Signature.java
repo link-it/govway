@@ -87,6 +87,9 @@ public class PKCS7Signature {
 		}
 	}
 	private void init(KeyStore keystore, String alias, String passwordPrivateKey, boolean useKeystoreProvider) throws UtilsException {
+		if(keystore==null) {
+			throw new UtilsException("Keystore undefined");
+		}
 		this.keystore = keystore;
 		this.privateKey = this.keystore.getPrivateKey(alias, passwordPrivateKey);
 		this.certificate = this.keystore.getCertificate(alias);

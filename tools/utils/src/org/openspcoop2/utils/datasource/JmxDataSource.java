@@ -154,9 +154,9 @@ public class JmxDataSource extends NotificationBroadcasterSupport implements Dyn
 			String param1 = null;
 			if(params[0]!=null && !"".equals(params[0])){
 				param1 = (String)params[0];
-				if(param1==null){
-					throw new MBeanException(new Exception("Identificativo del datasource non fornito"));
-				}
+			}
+			if(param1==null){
+				throw new MBeanException(new Exception("Identificativo del datasource non fornito"));
 			}
 			
 			return this.getUsedDBConnections(param1);
@@ -170,9 +170,9 @@ public class JmxDataSource extends NotificationBroadcasterSupport implements Dyn
 			String param1 = null;
 			if(params[0]!=null && !"".equals(params[0])){
 				param1 = (String)params[0];
-				if(param1==null){
-					throw new MBeanException(new Exception("Identificativo del datasource non fornito"));
-				}
+			}
+			if(param1==null){
+				throw new MBeanException(new Exception("Identificativo del datasource non fornito"));
 			}
 			
 			return this.getInformazioniDatabase(param1);

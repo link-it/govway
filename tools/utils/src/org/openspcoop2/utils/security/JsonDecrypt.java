@@ -527,7 +527,9 @@ public class JsonDecrypt {
 						JsonWebKey jsonWebKey = null;
 						try {
 							jsonWebKey = this.jsonWebKeys.getKey(kid);
-						}catch(Exception e) {}
+						}catch(Exception e) {
+							// key non esistente
+						}
 						if(jsonWebKey!=null) {
 							provider = getProviderJWK(jsonWebKey, keyAlgo, contentAlgo);
 						}

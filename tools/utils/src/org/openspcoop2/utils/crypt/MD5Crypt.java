@@ -107,6 +107,19 @@ public class MD5Crypt {
 		return inp & 0xff;
 	}
 
+	private static java.util.Random _rnd = null;
+	private static synchronized void initRandom() {
+		if(_rnd==null) {
+			_rnd = new java.util.Random();
+		}
+	}
+	private static java.util.Random getRandom() {
+		if(_rnd==null) {
+			initRandom();
+		}
+		return _rnd;
+	}
+	
 	/**
 	 * LINUX/BSD MD5Crypt function
 	 * 
@@ -116,11 +129,10 @@ public class MD5Crypt {
 	 */
 	static public final String crypt(String password) {
 		StringBuilder salt = new StringBuilder();
-		java.util.Random rnd = new java.util.Random();
 
 		// build a random 8 chars salt
 		while (salt.length() < 8) {
-			int index = (int) (rnd.nextFloat() * MD5Crypt.SALTCHARS.length());
+			int index = (int) (getRandom().nextFloat() * MD5Crypt.SALTCHARS.length());
 			salt.append(MD5Crypt.SALTCHARS.substring(index, index + 1));
 		}
 

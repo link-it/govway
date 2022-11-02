@@ -38,7 +38,7 @@ import org.openspcoop2.protocol.modipa.example.rest.blocking.model.MResponseType
 import org.openspcoop2.protocol.modipa.example.rest.blocking.model.MType;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.jaxrs.JacksonJsonProvider;
+import org.openspcoop2.utils.jaxrs.JacksonJsonProviderCustomized;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.service.authentication.filter.HTTPBasicAuthFilter;
 
@@ -110,7 +110,7 @@ public class Client {
 			password = password.trim();
 		}
 		
-		javax.ws.rs.client.Client client = ClientBuilder.newClient().register(JacksonJsonProvider.class);
+		javax.ws.rs.client.Client client = ClientBuilder.newClient().register(JacksonJsonProviderCustomized.class);
 		if(username!=null && password!=null){
 			System.out.println("Basic Auth username["+username+"] password["+password+"]");
 			client.register(new HTTPBasicAuthFilter(username, password));

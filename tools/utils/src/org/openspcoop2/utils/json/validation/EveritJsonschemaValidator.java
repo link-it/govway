@@ -67,35 +67,46 @@ public class EveritJsonschemaValidator implements IJsonSchemaValidator {
 			map.put("type", "string");
 			JSONObject jsonStringObject = new JSONObject(map);
 			
-			switch(config.getAdditionalProperties()) {
-			case DEFAULT:
-				break;
-			case FORCE_DISABLE: addAdditionalProperties(jsonSchemaObject, Boolean.FALSE, true);
-				break;
-			case FORCE_STRING: addAdditionalProperties(jsonSchemaObject, jsonStringObject, true);
-				break;
-			case IF_NULL_DISABLE: addAdditionalProperties(jsonSchemaObject, Boolean.FALSE, false);
-				break;
-			case IF_NULL_STRING: addAdditionalProperties(jsonSchemaObject, jsonStringObject, false);
-				break;
-			default:
-				break;
+			if(config!=null) {
+				switch(config.getAdditionalProperties()) {
+				case DEFAULT:
+					break;
+				case FORCE_DISABLE: addAdditionalProperties(jsonSchemaObject, Boolean.FALSE, true);
+					break;
+				case FORCE_STRING: addAdditionalProperties(jsonSchemaObject, jsonStringObject, true);
+					break;
+				case IF_NULL_DISABLE: addAdditionalProperties(jsonSchemaObject, Boolean.FALSE, false);
+					break;
+				case IF_NULL_STRING: addAdditionalProperties(jsonSchemaObject, jsonStringObject, false);
+					break;
+				default:
+					break;
+				}
 			}
 			
-			switch(config.getPoliticaInclusioneTipi()) {
-			case DEFAULT:
-				break;
-			case ALL: addTypes(jsonSchemaObject, config.getTipi(), true);
-				break;
-			case ANY: addTypes(jsonSchemaObject, config.getTipi(), false);
-				break;
-			default:
-				break;
+			if(config!=null) {
+				switch(config.getPoliticaInclusioneTipi()) {
+				case DEFAULT:
+					break;
+				case ALL: addTypes(jsonSchemaObject, config.getTipi(), true);
+					break;
+				case ANY: addTypes(jsonSchemaObject, config.getTipi(), false);
+					break;
+				default:
+					break;
+				}
 			}
 			
 			this.schema = SchemaLoader.load(jsonSchemaObject);
 			
-			System.out.println(jsonSchemaObject);
+			if(config!=null && config.isVerbose()) {
+				try {
+					String debugSchema = jsonSchemaObject.toString();
+					this.log.debug("JSON Schema: "+debugSchema);
+				}catch(Exception e) {
+					this.log.debug("JSON Schema build error: "+e.getMessage(),e);
+				}
+			}
 			
 		} catch(Exception e) {
 			throw new ValidationException(e);

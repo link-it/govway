@@ -88,7 +88,9 @@ public class XSDValidator {
 				if(isSchema!=null){
 					isSchema.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			throw new ServiceException("Init xsd schema failure: "+e.getMessage(),e);
 		}
 		
@@ -119,7 +121,9 @@ public class XSDValidator {
 						if(isSchema!=null){
 							isSchema.close();
 						}
-					}catch(Exception eClose){}
+					}catch(Exception eClose){
+						// close
+					}
 					for (InputStream inputStream : listInputStreams) {
 						try{
 							if(inputStream!=null){
@@ -148,13 +152,17 @@ public class XSDValidator {
 				if(isSchema!=null){
 					isSchema.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			for (InputStream inputStream : listInputStreams) {
 				try{
 					if(inputStream!=null){
 						inputStream.close();
 					}
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 		}
 	}

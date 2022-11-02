@@ -111,7 +111,9 @@ public class OpenSPCoop2PoolsStartup implements ServletContextListener {
 						if(is!=null){
 							is.close();
 						}
-					}catch(Exception eClose){}
+					}catch(Exception eClose){
+						// close
+					}
 				}
 
 			}catch(Exception e){}

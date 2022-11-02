@@ -75,14 +75,7 @@ public class ConnectionSessionJMSPool implements java.io.Serializable  {
 
 	/** Logger */
 	private static Logger staticLogger = null;
-	
-	/**
-	 * Viene chiamato in causa per istanziare il datasource
-	 *
-	 * 
-	 */
-	public ConnectionSessionJMSPool(JMSInfo configuration) throws OpenSPCoopFactoryException {
-
+	private static synchronized void initStaticLogger() {
 		if(ConnectionSessionJMSPool.staticLogger==null){
 			try{
 //				java.util.Properties loggerProperties = new java.util.Properties();
@@ -93,7 +86,21 @@ public class ConnectionSessionJMSPool implements java.io.Serializable  {
 				ConnectionSessionJMSPool.staticLogger = LoggerWrapperFactory.getLogger("govwayPools");
 			}
 		}
-		
+	}
+	private static void checkStaticLogger() {
+		if(ConnectionSessionJMSPool.staticLogger==null){
+			initStaticLogger();
+		}
+	}
+	
+	/**
+	 * Viene chiamato in causa per istanziare il datasource
+	 *
+	 * 
+	 */
+	public ConnectionSessionJMSPool(JMSInfo configuration) throws OpenSPCoopFactoryException {
+
+		checkStaticLogger();
 		
 		// Controllo che venga fornita la configurazione di un OpenSPCoopQueueManager
 		if(configuration==null){

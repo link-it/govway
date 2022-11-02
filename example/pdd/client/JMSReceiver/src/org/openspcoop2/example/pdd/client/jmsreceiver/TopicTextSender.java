@@ -130,8 +130,12 @@ public class TopicTextSender {
 			
 
 		} finally {
-			sender.close();
-			qs.close();
+			if(sender!=null) {
+				sender.close();
+			}
+			if(qs!=null) {
+				qs.close();
+			}
 			qc.close();
 		}
 	}

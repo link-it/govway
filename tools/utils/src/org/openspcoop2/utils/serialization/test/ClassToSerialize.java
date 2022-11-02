@@ -37,6 +37,7 @@ import org.bouncycastle.util.Arrays;
  * 
  */
 public class ClassToSerialize implements Serializable {
+
 	/**
 	 * 
 	 */
@@ -255,8 +256,10 @@ public class ClassToSerialize implements Serializable {
 			return false;
 		if(this.calendar == null && classObj.getCalendar()!=null || this.calendar != null && classObj.getCalendar()==null)
 			return false;
-		if(!Objects.equals(this.calendar.getTime(),classObj.getCalendar().getTime()))
-			return false;
+		if(this.calendar!=null) {
+			if(!Objects.equals(this.calendar.getTime(),classObj.getCalendar().getTime()))
+				return false;
+		}
 		if(!Objects.equals(this.simpleList,classObj.getSimpleList()))
 			return false;
 		if(!Objects.equals(this.complexList,classObj.getComplexList()))
@@ -264,6 +267,11 @@ public class ClassToSerialize implements Serializable {
 		
 		return true;
 		
+	}
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode();
 	}
 
 	public MyEnum getMyEnum() {

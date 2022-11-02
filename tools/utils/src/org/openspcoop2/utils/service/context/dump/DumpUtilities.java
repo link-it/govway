@@ -211,7 +211,7 @@ public class DumpUtilities {
 					}
 				}
 				
-				if(transactionWithClient.getClient() instanceof HttpClient) {
+				if(transactionWithClient!=null && transactionWithClient.getClient() instanceof HttpClient) {
 					try {
 						if(response.getResponseCode()!=null) {
 							((HttpClient)transactionWithClient.getClient()).setResponseStatusCode(response.getResponseCode());

@@ -363,7 +363,9 @@ public class JsonUtils {
 								if(fTmp!=null) {
 									fTmp.delete();
 								}
-							}catch(Exception e) {}
+							}catch(Exception e) {
+								// delete
+							}
 						}
 					}	
 					if(keystoreJCEKS!=null) {
@@ -436,16 +438,16 @@ public class JsonUtils {
 		
 		SecretKeyPkcs11 secretKeyPkcs11 = getSecretKeyPKCS11(props);
 		if(secretKeyPkcs11!=null) {
-			if(algorithm==null || "".equals(algorithm)) {
+			if(algorithm==null) {
 				throw new Exception("(SecretKey PKCS11) Signature Algorithm undefined");
 			}
-			JwsSignatureProvider provider = new HmacJwsSignatureProvider(secretKeyPkcs11, algorithm);
+			JwsSignatureProvider provider = new HmacJwsSignatureProviderExtended(secretKeyPkcs11, algorithm);
 			return provider;
 		}
 		
 		SecretKey secretKey = getSecretKey(props);
 		if(secretKey!=null) {
-			if(algorithm==null || "".equals(algorithm)) {
+			if(algorithm==null) {
 				throw new Exception("(JCEKS) Signature Algorithm undefined");
 			}
 			byte[] encoded = secretKey.getEncoded();
@@ -458,7 +460,7 @@ public class JsonUtils {
 		else {
 			String secret = getSecret(props, algorithm);
 			if(secret!=null) {
-				if(algorithm==null || "".equals(algorithm)) {
+				if(algorithm==null) {
 					throw new Exception("(Secret) Signature Algorithm undefined");
 				}
 				byte[] encoded = secret.getBytes();
@@ -489,7 +491,7 @@ public class JsonUtils {
 		if(type==null || "".equals(type)) {
 			type="undefined";
 		}
-		if(algorithm==null || "".equals(algorithm)) {
+		if(algorithm==null) {
 			throw new Exception("("+type+") Signature Algorithm undefined");
 		}
 		PrivateKey pKey = KeyManagementUtils.loadPrivateKey(null, props, KeyOperation.SIGN);
@@ -521,7 +523,7 @@ public class JsonUtils {
 		
 		SecretKey secretKey = getSecretKey(props);
 		if(secretKey!=null) {
-			if(algorithm==null || "".equals(algorithm)) {
+			if(algorithm==null) {
 				throw new Exception("(JCEKS) Signature Algorithm undefined");
 			}
 			JwsSignatureVerifier verifier = JwsUtils.getHmacSignatureVerifier(secretKey.getEncoded(), algorithm);
@@ -533,7 +535,7 @@ public class JsonUtils {
 		else {
 			String secret = getSecret(props, algorithm);
 			if(secret!=null) {
-				if(algorithm==null || "".equals(algorithm)) {
+				if(algorithm==null) {
 					throw new Exception("(Secret) Signature Algorithm undefined");
 				}
 				byte[] encoded = secret.getBytes();
@@ -570,7 +572,7 @@ public class JsonUtils {
 		
 		SecretKey secretKey = getSecretKey(props);
 		if(secretKey!=null) {
-			if(algorithm==null || "".equals(algorithm)) {
+			if(algorithm==null) {
 				throw new Exception("(JCEKS) Content Algorithm undefined");
 			}
 			JweEncryptionProvider provider = JweUtils.getDirectKeyJweEncryption(secretKey, algorithm);
@@ -603,7 +605,7 @@ public class JsonUtils {
 		
 		SecretKey secretKey = getSecretKey(props);
 		if(secretKey!=null) {
-			if(algorithm==null || "".equals(algorithm)) {
+			if(algorithm==null) {
 				throw new Exception("(JCEKS) Content Algorithm undefined");
 			}
 			JweDecryptionProvider verifier = JweUtils.getDirectKeyJweDecryption(secretKey, algorithm);
@@ -639,10 +641,10 @@ public class JsonUtils {
 		if(type==null || "".equals(type)) {
 			type="undefined";
 		}
-		if(contentAlgorithm==null || "".equals(contentAlgorithm)) {
+		if(contentAlgorithm==null) {
 			throw new Exception("("+type+") Content Algorithm undefined");
 		}
-		if(keyAlgorithm==null || "".equals(keyAlgorithm)) {
+		if(keyAlgorithm==null) {
 			throw new Exception("("+type+") Key Algorithm undefined");
 		}
 		PrivateKey privateKey = KeyManagementUtils.loadPrivateKey(null, props, KeyOperation.DECRYPT);

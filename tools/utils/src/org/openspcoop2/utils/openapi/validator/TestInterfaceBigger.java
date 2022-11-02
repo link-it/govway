@@ -352,7 +352,7 @@ public class TestInterfaceBigger {
 						msgErroreAtteso = "[ERROR][REQUEST][POST http://hapi.fhir.org/baseR4/Invoice @body] Object instance has properties which are not allowed by the schema: [\"resourceNonEsistente\"]";
 						break;
 					}
-					if(!e.getMessage().contains(msgErroreAtteso)) {
+					if(e!=null && e.getMessage()!=null && (!e.getMessage().contains(msgErroreAtteso))) {
 						throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 					}					
 				}
@@ -521,7 +521,7 @@ public class TestInterfaceBigger {
 						msgErroreAtteso = "[ERROR][RESPONSE][] Object instance has properties which are not allowed by the schema: [\"resourceNonEsistente\"]";
 						break;
 					}
-					if(!e.getMessage().contains(msgErroreAtteso)) {
+					if(e!=null && e.getMessage()!=null && (!e.getMessage().contains(msgErroreAtteso)) ) {
 						throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 					}					
 				}

@@ -81,7 +81,9 @@ public class KeyStore {
 				if(fin!=null){
 					fin.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 	}
@@ -107,7 +109,9 @@ public class KeyStore {
 				if(fin!=null){
 					fin.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 	}

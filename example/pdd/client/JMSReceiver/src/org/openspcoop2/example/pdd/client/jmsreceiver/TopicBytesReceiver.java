@@ -143,8 +143,12 @@ public class TopicBytesReceiver {
 
 		} finally {
 			qc.stop();
-			topicSubscriber.close();
-			qs.close();
+			if(topicSubscriber!=null) {
+				topicSubscriber.close();
+			}
+			if(qs!=null) {
+				qs.close();
+			}
 			qc.close();
 		}
 	}

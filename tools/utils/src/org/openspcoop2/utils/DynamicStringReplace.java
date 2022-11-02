@@ -70,6 +70,10 @@ public class DynamicStringReplace {
 			}
 		}
 		
+		if(messaggioWithPlaceHolder==null) {
+			return;
+		}
+		
 		StringBuilder keyword = new StringBuilder();
 		boolean keywordInCorso = false;
 		for(int i=0; i<messaggioWithPlaceHolder.length(); i++){
@@ -151,6 +155,10 @@ public class DynamicStringReplace {
 			if(index1<0 || index2<0){
 				return messaggioWithPlaceHolder; // non serve il replace
 			}
+		}
+		
+		if(messaggioWithPlaceHolder==null) {
+			return messaggioWithPlaceHolder;
 		}
 		
 		StringBuilder bf = new StringBuilder();

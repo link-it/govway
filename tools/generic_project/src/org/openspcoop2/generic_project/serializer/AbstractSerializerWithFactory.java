@@ -54,7 +54,9 @@ public abstract class AbstractSerializerWithFactory extends AbstractSerializer {
 			}catch(Exception e){}
 			try{
 				fout.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 

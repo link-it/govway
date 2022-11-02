@@ -134,8 +134,12 @@ public class QueueTextReceiver {
 
 		} finally {
 			qc.stop();
-			receiver.close();
-			qs.close();
+			if(receiver!=null) {
+				receiver.close();
+			}
+			if(qs!=null) {
+				qs.close();
+			}
 			qc.close();
 		}
 	}

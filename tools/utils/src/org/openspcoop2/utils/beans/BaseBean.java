@@ -50,10 +50,6 @@ import org.openspcoop2.utils.xml.JaxbUtils;
 public abstract class BaseBean {
 
 	
-	private static final java.text.SimpleDateFormat DATE_FORMAT = DateUtils.getSimpleDateFormatMs();
-	
-	
-	
 	
 	/* ********** GENERIC UTILS ********* */
 	
@@ -532,7 +528,7 @@ public abstract class BaseBean {
 								}
 							}else if("java.util.Date".equals(fields[i].getType().getName())){
 								java.util.Date date = (java.util.Date) fieldValue;
-								bf.append(DATE_FORMAT.format(date));
+								bf.append(DateUtils.getSimpleDateFormatMs().format(date));
 							}else{
 								bf.append(fieldValue.toString());
 							}
@@ -785,7 +781,7 @@ public abstract class BaseBean {
 												}else if("java.util.Date".equals(lista_thisSORT.get(j).getClass().getName())){
 													if(lista_thisSORT.get(j)!=null){
 														java.util.Date date = (java.util.Date) lista_thisSORT.get(j);
-														bf.append(DATE_FORMAT.format(date));
+														bf.append(DateUtils.getSimpleDateFormatMs().format(date));
 													}
 													else
 														bf.append("null");
@@ -805,7 +801,7 @@ public abstract class BaseBean {
 												}else if("java.util.Date".equals(lista_parameterSORT.get(j).getClass().getName())){
 													if(lista_parameterSORT.get(j)!=null){
 														java.util.Date date = (java.util.Date) lista_parameterSORT.get(j);
-														bf.append(DATE_FORMAT.format(date));
+														bf.append(DateUtils.getSimpleDateFormatMs().format(date));
 													}
 													else
 														bf.append("null");
@@ -857,7 +853,7 @@ public abstract class BaseBean {
 										bf.append(array[k]);
 								}else if("java.util.Date".equals(fields[i].getType().getName())){
 									java.util.Date date = (java.util.Date) fieldValue_object;
-									bf.append(DATE_FORMAT.format(date));
+									bf.append(DateUtils.getSimpleDateFormatMs().format(date));
 								}else{
 									bf.append(fieldValue_object);
 								}
@@ -915,7 +911,7 @@ public abstract class BaseBean {
 										bf.append(((char)array[k]));
 								}else if("java.util.Date".equals(fields[i].getType().getName())){
 									java.util.Date date = (java.util.Date) fieldValue_this;
-									bf.append(DATE_FORMAT.format(date));
+									bf.append(DateUtils.getSimpleDateFormatMs().format(date));
 								}else{
 									bf.append(fieldValue_this);
 								}
@@ -932,7 +928,7 @@ public abstract class BaseBean {
 								}else if("java.util.Date".equals(fields[i].getType().getName())){
 									if(fieldValue_object!=null){
 										java.util.Date date = (java.util.Date) fieldValue_object;
-										bf.append(DATE_FORMAT.format(date));
+										bf.append(DateUtils.getSimpleDateFormatMs().format(date));
 									}else
 										bf.append("null");
 								}else{

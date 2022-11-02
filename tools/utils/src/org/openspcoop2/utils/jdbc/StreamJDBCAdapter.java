@@ -143,7 +143,9 @@ public class StreamJDBCAdapter extends AbstractJDBCAdapter {
     		try{
     			if(os!=null)
     				os.close();
-    		}catch(Exception io){}
+    		}catch(Exception io){
+    			// close
+    		}
     		throw new UtilsException("StreamJDBCAppender error, reading binary parameter [indice:"+indice+"]"+e.getMessage(),e);
     	}
 	}

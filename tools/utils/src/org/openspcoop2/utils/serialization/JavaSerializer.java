@@ -65,7 +65,9 @@ public class JavaSerializer implements ISerializer {
 				if(oos!=null){
 					oos.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 

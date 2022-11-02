@@ -50,6 +50,7 @@ public class ExampleConfigDummyDriver {
 		
 	}
 	
+	/*
 	public Boolean isTest(String param) throws Exception{
 		if(param!=null){
 			if(param.equals("EXCEPTION")){
@@ -68,5 +69,6 @@ public class ExampleConfigDummyDriver {
 			return false;
 		}
 	}
+	*/
 	
 }

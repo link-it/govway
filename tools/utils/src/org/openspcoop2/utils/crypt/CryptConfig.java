@@ -123,7 +123,9 @@ public class CryptConfig implements Serializable {
 				if(is!=null){
 					is.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	public CryptConfig(InputStream is) throws UtilsException{

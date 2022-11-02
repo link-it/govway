@@ -21,7 +21,6 @@
 package org.openspcoop2.utils.sql;
 
 import java.util.Iterator;
-import java.util.Random;
 
 import org.openspcoop2.utils.TipiDatabase;
 
@@ -189,11 +188,10 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 		// Genero Tre caratteri alafabetici casuali per dare un alias del tipo "tabellaXXX"
 		StringBuilder subselectalias = new StringBuilder();
 		subselectalias.append("tabella");
-		Random rand = new Random();
 		int rnd; 
 		char base;
 		for (int count=0 ; count < 3; count++ ){
-			rnd = (rand.nextInt(52) );
+			rnd = (SQLQueryObjectCore.getRandom().nextInt(52) );
 			base = (rnd < 26) ? 'A' : 'a';
 			subselectalias.append((char) (base + rnd % 26));			
 		}
@@ -579,11 +577,10 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 					bf.append(this.getDefaultAliasFieldKeyword());
 					bf.append("tableSelectRaw");
 					// Genero Tre caratteri alfabetici casuali per dare un alias del tipo "tabellaXXX"
-					Random rand = new Random();
 					int rnd; 
 					char base;
 					for (int count=0 ; count < 3; count++ ){
-						rnd = (rand.nextInt(52) );
+						rnd = (SQLQueryObjectCore.getRandom().nextInt(52) );
 						base = (rnd < 26) ? 'A' : 'a';
 						bf.append((char) (base + rnd % 26));
 
@@ -596,11 +593,10 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 				bf.append(this.getDefaultAliasFieldKeyword());
 				bf.append("tabella");
 				// Genero Tre caratteri alfabetici casuali per dare un alias del tipo "tabellaXXX"
-				Random rand = new Random();
 				int rnd; 
 				char base;
 				for (int count=0 ; count < 3; count++ ){
-					rnd = (rand.nextInt(52) );
+					rnd = (SQLQueryObjectCore.getRandom().nextInt(52) );
 					base = (rnd < 26) ? 'A' : 'a';
 					bf.append((char) (base + rnd % 26));
 

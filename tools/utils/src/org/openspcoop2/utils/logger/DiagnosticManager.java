@@ -204,6 +204,10 @@ public class DiagnosticManager {
 			}
 		}
 		
+		if(msg==null) {
+			return msg;
+		}
+		
 		StringBuilder bf = new StringBuilder();
 		StringBuilder keyword = new StringBuilder();
 		boolean separator = false;

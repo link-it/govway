@@ -39,29 +39,29 @@ import org.apache.cxf.rt.security.crypto.HmacUtils;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class HmacJwsSignatureProvider extends org.apache.cxf.rs.security.jose.jws.HmacJwsSignatureProvider {
+public class HmacJwsSignatureProviderExtended extends org.apache.cxf.rs.security.jose.jws.HmacJwsSignatureProvider {
 
-	public HmacJwsSignatureProvider(byte[] key, AlgorithmParameterSpec spec, SignatureAlgorithm algo) {
+	public HmacJwsSignatureProviderExtended(byte[] key, AlgorithmParameterSpec spec, SignatureAlgorithm algo) {
 		super(key, spec, algo);
 	}
 
-	public HmacJwsSignatureProvider(byte[] key, SignatureAlgorithm algo) {
+	public HmacJwsSignatureProviderExtended(byte[] key, SignatureAlgorithm algo) {
 		super(key, algo);
 	}
 
-	public HmacJwsSignatureProvider(String arg0, SignatureAlgorithm arg1) {
+	public HmacJwsSignatureProviderExtended(String arg0, SignatureAlgorithm arg1) {
 		super(arg0, arg1);
 	}
 	
 	// METODI PER PKCS11
 	private SecretKeyPkcs11 secretKey;
 	private AlgorithmParameterSpec hmacSpec;
-	public HmacJwsSignatureProvider(SecretKeyPkcs11 secretKey, AlgorithmParameterSpec spec, SignatureAlgorithm algo) {
+	public HmacJwsSignatureProviderExtended(SecretKeyPkcs11 secretKey, AlgorithmParameterSpec spec, SignatureAlgorithm algo) {
 		super(secretKey.getSecretKey().getEncoded(), spec, algo);
 		this.secretKey = secretKey;
 		this.hmacSpec = spec;
 	}
-	public HmacJwsSignatureProvider(SecretKeyPkcs11 secretKey, SignatureAlgorithm algo) {
+	public HmacJwsSignatureProviderExtended(SecretKeyPkcs11 secretKey, SignatureAlgorithm algo) {
 		super(secretKey.getSecretKey().getEncoded(), algo);
 		this.secretKey = secretKey;
 	}

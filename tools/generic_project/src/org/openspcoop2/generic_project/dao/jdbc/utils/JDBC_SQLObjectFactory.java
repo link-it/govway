@@ -71,6 +71,9 @@ public class JDBC_SQLObjectFactory {
 		case DEFAULT:
 			throw new SQLQueryObjectException("Tipo database non gestito ["+tipoDatabase+"]");
 		}
+		if(sqlQueryObject==null) {
+			throw new SQLQueryObjectException("Tipo database non gestito");
+		}	
 		
 		sqlQueryObject.setSelectForUpdate(this.selectForUpdate);
 		((SQLQueryObjectCore)sqlQueryObject).setForceSelectForUpdateDisabledForNotQueryMethod(true);

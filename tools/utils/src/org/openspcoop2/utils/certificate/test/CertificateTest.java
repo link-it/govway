@@ -288,7 +288,7 @@ public class CertificateTest {
 			else if(ArchiveType.CER.equals(srcType) && ((i%2)==0)) {
 				srcExt = "cer";
 			}
-			else if(ArchiveType.CER.equals(srcType) && ((i%2)==1)) {
+			else if(ArchiveType.CER.equals(srcType) && ((i%2)!=0)) {
 				srcExt = "pem";
 			}
 
@@ -302,7 +302,7 @@ public class CertificateTest {
 				else if(ArchiveType.CER.equals(destType) && ((j%2)==0)) {
 					destExt = "cer";
 				}
-				else if(ArchiveType.CER.equals(destType) && ((j%2)==1)) {
+				else if(ArchiveType.CER.equals(destType) && ((j%2)!=0)) {
 					destExt = "pem";
 				}
 

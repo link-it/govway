@@ -79,6 +79,9 @@ public class CodecCrypt implements ICrypt {
 			}
 		}
 		
+		if(this.randomGenerator==null) {
+			throw new UtilsException("RandomGenerator undefined");
+		}
 		String salt = this.randomGenerator.nextRandom(saltLength);
 				
 		if(!CodecType.DES_UNIX_CRYPT.equals(this.type)) {

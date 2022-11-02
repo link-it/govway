@@ -91,7 +91,7 @@ public class ObjectFormatter implements IObjectFormatter {
 			try{
 				o.getClass().asSubclass(type.getTypeSupported());
 				isType = true;
-			}catch(Exception e){}
+			}catch(Exception e){isType=false;}
 			if(isType){
 				return type.toString(o);
 			}
@@ -114,7 +114,7 @@ public class ObjectFormatter implements IObjectFormatter {
 			try{
 				o.getClass().asSubclass(type.getTypeSupported());
 				isType = true;
-			}catch(Exception e){}
+			}catch(Exception e){isType=false;}
 			if(isType){
 				return type.toSQLString(o, databaseType);
 			}
@@ -133,7 +133,7 @@ public class ObjectFormatter implements IObjectFormatter {
 			try{
 				c.asSubclass(type.getTypeSupported());
 				isType = true;
-			}catch(Exception e){}
+			}catch(Exception e){isType=false;}
 			if(isType){
 				type.toObject(o,c);
 			}

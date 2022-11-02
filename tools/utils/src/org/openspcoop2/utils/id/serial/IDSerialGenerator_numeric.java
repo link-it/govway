@@ -45,6 +45,20 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
  */
 public class IDSerialGenerator_numeric {
 
+	private static java.util.Random _rnd = null;
+	private static synchronized void initRandom() {
+		if(_rnd==null) {
+			_rnd = new java.util.Random();
+		}
+	}
+	private static java.util.Random getRandom() {
+		if(_rnd==null) {
+			initRandom();
+		}
+		return _rnd;
+	}
+	
+	
 	public static String generate(Connection conDB,TipiDatabase tipoDatabase,
 			IDSerialGeneratorParameter param,Logger log, InfoStatistics infoStatistics) throws UtilsException{
 				
@@ -300,7 +314,7 @@ public class IDSerialGenerator_numeric {
 						}
 					}
 					
-					int sleep = (new java.util.Random()).nextInt(intervalloDestro);
+					int sleep = getRandom().nextInt(intervalloDestro);
 					//System.out.println("Sleep: "+sleep);
 					Utilities.sleep(sleep); // random
 				}catch(Exception eRandom){}

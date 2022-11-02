@@ -284,7 +284,7 @@ public class ExpressionSQL extends ExpressionImpl {
 						List<String> v = new ArrayList<String>();
 						try{
 							v = sqlQueryObject.getFieldsName();
-						}catch(Exception e){}
+						}catch(Exception e){v = new ArrayList<String>();}
 						boolean contains = false;
 						//System.out.println("SEARCH ALIAS ["+columnOrderAlias+"] ...");
 						if(v.contains(columnOrderAlias)){

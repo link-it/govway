@@ -139,7 +139,9 @@ public class PropertiesUtilities {
 			}finally{
 				try{
 					is.close();
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 		}
 		return null;
@@ -176,7 +178,9 @@ public class PropertiesUtilities {
 			}finally{
 				try{
 					is.close();
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 		}
 		return null;
@@ -269,7 +273,9 @@ public class PropertiesUtilities {
 			}finally{
 				try{
 					is.close();
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 		}
 		return null;

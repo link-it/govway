@@ -92,7 +92,9 @@ public abstract class AbstractNoReturnGeneratedKeyGenerator implements IKeyGener
 			}catch(Exception eClose){}
 			try{
 				stmt.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	

@@ -74,7 +74,7 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class JDBCUtilities {
+public class GenericJDBCUtilities {
 
 	/* *** OTHER *** */
 	
@@ -565,7 +565,7 @@ public class JDBCUtilities {
 			List<Object> listaQuery,List<JDBCObject> listaParams) throws NotFoundException, ServiceException, SQLQueryObjectException, JDBCAdapterException, ExpressionException, ExpressionNotImplementedException{
 		
 		List<Object> returnField = 
-			org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.toSqlForPreparedStatementFromCondition(expression,sqlQueryObject,listaQuery,listaParams,
+			org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.toSqlForPreparedStatementFromCondition(expression,sqlQueryObject,listaQuery,listaParams,
 							sqlConverter,model);
 			
 		return returnField;
@@ -582,7 +582,7 @@ public class JDBCUtilities {
 			
 			sqlQueryObjectDistinct = sqlQueryObject.newSQLQueryObject();
 			JDBCPaginatedExpression paginatedExpressionTmp = new JDBCPaginatedExpression(sqlFieldConverter);
-			org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.setAliasFields(sqlQueryObjectDistinct,paginatedExpressionTmp,false,field);
+			org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.setAliasFields(sqlQueryObjectDistinct,paginatedExpressionTmp,false,field);
 			sqlQueryObjectDistinct.setSelectDistinct(true);
 			List<OrderedField> listOrderedFields = getOrderedFields(expression);
 			SortOrder sortOrder = getSortOrder(expression);
@@ -650,8 +650,8 @@ public class JDBCUtilities {
 		
 		returnField = eliminaDuplicati(returnField);
 		
-		List<Class<?>> returnClassTypes = org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.readClassTypes(returnField);
-		List<List<String>> returnClassAliases = org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.readAliases(returnField);
+		List<Class<?>> returnClassTypes = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.readClassTypes(returnField);
+		List<List<String>> returnClassAliases = org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities.readAliases(returnField);
 				
 		List<Map<String,Object>> result = new ArrayList<Map<String,Object>>();
 		
@@ -1447,32 +1447,34 @@ public class JDBCUtilities {
 						valueIds = serviceWithId.select(jdbcProperties, log, connection, sqlQueryObjectSelect, rootTablePKExpresion, 
 								true, columnIds.toArray(new IField[]{}));
 					}
-					// Questo controllo e' sbagliato. Devo poter aggiornare dei singoli campi su piu' righe di oggetti interni. 
-					// Se voglio identificare esattamente una sola riga di un oggetto interno devo usare la condition
-					// Mentre l'oggetto "daoInterface" lo identifico esattamente (o grazie all'id, o grazie all'oggetto stesso e quindi l'id long, o grazie alla singola istanza) 
-	//				if(valueIds.size()>1){
-	//					throw new ServiceException("Cannot exists more columns with PK column ids (table:"+table+"), found: "+valueIds.size());
-	//				}
-					StringBuilder bfRowIdentification = new StringBuilder();
-					bfRowIdentification.append("( ");
-					for (int i = 0; i < valueIds.size(); i++) {
-						if(i>0){
-							bfRowIdentification.append(" OR ");
-						}
-						Map<String, Object> mapColumnValue = valueIds.get(i);
+					if(valueIds!=null) {
+						// Questo controllo e' sbagliato. Devo poter aggiornare dei singoli campi su piu' righe di oggetti interni. 
+						// Se voglio identificare esattamente una sola riga di un oggetto interno devo usare la condition
+						// Mentre l'oggetto "daoInterface" lo identifico esattamente (o grazie all'id, o grazie all'oggetto stesso e quindi l'id long, o grazie alla singola istanza) 
+		//				if(valueIds.size()>1){
+		//					throw new ServiceException("Cannot exists more columns with PK column ids (table:"+table+"), found: "+valueIds.size());
+		//				}
+						StringBuilder bfRowIdentification = new StringBuilder();
 						bfRowIdentification.append("( ");
-						for (int j = 0; j < columnIds.size(); j++) {
-							if(j>0){
-								bfRowIdentification.append(" AND ");
+						for (int i = 0; i < valueIds.size(); i++) {
+							if(i>0){
+								bfRowIdentification.append(" OR ");
 							}
-							IField columnId = columnIds.get(j);
-							bfRowIdentification.append(sqlConverter.toColumn(columnId, true)).append("=?");
-							lstObjectsUpdate.add(new JDBCObject(mapColumnValue.get(columnId.getFieldName()), columnId.getFieldType()));
-						}	
+							Map<String, Object> mapColumnValue = valueIds.get(i);
+							bfRowIdentification.append("( ");
+							for (int j = 0; j < columnIds.size(); j++) {
+								if(j>0){
+									bfRowIdentification.append(" AND ");
+								}
+								IField columnId = columnIds.get(j);
+								bfRowIdentification.append(sqlConverter.toColumn(columnId, true)).append("=?");
+								lstObjectsUpdate.add(new JDBCObject(mapColumnValue.get(columnId.getFieldName()), columnId.getFieldType()));
+							}	
+							bfRowIdentification.append(" )");
+						}
 						bfRowIdentification.append(" )");
+						sqlQueryObjectUpdate.addWhereCondition(bfRowIdentification.toString());
 					}
-					bfRowIdentification.append(" )");
-					sqlQueryObjectUpdate.addWhereCondition(bfRowIdentification.toString());
 				}
 			}catch(NotFoundException notFound){
 				update = false;

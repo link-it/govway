@@ -50,8 +50,5 @@ public enum LikeMode{
 	public String toString(){
 		return this.name();
 	}
-	public boolean equals(LikeMode esito){
-		return this.toString().equals(esito.toString());
-	}
 
 }

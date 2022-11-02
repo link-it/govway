@@ -75,6 +75,9 @@ public class PropertyFilterCore {
 			// Identificatore unico risorsa
 			String id = null;
 			try{
+				if(this.idBuilder==null) {
+					throw new Exception("IDBuilder not initialized");
+				}
 				id = this.idBuilder.toID(source,name);
 			}catch(Exception e){
 				// id non esistente per l'oggetto source

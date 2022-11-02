@@ -83,7 +83,9 @@ public class OpenSPCoop2PoolsProperties {
 			try{
 				if(properties!=null)
 					properties.close();
-			}catch(Exception er){}
+			}catch(Exception er){
+				// close
+			}
 			throw new Exception("OpenSPCoop2PoolsProperties initialize error: "+e.getMessage());
 		}	
 	}

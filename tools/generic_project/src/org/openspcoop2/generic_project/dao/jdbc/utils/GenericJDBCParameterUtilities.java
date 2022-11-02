@@ -36,9 +36,9 @@ import org.openspcoop2.utils.sql.SQLQueryObjectException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class JDBCParameterUtilities extends org.openspcoop2.utils.jdbc.JDBCParameterUtilities {
+public class GenericJDBCParameterUtilities extends org.openspcoop2.utils.jdbc.JDBCParameterUtilities {
 
-	public JDBCParameterUtilities(TipiDatabase tipoDatabaseOpenSPCoop2) throws SQLQueryObjectException, JDBCAdapterException{
+	public GenericJDBCParameterUtilities(TipiDatabase tipoDatabaseOpenSPCoop2) throws SQLQueryObjectException, JDBCAdapterException{
 		super(tipoDatabaseOpenSPCoop2);
 	}
 	

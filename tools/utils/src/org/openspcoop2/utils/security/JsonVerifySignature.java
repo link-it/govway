@@ -467,7 +467,9 @@ public class JsonVerifySignature {
 						JsonWebKey jsonWebKey = null;
 						try {
 							jsonWebKey = this.jsonWebKeys.getKey(kid);
-						}catch(Exception e) {}
+						}catch(Exception e) {
+							// key not found
+						}
 						if(jsonWebKey!=null) {
 							this.rsaPublicKey = JwkUtils.toRSAPublicKey(jsonWebKey);
 							provider = JwsUtils.getPublicKeySignatureVerifier(this.rsaPublicKey, algo);

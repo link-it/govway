@@ -58,16 +58,24 @@ public class IDSerialGenerator {
 	
 	public long buildIDAsNumber(IDSerialGeneratorParameter param, Connection con, TipiDatabase tipoDatabase, Logger log) throws UtilsException {
 		try{
-			if(IDSerialGeneratorType.ALFANUMERICO.equals(param)){
+			if(param!=null && param.getTipo()!=null && IDSerialGeneratorType.ALFANUMERICO.equals(param.getTipo())){
 				throw new UtilsException("IDSerialGeneratorType["+param.getTipo()+"] prevede anche caratteri alfanumerici");
 			}
-			return Long.parseLong(this.buildID(param,con,tipoDatabase,log));
+			String sId = this.buildID(param,con,tipoDatabase,log);
+			if(sId==null) {
+				throw new UtilsException("IDSerialGeneratorType["+param.getTipo()+"] build Id failed");
+			}
+			return Long.parseLong(sId);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
 	public String buildID(IDSerialGeneratorParameter param, Connection con, TipiDatabase tipoDatabase, Logger log) throws UtilsException {
 
+		if(param==null) {
+			throw new UtilsException("IDSerialGeneratorParameter non fornito");
+		}
+		
 		IDSerialGeneratorType tipo = param.getTipo();
 
 		// Check connessione

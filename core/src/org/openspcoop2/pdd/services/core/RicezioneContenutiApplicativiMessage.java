@@ -143,6 +143,7 @@ public class RicezioneContenutiApplicativiMessage implements GenericMessage {
 		return this.profiloCollaborazioneValue;
 	}
 
+	@Override
 	public PdDContext getPddContext() {
 		return this.pddContext;
 	}

@@ -116,10 +116,10 @@ public class PoolFactory extends BasePooledObjectFactory<org.openspcoop2.pools.p
 	/** Logger */
 	private Logger logger = null;
 	
-	private void initConnection() throws OpenSPCoopFactoryException{
+	private void initConnection(boolean forceReinit) throws OpenSPCoopFactoryException{
 		this.logger.debug("INIT CONNECTION pool ["+this.jndiName+"]...");
 		try{
-			if(this.con==null){
+			if(this.con==null || forceReinit){
 				this.logger.debug("INIT CONNECTION pool ["+this.jndiName+"] creo connessione...");
 				//	check ConnectionFactory
 				if(this.qcf == null){
@@ -259,7 +259,7 @@ public class PoolFactory extends BasePooledObjectFactory<org.openspcoop2.pools.p
 		
 		// Crea connessione
 		try{
-			this.initConnection();
+			this.initConnection(false);
 		}catch(Exception e){
 			this.con = null;
 			this.logger.error("InitConnectionPool non riuscita");
@@ -330,7 +330,7 @@ public class PoolFactory extends BasePooledObjectFactory<org.openspcoop2.pools.p
 
 			// check connessione
 			if(this.con == null){
-				this.initConnection();
+				this.initConnection(false);
 			}
 			
 			// La connessione deve essere utilizzata da uno alla volta
@@ -377,8 +377,10 @@ public class PoolFactory extends BasePooledObjectFactory<org.openspcoop2.pools.p
 					}catch(Exception eClose){}
 				
 					// Re-inizializzo la connessione
-					this.con=null;
-					this.initConnection();
+					this.initConnection(true);
+					if(this.con==null) {
+						throw new OpenSPCoopFactoryException("Connessione non inizializzata");
+					}
 					
 					s = null;
 				}
@@ -415,7 +417,9 @@ public class PoolFactory extends BasePooledObjectFactory<org.openspcoop2.pools.p
 			try{
 				if(s!=null)
 					s.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			throw new OpenSPCoopFactoryException("CreateObject["+e.getMessage()+"]");
 		}
 	}
@@ -642,10 +646,10 @@ public class PoolFactory extends BasePooledObjectFactory<org.openspcoop2.pools.p
 	public void closeConnection(){
 		try{
 			this.con.stop();
-		}catch(Exception eClose){}
+		}catch(Exception eClose){if(eClose!=null)eClose.getMessage();}
 		try{
 			this.con.close();
-		}catch(Exception eClose){}
+		}catch(Exception eClose){if(eClose!=null)eClose.getMessage();}
 	}
 	
 }

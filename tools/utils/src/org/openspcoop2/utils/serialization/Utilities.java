@@ -243,7 +243,9 @@ public class Utilities {
 												break;
 											}
 										}
-										setMethodRef.invoke(o, oDeserialized);
+										if(setMethodRef!=null) {
+											setMethodRef.invoke(o, oDeserialized);
+										}
 										
 										//System.out.println("RICORSIONE MorphDynaBean ["+oDeserialized.getClass().getName()+"]");
 										morpher(oDeserialized, morpherRegistry,morpherPackage,throwExceptionMorpherFailed);

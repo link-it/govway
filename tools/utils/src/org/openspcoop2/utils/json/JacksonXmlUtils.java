@@ -22,7 +22,7 @@ package org.openspcoop2.utils.json;
 
 import java.util.TimeZone;
 
-import org.openspcoop2.utils.jaxrs.JacksonXmlProvider;
+import org.openspcoop2.utils.jaxrs.JacksonXmlProviderCustomized;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -88,7 +88,7 @@ public class JacksonXmlUtils extends AbstractUtils {
 	private static ObjectMapper mapper;
 	private synchronized static void initMapper()  {
 		if(mapper==null){
-			mapper = JacksonXmlProvider.getObjectMapper(false, timeZone);
+			mapper = JacksonXmlProviderCustomized.getObjectMapper(false, timeZone);
 			mapper.setSerializationInclusion(Include.NON_NULL);
 		}
 	}

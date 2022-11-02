@@ -104,7 +104,9 @@ public class Printer {
 				this.out.flush();
 				this.out.close();
 			}
-		}catch(Exception eClose){}
+		}catch(Exception eClose){
+			// close
+		}
 	}
 	
 	

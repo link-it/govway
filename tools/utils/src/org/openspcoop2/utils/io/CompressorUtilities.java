@@ -224,6 +224,9 @@ public class CompressorUtilities {
 				((ZipOutputStream)out).closeEntry();
 				break;
 			}
+            if(out==null) {
+            	throw new Exception("OutputStream undefined");
+            }
             out.flush();
             out.close();
             baos.flush();
@@ -269,7 +272,9 @@ public class CompressorUtilities {
 				out.write(entry.getContent());
 				out.closeArchiveEntry();
 			}
-			
+            if(out==null) {
+            	throw new Exception("OutputStream undefined");
+            }
 			out.flush();
 			out.close();
 			if(compressorOut!=null) {
@@ -321,7 +326,9 @@ public class CompressorUtilities {
  						if(zf!=null){
  							zf.close();
  						}
- 					}catch(Exception eClose){}
+ 					}catch(Exception eClose){
+ 						// close
+ 					}
  				}
  				break;
  			}
@@ -352,6 +359,9 @@ public class CompressorUtilities {
 				in = new ZipArchiveInputStream(bin);
 				break;
 			}
+            if(in==null) {
+            	throw new Exception("InputStream undefined");
+            }
 			ArchiveEntry entry;
 		    while ((entry = in.getNextEntry()) != null) {
 		        String name = entry.getName();

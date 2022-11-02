@@ -58,7 +58,9 @@ public class ChecksumCRC {
 			try{
 				if(fin!=null)
 					fin.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -73,7 +75,9 @@ public class ChecksumCRC {
 			try{
 				if(bin!=null)
 					bin.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	

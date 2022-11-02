@@ -106,7 +106,7 @@ public class JsonSignature {
 				if("pkcs11".equalsIgnoreCase(keystore.getKeystoreType())) {
 					tipo = "PKCS11";
 					SecretKeyPkcs11 secretKeyPkcs11 = new SecretKeyPkcs11(keystore.getKeystoreProvider(), secret);
-					this.provider = new HmacJwsSignatureProvider(secretKeyPkcs11, algo);
+					this.provider = new HmacJwsSignatureProviderExtended(secretKeyPkcs11, algo);
 				}
 				else {
 					this.provider = JwsUtils.getHmacSignatureProvider(secret.getEncoded(), algo);

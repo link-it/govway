@@ -303,7 +303,7 @@ public class CertificateInfo implements Serializable {
 				String alias = (String) aliasesEnum.nextElement();
 				java.security.cert.Certificate certificate = trustStore.getCertificate(alias);
 				if(checkSameCertificateInTrustStore) {
-					if(this.equals(certificate)) {
+					if(this._equals(certificate)) {
 						return true;
 					}
 				}
@@ -335,22 +335,32 @@ public class CertificateInfo implements Serializable {
 	
 	@Override
 	public boolean equals(Object certificate) {
+		return this._equals(certificate);
+	}
+	private boolean _equals(Object certificate) {
 		if(certificate instanceof java.security.cert.X509Certificate) {
 			java.security.cert.X509Certificate x509 = (java.security.cert.X509Certificate) certificate;
-			return this.equals(x509);
+			return this.equals(x509, true);
+		}
+		else if(certificate instanceof java.security.cert.Certificate) {
+			if(this.getCertificate()!=null) {
+				java.security.cert.Certificate cer = (java.security.cert.Certificate) certificate;
+				return this.getCertificate().equals(cer);
+			}
 		}
 		else if(certificate instanceof CertificateInfo) {
 			CertificateInfo c = (CertificateInfo) certificate;
-			return this.equals(c);
+			return this.equals(c.getCertificate(), true);
 		}
 		return false;
 	}
+	/* Già gestite nell'equals(Object)
 	public boolean equals(java.security.cert.X509Certificate certificate) {
 		return this.equals(certificate, true);
 	}
 	public boolean equals(CertificateInfo certificate) {
 		return this.equals(certificate.getCertificate(), true);
-	}
+	}*/
 	
 	public boolean equals(java.security.cert.X509Certificate certificate, boolean strictVerifier) {
 		CertificateInfo certificateCheck = new CertificateInfo(certificate, "check");
@@ -377,5 +387,10 @@ public class CertificateInfo implements Serializable {
 		StringBuilder bf = new StringBuilder();
 		CertificateUtils.printCertificate(bf, this.certificate, this.name);
 		return bf.toString();
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.toString().hashCode();
 	}
 }

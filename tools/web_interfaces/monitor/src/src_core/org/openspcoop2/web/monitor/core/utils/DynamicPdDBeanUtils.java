@@ -56,7 +56,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
-import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities;
+import org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -485,13 +485,13 @@ public class DynamicPdDBeanUtils implements Serializable {
 					// SelectItem(servizio.getAccordo().getNome()+"@"+servizio.getNome()));
 					StringBuilder uri = new StringBuilder();
 
-					Object obj = res.get(JDBCUtilities.getAlias(AccordoServizioParteSpecifica.model().NOME));
+					Object obj = res.get(GenericJDBCUtilities.getAlias(AccordoServizioParteSpecifica.model().NOME));
 
 					String nomeAsps = (obj instanceof String) ? (String) obj : null;
 
 					String tipoAsps = null;
 					if(showTipoServizio){
-						obj = res.get(JDBCUtilities.getAlias(AccordoServizioParteSpecifica.model().TIPO));
+						obj = res.get(GenericJDBCUtilities.getAlias(AccordoServizioParteSpecifica.model().TIPO));
 						tipoAsps = (obj instanceof String) ? (String) obj : null;
 						if(tipoAsps != null)
 							uri.append(tipoAsps).append("/");

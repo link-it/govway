@@ -65,6 +65,11 @@ public class AliasTableField extends Field implements IAliasTableField {
 		}
 	}
 	
+	@Override 
+	public int hashCode() {
+		return super.hashCode();
+	}
+	
 	@Override
 	public String toString(){
 		return toString(0);
