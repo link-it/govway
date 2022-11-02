@@ -22,7 +22,7 @@
 		<cxf.gov4j.version>3.5.4-gov4j-1</cxf.gov4j.version>
 		<javax.ws.rs.api.cxf.version>2.1.6</javax.ws.rs.api.cxf.version>
 		<stax2.api.version>4.2.1</stax2.api.version>
-		<woodstock.core.version>6.2.8</woodstock.core.version>
+		<woodstock.core.version>6.4.0</woodstock.core.version>
 		<xml.resolver.version>1.2</xml.resolver.version>
 		<xmlschema.core.version>2.3.0</xmlschema.core.version>
 
