@@ -163,7 +163,7 @@ public class FormatReader {
 		// behaviour
 		
 		BooleanNullable allowMissingColumnsNames = getBooleanProperty(properties, CSV_ALLOW_MISSING_COLUMN_NAMES);
-		if(allowMissingColumnsNames!=null){
+		if(allowMissingColumnsNames!=null && allowMissingColumnsNames.getValue()!=null){
 			builder.setAllowMissingColumnNames(allowMissingColumnsNames.getValue());
 		}
 		
@@ -183,7 +183,7 @@ public class FormatReader {
 		}
 		
 		BooleanNullable withHeader = getBooleanProperty(properties, CSV_WITH_HEADER);
-		if(withHeader!=null){
+		if(withHeader!=null && withHeader.getValue()!=null){
 			if(withHeader.getValue()){
 				String [] h = getArrayStringProperty(properties, CSV_HEADER);
 				if(h!=null && h.length>0)
@@ -200,12 +200,12 @@ public class FormatReader {
 		}
 		
 		BooleanNullable withIgnoreEmptyLines = getBooleanProperty(properties, CSV_WITH_IGNORE_EMPTY_LINES);
-		if(withIgnoreEmptyLines!=null){
+		if(withIgnoreEmptyLines!=null && withIgnoreEmptyLines.getValue()!=null){
 			builder.setIgnoreEmptyLines(withIgnoreEmptyLines.getValue());
 		}
 		
 		BooleanNullable withIgnoreSurroundingSpaces = getBooleanProperty(properties, CSV_WITH_IGNORE_SURROUNDING_SPACES);
-		if(withIgnoreSurroundingSpaces!=null){
+		if(withIgnoreSurroundingSpaces!=null && withIgnoreSurroundingSpaces.getValue()!=null){
 			builder.setIgnoreSurroundingSpaces(withIgnoreSurroundingSpaces.getValue());
 		}
 		
@@ -241,12 +241,12 @@ public class FormatReader {
 		}
 		
 		BooleanNullable withSkipHeaderRecord = getBooleanProperty(properties, CSV_WITH_SKIP_HEADER_RECORD);
-		if(withSkipHeaderRecord!=null){
+		if(withSkipHeaderRecord!=null && withSkipHeaderRecord.getValue()!=null){
 			builder.setSkipHeaderRecord(withSkipHeaderRecord.getValue());
 		}
 		
 		BooleanNullable skipEmptyRecord = getBooleanProperty(properties, CSV_SKIP_EMPTY_RECORD);
-		if(skipEmptyRecord!=null){
+		if(skipEmptyRecord!=null && skipEmptyRecord.getValue()!=null){
 			this.skipEmptyRecord = skipEmptyRecord.getValue();
 		}
 		

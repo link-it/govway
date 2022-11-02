@@ -178,9 +178,13 @@
 	</path>
 	
 	<!-- estensione per testNG -->
-	<taskdef classpathref="classpath_run"
-             name="testng"
-             classname="org.testng.TestNGAntTask"/>
+	<taskdef resource="testngtasks" classpath="${openspcoop2_lib}/testsuite/testng-7.6.1.jar">
+		<classpath>
+			<fileset dir="${openspcoop2_lib}/log" >
+				<include name="*.jar"/>
+			</fileset>
+		</classpath>
+	</taskdef>
 	
 	<!-- Ripulisce la distribuzione -->
 	<target name="clean_testunits">

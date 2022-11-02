@@ -206,7 +206,7 @@ public class PerformanceTest
         System.out.println( "Put average for " + ehCacheDisplayName + " = " + putAvEH );
         System.out.println( "Put average for " + limitedCacheDisplayName + " = " + putAvLimited );
         float ratioPut = Float.intBitsToFloat( (int) putAvLimited ) / Float.intBitsToFloat( (int) putAvJCS );
-        float targetPut = 0.8f;
+        float targetPut = 0.85f;
         String msg = limitedCacheDisplayName + " puts took " + ratioPut + " times the " + jcsDisplayName
             + ", the goal is <" + targetPut + "x";
         System.out.println( msg );

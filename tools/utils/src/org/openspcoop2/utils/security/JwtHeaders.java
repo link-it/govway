@@ -215,12 +215,16 @@ public class JwtHeaders {
 			List<String> headers = new ArrayList<>();
 			if(hdrs.containsHeader(JWT_HDR_CRIT)) {
 				headers = hdrs.getCritical();
+				if(headers==null) {
+					headers = new ArrayList<>();
+				}
 			}
 			for (String ch : this.criticalHeaders) {
 				if(headers.contains(ch)==false) {
 					headers.add(ch);
 				}
 			}
+			/*
 			StringBuilder bf = new StringBuilder();
 			for (String ch : headers) {
 				if(bf.length()>0) {
@@ -228,7 +232,8 @@ public class JwtHeaders {
 				}
 				bf.append("\"").append(ch).append("\"");
 			}
-			hdrs.setHeader(JWT_HDR_CRIT, "["+bf.toString()+"]");
+			hdrs.setHeader(JWT_HDR_CRIT, "["+bf.toString()+"]");*/
+			hdrs.setCritical(headers);
 		}
 		if(this.x509Url!=null) {
 			if(!hdrs.containsHeader(JWT_HDR_X5U) || forceOverride) {
