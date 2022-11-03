@@ -975,6 +975,20 @@ public class TestReader {
 				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
 				ROOT_ELEMENT_SKCOT, HEADER_VARI_COMMENTI);
 				
+		
+		
+		
+		System.out.println("\n\n*** TEST SOAP 11 con returnLine (buffer 1k) ***");
+		test("requestEnvelope_returnLine_soap11.xml", contentTypeSoap11, 1, expectedFullBuffer, 463,
+				Costanti.SOAP_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
+		
+		System.out.println("\n\n*** TEST SOAP 12 con returnLine (buffer 1k) ***");
+		test("requestEnvelope_returnLine_soap12.xml", contentTypeSoap11, 1, expectedFullBuffer, 461,
+				Costanti.SOAP12_ENVELOPE_NAMESPACE, !isBodyEmptyAtteso, !isFaultAtteso, 
+				ROOT_ELEMENT_SKCOT,	HEADER_SOAP_NON_ATTESO);
+		
+		
 		System.out.println("\n\nTestsuite completata con successo");
 	}
 	

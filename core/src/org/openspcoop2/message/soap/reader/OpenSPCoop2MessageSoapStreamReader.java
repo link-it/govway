@@ -772,14 +772,17 @@ public class OpenSPCoop2MessageSoapStreamReader {
 	
 	private boolean isOpenedElement(String s, String prefix) {
 		if(prefix.startsWith(":")) {
-			return s.contains(prefix+" ") || s.contains(prefix+">") || s.contains(prefix+"/")  || s.contains(prefix+"\n") || s.contains(prefix+"\t");
+			return s.contains(prefix+" ") || s.contains(prefix+">") || s.contains(prefix+"/")  || 
+					s.contains(prefix+"\n") || s.contains(prefix+"\r") || s.contains(prefix+"\t");
 		}
 		else {
-			return s.startsWith(prefix+" ") || s.startsWith(prefix+">") || s.startsWith(prefix+"/")  || s.startsWith(prefix+"\n") || s.startsWith(prefix+"\t");
+			return s.startsWith(prefix+" ") || s.startsWith(prefix+">") || s.startsWith(prefix+"/")  || 
+					s.startsWith(prefix+"\n") || s.startsWith(prefix+"\r") || s.startsWith(prefix+"\t");
 		}
 	}
 	private boolean isClosedElement(String s, String prefix) {
-		return s.startsWith(prefix+" ") || s.startsWith(prefix+">") || s.startsWith(prefix+"\n") || s.startsWith(prefix+"\t");
+		return s.startsWith(prefix+" ") || s.startsWith(prefix+">") || 
+				s.startsWith(prefix+"\n") || s.startsWith(prefix+"\r") || s.startsWith(prefix+"\t");
 	}
 	
 	private boolean analizyEnvelopeNamespace(String envelope) throws Exception {

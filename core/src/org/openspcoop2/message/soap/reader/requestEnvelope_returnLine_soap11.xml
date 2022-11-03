@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        <SOAP-ENV:Envelope
+            xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+            xmlns:xsd="http://services.samples/xsd"
+            xmlns:ns1="http://operations.it.gov.inps/">
+            <SOAP-ENV:Body><xsd:skcotSyub>
+<redro><lobmys>IBM</lobmys><DIreyub>asankha</DIreyub><ecirp>140.34</ecirp><emulov>2000</emulov></redro>
+</xsd:skcotSyub></SOAP-ENV:Body>
+        </SOAP-ENV:Envelope>

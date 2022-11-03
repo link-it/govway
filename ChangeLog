@@ -1,3 +1,10 @@
+2022-11-03  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-1478
+	Corretto seguente errore di parser che si presentava con alcune Envelope SOAP:
+	"Invalid content (</SOAP-ENV:Envelope/>): The markup in the document preceding the root element must be well-formed."
+
 2022-11-02  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
