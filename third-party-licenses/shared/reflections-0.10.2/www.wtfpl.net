@@ -1,0 +1,375 @@
+
+<!doctype html>  
+
+<!--[if lt IE 7]><html lang="en-US" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html lang="en-US" class="no-js lt-ie9 lt-ie8"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html lang="en-US" class="no-js lt-ie9"><![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en-US" class="no-js"><!--<![endif]-->
+	
+	<head>
+		<meta charset="utf-8">
+		
+		<title></title>
+		
+		<!-- Google Chrome Frame for IE -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		
+		<!-- mobile meta (hooray!) -->
+		<meta name="HandheldFriendly" content="True">
+		<meta name="MobileOptimized" content="320">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		
+		<!-- icons & favicons (for more: http://themble.com/support/adding-icons-favicons/) -->
+		<link rel="shortcut icon" href="http://www.wtfpl.net/wp-content/themes/bones/favicon.ico">
+				
+  		<link rel="pingback" href="http://www.wtfpl.net/xmlrpc.php">
+		
+		<!-- wordpress head functions -->
+		<link rel='dns-prefetch' href='//s.w.org' />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/11\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/11\/svg\/","svgExt":".svg","source":{"concatemoji":"http:\/\/www.wtfpl.net\/wp-includes\/js\/wp-emoji-release.min.js"}};
+			!function(a,b,c){function d(a,b){var c=String.fromCharCode;l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,a),0,0);var d=k.toDataURL();l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,b),0,0);var e=k.toDataURL();return d===e}function e(a){var b;if(!l||!l.fillText)return!1;switch(l.textBaseline="top",l.font="600 32px Arial",a){case"flag":return!(b=d([55356,56826,55356,56819],[55356,56826,8203,55356,56819]))&&(b=d([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]),!b);case"emoji":return b=d([55358,56760,9792,65039],[55358,56760,8203,9792,65039]),!b}return!1}function f(a){var c=b.createElement("script");c.src=a,c.defer=c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var g,h,i,j,k=b.createElement("canvas"),l=k.getContext&&k.getContext("2d");for(j=Array("flag","emoji"),c.supports={everything:!0,everythingExceptFlag:!0},i=0;i<j.length;i++)c.supports[j[i]]=e(j[i]),c.supports.everything=c.supports.everything&&c.supports[j[i]],"flag"!==j[i]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[j[i]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(h=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",h,!1),a.addEventListener("load",h,!1)):(a.attachEvent("onload",h),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),g=c.source||{},g.concatemoji?f(g.concatemoji):g.wpemoji&&g.twemoji&&(f(g.twemoji),f(g.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='bones-stylesheet-css'  href='http://www.wtfpl.net/wp-content/themes/bones/library/css/style.css' type='text/css' media='all' />
+<!--[if lt IE 9]>
+<link rel='stylesheet' id='bones-ie-only-css'  href='http://www.wtfpl.net/wp-content/themes/bones/library/css/ie.css' type='text/css' media='all' />
+<![endif]-->
+<script type='text/javascript' src='http://www.wtfpl.net/wp-content/themes/bones/library/js/libs/modernizr.custom.min.js'></script>
+<script type='text/javascript' src='http://www.wtfpl.net/wp-includes/js/jquery/jquery.js'></script>
+<script type='text/javascript' src='http://www.wtfpl.net/wp-includes/js/jquery/jquery-migrate.min.js'></script>
+<link rel='https://api.w.org/' href='http://www.wtfpl.net/wp-json/' />
+<link rel="canonical" href="http://www.wtfpl.net/" />
+<link rel='shortlink' href='http://www.wtfpl.net/' />
+<link rel="alternate" type="application/json+oembed" href="http://www.wtfpl.net/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fwww.wtfpl.net%2F" />
+<link rel="alternate" type="text/xml+oembed" href="http://www.wtfpl.net/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fwww.wtfpl.net%2F&#038;format=xml" />
+<!-- This site is powered by Tweet, Like, Plusone and Share Plugin - http://letusbuzz.com/tweet-share-like-plusone/ -->
+	<meta property="og:type" content="article" />
+	<meta property="og:title" content="WTFPL — Do What the Fuck You Want to Public License" />
+	<meta property="og:url" content="http://www.wtfpl.net/"/>
+	<meta property="og:site_name" content="WTFPL &#8211; Do What the Fuck You Want to Public License" />
+	<meta property="og:description" content=" The WTFPL is a very permissive license for software and other scientific or artistic works that offers a great degree of freedom. In fact, it is probably the  "/>
+			<meta property="og:image" content="http://www.wtfpl.net/wp-content/uploads/2012/12/freedom.jpeg" />
+	<style type="text/css">div.socialicons{float:left;display:block;margin-right: 10px;}div.socialicons p{margin-bottom: 0px !important;margin-top: 0px !important;padding-bottom: 0px !important;padding-top: 0px !important;}</style>
+<script type="text/javascript" src="https://platform.twitter.com/widgets.js"></script><script type="text/javascript" src="https://connect.facebook.net/en_US/all.js#xfbml=1"></script><script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script><script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" type="text/javascript"></script><script type="text/javascript" src="https://platform.linkedin.com/in.js"></script>		<!-- end of wordpress head -->
+			
+		<!-- drop Google Analytics Here -->
+		<!-- end analytics -->
+		
+	</head>
+	
+	<body class="home page-template page-template-page-title page-template-page-title-php page page-id-17">
+	
+		<div id="container">
+			
+			<header class="header" role="banner">
+			
+				<div id="inner-header" class="wrap clearfix">
+					
+					<!-- to use a image just replace the bloginfo('name') with your img src and remove the surrounding <p> -->
+					<p id="logo" class="h1"><a href="http://www.wtfpl.net" rel="nofollow">WTFPL &#8211; Do What the Fuck You Want to Public License</a></p>
+					
+					<!-- if you'd like to use the site description you can un-comment it below -->
+										
+					
+					<nav role="navigation">
+						<div class="nav footer-nav clearfix"><ul><li class="current_page_item"><a href="http://www.wtfpl.net/">Home</a></li><li class="page_item page-item-2"><a href="http://www.wtfpl.net/about/">About the WTFPL</a></li><li class="page_item page-item-106"><a href="http://www.wtfpl.net/blog/">Blog</a></li><li class="page_item page-item-43"><a href="http://www.wtfpl.net/showcase/">WTFPL Showcase</a></li><li class="page_item page-item-22"><a href="http://www.wtfpl.net/faq/">Frequently Asked Questions</a></li><li class="page_item page-item-48"><a href="http://www.wtfpl.net/download/">WTFPL Downloads</a></li><li class="page_item page-item-41"><a href="http://www.wtfpl.net/feedback/">Feedback</a></li></ul></div>					</nav>
+				
+				</div> <!-- end #inner-header -->
+			
+			</header> <!-- end header -->
+			
+			<div id="content">
+			
+				<div id="inner-content" class="wrap clearfix">
+			
+				    <div id="padding-left" class="onecol first clearfix" role="padding"> <p></p> </div>
+				    <div id="main" class="tencol clearfix" role="main">
+
+					    					
+					    <article id="post-17" class="clearfix post-17 page type-page status-publish hentry" role="article">
+						
+						    <section class="entry-content">
+							    <h2><a href="/about/"><img class="aligncenter size-full wp-image-127" alt="freedom" src="http://www.wtfpl.net/wp-content/uploads/2012/12/freedom.jpeg" width="1280" height="616" srcset="http://www.wtfpl.net/wp-content/uploads/2012/12/freedom.jpeg 1280w, http://www.wtfpl.net/wp-content/uploads/2012/12/freedom-300x144.jpeg 300w, http://www.wtfpl.net/wp-content/uploads/2012/12/freedom-1024x492.jpeg 1024w" sizes="(max-width: 1280px) 100vw, 1280px" /></a></h2>
+<p>The WTFPL is a very permissive license for software and other scientific or artistic works that offers a great degree of freedom. In fact, it is probably the best license out there. This site provides information on how to make the most of the WTFPL. <a href="/about">Get started now!</a></p>
+<div class="social4i" style="height:29px;">
+<div class="social4in" style="height:29px;float: right;">
+<div class="socialicons s4twitter" style="float:left;margin-right: 10px;"><a href="https://twitter.com/share" data-url="http://www.wtfpl.net/" data-counturl="http://www.wtfpl.net/" data-text="WTFPL — Do What the Fuck You Want to Public License" class="twitter-share-button" data-count="horizontal" data-via=""></a></div>
+<div class="socialicons s4fblike" style="float:left;margin-right: 10px;">
+<div id="fb-root"></div>
+<p><fb:like href="http%3A%2F%2Fwww.wtfpl.net%2F" send="false" layout="button_count" width="100" height="21" show_faces="false" font=""></fb:like></div>
+<div class="socialicons s4plusone" style="float:left;margin-right: 10px;"><g:plusone size="medium" href="http://www.wtfpl.net/" count="true"></g:plusone></div>
+<div class="socialicons s4linkedin" style="float:left;margin-right: 10px;"><script type="in/share" data-url="http://www.wtfpl.net/" data-counter="right"></script></div>
+<div class="socialicons s4fbshare" style="position: relative;float:left;margin-right: 10px;">
+<div class="s4ifbshare" ><a name="fb_share" type="button_count" share_url="http%3A%2F%2Fwww.wtfpl.net%2F" href="http://www.facebook.com/sharer.php"></a></div>
+</div>
+</div>
+<div style="clear:both"></div>
+</div>
+						    </section> <!-- end article section -->
+						
+						    <footer class="article-footer">
+							    <p class="clearfix"></p>
+							
+						    </footer> <!-- end article footer -->
+						    
+						    
+<!-- You can start editing here. -->
+
+
+		
+	<!-- If comments are closed. -->
+	<!--p class="nocomments">Comments are closed.</p-->
+
+	
+
+
+					
+					    </article> <!-- end article -->
+					
+					    	
+					
+					    			
+				    </div> <!-- end #main -->
+				    
+				</div> <!-- end #inner-content -->
+    
+			</div> <!-- end #content -->
+
+			<footer class="footer" role="contentinfo">
+			
+				<div id="inner-footer" class="wrap clearfix">
+					
+					<nav role="navigation">
+    						                </nav>
+	                		
+					<p class="source-org copyright">&copy; 2022 WTFPL &#8211; Do What the Fuck You Want to Public License.</p>
+				
+				</div> <!-- end #inner-footer -->
+				
+			</footer> <!-- end footer -->
+		
+		</div> <!-- end #container -->
+		
+		<!-- all js scripts are loaded in library/bones.php -->
+		<script type='text/javascript' src='http://www.wtfpl.net/wp-content/themes/bones/library/js/scripts.js'></script>
+<script type='text/javascript' src='http://www.wtfpl.net/wp-includes/js/wp-embed.min.js'></script>
+
+	</body>
+
+</html> <!-- end page. what a ride! -->
+
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      "control" means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      "Object" form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+
+      "Work" shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+
+      "Contribution" shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to Licensor for inclusion in the Work by the copyright owner
+      or by an individual or Legal Entity authorized to submit on behalf of
+      the copyright owner. For the purposes of this definition, "submitted"
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as "Not a Contribution."
+
+      "Contributor" shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+
+      (d) If the Work includes a "NOTICE" text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS
+
+   APPENDIX: How to apply the Apache License to your work.
+
+      To apply the Apache License to your work, attach the following
+      boilerplate notice, with the fields enclosed by brackets "[]"
+      replaced with your own identifying information. (Don't include
+      the brackets!)  The text should be enclosed in the appropriate
+      comment syntax for the file format. We also recommend that a
+      file or class name and description of purpose be included on the
+      same "printed page" as the copyright notice for easier
+      identification within third-party archives.
+
+   Copyright [yyyy] [name of copyright owner]
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
