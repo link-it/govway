@@ -105,7 +105,7 @@ public class HashtableCheck {
 						byteInputBuffer.write(readB,0,readByte);
 					}
 					fis.close();
-					String sCheck = byteInputBuffer.toString().replace("transactionContext = new java.util.Hashtable<>();",""); // questo non va considerato
+					String sCheck = byteInputBuffer.toString().replace("transactionContext_shared = new java.util.Hashtable<>();",""); // questo non va considerato
 					if(sCheck.indexOf(HASHTABLE_CHECK)==-1){
 						jumpCheck = true;
 					}
