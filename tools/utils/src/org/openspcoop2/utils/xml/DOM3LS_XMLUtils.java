@@ -180,7 +180,9 @@ public class DOM3LS_XMLUtils {
 			}catch(Exception eClose){}
 			try{
 				fout.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	

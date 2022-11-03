@@ -30,6 +30,10 @@ package org.openspcoop2.utils.crypt;
 public class TestCodecCrypt {
 
 	public static void main(String[] args) throws Exception {
+		test();
+	}
+	
+	public static void test() throws Exception {
 		
 		CodecType [] types = CodecType.values();
 		

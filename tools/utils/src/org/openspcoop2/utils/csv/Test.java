@@ -35,7 +35,11 @@ import java.util.List;
  */
 public class Test {
 
-	public static void main(String[] args) throws Exception{
+	public static void main(String[] args) throws Exception {
+		test();
+	}
+	
+	public static void test() throws Exception {
 		
 		FormatReader formatReader = new FormatReader(Test.class.getResourceAsStream("/org/openspcoop2/utils/csv/example.format.properties"));
 		Format format = formatReader.getFormat();

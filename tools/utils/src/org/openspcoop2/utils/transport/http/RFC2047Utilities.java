@@ -38,6 +38,10 @@ import org.openspcoop2.utils.resources.Charset;
 public class RFC2047Utilities {
 
 	public static void main(String[] args) throws Exception {
+		test();
+	}
+	
+	public static void test() throws Exception {
 		
 		// Test String con caratteri appartenenti all'ISO ISO_8859_1
 		String string_iso_8859_1 = "für psychisch";

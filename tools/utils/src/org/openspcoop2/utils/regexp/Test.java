@@ -30,6 +30,10 @@ package org.openspcoop2.utils.regexp;
 public class Test {
 
 	public static void main(String[] args) throws Exception {
+		test();
+	}
+	
+	public static void test() throws Exception {
 		
 		String url = "/govway/out/ENTE/PubblicoAmministratore/TEST/v1/uuid23/altroContesto";
 		

@@ -1032,7 +1032,9 @@ public abstract class AbstractXMLUtils {
 			try{
 				if(cleanXML!=null)
 					cleanXML.close();
-			}catch(Exception eis){}
+			}catch(Exception eis){
+				// close
+			}
 			throw new UtilsException("Utilities.eraserType error "+e.getMessage(),e);
 		}
 	}  

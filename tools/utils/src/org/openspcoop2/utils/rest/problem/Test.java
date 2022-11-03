@@ -20,8 +20,6 @@
 
 package org.openspcoop2.utils.rest.problem;
 
-import org.openspcoop2.utils.UtilsException;
-
 /**
  * Test
  *
@@ -31,7 +29,11 @@ import org.openspcoop2.utils.UtilsException;
  */
 public class Test {
 
-	public static void main(String[] args) throws UtilsException {
+	public static void main(String[] args) throws Exception {
+		test();
+	}
+	
+	public static void test() throws Exception {
 		
 		boolean setType = true;
 		ProblemRFC7807Builder builder1 = new ProblemRFC7807Builder(setType);

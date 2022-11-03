@@ -98,8 +98,10 @@ public class WrappedLogSSLSocket extends SSLSocket {
         
         @Override
 		public void write(byte[] b) throws IOException {
-        	this.sb.append(b);
-            this.out.write(b);
+        	if(b!=null) {
+        		this.sb.append(new String(b));
+        		this.out.write(b);
+        	}
 		}
 
         @Override

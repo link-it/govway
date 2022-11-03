@@ -59,6 +59,10 @@ import org.openspcoop2.utils.xml.XMLUtils;
 public class Test {
 
 	public static void main(String[] args) throws Exception {
+		test();
+	}
+	
+	public static void test() throws Exception {
 		
 		AbstractXMLUtils xmlUtils = XMLUtils.getInstance();
 		

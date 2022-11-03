@@ -111,6 +111,10 @@ public class XMLDiffClientTest {
 	
 	
 	public static void main(String[] args) throws Exception {
+		test();
+	}
+	
+	public static void test() throws Exception {
 		
 		File originalFile = File.createTempFile("src", ".xml");
 		FileSystemUtilities.writeFile(originalFile, XMLDiffClientTest.XML_ORIGINAL.getBytes());

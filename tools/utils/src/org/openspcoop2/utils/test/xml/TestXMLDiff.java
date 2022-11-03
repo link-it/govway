@@ -39,7 +39,7 @@ public class TestXMLDiff {
 	public void testXMLDiff() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.xml.XMLDiffClientTest.main(null);
+		org.openspcoop2.utils.xml.XMLDiffClientTest.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

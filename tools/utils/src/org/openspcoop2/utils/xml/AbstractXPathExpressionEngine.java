@@ -383,7 +383,9 @@ public abstract class AbstractXPathExpressionEngine {
 								try{
 									if( reader != null )
 										reader.close();
-								} catch(Exception er) {}
+								} catch(Exception er) {
+									// close
+								}
 								throw e;
 							}		
 						}
@@ -484,7 +486,9 @@ public abstract class AbstractXPathExpressionEngine {
 						try{
 							if( reader != null )
 								reader.close();
-						} catch(Exception er) {}
+						} catch(Exception er) {
+							// close
+						}
 						throw e;
 					}		
 				}

@@ -110,6 +110,10 @@ public class TestXXE {
 	public static String multipart_content_type = "multipart/related;   boundary=\"----=_Part_0_6330713.1171639717331\";   type=\"application/xml\"";
 	
 	public static void main(String[] args) throws Exception {
+		test();
+	}
+	
+	public static void test() throws Exception {
 		
 		// Default è true
 		// AbstractXMLUtils.DISABLE_DTDs=false;

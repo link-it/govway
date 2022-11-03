@@ -39,7 +39,7 @@ public class TestXACML {
 	public void testXACML() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.xacml.test.Test.main(null);
+		org.openspcoop2.utils.xacml.test.Test.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

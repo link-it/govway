@@ -39,7 +39,7 @@ public class TestApacheGenerator {
 	public void testApacheIdGenerator() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.id.ApacheClient.main(null);
+		org.openspcoop2.utils.id.ApacheClient.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

@@ -479,6 +479,9 @@ public class JOSEUtils {
 			if(keystoreFile!=null) {
 				keystoreFile = keystoreFile.trim();
 			}
+			else {
+				throw new SecurityException("Keystore value in property '"+SecurityConstants.JOSE_USE_HEADERS_KEYSTORE_FILE+"' is null");
+			}
 			try {
 				return new JWKSet(FileSystemUtilities.readFile(keystoreFile));
 			}catch(Exception e) {

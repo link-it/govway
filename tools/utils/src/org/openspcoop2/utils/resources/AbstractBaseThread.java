@@ -30,7 +30,7 @@ import org.openspcoop2.utils.UtilsException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public abstract class BaseThread extends Thread {
+public abstract class AbstractBaseThread extends Thread {
 
     // VARIABILE PER STOP
 	private boolean stop = false;

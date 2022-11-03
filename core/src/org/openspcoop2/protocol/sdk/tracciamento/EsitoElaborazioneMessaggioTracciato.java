@@ -31,7 +31,7 @@ import org.openspcoop2.protocol.sdk.constants.EsitoElaborazioneMessaggioTracciat
 * @author $Author$
 * @version $Rev$, $Date$
 */
-public class EsitoElaborazioneMessaggioTracciato implements Serializable {
+public class EsitoElaborazioneMessaggioTracciato implements Serializable, Cloneable {
 
 	/**
 	 * 

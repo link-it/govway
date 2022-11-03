@@ -380,7 +380,9 @@ public class HttpUtilities {
 			String ext = null;
 			try{
 				ext = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length());
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ext non disponibile
+			}
 			MimeTypes mimeTypes = MimeTypes.getInstance();
 			if(ext!=null && mimeTypes.existsExtension(ext)){
 				mimeType = mimeTypes.getMimeType(ext);
@@ -1415,7 +1417,9 @@ public class HttpUtilities {
 				if(finTrustStore!=null){
 					finTrustStore.close();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 

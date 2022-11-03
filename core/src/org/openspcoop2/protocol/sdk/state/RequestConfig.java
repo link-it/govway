@@ -57,7 +57,7 @@ import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPorteDelegate;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class RequestConfig implements java.io.Serializable {
+public class RequestConfig implements java.io.Serializable, Cloneable {
 
 	/**
 	 * 

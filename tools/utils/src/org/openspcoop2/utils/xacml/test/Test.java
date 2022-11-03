@@ -44,7 +44,11 @@ public class Test {
 	private static String okRequest = "okRequestCittadinoeCitta.xml";
 	private static String koRequestCitta = "koRequestCitta.xml";
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
+		test();
+	}
+	
+	public static void test() throws Exception {
 		
 		boolean pdpUnico = true;
 		int nPolicy = 100000;

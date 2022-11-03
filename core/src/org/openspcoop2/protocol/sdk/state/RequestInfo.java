@@ -53,10 +53,10 @@ public class RequestInfo implements java.io.Serializable {
 	private IDServizio idServizio;
 	private String idTransazione;
 	private String messageFactory;
-	private RequestConfig preRequestConfig;
-	private RequestConfig requestConfig;
-	private RequestRateLimitingConfig requestRateLimitingConfig;
-	private RequestThreadContext requestThreadContext;
+	private transient RequestConfig preRequestConfig;
+	private transient RequestConfig requestConfig;
+	private transient RequestRateLimitingConfig requestRateLimitingConfig;
+	private transient RequestThreadContext requestThreadContext;
 	
 	public RequestThreadContext getRequestThreadContext() {
 		return this.requestThreadContext;

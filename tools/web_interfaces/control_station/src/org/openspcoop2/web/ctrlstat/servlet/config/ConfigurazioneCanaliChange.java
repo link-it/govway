@@ -104,7 +104,9 @@ public final class ConfigurazioneCanaliChange extends Action {
 			// setto la barra del titolo
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALI, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CANALI_LIST));
-			lstParam.add(new Parameter(oldCanale.getNome(), null));
+			if(oldCanale!=null) {
+				lstParam.add(new Parameter(oldCanale.getNome(), null));
+			}
 			ServletUtils.setPageDataTitle(pd, lstParam);
 
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento

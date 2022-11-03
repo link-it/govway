@@ -159,21 +159,23 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 				boolean allComplete = false;
 				List<AttachmentProcessingPart> lstAttachments = new ArrayList<AttachmentProcessingPart>();
 				
-				for(ProcessingPart<?,?> part: lstEncryptionParts) {
-
-					if(part instanceof AttachmentProcessingPart) {
-						AttachmentProcessingPart attProcessingPart = (AttachmentProcessingPart) part;
-						if(attProcessingPart.isAllAttachments()) {
-							allPresente = true;
-							allComplete = !attProcessingPart.isContent();
-						} else {
-							lstAttachments.add(attProcessingPart);
+				if(lstEncryptionParts!=null) {
+					for(ProcessingPart<?,?> part: lstEncryptionParts) {
+	
+						if(part instanceof AttachmentProcessingPart) {
+							AttachmentProcessingPart attProcessingPart = (AttachmentProcessingPart) part;
+							if(attProcessingPart.isAllAttachments()) {
+								allPresente = true;
+								allComplete = !attProcessingPart.isContent();
+							} else {
+								lstAttachments.add(attProcessingPart);
+							}
+							
+	
+						} else if(part instanceof ElementProcessingPart) {  
+							ElementProcessingPart elProcessingPart = (ElementProcessingPart) part;
+							encMsgProc.addElementToEncrypt(elProcessingPart.getPart(),elProcessingPart.isContent());
 						}
-						
-
-					} else if(part instanceof ElementProcessingPart) {  
-						ElementProcessingPart elProcessingPart = (ElementProcessingPart) part;
-						encMsgProc.addElementToEncrypt(elProcessingPart.getPart(),elProcessingPart.isContent());
 					}
 				}
 				
@@ -233,21 +235,23 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 				boolean allComplete = false;
 				List<AttachmentProcessingPart> lstAttachments = new ArrayList<AttachmentProcessingPart>();
 				
-				for(ProcessingPart<?,?> part: lstSignatureParts) {
-
-					if(part instanceof AttachmentProcessingPart) {
-						AttachmentProcessingPart attProcessingPart = (AttachmentProcessingPart) part;
-						if(attProcessingPart.isAllAttachments()) {
-							allPresente = true;
-							allComplete = !attProcessingPart.isContent();
-						} else {
-							lstAttachments.add(attProcessingPart);
+				if(lstSignatureParts!=null) {
+					for(ProcessingPart<?,?> part: lstSignatureParts) {
+	
+						if(part instanceof AttachmentProcessingPart) {
+							AttachmentProcessingPart attProcessingPart = (AttachmentProcessingPart) part;
+							if(attProcessingPart.isAllAttachments()) {
+								allPresente = true;
+								allComplete = !attProcessingPart.isContent();
+							} else {
+								lstAttachments.add(attProcessingPart);
+							}
+							
+	
+						} else if(part instanceof ElementProcessingPart) {  
+							ElementProcessingPart elProcessingPart = (ElementProcessingPart) part;
+							signMsgProc.addElementToSign(elProcessingPart.getPart(),elProcessingPart.isContent());
 						}
-						
-
-					} else if(part instanceof ElementProcessingPart) {  
-						ElementProcessingPart elProcessingPart = (ElementProcessingPart) part;
-						signMsgProc.addElementToSign(elProcessingPart.getPart(),elProcessingPart.isContent());
 					}
 				}
 				

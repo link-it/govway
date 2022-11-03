@@ -57,7 +57,7 @@ public class TestOpenApiReader {
 	public void testOpenApiReaderIndentazione() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' (verificaIndentazione) ...");
-		org.openspcoop2.utils.openapi.TestIndentazione.main(null);
+		org.openspcoop2.utils.openapi.TestIndentazione.test();
 		TestLogger.info("Run test '"+ID_TEST+"' (verificaIndentazione) ok");
 		
 	}

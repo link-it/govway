@@ -45,6 +45,10 @@ public class Xml2JsonTest {
 
 
 	public static void main(String[] args) throws Exception {
+		test();
+	}
+	
+	public static void test() throws Exception {
 
 		String xmlString = Utilities.getAsString(Xml2JsonTest.class.getResource("file.xml"), Charsets.ISO_8859_1.name());
 		Map<String, String> xmlToJsonNamespaces = new HashMap<String,String>(1);

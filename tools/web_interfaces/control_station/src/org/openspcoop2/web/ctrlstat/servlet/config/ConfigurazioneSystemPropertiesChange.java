@@ -190,6 +190,9 @@ public final class ConfigurazioneSystemPropertiesChange extends Action {
 			Property sp = new Property();
 			sp.setNome(nome);
 			sp.setValore(valore);
+			if(systemProperties==null) {
+				systemProperties = new SystemProperties();
+			}
 			systemProperties.addSystemProperty(sp);
 
 			confCore.performUpdateOperation(userLogin, confHelper.smista(), systemProperties);

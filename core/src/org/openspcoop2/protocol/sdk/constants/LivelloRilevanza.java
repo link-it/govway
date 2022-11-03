@@ -48,11 +48,11 @@ public enum LivelloRilevanza {
 		throw new NotImplementedException("Use ProtocolFactory.createTraduttore().toString(livelloRilevanza) or getEngineValue()");
 	}
 	
-	public boolean equals(LivelloRilevanza l){
+	public boolean equals(String l){
 		if(l==null){
 			return false;
 		}
-		return this.livello.equals(l.livello);
+		return this.livello.equals(l);
 	}
 	
 	public String getEngineValue(){

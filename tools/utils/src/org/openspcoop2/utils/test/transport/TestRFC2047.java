@@ -39,7 +39,7 @@ public class TestRFC2047 {
 	public void testRFC2047() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.transport.http.RFC2047Utilities.main(null);
+		org.openspcoop2.utils.transport.http.RFC2047Utilities.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

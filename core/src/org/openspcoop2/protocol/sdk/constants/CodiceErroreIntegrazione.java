@@ -311,11 +311,8 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
     	throw new RuntimeException("Not Implemented");
     }
     
-	public boolean equals(CodiceErroreIntegrazione codice){
-		if(codice==null){
-			return false;
-		}
-		return this.getCodice() == codice.getCodice();
+	public boolean equals(int codice){
+		return this.getCodice() == codice;
 	}
     
 //	public static CodiceErroreIntegrazione toCodiceErroreIntegrazione(String codiceString) {

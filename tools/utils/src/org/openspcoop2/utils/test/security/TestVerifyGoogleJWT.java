@@ -39,7 +39,7 @@ public class TestVerifyGoogleJWT {
 	public void testVerifyGoogleJWT() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.security.TestVerifyGoogleJWT.main(null);
+		org.openspcoop2.utils.security.TestVerifyGoogleJWT.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

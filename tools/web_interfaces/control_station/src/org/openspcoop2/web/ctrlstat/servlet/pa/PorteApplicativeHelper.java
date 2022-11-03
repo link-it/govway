@@ -4430,6 +4430,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 	private List<Parameter> _getTitoloPA(Integer parentPA, String idsogg, String idAsps, String soggettoTitle)	throws Exception, DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		List<Parameter> lstParam = new ArrayList<>();
+		if(parentPA==null) {
+			throw new Exception("parentPA is null");
+		}
 		switch (parentPA) {
 		case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE:
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(this.porteApplicativeCore);

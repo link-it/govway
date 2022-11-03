@@ -67,7 +67,7 @@ public class Messaggio implements Serializable{
 	
 	private String contentType;
 	
-	private DumpByteArrayOutputStream body;
+	private transient DumpByteArrayOutputStream body;
 	private BodyMultipartInfo bodyMultipartInfo;
 
 	private List<Attachment> attachments = new ArrayList<>();

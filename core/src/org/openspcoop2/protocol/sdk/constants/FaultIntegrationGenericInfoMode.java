@@ -31,7 +31,4 @@ public enum FaultIntegrationGenericInfoMode {
 
 	ABILITATO,DISABILITATO,SERVIZIO_APPLICATIVO;
 	
-	public boolean equals(FaultIntegrationGenericInfoMode s){
-		return this.toString().equals(s.toString());
-	}
 }

@@ -45,6 +45,10 @@ import com.nimbusds.jose.jwk.KeyUse;
 public class TestJWK {
 
 	public static void main(String[] args) throws Exception {
+		test();
+	}
+	
+	public static void test() throws Exception {
 		
 		InputStream isKeystore = null;
 		File fKeystore = null;

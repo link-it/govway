@@ -208,25 +208,27 @@ public final class ConfigurazioneHandlersRispostaList extends Action {
 					oggettiDaAggiornare.add(configurazione);
 				}
 				
-				for(int j = 0; j < listaDaAggiornare.size() ; j++) {
-					ConfigurazioneHandler handlerToMove = null;
-					ConfigurazioneHandler handlerToCheck = listaDaAggiornare.get(j);
-					if(handlerToCheck.getId().equals(idHandler)) {
-						handlerToMove = handlerToCheck;
-						
-						int posizioneAttuale = handlerToMove.getPosizione();
-						
-						ConfigurazioneHandler handlerToSwitch = null;
-						if(cambiaPosizione.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SU)) {
-							handlerToSwitch = listaDaAggiornare.get(j-1);
-						} else {
-							handlerToSwitch = listaDaAggiornare.get(j+1);
+				if(listaDaAggiornare!=null) {
+					for(int j = 0; j < listaDaAggiornare.size() ; j++) {
+						ConfigurazioneHandler handlerToMove = null;
+						ConfigurazioneHandler handlerToCheck = listaDaAggiornare.get(j);
+						if(handlerToCheck.getId().equals(idHandler)) {
+							handlerToMove = handlerToCheck;
+							
+							int posizioneAttuale = handlerToMove.getPosizione();
+							
+							ConfigurazioneHandler handlerToSwitch = null;
+							if(cambiaPosizione.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SU)) {
+								handlerToSwitch = listaDaAggiornare.get(j-1);
+							} else {
+								handlerToSwitch = listaDaAggiornare.get(j+1);
+							}
+							int posizioneNuova = handlerToSwitch.getPosizione();
+							
+							handlerToMove.setPosizione(posizioneNuova);
+							handlerToSwitch.setPosizione(posizioneAttuale);
+							break;
 						}
-						int posizioneNuova = handlerToSwitch.getPosizione();
-						
-						handlerToMove.setPosizione(posizioneNuova);
-						handlerToSwitch.setPosizione(posizioneAttuale);
-						break;
 					}
 				}
 

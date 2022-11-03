@@ -43,11 +43,11 @@ public enum ContestoCodificaEccezione {
 		throw new NotImplementedException("Use Protocol Factory");
 	}
 	
-	public boolean equals(ContestoCodificaEccezione c){
+	public boolean equals(String c){
 		if(c==null){
 			return false;
 		}
-		return this.value.equals(c.getEngineValue());
+		return this.value.equals(c);
 	}
 	
 	public String getEngineValue(){

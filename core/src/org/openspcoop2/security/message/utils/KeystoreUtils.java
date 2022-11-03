@@ -863,6 +863,9 @@ public class KeystoreUtils {
 	
 	
 	private static byte[] readResources(String path) throws Exception {
+		if(path==null) {
+			return null;
+		}
 		if(path!=null && (path.startsWith("http") || path.startsWith("https"))) {
 			HttpResponse httpResponse = HttpUtilities.getHTTPResponse(path, 60000, 10000);
 			if(httpResponse==null || httpResponse.getContent()==null) {

@@ -322,7 +322,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		int value = -1;
 		try {
 			value = Integer.valueOf(crllifecache);
-		}catch(Exception e) {}
+		}catch(Exception e) {
+			// value
+		}
 		if(value>0){
 			de.setValue(value+"");
 		}
@@ -420,7 +422,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			int value = -1;
 			try {
 				value = Integer.valueOf(lifecache);
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// value
+			}
 			if(value>0){
 				de.setValue(value+"");
 			}
@@ -3299,6 +3303,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String[] registriList, String[] registriListLabel, String[] tipiSoggettiLabel,
 			Vector<DataElement> dati) throws DriverRegistroServiziException {
 		
+		if(dati==null) {
+			throw new DriverRegistroServiziException("Dati is null");
+		}
+		
 		DataElement dataElement = new DataElement();
 		dataElement.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ROUTING_DELLE_BUSTE);
 		dataElement.setType(DataElementType.TITLE);
@@ -3879,7 +3887,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				String multi = MultitenantSoggettiFruizioni.SOLO_SOGGETTI_ESTERNI.getValue();
 				try {
 					multi = MultitenantSoggettiFruizioni.valueOf(multitenantSoggettiFruizioni).getValue();
-				}catch(Exception e) {}
+				}catch(Exception e) {
+					// null
+				}
 				de.setValue(multi);
 				if(allHidden) {
 					de.setType(DataElementType.HIDDEN);
@@ -3918,7 +3928,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				String multi = MultitenantSoggettiErogazioni.SOLO_SOGGETTI_ESTERNI.getValue();
 				try {
 					multi = MultitenantSoggettiErogazioni.valueOf(multitenantSoggettiErogazioni).getValue();
-				}catch(Exception e) {}
+				}catch(Exception e) {
+					// null
+				}
 				de.setValue(multi);
 				if(allHidden) {
 					de.setType(DataElementType.HIDDEN);
@@ -7201,7 +7213,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_STATO);
 		de.setType(DataElementType.SELECT);
 		de.setValues(ConfigurazioneCostanti.STATI_CON_WARNING);
-		if(controlloTraffico.isControlloMaxThreadsEnabled()) {
+		if(controlloTraffico!=null && controlloTraffico.isControlloMaxThreadsEnabled()) {
 			if(controlloTraffico.isControlloMaxThreadsWarningOnly()) {
 				de.setSelected(CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.getValue());
 			}
@@ -7221,7 +7233,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_SOGLIA);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_SOGLIA);
-		if(controlloTraffico.isControlloMaxThreadsEnabled()) {
+		if(controlloTraffico!=null && controlloTraffico.isControlloMaxThreadsEnabled()) {
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setRequired(true);
 		}
@@ -12958,7 +12970,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 		}
 		
-		if(policy.getId()!=null && policy.getId()>0){
+		if(policy!=null && policy.getId()!=null && policy.getId()>0){
 			// id
 			de = new DataElement();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID);
@@ -22771,7 +22783,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		List<String> protocolli = null;
 //		boolean groupByKey = false;
 		
-		if(allarme.getGroupBy().isEnabled()){
+		if(allarme!=null && allarme.getGroupBy()!=null && allarme.getGroupBy().isEnabled()){
 			
 			// protocollo
 			protocolli = this.confCore.getProtocolli();
@@ -22795,8 +22807,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		// stato
+		boolean allarmeGBEnabled = allarme!=null && allarme.getGroupBy()!=null ? allarme.getGroupBy().isEnabled() : false;
 		addToDatiDataElementStato_postBackViaPOST(dati, ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_ENABLED, 
-				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_ENABLED_STATO, allarme.getGroupBy().isEnabled(), true, false, false, false);
+				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_ALLARMI_GROUPBY_ENABLED_STATO, allarmeGBEnabled, true, false, false, false);
 		
 		/*
 		de = new DataElement();
@@ -22816,7 +22829,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		*/
 		
-		if(allarme.getGroupBy().isEnabled()){
+		if(allarme!=null && allarme.getGroupBy()!=null && allarme.getGroupBy().isEnabled()){
 		
 			GroupByConfiguration groupByConfig = this.confCore.getGroupByConfiguration(allarme, context);
 			

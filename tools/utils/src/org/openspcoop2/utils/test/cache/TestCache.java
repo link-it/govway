@@ -34,14 +34,29 @@ import org.testng.annotations.Test;
 public class TestCache {
 
 	private static final String ID_TEST = "Cache";
+	private static final String ID_TEST_MISURAZIONE_TEMPI = "Cache-MisurazioneTempi";
 	
 	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST,Costanti.GRUPPO_UTILS+"."+ID_TEST+".performance"})
-	public void testJKS() throws Exception{
+	public void testCache() throws Exception{
+		
+		boolean allTestExecution = true;
 		
 		TestLogger.info("Run test '"+ID_TEST+".performance' ...");
-		org.openspcoop2.utils.cache.test.PerformanceTest.main(null);
+		org.openspcoop2.utils.cache.test.PerformanceTest.test(allTestExecution);
 		TestLogger.info("Run test '"+ID_TEST+".performance' ok");
 		
 	}
 
+	@Test(groups={Costanti.GRUPPO_UTILS+"."+ID_TEST_MISURAZIONE_TEMPI})
+	public void testCacheSingleTest() throws Exception{
+		
+		// Serve per i tempi attesi
+		
+		boolean allTestExecution = false;
+		
+		TestLogger.info("Run test '"+ID_TEST+".performance' ...");
+		org.openspcoop2.utils.cache.test.PerformanceTest.test(allTestExecution);
+		TestLogger.info("Run test '"+ID_TEST+".performance' ok");
+		
+	}
 }

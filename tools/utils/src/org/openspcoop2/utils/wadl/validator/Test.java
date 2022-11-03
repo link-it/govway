@@ -61,6 +61,10 @@ import org.w3c.dom.Element;
 public class Test {
 
 	public static void main(String[] args) throws Exception {
+		test();
+	}
+	
+	public static void test() throws Exception {
 		
 		System.out.println("Inizializzazione dell'oggetto ApplicationWrapper...");
 		

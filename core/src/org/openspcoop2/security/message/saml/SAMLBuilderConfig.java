@@ -89,7 +89,9 @@ public class SAMLBuilderConfig {
 				if(is!=null){
 					is.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	public static SAMLBuilderConfig getSamlConfig(Properties p, RequestInfo requestInfoParam) throws IOException {

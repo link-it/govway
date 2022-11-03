@@ -37,6 +37,10 @@ import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 public class ApacheClient {
 
 	public static void main(String[] args) throws Exception {
+		test();
+	}
+	
+	public static void test() throws Exception {
 		
 		ApacheIdentifierGenerator generator = new ApacheIdentifierGenerator();
 		ApacheGeneratorConfiguration config = new ApacheGeneratorConfiguration();

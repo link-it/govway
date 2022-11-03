@@ -110,7 +110,9 @@ public final class ConfigurazioneCanaliNodiChange extends Action {
 			// setto la barra del titolo
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CANALI_NODI, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CANALI_NODI_LIST));
-			lstParam.add(new Parameter(oldNodo.getNome(), null));
+			if(oldNodo!=null) {
+				lstParam.add(new Parameter(oldNodo.getNome(), null));
+			}
 			ServletUtils.setPageDataTitle(pd, lstParam);
 
 			List<String> aliases = confCore.getJmxPdD_aliases();

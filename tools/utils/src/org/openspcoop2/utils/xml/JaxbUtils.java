@@ -81,7 +81,9 @@ public class JaxbUtils {
 		}finally{
 			try{
 				fis.close();
-			}catch(Exception eis){}
+			}catch(Exception eis){
+				// close
+			}
 		}
 		if(objectRead instanceof JAXBElement<?>){
 			return ((JAXBElement<?>)objectRead).getValue();

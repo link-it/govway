@@ -30,7 +30,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 * @author $Author$
 * @version $Rev$, $Date$
 */
-public class ErroreCooperazione implements Serializable {
+public class ErroreCooperazione implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 	

@@ -23,7 +23,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.resources.BaseThread;
+import org.openspcoop2.utils.resources.AbstractBaseThread;
 import org.slf4j.Logger;
 
 /**
@@ -33,7 +33,7 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class UniversallyUniqueIdentifierProducer extends BaseThread {
+public class UniversallyUniqueIdentifierProducer extends AbstractBaseThread {
 
 	private static UniversallyUniqueIdentifierProducer staticInstance;
 	public static synchronized void initialize(int buffer, Logger log) {

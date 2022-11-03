@@ -122,7 +122,9 @@ public class HttpHeaderTypes {
 				if(is!=null){
 					is.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 	} 

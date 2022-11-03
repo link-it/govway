@@ -45,11 +45,11 @@ public enum Inoltro {
 		throw new NotImplementedException("Use ProtocolFactory.createTraduttore().toString(inoltro) or getEngineValue()");
 	}
 	
-	public boolean equals(Inoltro i){
+	public boolean equals(String i){
 		if(i==null){
 			return false;
 		}
-		return this.inoltro.equals(i.inoltro);
+		return this.inoltro.equals(i);
 	}
 	
 	public String getEngineValue(){

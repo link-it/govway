@@ -178,15 +178,15 @@ public class HttpServletTransportRequestContext extends org.openspcoop2.utils.tr
 		StringBuilder sb = new StringBuilder(super.toString(prefix));
 		if(this.httpServletRequest!=null) {
 			sb.append("\n").append(prefix).append("httpServletRequest: disponibile");
-		}
-		if(this.httpServletRequest.getRequestURI()!=null) {
-			sb.append("\n").append(prefix).append("httpServletRequest.getRequestURI: ").append(this.httpServletRequest.getRequestURI());
-		}
-		if(this.httpServletRequest.getRequestURL()!=null) {
-			sb.append("\n").append(prefix).append("httpServletRequest.getRequestURL: ").append(this.httpServletRequest.getRequestURL());
-		}
-		if(this.httpServletRequest.getQueryString()!=null) {
-			sb.append("\n").append(prefix).append("httpServletRequest.getQueryString: ").append(this.httpServletRequest.getQueryString());
+			if(this.httpServletRequest.getRequestURI()!=null) {
+				sb.append("\n").append(prefix).append("httpServletRequest.getRequestURI: ").append(this.httpServletRequest.getRequestURI());
+			}
+			if(this.httpServletRequest.getRequestURL()!=null) {
+				sb.append("\n").append(prefix).append("httpServletRequest.getRequestURL: ").append(this.httpServletRequest.getRequestURL());
+			}
+			if(this.httpServletRequest.getQueryString()!=null) {
+				sb.append("\n").append(prefix).append("httpServletRequest.getQueryString: ").append(this.httpServletRequest.getQueryString());
+			}
 		}
 		return sb.toString();
 	}

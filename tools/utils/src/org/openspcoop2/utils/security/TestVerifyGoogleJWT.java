@@ -31,6 +31,10 @@ import java.util.Properties;
 public class TestVerifyGoogleJWT {
 
 	public static void main(String[] args) throws Exception {
+		test();
+	}
+	
+	public static void test() throws Exception {
 		
 		// https://developers.google.com/identity/protocols/OpenIDConnect#discovery
 		

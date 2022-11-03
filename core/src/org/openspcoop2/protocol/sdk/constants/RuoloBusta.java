@@ -39,7 +39,5 @@ public enum RuoloBusta implements Serializable {
 	public boolean equals(String e){
 		return this.toString().equals(e);
 	}
-	public boolean equals(RuoloBusta e){
-		return this.toString().equals(e.toString());
-	}
+
 }

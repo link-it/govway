@@ -70,7 +70,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-expression-5.3.23.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-tx-5.3.23.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-web-5.3.23.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-security-core-5.7.4.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-security-core-5.7.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/uddi4j-2.0.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xalan-2.7.3-rc5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xml-resolver-1.2.jar"/>	
@@ -86,7 +86,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-dom-2.4.1.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-policy-stax-2.4.1.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-stax-2.4.1.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-6.2.8.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-6.4.0.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/joda-time-2.12.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/guava-31.1-jre.jar"/>	
 		<var name="manifest.classpath.3parti" value="${tmp}" />

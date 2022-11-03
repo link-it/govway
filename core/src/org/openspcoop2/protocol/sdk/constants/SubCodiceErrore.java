@@ -28,7 +28,7 @@ package org.openspcoop2.protocol.sdk.constants;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SubCodiceErrore {
+public class SubCodiceErrore implements Cloneable {
 
 	private Integer subCodice = null;
 	

@@ -33,6 +33,10 @@ import org.openspcoop2.utils.io.HexBinaryUtilities;
 public class TestOthersCrypt {
 
 	public static void main(String[] args) throws Exception {
+		test();
+	}
+	
+	public static void test() throws Exception {
 		
 		CryptType [] type = new CryptType[4];
 		type[0] = CryptType.PBE_KEY_SPEC;

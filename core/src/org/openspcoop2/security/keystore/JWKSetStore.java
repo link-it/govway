@@ -88,7 +88,9 @@ public class JWKSetStore implements Serializable {
 				if(isStore!=null){
 					isStore.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 	}

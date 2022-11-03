@@ -203,10 +203,12 @@ public final class ConfigurazioneHandlersRispostaDel extends Action {
 				oggettiDaAggiornare.add(configurazione);
 			}
 			
-			for(int j = listaDaAggiornare.size() -1; j >= 0 ; j--) {
-				for (int i = 0; i < idsToRemove.size(); i++) {
-					if(idsToRemove.get(i).equals(listaDaAggiornare.get(j).getTipo())) {
-						listaDaAggiornare.remove(j);
+			if(listaDaAggiornare!=null) {
+				for(int j = listaDaAggiornare.size() -1; j >= 0 ; j--) {
+					for (int i = 0; i < idsToRemove.size(); i++) {
+						if(idsToRemove.get(i).equals(listaDaAggiornare.get(j).getTipo())) {
+							listaDaAggiornare.remove(j);
+						}
 					}
 				}
 			}

@@ -107,6 +107,8 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 		this(file,xmlUtils,false,true);
 	}
 	public DefinitionWrapper(File file,AbstractXMLUtils xmlUtils,boolean verbose,boolean importsDocument)throws WSDLException{
+		this.xmlUtils = xmlUtils;
+		this.wsdlUtilities = WSDLUtilities.getInstance(this.xmlUtils);
 		if (file != null){
 			this.wsdlDefinition = this.wsdlUtilities.readWSDLFromFile(file,verbose,importsDocument);
 			this.path = file.getAbsolutePath();
@@ -266,7 +268,7 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 
 	@Override
 	public String removeNamespace(String arg0) {
-		return this.removeNamespace(arg0);
+		return this.wsdlDefinition.removeNamespace(arg0);
 	}
 	
 	
@@ -851,12 +853,12 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 	
 	@Override
 	public void setExtensionAttribute(QName arg0, Object arg1) {
-		this.setExtensionAttribute(arg0, arg1);
+		this.wsdlDefinition.setExtensionAttribute(arg0, arg1);
 	}
 
 	@Override
 	public List<?> getNativeAttributeNames() {
-		return this.getNativeAttributeNames();
+		return this.wsdlDefinition.getNativeAttributeNames();
 	}
 	
 	@Override

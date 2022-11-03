@@ -481,7 +481,9 @@ public class PrettyPrintXMLUtils {
 				if(is!=null){
 					is.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	private static void prettyPrintWithTrAX_engine(Node doc,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException{
@@ -511,7 +513,9 @@ public class PrettyPrintXMLUtils {
 				if(is!=null){
 					is.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	private static void prettyPrintWithTrAX_engine(Node doc,File file,ErrorListener errorListener,boolean omitXMLDeclaration, String charset)throws TransformerException,IOException{
@@ -540,7 +544,9 @@ public class PrettyPrintXMLUtils {
 				if(is!=null){
 					is.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 		

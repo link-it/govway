@@ -84,8 +84,8 @@ public enum EsitoIdentificationMode {
 	public String toString(){
 		return this.valore;
 	}
-	public boolean equals(EsitoIdentificationMode esito){
-		return this.toString().equals(esito.toString());
+	public boolean equals(String esito){
+		return this.toString().equals(esito);
 	}
 	
 }

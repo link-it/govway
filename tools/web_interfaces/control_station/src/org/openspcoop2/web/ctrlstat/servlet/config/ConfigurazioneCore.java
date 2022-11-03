@@ -1330,7 +1330,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		if(aspc!=null) {
 			canaleApi = aspc.getCanale();
 		}
-		String canale = CanaliUtils.getCanale(config.getGestioneCanali(), canaleApi, canalePorta);
+		String canale = CanaliUtils.getCanale(config!=null ? config.getGestioneCanali() : null, canaleApi, canalePorta);
 		
 		return UrlInvocazioneAPI.getConfigurazioneUrlInvocazione(configurazioneUrlInvocazione, protocolFactory, ruolo, serviceBinding, interfaceName, soggettoOperativo,
 				tags, canale);

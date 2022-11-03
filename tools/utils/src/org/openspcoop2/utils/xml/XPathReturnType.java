@@ -80,9 +80,6 @@ public enum XPathReturnType {
 	public String toString(){
 		return this.valore.toString();
 	}
-	public boolean equals(XPathReturnType esito){
-		return this.toString().equals(esito.toString());
-	}
 
 }
 

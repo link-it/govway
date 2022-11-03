@@ -97,7 +97,9 @@ public class XSDSchemaCollection {
 			try{
 				if(fout!=null)
 					fout.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -113,7 +115,9 @@ public class XSDSchemaCollection {
 			try{
 				if(fout!=null)
 					fout.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -146,7 +150,9 @@ public class XSDSchemaCollection {
 			try{
 				if(zipOut!=null)
 					zipOut.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	

@@ -49,11 +49,11 @@ public enum FunzionalitaProtocollo {
 		return this.funzionalita;
 	}
 	
-	public boolean equals(FunzionalitaProtocollo p){
+	public boolean equals(String p){
 		if(p==null){
 			return false;
 		}
-		return this.funzionalita.equals(p.funzionalita);
+		return this.funzionalita.equals(p);
 	}
 	
 	public String getEngineValue(){

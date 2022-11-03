@@ -61,14 +61,7 @@ public class TestUUID {
 	static Logger log = null;
 	
 	public static void main(String[] args) throws Exception {
-		
-		File logFile = File.createTempFile("runTestUUID_", ".log");
-		System.out.println("LogMessages write in "+logFile.getAbsolutePath());
-		LoggerWrapperFactory.setDefaultLogConfiguration(Level.ALL, false, null, logFile, "%m %n");
-		log = LoggerWrapperFactory.getLogger(TestUUID.class);
-		
-		DateManager.initializeDataManager(org.openspcoop2.utils.date.SystemDate.class.getName(), new Properties(), log);
-		
+				
 		if(args!=null && args.length>0){
 			String numThreads = args[0].trim();
 			if(!"${threads}".equals(numThreads)){
@@ -99,6 +92,18 @@ public class TestUUID {
 				}
 			}
 		}
+	
+		test();
+	}
+	
+	public static void test() throws Exception {
+		
+		File logFile = File.createTempFile("runTestUUID_", ".log");
+		System.out.println("LogMessages write in "+logFile.getAbsolutePath());
+		LoggerWrapperFactory.setDefaultLogConfiguration(Level.ALL, false, null, logFile, "%m %n");
+		log = LoggerWrapperFactory.getLogger(TestUUID.class);
+		
+		DateManager.initializeDataManager(org.openspcoop2.utils.date.SystemDate.class.getName(), new Properties(), log);
 		
 		System.out.println("Threads:"+THREADS);
 		System.out.println("Id generati per thread:"+ID_GENERATI_PER_THREAD);

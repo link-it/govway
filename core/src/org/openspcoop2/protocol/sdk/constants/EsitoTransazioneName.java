@@ -168,7 +168,9 @@ public enum EsitoTransazioneName implements Serializable{
 		EsitoTransazioneName esitoTransactionName = null;
 		try{
 			esitoTransactionName = EsitoTransazioneName.valueOf(name);
-		}catch(Exception e){}
+		}catch(Exception e){
+			// ignore
+		}
 		if(esitoTransactionName==null){
 			esitoTransactionName = EsitoTransazioneName.CUSTOM;
 		}
@@ -189,9 +191,6 @@ public enum EsitoTransazioneName implements Serializable{
 	@Override
 	public String toString(){
 		return this.name();
-	}
-	public boolean equals(EsitoTransazioneName esito){
-		return this.toString().equals(esito.toString());
 	}
 
 

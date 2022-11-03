@@ -329,9 +329,11 @@ public class ConfigurazioneHandlersRichiestaChange extends Action {
 				oggettiDaAggiornare.add(configurazione);
 			}
 			
-			for (ConfigurazioneHandler handlerToCheck : listaDaAggiornare) {
-				if(handlerToCheck.getTipo().equals(handler.getTipo())) {
-					confHelper.updateHandler(handlerToCheck, handler, tipoOperazione);
+			if(listaDaAggiornare!=null) {
+				for (ConfigurazioneHandler handlerToCheck : listaDaAggiornare) {
+					if(handlerToCheck.getTipo().equals(handler.getTipo())) {
+						confHelper.updateHandler(handlerToCheck, handler, tipoOperazione);
+					}
 				}
 			}
 			

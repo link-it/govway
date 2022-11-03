@@ -39,7 +39,7 @@ public class TestUUID {
 	public void testUUID() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.id.TestUUID.main(null);
+		org.openspcoop2.utils.id.TestUUID.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 	
 	}

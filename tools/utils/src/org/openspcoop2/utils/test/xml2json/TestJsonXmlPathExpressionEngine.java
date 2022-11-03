@@ -39,7 +39,7 @@ public class TestJsonXmlPathExpressionEngine {
 	public void testJsonXmlPathExpressionEngine() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.xml2json.test.JsonXmlPathExpressionEngineTest.main(null);
+		org.openspcoop2.utils.xml2json.test.JsonXmlPathExpressionEngineTest.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

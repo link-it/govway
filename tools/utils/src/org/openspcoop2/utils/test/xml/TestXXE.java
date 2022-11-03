@@ -38,7 +38,7 @@ public class TestXXE {
 	public void testXXE() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.xml.test.TestXXE.main(null);
+		org.openspcoop2.utils.xml.test.TestXXE.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

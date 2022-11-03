@@ -54,7 +54,7 @@
 	<archive path="/op2_3.3.dev/lib/cxf/asm-9.3.jar"/>
 	<archive path="/op2_3.3.dev/lib/cxf/jakarta.ws.rs-api-2.1.6.jar"/>
         <archive path="/op2_3.3.dev/lib/cxf/stax2-api-4.2.1.jar"/>
-        <archive path="/op2_3.3.dev/lib/cxf/woodstox-core-6.2.8.jar"/>
+        <archive path="/op2_3.3.dev/lib/cxf/woodstox-core-6.4.0.jar"/>
         <archive path="/op2_3.3.dev/lib/cxf/xmlschema-core-2.3.0.jar"/>
         <archive path="/op2_3.3.dev/lib/cxf/xml-resolver-1.2.jar"/>
 	<!-- httpcore -->
@@ -257,10 +257,10 @@
 	<archive path="/op2_3.3.dev/lib/spring/spring-aspects-5.3.23.jar"/>
         <archive path="/op2_3.3.dev/lib/spring/spring-orm-5.3.23.jar"/>
 	<!-- spring-security -->
-	<archive path="/op2_3.3.dev/lib/spring-security/spring-security-core-5.7.4.jar"/>
-	<archive path="/op2_3.3.dev/lib/spring-security/spring-security-web-5.7.4.jar"/>
-	<archive path="/op2_3.3.dev/lib/spring-security/spring-security-crypto-5.7.4.jar"/>
-	<archive path="/op2_3.3.dev/lib/spring-security/spring-security-config-5.7.4.jar"/>
+	<archive path="/op2_3.3.dev/lib/spring-security/spring-security-core-5.7.5.jar"/>
+	<archive path="/op2_3.3.dev/lib/spring-security/spring-security-web-5.7.5.jar"/>
+	<archive path="/op2_3.3.dev/lib/spring-security/spring-security-crypto-5.7.5.jar"/>
+	<archive path="/op2_3.3.dev/lib/spring-security/spring-security-config-5.7.5.jar"/>
 	<!-- swagger -->
 	<archive path="/op2_3.3.dev/lib/swagger/swagger-annotations-2.2.4.jar"/>
 	<archive path="/op2_3.3.dev/lib/swagger/swagger-core-2.2.4.jar"/>

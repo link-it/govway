@@ -27,6 +27,6 @@ package org.openspcoop2.utils.threads;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public abstract class BaseThread extends org.openspcoop2.utils.resources.BaseThread {
+public abstract class BaseThread extends org.openspcoop2.utils.resources.AbstractBaseThread {
 
 }

@@ -39,7 +39,7 @@ public class TestUnzip {
 	public void testUnzip() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.io.ZipUtilities.main(null);
+		org.openspcoop2.utils.io.ZipUtilities.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

@@ -67,6 +67,12 @@ public class ClientTest {
 	static Logger log = null;
 	
 	public static void main(String[] args) throws Exception {
+		test(args, false);
+	}
+	public static void test(String[] args, boolean verificaLogFile) throws Exception {
+		
+		File fStatusCode = new File("statusCode");
+		fStatusCode.delete();
 		
 		File logFile = File.createTempFile("runSemaphoreTest_", ".log");
 		System.out.println("LogMessages write in "+logFile.getAbsolutePath());		
@@ -313,9 +319,11 @@ public class ClientTest {
 			if(foundError==false){
 				throw new Exception("Atteso errore di max life, errore non rilevato");
 			}
-			String logContent = FileSystemUtilities.readFile(logFile);
-			if(logContent.contains("Max Life Time (100ms) exceeded")==false) {
-				throw new Exception("Atteso errore di max life, errore non rilevato nel log file");
+			if(verificaLogFile) {
+				String logContent = FileSystemUtilities.readFile(logFile);
+				if(logContent.contains("Max Life Time (100ms) exceeded")==false) {
+					throw new Exception("Atteso errore di max life, errore non rilevato nel log file");
+				}
 			}
 			printInfos(infoStat);
 			listApplicativeId.add(applicativeId);
@@ -336,9 +344,11 @@ public class ClientTest {
 			if(foundError==false){
 				throw new Exception("Atteso errore di max life, errore non rilevato");
 			}
-			logContent = FileSystemUtilities.readFile(logFile);
-			if(logContent.contains("Max Life Time (105ms) exceeded")==false) {
-				throw new Exception("Atteso errore di max life, errore non rilevato nel log file");
+			if(verificaLogFile) {
+				String logContent = FileSystemUtilities.readFile(logFile);
+				if(logContent.contains("Max Life Time (105ms) exceeded")==false) {
+					throw new Exception("Atteso errore di max life, errore non rilevato nel log file");
+				}
 			}
 			printInfos(infoStat);
 			listApplicativeId.add(applicativeId);
@@ -364,9 +374,11 @@ public class ClientTest {
 				if(foundError==false){
 					throw new Exception("Atteso errore di idle time, errore non rilevato");
 				}
-				logContent = FileSystemUtilities.readFile(logFile);
-				if(logContent.contains("Idle Time (38ms) exceeded")==false) {
-					throw new Exception("Atteso errore di idle time, errore non rilevato nel log file");
+				if(verificaLogFile) {
+					String logContent = FileSystemUtilities.readFile(logFile);
+					if(logContent.contains("Idle Time (38ms) exceeded")==false) {
+						throw new Exception("Atteso errore di idle time, errore non rilevato nel log file");
+					}
 				}
 				printInfos(infoStat);
 				listApplicativeId.add(applicativeId);
@@ -387,9 +399,11 @@ public class ClientTest {
 				if(foundError==false){
 					throw new Exception("Atteso errore di idle time, errore non rilevato");
 				}
-				logContent = FileSystemUtilities.readFile(logFile);
-				if(logContent.contains("Idle Time (42ms) exceeded")==false) {
-					throw new Exception("Atteso errore di idle time, errore non rilevato nel log file");
+				if(verificaLogFile) {
+					String logContent = FileSystemUtilities.readFile(logFile);
+					if(logContent.contains("Idle Time (42ms) exceeded")==false) {
+						throw new Exception("Atteso errore di idle time, errore non rilevato nel log file");
+					}
 				}
 				printInfos(infoStat);
 				listApplicativeId.add(applicativeId);
@@ -417,6 +431,9 @@ public class ClientTest {
 		}
 
 
+		try {
+			FileSystemUtilities.writeFile(fStatusCode, "OK".getBytes());
+		}catch(Throwable t) {}
 	}
 
 	private static void info(Logger log, boolean systemOut, String msg) {

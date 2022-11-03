@@ -510,11 +510,8 @@ public enum CodiceErroreCooperazione implements CodiceErrore,Serializable {
 		return this.name();
 	}
 	
-	public boolean equals(CodiceErroreCooperazione codice){
-		if(codice==null){
-			return false;
-		}
-		return this.getCodice() == codice.getCodice();
+	public boolean equals(int codice){
+		return this.getCodice() == codice;
 	}
 	
 	public static CodiceErroreCooperazione toCodiceErroreCooperazione(IProtocolFactory<?> protocolFactory, String protocolString) throws ProtocolException{

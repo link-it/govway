@@ -82,7 +82,7 @@ public class IDSerialGenerator {
 
 	public long buildIDAsNumber(IDSerialGeneratorParameter param) throws ProtocolException {
 		try{
-			if(IDSerialGeneratorType.ALFANUMERICO.equals(param)){
+			if(param!=null && IDSerialGeneratorType.ALFANUMERICO.equals(param.getTipo())){
 				throw new ProtocolException("IDSerialGeneratorType["+param.getTipo()+"] prevede anche caratteri alfanumerici");
 			}
 			return Long.parseLong(this.buildID(param));

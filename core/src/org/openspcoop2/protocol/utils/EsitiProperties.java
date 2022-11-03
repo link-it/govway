@@ -115,7 +115,9 @@ public class EsitiProperties {
 			try{
 				if(properties!=null)
 					properties.close();
-			}catch(Exception er){}
+			}catch(Exception er){
+				// close
+			}
 		}
 		try{
 			this.reader = new EsitiInstanceProperties(confDir, propertiesReader, this.log);

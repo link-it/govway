@@ -678,7 +678,7 @@ public enum ErroriIntegrazione {
 		return getErrore426_ServletError(isRichiesta, null, eProcessamento);
 	}
 	public ErroreIntegrazione getErrore426_ServletError(boolean isRichiesta,String error) {
-		return getErrore426_ServletError(isRichiesta, error);
+		return getErrore426_ServletError(isRichiesta, error, null);
 	}
 	public ErroreIntegrazione getErrore426_ServletError(boolean isRichiesta,String error,Throwable eProcessamento) {
 		if(!this.equals(ERRORE_426_SERVLET_ERROR)){
@@ -835,7 +835,9 @@ public enum ErroriIntegrazione {
 		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PROTOCOL,protocolFactory.getProtocol()));
 		try{
 			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPI_SUPPORTATI,protocolFactory.createProtocolConfiguration().getTipiSoggetti().toString()));
-		}catch(Exception e){}
+		}catch(Exception e){
+			// ignore
+		}
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	
@@ -849,7 +851,9 @@ public enum ErroriIntegrazione {
 		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PROTOCOL,protocolFactory.getProtocol()));
 		try{
 			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPI_SUPPORTATI,protocolFactory.createProtocolConfiguration().getTipiSoggetti().toString()));
-		}catch(Exception e){}
+		}catch(Exception e){
+			// ignore
+		}
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	
@@ -864,7 +868,9 @@ public enum ErroriIntegrazione {
 		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PROTOCOL,protocolFactory.getProtocol()));
 		try{
 			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPI_SUPPORTATI,protocolFactory.createProtocolConfiguration().getTipiServizi(serviceBinding).toString()));
-		}catch(Exception e){}
+		}catch(Exception e){
+			// ignore
+		}
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	
@@ -928,7 +934,9 @@ public enum ErroriIntegrazione {
 		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PROTOCOL,protocolFactory.getProtocol()));
 		try{
 			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPI_SUPPORTATI,protocolFactory.createProtocolConfiguration().getTipiSoggetti().toString()));
-		}catch(Exception e){}
+		}catch(Exception e){
+			// ignore
+		}
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	

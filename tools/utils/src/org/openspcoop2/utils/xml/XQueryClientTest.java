@@ -90,6 +90,10 @@ public class XQueryClientTest {
 	
 	
 	public static void main(String[] args) throws Exception {
+		test();
+	}
+	
+	public static void test() throws Exception {
 		
 		File sourceFile = File.createTempFile("src", ".xml");
 		FileSystemUtilities.writeFile(sourceFile, XQueryClientTest.SOAP_XML.getBytes());

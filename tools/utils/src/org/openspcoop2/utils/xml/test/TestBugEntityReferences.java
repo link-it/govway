@@ -46,7 +46,11 @@ public class TestBugEntityReferences {
 	//    "        |         &quot;      |         &#34;         |          &#x22;
 	//    '        |         &apos;      |         &#39;         |          &#x27;
 	
-    public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
+		test();
+	}
+	
+	public static void test() throws Exception {
     
     	String template = "REFERENCE";
     	String valoreReferenceConTemplate = "Valore con reference: "+template+" .\nTerminata altra informazione\n\nFine";

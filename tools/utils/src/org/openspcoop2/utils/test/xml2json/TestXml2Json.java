@@ -39,7 +39,7 @@ public class TestXml2Json {
 	public void testConverterXml2json() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.xml2json.test.Xml2JsonTest.main(null);
+		org.openspcoop2.utils.xml2json.test.Xml2JsonTest.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

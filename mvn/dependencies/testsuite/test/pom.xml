@@ -27,6 +27,7 @@
 		<picocli.version>4.2.0</picocli.version>
 		<spring.version>${module.spring.version}</spring.version>
 		<logback.version>1.4.4</logback.version>
+		<slf4j-testng.version>2.0.0</slf4j-testng.version>
 
 	</properties>
 
@@ -188,6 +189,19 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 			<version>${spring.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.sbabcoc</groupId>
+			<artifactId>slf4j-testng</artifactId>
+			<version>${slf4j-testng.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

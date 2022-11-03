@@ -62,7 +62,13 @@ public abstract class AbstractXml2Json implements IXml2Json{
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		} finally {
-			if(reader != null)try {reader.close();} catch(Exception e) {}
+			if(reader != null) {
+				try {
+					reader.close();
+				} catch(Exception e) {
+					// close
+				}
+			}
 		}
 	}
 
@@ -77,7 +83,13 @@ public abstract class AbstractXml2Json implements IXml2Json{
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		} finally {
-			if(reader != null)try {reader.close();} catch(Exception e) {}
+			if(reader != null){
+				try {
+					reader.close();
+				} catch(Exception e) {
+					// close
+				}
+			}
 		}
 	}
 
@@ -89,7 +101,13 @@ public abstract class AbstractXml2Json implements IXml2Json{
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		} finally {
-			if(eventWriter != null)try {eventWriter.close();} catch(Exception e) {}
+			if(eventWriter != null){
+				try {
+					eventWriter.close();
+				} catch(Exception e) {
+					// close
+				}
+			}
 		}
 	}
 

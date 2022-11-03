@@ -70,7 +70,7 @@
 		<fileset dir="${required_lib}/cxf" includes="cxf-rt-databinding-jaxb-3.5.4.jar"/>
 		<fileset dir="${required_lib}/cxf" includes="cxf-rt-bindings-soap-3.5.4.jar"/>	
 		<fileset dir="${required_lib}/cxf" includes="stax2-api-4.2.1.jar"/>
-		<fileset dir="${required_lib}/cxf" includes="woodstox-core-6.2.8.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="woodstox-core-6.4.0.jar"/>
 		<fileset dir="${required_lib}/cxf" includes="xmlschema-core-2.3.0.jar"/>
 		<fileset dir="${required_lib}/cxf" includes="xml-resolver-1.2.jar"/>
 		<fileset dir="${required_lib}/cxf" includes="jakarta.ws.rs-api-2.1.6.jar"/>

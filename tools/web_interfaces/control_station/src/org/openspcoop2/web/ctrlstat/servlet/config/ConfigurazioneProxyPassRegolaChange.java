@@ -144,7 +144,9 @@ public final class ConfigurazioneProxyPassRegolaChange extends Action {
 			// setto la barra del titolo
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROXY_PASS_REGOLE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA_LIST));
-			lstParam.add(new Parameter(oldRegola.getNome(), null));
+			if(oldRegola!=null) {
+				lstParam.add(new Parameter(oldRegola.getNome(), null));
+			}
 			ServletUtils.setPageDataTitle(pd, lstParam);
 
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento

@@ -47,11 +47,11 @@ public enum ProfiloDiCollaborazione {
 		throw new NotImplementedException("Use ProtocolFactory.createTraduttore().toString(profilo) or getEngineValue()");
 	}
 	
-	public boolean equals(ProfiloDiCollaborazione p){
+	public boolean equals(String p){
 		if(p==null){
 			return false;
 		}
-		return this.profilo.equals(p.profilo);
+		return this.profilo.equals(p);
 	}
 	
 	public String getEngineValue(){

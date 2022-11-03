@@ -597,8 +597,8 @@ public class SemaphoreEngine {
 					infoStatistics.addErrorSerializableAccess(e);
 				}
 				
-				//System.out.println("ERRORE: "+e.getMessage());
-				//log.info("ERROR GET SERIAL SQL ["+e.getMessage()+"]");
+				//System.out.println("ERRORE ["+operationType+"] Iteration ["+iteration+"]: "+e.getMessage());
+				//this.log.info("ERROR ["+operationType+"] Iteration ["+iteration+"] GET SERIAL SQL ["+e.getMessage()+"]");
 				try{
 					if( rs != null )
 						rs.close();
@@ -678,7 +678,10 @@ public class SemaphoreEngine {
 			throw new UtilsException(msgError);	
 		}
 
+		//System.out.println("TERMINO ["+operationType+"] (attesaWhile:"+attesaAttivaJDBC+"): "+operazioneConclusaConSuccesso);
+		
 		return operazioneConclusaConSuccesso;
+				
 	}
 	
 }

@@ -33,6 +33,10 @@ import org.openspcoop2.utils.io.HexBinaryUtilities;
 public class TestJasyptCrypt {
 
 	public static void main(String[] args) throws Exception {
+		test();
+	}
+	
+	public static void test() throws Exception {
 		
 		JasyptType [] types = JasyptType.values();
 		

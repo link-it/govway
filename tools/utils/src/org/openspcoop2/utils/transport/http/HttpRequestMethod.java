@@ -73,13 +73,6 @@ public enum HttpRequestMethod implements Serializable {
 		return false;
 	}
 	
-	public boolean equals(HttpRequestMethod object){
-		if(object==null)
-			return false;
-		if(object.name()==null)
-			return false;
-		return object.name().equals(this.name());	
-	}
 	public boolean equals(String object){
 		if(object==null)
 			return false;

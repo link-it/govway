@@ -597,7 +597,9 @@ public class SSLUtilities {
 				if(finTrustStore!=null){
 					finTrustStore.close();
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 	
@@ -676,7 +678,9 @@ public class SSLUtilities {
 					if(isStore!=null){
 						isStore.close();
 					}
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 		}
 		List<X509CRL> caCrls = new ArrayList<>();

@@ -152,7 +152,9 @@ public class ExternalPWCallback
     			try{
     				if(fin!=null)
     					fin.close();
-    			}catch(Exception eClose){}
+    			}catch(Exception eClose){
+    				// close
+    			}
     		}
     	}
     } 

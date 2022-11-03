@@ -37,7 +37,11 @@ import org.openspcoop2.utils.serialization.SerializationConfig;
  */
 public class SerializerTest {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
+		test();
+	}
+	
+	public static void test() throws Exception {
 		try {
 			ISerializer jsonJacksonSerializer = new JsonJacksonSerializer();
 			IDeserializer jsonJacksonDeserializer = new JsonJacksonDeserializer();

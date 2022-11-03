@@ -38,7 +38,7 @@ public class TestBugEntityReferences {
 	public void testBugEntityReferences() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' [string] ...");
-		org.openspcoop2.utils.xml.test.TestBugEntityReferences.main(null);
+		org.openspcoop2.utils.xml.test.TestBugEntityReferences.test();
 		TestLogger.info("Run test '"+ID_TEST+"' [string] ok");
 		
 	}

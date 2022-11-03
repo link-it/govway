@@ -39,7 +39,7 @@ public class TestWADLValidator {
 	public void testWadlValidator() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.wadl.validator.Test.main(null);
+		org.openspcoop2.utils.wadl.validator.Test.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

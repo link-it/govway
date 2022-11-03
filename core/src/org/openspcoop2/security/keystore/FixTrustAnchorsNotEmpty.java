@@ -52,7 +52,9 @@ public class FixTrustAnchorsNotEmpty {
 					if(is!=null){
 						is.close();
 					}
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 		}
 	}

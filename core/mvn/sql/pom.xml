@@ -88,8 +88,7 @@
 								<taskdef resource="net/sf/antcontrib/antlib.xml"
 									classpathref="classpath_run" />
 								<taskdef classpathref="classpath_run"
-								     name="testng"
-								     classname="org.testng.TestNGAntTask"/>
+								     resource="testngtasks" classpath="${rootDir}/lib/testsuite/testng-7.6.1.jar"/>
 
 								<delete dir="build_testunits"/>
 								<unzip dest="build_testunits">

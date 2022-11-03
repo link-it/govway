@@ -87,8 +87,8 @@ public enum EsitoTransportContextIdentificationMode {
 	public String toString(){
 		return this.valore;
 	}
-	public boolean equals(EsitoTransportContextIdentificationMode esito){
-		return this.toString().equals(esito.toString());
+	public boolean equals(String esito){
+		return this.toString().equals(esito);
 	}
 	
 }

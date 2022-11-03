@@ -53,6 +53,10 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
 public class ZipUtilities {
 
 	public static void main(String[] args) throws Exception {
+		test();
+	}
+	
+	public static void test() throws Exception {
 
 		// TEST zip unzip singolo contenuto
 		String contenuto = "Hello World";

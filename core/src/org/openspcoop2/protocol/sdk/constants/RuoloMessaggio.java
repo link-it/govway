@@ -54,8 +54,8 @@ public enum RuoloMessaggio implements Serializable {
 		return this.tipo;
 	}
 	
-	public boolean equals(RuoloMessaggio tipoPdD){
-		return this.tipo.equals(tipoPdD.getTipo());
+	public boolean equals(String tipoPdD){
+		return this.tipo.equals(tipoPdD);
 	}
 	
 	public static final RuoloMessaggio toTipoTraccia(String v){

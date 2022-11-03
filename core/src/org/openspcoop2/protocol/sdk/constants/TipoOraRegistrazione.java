@@ -45,11 +45,11 @@ public enum TipoOraRegistrazione {
 		throw new NotImplementedException("Use ProtocolFactory.createTraduttore().toString(tipoOra) or getEngineValue()");
 	}
 	
-	public boolean equals(TipoOraRegistrazione t){
+	public boolean equals(String t){
 		if(t==null){
 			return false;
 		}
-		return this.tipoOra.equals(t.tipoOra);
+		return this.tipoOra.equals(t);
 	}
 	
 	public String getEngineValue(){

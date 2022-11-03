@@ -95,6 +95,9 @@ public final class ConfigurazioneProxyPassRegolaList extends Action {
 							break;
 						}
 					}
+					if(regolaToMove==null) {
+						throw new Exception("Regola da muovere non trovata");
+					}
 					
 					int posizioneAttuale = regolaToMove.getPosizione();
 					int posizioneNuova = cambiaPosizione.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_POSIZIONE_SU) ? (posizioneAttuale - 1) : (posizioneAttuale + 1);
@@ -105,6 +108,9 @@ public final class ConfigurazioneProxyPassRegolaList extends Action {
 							regolaToSwitch = reg;
 							break;
 						}
+					}
+					if(regolaToSwitch==null) {
+						throw new Exception("Regola con cui fare lo switch non trovata");
 					}
 					
 					regolaToMove.setPosizione(posizioneNuova);

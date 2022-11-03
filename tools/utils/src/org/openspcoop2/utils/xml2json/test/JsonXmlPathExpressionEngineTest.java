@@ -38,6 +38,10 @@ public class JsonXmlPathExpressionEngineTest {
 
 
 	public static void main(String[] args) throws Exception {
+		test();
+	}
+	
+	public static void test() throws Exception {
 
 		Logger log = LoggerWrapperFactory.getLogger(JsonXmlPathExpressionEngineTest.class);
 		

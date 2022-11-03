@@ -143,7 +143,9 @@ public class MultiKeystore implements Serializable  {
 			try{
 				if(isStore!=null)
 					isStore.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	

@@ -39,7 +39,7 @@ public class TestJacksonSerializer {
 	public void testJacksonSerializer() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.serialization.test.SerializerTest.main(null);
+		org.openspcoop2.utils.serialization.test.SerializerTest.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

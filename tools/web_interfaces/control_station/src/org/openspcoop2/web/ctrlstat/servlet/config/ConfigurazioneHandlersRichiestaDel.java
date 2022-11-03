@@ -204,10 +204,12 @@ public final class ConfigurazioneHandlersRichiestaDel extends Action {
 			}
 			
 			List<String> idRemove = new ArrayList<String>();
-			for(int j = listaDaAggiornare.size() -1; j >= 0 ; j--) {
-				for (int i = 0; i < idsToRemove.size(); i++) {
-					if(idsToRemove.get(i).equals(listaDaAggiornare.get(j).getTipo())) {
-						idRemove.add(idsToRemove.get(i));
+			if(listaDaAggiornare!=null) {
+				for(int j = listaDaAggiornare.size() -1; j >= 0 ; j--) {
+					for (int i = 0; i < idsToRemove.size(); i++) {
+						if(idsToRemove.get(i).equals(listaDaAggiornare.get(j).getTipo())) {
+							idRemove.add(idsToRemove.get(i));
+						}
 					}
 				}
 			}

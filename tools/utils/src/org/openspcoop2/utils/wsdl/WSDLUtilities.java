@@ -341,7 +341,9 @@ public class WSDLUtilities {
 				}catch(Exception eClose){}
 				try{
 					fout.close();
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 		}else{
 			writer.writeWSDL(wsdl, new FileWriter(file));

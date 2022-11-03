@@ -247,7 +247,9 @@ public abstract class AbstractXMLDiff {
 					if(finCompare!=null){
 						finCompare.close();
 					}
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 		}
 		else{
@@ -342,7 +344,9 @@ public abstract class AbstractXMLDiff {
 					if(ris!=null){
 						ris.close();
 					}
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 		}
 		else{

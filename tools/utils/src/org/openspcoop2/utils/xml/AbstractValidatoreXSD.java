@@ -251,7 +251,16 @@ public abstract class AbstractValidatoreXSD {
 			}
 			this.initializeSchema(log,schemaFactory,null,ss);
 		}catch(Exception e){
-			throw new Exception("Riscontrato errore durante la costruzione dello schema (URL:"+url+"): "+e.getMessage(),e);
+			StringBuilder sb = new StringBuilder();
+			if(url!=null) {
+				for (String u : url) {
+					if(sb.length()>0) {
+						sb.append(", ");
+					}
+					sb.append(u);
+				}
+			}
+			throw new Exception("Riscontrato errore durante la costruzione dello schema (URL:"+sb.toString()+"): "+e.getMessage(),e);
 		}
 	}
 	
@@ -266,7 +275,16 @@ public abstract class AbstractValidatoreXSD {
 			}
 			this.initializeSchema(log,schemaFactory,lsResourceResolver,ss);
 		}catch(Exception e){
-			throw new Exception("Riscontrato errore durante la costruzione dello schema (URL:"+url+"): "+e.getMessage(),e);
+			StringBuilder sb = new StringBuilder();
+			if(url!=null) {
+				for (String u : url) {
+					if(sb.length()>0) {
+						sb.append(", ");
+					}
+					sb.append(u);
+				}
+			}
+			throw new Exception("Riscontrato errore durante la costruzione dello schema (URL:"+sb.toString()+"): "+e.getMessage(),e);
 		}
 	}
 	

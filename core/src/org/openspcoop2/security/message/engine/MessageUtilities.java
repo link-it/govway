@@ -72,7 +72,7 @@ public class MessageUtilities {
 							String actualLocalName = actual.getLocalName();
 							String expectedNamespaceURI = expected.getNamespaceURI();
 							String expectedLocalName = expected.getLocalPart();
-							if(((actualNamespaceURI == null && expectedNamespaceURI == null) || actualNamespaceURI.equals(expectedNamespaceURI))
+							if(((actualNamespaceURI == null && expectedNamespaceURI == null) || (actualNamespaceURI!=null && actualNamespaceURI.equals(expectedNamespaceURI)))
 									&& actualLocalName.equals(expectedLocalName)) {
 									//trovato l'elemento che ci interessa
 									found = true;
@@ -191,7 +191,9 @@ public class MessageUtilities {
 											int position = -1;
 											try{
 												position = Integer.parseInt(nome);
-											}catch(Exception e){}
+											}catch(Exception e){
+												// position non presente
+											}
 											if(position>0){
 												int refPosition = -1;
 												for (int j = 0; j < cidAttachments.size(); j++) {
@@ -417,7 +419,9 @@ public class MessageUtilities {
 											int position = -1;
 											try{
 												position = Integer.parseInt(nome);
-											}catch(Exception e){}
+											}catch(Exception e){
+												// position non presente
+											}
 											if(position>0){
 												int refPosition = -1;
 												for (int j = 0; j < cidAttachments.size(); j++) {

@@ -35,6 +35,10 @@ import org.openspcoop2.utils.rest.ApiFormats;
 public class TestIndentazione {
 
 	public static void main(String[] args) throws Exception {
+		test();
+	}
+	
+	public static void test() throws Exception {
 
 		URI uri = TestIndentazione.class.getResource("/org/openspcoop2/utils/openapi/testIndentazioneOpenAPI_3.0.yaml").toURI();
 		
