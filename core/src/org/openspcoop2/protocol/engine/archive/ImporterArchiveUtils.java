@@ -1138,6 +1138,7 @@ public class ImporterArchiveUtils {
 	public void importSoggetto(ArchiveSoggetto archiveSoggetto,ArchiveEsitoImportDetail detail){
 		
 		IDSoggetto idSoggetto = archiveSoggetto.getIdSoggetto();
+		IProtocolFactory<?> protocolFactory = null;
 		try{
 			
 			boolean create = false;
@@ -1150,6 +1151,22 @@ public class ImporterArchiveUtils {
 					if(this.importerEngine.existsSoggettoRegistro(idSoggetto)){
 						detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
 						return;
+					}
+				}
+				
+				
+				
+				// --- check soggetto default ---
+				
+				// non devono essere importati soggetti di default diversi da quelli presenti
+				if(archiveSoggetto.getSoggettoConfigurazione().isDominioDefault()) {
+					protocolFactory = this.protocolFactoryManager.getProtocolFactoryByOrganizationType(idSoggetto.getTipo());
+					IDSoggetto soggettoDefaultProtocollo = this.importerEngine.getSoggettoDefault( protocolFactory.getProtocol());
+					if(soggettoDefaultProtocollo!=null) {
+						if(!soggettoDefaultProtocollo.equals(idSoggetto)) {
+							// imposto a false il dominio di default
+							archiveSoggetto.getSoggettoConfigurazione().setDominioDefault(false);
+						}
 					}
 				}
 				
@@ -1238,7 +1255,9 @@ public class ImporterArchiveUtils {
 				if(archiveSoggetto.getSoggettoRegistro().getCodiceIpa()==null ||
 						archiveSoggetto.getSoggettoRegistro().getIdentificativoPorta()==null){
 					
-					IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByOrganizationType(idSoggetto.getTipo());
+					if(protocolFactory==null) {
+						protocolFactory = this.protocolFactoryManager.getProtocolFactoryByOrganizationType(idSoggetto.getTipo());
+					}
 					ITraduttore traduttore = protocolFactory.createTraduttore();
 					
 					if(archiveSoggetto.getSoggettoRegistro().getCodiceIpa()==null){
@@ -1315,7 +1334,9 @@ public class ImporterArchiveUtils {
 				
 				if(archiveSoggetto.getSoggettoConfigurazione().getIdentificativoPorta()==null){
 					
-					IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByOrganizationType(idSoggetto.getTipo());
+					if(protocolFactory==null) {
+						protocolFactory = this.protocolFactoryManager.getProtocolFactoryByOrganizationType(idSoggetto.getTipo());
+					}
 					ITraduttore traduttore = protocolFactory.createTraduttore();
 					
 					if(archiveSoggetto.getSoggettoConfigurazione().getIdentificativoPorta()==null){
@@ -3042,6 +3063,11 @@ public class ImporterArchiveUtils {
 			
 			
 			// --- lettura elementi riferiti all'interno della porta delegata ---
+			
+			if(idSoggettoProprietario==null) {
+				throw new Exception("Soggetto proprietario non definito");
+			}
+			
 			PortaApplicativa pa = archivePortaApplicativa.getPortaApplicativa();
 			IDServizio idServizio = null;
 			IDSoggetto idSoggettoErogatore = idSoggettoProprietario;
@@ -3198,15 +3224,17 @@ public class ImporterArchiveUtils {
 						") non utilizzabile in una porta applicativa appartenete al soggetto ["+idSoggettoProprietario+"] (protocollo:"+protocolloAssociatoSoggettoProprietario+")");
 			}
 			// accordo di servizio parte specifica
-			String protocolloAssociatoAccordoParteSpecifica = this.protocolFactoryManager.getProtocolByServiceType(idServizio.getTipo());
-			if(protocolloAssociatoSoggettoProprietario.equals(protocolloAssociatoAccordoParteSpecifica)==false){
-				throw new Exception("AccordoServizioParteSpecifica ["+idServizio+"] (protocollo:"+protocolloAssociatoAccordoParteSpecifica+
-						") con servizio non utilizzabile in una porta applicativa appartenete al soggetto ["+idSoggettoProprietario+"] (protocollo:"+protocolloAssociatoSoggettoProprietario+")");
-			}
-			String protocolloAssociatoSoggettoAccordoParteSpecifica = this.protocolFactoryManager.getProtocolByOrganizationType(idServizio.getSoggettoErogatore().getTipo());
-			if(protocolloAssociatoSoggettoProprietario.equals(protocolloAssociatoSoggettoAccordoParteSpecifica)==false){
-				throw new Exception("AccordoServizioParteSpecifica ["+idServizio+"] (protocollo:"+protocolloAssociatoSoggettoAccordoParteSpecifica+
-						") con soggetto non utilizzabile in una porta applicativa appartenete al soggetto ["+idSoggettoProprietario+"] (protocollo:"+protocolloAssociatoSoggettoProprietario+")");
+			if(idServizio!=null) {
+				String protocolloAssociatoAccordoParteSpecifica = this.protocolFactoryManager.getProtocolByServiceType(idServizio.getTipo());
+				if(protocolloAssociatoSoggettoProprietario.equals(protocolloAssociatoAccordoParteSpecifica)==false){
+					throw new Exception("AccordoServizioParteSpecifica ["+idServizio+"] (protocollo:"+protocolloAssociatoAccordoParteSpecifica+
+							") con servizio non utilizzabile in una porta applicativa appartenete al soggetto ["+idSoggettoProprietario+"] (protocollo:"+protocolloAssociatoSoggettoProprietario+")");
+				}
+				String protocolloAssociatoSoggettoAccordoParteSpecifica = this.protocolFactoryManager.getProtocolByOrganizationType(idServizio.getSoggettoErogatore().getTipo());
+				if(protocolloAssociatoSoggettoProprietario.equals(protocolloAssociatoSoggettoAccordoParteSpecifica)==false){
+					throw new Exception("AccordoServizioParteSpecifica ["+idServizio+"] (protocollo:"+protocolloAssociatoSoggettoAccordoParteSpecifica+
+							") con soggetto non utilizzabile in una porta applicativa appartenete al soggetto ["+idSoggettoProprietario+"] (protocollo:"+protocolloAssociatoSoggettoProprietario+")");
+				}
 			}
 			
 			
@@ -3423,6 +3451,10 @@ public class ImporterArchiveUtils {
 			
 				
 			// --- check elementi riferiti ---
+			
+			if(attivazionePolicy==null) {
+				throw new Exception("Configurazione della policy non definita");
+			}
 			
 			// policy
 			if(this.importerEngine.existsControlloTraffico_configurationPolicy(attivazionePolicy.getIdPolicy()) == false ){

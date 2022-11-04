@@ -1507,6 +1507,9 @@ public class ExporterArchiveUtils {
 					
 					// add
 					org.openspcoop2.core.config.ServizioApplicativo sa = this.archiveEngine.getServizioApplicativo(idServizioApplicativo);
+					if(sa==null) {
+						throw new Exception("Servizio Applicativo '"+idServizioApplicativo+"' non esistente");
+					}
 					if(sa.getTipoSoggettoProprietario()==null){
 						sa.setTipoSoggettoProprietario(idServizioApplicativo.getIdSoggettoProprietario().getTipo());
 					}
@@ -1847,6 +1850,9 @@ public class ExporterArchiveUtils {
 				
 					// add
 					as = this.archiveEngine.getAccordoServizioParteSpecifica(idAccordoServizio,true);
+					if(as==null) {
+						throw new Exception("Accordo di servizio '"+idAccordoServizio+"' non esistente");
+					}
 					if(as.getTipoSoggettoErogatore()==null){
 						as.setTipoSoggettoErogatore(tipoSoggetto);
 					}
@@ -2188,6 +2194,10 @@ public class ExporterArchiveUtils {
 				
 				if(cascadeConfig.isCascadePorteDelegate() || ArchiveType.PORTA_DELEGATA.equals(provenienza)){
 				
+					if(pd==null) {
+						throw new Exception("Porta delegata '"+idPortaDelegata+"' non esistente");
+					}
+					
 					// add
 					if(pd.getTipoSoggettoProprietario()==null){
 						pd.setTipoSoggettoProprietario(idSoggettoFruitore.getTipo());
@@ -2436,6 +2446,10 @@ public class ExporterArchiveUtils {
 				
 				if(cascadeConfig.isCascadePorteApplicative() || ArchiveType.PORTA_APPLICATIVA.equals(provenienza)){
 				
+					if(pa==null) {
+						throw new Exception("Porta applicativa '"+idPortaApplicativa+"' non esistente");
+					}
+					
 					// add
 					if(pa.getTipoSoggettoProprietario()==null){
 						pa.setTipoSoggettoProprietario(idSoggettoErogatore.getTipo());
@@ -2742,7 +2756,7 @@ public class ExporterArchiveUtils {
 						}
 					}
 				}
-				if(pa.getServizioApplicativoDefault()!=null && !"".equals(pa.getServizioApplicativoDefault())) {
+				if(pa!=null && pa.getServizioApplicativoDefault()!=null && !"".equals(pa.getServizioApplicativoDefault())) {
 					IDServizioApplicativo idSA = new IDServizioApplicativo();
 					idSA.setNome(pa.getServizioApplicativoDefault());
 					idSA.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));

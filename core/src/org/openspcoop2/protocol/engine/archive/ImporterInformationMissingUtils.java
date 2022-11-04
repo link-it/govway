@@ -861,6 +861,9 @@ public class ImporterInformationMissingUtils {
 	}
 	
 	public static boolean checkConditions(ConditionsType conditions, HashMap<String, String> map) {
+		if(conditions==null) {
+			return false;
+		}
 		boolean result = _checkConditions(conditions, map);
 		if(conditions!=null && conditions.isNot()) {
 			return !result;
@@ -870,7 +873,7 @@ public class ImporterInformationMissingUtils {
 		}
 	}
 	private static boolean _checkConditions(ConditionsType conditions, HashMap<String, String> map) {
-		boolean and = conditions.isAnd();
+		boolean and = conditions!=null && conditions.isAnd();
 		if(conditions!=null && conditions.sizeProprietaList()>0) {
 			for (ConditionType cType : conditions.getProprietaList()) {
 				if(map==null || map.isEmpty() || map.containsKey(cType.getNome())==false) {
@@ -1740,10 +1743,10 @@ public class ImporterInformationMissingUtils {
 		Boolean correlato = null;
 		
 		// Identificazione attraverso WSDL Implementativo
-		if(asps.getByteWsdlImplementativoErogatore()!=null){
+		if(asps!=null && asps.getByteWsdlImplementativoErogatore()!=null){
 			correlato = false;
 		}
-		else if(asps.getByteWsdlImplementativoFruitore()!=null){
+		else if(asps!=null && asps.getByteWsdlImplementativoFruitore()!=null){
 			correlato = true;
 		}
 		

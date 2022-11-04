@@ -207,7 +207,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -256,7 +258,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -306,7 +310,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -353,7 +359,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 
@@ -399,7 +407,29 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
+		}
+	}
+	
+	public IDSoggetto getSoggettoDefault(String protocollo) throws DriverRegistroServiziException{
+		try {
+			List<IDSoggetto> soggettiDefault = this.driverRegistroServizi.getSoggettiDefault();
+			if(soggettiDefault!=null && !soggettiDefault.isEmpty()) {
+				ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+				for (IDSoggetto idSoggetto : soggettiDefault) {
+					if(idSoggetto!=null && idSoggetto.getTipo()!=null) {
+						String protCheck = protocolFactoryManager.getProtocolByOrganizationType(idSoggetto.getTipo());
+						if(protCheck.equals(protocollo)) {
+							return idSoggetto;
+						}
+					}
+				}
+			}
+			return null;
+		}catch(Exception e) {
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 	}
 	
@@ -477,7 +507,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverConfigurazione.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -522,7 +554,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverConfigurazione.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -638,7 +672,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -690,7 +726,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -779,7 +817,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -805,7 +845,9 @@ public abstract class AbstractArchiveEngine {
 			}catch(Throwable t) {}
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -821,7 +863,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -837,7 +881,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -853,7 +899,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -874,7 +922,9 @@ public abstract class AbstractArchiveEngine {
 			}catch(Throwable t) {}
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -895,7 +945,9 @@ public abstract class AbstractArchiveEngine {
 			}catch(Throwable t) {}
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -911,7 +963,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -927,7 +981,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -943,7 +999,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -959,7 +1017,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -975,7 +1035,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1032,7 +1094,9 @@ public abstract class AbstractArchiveEngine {
 			}catch(Throwable t) {}
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1048,7 +1112,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1064,7 +1130,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1080,7 +1148,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1101,7 +1171,9 @@ public abstract class AbstractArchiveEngine {
 			}catch(Throwable t) {}
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1122,7 +1194,9 @@ public abstract class AbstractArchiveEngine {
 			}catch(Throwable t) {}
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1138,7 +1212,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1154,7 +1230,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1170,7 +1248,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1186,7 +1266,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1202,7 +1284,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1584,7 +1668,9 @@ public abstract class AbstractArchiveEngine {
 				if(con!=null) {
 					this.driverConfigurazione.releaseConnection(con);
 				}
-			}catch(Exception eClose) {}
+			}catch(Exception eClose) {
+				// close
+			}
 		}
 		
 	}
@@ -1619,7 +1705,9 @@ public abstract class AbstractArchiveEngine {
 				if(con!=null) {
 					this.driverConfigurazione.releaseConnection(con);
 				}
-			}catch(Exception eClose) {}
+			}catch(Exception eClose) {
+				// close
+			}
 		}
 	}
 	public void createControlloTraffico_activePolicy(AttivazionePolicy policy, Logger log) throws DriverConfigurazioneException {
@@ -1845,7 +1933,9 @@ public abstract class AbstractArchiveEngine {
 				if(con!=null) {
 					this.driverConfigurazione.releaseConnection(con);
 				}
-			}catch(Exception eClose) {}
+			}catch(Exception eClose) {
+				// close
+			}
 		}
 		
 	}
@@ -2050,7 +2140,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -2187,7 +2279,9 @@ public abstract class AbstractArchiveEngine {
 		finally{
 			try{
 				this.driverConfigurazione.releaseConnection(con);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
