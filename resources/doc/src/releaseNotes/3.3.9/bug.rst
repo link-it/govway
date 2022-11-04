@@ -3,11 +3,13 @@ Bug Fix
 
 Sono stati risolti i seguenti bug:
 
-- una richiesta POST senza contenuto e senza ContentType veniva erroneamente riconosciuta come invalida dal filtro CORS e di conseguenza non veniva generato l'header http 'Access-Control-Allow-Origin' nella risposta;
+- una richiesta POST senza contenuto e senza ContentType veniva erroneamente riconosciuta come non valida dal filtro CORS e di conseguenza non veniva generato l'header http 'Access-Control-Allow-Origin' nella risposta;
 
-- corretto errore di parser che si presentava con alcune SOAPEnvelope: 
+- corretto errore di parsing che si presentava con alcune SOAPEnvelope: 
 
 	"Invalid content (</SOAP-ENV:Envelope/>): The markup in the document preceding the root element must be well-formed.".
+
+Sono stati introdotti miglioramenti prestazionali minimizzando gli accessi concorrenti alle varie cache di configurazione tramite l'ausilio di una cache di secondo livello che contiene tutti i dati principali raccolti durante la gestione della prima richiesta.
 
 Per la console di monitoraggio sono stati risolti i seguenti bug:
 

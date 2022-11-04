@@ -11,6 +11,5 @@ si può invece far riferimento al file ChangeLog di questa versione.
         :maxdepth: 2
 
 	java
-	core
 	bug
 
