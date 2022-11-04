@@ -547,7 +547,7 @@
 					<fileset dir="${dist}/cfg">
 						<include name="*.yaml"/>
 					</fileset>
-					<mapper type="glob" from="*.properties" to="*.yaml.new"/>
+					<mapper type="glob" from="*.yaml" to="*.yaml.new"/>
 				</move>
 
 			</then>

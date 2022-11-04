@@ -115,6 +115,10 @@ Per creare una tag version:
     Come test di verifica usare i comandi descritti in: https://github.com/teamdigitale/api-gateway-tools/blob/master/gateways/govway/DOCKER.md
 
 20. Riprovare i scenari descritti in precedenza con l'ultima versione "MASTER" pubblicata su docker-hub
+    - versione postgresql
+    - versione hsql (standalone)
+    - versone oracle
+    - batch
 
 21. Riportazione indicazione di backwardCompatibility e hotUpgrade sul wiki (per indicare le info sull'aggiornamento della base dati)
 

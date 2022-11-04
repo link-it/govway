@@ -385,7 +385,7 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 </concat>
 
 				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '006-001:Database:database_dedicato', 'true');
-				</concat>
+</concat>
 
 				<!-- Informazioni sensibili
 				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '006-001:Hostname:antinstaller_dbhost_log', '@VALORE@');
@@ -431,7 +431,7 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 </concat>
 
 				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '007-001:Database:database_dedicato', 'true');
-				</concat>
+</concat>
 
 				<!-- Informazioni sensibili
 				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '007-001:Hostname:antinstaller_dbhost_stats', '@VALORE@');
