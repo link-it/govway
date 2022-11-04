@@ -117,6 +117,8 @@ CREATE TABLE transazioni
 	diagnostici_list_2 CLOB,
 	diagnostici_list_ext CLOB,
 	diagnostici_ext CLOB,
+	error_log CLOB,
+	warning_log CLOB,
 	-- informazioni di integrazione
 	id_correlazione_applicativa VARCHAR(255),
 	id_correlazione_risposta VARCHAR(255),

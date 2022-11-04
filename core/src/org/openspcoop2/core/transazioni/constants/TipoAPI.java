@@ -101,9 +101,6 @@ public enum TipoAPI implements Serializable{
 	public String toString(){
 		return this.valore;
 	}
-	public boolean equals(TipoAPI esito){
-		return this.toString().equals(esito.toString());
-	}
 
 
 

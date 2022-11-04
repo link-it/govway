@@ -167,7 +167,9 @@ public class Signature {
 					if(isKeystore!=null) {
 						isKeystore.close();
 					}
-				}catch(Exception eClose) {}
+				}catch(Exception eClose) {
+					// close
+				}
 			}
 		
 			this.initialized = true;

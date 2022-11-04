@@ -42,15 +42,20 @@ public class DumpUtility {
 		try{
 			xml = PrettyPrintXMLUtils.prettyPrintWithTrAX(element);
 		}catch(Throwable e){
-			log.error("(DumpUtility) PrettyPrintWithTrAX non riuscita",e);
+			if(log!=null) {
+				log.error("(DumpUtility) PrettyPrintWithTrAX non riuscita",e);
+			}
 			try{
 				xml = msg.getAsString(element, false);
 			}catch(Throwable e2){
-				log.error("(DumpUtility) msg.getAsString(soap,false) non riuscita",e2);
+				if(log!=null) {
+					log.error("(DumpUtility) msg.getAsString(soap,false) non riuscita",e2);
+				}
 				try{
 					xml = XMLUtils.getInstance().toString(element, false);
 				}catch(Throwable e3){
-					log.error("(DumpUtility) XMLUtils.toString non riuscita",e3);
+					if(log!=null)
+						log.error("(DumpUtility) XMLUtils.toString non riuscita",e3);
 				}
 			}
 		}
@@ -63,7 +68,9 @@ public class DumpUtility {
 		try {
 			xml = PrettyPrintXMLUtils.prettyPrintWithTrAX(d);
 		}catch(Throwable e){
-			log.error("(DumpUtility) PrettyPrintWithTrAX non riuscita",e);
+			if(log!=null) {
+				log.error("(DumpUtility) PrettyPrintWithTrAX non riuscita",e);
+			}
 			try{
 				xml = msg.getAsString(d, false);
 			}catch(Throwable e2){

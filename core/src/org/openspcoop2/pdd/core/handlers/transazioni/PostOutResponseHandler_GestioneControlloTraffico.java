@@ -95,8 +95,12 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 					timeStart = DateManager.getTimeMillis();
 				}
 				
-				Object objectId = context.getPddContext().removeObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_UNIQUE_ID_POLICY);
-				if(objectId!=null && (objectId instanceof List<?>) ){
+				Object objectId = null;
+				if(context!=null && context.getPddContext()!=null) {
+					objectId = context.getPddContext().removeObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_UNIQUE_ID_POLICY);
+				}
+				if(context!=null && context.getPddContext()!=null &&
+						objectId!=null && (objectId instanceof List<?>) ){
 					@SuppressWarnings("unchecked")
 					List<String> uniqueIdsPolicies = (List<String>) objectId;
 					if(uniqueIdsPolicies!=null && uniqueIdsPolicies.size()>0){

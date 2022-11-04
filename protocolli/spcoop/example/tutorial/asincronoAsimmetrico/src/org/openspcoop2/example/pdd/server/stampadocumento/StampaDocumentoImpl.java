@@ -73,7 +73,7 @@ public class StampaDocumentoImpl implements StampaDocumento {
         System.out.println("Richiesta stampa di " + stampaDocumentoRequestPart.getCodiceDocumento() + " per cf = " + stampaDocumentoRequestPart.getCF());
         try {
             org.openspcoop2.example.pdd.server.stampadocumento.PresaConsegnaStampa _return = new PresaConsegnaStampa();
-            _return.setIdStampa(new java.util.Random().nextLong());
+            _return.setIdStampa(getRandom().nextLong());
             GregorianCalendar calendar = new GregorianCalendar();
             Date trialTime = new Date();
             calendar.setTime(trialTime);
@@ -89,4 +89,16 @@ public class StampaDocumentoImpl implements StampaDocumento {
         }
     }
 
+	private static java.util.Random _rnd = null;
+	private static synchronized void initRandom() {
+		if(_rnd==null) {
+			_rnd = new java.util.Random();
+		}
+	}
+	protected static java.util.Random getRandom() {
+		if(_rnd==null) {
+			initRandom();
+		}
+		return _rnd;
+	}
 }

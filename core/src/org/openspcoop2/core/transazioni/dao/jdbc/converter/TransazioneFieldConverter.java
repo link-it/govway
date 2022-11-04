@@ -521,6 +521,20 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return "diagnostici_ext";
 			}
 		}
+		if(field.equals(Transazione.model().ERROR_LOG)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".error_log";
+			}else{
+				return "error_log";
+			}
+		}
+		if(field.equals(Transazione.model().WARNING_LOG)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".warning_log";
+			}else{
+				return "warning_log";
+			}
+		}
 		if(field.equals(Transazione.model().ID_CORRELAZIONE_APPLICATIVA)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".id_correlazione_applicativa";
@@ -1490,6 +1504,12 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(Transazione.model(), returnAlias);
 		}
 		if(field.equals(Transazione.model().DIAGNOSTICI_EXT)){
+			return this.toTable(Transazione.model(), returnAlias);
+		}
+		if(field.equals(Transazione.model().ERROR_LOG)){
+			return this.toTable(Transazione.model(), returnAlias);
+		}
+		if(field.equals(Transazione.model().WARNING_LOG)){
 			return this.toTable(Transazione.model(), returnAlias);
 		}
 		if(field.equals(Transazione.model().ID_CORRELAZIONE_APPLICATIVA)){

@@ -276,6 +276,10 @@ a.titleLinkRight:hover {
 	color: ${diagnostici.error.color};
 }
 
+.warning{
+	color: ${diagnostici.warning.color};
+}
+
 .infoSpcoop,
 .infoOpenspcoop,
 .diag_info,

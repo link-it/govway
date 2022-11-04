@@ -103,6 +103,8 @@ import java.util.List;
  * 			&lt;element name="diagnostici-list2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="diagnostici-list-ext" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="diagnostici-ext" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="error-log" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="warning-log" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="id-correlazione-applicativa" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="id-correlazione-applicativa-risposta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="servizio-applicativo-fruitore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
@@ -213,6 +215,8 @@ import java.util.List;
   	"diagnosticiList2",
   	"diagnosticiListExt",
   	"diagnosticiExt",
+  	"errorLog",
+  	"warningLog",
   	"idCorrelazioneApplicativa",
   	"idCorrelazioneApplicativaRisposta",
   	"servizioApplicativoFruitore",
@@ -798,6 +802,22 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBean implements
 
   public void setDiagnosticiExt(java.lang.String diagnosticiExt) {
     this.diagnosticiExt = diagnosticiExt;
+  }
+
+  public java.lang.String getErrorLog() {
+    return this.errorLog;
+  }
+
+  public void setErrorLog(java.lang.String errorLog) {
+    this.errorLog = errorLog;
+  }
+
+  public java.lang.String getWarningLog() {
+    return this.warningLog;
+  }
+
+  public void setWarningLog(java.lang.String warningLog) {
+    this.warningLog = warningLog;
   }
 
   public java.lang.String getIdCorrelazioneApplicativa() {
@@ -1392,6 +1412,14 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBean implements
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="diagnostici-ext",required=false,nillable=false)
   protected java.lang.String diagnosticiExt;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="error-log",required=false,nillable=false)
+  protected java.lang.String errorLog;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="warning-log",required=false,nillable=false)
+  protected java.lang.String warningLog;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="id-correlazione-applicativa",required=false,nillable=false)

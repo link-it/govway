@@ -275,6 +275,14 @@
 					
 				</xsd:element>
 
+			    <!-- diagnostici -->
+			    <xsd:element minOccurs="0" name="error-log" type="xsd:string">
+			        
+			    </xsd:element>
+			    <xsd:element minOccurs="0" name="warning-log" type="xsd:string">
+			        
+			    </xsd:element>
+
 				<!-- informazioni di integrazione -->
 				<xsd:element minOccurs="0" name="id-correlazione-applicativa" type="xsd:string">
 					

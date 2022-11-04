@@ -1,3 +1,9 @@
+2022-11-03  Andrea Poli <apoli@link.it>
+
+	Aggiunte nuove colonne nella tabella transazioni per conservare motivazione errore o warning
+	ALTER TABLE transazioni ADD COLUMN error_log TEXT;
+	ALTER TABLE transazioni ADD COLUMN warning_log TEXT;
+
 2022-10-27  Andrea Poli <apoli@link.it>
 
 	Aggiunta nuova cache per i dati gestiti nelle richieste

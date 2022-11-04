@@ -1190,6 +1190,32 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 					</xsd:annotation>
 				</xsd:element>
 
+			    <!-- diagnostici -->
+			    <xsd:element name="error-log" type="xsd:string" minOccurs="0">
+			        <xsd:annotation>
+			            <xsd:appinfo>
+			                <linkit:generator
+			                    xmlns:linkit="http://www.link.it/project_generator">
+			                    <linkit:sql-column-mapping text="true" />
+			                	<linkit:sql-ddl-column-comment><![CDATA[Errore generato durante la gestione della transazione]]></linkit:sql-ddl-column-comment>
+			                	<linkit:ws-field-mapping filter="false" />
+			                </linkit:generator>
+			            </xsd:appinfo>
+			        </xsd:annotation>
+			    </xsd:element>
+			    <xsd:element name="warning-log" type="xsd:string" minOccurs="0">
+			        <xsd:annotation>
+			            <xsd:appinfo>
+			                <linkit:generator
+			                    xmlns:linkit="http://www.link.it/project_generator">
+			                    <linkit:sql-column-mapping text="true" />
+			                	<linkit:sql-ddl-column-comment><![CDATA[Warning segnalato durante la gestione della transazione]]></linkit:sql-ddl-column-comment>
+			                	<linkit:ws-field-mapping filter="false" />
+			                </linkit:generator>
+			            </xsd:appinfo>
+			        </xsd:annotation>
+			    </xsd:element>
+
 				<!-- informazioni di integrazione -->
 				<xsd:element name="id-correlazione-applicativa" type="xsd:string" minOccurs="0">
 					<xsd:annotation>

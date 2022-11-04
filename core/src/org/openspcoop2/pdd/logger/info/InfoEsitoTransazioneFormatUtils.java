@@ -221,6 +221,7 @@ public class InfoEsitoTransazioneFormatUtils {
 	}
 
 
+	// NOTA: questo ritorna anche il fault nel caso di esito inerente
 	public static String getDettaglioErrore(Logger log, DatiEsitoTransazione datiEsitoTransazione, List<MsgDiagnostico> msgsParams) {
 
 		IProtocolFactory<?> protocolFactory = null;
@@ -252,18 +253,49 @@ public class InfoEsitoTransazioneFormatUtils {
 
 		}
 
+		// diagnostico rilevante
+		String erroreRilevante = getMessaggioDiagnosticoErroreRilevante(log, datiEsitoTransazione.getEsito(), protocolFactory, msgsParams, false);
+		if(erroreRilevante!=null) {
+			return erroreRilevante;
+		}
+
+		if(!isEsitoFaultApplicativo(log, datiEsitoTransazione.getEsito(), protocolFactory)) {
+
+			if(PddRuolo.APPLICATIVA.equals(datiEsitoTransazione.getPddRuolo())) {
+				if(isVisualizzaFault(log, datiEsitoTransazione.getFaultIntegrazione())) {
+					return getFaultPretty(log,datiEsitoTransazione.getFaultIntegrazione(), datiEsitoTransazione.getFormatoFaultIntegrazione());
+				}
+				else if(isVisualizzaFault(log, datiEsitoTransazione.getFaultCooperazione())) {
+					return getFaultPretty(log,datiEsitoTransazione.getFaultCooperazione(), datiEsitoTransazione.getFormatoFaultCooperazione());
+				}
+			}
+			else if(PddRuolo.DELEGATA.equals(datiEsitoTransazione.getPddRuolo())) {
+				if(isVisualizzaFault(log, datiEsitoTransazione.getFaultCooperazione())) {
+					return getFaultPretty(log,datiEsitoTransazione.getFaultCooperazione(), datiEsitoTransazione.getFormatoFaultCooperazione());
+				}
+				else if(isVisualizzaFault(log, datiEsitoTransazione.getFaultIntegrazione())) {
+					return getFaultPretty(log,datiEsitoTransazione.getFaultIntegrazione(), datiEsitoTransazione.getFormatoFaultIntegrazione());
+				}
+			}
+
+		}
+
+		return null;
+	}
+
+	public static String getMessaggioDiagnosticoErroreRilevante(Logger log, Integer esito, IProtocolFactory<?> protocolFactory, List<MsgDiagnostico> msgsParams, boolean forceIgnoreWarning) {
+		
 		// Esito
 		EsitiProperties esitiProperties = null;
 		EsitoTransazioneName esitoTransactionName = null;
 		try {
 			esitiProperties = EsitiProperties.getInstance(log, protocolFactory);
-			esitoTransactionName = esitiProperties.getEsitoTransazioneName(datiEsitoTransazione.getEsito());
+			esitoTransactionName = esitiProperties.getEsitoTransazioneName(esito);
 		}catch(Exception e){
 			log.error("Errore durante il recupero dell'esito della transazione: "+e.getMessage(),e);
 			return ""; // non dovrebbe mai succedere
 		}
-
-		// lista diagnostici
+		
 		List<MsgDiagnostico> msgs = null;
 		if(msgsParams!=null) {
 			msgs = new ArrayList<MsgDiagnostico>();
@@ -276,7 +308,6 @@ public class InfoEsitoTransazioneFormatUtils {
 			}
 		}
 		
-
 		try {
 			StringBuilder sb = new StringBuilder();
 			StringBuilder erroreConnessone = new StringBuilder();
@@ -285,7 +316,7 @@ public class InfoEsitoTransazioneFormatUtils {
 				for (MsgDiagnostico msgDiagnostico : msgs) {
 					String codice = msgDiagnostico.getCodice();
 
-					if(isEsitoKo(log, datiEsitoTransazione.getEsito(), protocolFactory)) {
+					if(isEsitoKo(log, esito, protocolFactory) || forceIgnoreWarning) {
 						// salto gli errori 'warning'
 						if(MsgDiagnosticiProperties.MSG_DIAGNOSTICI_WARNING.contains(codice)) {
 							continue;
@@ -327,29 +358,47 @@ public class InfoEsitoTransazioneFormatUtils {
 		}catch(Exception e){
 			log.error("Errore durante il recupero dell'errore: "+e.getMessage(),e);
 		}
-
-		if(!isEsitoFaultApplicativo(log, datiEsitoTransazione.getEsito(), protocolFactory)) {
-
-			if(PddRuolo.APPLICATIVA.equals(datiEsitoTransazione.getPddRuolo())) {
-				if(isVisualizzaFault(log, datiEsitoTransazione.getFaultIntegrazione())) {
-					return getFaultPretty(log,datiEsitoTransazione.getFaultIntegrazione(), datiEsitoTransazione.getFormatoFaultIntegrazione());
-				}
-				else if(isVisualizzaFault(log, datiEsitoTransazione.getFaultCooperazione())) {
-					return getFaultPretty(log,datiEsitoTransazione.getFaultCooperazione(), datiEsitoTransazione.getFormatoFaultCooperazione());
-				}
-			}
-			else if(PddRuolo.DELEGATA.equals(datiEsitoTransazione.getPddRuolo())) {
-				if(isVisualizzaFault(log, datiEsitoTransazione.getFaultCooperazione())) {
-					return getFaultPretty(log,datiEsitoTransazione.getFaultCooperazione(), datiEsitoTransazione.getFormatoFaultCooperazione());
-				}
-				else if(isVisualizzaFault(log, datiEsitoTransazione.getFaultIntegrazione())) {
-					return getFaultPretty(log,datiEsitoTransazione.getFaultIntegrazione(), datiEsitoTransazione.getFormatoFaultIntegrazione());
-				}
-			}
-
-		}
-
+		
 		return null;
 	}
+	
+	public static String getMessaggioDiagnosticoWarning(Logger log, Integer esito, IProtocolFactory<?> protocolFactory, List<MsgDiagnostico> msgsParams) {
+		
+		List<MsgDiagnostico> msgs = null;
+		if(msgsParams!=null) {
+			msgs = new ArrayList<MsgDiagnostico>();
+			if(!msgsParams.isEmpty()) {
+				for (MsgDiagnostico msgDiagnostico : msgsParams) {
+					if(msgDiagnostico.getSeverita()<=LogLevels.SEVERITA_ERROR_INTEGRATION) {
+						msgs.add(msgDiagnostico);
+					}
+				}
+			}
+		}
+		
+		try {
+			StringBuilder sb = new StringBuilder();
+			if(msgs!=null && !msgs.isEmpty()) {
+				for (MsgDiagnostico msgDiagnostico : msgs) {
+					String codice = msgDiagnostico.getCodice();
 
+					if(MsgDiagnosticiProperties.MSG_DIAGNOSTICI_WARNING.contains(codice)) {
+						if(sb.length()>0) {
+							sb.append("\n");
+						}
+						sb.append(msgDiagnostico.getMessaggio());
+					}
+					
+				}
+			}
+			if(sb.length()>0) {
+				return sb.toString();
+			}
+
+		}catch(Exception e){
+			log.error("Errore durante il recupero dell'errore: "+e.getMessage(),e);
+		}
+		
+		return null;
+	}
 }

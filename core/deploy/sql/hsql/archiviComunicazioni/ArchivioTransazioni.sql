@@ -124,6 +124,8 @@ CREATE TABLE transazioni
 	diagnostici_list_2 VARCHAR(65535),
 	diagnostici_list_ext VARCHAR(65535),
 	diagnostici_ext VARCHAR(65535),
+	error_log VARCHAR(65535),
+	warning_log VARCHAR(65535),
 	-- informazioni di integrazione
 	id_correlazione_applicativa VARCHAR(255),
 	id_correlazione_risposta VARCHAR(255),

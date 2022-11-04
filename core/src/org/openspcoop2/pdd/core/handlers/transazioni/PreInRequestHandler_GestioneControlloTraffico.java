@@ -67,7 +67,10 @@ public class PreInRequestHandler_GestioneControlloTraffico {
 			OpenSPCoop2Properties propertiesReader = OpenSPCoop2Properties.getInstance();
 			logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(propertiesReader.isControlloTrafficoDebug());
 			ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance();
-			configurazioneGenerale = configPdDManager.getConfigurazioneControlloTraffico(context.getRequestInfo());
+			if(configPdDManager==null) {
+				throw new Exception("configPdDManager is null");
+			}
+			configurazioneGenerale = configPdDManager.getConfigurazioneControlloTraffico(context!=null ? context.getRequestInfo() : null);
 			if(configurazioneGenerale.getControlloTraffico()==null){
 				throw new Exception("Impostazione maxThreads non corretta?? ControlloTraffico is null");
 			}
@@ -170,7 +173,9 @@ public class PreInRequestHandler_GestioneControlloTraffico {
 				ConnectorInMessage req = null;
 				try{
 					req = (ConnectorInMessage) context.getTransportContext().get(PreInRequestContext.SERVLET_REQUEST);
-				}catch(Exception eIgnore){}
+				}catch(Exception eIgnore){
+					// ignore
+				}
 				if(req!=null){
 					try{
 						String urlInvocazione = req.getURLProtocolContext().getUrlInvocazione_formBased();

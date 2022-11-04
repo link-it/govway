@@ -50,10 +50,15 @@ public class StatisticsCollection {
 	private static Logger log = LoggerWrapperFactory.getLogger(StatisticsCollection.class);
 	private static boolean isEsitoOk(EsitoTransazione esito, IProtocolFactory<?> protocollo){
 		try{
+			if(esito==null) {
+				return false;
+			}
 			List<Integer> esitiOk = EsitiProperties.getInstance(log,protocollo).getEsitiCodeOk();
 			for (Integer esitoOk : esitiOk) {
-				if(esitoOk == esito.getCode()){
-					return true;
+				if(esitoOk!=null && esito.getCode()!=null) {
+					if(esitoOk.intValue() == esito.getCode().intValue()){
+						return true;
+					}
 				}
 			}
 			return false;

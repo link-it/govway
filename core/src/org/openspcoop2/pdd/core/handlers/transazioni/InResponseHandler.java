@@ -68,7 +68,10 @@ public class InResponseHandler extends FirstPositionHandler implements  org.open
 			return;
 		}
 
-		String idTransazione = (String) context.getPddContext().getObject(Costanti.ID_TRANSAZIONE);
+		String idTransazione = null;
+		if(context!=null && context.getPddContext()!=null) {
+			idTransazione = (String) context.getPddContext().getObject(Costanti.ID_TRANSAZIONE);
+		}
 		
 		//System.out.println("------------- InResponseHandler ("+idTransazione+")("+context.getTipoPorta().getTipo()+") -------------------");
 		
@@ -78,7 +81,7 @@ public class InResponseHandler extends FirstPositionHandler implements  org.open
 		String fault = null;
 		String formatoFault = null;
 		try{
-			if(context.getMessaggio()!=null){
+			if(context!=null && context.getMessaggio()!=null){
 				if(ServiceBinding.SOAP.equals(context.getMessaggio().getServiceBinding())) {
 					OpenSPCoop2SoapMessage soapMsg = context.getMessaggio().castAsSoap();
 					if(soapMsg.hasSOAPFault()){
@@ -172,7 +175,7 @@ public class InResponseHandler extends FirstPositionHandler implements  org.open
 		
 		
 		
-		if(context.getTransazioneApplicativoServer()!=null) {
+		if(context!=null && context.getTransazioneApplicativoServer()!=null) {
 			
 			try{
 			
@@ -282,6 +285,13 @@ public class InResponseHandler extends FirstPositionHandler implements  org.open
 				
 				}else{
 						
+					if(tr==null) {
+						throw new HandlerException("Transaction is null");
+					}
+					if(context==null) {
+						throw new HandlerException("Context is null");
+					}
+					
 					Date dataAccettazioneRisposta = context.getDataAccettazioneRisposta();
 					// La porta di dominio mi passa sempre questa informazione.
 					// Nel PddMonitor, invece, la data deve essere visualizzata solo se la dimensione e' diverso da 0 e cioe' se c'e' un messaggio di risposta.
@@ -333,7 +343,9 @@ public class InResponseHandler extends FirstPositionHandler implements  org.open
 					
 					try{
 						//System.out.println("SET CODICE TRASPORTO RICHIESTA ["+context.getReturnCode()+"]");
-						tr.setCodiceTrasportoRichiesta(context.getReturnCode()+"");
+						if(context!=null) {
+							tr.setCodiceTrasportoRichiesta(context.getReturnCode()+"");
+						}
 					}catch(TransactionDeletedException e){
 						//System.out.println("@@@@@REPOSITORY@@@@@ InResponseHandler SET CODICE TRASPORTO RICHIESTA ["+context.getReturnCode()+"]");
 						// INEFFICENTE: RepositoryGestioneStateful.addCodiceTrasportoRichiesta(idTransazione, context.getReturnCode()+"");
@@ -370,7 +382,9 @@ public class InResponseHandler extends FirstPositionHandler implements  org.open
 							tr.setLocation(prefix+CostantiPdD.getConnettoreRequest(connettoreRequestUrl, connettoreRequestMethod));
 						}
 						else {
-							tr.setLocation(context.getConnettore().getLocation());
+							if(context!=null && context.getConnettore()!=null) {
+								tr.setLocation(context.getConnettore().getLocation());
+							}
 						}
 					}catch(TransactionDeletedException e){
 						//System.out.println("@@@@@REPOSITORY@@@@@ OutRequestHandler SET LOCATION ["+context.getConnettore().getLocation()+"]");

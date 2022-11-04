@@ -140,6 +140,21 @@ public class GestoreConsegnaMultipla {
 	}
 
 
+	
+	
+	private static java.util.Random _rnd = null;
+	private static synchronized void initRandom() {
+		if(_rnd==null) {
+			_rnd = new java.util.Random();
+		}
+	}
+	public static java.util.Random getRandom() {
+		if(_rnd==null) {
+			initRandom();
+		}
+		return _rnd;
+	}
+	
 
 
 
@@ -614,8 +629,10 @@ public class GestoreConsegnaMultipla {
 						if(updateEffettuato == false){
 							// Per aiutare ad evitare conflitti
 							try{
-								Utilities.sleep((new java.util.Random()).nextInt(gestioneSerializableDB_CheckInterval)); // random da 0ms a checkIntervalms
-							}catch(Exception eRandom){}
+								Utilities.sleep(getRandom().nextInt(gestioneSerializableDB_CheckInterval)); // random da 0ms a checkIntervalms
+							}catch(Exception eRandom){
+								// ignore
+							}
 							iteration++;
 						}
 					}
@@ -833,7 +850,9 @@ public class GestoreConsegnaMultipla {
 					int code = -1;
 					try {
 						code = Integer.valueOf(transazioneApplicativoServer.getCodiceRisposta());
-					}catch(Exception e) {}
+					}catch(Exception e) {
+						// ignore
+					}
 					if(code>0) {
 						if(code<=299) {
 							transazioneApplicativoServer.setDettaglioEsito(esitiProperties.convertoToCode(EsitoTransazioneName.OK));

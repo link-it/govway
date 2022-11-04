@@ -137,6 +137,10 @@
 				<xsd:element name="diagnostici-list-ext" type="xsd:string" minOccurs="0" />
 				<xsd:element name="diagnostici-ext" type="xsd:string" minOccurs="0" />
 
+			    <!-- diagnostici -->
+			    <xsd:element name="error-log" type="xsd:string" minOccurs="0" />
+			    <xsd:element name="warning-log" type="xsd:string" minOccurs="0" />
+
 				<!-- informazioni di integrazione -->
 				<xsd:element name="id-correlazione-applicativa" type="xsd:string" minOccurs="0"/>
 				<xsd:element name="id-correlazione-applicativa-risposta" type="xsd:string" minOccurs="0"/>

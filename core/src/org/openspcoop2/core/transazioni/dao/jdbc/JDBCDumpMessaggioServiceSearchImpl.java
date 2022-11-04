@@ -1068,6 +1068,16 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 	
 	protected Long findIdDumpMessaggio(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdDumpMessaggio id, boolean throwNotFound) throws NotFoundException, ServiceException, NotImplementedException, Exception {
 
+		if(jdbcProperties==null) {
+			throw new ServiceException("jdbcProperties parameter is null");
+		}
+		if(sqlQueryObject==null) {
+			throw new ServiceException("sqlQueryObject parameter is null");
+		}
+		if(id==null) {
+			throw new ServiceException("id parameter is null");
+		}
+		
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 

@@ -21,6 +21,7 @@ package org.openspcoop2.web.monitor.transazioni.mbean;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.pdd.logger.LogLevels;
+import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 
 /**
@@ -41,6 +42,13 @@ public class MsgDiagnosticoBean extends MsgDiagnostico {
 	private String severitaString;
 
 	public String getSeveritaAsString() {
+		
+		if(this.getCodice()!=null) {
+			if(MsgDiagnosticiProperties.MSG_DIAGNOSTICI_WARNING.contains(this.getCodice())) {
+				return "warning";
+			}
+		}
+		
 		if (this.severitaString == null) {
 			this.severitaString = LogLevels.toOpenSPCoop2(this.getSeverita());
 		}

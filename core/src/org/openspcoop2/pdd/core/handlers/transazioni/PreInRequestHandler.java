@@ -144,6 +144,10 @@ public class PreInRequestHandler extends FirstPositionHandler implements org.ope
 	}
 	public static void setInfoInvocation(Transaction tr, RequestInfo requestInfo, ConnectorInMessage req) throws Exception {
 		
+		if(tr==null) {
+			throw new Exception("Transaction is null");
+		}
+		
 		tr.setRequestInfo(requestInfo);
 		
 		if(req.getCredential()!=null) {

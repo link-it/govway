@@ -105,6 +105,8 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.DIAGNOSTICI_LIST_2 = new Field("diagnostici-list2",java.lang.String.class,"transazione",Transazione.class);
 		this.DIAGNOSTICI_LIST_EXT = new Field("diagnostici-list-ext",java.lang.String.class,"transazione",Transazione.class);
 		this.DIAGNOSTICI_EXT = new Field("diagnostici-ext",java.lang.String.class,"transazione",Transazione.class);
+		this.ERROR_LOG = new Field("error-log",java.lang.String.class,"transazione",Transazione.class);
+		this.WARNING_LOG = new Field("warning-log",java.lang.String.class,"transazione",Transazione.class);
 		this.ID_CORRELAZIONE_APPLICATIVA = new Field("id-correlazione-applicativa",java.lang.String.class,"transazione",Transazione.class);
 		this.ID_CORRELAZIONE_APPLICATIVA_RISPOSTA = new Field("id-correlazione-applicativa-risposta",java.lang.String.class,"transazione",Transazione.class);
 		this.SERVIZIO_APPLICATIVO_FRUITORE = new Field("servizio-applicativo-fruitore",java.lang.String.class,"transazione",Transazione.class);
@@ -209,6 +211,8 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.DIAGNOSTICI_LIST_2 = new ComplexField(father,"diagnostici-list2",java.lang.String.class,"transazione",Transazione.class);
 		this.DIAGNOSTICI_LIST_EXT = new ComplexField(father,"diagnostici-list-ext",java.lang.String.class,"transazione",Transazione.class);
 		this.DIAGNOSTICI_EXT = new ComplexField(father,"diagnostici-ext",java.lang.String.class,"transazione",Transazione.class);
+		this.ERROR_LOG = new ComplexField(father,"error-log",java.lang.String.class,"transazione",Transazione.class);
+		this.WARNING_LOG = new ComplexField(father,"warning-log",java.lang.String.class,"transazione",Transazione.class);
 		this.ID_CORRELAZIONE_APPLICATIVA = new ComplexField(father,"id-correlazione-applicativa",java.lang.String.class,"transazione",Transazione.class);
 		this.ID_CORRELAZIONE_APPLICATIVA_RISPOSTA = new ComplexField(father,"id-correlazione-applicativa-risposta",java.lang.String.class,"transazione",Transazione.class);
 		this.SERVIZIO_APPLICATIVO_FRUITORE = new ComplexField(father,"servizio-applicativo-fruitore",java.lang.String.class,"transazione",Transazione.class);
@@ -375,6 +379,10 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 	public IField DIAGNOSTICI_LIST_EXT = null;
 	 
 	public IField DIAGNOSTICI_EXT = null;
+	 
+	public IField ERROR_LOG = null;
+	 
+	public IField WARNING_LOG = null;
 	 
 	public IField ID_CORRELAZIONE_APPLICATIVA = null;
 	 

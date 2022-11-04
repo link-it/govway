@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/sqlserver/archiviComunicazioni/2022-11-03-patch.sql

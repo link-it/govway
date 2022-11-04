@@ -98,12 +98,10 @@ public class LogLevels {
 			return LogLevels.SEVERITA_ALL;
 		}else if( valoreOpenspcoop2 < LogLevels.SEVERITA_FATAL) {
 			return LogLevels.SEVERITA_OFF;
-		}else if((valoreOpenspcoop2>= LogLevels.SEVERITA_FATAL) && (valoreOpenspcoop2 <= LogLevels.SEVERITA_DEBUG_HIGH)){
+		}else {
 			return valoreOpenspcoop2;
 		}
-		else{
-			return -1;
-		}
+
 	}
 
 	/** Definisce un Livello di Severita' FATAL per un messaggio Diagnostico: valore del field = 0 */
@@ -197,10 +195,10 @@ public class LogLevels {
 			return LogLevels.LOG_LEVEL_DEBUG_LOW;
 		} else if( valueLivelloOpenSPCoop == LogLevels.SEVERITA_DEBUG_MEDIUM ){
 			return LogLevels.LOG_LEVEL_DEBUG_MEDIUM;
-		} else if( valueLivelloOpenSPCoop == LogLevels.SEVERITA_DEBUG_HIGH ){
+		//} else if( valueLivelloOpenSPCoop == LogLevels.SEVERITA_DEBUG_HIGH ){
+		} else {
 			return LogLevels.LOG_LEVEL_DEBUG_HIGH;
-		} else
-			return null;
+		}
 	}
 
 	/** 

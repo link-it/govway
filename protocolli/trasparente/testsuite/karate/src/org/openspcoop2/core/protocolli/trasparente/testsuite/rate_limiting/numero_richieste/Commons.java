@@ -36,7 +36,8 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Utils
 public class Commons {
 
 	public static void checkPostConditionsRichiesteSimultanee(String idPolicy) {
-		checkPostConditionsRichiesteSimultanee(idPolicy, PolicyGroupByActiveThreadsType.LOCAL);
+		checkPostConditionsRichiesteSimultanee(idPolicy, 
+				null);	//PolicyGroupByActiveThreadsType.LOCAL); FIX: Devo controllarlo solamente se non e' null. Quando si fa il reset dell'erogazione/fruizione e non passa ancora una richiesta, rimane il motore precedente
 	}
 	public static void checkPostConditionsRichiesteSimultanee(String idPolicy, PolicyGroupByActiveThreadsType policyType) {
 		

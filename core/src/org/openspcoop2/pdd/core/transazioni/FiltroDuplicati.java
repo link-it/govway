@@ -110,7 +110,9 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 		}
 		else {
 			PdDContext pddContext = (PdDContext)context;
-			
+			if(pddContext==null) {
+				throw new ProtocolException("PdDContext non fornito");
+			}
 			this.idTransazione = (String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 			if(this.idTransazione==null){
 				throw new ProtocolException("Id di transazione non fornito");
@@ -157,7 +159,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 				try{
 					TransactionContext.getTransaction(this.idTransazione).addIdProtocolloDuplicato(idBusta);
 				}catch(Exception e){
-					new ProtocolException(e);
+					throw new ProtocolException(e);
 				}
 				return true;
 			}
@@ -169,7 +171,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 				try{
 					TransactionContext.getTransaction(this.idTransazione).addIdProtocolloDuplicato(idBusta);
 				}catch(Exception e){
-					new ProtocolException(e);
+					throw new ProtocolException(e);
 				}
 				return true;
 			}
@@ -191,7 +193,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 					try{
 						TransactionContext.getTransaction(this.idTransazione).addIdProtocolloDuplicato(idBusta);
 					}catch(Exception eSetDuplicata){
-						new ProtocolException(eSetDuplicata);
+						throw new ProtocolException(eSetDuplicata);
 					}
 					return true;
 				}else{
@@ -728,7 +730,9 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			try{
 				if(pstmt!=null)
 					pstmt.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 	}
@@ -842,7 +846,9 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			try{
 				if(pstmt!=null)
 					pstmt.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 	}

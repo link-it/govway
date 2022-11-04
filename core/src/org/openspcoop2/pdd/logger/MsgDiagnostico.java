@@ -253,6 +253,9 @@ public class MsgDiagnostico {
 			this.generatoreDateCasuali = GeneratoreCasualeDate.getGeneratoreCasualeDate();
 		}
 		try{
+			if(this.pddContext==null) {
+				throw new Exception("PdDContext is null");
+			}
 			this.protocolFactoryManager = ProtocolFactoryManager.getInstance();
 			this.protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 			this.traduttore = this.protocolFactory.createTraduttore();
@@ -437,7 +440,9 @@ public class MsgDiagnostico {
 		this.protocolFactory = protocolFactory;
 		try{
 			this.traduttore = this.protocolFactory.createTraduttore();
-		}catch(Exception e){}
+		}catch(Exception e){
+			// ignore
+		}
 		this.diagnosticoBuilder = new DiagnosticoBuilder(protocolFactory); 
 		this.addKeywords(protocolFactory);
 	}
@@ -737,7 +742,9 @@ public class MsgDiagnostico {
 				try{
 					String protocollo = ProtocolFactoryManager.getInstance().getProtocolByServiceType(idServizio.getTipo());
 					this.keywordLogPersonalizzati.put(CostantiPdD.KEY_TIPO_MITTENTE_BUSTA_RICHIESTA, ProtocolFactoryManager.getInstance().getDefaultOrganizationTypes().get(protocollo));
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				this.keywordLogPersonalizzati.put(CostantiPdD.KEY_MITTENTE_BUSTA_RICHIESTA, CostantiPdD.SOGGETTO_ANONIMO);
 			}
 		}

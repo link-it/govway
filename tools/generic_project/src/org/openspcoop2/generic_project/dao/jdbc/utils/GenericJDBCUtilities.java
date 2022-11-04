@@ -967,6 +967,28 @@ public class GenericJDBCUtilities {
 			List<ISQLQueryObject> sqlQueryObjectInnerList,List<JDBCObject> jdbcObjects,
 			Union union,UnionExpression ... unionExpression) throws NotFoundException, ExpressionException, ExpressionNotImplementedException, SQLQueryObjectException, JDBCAdapterException, ServiceException{
 			
+		if(sqlQueryObject==null) {
+			throw new SQLQueryObjectException("sqlQueryObject parameter is null");
+		}
+		if(sqlConverter==null) {
+			throw new SQLQueryObjectException("sqlConverter parameter is null");
+		}
+		if(model==null) {
+			throw new SQLQueryObjectException("model parameter is null");
+		}
+		if(sqlQueryObjectInnerList==null) {
+			throw new SQLQueryObjectException("sqlQueryObjectInnerList parameter is null");
+		}
+		if(jdbcObjects==null) {
+			throw new SQLQueryObjectException("jdbcObjects parameter is null");
+		}
+		if(union==null) {
+			throw new SQLQueryObjectException("union parameter is null");
+		}
+		if(unionExpression==null) {
+			throw new SQLQueryObjectException("unionExpression parameter is null");
+		}
+		
 		// check expression
 		List<Class<?>> returnClassTypes = checkUnionExpression(unionExpression);
 	

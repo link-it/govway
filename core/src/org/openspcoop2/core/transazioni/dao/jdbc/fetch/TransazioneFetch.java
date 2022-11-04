@@ -182,6 +182,10 @@ public class TransazioneFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "diagnostici_list_ext", Transazione.model().DIAGNOSTICI_LIST_EXT.getFieldType()));
 				setParameter(object, "setDiagnosticiExt", Transazione.model().DIAGNOSTICI_EXT.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "diagnostici_ext", Transazione.model().DIAGNOSTICI_EXT.getFieldType()));
+				setParameter(object, "setErrorLog", Transazione.model().ERROR_LOG.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "error_log", Transazione.model().ERROR_LOG.getFieldType()));
+				setParameter(object, "setWarningLog", Transazione.model().WARNING_LOG.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "warning_log", Transazione.model().WARNING_LOG.getFieldType()));
 				setParameter(object, "setIdCorrelazioneApplicativa", Transazione.model().ID_CORRELAZIONE_APPLICATIVA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "id_correlazione_applicativa", Transazione.model().ID_CORRELAZIONE_APPLICATIVA.getFieldType()));
 				setParameter(object, "setIdCorrelazioneApplicativaRisposta", Transazione.model().ID_CORRELAZIONE_APPLICATIVA_RISPOSTA.getFieldType(),
@@ -400,6 +404,10 @@ public class TransazioneFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"diagnostici-list-ext"));
 				setParameter(object, "setDiagnosticiExt", Transazione.model().DIAGNOSTICI_EXT.getFieldType(),
 					this.getObjectFromMap(map,"diagnostici-ext"));
+				setParameter(object, "setErrorLog", Transazione.model().ERROR_LOG.getFieldType(),
+					this.getObjectFromMap(map,"error-log"));
+				setParameter(object, "setWarningLog", Transazione.model().WARNING_LOG.getFieldType(),
+					this.getObjectFromMap(map,"warning-log"));
 				setParameter(object, "setIdCorrelazioneApplicativa", Transazione.model().ID_CORRELAZIONE_APPLICATIVA.getFieldType(),
 					this.getObjectFromMap(map,"id-correlazione-applicativa"));
 				setParameter(object, "setIdCorrelazioneApplicativaRisposta", Transazione.model().ID_CORRELAZIONE_APPLICATIVA_RISPOSTA.getFieldType(),

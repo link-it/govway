@@ -81,7 +81,7 @@ public class IdentificaSoggettoImpl implements IdentificaSoggetto {
         try {
             Risposta t = new Risposta();
             t.start();
-            java.lang.String _return = (new java.util.Random().nextLong()) + "";
+            java.lang.String _return = (getRandom().nextLong()) + "";
             return _return;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -107,4 +107,17 @@ public class IdentificaSoggettoImpl implements IdentificaSoggetto {
         	}
         }
     }
+    
+	private static java.util.Random _rnd = null;
+	private static synchronized void initRandom() {
+		if(_rnd==null) {
+			_rnd = new java.util.Random();
+		}
+	}
+	protected static java.util.Random getRandom() {
+		if(_rnd==null) {
+			initRandom();
+		}
+		return _rnd;
+	}
 }

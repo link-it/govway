@@ -29,12 +29,12 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
-import org.slf4j.Logger;
 import org.openspcoop2.pdd.config.MsgDiagnosticiInstanceProperties;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.PropertiesReader;
+import org.slf4j.Logger;
 
 
 /**
@@ -116,7 +116,9 @@ public class MsgDiagnosticiProperties {
 			try{
 				if(properties!=null)
 				    properties.close();
-			}catch(Exception er){}
+			}catch(Exception er){
+				// close
+			}
 		}
 
 		this.reader = new MsgDiagnosticiInstanceProperties(propertiesReader, this.log, confDir);
@@ -191,9 +193,15 @@ public class MsgDiagnosticiProperties {
 	private static Integer filtroMsgDiagnostico_OpenSPCoop2_0 = null;
 	public int getFiltroMsgDiagnostico_OpenSPCoop2_0() {	
 		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_0==null){
+			_initFiltroMsgDiagnostico_OpenSPCoop2_0(this.reader, this.log);
+		}
+		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_0;
+	}
+	private static synchronized void _initFiltroMsgDiagnostico_OpenSPCoop2_0(MsgDiagnosticiInstanceProperties reader, Logger log) {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_0==null){
 			try{ 
 				String value = null;
-				value = this.reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.0");
+				value = reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.0");
 				if(value==null){
 					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_0=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_FATAL);
 				}else{
@@ -203,20 +211,24 @@ public class MsgDiagnosticiProperties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.0': "+e.getMessage());
+				log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.0': "+e.getMessage());
 				MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_0=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_FATAL);
 			}  
 		}
-		
-		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_0;
 	}
 	
 	private static Integer filtroMsgDiagnostico_OpenSPCoop2_1 = null;
 	public int getFiltroMsgDiagnostico_OpenSPCoop2_1() {	
 		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_1==null){
+			_initFiltroMsgDiagnostico_OpenSPCoop2_1(this.reader, this.log);
+		}
+		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_1;
+	}
+	private static synchronized void _initFiltroMsgDiagnostico_OpenSPCoop2_1(MsgDiagnosticiInstanceProperties reader, Logger log) {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_1==null){
 			try{ 
 				String value = null;
-				value = this.reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.1");
+				value = reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.1");
 				if(value==null){
 					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_1=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_ERROR_PROTOCOL);
 				}else{
@@ -226,20 +238,24 @@ public class MsgDiagnosticiProperties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.1': "+e.getMessage());
+				log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.1': "+e.getMessage());
 				MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_1=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_ERROR_PROTOCOL);
 			}  
 		}
-		
-		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_1;
 	}
 	
 	private static Integer filtroMsgDiagnostico_OpenSPCoop2_2 = null;
 	public int getFiltroMsgDiagnostico_OpenSPCoop2_2() {	
 		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_2==null){
+			_initFiltroMsgDiagnostico_OpenSPCoop2_2(this.reader, this.log);
+		}
+		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_2;
+	}
+	private static synchronized void _initFiltroMsgDiagnostico_OpenSPCoop2_2(MsgDiagnosticiInstanceProperties reader, Logger log) {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_2==null){
 			try{ 
 				String value = null;
-				value = this.reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.2");
+				value = reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.2");
 				if(value==null){
 					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_2=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_ERROR_INTEGRATION);
 				}else{
@@ -249,21 +265,25 @@ public class MsgDiagnosticiProperties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.2': "+e.getMessage());
+				log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.2': "+e.getMessage());
 				MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_2=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_ERROR_INTEGRATION);
 			}  
 		}
-		
-		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_2;
 	}
 	
 	
 	private static Integer filtroMsgDiagnostico_OpenSPCoop2_3 = null;
 	public int getFiltroMsgDiagnostico_OpenSPCoop2_3() {	
 		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_3==null){
+			_initFiltroMsgDiagnostico_OpenSPCoop2_3(this.reader, this.log);
+		}
+		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_3;
+	}
+	private static synchronized void _initFiltroMsgDiagnostico_OpenSPCoop2_3(MsgDiagnosticiInstanceProperties reader, Logger log) {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_3==null){
 			try{ 
 				String value = null;
-				value = this.reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.3");
+				value = reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.3");
 				if(value==null){
 					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_3=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_INFO_PROTOCOL);
 				}else{
@@ -273,21 +293,25 @@ public class MsgDiagnosticiProperties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.3': "+e.getMessage());
+				log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.3': "+e.getMessage());
 				MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_3=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_INFO_PROTOCOL);
 			}  
 		}
-		
-		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_3;
 	}
 	
 	
 	private static Integer filtroMsgDiagnostico_OpenSPCoop2_4 = null;
 	public int getFiltroMsgDiagnostico_OpenSPCoop2_4() {	
 		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_4==null){
+			_initFiltroMsgDiagnostico_OpenSPCoop2_4(this.reader, this.log);
+		}
+		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_4;
+	}
+	private static synchronized void _initFiltroMsgDiagnostico_OpenSPCoop2_4(MsgDiagnosticiInstanceProperties reader, Logger log) {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_4==null){
 			try{ 
 				String value = null;
-				value = this.reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.4");
+				value = reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.4");
 				if(value==null){
 					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_4=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_INFO_INTEGRATION);
 				}else{
@@ -297,20 +321,24 @@ public class MsgDiagnosticiProperties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.4': "+e.getMessage());
+				log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.4': "+e.getMessage());
 				MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_4=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_INFO_INTEGRATION);
 			}  
 		}
-		
-		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_4;
 	}
 	
 	private static Integer filtroMsgDiagnostico_OpenSPCoop2_5 = null;
 	public int getFiltroMsgDiagnostico_OpenSPCoop2_5() {	
 		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_5==null){
+			_initFiltroMsgDiagnostico_OpenSPCoop2_5(this.reader, this.log);
+		}
+		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_5;
+	}
+	private static synchronized void _initFiltroMsgDiagnostico_OpenSPCoop2_5(MsgDiagnosticiInstanceProperties reader, Logger log) {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_5==null){
 			try{ 
 				String value = null;
-				value = this.reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.5");
+				value = reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.5");
 				if(value==null){
 					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_5=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_LOW);
 				}else{
@@ -320,21 +348,25 @@ public class MsgDiagnosticiProperties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.5': "+e.getMessage());
+				log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.5': "+e.getMessage());
 				MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_5=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_LOW);
 			}  
 		}
-		
-		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_5;
 	}
 	
 	
 	private static Integer filtroMsgDiagnostico_OpenSPCoop2_6 = null;
 	public int getFiltroMsgDiagnostico_OpenSPCoop2_6() {	
 		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_6==null){
+			_initFiltroMsgDiagnostico_OpenSPCoop2_6(this.reader, this.log);
+		}
+		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_6;
+	}
+	private static synchronized void _initFiltroMsgDiagnostico_OpenSPCoop2_6(MsgDiagnosticiInstanceProperties reader, Logger log) {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_6==null){
 			try{ 
 				String value = null;
-				value = this.reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.6");
+				value = reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.6");
 				if(value==null){
 					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_6=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_MEDIUM);
 				}else{
@@ -344,21 +376,25 @@ public class MsgDiagnosticiProperties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.6': "+e.getMessage());
+				log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.6': "+e.getMessage());
 				MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_6=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_MEDIUM);
 			}  
 		}
-		
-		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_6;
 	}
 	
 	
 	private static Integer filtroMsgDiagnostico_OpenSPCoop2_7 = null;
 	public int getFiltroMsgDiagnostico_OpenSPCoop2_7() {	
 		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_7==null){
+			_initFiltroMsgDiagnostico_OpenSPCoop2_7(this.reader, this.log);
+		}
+		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_7;
+	}
+	private static synchronized void _initFiltroMsgDiagnostico_OpenSPCoop2_7(MsgDiagnosticiInstanceProperties reader, Logger log) {	
+		if(MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_7==null){
 			try{ 
 				String value = null;
-				value = this.reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.7");
+				value = reader.getValue("filtroMsgDiagnostici.livelloOpenSPCoop2.7");
 				if(value==null){
 					MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_7=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_HIGH);
 				}else{
@@ -368,12 +404,10 @@ public class MsgDiagnosticiProperties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.7': "+e.getMessage());
+				log.error("Riscontrato errore durante la lettura della proprieta' 'filtroMsgDiagnostici.livelloOpenSPCoop2.7': "+e.getMessage());
 				MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_7=LogLevels.toIntervalloLog4J(LogLevels.SEVERITA_DEBUG_HIGH);
 			}  
 		}
-		
-		return MsgDiagnosticiProperties.filtroMsgDiagnostico_OpenSPCoop2_7;
 	}
 	
 	
@@ -494,6 +528,8 @@ public class MsgDiagnosticiProperties {
 	
 	/*---------- Inizializzazione messaggi diagnostici -------------*/
 	
+	private static Boolean initMsgDiagnosticiPersonalizzati = null;
+	
 	private static PropertiesReader livelliMsgDiagnosticiPersonalizzati = null;
 	public static PropertiesReader getLivelliMsgDiagnosticiPersonalizzati() {
 		return livelliMsgDiagnosticiPersonalizzati;
@@ -517,9 +553,15 @@ public class MsgDiagnosticiProperties {
 		return mappingCodiceToKeywordMsgDiagnosticiPersonalizzati;
 	}
 	
-	public synchronized boolean initializeMsgDiagnosticiPersonalizzati(){
+	public boolean initializeMsgDiagnosticiPersonalizzati(){
+		if(MsgDiagnosticiProperties.initMsgDiagnosticiPersonalizzati == null){
+			return _initializeMsgDiagnosticiPersonalizzati(this.reader, this.log);
+		}
+		return MsgDiagnosticiProperties.initMsgDiagnosticiPersonalizzati!=null ? MsgDiagnosticiProperties.initMsgDiagnosticiPersonalizzati : null;
+	}
+	private static synchronized boolean _initializeMsgDiagnosticiPersonalizzati(MsgDiagnosticiInstanceProperties reader, Logger log){
 		try{
-			if(MsgDiagnosticiProperties.livelliMsgDiagnosticiPersonalizzati == null){
+			if(MsgDiagnosticiProperties.initMsgDiagnosticiPersonalizzati == null){
 				
 				Properties tmp_livelliMsgDiagnosticiPersonalizzati = new Properties();
 				Properties tmp_codiciMsgDiagnosticiPersonalizzati = new Properties();
@@ -529,7 +571,7 @@ public class MsgDiagnosticiProperties {
 				
 				
 				// Search codiceIdentificativoFunzione
-				Properties msgDiagnostici =  this.reader.readProperties(MsgDiagnosticiProperties.PREFIX_MSG_DIAGNOSTICO);
+				Properties msgDiagnostici =  reader.readProperties(MsgDiagnosticiProperties.PREFIX_MSG_DIAGNOSTICO);
 				Enumeration<?> nomi = msgDiagnostici.keys();
 				while(nomi.hasMoreElements()){
 					String key = (String) nomi.nextElement();	
@@ -555,7 +597,7 @@ public class MsgDiagnosticiProperties {
 				}
 
 				// Leggo messaggio,livello e codice Diagnostico
-				msgDiagnostici = this.reader.readProperties(MsgDiagnosticiProperties.PREFIX_MSG_DIAGNOSTICO);
+				msgDiagnostici = reader.readProperties(MsgDiagnosticiProperties.PREFIX_MSG_DIAGNOSTICO);
 				nomi = msgDiagnostici.keys();
 				while(nomi.hasMoreElements()){
 					String key = (String) nomi.nextElement();	
@@ -632,18 +674,22 @@ public class MsgDiagnosticiProperties {
 				MsgDiagnosticiProperties.mappingCodiceToKeywordMsgDiagnosticiPersonalizzati = new PropertiesReader(tmp_mappingCodiceToKeywordMsgDiagnosticiPersonalizzati,true);	
 				MsgDiagnosticiProperties.codiciIdentificativiFunzione = new PropertiesReader(tmp_codiciIdentificativiFunzione,true);
 
+				MsgDiagnosticiProperties.initMsgDiagnosticiPersonalizzati = true;
 				
 			}
 			return true;
 		}catch(java.lang.Exception e) {
-			this.log.error("Riscontrato errore durante la lettura dei messaggi diagnostici personalizzati: "+e.getMessage());
+			log.error("Riscontrato errore durante la lettura dei messaggi diagnostici personalizzati: "+e.getMessage());
 			if(OpenSPCoop2Logger.getLoggerOpenSPCoopCore()!=null){
 				OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Riscontrato errore durante la lettura dei messaggi diagnostici personalizzati: "+e.getMessage(),e);
 			}
 			MsgDiagnosticiProperties.livelliMsgDiagnosticiPersonalizzati = null;
+			MsgDiagnosticiProperties.codiciMsgDiagnosticiPersonalizzati = null;
 			MsgDiagnosticiProperties.messaggiMsgDiagnosticiPersonalizzati = null;
+			MsgDiagnosticiProperties.mappingCodiceToKeywordMsgDiagnosticiPersonalizzati = null;
+			MsgDiagnosticiProperties.codiciIdentificativiFunzione = null;
 			return false;
-		} 	
+		}
 	}
 	
 	

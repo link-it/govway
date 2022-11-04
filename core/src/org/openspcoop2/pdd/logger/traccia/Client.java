@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Random;
 
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
@@ -47,6 +46,7 @@ import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.random.RandomUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.security.JOSESerialization;
@@ -158,15 +158,15 @@ public class Client {
 		transazioneDB.setCodiceRispostaUscita("200");
 		
 		transazioneDB.setDataAccettazioneRichiesta(DateManager.getDate());
-		Utilities.sleep(new Random().nextInt(300));
+		Utilities.sleep(RandomUtilities.getRandom().nextInt(300));
 		transazioneDB.setDataIngressoRichiesta(DateManager.getDate());
-		Utilities.sleep(new Random().nextInt(300));
+		Utilities.sleep(RandomUtilities.getRandom().nextInt(300));
 		transazioneDB.setDataUscitaRichiesta(DateManager.getDate());
-		Utilities.sleep(new Random().nextInt(300));
+		Utilities.sleep(RandomUtilities.getRandom().nextInt(300));
 		transazioneDB.setDataAccettazioneRisposta(DateManager.getDate());
-		Utilities.sleep(new Random().nextInt(300));
+		Utilities.sleep(RandomUtilities.getRandom().nextInt(300));
 		transazioneDB.setDataIngressoRisposta(DateManager.getDate());
-		Utilities.sleep(new Random().nextInt(300));
+		Utilities.sleep(RandomUtilities.getRandom().nextInt(300));
 		transazioneDB.setDataUscitaRisposta(DateManager.getDate());
 		
 		transazioneDB.setRichiestaIngressoBytes(67893l);

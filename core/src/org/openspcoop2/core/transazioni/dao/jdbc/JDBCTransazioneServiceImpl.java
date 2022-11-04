@@ -147,6 +147,8 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DIAGNOSTICI_LIST_2,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DIAGNOSTICI_LIST_EXT,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DIAGNOSTICI_EXT,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ERROR_LOG,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().WARNING_LOG,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ID_CORRELAZIONE_APPLICATIVA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ID_CORRELAZIONE_APPLICATIVA_RISPOSTA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE,false),"?");
@@ -250,6 +252,8 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getDiagnosticiList2(),Transazione.model().DIAGNOSTICI_LIST_2.getFieldType()) );
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getDiagnosticiListExt(),Transazione.model().DIAGNOSTICI_LIST_EXT.getFieldType()) );
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getDiagnosticiExt(),Transazione.model().DIAGNOSTICI_EXT.getFieldType()) );
+		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getErrorLog(),Transazione.model().ERROR_LOG.getFieldType()) );
+		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getWarningLog(),Transazione.model().WARNING_LOG.getFieldType()) );
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getIdCorrelazioneApplicativa(),Transazione.model().ID_CORRELAZIONE_APPLICATIVA.getFieldType()) );
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getIdCorrelazioneApplicativaRisposta(),Transazione.model().ID_CORRELAZIONE_APPLICATIVA_RISPOSTA.getFieldType()) );
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getServizioApplicativoFruitore(),Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE.getFieldType()) );
@@ -451,6 +455,10 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 		lstObjects_transazione.add(new JDBCObject(transazione.getDiagnosticiListExt(), Transazione.model().DIAGNOSTICI_LIST_EXT.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DIAGNOSTICI_EXT,false), "?");
 		lstObjects_transazione.add(new JDBCObject(transazione.getDiagnosticiExt(), Transazione.model().DIAGNOSTICI_EXT.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ERROR_LOG,false), "?");
+		lstObjects_transazione.add(new JDBCObject(transazione.getErrorLog(), Transazione.model().ERROR_LOG.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneFieldConverter().toColumn(Transazione.model().WARNING_LOG,false), "?");
+		lstObjects_transazione.add(new JDBCObject(transazione.getWarningLog(), Transazione.model().WARNING_LOG.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ID_CORRELAZIONE_APPLICATIVA,false), "?");
 		lstObjects_transazione.add(new JDBCObject(transazione.getIdCorrelazioneApplicativa(), Transazione.model().ID_CORRELAZIONE_APPLICATIVA.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ID_CORRELAZIONE_APPLICATIVA_RISPOSTA,false), "?");

@@ -622,6 +622,19 @@ public class TransactionServerUtils {
 		
 	}
 	
+	private static java.util.Random _rnd = null;
+	private static synchronized void initRandom() {
+		if(_rnd==null) {
+			_rnd = new java.util.Random();
+		}
+	}
+	protected static java.util.Random getRandom() {
+		if(_rnd==null) {
+			initRandom();
+		}
+		return _rnd;
+	}
+	
 	private static int _aggiornaInformazioneConsegnaTerminata(TransazioneApplicativoServer transazioneApplicativoServer, Connection connectionDB,
 			String tipoDatabase, Logger logCore,
 			IDAOFactory daoFactory, Logger logFactory, ServiceManagerProperties smpFactory,
@@ -680,8 +693,10 @@ public class TransactionServerUtils {
 				if(updateEffettuato == false){
 					// Per aiutare ad evitare conflitti
 					try{
-						Utilities.sleep((new java.util.Random()).nextInt(gestioneSerializableDB_CheckInterval)); // random da 0ms a checkIntervalms
-					}catch(Exception eRandom){}
+						Utilities.sleep(getRandom().nextInt(gestioneSerializableDB_CheckInterval)); // random da 0ms a checkIntervalms
+					}catch(Exception eRandom){
+						// random
+					}
 					conflitti++;
 				}
 			}
@@ -1219,7 +1234,7 @@ public class TransactionServerUtils {
 				// ID Costruito
 				updateEffettuato = true;
 
-			} catch(Exception e) {
+			} catch(Throwable e) {
 				try{
 					if(rs != null)
 						rs.close();
@@ -1236,7 +1251,7 @@ public class TransactionServerUtils {
 			if(updateEffettuato == false){
 				// Per aiutare ad evitare conflitti
 				try{
-					Utilities.sleep((new java.util.Random()).nextInt(gestioneSerializableDB_CheckInterval)); // random da 0ms a checkIntervalms
+					Utilities.sleep(getRandom().nextInt(gestioneSerializableDB_CheckInterval)); // random da 0ms a checkIntervalms
 				}catch(Exception eRandom){}
 			}
 		}

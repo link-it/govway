@@ -278,7 +278,7 @@ public class UtilitiesIntegrazioneWSAddressing {
 		}
 		
 		if(tipoSoggetto.contains(".")){
-			String[] split = tipoSoggetto.split(".");
+			String[] split = tipoSoggetto.split("\\.");
 			tipoSoggetto = split[1];
 			String sa = split[0];
 			if(tipoSoggetto==null){

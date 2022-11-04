@@ -25,7 +25,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Random;
 
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -85,6 +84,18 @@ import org.slf4j.Logger;
  */
 public class InRequestProtocolHandler_GestioneControlloTraffico {
 
+	private static java.util.Random _rnd = null;
+	private static synchronized void initRandom() {
+		if(_rnd==null) {
+			_rnd = new java.util.Random();
+		}
+	}
+	public static java.util.Random getRandom() {
+		if(_rnd==null) {
+			initRandom();
+		}
+		return _rnd;
+	}
 	
 	public void process(InRequestProtocolContext context, Transaction tr) throws HandlerException{
 		
@@ -112,7 +123,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 		ServiceBinding serviceBinding = ServiceBinding.REST;
 		
 		RequestInfo requestInfo = null;
-		if(context.getPddContext()!=null && context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)){
+		if(context!=null && context.getPddContext()!=null && context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)){
 			requestInfo = (RequestInfo) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		}
 		
@@ -672,11 +683,11 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 								// aggiungo backoff
 								if(!policyConfiguration_header_http.isForceDisabledHttpHeaders_retryAfter_backoff()) {
 									if(policyConfiguration_header_http.getForceHttpHeaders_retryAfter_backoff()>0) {
-										sec = sec + new Random().nextInt(policyConfiguration_header_http.getForceHttpHeaders_retryAfter_backoff());
+										sec = sec + getRandom().nextInt(policyConfiguration_header_http.getForceHttpHeaders_retryAfter_backoff());
 									}
 									else {
 										if(op2Properties.getControlloTrafficoRetryAfterHeader_randomBackoff()!=null && op2Properties.getControlloTrafficoRetryAfterHeader_randomBackoff()>0) {
-											sec = sec + new Random().nextInt(op2Properties.getControlloTrafficoRetryAfterHeader_randomBackoff());
+											sec = sec + getRandom().nextInt(op2Properties.getControlloTrafficoRetryAfterHeader_randomBackoff());
 										}
 									}
 								}
@@ -1100,6 +1111,10 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 	private boolean isCondizioneCongestionamentoPortaDominio(InRequestProtocolContext context, 
 			GestoreControlloTraffico gestoreControlloCongestione,
 			MsgDiagnostico msgDiag, Transaction tr) throws TransactionDeletedException{
+		
+		if(context==null) {
+			throw new TransactionDeletedException("Context is null");
+		}
 		
 		PdDContext pddContext = context.getPddContext();
 		

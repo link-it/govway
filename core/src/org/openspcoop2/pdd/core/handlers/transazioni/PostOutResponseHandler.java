@@ -558,7 +558,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				idDominio = context.getProtocollo().getDominio();
 			}
 			else if(requestInfo!=null){
-				if(requestInfo!=null && requestInfo.getIdentitaPdD()!=null && !requestInfo.getIdentitaPdD().equals(idDominio)){
+				if(requestInfo.getIdentitaPdD()!=null && !requestInfo.getIdentitaPdD().equals(idDominio)){
 					idDominio = requestInfo.getIdentitaPdD();
 				}
 			}

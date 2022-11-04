@@ -245,6 +245,9 @@ public class GestoreControlloTraffico {
 		
 	public void removeThread(Long maxThreadsObj, Integer thresholdObj, String idTransazione) throws Exception{
 		//synchronized (this.semaphore) {
+		if(maxThreadsObj==null) {
+			throw new Exception("MaxThreads param is null");
+		}
 		long maxThreadsPrimitive = maxThreadsObj.longValue();
 		int thresholdPrimitive = (thresholdObj!=null ? thresholdObj.intValue() : 0);
 		this.lock.acquire("removeThread", idTransazione);

@@ -189,6 +189,9 @@ public class Tracciamento {
 		this.msgDiagErroreTracciamento = MsgDiagnostico.newInstance(tipoPdD,idSoggettoDominio,idFunzione,nomePorta, this.requestInfo ,this._configurazionePdDReader);
 		this.msgDiagErroreTracciamento.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO);
 		try{
+			if(this.pddContext==null) {
+				throw new Exception("PdDContext is null");
+			}
 			this.protocolFactoryManager = ProtocolFactoryManager.getInstance();
 			this.protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 			this.tracciamentoSupportatoProtocollo = this.protocolFactory.createProtocolConfiguration().isAbilitataGenerazioneTracce();
@@ -353,7 +356,9 @@ public class Tracciamento {
 								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
 								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
 								this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita.openspcoopAppender");
-							}catch(Exception eMsg){}
+							}catch(Exception eMsg){
+								// ignore
+							}
 							if(this.openspcoopProperties.isTracciaturaFallita_BloccaCooperazioneInCorso()){
 								erroreAppender = true;
 								throw e; // Rilancio
@@ -451,7 +456,9 @@ public class Tracciamento {
 								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
 								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
 								this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita.openspcoopAppender");
-							}catch(Exception eMsg){}
+							}catch(Exception eMsg){
+								// ignore
+							}
 							if(this.openspcoopProperties.isTracciaturaFallita_BloccaCooperazioneInCorso()){
 								erroreAppender = true;
 								throw e; // Rilancio
@@ -555,7 +562,9 @@ public class Tracciamento {
 								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
 								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
 								this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita.openspcoopAppender");
-							}catch(Exception eMsg){}
+							}catch(Exception eMsg){
+								// ignore
+							}
 							if(this.openspcoopProperties.isTracciaturaFallita_BloccaCooperazioneInCorso()){
 								erroreAppender = true;
 								throw e; // Rilancio
@@ -655,7 +664,9 @@ public class Tracciamento {
 								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
 								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
 								this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita.openspcoopAppender");
-							}catch(Exception eMsg){}
+							}catch(Exception eMsg){
+								// ignore
+							}
 							if(this.openspcoopProperties.isTracciaturaFallita_BloccaCooperazioneInCorso()){
 								erroreAppender = true;
 								throw e; // Rilancio
@@ -753,7 +764,9 @@ public class Tracciamento {
 								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
 								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
 								this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita.openspcoopAppender");
-							}catch(Exception eMsg){}
+							}catch(Exception eMsg){
+								// ignore
+							}
 							if(this.openspcoopProperties.isTracciaturaFallita_BloccaCooperazioneInCorso()){
 								erroreAppender = true;
 								throw e; // Rilancio
@@ -857,7 +870,9 @@ public class Tracciamento {
 								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
 								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
 								this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita.openspcoopAppender");
-							}catch(Exception eMsg){}
+							}catch(Exception eMsg){
+								// ignore
+							}
 							if(this.openspcoopProperties.isTracciaturaFallita_BloccaCooperazioneInCorso()){
 								erroreAppender = true;
 								throw e; // Rilancio
@@ -937,7 +952,9 @@ public class Tracciamento {
 		
 		Traccia traccia = new Traccia();
 		
-		traccia.setIdTransazione((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+		if(this.pddContext!=null) {
+			traccia.setIdTransazione((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+		}
 		
 		// Esito
 		traccia.setEsitoElaborazioneMessaggioTracciato(esito);
@@ -1110,7 +1127,9 @@ public class Tracciamento {
 			Tracciamento.motivoMalfunzionamentoTracciamento=e;
 			try{
 				this.msgDiagErroreTracciamento.logPersonalizzato("errore.bloccoServizi");
-			}catch(Exception eMsg){}
+			}catch(Exception eMsg){
+				// ignore
+			}
 			logError("Il Sistema di tracciamento ha rilevato un errore durante la registrazione di una traccia legale,"+
 					" tutti i servizi/moduli della porta di dominio sono sospesi. Si richiede un intervento sistemistico per la risoluzione del problema "+
 					"e il riavvio di GovWay. Errore rilevato: ",e);

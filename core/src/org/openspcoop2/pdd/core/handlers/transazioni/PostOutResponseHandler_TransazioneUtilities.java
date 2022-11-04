@@ -74,6 +74,7 @@ import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.logger.DumpUtility;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.logger.info.InfoEsitoTransazioneFormatUtils;
 import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -1053,7 +1054,12 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				}
 			}
 			
-								
+			// ** diagnostici **
+			String errore = InfoEsitoTransazioneFormatUtils.getMessaggioDiagnosticoErroreRilevante(this.logger, transactionDTO.getEsito(), protocolFactory, transaction.getMsgDiagnostici(), true);			
+			String warning = InfoEsitoTransazioneFormatUtils.getMessaggioDiagnosticoWarning(this.logger, transactionDTO.getEsito(), protocolFactory, transaction.getMsgDiagnostici());			
+			transactionDTO.setErrorLog(errore);
+			transactionDTO.setWarningLog(warning);
+			
 			// ** informazioni di integrazione **
 			if(context.getIntegrazione()!=null){
 				transactionDTO.setIdCorrelazioneApplicativa(context.getIntegrazione().getIdCorrelazioneApplicativa());

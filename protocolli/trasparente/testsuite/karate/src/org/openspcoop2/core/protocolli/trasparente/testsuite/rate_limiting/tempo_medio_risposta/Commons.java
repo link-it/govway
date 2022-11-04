@@ -40,7 +40,8 @@ import org.slf4j.Logger;
 public class Commons {
 
 	static void checkPreConditionsTempoMedioRisposta(String idPolicy)  {
-		checkPreConditionsTempoMedioRisposta(idPolicy, PolicyGroupByActiveThreadsType.LOCAL);
+		checkPreConditionsTempoMedioRisposta(idPolicy, 
+				null);	//PolicyGroupByActiveThreadsType.LOCAL); FIX: Devo controllarlo solamente se non e' null. Quando si fa il reset dell'erogazione/fruizione e non passa ancora una richiesta, rimane il motore precedente
 	}
 	static void checkPreConditionsTempoMedioRisposta(String idPolicy, PolicyGroupByActiveThreadsType policyType)  {
 		

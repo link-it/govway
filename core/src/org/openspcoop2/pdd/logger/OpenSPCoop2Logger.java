@@ -294,7 +294,9 @@ public class OpenSPCoop2Logger {
 				if(isLogger!=null){
 					isLogger.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -323,7 +325,9 @@ public class OpenSPCoop2Logger {
 						if(fin!=null){
 							fin.close();
 						}
-					}catch(Exception eClose){}
+					}catch(Exception eClose){
+						// close
+					}
 				}
 			}
 			
@@ -352,7 +356,7 @@ public class OpenSPCoop2Logger {
 			// Abilitazione log da Log4j
 			tmp = loggerProperties.getProperty("logger.govway_tracciamento.level");
 			if(tmp!=null){
-				tmp.trim();
+				tmp = tmp.trim();
 				if(tmp.equalsIgnoreCase("OFF")){
 					OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging delle tracce disabilitato da log4j (OFF).");
 					OpenSPCoop2Logger.loggerTracciamentoAbilitato = false;
@@ -368,7 +372,7 @@ public class OpenSPCoop2Logger {
 			// Abilitazione log da Log4j
 			tmp = loggerProperties.getProperty("logger.govway_diagnostici.level");
 			if(tmp!=null){
-				tmp.trim();
+				tmp = tmp.trim();
 				if(tmp.equalsIgnoreCase("OFF")){
 					OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging dei messaggi diagnostici disabilitato da log4j (OFF).");
 					OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato = false;
@@ -383,7 +387,7 @@ public class OpenSPCoop2Logger {
 			// Abilitazione log da Log4j
 			tmp = loggerProperties.getProperty("logger.govway_portaDiDominio.level");
 			if(tmp!=null){
-				tmp.trim();
+				tmp = tmp.trim();
 				if(tmp.equalsIgnoreCase("OFF")){
 					OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging dei messaggi diagnostici 'readable' disabilitato da log4j (OFF).");
 					OpenSPCoop2Logger.loggerMsgDiagnosticoReadableAbilitato = false;
@@ -398,7 +402,7 @@ public class OpenSPCoop2Logger {
 			// Abilitazione log da Log4j
 			tmp = loggerProperties.getProperty("logger.govway_integrationManager.level");
 			if(tmp!=null){
-				tmp.trim();
+				tmp = tmp.trim();
 				if(tmp.equalsIgnoreCase("OFF")){
 					OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging dei messaggi diagnostici 'readable' per il servizio di IntegrationManager disabilitato da log4j (OFF).");
 					OpenSPCoop2Logger.loggerIntegrationManagerAbilitato = false;
@@ -413,7 +417,7 @@ public class OpenSPCoop2Logger {
 			// Abilitazione log da Log4j
 			tmp = loggerProperties.getProperty("logger.govway_dump.level");
 			if(tmp!=null){
-				tmp.trim();
+				tmp = tmp.trim();
 				if(tmp.equalsIgnoreCase("OFF")){
 					OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging dei contenuti applicativi (dump) disabilitato da log4j (OFF).");
 					OpenSPCoop2Logger.loggerDumpAbilitato = false;
@@ -785,11 +789,11 @@ public class OpenSPCoop2Logger {
 						String content = Utilities.getAsString(isLoggerProtocol, Charset.UTF_8.getValue());
 						if(content!=null) {
 							content = content.replaceAll(CostantiPdD.OPENSPCOOP2_LOGGER_PROTOCOL_ID_PROTOCOLLO, protocol);
+							loggerPropertiesProtocolAdjunct = new java.util.Properties();
+							StringReader sr = new StringReader(content);
+							loggerPropertiesProtocolAdjunct.load(sr);
+							sr.close();
 						}
-						loggerPropertiesProtocolAdjunct = new java.util.Properties();
-						StringReader sr = new StringReader(content);
-						loggerPropertiesProtocolAdjunct.load(sr);
-						sr.close();
 					}
 					if(loadExternalConfiguration){
 						
@@ -799,8 +803,10 @@ public class OpenSPCoop2Logger {
 						
 					}
 					logConsole.info("Protocol '"+protocol+"': Log4j config append");
-					LoggerWrapperFactory.setLogConfiguration(loggerPropertiesProtocolAdjunct,true);
-					initializeLogDirs(loggerPropertiesProtocolAdjunct, true);
+					if(loggerPropertiesProtocolAdjunct!=null) {
+						LoggerWrapperFactory.setLogConfiguration(loggerPropertiesProtocolAdjunct,true);
+						initializeLogDirs(loggerPropertiesProtocolAdjunct, true);
+					}
 					
 					Logger log = LoggerWrapperFactory.getLogger(CostantiPdD.getOpenspcoop2LoggerFactoryName(protocol));
 					protocolFactoryManager.getProtocolFactoryByName(protocol).initProtocolLogger(log);

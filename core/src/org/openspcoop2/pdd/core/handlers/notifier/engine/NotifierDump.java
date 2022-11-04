@@ -225,7 +225,9 @@ public class NotifierDump {
 			try{
 				if(r!=null)
 					dbManager.releaseResource(dominio, idModulo, r);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -345,7 +347,9 @@ public class NotifierDump {
 			try{
 				if(r!=null)
 					dbManager.releaseResource(dominio, idModulo, r);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	

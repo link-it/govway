@@ -46,7 +46,7 @@ import org.openspcoop2.utils.resources.MapReader;
 
 public class TracciamentoOpenSPCoopProtocolAppender implements ITracciaProducer{
 
-	private static java.util.concurrent.ConcurrentHashMap<String, ITracciaProducer> mappingProtocolToAppenders = new java.util.concurrent.ConcurrentHashMap<String, ITracciaProducer>();
+	private static java.util.HashMap<String, ITracciaProducer> mappingProtocolToAppenders = new java.util.HashMap<String, ITracciaProducer>();
 	
 	private static synchronized void initProtocolAppender(String protocol,OpenspcoopAppender appenderProperties) throws ProtocolException{
 		if(TracciamentoOpenSPCoopProtocolAppender.mappingProtocolToAppenders.containsKey(protocol)==false){

@@ -413,22 +413,37 @@ public class CommonConsegnaMultipla {
 	 * Controlla che la transazione principale abbia un determinato esito e determinate consegne da fare
 	 */
 	public static void checkStatoConsegna(HttpResponse response, int esito, int consegneMultipleRimanenti) {
-		String query = "select count(*) from transazioni where id=? and esito = ? and consegne_multiple = ?";
-		String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
-		ConfigLoader.getLoggerCore().info("Checking stato consegna for transazione:  " + id_transazione + " AND esito = " + esito + " AND consegne-rimanenti: " + consegneMultipleRimanenti);
-		Integer count = ConfigLoader.getDbUtils().readValue(query, Integer.class,  id_transazione, esito, consegneMultipleRimanenti);
 		
-		// debug for error
-		if(count.intValue() != 1) {
-			ConfigLoader.getLoggerCore().error("configurazione differente da quella attesa:");
-			String query2 = "select esito, esito_sincrono, consegne_multiple from transazioni where id = ?";
-			List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione);
-			for (var v : letto) {
-				ConfigLoader.getLoggerCore().error(v.toString());
+		// Provo 5 tentativi
+		int tentativi = 5;
+		int index = 0;
+		Integer count = null;
+		
+		while(index<tentativi) {
+			
+			String query = "select count(*) from transazioni where id=? and esito = ? and consegne_multiple = ?";
+			String id_transazione = response.getHeaderFirstValue(Common.HEADER_ID_TRANSAZIONE);
+			ConfigLoader.getLoggerCore().info("Checking stato consegna for transazione:  " + id_transazione + " AND esito = " + esito + " AND consegne-rimanenti: " + consegneMultipleRimanenti);
+			count = ConfigLoader.getDbUtils().readValue(query, Integer.class,  id_transazione, esito, consegneMultipleRimanenti);
+			
+			// debug for error
+			if(count.intValue() != 1) {
+				ConfigLoader.getLoggerCore().error("configurazione differente da quella attesa:");
+				String query2 = "select esito, esito_sincrono, consegne_multiple from transazioni where id = ?";
+				List<Map<String, Object>> letto = ConfigLoader.getDbUtils().readRows(query2, id_transazione);
+				for (var v : letto) {
+					ConfigLoader.getLoggerCore().error(v.toString());
+				}
+				
+				index++;
+				Utilities.sleep(1000);
 			}
+			break;
+			
 		}
 		
 		assertEquals(Integer.valueOf(1), count);
+		
 	}
 
 	

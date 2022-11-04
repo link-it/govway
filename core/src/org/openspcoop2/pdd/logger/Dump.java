@@ -204,21 +204,26 @@ public class Dump {
 		this.dumpHeaderWhiteList = op2Properties.getDumpHeaderWhiteList();
 		this.dumpHeaderBlackList = op2Properties.getDumpHeaderBlackList();
 		
-		if(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
-			this.requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		if(this.pddContext!=null && this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)) {
+			this.requestInfo = (RequestInfo) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		}
 		
 		this.msgDiagErroreDump = MsgDiagnostico.newInstance(this.tipoPdD,dominio,modulo,nomePorta,this.requestInfo,this.statoRichiesta,this.statoRisposta);
 		this.msgDiagErroreDump.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO);
 		
-		this.idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+		if(this.pddContext!=null) {
+			this.idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+		}
 		
 		// Protocol Factory Manager
 		String protocol = null;
 		try{
-			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
+			if(this.pddContext==null) {
+				throw new Exception("PdDContext is null");
+			}
+			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 			protocol = this.protocolFactory.getProtocol();
-			this.msgDiagErroreDump.setPddContext(pddContext, this.protocolFactory);
+			this.msgDiagErroreDump.setPddContext(this.pddContext, this.protocolFactory);
 		}catch (Exception e) {
 			throw new DumpException("Errore durante l'inizializzazione del ProtocolFactoryManager...",e);
 		}
@@ -268,7 +273,8 @@ public class Dump {
 		try {
 			dump(dumpBinarioRegistrazioneDatabase, onlyLogFileTrace_headers, onlyLogFileTrace_body, TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO,
 					null,msg,messageType,
-					protocolContext!=null ? protocolContext.getSource() : null,protocolContext.getHeaders());
+					protocolContext!=null ? protocolContext.getSource() : null,
+					protocolContext!=null ? protocolContext.getHeaders() : null);
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -284,7 +290,8 @@ public class Dump {
 		try {
 			dump(false, false, false, TipoMessaggio.RICHIESTA_INGRESSO,
 					msg,null,null,
-					protocolContext!=null ? protocolContext.getSource() : null,protocolContext.getHeaders());
+					protocolContext!=null ? protocolContext.getSource() : null,
+					protocolContext!=null ? protocolContext.getHeaders() : null);
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -299,7 +306,8 @@ public class Dump {
 		try {
 			dump(false, false, false, TipoMessaggio.RICHIESTA_INGRESSO,
 					null,DumpByteArrayOutputStream.newInstance(msg),null,
-					protocolContext!=null ? protocolContext.getSource() : null,protocolContext.getHeaders());
+					protocolContext!=null ? protocolContext.getSource() : null,
+					protocolContext!=null ? protocolContext.getHeaders() : null);
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -318,7 +326,8 @@ public class Dump {
 		try {
 			dump(dumpBinarioRegistrazioneDatabase, onlyLogFileTrace_headers, onlyLogFileTrace_body, TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO,
 					null,msg,messageType,
-					(infoConnettore!=null ? infoConnettore.getLocation() : null),infoConnettore.getHeaders());
+					(infoConnettore!=null ? infoConnettore.getLocation() : null),
+					(infoConnettore!=null ? infoConnettore.getHeaders() : null));
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -333,7 +342,8 @@ public class Dump {
 		try {
 			dump(false, false, false, TipoMessaggio.RICHIESTA_USCITA,
 					msg,null,null,
-					(infoConnettore!=null ? infoConnettore.getLocation() : null),infoConnettore.getHeaders());
+					(infoConnettore!=null ? infoConnettore.getLocation() : null),
+					(infoConnettore!=null ? infoConnettore.getHeaders() : null));
 		}
 		finally {
 			if(this.transactionNullable!=null) {
@@ -606,7 +616,9 @@ public class Dump {
 		
 		
 		Messaggio messaggio = new Messaggio();
-		messaggio.setProtocollo(this.protocolFactory.getProtocol());
+		if(this.protocolFactory!=null) {
+			messaggio.setProtocollo(this.protocolFactory.getProtocol());
+		}
 		messaggio.setTipoMessaggio(tipoMessaggio);
 		if(msg!=null) {
 			messaggio.setFormatoMessaggio(msg.getMessageType());
@@ -780,14 +792,18 @@ public class Dump {
 				// Registro l'errore sul file dump.log
 				this.loggerDump.error("Riscontrato errore durante la preparazione al dump del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
 						") con identificativo di transazione ["+this.idTransazione+"]:"+e.getMessage());
-			}catch(Exception eLog){}
+			}catch(Exception eLog){
+				// ignore
+			}
 			OpenSPCoop2Logger.loggerOpenSPCoopResources.error("Errore durante la preparazione al dump del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
 					") con identificativo di transazione ["+this.idTransazione+"]: "+e.getMessage(),e);
 			try{
 				this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, tipoMessaggio.getValue());
 				this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
 				this.msgDiagErroreDump.logPersonalizzato("dumpContenutiApplicativi.registrazioneNonRiuscita");
-			}catch(Exception eMsg){}
+			}catch(Exception eMsg){
+				// ignore
+			}
 			gestioneErroreDump(e);
 		}
 		
@@ -814,7 +830,9 @@ public class Dump {
 						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, tipoMessaggio.getValue());
 						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,t.getMessage());
 						this.msgDiagErroreDump.logPersonalizzato("dumpContenutiApplicativi.registrazioneNonRiuscita");
-					}catch(Exception eMsg){}
+					}catch(Exception eMsg){
+						// ignore
+					}
 					gestioneErroreDump(t);
 				}
 			}
@@ -848,14 +866,18 @@ public class Dump {
 						// Registro l'errore sul file dump.log
 						this.loggerDump.error("Riscontrato errore durante la registrazione, nel contesto della transazione, del dump del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
 								") con identificativo di transazione ["+this.idTransazione+"]:"+exc.getMessage());
-					}catch(Exception eLog){}
+					}catch(Exception eLog){
+						// ignore
+					}
 					OpenSPCoop2Logger.loggerOpenSPCoopResources.error("Errore durante la registrazione, nel contesto della transazione, del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
 							") con identificativo di transazione ["+this.idTransazione+"]: "+exc.getMessage(),exc);
 					try{
 						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, tipoMessaggio.getValue());
 						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,exc.getMessage());
 						this.msgDiagErroreDump.logPersonalizzato("dumpContenutiApplicativi.registrazioneNonRiuscita");
-					}catch(Exception eMsg){}
+					}catch(Exception eMsg){
+						// ignore
+					}
 					gestioneErroreDump(exc);
 				}
 				
@@ -979,14 +1001,18 @@ public class Dump {
 					// Registro l'errore sul file dump.log
 					this.loggerDump.error("Riscontrato errore durante il dump su file di log del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
 							") con identificativo di transazione ["+this.idTransazione+"]:"+e.getMessage());
-				}catch(Exception eLog){}
+				}catch(Exception eLog){
+					// ignore
+				}
 				OpenSPCoop2Logger.loggerOpenSPCoopResources.error("Errore durante il dump su file di log del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
 						") con identificativo di transazione ["+this.idTransazione+"]: "+e.getMessage(),e);
 				try{
 					this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, tipoMessaggio.getValue());
 					this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
 					this.msgDiagErroreDump.logPersonalizzato("dumpContenutiApplicativi.registrazioneNonRiuscita");
-				}catch(Exception eMsg){}
+				}catch(Exception eMsg){
+					// ignore
+				}
 				gestioneErroreDump(e);
 			}
 		}
@@ -1013,7 +1039,9 @@ public class Dump {
 						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
 						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoDumpOpenSPCoopAppender.get(i));
 						this.msgDiagErroreDump.logPersonalizzato("dumpContenutiApplicativi.registrazioneNonRiuscita.openspcoopAppender");
-					}catch(Exception eMsg){}
+					}catch(Exception eMsg){
+						// ignore
+					}
 					gestioneErroreDump(e);
 				}
 			}
@@ -1110,7 +1138,9 @@ public class Dump {
 			Dump.motivoMalfunzionamentoDump=e;
 			try{
 				this.msgDiagErroreDump.logPersonalizzato("dumpContenutiApplicativi.errore.bloccoServizi");
-			}catch(Exception eMsg){}
+			}catch(Exception eMsg){
+				// ignore
+			}
 			OpenSPCoop2Logger.loggerOpenSPCoopResources.error("Il Sistema di dump dei contenuti applicativi ha rilevato un errore "+
 					"durante la registrazione di un contenuto applicativo, tutti i servizi/moduli della porta di dominio sono sospesi."+
 					" Si richiede un intervento sistemistico per la risoluzione del problema e il riavvio di GovWay. "+

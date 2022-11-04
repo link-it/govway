@@ -246,7 +246,9 @@ public class GestoreTransazioniStateful {
 		}finally{
 			try{
 				con.setAutoCommit(true);
-			}catch(Exception eRollback){}
+			}catch(Exception eRollback){
+				// ignore
+			}
 		}
 		
 	}

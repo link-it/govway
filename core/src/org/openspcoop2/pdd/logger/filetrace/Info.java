@@ -1969,7 +1969,9 @@ public class Info {
 		String p = null;
 		try {
 			p = NamingUtils.getLabelProtocollo(this.getProfile());
-		}catch(Exception e) {}
+		}catch(Exception e) {
+			// possible null value
+		}
 		return correctValue(p, defaultValue);
 	}
 	

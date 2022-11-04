@@ -136,16 +136,24 @@ public class RepositoryGestioneStateful {
 			con.commit();
 		}catch(Exception e){
 			try{
-				con.rollback();
-			}catch(Exception eRollback){}
+				if(con!=null)
+					con.rollback();
+			}catch(Exception eRollback){
+				// close
+			}
 			throw new TransactionStatefulNotSupportedException("Errore durante la gestione della transazione stateful",e);
 		}finally{
 			try{
-				con.setAutoCommit(true);
-			}catch(Exception eRollback){}
+				if(con!=null)
+					con.setAutoCommit(true);
+			}catch(Exception eRollback){
+				// ignore
+			}
 			try {
 				dbManager.releaseResource(idDominio, ID_MODULO, dbResource);
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				// close
+			}
 		}
 	}
 	
@@ -170,7 +178,9 @@ public class RepositoryGestioneStateful {
 		}finally{
 			try {
 				dbManager.releaseResource(idDominio, ID_MODULO, dbResource);
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				// close
+			}
 		}
 	}
 	

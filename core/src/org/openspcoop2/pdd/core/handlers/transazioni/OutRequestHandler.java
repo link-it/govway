@@ -137,6 +137,10 @@ public class OutRequestHandler extends LastPositionHandler implements  org.opens
 				
 				else{
 				
+					if(tr==null) {
+						throw new HandlerException("Transaction is null");
+					}
+					
 					Date dataElaborazioneMessaggio = context.getDataElaborazioneMessaggio();
 					try{
 						tr.setDataUscitaRichiesta(dataElaborazioneMessaggio);

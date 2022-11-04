@@ -219,6 +219,8 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
 	    		fields.add(Transazione.model().DIAGNOSTICI_LIST_2);
 	    		fields.add(Transazione.model().DIAGNOSTICI_LIST_EXT);
 	    		fields.add(Transazione.model().DIAGNOSTICI_EXT);
+	    		fields.add(Transazione.model().ERROR_LOG);
+	    		fields.add(Transazione.model().WARNING_LOG);
 	    		fields.add(Transazione.model().ID_CORRELAZIONE_APPLICATIVA);
 	    		fields.add(Transazione.model().ID_CORRELAZIONE_APPLICATIVA_RISPOSTA);
 	    		fields.add(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE);
@@ -866,6 +868,8 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DIAGNOSTICI_LIST_2,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DIAGNOSTICI_LIST_EXT,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DIAGNOSTICI_EXT,true));
+		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ERROR_LOG,true));
+		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().WARNING_LOG,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ID_CORRELAZIONE_APPLICATIVA,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ID_CORRELAZIONE_APPLICATIVA_RISPOSTA,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE,true));

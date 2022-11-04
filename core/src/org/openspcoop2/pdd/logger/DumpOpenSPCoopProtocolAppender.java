@@ -46,7 +46,7 @@ import org.openspcoop2.utils.resources.MapReader;
 
 public class DumpOpenSPCoopProtocolAppender implements IDumpProducer{
 
-	private static java.util.concurrent.ConcurrentHashMap<String, IDumpProducer> mappingProtocolToAppenders = new java.util.concurrent.ConcurrentHashMap<String, IDumpProducer>();
+	private static java.util.Map<String, IDumpProducer> mappingProtocolToAppenders = new java.util.HashMap<String, IDumpProducer>();
 	
 	private static synchronized void initProtocolAppender(String protocol,OpenspcoopAppender appenderProperties) throws ProtocolException{
 		if(DumpOpenSPCoopProtocolAppender.mappingProtocolToAppenders.containsKey(protocol)==false){

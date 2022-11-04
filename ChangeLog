@@ -1,3 +1,12 @@
+2022-11-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayMonitor]
+	Aggiunta funzionalità OP-1480
+	Nella tabella 'transazioni' sono state aggiunte 2 nuove colonne che verranno valorizzate con:
+	- l'eventuale errore emerso durante la gestione della transazione;
+	- l'anomalia segnalata da funzionalità configurate in modalità warning. 
+	Inoltre i diagnostici che segnalano anomalie derivanti da funzionalità attivate in modalità warning vengono adesso presentati con una colorazione dedicata.
+
 2022-11-03  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
