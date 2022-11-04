@@ -6,6 +6,7 @@
 	- l'eventuale errore emerso durante la gestione della transazione;
 	- l'anomalia segnalata da funzionalità configurate in modalità warning. 
 	Inoltre i diagnostici che segnalano anomalie derivanti da funzionalità attivate in modalità warning vengono adesso presentati con una colorazione dedicata.
+	Infine riviste label nel CSV delle configurazioni per avere header con nomi unici.
 
 2022-11-03  Andrea Poli <apoli@link.it>
 

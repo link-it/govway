@@ -264,16 +264,16 @@ public class ConfigurazioniCsvExporter {
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_PROPRIETA);
 			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TRASPORTO_RICHIEDENTI_AUTORIZZATI_STATO);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_APPLICATIVI_AUTORIZZATI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TRASPORTO_RICHIEDENTI_APPLICATIVI_AUTORIZZATI);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TRASPORTO_RUOLI_STATO);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI_RICHIESTI);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TRASPORTO_RUOLI_RICHIESTI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TRASPORTO_RUOLI_AUTORIZZATI);
 			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_RICHIEDENTI_AUTORIZZATI_STATO);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_APPLICATIVI_AUTORIZZATI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_RICHIEDENTI_APPLICATIVI_AUTORIZZATI);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_RUOLI_STATO);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI_RICHIESTI);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_RUOLI_RICHIESTI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_RUOLI_AUTORIZZATI);
 			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_CLAIMS);
 			
@@ -470,19 +470,19 @@ public class ConfigurazioniCsvExporter {
 			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_PROPRIETA);
-			
+						
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TRASPORTO_RICHIEDENTI_AUTORIZZATI_STATO);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_SOGGETTI_AUTORIZZATI);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_APPLICATIVI_AUTORIZZATI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TRASPORTO_RICHIEDENTI_SOGGETTI_AUTORIZZATI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TRASPORTO_RICHIEDENTI_APPLICATIVI_AUTORIZZATI);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TRASPORTO_RUOLI_STATO);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI_RICHIESTI);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TRASPORTO_RUOLI_RICHIESTI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TRASPORTO_RUOLI_AUTORIZZATI);
 			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_RICHIEDENTI_AUTORIZZATI_STATO);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_APPLICATIVI_AUTORIZZATI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_RICHIEDENTI_APPLICATIVI_AUTORIZZATI);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_RUOLI_STATO);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI_RICHIESTI);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_RUOLI_RICHIESTI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_RUOLI_AUTORIZZATI);
 
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_CLAIMS);
 			

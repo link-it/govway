@@ -388,6 +388,9 @@ public class StatsUtils {
 									sdf = new SimpleDateFormat("MMM/yy", ApplicationBean.getInstance().getLocale());
 								} 
 							}
+							if(sdf==null) {
+								throw new RuntimeException("SimpleDateFormat undefined");
+							}
 							Date rDate = ((Res)entry).getRisultato();
 							r = sdf.format(rDate);
 						}
@@ -419,6 +422,9 @@ public class StatsUtils {
 						}
 						else if(j==2){
 							barSB = barSB_serie3;
+						}
+						if(barSB==null) {
+							throw new RuntimeException("barSB undefined");
 						}
 
 						barSB.append("<set value='");
@@ -475,6 +481,9 @@ public class StatsUtils {
 						if(altri_sum_serie3_numeroItem>1 && (occupazioneBanda || tempoMedio)){
 							v = v / altri_sum_serie3_numeroItem;
 						}
+					}
+					if(barSB==null) {
+						throw new RuntimeException("barSB undefined");
 					}
 
 					String toolText = getToolText(search,v); 
@@ -1096,6 +1105,9 @@ public class StatsUtils {
 						if(j==0){
 							barSB = barSB_serie1;
 						}
+						if(barSB==null) {
+							throw new RuntimeException("barSB undefined");
+						}
 
 						barSB.append("<set value='");
 						barSB.append(value);
@@ -1130,6 +1142,9 @@ public class StatsUtils {
 						if(altri_sum_serie1_numeroItem>1 && (occupazioneBanda || tempoMedio)){
 							v = v / altri_sum_serie1_numeroItem;
 						}
+					}
+					if(barSB==null) {
+						throw new RuntimeException("barSB undefined");
 					}
 
 					String value = StatsUtils.getValue(search,v);
