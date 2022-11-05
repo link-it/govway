@@ -74,7 +74,8 @@ public class Commons {
 	}
 
 	public static void checkPreConditionsRichiesteSimultanee(String idPolicy) {
-		checkPreConditionsRichiesteSimultanee(idPolicy, PolicyGroupByActiveThreadsType.LOCAL);
+		checkPreConditionsRichiesteSimultanee(idPolicy, 
+				null); // PolicyGroupByActiveThreadsType.LOCAL); FIX: Devo controllarlo solamente se non e' null. Quando si fa il reset dell'erogazione/fruizione e non passa ancora una richiesta, rimane il motore precedente
 	}
 	public static void checkPreConditionsRichiesteSimultanee(String idPolicy, PolicyGroupByActiveThreadsType policyType) {
 		
