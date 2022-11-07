@@ -23,6 +23,8 @@ package org.openspcoop2.core.id;
 
 import java.io.Serializable;
 
+import org.openspcoop2.utils.Utilities;
+
 
 /**
  * Classe utilizzata per rappresentare un identificatore di un port type di un Accordo di Servizio nel registro dei Servizi.
@@ -33,7 +35,7 @@ import java.io.Serializable;
  * @version $Rev$, $Date$
  */
 
-public class IDPortType implements Serializable {
+public class IDPortType implements Serializable, Cloneable {
 
 	/**
 	 * 
@@ -70,7 +72,7 @@ public class IDPortType implements Serializable {
 	public boolean equals(Object object){
 		if(object == null)
 			return false;
-		if(object.getClass().getName().equals(this.getClass().getName()) == false)
+		if(!Utilities.equalsClass(object,this))
 			return false;
 		IDPortType id = (IDPortType) object;
 		

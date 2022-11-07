@@ -136,6 +136,14 @@ public class Utilities {
 		}
 	}
 	
+	
+	public static boolean equalsClass(Object o1, Object o2) {
+		if(o1==null || o2==null) {
+			return false;
+		}
+		return o1.getClass().getName().equals(o2.getClass().getName());
+	}
+	
 
 
 	/** ArrayBuffer utilizzato per la lettura */

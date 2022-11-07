@@ -22,6 +22,7 @@
 
 package org.openspcoop2.core.id;
 
+import org.openspcoop2.utils.Utilities;
 
 /**
  * Classe utilizzata per rappresentare un identificatore di un gruppo di proprietà
@@ -33,7 +34,7 @@ package org.openspcoop2.core.id;
  * @version $Rev$, $Date$
  */
 
-public class IDGenericProperties implements java.io.Serializable {
+public class IDGenericProperties implements java.io.Serializable, Cloneable {
 
 	 /**
 	 * serialVersionUID
@@ -75,7 +76,7 @@ public class IDGenericProperties implements java.io.Serializable {
 	public boolean equals(Object object){
 		if(object == null)
 			return false;
-		if(object.getClass().getName().equals(this.getClass().getName()) == false)
+		if(!Utilities.equalsClass(object,this))
 			return false;
 		IDGenericProperties id = (IDGenericProperties) object;
 		

@@ -22,6 +22,8 @@
 
 package org.openspcoop2.core.id;
 
+import org.openspcoop2.utils.Utilities;
+
 /**
  * Classe utilizzata per rappresentare un Ruolo nel registro dei Servizi.
  * 
@@ -30,7 +32,7 @@ package org.openspcoop2.core.id;
  * @version $Rev$, $Date$
  */
 
-public class IDRuolo implements java.io.Serializable {
+public class IDRuolo implements java.io.Serializable, Cloneable {
 
 	 /**
 	 * serialVersionUID
@@ -99,12 +101,12 @@ public class IDRuolo implements java.io.Serializable {
 	}
 	
 	@Override 
-	public boolean equals(Object ruolo){
-		if(ruolo == null)
+	public boolean equals(Object object){
+		if(object == null)
 			return false;
-		if(ruolo.getClass().getName().equals(this.getClass().getName()) == false)
+		if(!Utilities.equalsClass(object,this))
 			return false;
-		IDRuolo id = (IDRuolo) ruolo;
+		IDRuolo id = (IDRuolo) object;
 		// NOME
 		if(this.getNome()==null){
 			if(id.getNome()!=null)

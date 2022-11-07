@@ -22,6 +22,8 @@
 
 package org.openspcoop2.core.id;
 
+import org.openspcoop2.utils.Utilities;
+
 /**
  * Classe utilizzata per rappresentare un identificatore di un Accordo di Cooperazione nel registro dei Servizi.
  * 
@@ -31,7 +33,7 @@ package org.openspcoop2.core.id;
  * @version $Rev$, $Date$
  */
 
-public class IDAccordoCooperazione implements java.io.Serializable {
+public class IDAccordoCooperazione implements java.io.Serializable, Cloneable {
 
 	 /**
 	 * serialVersionUID
@@ -88,9 +90,9 @@ public class IDAccordoCooperazione implements java.io.Serializable {
 	public boolean equals(Object object){
 		if(object == null)
 			return false;
-		if(object.getClass().getName().equals(this.getClass().getName()) == false)
+		if(!Utilities.equalsClass(object,this))
 			return false;
-		IDAccordo id = (IDAccordo) object;
+		IDAccordoCooperazione id = (IDAccordoCooperazione) object;
 		
 		if(this.nome==null){
 			if(id.nome!=null)
@@ -100,8 +102,18 @@ public class IDAccordoCooperazione implements java.io.Serializable {
 				return false;
 		}
 
-		if(this.getVersione()!=id.getVersione()){
-			return false;
+		if(this.getVersione()==null) {
+			if(id.getVersione()!=null) {
+				return false;
+			}
+		}
+		else {
+			if(id.getVersione()==null) {
+				return false;
+			}
+			if(this.getVersione().intValue()!=id.getVersione().intValue()){
+				return false;
+			}
 		}
 		
 		if(this.soggettoReferente==null){

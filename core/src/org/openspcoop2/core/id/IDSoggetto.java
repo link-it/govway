@@ -31,7 +31,7 @@ package org.openspcoop2.core.id;
  * @version $Rev$, $Date$
  */
 
-public class IDSoggetto implements java.io.Serializable {
+public class IDSoggetto implements java.io.Serializable, Cloneable {
 
 	 /**
 	 * serialVersionUID

@@ -20,6 +20,8 @@
 
 package org.openspcoop2.core.id;
 
+import org.openspcoop2.utils.Utilities;
+
 /**
  * IdentificativiErogazione
  *
@@ -27,7 +29,7 @@ package org.openspcoop2.core.id;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class IdentificativiErogazione implements java.io.Serializable {
+public class IdentificativiErogazione implements java.io.Serializable, Cloneable {
 
 	/**
 	 * 
@@ -68,7 +70,7 @@ public class IdentificativiErogazione implements java.io.Serializable {
 	public boolean equals(Object object){
 		if(object == null)
 			return false;
-		if(object.getClass().getName().equals(this.getClass().getName()) == false)
+		if(!Utilities.equalsClass(object,this))
 			return false;
 		IdentificativiErogazione id = (IdentificativiErogazione) object;
 		

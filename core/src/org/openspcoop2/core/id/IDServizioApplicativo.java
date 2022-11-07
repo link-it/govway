@@ -23,6 +23,8 @@ package org.openspcoop2.core.id;
 
 import java.io.Serializable;
 
+import org.openspcoop2.utils.Utilities;
+
 /**
  * Classe utilizzata per rappresentare un identificatore di un Servizio Applicativo nella configurazione
  * 
@@ -33,7 +35,7 @@ import java.io.Serializable;
  * @version $Rev$, $Date$
  */
 
-public class IDServizioApplicativo implements Serializable {
+public class IDServizioApplicativo implements Serializable, Cloneable {
 
 	/**
 	 * 
@@ -77,7 +79,7 @@ public class IDServizioApplicativo implements Serializable {
 	public boolean equals(Object object){
 		if(object == null)
 			return false;
-		if(object.getClass().getName().equals(this.getClass().getName()) == false)
+		if(!Utilities.equalsClass(object,this))
 			return false;
 		IDServizioApplicativo id = (IDServizioApplicativo) object;
 		
@@ -108,17 +110,21 @@ public class IDServizioApplicativo implements Serializable {
 	
 	@Override
 	public IDServizioApplicativo clone(){
-		IDServizioApplicativo idSA = new IDServizioApplicativo();
+		
+		IDServizioApplicativo clone = null;
+		try {
+			clone = (IDServizioApplicativo) super.clone();
+		}catch(Throwable t) {
+			clone = new IDServizioApplicativo();
+		}
 		if(this.nome!=null){
-			idSA.nome = new String(this.nome);
+			clone.nome = new String(this.nome);
 		}
 		if(this.idSoggettoProprietario!=null){
-			idSA.idSoggettoProprietario = this.idSoggettoProprietario.clone();
+			clone.idSoggettoProprietario = this.idSoggettoProprietario.clone();
 		}
-		return idSA;
-	}
-	
-	
+		return clone;
+	}	
 	
 	public String toFormatString(){
 		StringBuilder sb = new StringBuilder();

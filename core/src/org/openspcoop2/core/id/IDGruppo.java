@@ -22,6 +22,8 @@
 
 package org.openspcoop2.core.id;
 
+import org.openspcoop2.utils.Utilities;
+
 /**
  * Classe utilizzata per rappresentare un Gruppo nel registro dei Servizi.
  * 
@@ -30,7 +32,7 @@ package org.openspcoop2.core.id;
  * @version $Rev$, $Date$
  */
 
-public class IDGruppo implements java.io.Serializable {
+public class IDGruppo implements java.io.Serializable, Cloneable {
 
 	 /**
 	 * serialVersionUID
@@ -99,12 +101,12 @@ public class IDGruppo implements java.io.Serializable {
 	}
 	
 	@Override 
-	public boolean equals(Object gruppo){
-		if(gruppo == null)
+	public boolean equals(Object object){
+		if(object == null)
 			return false;
-		if(gruppo.getClass().getName().equals(this.getClass().getName()) == false)
+		if(!Utilities.equalsClass(object,this))
 			return false;
-		IDGruppo id = (IDGruppo) gruppo;
+		IDGruppo id = (IDGruppo) object;
 		// NOME
 		if(this.getNome()==null){
 			if(id.getNome()!=null)

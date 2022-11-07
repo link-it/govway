@@ -33,7 +33,7 @@ package org.openspcoop2.core.id;
  * @version $Rev$, $Date$
  */
 
-public class IDAccordo implements java.io.Serializable {
+public class IDAccordo implements java.io.Serializable, Cloneable {
 
 	 /**
 	 * serialVersionUID
@@ -108,8 +108,18 @@ public class IDAccordo implements java.io.Serializable {
 				return false;
 		}
 
-		if(this.getVersione()!=id.getVersione()){
-			return false;
+		if(this.getVersione()==null) {
+			if(id.getVersione()!=null) {
+				return false;
+			}
+		}
+		else {
+			if(id.getVersione()==null) {
+				return false;
+			}
+			if(this.getVersione().intValue()!=id.getVersione().intValue()){
+				return false;
+			}
 		}
 		
 		if(this.soggettoReferente==null){

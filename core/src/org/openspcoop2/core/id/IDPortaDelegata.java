@@ -21,6 +21,7 @@
 
 package org.openspcoop2.core.id;
 
+import org.openspcoop2.utils.Utilities;
 
 /**
  * Classe utilizzata per rappresentare un identificatore di una Porta Delegata nella configurazione
@@ -31,7 +32,7 @@ package org.openspcoop2.core.id;
  * @version $Rev$, $Date$
  */
 
-public class IDPortaDelegata implements java.io.Serializable{
+public class IDPortaDelegata implements java.io.Serializable, Cloneable{
 
 	 /**
 	 * serialVersionUID
@@ -82,7 +83,7 @@ public class IDPortaDelegata implements java.io.Serializable{
 	public boolean equals(Object object){
 		if(object == null)
 			return false;
-		if(object.getClass().getName().equals(this.getClass().getName()) == false)
+		if(!Utilities.equalsClass(object,this))
 			return false;
 		IDPortaDelegata id = (IDPortaDelegata) object;
 		

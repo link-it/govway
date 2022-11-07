@@ -23,6 +23,8 @@ package org.openspcoop2.core.id;
 
 import java.io.Serializable;
 
+import org.openspcoop2.utils.Utilities;
+
 /**
  * Classe utilizzata per rappresentare un identificatore di un Servizio Applicativo nella configurazione
  * 
@@ -33,7 +35,7 @@ import java.io.Serializable;
  * @version $Rev$, $Date$
  */
 
-public class IDConnettore extends IDServizioApplicativo implements Serializable {
+public class IDConnettore extends IDServizioApplicativo implements Serializable, Cloneable {
 
 	/**
 	 * 
@@ -66,7 +68,7 @@ public class IDConnettore extends IDServizioApplicativo implements Serializable 
 	public boolean equals(Object object){
 		if(object == null)
 			return false;
-		if(object.getClass().getName().equals(this.getClass().getName()) == false)
+		if(!Utilities.equalsClass(object,this))
 			return false;
 		IDConnettore id = (IDConnettore) object;
 		

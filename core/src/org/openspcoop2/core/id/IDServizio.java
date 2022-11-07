@@ -23,6 +23,7 @@
 package org.openspcoop2.core.id;
 
 import org.openspcoop2.core.constants.TipologiaServizio;
+import org.openspcoop2.utils.Utilities;
 
 /**
  * Classe utilizzata per rappresentare un identificatore di un Servizio nel registro dei servizi
@@ -33,7 +34,7 @@ import org.openspcoop2.core.constants.TipologiaServizio;
  * @version $Rev$, $Date$
  */
 
-public class IDServizio implements java.io.Serializable {
+public class IDServizio implements java.io.Serializable, Cloneable {
 
 	/**
 	 * serialVersionUID
@@ -142,13 +143,13 @@ public class IDServizio implements java.io.Serializable {
 
 	
 	@Override
-	public boolean equals(Object servizio){
+	public boolean equals(Object object){
 		
-		if(servizio==null)
+		if(object==null)
 			return false;
-		if(servizio.getClass().getName().equals(this.getClass().getName()) == false)
+		if(!Utilities.equalsClass(object,this))
 			return false;
-		IDServizio id = (IDServizio) servizio;
+		IDServizio id = (IDServizio) object;
 		
 		return this.equals(id, true);
 	}
@@ -172,8 +173,18 @@ public class IDServizio implements java.io.Serializable {
 				return false;
 		}
 		// VERSIONE
-		if(this.getVersione()!=id.getVersione()){
-			return false;
+		if(this.getVersione()==null) {
+			if(id.getVersione()!=null) {
+				return false;
+			}
+		}
+		else {
+			if(id.getVersione()==null) {
+				return false;
+			}
+			if(this.getVersione().intValue()!=id.getVersione().intValue()){
+				return false;
+			}
 		}
 		
 		// AZIONE
