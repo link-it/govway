@@ -124,7 +124,9 @@ public class GestoreEventi {
 			try{
 				if(r!=null)
 					dbManager.releaseResource(this.properties.getIdentitaPortaDefaultWithoutProtocol(), modulo, r, logError);
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
     }
     public void log(Evento evento, Connection connection) throws Exception{

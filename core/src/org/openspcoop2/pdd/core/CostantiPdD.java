@@ -817,6 +817,7 @@ public class CostantiPdD {
     public final static MapKey<String> KEY_INFO_IN_CACHE_FUNZIONE_AUTENTICAZIONE = Map.newMapKey("RESULT_AUTHN_IN_CACHE");
     public final static MapKey<String> KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE = Map.newMapKey("RESULT_AUTHZ_IN_CACHE");
     public final static MapKey<String> KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE_CONTENUTI = Map.newMapKey("RESULT_AUTHZ_CONTENUTI_IN_CACHE");
+    public final static MapKey<String> KEY_INFO_IN_CACHE_FUNZIONE_AUTENTICAZIONE_TOKEN = Map.newMapKey("RESULT_AUTHN_TOKEN_IN_CACHE");
     public final static void addKeywordInCache(MsgDiagnostico msgDiag, boolean isEsitoPresenteInCache, PdDContext pddContext, MapKey<String> ID_FUNCTION) {
     	if(isEsitoPresenteInCache){
 			msgDiag.addKeyword(CostantiPdD.KEY_INFO_IN_CACHE, CostantiPdD.KEY_INFO_IN_CACHE_VALUE);

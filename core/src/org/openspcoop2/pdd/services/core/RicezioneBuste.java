@@ -3849,7 +3849,7 @@ public class RicezioneBuste {
 										datiInvocazioneAutenticazione, parametriAutenticazione,
 										pddContext, protocolFactory, requestMessage); 
 						CostantiPdD.addKeywordInCache(msgDiag, esito.isEsitoPresenteInCache(),
-								pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTENTICAZIONE);
+								pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTENTICAZIONE_TOKEN);
 						if(esito.isClientAuthenticated() == false) {
 							erroreCooperazione = esito.getErroreCooperazione();
 							erroreIntegrazione = esito.getErroreIntegrazione();
@@ -3892,7 +3892,7 @@ public class RicezioneBuste {
 						}
 					} catch (Exception e) {
 						CostantiPdD.addKeywordInCache(msgDiag, false,
-								pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTENTICAZIONE);
+								pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTENTICAZIONE_TOKEN);
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento("["+ RicezioneBuste.ID_MODULO+ "] processo di autenticazione applicativo token fallito, " + e.getMessage(),CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE);
 						eAutenticazione = e;

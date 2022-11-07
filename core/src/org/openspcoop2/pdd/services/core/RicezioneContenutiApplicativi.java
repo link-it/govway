@@ -2650,7 +2650,7 @@ public class RicezioneContenutiApplicativi {
 									datiInvocazioneAutenticazione, new ParametriAutenticazione(portaDelegata.getProprietaAutenticazioneList()), 
 									pddContext, protocolFactory, requestMessage); 
 					CostantiPdD.addKeywordInCache(msgDiag, esito.isEsitoPresenteInCache(),
-							pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTENTICAZIONE);
+							pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTENTICAZIONE_TOKEN);
 					if(esito.isClientAuthenticated() == false) {
 						errore = esito.getErroreIntegrazione();
 						eAutenticazione = esito.getEccezioneProcessamento();
@@ -2694,7 +2694,7 @@ public class RicezioneContenutiApplicativi {
 					}
 				} catch (Exception e) {
 					CostantiPdD.addKeywordInCache(msgDiag, false,
-							pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTENTICAZIONE);
+							pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTENTICAZIONE_TOKEN);
 					errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento("processo di autenticazione applicativo token fallito, " + e.getMessage(),CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE);
 					eAutenticazione = e;

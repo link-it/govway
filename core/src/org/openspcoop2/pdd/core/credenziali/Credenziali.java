@@ -81,7 +81,16 @@ public class Credenziali  extends HttpServletCredential implements java.io.Seria
 
 	@Override
 	public boolean equals(Object c){
+		if(c==null) {
+			return false;
+		}
 		return this.toString().equals(((Credenziali)c).toString());
+	}
+	
+	@Override
+	public int hashCode(){
+		String s = this.toString();
+		return s!=null ? s.hashCode() : 0;
 	}
 
 	@Override

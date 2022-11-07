@@ -170,7 +170,7 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 		}
 		long timeMillis = DateManager.getTimeMillis() - (this.maxLifeTime * 1000);
 		ElementDateInfo<K> oldestInfo = this.elementInfos[ this.startIx ];
-		if ( oldestInfo.getTimeMillis() <= timeMillis ) {
+		if ( oldestInfo!=null && oldestInfo.getTimeMillis() <= timeMillis ) {
 
 			this.semaphore.acquireThrowRuntime("cleanUpExtraTime");
 			try {
