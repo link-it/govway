@@ -793,7 +793,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 				}
 			}
 			List<IDSoggetto> idsOpenSPCoop = new ArrayList<IDSoggetto>();
-			if(filtroRicerca.getProtocolProperties()==null || filtroRicerca.getProtocolProperties().size()<=0){
+			if(filtroRicerca==null || filtroRicerca.getProtocolProperties()==null || filtroRicerca.getProtocolProperties().size()<=0){
 				List<IdSoggetto> ids = this.soggettoPort.findAllIds(filter);
 				if(ids==null || ids.size()<=0){
 					throw new org.openspcoop2.core.registry.ws.client.soggetto.search.RegistryNotFoundException_Exception("La ricerca non ha trovato soggetti");
@@ -882,7 +882,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 				}				
 			}
 			List<IDAccordoCooperazione> idsOpenSPCoop = new ArrayList<IDAccordoCooperazione>();
-			if(filtroRicerca.getProtocolPropertiesAccordo()==null || filtroRicerca.getProtocolPropertiesAccordo().size()<=0){
+			if(filtroRicerca==null || filtroRicerca.getProtocolPropertiesAccordo()==null || filtroRicerca.getProtocolPropertiesAccordo().size()<=0){
 				List<IdAccordoCooperazione> ids = this.accordoCooperazionePort.findAllIds(filter);
 				if(ids==null || ids.size()<=0){
 					throw new org.openspcoop2.core.registry.ws.client.accordocooperazione.search.RegistryNotFoundException_Exception("La ricerca non ha trovato accordi");
@@ -982,7 +982,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 				}
 			}
 			List<IDAccordo> idsOpenSPCoop = new ArrayList<IDAccordo>();
-			if(filtroRicerca.getProtocolPropertiesAccordo()==null || filtroRicerca.getProtocolPropertiesAccordo().size()<=0){
+			if(filtroRicerca==null || filtroRicerca.getProtocolPropertiesAccordo()==null || filtroRicerca.getProtocolPropertiesAccordo().size()<=0){
 				List<IdAccordoServizioParteComune> ids = this.accordoServizioParteComunePort.findAllIds(filter);
 				if(ids==null || ids.size()<=0){
 					throw new org.openspcoop2.core.registry.ws.client.accordoserviziopartecomune.search.RegistryNotFoundException_Exception("La ricerca non ha trovato accordi");
@@ -1334,7 +1334,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 				}
 			}
 			List<IDServizio> idsOpenSPCoop = new ArrayList<IDServizio>();
-			if(filtroRicerca.getProtocolProperties()==null || filtroRicerca.getProtocolProperties().size()<=0){
+			if(filtroRicerca==null || filtroRicerca.getProtocolProperties()==null || filtroRicerca.getProtocolProperties().size()<=0){
 				List<IdAccordoServizioParteSpecifica> ids = this.accordoServizioParteSpecificaPort.findAllIds(filter);
 				if(ids==null || ids.size()<=0){
 					throw new org.openspcoop2.core.registry.ws.client.accordoserviziopartespecifica.search.RegistryNotFoundException_Exception("La ricerca non ha trovato accordi");

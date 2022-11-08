@@ -48,7 +48,9 @@ public class ProtocolFactoryReflectionUtils
 			Object protocolFactoryManager = null;
 			try{
 				protocolFactoryManager = cProtocolFactoryManager.getMethod("getInstance").invoke(null);
-			}catch(Exception pe){}
+			}catch(Exception pe){
+				// ignore
+			}
 			if(protocolFactoryManager==null){
 			
 				Class<?> cConfigurazionePdD = Class.forName("org.openspcoop2.protocol.sdk.ConfigurazionePdD");

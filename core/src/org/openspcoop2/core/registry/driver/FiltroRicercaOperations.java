@@ -46,18 +46,18 @@ public class FiltroRicercaOperations extends FiltroRicercaPortTypes implements S
 	private String nomeAzione;
 
 	/** ProtocolProperty */
-	private List<FiltroRicercaProtocolProperty> protocolPropertiesAzione = new ArrayList<FiltroRicercaProtocolProperty>();
+	private List<FiltroRicercaProtocolPropertyRegistry> protocolPropertiesAzione = new ArrayList<FiltroRicercaProtocolPropertyRegistry>();
 
-	public List<FiltroRicercaProtocolProperty> getProtocolPropertiesAzione() {
+	public List<FiltroRicercaProtocolPropertyRegistry> getProtocolPropertiesAzione() {
 		return this.protocolPropertiesAzione;
 	}
 
 	public void setProtocolPropertiesAzione(
-			List<FiltroRicercaProtocolProperty> list) {
+			List<FiltroRicercaProtocolPropertyRegistry> list) {
 		this.protocolPropertiesAzione = list;
 	}
 
-	public void addProtocolPropertyAzione(FiltroRicercaProtocolProperty filtro){
+	public void addProtocolPropertyAzione(FiltroRicercaProtocolPropertyRegistry filtro){
 		this.protocolPropertiesAzione.add(filtro);
 	}
 	

@@ -46,18 +46,18 @@ public class FiltroRicercaResources extends FiltroRicercaAccordi implements Seri
 	private String resourceName;
 
 	/** ProtocolProperty */
-	private List<FiltroRicercaProtocolProperty> protocolPropertiesResources = new ArrayList<FiltroRicercaProtocolProperty>();
+	private List<FiltroRicercaProtocolPropertyRegistry> protocolPropertiesResources = new ArrayList<FiltroRicercaProtocolPropertyRegistry>();
 
-	public List<FiltroRicercaProtocolProperty> getProtocolPropertiesResources() {
+	public List<FiltroRicercaProtocolPropertyRegistry> getProtocolPropertiesResources() {
 		return this.protocolPropertiesResources;
 	}
 
 	public void setProtocolPropertiesResources(
-			List<FiltroRicercaProtocolProperty> list) {
+			List<FiltroRicercaProtocolPropertyRegistry> list) {
 		this.protocolPropertiesResources = list;
 	}
 
-	public void addProtocolPropertyResource(FiltroRicercaProtocolProperty filtro){
+	public void addProtocolPropertyResource(FiltroRicercaProtocolPropertyRegistry filtro){
 		this.protocolPropertiesResources.add(filtro);
 	}
 	

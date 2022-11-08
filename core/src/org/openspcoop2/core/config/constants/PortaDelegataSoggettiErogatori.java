@@ -65,13 +65,6 @@ public enum PortaDelegataSoggettiErogatori implements IEnumeration , Serializabl
 	public String toString(){
 		return this.value;
 	}
-	public boolean equals(PortaDelegataSoggettiErogatori object){
-		if(object==null)
-			return false;
-		if(object.getValue()==null)
-			return false;
-		return object.getValue().equals(this.getValue());	
-	}
 	public boolean equals(String object){
 		if(object==null)
 			return false;

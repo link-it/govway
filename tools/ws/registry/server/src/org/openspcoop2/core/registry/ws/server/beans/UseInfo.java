@@ -37,8 +37,10 @@ import java.util.List;
     "used"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "use-info")
-public class UseInfo extends org.openspcoop2.utils.beans.BaseBean {
+public class UseInfo extends org.openspcoop2.utils.beans.BaseBean implements java.io.Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	@XmlElement(name="inUseCondition",required=false,nillable=false)
 	private List<InUseCondition> inUseCondition = new ArrayList<InUseCondition>();
 	

@@ -41,6 +41,9 @@ public class SearchUtils
 		return SearchUtils.getFilter(ricerca, idLista, filterName, "");
 	}
 	public static String getFilter(ISearch ricerca, int idLista, String filterName, String defaultValue) {
+		if(ricerca==null) {
+			throw new RuntimeException("Param ricerca is null");
+		}
 		String filter = ricerca.getFilter(idLista, filterName);
 		filter = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(filter) || (filter==null)) ? defaultValue : filter;
 		return filter;

@@ -90,12 +90,11 @@ public enum TransferLengthModes {
 		return this.nome;
 	}
 	
-	public boolean equals(TransferLengthModes tlm){
-		if(tlm!=null){
-			return this.toString().equals(tlm.toString());
-		}else{
+	public boolean equals(String tlm){
+		if(tlm==null) {
 			return false;
 		}
+		return this.toString().equals(tlm);
 	}
 }
 

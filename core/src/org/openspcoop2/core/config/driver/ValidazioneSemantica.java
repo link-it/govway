@@ -1098,7 +1098,7 @@ public class ValidazioneSemantica {
 					checkIDPA = false;
 				}
 			}	
-			else if(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_DELEGATED_BY.equals(identificazione)){
+			else if(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_DELEGATED_BY.equals(identificazione)){
 				if (pda.getNomePortaDelegante() == null) {
 					this.errori.add("L'azione della porta delegata "+idPortaApplicativa+" non contiene la definizione del nome della porta delegante, nonostante la modalita' di identificazione sia "+identificazione);
 					checkIDPA = false;

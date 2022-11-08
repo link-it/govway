@@ -138,6 +138,8 @@ public class RegistryNotFoundException extends org.openspcoop2.utils.beans.BaseB
 			java.lang.reflect.Method m = id.getClass().getMethod("toJson");
 			String json = (String) m.invoke(id);
 			this.objectId = json;
-		}catch(Exception e){}
+		}catch(Exception e){
+			// ignore
+		}
 	}	
 }

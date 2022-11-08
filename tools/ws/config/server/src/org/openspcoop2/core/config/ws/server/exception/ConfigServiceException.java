@@ -138,6 +138,8 @@ public class ConfigServiceException extends org.openspcoop2.utils.beans.BaseBean
 			java.lang.reflect.Method m = id.getClass().getMethod("toJson");
 			String json = (String) m.invoke(id);
 			this.objectId = json;
-		}catch(Exception e){}
+		}catch(Exception e){
+			// ignore
+		}
 	}	
 }

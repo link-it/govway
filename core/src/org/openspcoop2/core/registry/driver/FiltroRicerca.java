@@ -58,18 +58,18 @@ public class FiltroRicerca implements Serializable{
 	private String tipo;
 	
 	/** ProtocolProperty */
-	private List<FiltroRicercaProtocolProperty> protocolProperties = new ArrayList<FiltroRicercaProtocolProperty>();
+	private List<FiltroRicercaProtocolPropertyRegistry> protocolProperties = new ArrayList<FiltroRicercaProtocolPropertyRegistry>();
 
-	public List<FiltroRicercaProtocolProperty> getProtocolProperties() {
+	public List<FiltroRicercaProtocolPropertyRegistry> getProtocolProperties() {
 		return this.protocolProperties;
 	}
 
 	public void setProtocolProperties(
-			List<FiltroRicercaProtocolProperty> list) {
+			List<FiltroRicercaProtocolPropertyRegistry> list) {
 		this.protocolProperties = list;
 	}
 
-	public void addProtocolProperty(FiltroRicercaProtocolProperty filtro){
+	public void addProtocolProperty(FiltroRicercaProtocolPropertyRegistry filtro){
 		this.protocolProperties.add(filtro);
 	}
 	

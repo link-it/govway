@@ -298,7 +298,9 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			try{
 				if(bin!=null)
 					bin.close();
-			} catch(Exception eis) {}
+			} catch(Exception eis) {
+				// ignore
+			}
 			if(e instanceof DriverRegistroServiziNotFound)
 				throw (DriverRegistroServiziNotFound)e;
 			else
@@ -366,7 +368,9 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 					try{
 						if(bin!=null)
 							bin.close();
-					} catch(Exception eis) {}
+					} catch(Exception eis) {
+						// ignore
+					}
 					throw new DriverRegistroServiziException("[getAllIdAccordiCooperazione] Errore durante il parsing xml ("+urlXMLAccordi[i]+"): "+e.getMessage(),e);
 				}
 				if(ac==null)
@@ -511,7 +515,9 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			try{
 				if(bin!=null)
 					bin.close();
-			} catch(Exception eis) {}
+			} catch(Exception eis) {
+				// ignore
+			}
 			if(e instanceof DriverRegistroServiziNotFound)
 				throw (DriverRegistroServiziNotFound)e;
 			else
@@ -623,7 +629,9 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 					try{
 						if(bin!=null)
 							bin.close();
-					} catch(Exception eis) {}
+					} catch(Exception eis) {
+						// ignore
+					}
 					throw new DriverRegistroServiziException("["+nomeMetodo+"] Errore durante il parsing xml ("+urlXMLAccordi[i]+"): "+e.getMessage(),e);
 				}
 				if(as==null)
@@ -960,7 +968,9 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			try{
 				if(bin!=null)
 					bin.close();
-			} catch(Exception eis) {}
+			} catch(Exception eis) {
+				// ignore
+			}
 			if(e instanceof DriverRegistroServiziNotFound)
 				throw (DriverRegistroServiziNotFound)e;
 			else
@@ -1022,7 +1032,9 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 					try{
 						if(bin!=null)
 							bin.close();
-					} catch(Exception eis) {}
+					} catch(Exception eis) {
+						// ignore
+					}
 					throw new DriverRegistroServiziException("[getAllIdPorteDominio] Errore durante il parsing xml ("+urlXMLPdd[i]+"): "+e.getMessage(),e);
 				}
 				if(pd==null)
@@ -1139,7 +1151,9 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			try{
 				if(bin!=null)
 					bin.close();
-			} catch(Exception eis) {}
+			} catch(Exception eis) {
+				// ignore
+			}
 			if(e instanceof DriverRegistroServiziNotFound)
 				throw (DriverRegistroServiziNotFound)e;
 			else
@@ -1202,7 +1216,9 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 					try{
 						if(bin!=null)
 							bin.close();
-					} catch(Exception eis) {}
+					} catch(Exception eis) {
+						// ignore
+					}
 					throw new DriverRegistroServiziException("[getAllIdGruppi] Errore durante il parsing xml ("+urlXMLGruppi[i]+"): "+e.getMessage(),e);
 				}
 				if(gruppo==null)
@@ -1330,7 +1346,9 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			try{
 				if(bin!=null)
 					bin.close();
-			} catch(Exception eis) {}
+			} catch(Exception eis) {
+				// ignore
+			}
 			if(e instanceof DriverRegistroServiziNotFound)
 				throw (DriverRegistroServiziNotFound)e;
 			else
@@ -1393,7 +1411,9 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 					try{
 						if(bin!=null)
 							bin.close();
-					} catch(Exception eis) {}
+					} catch(Exception eis) {
+						// ignore
+					}
 					throw new DriverRegistroServiziException("[getAllIdRuoli] Errore durante il parsing xml ("+urlXMLRuoli[i]+"): "+e.getMessage(),e);
 				}
 				if(ruolo==null)
@@ -1535,7 +1555,9 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			try{
 				if(bin!=null)
 					bin.close();
-			} catch(Exception eis) {}
+			} catch(Exception eis) {
+				// ignore
+			}
 			if(e instanceof DriverRegistroServiziNotFound)
 				throw (DriverRegistroServiziNotFound)e;
 			else
@@ -1598,7 +1620,9 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 					try{
 						if(bin!=null)
 							bin.close();
-					} catch(Exception eis) {}
+					} catch(Exception eis) {
+						// ignore
+					}
 					throw new DriverRegistroServiziException("[getAllIdScope] Errore durante il parsing xml ("+urlXMLScope[i]+"): "+e.getMessage(),e);
 				}
 				if(scope==null)
@@ -1739,7 +1763,9 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			try{
 				if(bin!=null)
 					bin.close();
-			} catch(Exception eis) {}
+			} catch(Exception eis) {
+				// ignore
+			}
 			if(e instanceof DriverRegistroServiziNotFound)
 				throw (DriverRegistroServiziNotFound)e;
 			else
@@ -1874,7 +1900,9 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			else if(l.size()==1){
 				idSoggetto = l.get(0);
 			}
-		}catch(DriverRegistroServiziNotFound notFound){}
+		}catch(DriverRegistroServiziNotFound notFound){
+			// ignore
+		}
 		
 		if(idSoggetto==null){
 			throw new DriverRegistroServiziNotFound("Nessun soggetto trovato che possiede le credenziali '"+tipoCredenziale.toString()+"' fornite");
@@ -1958,7 +1986,9 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 					try{
 						if(bin!=null)
 							bin.close();
-					} catch(Exception eis) {}
+					} catch(Exception eis) {
+						// ignore
+					}
 					throw new DriverRegistroServiziException("[getAllIdSoggettiRegistro] Errore durante il parsing xml ("+urlXMLSoggetti[i]+"): "+e.getMessage(),e);
 				}
 				if(ss==null)
@@ -2201,7 +2231,9 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			try{
 				if(bin!=null)
 					bin.close();
-			} catch(Exception eis) {}
+			} catch(Exception eis) {
+				// ignore
+			}
 			if(e instanceof DriverRegistroServiziNotFound)
 				throw (DriverRegistroServiziNotFound)e;
 			else
@@ -2292,7 +2324,9 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 				try{
 					if(bin!=null)
 						bin.close();
-				} catch(Exception eis) {}
+				} catch(Exception eis) {
+					// ignore
+				}
 				if(e instanceof DriverRegistroServiziNotFound)
 					throw (DriverRegistroServiziNotFound)e;
 				else
@@ -2391,7 +2425,9 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 					try{
 						if(bin!=null)
 							bin.close();
-					} catch(Exception eis) {}
+					} catch(Exception eis) {
+						// ignore
+					}
 					throw new DriverRegistroServiziException("[getAllIdServizi] Errore durante il parsing xml del servizio("+urlXMLServizi[i]+"): "+e.getMessage(),e);
 				}
 				if(serv==null)

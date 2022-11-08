@@ -46,12 +46,6 @@ public enum PddTipologia {
 		}
 		return t.equals(this.toString());
 	}
-	public boolean equals(PddTipologia t){
-		if(t==null){
-			return false;
-		}
-		return t.toString().equals(this.toString());
-	}
 	
 	public static PddTipologia toPddTipologia(String value){
 		if(value==null){

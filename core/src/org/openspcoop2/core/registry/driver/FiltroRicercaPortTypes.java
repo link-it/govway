@@ -46,18 +46,18 @@ public class FiltroRicercaPortTypes extends FiltroRicercaAccordi implements Seri
 	private String nomePortType;
 
 	/** ProtocolProperty */
-	private List<FiltroRicercaProtocolProperty> protocolPropertiesPortType = new ArrayList<FiltroRicercaProtocolProperty>();
+	private List<FiltroRicercaProtocolPropertyRegistry> protocolPropertiesPortType = new ArrayList<FiltroRicercaProtocolPropertyRegistry>();
 
-	public List<FiltroRicercaProtocolProperty> getProtocolPropertiesPortType() {
+	public List<FiltroRicercaProtocolPropertyRegistry> getProtocolPropertiesPortType() {
 		return this.protocolPropertiesPortType;
 	}
 
 	public void setProtocolPropertiesPortType(
-			List<FiltroRicercaProtocolProperty> list) {
+			List<FiltroRicercaProtocolPropertyRegistry> list) {
 		this.protocolPropertiesPortType = list;
 	}
 
-	public void addProtocolPropertyPortType(FiltroRicercaProtocolProperty filtro){
+	public void addProtocolPropertyPortType(FiltroRicercaProtocolPropertyRegistry filtro){
 		this.protocolPropertiesPortType.add(filtro);
 	}
 	

@@ -67,13 +67,6 @@ public enum TipoPeriodoRealtime implements IEnumeration , Serializable , Cloneab
 	public String toString(){
 		return this.value;
 	}
-	public boolean equals(TipoPeriodoRealtime object){
-		if(object==null)
-			return false;
-		if(object.getValue()==null)
-			return false;
-		return object.getValue().equals(this.getValue());	
-	}
 	public boolean equals(String object){
 		if(object==null)
 			return false;

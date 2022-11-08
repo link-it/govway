@@ -120,7 +120,7 @@ public class AllarmiDriverUtils {
 				addAnd = true;
 			}
 			
-			if (!filterStato.equals("") && filterStato!=null) {
+			if (filterStato!=null && !filterStato.equals("")) {
 				if(addAnd)
 					expr.and();
 				

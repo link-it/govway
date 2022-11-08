@@ -42,39 +42,39 @@ import org.openspcoop2.core.registry.Soggetto;
  */
 public class ProtocolPropertiesUtilities {
 
-	public static boolean isMatch(Soggetto soggetto,List<FiltroRicercaProtocolProperty> list){
+	public static boolean isMatch(Soggetto soggetto,List<FiltroRicercaProtocolPropertyRegistry> list){
 		return isMatch(soggetto.getProtocolPropertyList(), list);
 	}
-	public static boolean isMatch(AccordoCooperazione accordo,List<FiltroRicercaProtocolProperty> list){
+	public static boolean isMatch(AccordoCooperazione accordo,List<FiltroRicercaProtocolPropertyRegistry> list){
 		return isMatch(accordo.getProtocolPropertyList(), list);
 	}
-	public static boolean isMatch(AccordoServizioParteComune accordo,List<FiltroRicercaProtocolProperty> list){
+	public static boolean isMatch(AccordoServizioParteComune accordo,List<FiltroRicercaProtocolPropertyRegistry> list){
 		return isMatch(accordo.getProtocolPropertyList(), list);
 	}
-	public static boolean isMatch(PortType pt,List<FiltroRicercaProtocolProperty> list){
+	public static boolean isMatch(PortType pt,List<FiltroRicercaProtocolPropertyRegistry> list){
 		return isMatch(pt.getProtocolPropertyList(), list);
 	}
-	public static boolean isMatch(Operation op,List<FiltroRicercaProtocolProperty> list){
+	public static boolean isMatch(Operation op,List<FiltroRicercaProtocolPropertyRegistry> list){
 		return isMatch(op.getProtocolPropertyList(), list);
 	}
-	public static boolean isMatch(Azione az,List<FiltroRicercaProtocolProperty> list){
+	public static boolean isMatch(Azione az,List<FiltroRicercaProtocolPropertyRegistry> list){
 		return isMatch(az.getProtocolPropertyList(), list);
 	}
-	public static boolean isMatch(Resource resource,List<FiltroRicercaProtocolProperty> list){
+	public static boolean isMatch(Resource resource,List<FiltroRicercaProtocolPropertyRegistry> list){
 		return isMatch(resource.getProtocolPropertyList(), list);
 	}
-	public static boolean isMatch(AccordoServizioParteSpecifica accordo,List<FiltroRicercaProtocolProperty> list){
+	public static boolean isMatch(AccordoServizioParteSpecifica accordo,List<FiltroRicercaProtocolPropertyRegistry> list){
 		return isMatch(accordo.getProtocolPropertyList(), list);
 	}
-	public static boolean isMatch(Fruitore fruitore,List<FiltroRicercaProtocolProperty> list){
+	public static boolean isMatch(Fruitore fruitore,List<FiltroRicercaProtocolPropertyRegistry> list){
 		return isMatch(fruitore.getProtocolPropertyList(), list);
 	}
-	public static boolean isMatch(List<ProtocolProperty> protocolProperties ,List<FiltroRicercaProtocolProperty> list){
+	public static boolean isMatch(List<ProtocolProperty> protocolProperties ,List<FiltroRicercaProtocolPropertyRegistry> list){
 		if(list==null || list.size()<=0){
 			return true;
 		}
 		for (int i = 0; i < list.size(); i++) {
-			FiltroRicercaProtocolProperty filtro = list.get(i);
+			FiltroRicercaProtocolPropertyRegistry filtro = list.get(i);
 			
 			if(filtro.getName()!=null){
 				boolean found = false;

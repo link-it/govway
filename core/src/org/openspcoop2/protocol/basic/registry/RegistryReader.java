@@ -44,7 +44,7 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
-import org.openspcoop2.core.registry.driver.FiltroRicercaProtocolProperty;
+import org.openspcoop2.core.registry.driver.FiltroRicercaProtocolPropertyRegistry;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziCRUD;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
@@ -371,7 +371,7 @@ public class RegistryReader implements IRegistryReader {
 			if(filtro.getNomePdd()!=null){
 				filtroDriver.setNomePdd(filtro.getNomePdd());
 			}
-			List<FiltroRicercaProtocolProperty> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
+			List<FiltroRicercaProtocolPropertyRegistry> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
 			if(listPP!=null && listPP.size()>0){
 				filtroDriver.setProtocolProperties(listPP);
 			}
@@ -451,7 +451,7 @@ public class RegistryReader implements IRegistryReader {
 			if(filtro.getIdGruppo()!=null) {
 				filtroDriver.setIdGruppo(filtro.getIdGruppo());
 			}
-			List<FiltroRicercaProtocolProperty> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
+			List<FiltroRicercaProtocolPropertyRegistry> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
 			if(listPP!=null && listPP.size()>0){
 				filtroDriver.setProtocolPropertiesAccordo(listPP);
 			}	
@@ -533,7 +533,7 @@ public class RegistryReader implements IRegistryReader {
 			if(filtro.getNomePortType()!=null){
 				filtroDriver.setNomePortType(filtro.getNomePortType());
 			}
-			List<FiltroRicercaProtocolProperty> listPP_portTypes = ProtocolUtils.convert(filtro.getProtocolPropertiesPortType());
+			List<FiltroRicercaProtocolPropertyRegistry> listPP_portTypes = ProtocolUtils.convert(filtro.getProtocolPropertiesPortType());
 			if(listPP_portTypes!=null && listPP_portTypes.size()>0){
 				filtroDriver.setProtocolPropertiesPortType(listPP_portTypes);
 			}	
@@ -559,7 +559,7 @@ public class RegistryReader implements IRegistryReader {
 			if(filtro.getIdGruppo()!=null) {
 				filtroDriver.setIdGruppo(filtro.getIdGruppo());
 			}
-			List<FiltroRicercaProtocolProperty> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
+			List<FiltroRicercaProtocolPropertyRegistry> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
 			if(listPP!=null && listPP.size()>0){
 				filtroDriver.setProtocolPropertiesAccordo(listPP);
 			}	
@@ -615,7 +615,7 @@ public class RegistryReader implements IRegistryReader {
 			if(filtro.getNomeAzione()!=null){
 				filtroDriver.setNomeAzione(filtro.getNomeAzione());
 			}
-			List<FiltroRicercaProtocolProperty> listPP_azioni = ProtocolUtils.convert(filtro.getProtocolPropertiesAzione());
+			List<FiltroRicercaProtocolPropertyRegistry> listPP_azioni = ProtocolUtils.convert(filtro.getProtocolPropertiesAzione());
 			if(listPP_azioni!=null && listPP_azioni.size()>0){
 				filtroDriver.setProtocolPropertiesAzione(listPP_azioni);
 			}	
@@ -624,7 +624,7 @@ public class RegistryReader implements IRegistryReader {
 			if(filtro.getNomePortType()!=null){
 				filtroDriver.setNomePortType(filtro.getNomePortType());
 			}
-			List<FiltroRicercaProtocolProperty> listPP_portTypes = ProtocolUtils.convert(filtro.getProtocolPropertiesPortType());
+			List<FiltroRicercaProtocolPropertyRegistry> listPP_portTypes = ProtocolUtils.convert(filtro.getProtocolPropertiesPortType());
 			if(listPP_portTypes!=null && listPP_portTypes.size()>0){
 				filtroDriver.setProtocolPropertiesPortType(listPP_portTypes);
 			}	
@@ -650,7 +650,7 @@ public class RegistryReader implements IRegistryReader {
 			if(filtro.getIdGruppo()!=null) {
 				filtroDriver.setIdGruppo(filtro.getIdGruppo());
 			}
-			List<FiltroRicercaProtocolProperty> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
+			List<FiltroRicercaProtocolPropertyRegistry> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
 			if(listPP!=null && listPP.size()>0){
 				filtroDriver.setProtocolPropertiesAccordo(listPP);
 			}	
@@ -705,7 +705,7 @@ public class RegistryReader implements IRegistryReader {
 			if(filtro.getNomeAzione()!=null){
 				filtroDriver.setNomeAzione(filtro.getNomeAzione());
 			}
-			List<FiltroRicercaProtocolProperty> listPP_azioni = ProtocolUtils.convert(filtro.getProtocolPropertiesAzione());
+			List<FiltroRicercaProtocolPropertyRegistry> listPP_azioni = ProtocolUtils.convert(filtro.getProtocolPropertiesAzione());
 			if(listPP_azioni!=null && listPP_azioni.size()>0){
 				filtroDriver.setProtocolPropertiesAzione(listPP_azioni);
 			}	
@@ -731,7 +731,7 @@ public class RegistryReader implements IRegistryReader {
 			if(filtro.getIdGruppo()!=null) {
 				filtroDriver.setIdGruppo(filtro.getIdGruppo());
 			}
-			List<FiltroRicercaProtocolProperty> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
+			List<FiltroRicercaProtocolPropertyRegistry> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
 			if(listPP!=null && listPP.size()>0){
 				filtroDriver.setProtocolPropertiesAccordo(listPP);
 			}	
@@ -776,7 +776,7 @@ public class RegistryReader implements IRegistryReader {
 			if(filtro.getNomeRisorsa()!=null){
 				filtroDriver.setResourceName(filtro.getNomeRisorsa());
 			}
-			List<FiltroRicercaProtocolProperty> listPP_resources = ProtocolUtils.convert(filtro.getProtocolPropertiesRisorsa());
+			List<FiltroRicercaProtocolPropertyRegistry> listPP_resources = ProtocolUtils.convert(filtro.getProtocolPropertiesRisorsa());
 			if(listPP_resources!=null && listPP_resources.size()>0){
 				filtroDriver.setProtocolPropertiesResources(listPP_resources);
 			}	
@@ -802,7 +802,7 @@ public class RegistryReader implements IRegistryReader {
 			if(filtro.getIdGruppo()!=null) {
 				filtroDriver.setIdGruppo(filtro.getIdGruppo());
 			}
-			List<FiltroRicercaProtocolProperty> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
+			List<FiltroRicercaProtocolPropertyRegistry> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
 			if(listPP!=null && listPP.size()>0){
 				filtroDriver.setProtocolPropertiesAccordo(listPP);
 			}	
@@ -893,7 +893,7 @@ public class RegistryReader implements IRegistryReader {
 			if(filtro.getPortType()!=null){
 				filtroDriver.setPortType(filtro.getPortType());
 			}
-			List<FiltroRicercaProtocolProperty> listPP = ProtocolUtils.convert(filtro.getProtocolPropertiesServizi());
+			List<FiltroRicercaProtocolPropertyRegistry> listPP = ProtocolUtils.convert(filtro.getProtocolPropertiesServizi());
 			if(listPP!=null && listPP.size()>0){
 				filtroDriver.setProtocolProperties(listPP);
 			}
@@ -925,7 +925,7 @@ public class RegistryReader implements IRegistryReader {
 					filtroDriver.setNomeSoggettoFruitore(filtro.getSoggettoFruitore().getNome());
 				}
 			}
-			List<FiltroRicercaProtocolProperty> listPP_fruitore = ProtocolUtils.convert(filtro.getProtocolPropertiesFruizione());
+			List<FiltroRicercaProtocolPropertyRegistry> listPP_fruitore = ProtocolUtils.convert(filtro.getProtocolPropertiesFruizione());
 			if(listPP_fruitore!=null && listPP_fruitore.size()>0){
 				filtroDriver.setProtocolPropertiesFruizione(listPP_fruitore);
 			}
@@ -954,7 +954,7 @@ public class RegistryReader implements IRegistryReader {
 			if(filtro.getPortType()!=null){
 				filtroDriver.setPortType(filtro.getPortType());
 			}
-			List<FiltroRicercaProtocolProperty> listPP = ProtocolUtils.convert(filtro.getProtocolPropertiesServizi());
+			List<FiltroRicercaProtocolPropertyRegistry> listPP = ProtocolUtils.convert(filtro.getProtocolPropertiesServizi());
 			if(listPP!=null && listPP.size()>0){
 				filtroDriver.setProtocolProperties(listPP);
 			}
@@ -1026,7 +1026,7 @@ public class RegistryReader implements IRegistryReader {
 			if(filtro.getIdGruppo()!=null) {
 				filtroDriver.setIdGruppo(filtro.getIdGruppo());
 			}
-			List<FiltroRicercaProtocolProperty> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
+			List<FiltroRicercaProtocolPropertyRegistry> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
 			if(listPP!=null && listPP.size()>0){
 				filtroDriver.setProtocolPropertiesAccordo(listPP);
 			}	

@@ -199,7 +199,9 @@ public class XMLLib{
 			try{
 				if( fos != null )
 					fos.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante il salvataggio del file ("+fileName+"): "+e.getMessage(),e);
 		}
 	} 
@@ -246,11 +248,15 @@ public class XMLLib{
 			try{
 				if( fr != null )
 					fr.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			try{
 				if( bf != null )
 					bf.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante la elaborazione del file di index ("+indexServizi+"): "+e.getMessage(),e);
 		}
 	}
@@ -297,7 +303,9 @@ public class XMLLib{
 			try{
 				if( fos != null )
 					fos.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante l'impostazione del file di index ("+indexServizi+"): "+e.getMessage(),e);
 		}
 	}
@@ -376,11 +384,15 @@ public class XMLLib{
 			try{
 				if( fin != null )
 					fin.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			try{
 				if( bout != null )
 					bout.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante il check del file di index ("+file.getName()+"): "+e.getMessage(),e);
 		}
 	}
@@ -568,11 +580,15 @@ public class XMLLib{
 			try{
 				if( fr != null )
 					fr.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			try{
 				if( bf != null )
 					bf.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 		}
 	}
 
@@ -655,10 +671,12 @@ public class XMLLib{
 						}
 						// Elimino vecchi allegati
 						String[]listAllegati = dirAllegati.list();
-						for(int j=0; j<listAllegati.length;j++){
-							File fileAllegati = new File(dirAllegati.getAbsolutePath() + File.separator +listAllegati[j]);
-							if(fileAllegati.delete()==false){
-								throw new DriverRegistroServiziException("Eliminazione dell'allegato ["+ fileAllegati.getAbsolutePath() +"] per l'accordo [" + accordoOLD + "] non riuscita");
+						if(listAllegati!=null) {
+							for(int j=0; j<listAllegati.length;j++){
+								File fileAllegati = new File(dirAllegati.getAbsolutePath() + File.separator +listAllegati[j]);
+								if(fileAllegati.delete()==false){
+									throw new DriverRegistroServiziException("Eliminazione dell'allegato ["+ fileAllegati.getAbsolutePath() +"] per l'accordo [" + accordoOLD + "] non riuscita");
+								}
 							}
 						}
 						// Elimina vecchia directory degli allegati
@@ -667,10 +685,12 @@ public class XMLLib{
 						}
 						// Elimino vecche specificheSemiformali
 						String[]listSpecificheSemiformali = dirSpecificheSemiformali.list();
-						for(int j=0; j<listSpecificheSemiformali.length;j++){
-							File fileSpecificheSemiformali = new File(dirSpecificheSemiformali.getAbsolutePath() + File.separator +listSpecificheSemiformali[j]);
-							if(fileSpecificheSemiformali.delete()==false){
-								throw new DriverRegistroServiziException("Eliminazione della specifica semiformale ["+ fileSpecificheSemiformali.getAbsolutePath() +"] per l'accordo [" + accordoOLD + "] non riuscita");
+						if(listSpecificheSemiformali!=null) {
+							for(int j=0; j<listSpecificheSemiformali.length;j++){
+								File fileSpecificheSemiformali = new File(dirSpecificheSemiformali.getAbsolutePath() + File.separator +listSpecificheSemiformali[j]);
+								if(fileSpecificheSemiformali.delete()==false){
+									throw new DriverRegistroServiziException("Eliminazione della specifica semiformale ["+ fileSpecificheSemiformali.getAbsolutePath() +"] per l'accordo [" + accordoOLD + "] non riuscita");
+								}
 							}
 						}
 						// Elimina vecchia directory delle specifiche semiformali
@@ -795,10 +815,12 @@ public class XMLLib{
 			}
 			// Elimino vecchi allegati
 			String[]listAllegati = dirAllegati.list();
-			for(int j=0; j<listAllegati.length;j++){
-				File fileAllegati = new File(dirAllegati.getAbsolutePath() + File.separator +listAllegati[j]);
-				if(fileAllegati.delete()==false){
-					throw new DriverRegistroServiziException("Eliminazione dell'allegato ["+ fileAllegati.getAbsolutePath() +"] per l'accordo [" + fileNameAccordo + "] non riuscita");
+			if(listAllegati!=null) {
+				for(int j=0; j<listAllegati.length;j++){
+					File fileAllegati = new File(dirAllegati.getAbsolutePath() + File.separator +listAllegati[j]);
+					if(fileAllegati.delete()==false){
+						throw new DriverRegistroServiziException("Eliminazione dell'allegato ["+ fileAllegati.getAbsolutePath() +"] per l'accordo [" + fileNameAccordo + "] non riuscita");
+					}
 				}
 			}
 			// Elimina vecchia directory degli allegati
@@ -807,10 +829,12 @@ public class XMLLib{
 			}
 			// Elimino vecche specificheSemiformali
 			String[]listSpecificheSemiformali = dirSpecificheSemiformali.list();
-			for(int j=0; j<listSpecificheSemiformali.length;j++){
-				File fileSpecificheSemiformali = new File(dirSpecificheSemiformali.getAbsolutePath() + File.separator +listSpecificheSemiformali[j]);
-				if(fileSpecificheSemiformali.delete()==false){
-					throw new DriverRegistroServiziException("Eliminazione della specifica semiformale ["+ fileSpecificheSemiformali.getAbsolutePath() +"] per l'accordo [" + fileNameAccordo + "] non riuscita");
+			if(listSpecificheSemiformali!=null) {
+				for(int j=0; j<listSpecificheSemiformali.length;j++){
+					File fileSpecificheSemiformali = new File(dirSpecificheSemiformali.getAbsolutePath() + File.separator +listSpecificheSemiformali[j]);
+					if(fileSpecificheSemiformali.delete()==false){
+						throw new DriverRegistroServiziException("Eliminazione della specifica semiformale ["+ fileSpecificheSemiformali.getAbsolutePath() +"] per l'accordo [" + fileNameAccordo + "] non riuscita");
+					}
 				}
 			}
 			// Elimina vecchia directory delle specifiche semiformali
@@ -954,22 +978,26 @@ public class XMLLib{
 						}
 						// Elimino vecchi WSDL
 						String[]listWSDL = dirWSDL.list();
-						for(int j=0; j<listWSDL.length;j++){
-							File fileWSDL = new File(dirWSDL.getAbsolutePath() + File.separator +listWSDL[j]);
-							if(fileWSDL.delete()==false){
-								throw new DriverRegistroServiziException("Eliminazione del file wsdl ["+ fileWSDL.getAbsolutePath() +"] per l'accordo [" + accordoOLD + "] non riuscita");
-							}
-						} 
+						if(listWSDL!=null) {
+							for(int j=0; j<listWSDL.length;j++){
+								File fileWSDL = new File(dirWSDL.getAbsolutePath() + File.separator +listWSDL[j]);
+								if(fileWSDL.delete()==false){
+									throw new DriverRegistroServiziException("Eliminazione del file wsdl ["+ fileWSDL.getAbsolutePath() +"] per l'accordo [" + accordoOLD + "] non riuscita");
+								}
+							} 
+						}
 						// Elimina vecchia directory dei WSDL
 						if(dirWSDL.delete()==false){
 							throw new DriverRegistroServiziException("Eliminazione della directory per i WSDL dell'accordo ["+accordoOLD + "] non riuscita");
 						}
 						// Elimino vecche specofiche conversazione
 						String[]listSpecificheConversazione = dirSpecificheConversazioni.list();
-						for(int j=0; j<listSpecificheConversazione.length;j++){
-							File fileSpecificaConversazione = new File(dirSpecificheConversazioni.getAbsolutePath() + File.separator +listSpecificheConversazione[j]);
-							if(fileSpecificaConversazione.delete()==false){
-								throw new DriverRegistroServiziException("Eliminazione del file di specifica conversazione ["+ fileSpecificaConversazione.getAbsolutePath() +"] per l'accordo [" + accordoOLD + "] non riuscita");
+						if(listSpecificheConversazione!=null) {
+							for(int j=0; j<listSpecificheConversazione.length;j++){
+								File fileSpecificaConversazione = new File(dirSpecificheConversazioni.getAbsolutePath() + File.separator +listSpecificheConversazione[j]);
+								if(fileSpecificaConversazione.delete()==false){
+									throw new DriverRegistroServiziException("Eliminazione del file di specifica conversazione ["+ fileSpecificaConversazione.getAbsolutePath() +"] per l'accordo [" + accordoOLD + "] non riuscita");
+								}
 							}
 						}
 						// Elimina vecchia directory delle specifiche di conversazione
@@ -978,10 +1006,12 @@ public class XMLLib{
 						}
 						// Elimino vecchi allegati
 						String[]listAllegati = dirAllegati.list();
-						for(int j=0; j<listAllegati.length;j++){
-							File fileAllegati = new File(dirAllegati.getAbsolutePath() + File.separator +listAllegati[j]);
-							if(fileAllegati.delete()==false){
-								throw new DriverRegistroServiziException("Eliminazione dell'allegato ["+ fileAllegati.getAbsolutePath() +"] per l'accordo [" + accordoOLD + "] non riuscita");
+						if(listAllegati!=null) {
+							for(int j=0; j<listAllegati.length;j++){
+								File fileAllegati = new File(dirAllegati.getAbsolutePath() + File.separator +listAllegati[j]);
+								if(fileAllegati.delete()==false){
+									throw new DriverRegistroServiziException("Eliminazione dell'allegato ["+ fileAllegati.getAbsolutePath() +"] per l'accordo [" + accordoOLD + "] non riuscita");
+								}
 							}
 						}
 						// Elimina vecchia directory degli allegati
@@ -990,10 +1020,12 @@ public class XMLLib{
 						}
 						// Elimino vecche specificheSemiformali
 						String[]listSpecificheSemiformali = dirSpecificheSemiformali.list();
-						for(int j=0; j<listSpecificheSemiformali.length;j++){
-							File fileSpecificheSemiformali = new File(dirSpecificheSemiformali.getAbsolutePath() + File.separator +listSpecificheSemiformali[j]);
-							if(fileSpecificheSemiformali.delete()==false){
-								throw new DriverRegistroServiziException("Eliminazione della specifica semiformale ["+ fileSpecificheSemiformali.getAbsolutePath() +"] per l'accordo [" + accordoOLD + "] non riuscita");
+						if(listSpecificheSemiformali!=null) {
+							for(int j=0; j<listSpecificheSemiformali.length;j++){
+								File fileSpecificheSemiformali = new File(dirSpecificheSemiformali.getAbsolutePath() + File.separator +listSpecificheSemiformali[j]);
+								if(fileSpecificheSemiformali.delete()==false){
+									throw new DriverRegistroServiziException("Eliminazione della specifica semiformale ["+ fileSpecificheSemiformali.getAbsolutePath() +"] per l'accordo [" + accordoOLD + "] non riuscita");
+								}
 							}
 						}
 						// Elimina vecchia directory delle specifiche semiformali
@@ -1004,10 +1036,12 @@ public class XMLLib{
 						if(dirSpecificheCoordinamento.exists()){
 							// Elimino vecche specificheCoordinamento
 							String[]listSpecificheCoordinamento = dirSpecificheCoordinamento.list();
-							for(int j=0; j<listSpecificheCoordinamento.length;j++){
-								File fileSpecificheCoordinamento = new File(dirSpecificheCoordinamento.getAbsolutePath() + File.separator +listSpecificheCoordinamento[j]);
-								if(fileSpecificheCoordinamento.delete()==false){
-									throw new DriverRegistroServiziException("Eliminazione della specifica coordinamento ["+ fileSpecificheCoordinamento.getAbsolutePath() +"] per l'accordo [" + accordoOLD + "] non riuscita");
+							if(listSpecificheCoordinamento!=null) {
+								for(int j=0; j<listSpecificheCoordinamento.length;j++){
+									File fileSpecificheCoordinamento = new File(dirSpecificheCoordinamento.getAbsolutePath() + File.separator +listSpecificheCoordinamento[j]);
+									if(fileSpecificheCoordinamento.delete()==false){
+										throw new DriverRegistroServiziException("Eliminazione della specifica coordinamento ["+ fileSpecificheCoordinamento.getAbsolutePath() +"] per l'accordo [" + accordoOLD + "] non riuscita");
+									}
 								}
 							}
 							// Elimina vecchia directory delle specifiche coordinamento
@@ -1320,22 +1354,26 @@ public class XMLLib{
 			}
 			// Elimino vecchi WSDL
 			String[]listWSDL = dirWSDL.list();
-			for(int j=0; j<listWSDL.length;j++){
-				File fileWSDL = new File(dirWSDL.getAbsolutePath() + File.separator +listWSDL[j]);
-				if(fileWSDL.delete()==false){
-					throw new DriverRegistroServiziException("Eliminazione del file wsdl ["+fileWSDL.getAbsolutePath()+"] per l'accordo [" + fileNameAccordo + "] non riuscita");
-				}
-			}  
+			if(listWSDL!=null) {
+				for(int j=0; j<listWSDL.length;j++){
+					File fileWSDL = new File(dirWSDL.getAbsolutePath() + File.separator +listWSDL[j]);
+					if(fileWSDL.delete()==false){
+						throw new DriverRegistroServiziException("Eliminazione del file wsdl ["+fileWSDL.getAbsolutePath()+"] per l'accordo [" + fileNameAccordo + "] non riuscita");
+					}
+				}  
+			}
 			// Elimina vecchia directory dei WSDL
 			if(dirWSDL.delete()==false){
 				throw new DriverRegistroServiziException("Eliminazione della directory per i WSDL dell'accordo ["+fileNameAccordo + "] non riuscita");
 			}
 			// Elimino vecchie specifiche conversazione
 			String[]listSpecificheConversazione = dirSpecificheConversazione.list();
-			for(int j=0; j<listSpecificheConversazione.length;j++){
-				File fileSpecificaConversazione = new File(dirSpecificheConversazione.getAbsolutePath() + File.separator +listSpecificheConversazione[j]);
-				if(fileSpecificaConversazione.delete()==false){
-					throw new DriverRegistroServiziException("Eliminazione del file specifica di conversazione ["+ fileSpecificaConversazione.getAbsolutePath() +"] per l'accordo [" + fileNameAccordo + "] non riuscita");
+			if(listSpecificheConversazione!=null) {
+				for(int j=0; j<listSpecificheConversazione.length;j++){
+					File fileSpecificaConversazione = new File(dirSpecificheConversazione.getAbsolutePath() + File.separator +listSpecificheConversazione[j]);
+					if(fileSpecificaConversazione.delete()==false){
+						throw new DriverRegistroServiziException("Eliminazione del file specifica di conversazione ["+ fileSpecificaConversazione.getAbsolutePath() +"] per l'accordo [" + fileNameAccordo + "] non riuscita");
+					}
 				}
 			}
 			// Elimina vecchia directory delle specifiche di conversazione
@@ -1344,10 +1382,12 @@ public class XMLLib{
 			}
 			// Elimino vecchi allegati
 			String[]listAllegati = dirAllegati.list();
-			for(int j=0; j<listAllegati.length;j++){
-				File fileAllegati = new File(dirAllegati.getAbsolutePath() + File.separator +listAllegati[j]);
-				if(fileAllegati.delete()==false){
-					throw new DriverRegistroServiziException("Eliminazione dell'allegato ["+ fileAllegati.getAbsolutePath() +"] per l'accordo [" + fileNameAccordo + "] non riuscita");
+			if(listAllegati!=null) {
+				for(int j=0; j<listAllegati.length;j++){
+					File fileAllegati = new File(dirAllegati.getAbsolutePath() + File.separator +listAllegati[j]);
+					if(fileAllegati.delete()==false){
+						throw new DriverRegistroServiziException("Eliminazione dell'allegato ["+ fileAllegati.getAbsolutePath() +"] per l'accordo [" + fileNameAccordo + "] non riuscita");
+					}
 				}
 			}
 			// Elimina vecchia directory degli allegati
@@ -1356,10 +1396,12 @@ public class XMLLib{
 			}
 			// Elimino vecche specificheSemiformali
 			String[]listSpecificheSemiformali = dirSpecificheSemiformali.list();
-			for(int j=0; j<listSpecificheSemiformali.length;j++){
-				File fileSpecificheSemiformali = new File(dirSpecificheSemiformali.getAbsolutePath() + File.separator +listSpecificheSemiformali[j]);
-				if(fileSpecificheSemiformali.delete()==false){
-					throw new DriverRegistroServiziException("Eliminazione della specifica semiformale ["+ fileSpecificheSemiformali.getAbsolutePath() +"] per l'accordo [" + fileNameAccordo + "] non riuscita");
+			if(listSpecificheSemiformali!=null) {
+				for(int j=0; j<listSpecificheSemiformali.length;j++){
+					File fileSpecificheSemiformali = new File(dirSpecificheSemiformali.getAbsolutePath() + File.separator +listSpecificheSemiformali[j]);
+					if(fileSpecificheSemiformali.delete()==false){
+						throw new DriverRegistroServiziException("Eliminazione della specifica semiformale ["+ fileSpecificheSemiformali.getAbsolutePath() +"] per l'accordo [" + fileNameAccordo + "] non riuscita");
+					}
 				}
 			}
 			// Elimina vecchia directory delle specifiche semiformali
@@ -1370,10 +1412,12 @@ public class XMLLib{
 			if(dirSpecificheCoordinamento.exists()){
 				// Elimino vecche specificheCoordinamento
 				String[]listSpecificheCoordinamento = dirSpecificheCoordinamento.list();
-				for(int j=0; j<listSpecificheCoordinamento.length;j++){
-					File fileSpecificheCoordinamento = new File(dirSpecificheCoordinamento.getAbsolutePath() + File.separator +listSpecificheCoordinamento[j]);
-					if(fileSpecificheCoordinamento.delete()==false){
-						throw new DriverRegistroServiziException("Eliminazione della specifica coordinamento ["+ fileSpecificheCoordinamento.getAbsolutePath() +"] per l'accordo [" + fileNameAccordo + "] non riuscita");
+				if(listSpecificheCoordinamento!=null) {
+					for(int j=0; j<listSpecificheCoordinamento.length;j++){
+						File fileSpecificheCoordinamento = new File(dirSpecificheCoordinamento.getAbsolutePath() + File.separator +listSpecificheCoordinamento[j]);
+						if(fileSpecificheCoordinamento.delete()==false){
+							throw new DriverRegistroServiziException("Eliminazione della specifica coordinamento ["+ fileSpecificheCoordinamento.getAbsolutePath() +"] per l'accordo [" + fileNameAccordo + "] non riuscita");
+						}
 					}
 				}
 				// Elimina vecchia directory delle specifiche coordinamento
@@ -2141,9 +2185,11 @@ public class XMLLib{
 			// Elimino servizi del soggetto
 			File dirS = new File(dirSoggetto + CostantiXMLRepository.SERVIZI);
 			File[] dirSserv = dirS.listFiles();
-			for(int i=0; i<dirSserv.length;i++){
-				if(dirSserv[i].delete() == false){
-					throw new DriverRegistroServiziException("Eliminazione XML del soggetto ["+idSoggetto+"] (eliminazione definizione servizio ["+dirSserv[i].getAbsolutePath()+"]) non riuscita");
+			if(dirSserv!=null) {
+				for(int i=0; i<dirSserv.length;i++){
+					if(dirSserv[i].delete() == false){
+						throw new DriverRegistroServiziException("Eliminazione XML del soggetto ["+idSoggetto+"] (eliminazione definizione servizio ["+dirSserv[i].getAbsolutePath()+"]) non riuscita");
+					}
 				}
 			}
 
@@ -2204,14 +2250,16 @@ public class XMLLib{
 							!CostantiXMLRepository.ACCORDI_DI_COOPERAZIONE.equalsIgnoreCase(soggetti[i].getName()) && 
 							!CostantiXMLRepository.PORTE_DI_DOMINIO.equalsIgnoreCase(soggetti[i].getName())){
 						File[] fs = soggetti[i].listFiles();
-						for(int j=0; j<fs.length;j++){
-							if(fs[j].isFile()){
-								org.openspcoop2.core.registry.RegistroServizi r = 
-									(org.openspcoop2.core.registry.RegistroServizi)  JaxbUtils.xmlToObj(fs[j].getAbsolutePath(),
-											org.openspcoop2.core.registry.RegistroServizi.class);
-								soggettiRegistrati[index] = r.getSoggetto(0);
-								index++;
-								break;
+						if(fs!=null) {
+							for(int j=0; j<fs.length;j++){
+								if(fs[j].isFile()){
+									org.openspcoop2.core.registry.RegistroServizi r = 
+										(org.openspcoop2.core.registry.RegistroServizi)  JaxbUtils.xmlToObj(fs[j].getAbsolutePath(),
+												org.openspcoop2.core.registry.RegistroServizi.class);
+									soggettiRegistrati[index] = r.getSoggetto(0);
+									index++;
+									break;
+								}
 							}
 						}
 					}
@@ -2324,32 +2372,38 @@ public class XMLLib{
 
 						// Elimino vecchi WSDL
 						String[]listWSDL = dirWSDL.list();
-						for(int j=0; j<listWSDL.length;j++){
-							File fileInterno = new File(dirWSDL.getAbsolutePath() + File.separator +listWSDL[j]);
-							if(fileInterno.isDirectory()){
-								// wsdl-implementativo fruitore-servizio
-								String[]listFruitoreWSDL = fileInterno.list();
-								for(int k=0; k<listFruitoreWSDL.length;k++){
-									File fileWsdlFruitore = new File(fileInterno.getAbsolutePath() + File.separator +listFruitoreWSDL[k]);
-									if(fileWsdlFruitore.delete()==false){
-										throw new DriverRegistroServiziException("Eliminazione del file wsdl ["+ fileWsdlFruitore.getAbsolutePath() +"] per il servizio [" + idServizioOLD + "] non riuscita");
-									}	
+						if(listWSDL!=null) {
+							for(int j=0; j<listWSDL.length;j++){
+								File fileInterno = new File(dirWSDL.getAbsolutePath() + File.separator +listWSDL[j]);
+								if(fileInterno.isDirectory()){
+									// wsdl-implementativo fruitore-servizio
+									String[]listFruitoreWSDL = fileInterno.list();
+									if(listFruitoreWSDL!=null) {
+										for(int k=0; k<listFruitoreWSDL.length;k++){
+											File fileWsdlFruitore = new File(fileInterno.getAbsolutePath() + File.separator +listFruitoreWSDL[k]);
+											if(fileWsdlFruitore.delete()==false){
+												throw new DriverRegistroServiziException("Eliminazione del file wsdl ["+ fileWsdlFruitore.getAbsolutePath() +"] per il servizio [" + idServizioOLD + "] non riuscita");
+											}	
+										}
+									}
 								}
-							}
-							if(fileInterno.delete()==false){
-								throw new DriverRegistroServiziException("Eliminazione del file wsdl ["+ fileInterno.getAbsolutePath() +"] per il servizio [" + idServizioOLD + "] non riuscita");
-							}		
-						}  
+								if(fileInterno.delete()==false){
+									throw new DriverRegistroServiziException("Eliminazione del file wsdl ["+ fileInterno.getAbsolutePath() +"] per il servizio [" + idServizioOLD + "] non riuscita");
+								}		
+							} 
+						}
 						// Elimina vecchia directory dei WSDL
 						if(dirWSDL.delete()==false){
 							throw new DriverRegistroServiziException("Eliminazione della directory per i WSDL del servizio ["+idServizioOLD + "] non riuscita");
 						}					
 						// Elimino vecchi allegati
 						String[]listAllegati = dirAllegati.list();
-						for(int j=0; j<listAllegati.length;j++){
-							File fileAllegati = new File(dirAllegati.getAbsolutePath() + File.separator +listAllegati[j]);
-							if(fileAllegati.delete()==false){
-								throw new DriverRegistroServiziException("Eliminazione dell'allegato ["+ fileAllegati.getAbsolutePath() +"] per l'accordo [" + idServizioOLD + "] non riuscita");
+						if(listAllegati!=null) {
+							for(int j=0; j<listAllegati.length;j++){
+								File fileAllegati = new File(dirAllegati.getAbsolutePath() + File.separator +listAllegati[j]);
+								if(fileAllegati.delete()==false){
+									throw new DriverRegistroServiziException("Eliminazione dell'allegato ["+ fileAllegati.getAbsolutePath() +"] per l'accordo [" + idServizioOLD + "] non riuscita");
+								}
 							}
 						}
 						// Elimina vecchia directory degli allegati
@@ -2358,10 +2412,12 @@ public class XMLLib{
 						}
 						// Elimino vecche specificheSemiformali
 						String[]listSpecificheSemiformali = dirSpecificheSemiformali.list();
-						for(int j=0; j<listSpecificheSemiformali.length;j++){
-							File fileSpecificheSemiformali = new File(dirSpecificheSemiformali.getAbsolutePath() + File.separator +listSpecificheSemiformali[j]);
-							if(fileSpecificheSemiformali.delete()==false){
-								throw new DriverRegistroServiziException("Eliminazione della specifica semiformale ["+ fileSpecificheSemiformali.getAbsolutePath() +"] per l'accordo [" + idServizioOLD + "] non riuscita");
+						if(listSpecificheSemiformali!=null) {
+							for(int j=0; j<listSpecificheSemiformali.length;j++){
+								File fileSpecificheSemiformali = new File(dirSpecificheSemiformali.getAbsolutePath() + File.separator +listSpecificheSemiformali[j]);
+								if(fileSpecificheSemiformali.delete()==false){
+									throw new DriverRegistroServiziException("Eliminazione della specifica semiformale ["+ fileSpecificheSemiformali.getAbsolutePath() +"] per l'accordo [" + idServizioOLD + "] non riuscita");
+								}
 							}
 						}
 						// Elimina vecchia directory delle specifiche semiformali
@@ -2370,10 +2426,12 @@ public class XMLLib{
 						}
 						// Elimino vecchie specificheSicurezza
 						String[]listSpecificheSicurezza = dirSpecificheSicurezza.list();
-						for(int j=0; j<listSpecificheSicurezza.length;j++){
-							File fileSpecificheSicurezza = new File(dirSpecificheSicurezza.getAbsolutePath() + File.separator +listSpecificheSicurezza[j]);
-							if(fileSpecificheSicurezza.delete()==false){
-								throw new DriverRegistroServiziException("Eliminazione della specifica di sicurezza ["+ fileSpecificheSicurezza.getAbsolutePath() +"] per l'accordo [" + idServizioOLD + "] non riuscita");
+						if(listSpecificheSicurezza!=null) {
+							for(int j=0; j<listSpecificheSicurezza.length;j++){
+								File fileSpecificheSicurezza = new File(dirSpecificheSicurezza.getAbsolutePath() + File.separator +listSpecificheSicurezza[j]);
+								if(fileSpecificheSicurezza.delete()==false){
+									throw new DriverRegistroServiziException("Eliminazione della specifica di sicurezza ["+ fileSpecificheSicurezza.getAbsolutePath() +"] per l'accordo [" + idServizioOLD + "] non riuscita");
+								}
 							}
 						}
 						// Elimina vecchia directory delle specifiche di sicurezza
@@ -2382,10 +2440,12 @@ public class XMLLib{
 						}
 						// Elimino vecchie specificheLivelliServizio
 						String[]listSpecificheLivelliServizio = dirSpecificheLivelliServizio.list();
-						for(int j=0; j<listSpecificheLivelliServizio.length;j++){
-							File fileSpecificheLivelliServizio = new File(dirSpecificheLivelliServizio.getAbsolutePath() + File.separator +listSpecificheLivelliServizio[j]);
-							if(fileSpecificheLivelliServizio.delete()==false){
-								throw new DriverRegistroServiziException("Eliminazione della specifica dei livelli di servizio ["+ fileSpecificheLivelliServizio.getAbsolutePath() +"] per l'accordo [" + idServizioOLD + "] non riuscita");
+						if(listSpecificheLivelliServizio!=null) {
+							for(int j=0; j<listSpecificheLivelliServizio.length;j++){
+								File fileSpecificheLivelliServizio = new File(dirSpecificheLivelliServizio.getAbsolutePath() + File.separator +listSpecificheLivelliServizio[j]);
+								if(fileSpecificheLivelliServizio.delete()==false){
+									throw new DriverRegistroServiziException("Eliminazione della specifica dei livelli di servizio ["+ fileSpecificheLivelliServizio.getAbsolutePath() +"] per l'accordo [" + idServizioOLD + "] non riuscita");
+								}
 							}
 						}
 						// Elimina vecchia directory delle specifiche dei livelli di servizio
@@ -2514,33 +2574,37 @@ public class XMLLib{
 
 			// check directory dei WSDL dei fruitori 
 			String[]listWSDLFruitori = dirWSDL.list();
-			for(int j=0; j<listWSDLFruitori.length;j++){
-				File fileInterno = new File(dirWSDL.getAbsolutePath() + File.separator +listWSDLFruitori[j]);
-
-				// Se e' una directory potra' contenere i wsdl di un fruitore
-				if(fileInterno.isDirectory()){
-					boolean definizioneTrovata = false;
-					for(int h=0; h<asps.sizeFruitoreList(); h++){
-						String idFruitore = asps.getFruitore(h).getTipo()+asps.getFruitore(h).getNome();
-						if(idFruitore.equals(fileInterno.getName())){
-							definizioneTrovata = true;
-							break;
+			if(listWSDLFruitori!=null) {
+				for(int j=0; j<listWSDLFruitori.length;j++){
+					File fileInterno = new File(dirWSDL.getAbsolutePath() + File.separator +listWSDLFruitori[j]);
+	
+					// Se e' una directory potra' contenere i wsdl di un fruitore
+					if(fileInterno.isDirectory()){
+						boolean definizioneTrovata = false;
+						for(int h=0; h<asps.sizeFruitoreList(); h++){
+							String idFruitore = asps.getFruitore(h).getTipo()+asps.getFruitore(h).getNome();
+							if(idFruitore.equals(fileInterno.getName())){
+								definizioneTrovata = true;
+								break;
+							}
 						}
-					}
-
-					// elimino i wsdl dei fruitori.
-					String[]listWSDLFruitoreEliminato = fileInterno.list();
-					for(int n=0; n<listWSDLFruitoreEliminato.length;n++){
-						File fileWsdlFruitoreEliminato = new File(fileInterno.getAbsolutePath() + File.separator +listWSDLFruitoreEliminato[n]);
-						if(fileWsdlFruitoreEliminato.delete()==false){
-							throw new DriverRegistroServiziException("Eliminazione del file wsdl ["+ fileWsdlFruitoreEliminato.getAbsolutePath() +"] per il servizio [" + idServizioNEW + "] (Fruitore) non riuscita");
-						}	
-					}
-
-					// Elimino le directory dei fruitori che non sono piu' contenuti nel servizio.
-					if(definizioneTrovata == false){
-						if(fileInterno.delete()==false){
-							throw new DriverRegistroServiziException("Eliminazione del file wsdl ["+ fileInterno.getAbsolutePath() +"] per il servizio [" + idServizioNEW + "] (Fruitore) non riuscita");
+	
+						// elimino i wsdl dei fruitori.
+						String[]listWSDLFruitoreEliminato = fileInterno.list();
+						if(listWSDLFruitoreEliminato!=null) {
+							for(int n=0; n<listWSDLFruitoreEliminato.length;n++){
+								File fileWsdlFruitoreEliminato = new File(fileInterno.getAbsolutePath() + File.separator +listWSDLFruitoreEliminato[n]);
+								if(fileWsdlFruitoreEliminato.delete()==false){
+									throw new DriverRegistroServiziException("Eliminazione del file wsdl ["+ fileWsdlFruitoreEliminato.getAbsolutePath() +"] per il servizio [" + idServizioNEW + "] (Fruitore) non riuscita");
+								}	
+							}
+						}
+	
+						// Elimino le directory dei fruitori che non sono piu' contenuti nel servizio.
+						if(definizioneTrovata == false){
+							if(fileInterno.delete()==false){
+								throw new DriverRegistroServiziException("Eliminazione del file wsdl ["+ fileInterno.getAbsolutePath() +"] per il servizio [" + idServizioNEW + "] (Fruitore) non riuscita");
+							}
 						}
 					}
 				}
@@ -2708,20 +2772,22 @@ public class XMLLib{
 			// Elimino eventuale file di index
 			if(this.existsIndexServizi(dirServiziSoggetto)){
 				IDServizio[]index = this.readIndexServiziFromFile(dirServiziSoggetto);
-				if(index!=null && index.length==1){
-					this.deleteIndexServizi(dirServiziSoggetto);
-				}else{
-					IDServizio [] newImage = new IDServizio[index.length-1];
-					int j=0;
-					for(int i=0; i< index.length; i++){
-						if( !(index[i].getTipo().equals(idServ.getTipo()) &&
-								index[i].getNome().equals(idServ.getNome()) &&
-								index[i].getVersione().intValue() == idServ.getVersione().intValue()) ){
-							newImage[j]=index[i];
-							j++;
+				if(index!=null){
+					if(index.length==1){
+						this.deleteIndexServizi(dirServiziSoggetto);
+					}else{
+						IDServizio [] newImage = new IDServizio[index.length-1];
+						int j=0;
+						for(int i=0; i< index.length; i++){
+							if( !(index[i].getTipo().equals(idServ.getTipo()) &&
+									index[i].getNome().equals(idServ.getNome()) &&
+									index[i].getVersione().intValue() == idServ.getVersione().intValue()) ){
+								newImage[j]=index[i];
+								j++;
+							}
 						}
+						this.setContenutoIndexServizi(dirServiziSoggetto,newImage);
 					}
-					this.setContenutoIndexServizi(dirServiziSoggetto,newImage);
 				}
 			}
 
@@ -2740,21 +2806,25 @@ public class XMLLib{
 			
 			//	Elimino vecchi WSDL
 			String[]listWSDL = dirWSDL.list();
-			for(int j=0; j<listWSDL.length;j++){
-				File fileInterno = new File(dirWSDL.getAbsolutePath() + File.separator +listWSDL[j]);
-				if(fileInterno.isDirectory()){
-					// wsdl-implementativo fruitore-servizio
-					String[]listFruitoreWSDL = fileInterno.list();
-					for(int k=0; k<listFruitoreWSDL.length;k++){
-						File fileWsdlFruitore = new File(fileInterno.getAbsolutePath() + File.separator +listFruitoreWSDL[k]);
-						if(fileWsdlFruitore.delete()==false){
-							throw new DriverRegistroServiziException("Eliminazione del file wsdl ["+ fileWsdlFruitore.getAbsolutePath() +"] per il servizio [" + idServizio + "] non riuscita");
-						}	
+			if(listWSDL!=null) {
+				for(int j=0; j<listWSDL.length;j++){
+					File fileInterno = new File(dirWSDL.getAbsolutePath() + File.separator +listWSDL[j]);
+					if(fileInterno.isDirectory()){
+						// wsdl-implementativo fruitore-servizio
+						String[]listFruitoreWSDL = fileInterno.list();
+						if(listFruitoreWSDL!=null) {
+							for(int k=0; k<listFruitoreWSDL.length;k++){
+								File fileWsdlFruitore = new File(fileInterno.getAbsolutePath() + File.separator +listFruitoreWSDL[k]);
+								if(fileWsdlFruitore.delete()==false){
+									throw new DriverRegistroServiziException("Eliminazione del file wsdl ["+ fileWsdlFruitore.getAbsolutePath() +"] per il servizio [" + idServizio + "] non riuscita");
+								}	
+							}
+						}
+					}
+					if(fileInterno.delete()==false){
+						throw new DriverRegistroServiziException("Eliminazione del file wsdl ["+ fileInterno.getAbsolutePath() +"] per il servizio [" + idServizio + "] non riuscita");
 					}
 				}
-				if(fileInterno.delete()==false){
-					throw new DriverRegistroServiziException("Eliminazione del file wsdl ["+ fileInterno.getAbsolutePath() +"] per il servizio [" + idServizio + "] non riuscita");
-				}		
 			}  
 			// Elimina vecchia directory dei WSDL
 			if(dirWSDL.delete()==false){
@@ -2763,10 +2833,12 @@ public class XMLLib{
 			
 			// Elimino vecchi allegati
 			String[]listAllegati = dirAllegati.list();
-			for(int j=0; j<listAllegati.length;j++){
-				File fileAllegati = new File(dirAllegati.getAbsolutePath() + File.separator +listAllegati[j]);
-				if(fileAllegati.delete()==false){
-					throw new DriverRegistroServiziException("Eliminazione dell'allegato ["+ fileAllegati.getAbsolutePath() +"] per l'accordo [" + idServizio + "] non riuscita");
+			if(listAllegati!=null) {
+				for(int j=0; j<listAllegati.length;j++){
+					File fileAllegati = new File(dirAllegati.getAbsolutePath() + File.separator +listAllegati[j]);
+					if(fileAllegati.delete()==false){
+						throw new DriverRegistroServiziException("Eliminazione dell'allegato ["+ fileAllegati.getAbsolutePath() +"] per l'accordo [" + idServizio + "] non riuscita");
+					}
 				}
 			}
 			// Elimina vecchia directory degli allegati
@@ -2775,10 +2847,12 @@ public class XMLLib{
 			}
 			// Elimino vecche specificheSemiformali
 			String[]listSpecificheSemiformali = dirSpecificheSemiformali.list();
-			for(int j=0; j<listSpecificheSemiformali.length;j++){
-				File fileSpecificheSemiformali = new File(dirSpecificheSemiformali.getAbsolutePath() + File.separator +listSpecificheSemiformali[j]);
-				if(fileSpecificheSemiformali.delete()==false){
-					throw new DriverRegistroServiziException("Eliminazione della specifica semiformale ["+ fileSpecificheSemiformali.getAbsolutePath() +"] per l'accordo [" + idServizio + "] non riuscita");
+			if(listSpecificheSemiformali!=null) {
+				for(int j=0; j<listSpecificheSemiformali.length;j++){
+					File fileSpecificheSemiformali = new File(dirSpecificheSemiformali.getAbsolutePath() + File.separator +listSpecificheSemiformali[j]);
+					if(fileSpecificheSemiformali.delete()==false){
+						throw new DriverRegistroServiziException("Eliminazione della specifica semiformale ["+ fileSpecificheSemiformali.getAbsolutePath() +"] per l'accordo [" + idServizio + "] non riuscita");
+					}
 				}
 			}
 			// Elimina vecchia directory delle specifiche semiformali
@@ -2787,10 +2861,12 @@ public class XMLLib{
 			}
 			// Elimino vecchie specificheSicurezza
 			String[]listSpecificheSicurezza = dirSpecificheSicurezza.list();
-			for(int j=0; j<listSpecificheSicurezza.length;j++){
-				File fileSpecificheSicurezza = new File(dirSpecificheSicurezza.getAbsolutePath() + File.separator +listSpecificheSicurezza[j]);
-				if(fileSpecificheSicurezza.delete()==false){
-					throw new DriverRegistroServiziException("Eliminazione della specifica di sicurezza ["+ fileSpecificheSicurezza.getAbsolutePath() +"] per l'accordo [" + idServizio + "] non riuscita");
+			if(listSpecificheSicurezza!=null) {
+				for(int j=0; j<listSpecificheSicurezza.length;j++){
+					File fileSpecificheSicurezza = new File(dirSpecificheSicurezza.getAbsolutePath() + File.separator +listSpecificheSicurezza[j]);
+					if(fileSpecificheSicurezza.delete()==false){
+						throw new DriverRegistroServiziException("Eliminazione della specifica di sicurezza ["+ fileSpecificheSicurezza.getAbsolutePath() +"] per l'accordo [" + idServizio + "] non riuscita");
+					}
 				}
 			}
 			// Elimina vecchia directory delle specifiche di sicurezza
@@ -2799,10 +2875,12 @@ public class XMLLib{
 			}
 			// Elimino vecchie specificheLivelliServizio
 			String[]listSpecificheLivelliServizio = dirSpecificheLivelliServizio.list();
-			for(int j=0; j<listSpecificheLivelliServizio.length;j++){
-				File fileSpecificheLivelliServizio = new File(dirSpecificheLivelliServizio.getAbsolutePath() + File.separator +listSpecificheLivelliServizio[j]);
-				if(fileSpecificheLivelliServizio.delete()==false){
-					throw new DriverRegistroServiziException("Eliminazione della specifica dei livelli di servizio ["+ fileSpecificheLivelliServizio.getAbsolutePath() +"] per l'accordo [" + idServizio + "] non riuscita");
+			if(listSpecificheLivelliServizio!=null) {
+				for(int j=0; j<listSpecificheLivelliServizio.length;j++){
+					File fileSpecificheLivelliServizio = new File(dirSpecificheLivelliServizio.getAbsolutePath() + File.separator +listSpecificheLivelliServizio[j]);
+					if(fileSpecificheLivelliServizio.delete()==false){
+						throw new DriverRegistroServiziException("Eliminazione della specifica dei livelli di servizio ["+ fileSpecificheLivelliServizio.getAbsolutePath() +"] per l'accordo [" + idServizio + "] non riuscita");
+					}
 				}
 			}
 			// Elimina vecchia directory delle specifiche dei livelli di servizio

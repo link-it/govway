@@ -73,9 +73,13 @@ public class IDUnivocoGroupByPolicyMapId extends IDUnivocoGroupByPolicy implemen
 	
 	@Override
 	public boolean equals(Object param){
-		if(param==null || !(param instanceof IDUnivocoGroupByPolicyMapId))
+		if(param==null) {
 			return false;
-		return this.match((IDUnivocoGroupByPolicyMapId) param);
+		}
+		if(param instanceof IDUnivocoGroupByPolicyMapId) {
+			return this.match((IDUnivocoGroupByPolicyMapId) param);
+		}
+		return false;
 	}
 	
 	

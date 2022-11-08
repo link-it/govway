@@ -842,11 +842,11 @@ public class ValidazioneSemantica {
 			this.errori.add("La conferma ricezione nel "+uriAS+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
 		// XSD: id-collaborazione: abilitato, disabilitato
 		StatoFunzionalita idColl = as.getIdCollaborazione();
-		if (idColl!=null && idColl != null && !idColl.equals(CostantiRegistroServizi.ABILITATO) && !idColl.equals(CostantiRegistroServizi.DISABILITATO))
+		if (idColl!=null && !idColl.equals(CostantiRegistroServizi.ABILITATO) && !idColl.equals(CostantiRegistroServizi.DISABILITATO))
 			this.errori.add("L'id collaborazione nel "+uriAS+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
 		// XSD: consegna-in-ordine: abilitato, disabilitato
 		StatoFunzionalita consOrd = as.getConsegnaInOrdine();
-		if (consOrd!=null && consOrd != null && !consOrd.equals(CostantiRegistroServizi.ABILITATO) && !consOrd.equals(CostantiRegistroServizi.DISABILITATO))
+		if (consOrd!=null && !consOrd.equals(CostantiRegistroServizi.ABILITATO) && !consOrd.equals(CostantiRegistroServizi.DISABILITATO))
 			this.errori.add("La consegna in ordine nel "+uriAS+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
 		// Scadenza
 		if(as.getScadenza()!=null){

@@ -702,7 +702,9 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		Soggetto soggetto = null;
 		try{
 			soggetto = getSoggetto(soggettoProprietario);
-		}catch(Exception e){}
+		}catch(Exception e){
+			// ignore
+		}
 		if(soggetto == null)
 			throw new DriverConfigurazioneException("[getPortaDelegata] Soggetto fruitore ["+soggettoProprietario.getTipo()+"/"+soggettoProprietario.getNome()+"] non esistente");
 
@@ -1073,7 +1075,9 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		Soggetto soggetto = null;
 		try{
 			soggetto = getSoggetto(soggettoProprietario);
-		}catch(Exception e){}
+		}catch(Exception e){
+			// ignore
+		}
 		if(soggetto == null)
 			throw new DriverConfigurazioneException("[getPortaApplicativa] Soggetto fruitore ["+soggettoProprietario.getTipo()+"/"+soggettoProprietario.getNome()+"] non esistente");
 

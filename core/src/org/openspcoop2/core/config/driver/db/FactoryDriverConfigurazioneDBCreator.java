@@ -43,6 +43,11 @@ public class FactoryDriverConfigurazioneDBCreator extends FactoryDriverCreator {
 	private String tipoDatabase;
 	private Properties jndiProp;
 
+	public void setJndiProp(Properties jndiProp) {
+		this.jndiProp = jndiProp;
+	}
+
+
 	/**
 	 * Ritorna una nuova istanza del {@link DriverConfigurazioneDB}
 	 */

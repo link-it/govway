@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.constants.CostantiLabel;
-import org.openspcoop2.core.registry.driver.FiltroRicercaProtocolProperty;
+import org.openspcoop2.core.registry.driver.FiltroRicercaProtocolPropertyRegistry;
 import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
 import org.openspcoop2.protocol.sdk.properties.BooleanProperty;
 import org.openspcoop2.protocol.sdk.properties.NumberProperty;
@@ -130,12 +130,12 @@ public class ProtocolUtils {
 		return l;
 	}
 	
-	public static List<FiltroRicercaProtocolProperty> convert(ProtocolProperties protocolProperties){
-		List<FiltroRicercaProtocolProperty> list = null;
+	public static List<FiltroRicercaProtocolPropertyRegistry> convert(ProtocolProperties protocolProperties){
+		List<FiltroRicercaProtocolPropertyRegistry> list = null;
 		if(protocolProperties!=null && protocolProperties.sizeProperties()>0){
-			list = new ArrayList<FiltroRicercaProtocolProperty>();
+			list = new ArrayList<FiltroRicercaProtocolPropertyRegistry>();
 			for (int i = 0; i < protocolProperties.sizeProperties(); i++) {
-				FiltroRicercaProtocolProperty fpp = new FiltroRicercaProtocolProperty();
+				FiltroRicercaProtocolPropertyRegistry fpp = new FiltroRicercaProtocolPropertyRegistry();
 				AbstractProperty<?> p = protocolProperties.getProperty(i);
 				fpp.setName(p.getId());
 				if(p instanceof StringProperty){

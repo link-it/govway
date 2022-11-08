@@ -79,7 +79,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
-import org.openspcoop2.core.config.driver.FiltroRicercaProtocolProperty;
+import org.openspcoop2.core.config.driver.FiltroRicercaProtocolPropertyConfig;
 import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.core.config.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.config.driver.IDServizioUtils;
@@ -3551,27 +3551,39 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			try {
 				if(rs1!=null)
 					rs1.close();
-			}catch(Exception eClose) {}
+			}catch(Exception eClose) {
+				// close
+			}
 			try {
 				if(rs0!=null)
 					rs0.close();
-			}catch(Exception eClose) {}
+			}catch(Exception eClose) {
+				// close
+			}
 			try {
 				if(rs!=null)
 					rs.close();
-			}catch(Exception eClose) {}
+			}catch(Exception eClose) {
+				// close
+			}
 			try {
 				if(stm1!=null)
 					stm1.close();
-			}catch(Exception eClose) {}
+			}catch(Exception eClose) {
+				// close
+			}
 			try {
 				if(stm0!=null)
 					stm0.close();
-			}catch(Exception eClose) {}
+			}catch(Exception eClose) {
+				// close
+			}
 			try {
 				if(stmt!=null)
 					stmt.close();
-			}catch(Exception eClose) {}
+			}catch(Exception eClose) {
+				// close
+			}
 
 			try {
 				if (error && this.atomica) {
@@ -3750,11 +3762,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			try {
 				if(rs!=null)
 					rs.close();
-			}catch(Exception eClose) {}
+			}catch(Exception eClose) {
+				// close
+			}
 			try {
 				if(stmt!=null)
 					stmt.close();
-			}catch(Exception eClose) {}
+			}catch(Exception eClose) {
+				// close
+			}
 
 			try {
 				if (error && this.atomica) {
@@ -7624,7 +7640,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 				sqlQueryObject.addSelectField("*");
 				
-				List<FiltroRicercaProtocolProperty> modiFilter = null; 
+				List<FiltroRicercaProtocolPropertyConfig> modiFilter = null; 
 				if(tokenWithHttpsEnabled){
 				
 					modiFilter = buildListModiTokenCredentials(tokenPolicy, tokenClientId);
@@ -8036,25 +8052,25 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 	}
 
-    private List<FiltroRicercaProtocolProperty> buildListModiTokenCredentials (String tokenPolicy, String tokenClientId) throws SQLQueryObjectException {
-    	List<FiltroRicercaProtocolProperty> list = new ArrayList<FiltroRicercaProtocolProperty>();
-		FiltroRicercaProtocolProperty pTokenPolicy = new FiltroRicercaProtocolProperty();
+    private List<FiltroRicercaProtocolPropertyConfig> buildListModiTokenCredentials (String tokenPolicy, String tokenClientId) throws SQLQueryObjectException {
+    	List<FiltroRicercaProtocolPropertyConfig> list = new ArrayList<FiltroRicercaProtocolPropertyConfig>();
+		FiltroRicercaProtocolPropertyConfig pTokenPolicy = new FiltroRicercaProtocolPropertyConfig();
 		pTokenPolicy.setName(CostantiDB.MODIPA_SICUREZZA_TOKEN_POLICY);
 		pTokenPolicy.setValueAsString(tokenPolicy);
 		list.add(pTokenPolicy);
-		FiltroRicercaProtocolProperty pTokenClientId = new FiltroRicercaProtocolProperty();
+		FiltroRicercaProtocolPropertyConfig pTokenClientId = new FiltroRicercaProtocolPropertyConfig();
 		pTokenClientId.setName(CostantiDB.MODIPA_SICUREZZA_TOKEN_CLIENT_ID);
 		pTokenClientId.setValueAsString(tokenClientId);
 		list.add(pTokenClientId);
 		return list;
     }
-    private ISQLQueryObject buildSQLQueryObjectModiTokenCredentials (List<FiltroRicercaProtocolProperty> list) throws SQLQueryObjectException {
+    private ISQLQueryObject buildSQLQueryObjectModiTokenCredentials (List<FiltroRicercaProtocolPropertyConfig> list) throws SQLQueryObjectException {
     	ISQLQueryObject sqlQueryObjectProtocolProperties = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 		_setProtocolPropertiesForSearch(sqlQueryObjectProtocolProperties, list, CostantiDB.SERVIZI_APPLICATIVI);
 		return sqlQueryObjectProtocolProperties;
     }
     private void setSQLQueryObjectModiTokenCredentials (PreparedStatement stmt, int index,
-    		List<FiltroRicercaProtocolProperty> list) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException {
+    		List<FiltroRicercaProtocolPropertyConfig> list) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException {
 		_setProtocolPropertiesForSearch(stmt, index, 
 				list, ProprietariProtocolProperty.SERVIZIO_APPLICATIVO);
     }
@@ -13671,10 +13687,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}finally {
 				try {
 					rsRegole.close();
-				}catch(Exception eClose) {}
+				}catch(Exception eClose) {
+					// close
+				}
 				try {
 					stmRegole.close();
-				}catch(Exception eClose) {}
+				}catch(Exception eClose) {
+					// close
+				}
 			}
 		}
 
@@ -19560,7 +19580,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("nome");
 			sqlQueryObject.addSelectField("id_soggetto");
 			
-			List<FiltroRicercaProtocolProperty> modiFilter = null; 
+			List<FiltroRicercaProtocolPropertyConfig> modiFilter = null; 
 			if(tokenWithHttpsEnabled){
 			
 				modiFilter = buildListModiTokenCredentials(tokenPolicy, tokenClientId);
@@ -27925,7 +27945,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					try{
 						if(stmtTest!=null)
 							stmtTest.close();
-					}catch(Exception e){}
+					}catch(Exception e){
+						// close
+					}
 					try {
 						stmtTest = con.createStatement();
 						ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -27944,11 +27966,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				try{
 					if(stmtTest!=null)
 						stmtTest.close();
-				}catch(Exception e){}
+				}catch(Exception e){
+					// close
+				}
 				try{
 					if(con!=null)
 						con.close();
-				}catch(Exception e){}
+				}catch(Exception e){
+					// close
+				}
 			}
 		}else{
 			Statement stmtTest = null;
@@ -27967,7 +27993,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					try{
 						if(stmtTest!=null)
 							stmtTest.close();
-					}catch(Exception e){}
+					}catch(Exception e){
+						// close
+					}
 					try {
 						stmtTest = this.globalConnection.createStatement();
 						ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -27986,7 +28014,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				try{
 					if(stmtTest!=null)
 						stmtTest.close();
-				}catch(Exception e){}
+				}catch(Exception e){
+					// close
+				}
 			}
 		}
 	}
@@ -28927,7 +28957,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			if(proprietario!=null){
 				idProprietario=DBUtils.getIdSoggetto(proprietario.getNome(), proprietario.getTipo(), con, this.tipoDB);
-				if(idProprietario<0) new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Il proprietario ["+proprietario.toString()+"] non esiste.");
+				if(idProprietario==null || idProprietario<0) 
+					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Il proprietario ["+proprietario.toString()+"] non esiste.");
 			}
 
 
@@ -29180,7 +29211,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			if(proprietario!=null){
 				idProprietario=DBUtils.getIdSoggetto(proprietario.getNome(), proprietario.getTipo(), con, this.tipoDB);
-				if(idProprietario<0) new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Il proprietario ["+proprietario.toString()+"] non esiste.");
+				if(idProprietario==null || idProprietario<0) 
+					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Il proprietario ["+proprietario.toString()+"] non esiste.");
 			}
 			filters.setNumEntries(idLista, this.serviziApplicativiList_engineCount(proprietario, 
 					erogazione, searchSoloErogazione, 
@@ -29472,7 +29504,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 
 			idProprietario=DBUtils.getIdSoggetto(proprietario.getNome(), proprietario.getTipo(), con, this.tipoDB);
-			if(idProprietario<0) new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Il proprietario ["+proprietario.toString()+"] non esiste.");
+			if(idProprietario<0) 
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Il proprietario ["+proprietario.toString()+"] non esiste.");
 
 			//count
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -32584,7 +32617,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			this._setProtocolPropertiesForSearch(sqlQueryObject, filtroRicerca.getProtocolProperties(), tabella);
 		}
 	}
-	private void _setProtocolPropertiesForSearch(ISQLQueryObject sqlQueryObject, List<FiltroRicercaProtocolProperty> list, String tabella) throws SQLQueryObjectException{
+	private void _setProtocolPropertiesForSearch(ISQLQueryObject sqlQueryObject, List<FiltroRicercaProtocolPropertyConfig> list, String tabella) throws SQLQueryObjectException{
 		if(list!=null && list.size()>0){
 			List<org.openspcoop2.core.mapping.FiltroRicercaProtocolProperty> l = new ArrayList<>();
 			l.addAll(list);
@@ -32600,7 +32633,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	}
 	
 	private void _setProtocolPropertiesForSearch(PreparedStatement stmt, int index, 
-			List<FiltroRicercaProtocolProperty> list, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException{
+			List<FiltroRicercaProtocolPropertyConfig> list, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException{
 		if(list!=null && list.size()>0){
 			List<org.openspcoop2.core.mapping.FiltroRicercaProtocolProperty> l = new ArrayList<>();
 			l.addAll(list);
@@ -34231,7 +34264,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		Map<String, String> m = new HashMap<String, String>();
 		for (String s : sa) {
 			for (PortaApplicativaServizioApplicativo pasa : pa.getServizioApplicativoList()) {
-				if(pasa.getNome().equals(s)) {
+				if(pasa!=null && pasa.getNome()!=null && pasa.getNome().equals(s)) {
 					if(pasa.getId()==null || pasa.getId()<=0) {
 						return null;
 					}

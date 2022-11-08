@@ -143,7 +143,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio;
 import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
 import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
-import org.openspcoop2.core.registry.driver.FiltroRicercaProtocolProperty;
+import org.openspcoop2.core.registry.driver.FiltroRicercaProtocolPropertyRegistry;
 import org.openspcoop2.core.registry.driver.FiltroRicercaResources;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
@@ -3684,13 +3684,17 @@ IDriverWS ,IMonitoraggioRisorsa{
 									rs.close();
 									rs = null;
 								}
-							}catch (Exception e) {}
+							}catch (Exception e) {
+								// close
+							}
 							try{
 								if(stm!=null){
 									stm.close();
 									stm=null;
 								}
-							}catch (Exception e) {}
+							}catch (Exception e) {
+								// close
+							}
 						}
 					}
 				}
@@ -3758,10 +3762,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 			//Chiudo statement and resultset
 			try{
 				if(rs!=null) rs.close();
-			}catch (Exception e) {}
+			}catch (Exception e) {
+				// close
+			}
 			try{
 				if(stm!=null) stm.close();
-			}catch (Exception e) {}
+			}catch (Exception e) {
+				// close
+			}
 
 			try {
 				if (this.atomica) {
@@ -4049,7 +4057,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 			try{
 				stm.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 
 			try {
 				// se ci sono errori eseguo il rollback altrimenti il commit
@@ -5433,11 +5443,15 @@ IDriverWS ,IMonitoraggioRisorsa{
 			try{
 				if(rs!=null)
 					rs.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				if(stm!=null)
 					stm.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try {
 				if (error && this.atomica) {
 					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
@@ -5585,12 +5599,16 @@ IDriverWS ,IMonitoraggioRisorsa{
 			try{
 				if(rs!=null)
 					rs.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 
 				if(stm!=null) stm.close();
 				if(updateStmt!=null) updateStmt.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try {
 				if (error && this.atomica) {
 					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
@@ -12681,7 +12699,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 					indexStmt++;
 				}
 				if(filtroRicerca.getTipologia()!=null){
-					StatoFunzionalita servizioCorrelato = (TipologiaServizio.CORRELATO.equals(filtroRicerca.getTipologia()) ? CostantiRegistroServizi.ABILITATO : CostantiRegistroServizi.DISABILITATO);
+					StatoFunzionalita servizioCorrelato = (org.openspcoop2.core.constants.TipologiaServizio.CORRELATO.equals(filtroRicerca.getTipologia()) ? CostantiRegistroServizi.ABILITATO : CostantiRegistroServizi.DISABILITATO);
 					this.log.debug("tipologiaServizio stmt.setString("+servizioCorrelato.getValue()+") original:["+filtroRicerca.getTipologia()+"]");
 					stm.setString(indexStmt, servizioCorrelato.getValue());
 					indexStmt++;
@@ -21003,10 +21021,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 	}
 
-	public List<AccordoServizioParteSpecifica> getServiziByIdErogatore(long idErogatore) throws DriverRegistroServiziException {
-		return getServiziByIdErogatoreAndFilters(idErogatore, null);		
-	}
-
 	public List<AccordoServizioParteSpecifica> getServiziByIdErogatore(long idErogatore,ISearch filters) throws DriverRegistroServiziException {
 		return getServiziByIdErogatoreAndFilters(idErogatore, filters);		
 	}
@@ -23695,7 +23709,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 					try{
 						if(stmtTest!=null)
 							stmtTest.close();
-					}catch(Exception e){}
+					}catch(Exception e){
+						// close
+					}
 					try {
 						stmtTest = con.createStatement();
 						ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -23714,11 +23730,15 @@ IDriverWS ,IMonitoraggioRisorsa{
 				try{
 					if(stmtTest!=null)
 						stmtTest.close();
-				}catch(Exception e){}
+				}catch(Exception e){
+					// close
+				}
 				try{
 					if(con!=null)
 						con.close();
-				}catch(Exception e){}
+				}catch(Exception e){
+					// close
+				}
 			}
 		}else{
 			Statement stmtTest = null;
@@ -23737,7 +23757,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 					try{
 						if(stmtTest!=null)
 							stmtTest.close();
-					}catch(Exception e){}
+					}catch(Exception e){
+						// close
+					}
 					try {
 						stmtTest = this.globalConnection.createStatement();
 						ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -23756,7 +23778,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				try{
 					if(stmtTest!=null)
 						stmtTest.close();
-				}catch(Exception e){}
+				}catch(Exception e){
+					// close
+				}
 			}
 		}
 	}
@@ -27616,7 +27640,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this._setProtocolPropertiesForSearch(sqlQueryObject, filtroRicerca.getProtocolProperties(), tabella);
 		}
 	}
-	private void _setProtocolPropertiesForSearch(ISQLQueryObject sqlQueryObject, List<FiltroRicercaProtocolProperty> list, String tabella) throws SQLQueryObjectException{
+	private void _setProtocolPropertiesForSearch(ISQLQueryObject sqlQueryObject, List<FiltroRicercaProtocolPropertyRegistry> list, String tabella) throws SQLQueryObjectException{
 		if(list!=null && list.size()>0){
 			List<org.openspcoop2.core.mapping.FiltroRicercaProtocolProperty> l = new ArrayList<>();
 			l.addAll(list);
@@ -27666,7 +27690,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	}
 	
 	private void _setProtocolPropertiesForSearch(PreparedStatement stmt, int index, 
-			List<FiltroRicercaProtocolProperty> list, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException{
+			List<FiltroRicercaProtocolPropertyRegistry> list, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException{
 		if(list!=null && list.size()>0){
 			List<org.openspcoop2.core.mapping.FiltroRicercaProtocolProperty> l = new ArrayList<>();
 			l.addAll(list);

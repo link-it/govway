@@ -887,30 +887,6 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 
 	
 
-	public List<AccordoServizioParteSpecifica> getServiziByIdErogatore(long idErogatore) throws DriverRegistroServiziException {
-		Connection con = null;
-		String nomeMetodo = "getServiziByIdErogatore";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverRegistroServiziDB().getServiziByIdErogatore(idErogatore);
-
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-	}
-
-	
-
-	
 	public List<IDServizio> getIdServiziWithPortType(IDPortType idPT) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		Connection con = null;
 		String nomeMetodo = "getIdServiziWithPortType";

@@ -44,6 +44,10 @@ public class FactoryDriverRegistroServiziDBCreator extends FactoryDriverCreator 
 	private Properties jndiProp;
 
 
+	public void setJndiProp(Properties jndiProp) {
+		this.jndiProp = jndiProp;
+	}
+
 	public FactoryDriverRegistroServiziDBCreator(String fileProperties) {
 		super(fileProperties);
 

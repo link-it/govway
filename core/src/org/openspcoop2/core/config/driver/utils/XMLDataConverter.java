@@ -836,7 +836,9 @@ public class XMLDataConverter {
 				try{  
 					if(iStream!=null)
 						iStream.close();
-				} catch(Exception ef) {}
+				} catch(Exception ef) {
+					// close
+				}
 				throw new DriverConfigurazioneException("Riscontrato errore durante l'unmarshall del file di configurazione: "+e.getMessage());
 			}
 

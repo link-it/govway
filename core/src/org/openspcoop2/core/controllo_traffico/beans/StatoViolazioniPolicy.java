@@ -133,7 +133,7 @@ public class StatoViolazioniPolicy {
 		if(bf.length()>0)
 			return bf.toString();
 		else
-			return null;
+			return "";
 	}
 	
 	public void addViolazione(String gruppo,boolean warningOnly) {

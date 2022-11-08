@@ -202,7 +202,9 @@ public class TestValidazioneSemantica {
 					try{
 						if(connectionDB!=null)
 							connectionDB.close();
-					}catch(Exception e){}
+					}catch(Exception e){
+						// close
+					}
 				}
 			}	
 			

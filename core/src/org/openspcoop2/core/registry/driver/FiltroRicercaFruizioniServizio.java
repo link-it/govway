@@ -48,18 +48,18 @@ public class FiltroRicercaFruizioniServizio extends FiltroRicercaServizi impleme
 	private String nomeSoggettoFruitore;
 
 	/** ProtocolProperty */
-	private List<FiltroRicercaProtocolProperty> protocolPropertiesFruizione = new ArrayList<FiltroRicercaProtocolProperty>();
+	private List<FiltroRicercaProtocolPropertyRegistry> protocolPropertiesFruizione = new ArrayList<FiltroRicercaProtocolPropertyRegistry>();
 
-	public List<FiltroRicercaProtocolProperty> getProtocolPropertiesFruizione() {
+	public List<FiltroRicercaProtocolPropertyRegistry> getProtocolPropertiesFruizione() {
 		return this.protocolPropertiesFruizione;
 	}
 
 	public void setProtocolPropertiesFruizione(
-			List<FiltroRicercaProtocolProperty> list) {
+			List<FiltroRicercaProtocolPropertyRegistry> list) {
 		this.protocolPropertiesFruizione = list;
 	}
 
-	public void addProtocolPropertyFruizione(FiltroRicercaProtocolProperty filtro){
+	public void addProtocolPropertyFruizione(FiltroRicercaProtocolPropertyRegistry filtro){
 		this.protocolPropertiesFruizione.add(filtro);
 	}
 	

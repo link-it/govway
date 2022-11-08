@@ -111,18 +111,18 @@ public class FiltroRicercaAccordi implements Serializable{
 	}
 	
 	/** ProtocolProperty */
-	private List<FiltroRicercaProtocolProperty> protocolPropertiesAccordo = new ArrayList<FiltroRicercaProtocolProperty>();
+	private List<FiltroRicercaProtocolPropertyRegistry> protocolPropertiesAccordo = new ArrayList<FiltroRicercaProtocolPropertyRegistry>();
 
-	public List<FiltroRicercaProtocolProperty> getProtocolPropertiesAccordo() {
+	public List<FiltroRicercaProtocolPropertyRegistry> getProtocolPropertiesAccordo() {
 		return this.protocolPropertiesAccordo;
 	}
 
 	public void setProtocolPropertiesAccordo(
-			List<FiltroRicercaProtocolProperty> list) {
+			List<FiltroRicercaProtocolPropertyRegistry> list) {
 		this.protocolPropertiesAccordo = list;
 	}
 
-	public void addProtocolPropertyAccordo(FiltroRicercaProtocolProperty filtro){
+	public void addProtocolPropertyAccordo(FiltroRicercaProtocolPropertyRegistry filtro){
 		this.protocolPropertiesAccordo.add(filtro);
 	}
 	

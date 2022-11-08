@@ -46,7 +46,7 @@ import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
-import org.openspcoop2.core.registry.driver.FiltroRicercaProtocolProperty;
+import org.openspcoop2.core.registry.driver.FiltroRicercaProtocolPropertyRegistry;
 import org.openspcoop2.core.registry.driver.FiltroRicercaResources;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
@@ -96,7 +96,7 @@ public class AccordiServizioParteComuneUtilities {
 			
 			if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(as.getServiceBinding())) {
 				FiltroRicercaResources filtroRicerca = new FiltroRicercaResources();
-				FiltroRicercaProtocolProperty filtroRPP = new FiltroRicercaProtocolProperty();
+				FiltroRicercaProtocolPropertyRegistry filtroRPP = new FiltroRicercaProtocolPropertyRegistry();
 				filtroRPP.setName(org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA);
 				filtroRPP.setValueAsString(oldURI);
 				filtroRicerca.addProtocolPropertyResource(filtroRPP);
@@ -148,7 +148,7 @@ public class AccordiServizioParteComuneUtilities {
 			}
 			else {
 				FiltroRicercaOperations filtroRicerca = new FiltroRicercaOperations();
-				FiltroRicercaProtocolProperty filtroRPP = new FiltroRicercaProtocolProperty();
+				FiltroRicercaProtocolPropertyRegistry filtroRPP = new FiltroRicercaProtocolPropertyRegistry();
 				filtroRPP.setName(org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA);
 				filtroRPP.setValueAsString(oldURI);
 				filtroRicerca.addProtocolPropertyAzione(filtroRPP);

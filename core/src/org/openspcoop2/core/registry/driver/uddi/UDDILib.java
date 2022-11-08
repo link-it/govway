@@ -1769,7 +1769,9 @@ public class UDDILib
 				try{
 					//rollback quanto fatto prima
 					deleteBusinessEntity(idSogg);
-				}catch(Exception rollbackE){}
+				}catch(Exception rollbackE){
+					// ignore
+				}
 				throw e; // rilancio l'eccezione
 			}
 
@@ -1780,7 +1782,9 @@ public class UDDILib
 				try{
 					//rollback quanto fatto prima
 					deleteBusinessEntity(idSogg);
-				}catch(Exception rollbackE){}
+				}catch(Exception rollbackE){
+					// ignore
+				}
 				throw e; // rilancio l'eccezione
 			}
 
@@ -2114,7 +2118,9 @@ public class UDDILib
 			// verifico che non esista gia' un servizio associato a be
 			try{
 				bs = getBusinessService(be,idServ);
-			}catch(DriverRegistroServiziNotFound e){}
+			}catch(DriverRegistroServiziNotFound e){
+				// ignore
+			}
 			
 			/*entro solo se il servizio non e' gia stato registrato*/
 			if(bs==null){
@@ -2534,7 +2540,9 @@ public class UDDILib
 				// rollback
 				try{
 					deleteBusinessService(idServ);
-				}catch(Exception eRollback){}
+				}catch(Exception eRollback){
+					// ignore
+				}
 				throw e; // rilancio
 			}
 
@@ -2545,7 +2553,9 @@ public class UDDILib
 				// rollback
 				try{
 					deleteBusinessService(idServ);
-				}catch(Exception eRollback){}
+				}catch(Exception eRollback){
+					// ignore
+				}
 				throw e; // rilancio
 			}
 			
@@ -2556,7 +2566,9 @@ public class UDDILib
 				// rollback
 				try{
 					deleteBusinessService(idServ);
-				}catch(Exception eRollback){}
+				}catch(Exception eRollback){
+					// ignore
+				}
 				throw e; // rilancio
 			}
 

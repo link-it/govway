@@ -60,18 +60,18 @@ public class FiltroRicercaServiziApplicativi extends FiltroRicercaBase implement
 	private String tipo;
 
 	/** ProtocolProperty */
-	private List<FiltroRicercaProtocolProperty> protocolProperties = new ArrayList<FiltroRicercaProtocolProperty>();
+	private List<FiltroRicercaProtocolPropertyConfig> protocolProperties = new ArrayList<FiltroRicercaProtocolPropertyConfig>();
 
-	public List<FiltroRicercaProtocolProperty> getProtocolProperties() {
+	public List<FiltroRicercaProtocolPropertyConfig> getProtocolProperties() {
 		return this.protocolProperties;
 	}
 
 	public void setProtocolProperties(
-			List<FiltroRicercaProtocolProperty> list) {
+			List<FiltroRicercaProtocolPropertyConfig> list) {
 		this.protocolProperties = list;
 	}
 
-	public void addProtocolProperty(FiltroRicercaProtocolProperty filtro){
+	public void addProtocolProperty(FiltroRicercaProtocolPropertyConfig filtro){
 		this.protocolProperties.add(filtro);
 	}
 	

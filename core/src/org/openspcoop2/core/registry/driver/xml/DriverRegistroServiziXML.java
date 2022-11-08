@@ -941,7 +941,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 			for (Documento doc : aspc.getSpecificaSemiformaleList()) {
 				File f = new File(doc.getFile());
 				if(nome.equals(doc.getFile()) || nome.equals(f.getName())) {
-					if(tipo.equals(doc.getTipo())) {
+					if(tipo!=null && tipo.getNome().equals(doc.getTipo())) {
 						return doc;
 					}
 				}
@@ -2155,7 +2155,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 			for (Documento doc : asps.getSpecificaSemiformaleList()) {
 				File f = new File(doc.getFile());
 				if(nome.equals(doc.getFile()) || nome.equals(f.getName())) {
-					if(tipo.equals(doc.getTipo())) {
+					if(tipo!=null && tipo.getNome().equals(doc.getTipo())) {
 						return doc;
 					}
 				}
@@ -2171,7 +2171,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 			for (Documento doc : asps.getSpecificaSicurezzaList()) {
 				File f = new File(doc.getFile());
 				if(nome.equals(doc.getFile()) || nome.equals(f.getName())) {
-					if(tipo.equals(doc.getTipo())) {
+					if(tipo!=null && tipo.getNome().equals(doc.getTipo())) {
 						return doc;
 					}
 				}
@@ -2186,7 +2186,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 			for (Documento doc : asps.getSpecificaLivelloServizioList()) {
 				File f = new File(doc.getFile());
 				if(nome.equals(doc.getFile()) || nome.equals(f.getName())) {
-					if(tipo.equals(doc.getTipo())) {
+					if(tipo!=null && tipo.getNome().equals(doc.getTipo())) {
 						return doc;
 					}
 				}

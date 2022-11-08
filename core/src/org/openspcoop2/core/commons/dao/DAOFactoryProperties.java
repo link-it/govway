@@ -97,7 +97,9 @@ public class DAOFactoryProperties {
 			try{
 				if(propertiesInternal!=null)
 					propertiesInternal.close();
-			}catch(Exception er){}
+			}catch(Exception er){
+				// close
+			}
 			throw e;
 		}
 		
@@ -129,7 +131,9 @@ public class DAOFactoryProperties {
 			try{
 				if(properties!=null)
 					properties.close();
-			}catch(Exception er){}
+			}catch(Exception er){
+				// close
+			}
 			throw e;
 		}	
 

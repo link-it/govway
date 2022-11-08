@@ -31,7 +31,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaSoggettiFruitori;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
-import org.openspcoop2.core.config.driver.FiltroRicercaProtocolProperty;
+import org.openspcoop2.core.config.driver.FiltroRicercaProtocolPropertyConfig;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -509,12 +509,12 @@ public class IdentificazioneApplicativoMittenteUtils {
 		
 		filtro.setTipoSoggetto(CostantiLabel.MODIPA_PROTOCOL_NAME);
 		
-		FiltroRicercaProtocolProperty filtroSubject = new FiltroRicercaProtocolProperty();
+		FiltroRicercaProtocolPropertyConfig filtroSubject = new FiltroRicercaProtocolPropertyConfig();
 		filtroSubject.setName(ModICostanti.MODIPA_KEY_CN_SUBJECT);
 		filtroSubject.setValueAsString(subject);
 		filtro.addProtocolProperty(filtroSubject);
 		
-		FiltroRicercaProtocolProperty filtroIssuer = new FiltroRicercaProtocolProperty();
+		FiltroRicercaProtocolPropertyConfig filtroIssuer = new FiltroRicercaProtocolPropertyConfig();
 		filtroIssuer.setName(ModICostanti.MODIPA_KEY_CN_ISSUER);
 		filtroIssuer.setValueAsString(issuer);
 		filtro.addProtocolProperty(filtroIssuer);

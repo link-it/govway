@@ -32,6 +32,7 @@ import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.RegistroTipo;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
@@ -151,7 +152,7 @@ public class TestXMLDataConverter {
 			
 			superUser = reader.getProperty("openspcoop2.superuser");
 			if(superUser!=null)
-				superUser.trim();
+				superUser = superUser.trim();
 			
 			if("db".equals(args_tipoRegistroCRUD)){
 				// Database
@@ -262,16 +263,20 @@ public class TestXMLDataConverter {
 			try{
 				if(connectionSQL!=null)
 					connectionSQL.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 	
 	
+	private static Semaphore semaphoreResetEffettuata = new Semaphore("TestXMLDataConverterRegistryReset");
 	private static Boolean resetEffettuata = false;
 	private static boolean reset(boolean b){
 		if(b){
 			// Se si desidera la reset, controllo se e' gia stata effettuata
-			synchronized (TestXMLDataConverter.resetEffettuata) {
+			semaphoreResetEffettuata.acquireThrowRuntime("reset");
+			try {
 				if(TestXMLDataConverter.resetEffettuata==false){
 					TestXMLDataConverter.resetEffettuata=true;
 					return true;
@@ -279,6 +284,8 @@ public class TestXMLDataConverter {
 				else{
 					return false;
 				}
+			}finally {
+				semaphoreResetEffettuata.release("reset");
 			}
 		}
 		return false;
@@ -330,7 +337,7 @@ public class TestXMLDataConverter {
 			boolean gestioneSoggetti,boolean reset, boolean mantieniFruitori, boolean deleteMappingErogazioneFruizione) throws Exception{
 		
 		Logger logDriver = null;
-		if( "uddi".equals(acCRUD.getTipo()) || "web".equals(acCRUD.getTipo()) ){
+		if( org.openspcoop2.core.config.constants.RegistroTipo.UDDI.equals(acCRUD.getTipo()) || org.openspcoop2.core.config.constants.RegistroTipo.WEB.equals(acCRUD.getTipo()) ){
 			logDriver = log;
 		}
 		

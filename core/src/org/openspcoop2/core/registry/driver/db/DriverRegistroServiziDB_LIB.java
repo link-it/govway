@@ -3000,7 +3000,9 @@ public class DriverRegistroServiziDB_LIB {
 			try {
 				if(updateRS!=null) updateRS.close();
 				if(updateStmt!=null)updateStmt.close();
-			} catch (Exception ex) {/* ignore */}
+			} catch (Exception ex) {
+				// ignore
+			}
 		}
 
 	}
@@ -3695,7 +3697,7 @@ public class DriverRegistroServiziDB_LIB {
 		ResultSet selectRS = null;
 		long n = 0;
 		if (idAccordo <= 0)
-			new Exception("[DriverRegistroServiziDB_LIB::CRUDAzione] ID Accordo non valido.");
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAzione] ID Accordo non valido.");
 
 		try {
 			switch (type) {
@@ -3878,7 +3880,7 @@ public class DriverRegistroServiziDB_LIB {
 		ResultSet selectRS = null;
 		long n = 0;
 		if (idAccordo <= 0)
-			new Exception("[DriverRegistroServiziDB_LIB::CRUDPortType] ID Accordo non valido.");
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDPortType] ID Accordo non valido.");
 
 		try {
 			switch (type) {
@@ -4142,7 +4144,7 @@ public class DriverRegistroServiziDB_LIB {
 		ResultSet selectRS = null;
 		long n = 0;
 		if (idPortType <= 0)
-			new Exception("[DriverRegistroServiziDB_LIB::CRUDAzionePortType] ID Port Type non valido.");
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAzionePortType] ID Port Type non valido.");
 
 		try {
 			switch (type) {
@@ -4472,7 +4474,7 @@ public class DriverRegistroServiziDB_LIB {
 		PreparedStatement selectStmt = null;
 		ResultSet selectRS = null;
 		if (azione.getId() <= 0)
-			new Exception("[DriverRegistroServiziDB_LIB::CRUDMessageAzionePortType] ID Operation Port Type non valida.");
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDMessageAzionePortType] ID Operation Port Type non valida.");
 
 		try {
 			switch (type) {
@@ -4585,7 +4587,7 @@ public class DriverRegistroServiziDB_LIB {
 		ResultSet selectRS = null;
 		int n = 0;
 		if (idAccordo <= 0)
-			new Exception("[DriverRegistroServiziDB_LIB::CRUDResource] ID Accordo non valido.");
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDResource] ID Accordo non valido.");
 
 		try {
 			switch (type) {
@@ -4894,7 +4896,7 @@ public class DriverRegistroServiziDB_LIB {
 		ResultSet selectRS = null;
 		long n = 0;
 		if (idResource <= 0)
-			new Exception("[DriverRegistroServiziDB_LIB::_CRUDResourceRequestResponse] ID Risorda non valido.");
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::_CRUDResourceRequestResponse] ID Risorda non valido.");
 
 		try {
 			switch (type) {
@@ -5155,14 +5157,14 @@ public class DriverRegistroServiziDB_LIB {
 		String updateQuery;
 		long n = 0;
 		if (idAccordo <= 0)
-			new Exception("[DriverRegistroServiziDB_LIB::CRUDAccordoGruppo] ID Accordo non valido.");
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoGruppo] ID Accordo non valido.");
 		
 		try {
 			
 			IDGruppo idGruppo = new IDGruppo(gruppo.getNome());
 			long idGruppoLong = DBUtils.getIdGruppo(idGruppo, con, DriverRegistroServiziDB_LIB.tipoDB);
 			if(idGruppoLong<=0) {
-				new Exception("[DriverRegistroServiziDB_LIB::CRUDAccordoGruppo] Gruppo con nome '"+idGruppo.getNome()+"' non esistente.");
+				throw new Exception("[DriverRegistroServiziDB_LIB::CRUDAccordoGruppo] Gruppo con nome '"+idGruppo.getNome()+"' non esistente.");
 			}
 			
 			switch (type) {
@@ -6319,10 +6321,10 @@ public class DriverRegistroServiziDB_LIB {
 		PreparedStatement selectStmt = null;
 		ResultSet selectRS = null;
 		if (idAccordo <= 0)
-			new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioServizioComposto] ID Accordo non valido.");
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioServizioComposto] ID Accordo non valido.");
 		
 		if (asServComposto == null && (type==CostantiDB.CREATE || type==CostantiDB.UPDATE))
-			new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioServizioComposto] Accordo Cooperazione non valido.");
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioServizioComposto] Accordo Cooperazione non valido.");
 		
 //		if(asServComposto!=null){
 //			if (asServComposto.getIdAccordoCooperazione() <= 0 && (type==CostantiDB.CREATE || type==CostantiDB.UPDATE)){
@@ -7021,7 +7023,9 @@ public class DriverRegistroServiziDB_LIB {
 			try {
 				if(updateRS!=null) updateRS.close();
 				if(updateStmt!=null)updateStmt.close();
-			} catch (Exception ex) {/* ignore */}
+			} catch (Exception ex) {
+				// ignore 
+			}
 		}
 
 	}

@@ -759,6 +759,16 @@ public class JDBCOperationServiceSearchImpl implements IJDBCServiceSearchWithId<
 	
 	protected Long findIdOperation(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdOperation id, boolean throwNotFound) throws NotFoundException, ServiceException, NotImplementedException, Exception {
 
+		if(jdbcProperties==null) {
+			throw new ServiceException("Param jdbcProperties is null");
+		}
+		if(sqlQueryObject==null) {
+			throw new ServiceException("Param sqlQueryObject is null");
+		}
+		if(id==null) {
+			throw new ServiceException("Param id is null");
+		}
+		
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 

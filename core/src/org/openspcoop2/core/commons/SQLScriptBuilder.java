@@ -144,11 +144,13 @@ public class SQLScriptBuilder {
 		
 		// BASE
 		File [] f = sqlSourceDir.listFiles();
-		for (int i = 0; i < f.length; i++) {
-			if(f[i].isFile()) {
-				_createSql(sqlSourceDir, f[i].getName(), 
-						sqlDestDir, sqlScriptName, prefix, bout,
-						splitDDL_DML);
+		if(f!=null) {
+			for (int i = 0; i < f.length; i++) {
+				if(f[i].isFile()) {
+					_createSql(sqlSourceDir, f[i].getName(), 
+							sqlDestDir, sqlScriptName, prefix, bout,
+							splitDDL_DML);
+				}
 			}
 		}
 		
@@ -425,6 +427,9 @@ public class SQLScriptBuilder {
 	}
 	
 	private static void _createSqlAggiornamento(File upgradeFile,ByteArrayOutputStream bout) throws Exception{
+		if(bout==null) {
+			throw new Exception("Param bout is null");
+		}
 		byte[] b = FileSystemUtilities.readBytesFromFile(upgradeFile);
 		if(bout.size()>0){
 			bout.write("\n\n".getBytes());

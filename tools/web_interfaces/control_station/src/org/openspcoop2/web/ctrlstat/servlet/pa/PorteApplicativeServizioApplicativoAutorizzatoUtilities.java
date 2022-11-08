@@ -32,7 +32,7 @@ import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
-import org.openspcoop2.core.config.driver.FiltroRicercaProtocolProperty;
+import org.openspcoop2.core.config.driver.FiltroRicercaProtocolPropertyConfig;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -229,12 +229,12 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 						filtro.setProtocolProperties(new ArrayList<>());
 						filtro.setTipo(filtroTipoSA);
 						
-						FiltroRicercaProtocolProperty ppSicMsg = new FiltroRicercaProtocolProperty();
+						FiltroRicercaProtocolPropertyConfig ppSicMsg = new FiltroRicercaProtocolPropertyConfig();
 						ppSicMsg.setName(CostantiDB.MODIPA_SICUREZZA_MESSAGGIO);
 						ppSicMsg.setValueAsBoolean(true);
 						filtro.getProtocolProperties().add(ppSicMsg);
 						
-						FiltroRicercaProtocolProperty ppSicToken = new FiltroRicercaProtocolProperty();
+						FiltroRicercaProtocolPropertyConfig ppSicToken = new FiltroRicercaProtocolPropertyConfig();
 						ppSicToken.setName(CostantiDB.MODIPA_SICUREZZA_TOKEN);
 						ppSicToken.setValueAsBoolean(true);
 						filtro.getProtocolProperties().add(ppSicToken);
@@ -257,7 +257,7 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 							filtro.setNomeSoggetto(idSoggetto.getNome());
 							filtro.setProtocolProperties(new ArrayList<>());
 							filtro.setTipo(filtroTipoSA);
-							FiltroRicercaProtocolProperty pp = new FiltroRicercaProtocolProperty();
+							FiltroRicercaProtocolPropertyConfig pp = new FiltroRicercaProtocolPropertyConfig();
 							pp.setName(CostantiDB.MODIPA_SICUREZZA_MESSAGGIO);
 							pp.setValueAsBoolean(true);
 							filtro.getProtocolProperties().add(pp);
@@ -278,7 +278,7 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 							filtro.setNomeSoggetto(idSoggetto.getNome());
 							filtro.setProtocolProperties(new ArrayList<>());
 							filtro.setTipo(filtroTipoSA);
-							FiltroRicercaProtocolProperty pp = new FiltroRicercaProtocolProperty();
+							FiltroRicercaProtocolPropertyConfig pp = new FiltroRicercaProtocolPropertyConfig();
 							pp.setName(CostantiDB.MODIPA_SICUREZZA_TOKEN);
 							pp.setValueAsBoolean(true);
 							filtro.getProtocolProperties().add(pp);

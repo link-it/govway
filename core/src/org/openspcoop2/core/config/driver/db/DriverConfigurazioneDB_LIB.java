@@ -12234,12 +12234,16 @@ public class DriverConfigurazioneDB_LIB {
 				if(rs1!=null) {
 					rs1.close();
 				}
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// close
+			}
 			try {
 				if(stm1!=null) {
 					stm1.close();
 				}
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// close
+			}
 		}
 	}
 	
@@ -12279,12 +12283,16 @@ public class DriverConfigurazioneDB_LIB {
 				if(rs1!=null) {
 					rs1.close();
 				}
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// close
+			}
 			try {
 				if(stm1!=null) {
 					stm1.close();
 				}
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// close
+			}
 		}
 	}
 	
@@ -13367,19 +13375,27 @@ public class DriverConfigurazioneDB_LIB {
 			try {
 				if(rs1!=null)
 					rs1.close();
-			}catch(Exception eClose) {}
+			}catch(Exception eClose) {
+				// close
+			}
 			try {
 				if(rs!=null)
 					rs.close();
-			}catch(Exception eClose) {}
+			}catch(Exception eClose) {
+				// close
+			}
 			try {
 				if(stm1!=null)
 					stm1.close();
-			}catch(Exception eClose) {}
+			}catch(Exception eClose) {
+				// close
+			}
 			try {
 				if(stm!=null)
 					stm.close();
-			}catch(Exception eClose) {}
+			}catch(Exception eClose) {
+				// close
+			}
 		}
 		
 		return trasformazioni;
@@ -14563,12 +14579,16 @@ public class DriverConfigurazioneDB_LIB {
 				if(rs1!=null) {
 					rs1.close();
 				}
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// close
+			}
 			try {
 				if(stm1!=null) {
 					stm1.close();
 				}
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// close
+			}
 		}
 	}
 	
@@ -14772,12 +14792,16 @@ public class DriverConfigurazioneDB_LIB {
 				if(rs1!=null) {
 					rs1.close();
 				}
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// close
+			}
 			try {
 				if(stm1!=null) {
 					stm1.close();
 				}
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// close
+			}
 		}
 	}
 	
@@ -14868,12 +14892,16 @@ public class DriverConfigurazioneDB_LIB {
 				if(rs1!=null) {
 					rs1.close();
 				}
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// close
+			}
 			try {
 				if(stm1!=null) {
 					stm1.close();
 				}
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// close
+			}
 		}
 	}
 	

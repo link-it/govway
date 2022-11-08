@@ -937,7 +937,7 @@ public class RegistroCore {
 
 		List<Object> list = aspsDAO.select(pagExpr,true,cf);
 
-		if(list==null || list.size()<0) {
+		if(list==null || list.size()<=0) {
 			throw new NotFoundException("NonPresente");
 		}
 		if(list.size()>1) {

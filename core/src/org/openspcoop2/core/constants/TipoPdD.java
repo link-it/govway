@@ -51,11 +51,11 @@ public enum TipoPdD implements Serializable {
 		return this.tipo;
 	}
 	
-	public boolean equals(TipoPdD tipoPdD){
+	public boolean equals(String tipoPdD){
 		if(tipoPdD==null) {
 			return false;
 		}
-		return this.tipo.equals(tipoPdD.getTipo());
+		return this.tipo.equals(tipoPdD);
 	}
 	
 	public static TipoPdD toTipoPdD(String value){

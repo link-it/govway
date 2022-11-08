@@ -63,13 +63,6 @@ public enum CorrelazioneApplicativaGestioneIdentificazioneFallita implements IEn
 	public String toString(){
 		return this.value;
 	}
-	public boolean equals(CorrelazioneApplicativaGestioneIdentificazioneFallita object){
-		if(object==null)
-			return false;
-		if(object.getValue()==null)
-			return false;
-		return object.getValue().equals(this.getValue());	
-	}
 	public boolean equals(String object){
 		if(object==null)
 			return false;

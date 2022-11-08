@@ -33,7 +33,7 @@ import org.openspcoop2.utils.rest.api.Api;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AccordoServizioWrapper implements java.io.Serializable{
+public class AccordoServizioWrapper implements java.io.Serializable, Cloneable{
 
 	/**
 	 * 
@@ -49,13 +49,23 @@ public class AccordoServizioWrapper implements java.io.Serializable{
 	public void setApi(Api api) {
 		this.api = api;
 	}
-	private org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("AccordoServizioWrapperREST");
+	private transient org.openspcoop2.utils.Semaphore _semaphore = new org.openspcoop2.utils.Semaphore("AccordoServizioWrapperREST");
+	public org.openspcoop2.utils.Semaphore getSemaphore(){
+		if(this._semaphore==null) {
+			initSemaphore();
+		}
+		return this._semaphore;
+	}
+	private synchronized void initSemaphore(){
+		 this._semaphore = new org.openspcoop2.utils.Semaphore("AccordoServizioWrapperREST");
+	}
+	
 	public void updateApi(Api api) {
-		this.semaphore.acquireThrowRuntime("updateAPI");
+		this.getSemaphore().acquireThrowRuntime("updateAPI");
 		try {
 			this.api = api;
 		}finally {
-			this.semaphore.release("updateAPI");
+			this.getSemaphore().release("updateAPI");
 		}
 	}
 

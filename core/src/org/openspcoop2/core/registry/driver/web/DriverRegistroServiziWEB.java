@@ -264,7 +264,9 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 			try{
 				if(bin!=null)
 					bin.close();
-			} catch(Exception eis) {}
+			} catch(Exception eis) {
+				// close
+			}
 			if(e instanceof DriverRegistroServiziNotFound)
 				throw (DriverRegistroServiziNotFound)e;
 			else
@@ -441,7 +443,9 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 			try{
 				if(bin!=null)
 					bin.close();
-			} catch(Exception eis) {}
+			} catch(Exception eis) {
+				// close
+			}
 			if(e instanceof DriverRegistroServiziNotFound)
 				throw (DriverRegistroServiziNotFound)e;
 			else
@@ -855,7 +859,9 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 			try{
 				if(bin!=null)
 					bin.close();
-			} catch(Exception eis) {}
+			} catch(Exception eis) {
+				// close
+			}
 			if(e instanceof DriverRegistroServiziNotFound)
 				throw (DriverRegistroServiziNotFound)e;
 			else
@@ -1009,7 +1015,9 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 			try{
 				if(bin!=null)
 					bin.close();
-			} catch(Exception eis) {}
+			} catch(Exception eis) {
+				// close
+			}
 			if(e instanceof DriverRegistroServiziNotFound)
 				throw (DriverRegistroServiziNotFound)e;
 			else
@@ -1172,7 +1180,9 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 			try{
 				if(bin!=null)
 					bin.close();
-			} catch(Exception eis) {}
+			} catch(Exception eis) {
+				// close
+			}
 			if(e instanceof DriverRegistroServiziNotFound)
 				throw (DriverRegistroServiziNotFound)e;
 			else
@@ -1349,7 +1359,9 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 			try{
 				if(bin!=null)
 					bin.close();
-			} catch(Exception eis) {}
+			} catch(Exception eis) {
+				// close
+			}
 			if(e instanceof DriverRegistroServiziNotFound)
 				throw (DriverRegistroServiziNotFound)e;
 			else
@@ -1530,7 +1542,9 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 			try{
 				if(bin!=null)
 					bin.close();
-			} catch(Exception eis) {}
+			} catch(Exception eis) {
+				// close
+			}
 			if(e instanceof DriverRegistroServiziNotFound)
 				throw (DriverRegistroServiziNotFound)e;
 			else
@@ -1665,7 +1679,9 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 			else if(l.size()==1){
 				idSoggetto = l.get(0);
 			}
-		}catch(DriverRegistroServiziNotFound notFound){}
+		}catch(DriverRegistroServiziNotFound notFound){
+			// ignore
+		}
 		
 		if(idSoggetto==null){
 			throw new DriverRegistroServiziNotFound("Nessun soggetto trovato che possiede le credenziali '"+tipoCredenziale.toString()+"' fornite");
@@ -1974,7 +1990,9 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 			try{
 				if(bin!=null)
 					bin.close();
-			} catch(Exception eis) {}
+			} catch(Exception eis) {
+				// close
+			}
 			if(e instanceof DriverRegistroServiziNotFound)
 				throw (DriverRegistroServiziNotFound)e;
 			else
@@ -2117,7 +2135,9 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 			try{
 				if(bin!=null)
 					bin.close();
-			} catch(Exception eis) {}
+			} catch(Exception eis) {
+				// close
+			}
 			if(e instanceof DriverRegistroServiziNotFound)
 				throw (DriverRegistroServiziNotFound)e;
 			else

@@ -1041,6 +1041,28 @@ public class GenericJDBCUtilities {
 			List<ISQLQueryObject> sqlQueryObjectInnerList,List<JDBCObject> jdbcObjects, List<Class<?>> returnClassTypes,
 			Union union,UnionExpression ... unionExpression) throws NotFoundException, ExpressionException, ExpressionNotImplementedException, SQLQueryObjectException, JDBCAdapterException, ServiceException{
 					
+		if(jdbcProperties==null) {
+			throw new ServiceException("jdbcProperties is null");
+		}
+		if(sqlQueryObject==null) {
+			throw new ServiceException("sqlQueryObject is null");
+		}
+		if(sqlQueryObjectInnerList==null) {
+			throw new ServiceException("sqlQueryObjectInnerList is null");
+		}
+		if(jdbcObjects==null) {
+			throw new ServiceException("jdbcObjects is null");
+		}
+		if(returnClassTypes==null) {
+			throw new ServiceException("returnClassTypes is null");
+		}
+		if(union==null) {
+			throw new ServiceException("union is null");
+		}
+		if(unionExpression==null) {
+			throw new ServiceException("unionExpression is null");
+		}
+		
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 		

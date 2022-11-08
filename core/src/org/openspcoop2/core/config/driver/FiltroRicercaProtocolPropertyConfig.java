@@ -20,7 +20,7 @@
 
 
 
-package org.openspcoop2.core.registry.driver;
+package org.openspcoop2.core.config.driver;
 
 import java.io.Serializable;
 
@@ -34,7 +34,7 @@ import java.io.Serializable;
  * @version $Rev$, $Date$
  */
 
-public class FiltroRicercaProtocolProperty extends org.openspcoop2.core.mapping.FiltroRicercaProtocolProperty implements Serializable{
+public class FiltroRicercaProtocolPropertyConfig extends org.openspcoop2.core.mapping.FiltroRicercaProtocolProperty implements Serializable{
 
 	
 	/**

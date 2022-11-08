@@ -30,6 +30,7 @@ import org.apache.logging.log4j.Level;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
@@ -135,7 +136,7 @@ public class TestXMLDataConverter {
 						
 			superUser = reader.getProperty("openspcoop2.superuser");
 			if(superUser!=null)
-				superUser.trim();
+				superUser = superUser.trim();
 			
 			if("db".equals(args_tipoConfigurazioneCRUD)){
 				// Database
@@ -220,16 +221,20 @@ public class TestXMLDataConverter {
 			try{
 				if(connectionSQL!=null)
 					connectionSQL.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 	
 	
+	private static Semaphore semaphoreResetEffettuata = new Semaphore("TestXMLDataConverterConfigReset");
 	private static Boolean resetEffettuata = false;
 	private static boolean reset(boolean b){
 		if(b){
 			// Se si desidera la reset, controllo se e' gia stata effettuata
-			synchronized (TestXMLDataConverter.resetEffettuata) {
+			semaphoreResetEffettuata.acquireThrowRuntime("reset");
+			try {
 				if(TestXMLDataConverter.resetEffettuata==false){
 					TestXMLDataConverter.resetEffettuata=true;
 					return true;
@@ -237,6 +242,8 @@ public class TestXMLDataConverter {
 				else{
 					return false;
 				}
+			}finally {
+				semaphoreResetEffettuata.release("reset");
 			}
 		}
 		return false;

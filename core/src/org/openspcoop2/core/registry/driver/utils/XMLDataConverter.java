@@ -200,7 +200,9 @@ public class XMLDataConverter {
 					if(f.getParentFile()!=null){
 						this.parentFile = f.getParentFile();
 					}
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 			}
 			else if (sorgente instanceof byte[]){
 				createSorgente((byte[])sorgente);
@@ -224,7 +226,9 @@ public class XMLDataConverter {
 					if(f.getParentFile()!=null){
 						this.parentFile = f.getParentFile();
 					}
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 			}
 		}catch(DriverRegistroServiziException d){
 			throw d;
@@ -387,7 +391,9 @@ public class XMLDataConverter {
 					if(f.getParentFile()!=null){
 						this.parentFile = f.getParentFile();
 					}
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 			}
 			else if (sorgente instanceof byte[]){
 				createSorgente((byte[])sorgente);
@@ -411,7 +417,9 @@ public class XMLDataConverter {
 					if(f.getParentFile()!=null){
 						this.parentFile = f.getParentFile();
 					}
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 			}
 		}catch(DriverRegistroServiziException d){
 			throw d;
@@ -510,7 +518,9 @@ public class XMLDataConverter {
 					if(f.getParentFile()!=null){
 						this.parentFile = f.getParentFile();
 					}
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 			}
 			else if (sorgente instanceof byte[]){
 				createSorgente((byte[])sorgente);
@@ -534,7 +544,9 @@ public class XMLDataConverter {
 					if(f.getParentFile()!=null){
 						this.parentFile = f.getParentFile();
 					}
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 			}
 		}catch(DriverRegistroServiziException d){
 			throw d;
@@ -590,7 +602,9 @@ public class XMLDataConverter {
 			if(fXML!=null){
 				try{
 					fXML.close();
-				}catch(Exception e){}
+				}catch(Exception e){
+					// close
+				}
 			}
 		}
 		
@@ -612,7 +626,9 @@ public class XMLDataConverter {
 							iStream.close();
 						if(httpConn !=null)
 							httpConn.disconnect();
-					} catch(Exception ef) {}
+					} catch(Exception ef) {
+						// ignore
+					}
 					throw new DriverRegistroServiziException("Riscontrato errore durante la creazione dell'inputStream del registro dei servizi (HTTP) : \n\n"+e.getMessage());
 				}
 			}else{
@@ -635,7 +651,9 @@ public class XMLDataConverter {
 						iStream.close();
 					if(httpConn !=null)
 						httpConn.disconnect();
-				} catch(Exception ef) {}
+				} catch(Exception ef) {
+					// ignore
+				}
 				throw new DriverRegistroServiziException("Riscontrato errore durante l'unmarshall del file di configurazione: "+e.getMessage());
 			}
 
@@ -682,7 +700,9 @@ public class XMLDataConverter {
 				try{  
 					if(iStream!=null)
 						iStream.close();
-				} catch(java.io.IOException ef) {}
+				} catch(java.io.IOException ef) {
+					// close
+				}
 				throw new DriverRegistroServiziException("Riscontrato errore durante la creazione dell'inputStreamReader del registro dei servizi : \n\n"+e.getMessage());
 			}
 
@@ -695,7 +715,9 @@ public class XMLDataConverter {
 				try{  
 					if(iStream!=null)
 						iStream.close();
-				} catch(Exception ef) {}
+				} catch(Exception ef) {
+					// close
+				}
 				throw new DriverRegistroServiziException("Riscontrato errore durante l'unmarshall del file di configurazione: "+e.getMessage());
 			}
 
@@ -1106,7 +1128,9 @@ public class XMLDataConverter {
 								if(driver.isAtomica()) {
 									con.commit();
 								}
-							}catch(Throwable t) {}
+							}catch(Throwable t) {
+								// ignore
+							}
 							driver.releaseConnection(con);
 						}
 					}
@@ -1247,7 +1271,9 @@ public class XMLDataConverter {
 							if(file!=null){
 								file.close();
 							}
-						}catch(Exception eClose){}
+						}catch(Exception eClose){
+							// close
+						}
 					}
 				}
 				else if(this.parentFile!=null){
@@ -1267,7 +1293,9 @@ public class XMLDataConverter {
 								if(file!=null){
 									file.close();
 								}
-							}catch(Exception eClose){}
+							}catch(Exception eClose){
+								// close
+							}
 						}	
 					}
 				}
@@ -1399,7 +1427,9 @@ public class XMLDataConverter {
 							if(file!=null){
 								file.close();
 							}
-						}catch(Exception eClose){}
+						}catch(Exception eClose){
+							// close
+						}
 					}		
 				}
 				else if(this.parentFile!=null){
@@ -1419,7 +1449,9 @@ public class XMLDataConverter {
 								if(file!=null){
 									file.close();
 								}
-							}catch(Exception eClose){}
+							}catch(Exception eClose){
+								// close
+							}
 						}	
 					}
 				}

@@ -34,7 +34,10 @@ import javax.xml.bind.annotation.XmlElements;
 @javax.xml.bind.annotation.XmlType(name = "id-entity", namespace="http://www.openspcoop2.org/core/registry/management", propOrder = {
 	    "id"
 	})
-public class IdEntity extends org.openspcoop2.utils.beans.BaseBean {
+public class IdEntity extends org.openspcoop2.utils.beans.BaseBean implements java.io.Serializable {
+
+	private static final long serialVersionUID = 1L;
+	
 	@XmlElements({
 	@XmlElement(name="wrapperIdAccordoCooperazione", namespace="http://www.openspcoop2.org/core/registry/management", type=WrapperIdAccordoCooperazione.class),
 	
