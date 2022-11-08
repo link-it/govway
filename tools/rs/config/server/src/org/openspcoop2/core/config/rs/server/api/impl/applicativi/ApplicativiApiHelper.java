@@ -376,7 +376,9 @@ public class ApplicativiApiHelper {
 			}
 		}
 	
-		ret.setCredenziali(authFromCredenziali(invPorta.getCredenzialiList()));
+		if(invPorta!=null) {
+			ret.setCredenziali(authFromCredenziali(invPorta.getCredenzialiList()));
+		}
 			
 		if(sa.sizeProprietaList()>0) {
 			for (org.openspcoop2.core.config.Proprieta proprieta : sa.getProprietaList()) {
@@ -821,7 +823,7 @@ public class ApplicativiApiHelper {
 			if (!portaDominio.equals(tmpSoggettoProprietarioSa.getPortaDominio()))
 				continue;
 			
-			if (tipoOperazione == TipoOperazione.CHANGE && sa.getNome().equals(saConflict.getNome()) && (sa.getIdSoggetto() == saConflict.getIdSoggetto())) {
+			if (tipoOperazione == TipoOperazione.CHANGE && sa.getNome().equals(saConflict.getNome()) && (sa.getIdSoggetto().longValue() == saConflict.getIdSoggetto().longValue())) {
 				continue;
 			}
 			

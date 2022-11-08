@@ -61,8 +61,7 @@ public class ConnettoreAPIHelper {
 	private static Map<String, IConnettoreApiHelper> helpers;
 	private static Map<ConnettoreEnum, IConnettoreApiHelper> helpersByEnum;
 	
-	private static IConnettoreApiHelper getHelper(String tipo, Boolean custom, boolean isMessageBox) throws Exception {
-		
+	private static synchronized void initHelper() {
 		if(helpers== null) {
 			helpers = new HashMap<>();
 			ConnettoreHTTPApiHelper connHttpApiHelper = new ConnettoreHTTPApiHelper();
@@ -74,6 +73,13 @@ public class ConnettoreAPIHelper {
 			helpers.put(TipiConnettore.NULLECHO.toString(), new ConnettoreEchoApiHelper());
 			helpers.put(TipiConnettore.DISABILITATO.toString(), new ConnettoreMessageBoxApiHelper());
 			helpers.put(CUSTOM_KEY, new ConnettorePluginApiHelper());
+		}
+	}
+	
+	private static IConnettoreApiHelper getHelper(String tipo, Boolean custom, boolean isMessageBox) throws Exception {
+		
+		if(helpers== null) {
+			initHelper();
 		}
 		
 		if(helpers.containsKey(tipo)) {
@@ -91,8 +97,7 @@ public class ConnettoreAPIHelper {
 		}
 	}
 
-	private static IConnettoreApiHelper getHelper(ConnettoreEnum tipo) throws Exception {
-		
+	private static synchronized void initHelperByEnum() {
 		if(helpersByEnum== null) {
 			helpersByEnum = new HashMap<>();
 			helpersByEnum.put(ConnettoreEnum.HTTP, new ConnettoreHTTPApiHelper());
@@ -102,6 +107,13 @@ public class ConnettoreAPIHelper {
 			helpersByEnum.put(ConnettoreEnum.ECHO, new ConnettoreEchoApiHelper());
 			helpersByEnum.put(ConnettoreEnum.PLUGIN, new ConnettorePluginApiHelper());
 			helpersByEnum.put(ConnettoreEnum.MESSAGE_BOX, new ConnettoreMessageBoxApiHelper());
+		}
+	}
+	
+	private static IConnettoreApiHelper getHelper(ConnettoreEnum tipo) throws Exception {
+		
+		if(helpersByEnum== null) {
+			initHelperByEnum();
 		}
 		
 		if(helpersByEnum.containsKey(tipo)) {

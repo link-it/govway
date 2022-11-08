@@ -834,7 +834,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 					as.getNome(), new IDSoggetto(as.getSoggettoReferente().getTipo(), as.getSoggettoReferente().getNome()));
 
 			Optional<AccordoServizioParteComune> newApc = BaseHelper.findFirst(asParteComuneCompatibili,
-					a -> a.getVersione() == body.getApiVersione());
+					a -> (a.getVersione()!=null && body.getApiVersione()!=null && (a.getVersione().intValue() == body.getApiVersione().intValue())));
 
 			if (!newApc.isPresent()) {
 				throw FaultCode.RICHIESTA_NON_VALIDA

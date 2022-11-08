@@ -82,7 +82,7 @@ public class ValidationExceptionMapper implements ExceptionMapper<ValidationExce
 		return Response.status(problem.getStatus()).entity(problem).type(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807).build();
 	}
 	
-	public void _setType(Problem problem, ValidationException e) {
+	public void _setType(ProblemRFC7807 problem, ValidationException e) {
 		if(this.typeGenerator==null) {
 			return;
 		}
@@ -90,7 +90,7 @@ public class ValidationExceptionMapper implements ExceptionMapper<ValidationExce
 	}
 	
 	
-	public void updateProblem(Problem problem, ValidationException e) {
+	public void updateProblem(ProblemRFC7807 problem, ValidationException e) {
 		
 	}
 }

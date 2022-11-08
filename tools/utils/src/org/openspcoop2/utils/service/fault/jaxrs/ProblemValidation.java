@@ -29,10 +29,10 @@ import java.util.List;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ProblemValidation extends Problem {
+public class ProblemValidation extends ProblemRFC7807 {
 	
 	public ProblemValidation() {}
-	public ProblemValidation(Problem problem) {
+	public ProblemValidation(ProblemRFC7807 problem) {
 		super();
 		this.setDetail(problem.getDetail());
 		this.setInstance(problem.getInstance());

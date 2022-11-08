@@ -41,8 +41,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 
@@ -57,7 +55,6 @@ public class AuthenticationProvider implements org.springframework.security.auth
 
 	private Logger log = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
-	private UserDetailsService userDetailsService;
 	private String configuratorRoleName = "configuratore";	
 
 	private static ICrypt passwordManager = null;
@@ -135,21 +132,8 @@ public class AuthenticationProvider implements org.springframework.security.auth
 //		}
 	
 		// Wrap in UsernamePasswordAuthenticationToken
-		UsernamePasswordAuthenticationToken userAuth = null;
-		if(this.userDetailsService!=null) {
-			try {
-	            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-	            userAuth = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
-		    }catch(UsernameNotFoundException e){
-		    	String msg = "User '"+username+"' unknown: "+e.getMessage();
-		    	this.log.debug(msg,e);
-		    	throw new BadCredentialsException(msg,e);
-		    }
-		}
-		else {	
-			User user = new User(username, "secret", true, true, true, true, roles);
-			userAuth = new UsernamePasswordAuthenticationToken(user, "secret", user.getAuthorities());
-		}
+		User user = new User(username, "secret", true, true, true, true, roles);
+		UsernamePasswordAuthenticationToken userAuth = new UsernamePasswordAuthenticationToken(user, "secret", user.getAuthorities());
 		userAuth.setDetails(authentication.getDetails());
 		return userAuth;
 		

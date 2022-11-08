@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.core.config.rs.server.config;
+package org.openspcoop2.core.monitor.rs.server.config;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.beans.BeanUtils;
@@ -30,9 +30,9 @@ import org.openspcoop2.utils.beans.BeanUtils;
  * @version $Rev$, $Date$
  * 
  */
-public class ContextConfig extends org.openspcoop2.utils.service.context.ContextConfig {
+public class ApiContextConfig extends org.openspcoop2.utils.service.context.ContextConfig {
 
-	public ContextConfig() throws UtilsException{
+	public ApiContextConfig() throws UtilsException{
 		org.openspcoop2.utils.service.context.ContextConfig cc = ServerProperties.getInstance().getContextConfig();
 		BeanUtils.copy(this, cc);
 	}

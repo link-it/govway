@@ -70,11 +70,11 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<javax.ws.r
 	
 	@Override
 	public Response toResponse(javax.ws.rs.WebApplicationException e) {
-		if(e.getResponse()==null || e.getResponse().getEntity()==null || !(e.getResponse().getEntity() instanceof Problem)) {
+		if(e.getResponse()==null || e.getResponse().getEntity()==null || !(e.getResponse().getEntity() instanceof ProblemRFC7807)) {
 			
 			this.log.error(e.getMessage(),e);
 			
-			Problem problem = null;
+			ProblemRFC7807 problem = null;
 			
             if(e.getCause() instanceof JsonMappingException) {
             	JsonMappingException jsonMappingException = (JsonMappingException) e.getCause();
@@ -123,7 +123,7 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<javax.ws.r
 				return responseBuilder.build();
 			} else {
 				
-				Problem problem = this._getProblem(e);
+				ProblemRFC7807 problem = this._getProblem(e);
 				if(problem!=null) {
 		            this.updateProblem(problem, e); // customizzabile
 		            this._setType(problem, e);
@@ -138,17 +138,17 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<javax.ws.r
 		}
 	}
 	
-	private Problem _getProblem(javax.ws.rs.WebApplicationException e) {
+	private ProblemRFC7807 _getProblem(javax.ws.rs.WebApplicationException e) {
 		if(e==null || e.getResponse()==null || e.getResponse().getEntity()==null) {
 			return null;
 		}
-		if(!(e.getResponse().getEntity() instanceof Problem)) {
+		if(!(e.getResponse().getEntity() instanceof ProblemRFC7807)) {
 			return null;
 		}
-		Problem problem = (Problem) e.getResponse().getEntity();
+		ProblemRFC7807 problem = (ProblemRFC7807) e.getResponse().getEntity();
 		return problem;
 	}
-	private void _setType(Problem problem, javax.ws.rs.WebApplicationException e) {
+	private void _setType(ProblemRFC7807 problem, javax.ws.rs.WebApplicationException e) {
 		if(this.typeGenerator==null) {
 			return;
 		}
@@ -156,7 +156,7 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<javax.ws.r
 	}
 	
 	
-	public void updateProblem(Problem problem, javax.ws.rs.WebApplicationException e) {
+	public void updateProblem(ProblemRFC7807 problem, javax.ws.rs.WebApplicationException e) {
 		
 	}
 

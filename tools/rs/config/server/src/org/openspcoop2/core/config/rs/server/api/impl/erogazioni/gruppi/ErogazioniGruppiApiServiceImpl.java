@@ -47,6 +47,7 @@ import org.openspcoop2.core.config.rs.server.model.ModalitaConfigurazioneGruppoE
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
@@ -176,8 +177,8 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 				
 				if(confNuova.getAutenticazione()!=null) {
 					erogazioneAutenticazione = Enums.toTipoAutenticazione(confNuova.getAutenticazione().getTipo()).toString();
-					Boolean autenticazioneOpzionale = ErogazioniApiHelper.getAutenticazioneOpzionale(confNuova.getAutenticazione()); // gestisce authn se null
-					erogazioneAutenticazioneOpzionale = ServletUtils.boolToCheckBoxStatus(autenticazioneOpzionale);
+					BooleanNullable autenticazioneOpzionaleNullable = ErogazioniApiHelper.getAutenticazioneOpzionale(confNuova.getAutenticazione()); // gestisce authn se null
+					erogazioneAutenticazioneOpzionale = ServletUtils.boolToCheckBoxStatus(autenticazioneOpzionaleNullable!=null ? autenticazioneOpzionaleNullable.getValue() : null);
 					erogazioneAutenticazionePrincipal = ErogazioniApiHelper.getTipoAutenticazionePrincipal(confNuova.getAutenticazione()); 
 					erogazioneAutenticazioneParametroList = ErogazioniApiHelper.getAutenticazioneParametroList(env, confNuova.getAutenticazione().getTipo(), confNuova.getAutenticazione());
 				}

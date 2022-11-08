@@ -873,7 +873,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
-			if ((body.getNome().indexOf(" ") != -1) || (body.getNome().indexOf(" ") != -1)) {
+			if ((body.getNome().indexOf(" ") != -1) || (body.getValore().indexOf(" ") != -1)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 			}
 			
@@ -3232,7 +3232,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			
-			if ((body.getNome().indexOf(" ") != -1) || (body.getNome().indexOf(" ") != -1)) {
+			if ((body.getNome().indexOf(" ") != -1) || (body.getValore().indexOf(" ") != -1)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 			}
 			

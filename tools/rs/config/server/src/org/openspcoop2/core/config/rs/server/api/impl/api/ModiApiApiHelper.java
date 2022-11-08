@@ -344,7 +344,7 @@ public class ModiApiApiHelper {
 		sicurezzaMessaggio.setPattern(profiloSicurezzaMessaggioPattern);
 
 		
-		if(!profiloSicurezzaMessaggioPattern.equals(ModISicurezzaMessaggioEnum.DISABILITATO)) {
+		if(profiloSicurezzaMessaggioPattern!=null && !profiloSicurezzaMessaggioPattern.equals(ModISicurezzaMessaggioEnum.DISABILITATO)) {
 			if(isSOAP) {
 				populateSicurezzaMessaggioSOAP(p, sicurezzaMessaggio);
 			} else {

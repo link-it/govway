@@ -45,7 +45,7 @@
 		<if>
 			<istrue value="${swaggerCodeGen.useGovwayTemplate}" />
 			<then>
-				<var name="swaggerCodeGenCliJarName" value="swagger-codegen-cli-3.0.18-gov4j-3.jar"/>	
+				<var name="swaggerCodeGenCliJarName" value="swagger-codegen-cli-3.0.18-gov4j-4.jar"/>	
 			</then>
 		</if>
 		<!-- per vedere i parametri disponibili: java -jar lib/swagger-codegen/swagger-codegen-cli-3.0.18.jar generate -h -->
@@ -253,7 +253,7 @@ paths:
 		<if>
 			<istrue value="${swaggerCodeGen.useGovwayTemplate}" />
 			<then>
-				<var name="swaggerCodeGenCliJarName" value="swagger-codegen-cli-3.0.18-gov4j-3.jar"/>	
+				<var name="swaggerCodeGenCliJarName" value="swagger-codegen-cli-3.0.18-gov4j-4.jar"/>	
 			</then>
 		</if>
 		<java jar="${required_lib}/swagger-codegen/${swaggerCodeGenCliJarName}" fork="true">

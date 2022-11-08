@@ -94,7 +94,7 @@ public class StatusApiServiceImpl extends BaseImpl implements StatusApi {
 				
 				if(ok) {
 					p = new Problem();
-					org.openspcoop2.utils.service.fault.jaxrs.Problem pUtils = FaultCode.STATUS_OK.toFault();
+					org.openspcoop2.utils.service.fault.jaxrs.ProblemRFC7807 pUtils = FaultCode.STATUS_OK.toFault();
 					List<BlackListElement> metodiEsclusi = new ArrayList<BlackListElement>(0);
 					BeanUtils.copy(p, pUtils, metodiEsclusi);
 				}

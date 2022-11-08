@@ -437,7 +437,9 @@ public class CommonConsegnaMultipla {
 				
 				index++;
 				Utilities.sleep(1000);
+				continue;
 			}
+			
 			break;
 			
 		}

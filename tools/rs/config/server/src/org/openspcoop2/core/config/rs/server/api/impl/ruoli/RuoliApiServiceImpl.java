@@ -288,7 +288,9 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
 			org.openspcoop2.core.registry.Ruolo oldRuolo = null;
 			try {
 				oldRuolo = rEnv.ruoliCore.getRuolo(nome); 
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				// ignore
+			}
 			if (oldRuolo == null) throw FaultCode.NOT_FOUND.toException("Nessun ruolo da aggiornare corrisponde al nome: " + nome);
 			
 			org.openspcoop2.core.registry.Ruolo ruoloNEW = RuoliApiHelper.apiRuoloToRuoloRegistro(body, rEnv.userLogin);

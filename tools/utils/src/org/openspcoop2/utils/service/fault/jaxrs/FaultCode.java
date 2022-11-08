@@ -77,21 +77,21 @@ public class FaultCode {
 		return this.descrizione;
 	}
 
-	public Problem toFault() {
-		Problem problem = new Problem();
+	public ProblemRFC7807 toFault() {
+		ProblemRFC7807 problem = new ProblemRFC7807();
 		problem.setType("https://httpstatuses.com/"+this.code);
 		problem.setStatus(this.code);
 		problem.setTitle(HttpUtilities.getHttpReason(this.code));
 		problem.setDetail(this.descrizione);
 		return problem;
 	}
-	public Problem toFault(String dettaglio) {
-		Problem problem = this.toFault();
+	public ProblemRFC7807 toFault(String dettaglio) {
+		ProblemRFC7807 problem = this.toFault();
 		problem.setDetail(dettaglio);
 		return problem;
 	}
-	public Problem toFault(Throwable e) {
-		Problem problem = this.toFault();
+	public ProblemRFC7807 toFault(Throwable e) {
+		ProblemRFC7807 problem = this.toFault();
 		problem.setDetail(e.getMessage());
 		return problem;
 	}
@@ -100,7 +100,7 @@ public class FaultCode {
 		return this.toFaultResponseBuilder(true);
 	}
 	public ResponseBuilder toFaultResponseBuilder(boolean addFault) {
-		Problem problem = this.toFault();
+		ProblemRFC7807 problem = this.toFault();
 		ResponseBuilder rb = Response.status(this.code);
 		if(addFault) {
 			rb.entity(problem).type(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);
@@ -108,11 +108,11 @@ public class FaultCode {
 		return rb;
 	}
 	public ResponseBuilder toFaultResponseBuilder(String dettaglio) {
-		Problem problem = this.toFault(dettaglio);
+		ProblemRFC7807 problem = this.toFault(dettaglio);
 		return Response.status(this.code).entity(problem).type(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);
 	}
 	public ResponseBuilder toFaultResponseBuilder(Throwable e) {
-		Problem problem = this.toFault(e);
+		ProblemRFC7807 problem = this.toFault(e);
 		return Response.status(this.code).entity(problem).type(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);
 	}
 	

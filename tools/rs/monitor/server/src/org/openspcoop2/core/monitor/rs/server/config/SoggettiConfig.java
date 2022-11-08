@@ -29,6 +29,7 @@ import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.slf4j.Logger;
 
@@ -42,7 +43,7 @@ import org.slf4j.Logger;
  */
 public class SoggettiConfig {
 
-	private static Boolean semaphore = true;
+	private static Semaphore semaphore = new Semaphore("ApiSoggettiConfig");
 	
 	public static boolean existsIdentificativoPorta(String tipoSoggetto, String nomeSoggetto) {
 		
@@ -82,8 +83,8 @@ public class SoggettiConfig {
 				return false;
 			}
 			
-			synchronized (semaphore) {
-				
+			semaphore.acquire("existsIdentificativoPorta");
+			try {
 				// controllo se non fosse gia' stato riaggiunto da un altro thread
 				
 				if(Utility.existsIdentificativoPorta(tipoSoggetto, nomeSoggetto)) {
@@ -93,6 +94,8 @@ public class SoggettiConfig {
 				Utility.putIdentificativoPorta(tipoSoggetto, nomeSoggetto, soggetto.getIdentificativoPorta());
 				
 				return true;
+			}finally {
+				semaphore.release("existsIdentificativoPorta");
 			}
 			
 		} 

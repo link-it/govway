@@ -818,8 +818,8 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 
 			if(asps!=null) {
 				idAps.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+				idAps.setPortType(asps.getPortType());
 			}
-			idAps.setPortType(asps.getPortType());
 
 			idFruizione.setIdServizio(idAps);
 			idFruizione.setIdFruitore(new IDSoggetto(env.idSoggetto.getTipo(), env.idSoggetto.getNome()));
@@ -945,7 +945,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 					as.getNome(), new IDSoggetto(as.getSoggettoReferente().getTipo(), as.getSoggettoReferente().getNome()));
 
 			Optional<AccordoServizioParteComune> newApc = BaseHelper.findFirst(asParteComuneCompatibili,
-					a -> a.getVersione() == body.getApiVersione());
+					a -> (a.getVersione()!=null && body.getApiVersione()!=null && (a.getVersione().intValue() == body.getApiVersione().intValue())));
 
 			if (!newApc.isPresent()) {
 				throw FaultCode.RICHIESTA_NON_VALIDA

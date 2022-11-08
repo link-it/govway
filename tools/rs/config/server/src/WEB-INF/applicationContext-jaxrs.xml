@@ -81,7 +81,7 @@
 	<b:bean id="dumpSendMessageToFileSystemInterceptor" class="org.openspcoop2.utils.service.logger.DumpSendMessageToFileSystemInterceptor"/>
 
 	<!-- Context -->
-	<b:bean id="contextConfig" class="org.openspcoop2.core.config.rs.server.config.ContextConfig"/>
+	<b:bean id="contextConfig" class="org.openspcoop2.core.config.rs.server.config.ApiContextConfig"/>
 	<!--  <b:bean id="customContextFactory" class="org.openspcoop2.utils.service.context.ExampleCustomContextFactory"/> -->
 	<b:bean id="context" class="org.openspcoop2.utils.service.context.ContextFeature">
 		<!-- <b:property name="contextFactory" >

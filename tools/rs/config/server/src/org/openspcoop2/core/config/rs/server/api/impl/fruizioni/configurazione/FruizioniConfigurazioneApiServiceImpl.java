@@ -543,7 +543,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			
-			if ((body.getNome().indexOf(" ") != -1) || (body.getNome().indexOf(" ") != -1)) {
+			if ((body.getNome().indexOf(" ") != -1) || (body.getValore().indexOf(" ") != -1)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 			}
 			
@@ -2763,7 +2763,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			
-			if ((body.getNome().indexOf(" ") != -1) || (body.getNome().indexOf(" ") != -1)) {
+			if ((body.getNome().indexOf(" ") != -1) || (body.getValore().indexOf(" ") != -1)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 			}
 			

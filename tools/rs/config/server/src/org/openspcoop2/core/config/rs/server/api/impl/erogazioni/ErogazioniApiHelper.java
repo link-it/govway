@@ -157,6 +157,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
@@ -838,25 +839,25 @@ public class ErogazioniApiHelper {
 		return list;
 	}
 
-	public static Boolean getAutenticazioneOpzionale(Object authn) {
+	public static org.openspcoop2.utils.BooleanNullable getAutenticazioneOpzionale(Object authn) {
 		if(authn!=null) {
 			if(authn instanceof APIImplAutenticazioneBasic) {
-				return ((APIImplAutenticazioneBasic)authn).isOpzionale();
+				return new org.openspcoop2.utils.BooleanNullable(((APIImplAutenticazioneBasic)authn).isOpzionale());
 			}
 			else if(authn instanceof APIImplAutenticazioneHttps) {
-				return ((APIImplAutenticazioneHttps)authn).isOpzionale();
+				return new org.openspcoop2.utils.BooleanNullable(((APIImplAutenticazioneHttps)authn).isOpzionale());
 			}
 			else if(authn instanceof APIImplAutenticazionePrincipal) {
-				return ((APIImplAutenticazionePrincipal)authn).isOpzionale();
+				return new org.openspcoop2.utils.BooleanNullable(((APIImplAutenticazionePrincipal)authn).isOpzionale());
 			}
 			else if(authn instanceof APIImplAutenticazioneApiKey) {
-				return ((APIImplAutenticazioneApiKey)authn).isOpzionale();
+				return new org.openspcoop2.utils.BooleanNullable(((APIImplAutenticazioneApiKey)authn).isOpzionale());
 			}
 			else if(authn instanceof APIImplAutenticazioneCustom) {
-				return ((APIImplAutenticazioneCustom)authn).isOpzionale();
+				return new org.openspcoop2.utils.BooleanNullable(((APIImplAutenticazioneCustom)authn).isOpzionale());
 			}
 		}
-		return null;
+		return org.openspcoop2.utils.BooleanNullable.NULL();
 	}
 	
 	public static TipoAutenticazionePrincipal getTipoAutenticazionePrincipal(Object authn){
@@ -1220,7 +1221,7 @@ public class ErogazioniApiHelper {
 		
 		final boolean escludiFruitore = fruizioniEscludiSoggettoFruitore;
 		String[] soggettiCompatibili = listSoggetti.stream()
-				.filter( s -> generaPortaApplicativa || ( !escludiFruitore || s.getId() != fruitore.get().getId() ) )
+				.filter( s -> generaPortaApplicativa || ( !escludiFruitore || (s.getId().longValue() != fruitore.get().getId().longValue()) ) )
 				.map( s -> s.getId().toString())
 				.toArray(String[]::new);
 		
@@ -1298,7 +1299,7 @@ public class ErogazioniApiHelper {
         	autenticazionePrincipal = getTipoAutenticazionePrincipal(authn); 
         	autenticazioneParametroList = getAutenticazioneParametroList(env, authn.getTipo(), authn);
         }
-        final Boolean autenticazioneOpzionale = getAutenticazioneOpzionale(authn); // gestisce authn se null
+        final BooleanNullable autenticazioneOpzionaleNullable = getAutenticazioneOpzionale(authn); // gestisce authn se null
         AllAnyEnum ruoliRichiesti = null;
         
         if ( generaPortaApplicativa && as.getServiceBinding() == ServiceBinding.SOAP && authz != null && authz.getTipo() != null ) {
@@ -1541,7 +1542,7 @@ public class ErogazioniApiHelper {
         		null,	// erogazioneSoggetto, Come da codice console.
         		erogazioneRuolo,	//, non viene utilizzato.
         		evalnull( () -> Enums.tipoAutenticazioneFromRest.get(authn.getTipo()).toString() ),		// erogazioneAutenticazione
-        		evalnull( () -> ServletUtils.boolToCheckBoxStatus( autenticazioneOpzionale ) ),					// erogazioneAutenticazioneOpzionale
+        		evalnull( () -> ServletUtils.boolToCheckBoxStatus( autenticazioneOpzionaleNullable!=null ? autenticazioneOpzionaleNullable.getValue() : null ) ),					// erogazioneAutenticazioneOpzionale
         		autenticazionePrincipal, // erogazioneAutenticazionePrincipal
         		autenticazioneParametroList, // erogazioneAutenticazioneParametroList
         		statoAutorizzazione,					   	// erogazioneAutorizzazione QUESTO E' lo STATO dell'autorizzazione
@@ -1555,7 +1556,7 @@ public class ErogazioniApiHelper {
         		null,																	// fruizioneServizioApplicativo
         		null,																	// Ruolo fruizione, non viene utilizzato.
         		evalnull( () -> Enums.tipoAutenticazioneFromRest.get(authn.getTipo()).toString() ),  // fruizioneAutenticazione 
-        		evalnull( () -> ServletUtils.boolToCheckBoxStatus( autenticazioneOpzionale ) ), 			// fruizioneAutenticazioneOpzionale
+        		evalnull( () -> ServletUtils.boolToCheckBoxStatus( autenticazioneOpzionaleNullable!=null ? autenticazioneOpzionaleNullable.getValue() : null ) ), 			// fruizioneAutenticazioneOpzionale
         		autenticazionePrincipal, // fruizioneAutenticazionePrincipal
         		autenticazioneParametroList, // fruizioneAutenticazioneParametroList
         		statoAutorizzazione,											// fruizioneAutorizzazione 	
@@ -1716,7 +1717,10 @@ public class ErogazioniApiHelper {
 		final OneOfAPIImplAutorizzazione authz = impl.getAutorizzazione();
         final OneOfAPIImplAutenticazione authn = impl.getAutenticazione();
         
-        final AccordoServizioParteComuneSintetico as = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
+        AccordoServizioParteComuneSintetico as = null;
+        if(asps!=null) {
+        	as = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
+        }
 
         FonteEnum ruoliFonte = FonteEnum.QUALSIASI;
         
@@ -1733,7 +1737,7 @@ public class ErogazioniApiHelper {
         	autenticazionePrincipal = getTipoAutenticazionePrincipal(authn); 
         	autenticazioneParametroList = getAutenticazioneParametroList(env, authn.getTipo(), authn);
         }
-        final Boolean autenticazioneOpzionale = getAutenticazioneOpzionale(authn); // gestisce authn se null
+        final org.openspcoop2.utils.BooleanNullable autenticazioneOpzionaleNullable = getAutenticazioneOpzionale(authn); // gestisce authn se null
                 
         if ( evalnull( () -> authz.getTipo() ) != null) {
 		    switch (authz.getTipo()) {
@@ -1787,7 +1791,10 @@ public class ErogazioniApiHelper {
         
     	
         
-    	final IDServizio idServizio = env.idServizioFactory.getIDServizioFromValues(asps.getTipo(), asps.getNome(), new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()), asps.getVersione()); 
+    	IDServizio idServizio = null;
+    	if(asps!=null) {
+    		idServizio = env.idServizioFactory.getIDServizioFromValues(asps.getTipo(), asps.getNome(), new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()), asps.getVersione());
+    	}
 	               
         BinaryParameter xamlPolicy = new BinaryParameter();
         if(authz instanceof APIImplAutorizzazioneXACML) {
@@ -1829,8 +1836,8 @@ public class ErogazioniApiHelper {
 
 			if(asps!=null) {
 				idAps.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+				idAps.setPortType(asps.getPortType());
 			}
-			idAps.setPortType(asps.getPortType());
 
 			idFruizione.setIdServizio(idAps);
 			IDSoggetto idFruitore = new IDSoggetto(env.idSoggetto.getTipo(), env.idSoggetto.getNome());
@@ -1852,7 +1859,7 @@ public class ErogazioniApiHelper {
 				generaPortaApplicativa,										// generaPortaApplicativa,
 				generaPortaDelegata, 										// generaPortaDelegata
 				evalnull( () -> Enums.tipoAutenticazioneFromRest.get(authn.getTipo()).toString() ),											// erogazioneAutenticazione
-        		evalnull( () -> ServletUtils.boolToCheckBoxStatus( autenticazioneOpzionale ) ), 														// erogazioneAutenticazioneOpzionale
+        		evalnull( () -> ServletUtils.boolToCheckBoxStatus( autenticazioneOpzionaleNullable!=null ? autenticazioneOpzionaleNullable.getValue() : null ) ), 														// erogazioneAutenticazioneOpzionale
         		autenticazionePrincipal, // erogazioneAutenticazionePrincipal
         		autenticazioneParametroList, // erogazioneAutenticazioneParametroList
         		statoAutorizzazione,	// autorizzazione, è lo STATO 	
@@ -1900,7 +1907,7 @@ public class ErogazioniApiHelper {
 	
 	public static Fruitore getFruitore(AccordoServizioParteSpecifica asps, String nome) {
 		
-		if(asps.getFruitoreList()!=null) {
+		if(asps!=null && asps.getFruitoreList()!=null) {
 			for(Fruitore f: asps.getFruitoreList()) {
 				if(f.getNome().equals(nome)) {
 					return f;
@@ -2807,12 +2814,20 @@ public class ErogazioniApiHelper {
 		if(aspc!=null) {
 			canaleApi = aspc.getCanale();
 		}
-		String canale = CanaliUtils.getCanale(config.getGestioneCanali(), canaleApi, pa.getCanale());
+		String canale = null;
+		if(config!=null) {
+			canale = CanaliUtils.getCanale(config.getGestioneCanali(), canaleApi, pa.getCanale());
+		}
+		
+		org.openspcoop2.message.constants.ServiceBinding sbMessage = org.openspcoop2.message.constants.ServiceBinding.SOAP;
+		if(aspc!=null) {
+			sbMessage = (ServiceBinding.REST.equals(aspc.getServiceBinding())) ? org.openspcoop2.message.constants.ServiceBinding.REST : org.openspcoop2.message.constants.ServiceBinding.SOAP;
+		}
 		
 		UrlInvocazioneAPI urlInvocazioneAPI = UrlInvocazioneAPI.getConfigurazioneUrlInvocazione(configurazioneUrlInvocazione, env.protocolFactory, RuoloContesto.PORTA_APPLICATIVA, 
-				ServiceBinding.REST.equals(aspc.getServiceBinding()) ? org.openspcoop2.message.constants.ServiceBinding.REST : org.openspcoop2.message.constants.ServiceBinding.SOAP, 
-						pa.getNome(), idServizio.getSoggettoErogatore(),
-						tags, canale);		
+				sbMessage, 
+				pa.getNome(), idServizio.getSoggettoErogatore(),
+				tags, canale);		
 		return urlInvocazioneAPI.getUrl();
 		
 	}
@@ -2845,12 +2860,20 @@ public class ErogazioniApiHelper {
 		if(aspc!=null) {
 			canaleApi = aspc.getCanale();
 		}
-		String canale = CanaliUtils.getCanale(config.getGestioneCanali(), canaleApi, pd.getCanale());
+		String canale = null;
+		if(config!=null) {
+			canale = CanaliUtils.getCanale(config.getGestioneCanali(), canaleApi, pd.getCanale());
+		}
+		
+		org.openspcoop2.message.constants.ServiceBinding sbMessage = org.openspcoop2.message.constants.ServiceBinding.SOAP;
+		if(aspc!=null) {
+			sbMessage = (ServiceBinding.REST.equals(aspc.getServiceBinding())) ? org.openspcoop2.message.constants.ServiceBinding.REST : org.openspcoop2.message.constants.ServiceBinding.SOAP;
+		}
 		
 		UrlInvocazioneAPI urlInvocazioneAPI = UrlInvocazioneAPI.getConfigurazioneUrlInvocazione(configurazioneUrlInvocazione, env.protocolFactory, RuoloContesto.PORTA_DELEGATA, 
-				ServiceBinding.REST.equals(aspc.getServiceBinding()) ? org.openspcoop2.message.constants.ServiceBinding.REST : org.openspcoop2.message.constants.ServiceBinding.SOAP, 
-						pd.getNome(), fruitore,
-						tags, canale);		
+				sbMessage, 
+				pd.getNome(), fruitore,
+				tags, canale);		
 		return urlInvocazioneAPI.getUrl();
 		
 	}
@@ -4280,9 +4303,9 @@ public class ErogazioniApiHelper {
 
 	public static final void fillPortaApplicativa(final ErogazioniEnv env, ControlloAccessiAutenticazione body, final PortaApplicativa newPa) throws InstantiationException, IllegalAccessException {
 		final OneOfControlloAccessiAutenticazioneAutenticazione auth = body.getAutenticazione();
-		final Boolean autenticazioneOpzionale = getAutenticazioneOpzionale(auth); // gestisce auth se null
+		final BooleanNullable autenticazioneOpzionaleNullable = getAutenticazioneOpzionale(auth); // gestisce auth se null
 		
-		newPa.setAutenticazioneOpzionale( evalnull( () -> Helper.boolToStatoFunzionalitaConf(autenticazioneOpzionale)) );
+		newPa.setAutenticazioneOpzionale( evalnull( () -> Helper.boolToStatoFunzionalitaConf(autenticazioneOpzionaleNullable!=null ? autenticazioneOpzionaleNullable.getValue() : null)) );
 		newPa.setAutenticazione( evalnull( () -> Enums.tipoAutenticazioneFromRest.get(auth.getTipo()).toString()) );
 		
         TipoAutenticazionePrincipal autenticazionePrincipal = null;
@@ -4330,9 +4353,9 @@ public class ErogazioniApiHelper {
 	
 	public static final void fillPortaDelegata(final ErogazioniEnv env, ControlloAccessiAutenticazione body, final PortaDelegata newPd) {
 		final OneOfControlloAccessiAutenticazioneAutenticazione auth = body.getAutenticazione();
-		final Boolean autenticazioneOpzionale = getAutenticazioneOpzionale(auth); // gestisce auth se null
+		final BooleanNullable autenticazioneOpzionaleNullable = getAutenticazioneOpzionale(auth); // gestisce auth se null
 		
-		newPd.setAutenticazioneOpzionale( evalnull( () -> Helper.boolToStatoFunzionalitaConf(autenticazioneOpzionale)) );
+		newPd.setAutenticazioneOpzionale( evalnull( () -> Helper.boolToStatoFunzionalitaConf(autenticazioneOpzionaleNullable!=null ? autenticazioneOpzionaleNullable.getValue() : null)) );
 		newPd.setAutenticazione( evalnull( () -> Enums.tipoAutenticazioneFromRest.get(auth.getTipo()).toString()) );
 		
 		TipoAutenticazionePrincipal autenticazionePrincipal = null;
@@ -4799,7 +4822,7 @@ public class ErogazioniApiHelper {
 			tipoRisorsaPolicyAttiva = TipoRisorsaPolicyAttiva.TEMPO_COMPLESSIVO_RISPOSTA;
 			break;
 		}
-		return tipoRisorsaPolicyAttiva.getValue();
+		return tipoRisorsaPolicyAttiva!=null ? tipoRisorsaPolicyAttiva.getValue() : null;
 	}
 	private static String getDataElementModalitaIntervallo(RateLimitingCriteriIntervalloEnum intervallo) {
     	String modalitaRisorsaEsiti = null;

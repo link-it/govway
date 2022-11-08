@@ -75,7 +75,9 @@ public class ServerProperties  {
 		    try{
 				if(properties!=null)
 				    properties.close();
-		    }catch(Exception er){}
+		    }catch(Exception er){
+		    	// close
+		    }
 		}
 
 		this.reader = new ServerInstanceProperties(propertiesReader, this.log, confDir);

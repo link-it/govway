@@ -50,7 +50,8 @@ public class ApiEnv extends Environment {
 		if (profilo == null)
 			profilo = Helper.getProfiloDefault();
 		
-		soggetto = Helper.getSoggettoOrDefault(soggetto, profilo);		
+		//soggetto = 
+		Helper.getSoggettoOrDefault(soggetto, profilo);	
 		
 		this.apcCore = new AccordiServizioParteComuneCore(this.stationCore);
 		this.apcHelper = new AccordiServizioParteComuneHelper(this.stationCore, this.requestWrapper, this.pd, ctx.getServletRequest().getSession());

@@ -538,7 +538,6 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			}
 			
 			final ApplicativiEnv env = new ApplicativiEnv(context.getServletRequest(), profilo, soggetto, context);
-			soggetto = env.idSoggetto.getNome();
 			
 			final ServizioApplicativo oldSa = BaseHelper.supplyOrNotFound( () -> ApplicativiApiHelper.getServizioApplicativo(nome, env.idSoggetto.getNome(), env.tipo_protocollo, env.saCore), "Servizio Applicativo");
 			

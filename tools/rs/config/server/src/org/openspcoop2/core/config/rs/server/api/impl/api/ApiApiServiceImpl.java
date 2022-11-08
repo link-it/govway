@@ -935,7 +935,9 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				break;
 			}
 			
-			Helper.setContentType(context, fileName);
+			if(fileName!=null) {
+				Helper.setContentType(context, fileName);
+			}
 			
 			return spec;
 		} catch (javax.ws.rs.WebApplicationException e) {
