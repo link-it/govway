@@ -34,7 +34,7 @@ import org.openspcoop2.generic_project.exception.DeserializerException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public abstract class AbstractDeserializer {
+public abstract class AbstractDeserializerBase {
 
 	public <T> T xmlToObj(String fileName,Class<T> c) throws DeserializerException {
 		return this.xmlToObj(new File(fileName), c);

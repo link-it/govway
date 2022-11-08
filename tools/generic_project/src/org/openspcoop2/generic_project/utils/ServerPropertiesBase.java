@@ -31,7 +31,7 @@ import org.openspcoop2.utils.Utilities;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ServerProperties {
+public class ServerPropertiesBase {
 
 
 		
@@ -39,10 +39,10 @@ public class ServerProperties {
 	
 	private LoaderProperties loader = null;
 	
-	public ServerProperties(String filePropertiesName) throws ServiceException{
+	public ServerPropertiesBase(String filePropertiesName) throws ServiceException{
 		this.loader = new LoaderProperties(filePropertiesName);
 	}
-	public ServerProperties(Properties properties) throws ServiceException{
+	public ServerPropertiesBase(Properties properties) throws ServiceException{
 		this.loader = new LoaderProperties(properties);
 	}
 	

@@ -32,7 +32,7 @@ import org.openspcoop2.generic_project.exception.ServiceException;
  * @version $Rev$, $Date$
  */
 
-public class AuthorizationManager extends org.openspcoop2.generic_project.utils.AuthorizationManager {
+public class AuthorizationManager extends org.openspcoop2.generic_project.utils.AuthorizationManagerBase {
 
 	// ------- Static -------------
 	

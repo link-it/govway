@@ -31,9 +31,9 @@ import org.openspcoop2.generic_project.exception.ServiceException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class JDBCLimitedServiceManager extends JDBCServiceManager {
+public class JDBCLimitedServiceManager extends JDBCServiceManagerBase {
 
-	public JDBCLimitedServiceManager(JDBCServiceManager jdbcServiceManager){
+	public JDBCLimitedServiceManager(JDBCServiceManagerBase jdbcServiceManager){
 		this.datasource = jdbcServiceManager.datasource;
 		this.connection = jdbcServiceManager.connection;
 		this.log = jdbcServiceManager.log;

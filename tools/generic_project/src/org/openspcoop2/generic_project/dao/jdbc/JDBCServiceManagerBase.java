@@ -44,7 +44,7 @@ import org.openspcoop2.utils.resources.GestoreJNDI;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class JDBCServiceManager {
+public class JDBCServiceManagerBase {
 
 	/** DataSource. */
 	protected DataSource datasource;
@@ -65,23 +65,23 @@ public class JDBCServiceManager {
 	/** Tipo di costruttore */
 	private JDBCServiceManagerTipoCostruttore tipoCostruttore = null;
 	
-	protected JDBCServiceManager(){}
+	protected JDBCServiceManagerBase(){}
 	
-	public JDBCServiceManager(String jndiName, Properties contextJNDI,ServiceManagerProperties serviceManagerProperties) throws ServiceException{
+	public JDBCServiceManagerBase(String jndiName, Properties contextJNDI,ServiceManagerProperties serviceManagerProperties) throws ServiceException{
 		this(jndiName, contextJNDI, new JDBCServiceManagerProperties(serviceManagerProperties), null);
 	}
-	public JDBCServiceManager(String jndiName, Properties contextJNDI,JDBCServiceManagerProperties jdbcProperties) throws ServiceException{
+	public JDBCServiceManagerBase(String jndiName, Properties contextJNDI,JDBCServiceManagerProperties jdbcProperties) throws ServiceException{
 		this(jndiName, contextJNDI, jdbcProperties, null);
 	}
-	public JDBCServiceManager(String jndiName, Properties contextJNDI,ServiceManagerProperties serviceManagerProperties,Logger alog) throws ServiceException{
+	public JDBCServiceManagerBase(String jndiName, Properties contextJNDI,ServiceManagerProperties serviceManagerProperties,Logger alog) throws ServiceException{
 		this(jndiName, contextJNDI, new JDBCServiceManagerProperties(serviceManagerProperties), alog);
 	}
-	public JDBCServiceManager(String jndiName, Properties contextJNDI,JDBCServiceManagerProperties jdbcProperties,Logger alog) throws ServiceException{
+	public JDBCServiceManagerBase(String jndiName, Properties contextJNDI,JDBCServiceManagerProperties jdbcProperties,Logger alog) throws ServiceException{
 		
 		this.tipoCostruttore = JDBCServiceManagerTipoCostruttore.DATASOURCE_CFG;
 		
 		if(alog==null){
-			this.log = LoggerWrapperFactory.getLogger(JDBCServiceManager.class);
+			this.log = LoggerWrapperFactory.getLogger(JDBCServiceManagerBase.class);
 		}else
 			this.log = alog;
 		
@@ -102,21 +102,21 @@ public class JDBCServiceManager {
 		}
 	}
 	
-	public JDBCServiceManager(DataSource ds,ServiceManagerProperties serviceManagerProperties) throws ServiceException{
+	public JDBCServiceManagerBase(DataSource ds,ServiceManagerProperties serviceManagerProperties) throws ServiceException{
 		this(ds, new JDBCServiceManagerProperties(serviceManagerProperties), null);
 	}
-	public JDBCServiceManager(DataSource ds,JDBCServiceManagerProperties jdbcProperties) throws ServiceException{
+	public JDBCServiceManagerBase(DataSource ds,JDBCServiceManagerProperties jdbcProperties) throws ServiceException{
 		this(ds, jdbcProperties, null);
 	}
-	public JDBCServiceManager(DataSource ds,ServiceManagerProperties serviceManagerProperties,Logger alog) throws ServiceException{
+	public JDBCServiceManagerBase(DataSource ds,ServiceManagerProperties serviceManagerProperties,Logger alog) throws ServiceException{
 		this(ds, new JDBCServiceManagerProperties(serviceManagerProperties), alog);
 	}
-	public JDBCServiceManager(DataSource ds,JDBCServiceManagerProperties jdbcProperties,Logger alog) throws ServiceException{
+	public JDBCServiceManagerBase(DataSource ds,JDBCServiceManagerProperties jdbcProperties,Logger alog) throws ServiceException{
 		
 		this.tipoCostruttore = JDBCServiceManagerTipoCostruttore.DATASOURCE_OBJECT;
 		
 		if(alog==null){
-			this.log = LoggerWrapperFactory.getLogger(JDBCServiceManager.class);
+			this.log = LoggerWrapperFactory.getLogger(JDBCServiceManagerBase.class);
 		}else
 			this.log = alog;
 		
@@ -136,21 +136,21 @@ public class JDBCServiceManager {
 		}
 	}
 	
-	public JDBCServiceManager(String connectionUrl,String driverJDBC,String username,String password,ServiceManagerProperties serviceManagerProperties) throws ServiceException{
+	public JDBCServiceManagerBase(String connectionUrl,String driverJDBC,String username,String password,ServiceManagerProperties serviceManagerProperties) throws ServiceException{
 		this(connectionUrl,driverJDBC,username,password,new JDBCServiceManagerProperties(serviceManagerProperties),null);
 	}
-	public JDBCServiceManager(String connectionUrl,String driverJDBC,String username,String password,JDBCServiceManagerProperties jdbcProperties) throws ServiceException{
+	public JDBCServiceManagerBase(String connectionUrl,String driverJDBC,String username,String password,JDBCServiceManagerProperties jdbcProperties) throws ServiceException{
 		this(connectionUrl,driverJDBC,username,password,jdbcProperties,null);
 	}
-	public JDBCServiceManager(String connectionUrl,String driverJDBC,String username,String password,ServiceManagerProperties serviceManagerProperties,Logger alog) throws ServiceException{
+	public JDBCServiceManagerBase(String connectionUrl,String driverJDBC,String username,String password,ServiceManagerProperties serviceManagerProperties,Logger alog) throws ServiceException{
 		this(connectionUrl,driverJDBC,username,password,new JDBCServiceManagerProperties(serviceManagerProperties),alog);
 	}
-	public JDBCServiceManager(String connectionUrl,String driverJDBC,String username,String password,JDBCServiceManagerProperties jdbcProperties,Logger alog) throws ServiceException{
+	public JDBCServiceManagerBase(String connectionUrl,String driverJDBC,String username,String password,JDBCServiceManagerProperties jdbcProperties,Logger alog) throws ServiceException{
 		
 		this.tipoCostruttore = JDBCServiceManagerTipoCostruttore.CONNECTION_CFG;
 		
 		if(alog==null){
-			this.log = LoggerWrapperFactory.getLogger(JDBCServiceManager.class);
+			this.log = LoggerWrapperFactory.getLogger(JDBCServiceManagerBase.class);
 		}else
 			this.log = alog;
 		
@@ -211,21 +211,21 @@ public class JDBCServiceManager {
 		}
 	}
 	
-	public JDBCServiceManager(Connection connection,ServiceManagerProperties serviceManagerProperties) throws ServiceException{
+	public JDBCServiceManagerBase(Connection connection,ServiceManagerProperties serviceManagerProperties) throws ServiceException{
 		this(connection, new JDBCServiceManagerProperties(serviceManagerProperties), null);
 	}
-	public JDBCServiceManager(Connection connection,JDBCServiceManagerProperties jdbcProperties) throws ServiceException{
+	public JDBCServiceManagerBase(Connection connection,JDBCServiceManagerProperties jdbcProperties) throws ServiceException{
 		this(connection, jdbcProperties, null);
 	}
-	public JDBCServiceManager(Connection connection,ServiceManagerProperties serviceManagerProperties,Logger alog) throws ServiceException{
+	public JDBCServiceManagerBase(Connection connection,ServiceManagerProperties serviceManagerProperties,Logger alog) throws ServiceException{
 		this(connection, new JDBCServiceManagerProperties(serviceManagerProperties), alog);
 	}
-	public JDBCServiceManager(Connection connection,JDBCServiceManagerProperties jdbcProperties,Logger alog) throws ServiceException{
+	public JDBCServiceManagerBase(Connection connection,JDBCServiceManagerProperties jdbcProperties,Logger alog) throws ServiceException{
 		
 		this.tipoCostruttore = JDBCServiceManagerTipoCostruttore.CONNECTION_OBJECT;
 		
 		if(alog==null){
-			this.log = LoggerWrapperFactory.getLogger(JDBCServiceManager.class);
+			this.log = LoggerWrapperFactory.getLogger(JDBCServiceManagerBase.class);
 		}else
 			this.log = alog;
 		

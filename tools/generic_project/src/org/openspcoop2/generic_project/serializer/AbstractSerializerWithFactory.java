@@ -36,7 +36,7 @@ import org.openspcoop2.utils.serialization.SerializationFactory.SERIALIZATION_TY
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public abstract class AbstractSerializerWithFactory extends AbstractSerializer {
+public abstract class AbstractSerializerWithFactory extends AbstractSerializerBase {
 
 	protected abstract SERIALIZATION_TYPE getSERIALIZATION_TYPE();
 	

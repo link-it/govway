@@ -31,7 +31,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openspcoop2.generic_project.serializer.AbstractDeserializer;
+import org.openspcoop2.generic_project.serializer.AbstractDeserializerBase;
 import org.openspcoop2.pools.core.ConnectionFactory;
 import org.openspcoop2.pools.core.Datasource;
 import org.openspcoop2.pools.core.IdleObjectEviction;
@@ -60,7 +60,7 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 	public boolean create = false;
 
 	/** Contesto di Unmarshall. */
-	private AbstractDeserializer deserializer;
+	private AbstractDeserializerBase deserializer;
 	private Class<org.openspcoop2.pools.core.Openspcoop2> cXmlRoot;
 	/** Path dove si trova il file xml che realizza la configurazione delle risorse esterne. */
 	private String openspcoop2_pools_path;

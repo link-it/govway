@@ -28,7 +28,7 @@ import java.net.URLConnection;
 
 import org.openspcoop2.generic_project.beans.IProjectInfo;
 import org.openspcoop2.generic_project.exception.ServiceException;
-import org.openspcoop2.generic_project.serializer.AbstractDeserializer;
+import org.openspcoop2.generic_project.serializer.AbstractDeserializerBase;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.xml.ValidatoreXSD;
 import org.slf4j.Logger;
@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 public abstract class AbstractXMLServiceManager<XML> {
 
 	/** Contesto di Unmarshall. */
-	private AbstractDeserializer deserializer;
+	private AbstractDeserializerBase deserializer;
 	private Class<XML> cXmlRoot;
 	/** XML Path */
 	protected String xmlPath;
@@ -148,16 +148,16 @@ public abstract class AbstractXMLServiceManager<XML> {
 
 
 	/* ********  COSTRUTTORI e METODI DI RELOAD  ******** */
-	protected AbstractXMLServiceManager(Class<XML> cXmlRoot, AbstractDeserializer deserializer, String xsdPath, File xmlPath) throws ServiceException{
+	protected AbstractXMLServiceManager(Class<XML> cXmlRoot, AbstractDeserializerBase deserializer, String xsdPath, File xmlPath) throws ServiceException{
 		this(cXmlRoot, deserializer, xsdPath, xmlPath,null);
 	}
-	protected AbstractXMLServiceManager(Class<XML> cXmlRoot, AbstractDeserializer deserializer, String xsdPath, File xmlPath,Logger alog) throws ServiceException{
+	protected AbstractXMLServiceManager(Class<XML> cXmlRoot, AbstractDeserializerBase deserializer, String xsdPath, File xmlPath,Logger alog) throws ServiceException{
 		this(cXmlRoot,deserializer, xsdPath, xmlPath.getAbsolutePath(),alog);
 	}
-	protected AbstractXMLServiceManager(Class<XML> cXmlRoot, AbstractDeserializer deserializer, String xsdPath, String xmlPath) throws ServiceException{
+	protected AbstractXMLServiceManager(Class<XML> cXmlRoot, AbstractDeserializerBase deserializer, String xsdPath, String xmlPath) throws ServiceException{
 		this(cXmlRoot, deserializer, xsdPath,  xmlPath,null);
 	}
-	protected AbstractXMLServiceManager(Class<XML> cXmlRoot, AbstractDeserializer deserializer, String xsdPath, String xmlPath,Logger alog) throws ServiceException{
+	protected AbstractXMLServiceManager(Class<XML> cXmlRoot, AbstractDeserializerBase deserializer, String xsdPath, String xmlPath,Logger alog) throws ServiceException{
 
 		if(alog==null){
 			this.log = LoggerWrapperFactory.getLogger(AbstractXMLServiceManager.class);

@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.monitor.engine.statistic;
 
-import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManager;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerBase;
 
 /**
  * StatisticsLibrary
@@ -55,26 +55,26 @@ public class StatisticsLibrary {
 	}
 	
 	public void close() {
-		if(this.statisticheSM!=null && this.statisticheSM instanceof JDBCServiceManager) {
-			_close((JDBCServiceManager)this.statisticheSM,"Statistiche");
+		if(this.statisticheSM!=null && this.statisticheSM instanceof JDBCServiceManagerBase) {
+			_close((JDBCServiceManagerBase)this.statisticheSM,"Statistiche");
 		}
-		if(this.transazioniSM!=null && this.transazioniSM instanceof JDBCServiceManager) {
-			_close((JDBCServiceManager)this.transazioniSM,"Transazioni");
+		if(this.transazioniSM!=null && this.transazioniSM instanceof JDBCServiceManagerBase) {
+			_close((JDBCServiceManagerBase)this.transazioniSM,"Transazioni");
 		}
-		if(this.utilsSM!=null && this.utilsSM instanceof JDBCServiceManager) {
-			_close((JDBCServiceManager)this.utilsSM,"Utils");
+		if(this.utilsSM!=null && this.utilsSM instanceof JDBCServiceManagerBase) {
+			_close((JDBCServiceManagerBase)this.utilsSM,"Utils");
 		}
-		if(this.pluginsBaseSM!=null && this.pluginsBaseSM instanceof JDBCServiceManager) {
-			_close((JDBCServiceManager)this.pluginsBaseSM,"PluginBase");
+		if(this.pluginsBaseSM!=null && this.pluginsBaseSM instanceof JDBCServiceManagerBase) {
+			_close((JDBCServiceManagerBase)this.pluginsBaseSM,"PluginBase");
 		}
-		if(this.pluginsStatisticheSM!=null && this.pluginsStatisticheSM instanceof JDBCServiceManager) {
-			_close((JDBCServiceManager)this.pluginsStatisticheSM,"PluginStatistiche");
+		if(this.pluginsStatisticheSM!=null && this.pluginsStatisticheSM instanceof JDBCServiceManagerBase) {
+			_close((JDBCServiceManagerBase)this.pluginsStatisticheSM,"PluginStatistiche");
 		}
-		if(this.pluginsTransazioniSM!=null && this.pluginsTransazioniSM instanceof JDBCServiceManager) {
-			_close((JDBCServiceManager)this.pluginsTransazioniSM,"PluginTransazioni");
+		if(this.pluginsTransazioniSM!=null && this.pluginsTransazioniSM instanceof JDBCServiceManagerBase) {
+			_close((JDBCServiceManagerBase)this.pluginsTransazioniSM,"PluginTransazioni");
 		}
 	}
-	private void _close(JDBCServiceManager serviceManager, String tipo) {
+	private void _close(JDBCServiceManagerBase serviceManager, String tipo) {
 		try {
 			serviceManager.close();
 		}catch(Throwable t) {

@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
-import org.openspcoop2.generic_project.utils.ServerProperties;
+import org.openspcoop2.generic_project.utils.ServerPropertiesBase;
 import org.openspcoop2.pdd.monitor.Busta;
 import org.openspcoop2.pdd.monitor.constants.StatoMessaggio;
 import org.openspcoop2.pdd.monitor.driver.FilterSearch;
@@ -100,7 +100,7 @@ public class MonitorConsole {
 			inProp = MonitorConsole.class.getResourceAsStream("/monitor_pdd.cli.database.properties");
 			Properties properties = new Properties();
 			properties.load(inProp);
-			ServerProperties readerProperties = new ServerProperties(properties);
+			ServerPropertiesBase readerProperties = new ServerPropertiesBase(properties);
 			
 			// informazioni generali
 			String tmpDataSourceMode = readerProperties.getProperty("tipo", true);

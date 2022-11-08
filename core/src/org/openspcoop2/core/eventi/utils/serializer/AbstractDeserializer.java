@@ -35,7 +35,7 @@ import java.io.File;
  * @version $Rev$, $Date$
  */
 
-public abstract class AbstractDeserializer extends org.openspcoop2.generic_project.serializer.AbstractDeserializer {
+public abstract class AbstractDeserializer extends org.openspcoop2.generic_project.serializer.AbstractDeserializerBase {
 
 
 

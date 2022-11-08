@@ -38,7 +38,7 @@ import org.openspcoop2.utils.xml.XMLUtils;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public abstract class AbstractSerializer {
+public abstract class AbstractSerializerBase {
 
 
 	private void createFile(String fileName) throws Exception{

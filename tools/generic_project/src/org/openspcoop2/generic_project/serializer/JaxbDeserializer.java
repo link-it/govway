@@ -31,7 +31,7 @@ import org.openspcoop2.utils.xml.JaxbUtils;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class JaxbDeserializer extends AbstractDeserializer {
+public class JaxbDeserializer extends AbstractDeserializerBase {
 
 	@SuppressWarnings("unchecked")
 	@Override

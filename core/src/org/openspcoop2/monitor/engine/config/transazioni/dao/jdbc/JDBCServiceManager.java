@@ -44,7 +44,7 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 
-public class JDBCServiceManager extends org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManager implements IServiceManager {
+public class JDBCServiceManager extends org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerBase implements IServiceManager {
 
 	protected Connection get_Connection() throws ServiceException {
 		return this.connection;

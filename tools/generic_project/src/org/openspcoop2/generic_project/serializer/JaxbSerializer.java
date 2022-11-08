@@ -31,7 +31,7 @@ import org.openspcoop2.utils.xml.JaxbUtils;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class JaxbSerializer extends AbstractSerializer {
+public class JaxbSerializer extends AbstractSerializerBase {
 
 	
 	@Override

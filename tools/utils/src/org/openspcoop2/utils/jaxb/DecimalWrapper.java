@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.utils.jaxb;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -30,8 +31,10 @@ import java.math.BigInteger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DecimalWrapper {
+public class DecimalWrapper implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private int minInteger = 0;
 	private int minDecimal = 0;
 	private int maxInteger = 0;

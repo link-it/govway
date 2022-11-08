@@ -36,7 +36,7 @@ import org.openspcoop2.utils.transport.http.HttpServletCredential;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AuthorizationManager {
+public class AuthorizationManagerBase {
 	
 	private boolean basic = false;
 	private boolean ssl = false;
@@ -55,10 +55,10 @@ public class AuthorizationManager {
 	private Properties principalAuthorizedIdentitiesSearch = null;
 	private Properties principalAuthorizedIdentitiesCRUD = null;
 	
-	public AuthorizationManager(Properties serverProperties) throws ServiceException{
-		this(new ServerProperties(serverProperties));
+	public AuthorizationManagerBase(Properties serverProperties) throws ServiceException{
+		this(new ServerPropertiesBase(serverProperties));
 	}
-	public AuthorizationManager(ServerProperties serverProperties) throws ServiceException{
+	public AuthorizationManagerBase(ServerPropertiesBase serverProperties) throws ServiceException{
 		
 		String identifiedMethodOrRelationTmp = serverProperties.getProperty("identifiedMethod.orRelation", false);
 		if(identifiedMethodOrRelationTmp!=null){
