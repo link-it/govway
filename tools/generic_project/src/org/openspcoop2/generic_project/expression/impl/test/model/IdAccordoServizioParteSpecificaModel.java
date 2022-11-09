@@ -21,6 +21,7 @@ package org.openspcoop2.generic_project.expression.impl.test.model;
 
 import org.openspcoop2.generic_project.beans.AbstractModel;
 import org.openspcoop2.generic_project.beans.ComplexField;
+import org.openspcoop2.generic_project.beans.Field;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.expression.impl.test.beans.IdAccordoServizioParteSpecifica;
 import org.openspcoop2.generic_project.expression.impl.test.beans.IdSoggetto;
@@ -35,6 +36,16 @@ import org.openspcoop2.generic_project.expression.impl.test.beans.IdSoggetto;
  */
 public class IdAccordoServizioParteSpecificaModel extends AbstractModel<IdAccordoServizioParteSpecifica> {
 
+	public IdAccordoServizioParteSpecificaModel(){
+		
+		super();
+	
+		this.TIPO = new Field("tipo",java.lang.String.class,"id-accordo-servizio-parte-specifica",IdAccordoServizioParteSpecifica.class);
+		this.NOME = new Field("nome",java.lang.String.class,"id-accordo-servizio-parte-specifica",IdAccordoServizioParteSpecifica.class);
+		this.ID_EROGATORE = new IdSoggettoModel(new Field("id-erogatore",IdSoggetto.class,"id-accordo-servizio-parte-specifica",IdAccordoServizioParteSpecifica.class));
+	
+	}
+	
 	public IdAccordoServizioParteSpecificaModel(IField father){
 	
 		super(father);

@@ -76,12 +76,14 @@ public class IDUnivocoGroupByPolicyMapId extends IDUnivocoGroupByPolicy implemen
 		if(param==null) {
 			return false;
 		}
+		return checkInstance(param);
+	}
+	private boolean checkInstance(Object param) {
 		if(param instanceof IDUnivocoGroupByPolicyMapId) {
 			return this.match((IDUnivocoGroupByPolicyMapId) param);
 		}
 		return false;
 	}
-	
 	
 	// Utile per usare l'oggetto in hashtable come chiave
 	@Override

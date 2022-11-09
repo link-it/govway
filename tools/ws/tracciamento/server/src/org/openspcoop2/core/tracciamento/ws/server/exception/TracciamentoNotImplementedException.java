@@ -138,6 +138,8 @@ public class TracciamentoNotImplementedException extends org.openspcoop2.utils.b
 			java.lang.reflect.Method m = id.getClass().getMethod("toJson");
 			String json = (String) m.invoke(id);
 			this.objectId = json;
-		}catch(Exception e){}
+		}catch(Exception e){
+			// ignore
+		}
 	}	
 }

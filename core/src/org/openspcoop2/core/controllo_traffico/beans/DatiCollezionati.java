@@ -287,9 +287,12 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	
 	@Override
 	public Object clone() {
-		return clone(false); // se servissse avere una immagine con i dati remoti, usare la clone con il boolean.
+		return _clone(false, super.clone()); // se servissse avere una immagine con i dati remoti, usare la clone con il boolean.
 	}
 	public DatiCollezionati clone(boolean readRemoteInfo) {
+		return _clone(readRemoteInfo, super.clone()); 
+	}
+	private DatiCollezionati _clone(boolean readRemoteInfo, Object o) {
 		Date updatePolicyDate = new Date(this.updatePolicyDate.getTime());
 		Date gestorePolicyConfigDate = null;
 		if(this.gestorePolicyConfigDate!=null) {

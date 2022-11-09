@@ -25,7 +25,6 @@ import org.openspcoop2.core.config.rs.server.api.impl.Environment;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.context.IContext;
-import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiHelper;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
@@ -40,17 +39,16 @@ import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
 public class SoggettiEnv extends Environment {
 	
 
-	public final UtentiCore utentiCore;
-	public final PddCore 		pddCore;
-	public final SoggettiHelper soggettiHelper;
-	public final ConsoleInterfaceType consoleInterfaceType;
-
-	
+	public UtentiCore utentiCore;
+	public SoggettiHelper soggettiHelper;
+	public ConsoleInterfaceType consoleInterfaceType;
 
 	public SoggettiEnv(HttpServletRequest req, ProfiloEnum profilo, IContext ctx) throws Exception {
 		super(req,profilo,null,ctx);
-		
-		this.pddCore 	= new PddCore(this.soggettiCore);
+		init(req);
+	}
+	
+	public void init(HttpServletRequest req) throws Exception {
 		this.utentiCore = new UtentiCore(this.soggettiCore);
 		this.soggettiHelper = new SoggettiHelper(this.stationCore, this.requestWrapper, this.pd, req.getSession());	
 		this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(this.soggettiHelper);

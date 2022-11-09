@@ -85,7 +85,9 @@ public class BackendProperties {
 		    try{
 				if(properties!=null)
 				    properties.close();
-		    }catch(Exception er){}
+		    }catch(Exception er){
+		    	// close
+		    }
 		}
 
 		this.reader = new BackendInstanceProperties(propertiesReader, this.log, confDir);

@@ -259,6 +259,10 @@ public class AccordiServizioParteSpecificaUtilities {
 			AccordiServizioParteSpecificaCore apsCore, ErogazioniHelper apsHelper, String nomeSAServer, String canaleStato, String canale, boolean gestioneCanaliEnabled,
 			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi) throws Exception {
 		
+		if(asps==null) {
+			throw new Exception("Param asps is null");
+		}
+		
 		List<Object> listaOggettiDaCreare = new ArrayList<Object>();
 		if(!alreadyExists) {
 			listaOggettiDaCreare.add(asps);

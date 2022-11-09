@@ -90,10 +90,14 @@ public class WSStartup implements ServletContextListener {
 					if(is!=null){
 						is.close();
 					}
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 
-		}catch(Exception e){}
+		}catch(Exception e){
+			// ignore
+		}
 		
 		if(WSStartup.initializedLog==false){
 			
