@@ -770,7 +770,9 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 							if(file!=null){
 								file.close();
 							}
-						}catch(Exception eClose){}
+						}catch(Exception eClose){
+							// close
+						}
 					}		
 				}
 				else{

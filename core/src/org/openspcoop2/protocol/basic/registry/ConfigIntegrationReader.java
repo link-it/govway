@@ -48,9 +48,9 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPorteApplicative;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPorteDelegate;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServiziApplicativi;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPorteApplicative;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPorteDelegate;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServiziApplicativi;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReaderInUso;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
@@ -218,7 +218,7 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 		
 	@Override
-	public List<IDServizioApplicativo> findIdServiziApplicativi(FiltroRicercaServiziApplicativi filtroRicerca) throws RegistryNotFound,RegistryException{
+	public List<IDServizioApplicativo> findIdServiziApplicativi(ProtocolFiltroRicercaServiziApplicativi filtroRicerca) throws RegistryNotFound,RegistryException{
 		try{
 			return this.driverConfigurazioneGET.getAllIdServiziApplicativi(filtroRicerca);
 		} catch (DriverConfigurazioneNotFound de) {
@@ -282,7 +282,7 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
-	public List<IDPortaDelegata> findIdPorteDelegate(FiltroRicercaPorteDelegate filtroRicerca) throws RegistryNotFound,RegistryException{
+	public List<IDPortaDelegata> findIdPorteDelegate(ProtocolFiltroRicercaPorteDelegate filtroRicerca) throws RegistryNotFound,RegistryException{
 		try{
 			return this.driverConfigurazioneGET.getAllIdPorteDelegate(filtroRicerca);
 		} catch (DriverConfigurazioneNotFound de) {
@@ -314,7 +314,9 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 					if(con!=null) {
 						driver.releaseConnection(con);
 					}
-				}catch(Exception eClose) {}
+				}catch(Exception eClose) {
+					// close
+				}
 			}
 			
 		}
@@ -348,7 +350,9 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 					if(con!=null) {
 						driver.releaseConnection(con);
 					}
-				}catch(Exception eClose) {}
+				}catch(Exception eClose) {
+					// close
+				}
 			}
 			
 		}
@@ -403,7 +407,7 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
-	public List<IDPortaApplicativa> findIdPorteApplicative(FiltroRicercaPorteApplicative filtroRicerca) throws RegistryNotFound,RegistryException{
+	public List<IDPortaApplicativa> findIdPorteApplicative(ProtocolFiltroRicercaPorteApplicative filtroRicerca) throws RegistryNotFound,RegistryException{
 		try{
 			return this.driverConfigurazioneGET.getAllIdPorteApplicative(filtroRicerca);
 		} catch (DriverConfigurazioneNotFound de) {
@@ -436,7 +440,9 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 					if(con!=null) {
 						driver.releaseConnection(con);
 					}
-				}catch(Exception eClose) {}
+				}catch(Exception eClose) {
+					// close
+				}
 			}
 			
 		}
@@ -470,7 +476,9 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 					if(con!=null) {
 						driver.releaseConnection(con);
 					}
-				}catch(Exception eClose) {}
+				}catch(Exception eClose) {
+					// close
+				}
 			}
 			
 		}
@@ -531,7 +539,9 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 					if(con!=null) {
 						driver.releaseConnection(con);
 					}
-				}catch(Exception eClose) {}
+				}catch(Exception eClose) {
+					// close
+				}
 			}
 			
 		}
@@ -561,7 +571,9 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 					if(con!=null) {
 						driver.releaseConnection(con);
 					}
-				}catch(Exception eClose) {}
+				}catch(Exception eClose) {
+					// close
+				}
 			}
 			
 		}
@@ -595,7 +607,9 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 					if(con!=null) {
 						driver.releaseConnection(con);
 					}
-				}catch(Exception eClose) {}
+				}catch(Exception eClose) {
+					// close
+				}
 			}
 			
 		}
@@ -628,7 +642,9 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 					if(con!=null) {
 						driver.releaseConnection(con);
 					}
-				}catch(Exception eClose) {}
+				}catch(Exception eClose) {
+					// close
+				}
 			}
 			
 		}
@@ -657,7 +673,9 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 					if(con!=null) {
 						driver.releaseConnection(con);
 					}
-				}catch(Exception eClose) {}
+				}catch(Exception eClose) {
+					// close
+				}
 			}
 			
 		}
@@ -688,7 +706,9 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 					if(con!=null) {
 						driver.releaseConnection(con);
 					}
-				}catch(Exception eClose) {}
+				}catch(Exception eClose) {
+					// close
+				}
 			}
 			
 		}
@@ -717,7 +737,9 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 					if(con!=null) {
 						driver.releaseConnection(con);
 					}
-				}catch(Exception eClose) {}
+				}catch(Exception eClose) {
+					// close
+				}
 			}
 			
 		}
@@ -748,7 +770,9 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 					if(con!=null) {
 						driver.releaseConnection(con);
 					}
-				}catch(Exception eClose) {}
+				}catch(Exception eClose) {
+					// close
+				}
 			}
 			
 		}
@@ -777,7 +801,9 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 					if(con!=null) {
 						driver.releaseConnection(con);
 					}
-				}catch(Exception eClose) {}
+				}catch(Exception eClose) {
+					// close
+				}
 			}
 			
 		}
@@ -808,7 +834,9 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 					if(con!=null) {
 						driver.releaseConnection(con);
 					}
-				}catch(Exception eClose) {}
+				}catch(Exception eClose) {
+					// close
+				}
 			}
 			
 		}

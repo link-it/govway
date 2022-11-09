@@ -804,9 +804,9 @@ public class DBOggettiInUsoUtils  {
 
 						StringBuilder bf = new StringBuilder();
 
-						bf.append(idReferenteObject.getTipo());
+						bf.append(idReferenteObject!=null ? idReferenteObject.getTipo() : "?");
 						bf.append("/");
-						bf.append(idReferenteObject.getNome());
+						bf.append(idReferenteObject!=null ? idReferenteObject.getNome() : "?");
 						bf.append(":");
 						
 						bf.append(nomeAccordo);
@@ -2052,7 +2052,7 @@ public class DBOggettiInUsoUtils  {
 						bf.append(idSoggettoRegistro.toString());
 						bf.append(":");
 						bf.append(nomeAccordo);
-						if(versione!=null && !"".equals(versione)){
+						if(versione!=null){
 							bf.append(":");
 							bf.append(versione);
 						}
@@ -2088,7 +2088,7 @@ public class DBOggettiInUsoUtils  {
 						bf.append(idSoggettoRegistro.toString());
 						bf.append(":");
 						bf.append(nomeAccordo);
-						if(versione!=null && !"".equals(versione)){
+						if(versione!=null){
 							bf.append(":");
 							bf.append(versione);
 						}
@@ -2128,7 +2128,7 @@ public class DBOggettiInUsoUtils  {
 						bf.append(idSoggettoRegistro.toString());
 						bf.append(":");
 						bf.append(nomeAccordo);
-						if(versione!=null && !"".equals(versione)){
+						if(versione!=null){
 							bf.append(":");
 							bf.append(versione);
 						}
@@ -2622,7 +2622,9 @@ public class DBOggettiInUsoUtils  {
 				String protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(idSoggetto.getTipo());
 				labelSoggetto = getProtocolPrefix(protocollo)+NamingUtils.getLabelSoggetto(protocollo, idSoggetto);
 			}
-		}catch(Exception e) {}
+		}catch(Exception e) {
+			// ignore
+		}
 		String msg = "Soggetto '"+labelSoggetto+ "' non eliminabile perch&egrave; :"+separator;
 		if(prefix==false){
 			msg = "";
@@ -2858,9 +2860,9 @@ public class DBOggettiInUsoUtils  {
 
 					StringBuilder bf = new StringBuilder();
 
-					bf.append(idReferenteObject.getTipo());
+					bf.append(idReferenteObject!=null ? idReferenteObject.getTipo() : "?");
 					bf.append("/");
-					bf.append(idReferenteObject.getNome());
+					bf.append(idReferenteObject!=null ? idReferenteObject.getNome() : "?");
 					bf.append(":");
 					
 					bf.append(nomeAccordo);
@@ -3040,7 +3042,9 @@ public class DBOggettiInUsoUtils  {
 					List<MappingErogazionePortaApplicativa> listPA = null;
 					try {
 						listPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, tipoDB, idServizio, true);
-					}catch(Exception e) {}
+					}catch(Exception e) {
+						// ignore
+					}
 					if(listPA!=null && !listPA.isEmpty()) {
 						found=true;
 						for (MappingErogazionePortaApplicativa mappingPA : listPA) {
@@ -3083,7 +3087,9 @@ public class DBOggettiInUsoUtils  {
 						List<MappingFruizionePortaDelegata> listPD = null;
 						try {
 							listPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, tipoDB, idSoggettoFruitore, idServizio, true);
-						}catch(Exception e) {}
+						}catch(Exception e) {
+							// ignore
+						}
 						if(listPD!=null && !listPD.isEmpty()) {
 							found=true;
 							for (MappingFruizionePortaDelegata mappingPD : listPD) {
@@ -6352,9 +6358,9 @@ public class DBOggettiInUsoUtils  {
 
 					StringBuilder bf = new StringBuilder();
 
-					bf.append(idReferenteObject.getTipo());
+					bf.append(idReferenteObject!=null ? idReferenteObject.getTipo() : "?");
 					bf.append("/");
-					bf.append(idReferenteObject.getNome());
+					bf.append(idReferenteObject!=null ? idReferenteObject.getNome() : "?");
 					bf.append(":");
 					
 					bf.append(nomeAccordo);
@@ -8050,7 +8056,7 @@ public class DBOggettiInUsoUtils  {
 		if(idGP!=null && CostantiConfigurazione.GENERIC_PROPERTIES_ATTRIBUTE_AUTHORITY.equals(idGP.getTipologia())) {
 			object = "Attribute Authority";
 		}
-		String msg = object+" '"+idGP.getNome()+"'" + intestazione+separator;
+		String msg = object+" '"+(idGP!=null ? idGP.getNome() : "?")+"'" + intestazione+separator;
 		if(prefix==false){
 			msg = "";
 		}
@@ -8322,9 +8328,9 @@ public class DBOggettiInUsoUtils  {
 	
 						StringBuilder bf = new StringBuilder();
 	
-						bf.append(idReferenteObject.getTipo());
+						bf.append(idReferenteObject!=null ? idReferenteObject.getTipo() : "?");
 						bf.append("/");
-						bf.append(idReferenteObject.getNome());
+						bf.append(idReferenteObject!=null ? idReferenteObject.getNome() : "?");
 						bf.append(":");
 						
 						bf.append(nomeAccordo);

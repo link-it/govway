@@ -49,7 +49,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 import org.openspcoop2.utils.wsdl.WSDLUtilities;
 import org.openspcoop2.utils.xml.XMLException;
@@ -126,7 +126,7 @@ public class SplitWSDL {
 
 	
 	/* ------- ALTRO ---------- */
-	private XMLUtils xmlUtils = null;
+	private MessageXMLUtils xmlUtils = null;
 	private WSDLUtilities wsdlUtilities = null;
 	
 	
@@ -293,7 +293,7 @@ public class SplitWSDL {
 		
 		try{
 		
-			this.xmlUtils = XMLUtils.DEFAULT;
+			this.xmlUtils = MessageXMLUtils.DEFAULT;
 			this.wsdlUtilities = WSDLUtilities.getInstance(this.xmlUtils);
 			
 			/** Carico i wsdl necessari */
@@ -510,7 +510,7 @@ public class SplitWSDL {
 				output_importsWsdl.add(newImport);
 				
 				/** Aggiungo il documento importato alla lista degli schemi */
-				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
+				org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;
 				Document doc = xmlUtils.newDocument(importedFile);
 				if(isErogatore) 
 					addSchemaErogatore(doc.getDocumentElement(), schemaFilename, importedFile, true, permettiSchemaLocationNonDefiniti);
@@ -694,7 +694,7 @@ public class SplitWSDL {
 	private void addSchema(Element xml, String filename, File xmlSource, List<SchemaXSDAccordoServizio> schemi, 
 			boolean check, boolean permettiSchemaLocationNonDefiniti) throws ParserConfigurationException, SAXException, IOException, SchemaXSDNamingException, XMLException{
 		
-		org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
+		org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;
 				
 		// Indica se il filename deve essere forzato ad essere quello indicato
 		boolean force = false;

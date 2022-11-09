@@ -114,23 +114,23 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 			this.staticInstanceConfig = staticInstanceConfig;
 			if(staticInstanceConfig.isStaticConfig()) {
 				if(staticInstanceTraduttore==null) {
-					staticInstanceTraduttore = new Map<org.openspcoop2.protocol.sdk.config.ITraduttore>();
+					initStaticInstanceTraduttore();
 				}
 				createTraduttore();
 				if(staticInstanceProtocolIntegrationConfiguration==null) {
-					staticInstanceProtocolIntegrationConfiguration = new Map<org.openspcoop2.protocol.sdk.config.IProtocolIntegrationConfiguration>();
+					initStaticInstanceProtocolIntegrationConfiguration();
 				}
 				createProtocolIntegrationConfiguration();
 			}
 			if(staticInstanceConfig.isStaticErrorBuilder()) {
 				if(staticInstanceErroreApplicativoBuilder==null) {
-					staticInstanceErroreApplicativoBuilder = new Map<org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder>();
+					initStaticInstanceErroreApplicativoBuilder();
 				}
 				createErroreApplicativoBuilder();
 			}
 			if(staticInstanceConfig.isStaticEsitoBuilder() && EsitiProperties.isInitializedProtocol(this.getProtocolMapKey())) {
 				if(staticInstanceEsitoBuilder==null) {
-					staticInstanceEsitoBuilder = new Map<org.openspcoop2.protocol.sdk.builder.IEsitoBuilder>();
+					initStaticInstanceEsitoBuilder();
 				}
 				createEsitoBuilder();
 			}
@@ -140,7 +140,7 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 		if(this.staticInstanceConfig!=null && this.staticInstanceConfig.isStaticEsitoBuilder() && EsitiProperties.isInitializedProtocol(this.getProtocolMapKey()) && 
 				(staticInstanceEsitoBuilder==null || !staticInstanceEsitoBuilder.containsKey(this.getProtocolMapKey()))) {
 			if(staticInstanceEsitoBuilder==null) {
-				staticInstanceEsitoBuilder = new Map<org.openspcoop2.protocol.sdk.builder.IEsitoBuilder>();
+				initStaticInstanceEsitoBuilder();
 			}
 			createEsitoBuilder();
 		}
@@ -206,6 +206,11 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 	}
 	
 	private static Map<org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder> staticInstanceErroreApplicativoBuilder = null;
+	private static synchronized void initStaticInstanceErroreApplicativoBuilder() {
+		if(staticInstanceErroreApplicativoBuilder==null) {
+			staticInstanceErroreApplicativoBuilder = new Map<org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder>();
+		}
+	}
 	@Override
 	public org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder createErroreApplicativoBuilder()  throws ProtocolException {
 		if(staticInstanceErroreApplicativoBuilder!=null) {
@@ -227,6 +232,11 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 	}
 	
 	private static Map<org.openspcoop2.protocol.sdk.builder.IEsitoBuilder> staticInstanceEsitoBuilder = null;
+	private static synchronized void initStaticInstanceEsitoBuilder() {
+		if(staticInstanceEsitoBuilder==null) {
+			staticInstanceEsitoBuilder = new Map<org.openspcoop2.protocol.sdk.builder.IEsitoBuilder>();
+		}
+	}
 	@Override
 	public org.openspcoop2.protocol.sdk.builder.IEsitoBuilder createEsitoBuilder()  throws ProtocolException{
 		if(staticInstanceEsitoBuilder!=null) {
@@ -339,6 +349,11 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 	/* ** CONFIG ** */
 	
 	private static Map<org.openspcoop2.protocol.sdk.config.ITraduttore> staticInstanceTraduttore = null;
+	private static synchronized void initStaticInstanceTraduttore() {
+		if(staticInstanceTraduttore==null) {
+			staticInstanceTraduttore = new Map<org.openspcoop2.protocol.sdk.config.ITraduttore>();
+		}
+	}
 	@Override
 	public org.openspcoop2.protocol.sdk.config.ITraduttore createTraduttore()  throws ProtocolException{
 		if(staticInstanceTraduttore!=null) {
@@ -360,6 +375,11 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 	}
 	
 	private static Map<org.openspcoop2.protocol.sdk.config.IProtocolIntegrationConfiguration> staticInstanceProtocolIntegrationConfiguration = null;
+	private static synchronized void initStaticInstanceProtocolIntegrationConfiguration() {
+		if(staticInstanceProtocolIntegrationConfiguration==null) {
+			staticInstanceProtocolIntegrationConfiguration = new Map<org.openspcoop2.protocol.sdk.config.IProtocolIntegrationConfiguration>();
+		}
+	}
 	@Override
 	public IProtocolIntegrationConfiguration createProtocolIntegrationConfiguration() throws ProtocolException{
 		if(staticInstanceProtocolIntegrationConfiguration!=null) {

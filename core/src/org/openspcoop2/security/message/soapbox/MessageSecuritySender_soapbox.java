@@ -38,7 +38,7 @@ import org.adroitlogic.ultraesb.core.MessageImpl;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.IMessageSecuritySender;
 import org.openspcoop2.security.message.constants.SecurityConstants;
@@ -74,7 +74,7 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 				throw new SecurityException("SoapBox Engine usable only with SOAP Binding");
 			}
 			OpenSPCoop2SoapMessage message = messageParam.castAsSoap();
-			AbstractXMLUtils xmlUtils = XMLUtils.getInstance(message.getFactory());
+			AbstractXMLUtils xmlUtils = MessageXMLUtils.getInstance(message.getFactory());
 			
 
 

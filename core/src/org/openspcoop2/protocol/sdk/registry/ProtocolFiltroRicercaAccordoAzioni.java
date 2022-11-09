@@ -20,34 +20,32 @@
 
 package org.openspcoop2.protocol.sdk.registry;
 
-import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 
 /**
- *  FiltroRicercaFruizioniServizio
+ *  FiltroRicercaPortTypeAzioni
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class FiltroRicercaFruizioniServizio extends FiltroRicercaServizi {
+public class ProtocolFiltroRicercaAccordoAzioni extends ProtocolFiltroRicercaAccordi {
 
-	private IDSoggetto soggettoFruitore;
-	private ProtocolProperties protocolPropertiesFruizione;
+	private String nomeAzione;
+	private ProtocolProperties protocolPropertiesAzione;
 
-	public IDSoggetto getSoggettoFruitore() {
-		return this.soggettoFruitore;
+	public String getNomeAzione() {
+		return this.nomeAzione;
 	}
-	public void setSoggettoFruitore(IDSoggetto soggettoFruitore) {
-		this.soggettoFruitore = soggettoFruitore;
+	public void setNomeAzione(String nomeAzione) {
+		this.nomeAzione = nomeAzione;
 	}
-	public ProtocolProperties getProtocolPropertiesFruizione() {
-		return this.protocolPropertiesFruizione;
+	public ProtocolProperties getProtocolPropertiesAzione() {
+		return this.protocolPropertiesAzione;
 	}
-	public void setProtocolPropertiesFruizione(ProtocolProperties protocolPropertiesFruizione) {
-		this.protocolPropertiesFruizione = protocolPropertiesFruizione;
+	public void setProtocolPropertiesAzione(ProtocolProperties protocolPropertiesAzione) {
+		this.protocolPropertiesAzione = protocolPropertiesAzione;
 	}
-	
+
+
 }
-	
-

@@ -38,7 +38,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.PddProperties;
@@ -1741,7 +1741,7 @@ public class Test {
 			if(contenuto.contains(PREFIX_ORIGINALE)) {
 				
 				System.out.println("Template:\n "+new String(templateRequest));
-				System.out.println("PRIMA: "+XMLUtils.getInstance(messageFactory).toString(messageContentRequest.getElement()));
+				System.out.println("PRIMA: "+MessageXMLUtils.getInstance(messageFactory).toString(messageContentRequest.getElement()));
 				System.out.println("DOPO: "+contenuto);
 
 				throw new Exception("Trovato '"+PREFIX_ORIGINALE+"' non atteso");
@@ -1894,7 +1894,7 @@ public class Test {
 			if(contenuto.contains(PREFIX_ORIGINALE)) {
 				
 				System.out.println("Template:\n "+new String(templateResponse));
-				System.out.println("PRIMA: "+XMLUtils.getInstance(messageFactory).toString(messageContentResponse.getElement()));
+				System.out.println("PRIMA: "+MessageXMLUtils.getInstance(messageFactory).toString(messageContentResponse.getElement()));
 				System.out.println("DOPO: "+contenuto);
 				
 				throw new Exception("Trovato '"+PREFIX_ORIGINALE+"' non atteso");

@@ -41,7 +41,7 @@ import org.openspcoop2.protocol.manifest.IntegrationConfiguration;
 import org.openspcoop2.protocol.manifest.IntegrationConfigurationResourceIdentificationMode;
 import org.openspcoop2.protocol.manifest.constants.ResourceIdentificationType;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.config.Subscription;
+import org.openspcoop2.protocol.sdk.config.ProtocolSubscription;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 
@@ -65,9 +65,9 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 		super(integrationConfiguration);
 	}
 
-	public Subscription createDefaultSubscription(IDSoggetto idFruitore, IDServizio idServizio) throws ProtocolException {
+	public ProtocolSubscription createDefaultSubscription(IDSoggetto idFruitore, IDServizio idServizio) throws ProtocolException {
 		
-		Subscription subscription = new Subscription();
+		ProtocolSubscription subscription = new ProtocolSubscription();
 		
 		PortaDelegata portaDelegata = new PortaDelegata();
 		portaDelegata.setNome(this.getNome(idServizio, idFruitore, null, null, 
@@ -176,14 +176,14 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 		return list;
 	}
 	
-	public Subscription createSubscription(IConfigIntegrationReader configIntegrationReader, IDSoggetto idFruitore, IDServizio idServizio,
+	public ProtocolSubscription createSubscription(IConfigIntegrationReader configIntegrationReader, IDSoggetto idFruitore, IDServizio idServizio,
 			PortaDelegata portaDelegataDefault, 
 			String ruleName, String description, String ... azione ) throws ProtocolException {
 		return createSubscription(configIntegrationReader, idFruitore, idServizio, 
 				portaDelegataDefault, null, 
 				ruleName, description, azione);
 	}
-	public Subscription createSubscription(IConfigIntegrationReader configIntegrationReader, IDSoggetto idFruitore, IDServizio idServizio,
+	public ProtocolSubscription createSubscription(IConfigIntegrationReader configIntegrationReader, IDSoggetto idFruitore, IDServizio idServizio,
 			PortaDelegata portaDelegataDefault, PortaDelegata portaDelegataDaClonare,
 			String ruleName, String description, String ... azione ) throws ProtocolException {
 		
@@ -202,7 +202,7 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 			descrizioneNuovaPortaDelegata = null;
 		}
 		
-		Subscription subscription = new Subscription();
+		ProtocolSubscription subscription = new ProtocolSubscription();
 		
 		PortaDelegata portaDelegata = null;
 		
@@ -223,7 +223,9 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 			List<AttivazionePolicy> listAP = null;
 			try {
 				listAP = configIntegrationReader.getRateLimitingPolicy(idPD);
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// ignore
+			}
 			List<String> idPolicyCreate = new ArrayList<String>();
 			if(listAP!=null && !listAP.isEmpty()) {
 				for (AttivazionePolicy attivazionePolicy : listAP) {
@@ -248,7 +250,9 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 							}
 							subscription.getRateLimitingPolicies().add(apCloned);
 							
-						}catch(Exception e) {}
+						}catch(Exception e) {
+							// ignore
+						}
 					}
 				}
 			}
@@ -257,7 +261,9 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 			List<Allarme> listAllarmi = null;
 			try {
 				listAllarmi = configIntegrationReader.getAllarmi(idPD);
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// ignore
+			}
 			List<String> idAllarmiCreate = new ArrayList<String>();
 			if(listAllarmi!=null && !listAllarmi.isEmpty()) {
 				for (Allarme allarme : listAllarmi) {
@@ -282,7 +288,9 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 							}
 							subscription.getAllarmi().add(allarmeCloned);
 							
-						}catch(Exception e) {}
+						}catch(Exception e) {
+							// ignore
+						}
 					}
 				}
 			}

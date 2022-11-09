@@ -70,6 +70,9 @@ public abstract class AbstractCore implements ICore {
 	
 	
 	public static void init(ICore core,PdDContext pddContext,IProtocolFactory<?> protocolFactory,Object ... args){
+		if(core==null) {
+			throw new RuntimeException("Param core is null");
+		}
 		core.init(pddContext, protocolFactory, args);
 	}
 }

@@ -35,7 +35,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPorteApplicative;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPorteApplicative;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
@@ -189,7 +189,7 @@ public class IdentificazionePortaApplicativa extends AbstractIdentificazionePort
 			
 			if(this.pa.getRicercaPortaAzioneDelegata()!=null && StatoFunzionalita.ABILITATO.equals(this.pa.getRicercaPortaAzioneDelegata())) {
 				
-				FiltroRicercaPorteApplicative filtroPA = new FiltroRicercaPorteApplicative();
+				ProtocolFiltroRicercaPorteApplicative filtroPA = new ProtocolFiltroRicercaPorteApplicative();
 				filtroPA.setNomePortaDelegante(getIDPortaApplicativa().getNome());
 				filtroPA.setAzione(action);
 				List<IDPortaApplicativa> list = null;

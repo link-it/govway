@@ -53,7 +53,7 @@ public class DumpMessaggio implements Serializable{
 	
 	private Map<String, List<String>> headers = new HashMap<>();
 	
-	private ByteArrayOutputStream body;
+	private transient ByteArrayOutputStream body;
 	private DumpMessaggioMultipartInfo multipartInfoBody;
 	
 	private List<DumpAttachment> attachments;

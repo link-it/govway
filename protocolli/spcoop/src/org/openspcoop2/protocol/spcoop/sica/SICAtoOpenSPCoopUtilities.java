@@ -52,9 +52,9 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.wsdl.RegistroOpenSPCoopUtilities;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.soap.SoapUtils;
-import org.openspcoop2.message.xml.XMLUtils;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordi;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServizi;
+import org.openspcoop2.message.xml.MessageXMLUtils;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaAccordi;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServizi;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -353,7 +353,7 @@ public class SICAtoOpenSPCoopUtilities {
 		}
 		
 		try{
-			FiltroRicercaAccordi filtro = new FiltroRicercaAccordi();
+			ProtocolFiltroRicercaAccordi filtro = new ProtocolFiltroRicercaAccordi();
 			filtro.setVersione(versioneInt);
 //			org.openspcoop2.protocol.sdk.properties.ProtocolProperties protocolProperties = new org.openspcoop2.protocol.sdk.properties.ProtocolProperties();
 //			protocolProperties.addProperty(org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti.SPCOOP_PROTOCOL_PROPERTIES_NOME_ACCORDO_CNIPA, nome);
@@ -556,7 +556,7 @@ public class SICAtoOpenSPCoopUtilities {
 		}
 		
 		try{
-			FiltroRicercaAccordi filtro = new FiltroRicercaAccordi();
+			ProtocolFiltroRicercaAccordi filtro = new ProtocolFiltroRicercaAccordi();
 			filtro.setVersione(versioneInt);
 			filtro.setSoggetto(idSoggetto);
 //			org.openspcoop2.protocol.sdk.properties.ProtocolProperties protocolProperties = new org.openspcoop2.protocol.sdk.properties.ProtocolProperties();
@@ -610,7 +610,7 @@ public class SICAtoOpenSPCoopUtilities {
 		}
 		
 		try{
-			FiltroRicercaServizi filtro = new FiltroRicercaServizi();
+			ProtocolFiltroRicercaServizi filtro = new ProtocolFiltroRicercaServizi();
 			filtro.setVersioneServizio(versioneInt);
 			filtro.setSoggettoErogatore(idSoggetto);
 //			org.openspcoop2.protocol.sdk.properties.ProtocolProperties protocolProperties = new org.openspcoop2.protocol.sdk.properties.ProtocolProperties();
@@ -645,7 +645,7 @@ public class SICAtoOpenSPCoopUtilities {
 	public static String readConnettoreFromWsdlImplementativo(byte[] wsdlImplementativo) throws SICAToOpenSPCoopUtilitiesException{
 		
 		try{
-			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;		
+			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;		
 			Document documentLogico = xmlUtils.newDocument(wsdlImplementativo);
 			
 			NodeList list = documentLogico.getChildNodes();
@@ -691,7 +691,7 @@ public class SICAtoOpenSPCoopUtilities {
 	public static byte[] saveConnettoreIntoWsdlImplementativo(byte[] wsdlImplementativo,String url) throws SICAToOpenSPCoopUtilitiesException{
 		
 		try{
-			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;		
+			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;		
 			Document documentLogico = xmlUtils.newDocument(wsdlImplementativo);
 			
 			NodeList list = documentLogico.getChildNodes();
@@ -740,7 +740,7 @@ public class SICAtoOpenSPCoopUtilities {
 		try{
 			
 			// <wsdl:definitions xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\"/>
-			Element el = XMLUtils.DEFAULT.newElement(wsdl);
+			Element el = MessageXMLUtils.DEFAULT.newElement(wsdl);
 			
 			if("http://schemas.xmlsoap.org/wsdl/".equals(el.getNamespaceURI())==false){
 				return false;
@@ -1655,7 +1655,7 @@ public class SICAtoOpenSPCoopUtilities {
 		org.openspcoop2.core.registry.AccordoServizioParteSpecifica aspsOpenSPCoop = new org.openspcoop2.core.registry.AccordoServizioParteSpecifica();
 		
 		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
-		AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;		
+		AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;		
 		WSDLUtilities wsdlUtilities = WSDLUtilities.getInstance(xmlUtils);
 				
 		/* Metadati presenti nel Manifest dell'Accordo di Cooperazione. */
@@ -2029,7 +2029,7 @@ public class SICAtoOpenSPCoopUtilities {
 		boolean wsdlEmptySeNonDefiniti = sicaToOpenspcoopContext.isWSDL_XSD_accordiParteSpecifica_wsdlEmpty();
 		boolean openspcoopToSicaEliminazioneImportParteComune = sicaToOpenspcoopContext.isWSDL_XSD_accordiParteSpecifica_openspcoopToSica_eliminazioneImportParteComune();
 		
-		AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;		
+		AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;		
 		
 		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 		

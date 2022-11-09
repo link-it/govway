@@ -62,10 +62,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Dominio }
+     * Create an instance of {@link DettaglioRouting }
      */
-    public Dominio createDominio() {
-        return new Dominio();
+    public DettaglioRouting createDettaglioRouting() {
+        return new DettaglioRouting();
     }
 
     /**
@@ -76,10 +76,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DettaglioRouting }
+     * Create an instance of {@link Dominio }
      */
-    public DettaglioRouting createDettaglioRouting() {
-        return new DettaglioRouting();
+    public Dominio createDominio() {
+        return new Dominio();
     }
 
     private final static QName _RouterDetails = new QName("http://govway.org/integration/fault/router_details", "router-details");

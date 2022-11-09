@@ -35,6 +35,7 @@ import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.constants.FaultIntegrationGenericInfoMode;
 import org.openspcoop2.protocol.sdk.constants.TipoIntegrazione;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
@@ -143,13 +144,13 @@ public abstract class BasicManager extends BasicComponentFactory implements IPro
 	/* *********** SOAP Fault della Porta (Generati dagli attori esterni) ******************* */
 	
 	@Override
-	public Boolean isAggiungiDetailErroreApplicativo_FaultApplicativo(){
-		return null; // default in govway.properties
+	public BooleanNullable isAggiungiDetailErroreApplicativo_FaultApplicativo(){
+		return BooleanNullable.NULL(); // default in govway.properties
 	}
 	
 	@Override
-	public Boolean isAggiungiDetailErroreApplicativo_FaultPdD(){
-		return null; // default in govway.properties
+	public BooleanNullable isAggiungiDetailErroreApplicativo_FaultPdD(){
+		return BooleanNullable.NULL(); // default in govway.properties
 	}
 	
 	

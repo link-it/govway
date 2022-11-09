@@ -51,7 +51,7 @@ import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
 import org.openspcoop2.protocol.as4.pmode.TranslatorPayloadProfilesDefault;
@@ -213,7 +213,7 @@ public class AS4Sbustamento {
 				// ----- checkEnvelope----
 				Element envelope = null;
 				try {
-					envelope = XMLUtils.getInstance(messageFactory).newElement(contentRoot);
+					envelope = MessageXMLUtils.getInstance(messageFactory).newElement(contentRoot);
 				}catch(Throwable e) {
 					String s = "";
 					try {

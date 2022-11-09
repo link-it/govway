@@ -90,7 +90,7 @@ import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.wsdl.RegistroOpenSPCoopUtilities;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -2140,7 +2140,7 @@ public class ImporterArchiveUtils {
 			OpenSPCoop2MessageFactory defaultFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 			RegistroOpenSPCoopUtilities wsdlUtility = new RegistroOpenSPCoopUtilities(defaultFactory, this.log);
 			wsdl=wsdlUtility.eliminaImportASParteComune(wsdl);
-			DefinitionWrapper wsdlObject = new DefinitionWrapper(wsdl,XMLUtils.getInstance(defaultFactory));
+			DefinitionWrapper wsdlObject = new DefinitionWrapper(wsdl,MessageXMLUtils.getInstance(defaultFactory));
 			Map<String, List<String>> mapPortTypeOperations = new HashMap<String, List<String>>();
 			java.util.Map<?,?> pts = wsdlObject.getAllPortTypes();
 			if(pts==null || pts.size()<=0){

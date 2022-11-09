@@ -86,7 +86,7 @@ import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.utils.RegistroServiziUtils;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
@@ -296,7 +296,7 @@ public class XMLDataConverter {
 		}catch(Exception e){
 			throw new DriverConfigurazioneException("Errore durante l'istanziazione del driver di CRUD: "+e.getMessage(),e);
 		}
-		this.xmlUtils = XMLUtils.DEFAULT;
+		this.xmlUtils = MessageXMLUtils.DEFAULT;
 		
 		// Protocol initialize
 		try {
@@ -461,7 +461,7 @@ public class XMLDataConverter {
 		
 		// Istanziazione CRUD
 		this.gestoreCRUD = gestoreCRUD;
-		this.xmlUtils = XMLUtils.DEFAULT;
+		this.xmlUtils = MessageXMLUtils.DEFAULT;
 		
 		// Protocol initialize
 		try {
@@ -632,7 +632,7 @@ public class XMLDataConverter {
 		}catch(Exception e){
 			throw new DriverConfigurazioneException("Errore durante l'istanziazione del driver di CRUD: "+e.getMessage(),e);
 		}
-		this.xmlUtils = XMLUtils.DEFAULT;
+		this.xmlUtils = MessageXMLUtils.DEFAULT;
 		
 		// Protocol initialize
 		try {
@@ -781,7 +781,7 @@ public class XMLDataConverter {
 	
 	private InputStream readBytes(InputStream is) throws Exception{
 		// Leggo il data[] in modo da correggere gli eventuali entity imports
-		this.xmlUtils = XMLUtils.DEFAULT;
+		this.xmlUtils = MessageXMLUtils.DEFAULT;
 		byte[] b = new byte[0];
 		try {
 			Document d = this.xmlUtils.newDocument(is);

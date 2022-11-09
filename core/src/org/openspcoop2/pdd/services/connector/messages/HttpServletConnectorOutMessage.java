@@ -74,6 +74,9 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 	}
 
 	private void _sendHeaders(OpenSPCoop2Message msg) throws Exception {
+		if(msg==null) {
+			throw new Exception("Message is null");
+		}
 		// Propago eventuali header http
 		OpenSPCoop2MessageProperties forwardHeader = null;
 		if(ServiceBinding.REST.equals(msg.getServiceBinding())) {

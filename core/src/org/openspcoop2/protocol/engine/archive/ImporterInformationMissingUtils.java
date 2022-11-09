@@ -49,7 +49,7 @@ import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.information_missing.ConditionType;
 import org.openspcoop2.protocol.information_missing.ConditionsType;
@@ -104,7 +104,7 @@ public class ImporterInformationMissingUtils {
 		this.validateDocuments = validateDocuments;
 		this.protocolFactory = protocolFactory;
 		this.validatoreDocumenti = this.protocolFactory.createValidazioneDocumenti();
-		this.xmlUtils = XMLUtils.DEFAULT;
+		this.xmlUtils = MessageXMLUtils.DEFAULT;
 		this.registryReader = registryReader;
 		this.archive = archive;
 	}

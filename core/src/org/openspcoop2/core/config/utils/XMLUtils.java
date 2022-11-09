@@ -41,7 +41,7 @@ public class XMLUtils  {
 	
 	public static boolean isConfigurazione(byte [] doc){
 		try{
-			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
+			org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			return XMLUtils.isConfigurazione_engine(elemXML);

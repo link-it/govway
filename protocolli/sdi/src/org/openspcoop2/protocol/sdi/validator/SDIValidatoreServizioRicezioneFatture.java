@@ -548,7 +548,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 			String namespace = null;
 			Throwable eMalformato = null;
 			try {
-				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance(this.messageFactory);
+				org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.getInstance(this.messageFactory);
 				Document docXML = xmlUtils.newDocument(metadati);
 				Element elemXML = docXML.getDocumentElement();
 				namespace = elemXML.getNamespaceURI();

@@ -106,7 +106,9 @@ public class EsitoRichiestaXMLUtils  {
 			try{
 				if(bin!=null)
 					bin.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -128,7 +130,9 @@ public class EsitoRichiestaXMLUtils  {
 			try{
 				if(fin!=null)
 					fin.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -272,7 +276,7 @@ public class EsitoRichiestaXMLUtils  {
 	
 	public static boolean isEsitoRichiesta(byte [] doc){
 		try{
-			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
+			org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			return EsitoRichiestaXMLUtils.isEsitoRichiesta_engine(elemXML);

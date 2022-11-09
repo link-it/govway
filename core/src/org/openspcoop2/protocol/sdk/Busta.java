@@ -56,7 +56,7 @@ import org.openspcoop2.utils.date.DateManager;
  * @version $Rev$, $Date$
  */
 
-public class Busta implements java.io.Serializable { 
+public class Busta implements java.io.Serializable, Cloneable { 
 
 	private static final long serialVersionUID = 1L;
 

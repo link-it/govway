@@ -37,29 +37,29 @@ import org.openspcoop2.utils.xml.XMLException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class XMLUtils extends org.openspcoop2.utils.xml.XMLUtils {
+public class MessageXMLUtils extends org.openspcoop2.utils.xml.XMLUtils {
 
-	private static HashMap<String, XMLUtils> xmlUtilsMap = new HashMap<>();
+	private static HashMap<String, MessageXMLUtils> xmlUtilsMap = new HashMap<>();
 	private static synchronized void init(OpenSPCoop2MessageFactory messageFactory){
 		String key = messageFactory.getClass().getName();
-		if(!XMLUtils.xmlUtilsMap.containsKey(key)){
-			XMLUtils xmlUtils = new XMLUtils(messageFactory);
+		if(!MessageXMLUtils.xmlUtilsMap.containsKey(key)){
+			MessageXMLUtils xmlUtils = new MessageXMLUtils(messageFactory);
 			xmlUtilsMap.put(key, xmlUtils);
 		}
 	}
-	public static XMLUtils getInstance(OpenSPCoop2MessageFactory messageFactory){
+	public static MessageXMLUtils getInstance(OpenSPCoop2MessageFactory messageFactory){
 		String key = messageFactory.getClass().getName();
-		if(!XMLUtils.xmlUtilsMap.containsKey(key)){
-			XMLUtils.init(messageFactory);
+		if(!MessageXMLUtils.xmlUtilsMap.containsKey(key)){
+			MessageXMLUtils.init(messageFactory);
 		}
-		return XMLUtils.xmlUtilsMap.get(key);
+		return MessageXMLUtils.xmlUtilsMap.get(key);
 	}
 	
-	public static XMLUtils DEFAULT = XMLUtils.getInstance(OpenSPCoop2MessageFactory.getDefaultMessageFactory());
+	public static MessageXMLUtils DEFAULT = MessageXMLUtils.getInstance(OpenSPCoop2MessageFactory.getDefaultMessageFactory());
 	
 	private OpenSPCoop2MessageFactory messageFactory;
 	
-	public XMLUtils(OpenSPCoop2MessageFactory messageFactory) {
+	public MessageXMLUtils(OpenSPCoop2MessageFactory messageFactory) {
 		this.messageFactory = messageFactory;
 	}
 	

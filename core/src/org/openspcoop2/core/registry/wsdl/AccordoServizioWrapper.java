@@ -38,7 +38,7 @@ import org.openspcoop2.core.registry.constants.TipologiaServizio;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AccordoServizioWrapper implements java.io.Serializable{
+public class AccordoServizioWrapper implements java.io.Serializable, Cloneable{
 
 	/**
 	 * 

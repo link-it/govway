@@ -201,6 +201,10 @@ public class RicezioneBusteServiceUtils {
 			protocolContext.setFunctionParameters(idPA.getNome());
 		}
 		
+		if(requestInfo==null) {
+			throw new ConnectorException("Param requestInfo is null");
+		}
+		
 		IProtocolFactory<?> pf = requestInfo.getProtocolFactory();
 		ServiceBindingConfiguration bindingConfig = requestInfo.getBindingConfig();
 		ServiceBinding integrationServiceBinding = requestInfo.getIntegrationServiceBinding();
@@ -536,7 +540,9 @@ public class RicezioneBusteServiceUtils {
 						if(pddContextNullable!=null) {
 							pddContextNullable.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
 						}
-					}catch(Throwable t) {}
+					}catch(Throwable t) {
+						// ignore
+					}
 					return cdiError;
 				}
 				return null;

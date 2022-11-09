@@ -199,7 +199,9 @@ public class TestGestoreRepository {
 	    }finally{
 	    	try{
 	    		con.close();
-	    	}catch(Exception eClose){}
+	    	}catch(Exception eClose){
+				// close
+			}
 	    }
 	}
 
@@ -837,16 +839,24 @@ public class TestGestoreRepository {
 	    }finally{
 	    	try{
 	    		stmtDelete.close();
-	    	}catch(Exception eClose){}
+	    	}catch(Exception eClose){
+				// close
+			}
 	    	try{
 	    		stmtInsert.close();
-	    	}catch(Exception eClose){}
+	    	}catch(Exception eClose){
+				// close
+			}
 	    	try{
 	    		rsQuery.close();
-	    	}catch(Exception eClose){}
+	    	}catch(Exception eClose){
+				// close
+			}
 	    	try{
 	    		stmtQuery.close();
-	    	}catch(Exception eClose){}
+	    	}catch(Exception eClose){
+				// close
+			}
 	    }
 	}
 	

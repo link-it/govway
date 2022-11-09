@@ -46,12 +46,12 @@ public interface IProtocolIntegrationConfiguration extends IComponentFactory {
 
 	// SUBSCRIPTION
 	
-	public Subscription createDefaultSubscription(ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio) throws ProtocolException;
+	public ProtocolSubscription createDefaultSubscription(ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio) throws ProtocolException;
 	
-	public Subscription createSubscription(IConfigIntegrationReader configIntegrationReader, ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio,
+	public ProtocolSubscription createSubscription(IConfigIntegrationReader configIntegrationReader, ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio,
 			PortaDelegata portaDelegataDefault, 
 			String ruleName, String description, String ... azione ) throws ProtocolException;
-	public Subscription createSubscription(IConfigIntegrationReader configIntegrationReader, ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio,
+	public ProtocolSubscription createSubscription(IConfigIntegrationReader configIntegrationReader, ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio,
 			PortaDelegata portaDelegataDefault, PortaDelegata portaDelegataDaCopiare,
 			String ruleName, String description, String ... azione ) throws ProtocolException;
 	
@@ -62,12 +62,12 @@ public interface IProtocolIntegrationConfiguration extends IComponentFactory {
 	
 	// IMPLEMENTATION
 	
-	public Implementation createDefaultImplementation(ServiceBinding serviceBinding, IDServizio idServizio) throws ProtocolException;
+	public ProtocolImplementation createDefaultImplementation(ServiceBinding serviceBinding, IDServizio idServizio) throws ProtocolException;
 	
-	public Implementation createImplementation(IConfigIntegrationReader configIntegrationReader, ServiceBinding serviceBinding, IDServizio idServizio,
+	public ProtocolImplementation createImplementation(IConfigIntegrationReader configIntegrationReader, ServiceBinding serviceBinding, IDServizio idServizio,
 			PortaApplicativa portaApplicativaDefault, 
 			String ruleName, String description, String ... azione ) throws ProtocolException;
-	public Implementation createImplementation(IConfigIntegrationReader configIntegrationReader, ServiceBinding serviceBinding, IDServizio idServizio,
+	public ProtocolImplementation createImplementation(IConfigIntegrationReader configIntegrationReader, ServiceBinding serviceBinding, IDServizio idServizio,
 			PortaApplicativa portaApplicativaDefault, PortaApplicativa portaApplicativaDaCopiare,
 			String ruleName, String description, String ... azione ) throws ProtocolException;
 	

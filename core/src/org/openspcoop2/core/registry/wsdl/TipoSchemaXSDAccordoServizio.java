@@ -34,10 +34,6 @@ public enum TipoSchemaXSDAccordoServizio {
 
 	ALLEGATO,
 	SPECIFICA_SEMIFORMALE;
-		
-	public boolean equals(TipoSchemaXSDAccordoServizio param){
-		return this.toString().equals(param.toString());
-	}
 	
 	public String getDirectory(){
 		if(this.equals(ALLEGATO)){

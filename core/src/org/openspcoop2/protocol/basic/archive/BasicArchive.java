@@ -53,7 +53,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -201,7 +201,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 		
 		try{
 		
-			AbstractXMLUtils xmlUtils = XMLUtils.DEFAULT;
+			AbstractXMLUtils xmlUtils = MessageXMLUtils.DEFAULT;
 			WSDLUtilities wsdlUtilities = new WSDLUtilities(xmlUtils);
 			Document d = xmlUtils.newDocument(wsdlBytes);
 			wsdlUtilities.removeTypes(d);
@@ -377,7 +377,9 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 	         try {
 	        	 boolean usingFromSetProtocolInfo = true;
 	        	 api.validate(usingFromSetProtocolInfo, false);
-	         }catch(ParseWarningException warning) {}
+	         }catch(ParseWarningException warning) {
+	        	 // ignore
+	         }
 	         
 	         if(accordoServizioParteComune.getDescrizione()==null || "".equals(accordoServizioParteComune.getDescrizione())) {
 	        	 if(api.getDescription()!=null) {
@@ -894,7 +896,9 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 				if(archive!=null){
 					archive.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 	}

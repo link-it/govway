@@ -29,7 +29,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.xml.XSDResourceResolver;
 import org.testng.Assert;
@@ -172,7 +172,7 @@ public class OpenSPCoopDetailsUtilities {
 		try{
 
 			Assert.assertTrue(dettaglioOpenSPCoop!=null);
-			xml = XMLUtils.DEFAULT.toString(dettaglioOpenSPCoop);
+			xml = MessageXMLUtils.DEFAULT.toString(dettaglioOpenSPCoop);
 			Reporter.log("Dettaglio OpenSPCoop ("+dettaglioOpenSPCoop.getNamespaceURI()+"): "+xml);
 			Assert.assertTrue(org.openspcoop2.core.eccezione.details.constants.Costanti.TARGET_NAMESPACE.equals(dettaglioOpenSPCoop.getNamespaceURI()));
 			

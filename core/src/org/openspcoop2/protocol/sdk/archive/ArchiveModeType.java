@@ -63,6 +63,11 @@ public class ArchiveModeType {
 	}
 	
 	@Override
+	public int hashCode(){
+		return this.toString().hashCode();
+	}
+	
+	@Override
 	public String toString(){
 		return this.type;
 	}

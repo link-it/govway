@@ -288,6 +288,11 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			MsgDiagnostico msgDiag) throws OpenSPCoopStateException {
 		
 		ConsegnaContenutiApplicativiMessage consegnaContenutiApplicativiMsg = (ConsegnaContenutiApplicativiMessage) openspcoopstate.getMessageLib();
+		
+		if(consegnaContenutiApplicativiMsg==null) {
+			throw new OpenSPCoopStateException("ConsegnaContenutiApplicativiMessage is null");
+		}
+		
 		IDPortaApplicativa idApplicativa = null;
 		if(consegnaContenutiApplicativiMsg.getRichiestaApplicativa()!=null) {
 			idApplicativa = consegnaContenutiApplicativiMsg.getRichiestaApplicativa().getIdPortaApplicativa();
@@ -2444,7 +2449,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							if(transportResponseContext!=null) {
 								ct = transportResponseContext.getContentType();
 							}
-						}catch(Throwable tRead) {}	
+						}catch(Throwable tRead) {
+							// ignore
+						}	
 						this.log.error("Avvenuto errore durante il controllo del charset della risposta (Content-Type: "+ct+"): "+t.getMessage(),t);
 					}
 					
@@ -3705,7 +3712,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								if(binXSD!=null){
 									try{
 										binXSD.close();
-									}catch(Exception e){}
+									}catch(Exception e){
+										// close
+									}	
 								}
 							}
 						}
@@ -4197,7 +4206,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								// forzo la lettura del messaggio per impostare la dimensione della richiesta
 								try{
 									responseMessage.writeTo(NullOutputStream.NULL_OUTPUT_STREAM, true);
-								}catch(Exception eFlush){}
+								}catch(Exception eFlush){
+									// ignore
+								}
 								incomingResponseMessageContentLength = responseMessage.getIncomingMessageContentLength();
 							}
 						}

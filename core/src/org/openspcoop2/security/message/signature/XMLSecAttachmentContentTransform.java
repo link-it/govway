@@ -31,7 +31,7 @@ import org.apache.xml.security.signature.XMLSignatureInput;
 import org.apache.xml.security.transforms.TransformSpi;
 import org.apache.xml.security.transforms.TransformationException;
 import org.bouncycastle.util.encoders.Base64;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.security.message.constants.WSSAttachmentsConstants;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XMLException;
@@ -53,7 +53,7 @@ public class XMLSecAttachmentContentTransform extends TransformSpi {
 	private AbstractXMLUtils xmlUtils = null;
 	
     public XMLSecAttachmentContentTransform(){
-    	this.xmlUtils = XMLUtils.DEFAULT;
+    	this.xmlUtils = MessageXMLUtils.DEFAULT;
     }
     
 	@Override

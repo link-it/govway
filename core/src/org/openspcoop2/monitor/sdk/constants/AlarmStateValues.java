@@ -49,9 +49,6 @@ public enum AlarmStateValues {
 	public String toString(){
 		return this.name();
 	}
-	public boolean equals(AlarmStateValues esito){
-		return this.toString().equals(esito.toString());
-	}
 
 }
 

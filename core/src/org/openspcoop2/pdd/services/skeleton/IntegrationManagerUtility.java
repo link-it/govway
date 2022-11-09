@@ -105,7 +105,7 @@ public class IntegrationManagerUtility {
 	 */
 	public static IntegrationManagerException mapXMLIntoProtocolException(IProtocolFactory<?> protocolFactory,String xml,String prefixCodiceErroreApplicativoIntegrazione, 
 			IntegrationFunctionError functionError, ErroriProperties erroriProperties) throws Exception{
-		org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
+		org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;
 		org.w3c.dom.Document document = xmlUtils.newDocument(xml.getBytes());
 		return IntegrationManagerUtility.mapXMLIntoProtocolException(protocolFactory,document.getFirstChild(),prefixCodiceErroreApplicativoIntegrazione, 
 				functionError, erroriProperties);

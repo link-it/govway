@@ -52,13 +52,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RiferimentoServizioApplicativoErogatore }
-     */
-    public RiferimentoServizioApplicativoErogatore createRiferimentoServizioApplicativoErogatore() {
-        return new RiferimentoServizioApplicativoErogatore();
-    }
-
-    /**
      * Create an instance of {@link CredenzialiInvocazioneBasic }
      */
     public CredenzialiInvocazioneBasic createCredenzialiInvocazioneBasic() {
@@ -73,10 +66,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DatiApplicativiFruizione }
+     * Create an instance of {@link Soggetto }
      */
-    public DatiApplicativiFruizione createDatiApplicativiFruizione() {
-        return new DatiApplicativiFruizione();
+    public Soggetto createSoggetto() {
+        return new Soggetto();
+    }
+
+    /**
+     * Create an instance of {@link Fruitori }
+     */
+    public Fruitori createFruitori() {
+        return new Fruitori();
     }
 
     /**
@@ -87,31 +87,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Erogazione }
+     * Create an instance of {@link RiferimentoAccordoServizioParteSpecifica }
      */
-    public Erogazione createErogazione() {
-        return new Erogazione();
+    public RiferimentoAccordoServizioParteSpecifica createRiferimentoAccordoServizioParteSpecifica() {
+        return new RiferimentoAccordoServizioParteSpecifica();
     }
 
     /**
-     * Create an instance of {@link DatiServizio }
+     * Create an instance of {@link DatiApplicativiErogazione }
      */
-    public DatiServizio createDatiServizio() {
-        return new DatiServizio();
-    }
-
-    /**
-     * Create an instance of {@link Soggetto }
-     */
-    public Soggetto createSoggetto() {
-        return new Soggetto();
-    }
-
-    /**
-     * Create an instance of {@link DatiFruizione }
-     */
-    public DatiFruizione createDatiFruizione() {
-        return new DatiFruizione();
+    public DatiApplicativiErogazione createDatiApplicativiErogazione() {
+        return new DatiApplicativiErogazione();
     }
 
     /**
@@ -122,10 +108,38 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link IdentificatoreAccordo }
+     * Create an instance of {@link RiferimentoAccordoServizioParteComune }
      */
-    public IdentificatoreAccordo createIdentificatoreAccordo() {
-        return new IdentificatoreAccordo();
+    public RiferimentoAccordoServizioParteComune createRiferimentoAccordoServizioParteComune() {
+        return new RiferimentoAccordoServizioParteComune();
+    }
+
+    /**
+     * Create an instance of {@link Erogazione }
+     */
+    public Erogazione createErogazione() {
+        return new Erogazione();
+    }
+
+    /**
+     * Create an instance of {@link DatiFruizione }
+     */
+    public DatiFruizione createDatiFruizione() {
+        return new DatiFruizione();
+    }
+
+    /**
+     * Create an instance of {@link DatiServizio }
+     */
+    public DatiServizio createDatiServizio() {
+        return new DatiServizio();
+    }
+
+    /**
+     * Create an instance of {@link DatiApplicativiFruizione }
+     */
+    public DatiApplicativiFruizione createDatiApplicativiFruizione() {
+        return new DatiApplicativiFruizione();
     }
 
     /**
@@ -143,31 +157,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RiferimentoAccordoServizioParteSpecifica }
+     * Create an instance of {@link IdentificatoreAccordo }
      */
-    public RiferimentoAccordoServizioParteSpecifica createRiferimentoAccordoServizioParteSpecifica() {
-        return new RiferimentoAccordoServizioParteSpecifica();
+    public IdentificatoreAccordo createIdentificatoreAccordo() {
+        return new IdentificatoreAccordo();
     }
 
     /**
-     * Create an instance of {@link Fruitori }
+     * Create an instance of {@link RiferimentoServizioApplicativoErogatore }
      */
-    public Fruitori createFruitori() {
-        return new Fruitori();
-    }
-
-    /**
-     * Create an instance of {@link DatiApplicativiErogazione }
-     */
-    public DatiApplicativiErogazione createDatiApplicativiErogazione() {
-        return new DatiApplicativiErogazione();
-    }
-
-    /**
-     * Create an instance of {@link RiferimentoAccordoServizioParteComune }
-     */
-    public RiferimentoAccordoServizioParteComune createRiferimentoAccordoServizioParteComune() {
-        return new RiferimentoAccordoServizioParteComune();
+    public RiferimentoServizioApplicativoErogatore createRiferimentoServizioApplicativoErogatore() {
+        return new RiferimentoServizioApplicativoErogatore();
     }
 
 

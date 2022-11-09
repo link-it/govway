@@ -48,9 +48,6 @@ public enum MessageType{
 	public String toString(){
 		return this.name();
 	}
-	public boolean equals(MessageType esito){
-		return this.toString().equals(esito.toString());
-	}
 
 }
 

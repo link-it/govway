@@ -33,6 +33,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.FaultIntegrationGenericInfoMode;
 import org.openspcoop2.protocol.sdk.constants.TipoIntegrazione;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
@@ -126,12 +127,12 @@ public class ModIProtocolManager extends BasicManager {
 	/* *********** SOAP Fault della Porta (Generati dagli attori esterni) ******************* */
 	
 	@Override
-	public Boolean isAggiungiDetailErroreApplicativo_FaultApplicativo() {
+	public BooleanNullable isAggiungiDetailErroreApplicativo_FaultApplicativo() {
 		return this.modipaProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
 	}
 
 	@Override
-	public Boolean isAggiungiDetailErroreApplicativo_FaultPdD() {
+	public BooleanNullable isAggiungiDetailErroreApplicativo_FaultPdD() {
 		return this.modipaProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
 	}
 	

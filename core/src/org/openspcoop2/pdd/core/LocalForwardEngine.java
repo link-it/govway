@@ -42,7 +42,7 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.utils.MessageUtilities;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.pdd.config.MTOMProcessorConfig;
 import org.openspcoop2.pdd.config.MessageSecurityConfig;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -552,7 +552,7 @@ public class LocalForwardEngine {
 //							requestMessage.writeTo(System.out, false);
 							DOMSource s = (DOMSource) soapMessage.getSOAPPart().getContent();
 							Node n = s.getNode();
-							XMLUtils xmlUtils = XMLUtils.getInstance(requestMessage.getFactory());
+							MessageXMLUtils xmlUtils = MessageXMLUtils.getInstance(requestMessage.getFactory());
 							byte[] bytes = xmlUtils.toByteArray(n);
 //							System.out.println("A:"+new String(bytes));
 							soapMessage.getSOAPPart().setContent(new DOMSource(xmlUtils.newElement(bytes)));
@@ -1080,7 +1080,7 @@ public class LocalForwardEngine {
 //							requestMessage.writeTo(System.out, false);
 							DOMSource s = (DOMSource) soapMessage.getSOAPPart().getContent();
 							Node n = s.getNode();
-							XMLUtils xmlUtils = XMLUtils.getInstance(responseMessage.getFactory());
+							MessageXMLUtils xmlUtils = MessageXMLUtils.getInstance(responseMessage.getFactory());
 							byte[] bytes = xmlUtils.toByteArray(n);
 //							System.out.println("A:"+new String(bytes));
 							soapMessage.getSOAPPart().setContent(new DOMSource(xmlUtils.newElement(bytes)));

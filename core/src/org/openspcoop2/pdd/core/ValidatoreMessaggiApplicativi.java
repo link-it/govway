@@ -76,7 +76,7 @@ public class ValidatoreMessaggiApplicativi {
 	/** Logger */
 	private Logger logger = null;
 	/** XMLUtils */
-	private org.openspcoop2.message.xml.XMLUtils xmlUtils = null;
+	private org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = null;
 	/** WSDLValidator */
 	private WSDLValidator wsdlValidator = null;
 	/** Validate SOAPAction */
@@ -184,7 +184,7 @@ public class ValidatoreMessaggiApplicativi {
 		this.idServizio = idServizio;
 		
 		this.logger = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
-		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance(this.message.getFactory());
+		this.xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.getInstance(this.message.getFactory());
 
 		this.pddContext = pddContext;
 		

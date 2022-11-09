@@ -73,7 +73,7 @@ public class OpenSPCoop2Message_saaj_11_impl extends AbstractOpenSPCoop2Message_
 	}
 
 	private Message1_1_FIX_Impl getMessage1_1_FIX_Impl(){
-		return ((Message1_1_FIX_Impl)this.getSoapMessage());
+		return ((Message1_1_FIX_Impl)this._getSoapMessage());
 	}
 	
 	

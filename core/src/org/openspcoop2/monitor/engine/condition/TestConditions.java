@@ -145,6 +145,12 @@ public class TestConditions {
 				contenutiModel = StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI;
 				break;
 			}
+			if(model==null) {
+				throw new ExpressionException("Model is null");
+			}
+			if(contenutiModel==null) {
+				throw new ExpressionException("ContenutiModel is null");
+			}
 			pagExpression.equals(model.SERVIZIO, "ServizioTest");
 			pagExpression.equals(model.AZIONE, "AzioneTest");
 			pagExpression.limit(25);

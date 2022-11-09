@@ -18,20 +18,16 @@
  *
  */
 
-
-
-package org.openspcoop2.protocol.sdk.config;
+package org.openspcoop2.protocol.sdk.registry;
 
 /**
- * Subscription
- *
+ *  FiltroRicercaPorteApplicative
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-
-public class Subscription extends org.openspcoop2.core.mapping.Subscription {
+public class ProtocolFiltroRicercaPorteApplicative extends org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative {
 
 	/**
 	 * 
@@ -39,8 +35,3 @@ public class Subscription extends org.openspcoop2.core.mapping.Subscription {
 	private static final long serialVersionUID = 1L;
 
 }
-
-
-
-
-

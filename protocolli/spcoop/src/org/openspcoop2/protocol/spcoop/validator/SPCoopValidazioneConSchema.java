@@ -35,7 +35,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.xml.ValidatoreXSD;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.protocol.basic.BasicStateComponentFactory;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -214,7 +214,7 @@ public class SPCoopValidazioneConSchema extends BasicStateComponentFactory imple
 		this.erroriValidazione = new java.util.ArrayList<Eccezione>();
 		this.erroriProcessamento = new java.util.ArrayList<Eccezione>();
 
-		XMLUtils xmlUtils = XMLUtils.getInstance(message.getFactory());
+		MessageXMLUtils xmlUtils = MessageXMLUtils.getInstance(message.getFactory());
 		ValidatoreXSD validatoreBustaSPCoop = getValidatoreXSD(message.getFactory(), this.log);
 		
 		if(validatoreBustaSPCoop == null){

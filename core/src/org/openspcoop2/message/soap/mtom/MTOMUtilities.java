@@ -114,7 +114,7 @@ public class MTOMUtilities {
 			boolean restoredXomReference = false;
 			
 			AbstractXPathExpressionEngine xpathEngine = new XPathExpressionEngine(msgParam.getFactory());
-			DynamicNamespaceContext dnc = org.openspcoop2.message.xml.DynamicNamespaceContextFactory.getInstance(msgParam.getFactory()).getNamespaceContext(element);
+			DynamicNamespaceContext dnc = org.openspcoop2.message.xml.MessageDynamicNamespaceContextFactory.getInstance(msgParam.getFactory()).getNamespaceContext(element);
 			Object oNode = null;
 			try{
 				oNode = xpathEngine.getMatchPattern(element, dnc, org.openspcoop2.message.soap.mtom.Costanti.MTOM_XOP_REFERENCES, XPathReturnType.NODESET);
@@ -230,7 +230,9 @@ public class MTOMUtilities {
 						cType.setParameter(HttpConstants.CONTENT_TYPE_PARAMETER_CHARSET, charsetParam);
 					}
 					
-					message.setContentType(cType.toString());
+					if(cType!=null) {
+						message.setContentType(cType.toString());
+					}
 				}
 			}
 			
@@ -273,7 +275,7 @@ public class MTOMUtilities {
 				return list;
 			}
 			AbstractXPathExpressionEngine xpathEngine = new XPathExpressionEngine(msgParam.getFactory());
-			DynamicNamespaceContext dnc = org.openspcoop2.message.xml.DynamicNamespaceContextFactory.getInstance(msgParam.getFactory()).getNamespaceContext(element);
+			DynamicNamespaceContext dnc = org.openspcoop2.message.xml.MessageDynamicNamespaceContextFactory.getInstance(msgParam.getFactory()).getNamespaceContext(element);
 			
 			boolean addAttachment = false;
 			
@@ -464,7 +466,7 @@ public class MTOMUtilities {
 				return list;
 			}
 			AbstractXPathExpressionEngine xpathEngine = new XPathExpressionEngine(msgParam.getFactory());
-			DynamicNamespaceContext dnc = org.openspcoop2.message.xml.DynamicNamespaceContextFactory.getInstance(msgParam.getFactory()).getNamespaceContext(element);
+			DynamicNamespaceContext dnc = org.openspcoop2.message.xml.MessageDynamicNamespaceContextFactory.getInstance(msgParam.getFactory()).getNamespaceContext(element);
 			
 			if(packageInfos==null || packageInfos.size()<=0){
 				return list;

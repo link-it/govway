@@ -1153,7 +1153,7 @@ public class SOAPMessageScorretti extends GestioneViaJmx  {
 									}
 								}
 								
-								Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.DEFAULT.newElement(xmlErroreApplicativo),
+								Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT.newElement(xmlErroreApplicativo),
 										//Utilities.testSuiteProperties.getIdentitaDefault_dominio(),
 										CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),
 										"RicezioneContenutiApplicativiHTTP", 

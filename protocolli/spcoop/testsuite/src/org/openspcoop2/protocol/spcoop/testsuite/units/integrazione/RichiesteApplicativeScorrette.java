@@ -2810,7 +2810,7 @@ public class RichiesteApplicativeScorrette extends GestioneViaJmx {
 					}
 				}
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.DEFAULT.newElement(xmlErroreApplicativo),
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT.newElement(xmlErroreApplicativo),
 						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),RicezioneContenutiApplicativiHTTPtoSOAPConnector.ID_MODULO, 
 						codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);	
 				

@@ -44,7 +44,7 @@ import org.openspcoop2.utils.date.DateManager;
  */
 
 
-public class Trasmissione implements java.io.Serializable{
+public class Trasmissione implements java.io.Serializable, Cloneable{
 
 	/**
 	 * serialVersionUID

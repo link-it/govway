@@ -50,7 +50,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -87,7 +87,7 @@ public class AccordoServizioWrapperUtilities {
 		
 		this.messageFactory = messageFactory;
 		this.openspcoopUtilities = new RegistroOpenSPCoopUtilities(this.messageFactory, this.logger);
-		this.xmlUtils = XMLUtils.getInstance(this.messageFactory);
+		this.xmlUtils = MessageXMLUtils.getInstance(this.messageFactory);
 		this.wsdlUtilities = WSDLUtilities.getInstance(this.xmlUtils);
 		this.accordoServizioUtils = new AccordoServizioUtils(this.messageFactory, this.logger);
 	}
@@ -739,7 +739,7 @@ public class AccordoServizioWrapperUtilities {
 					
 					BindingStyle style = CostantiRegistroServizi.WSDL_STYLE_DOCUMENT;
 					BindingUse use = CostantiRegistroServizi.WSDL_USE_LITERAL;
-					if(pt.getStyle()!=null && ("".equals(pt.getStyle())==false) && 
+					if(pt.getStyle()!=null && ("".equals(pt.getStyle().getValue())==false) && 
 							CostantiRegistroServizi.WSDL_STYLE_RPC.equals(pt.getStyle()))
 						style = CostantiRegistroServizi.WSDL_STYLE_RPC;
 											
@@ -748,14 +748,14 @@ public class AccordoServizioWrapperUtilities {
 						try{
 							// Analizzo stile e uso nell'operazione
 							Message argumentsOperation = isRichiesta ? op.getMessageInput() : op.getMessageOutput();
-							if(op.getStyle()!=null && ("".equals(op.getStyle())==false)){
+							if(op.getStyle()!=null && ("".equals(op.getStyle().getValue())==false)){
 								if(CostantiRegistroServizi.WSDL_STYLE_RPC.equals(op.getStyle()))
 									style = CostantiRegistroServizi.WSDL_STYLE_RPC;
 								else if(CostantiRegistroServizi.WSDL_STYLE_DOCUMENT.equals(op.getStyle()))
 									style = CostantiRegistroServizi.WSDL_STYLE_DOCUMENT;
 							}
 							if(argumentsOperation!=null && argumentsOperation.getUse()!=null &&
-									("".equals(argumentsOperation.getUse())==false) &&
+									("".equals(argumentsOperation.getUse().getValue())==false) &&
 									CostantiRegistroServizi.WSDL_USE_ENCODED.equals(argumentsOperation.getUse())) {
 								use = CostantiRegistroServizi.WSDL_USE_ENCODED; 
 							}

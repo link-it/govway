@@ -338,7 +338,9 @@ public class ProtocolFactoryManager {
 		}finally{
 			try{
 				openStream.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 		//System.out.println("CARICATO ["+new String(manifest)+"]");
 

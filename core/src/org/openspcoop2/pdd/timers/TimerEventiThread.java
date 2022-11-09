@@ -205,7 +205,9 @@ public class TimerEventiThread extends BaseThread{
 				try{
 					if(r!=null)
 						dbManager.releaseResource(this.properties.getIdentitaPortaDefaultWithoutProtocol(), ID_MODULO, r);
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// ignore
+				}
 			}
 	    	
 		}

@@ -141,7 +141,12 @@ public class IDAccordo implements java.io.Serializable, Cloneable {
 
 	@Override
 	public IDAccordo clone(){
-		IDAccordo idAccordo = new IDAccordo();
+		IDAccordo idAccordo = null;
+		try {
+			idAccordo = (IDAccordo) super.clone();
+		}catch(Throwable t) {
+			idAccordo = new IDAccordo();
+		}
 		
 		if(this.nome!=null){
 			idAccordo.nome = new String(this.nome);

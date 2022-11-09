@@ -54,7 +54,9 @@ public class OpenSPCoop2Message_mimeMultipart_impl extends AbstractBaseOpenSPCoo
 		}finally {
 			try {
 				this._getInputStream().close();
-			}catch(Exception eClose) {}
+			}catch(Exception eClose) {
+				// close
+			}
 		}
 	}
 	@Override

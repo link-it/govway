@@ -219,7 +219,12 @@ public class IDServizio implements java.io.Serializable, Cloneable {
 	
 	@Override
 	public IDServizio clone(){
-		IDServizio s = new IDServizio();
+		IDServizio s = null;
+		try {
+			s = (IDServizio) super.clone();
+		}catch(Throwable t) {
+			s = new IDServizio();
+		}
 		
 		if(this.soggettoErogatore!=null){
 			IDSoggetto sogg = this.soggettoErogatore.clone();

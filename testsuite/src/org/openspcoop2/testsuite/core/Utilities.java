@@ -52,7 +52,7 @@ import org.apache.axis.message.Text;
 import org.openspcoop2.core.integrazione.EsitoRichiesta;
 import org.openspcoop2.core.integrazione.utils.EsitoRichiestaXMLUtils;
 import org.openspcoop2.message.constants.MessageType;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
@@ -300,7 +300,7 @@ public class Utilities {
 			}
 			for (int i = 0; i < lista.getLength(); i++) {
 				Node n = lista.item(i);
-				byte[] xml = XMLUtils.DEFAULT.toByteArray(n);
+				byte[] xml = MessageXMLUtils.DEFAULT.toByteArray(n);
 				if(EsitoRichiestaXMLUtils.isEsitoRichiesta(xml)){
 					EsitoRichiesta esito = EsitoRichiestaXMLUtils.getEsitoRichiesta(log, xml);
 					return esito.getMessageId();

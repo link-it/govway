@@ -46,8 +46,8 @@ import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPorteApplicative;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPorteDelegate;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPorteApplicative;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPorteDelegate;
 
 
 /**
@@ -638,7 +638,7 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		return this.serviziApplicativiErogatore.size();
 	}
 	
-	public List<IDPortaApplicativa> getPorteApplicativeByFiltroRicerca(FiltroRicercaPorteApplicative filtro) {
+	public List<IDPortaApplicativa> getPorteApplicativeByFiltroRicerca(ProtocolFiltroRicercaPorteApplicative filtro) {
 		if(this.listPorteApplicativeByFiltroRicerca==null) {
 			return null;
 		}
@@ -654,7 +654,7 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 			this.semaphorePorteApplicativeByFiltroRicerca = new org.openspcoop2.utils.Semaphore("RequestConfigPorteApplicativeByFiltroRicerca");
 		}
 	}
-	public void addPorteApplicativeByFiltroRicerca(FiltroRicercaPorteApplicative filtro, List<IDPortaApplicativa> list, String idTransazione) {
+	public void addPorteApplicativeByFiltroRicerca(ProtocolFiltroRicercaPorteApplicative filtro, List<IDPortaApplicativa> list, String idTransazione) {
 		if(this.semaphorePorteApplicativeByFiltroRicerca==null) {
 			// serializzazione da transient
 			initSemaphorePorteApplicativeByFiltroRicerca();
@@ -710,7 +710,7 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 		this.listMappingFruizionePortaDelegata = listMappingFruizionePortaDelegata;
 	}
 	
-	public List<IDPortaDelegata> getPorteDelegateByFiltroRicerca(FiltroRicercaPorteDelegate filtro) {
+	public List<IDPortaDelegata> getPorteDelegateByFiltroRicerca(ProtocolFiltroRicercaPorteDelegate filtro) {
 		if(this.listPorteDelegateByFiltroRicerca==null) {
 			return null;
 		}
@@ -726,7 +726,7 @@ public class RequestConfig implements java.io.Serializable, Cloneable {
 			this.semaphorePorteDelegateByFiltroRicerca = new org.openspcoop2.utils.Semaphore("RequestConfigPorteDelegateByFiltroRicerca");
 		}
 	}
-	public void addPorteDelegateByFiltroRicerca(FiltroRicercaPorteDelegate filtro, List<IDPortaDelegata> list, String idTransazione) {
+	public void addPorteDelegateByFiltroRicerca(ProtocolFiltroRicercaPorteDelegate filtro, List<IDPortaDelegata> list, String idTransazione) {
 		if(this.semaphorePorteDelegateByFiltroRicerca==null) {
 			// serializzazione da transient
 			initSemaphorePorteDelegateByFiltroRicerca();

@@ -444,7 +444,9 @@ public class RicezioneContenutiApplicativiService {
 			if(req!=null && req.getURLProtocolContext()!=null && req.getURLProtocolContext().getRequestType()!=null) {
 				try {
 					method = HttpRequestMethod.valueOf(req.getURLProtocolContext().getRequestType());
-				}catch(Exception e) {}
+				}catch(Exception e) {
+					// ignore
+				}
 			}
 			if(method!=null && !HttpRequestMethod.POST.equals(method)){
 				if(ServicesUtils.isRequestWsdl(req, logCore)) {
@@ -1094,7 +1096,9 @@ public class RicezioneContenutiApplicativiService {
 					}
 					pddContext.addObject(org.openspcoop2.core.constants.Costanti.URL_INVOCAZIONE, urlInvocazione);
 				}
-			}catch(Throwable t){}
+			}catch(Throwable t){
+				// ignore
+			}
 			try{
 				Credenziali credenziali = context.getCredenziali();
 				if(credenziali==null){
@@ -1103,7 +1107,9 @@ public class RicezioneContenutiApplicativiService {
 				if(credenziali!=null){
 					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CREDENZIALI_INVOCAZIONE, credenziali.toString());
 				}
-			}catch(Throwable t){}
+			}catch(Throwable t){
+				// ignore
+			}
 				
 			
 			try{
@@ -1223,7 +1229,9 @@ public class RicezioneContenutiApplicativiService {
 				if(responseMessage.getForcedResponseCode()!=null){
 					try{
 						statoServletResponse = Integer.parseInt(responseMessage.getForcedResponseCode());
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 								
 				// transfer length
@@ -1349,12 +1357,16 @@ public class RicezioneContenutiApplicativiService {
 				if(responseMessage.getForcedResponse().getResponseCode()!=null) {
 					try{
 						statoServletResponse = Integer.parseInt(responseMessage.getForcedResponse().getResponseCode());
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 				else if(responseMessage!=null && responseMessage.getForcedResponseCode()!=null) {
 					try{
 						statoServletResponse = Integer.parseInt(responseMessage.getForcedResponseCode());
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 				res.setStatus(statoServletResponse);
 				
@@ -1374,7 +1386,9 @@ public class RicezioneContenutiApplicativiService {
 				if(responseMessage!=null && responseMessage.getForcedResponseCode()!=null) {
 					try{
 						statoServletResponse = Integer.parseInt(responseMessage.getForcedResponseCode());
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 				else {
 					statoServletResponse = protocolFactory.createProtocolManager().getHttpReturnCodeEmptyResponseOneWay();
@@ -1446,7 +1460,9 @@ public class RicezioneContenutiApplicativiService {
 						try{
 							statoServletResponse = Integer.parseInt(responseMessageError.getForcedResponseCode());
 							res.setStatus(statoServletResponse);
-						}catch(Exception eStatus){}
+						}catch(Exception eStatus){
+							// ignore
+						}
 					}
 					if(ServiceBinding.SOAP.equals(responseMessageError.getServiceBinding()) ){
 						SOAPBody body = responseMessageError.castAsSoap().getSOAPBody();
@@ -1488,7 +1504,9 @@ public class RicezioneContenutiApplicativiService {
 					if(responseMessageError!=null && responseMessageError.getForcedResponseCode()!=null) {
 						try{
 							statoServletResponse = Integer.parseInt(responseMessageError.getForcedResponseCode());
-						}catch(Exception eStatus){}
+						}catch(Exception eStatus){
+							// ignore
+						}
 					}
 					
 					try{
@@ -1504,7 +1522,9 @@ public class RicezioneContenutiApplicativiService {
 					}
 					try {
 						res.setStatus(statoServletResponse);
-					}catch(Throwable t) {}
+					}catch(Throwable t) {
+						// ignore
+					}
 					try{
 						res.sendResponse(DumpByteArrayOutputStream.newInstance(error.toString().getBytes()));
 					}catch(Exception erroreStreamChiuso){ 
@@ -1677,7 +1697,9 @@ public class RicezioneContenutiApplicativiService {
 							// forzo la lettura del messaggio per impostare la dimensione della richiesta
 							try{
 								requestMessage.writeTo(NullOutputStream.NULL_OUTPUT_STREAM, true);
-							}catch(Exception eFlush){}
+							}catch(Exception eFlush){
+								// ignore
+							}
 							incomingRequestMessageContentLength = requestMessage.getIncomingMessageContentLength();
 						}
 					}

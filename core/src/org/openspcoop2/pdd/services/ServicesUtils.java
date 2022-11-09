@@ -63,7 +63,7 @@ import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -121,6 +121,20 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class ServicesUtils {
+
+	private static java.util.Random _rnd = null;
+	private static synchronized void initRandom() {
+		if(_rnd==null) {
+			_rnd = new java.util.Random();
+		}
+	}
+	public static java.util.Random getRandom() {
+		if(_rnd==null) {
+			initRandom();
+		}
+		return _rnd;
+	}
+	
 	
 	public static ServiceIdentificationReader getServiceIdentificationReader(Logger logCore, RequestInfo requestInfo,
 			RegistroServiziManager registroServiziManager, ConfigurazionePdDManager configurazionePdDManager) throws Exception{
@@ -321,11 +335,13 @@ public class ServicesUtils {
 				else {
 					charset = ContentTypeUtilities.readCharsetFromContentType(contentType);
 				}
-				if(charset.startsWith("\"") && charset.length()>1) {
-					charset = charset.substring(1);
-				}
-				if(charset.endsWith("\"") && charset.length()>1) {
-					charset = charset.substring(0,charset.length()-1);
+				if(charset!=null) {
+					if(charset.startsWith("\"") && charset.length()>1) {
+						charset = charset.substring(1);
+					}
+					if(charset.endsWith("\"") && charset.length()>1) {
+						charset = charset.substring(0,charset.length()-1);
+					}
 				}
 				boolean find = false;
 				for (String def : ctDefault) {
@@ -672,7 +688,7 @@ public class ServicesUtils {
 				}
 				if(wsdlLogico!=null) {
 					// wsdl logico utilizzato dentro wsdlWrapperUtilities
-					XMLUtils xmlUtils = XMLUtils.DEFAULT;
+					MessageXMLUtils xmlUtils = MessageXMLUtils.DEFAULT;
 					WSDLUtilities wsdlUtilities = new WSDLUtilities(xmlUtils);
 					AccordoServizioWrapperUtilities wsdlWrapperUtilities = new AccordoServizioWrapperUtilities(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), logCore);
 					wsdlWrapperUtilities.setAccordoServizio(new AccordoServizioWrapper());
@@ -745,7 +761,7 @@ class ConnectorHttpServletResponse extends WrappedHttpServletResponse {
 		try {
 			this.outMessage.setContentType(type);
 		}catch(Exception e) {
-			new RuntimeException(e.getMessage(),e);
+			throw new RuntimeException(e.getMessage(),e);
 		}
 	}
 
@@ -754,7 +770,7 @@ class ConnectorHttpServletResponse extends WrappedHttpServletResponse {
 		try {
 			this.outMessage.setHeader(arg0, arg1+"");
 		}catch(Exception e) {
-			new RuntimeException(e.getMessage(),e);
+			throw new RuntimeException(e.getMessage(),e);
 		}
 	}
 
@@ -763,7 +779,7 @@ class ConnectorHttpServletResponse extends WrappedHttpServletResponse {
 		try {
 			this.outMessage.setHeader(arg0, arg1);
 		}catch(Exception e) {
-			new RuntimeException(e.getMessage(),e);
+			throw new RuntimeException(e.getMessage(),e);
 		}
 	}
 	
@@ -772,7 +788,7 @@ class ConnectorHttpServletResponse extends WrappedHttpServletResponse {
 		try {
 			this.outMessage.addHeader(arg0, arg1);
 		}catch(Exception e) {
-			new RuntimeException(e.getMessage(),e);
+			throw new RuntimeException(e.getMessage(),e);
 		}
 	}
 

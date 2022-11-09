@@ -35,7 +35,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPorteDelegate;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPorteDelegate;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
@@ -190,7 +190,7 @@ public class IdentificazionePortaDelegata extends AbstractIdentificazionePorta {
 			
 			if(this.pd.getRicercaPortaAzioneDelegata()!=null && StatoFunzionalita.ABILITATO.equals(this.pd.getRicercaPortaAzioneDelegata())) {
 				
-				FiltroRicercaPorteDelegate filtroPD = new FiltroRicercaPorteDelegate();
+				ProtocolFiltroRicercaPorteDelegate filtroPD = new ProtocolFiltroRicercaPorteDelegate();
 				filtroPD.setNomePortaDelegante(getIDPortaDelegata().getNome());
 				filtroPD.setAzione(action);
 				List<IDPortaDelegata> list = null;

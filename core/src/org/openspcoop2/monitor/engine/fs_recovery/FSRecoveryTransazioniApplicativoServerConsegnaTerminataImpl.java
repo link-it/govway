@@ -138,7 +138,9 @@ public class FSRecoveryTransazioniApplicativoServerConsegnaTerminataImpl extends
 				
 				try{
 					connection.setAutoCommit(true);
-				}catch(Exception eRollback){}
+				}catch(Exception eRollback){
+					// ignore
+				}
 			}
 		}
 

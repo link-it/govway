@@ -39,9 +39,9 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPorteApplicative;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPorteDelegate;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServiziApplicativi;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPorteApplicative;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPorteDelegate;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServiziApplicativi;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
@@ -215,7 +215,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
-	public List<IDServizioApplicativo> findIdServiziApplicativi(FiltroRicercaServiziApplicativi filtroRicerca) throws RegistryNotFound,RegistryException{
+	public List<IDServizioApplicativo> findIdServiziApplicativi(ProtocolFiltroRicercaServiziApplicativi filtroRicerca) throws RegistryNotFound,RegistryException{
 		try{
 			return this.configurazionePdDMangager.getAllIdServiziApplicativi(filtroRicerca);
 		} catch (DriverConfigurazioneNotFound de) {
@@ -277,7 +277,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
-	public List<IDPortaDelegata> findIdPorteDelegate(FiltroRicercaPorteDelegate filtroRicerca) throws RegistryNotFound,RegistryException{
+	public List<IDPortaDelegata> findIdPorteDelegate(ProtocolFiltroRicercaPorteDelegate filtroRicerca) throws RegistryNotFound,RegistryException{
 		try{
 			return this.configurazionePdDMangager.getAllIdPorteDelegate(filtroRicerca);
 		} catch (DriverConfigurazioneNotFound de) {
@@ -336,7 +336,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
-	public List<IDPortaApplicativa> findIdPorteApplicative(FiltroRicercaPorteApplicative filtroRicerca) throws RegistryNotFound,RegistryException{
+	public List<IDPortaApplicativa> findIdPorteApplicative(ProtocolFiltroRicercaPorteApplicative filtroRicerca) throws RegistryNotFound,RegistryException{
 		try{
 			return this.configurazionePdDMangager.getAllIdPorteApplicative(filtroRicerca);
 		} catch (DriverConfigurazioneNotFound de) {

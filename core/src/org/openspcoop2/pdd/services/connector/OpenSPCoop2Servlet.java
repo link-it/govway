@@ -297,7 +297,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 			
 			else if(function.equals(URLProtocolContext.IntegrationManager_FUNCTION) || (idServiceCustom!=null && IDService.INTEGRATION_MANAGER_SOAP.equals(idServiceCustom))){
 				
-				if(op2Properties.isIntegrationManagerEnabled()==false) {
+				if(op2Properties!=null && op2Properties.isIntegrationManagerEnabled()==false) {
 					throw new Exception("Service ["+function+"] not active");
 				}
 				
@@ -340,10 +340,14 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 								
 						try{
 							res.getOutputStream().flush();
-						}catch(Exception eClose){}
+						}catch(Exception eClose){
+							// ignore
+						}
 						try{
 							res.getOutputStream().close();
-						}catch(Exception eClose){}
+						}catch(Exception eClose){
+							// ignore
+						}
 						
 						return;
 					}
@@ -384,10 +388,14 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 								
 						try{
 							res.getOutputStream().flush();
-						}catch(Exception eClose){}
+						}catch(Exception eClose){
+							// ignore
+						}
 						try{
 							res.getOutputStream().close();
-						}catch(Exception eClose){}
+						}catch(Exception eClose){
+							// ignore
+						}
 						
 						return;
 					}
@@ -401,7 +409,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 			}
 			else if(function.equals(URLProtocolContext.Proxy_FUNCTION)){
 				
-				if(!op2Properties.isProxyReadJMXResourcesEnabled()) {
+				if(op2Properties!=null && !op2Properties.isProxyReadJMXResourcesEnabled()) {
 					throw new Exception("Service ["+function+"] not supported");
 				}
 				
@@ -424,10 +432,14 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 								
 						try{
 							res.getOutputStream().flush();
-						}catch(Exception eClose){}
+						}catch(Exception eClose){
+							// ignore
+						}
 						try{
 							res.getOutputStream().close();
-						}catch(Exception eClose){}
+						}catch(Exception eClose){
+							// ignore
+						}
 						
 						return;
 					}
@@ -491,10 +503,14 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				
 				try{
 					res.getOutputStream().flush();
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// ignore
+				}
 				try{
 					res.getOutputStream().close();
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// ignore
+				}
 				
 			}
 			

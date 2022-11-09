@@ -26,6 +26,7 @@ import org.openspcoop2.protocol.basic.config.BasicManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.FaultIntegrationGenericInfoMode;
+import org.openspcoop2.utils.BooleanNullable;
 
 /**
  * Classe che implementa, in base al protocollo Trasparente, l'interfaccia {@link org.openspcoop2.protocol.sdk.config.IProtocolManager} 
@@ -115,12 +116,12 @@ public class TrasparenteProtocolManager extends BasicManager {
 	/* *********** SOAP Fault della Porta (Generati dagli attori esterni) ******************* */
 	
 	@Override
-	public Boolean isAggiungiDetailErroreApplicativo_FaultApplicativo() {
+	public BooleanNullable isAggiungiDetailErroreApplicativo_FaultApplicativo() {
 		return this.trasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
 	}
 
 	@Override
-	public Boolean isAggiungiDetailErroreApplicativo_FaultPdD() {
+	public BooleanNullable isAggiungiDetailErroreApplicativo_FaultPdD() {
 		return this.trasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
 	}
 	

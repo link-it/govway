@@ -111,7 +111,7 @@ public class SerializedContext extends org.openspcoop2.utils.beans.BaseBean impl
 
   /**
    * @deprecated Use method getPropertyList
-   * @return List<SerializedParameter>
+   * @return List&lt;SerializedParameter&gt;
   */
   @Deprecated
   public List<SerializedParameter> getProperty() {
@@ -120,7 +120,7 @@ public class SerializedContext extends org.openspcoop2.utils.beans.BaseBean impl
 
   /**
    * @deprecated Use method setPropertyList
-   * @param property List<SerializedParameter>
+   * @param property List&lt;SerializedParameter&gt;
   */
   @Deprecated
   public void setProperty(List<SerializedParameter> property) {

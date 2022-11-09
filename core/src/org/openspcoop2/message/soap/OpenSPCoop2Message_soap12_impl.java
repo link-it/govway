@@ -59,7 +59,9 @@ public class OpenSPCoop2Message_soap12_impl extends AbstractOpenSPCoop2Message_s
 		}finally{
 			try{
 				this._getInputStream().close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	@Override
@@ -134,10 +136,12 @@ public class OpenSPCoop2Message_soap12_impl extends AbstractOpenSPCoop2Message_s
 					if(pSoapAction!=null){
 						cType.getParameterList().remove(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION);
 					}
-					if(this.contentTypeParamaters!=null && this.contentTypeParamaters.containsKey(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION)){
-						this.contentTypeParamaters.remove(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION);
+					if(this.contentTypeParamaters!=null) {
+						if(this.contentTypeParamaters.containsKey(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION)){
+							this.contentTypeParamaters.remove(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION);
+						}
+						this.contentTypeParamaters.put(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION, soapActionValue);
 					}
-					this.contentTypeParamaters.put(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION, soapActionValue);
 					//System.out.println("NEW '"+soapActionValue+"'");
 					return ContentTypeUtilities.buildContentType(cType.toString(),this.contentTypeParamaters);
 				}

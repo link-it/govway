@@ -29,7 +29,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class FiltroRicercaPortTypeAzioni extends FiltroRicercaPortType {
+public class ProtocolFiltroRicercaPortTypeAzioni extends ProtocolFiltroRicercaPortType {
 
 	private String nomeAzione;
 	private ProtocolProperties protocolPropertiesAzione;

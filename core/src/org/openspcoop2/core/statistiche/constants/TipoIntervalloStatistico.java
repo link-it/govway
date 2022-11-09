@@ -67,13 +67,6 @@ public enum TipoIntervalloStatistico implements IEnumeration , Serializable , Cl
 	public String toString(){
 		return this.value;
 	}
-	public boolean equals(TipoIntervalloStatistico object){
-		if(object==null)
-			return false;
-		if(object.getValue()==null)
-			return false;
-		return object.getValue().equals(this.getValue());	
-	}
 	public boolean equals(String object){
 		if(object==null)
 			return false;

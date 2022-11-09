@@ -55,7 +55,7 @@ import org.adroitlogic.soapbox.SecurityFailureException;
 import org.adroitlogic.soapbox.SignatureRequest;
 import org.apache.wss4j.common.WSS4JConstants;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.security.message.constants.WSSAttachmentsConstants;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.w3c.dom.Document;
@@ -115,7 +115,7 @@ public class SignPartialMessageProcessor implements Processor {
     @Override
 	public void process(SecurityConfig secConfig, MessageSecurityContext msgSecCtx) {
 
-    	AbstractXMLUtils xmlUtils = XMLUtils.getInstance(this.message.getFactory());
+    	AbstractXMLUtils xmlUtils = MessageXMLUtils.getInstance(this.message.getFactory());
     	
         SignatureRequest signReq = msgSecCtx.getSignatureRequest();
 

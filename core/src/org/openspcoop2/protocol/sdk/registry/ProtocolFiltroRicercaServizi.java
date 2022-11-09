@@ -31,7 +31,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class FiltroRicercaServizi {
+public class ProtocolFiltroRicercaServizi {
 
 	private IDAccordo idAccordoServizioParteComune;
 	private String tipoServizio;

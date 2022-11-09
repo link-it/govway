@@ -42,7 +42,7 @@ public class XQueryExpressionEngine extends org.openspcoop2.utils.xml.AbstractXQ
 	
 	@Override
 	public AbstractXMLUtils getXMLUtils() {
-		return org.openspcoop2.message.xml.XMLUtils.getInstance(this.messageFactory);
+		return org.openspcoop2.message.xml.MessageXMLUtils.getInstance(this.messageFactory);
 	}
 
 	@Override

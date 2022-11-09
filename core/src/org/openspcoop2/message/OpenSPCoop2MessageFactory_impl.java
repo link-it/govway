@@ -68,8 +68,8 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 	protected synchronized void initSoapFactory() {
 		try{
             if(OpenSPCoop2MessageFactory.soapFactory11==null || OpenSPCoop2MessageFactory.soapFactory12==null){
-            	OpenSPCoop2MessageFactory.soapFactory11 = new com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl();
-            	OpenSPCoop2MessageFactory.soapFactory12 = new com.sun.xml.messaging.saaj.soap.ver1_2.SOAPFactory1_2Impl();
+            	OpenSPCoop2MessageFactory.initSoapFactory11(new com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl());
+            	OpenSPCoop2MessageFactory.initSoapFactory12(new com.sun.xml.messaging.saaj.soap.ver1_2.SOAPFactory1_2Impl());
             }
         }catch(Exception e){
                 System.out.println("ERRORE: "+e.getMessage());
@@ -79,7 +79,7 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 	@Override
 	protected synchronized void initSoapMessageFactory() throws SOAPException {
 		if(OpenSPCoop2MessageFactory.soapMessageFactory==null){
-            OpenSPCoop2MessageFactory.soapMessageFactory = new com.sun.xml.messaging.saaj.soap.MessageFactoryImpl();
+            OpenSPCoop2MessageFactory.initSoapMessageFactory(new com.sun.xml.messaging.saaj.soap.MessageFactoryImpl());
 		}
 	}
 	

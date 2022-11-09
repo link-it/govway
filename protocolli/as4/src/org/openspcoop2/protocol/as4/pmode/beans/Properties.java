@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.protocol.as4.pmode.TranslatorPropertiesDefault;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -65,7 +65,7 @@ public class Properties {
 		
 		for(byte[] content: contents) {
 			
-			Document doc = XMLUtils.DEFAULT.newDocument(content);
+			Document doc = MessageXMLUtils.DEFAULT.newDocument(content);
 			doc.getDocumentElement().normalize();
 	
 			NodeList propertyList = doc.getElementsByTagName("property");

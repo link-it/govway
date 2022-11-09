@@ -136,7 +136,9 @@ public class WSDLValidator {
 			try{
 				body = envelope.getBody();
 			}catch(Exception e){
-				this.logger.error("SOAPEnvelope.getBody failed: "+e.getMessage(),e);
+				if(this.logger!=null) {
+					this.logger.error("SOAPEnvelope.getBody failed: "+e.getMessage(),e);
+				}
 				throw new WSDLException("SOAPEnvelope senza body");
 			}
 			
@@ -311,7 +313,9 @@ public class WSDLValidator {
 					errorMsgValidazioneXSD.append("(element "+nomeElemento+") "+e.getMessage());
 					String elementNonValidato = null;
 					try{
-						elementNonValidato = this.xmlUtils.toString(n);
+						if(n!=null) {
+							elementNonValidato = this.xmlUtils.toString(n);
+						}
 					}catch(Exception eString){
 						this.logger.error("Errore durante la conversione del Node in String: "+eString.getMessage(),eString);
 					}
@@ -329,11 +333,11 @@ public class WSDLValidator {
 			
 			try{
 	
-				if(portType.getStyle()!=null && ("".equals(portType.getStyle())==false) && 
+				if(portType.getStyle()!=null && ("".equals(portType.getStyle().getValue())==false) && 
 						CostantiRegistroServizi.WSDL_STYLE_RPC.equals(portType.getStyle()))
 					style = CostantiRegistroServizi.WSDL_STYLE_RPC;
 				
-				if(operation.getStyle()!=null && ("".equals(operation.getStyle())==false)){
+				if(operation.getStyle()!=null && ("".equals(operation.getStyle().getValue())==false)){
 					if(CostantiRegistroServizi.WSDL_STYLE_RPC.equals(operation.getStyle()))
 						style = CostantiRegistroServizi.WSDL_STYLE_RPC;
 					else if(CostantiRegistroServizi.WSDL_STYLE_DOCUMENT.equals(operation.getStyle()))
@@ -351,12 +355,12 @@ public class WSDLValidator {
 			try{
 				if(isRichiesta){
 					if(operation.getMessageInput()!=null && operation.getMessageInput().getUse()!=null &&
-							("".equals(operation.getMessageInput().getUse())==false) &&
+							("".equals(operation.getMessageInput().getUse().getValue())==false) &&
 							CostantiRegistroServizi.WSDL_USE_ENCODED.equals(operation.getMessageInput().getUse()))
 						use = CostantiRegistroServizi.WSDL_USE_ENCODED; 
 				}else{
 					if(operation.getMessageOutput()!=null && operation.getMessageOutput().getUse()!=null &&
-							("".equals(operation.getMessageOutput().getUse())==false) &&
+							("".equals(operation.getMessageOutput().getUse().getValue())==false) &&
 							CostantiRegistroServizi.WSDL_USE_ENCODED.equals(operation.getMessageOutput().getUse()))
 						use = CostantiRegistroServizi.WSDL_USE_ENCODED; 
 				}
@@ -481,14 +485,18 @@ public class WSDLValidator {
 							
 							String elementNonValidato = null;
 							try{
-								elementNonValidato = this.xmlUtils.toString(n);
+								if(n!=null) {
+									elementNonValidato = this.xmlUtils.toString(n);
+								}
 							}catch(Exception eString){
 								this.logger.error("Errore durante la conversione del Node in String: "+eString.getMessage(),eString);
 							}
 							
 							String elementNonValidato_cleanXSIType = null;
 							try{
-								elementNonValidato_cleanXSIType = this.xmlUtils.toString(nodo);
+								if(nodo!=null) {
+									elementNonValidato_cleanXSIType = this.xmlUtils.toString(nodo);
+								}
 							}catch(Exception eString){
 								this.logger.error("Errore durante la conversione del Node (clean xsiType) in String: "+eString.getMessage(),eString);
 							}
@@ -758,7 +766,7 @@ public class WSDLValidator {
 					throw new WSDLValidatorException("Service ["+portType+"] undefined in the API specification '"+uriAccordo+"'");
 				}
 			}
-			if(portTypeAS.getStyle()!=null && ("".equals(portTypeAS.getStyle())==false) && 
+			if(portTypeAS.getStyle()!=null && ("".equals(portTypeAS.getStyle().getValue())==false) && 
 					CostantiRegistroServizi.WSDL_STYLE_RPC.equals(portTypeAS.getStyle()))
 				style = CostantiRegistroServizi.WSDL_STYLE_RPC;
 			
@@ -777,7 +785,7 @@ public class WSDLValidator {
 					// Prendo la definizione del messaggio di input se e' una richiesta, di output se e' una risposta
 					Message argumentsOperation = isRichiesta ? operationAS.getMessageInput() : operationAS.getMessageOutput();
 					
-					if(operationAS.getStyle()!=null && ("".equals(operationAS.getStyle())==false)){
+					if(operationAS.getStyle()!=null && ("".equals(operationAS.getStyle().getValue())==false)){
 						if(CostantiRegistroServizi.WSDL_STYLE_RPC.equals(operationAS.getStyle()))
 							style = CostantiRegistroServizi.WSDL_STYLE_RPC;
 						else if(CostantiRegistroServizi.WSDL_STYLE_DOCUMENT.equals(operationAS.getStyle()))
@@ -785,7 +793,7 @@ public class WSDLValidator {
 					}
 					
 					if(argumentsOperation!=null && argumentsOperation.getUse()!=null &&
-							("".equals(argumentsOperation.getUse())==false) &&
+							("".equals(argumentsOperation.getUse().getValue())==false) &&
 							CostantiRegistroServizi.WSDL_USE_ENCODED.equals(argumentsOperation.getUse()))
 						use = CostantiRegistroServizi.WSDL_USE_ENCODED; 
 					
@@ -994,7 +1002,9 @@ public class WSDLValidator {
 														this.rpcChildElement.removeAttribute(this.rpcChildElementNamespaceAggiunto);
 														this.rpcChildElement.removeNamespaceDeclaration(PREFIX_RPC_AGGIUNTO);
 													}
-												}catch(Exception eClose){}
+												}catch(Exception eClose){
+													// ignore
+												}
 											}
 										}
 									}
@@ -1314,7 +1324,9 @@ public class WSDLValidator {
 			try{
 				if(cleanXML!=null)
 					cleanXML.close();
-			}catch(Exception eis){}
+			}catch(Exception eis){
+				// ignore
+			}
 			throw new UtilsException("Eliminazione xsi:type per validazione non riuscita "+e.getMessage(),e);
 		}
 	}  
@@ -1424,7 +1436,7 @@ class RootElementBody{
 				
 				if(attrName.startsWith("xmlns")){
 				
-					if(prefix.equals("") || prefix==null){
+					if(prefix==null || prefix.equals("")){
 						if("xmlns".equals(attrName)){
 							//System.out.println("FOUND! ["+value+"]");
 							return value;

@@ -2830,21 +2830,29 @@ public class ProfiloDiCollaborazione {
 					try{
 						if( pstmt != null )
 							pstmt.close();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// close
+					}
 					try{
 						if( rs != null )
 							rs.close();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// close
+					}
 					try{
 						connectionDB.rollback();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// ignore
+					}
 				}
 
 				if(getBusteOK == false){
 					// Per aiutare ad evitare conflitti
 					try{
-						Utilities.sleep((new java.util.Random()).nextInt(checkInterval)); // random da 0ms a checkIntervalms
-					}catch(Exception eRandom){}
+						Utilities.sleep(ProtocolRandomUtilities.getRandom().nextInt(checkInterval)); // random da 0ms a checkIntervalms
+					}catch(Exception eRandom){
+						// ignore
+					}
 				}
 			}
 
@@ -2997,11 +3005,15 @@ public class ProfiloDiCollaborazione {
 				try{
 					if( rs != null )
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if( pstmt != null )
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				String errorMsg = "[ProfiloDiCollaborazione.asincrono_getBusteAsincronePerUlterioreInoltro] errore, queryString["+queryString+"]: "+e.getMessage();
 				this.log.error(errorMsg,e);
 				throw new  ProtocolException(errorMsg,e);
@@ -3051,11 +3063,15 @@ public class ProfiloDiCollaborazione {
 					try{
 						if( rsReadProfilo != null )
 							rsReadProfilo.close();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// close
+					}
 					try{
 						if( pstmtReadProfilo != null )
 							pstmtReadProfilo.close();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// close
+					}
 				}
 			}
 			
@@ -3305,29 +3321,39 @@ public class ProfiloDiCollaborazione {
 					// ID Costruito
 					validazioneRicevutaOK = true;
 
-				} catch(Exception e) {
+				} catch(Throwable e) {
 					try{
 						if( rs != null  )
 							rs.close();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// close
+					}
 					try{
 						if( pstmt != null  )
 							pstmt.close();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// close
+					}
 					try{
 						if( pstmtValidazione != null  )
 							pstmtValidazione.close();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// close
+					}
 					try{
 						connectionDB.rollback();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// ignore
+					}
 				}
 
 				if(validazioneRicevutaOK == false){
 					// Per aiutare ad evitare conflitti
 					try{
-						Utilities.sleep((new java.util.Random()).nextInt(checkInterval)); // random da 0ms a checkIntervalms
-					}catch(Exception eRandom){}
+						Utilities.sleep(ProtocolRandomUtilities.getRandom().nextInt(checkInterval)); // random da 0ms a checkIntervalms
+					}catch(Exception eRandom){
+						// ignore
+					}
 				}
 			}
 
@@ -3480,15 +3506,21 @@ public class ProfiloDiCollaborazione {
 			try{
 				if( rs != null  )
 					rs.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			try{
 				if( pstmt != null  )
 					pstmt.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			try{
 				if( pstmtValidazione != null  )
 					pstmtValidazione.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			String errorMsg = "PROFILO_DI_COLLABORAZIONE_ASINCRONO, Errore durante la validazioneRicevutaAsincrona "+idRicevuta+": "+e.getMessage();		
 			this.log.error(errorMsg,e);
 			throw new ProtocolException(errorMsg,e);

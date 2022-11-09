@@ -31,7 +31,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class FiltroRicercaSoggetti {
+public class ProtocolFiltroRicercaSoggetti {
 
 	private String tipo;
 	private String nome;

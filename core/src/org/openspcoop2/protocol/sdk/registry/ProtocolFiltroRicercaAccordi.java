@@ -32,7 +32,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class FiltroRicercaAccordi {
+public class ProtocolFiltroRicercaAccordi {
 
 	private String nome;
 	private Integer versione;

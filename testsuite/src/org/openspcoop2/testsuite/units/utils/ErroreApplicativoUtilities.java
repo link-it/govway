@@ -27,7 +27,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -168,7 +168,7 @@ public class ErroreApplicativoUtilities {
 		try{
 
 			Assert.assertTrue(erroreApplicativoNode!=null);
-			xml = XMLUtils.DEFAULT.toString(erroreApplicativoNode);
+			xml = MessageXMLUtils.DEFAULT.toString(erroreApplicativoNode);
 			Reporter.log("Dettaglio OpenSPCoop ("+erroreApplicativoNode.getNamespaceURI()+"): "+xml);
 			Assert.assertTrue(org.openspcoop2.core.eccezione.errore_applicativo.constants.Costanti.TARGET_NAMESPACE.equals(erroreApplicativoNode.getNamespaceURI()));
 			

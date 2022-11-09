@@ -57,7 +57,8 @@ public class Sbustamento  {
 	}
 	
 	public Sbustamento(Logger log, IProtocolFactory<?> protocolFactory,IState state){
-		if(log==null) log = Configurazione.getLibraryLog();
+		//if(log==null) 
+		//	this.log = Configurazione.getLibraryLog();
 		//this.log = log;
 		this.protocolFactory = protocolFactory;
 		this.state = state;

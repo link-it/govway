@@ -55,17 +55,17 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Eccezione }
+     */
+    public Eccezione createEccezione() {
+        return new Eccezione();
+    }
+
+    /**
      * Create an instance of {@link DominioSoggetto }
      */
     public DominioSoggetto createDominioSoggetto() {
         return new DominioSoggetto();
-    }
-
-    /**
-     * Create an instance of {@link Dominio }
-     */
-    public Dominio createDominio() {
-        return new Dominio();
     }
 
     /**
@@ -76,10 +76,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Eccezione }
+     * Create an instance of {@link Dettaglio }
      */
-    public Eccezione createEccezione() {
-        return new Eccezione();
+    public Dettaglio createDettaglio() {
+        return new Dettaglio();
+    }
+
+    /**
+     * Create an instance of {@link Dominio }
+     */
+    public Dominio createDominio() {
+        return new Dominio();
     }
 
     /**
@@ -87,13 +94,6 @@ public class ObjectFactory {
      */
     public Eccezioni createEccezioni() {
         return new Eccezioni();
-    }
-
-    /**
-     * Create an instance of {@link Dettaglio }
-     */
-    public Dettaglio createDettaglio() {
-        return new Dettaglio();
     }
 
     /**

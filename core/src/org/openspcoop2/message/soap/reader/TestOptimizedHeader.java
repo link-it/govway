@@ -41,7 +41,7 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_soap_impl;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportRequestContext;
@@ -678,13 +678,13 @@ public class TestOptimizedHeader {
 			long bytes = ((long)kbBody) * 1024l;
 			while(resource.length<bytes) {
 				
-				XMLUtils xmlUtils = XMLUtils.getInstance(factory);
+				MessageXMLUtils xmlUtils = MessageXMLUtils.getInstance(factory);
 				
 				Element envelope = xmlUtils.newElement(resource);
 				NodeList l = envelope.getElementsByTagNameNS(envelope.getNamespaceURI(), "Body");
 				Node body = l.item(0);
 				
-				Node node = XMLUtils.getInstance(factory).getFirstNotEmptyChildNode(body);
+				Node node = MessageXMLUtils.getInstance(factory).getFirstNotEmptyChildNode(body);
 
 				List<Node> children = xmlUtils.getNotEmptyChildNodes(node, false);
 				
@@ -731,7 +731,7 @@ public class TestOptimizedHeader {
 		
 		Element envelope = null;
 		if(!contentType.startsWith(HttpConstants.CONTENT_TYPE_MULTIPART_RELATED) && !fileName.startsWith("requestMalformed_soap")) {
-			envelope = XMLUtils.getInstance(factory).newElement(resource);
+			envelope = MessageXMLUtils.getInstance(factory).newElement(resource);
 		}
 
 		if(fileName.contains("Header5K") && !fileName.contains("requestHeader5KBody5K")){
@@ -2308,7 +2308,7 @@ public class TestOptimizedHeader {
 	
 	private static void verificaConsistenza(String contentType, OpenSPCoop2MessageFactory factory, ByteArrayOutputStream bout, MessageType messageType, String fileName) throws Exception {
 		if(!contentType.startsWith(HttpConstants.CONTENT_TYPE_MULTIPART_RELATED)) {
-			Element check = XMLUtils.getInstance(factory).newElement(bout.toByteArray());
+			Element check = MessageXMLUtils.getInstance(factory).newElement(bout.toByteArray());
 			check.toString();
 			
 			TransportRequestContext req = new TransportRequestContext();

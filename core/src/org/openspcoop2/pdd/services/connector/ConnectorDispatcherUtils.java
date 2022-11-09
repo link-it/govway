@@ -104,10 +104,14 @@ public class ConnectorDispatcherUtils {
 			
 			try{
 				res.getOutputStream().flush();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// ignore
+			}
 			try{
 				res.getOutputStream().close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// ignore
+			}
 			
 		}
 	}
@@ -150,10 +154,14 @@ public class ConnectorDispatcherUtils {
 			
 			try{
 				res.getOutputStream().flush();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// ignore
+			}
 			try{
 				res.getOutputStream().close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// ignore
+			}
 			
 		}
 	}
@@ -210,7 +218,7 @@ public class ConnectorDispatcherUtils {
 				}
 				
 				byte[] b = bout.toByteArray();
-				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
+				org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;
 				Document d = xmlUtils.newDocument(b);
 				d.getFirstChild().appendChild(d.createComment(versione));
 				xmlUtils.writeTo(d, res.getOutputStream());
@@ -231,14 +239,20 @@ public class ConnectorDispatcherUtils {
 		}finally{
 			try{
 				res.getOutputStream().flush();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// ignore
+			}
 			try{
 				res.getOutputStream().close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// ignore
+			}
 			try{
 				if(is!=null)
 					is.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// ignore
+			}
 		}
 		return;
 	}
@@ -364,6 +378,10 @@ public class ConnectorDispatcherUtils {
 			IntegrationFunctionError integrationFunctionError, Throwable e, ParseException parseException,
 			OpenSPCoop2Message msg, boolean clientError) throws ConnectorException{
 		
+		if(requestInfo==null) {
+			throw new ConnectorException("RequestInfo param is null");
+		}
+		
 		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
 		
 		Map<String, List<String>> trasporto = new HashMap<String, List<String>>();
@@ -407,7 +425,7 @@ public class ConnectorDispatcherUtils {
 		
 		int status = 200;
 		String contentTypeRisposta = null;
-		if(msg.getForcedResponseCode()!=null){
+		if(msg!=null && msg.getForcedResponseCode()!=null){
 			status = Integer.parseInt(msg.getForcedResponseCode());
 			res.setStatus(status);
 		}
@@ -471,6 +489,10 @@ public class ConnectorDispatcherUtils {
 	
 	
 	public static void doInfo(ConnectorDispatcherInfo info, RequestInfo requestInfo,ConnectorOutMessage res, Logger log, boolean portaDelegata) throws ConnectorException{
+		
+		if(requestInfo==null) {
+			throw new ConnectorException("RequestInfo param is null");
+		}
 		
 		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
 		

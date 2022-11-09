@@ -88,10 +88,10 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.properties.StringConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.StringProperty;
 import org.openspcoop2.protocol.sdk.properties.SubtitleConsoleItem;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordi;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPortTypeAzioni;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaRisorse;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServiziApplicativi;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaAccordi;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPortTypeAzioni;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaRisorse;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServiziApplicativi;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
@@ -645,7 +645,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 					// In questi casi si consiglia di usare anzi una modalità filesyste o HSM dove si fornirà il certificato in più solo per l'applicativo che deve essere identificato lato erogazione
 					if(cert!=null && cert.getSubject()!=null) {
 						
-						FiltroRicercaServiziApplicativi filtro = IdentificazioneApplicativoMittenteUtils.createFilter(cert.getSubject().toString(), 
+						ProtocolFiltroRicercaServiziApplicativi filtro = IdentificazioneApplicativoMittenteUtils.createFilter(cert.getSubject().toString(), 
 								cert.getIssuer().toString());
 						
 						List<IDServizioApplicativo> list = null;
@@ -930,7 +930,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 							AccordoServizioParteComune as = registryReader.getAccordoServizioParteComune(id);
 							if(ServiceBinding.REST.equals(as.getServiceBinding())){
 								
-								FiltroRicercaRisorse filtro = new FiltroRicercaRisorse();
+								ProtocolFiltroRicercaRisorse filtro = new ProtocolFiltroRicercaRisorse();
 								ProtocolProperties protocolPropertiesResources = new ProtocolProperties();
 								protocolPropertiesResources.addProperty(ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA_ID, IDAccordoFactory.getInstance().getUriFromIDAccordo(id));
 								filtro.setProtocolPropertiesRisorsa(protocolPropertiesResources);
@@ -950,7 +950,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 							}
 							else {
 							
-								FiltroRicercaPortTypeAzioni filtro = new FiltroRicercaPortTypeAzioni();
+								ProtocolFiltroRicercaPortTypeAzioni filtro = new ProtocolFiltroRicercaPortTypeAzioni();
 								ProtocolProperties protocolPropertiesAzioni = new ProtocolProperties();
 								protocolPropertiesAzioni.addProperty(ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA_ID, IDAccordoFactory.getInstance().getUriFromIDAccordo(id));
 								filtro.setProtocolPropertiesAzione(protocolPropertiesAzioni);
@@ -2142,7 +2142,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 						// listo le altre API
 						List<IDAccordo> list = null;
 						try {
-							FiltroRicercaAccordi filtro = new FiltroRicercaAccordi();
+							ProtocolFiltroRicercaAccordi filtro = new ProtocolFiltroRicercaAccordi();
 							filtro.setServiceBinding(idPortType!=null ? ServiceBinding.SOAP : ServiceBinding.REST);
 							filtro.setSoggetto(new IDSoggetto(this.protocolFactory.createProtocolConfiguration().getTipoSoggettoDefault(), null));
 							list = registryReader.findIdAccordiServizioParteComune(filtro);

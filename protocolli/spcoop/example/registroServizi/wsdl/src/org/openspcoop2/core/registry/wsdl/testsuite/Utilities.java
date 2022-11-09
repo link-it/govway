@@ -31,7 +31,7 @@ import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.wsdl.RegistroOpenSPCoopUtilities;
 import org.openspcoop2.core.registry.wsdl.SplitWSDL;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.core.registry.wsdl.SchemaXSDAccordoServizio;
 import org.openspcoop2.core.registry.wsdl.ConverterStandardWSDL2SplitWSDL;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -88,7 +88,7 @@ public class Utilities {
 		OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		RegistroOpenSPCoopUtilities registroOpenSPCoopUtilities = new RegistroOpenSPCoopUtilities(messageFactory, null);
 		Definition definition = registroOpenSPCoopUtilities.buildWsdlFromObjects(as, null, true);
-		DefinitionWrapper defitionWrapper = new DefinitionWrapper(definition,XMLUtils.DEFAULT);
+		DefinitionWrapper defitionWrapper = new DefinitionWrapper(definition,MessageXMLUtils.DEFAULT);
 		//FileSystemUtilities.writeFile(new File("wsdlTestBytes.wsdl"), defitionWrapper.toByteArray());
 		return defitionWrapper.toByteArray();
 		
@@ -98,7 +98,7 @@ public class Utilities {
 	
 	public static void writeSpcoopWsdlTo(File output,ConverterStandardWSDL2SplitWSDL wsdl2spcoop,boolean prettyPrint) throws Exception{
 		
-		XMLUtils xmlUtils = XMLUtils.DEFAULT;
+		MessageXMLUtils xmlUtils = MessageXMLUtils.DEFAULT;
 		WSDLUtilities wsdlUtilities = WSDLUtilities.getInstance(xmlUtils);
 		
 		output.mkdir();

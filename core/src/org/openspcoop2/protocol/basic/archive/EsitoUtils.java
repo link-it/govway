@@ -631,7 +631,7 @@ public class EsitoUtils {
 				ArchiveAllarme allarme = ((ArchiveAllarme)archiveAllarme.getArchiveObject()); 
 				String aliasAllarme = allarme.getAlias();
 				if(allarme.getRuoloPorta()!=null && allarme.getNomePorta()!=null) {
-					if(RuoloPolicy.APPLICATIVA.equals(allarme.getRuoloPorta())) {
+					if(org.openspcoop2.core.allarmi.constants.RuoloPorta.APPLICATIVA.equals(allarme.getRuoloPorta())) {
 						aliasAllarme = aliasAllarme + " (inbound:"+allarme.getNomePorta()+")";
 					}
 					else {
@@ -905,6 +905,15 @@ public class EsitoUtils {
 	private ArchiveEsitoImport getArchiveEsitoImport(ArchiveIdCorrelazione idCorrelazioneParam,
 			Map<String, ArchiveEsitoImport> map,
 			Map<String, ArchiveIdCorrelazione> mapIdCorrelazione){
+		if(idCorrelazioneParam==null) {
+			throw new RuntimeException("Param idCorrelazioneParam is null");
+		}
+		if(map==null) {
+			throw new RuntimeException("Param map is null");
+		}
+		if(mapIdCorrelazione==null) {
+			throw new RuntimeException("Param mapIdCorrelazione is null");
+		}
 		String idCorrelazione = idCorrelazioneParam.getId();
 		if(idCorrelazione==null){
 			idCorrelazione = ZIPUtils.ID_CORRELAZIONE_DEFAULT;	

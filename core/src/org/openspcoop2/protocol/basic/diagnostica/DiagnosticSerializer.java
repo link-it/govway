@@ -40,11 +40,11 @@ import org.w3c.dom.Element;
  */
 public class DiagnosticSerializer extends BasicComponentFactory implements org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticSerializer {
 
-	protected org.openspcoop2.message.xml.XMLUtils xmlUtils;
+	protected org.openspcoop2.message.xml.MessageXMLUtils xmlUtils;
 
 	public DiagnosticSerializer(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		super(protocolFactory);
-		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
+		this.xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;
 	}
 
 	/* --------------------- MESSAGGI DIAGNOSTICI -----------------------*/

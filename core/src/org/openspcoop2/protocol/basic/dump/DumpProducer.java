@@ -477,7 +477,9 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 						if(pstmt!=null) {
 							pstmt.close();
 						}
-					}catch(Exception eClose) {}
+					}catch(Exception eClose) {
+						// close
+					}
 				}
 			}
 			
@@ -490,7 +492,9 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 		}finally{
 			try{
 				this.releaseConnection(cr, "dump.log");
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 

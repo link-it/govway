@@ -52,7 +52,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -114,7 +114,7 @@ public class TunnelSoapUtils {
 				//System.out.println("XML");
 				Element e = null;
 				try{
-					e = XMLUtils.getInstance(message.getFactory()).newElement(bodySbustato);
+					e = MessageXMLUtils.getInstance(message.getFactory()).newElement(bodySbustato);
 					Source streamSource = new DOMSource(e);
 					ap = soapMessage.createAttachmentPart();
 					ap.setContent(streamSource, HttpConstants.CONTENT_TYPE_TEXT_XML);
@@ -285,7 +285,9 @@ public class TunnelSoapUtils {
 			try{
 				if(cout!=null)
 					cout.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 		
 		
@@ -314,7 +316,9 @@ public class TunnelSoapUtils {
 			try{
 				if(bodySbustato!=null)
 					bodySbustato.close();
-			}catch(Exception eis){}	
+			}catch(Exception eis){
+				// close
+			}	
 			throw new MessageException("Sbustamento msg non riuscito: "+e.getMessage(),e);
 		}
 	}
@@ -364,7 +368,9 @@ public class TunnelSoapUtils {
 			try{
 				if(bout!=null)
 					bout.close();
-			}catch(Exception eis){}
+			}catch(Exception eis){
+				// close
+			}
 		}
 	}
 	

@@ -116,7 +116,9 @@ public class AlarmConfigProperties {
 			try{
 				if(properties!=null)
 					properties.close();
-			}catch(Exception er){}
+			}catch(Exception er){
+				// close
+			}
 			throw new EngineException(e.getMessage(),e);
 		}	
 	

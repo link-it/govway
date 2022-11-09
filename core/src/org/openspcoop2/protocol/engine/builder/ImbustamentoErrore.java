@@ -24,7 +24,6 @@ package org.openspcoop2.protocol.engine.builder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
@@ -101,6 +100,20 @@ import org.w3c.dom.Element;
 
 public class ImbustamentoErrore  {
 
+	private static java.util.Random _rnd = null;
+	private static synchronized void initRandom() {
+		if(_rnd==null) {
+			_rnd = new java.util.Random();
+		}
+	}
+	public static java.util.Random getRandom() {
+		if(_rnd==null) {
+			initRandom();
+		}
+		return _rnd;
+	}
+	
+	
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
 	protected OpenSPCoop2MessageFactory errorFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
@@ -108,7 +121,7 @@ public class ImbustamentoErrore  {
 	/** Logger utilizzato per debug. */
 	private Logger log = null;
 	private org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory;
-	private org.openspcoop2.message.xml.XMLUtils xmlUtils;
+	private org.openspcoop2.message.xml.MessageXMLUtils xmlUtils;
 	private IProtocolManager protocolManager;
 	private DettaglioEccezioneOpenSPCoop2Builder dettaglioEccezioneOpenSPCoop2Builder;
 	private ServiceBinding serviceBinding;
@@ -131,7 +144,7 @@ public class ImbustamentoErrore  {
 			this.log = LoggerWrapperFactory.getLogger(ImbustamentoErrore.class);
 		this.protocolFactory = protocolFactory;
 		
-		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance(this.errorFactory);
+		this.xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.getInstance(this.errorFactory);
 		
 		this.protocolManager = this.protocolFactory.createProtocolManager();
 		
@@ -230,6 +243,10 @@ public class ImbustamentoErrore  {
 	 */
 	private Busta buildMessaggioErroreProtocollo(List<Eccezione> eccezioni,Busta busta,String id_busta,TipoOraRegistrazione tipoTempo) throws ProtocolException{	
 
+		if(busta==null) {
+			throw new ProtocolException("Busta param is null");
+		}
+		
 		// Scambio mitt con dest
 		boolean mittentePresente = busta.getMittente()!=null; // in alcuni protocollo puo' non esistere
 		String tipoDest = busta.getTipoMittente();
@@ -306,9 +323,11 @@ public class ImbustamentoErrore  {
 		}
 
 		// Aggiungo eccezioni
-		while(eccezioni.size()>0){
-			Eccezione e = eccezioni.remove(0);
-			busta.addEccezione(e);
+		if(eccezioni!=null) {
+			while(eccezioni.size()>0){
+				Eccezione e = eccezioni.remove(0);
+				busta.addEccezione(e);
+			}
 		}
 
 		// Validazione XSD: non devo produrre valori non validabili.
@@ -660,7 +679,9 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 								try {
 									String tmpCode = codiceEccezione.substring(org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_PREFIX_CODE.length());
 									codeInt = Integer.valueOf(tmpCode);
-								}catch(Exception e) {}
+								}catch(Exception e) {
+									// ignore
+								}
 							}
 							if(codeInt>=400 && codeInt< 500) {
 								code = SOAPFaultCode.Sender;
@@ -826,7 +847,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 						seconds=0;
 					}
 					if(returnConfig.getRetryRandomBackoffSeconds()>0) {
-						seconds = seconds + new Random().nextInt(returnConfig.getRetryRandomBackoffSeconds());
+						seconds = seconds + getRandom().nextInt(returnConfig.getRetryRandomBackoffSeconds());
 					}
 					msg.forceTransportHeader(HttpConstants.RETRY_AFTER, seconds+"");
 				}
@@ -1089,8 +1110,10 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			// Lista trasmissioni della richiesta
 			ArrayList<Trasmissione> listaTrasmissioniBustaRichiesta = 
 				new ArrayList<Trasmissione>();
-			for(int i=0;i<busta.sizeListaTrasmissioni();i++){
-				listaTrasmissioniBustaRichiesta.add(busta.getTrasmissione(i));
+			if(busta!=null) {
+				for(int i=0;i<busta.sizeListaTrasmissioni();i++){
+					listaTrasmissioniBustaRichiesta.add(busta.getTrasmissione(i));
+				}
 			}
 
 			String id_bustaErrore = 
@@ -1175,7 +1198,9 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 					try{
 						String dominio = RegistroServiziManager.getInstance(this.state).getDominio(new IDSoggetto(tras.getTipoDestinazione(),tras.getDestinazione()), null, this.protocolFactory, requestInfo);
 						tras.setIdentificativoPortaDestinazione(dominio);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 				tras.setOraRegistrazione(busta.getOraRegistrazione());
 				tras.setTempo(busta.getTipoOraRegistrazione());
@@ -1297,8 +1322,10 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			// Lista trasmissioni della richiesta
 			ArrayList<Trasmissione> listaTrasmissioniBustaRichiesta = 
 				new ArrayList<Trasmissione>();
-			for(int i=0;i<busta.sizeListaTrasmissioni();i++){
-				listaTrasmissioniBustaRichiesta.add(busta.getTrasmissione(i));
+			if(busta!=null) {
+				for(int i=0;i<busta.sizeListaTrasmissioni();i++){
+					listaTrasmissioniBustaRichiesta.add(busta.getTrasmissione(i));
+				}
 			}
 
 			String id_bustaErrore = 
@@ -1366,7 +1393,9 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 					try{
 						String dominio = RegistroServiziManager.getInstance(this.state).getDominio(new IDSoggetto(tras.getTipoDestinazione(),tras.getDestinazione()), null, this.protocolFactory, requestInfo);
 						tras.setIdentificativoPortaDestinazione(dominio);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 				tras.setOraRegistrazione(busta.getOraRegistrazione());
 				tras.setTempo(busta.getTipoOraRegistrazione());

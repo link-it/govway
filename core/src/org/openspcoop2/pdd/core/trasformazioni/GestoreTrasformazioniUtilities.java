@@ -51,7 +51,7 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.dynamic.DynamicException;
@@ -883,7 +883,7 @@ public class GestoreTrasformazioniUtilities {
 							
 							if(MessageType.XML.equals(messageType)) {
 								
-								message.castAsRestXml().updateContent(XMLUtils.getInstance(messageFactory).newElement(risultato.getContenuto()));
+								message.castAsRestXml().updateContent(MessageXMLUtils.getInstance(messageFactory).newElement(risultato.getContenuto()));
 																
 								addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
 								

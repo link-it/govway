@@ -86,8 +86,8 @@ import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeBean;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.config.Implementation;
-import org.openspcoop2.protocol.sdk.config.Subscription;
+import org.openspcoop2.protocol.sdk.config.ProtocolImplementation;
+import org.openspcoop2.protocol.sdk.config.ProtocolSubscription;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
@@ -353,7 +353,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
 		
 
-		Implementation implementationDefault = protocolFactory.createProtocolIntegrationConfiguration().
+		ProtocolImplementation implementationDefault = protocolFactory.createProtocolIntegrationConfiguration().
 				createDefaultImplementation(serviceBinding, idServizio);
 		
 		PortaApplicativa portaApplicativa = implementationDefault.getPortaApplicativa();
@@ -491,7 +491,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
 		
 		
-		Subscription subscriptionDefault = protocolFactory.createProtocolIntegrationConfiguration().
+		ProtocolSubscription subscriptionDefault = protocolFactory.createProtocolIntegrationConfiguration().
 				createDefaultSubscription(serviceBinding, idFruitore, idServizio);
 		
 		PortaDelegata portaDelegata = subscriptionDefault.getPortaDelegata();
@@ -2019,7 +2019,7 @@ public class AccordiServizioParteSpecificaUtilities {
 
 		PortaApplicativa portaApplicativaDefault = porteApplicativeCore.getPortaApplicativa(mappingDefault.getIdPortaApplicativa());
 		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
-		Implementation implementation = null;
+		ProtocolImplementation implementation = null;
 		
 		IConfigIntegrationReader configIntegrationReader = apsCore.getConfigIntegrationReader(protocolFactory);
 		
@@ -2602,7 +2602,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		IConfigIntegrationReader configIntegrationReader = apsCore.getConfigIntegrationReader(protocolFactory);
 		
-		Subscription subscription = null;
+		ProtocolSubscription subscription = null;
 		PortaDelegata portaDelegataDaCopiare = null;
 		if(modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
 			portaDelegataDaCopiare = porteDelegateCore.getPortaDelegata(mappingSelezionato.getIdPortaDelegata());

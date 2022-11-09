@@ -32,7 +32,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
@@ -66,7 +66,9 @@ public class OpenSPCoop2Message_xml_impl extends AbstractBaseOpenSPCoop2RestMess
 		}finally{
 			try{
 				this._getInputStream().close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	@Override
@@ -97,7 +99,7 @@ public class OpenSPCoop2Message_xml_impl extends AbstractBaseOpenSPCoop2RestMess
 			isr = new InputStreamReader(is,this.contentTypeCharsetName);
 			isSax = new InputSource(isr);
 			isSax.setEncoding(this.contentTypeCharsetName);
-			return XMLUtils.getInstance(this.messageFactory).newElement(isSax);
+			return MessageXMLUtils.getInstance(this.messageFactory).newElement(isSax);
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
 		}finally{
@@ -105,7 +107,9 @@ public class OpenSPCoop2Message_xml_impl extends AbstractBaseOpenSPCoop2RestMess
 				if(isr!=null){
 					isr.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 
@@ -130,7 +134,7 @@ public class OpenSPCoop2Message_xml_impl extends AbstractBaseOpenSPCoop2RestMess
 	@Override
 	protected void serializeContent(OutputStream os, boolean consume) throws MessageException {
 		try{
-			XMLUtils.getInstance(this.messageFactory).writeTo(this.content, os, true, this.contentTypeCharsetName);
+			MessageXMLUtils.getInstance(this.messageFactory).writeTo(this.content, os, true, this.contentTypeCharsetName);
 			os.flush();
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
@@ -206,7 +210,7 @@ public class OpenSPCoop2Message_xml_impl extends AbstractBaseOpenSPCoop2RestMess
 			}
 				
 			if(remove) {
-				List<Node> list = XMLUtils.getInstance(this.messageFactory).getNotEmptyChildNodes(element, false);
+				List<Node> list = MessageXMLUtils.getInstance(this.messageFactory).getNotEmptyChildNodes(element, false);
 				List<Node> removeNodes = new ArrayList<Node>();
 				if(list!=null && !list.isEmpty()) {
 					for (Node node : list) {

@@ -63,13 +63,6 @@ public enum AccordoServizioParteComuneReplaceType implements IEnumeration , Seri
 	public String toString(){
 		return this.value;
 	}
-	public boolean equals(AccordoServizioParteComuneReplaceType object){
-		if(object==null)
-			return false;
-		if(object.getValue()==null)
-			return false;
-		return object.getValue().equals(this.getValue());	
-	}
 	public boolean equals(String object){
 		if(object==null)
 			return false;

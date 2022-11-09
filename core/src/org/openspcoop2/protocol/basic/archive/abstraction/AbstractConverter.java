@@ -36,8 +36,8 @@ import org.openspcoop2.protocol.abstraction.Soggetto;
 import org.openspcoop2.protocol.basic.archive.ZIPReadUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.archive.Archive;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordi;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServizi;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaAccordi;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServizi;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
@@ -208,7 +208,9 @@ public abstract class AbstractConverter {
 		try{
 			registryReader.getAccordoServizioParteComune(idAccordo);
 			return true;
-		}catch(RegistryNotFound notFound){}
+		}catch(RegistryNotFound notFound){
+			// ignore
+		}
 		
 		// Cerco negli oggetti presenti nell'archivio
 		if(archive.getAccordiServizioParteComune().size()>0){
@@ -218,7 +220,9 @@ public abstract class AbstractConverter {
 					if(idAccordo.equals(id)){
 						return true;
 					}
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 			}
 		}
 		if(archive.getAccordiServizioComposto().size()>0){
@@ -228,7 +232,9 @@ public abstract class AbstractConverter {
 					if(idAccordo.equals(id)){
 						return true;
 					}
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 			}
 		}
 
@@ -243,7 +249,7 @@ public abstract class AbstractConverter {
 		List<String> uriAccordi = new ArrayList<String>();
 		
 		// Cerco nel registro
-		FiltroRicercaAccordi filtroAccordi = new FiltroRicercaAccordi();
+		ProtocolFiltroRicercaAccordi filtroAccordi = new ProtocolFiltroRicercaAccordi();
 		filtroAccordi.setNome(nome);
 		if(versione!=null){
 			filtroAccordi.setVersione(versione);
@@ -271,7 +277,7 @@ public abstract class AbstractConverter {
 					if(nome.equals(id.getNome())==false){
 						continue;
 					}
-					if(versione!=null && ((versione+"").equals(id.getVersione())==false) ){
+					if(versione!=null && id.getVersione()!=null && (versione.intValue()!=id.getVersione().intValue()) ){
 						continue;
 					}
 					if(idSoggetto!=null){
@@ -290,7 +296,9 @@ public abstract class AbstractConverter {
 						idAccordi.add(id);
 						uriAccordi.add(uri);
 					}
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 			}
 		}
 		if(archive.getAccordiServizioComposto().size()>0){
@@ -300,7 +308,7 @@ public abstract class AbstractConverter {
 					if(nome.equals(id.getNome())==false){
 						continue;
 					}
-					if(versione!=null && ((versione+"").equals(id.getVersione())==false) ){
+					if(versione!=null && id.getVersione()!=null && (versione.intValue()!=id.getVersione().intValue()) ){
 						continue;
 					}
 					if(idSoggetto!=null){
@@ -319,7 +327,9 @@ public abstract class AbstractConverter {
 						idAccordi.add(id);
 						uriAccordi.add(uri);
 					}
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 			}
 		}
 		
@@ -353,7 +363,9 @@ public abstract class AbstractConverter {
 		try{
 			registryReader.getAccordoServizioParteSpecifica(idServizio);
 			return true;
-		}catch(RegistryNotFound notFound){}
+		}catch(RegistryNotFound notFound){
+			// ignore
+		}
 		
 		// Cerco negli oggetti presenti nell'archivio
 		if(archive.getAccordiServizioParteSpecifica().size()>0){
@@ -366,7 +378,9 @@ public abstract class AbstractConverter {
 					if(idServizio.equals(id)){
 						return true;
 					}
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 			}
 		}
 
@@ -380,7 +394,9 @@ public abstract class AbstractConverter {
 		// Cerco nel registro
 		try{
 			return registryReader.getAccordoServizioParteSpecifica(idServizio);
-		}catch(RegistryNotFound notFound){}
+		}catch(RegistryNotFound notFound){
+			// ignore
+		}
 		
 		// Cerco negli oggetti presenti nell'archivio
 		if(archive.getAccordiServizioParteSpecifica().size()>0){
@@ -403,7 +419,9 @@ public abstract class AbstractConverter {
 						continue;
 					}
 					return asps;
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 			}
 		}
 		return null;
@@ -417,7 +435,7 @@ public abstract class AbstractConverter {
 		List<String> uriAccordi = new ArrayList<String>();
 		
 		// Cerco nel registro
-		FiltroRicercaServizi filtroAccordi = new FiltroRicercaServizi();
+		ProtocolFiltroRicercaServizi filtroAccordi = new ProtocolFiltroRicercaServizi();
 		filtroAccordi.setTipoServizio(tipo);
 		filtroAccordi.setNomeServizio(nome);
 		if(idSoggetto!=null){
@@ -456,16 +474,19 @@ public abstract class AbstractConverter {
 						if(idSoggetto.getNome().equals(asps.getNomeSoggettoErogatore())==false){
 							continue;
 						}
+
+						IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipo, nome,
+								new IDSoggetto(idSoggetto.getTipo(),idSoggetto.getNome()), 
+								versione);
+						String uri = idServizio.toString();
+						if(uriAccordi.contains(uri)==false){
+							idAccordi.add(idServizio);
+							uriAccordi.add(uri);
+						}
 					}
-					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipo, nome,
-							new IDSoggetto(idSoggetto.getTipo(),idSoggetto.getNome()), 
-							versione);
-					String uri = idServizio.toString();
-					if(uriAccordi.contains(uri)==false){
-						idAccordi.add(idServizio);
-						uriAccordi.add(uri);
-					}
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 			}
 		}
 		

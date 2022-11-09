@@ -371,7 +371,9 @@ public class RegistroServiziReader {
 				FiltroRicercaServizi filtro = new FiltroRicercaServizi();
 				filtro.setIdAccordoServizioParteComune(idAccordo);
 				serviziImplementati = RegistroServiziManager.getInstance().getAllIdServizi(filtro, null);
-			}catch(Throwable t) {}
+			}catch(Throwable t) {
+				// ignore
+			}
 			
 			List<String> keyForClean = new ArrayList<String>();
 			List<String> keys = RegistroServiziReader.keysCache();
@@ -1062,7 +1064,9 @@ public class RegistroServiziReader {
 			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
 			try{
 				r = driver.getPortaDominio(nome);
-			}catch(DriverRegistroServiziNotFound notFound){}
+			}catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			if(r!=null || nomeRegistro!=null){
 				break;
 			}
@@ -1083,7 +1087,9 @@ public class RegistroServiziReader {
 			try{
 				IDRuolo idRuolo = new IDRuolo(nome);
 				r = driver.getRuolo(idRuolo);
-			}catch(DriverRegistroServiziNotFound notFound){}
+			}catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			if(r!=null || nomeRegistro!=null){
 				break;
 			}
@@ -1103,7 +1109,9 @@ public class RegistroServiziReader {
 			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
 			try{
 				r = driver.getSoggetto(idSoggetto);
-			}catch(DriverRegistroServiziNotFound notFound){}
+			}catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			if(r!=null || nomeRegistro!=null){
 				break;
 			}
@@ -1128,7 +1136,9 @@ public class RegistroServiziReader {
 				else{
 					r = driver.getAccordoServizioParteComune(idAccordo);
 				}
-			}catch(DriverRegistroServiziNotFound notFound){}
+			}catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			if(r!=null || nomeRegistro!=null){
 				break;
 			}
@@ -1153,7 +1163,9 @@ public class RegistroServiziReader {
 				else{
 					r = driver.getAccordoServizioParteSpecifica(idServizio);
 				}
-			}catch(DriverRegistroServiziNotFound notFound){}
+			}catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			if(r!=null || nomeRegistro!=null){
 				break;
 			}
@@ -1178,7 +1190,9 @@ public class RegistroServiziReader {
 				else{
 					r = driver.getAccordoCooperazione(idAccordo);
 				}
-			}catch(DriverRegistroServiziNotFound notFound){}
+			}catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			if(r!=null || nomeRegistro!=null){
 				break;
 			}
@@ -1201,7 +1215,9 @@ public class RegistroServiziReader {
 			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
 			try{
 				r = driver.getAllIdPorteDominio(filtroRicerca);
-			}catch(DriverRegistroServiziNotFound notFound){}
+			}catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			if(r!=null || nomeRegistro!=null){
 				break;
 			}
@@ -1221,7 +1237,9 @@ public class RegistroServiziReader {
 			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
 			try{
 				r = driver.getAllIdRuoli(filtroRicerca);
-			}catch(DriverRegistroServiziNotFound notFound){}
+			}catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			if(r!=null || nomeRegistro!=null){
 				break;
 			}
@@ -1241,7 +1259,9 @@ public class RegistroServiziReader {
 			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
 			try{
 				r = driver.getAllIdSoggetti(filtroRicerca);
-			}catch(DriverRegistroServiziNotFound notFound){}
+			}catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			if(r!=null || nomeRegistro!=null){
 				break;
 			}
@@ -1261,7 +1281,9 @@ public class RegistroServiziReader {
 			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
 			try{
 				r = driver.getAllIdAccordiCooperazione(filtroRicerca);
-			}catch(DriverRegistroServiziNotFound notFound){}
+			}catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			if(r!=null || nomeRegistro!=null){
 				break;
 			}
@@ -1281,7 +1303,9 @@ public class RegistroServiziReader {
 			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
 			try{
 				r = driver.getAllIdAccordiServizioParteComune(filtroRicerca);
-			}catch(DriverRegistroServiziNotFound notFound){}
+			}catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			if(r!=null || nomeRegistro!=null){
 				break;
 			}
@@ -1301,7 +1325,9 @@ public class RegistroServiziReader {
 			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
 			try{
 				r = driver.getAllIdPortType(filtroRicerca);
-			}catch(DriverRegistroServiziNotFound notFound){}
+			}catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			if(r!=null || nomeRegistro!=null){
 				break;
 			}
@@ -1321,7 +1347,9 @@ public class RegistroServiziReader {
 			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
 			try{
 				r = driver.getAllIdAzionePortType(filtroRicerca);
-			}catch(DriverRegistroServiziNotFound notFound){}
+			}catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			if(r!=null || nomeRegistro!=null){
 				break;
 			}
@@ -1341,7 +1369,9 @@ public class RegistroServiziReader {
 			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
 			try{
 				r = driver.getAllIdAzioneAccordo(filtroRicerca);
-			}catch(DriverRegistroServiziNotFound notFound){}
+			}catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			if(r!=null || nomeRegistro!=null){
 				break;
 			}
@@ -1361,7 +1391,9 @@ public class RegistroServiziReader {
 			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
 			try{
 				r = driver.getAllIdServizi(filtroRicerca);
-			}catch(DriverRegistroServiziNotFound notFound){}
+			}catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			if(r!=null || nomeRegistro!=null){
 				break;
 			}
@@ -1381,7 +1413,9 @@ public class RegistroServiziReader {
 			IDriverRegistroServiziGet driver = this.registroServizi.getDriverRegistroServizi().get(nomeRegInLista);
 			try{
 				r = driver.getAllIdFruizioniServizio(filtroRicerca);
-			}catch(DriverRegistroServiziNotFound notFound){}
+			}catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			if(r!=null || nomeRegistro!=null){
 				break;
 			}
@@ -1412,7 +1446,9 @@ public class RegistroServiziReader {
 		org.openspcoop2.core.registry.AccordoServizioParteSpecifica servizio = null;
 		try{
 			servizio = this.registroServizi.getAccordoServizioParteSpecifica(connectionPdD,nomeRegistro,idServizio);
-		}catch(DriverRegistroServiziNotFound e){}
+		}catch(DriverRegistroServiziNotFound e){
+			// ignore
+		}
 		if(servizio != null){
 			// Profilo di gestione
 			profilo = servizio.getVersioneProtocollo();
@@ -1713,7 +1749,9 @@ public class RegistroServiziReader {
 				nowDate.setTime(now);
 				infoServizio.setScadenza(nowDate);
 				infoServizio.setScadenzaMinuti(minuti);
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 		}
 
 
@@ -1787,7 +1825,9 @@ public class RegistroServiziReader {
 						nowDate.setTime(now);
 						infoServizio.setScadenza(nowDate);
 						infoServizio.setScadenzaMinuti(minuti);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 				
 			}
@@ -1950,7 +1990,9 @@ public class RegistroServiziReader {
 				nowDate.setTime(now);
 				infoServizio.setScadenza(nowDate);
 				infoServizio.setScadenzaMinuti(minuti);
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 		}
 
 
@@ -2028,7 +2070,9 @@ public class RegistroServiziReader {
 						nowDate.setTime(now);
 						infoServizio.setScadenza(nowDate);
 						infoServizio.setScadenzaMinuti(minuti);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 				
 			}
@@ -2152,7 +2196,9 @@ public class RegistroServiziReader {
 						nowDate.setTime(now);
 						infoServizio.setScadenza(nowDate);
 						infoServizio.setScadenzaMinuti(minuti);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 				
 			}
@@ -2208,7 +2254,9 @@ public class RegistroServiziReader {
 				nowDate.setTime(now);
 				infoServizio.setScadenza(nowDate);
 				infoServizio.setScadenzaMinuti(minuti);
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 		}
 
 
@@ -2633,7 +2681,9 @@ public class RegistroServiziReader {
 		org.openspcoop2.core.registry.AccordoServizioParteSpecifica servizio = null;
 		try{
 			servizio = this.registroServizi.getAccordoServizioParteSpecifica(connectionPdD,nomeRegistro,idService);
-		}catch(DriverRegistroServiziNotFound e){}
+		}catch(DriverRegistroServiziNotFound e){
+			// ignore
+		}
 		String uriServizio = null;
 		try{
 			uriServizio = IDServizioFactory.getInstance().getUriFromIDServizio(idService);
@@ -2958,7 +3008,9 @@ public class RegistroServiziReader {
 		org.openspcoop2.core.registry.AccordoServizioParteSpecifica servizio = null;
 		try{
 			servizio = this.registroServizi.getAccordoServizioParteSpecifica(connectionPdD,nomeRegistro,idService);
-		}catch(DriverRegistroServiziNotFound e){}
+		}catch(DriverRegistroServiziNotFound e){
+			// ignore
+		}
 		if(servizio==null){
 			risultato.setServizioRegistrato(false);
 			return risultato;
@@ -2977,7 +3029,9 @@ public class RegistroServiziReader {
 		org.openspcoop2.core.registry.AccordoServizioParteComune as = null;
 		try{
 			as = this.registroServizi.getAccordoServizioParteComune(connectionPdD,nomeRegistro,idAccordo);
-		}catch(DriverRegistroServiziNotFound e){}
+		}catch(DriverRegistroServiziNotFound e){
+			// ignore
+		}
 		if (as == null){
 			risultato.setServizioRegistrato(false);
 			return risultato;
@@ -3061,7 +3115,9 @@ public class RegistroServiziReader {
 					org.openspcoop2.core.registry.AccordoServizioParteSpecifica servizioC = null;
 					try{
 						servizioC = this.registroServizi.getAccordoServizioParteSpecifica_ServizioCorrelato(connectionPdD,nomeRegistro,soggettoFruitore,idAccordo);
-					}catch(DriverRegistroServiziNotFound e){}
+					}catch(DriverRegistroServiziNotFound e){
+						// ignore
+					}
 					if(servizioC!=null){
 						if(servizioC.getNome()!=null && servizioC.getTipo()!=null && servizioC.getVersione()!=null){
 							risultato.setTipoServizioCorrelato(servizioC.getTipo());
@@ -3105,7 +3161,9 @@ public class RegistroServiziReader {
 						org.openspcoop2.core.registry.AccordoServizioParteSpecifica servizioC = null;
 						try{
 							servizioC = this.registroServizi.getAccordoServizioParteSpecifica_ServizioCorrelato(connectionPdD,nomeRegistro,idService.getSoggettoErogatore(),idAccordo);
-						}catch(DriverRegistroServiziNotFound e){}
+						}catch(DriverRegistroServiziNotFound e){
+							// ignore
+						}
 						if(servizioC!=null){
 							if(servizioC.getNome()!=null && servizioC.getTipo()!=null && servizioC.getVersione()!=null){
 								risultato.setTipoServizioCorrelato(servizioC.getTipo());
@@ -3136,7 +3194,9 @@ public class RegistroServiziReader {
 			Soggetto soggettoFruitore = null;
 			try{
 				soggettoFruitore = this.registroServizi.getSoggetto(nomeRegistro, soggettoFruitore);
-			}catch(DriverRegistroServiziNotFound e){}
+			}catch(DriverRegistroServiziNotFound e){
+				// ignore
+			}
 			if (soggettoFruitore == null){
 				this.log.debug("validaServizio, soggetto frutore ["+soggettoFruitore.toString()+"] non definito (o non registrato)");
 				risultato.setServizioRegistrato(false);
@@ -3146,7 +3206,9 @@ public class RegistroServiziReader {
 				PortaDominio pdd = null;
 				try{
 					pdd = this.registroServizi.getPortaDominio(nomeRegistro, soggettoFruitore.getPortaDominio());
-				}catch(DriverRegistroServiziNotFound e){}
+				}catch(DriverRegistroServiziNotFound e){
+				// ignore
+			}
 				if (pdd == null){
 					this.log.debug("validaServizio, porta di domino ["+soggettoFruitore.getPortaDominio()+"] associata al soggetto fruitore ["+soggettoFruitore.toString()+"] non definita (o non registrata)");
 					risultato.setServizioRegistrato(false);
@@ -3169,7 +3231,9 @@ public class RegistroServiziReader {
 			Soggetto soggettoErogatore = null;
 			try{
 				soggettoErogatore = this.registroServizi.getSoggetto(nomeRegistro, idService.getSoggettoErogatore());
-			}catch(DriverRegistroServiziNotFound e){}
+			}catch(DriverRegistroServiziNotFound e){
+				// ignore
+			}
 			if (soggettoErogatore == null){
 				this.log.debug("validaServizio, soggetto erogatore ["+idService.getSoggettoErogatore().toString()+"] non definito (o non registrato)");
 				risultato.setServizioRegistrato(false);
@@ -3179,7 +3243,9 @@ public class RegistroServiziReader {
 				PortaDominio pdd = null;
 				try{
 					pdd = this.registroServizi.getPortaDominio(nomeRegistro, soggettoErogatore.getPortaDominio());
-				}catch(DriverRegistroServiziNotFound e){}
+				}catch(DriverRegistroServiziNotFound e){
+				// ignore
+			}
 				if (pdd == null){
 					this.log.debug("validaServizio, porta di domino ["+soggettoErogatore.getPortaDominio()+"] associata al soggetto erogatore ["+idService.getSoggettoErogatore().toString()+"] non definita (o non registrata)");
 					risultato.setServizioRegistrato(false);
@@ -3328,6 +3394,10 @@ public class RegistroServiziReader {
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		
+		if(soggetto==null) {
+			throw new DriverRegistroServiziException("Param soggetto is null");
+		}
+		
 		if(soggetto.sizeCredenzialiList()<=0) {
 			throw new DriverRegistroServiziException("Nessuna credenziale risulta associata al soggetto");
 		}
@@ -3386,6 +3456,10 @@ public class RegistroServiziReader {
 	public static CertificateCheck checkCertificatiConnettoreHttpsById(Connettore connettore, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		if(connettore==null) {
+			throw new DriverRegistroServiziException("Param connettore is null");
+		}
 		
 		TipiConnettore tipo = TipiConnettore.toEnumFromName(connettore.getTipo());
 		if( !TipiConnettore.HTTPS.equals(tipo)) {
@@ -3487,6 +3561,10 @@ public class RegistroServiziReader {
 	public static CertificateCheck checkCertificatiModIErogazioneById(AccordoServizioParteSpecifica asps, int sogliaWarningGiorni, 
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		if(asps==null) {
+			throw new DriverRegistroServiziException("Param asps is null");
+		}
 		
 		boolean modi = asps.getTipoSoggettoErogatore().equals(CostantiLabel.MODIPA_PROTOCOL_NAME);
 		if(!modi) {

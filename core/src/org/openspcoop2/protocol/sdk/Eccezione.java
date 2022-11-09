@@ -46,7 +46,7 @@ import org.openspcoop2.protocol.sdk.constants.SubCodiceErrore;
  * @version $Rev$, $Date$
  */
 
-public class Eccezione implements java.io.Serializable{
+public class Eccezione implements java.io.Serializable, Cloneable{
 
 	/**
 	 * serialVersionUID
@@ -80,6 +80,9 @@ public class Eccezione implements java.io.Serializable{
     
     /* Metodi da utilizzare per fare attuare la traduzione della descrizione */
 	public Eccezione(ErroreCooperazione errore,boolean isErroreValidazione, String modulo,IProtocolFactory<?> protocolFactory) throws ProtocolException{
+		if(protocolFactory==null) {
+			throw new ProtocolException("ProtocolFactory is null");
+		}
 		this.eccezione = new org.openspcoop2.core.tracciamento.Eccezione();
 		if(isErroreValidazione){
 			this.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);

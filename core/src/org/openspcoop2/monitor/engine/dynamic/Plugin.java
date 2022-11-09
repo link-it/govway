@@ -60,7 +60,7 @@ public class Plugin implements Serializable {
 	
 	private List<PluginJar> archivePlugin = new ArrayList<>();
 	
-	private DynamicClassLoader classLoader;
+	private transient DynamicClassLoader classLoader;
 	
 	public Plugin(RegistroPlugin plugin) throws Exception {
 		this.nome = plugin.getNome();

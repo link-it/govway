@@ -54,7 +54,9 @@ public class OpenSPCoop2Message_soap11_impl extends AbstractOpenSPCoop2Message_s
 		}finally{
 			try{
 				this._getInputStream().close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	@Override

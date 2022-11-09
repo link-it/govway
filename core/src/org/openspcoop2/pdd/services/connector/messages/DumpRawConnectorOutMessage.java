@@ -144,6 +144,9 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 	}
 	
 	private void _sendHeaders(OpenSPCoop2Message message) throws Exception {
+		if(message==null) {
+			throw new Exception("Message is null");
+		}
 		// Eventuali header http propagati
 		OpenSPCoop2MessageProperties forwardHeader = null;
 		if(ServiceBinding.REST.equals(message.getServiceBinding())) {

@@ -93,6 +93,7 @@ import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.IUniqueIdentifier;
@@ -127,6 +128,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	private boolean inizializzato = false;
 
 	/** Indicazione se il servizio PD risulta attivo */
+	private static Semaphore semaphore = new Semaphore(ID_MODULO);
 	private static Boolean staticInitialized = false;
 	
 	private void init(){
@@ -134,10 +136,13 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			this.propertiesReader = OpenSPCoop2Properties.getInstance();
 			this.className = ClassNameProperties.getInstance();
 			this.inizializzato = true;
-			synchronized (IntegrationManager.staticInitialized) {
+			semaphore.acquireThrowRuntime("init");
+			try {
 				if(IntegrationManager.staticInitialized==false){
 					IntegrationManager.staticInitialized = true;
 				}
+			}finally {
+				semaphore.release("init");
 			}
 		}
 	}
@@ -683,7 +688,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}else{
 				ids = gestoreMessaggi.getIDMessaggi_ServizioApplicativo(id_servizio_applicativo.getNome(),tipoServizio,servizio,azione,counter,offset);
 			}
-			if(ids.size() == 0){
+			if(ids==null || ids.size() == 0){
 				msgDiag.logPersonalizzato("messaggiNonPresenti");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI.
 						getErroreIntegrazione(),id_servizio_applicativo,
@@ -1114,7 +1119,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			// Messaggio
 			OpenSPCoop2Message consegnaMessage = null;
 			try{
-				if(useNewMethod) {
+				if(useNewMethod && gestoreMessaggiIdentificativoReale!=null) {
 					consegnaMessage = gestoreMessaggiIdentificativoReale.getMessage(dataMessaggio); // risoluzione riferimento messaggio gia' effettuata
 				}
 				else {
@@ -1133,7 +1138,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					IBustaBuilder<?> bustaBuilder = protocolFactory.createBustaBuilder(stato.getStatoRichiesta());
 					
 					FaseSbustamento fase = null;
-					if(RuoloMessaggio.RICHIESTA.equals(fase)){
+					if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)){
 						fase = FaseSbustamento.PRE_CONSEGNA_RICHIESTA;
 					}else{
 						fase = FaseSbustamento.PRE_CONSEGNA_RISPOSTA;

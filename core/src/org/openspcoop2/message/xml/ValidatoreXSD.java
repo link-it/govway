@@ -62,7 +62,7 @@ public class ValidatoreXSD extends  org.openspcoop2.utils.xml.AbstractValidatore
 		if(messageFactoryParam==null) {
 			messageFactoryParam = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		}
-		return XMLUtils.getInstance(messageFactoryParam);
+		return MessageXMLUtils.getInstance(messageFactoryParam);
 	}
 	
 	

@@ -129,7 +129,9 @@ public abstract class AbstractContext implements java.io.Serializable{
 			this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO,requestInfo);
 		}
 		this.dataAccettazioneRichiesta = dataAccettazioneRichiesta;
-		this.identitaPdD = requestInfo.getIdentitaPdD();
+		if(requestInfo!=null) {
+			this.identitaPdD = requestInfo.getIdentitaPdD();
+		}
 		this.idModuloAsIDService = idModuloAsIDService;
 		this.requestInfo = requestInfo;
 	}

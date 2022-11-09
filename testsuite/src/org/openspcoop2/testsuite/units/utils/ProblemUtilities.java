@@ -25,7 +25,7 @@ package org.openspcoop2.testsuite.units.utils;
 import org.apache.axis.AxisFault;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -164,7 +164,7 @@ public class ProblemUtilities {
 			ErroriProperties erroriProperties = ErroriProperties.getInstance(LoggerWrapperFactory.getLogger(ProblemUtilities.class));
 			
 			Assert.assertTrue(problemNode!=null);
-			xml = XMLUtils.DEFAULT.toString(problemNode);
+			xml = MessageXMLUtils.DEFAULT.toString(problemNode);
 			Reporter.log("Namespace Problem ("+problemNode.getNamespaceURI()+"): "+xml);
 			Assert.assertTrue(ProblemConstants.XML_PROBLEM_DETAILS_RFC_7807_NAMESPACE.equals(problemNode.getNamespaceURI()));
 			

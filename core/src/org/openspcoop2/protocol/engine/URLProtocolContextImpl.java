@@ -74,7 +74,9 @@ public class URLProtocolContextImpl extends org.openspcoop2.protocol.sdk.state.U
 			try {
 				pfEmptyContext = protocolFactoryManager.getProtocolFactoryWithEmptyContext();
 				idServiceDefaultEmptyContext = protocolFactoryManager.getDefaultServiceForEmptyContext();
-			}catch(Throwable e) {}
+			}catch(Throwable e) {
+				// ignore
+			}
 			
 			// Altro...
 			if(urlInvocazione.startsWith(servletContext+"/")){
@@ -169,7 +171,7 @@ public class URLProtocolContextImpl extends org.openspcoop2.protocol.sdk.state.U
 						functionParameters = req.getRequestURI().substring(sizePrefix);
 					}
 					
-					if(functionParameters.startsWith(IntegrationManager_SERVICE_PD)) {
+					if(functionParameters!=null && functionParameters.startsWith(IntegrationManager_SERVICE_PD)) {
 						function+="_"+IntegrationManager_SERVICE_PD;
 						
 						Object oPD = getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PORTA_DELEGATA.getValue());
@@ -180,7 +182,7 @@ public class URLProtocolContextImpl extends org.openspcoop2.protocol.sdk.state.U
 						functionParameters=(String)oPD;
 						
 					} 
-					else if(functionParameters.startsWith(IntegrationManager_SERVICE_MessageBox)) {
+					else if(functionParameters!=null && functionParameters.startsWith(IntegrationManager_SERVICE_MessageBox)) {
 						function+="_"+IntegrationManager_SERVICE_MessageBox;
 						
 						if(functionParameters.length()>IntegrationManager_SERVICE_MessageBox.length()) {

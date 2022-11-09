@@ -460,7 +460,10 @@ public class XMLLib{
 				if( (line!=null) && (line.length()>0) && (line.getBytes()[0]==condizioneUscita) )
 					break;
 
-				String [] splitLine = line.split(CostantiXMLRepository.INDEX_SERVIZI_SEPARATORE);
+				String [] splitLine = null;
+				if(line!=null) {
+					splitLine = line.split(CostantiXMLRepository.INDEX_SERVIZI_SEPARATORE);
+				}
 				if(splitLine==null){
 					throw new Exception("Non e' un file index servizi del registro dei servizi di OpenSPCoop (read line '"+CostantiXMLRepository.INDEX_SERVIZI_SEPARATORE+"') ["+line+"]");
 				}else if(splitLine.length!=5){

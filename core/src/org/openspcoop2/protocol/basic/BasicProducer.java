@@ -395,10 +395,14 @@ public class BasicProducer extends BasicComponentFactory implements IMonitoraggi
 			try{
 				if(stmtTest!=null)
 					stmtTest.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				this.releaseConnection(cr, "isAlive");
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 

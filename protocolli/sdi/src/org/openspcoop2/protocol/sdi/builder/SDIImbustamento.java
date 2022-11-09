@@ -35,7 +35,7 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.utils.MessageUtilities;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.protocol.sdi.config.SDIProperties;
 import org.openspcoop2.protocol.sdi.config.SDITraduttore;
 import org.openspcoop2.protocol.sdi.constants.SDICostanti;
@@ -80,7 +80,7 @@ public class SDIImbustamento {
 		try{
 			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
 			OpenSPCoop2MessageFactory messageFactory = msgParam.getFactory();
-			XMLUtils xmlUtils = XMLUtils.getInstance(messageFactory);
+			MessageXMLUtils xmlUtils = MessageXMLUtils.getInstance(messageFactory);
 					
 			// create body
 			SOAPPart soapPart = msg.getSOAPPart();
@@ -441,7 +441,7 @@ public class SDIImbustamento {
 		try{
 			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
 			OpenSPCoop2MessageFactory messageFactory = msgParam.getFactory();
-			XMLUtils xmlUtils = XMLUtils.getInstance(messageFactory);
+			MessageXMLUtils xmlUtils = MessageXMLUtils.getInstance(messageFactory);
 			
 			// create body
 			SOAPPart soapPart = msg.getSOAPPart();
@@ -490,7 +490,7 @@ public class SDIImbustamento {
 		try{
 			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
 			OpenSPCoop2MessageFactory messageFactory = msgParam.getFactory();
-			XMLUtils xmlUtils = XMLUtils.getInstance(messageFactory);
+			MessageXMLUtils xmlUtils = MessageXMLUtils.getInstance(messageFactory);
 		
 			// create body
 			SOAPPart soapPart = msg.getSOAPPart();

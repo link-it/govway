@@ -70,7 +70,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.config.Subscription;
+import org.openspcoop2.protocol.sdk.config.ProtocolSubscription;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
@@ -1203,7 +1203,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, nomeservizio, mytipoprov, mynomeprov, versioneservizio);
 				ServiceBinding serviceBinding = org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(as.getServiceBinding()) ?
 						ServiceBinding.REST : ServiceBinding.SOAP;
-				Subscription subscriptionDefault = this.protocolFactory.createProtocolIntegrationConfiguration().
+				ProtocolSubscription subscriptionDefault = this.protocolFactory.createProtocolIntegrationConfiguration().
 						createDefaultSubscription(serviceBinding, idFruitore, idServizio);
 				
 				PortaDelegata portaDelegata = subscriptionDefault.getPortaDelegata();

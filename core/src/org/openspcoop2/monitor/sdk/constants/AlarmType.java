@@ -49,9 +49,6 @@ public enum AlarmType {
 	public String toString(){
 		return this.name();
 	}
-	public boolean equals(AlarmType esito){
-		return this.toString().equals(esito.toString());
-	}
 
 }
 

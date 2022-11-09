@@ -26,7 +26,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.Properties;
 
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWSOptions;
 import org.openspcoop2.utils.security.JsonSignature;
@@ -88,7 +88,7 @@ public class Signature {
 	private boolean initialized = false;
 	private JsonSignature jsonCompactSignature;
 	private XmlSignature xmlSignature;
-	private XMLUtils xmlUtils;
+	private MessageXMLUtils xmlUtils;
 	
 	public synchronized void init() throws TracciaException {
 		
@@ -157,7 +157,7 @@ public class Signature {
 					this.xmlSignature.addRSAKeyInfo();
 				}
 				
-				this.xmlUtils = XMLUtils.DEFAULT;
+				this.xmlUtils = MessageXMLUtils.DEFAULT;
 			}
 			catch(Exception e) {
 				throw new TracciaException(e.getMessage(),e);

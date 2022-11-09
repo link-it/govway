@@ -108,11 +108,9 @@ public class ServiceIdentificationReader implements IServiceIdentificationReader
 					}
 				}
 				if(this.idPD.getIdentificativiFruizione().getSoggettoFruitore()!=null){
-					if(this.idPD.getIdentificativiFruizione().getSoggettoFruitore()!=null){
-						if(this.idPD.getIdentificativiFruizione().getSoggettoFruitore().getCodicePorta()==null){
-							this.idPD.getIdentificativiFruizione().getSoggettoFruitore().setCodicePorta(
-									this.registryReader.getDominio(this.idPD.getIdentificativiFruizione().getSoggettoFruitore()));
-						}
+					if(this.idPD.getIdentificativiFruizione().getSoggettoFruitore().getCodicePorta()==null){
+						this.idPD.getIdentificativiFruizione().getSoggettoFruitore().setCodicePorta(
+								this.registryReader.getDominio(this.idPD.getIdentificativiFruizione().getSoggettoFruitore()));
 					}
 				}
 			}

@@ -220,15 +220,21 @@ public class RollbackRepositoryBuste implements java.io.Serializable {
 				try{
 					if( pstmtUpdateHistory != null )
 						pstmtUpdateHistory.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if( pstmtUpdateProfilo != null )
 						pstmtUpdateProfilo.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if( pstmtUpdatePdd != null )
 						pstmtUpdatePdd.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				throw new ProtocolException(errorMsg,e);
 			}
 		}else{
@@ -334,15 +340,21 @@ public class RollbackRepositoryBuste implements java.io.Serializable {
 				try{
 					if( pstmtUpdateHistory != null )
 						pstmtUpdateHistory.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if( pstmtUpdateProfilo != null )
 						pstmtUpdateProfilo.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if( pstmtUpdatePdd != null )
 						pstmtUpdatePdd.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				throw new ProtocolException(errorMsg,e);
 			}
 		}else{

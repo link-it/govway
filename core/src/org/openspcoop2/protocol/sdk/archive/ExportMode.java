@@ -27,7 +27,7 @@ package org.openspcoop2.protocol.sdk.archive;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ExportMode extends ArchiveMode {
+public class ExportMode extends ArchiveMode implements Cloneable {
 
 	public ExportMode(String name) {
 		super(name);

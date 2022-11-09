@@ -133,6 +133,16 @@ public abstract class OpenSPCoop2MessageFactory {
 		}
 		return OpenSPCoop2MessageFactory.soapFactory12;
 	}
+	public static synchronized void initSoapFactory11(SOAPFactory soapFactory) {
+		if(OpenSPCoop2MessageFactory.soapFactory11==null){
+			OpenSPCoop2MessageFactory.soapFactory11=soapFactory;
+		}
+	} 
+	public static synchronized void initSoapFactory12(SOAPFactory soapFactory) {
+		if(OpenSPCoop2MessageFactory.soapFactory12==null){
+			OpenSPCoop2MessageFactory.soapFactory12=soapFactory;
+		}
+	} 
 	protected abstract void initSoapFactory();
 	
 	
@@ -143,6 +153,11 @@ public abstract class OpenSPCoop2MessageFactory {
 		}
 		return OpenSPCoop2MessageFactory.soapMessageFactory;
 	}
+	public static synchronized void initSoapMessageFactory(MessageFactory soapMessageFactory) {
+		if(OpenSPCoop2MessageFactory.soapMessageFactory==null){
+			OpenSPCoop2MessageFactory.soapMessageFactory=soapMessageFactory;
+		}
+	} 
 	protected abstract void initSoapMessageFactory() throws SOAPException; 
 	
 	public abstract SOAPConnectionFactory getSOAPConnectionFactory() throws SOAPException;
@@ -616,8 +631,10 @@ public abstract class OpenSPCoop2MessageFactory {
 					result.setMessage(null);
 					result.setParseException(ParseExceptionUtils.buildParseException(soapException, messageRole));
 				}
-				
-				soapMessage.setSoapAction(soapAction);
+
+				if(soapMessage!=null) {
+					soapMessage.setSoapAction(soapAction);
+				}
 			}
 						
 			return result;
@@ -1044,7 +1061,7 @@ public abstract class OpenSPCoop2MessageFactory {
 	
 	public OpenSPCoop2Message createFaultMessage(MessageType messageType,boolean useProblemRFC7807, FaultBuilderConfig faultBuilderConfig, 
 			Throwable t,NotifierInputStreamParams notifierInputStreamParams) {
-		return createFaultMessage(messageType, useProblemRFC7807, faultBuilderConfig, t.getMessage(),notifierInputStreamParams);
+		return createFaultMessage(messageType, useProblemRFC7807, faultBuilderConfig,t!=null ? t.getMessage() : "Internal Error",notifierInputStreamParams);
 	}
 	public OpenSPCoop2Message createFaultMessage(MessageType messageType,boolean useProblemRFC7807, 
 			Throwable t,NotifierInputStreamParams notifierInputStreamParams) {

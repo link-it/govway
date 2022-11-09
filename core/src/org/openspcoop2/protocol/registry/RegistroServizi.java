@@ -754,7 +754,9 @@ public class RegistroServizi  {
 			try{
 				listAccordi = this.driverRegistroServizi.get(nomeRegistro).getAllIdAccordiServizioParteComune(filtroAccordi);
 			}
-			catch(DriverRegistroServiziNotFound notFound){}
+			catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 			
 			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recuperati "+(listAccordi!=null ? listAccordi.size() : 0)+" accordi di servizio parte comune";
@@ -783,7 +785,9 @@ public class RegistroServizi  {
 						this.cache.remove(_getKey_getAccordoServizioParteComune(this.idAccordoFactory, idAccordo, null, null));
 						this.getAccordoServizioParteComune(connectionPdD, nomeRegistro, idAccordo);
 					}
-					catch(DriverRegistroServiziNotFound notFound){}
+					catch(DriverRegistroServiziNotFound notFound){
+						// ignore
+					}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
 					// uguale a quello sopra
@@ -791,7 +795,9 @@ public class RegistroServizi  {
 //						this.cache.remove(_getKey_getAccordoServizioParteComune(this.idAccordoFactory, idAccordo, false, false));
 //						this.getAccordoServizioParteComune(connectionPdD, nomeRegistro, idAccordo, false, false);
 //					}
-//					catch(DriverRegistroServiziNotFound notFound){}
+//					catch(DriverRegistroServiziNotFound notFound){
+//						// ignore					
+//					}
 //					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
 					AccordoServizioParteComune as = null;
@@ -799,7 +805,9 @@ public class RegistroServizi  {
 						this.cache.remove(_getKey_getAccordoServizioParteComune(this.idAccordoFactory, idAccordo, true, true));
 						as = this.getAccordoServizioParteComune(connectionPdD, nomeRegistro, idAccordo, true, true);
 					}
-					catch(DriverRegistroServiziNotFound notFound){}
+					catch(DriverRegistroServiziNotFound notFound){
+						// ignore
+					}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 										
 					boolean serviziCorrelati = false;
@@ -860,7 +868,9 @@ public class RegistroServizi  {
 						try{
 							listServizi = this.driverRegistroServizi.get(nomeRegistro).getAllIdServizi(filtroServizi);
 						}
-						catch(DriverRegistroServiziNotFound notFound){}
+						catch(DriverRegistroServiziNotFound notFound){
+							// ignore
+						}
 						catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 
 						msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], (analisi profilo asincrono) recuperati "+(listServizi!=null ? listServizi.size() : 0)+" servizi che implementano l'accordo di servizio parte comune ["+idAccordo+"]";
@@ -887,21 +897,27 @@ public class RegistroServizi  {
 										this.cache.remove(_getKey_getAccordoServizioParteSpecifica_ServizioCorrelato(idSoggetto, idAccordo,null));
 										this.getAccordoServizioParteSpecifica_ServizioCorrelato(connectionPdD, nomeRegistro, idSoggetto, idAccordo);
 									}
-									catch(DriverRegistroServiziNotFound notFound){}
+									catch(DriverRegistroServiziNotFound notFound){
+										// ignore
+									}
 									catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 									
 									try{
 										this.cache.remove(_getKey_getAccordoServizioParteSpecifica_ServizioCorrelato(idSoggetto, idAccordo,false));
 										this.getAccordoServizioParteSpecifica_ServizioCorrelato(connectionPdD, nomeRegistro, idSoggetto, idAccordo, false);
 									}
-									catch(DriverRegistroServiziNotFound notFound){}
+									catch(DriverRegistroServiziNotFound notFound){
+										// ignore
+									}
 									catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 									
 									try{
 										this.cache.remove(_getKey_getAccordoServizioParteSpecifica_ServizioCorrelato(idSoggetto, idAccordo,true));
 										this.getAccordoServizioParteSpecifica_ServizioCorrelato(connectionPdD, nomeRegistro, idSoggetto, idAccordo, true);
 									}
-									catch(DriverRegistroServiziNotFound notFound){}
+									catch(DriverRegistroServiziNotFound notFound){
+										// ignore
+									}
 									catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 									
 									msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+
@@ -945,7 +961,9 @@ public class RegistroServizi  {
 			try{
 				listPdd = this.driverRegistroServizi.get(nomeRegistro).getAllIdPorteDominio(filtroPdd);
 			}
-			catch(DriverRegistroServiziNotFound notFound){}
+			catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 			
 			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recuperate "+(listPdd!=null ? listPdd.size() : 0)+" porte di dominio";
@@ -968,7 +986,9 @@ public class RegistroServizi  {
 						this.cache.remove(_getKey_getPortaDominio(idPdd));
 						this.getPortaDominio(connectionPdD, nomeRegistro, idPdd);
 					}
-					catch(DriverRegistroServiziNotFound notFound){}
+					catch(DriverRegistroServiziNotFound notFound){
+						// ignore
+					}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
 				}
@@ -991,7 +1011,9 @@ public class RegistroServizi  {
 			try{
 				listRuoli = this.driverRegistroServizi.get(nomeRegistro).getAllIdRuoli(filtroRuoli);
 			}
-			catch(DriverRegistroServiziNotFound notFound){}
+			catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 			
 			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recuperati "+(listRuoli!=null ? listRuoli.size() : 0)+" ruoli";
@@ -1014,7 +1036,9 @@ public class RegistroServizi  {
 						this.cache.remove(_getKey_getRuolo(idRuolo.getNome()));
 						this.getRuolo(connectionPdD, nomeRegistro, idRuolo.getNome());
 					}
-					catch(DriverRegistroServiziNotFound notFound){}
+					catch(DriverRegistroServiziNotFound notFound){
+						// ignore
+					}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
 				}
@@ -1038,7 +1062,9 @@ public class RegistroServizi  {
 			try{
 				listScope = this.driverRegistroServizi.get(nomeRegistro).getAllIdScope(filtroScope);
 			}
-			catch(DriverRegistroServiziNotFound notFound){}
+			catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 			
 			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recuperati "+(listScope!=null ? listScope.size() : 0)+" scope";
@@ -1061,7 +1087,9 @@ public class RegistroServizi  {
 						this.cache.remove(_getKey_getScope(idScope.getNome()));
 						this.getScope(connectionPdD, nomeRegistro, idScope.getNome());
 					}
-					catch(DriverRegistroServiziNotFound notFound){}
+					catch(DriverRegistroServiziNotFound notFound){
+						// ignore
+					}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
 				}
@@ -1085,7 +1113,9 @@ public class RegistroServizi  {
 			try{
 				listSoggetti = this.driverRegistroServizi.get(nomeRegistro).getAllIdSoggetti(filtroSoggetti);
 			}
-			catch(DriverRegistroServiziNotFound notFound){}
+			catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 			
 			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recuperati "+(listSoggetti!=null ? listSoggetti.size() : 0)+" soggetti";
@@ -1108,14 +1138,18 @@ public class RegistroServizi  {
 						this.cache.remove(_getKey_getSoggetto(idSoggetto));
 						this.getSoggetto(connectionPdD, nomeRegistro, idSoggetto);
 					}
-					catch(DriverRegistroServiziNotFound notFound){}
+					catch(DriverRegistroServiziNotFound notFound){
+						// ignore
+					}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
 					Soggetto soggetto = null;
 					try{
 						soggetto = this.driverRegistroServizi.get(nomeRegistro).getSoggetto(idSoggetto);
 					}
-					catch(DriverRegistroServiziNotFound notFound){}
+					catch(DriverRegistroServiziNotFound notFound){
+						// ignore
+					}
 					catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
 					if(soggetto!=null){
@@ -1127,7 +1161,9 @@ public class RegistroServizi  {
 											this.cache.remove(_getKey_getSoggettoByCredenzialiBasic(credenziale.getUser(), credenziale.getPassword()));
 											this.getSoggettoByCredenzialiBasic(connectionPdD, nomeRegistro, credenziale.getUser(), credenziale.getPassword(), cryptConfigSoggetti);
 										}
-										catch(DriverRegistroServiziNotFound notFound){}
+										catch(DriverRegistroServiziNotFound notFound){
+											// ignore
+										}
 										catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 									}
 									else if(CredenzialeTipo.APIKEY.equals(credenziale.getTipo())){
@@ -1135,7 +1171,9 @@ public class RegistroServizi  {
 											this.cache.remove(_getKey_getSoggettoByCredenzialiApiKey(credenziale.getUser(), credenziale.getPassword(), credenziale.isCertificateStrictVerification()));
 											this.getSoggettoByCredenzialiApiKey(connectionPdD, nomeRegistro, credenziale.getUser(), credenziale.getPassword(), credenziale.isCertificateStrictVerification(), cryptConfigSoggetti);
 										}
-										catch(DriverRegistroServiziNotFound notFound){}
+										catch(DriverRegistroServiziNotFound notFound){
+											// ignore
+										}
 										catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 									}
 									else if(CredenzialeTipo.SSL.equals(credenziale.getTipo())){
@@ -1144,7 +1182,9 @@ public class RegistroServizi  {
 												this.cache.remove(_getKey_getSoggettoByCredenzialiSsl(credenziale.getSubject(),credenziale.getIssuer()));
 												this.getSoggettoByCredenzialiSsl(connectionPdD, nomeRegistro, credenziale.getSubject(),credenziale.getIssuer());
 											}
-											catch(DriverRegistroServiziNotFound notFound){}
+											catch(DriverRegistroServiziNotFound notFound){
+												// ignore
+											}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 										}
 										if(credenziale.getCertificate()!=null) {
@@ -1153,7 +1193,9 @@ public class RegistroServizi  {
 												this.cache.remove(_getKey_getSoggettoByCredenzialiSsl(certificato, credenziale.isCertificateStrictVerification()));
 												this.getSoggettoByCredenzialiSsl(connectionPdD, nomeRegistro, certificato, credenziale.isCertificateStrictVerification());
 											}
-											catch(DriverRegistroServiziNotFound notFound){}
+											catch(DriverRegistroServiziNotFound notFound){
+												// ignore
+											}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 										}
 									}
@@ -1162,7 +1204,9 @@ public class RegistroServizi  {
 											this.cache.remove(_getKey_getSoggettoByCredenzialiPrincipal(credenziale.getUser()));
 											this.getSoggettoByCredenzialiPrincipal(connectionPdD, nomeRegistro, credenziale.getUser());
 										}
-										catch(DriverRegistroServiziNotFound notFound){}
+										catch(DriverRegistroServiziNotFound notFound){
+											// ignore
+										}
 										catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 									}
 								}
@@ -1189,7 +1233,9 @@ public class RegistroServizi  {
 			try{
 				listServizi = this.driverRegistroServizi.get(nomeRegistro).getAllIdServizi(filtroServizi);
 			}
-			catch(DriverRegistroServiziNotFound notFound){}
+			catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 			
 			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recuperati "+(listServizi!=null ? listServizi.size() : 0)+" servizi";
@@ -1218,28 +1264,36 @@ public class RegistroServizi  {
 						this.cache.remove(_getKey_getAccordoServizioParteSpecifica(idServizio,null));
 						this.getAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, idServizio);
 					}
-					catch(DriverRegistroServiziNotFound notFound){}
+					catch(DriverRegistroServiziNotFound notFound){
+						// ignore
+					}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 										
 					try{
 						this.cache.remove(_getKey_getAccordoServizioParteSpecifica(idServizio,false));
 						this.getAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, idServizio, false);
 					}
-					catch(DriverRegistroServiziNotFound notFound){}
+					catch(DriverRegistroServiziNotFound notFound){
+						// ignore
+					}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
 					try{
 						this.cache.remove(_getKey_getAccordoServizioParteSpecifica(idServizio,true));
 						this.getAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, idServizio, true);
 					}
-					catch(DriverRegistroServiziNotFound notFound){}
+					catch(DriverRegistroServiziNotFound notFound){
+						// ignore
+					}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 				
 					AccordoServizioParteSpecifica asps = null;
 					try{
 						asps = this.driverRegistroServizi.get(nomeRegistro).getAccordoServizioParteSpecifica(idServizio);
 					}
-					catch(DriverRegistroServiziNotFound notFound){}
+					catch(DriverRegistroServiziNotFound notFound){
+						// ignore
+					}
 					catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
 					try{
@@ -1258,21 +1312,27 @@ public class RegistroServizi  {
 															this.cache.remove(_getKey_getAccordoServizioParteSpecifica(idServizio,null));
 															this.getAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, idServizio);
 														}
-														catch(DriverRegistroServiziNotFound notFound){}
+														catch(DriverRegistroServiziNotFound notFound){
+															// ignore
+														}
 														catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 														
 														try{
 															this.cache.remove(_getKey_getAccordoServizioParteSpecifica(idServizio,false));
 															this.getAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, idServizio, false);
 														}
-														catch(DriverRegistroServiziNotFound notFound){}
+														catch(DriverRegistroServiziNotFound notFound){
+															// ignore
+														}
 														catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 														
 														try{
 															this.cache.remove(_getKey_getAccordoServizioParteSpecifica(idServizio,true));
 															this.getAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, idServizio, true);
 														}
-														catch(DriverRegistroServiziNotFound notFound){}
+														catch(DriverRegistroServiziNotFound notFound){
+															// ignore
+														}
 														catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 													}
 												}
@@ -1288,28 +1348,36 @@ public class RegistroServizi  {
 												this.cache.remove(_getKey_getAccordoServizioParteSpecifica(idServizio,null));
 												this.getAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, idServizio);
 											}
-											catch(DriverRegistroServiziNotFound notFound){}
+											catch(DriverRegistroServiziNotFound notFound){
+												// ignore
+											}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 											
 											try{
 												this.cache.remove(_getKey_getAccordoServizioParteSpecifica(idServizio,false));
 												this.getAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, idServizio, false);
 											}
-											catch(DriverRegistroServiziNotFound notFound){}
+											catch(DriverRegistroServiziNotFound notFound){
+												// ignore
+											}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 											
 											try{
 												this.cache.remove(_getKey_getAccordoServizioParteSpecifica(idServizio,true));
 												this.getAccordoServizioParteSpecifica(connectionPdD, nomeRegistro, idServizio, true);
 											}
-											catch(DriverRegistroServiziNotFound notFound){}
+											catch(DriverRegistroServiziNotFound notFound){
+												// ignore
+											}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 										}
 									}
 								}
 							}
 						}
-					}catch(DriverRegistroServiziNotFound notFound){}
+					}catch(DriverRegistroServiziNotFound notFound){
+						// ignore
+					}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
 					// Correlato implementato nella parte comune
@@ -1339,7 +1407,9 @@ public class RegistroServizi  {
 			try{
 				listAccordiCooperazione = this.driverRegistroServizi.get(nomeRegistro).getAllIdAccordiCooperazione(filtroAccordiCooperazione);
 			}
-			catch(DriverRegistroServiziNotFound notFound){}
+			catch(DriverRegistroServiziNotFound notFound){
+				// ignore
+			}
 			catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 			
 			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recuperati "+(listAccordiCooperazione!=null ? listAccordiCooperazione.size() : 0)+" accordi di cooperazione";
@@ -1362,21 +1432,27 @@ public class RegistroServizi  {
 						this.cache.remove(_getKey_getAccordoCooperazione(this.idAccordoCooperazioneFactory, idAccordoCooperazione, null));
 						this.getAccordoCooperazione(connectionPdD, nomeRegistro, idAccordoCooperazione);
 					}
-					catch(DriverRegistroServiziNotFound notFound){}
+					catch(DriverRegistroServiziNotFound notFound){
+						// ignore
+					}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
 					try{
 						this.cache.remove(_getKey_getAccordoCooperazione(this.idAccordoCooperazioneFactory, idAccordoCooperazione, false));
 						this.getAccordoCooperazione(connectionPdD, nomeRegistro, idAccordoCooperazione, false);
 					}
-					catch(DriverRegistroServiziNotFound notFound){}
+					catch(DriverRegistroServiziNotFound notFound){
+						// ignore
+					}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
 					try{
 						this.cache.remove(_getKey_getAccordoCooperazione(this.idAccordoCooperazioneFactory, idAccordoCooperazione, true));
 						this.getAccordoCooperazione(connectionPdD, nomeRegistro, idAccordoCooperazione, true);
 					}
-					catch(DriverRegistroServiziNotFound notFound){}
+					catch(DriverRegistroServiziNotFound notFound){
+						// ignore
+					}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 
 				}
@@ -2783,7 +2859,7 @@ public class RegistroServizi  {
 				idAccordo,
 				ruolo, tipo, nome,
 				key);
-		if(useRequestInfo) {
+		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addAllegatoApi(key, doc, 
 					requestInfo!=null ? requestInfo.getIdTransazione() : null);
 		}
@@ -2906,7 +2982,7 @@ public class RegistroServizi  {
 				idServizio,
 				ruolo, tipo, nome,
 				key);
-		if(useRequestInfo) {
+		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addAllegatoServizio(key, doc, 
 					requestInfo!=null ? requestInfo.getIdTransazione() : null);
 		}
@@ -3575,6 +3651,9 @@ public class RegistroServizi  {
 		// Effettuo le query nella mia gerarchia di registri.
 		org.openspcoop2.core.registry.AccordoServizioParteSpecifica servizio = asWrapper.servizio;
 		org.openspcoop2.core.registry.AccordoServizioParteComune as = asWrapper.as;
+		if(as==null) {
+			throw new DriverRegistroServiziException("AS undefined");
+		}
 
 		//Recupero la classe specificata dal parametro passato
 		boolean registroServiziDB = asWrapper.registroServiziDB;
@@ -3978,7 +4057,9 @@ public class RegistroServizi  {
 						asWrapper.servizio = ((DriverRegistroServiziDB)driver).getAccordoServizioParteSpecifica(idService,true); // leggo contenuto allegati
 					else
 						asWrapper.servizio = driver.getAccordoServizioParteSpecifica(idService);	
-				}catch(DriverRegistroServiziNotFound e){}
+				}catch(DriverRegistroServiziNotFound e){
+					// ignore
+				}
 				if(asWrapper.servizio == null){
 					throw new DriverRegistroServiziNotFound("Servizio ["+uriServizio+"] non definito");
 				}
@@ -4038,7 +4119,9 @@ public class RegistroServizi  {
 							asWrapper.servizio = ((DriverRegistroServiziDB)driver).getAccordoServizioParteSpecifica(idService,true); // leggo contenuto allegati
 						else
 							asWrapper.servizio = driver.getAccordoServizioParteSpecifica(idService);	
-					}catch(DriverRegistroServiziNotFound e){}
+					}catch(DriverRegistroServiziNotFound e){
+						// ignore
+					}
 					if(asWrapper.servizio == null){
 						throw new DriverRegistroServiziNotFound("Servizio ["+uriServizio+"] non definito");
 					}

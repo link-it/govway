@@ -47,10 +47,10 @@ import org.openspcoop2.protocol.as4.pmode.beans.Properties;
 import org.openspcoop2.protocol.as4.pmode.beans.Soggetto;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordi;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPorteApplicative;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServizi;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaSoggetti;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaAccordi;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPorteApplicative;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServizi;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaSoggetti;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
@@ -83,7 +83,7 @@ public class PModeRegistryReader {
 	public List<APC> findAllAPC() throws Exception {
 		
 		List<APC> apcList = new ArrayList<>();
-		FiltroRicercaAccordi filtroRicerca = new FiltroRicercaAccordi();
+		ProtocolFiltroRicercaAccordi filtroRicerca = new ProtocolFiltroRicercaAccordi();
 		filtroRicerca.setSoggetto(new IDSoggetto(this.tipo, null));
 		List<IDAccordo> allIdAccordiServizioParteComune = this.registryReader.findIdAccordiServizioParteComune(filtroRicerca);
 		
@@ -140,7 +140,7 @@ public class PModeRegistryReader {
 	
 	public List<Soggetto> findAllSoggetti(Map<IDAccordo, API> accordi) throws Exception {
 		
-		FiltroRicercaSoggetti filtroRicercaSoggetti = new FiltroRicercaSoggetti();
+		ProtocolFiltroRicercaSoggetti filtroRicercaSoggetti = new ProtocolFiltroRicercaSoggetti();
 		filtroRicercaSoggetti.setTipo(this.tipo);
 
 		List<IDSoggetto> allIdSoggetti = this.registryReader.findIdSoggetti(filtroRicercaSoggetti);
@@ -175,7 +175,7 @@ public class PModeRegistryReader {
 			}
 			else {
 				// db ?
-				FiltroRicercaServizi filtroRicercaServizi = new FiltroRicercaServizi();
+				ProtocolFiltroRicercaServizi filtroRicercaServizi = new ProtocolFiltroRicercaServizi();
 				filtroRicercaServizi.setTipoServizio(this.tipo);
 				filtroRicercaServizi.setSoggettoErogatore(idSoggetto);
 				List<IDServizio> listServizi = null;
@@ -245,7 +245,7 @@ public class PModeRegistryReader {
 		
 		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
 		
-		FiltroRicercaSoggetti filtroRicercaSoggetti = new FiltroRicercaSoggetti();
+		ProtocolFiltroRicercaSoggetti filtroRicercaSoggetti = new ProtocolFiltroRicercaSoggetti();
 		filtroRicercaSoggetti.setTipo(this.tipo);
 		List<IDSoggetto> allIdSoggettiTmp = this.registryReader.findIdSoggetti(filtroRicercaSoggetti);
 		List<IDSoggetto> allIdSoggetti = new ArrayList<>(); // escludo soggetto erogatore
@@ -256,7 +256,7 @@ public class PModeRegistryReader {
 		}
 		
 		List<IDSoggetto> list = new ArrayList<>();
-		FiltroRicercaPorteApplicative filtroRicerca = new FiltroRicercaPorteApplicative();
+		ProtocolFiltroRicercaPorteApplicative filtroRicerca = new ProtocolFiltroRicercaPorteApplicative();
 		filtroRicerca.setTipoSoggetto(idServizio.getSoggettoErogatore().getTipo());
 		filtroRicerca.setNomeSoggetto(idServizio.getSoggettoErogatore().getNome());
 		filtroRicerca.setTipoServizio(idServizio.getTipo());
@@ -301,7 +301,7 @@ public class PModeRegistryReader {
 			
 			PortaDominio portaDominio = this.registryReader.getPortaDominio(allIdPorteDominio.get(0));
 			
-			FiltroRicercaSoggetti filtroRicercaSoggetti = new FiltroRicercaSoggetti();
+			ProtocolFiltroRicercaSoggetti filtroRicercaSoggetti = new ProtocolFiltroRicercaSoggetti();
 			filtroRicercaSoggetti.setTipo(this.tipo);
 			filtroRicercaSoggetti.setNomePdd(portaDominio.getNome());
 				
@@ -318,7 +318,7 @@ public class PModeRegistryReader {
 
 	public Map<IDAccordo, API> findAllAccordi(PayloadProfiles findPayloadProfile,Properties findProperties) throws Exception {
 		
-		FiltroRicercaAccordi filtroRicerca = new FiltroRicercaAccordi();
+		ProtocolFiltroRicercaAccordi filtroRicerca = new ProtocolFiltroRicercaAccordi();
 		filtroRicerca.setSoggetto(new IDSoggetto(this.tipo,null));
 		List<IDAccordo> allId = this.registryReader.findIdAccordiServizioParteComune(filtroRicerca);
 		

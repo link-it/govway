@@ -235,7 +235,7 @@ public class XMLUtils  {
 	
 	private static byte [] unescapeXMLMalformatoChildElements(byte [] xml){
 		try{
-			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;		
+			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;		
 			Document docXML = xmlUtils.newDocument(xml);
 			Element elemXML = docXML.getDocumentElement();
 			String prefixRootElement = elemXML.getPrefix();
@@ -338,7 +338,7 @@ public class XMLUtils  {
 	
 	public static boolean isProfiloCollaborazioneEGOV(byte [] doc){
 		try{
-			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;		
+			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;		
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			//System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");
@@ -358,7 +358,7 @@ public class XMLUtils  {
 	
 	private static boolean isProfiloCollaborazioneEGOV_NamespaceSPCoopGovIT(byte [] doc){
 		try{
-			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;		
+			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;		
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			//System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");
@@ -412,7 +412,7 @@ public class XMLUtils  {
 		// Lettura specifica come document
 		Map<String, String> mapPrefixNamespaces = new HashMap<String, String>();
 		try{
-			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;		
+			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;		
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			NamedNodeMap map = elemXML.getAttributes();
@@ -607,7 +607,7 @@ public class XMLUtils  {
 					OpenSPCoop2MessageFactory defaultFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 					RegistroOpenSPCoopUtilities wsdlUtility = new RegistroOpenSPCoopUtilities(defaultFactory, null);
 					wsdlConcettuale = wsdlUtility.eliminaImportASParteComune(wsdlConcettuale);
-					DefinitionWrapper wsdl = new DefinitionWrapper(wsdlConcettuale,org.openspcoop2.message.xml.XMLUtils.DEFAULT);
+					DefinitionWrapper wsdl = new DefinitionWrapper(wsdlConcettuale,org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT);
 					String targetNamespace = wsdl.getTargetNamespace();
 					String prefix = null;
 					if(targetNamespace!=null){

@@ -286,7 +286,9 @@ public class TimerGestoreMessaggiLib  {
 							GestoreMessaggi.releaseLock(
 									this.semaphore, connectionDB, this.timerLock,
 									this.msgDiag, causaMessaggiINBOXDaEliminareNonScaduti);
-						}catch(Exception e){}
+						}catch(Exception e){
+							// ignore
+						}
 					}
 	
 					//	Eliminazione Messaggi from OUTBOX
@@ -356,7 +358,9 @@ public class TimerGestoreMessaggiLib  {
 							GestoreMessaggi.releaseLock(
 									this.semaphore, connectionDB, this.timerLock,
 									this.msgDiag, causaMessaggiOUTBOXDaEliminareNonScaduti);
-						}catch(Exception e){}
+						}catch(Exception e){
+							// ignore
+						}
 					}
 					
 				}
@@ -509,7 +513,9 @@ public class TimerGestoreMessaggiLib  {
 							GestoreMessaggi.releaseLock(
 									this.semaphore, connectionDB, this.timerLock,
 									this.msgDiag, causaMessaggiINBOXScaduti);
-						}catch(Exception e){}
+						}catch(Exception e){
+							// ignore
+						}
 					}
 	
 					// Eliminazione Messaggi from OUTBOX
@@ -616,7 +622,9 @@ public class TimerGestoreMessaggiLib  {
 							GestoreMessaggi.releaseLock(
 									this.semaphore, connectionDB, this.timerLock,
 									this.msgDiag, causaMessaggiOUTBOXScaduti);
-						}catch(Exception e){}
+						}catch(Exception e){
+							// ignore
+						}
 					}
 
 				}
@@ -728,7 +736,9 @@ public class TimerGestoreMessaggiLib  {
 							GestoreMessaggi.releaseLock(
 									this.semaphore, connectionDB, this.timerLock,
 									this.msgDiag, causaMessaggiINBOXNonGestitiRicezioneContenutiApplicativi);
-						}catch(Exception e){}
+						}catch(Exception e){
+							// ignore
+						}
 					}
 	
 	
@@ -827,7 +837,9 @@ public class TimerGestoreMessaggiLib  {
 							GestoreMessaggi.releaseLock(
 									this.semaphore, connectionDB, this.timerLock,
 									this.msgDiag, causaMessaggiOUTBOXNonGestitiRicezioneBuste);
-						}catch(Exception e){}
+						}catch(Exception e){
+							// ignore
+						}
 					}
 					
 				}
@@ -956,7 +968,9 @@ public class TimerGestoreMessaggiLib  {
 						GestoreMessaggi.releaseLock(
 								this.semaphore, connectionDB, this.timerLockCorrelazioneApplicativa,
 								this.msgDiag, causaCorrelazioniApplicativeScadute);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 	
 	
@@ -1052,7 +1066,9 @@ public class TimerGestoreMessaggiLib  {
 							GestoreMessaggi.releaseLock(
 									this.semaphore, connectionDB, this.timerLockCorrelazioneApplicativa,
 									this.msgDiag, causaCorrelazioniApplicativeScaduteRispettoOraRegistrazione);
-						}catch(Exception e){}
+						}catch(Exception e){
+							// ignore
+						}
 					}
 				}
 			}

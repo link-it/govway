@@ -18,34 +18,29 @@
  *
  */
 
-package org.openspcoop2.protocol.sdk.registry;
 
-import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+
+package org.openspcoop2.protocol.sdk.config;
 
 /**
- *  FiltroRicercaResources
+ * Subscription
+ *
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class FiltroRicercaRisorse extends FiltroRicercaAccordi {
 
-	private String nomeRisorsa;
-	private ProtocolProperties protocolPropertiesRisorsa;
+public class ProtocolSubscription extends org.openspcoop2.core.mapping.Subscription {
 
-	public String getNomeRisorsa() {
-		return this.nomeRisorsa;
-	}
-	public void setNomeRisorsa(String nomeRisorsa) {
-		this.nomeRisorsa = nomeRisorsa;
-	}
-	public ProtocolProperties getProtocolPropertiesRisorsa() {
-		return this.protocolPropertiesRisorsa;
-	}
-	public void setProtocolPropertiesRisorsa(ProtocolProperties protocolPropertiesResources) {
-		this.protocolPropertiesRisorsa = protocolPropertiesResources;
-	}
-
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 }
+
+
+
+
+

@@ -18,34 +18,29 @@
  *
  */
 
-package org.openspcoop2.protocol.sdk.registry;
 
-import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+
+package org.openspcoop2.protocol.sdk.config;
 
 /**
- *  FiltroRicercaPortTypeAzioni
+ * Implementation
+ *
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class FiltroRicercaAccordoAzioni extends FiltroRicercaAccordi {
 
-	private String nomeAzione;
-	private ProtocolProperties protocolPropertiesAzione;
+public class ProtocolImplementation extends org.openspcoop2.core.mapping.Implementation {
 
-	public String getNomeAzione() {
-		return this.nomeAzione;
-	}
-	public void setNomeAzione(String nomeAzione) {
-		this.nomeAzione = nomeAzione;
-	}
-	public ProtocolProperties getProtocolPropertiesAzione() {
-		return this.protocolPropertiesAzione;
-	}
-	public void setProtocolPropertiesAzione(ProtocolProperties protocolPropertiesAzione) {
-		this.protocolPropertiesAzione = protocolPropertiesAzione;
-	}
-
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 }
+
+
+
+
+

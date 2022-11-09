@@ -78,7 +78,7 @@ public class OpenSPCoop2Message_saaj_12_impl extends AbstractOpenSPCoop2Message_
 	}
 
 	private Message1_2_FIX_Impl getMessage1_2_FIX_Impl(){
-		return ((Message1_2_FIX_Impl)this.getSoapMessage());
+		return ((Message1_2_FIX_Impl)this._getSoapMessage());
 	}
 	
 	
@@ -127,10 +127,12 @@ public class OpenSPCoop2Message_saaj_12_impl extends AbstractOpenSPCoop2Message_
 						if(pSoapAction!=null){
 							cType.getParameterList().remove(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION);
 						}
-						if(this.contentTypeParamaters!=null && this.contentTypeParamaters.containsKey(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION)){
-							this.contentTypeParamaters.remove(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION);
+						if(this.contentTypeParamaters!=null) {
+							if(this.contentTypeParamaters.containsKey(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION)){
+								this.contentTypeParamaters.remove(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION);
+							}
+							this.contentTypeParamaters.put(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION, soapActionValue);
 						}
-						this.contentTypeParamaters.put(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION, soapActionValue);
 						//System.out.println("NEW '"+soapActionValue+"'");
 					}
 				}

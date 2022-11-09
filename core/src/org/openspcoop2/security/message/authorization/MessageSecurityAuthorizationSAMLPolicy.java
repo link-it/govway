@@ -45,7 +45,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.WSSecurityUtils;
-import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
+import org.openspcoop2.message.xml.MessageDynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -258,9 +258,9 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 	    	
 			DynamicNamespaceContext dnc = null;
 			if(MessageType.SOAP_11.equals(soapMessage.getMessageType())) {
-				dnc = DynamicNamespaceContextFactory.getInstance(soapMessage.getFactory()).getNamespaceContextFromSoapEnvelope11(soapMessage.getSOAPPart().getEnvelope());
+				dnc = MessageDynamicNamespaceContextFactory.getInstance(soapMessage.getFactory()).getNamespaceContextFromSoapEnvelope11(soapMessage.getSOAPPart().getEnvelope());
 			} else {
-				dnc = DynamicNamespaceContextFactory.getInstance(soapMessage.getFactory()).getNamespaceContextFromSoapEnvelope12(soapMessage.getSOAPPart().getEnvelope());
+				dnc = MessageDynamicNamespaceContextFactory.getInstance(soapMessage.getFactory()).getNamespaceContextFromSoapEnvelope12(soapMessage.getSOAPPart().getEnvelope());
 			}
 	    	
 			AbstractXPathExpressionEngine xpathExpressionEngine = new XPathExpressionEngine(soapMessage.getFactory());

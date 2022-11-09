@@ -32,7 +32,7 @@ package org.openspcoop2.protocol.sdk;
  * @version $Rev$, $Date$
  */
 
-public class Allegato implements java.io.Serializable {
+public class Allegato implements java.io.Serializable, Cloneable {
 
 	/**
 	 * serialVersionUID

@@ -126,7 +126,7 @@ public class SPCoopTracciaSerializer extends TracciaSerializer implements ITracc
 				case DEFAULT:
 					
 					ByteArrayOutputStream bout = new ByteArrayOutputStream();
-					bout.write(org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(this.toElement(traccia)));
+					bout.write(org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT.toByteArray(this.toElement(traccia)));
 					bout.flush();
 					bout.close();
 					return bout;

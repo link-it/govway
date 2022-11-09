@@ -39,7 +39,7 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServiziApplicativi;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServiziApplicativi;
 import org.openspcoop2.web.ctrlstat.servlet.ApiKeyState;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
@@ -223,7 +223,7 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 					// modipa, soggetto interno
 					
 					if(isModiSicurezzaMessaggio && isAutorizzazioneToken) {
-						FiltroRicercaServiziApplicativi filtro = new FiltroRicercaServiziApplicativi();
+						ProtocolFiltroRicercaServiziApplicativi filtro = new ProtocolFiltroRicercaServiziApplicativi();
 						filtro.setTipoSoggetto(idSoggetto.getTipo());
 						filtro.setNomeSoggetto(idSoggetto.getNome());
 						filtro.setProtocolProperties(new ArrayList<>());
@@ -252,7 +252,7 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 					else {
 					
 						if(isModiSicurezzaMessaggio) {
-							FiltroRicercaServiziApplicativi filtro = new FiltroRicercaServiziApplicativi();
+							ProtocolFiltroRicercaServiziApplicativi filtro = new ProtocolFiltroRicercaServiziApplicativi();
 							filtro.setTipoSoggetto(idSoggetto.getTipo());
 							filtro.setNomeSoggetto(idSoggetto.getNome());
 							filtro.setProtocolProperties(new ArrayList<>());
@@ -273,7 +273,7 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 						}
 						
 						if(isAutorizzazioneToken) {
-							FiltroRicercaServiziApplicativi filtro = new FiltroRicercaServiziApplicativi();
+							ProtocolFiltroRicercaServiziApplicativi filtro = new ProtocolFiltroRicercaServiziApplicativi();
 							filtro.setTipoSoggetto(idSoggetto.getTipo());
 							filtro.setNomeSoggetto(idSoggetto.getNome());
 							filtro.setProtocolProperties(new ArrayList<>());

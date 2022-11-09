@@ -77,7 +77,9 @@ public class LoggerManager {
 				try{
 					if(is!=null)
 						is.close();
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 		}
 	}

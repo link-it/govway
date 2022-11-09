@@ -145,7 +145,9 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 					
 					try{
 						connection.setAutoCommit(true);
-					}catch(Exception eRollback){}
+					}catch(Exception eRollback){
+						// ignore
+					}
 				}
 			}
 

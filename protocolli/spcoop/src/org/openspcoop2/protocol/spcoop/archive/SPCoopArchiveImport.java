@@ -66,9 +66,9 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveIdCorrelazione;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
-import org.openspcoop2.protocol.sdk.config.Implementation;
-import org.openspcoop2.protocol.sdk.config.Subscription;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaSoggetti;
+import org.openspcoop2.protocol.sdk.config.ProtocolImplementation;
+import org.openspcoop2.protocol.sdk.config.ProtocolSubscription;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaSoggetti;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopContext;
@@ -363,7 +363,7 @@ public class SPCoopArchiveImport {
 					
 					// creo Porta Applicativa
 					
-					Implementation implementationDefault = this.protocolFactory.createProtocolIntegrationConfiguration().
+					ProtocolImplementation implementationDefault = this.protocolFactory.createProtocolIntegrationConfiguration().
 							createDefaultImplementation(ServiceBinding.SOAP, idServizio);
 					
 					PortaApplicativa portaApplicativa = implementationDefault.getPortaApplicativa();
@@ -425,7 +425,7 @@ public class SPCoopArchiveImport {
 						throw new Exception("Non esistono pdd operative");
 					}
 					for (String pddOperativa : pddOperative) {
-						FiltroRicercaSoggetti filtro = new FiltroRicercaSoggetti();
+						ProtocolFiltroRicercaSoggetti filtro = new ProtocolFiltroRicercaSoggetti();
 						filtro.setTipo("spc");
 						filtro.setNomePdd(pddOperativa);
 						List<IDSoggetto> idSoggetti = null;
@@ -441,7 +441,7 @@ public class SPCoopArchiveImport {
 					}
 					Soggetto soggettoFruitore = registryReader.getSoggetto(idFruitore);
 															
-					Subscription subscriptionDefault = this.protocolFactory.createProtocolIntegrationConfiguration().
+					ProtocolSubscription subscriptionDefault = this.protocolFactory.createProtocolIntegrationConfiguration().
 							createDefaultSubscription(ServiceBinding.SOAP, idFruitore, idServizio);
 					
 					PortaDelegata portaDelegata = subscriptionDefault.getPortaDelegata();

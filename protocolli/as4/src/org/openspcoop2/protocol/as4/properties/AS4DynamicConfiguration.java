@@ -59,11 +59,11 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesFactory;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.properties.StringConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.StringProperty;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordi;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordoAzioni;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPortTypeAzioni;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaRisorse;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaSoggetti;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaAccordi;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaAccordoAzioni;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPortTypeAzioni;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaRisorse;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaSoggetti;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
@@ -202,7 +202,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		StringProperty userMessagePartyIdItem = (StringProperty) 
 				ProtocolPropertiesUtils.getAbstractPropertyById(properties, AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_ID_ID);
 		List<IDSoggetto> idSoggettiList = null;
-		FiltroRicercaSoggetti filtroSoggetti = new FiltroRicercaSoggetti();
+		ProtocolFiltroRicercaSoggetti filtroSoggetti = new ProtocolFiltroRicercaSoggetti();
 		filtroSoggetti.setProtocolProperties(new ProtocolProperties());
 		filtroSoggetti.getProtocolProperties().addProperty(userMessagePartyIdItem);
 		try{
@@ -386,7 +386,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 			
 		// Tipo e Nome del servizio devono essere univoci
 		List<IDAccordo> idAccordiList = null;
-		FiltroRicercaAccordi filtroAccordi = new FiltroRicercaAccordi();
+		ProtocolFiltroRicercaAccordi filtroAccordi = new ProtocolFiltroRicercaAccordi();
 		filtroAccordi.setProtocolProperties(new ProtocolProperties());
 		filtroAccordi.getProtocolProperties().addProperty(serviceTypeItem);
 		filtroAccordi.getProtocolProperties().addProperty(serviceNameItem);
@@ -524,7 +524,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		
 		// IdAzione deve essere univoca
 		List<IDAccordoAzione> idAccordiAzioniList = null;
-		FiltroRicercaAccordoAzioni filtroAccordi = new FiltroRicercaAccordoAzioni();
+		ProtocolFiltroRicercaAccordoAzioni filtroAccordi = new ProtocolFiltroRicercaAccordoAzioni();
 		filtroAccordi.setNome(id.getIdAccordo().getNome());
 		filtroAccordi.setSoggetto(id.getIdAccordo().getSoggettoReferente());
 		filtroAccordi.setVersione(id.getIdAccordo().getVersione());
@@ -598,7 +598,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		
 		// IdAzione deve essere univoca
 		List<IDPortTypeAzione> idAccordiAzioniList = null;
-		FiltroRicercaPortTypeAzioni filtroAccordi = new FiltroRicercaPortTypeAzioni();
+		ProtocolFiltroRicercaPortTypeAzioni filtroAccordi = new ProtocolFiltroRicercaPortTypeAzioni();
 		filtroAccordi.setNome(id.getIdPortType().getIdAccordo().getNome());
 		filtroAccordi.setSoggetto(id.getIdPortType().getIdAccordo().getSoggettoReferente());
 		filtroAccordi.setVersione(id.getIdPortType().getIdAccordo().getVersione());
@@ -677,7 +677,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		
 		// IdAzione deve essere univoca
 		List<IDResource> idAccordiAzioniList = null;
-		FiltroRicercaRisorse filtroAccordi = new FiltroRicercaRisorse();
+		ProtocolFiltroRicercaRisorse filtroAccordi = new ProtocolFiltroRicercaRisorse();
 		filtroAccordi.setNome(id.getIdAccordo().getNome());
 		filtroAccordi.setSoggetto(id.getIdAccordo().getSoggettoReferente());
 		filtroAccordi.setVersione(id.getIdAccordo().getVersione());
@@ -910,7 +910,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		StringBuilder bfExc = new StringBuilder();
 		
 		List<IDAccordoAzione> idAccordiAzioniList = null;
-		FiltroRicercaAccordoAzioni filtroAccordi = new FiltroRicercaAccordoAzioni();
+		ProtocolFiltroRicercaAccordoAzioni filtroAccordi = new ProtocolFiltroRicercaAccordoAzioni();
 		filtroAccordi.setProtocolPropertiesAzione(new ProtocolProperties());
 		filtroAccordi.getProtocolPropertiesAzione().addProperty(actionTypeItem);
 		try{
@@ -931,7 +931,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		}
 		
 		List<IDPortTypeAzione> idAccordiPTOperationsList = null;
-		FiltroRicercaPortTypeAzioni filtroOperations = new FiltroRicercaPortTypeAzioni();
+		ProtocolFiltroRicercaPortTypeAzioni filtroOperations = new ProtocolFiltroRicercaPortTypeAzioni();
 		filtroOperations.setProtocolPropertiesAzione(new ProtocolProperties());
 		filtroOperations.getProtocolPropertiesAzione().addProperty(actionTypeItem);
 		try{
@@ -955,7 +955,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		
 		
 		List<IDResource> idAccordiResourceList = null;
-		FiltroRicercaRisorse filtroResource = new FiltroRicercaRisorse();
+		ProtocolFiltroRicercaRisorse filtroResource = new ProtocolFiltroRicercaRisorse();
 		filtroResource.setProtocolPropertiesRisorsa(new ProtocolProperties());
 		filtroResource.getProtocolPropertiesRisorsa().addProperty(actionTypeItem);
 		try{

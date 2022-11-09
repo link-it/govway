@@ -111,7 +111,7 @@ public class ContentTypeParameters extends org.openspcoop2.utils.beans.BaseBean 
 
   /**
    * @deprecated Use method getParameterList
-   * @return List<StringParameter>
+   * @return List&lt;StringParameter&gt;
   */
   @Deprecated
   public List<StringParameter> getParameter() {
@@ -120,7 +120,7 @@ public class ContentTypeParameters extends org.openspcoop2.utils.beans.BaseBean 
 
   /**
    * @deprecated Use method setParameterList
-   * @param parameter List<StringParameter>
+   * @param parameter List&lt;StringParameter&gt;
   */
   @Deprecated
   public void setParameter(List<StringParameter> parameter) {

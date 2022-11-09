@@ -93,7 +93,9 @@ public abstract class AbstractSerializer {
 		finally{
 			try{
 				out.flush();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 		}
 	}
 	protected void objToXml(String fileName,Class<?> c,Object object,boolean prettyPrint) throws SerializerException{
@@ -114,10 +116,14 @@ public abstract class AbstractSerializer {
 		finally{
 			try{
 				fout.flush();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			try{
 				fout.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 		}
 	}
 	protected ByteArrayOutputStream objToXml(Class<?> c,Object object,boolean prettyPrint) throws SerializerException{
@@ -131,10 +137,14 @@ public abstract class AbstractSerializer {
 		finally{
 			try{
 				bout.flush();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			try{
 				bout.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 		}
 		return bout;
 	}

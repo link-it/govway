@@ -337,14 +337,20 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 		}finally{
 			try{
 				rs.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			try{
 				pstmt.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -412,14 +418,20 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 		}finally{
 			try{
 				rs.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			try{
 				pstmt.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -457,7 +469,9 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 			throw new DriverTracciamentoException(e);
 		} finally {
 			if(stmt!=null) 
-				try{ stmt.close(); } catch (SQLException e) {}
+				try{ stmt.close(); } catch (SQLException e) {
+					// close
+				}
 			releaseConnection(con);
 			this.log.debug("Tracce Eliminate: " + deleted );
 		}
@@ -572,14 +586,20 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 		}finally{
 			try{
 				rs.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			try{
 				pstmt.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	} 
 	
@@ -642,14 +662,20 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 		}finally{
 			try{
 				rs.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			try{
 				pstmt.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}	
 	}
 	
@@ -732,14 +758,20 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 		}finally{
 			try{
 				rs.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			try{
 				pstmt.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	

@@ -31,7 +31,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
+import org.openspcoop2.message.xml.MessageDynamicNamespaceContextFactory;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.manifest.UrlMapping;
 import org.openspcoop2.protocol.manifest.constants.UrlMappingSourceType;
@@ -109,7 +109,9 @@ public class InformazioniServizioURLMapping {
 							if(is!=null){
 								is.close();
 							}
-						}catch(Exception eClose){}
+						}catch(Exception eClose){
+							// close
+						}
 					}
 				}
 				else{
@@ -416,7 +418,7 @@ public class InformazioniServizioURLMapping {
 					}
 				}
 				if(element!=null) {
-					dnc = DynamicNamespaceContextFactory.getInstance(this.msg.getFactory()).getNamespaceContext(element);
+					dnc = MessageDynamicNamespaceContextFactory.getInstance(this.msg.getFactory()).getNamespaceContext(element);
 					xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(this.msg.getFactory());
 				}
 			}catch(Exception e){

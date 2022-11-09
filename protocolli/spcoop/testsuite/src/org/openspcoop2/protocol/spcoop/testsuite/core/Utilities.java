@@ -27,9 +27,9 @@ import java.io.File;
 import org.apache.axis.AxisFault;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.IntegrationError;
-import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
+import org.openspcoop2.message.xml.MessageDynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
@@ -77,10 +77,10 @@ public class Utilities {
 	
 	public static String readApplicationServerVersion() throws Exception{
 		byte[] local_env = org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(new File("local_env.xml"));
-		AbstractXMLUtils xmlUtils = XMLUtils.DEFAULT;
+		AbstractXMLUtils xmlUtils = MessageXMLUtils.DEFAULT;
 		XPathExpressionEngine engine = new XPathExpressionEngine(OpenSPCoop2MessageFactory.getDefaultMessageFactory());
 		Document local_env_document = xmlUtils.newDocument(local_env);
-		String version_jbossas = engine.getStringMatchPattern(local_env_document, DynamicNamespaceContextFactory.getInstance(OpenSPCoop2MessageFactory.getDefaultMessageFactory()).getNamespaceContext(local_env_document), "//property[@name='as']/@value");
+		String version_jbossas = engine.getStringMatchPattern(local_env_document, MessageDynamicNamespaceContextFactory.getInstance(OpenSPCoop2MessageFactory.getDefaultMessageFactory()).getNamespaceContext(local_env_document), "//property[@name='as']/@value");
 		return version_jbossas;
 	}
 	
@@ -247,7 +247,7 @@ public class Utilities {
 		try{
 
 			Assert.assertTrue(erroreApplicativo!=null);
-			xml = XMLUtils.DEFAULT.toString(erroreApplicativo);
+			xml = MessageXMLUtils.DEFAULT.toString(erroreApplicativo);
 			Reporter.log("Errore Applicativo CNIPA ("+erroreApplicativo.getNamespaceURI()+"): "+xml);
 			Assert.assertTrue("http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/".equals(erroreApplicativo.getNamespaceURI()));
 			
@@ -476,7 +476,7 @@ public class Utilities {
 		try{
 
 			Assert.assertTrue(erroreIntegrationManagerException!=null);
-			xml = XMLUtils.DEFAULT.toString(erroreIntegrationManagerException);
+			xml = MessageXMLUtils.DEFAULT.toString(erroreIntegrationManagerException);
 			Reporter.log("Errore IntegrationManagerException ("+erroreIntegrationManagerException.getNamespaceURI()+"): "+xml);
 			Assert.assertTrue("http://services.pdd.openspcoop2.org".equals(erroreIntegrationManagerException.getNamespaceURI()));
 			

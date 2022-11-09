@@ -55,7 +55,7 @@ public enum TransactionExceptionCode {
 		return MSG[this.value];
 	}
 	
-	public boolean equals(TransactionExceptionCode code){
-		return this.value == code.getValue();
+	public boolean equals(int code){
+		return this.value == code;
 	}
 }

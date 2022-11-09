@@ -73,13 +73,6 @@ public enum IntegrationErrorMessageType implements IEnumeration , Serializable ,
 	public String toString(){
 		return this.value;
 	}
-	public boolean equals(IntegrationErrorMessageType object){
-		if(object==null)
-			return false;
-		if(object.getValue()==null)
-			return false;
-		return object.getValue().equals(this.getValue());	
-	}
 	public boolean equals(String object){
 		if(object==null)
 			return false;

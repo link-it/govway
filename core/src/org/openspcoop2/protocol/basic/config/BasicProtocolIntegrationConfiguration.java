@@ -32,8 +32,8 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.config.Implementation;
-import org.openspcoop2.protocol.sdk.config.Subscription;
+import org.openspcoop2.protocol.sdk.config.ProtocolImplementation;
+import org.openspcoop2.protocol.sdk.config.ProtocolSubscription;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 
@@ -66,7 +66,7 @@ public class BasicProtocolIntegrationConfiguration extends BasicComponentFactory
 	// SUBSCRIPTION
 	
 	@Override
-	public Subscription createDefaultSubscription(ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio) throws ProtocolException{
+	public ProtocolSubscription createDefaultSubscription(ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio) throws ProtocolException{
 		if(serviceBinding==null){
 			throw new ProtocolException("Service Binding undefined");
 		}
@@ -86,7 +86,7 @@ public class BasicProtocolIntegrationConfiguration extends BasicComponentFactory
 	}
 	
 	@Override
-	public Subscription createSubscription(IConfigIntegrationReader configIntegrationReader, ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio,
+	public ProtocolSubscription createSubscription(IConfigIntegrationReader configIntegrationReader, ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio,
 			PortaDelegata portaDelegataDefault, 
 			String ruleName, String description, String ... azione ) throws ProtocolException{
 		return this.createSubscription(configIntegrationReader, serviceBinding, idFruitore, idServizio, 
@@ -94,7 +94,7 @@ public class BasicProtocolIntegrationConfiguration extends BasicComponentFactory
 				ruleName, description, azione);
 	}
 	@Override
-	public Subscription createSubscription(IConfigIntegrationReader confiIntegrationReader, ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio,
+	public ProtocolSubscription createSubscription(IConfigIntegrationReader confiIntegrationReader, ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio,
 			PortaDelegata portaDelegataDefault, PortaDelegata portaDelegataDaCopiare,
 			String ruleName, String description, String ... azione ) throws ProtocolException{
 		if(serviceBinding==null){
@@ -156,7 +156,7 @@ public class BasicProtocolIntegrationConfiguration extends BasicComponentFactory
 	// IMPLEMENTATION
 	
 	@Override
-	public Implementation createDefaultImplementation(ServiceBinding serviceBinding, IDServizio idServizio) throws ProtocolException{
+	public ProtocolImplementation createDefaultImplementation(ServiceBinding serviceBinding, IDServizio idServizio) throws ProtocolException{
 		if(serviceBinding==null){
 			throw new ProtocolException("Service Binding undefined");
 		}
@@ -176,7 +176,7 @@ public class BasicProtocolIntegrationConfiguration extends BasicComponentFactory
 	}
 	
 	@Override
-	public Implementation createImplementation(IConfigIntegrationReader configIntegrationReader,ServiceBinding serviceBinding, IDServizio idServizio,
+	public ProtocolImplementation createImplementation(IConfigIntegrationReader configIntegrationReader,ServiceBinding serviceBinding, IDServizio idServizio,
 			PortaApplicativa portaApplicativaDefault, 
 			String ruleName, String description, String ... azione ) throws ProtocolException{
 		return this.createImplementation(configIntegrationReader,serviceBinding, idServizio, 
@@ -184,7 +184,7 @@ public class BasicProtocolIntegrationConfiguration extends BasicComponentFactory
 				ruleName, description, azione);
 	}
 	@Override
-	public Implementation createImplementation(IConfigIntegrationReader configIntegrationReader,ServiceBinding serviceBinding, IDServizio idServizio,
+	public ProtocolImplementation createImplementation(IConfigIntegrationReader configIntegrationReader,ServiceBinding serviceBinding, IDServizio idServizio,
 			PortaApplicativa portaApplicativaDefault, PortaApplicativa portaApplicativaDaCopiare,
 			String ruleName, String description, String ... azione ) throws ProtocolException{
 		if(serviceBinding==null){

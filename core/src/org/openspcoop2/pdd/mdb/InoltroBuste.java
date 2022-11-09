@@ -30,7 +30,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
@@ -3639,7 +3638,7 @@ public class InoltroBuste extends GenericLib{
 									retryAfterSeconds!=null && retryAfterSeconds>0) {
 									int seconds = retryAfterSeconds;
 									if(retryAfterBackOffSeconds!=null && retryAfterBackOffSeconds>0) {
-										seconds = seconds + new Random().nextInt(retryAfterBackOffSeconds);
+										seconds = seconds + ServicesUtils.getRandom().nextInt(retryAfterBackOffSeconds);
 									}
 									responseMessageError.forceTransportHeader(HttpConstants.RETRY_AFTER, seconds+"");
 								}

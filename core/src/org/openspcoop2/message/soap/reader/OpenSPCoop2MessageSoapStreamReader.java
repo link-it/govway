@@ -1097,7 +1097,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 						}
 						
 						//os.write(OpenSPCoop2MessageFactory.getAsByte(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), this._header, true));
-						os.write(org.openspcoop2.message.xml.XMLUtils.getInstance(OpenSPCoop2MessageFactory.getDefaultMessageFactory()).toByteArray(soapHeader, xmlConfig));
+						os.write(org.openspcoop2.message.xml.MessageXMLUtils.getInstance(OpenSPCoop2MessageFactory.getDefaultMessageFactory()).toByteArray(soapHeader, xmlConfig));
 						writeHeader = true;
 						if(debug) {
 							os.flush();
@@ -1109,7 +1109,7 @@ public class OpenSPCoop2MessageSoapStreamReader {
 			else {
 				if(!writeHeader) {
 					//os.write(OpenSPCoop2MessageFactory.getAsByte(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), this._header, true));
-					os.write(org.openspcoop2.message.xml.XMLUtils.getInstance(OpenSPCoop2MessageFactory.getDefaultMessageFactory()).toByteArray(soapHeader, xmlConfig));
+					os.write(org.openspcoop2.message.xml.MessageXMLUtils.getInstance(OpenSPCoop2MessageFactory.getDefaultMessageFactory()).toByteArray(soapHeader, xmlConfig));
 					writeHeader = true;
 					if(debug) {
 						os.flush();

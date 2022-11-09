@@ -798,7 +798,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 					if(XMLUtils.isErroreApplicativo(childNode)){
 						
 						try{
-							byte[] xml = org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).toByteArray(childNode,true);
+							byte[] xml = org.openspcoop2.message.xml.MessageXMLUtils.getInstance(messageFactory).toByteArray(childNode,true);
 							ErroreApplicativo erroreApplicativoObject = XMLUtils.getErroreApplicativo(this.log, xml);
 							Eccezione ecc = erroreApplicativoObject.getException();
 							if(TipoEccezione.PROTOCOL.equals(ecc.getType())){

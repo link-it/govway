@@ -33,7 +33,7 @@ import javax.xml.transform.TransformerException;
 
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageType;
-import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
+import org.openspcoop2.message.xml.MessageDynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
@@ -124,16 +124,16 @@ public class XMLEncoding {
 		
 		OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		
-		DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
+		DynamicNamespaceContext dnc = MessageDynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
 		XPathExpressionEngine xpathEngine = new XPathExpressionEngine(messageFactory);
 		String msg = null;
 		try {
-			msg = org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).toString(client.getResponseMessage().getSOAPBody());
+			msg = org.openspcoop2.message.xml.MessageXMLUtils.getInstance(messageFactory).toString(client.getResponseMessage().getSOAPBody());
 		}catch(Throwable t) {
 			// normalize per conflito di librerie axis - saaj
-			org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
+			org.w3c.dom.Document d = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT.newDocument();
 			Node n = d.importNode(client.getResponseMessage().getSOAPBody(), true);
-			msg = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toString(n,true);
+			msg = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT.toString(n,true);
 		}
 		String value = xpathEngine.getStringMatchPattern(msg, dnc, "//prova2/text()");
 		//System.out.println("VALUE = "+value);
@@ -193,16 +193,16 @@ public class XMLEncoding {
 		
 		OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		
-		DynamicNamespaceContext dncBody = DynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
+		DynamicNamespaceContext dncBody = MessageDynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
 		XPathExpressionEngine xpathEngine = new XPathExpressionEngine(messageFactory);
 		String msg = null;
 		try {
-			msg = org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).toString(client.getResponseMessage().getSOAPBody());
+			msg = org.openspcoop2.message.xml.MessageXMLUtils.getInstance(messageFactory).toString(client.getResponseMessage().getSOAPBody());
 		}catch(Throwable t) {
 			// normalize per conflito di librerie axis - saaj
-			org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
+			org.w3c.dom.Document d = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT.newDocument();
 			Node n = d.importNode(client.getResponseMessage().getSOAPBody(), true);
-			msg = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toString(n,true);
+			msg = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT.toString(n,true);
 		}
 		String valueBody = xpathEngine.getStringMatchPattern(msg, dncBody, "//prova2/text()");
 		
@@ -277,16 +277,16 @@ public class XMLEncoding {
 		
 		OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		
-		DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
+		DynamicNamespaceContext dnc = MessageDynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
 		XPathExpressionEngine xpathEngine = new XPathExpressionEngine(messageFactory);
 		String msg = null;
 		try {
-			msg = org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).toString(client.getResponseMessage().getSOAPBody());
+			msg = org.openspcoop2.message.xml.MessageXMLUtils.getInstance(messageFactory).toString(client.getResponseMessage().getSOAPBody());
 		}catch(Throwable t) {
 			// normalize per conflito di librerie axis - saaj
-			org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
+			org.w3c.dom.Document d = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT.newDocument();
 			Node n = d.importNode(client.getResponseMessage().getSOAPBody(), true);
-			msg = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toString(n,true);
+			msg = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT.toString(n,true);
 		}
 		String value = xpathEngine.getStringMatchPattern(msg, dnc, "//prova2/text()");
 		
@@ -347,16 +347,16 @@ public class XMLEncoding {
 		
 		OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		
-		DynamicNamespaceContext dncBody = DynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
+		DynamicNamespaceContext dncBody = MessageDynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
 		XPathExpressionEngine xpathEngine = new XPathExpressionEngine(messageFactory);
 		String msg = null;
 		try {
-			msg = org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).toString(client.getResponseMessage().getSOAPBody());
+			msg = org.openspcoop2.message.xml.MessageXMLUtils.getInstance(messageFactory).toString(client.getResponseMessage().getSOAPBody());
 		}catch(Throwable t) {
 			// normalize per conflito di librerie axis - saaj
-			org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
+			org.w3c.dom.Document d = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT.newDocument();
 			Node n = d.importNode(client.getResponseMessage().getSOAPBody(), true);
-			msg = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toString(n,true);
+			msg = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT.toString(n,true);
 		}
 		String valueBody = xpathEngine.getStringMatchPattern(msg, dncBody, "//prova2/text()");
 		

@@ -28,7 +28,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.utils.json.JsonPathNotFoundException;
 import org.openspcoop2.utils.json.JsonPathNotValidException;
@@ -68,7 +68,7 @@ public class PatternExtractor {
 		try {
 			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 			OpenSPCoop2Message jsonMessageVerifica = messageFactory.createMessage(MessageType.XML, MessageRole.NONE, 
-					HttpConstants.CONTENT_TYPE_XML, XMLUtils.getInstance(messageFactory).toByteArray(element, true)).getMessage();
+					HttpConstants.CONTENT_TYPE_XML, MessageXMLUtils.getInstance(messageFactory).toByteArray(element, true)).getMessage();
 			MessageContent messageContent = new MessageContent(jsonMessageVerifica.castAsRestXml(), bufferMessage_readOnly, context);
 			return new PatternExtractor(messageFactory, messageContent, log);
 		}catch(Exception e) {
@@ -176,7 +176,7 @@ public class PatternExtractor {
 		try {
 			this.refresh = true;
 			if(this.element!=null) {
-				XMLUtils xmlUtils = XMLUtils.getInstance(this.messageFactory);
+				MessageXMLUtils xmlUtils = MessageXMLUtils.getInstance(this.messageFactory);
 				this.element = xmlUtils.newElement(xmlUtils.toByteArray(this.element));
 			}
 		}catch(Exception e){

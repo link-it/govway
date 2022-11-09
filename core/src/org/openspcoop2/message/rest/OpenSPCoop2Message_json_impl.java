@@ -75,7 +75,9 @@ public class OpenSPCoop2Message_json_impl extends AbstractBaseOpenSPCoop2RestMes
 		}finally {
 			try {
 				this._getInputStream().close();
-			}catch(Exception eClose) {}
+			}catch(Exception eClose) {
+				// close
+			}
 		}
 	}
 	@Override
@@ -114,7 +116,9 @@ public class OpenSPCoop2Message_json_impl extends AbstractBaseOpenSPCoop2RestMes
 				if(w!=null){
 					w.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -203,7 +207,7 @@ public class OpenSPCoop2Message_json_impl extends AbstractBaseOpenSPCoop2RestMes
 	}
 	private net.minidev.json.JSONArray toJSONArray(Object valueParam) throws MessageException {
 		net.minidev.json.JSONArray value = null;
-		if(valueParam instanceof net.minidev.json.JSONObject) {
+		if(valueParam instanceof net.minidev.json.JSONArray) {
 			value = (net.minidev.json.JSONArray) valueParam;
 		}
 		else if(valueParam instanceof String) {

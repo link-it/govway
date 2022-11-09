@@ -38,7 +38,7 @@ import org.openspcoop2.message.utils.DumpAttachment;
 import org.openspcoop2.message.utils.DumpMessaggio;
 import org.openspcoop2.message.utils.DumpMessaggioConfig;
 import org.openspcoop2.message.utils.DumpMessaggioMultipartInfo;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -461,7 +461,9 @@ public class DumpSoapMessageUtils {
 					if(bout!=null){
 						bout.close();
 					}
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 		}
 		else{
@@ -486,7 +488,9 @@ public class DumpSoapMessageUtils {
 					if(bout!=null){
 						bout.close();
 					}
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 		}
 		else{
@@ -546,7 +550,7 @@ public class DumpSoapMessageUtils {
 							try {
 								javax.xml.transform.dom.DOMSource domSource = (javax.xml.transform.dom.DOMSource) o;	
 								bout = new ByteArrayOutputStream();
-								bout.write(XMLUtils.getInstance(msg.getFactory()).toByteArray(domSource.getNode()));
+								bout.write(MessageXMLUtils.getInstance(msg.getFactory()).toByteArray(domSource.getNode()));
 								bout.flush();
 								bout.close();
 								forceRebuildDataHandler = true;

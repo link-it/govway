@@ -215,7 +215,9 @@ public class Deserializer {
 					try{
 						if(bin!=null)
 							bin.close();
-					}catch(Exception e){}
+					}catch(Exception e){
+						// close
+					}
 				}
 			}
 	
@@ -369,7 +371,9 @@ public class Deserializer {
 					try{
 						if(bin!=null)
 							bin.close();
-					}catch(Exception e){}
+					}catch(Exception e){
+						// close
+					}
 				}
 			}
 	
@@ -407,7 +411,9 @@ public class Deserializer {
 				if(is!=null){
 					is.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}	
 	}
 
@@ -429,7 +435,9 @@ public class Deserializer {
 				if(isProp!=null){
 					isProp.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 

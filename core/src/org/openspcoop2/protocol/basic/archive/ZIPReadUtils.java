@@ -249,7 +249,9 @@ public class ZIPReadUtils  {
 					fout.close();
 				if(tmp!=null)
 					tmp.delete();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 	}
@@ -283,7 +285,9 @@ public class ZIPReadUtils  {
 			try{
 				if(zipFile!=null)
 					zipFile.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 		
@@ -316,7 +320,9 @@ public class ZIPReadUtils  {
 				if(bout!=null){
 					bout.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -974,12 +980,16 @@ public class ZIPReadUtils  {
 							if(inputStream!=null){
 								inputStream.close();
 							}
-						}catch(Exception eClose){}
+						}catch(Exception eClose){
+							// close
+						}
 						try{
 							if(bin!=null){
 								bin.close();
 							}
-						}catch(Exception eClose){}
+						}catch(Exception eClose){
+							// close
+						}
 					}
 				}
 			}
@@ -1306,6 +1316,9 @@ public class ZIPReadUtils  {
 				ruoloPorta = policy.getFiltro().getRuoloPorta();
 				nomePorta = policy.getFiltro().getNomePorta();
 			}
+			if(policy==null) {
+				throw new Exception("Policy is null");
+			}
 			String key = ArchiveActivePolicy.buildKey(ruoloPorta, nomePorta, policy.getAlias());
 			if(archivio.getControlloTraffico_activePolicies().containsKey(key)){
 				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere più di un'attivazione di policy con key ["+key+"]");
@@ -1329,6 +1342,9 @@ public class ZIPReadUtils  {
 			if(allarme!=null && allarme.getFiltro()!=null) {
 				ruoloPorta = allarme.getFiltro().getRuoloPorta();
 				nomePorta = allarme.getFiltro().getNomePorta();
+			}
+			if(allarme==null) {
+				throw new Exception("Allarme is null");
 			}
 			String key = ArchiveAllarme.buildKey(ruoloPorta, nomePorta, allarme.getAlias());
 			if(archivio.getAllarmi().containsKey(key)){
@@ -1618,7 +1634,7 @@ public class ZIPReadUtils  {
 							soggettoRegistroServizi.getNome()+"] differente da quello indicato ["+nomeSoggetto+"] nella directory che contiene la definizione");
 				}
 			}
-			else if(!registro){
+			else {
 				if(soggettoConfigurazione!=null){
 					throw new ProtocolException("Elemento ["+entryName+"] errato. Una definizione xml del soggetto con tipologia ("+schema+") e' presente piu' di una volta");
 				}
@@ -1634,10 +1650,6 @@ public class ZIPReadUtils  {
 					throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml del soggetto ("+schema+") contiene un tipo ["+
 							soggettoConfigurazione.getNome()+"] differente da quello indicato ["+nomeSoggetto+"] nella directory che contiene la definizione");
 				}
-			}
-			else{
-				throw new ProtocolException("Elemento ["+entryName+"] errato. Attesa una definizione del soggetto che contenga informazioni di registro (namespace: "+
-							CostantiRegistroServizi.TARGET_NAMESPACE+") o di configurazione ("+CostantiConfigurazione.TARGET_NAMESPACE+")"); 
 			}
 			
 			// add
@@ -1858,7 +1870,7 @@ public class ZIPReadUtils  {
 					if(USE_VERSION_XML_BEAN.equals(versioneAccordo)==false){
 						if(versioneAccordoInt!=null){
 							if(aspc.getVersione()!=null){
-								if(aspc.getVersione()!=null && aspc.getVersione().intValue()!= versioneAccordoInt.intValue()){
+								if(aspc.getVersione().intValue()!= versioneAccordoInt.intValue()){
 									throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene una versione ["+
 											aspc.getVersione()+"] (fileSystemName:"+versioneAccordo+") differente da quella indicato ["+versioneAccordoInt+"] nella directory che contiene la definizione");
 								}
@@ -2132,7 +2144,7 @@ public class ZIPReadUtils  {
 					if(USE_VERSION_XML_BEAN.equals(versioneServizio)==false){
 						if(versioneServizioInt!=null){
 							if(asps.getVersione()!=null){
-								if(asps.getVersione()!=null && asps.getVersione().intValue()!= versioneServizioInt.intValue()){
+								if(asps.getVersione().intValue()!= versioneServizioInt.intValue()){
 									throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene una versione ["+
 											asps.getVersione()+"] (fileSystemName:"+versioneServizio+") differente da quella indicato ["+versioneServizioInt+"] nella directory che contiene la definizione");
 								}
@@ -2647,7 +2659,7 @@ public class ZIPReadUtils  {
 					if(USE_VERSION_XML_BEAN.equals(versioneAccordo)==false){
 						if(versioneAccordoInt!=null){
 							if(ac.getVersione()!=null){
-								if(ac.getVersione()!=null && ac.getVersione().intValue()!= versioneAccordoInt.intValue()){
+								if(ac.getVersione().intValue()!= versioneAccordoInt.intValue()){
 									throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene una versione ["+
 											ac.getVersione()+"] (fileSystemName:"+versioneAccordo+") differente da quella indicato ["+versioneAccordoInt+"] nella directory che contiene la definizione");
 								}

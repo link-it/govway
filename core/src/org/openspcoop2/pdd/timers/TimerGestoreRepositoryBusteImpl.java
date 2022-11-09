@@ -39,6 +39,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
+import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 
@@ -188,6 +189,7 @@ public class TimerGestoreRepositoryBusteImpl implements SessionBean, TimedObject
 	public void ejbPassivate() throws EJBException {
 	}
 
+	private static Semaphore SEMAPHORE = new Semaphore(TimerGestoreRepositoryBuste.ID_MODULO);
 	private static Boolean LOCK = false;
 	
 	/**
@@ -216,7 +218,8 @@ public class TimerGestoreRepositoryBusteImpl implements SessionBean, TimedObject
 			}else{
 				// Viene sempre richiamato ejbCreate() e quindi la variabile deployFromOpenSPCoop è sempre null.
 				// La single instance viene gestiti quindi con un lock
-				synchronized (LOCK) {
+				SEMAPHORE.acquireThrowRuntime("ejbTimeout");
+				try {
 					if(LOCK){
 						this.msgDiag.logPersonalizzato("precedenteEsecuzioneInCorso.stopTimer");
 						this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("precedenteEsecuzioneInCorso.stopTimer"));
@@ -234,6 +237,8 @@ public class TimerGestoreRepositoryBusteImpl implements SessionBean, TimedObject
 							Utilities.sleep(500);
 						}
 					}
+				}finally {
+					SEMAPHORE.release("ejbTimeout");
 				}
 			}
 		}
@@ -287,8 +292,11 @@ public class TimerGestoreRepositoryBusteImpl implements SessionBean, TimedObject
 			}
 						
 		}finally{
-			synchronized (LOCK) {
+			SEMAPHORE.acquireThrowRuntime("ejbTimeoutCheck2");
+			try {
 				LOCK = false;
+			}finally {
+				SEMAPHORE.release("ejbTimeoutCheck2");
 			}	
 		}
 

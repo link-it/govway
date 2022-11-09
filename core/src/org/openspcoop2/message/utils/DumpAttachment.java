@@ -49,7 +49,7 @@ public class DumpAttachment implements Serializable{
 	private Map<String, List<String>> headers = new HashMap<>();
 	
 	private String errorContentNotSerializable;
-	private ByteArrayOutputStream content;
+	private transient ByteArrayOutputStream content;
 	private StringBuilder printableContent;
 	
 	public String getContentId() {

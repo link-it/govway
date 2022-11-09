@@ -29,7 +29,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -384,6 +383,9 @@ public class RicezioneContenutiApplicativi {
 		// ------------- in-handler -----------------------------
 		IProtocolFactory<?> protocolFactory = null;
 		try{
+			if(context==null) {
+				throw new Exception("Context is null");
+			}
 			protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String)context.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 		}catch(Exception e){
 			setSOAPFault(IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, logCore, msgDiag, e, "ProtocolFactoryInstance");
@@ -668,7 +670,9 @@ public class RicezioneContenutiApplicativi {
 				PortaDelegata portaDelegata = null;
 				try {
 					portaDelegata = configurazionePdDReader.getPortaDelegata_SafeMethod(identificativoPortaDelegata, this.msgContext.getRequestInfo());
-				}catch(Exception e) {}
+				}catch(Exception e) {
+					// ignore
+				}
 				if(portaDelegata!=null) {
 					// Aggiorno tutti
 					soggettoErogatore = new IDSoggetto(portaDelegata.getSoggettoErogatore().getTipo(),portaDelegata.getSoggettoErogatore().getNome());
@@ -1471,7 +1475,9 @@ public class RicezioneContenutiApplicativi {
 										}
 									}
 								}
-							}catch(Throwable tIgnore) {}
+							}catch(Throwable tIgnore) {
+								// ignore
+							}
 						}
 					}
 				}
@@ -2282,7 +2288,9 @@ public class RicezioneContenutiApplicativi {
 				            if (configProperties != null && !configProperties.isEmpty()) {
 				            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO, configProperties);
 							}	
-						}catch(Throwable t) {}
+						}catch(Throwable t) {
+							// ignore
+						}
 					}
 				} catch (Exception e) {
 					msgDiag.logErroreGenerico(e, "existsServizioApplicativo("+servizioApplicativo+")");
@@ -2392,7 +2400,9 @@ public class RicezioneContenutiApplicativi {
 					            if (configProperties != null && !configProperties.isEmpty()) {
 					            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO, configProperties);
 								}	
-							}catch(Throwable t) {}
+							}catch(Throwable t) {
+								// ignore
+							}
 						}
 						else {
 							// l'errore puo' non esserci se l'autenticazione utilizzata non prevede una identificazione obbligatoria
@@ -2671,14 +2681,18 @@ public class RicezioneContenutiApplicativi {
 					            if (configProperties != null && !configProperties.isEmpty()) {
 					            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO_TOKEN, configProperties);
 								}	
-							}catch(Throwable t) {}	
+							}catch(Throwable t) {
+								// ignore
+							}
 							try {
 								soggettoToken = registroServiziReader.getSoggetto(idApplicativoToken.getIdSoggettoProprietario(), null, requestInfo);
 								Map<String, String> configProperties = registroServiziReader.getProprietaConfigurazione(soggettoToken);
 					            if (configProperties != null && !configProperties.isEmpty()) {
 					            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN, configProperties);
 								}	
-							}catch(Throwable t) {}	
+							}catch(Throwable t) {
+								// ignore
+							}
 						}
 						else {
 							errore = esito.getErroreIntegrazione();
@@ -3152,7 +3166,7 @@ public class RicezioneContenutiApplicativi {
 					int seconds = propertiesReader.getServiceUnavailableRetryAfterSeconds_pd_suspend();
 					if(propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend()!=null &&
 							propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend()>0) {
-						seconds = seconds + new Random().nextInt(propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend());
+						seconds = seconds + ServicesUtils.getRandom().nextInt(propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend());
 					}
 					errorOpenSPCoopMsg.forceTransportHeader(HttpConstants.RETRY_AFTER, seconds+"");
 				}
@@ -3687,7 +3701,9 @@ public class RicezioneContenutiApplicativi {
 							infoServizio = registroServiziReader.getInfoServizioCorrelato(soggettoFruitore,idServizio, nomeRegistroForSearch, false, requestInfo);
 							isServizioCorrelato = true;
 							throwFault = false;
-						}catch(Throwable ignore) {}
+						}catch(Throwable ignore) {
+							// ignore
+						}
 					}
 					if(throwFault) {
 						invocazioneAzioneErrata = e.getMessage();
@@ -3711,7 +3727,9 @@ public class RicezioneContenutiApplicativi {
 								infoServizio = registroServiziReader.getInfoServizioAzioneCorrelata(soggettoFruitore, idServizio,nomeRegistroForSearch, false, requestInfo);
 								isServizioCorrelato = true;
 								throwFault = false;
-							}catch(Throwable ignore) {}
+							}catch(Throwable ignore) {
+								// ignore
+							}
 						}
 						if(throwFault) {
 							invocazioneAzioneErrata = e.getMessage();
@@ -3747,7 +3765,9 @@ public class RicezioneContenutiApplicativi {
 						try {
 							infoServizio = registroServiziReader.getInfoServizio(soggettoFruitore, idServizio,nomeRegistroForSearch,true, false, requestInfo);
 							throwFault = false;
-						}catch(Throwable ignore) {}
+						}catch(Throwable ignore) {
+							// ignore
+						}
 					}
 					if(throwFault) {
 						invocazioneAzioneErrata = e.getMessage();
@@ -3770,7 +3790,9 @@ public class RicezioneContenutiApplicativi {
 								infoServizio = registroServiziReader.getInfoServizioCorrelato(soggettoFruitore,idServizio, nomeRegistroForSearch, false, requestInfo);
 								isServizioCorrelato = true;
 								throwFault = false;
-							}catch(Throwable ignore) {}
+							}catch(Throwable ignore) {
+								// ignore
+							}
 						}
 						if(throwFault) {
 							invocazioneAzioneErrata = e.getMessage();
@@ -3875,7 +3897,9 @@ public class RicezioneContenutiApplicativi {
 			richiestaDelegata.setIdAccordo(infoServizio.getIdAccordo());
 			try{
 				idServizio.setUriAccordoServizioParteComune(IDAccordoFactory.getInstance().getUriFromIDAccordo(infoServizio.getIdAccordo()));
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 		}
 		msgDiag.highDebug("Convert infoServizio to Busta ...");
 		Busta bustaRichiesta = infoServizio.convertToBusta(protocolFactory.getProtocol(), soggettoFruitore);
@@ -4130,7 +4154,9 @@ public class RicezioneContenutiApplicativi {
 				Connettore connettoreFruitore = null;
 				try{
 					connettoreFruitore = registroServiziReader.getConnettore(soggettoFruitore, nomeRegistroForSearch, requestInfo);
-				}catch(org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound dNotFound){}
+				}catch(org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound dNotFound){
+					// ignore
+				}
 				if(connettoreFruitore!=null && !CostantiConfigurazione.DISABILITATO.equals(connettoreFruitore.getTipo())){
 					if(connettoreFruitore.getProperties()!=null && connettoreFruitore.getProperties().containsKey(CostantiConnettori.CONNETTORE_LOCATION)){
 						indirizzoFruitore = connettoreFruitore.getProperties().get(CostantiConnettori.CONNETTORE_LOCATION);
@@ -4141,7 +4167,9 @@ public class RicezioneContenutiApplicativi {
 				Connettore connettoreErogatore = null;
 				try{
 					connettoreErogatore = registroServiziReader.getConnettore(idServizio.getSoggettoErogatore(), nomeRegistroForSearch, requestInfo);
-				}catch(org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound dNotFound){}
+				}catch(org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound dNotFound){
+					// ignore
+				}
 				if(connettoreErogatore!=null && !CostantiConfigurazione.DISABILITATO.equals(connettoreErogatore.getTipo())){
 					if(connettoreErogatore.getProperties()!=null && connettoreErogatore.getProperties().containsKey(CostantiConnettori.CONNETTORE_LOCATION)){
 						indirizzoErogatore = connettoreErogatore.getProperties().get(CostantiConnettori.CONNETTORE_LOCATION);
@@ -4446,7 +4474,9 @@ public class RicezioneContenutiApplicativi {
 				if (binXSD != null) {
 					try {
 						binXSD.close();
-					} catch (Exception e) {}
+					} catch (Exception e) {
+						// ignore
+					}
 				}
 			}
 		}
@@ -5346,7 +5376,9 @@ public class RicezioneContenutiApplicativi {
 							}finally{
 								try{
 									GestoreMessaggi.releaseLock(msgRequest,TimerLock.newInstance(TipoLock._getLockGestioneRepositoryMessaggi()),msgDiag, causa);
-								}catch(Exception eUnlock){}
+								}catch(Exception eUnlock){
+									// ignore
+								}
 							}
 						}
 						else {
@@ -5733,7 +5765,9 @@ public class RicezioneContenutiApplicativi {
 					openspcoopstate.setUseConnection(true);
 					try{
 						openspcoopstate.commit();
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					openspcoopstate.releaseResource();
 					openspcoopstate.setUseConnection(false);
 				}
@@ -5835,7 +5869,9 @@ public class RicezioneContenutiApplicativi {
 				openspcoopstate.setUseConnection(true);
 				try{
 					openspcoopstate.commit();
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				openspcoopstate.releaseResource();
 				openspcoopstate.setUseConnection(false);
 			}
@@ -5945,7 +5981,9 @@ public class RicezioneContenutiApplicativi {
 					openspcoopstate.setUseConnection(true);
 					try{
 						openspcoopstate.commit();
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					openspcoopstate.releaseResource();
 					openspcoopstate.setUseConnection(false);
 				}
@@ -6252,7 +6290,10 @@ public class RicezioneContenutiApplicativi {
 		headerIntegrazioneRisposta.getBusta().setID(idMessageRequest);
 		OutResponsePDMessage outResponsePDMessage = new OutResponsePDMessage();
 		outResponsePDMessage.setBustaRichiesta(bustaRichiesta);
-		Object bustaRispostaObject = pddContext.getObject(CostantiPdD.BUSTA_RISPOSTA);
+		Object bustaRispostaObject = null;
+		if(pddContext!=null) {
+			bustaRispostaObject = pddContext.getObject(CostantiPdD.BUSTA_RISPOSTA);
+		}
 		if(bustaRispostaObject!=null && bustaRispostaObject instanceof Busta){
 			Busta bustaRisposta = (Busta) bustaRispostaObject;
 			// aggiungo proprieta' (vengono serializzate negli header di integrazione)

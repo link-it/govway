@@ -57,7 +57,7 @@ import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
@@ -166,7 +166,7 @@ public class PreLoadingConfig  {
 							}
 							else {
 							
-								Element element = XMLUtils.DEFAULT.newElement(bytes);
+								Element element = MessageXMLUtils.DEFAULT.newElement(bytes);
 								if(org.openspcoop2.core.config.utils.XMLUtils.isConfigurazione(element)) {
 									configNameList.add(entryName);
 									configList.add(bytes);

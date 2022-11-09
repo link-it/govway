@@ -310,7 +310,9 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 				pm = protocolFactory.createProtocolManager();
 			}
 			this.proprietaErroreAppl = openspcoopProperties.getProprietaGestioneErrorePD(pm);
-		}catch(Exception e){}
+		}catch(Exception e){
+			// ignore
+		}
 		if(servizioApplicativo!=null){
 			try{
 				ConfigurazionePdDManager configPdDReader = ConfigurazionePdDManager.getInstance();

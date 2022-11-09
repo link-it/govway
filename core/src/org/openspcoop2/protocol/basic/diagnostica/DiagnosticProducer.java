@@ -232,10 +232,14 @@ public class DiagnosticProducer extends BasicProducer implements IDiagnosticProd
 			try{
 				if(stmt!=null)
 					stmt.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				this.releaseConnection(cr, "log");
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 		

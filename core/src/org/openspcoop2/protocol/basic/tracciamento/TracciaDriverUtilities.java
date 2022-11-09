@@ -996,16 +996,24 @@ public class TracciaDriverUtilities {
 		}finally{
 			try{
 				rsLista.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			try{
 				pstmtLista.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			try{
 				rs.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			try{
 				pstmt.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	} 
 	

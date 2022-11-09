@@ -40,7 +40,7 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.DumpSoapMessageUtils;
 import org.openspcoop2.message.soap.SoapUtils;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
@@ -140,7 +140,7 @@ public class SPCoopSbustamento {
 		try{
 			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
 			
-			XMLUtils xmlUtils = XMLUtils.getInstance(msg.getFactory());
+			MessageXMLUtils xmlUtils = MessageXMLUtils.getInstance(msg.getFactory());
 			
 			SOAPBody body = msg.getSOAPBody();
 			SOAPElement descrizione = (SOAPElement) msg.getFirstChildElement(body);

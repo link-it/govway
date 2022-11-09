@@ -30,7 +30,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -422,6 +421,9 @@ public class RicezioneBuste {
 		
 		IProtocolFactory<?> protocolFactory = null;
 		try{
+			if(context==null) {
+				throw new Exception("Context is null");
+			}
 			protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String)context.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 		}catch(Exception e){
 			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, logCore, msgDiag, e, "ProtocolFactoryInstance");
@@ -458,7 +460,7 @@ public class RicezioneBuste {
 			}
 		}
 		connettore.setUrlProtocolContext(this.msgContext.getUrlProtocolContext());	
-		if(ServiceBinding.SOAP.equals(requestMessage.getServiceBinding())){
+		if(requestMessage!=null && ServiceBinding.SOAP.equals(requestMessage.getServiceBinding())){
 			try{
 				connettore.setSoapAction(requestMessage.castAsSoap().getSoapAction());
 			}catch(Exception e){
@@ -709,7 +711,9 @@ public class RicezioneBuste {
 				PortaApplicativa portaApplicativa = null;
 				try {
 					portaApplicativa = configurazionePdDReader.getPortaApplicativa_SafeMethod(identificativoPortaApplicativa, this.msgContext.getRequestInfo());
-				}catch(Exception e) {}
+				}catch(Exception e) {
+					// ignore
+				}
 				if(portaApplicativa!=null) {
 					// Aggiorno tutti
 					soggettoErogatore = new IDSoggetto(portaApplicativa.getTipoSoggettoProprietario(), portaApplicativa.getNomeSoggettoProprietario());
@@ -800,12 +804,16 @@ public class RicezioneBuste {
 				if(erroreCooperazione != null){
 					try{
 						descrizioneErrore = erroreCooperazione.getDescrizione(this.generatoreErrore.getProtocolFactory());
-					}catch(Throwable t){}
+					}catch(Throwable t){
+						// ignore
+					}
 				}
 				if(descrizioneErrore==null && erroreIntegrazione!=null) {
 					try{
 						descrizioneErrore = erroreIntegrazione.getDescrizione(this.generatoreErrore.getProtocolFactory());
-					}catch(Throwable t){}
+					}catch(Throwable t){
+						// ignore
+					}
 				}
 				if(descrizioneErrore==null) {
 					descrizioneErrore = posizioneErrore;
@@ -2040,7 +2048,9 @@ public class RicezioneBuste {
 										}
 									}
 								}
-							}catch(Throwable tIgnore) {}
+							}catch(Throwable tIgnore) {
+								// ignore
+							}
 						}
 					}
 				}
@@ -2189,7 +2199,9 @@ public class RicezioneBuste {
 							parametriGenerazioneBustaErrore.setIdentitaPdD(identitaPdD);
 							parametriInvioBustaErrore.setIdentitaPdD(identitaPdD);
 						}
-					}catch(Exception e){}	
+					}catch(Exception e){
+						// ignore
+					}	
 				}
 				
 				// Imposto i domini corretti, se sono stati impostati dei mittenti e tipi mittenti esistenti
@@ -2198,14 +2210,18 @@ public class RicezioneBuste {
 						String dominio = registroServiziReader.getDominio(new IDSoggetto(erroreIntestazione.getTipoMittente(), erroreIntestazione.getMittente()), null, protocolFactory, requestInfo);
 						if(dominio!=null)
 							erroreIntestazione.setIdentificativoPortaMittente(dominio);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 				if(erroreIntestazione.getDestinatario()!=null && erroreIntestazione.getTipoDestinatario()!=null){
 					try{
 						String dominio = registroServiziReader.getDominio(new IDSoggetto(erroreIntestazione.getTipoDestinatario(), erroreIntestazione.getDestinatario()), null, protocolFactory, requestInfo);
 						if(dominio!=null)
 							erroreIntestazione.setIdentificativoPortaDestinatario(dominio);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 			}
 
@@ -2764,7 +2780,9 @@ public class RicezioneBuste {
 					gestioneTokenAutenticazione = pd.getGestioneToken().getAutenticazione();
 				}
 			}
-		}catch(Exception exception){}
+		}catch(Exception exception){
+			// ignore
+		}
 		this.msgContext.getIntegrazione().setTipoGestioneToken(tipoGestioneToken);
 		String token = null;
 		if (tipoGestioneToken == null || asincronoSimmetricoRisposta) {
@@ -3304,7 +3322,9 @@ public class RicezioneBuste {
 						autenticazioneOpzionale = configurazionePdDReader.isAutenticazioneOpzionale(pd);
 						parametriAutenticazione = new ParametriAutenticazione(pd.getProprietaAutenticazioneList());
 					}
-				}catch(Exception exception){}
+				}catch(Exception exception){
+					// ignore
+				}
 				this.msgContext.getIntegrazione().setTipoAutenticazione(tipoAutenticazione);
 				this.msgContext.getIntegrazione().setAutenticazioneOpzionale(autenticazioneOpzionale);
 				if(tipoAutenticazione!=null){
@@ -3432,7 +3452,9 @@ public class RicezioneBuste {
 								            if (configProperties != null && !configProperties.isEmpty()) {
 								            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO, configProperties);
 											}	
-										}catch(Throwable t) {}	
+										}catch(Throwable t) {
+											// ignore
+										}
 									}
 									msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, ""); // per evitare di visualizzarle anche nei successivi diagnostici
 									msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI, "");
@@ -3833,7 +3855,9 @@ public class RicezioneBuste {
 							else{
 								parametriAutenticazione = new ParametriAutenticazione(pd.getProprietaAutenticazioneList());
 							}
-						}catch(Exception exception){}
+						}catch(Exception exception){
+							// ignore
+						}
 					}
 					
 					msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_CLIENT_ID, informazioniTokenNormalizzate.getClientId());
@@ -3871,14 +3895,18 @@ public class RicezioneBuste {
 						            if (configProperties != null && !configProperties.isEmpty()) {
 						            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_APPLICATIVO_TOKEN, configProperties);
 									}	
-								}catch(Throwable t) {}	
+								}catch(Throwable t) {
+									// ignore
+								}
 								try {
 									soggettoToken = registroServiziReader.getSoggetto(idApplicativoToken.getIdSoggettoProprietario(), null, requestInfo);
 									Map<String, String> configProperties = registroServiziReader.getProprietaConfigurazione(soggettoToken);
 						            if (configProperties != null && !configProperties.isEmpty()) {
 						            	pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_PROPRIETARIO_APPLICATIVO_TOKEN, configProperties);
 									}	
-								}catch(Throwable t) {}	
+								}catch(Throwable t) {
+									// ignore
+								}	
 							}
 							else {
 								erroreIntegrazione = esito.getErroreIntegrazione();
@@ -4030,7 +4058,9 @@ public class RicezioneBuste {
 		// ** trasporto **
 		try {
 			pddContext.removeObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_SOGGETTO_FRUITORE);
-		}catch(Throwable t) {}	
+		}catch(Throwable t) {
+			// ignore
+		}
 		// Avendo commentato il pezzo prima dell'autenticazione, non dovrebbe servire neanche questo
 		//requestInfo.getRequestThreadContext().clearSoggettoFruitore();
 		if(soggettoFruitore!=null) {
@@ -4398,7 +4428,7 @@ public class RicezioneBuste {
 					int seconds = propertiesReader.getServiceUnavailableRetryAfterSeconds_pa_suspend();
 					if(propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_suspend()!=null &&
 							propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_suspend()>0) {
-						seconds = seconds + new Random().nextInt(propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_suspend());
+						seconds = seconds + ServicesUtils.getRandom().nextInt(propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_suspend());
 					}
 					errorOpenSPCoopMsg.forceTransportHeader(HttpConstants.RETRY_AFTER, seconds+"");
 				}
@@ -6213,7 +6243,9 @@ public class RicezioneBuste {
 //					tipoAutorizzazione = configurazionePdDReader.getAutorizzazione(pd);
 //				}
 			}
-		}catch(Exception notFound){}
+		}catch(Exception notFound){
+			// ignore
+		}
 		boolean isAttivoAutorizzazioneBuste = tipoAutorizzazione!=null && !CostantiConfigurazione.AUTORIZZAZIONE_NONE.equalsIgnoreCase(tipoAutorizzazione);
 		this.msgContext.getIntegrazione().setTipoAutorizzazione(tipoAutorizzazione);
 		if(tipoAutorizzazione!=null){
@@ -6795,7 +6827,9 @@ public class RicezioneBuste {
 						if(binXSD!=null){
 							try{
 								binXSD.close();
-							}catch(Exception e){}
+							}catch(Exception e){
+								// ignore
+							}
 						}
 					}
 				}
@@ -7359,7 +7393,9 @@ public class RicezioneBuste {
 							}finally{
 								try{
 									GestoreMessaggi.releaseLock(msgRequest,TimerLock.newInstance(TipoLock._getLockGestioneRepositoryMessaggi()),msgDiag, causa);
-								}catch(Exception eUnlock){}
+								}catch(Exception eUnlock){
+									// ignore
+								}
 							}
 						}
 						else {
@@ -8121,7 +8157,9 @@ public class RicezioneBuste {
 					try{
 						String dominio = registroServiziReader.getDominio(new IDSoggetto(tras.getTipoDestinazione(),tras.getDestinazione()), null, protocolFactory, requestInfo);
 						tras.setIdentificativoPortaDestinazione(dominio);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					
 					// oraRegistrazione
 					tras.setOraRegistrazione(bustaRisposta.getOraRegistrazione());
@@ -8229,7 +8267,9 @@ public class RicezioneBuste {
 							// Aggiorno proprietario Messaggio
 							msgDiag.mediumDebug("Aggiornamento proprietario messaggio risposta ...");
 							msgResponse.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
-						}catch(Throwable t) {}
+						}catch(Throwable t) {
+							// ignore
+						}
 					}
 					
 					if(functionAsRouter && 
@@ -8292,7 +8332,9 @@ public class RicezioneBuste {
 								// Aggiorno proprietario Messaggio
 								msgDiag.mediumDebug("Aggiornamento proprietario messaggio risposta ...");
 								msgResponse.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
-							}catch(Throwable t) {}
+							}catch(Throwable t) {
+								// ignore
+							}
 						}
 						
 						// L'errore viene registrato dentro il metodo mtomProcessor.mtomBeforeSecurity
@@ -8370,7 +8412,9 @@ public class RicezioneBuste {
 									// Aggiorno proprietario Messaggio
 									msgDiag.mediumDebug("Aggiornamento proprietario messaggio risposta ...");
 									msgResponse.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
-								}catch(Throwable t) {}
+								}catch(Throwable t) {
+									// ignore
+								}
 							}
 							
 							msgDiag.addKeywordErroreProcessamento(e);
@@ -8411,7 +8455,9 @@ public class RicezioneBuste {
 								// Aggiorno proprietario Messaggio
 								msgDiag.mediumDebug("Aggiornamento proprietario messaggio risposta ...");
 								msgResponse.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
-							}catch(Throwable t) {}
+							}catch(Throwable t) {
+								// ignore
+							}
 						}
 						
 						// L'errore viene registrato dentro il metodo mtomProcessor.mtomAfterSecurity
@@ -8477,7 +8523,9 @@ public class RicezioneBuste {
 							// Aggiorno proprietario Messaggio
 							msgDiag.mediumDebug("Aggiornamento proprietario messaggio risposta ...");
 							msgResponse.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
-						}catch(Throwable t) {}
+						}catch(Throwable t) {
+							// ignore
+						}
 					}
 					
 					if(functionAsRouter && 
@@ -9203,7 +9251,9 @@ public class RicezioneBuste {
 							idServizioPA.setAzione(bustaRichiesta.getAzione());
 							try {
 								pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
-							}catch(DriverConfigurazioneNotFound notFound) {}
+							}catch(DriverConfigurazioneNotFound notFound) {
+								// ignore
+							}
 						}
 					}
 					if(pa!=null) {
@@ -9247,7 +9297,9 @@ public class RicezioneBuste {
 							idServizioPA.setAzione(bustaRichiesta.getAzione());
 							try {
 								pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
-							}catch(DriverConfigurazioneNotFound notFound) {}
+							}catch(DriverConfigurazioneNotFound notFound) {
+								// ignore
+							}
 						}
 					}
 					if(pa!=null) {
@@ -9320,7 +9372,9 @@ public class RicezioneBuste {
 							idServizioPA.setAzione(bustaRichiesta.getAzione());
 							try {
 								pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
-							}catch(DriverConfigurazioneNotFound notFound) {}
+							}catch(DriverConfigurazioneNotFound notFound) {
+								// ignore
+							}
 						}
 					}
 					if(pa!=null) {
@@ -9351,7 +9405,9 @@ public class RicezioneBuste {
 								idServizioPA.setAzione(idServizioOriginale.getAzione());
 								try {
 									pa = this.getPortaApplicativa(configurazionePdDReader,idServizioPA);
-								}catch(DriverConfigurazioneNotFound notFound) {}
+								}catch(DriverConfigurazioneNotFound notFound) {
+									// ignore
+								}
 							}
 						}
 						if(pa!=null) {
@@ -9458,7 +9514,9 @@ public class RicezioneBuste {
 							idServizioPA.setAzione(bustaRichiesta.getAzione());
 							try {
 								pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
-							}catch(DriverConfigurazioneNotFound notFound) {}
+							}catch(DriverConfigurazioneNotFound notFound) {
+								// ignore
+							}
 						}
 					}
 					if(pa!=null) {
@@ -9485,7 +9543,9 @@ public class RicezioneBuste {
 						idServizioPA.setAzione(bustaRichiesta.getAzione());
 						try {
 							pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
-						}catch(DriverConfigurazioneNotFound notFound) {}
+						}catch(DriverConfigurazioneNotFound notFound) {
+							// ignore
+						}
 					}
 				}
 				if(pa!=null) {
@@ -9514,7 +9574,9 @@ public class RicezioneBuste {
 							idServizioPA.setAzione(bustaRichiesta.getAzione());
 							try {
 								pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
-							}catch(DriverConfigurazioneNotFound notFound) {}
+							}catch(DriverConfigurazioneNotFound notFound) {
+								// ignore
+							}
 						}
 					}
 					if(pa!=null) {
@@ -9561,7 +9623,9 @@ public class RicezioneBuste {
 							idServizioPA.setAzione(bustaRichiesta.getAzione());
 							try {
 								pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
-							}catch(DriverConfigurazioneNotFound notFound) {}
+							}catch(DriverConfigurazioneNotFound notFound) {
+								// ignore
+							}
 						}
 					}
 					if(pa!=null) {
@@ -9590,7 +9654,9 @@ public class RicezioneBuste {
 							idServizioPA.setAzione(idServizioOriginale.getAzione());
 							try {
 								pa = this.getPortaApplicativa(configurazionePdDReader, idServizioPA);
-							}catch(DriverConfigurazioneNotFound notFound) {}
+							}catch(DriverConfigurazioneNotFound notFound) {
+								// ignore
+							}
 						}
 					}
 					if(pa!=null) {

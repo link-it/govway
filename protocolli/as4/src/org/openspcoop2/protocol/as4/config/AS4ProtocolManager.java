@@ -41,7 +41,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
 import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.StatusRequest;
 import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.MessageStatus;
@@ -51,6 +51,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.TransportRequestContext;
@@ -80,12 +81,12 @@ public class AS4ProtocolManager extends BasicManager {
 	
 	
 	@Override
-	public Boolean isAggiungiDetailErroreApplicativo_FaultApplicativo() {
+	public BooleanNullable isAggiungiDetailErroreApplicativo_FaultApplicativo() {
 		return this.as4Properties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
 	}
 
 	@Override
-	public Boolean isAggiungiDetailErroreApplicativo_FaultPdD() {
+	public BooleanNullable isAggiungiDetailErroreApplicativo_FaultPdD() {
 		return this.as4Properties.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
 	}
 
@@ -112,7 +113,7 @@ public class AS4ProtocolManager extends BasicManager {
 							
 							// recupero id
 							backend.ecodex.org._1_1.utils.serializer.JaxbDeserializer deserializer = new backend.ecodex.org._1_1.utils.serializer.JaxbDeserializer();
-							byte[]b=XMLUtils.getInstance(messageFactory).toByteArray(n);
+							byte[]b=MessageXMLUtils.getInstance(messageFactory).toByteArray(n);
 							SubmitResponse submitResponse = deserializer.readSubmitResponse(b);
 							String responseId = submitResponse.getMessageIDList().get(0);
 							busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_MESSAGE_INFO_ID, responseId);

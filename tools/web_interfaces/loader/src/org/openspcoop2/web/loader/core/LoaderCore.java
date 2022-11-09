@@ -34,7 +34,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.struts.upload.FormFile;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.utils.IVersionInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -248,7 +248,7 @@ public class LoaderCore{
 			throw new Exception("[OpenSPCoopLoader::initCore] Impossibile leggere i dati dal file loader.properties:" + e.toString());
 		} 
 		
-		this.xmlUtils = XMLUtils.DEFAULT;
+		this.xmlUtils = MessageXMLUtils.DEFAULT;
 	}
 	
 	public LoaderCore(LoaderCore core) throws Exception{
@@ -288,7 +288,7 @@ public class LoaderCore{
 		this.logoHeaderTitolo =  core.logoHeaderTitolo;
 		this.visualizzaLinkHomeHeader = core.visualizzaLinkHomeHeader;
 		
-		this.xmlUtils = XMLUtils.DEFAULT;
+		this.xmlUtils = MessageXMLUtils.DEFAULT;
 	}
 
 	public static Logger getLog() {

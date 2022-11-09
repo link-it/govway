@@ -111,7 +111,7 @@ public class HeaderParameters extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method getHeaderParameterList
-   * @return List<StringParameter>
+   * @return List&lt;StringParameter&gt;
   */
   @Deprecated
   public List<StringParameter> getHeaderParameter() {
@@ -120,7 +120,7 @@ public class HeaderParameters extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method setHeaderParameterList
-   * @param headerParameter List<StringParameter>
+   * @param headerParameter List&lt;StringParameter&gt;
   */
   @Deprecated
   public void setHeaderParameter(List<StringParameter> headerParameter) {

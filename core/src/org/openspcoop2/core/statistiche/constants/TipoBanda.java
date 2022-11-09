@@ -54,13 +54,6 @@ public enum TipoBanda  implements IEnumeration , Serializable , Cloneable{
 	public String toString(){
 		return this.value;
 	}
-	public boolean equals(TipoBanda object){
-		if(object==null)
-			return false;
-		if(object.getValue()==null)
-			return false;
-		return object.getValue().equals(this.getValue());	
-	}
 	public boolean equals(String object){
 		if(object==null)
 			return false;

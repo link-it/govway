@@ -128,6 +128,7 @@ import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.NameValue;
@@ -7762,14 +7763,14 @@ public class OpenSPCoop2Properties {
 				pNew.setInformazioniGenericheDetailsOpenSPCoop(false);
 			} 
 			
-			Boolean enrich = protocolManager.isAggiungiDetailErroreApplicativo_FaultApplicativo();
-			if(enrich!=null){
-				pNew.setAggiungiDetailErroreApplicativo_SoapFaultApplicativo(enrich);
+			BooleanNullable enrichNullable = protocolManager.isAggiungiDetailErroreApplicativo_FaultApplicativo();
+			if(enrichNullable!=null && enrichNullable.getValue()!=null){
+				pNew.setAggiungiDetailErroreApplicativo_SoapFaultApplicativo(enrichNullable.getValue());
 			}
 			
-			enrich = protocolManager.isAggiungiDetailErroreApplicativo_FaultPdD();
-			if(enrich!=null){
-				pNew.setAggiungiDetailErroreApplicativo_SoapFaultPdD(enrich);
+			enrichNullable = protocolManager.isAggiungiDetailErroreApplicativo_FaultPdD();
+			if(enrichNullable!=null && enrichNullable.getValue()!=null){
+				pNew.setAggiungiDetailErroreApplicativo_SoapFaultPdD(enrichNullable.getValue());
 			}
 			
 		}else{

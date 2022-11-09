@@ -54,7 +54,7 @@ import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.SOAPFault;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.openspcoop2.message.constants.MessageType;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPSProperties;
 import org.openspcoop2.testsuite.axis14.Axis14DynamicNamespaceContextFactory;
 import org.openspcoop2.testsuite.core.CostantiTestSuite;
@@ -618,8 +618,8 @@ public class ClientHttpGenerico extends ClientCore{
 													for(int j=0; j<detailChilds.getLength(); j++){
 														Node n = detailChilds.item(j);
 														try {
-															byte [] nByte = XMLUtils.DEFAULT.toByteArray(n,true);
-															elementsW3C.add(XMLUtils.DEFAULT.newElement(nByte));
+															byte [] nByte = MessageXMLUtils.DEFAULT.toByteArray(n,true);
+															elementsW3C.add(MessageXMLUtils.DEFAULT.newElement(nByte));
 														}catch(Throwable t) {
 															XmlDeserializer des = new XmlDeserializer();
 															boolean normalizeConflittoLibreriaAxisSaaj = false;
@@ -638,10 +638,10 @@ public class ClientHttpGenerico extends ClientCore{
 															}
 															if(normalizeConflittoLibreriaAxisSaaj) {
 																// normalize per conflito di librerie axis - saaj
-																org.w3c.dom.Document d = XMLUtils.DEFAULT.newDocument();
+																org.w3c.dom.Document d = MessageXMLUtils.DEFAULT.newDocument();
 																n = d.importNode(n, true);
-																byte [] nByte = XMLUtils.DEFAULT.toByteArray(n,true);
-																elementsW3C.add(XMLUtils.DEFAULT.newElement(nByte));
+																byte [] nByte = MessageXMLUtils.DEFAULT.toByteArray(n,true);
+																elementsW3C.add(MessageXMLUtils.DEFAULT.newElement(nByte));
 															}
 														}
 													}

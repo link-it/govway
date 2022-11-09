@@ -66,7 +66,7 @@ import org.openspcoop2.core.registry.driver.db.IDAccordoDB;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XMLDiff;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
@@ -2173,7 +2173,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 			
 			try{
 				
-				AbstractXMLUtils xmlUtils = XMLUtils.DEFAULT; 
+				AbstractXMLUtils xmlUtils = MessageXMLUtils.DEFAULT; 
 				XSDUtils xsdUtils = new XSDUtils(xmlUtils);
 				WSDLUtilities wsdlUtilities = new WSDLUtilities(xmlUtils);
 				

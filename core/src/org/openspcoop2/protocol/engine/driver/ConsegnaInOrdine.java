@@ -235,15 +235,21 @@ public class ConsegnaInOrdine  {
 				try{
 					if( rs != null )
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if( pstmt != null )
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if( pstmtInsert != null )
 						pstmtInsert.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new ProtocolException(errorMsg,e);
 			}
@@ -282,7 +288,9 @@ public class ConsegnaInOrdine  {
 					connessioneValida = true;
 				else
 					connessioneValida = ( (connectionDB!=null) && (!connectionDB.isClosed()) );
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 					
 			if(connessioneValida && busta.getSequenza()!=-1 && busta.getCollaborazione()!=null){
 
@@ -349,7 +357,7 @@ public class ConsegnaInOrdine  {
 								return Eccezione.getEccezioneValidazione(ErroriCooperazione.CONSEGNA_IN_ORDINE_SERVIZIO_NON_VALIDO.getErroreCooperazione(), protocolFactory);
 							}
 							if( (azione==null && busta.getAzione()!=null) ||
-									(azione.equals(busta.getAzione())==false) ){
+									(azione!=null && azione.equals(busta.getAzione())==false) ){
 								this.log.debug("L'azione non rispetta quello attesa nella gestione della collaborazione con consegna in ordine.");
 								return Eccezione.getEccezioneValidazione(ErroriCooperazione.CONSEGNA_IN_ORDINE_AZIONE_NON_VALIDA.getErroreCooperazione(), protocolFactory);
 							}
@@ -365,11 +373,15 @@ public class ConsegnaInOrdine  {
 					try{
 						if( rs != null )
 							rs.close();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// close
+					}
 					try{
 						if( pstmt != null )
 							pstmt.close();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// close
+					}
 					throw new ProtocolException("ERROR validazioneDatiConsegnaInOrdine ["+e.getMessage()+"]",e);
 				}
 
@@ -509,21 +521,29 @@ public class ConsegnaInOrdine  {
 					try{
 						if( rs != null )
 							rs.close();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// close
+					}
 					try{
 						if( pstmt != null )
 							pstmt.close();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// close
+					}
 					try{
 						connectionDB.rollback();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// ignore
+					}
 				}
 
 				if(nextSequenceOK == false){
 					// Per aiutare ad evitare conflitti
 					try{
-						Utilities.sleep((new java.util.Random()).nextInt(checkInterval)); // random da 0ms a checkIntervalms
-					}catch(Exception eRandom){}
+						Utilities.sleep(ProtocolRandomUtilities.getRandom().nextInt(checkInterval)); // random da 0ms a checkIntervalms
+					}catch(Exception eRandom){
+						// ignore
+					}
 				}
 			}
 
@@ -622,7 +642,9 @@ public class ConsegnaInOrdine  {
 				try{
 					if( pstmtInsert != null )
 						pstmtInsert.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new ProtocolException(errorMsg,e);
 			}

@@ -56,11 +56,11 @@ public class BasicProtocolFactory extends BasicEmptyRawContentFactory {
 		if(staticInstanceConfig!=null) {
 			if(staticInstanceConfig.isStaticConfig()) {
 				if(staticInstanceProtocolManager==null) {
-					staticInstanceProtocolManager = new HashMap<String, IProtocolManager>();
+					initStaticInstanceProtocolManager();
 				}
 				createProtocolManager();
 				if(staticInstanceProtocolVersionManager==null) {
-					staticInstanceProtocolVersionManager = new HashMap<String, IProtocolVersionManager>();
+					initStaticInstanceProtocolVersionManager();
 				}
 				createProtocolVersionManager("-");
 			}
@@ -68,6 +68,11 @@ public class BasicProtocolFactory extends BasicEmptyRawContentFactory {
 	}
 
 	private static Map<String, IProtocolManager> staticInstanceProtocolManager = null;
+	private static synchronized void initStaticInstanceProtocolManager() {
+		if(staticInstanceProtocolManager==null) {
+			staticInstanceProtocolManager = new HashMap<String, IProtocolManager>();
+		}
+	}
 	@Override
 	public IProtocolManager createProtocolManager()
 			throws ProtocolException {
@@ -88,6 +93,11 @@ public class BasicProtocolFactory extends BasicEmptyRawContentFactory {
 	}
 	
 	private static Map<String, IProtocolVersionManager> staticInstanceProtocolVersionManager = null;
+	private static synchronized void initStaticInstanceProtocolVersionManager() {
+		if(staticInstanceProtocolVersionManager==null) {
+			staticInstanceProtocolVersionManager = new HashMap<String, IProtocolVersionManager>();
+		}
+	}
 	@Override
 	public IProtocolVersionManager createProtocolVersionManager(String version)
 			throws ProtocolException {

@@ -20,18 +20,31 @@
 
 package org.openspcoop2.protocol.sdk.registry;
 
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+
 /**
- *  FiltroRicercaServiziApplicativi
+ *  FiltroRicercaPortType
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class FiltroRicercaServiziApplicativi extends org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi {
+public class ProtocolFiltroRicercaPortType extends ProtocolFiltroRicercaAccordi {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	private String nomePortType;
+	private ProtocolProperties protocolPropertiesPortType;
+
+	public String getNomePortType() {
+		return this.nomePortType;
+	}
+	public void setNomePortType(String nomePortType) {
+		this.nomePortType = nomePortType;
+	}
+	public ProtocolProperties getProtocolPropertiesPortType() {
+		return this.protocolPropertiesPortType;
+	}
+	public void setProtocolPropertiesPortType(ProtocolProperties protocolPropertiesPortType) {
+		this.protocolPropertiesPortType = protocolPropertiesPortType;
+	}	
 
 }

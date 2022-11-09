@@ -475,7 +475,11 @@ public class Utils {
 							// jenkins
 							if( ((polInfo.richiesteBloccate)==(bloccate-1))
 									||
-									((polInfo.richiesteBloccate)==(bloccate-2))) {
+									((polInfo.richiesteBloccate)==(bloccate-2))
+									||
+									((polInfo.richiesteBloccate)==(bloccate+1))
+									||
+									((polInfo.richiesteBloccate)==(bloccate+2)) ) {
 								logRateLimiting.debug("PolicyRichiesteBloccate["+polInfo.richiesteBloccate+"]=attese["+bloccate+"] con scarto di 2 [tolleranza] ("+tipoRisorsa+"): "+t.getMessage(),t);
 							}
 							else {

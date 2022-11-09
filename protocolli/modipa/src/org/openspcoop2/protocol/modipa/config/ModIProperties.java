@@ -30,6 +30,7 @@ import org.openspcoop2.protocol.basic.BasicStaticInstanceConfig;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.digest.DigestEncoding;
@@ -3658,26 +3659,27 @@ public class ModIProperties {
      * @return Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultApplicativo originale
      * 
      */
-	private static Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativo= null;
+	private static BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultApplicativo= null;
 	private static Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead= null;
-    public Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativo(){
+    public BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultApplicativo(){
     	if(ModIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.erroreApplicativo.faultApplicativo.enrichDetails"); 
 				
 				if (value != null){
 					value = value.trim();
-					ModIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = Boolean.parseBoolean(value);
+					Boolean b = Boolean.parseBoolean(value);
+					ModIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = b ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
 				}else{
 					this.log.debug("Proprietà 'org.openspcoop2.protocol.modipa.erroreApplicativo.faultApplicativo.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails)");
-					ModIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = null;
+					ModIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = BooleanNullable.NULL();
 				}
 				
 				ModIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprietà 'org.openspcoop2.protocol.modipa.erroreApplicativo.faultApplicativo.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultApplicativo.enrichDetails), errore:"+e.getMessage());
-				ModIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = null;
+				ModIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = BooleanNullable.NULL();
 				
 				ModIProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativoRead = true;
 			}
@@ -3692,26 +3694,27 @@ public class ModIProperties {
      * @return Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultPdD originale
      * 
      */
-	private static Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdD= null;
+	private static BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultPdD= null;
 	private static Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdDRead= null;
-    public Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdD(){
+    public BooleanNullable isAggiungiDetailErroreApplicativo_SoapFaultPdD(){
     	if(ModIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead==null){
 	    	try{  
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.modipa.erroreApplicativo.faultPdD.enrichDetails"); 
 				
 				if (value != null){
 					value = value.trim();
-					ModIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = Boolean.parseBoolean(value);
+					Boolean b = Boolean.parseBoolean(value);
+					ModIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = b ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
 				}else{
 					this.log.debug("Proprietà 'org.openspcoop2.protocol.modipa.erroreApplicativo.faultPdD.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultPdD.enrichDetails)");
-					ModIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = null;
+					ModIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = BooleanNullable.NULL();
 				}
 				
 				ModIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead = true;
 				
 			}catch(java.lang.Exception e) {
 				this.log.warn("Proprietà 'org.openspcoop2.protocol.modipa.erroreApplicativo.faultPdD.enrichDetails' non impostata, viene utilizzato il default associato al Servizio Applicativo (faultPdD.enrichDetails), errore:"+e.getMessage());
-				ModIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = null;
+				ModIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD = BooleanNullable.NULL();
 				
 				ModIProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdDRead = true;
 			}

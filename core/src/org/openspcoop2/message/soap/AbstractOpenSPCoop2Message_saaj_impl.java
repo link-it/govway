@@ -56,8 +56,8 @@ import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.message.soap.reference.AttachmentReference;
 import org.openspcoop2.message.soap.reference.ElementReference;
 import org.openspcoop2.message.soap.reference.Reference;
-import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageDynamicNamespaceContextFactory;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.dch.DataContentHandlerManager;
@@ -81,7 +81,7 @@ import org.w3c.dom.NodeList;
 public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseOpenSPCoop2SoapMessage {
 
 	private SOAPMessage soapMessage;	
-	protected SOAPMessage getSoapMessage() {
+	protected SOAPMessage _getSoapMessage() {
 		return this.soapMessage;
 	}
 
@@ -236,7 +236,7 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 					// javax.xml.soap.SOAPException: no object DCH for MIME type text/xml
 					//    at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.28.jar:?]
 					//System.out.println("XML (DOMSource)");
-					streamSource = new DOMSource(XMLUtils.getInstance(this.messageFactory).newElement(content));
+					streamSource = new DOMSource(MessageXMLUtils.getInstance(this.messageFactory).newElement(content));
 				}
 				else {
 					// Se è registrato un content handler per text/xml
@@ -440,7 +440,7 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 			else{
 				throw new MessageException("MessageType ["+messageType+"] not supported");
 			}
-			return soapFactory.createElement(XMLUtils.getInstance(messageFactory).newElement(bytes));
+			return soapFactory.createElement(MessageXMLUtils.getInstance(messageFactory).newElement(bytes));
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
 		}
@@ -614,9 +614,9 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 				    			
 				    			DynamicNamespaceContext dnc = null;
 				    			if(MessageType.SOAP_11.equals(this.getMessageType())) {
-				    				dnc = DynamicNamespaceContextFactory.getInstance(this.messageFactory).getNamespaceContextFromSoapEnvelope11(soapEnvelope);
+				    				dnc = MessageDynamicNamespaceContextFactory.getInstance(this.messageFactory).getNamespaceContextFromSoapEnvelope11(soapEnvelope);
 				    			} else {
-				    				dnc = DynamicNamespaceContextFactory.getInstance(this.messageFactory).getNamespaceContextFromSoapEnvelope12(soapEnvelope);
+				    				dnc = MessageDynamicNamespaceContextFactory.getInstance(this.messageFactory).getNamespaceContextFromSoapEnvelope12(soapEnvelope);
 				    			}
 				    	    	
 				    			AbstractXPathExpressionEngine xpathExpressionEngine = new XPathExpressionEngine(this.messageFactory);

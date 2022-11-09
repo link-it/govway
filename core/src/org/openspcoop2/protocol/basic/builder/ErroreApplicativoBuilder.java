@@ -22,7 +22,6 @@ package org.openspcoop2.protocol.basic.builder;
 
 import java.io.ByteArrayInputStream;
 import java.util.Date;
-import java.util.Random;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
@@ -97,15 +96,28 @@ import org.w3c.dom.Node;
  */
 
 public class ErroreApplicativoBuilder extends BasicComponentFactory implements org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder {
+
+	private static java.util.Random _rnd = null;
+	private static synchronized void initRandom() {
+		if(_rnd==null) {
+			_rnd = new java.util.Random();
+		}
+	}
+	public static java.util.Random getRandom() {
+		if(_rnd==null) {
+			initRandom();
+		}
+		return _rnd;
+	}
 	
 	protected ITraduttore traduttore;
 	protected OpenSPCoop2MessageFactory errorFactory = null;
-	protected org.openspcoop2.message.xml.XMLUtils xmlUtils;
+	protected org.openspcoop2.message.xml.MessageXMLUtils xmlUtils;
 	protected boolean omitXMLDeclaration;
 	
 	public ErroreApplicativoBuilder(IProtocolFactory<?> factory) throws ProtocolException{
 		super(factory);
-		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
+		this.xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;
 		this.traduttore = factory.createTraduttore();
 		this.errorFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		this.omitXMLDeclaration = false;
@@ -993,7 +1005,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 					
 					// Genero FAULT O ERRORE XML
 					
-					if(proprieta.isFaultAsXML()){
+					if(proprieta!=null && proprieta.isFaultAsXML()){
 						soapBody.appendChild(soapBody.getOwnerDocument().importNode(rispostaApplicativaElement,true));
 			
 						//NOTA: in caso il servizio applicativo voglia un errore XML non deve essere aggiunto il Details di OpenSPCoop
@@ -1036,10 +1048,12 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 						}
 						
 						// fault actor
-						fault.setFaultActor(proprieta.getFaultActor());
+						if(proprieta!=null) {
+							fault.setFaultActor(proprieta.getFaultActor());
+						}
 						
 						// fault string
-						if(proprieta.isInsertAsDetails()){
+						if(proprieta!=null && proprieta.isInsertAsDetails()){
 							
 							codeDetailsErrorWrapper.setDetails(posizioneEccezione);
 							
@@ -1169,7 +1183,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 						seconds=0;
 					}
 					if(returnConfig.getRetryRandomBackoffSeconds()>0) {
-						seconds = seconds + new Random().nextInt(returnConfig.getRetryRandomBackoffSeconds());
+						seconds = seconds + getRandom().nextInt(returnConfig.getRetryRandomBackoffSeconds());
 					}
 					msg.forceTransportHeader(HttpConstants.RETRY_AFTER, seconds+"");
 				}

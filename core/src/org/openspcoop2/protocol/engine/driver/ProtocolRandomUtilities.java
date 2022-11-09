@@ -17,21 +17,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-package org.openspcoop2.protocol.sdk.registry;
+package org.openspcoop2.protocol.engine.driver;
 
 /**
- *  FiltroRicercaPorteApplicative
+ * ProtocolRandomUtilities
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class FiltroRicercaPorteApplicative extends org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative {
+public class ProtocolRandomUtilities {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
+	private static java.util.Random _rnd = null;
+	private static synchronized void initRandom() {
+		if(_rnd==null) {
+			_rnd = new java.util.Random();
+		}
+	}
+	public static java.util.Random getRandom() {
+		if(_rnd==null) {
+			initRandom();
+		}
+		return _rnd;
+	}
+	
 }

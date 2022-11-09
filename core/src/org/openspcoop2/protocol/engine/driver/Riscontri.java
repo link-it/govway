@@ -253,11 +253,15 @@ public class Riscontri  {
 			try{
 				if( rs != null )
 					rs.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			try{
 				if( pstmt != null )
 					pstmt.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			String errorMsg = "[Riscontri.getBustePerUlterioreInoltro] errore, queryString["+queryString+"]: "+e.getMessage();
 			this.log.error(errorMsg,e);
 			throw new ProtocolException(errorMsg,e);
@@ -362,17 +366,23 @@ public class Riscontri  {
 				try{
 					if( pstmtDelete != null  )
 						pstmtDelete.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					connectionDB.rollback();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// ignore
+				}
 			}
 
 			if(deleteRiscontroOK == false){
 				// Per aiutare ad evitare conflitti
 				try{
-					Utilities.sleep((new java.util.Random()).nextInt(checkInterval)); // random da 0ms a checkIntervalms
-				}catch(Exception eRandom){}
+					Utilities.sleep(ProtocolRandomUtilities.getRandom().nextInt(checkInterval)); // random da 0ms a checkIntervalms
+				}catch(Exception eRandom){
+					// ignore
+				}
 			}
 		}
 
@@ -422,7 +432,9 @@ public class Riscontri  {
 			try{
 				if( pstmtDelete != null  )
 					pstmtDelete.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			String errorMsg = "RISCONTRI, Errore durante la validazioneRiscontroRicevuto: "+e.getMessage();		
 			this.log.error(errorMsg,e);
 			throw new ProtocolException(errorMsg,e);

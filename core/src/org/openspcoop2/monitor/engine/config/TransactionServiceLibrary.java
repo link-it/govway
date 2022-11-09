@@ -33,7 +33,7 @@ import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
-import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
+import org.openspcoop2.message.xml.MessageDynamicNamespaceContextFactory;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazione;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazionePlugin;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
@@ -105,7 +105,7 @@ public class TransactionServiceLibrary implements Serializable {
 
 	// ****** STATI E RISORSE *************** 
 
-	public TransactionInfo readStatoAndResources(OpenSPCoop2Message msg, DynamicNamespaceContextFactory dncFactory,
+	public TransactionInfo readStatoAndResources(OpenSPCoop2Message msg, MessageDynamicNamespaceContextFactory dncFactory,
 			AbstractXPathExpressionEngine xpathEngine, boolean debug, Logger log, boolean isRichiesta,
 			String idTransazione) throws Exception{
 		TransactionInfo transactionInfo = new TransactionInfo();
@@ -113,7 +113,7 @@ public class TransactionServiceLibrary implements Serializable {
 				transactionInfo);
 		return transactionInfo;
 	}
-	public TransactionInfo readStato(OpenSPCoop2Message msg, DynamicNamespaceContextFactory dncFactory,
+	public TransactionInfo readStato(OpenSPCoop2Message msg, MessageDynamicNamespaceContextFactory dncFactory,
 			AbstractXPathExpressionEngine xpathEngine, boolean debug, Logger log, boolean isRichiesta,
 			String idTransazione) throws Exception{
 		TransactionInfo transactionInfo = new TransactionInfo();
@@ -121,7 +121,7 @@ public class TransactionServiceLibrary implements Serializable {
 				transactionInfo);
 		return transactionInfo;
 	}
-	public TransactionInfo readResources(OpenSPCoop2Message msg, DynamicNamespaceContextFactory dncFactory,
+	public TransactionInfo readResources(OpenSPCoop2Message msg, MessageDynamicNamespaceContextFactory dncFactory,
 			AbstractXPathExpressionEngine xpathEngine, boolean debug, Logger log, boolean isRichiesta,
 			String idTransazione, String stato) throws Exception{
 		TransactionInfo transactionInfo = new TransactionInfo();
@@ -131,7 +131,7 @@ public class TransactionServiceLibrary implements Serializable {
 		return transactionInfo;
 	}
 	private void _readStatoAndResources(SOAPEnvelope soapEnvelope,OpenSPCoop2Message msg, 
-			DynamicNamespaceContextFactory dncFactory,
+			MessageDynamicNamespaceContextFactory dncFactory,
 			AbstractXPathExpressionEngine xpathEngine, boolean debug, Logger log, boolean isRichiesta,
 			String idTransazione, boolean readStato, boolean readResources,
 			TransactionInfo transactionInfo) throws Exception{

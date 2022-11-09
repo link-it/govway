@@ -146,7 +146,9 @@ public class XMLUtils  {
 			try{
 				if(bin!=null)
 					bin.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -168,7 +170,9 @@ public class XMLUtils  {
 			try{
 				if(fin!=null)
 					fin.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -318,7 +322,7 @@ public class XMLUtils  {
 						try{
 							if(XMLUtils.isDettaglioRouting(elem)){
 								//System.out.println("ITEM ["+elem.getLocalName()+"] TROVATO");
-								org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
+								org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;
 								byte [] xml = xmlUtils.toByteArray(elem);
 								//System.out.println("XML S: "+new String(xml));
 								DettaglioRouting de = XMLUtils.getDettaglioRouting(log,xml);
@@ -339,7 +343,7 @@ public class XMLUtils  {
 	
 	public static boolean isDettaglioRouting(byte [] doc){
 		try{
-			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
+			org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			return XMLUtils.isDettaglioRouting_engine(elemXML);

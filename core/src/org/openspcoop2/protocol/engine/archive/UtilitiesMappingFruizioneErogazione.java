@@ -60,7 +60,7 @@ import org.openspcoop2.core.registry.utils.RegistroServiziUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.config.Subscription;
+import org.openspcoop2.protocol.sdk.config.ProtocolSubscription;
 import org.slf4j.Logger;
 
 
@@ -661,7 +661,7 @@ public class UtilitiesMappingFruizioneErogazione  {
 					IDSoggetto idFruitore = new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario());
 					org.openspcoop2.message.constants.ServiceBinding serviceBinding = readServiceBinding(idServizio);
 					IProtocolFactory<?> p = ProtocolFactoryManager.getInstance().getProtocolFactoryByServiceType(idServizio.getTipo());
-					Subscription subcription = p.createProtocolIntegrationConfiguration().createDefaultSubscription(serviceBinding, idFruitore, idServizio);
+					ProtocolSubscription subcription = p.createProtocolIntegrationConfiguration().createDefaultSubscription(serviceBinding, idFruitore, idServizio);
 					PortaDelegata pdDefault = subcription.getPortaDelegata();
 					MappingFruizionePortaDelegata mapping = subcription.getMapping();
 					IDPortaDelegata idPDDefault = mapping.getIdPortaDelegata();

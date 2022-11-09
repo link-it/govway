@@ -37,7 +37,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Random;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -62,6 +61,7 @@ import org.openspcoop2.utils.id.UUIDUtilsGenerator;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.mime.MultipartUtils;
+import org.openspcoop2.utils.random.RandomUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.rest.problem.JsonSerializer;
 import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
@@ -1202,8 +1202,7 @@ public class ServletTestService extends HttpServlet {
 				if(min!=null){
 					minSleep = Integer.parseInt((String)min);
 				}
-				Random r = new Random();
-				int sleepInteger = minSleep + r.nextInt(maxSleep-minSleep);
+				int sleepInteger = minSleep + RandomUtilities.getRandom().nextInt(maxSleep-minSleep);
 				if(sleepInteger>1000){
 					int count = sleepInteger/1000;
 					int resto = sleepInteger%1000;

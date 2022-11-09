@@ -423,7 +423,7 @@ public class TracciaProducer extends BasicProducer implements ITracciaProducer{
 					
 					String columnExtV = "";
 					String valueExtV = "";
-					if(v.length()>limit) {
+					if(v!=null && v.length()>limit) {
 						columnExtV = CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_EXT_VALUE+", ";
 						valueExtV = ", ?";
 					}
@@ -440,7 +440,7 @@ public class TracciaProducer extends BasicProducer implements ITracciaProducer{
 					int index = 1;
 					stmt.setLong(index++, idtraccia);
 					JDBCUtilities.setSQLStringValue(stmt,index++, propertiesNames[i]);
-					if(v.length()>limit) {
+					if(v!=null && v.length()>limit) {
 						JDBCUtilities.setSQLStringValue(stmt,index++, v.substring(0, limit));
 						JDBCUtilities.setSQLStringValue(stmt,index++, v);
 					}
@@ -467,14 +467,20 @@ public class TracciaProducer extends BasicProducer implements ITracciaProducer{
 			try{
 				if(rs!=null)
 					rs.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				if(stmt!=null)
 					stmt.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				this.releaseConnection(cr, "traccia.log");
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 

@@ -87,47 +87,47 @@ public interface IRegistryReader extends IRegistryReaderInUso {
 	public boolean existsSoggettoByCredenzialiPrincipal(String principal);
 	public Soggetto getSoggettoByCredenzialiPrincipal(String principal) throws RegistryNotFound,RegistryException;
 	
-	public List<IDSoggetto> findIdSoggetti(FiltroRicercaSoggetti filtro) throws RegistryNotFound,RegistryException;
+	public List<IDSoggetto> findIdSoggetti(ProtocolFiltroRicercaSoggetti filtro) throws RegistryNotFound,RegistryException;
 	
 	// ACCORDI PARTE COMUNE
 	
 	public AccordoServizioParteComune getAccordoServizioParteComune(IDAccordo idAccordo) throws RegistryNotFound,RegistryException;
 	public AccordoServizioParteComune getAccordoServizioParteComune(IDAccordo idAccordo,boolean readAllegati,boolean readDatiRegistro) throws RegistryNotFound,RegistryException;
-	public List<IDAccordo> findIdAccordiServizioParteComune(FiltroRicercaAccordi filtro) throws RegistryNotFound,RegistryException; 
+	public List<IDAccordo> findIdAccordiServizioParteComune(ProtocolFiltroRicercaAccordi filtro) throws RegistryNotFound,RegistryException; 
 	public org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getAccordoServizioParteComuneSoap(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchema, boolean readDatiRegistro) throws RegistryNotFound,RegistryException;
 	public org.openspcoop2.core.registry.rest.AccordoServizioWrapper getAccordoServizioParteComuneRest(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchema, boolean processIncludeForOpenApi, boolean readDatiRegistro) throws RegistryNotFound,RegistryException;
 	
 	// ELEMENTI INTERNI ALL'ACCORDO PARTE COMUNE
 	
 	public PortType getPortType(IDPortType id) throws RegistryNotFound,RegistryException; 
-	public List<IDPortType> findIdPortType(FiltroRicercaPortType filtro) throws RegistryNotFound,RegistryException;
+	public List<IDPortType> findIdPortType(ProtocolFiltroRicercaPortType filtro) throws RegistryNotFound,RegistryException;
 
 	public Operation getAzionePortType(IDPortTypeAzione id) throws RegistryNotFound,RegistryException; 
-	public List<IDPortTypeAzione> findIdAzionePortType(FiltroRicercaPortTypeAzioni filtro) throws RegistryNotFound,RegistryException; 
+	public List<IDPortTypeAzione> findIdAzionePortType(ProtocolFiltroRicercaPortTypeAzioni filtro) throws RegistryNotFound,RegistryException; 
 
 	public Azione getAzioneAccordo(IDAccordoAzione id) throws RegistryNotFound,RegistryException; 
-	public List<IDAccordoAzione> findIdAzioneAccordo(FiltroRicercaAccordoAzioni filtro) throws RegistryNotFound,RegistryException; 
+	public List<IDAccordoAzione> findIdAzioneAccordo(ProtocolFiltroRicercaAccordoAzioni filtro) throws RegistryNotFound,RegistryException; 
 	
 	public Resource getResourceAccordo(IDResource id) throws RegistryNotFound,RegistryException; 
-	public List<IDResource> findIdResourceAccordo(FiltroRicercaRisorse filtro) throws RegistryNotFound,RegistryException; 
+	public List<IDResource> findIdResourceAccordo(ProtocolFiltroRicercaRisorse filtro) throws RegistryNotFound,RegistryException; 
 	
 	// ACCORDI PARTE SPECIFICA
 	
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDServizio idServizio) throws RegistryNotFound,RegistryException;
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDServizio idServizio,boolean readAllegati) throws RegistryNotFound,RegistryException;
-	public List<IDServizio> findIdAccordiServizioParteSpecifica(FiltroRicercaServizi filtro) throws RegistryNotFound,RegistryException; 
+	public List<IDServizio> findIdAccordiServizioParteSpecifica(ProtocolFiltroRicercaServizi filtro) throws RegistryNotFound,RegistryException; 
 	
 	
 	// ELEMENTI INTERNI ALL'ACCORDO PARTE SPECIFICA
 	
-	public List<IDFruizione> findIdFruizioni(FiltroRicercaFruizioniServizio filtro) throws RegistryNotFound,RegistryException; 
+	public List<IDFruizione> findIdFruizioni(ProtocolFiltroRicercaFruizioniServizio filtro) throws RegistryNotFound,RegistryException; 
 	
 	
 	// ACCORDI COOPERAZIONE
 	
 	public AccordoCooperazione getAccordoCooperazione(IDAccordoCooperazione idAccordo) throws RegistryNotFound,RegistryException;
 	public AccordoCooperazione getAccordoCooperazione(IDAccordoCooperazione idAccordo,boolean readAllegati) throws RegistryNotFound,RegistryException;
-	public List<IDAccordoCooperazione> findIdAccordiCooperazione(FiltroRicercaAccordi filtro) throws RegistryNotFound,RegistryException; 
+	public List<IDAccordoCooperazione> findIdAccordiCooperazione(ProtocolFiltroRicercaAccordi filtro) throws RegistryNotFound,RegistryException; 
 	
 	
 }

@@ -141,7 +141,10 @@ public enum ModalitaIdentificazione {
 	public String toString(){
 		return this.valore;
 	}
-	public boolean equals(ModalitaIdentificazione esito){
-		return this.toString().equals(esito.toString());
+	public boolean equals(String esito){
+		if(esito==null) {
+			return false;
+		}
+		return this.toString().equals(esito);
 	}
 }

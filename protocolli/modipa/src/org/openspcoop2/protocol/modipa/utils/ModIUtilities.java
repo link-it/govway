@@ -49,7 +49,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.SoapUtils;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
@@ -64,9 +64,9 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPortTypeAzioni;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaRisorse;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServizi;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPortTypeAzioni;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaRisorse;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServizi;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
@@ -275,7 +275,7 @@ public class ModIUtilities {
 		String portTypeRisposta = null;
 		
 		if(rest) {
-			FiltroRicercaRisorse filtroRisorse = new FiltroRicercaRisorse();
+			ProtocolFiltroRicercaRisorse filtroRisorse = new ProtocolFiltroRicercaRisorse();
 			filtroRisorse.setProtocolPropertiesRisorsa(new ProtocolProperties());
 			filtroRisorse.getProtocolPropertiesRisorsa().addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, 
 					ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RISPOSTA);
@@ -298,7 +298,7 @@ public class ModIUtilities {
 			idAccordoRisposta = idResource.getIdAccordo();
 		}
 		else {
-			FiltroRicercaPortTypeAzioni filtroPTAzioni = new FiltroRicercaPortTypeAzioni();
+			ProtocolFiltroRicercaPortTypeAzioni filtroPTAzioni = new ProtocolFiltroRicercaPortTypeAzioni();
 			filtroPTAzioni.setProtocolPropertiesAzione(new ProtocolProperties());
 			filtroPTAzioni.getProtocolPropertiesAzione().addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, 
 					ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RISPOSTA);
@@ -324,7 +324,7 @@ public class ModIUtilities {
 			portTypeRisposta = idPTAzione.getIdPortType().getNome();
 		}
 			
-		FiltroRicercaServizi filtroServizi = new FiltroRicercaServizi(); 
+		ProtocolFiltroRicercaServizi filtroServizi = new ProtocolFiltroRicercaServizi(); 
 		filtroServizi.setIdAccordoServizioParteComune(idAccordoRisposta);
 		filtroServizi.setSoggettoErogatore(idSoggettoErogatoreServizioCorrelato);
 		if(!rest) {
@@ -630,7 +630,7 @@ public class ModIUtilities {
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				Node n = nodeList.item(i);
 				byte[] ref = msg.getAsByte(n, false);
-				Element element = XMLUtils.getInstance(msg.getFactory()).newElement(ref);
+				Element element = MessageXMLUtils.getInstance(msg.getFactory()).newElement(ref);
 				hdrElement.addChildElement(SoapUtils.getSoapFactory(msg.getFactory(), msg.getMessageType()).createElement(element));
 			}
 		}

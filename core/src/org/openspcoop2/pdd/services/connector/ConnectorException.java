@@ -84,7 +84,7 @@ public class ConnectorException extends Exception {
 				 }
 			 }
 		}catch(Throwable t){
-			t.getMessage(); // per debug
+			//t.getMessage(); // per debug
 		}
 		return null;
 	}

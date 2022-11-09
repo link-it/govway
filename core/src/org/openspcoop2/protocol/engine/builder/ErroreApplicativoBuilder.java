@@ -73,7 +73,7 @@ public class ErroreApplicativoBuilder  {
 	private IProtocolFactory<?> protocolFactory;
 	private IProtocolManager protocolManager;
 	private IErroreApplicativoBuilder erroreApplicativoBuilder;
-	private org.openspcoop2.message.xml.XMLUtils xmlUtils;
+	private org.openspcoop2.message.xml.MessageXMLUtils xmlUtils;
 	private IDSoggetto dominio;
 	public void setDominio(IDSoggetto dominio) {
 		this.dominio = dominio;
@@ -132,7 +132,7 @@ public class ErroreApplicativoBuilder  {
 			this.log = LoggerWrapperFactory.getLogger(ErroreApplicativoBuilder.class);
 		this.protocolFactory = protocolFactory;
 		
-		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance(this.errorFactory);
+		this.xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.getInstance(this.errorFactory);
 		
 		this.protocolManager = this.protocolFactory.createProtocolManager();
 		this.erroreApplicativoBuilder = this.protocolFactory.createErroreApplicativoBuilder();

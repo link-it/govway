@@ -65,7 +65,7 @@ public interface IConfigIntegrationReader extends IConfigIntegrationReaderInUso 
 	public boolean existsServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId, boolean tokenWithHttpsEnabled);
 	public ServizioApplicativo getServizioApplicativoByCredenzialiToken(String tokenPolicy, String tokenClientId, boolean tokenWithHttpsEnabled) throws RegistryNotFound,RegistryException;
 	
-	public List<IDServizioApplicativo> findIdServiziApplicativi(FiltroRicercaServiziApplicativi filtroRicerca) throws RegistryNotFound,RegistryException;
+	public List<IDServizioApplicativo> findIdServiziApplicativi(ProtocolFiltroRicercaServiziApplicativi filtroRicerca) throws RegistryNotFound,RegistryException;
 	
 
 	// PORTA DELEGATA
@@ -74,7 +74,7 @@ public interface IConfigIntegrationReader extends IConfigIntegrationReaderInUso 
 	public boolean existsPortaDelegata(IDPortaDelegata idPortaDelegata); 
 	public PortaDelegata getPortaDelegata(IDPortaDelegata idPortaDelegata) throws RegistryNotFound,RegistryException; 
 	
-	public List<IDPortaDelegata> findIdPorteDelegate(FiltroRicercaPorteDelegate filtroRicerca) throws RegistryNotFound,RegistryException;
+	public List<IDPortaDelegata> findIdPorteDelegate(ProtocolFiltroRicercaPorteDelegate filtroRicerca) throws RegistryNotFound,RegistryException;
 	
 	public List<AttivazionePolicy> getRateLimitingPolicy(IDPortaDelegata idPortaDelegata) throws RegistryNotFound,RegistryException;
 	
@@ -86,7 +86,7 @@ public interface IConfigIntegrationReader extends IConfigIntegrationReaderInUso 
 	public boolean existsPortaApplicativa(IDPortaApplicativa idPortaApplicativa); 
 	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPortaApplicativa) throws RegistryNotFound,RegistryException; 
 	
-	public List<IDPortaApplicativa> findIdPorteApplicative(FiltroRicercaPorteApplicative filtroRicerca) throws RegistryNotFound,RegistryException;
+	public List<IDPortaApplicativa> findIdPorteApplicative(ProtocolFiltroRicercaPorteApplicative filtroRicerca) throws RegistryNotFound,RegistryException;
 	
 	public List<AttivazionePolicy> getRateLimitingPolicy(IDPortaApplicativa idPortaApplicativa) throws RegistryNotFound,RegistryException;
 	

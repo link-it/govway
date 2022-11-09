@@ -33,6 +33,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Map;
 import org.openspcoop2.utils.MapKey;
@@ -1066,10 +1067,22 @@ public class EsitiProperties {
 			esito.setFaultNamespaceCode(this.getOptionalProperty(prefix+index+".namespaceCode"));
 			
 			esito.setFaultReason(this.getOptionalProperty(prefix+index+".reason"));
-			esito.setFaultReasonContains(this.getOptionalBooleanProperty(prefix+index+".reason.contains"));
+			BooleanNullable bn = this.getOptionalBooleanProperty(prefix+index+".reason.contains");
+			if(bn!=null && bn.getValue()!=null) {
+				esito.setFaultReasonContains(bn.getValue());
+			}
+			else {
+				esito.setFaultReasonContains(null);
+			}
 			
 			esito.setFaultActor(this.getOptionalProperty(prefix+index+".actor"));
-			esito.setFaultActorNotDefined(this.getOptionalBooleanProperty(prefix+index+".actorNotDefined"));
+			bn = this.getOptionalBooleanProperty(prefix+index+".actorNotDefined");
+			if(bn!=null && bn.getValue()!=null) {
+				esito.setFaultActorNotDefined(bn.getValue());
+			}
+			else {
+				esito.setFaultActorNotDefined(null);
+			}
 			
 			// check consistenza
 			if(esito.getFaultReasonContains()!=null && esito.getFaultReason()==null){
@@ -1142,7 +1155,9 @@ public class EsitiProperties {
 			try {
 				esitoTransazioneName = getEsitoTransazioneName(codeEsito);
 				esito.setEsito(esitoTransazioneName);
-			}catch(Throwable t) {}
+			}catch(Throwable t) {
+				// ignore
+			}
 			
 			esito.setName(this.getOptionalProperty(prefix+index+".name"));
 			if(esito.getName()!=null) {
@@ -1408,18 +1423,18 @@ public class EsitiProperties {
 		} 	   
 	}
 	
-	public Boolean getOptionalBooleanProperty(String property) throws ProtocolException {
+	public BooleanNullable getOptionalBooleanProperty(String property) throws ProtocolException {
 		String p = this.getOptionalProperty(property);
 		if(p!=null){
 			try{
-				return Boolean.parseBoolean(p);
+				return Boolean.parseBoolean(p) ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+property+"': "+e.getMessage();
 				this.log.error(msg,e);
 				throw new ProtocolException(msg,e);
 			} 	
 		}
-		return null;
+		return BooleanNullable.NULL();
 	}
 	
 	private List<String> getLista(String property) throws ProtocolException {

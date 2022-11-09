@@ -25,7 +25,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.Properties;
 
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.utils.json.JacksonJsonUtils;
 import org.openspcoop2.utils.json.JacksonXmlUtils;
 import org.openspcoop2.utils.service.beans.TransazioneBase;
@@ -138,7 +138,7 @@ public class Serializer {
 			bout.flush();
 			bout.close();
 			
-			XMLUtils xmlUtils = XMLUtils.DEFAULT;
+			MessageXMLUtils xmlUtils = MessageXMLUtils.DEFAULT;
 			Element element = xmlUtils.newElement(bout.toByteArray());
 			Document dom = xmlUtils.newDocument();
 			Element elementNew = dom.createElementNS(this.xml_namespace, this.xml_localName);

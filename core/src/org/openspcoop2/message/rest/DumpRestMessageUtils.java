@@ -436,7 +436,9 @@ public class DumpRestMessageUtils {
 					if(bout!=null){
 						bout.close();
 					}
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 		}
 		else{
@@ -461,7 +463,9 @@ public class DumpRestMessageUtils {
 					if(bout!=null){
 						bout.close();
 					}
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 		}
 		else{
@@ -535,22 +539,7 @@ public class DumpRestMessageUtils {
 			// anche il caso del tunnel soap non esiste.
 			if(convert && MailcapActivationReader.existsDataContentHandler(bodyPart.getContentType())){
 				if(bodyPart.getContentType()!=null && bodyPart.getContentType().startsWith(HttpConstants.CONTENT_TYPE_PLAIN)){
-					// Se siamo in text plain non devo fare nulla. Comunque non l'ho perso.
-					// Se uso il codice sotto, poi si perde il content-type, non viene serializzato
-					/*
-					if(s!=null){
-						bodyPart.setDataHandler(new javax.activation.DataHandler(s,bodyPart.getContentType()));
-						//bodyPart.setContent(s,bodyPart.getContentType());
-						//bodyPart.setText(s);
-					}
-					else{
-						//bodyPart.setDataHandler(new javax.activation.DataHandler(bout.toByteArray(),bodyPart.getContentType()));
-						// devo comunque impostare una stringa nel caso di text/plain, senno ottengo un errore:
-						// "text/plain" DataContentHandler requires String object, was given object of type class [B
-						bodyPart.setDataHandler(new javax.activation.DataHandler(bout.toString(),bodyPart.getContentType()));
-						//bodyPart.setContent(bout.toString(),bodyPart.getContentType());
-						//bodyPart.setText(bout.toString());
-					}*/
+					processContentTypeTextPlain(s, bodyPart, bout);
 				}
 				else{
 					//bodyPart.setDataHandler(new javax.activation.DataHandler(bout.toByteArray(),bodyPart.getContentType()));
@@ -574,5 +563,23 @@ public class DumpRestMessageUtils {
 		}
 	}
 
-
+	private static void processContentTypeTextPlain(String s, BodyPart bodyPart, java.io.ByteArrayOutputStream bout) throws Exception {
+		// Se siamo in text plain non devo fare nulla. Comunque non l'ho perso.
+		// Se uso il codice sotto, poi si perde il content-type, non viene serializzato
+		/*
+		if(s!=null){
+			bodyPart.setDataHandler(new javax.activation.DataHandler(s,bodyPart.getContentType()));
+			//bodyPart.setContent(s,bodyPart.getContentType());
+			//bodyPart.setText(s);
+		}
+		else{
+			//bodyPart.setDataHandler(new javax.activation.DataHandler(bout.toByteArray(),bodyPart.getContentType()));
+			// devo comunque impostare una stringa nel caso di text/plain, senno ottengo un errore:
+			// "text/plain" DataContentHandler requires String object, was given object of type class [B
+			bodyPart.setDataHandler(new javax.activation.DataHandler(bout.toString(),bodyPart.getContentType()));
+			//bodyPart.setContent(bout.toString(),bodyPart.getContentType());
+			//bodyPart.setText(bout.toString());
+		}*/
+	}
+	
 }

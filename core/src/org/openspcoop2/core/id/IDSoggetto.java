@@ -194,7 +194,12 @@ public class IDSoggetto implements java.io.Serializable, Cloneable {
 	
 	@Override
 	public IDSoggetto clone(){
-		IDSoggetto clone = new IDSoggetto();
+		IDSoggetto clone = null;
+		try {
+			clone = (IDSoggetto) super.clone();
+		}catch(Throwable t) {
+			clone = new IDSoggetto();
+		}
 		
 		clone.setCodicePorta(this.codicePorta!=null ? new String(this.codicePorta) : null);
 		clone.setTipo(this.tipo!=null ? new String(this.tipo) : null);

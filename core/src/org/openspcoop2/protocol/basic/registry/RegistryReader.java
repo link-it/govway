@@ -51,14 +51,14 @@ import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.protocol.registry.RegistroServizi;
 import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordi;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordoAzioni;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaFruizioniServizio;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPortType;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPortTypeAzioni;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaRisorse;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServizi;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaSoggetti;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaAccordi;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaAccordoAzioni;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaFruizioniServizio;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPortType;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPortTypeAzioni;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaRisorse;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServizi;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaSoggetti;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReaderInUso;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
@@ -359,7 +359,7 @@ public class RegistryReader implements IRegistryReader {
 	}
 	
 	@Override
-	public List<IDSoggetto> findIdSoggetti(FiltroRicercaSoggetti filtro) throws RegistryNotFound,RegistryException{
+	public List<IDSoggetto> findIdSoggetti(ProtocolFiltroRicercaSoggetti filtro) throws RegistryNotFound,RegistryException{
 		try{
 			org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti();
 			if(filtro.getTipo()!=null){
@@ -428,7 +428,7 @@ public class RegistryReader implements IRegistryReader {
 	}
 	
 	@Override
-	public List<IDAccordo> findIdAccordiServizioParteComune(FiltroRicercaAccordi filtro) throws RegistryNotFound,RegistryException{
+	public List<IDAccordo> findIdAccordiServizioParteComune(ProtocolFiltroRicercaAccordi filtro) throws RegistryNotFound,RegistryException{
 		try{
 			org.openspcoop2.core.registry.driver.FiltroRicercaAccordi filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaAccordi();
 			if(filtro.getNome()!=null){
@@ -525,7 +525,7 @@ public class RegistryReader implements IRegistryReader {
 	}
 	
 	@Override
-	public List<IDPortType> findIdPortType(FiltroRicercaPortType filtro) throws RegistryNotFound,RegistryException{
+	public List<IDPortType> findIdPortType(ProtocolFiltroRicercaPortType filtro) throws RegistryNotFound,RegistryException{
 		try{
 			org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes();
 			
@@ -607,7 +607,7 @@ public class RegistryReader implements IRegistryReader {
 	}
 	
 	@Override
-	public List<IDPortTypeAzione> findIdAzionePortType(FiltroRicercaPortTypeAzioni filtro) throws RegistryNotFound,RegistryException{
+	public List<IDPortTypeAzione> findIdAzionePortType(ProtocolFiltroRicercaPortTypeAzioni filtro) throws RegistryNotFound,RegistryException{
 		try{
 			org.openspcoop2.core.registry.driver.FiltroRicercaOperations filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaOperations();
 			
@@ -697,7 +697,7 @@ public class RegistryReader implements IRegistryReader {
 	}
 	
 	@Override
-	public List<IDAccordoAzione> findIdAzioneAccordo(FiltroRicercaAccordoAzioni filtro) throws RegistryNotFound,RegistryException{
+	public List<IDAccordoAzione> findIdAzioneAccordo(ProtocolFiltroRicercaAccordoAzioni filtro) throws RegistryNotFound,RegistryException{
 		try{
 			org.openspcoop2.core.registry.driver.FiltroRicercaAzioni filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaAzioni();
 			
@@ -768,7 +768,7 @@ public class RegistryReader implements IRegistryReader {
 		throw new RegistryNotFound("Risorsa ["+id.getNome()+"] non trovata all'interno dell'accordo ["+uriAccordo+"]");
 	}
 	@Override
-	public List<IDResource> findIdResourceAccordo(FiltroRicercaRisorse filtro) throws RegistryNotFound,RegistryException{
+	public List<IDResource> findIdResourceAccordo(ProtocolFiltroRicercaRisorse filtro) throws RegistryNotFound,RegistryException{
 		try{
 			org.openspcoop2.core.registry.driver.FiltroRicercaResources filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaResources();
 			
@@ -865,7 +865,7 @@ public class RegistryReader implements IRegistryReader {
 	}
 
 	@Override
-	public List<IDServizio> findIdAccordiServizioParteSpecifica(FiltroRicercaServizi filtro) throws RegistryNotFound,RegistryException{
+	public List<IDServizio> findIdAccordiServizioParteSpecifica(ProtocolFiltroRicercaServizi filtro) throws RegistryNotFound,RegistryException{
 		try{
 			org.openspcoop2.core.registry.driver.FiltroRicercaServizi filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaServizi();
 			
@@ -912,7 +912,7 @@ public class RegistryReader implements IRegistryReader {
 	// ELEMENTI INTERNI ALL'ACCORDO PARTE SPECIFICA
 	
 	@Override
-	public List<IDFruizione> findIdFruizioni(FiltroRicercaFruizioniServizio filtro) throws RegistryNotFound,RegistryException{
+	public List<IDFruizione> findIdFruizioni(ProtocolFiltroRicercaFruizioniServizio filtro) throws RegistryNotFound,RegistryException{
 		
 		try{
 			org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio();
@@ -1003,7 +1003,7 @@ public class RegistryReader implements IRegistryReader {
 	}
 	
 	@Override
-	public List<IDAccordoCooperazione> findIdAccordiCooperazione(FiltroRicercaAccordi filtro) throws RegistryNotFound,RegistryException{
+	public List<IDAccordoCooperazione> findIdAccordiCooperazione(ProtocolFiltroRicercaAccordi filtro) throws RegistryNotFound,RegistryException{
 		try{
 			org.openspcoop2.core.registry.driver.FiltroRicercaAccordi filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaAccordi();
 			if(filtro.getNome()!=null){

@@ -412,7 +412,7 @@ public class RegistroServiziManager {
 			}
 		}
 		org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper w = this.registroServiziReader.getWsdlAccordoServizio(this.getConnection(), idService, infoWsdlSource,buildSchemaXSD, readDatiRegistro);
-		if(useRequestInfo && requestInfo.getRequestConfig().getAsWrapper_soap(infoWsdlSource, buildSchemaXSD, readDatiRegistro)==null) {
+		if(useRequestInfo && requestInfo!=null && requestInfo.getRequestConfig().getAsWrapper_soap(infoWsdlSource, buildSchemaXSD, readDatiRegistro)==null) {
 			requestInfo.getRequestConfig().setAsWrapper_soap(w, infoWsdlSource, buildSchemaXSD, readDatiRegistro,
 					requestInfo!=null ? requestInfo.getIdTransazione() : null);
 		}
@@ -429,7 +429,7 @@ public class RegistroServiziManager {
 			}
 		}
 		org.openspcoop2.core.registry.rest.AccordoServizioWrapper w = this.registroServiziReader.getRestAccordoServizio(this.getConnection(), idService, infoWsdlSource,buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro);
-		if(useRequestInfo && requestInfo.getRequestConfig().getAsWrapper_rest(infoWsdlSource, buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro)==null) {
+		if(useRequestInfo && requestInfo!=null && requestInfo.getRequestConfig().getAsWrapper_rest(infoWsdlSource, buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro)==null) {
 			requestInfo.getRequestConfig().setAsWrapper_rest(w, infoWsdlSource, buildSchemaXSD, processIncludeForOpenApi, readDatiRegistro,
 					requestInfo!=null ? requestInfo.getIdTransazione() : null);
 		}
@@ -745,7 +745,7 @@ public class RegistroServiziManager {
 			}
 		}
 		Ruolo r = this.registroServiziReader.getRuolo(this.getConnection(), nome, nomeRegistro);
-		if(useRequestInfo) {
+		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addRuolo(nome, r, 
 					requestInfo!=null ? requestInfo.getIdTransazione() : null);
 		}
@@ -764,7 +764,7 @@ public class RegistroServiziManager {
 			}
 		}
 		Scope s = this.registroServiziReader.getScope(this.getConnection(), nome, nomeRegistro);
-		if(useRequestInfo) {
+		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addScope(nome, s, 
 					requestInfo!=null ? requestInfo.getIdTransazione() : null);
 		}

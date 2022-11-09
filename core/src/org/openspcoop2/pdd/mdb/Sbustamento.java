@@ -2611,7 +2611,9 @@ public class Sbustamento extends GenericLib{
 			throw new Exception("GestoreFiltroDuplicati non registrato ("+gestoreFiltroDuplicatiType+")");
 		}
 		IFiltroDuplicati gestoreFiltroDuplicati = (IFiltroDuplicati) loader.newInstance(gestoreFiltroDuplicatiClass);
-		pddContext.addObject(org.openspcoop2.core.constants.Costanti.OPENSPCOOP_STATE, openspcoopstate );
+		if(pddContext!=null) {
+			pddContext.addObject(org.openspcoop2.core.constants.Costanti.OPENSPCOOP_STATE, openspcoopstate );
+		}
 		gestoreFiltroDuplicati.init(pddContext);
 		if(gestoreFiltroDuplicati instanceof org.openspcoop2.protocol.engine.driver.FiltroDuplicati){
 			((org.openspcoop2.protocol.engine.driver.FiltroDuplicati)gestoreFiltroDuplicati).setHistoryBuste(historyBuste);

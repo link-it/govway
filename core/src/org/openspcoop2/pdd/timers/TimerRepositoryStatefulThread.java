@@ -152,7 +152,9 @@ public class TimerRepositoryStatefulThread extends BaseThread{
 				try{
 					if(r!=null)
 						dbManager.releaseResource(this.openspcoopProperties.getIdentitaPortaDefaultWithoutProtocol(), ID_MODULO, r);
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// ignore
+				}
 			}
 			
 		}

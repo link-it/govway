@@ -325,7 +325,7 @@ public class StatisticsUtils {
 	}
 	
 	private static void setCondition(IExpression expr, Integer value,IField field) throws ExpressionNotImplementedException, ExpressionException{
-		if(value==null || "".equals(value) || value.intValue() == Costanti.INFORMAZIONE_VERSIONE_NON_DISPONIBILE){
+		if(value==null || value.intValue() == Costanti.INFORMAZIONE_VERSIONE_NON_DISPONIBILE.intValue()){
 			expr.equals(field,Costanti.INFORMAZIONE_VERSIONE_NON_DISPONIBILE);
 		}
 		else{

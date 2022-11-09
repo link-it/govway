@@ -57,7 +57,7 @@ public class TestXXE {
 		
 		System.out.println("- newDocument(byte[])");
 		try {
-			org.openspcoop2.message.xml.XMLUtils.getInstance(factory).newDocument(org.openspcoop2.utils.xml.test.TestXXE.xmlMessage);
+			org.openspcoop2.message.xml.MessageXMLUtils.getInstance(factory).newDocument(org.openspcoop2.utils.xml.test.TestXXE.xmlMessage);
 			throw new Exception("newDocument ok ?");
 		}catch(Exception e) {
 			if(e.getMessage().contains("DOCTYPE is disallowed when the feature \"http://apache.org/xml/features/disallow-doctype-decl\" set to true")) {
@@ -72,7 +72,7 @@ public class TestXXE {
 		System.out.println("- newDocument(InputStream)");
 		try {
 			try(ByteArrayInputStream bin = new ByteArrayInputStream(org.openspcoop2.utils.xml.test.TestXXE.xmlMessage)){
-				org.openspcoop2.message.xml.XMLUtils.getInstance(factory).newDocument(bin);
+				org.openspcoop2.message.xml.MessageXMLUtils.getInstance(factory).newDocument(bin);
 			}
 			throw new Exception("newDocument ok ?");
 		}catch(Exception e) {
@@ -89,7 +89,7 @@ public class TestXXE {
 		File file = File.createTempFile("testXXE", ".xml");
 		try {
 			FileSystemUtilities.writeFile(file, org.openspcoop2.utils.xml.test.TestXXE.xmlMessage);
-			org.openspcoop2.message.xml.XMLUtils.getInstance(factory).newDocument(file);
+			org.openspcoop2.message.xml.MessageXMLUtils.getInstance(factory).newDocument(file);
 			throw new Exception("newDocument ok ?");
 		}catch(Exception e) {
 			if(e.getMessage().contains("DOCTYPE is disallowed when the feature \"http://apache.org/xml/features/disallow-doctype-decl\" set to true")) {
@@ -107,7 +107,7 @@ public class TestXXE {
 		try {
 			try(ByteArrayInputStream bin = new ByteArrayInputStream(org.openspcoop2.utils.xml.test.TestXXE.xmlMessage)){
 				InputSource inputSource = new InputSource(bin);
-				org.openspcoop2.message.xml.XMLUtils.getInstance(factory).newDocument(inputSource);
+				org.openspcoop2.message.xml.MessageXMLUtils.getInstance(factory).newDocument(inputSource);
 			}
 			throw new Exception("newDocument ok ?");
 		}catch(Exception e) {
@@ -122,7 +122,7 @@ public class TestXXE {
 		System.out.println("");
 		System.out.println("- newElement(byte[])");
 		try {
-			org.openspcoop2.message.xml.XMLUtils.getInstance(factory).newElement(org.openspcoop2.utils.xml.test.TestXXE.xmlMessage);
+			org.openspcoop2.message.xml.MessageXMLUtils.getInstance(factory).newElement(org.openspcoop2.utils.xml.test.TestXXE.xmlMessage);
 			throw new Exception("newElement ok ?");
 		}catch(Exception e) {
 			if(e.getMessage().contains("DOCTYPE is disallowed when the feature \"http://apache.org/xml/features/disallow-doctype-decl\" set to true")) {
@@ -137,7 +137,7 @@ public class TestXXE {
 		System.out.println("- newElement(InputStream)");
 		try {
 			try(ByteArrayInputStream bin = new ByteArrayInputStream(org.openspcoop2.utils.xml.test.TestXXE.xmlMessage)){
-				org.openspcoop2.message.xml.XMLUtils.getInstance(factory).newElement(bin);
+				org.openspcoop2.message.xml.MessageXMLUtils.getInstance(factory).newElement(bin);
 			}
 			throw new Exception("newElement ok ?");
 		}catch(Exception e) {
@@ -154,7 +154,7 @@ public class TestXXE {
 		file = File.createTempFile("testXXE", ".xml");
 		try {
 			FileSystemUtilities.writeFile(file, org.openspcoop2.utils.xml.test.TestXXE.xmlMessage);
-			org.openspcoop2.message.xml.XMLUtils.getInstance(factory).newElement(file);
+			org.openspcoop2.message.xml.MessageXMLUtils.getInstance(factory).newElement(file);
 			throw new Exception("newElement ok ?");
 		}catch(Exception e) {
 			if(e.getMessage().contains("DOCTYPE is disallowed when the feature \"http://apache.org/xml/features/disallow-doctype-decl\" set to true")) {
@@ -172,7 +172,7 @@ public class TestXXE {
 		try {
 			try(ByteArrayInputStream bin = new ByteArrayInputStream(org.openspcoop2.utils.xml.test.TestXXE.xmlMessage)){
 				InputSource inputSource = new InputSource(bin);
-				org.openspcoop2.message.xml.XMLUtils.getInstance(factory).newElement(inputSource);
+				org.openspcoop2.message.xml.MessageXMLUtils.getInstance(factory).newElement(inputSource);
 			}
 			throw new Exception("newElement ok ?");
 		}catch(Exception e) {
@@ -188,7 +188,7 @@ public class TestXXE {
 		System.out.println("");
 		System.out.println("- getSAXParserFactory usage");
 		try {
-			SAXParserFactory saxFactory = org.openspcoop2.message.xml.XMLUtils.getInstance(factory).getSAXParserFactory();
+			SAXParserFactory saxFactory = org.openspcoop2.message.xml.MessageXMLUtils.getInstance(factory).getSAXParserFactory();
 			saxFactory.setNamespaceAware(true);
 			SAXParser saxParser = saxFactory.newSAXParser();
 			XMLReader xmlReader = saxParser.getXMLReader();
@@ -212,7 +212,7 @@ public class TestXXE {
 		try {
 			try(ByteArrayInputStream bin = new ByteArrayInputStream(org.openspcoop2.utils.xml.test.TestXXE.xsdSchema)){
 				StreamSource streamSource = new StreamSource(bin);
-				SchemaFactory schemafactory = org.openspcoop2.message.xml.XMLUtils.getInstance(factory).getSchemaFactory();
+				SchemaFactory schemafactory = org.openspcoop2.message.xml.MessageXMLUtils.getInstance(factory).getSchemaFactory();
 				@SuppressWarnings("unused")
 				Schema schema = schemafactory.newSchema(streamSource);
 			}
@@ -312,9 +312,9 @@ public class TestXXE {
 			try(ByteArrayInputStream bin = new ByteArrayInputStream(org.openspcoop2.utils.xml.test.TestXXE.xslt)){
 				// NOTA: non e' sul transformer factory che si interviene ma bensì sul source dell'xslt
 				//StreamSource streamSource = new StreamSource(bin);
-				Source xsltSource = new DOMSource(org.openspcoop2.message.xml.XMLUtils.getInstance(factory).newElement(org.openspcoop2.utils.xml.test.TestXXE.xslt));
+				Source xsltSource = new DOMSource(org.openspcoop2.message.xml.MessageXMLUtils.getInstance(factory).newElement(org.openspcoop2.utils.xml.test.TestXXE.xslt));
 				@SuppressWarnings("unused")
-				Transformer trans = org.openspcoop2.message.xml.XMLUtils.getInstance(factory).getTransformerFactory().newTransformer(xsltSource);
+				Transformer trans = org.openspcoop2.message.xml.MessageXMLUtils.getInstance(factory).getTransformerFactory().newTransformer(xsltSource);
 			}
 			throw new Exception("getTransformerFactory usage ok ?");
 		}catch(Exception e) {

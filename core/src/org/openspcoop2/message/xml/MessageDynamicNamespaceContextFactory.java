@@ -40,28 +40,28 @@ import org.xml.sax.SAXException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DynamicNamespaceContextFactory extends org.openspcoop2.utils.xml.DynamicNamespaceContextFactory {
+public class MessageDynamicNamespaceContextFactory extends org.openspcoop2.utils.xml.DynamicNamespaceContextFactory {
 
 
-	private static HashMap<String, DynamicNamespaceContextFactory> dncfactoryMap = new HashMap<>();
+	private static HashMap<String, MessageDynamicNamespaceContextFactory> dncfactoryMap = new HashMap<>();
 	private static synchronized void init(OpenSPCoop2MessageFactory messageFactory){
 		String key = messageFactory.getClass().getName();
-		if(!DynamicNamespaceContextFactory.dncfactoryMap.containsKey(key)){
-			DynamicNamespaceContextFactory fac = new DynamicNamespaceContextFactory(messageFactory);
+		if(!MessageDynamicNamespaceContextFactory.dncfactoryMap.containsKey(key)){
+			MessageDynamicNamespaceContextFactory fac = new MessageDynamicNamespaceContextFactory(messageFactory);
 			dncfactoryMap.put(key, fac);
 		}
 	}
-	public static DynamicNamespaceContextFactory getInstance(OpenSPCoop2MessageFactory messageFactory){
+	public static MessageDynamicNamespaceContextFactory getInstance(OpenSPCoop2MessageFactory messageFactory){
 		String key = messageFactory.getClass().getName();
-		if(!DynamicNamespaceContextFactory.dncfactoryMap.containsKey(key)){
-			DynamicNamespaceContextFactory.init(messageFactory);
+		if(!MessageDynamicNamespaceContextFactory.dncfactoryMap.containsKey(key)){
+			MessageDynamicNamespaceContextFactory.init(messageFactory);
 		}
-		return DynamicNamespaceContextFactory.dncfactoryMap.get(key);
+		return MessageDynamicNamespaceContextFactory.dncfactoryMap.get(key);
 	}
 	
 	private OpenSPCoop2MessageFactory messageFactory;
 	
-	public DynamicNamespaceContextFactory(OpenSPCoop2MessageFactory messageFactory) {
+	public MessageDynamicNamespaceContextFactory(OpenSPCoop2MessageFactory messageFactory) {
 		this.messageFactory = messageFactory;
 	}
 	

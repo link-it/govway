@@ -55,9 +55,9 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordi;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServizi;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaSoggetti;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaAccordi;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServizi;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaSoggetti;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -250,7 +250,7 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 					"PartyInfo/From/PartyId/Type"));
 			return;
 		}
-		FiltroRicercaSoggetti filtroSoggetti = new FiltroRicercaSoggetti();
+		ProtocolFiltroRicercaSoggetti filtroSoggetti = new ProtocolFiltroRicercaSoggetti();
 		filtroSoggetti.setProtocolProperties(new ProtocolProperties());
 		filtroSoggetti.getProtocolProperties().addProperty(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_BASE,from.getBase());
 		List<IDSoggetto> list = null;
@@ -306,7 +306,7 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 					"PartyInfo/To/PartyId/Type"));
 			return;
 		}
-		filtroSoggetti = new FiltroRicercaSoggetti();
+		filtroSoggetti = new ProtocolFiltroRicercaSoggetti();
 		filtroSoggetti.setProtocolProperties(new ProtocolProperties());
 		filtroSoggetti.getProtocolProperties().addProperty(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_BASE,to.getBase());
 		list = null;
@@ -355,7 +355,7 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 //					"CollaborationInfo/Service/Type"));
 //			return;
 		}
-		FiltroRicercaAccordi filtroAccordi = new FiltroRicercaAccordi();
+		ProtocolFiltroRicercaAccordi filtroAccordi = new ProtocolFiltroRicercaAccordi();
 		//filtroAccordi.setSoggetto(idDestinatario); // Non e' detto che il soggetto destinatario sia anche il referente!
 		filtroAccordi.setProtocolProperties(new ProtocolProperties());
 		filtroAccordi.getProtocolProperties().addProperty(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_BASE,
@@ -380,7 +380,7 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 		}
 		IDAccordo idAccordo = listAccordi.get(0);
 		AccordoServizioParteComune aspc = registryReader.getAccordoServizioParteComune(idAccordo,false,false);
-		FiltroRicercaServizi filtroServizi = new FiltroRicercaServizi();
+		ProtocolFiltroRicercaServizi filtroServizi = new ProtocolFiltroRicercaServizi();
 		filtroServizi.setIdAccordoServizioParteComune(idAccordo);
 		filtroServizi.setSoggettoErogatore(idDestinatario);
 		List<IDServizio> listServizi = null;
@@ -612,7 +612,7 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 					if(userMessage.getPartyInfo().getFrom().getPartyIdList()!=null && userMessage.getPartyInfo().getFrom().getPartyIdList().size()>0) {
 						PartyId from = userMessage.getPartyInfo().getFrom().getPartyId(0);
 						if(from.getBase()!=null && from.getType()!=null) {
-							FiltroRicercaSoggetti filtroSoggetti = new FiltroRicercaSoggetti();
+							ProtocolFiltroRicercaSoggetti filtroSoggetti = new ProtocolFiltroRicercaSoggetti();
 							filtroSoggetti.setProtocolProperties(new ProtocolProperties());
 							filtroSoggetti.getProtocolProperties().addProperty(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_BASE,from.getBase());
 							List<IDSoggetto> list = null;
@@ -635,7 +635,7 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 					if(userMessage.getPartyInfo().getTo().getPartyIdList()!=null && userMessage.getPartyInfo().getTo().getPartyIdList().size()>0) {
 						PartyId to = userMessage.getPartyInfo().getTo().getPartyId(0);
 						if(to.getBase()!=null && to.getType()!=null) {
-							FiltroRicercaSoggetti filtroSoggetti = new FiltroRicercaSoggetti();
+							ProtocolFiltroRicercaSoggetti filtroSoggetti = new ProtocolFiltroRicercaSoggetti();
 							filtroSoggetti.setProtocolProperties(new ProtocolProperties());
 							filtroSoggetti.getProtocolProperties().addProperty(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_BASE,to.getBase());
 							List<IDSoggetto> list = null;
@@ -666,7 +666,7 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 			if(userMessage.getCollaborationInfo()!=null) {
 				if(userMessage.getCollaborationInfo().getService()!=null) {
 					if(userMessage.getCollaborationInfo().getService().getBase()!=null ) {
-						FiltroRicercaAccordi filtroAccordi = new FiltroRicercaAccordi();
+						ProtocolFiltroRicercaAccordi filtroAccordi = new ProtocolFiltroRicercaAccordi();
 						//filtroAccordi.setSoggetto(idDestinatario); // Non e' detto che il soggetto destinatario sia anche il referente!
 						filtroAccordi.setProtocolProperties(new ProtocolProperties());
 						filtroAccordi.getProtocolProperties().addProperty(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_BASE,
@@ -684,7 +684,7 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 						if(listAccordi!=null && listAccordi.size()>0) {
 							idAccordo = listAccordi.get(0);
 							aspc = registryReader.getAccordoServizioParteComune(idAccordo,false,false);
-							FiltroRicercaServizi filtroServizi = new FiltroRicercaServizi();
+							ProtocolFiltroRicercaServizi filtroServizi = new ProtocolFiltroRicercaServizi();
 							filtroServizi.setIdAccordoServizioParteComune(idAccordo);
 							filtroServizi.setSoggettoErogatore(idDestinatario);
 							List<IDServizio> listServizi = null;

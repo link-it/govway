@@ -49,8 +49,5 @@ public enum CRUDType {
 	public String toString(){
 		return this.name();
 	}
-	public boolean equals(CRUDType esito){
-		return this.toString().equals(esito.toString());
-	}
 }
 

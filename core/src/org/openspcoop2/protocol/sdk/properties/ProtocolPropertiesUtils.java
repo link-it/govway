@@ -29,6 +29,7 @@ import org.openspcoop2.core.tracciamento.Proprieta;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemValueType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.utils.BooleanNullable;
 
 /**
  * ProtocolPropertiesUtils
@@ -537,22 +538,22 @@ public class ProtocolPropertiesUtils {
 		
 	}
 	
-	public static Boolean getOptionalBooleanValuePropertyRegistry(List<ProtocolProperty> list, String propertyName) throws ProtocolException{
+	public static BooleanNullable getOptionalBooleanValuePropertyRegistry(List<ProtocolProperty> list, String propertyName) throws ProtocolException{
 		
 		ProtocolProperty pp = getProtocolPropertyRegistry(list, propertyName, false);
 		if(pp!=null && pp.getBooleanValue()!=null){
-			return pp.getBooleanValue();
+			return pp.getBooleanValue() ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
 		}
-		return null;
+		return BooleanNullable.NULL();
 		
 	}
-	public static Boolean getOptionalBooleanValuePropertyConfig(List<org.openspcoop2.core.config.ProtocolProperty> list, String propertyName) throws ProtocolException{
+	public static BooleanNullable getOptionalBooleanValuePropertyConfig(List<org.openspcoop2.core.config.ProtocolProperty> list, String propertyName) throws ProtocolException{
 		
 		org.openspcoop2.core.config.ProtocolProperty pp = getProtocolPropertyConfig(list, propertyName, false);
 		if(pp!=null && pp.getBooleanValue()!=null){
-			return pp.getBooleanValue();
+			return pp.getBooleanValue() ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
 		}
-		return null;
+		return BooleanNullable.NULL();
 		
 	}
 	public static boolean getBooleanValuePropertyRegistry(List<ProtocolProperty> list, String propertyName, boolean throwNotFoundException) throws ProtocolException{

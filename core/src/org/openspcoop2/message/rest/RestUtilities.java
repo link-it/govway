@@ -66,11 +66,11 @@ public class RestUtilities {
 		if(url.contains("?")){
 			baseUrl = url.split("\\?")[0];
 			if(baseUrl!=null){
-				baseUrl.trim();
+				baseUrl = baseUrl.trim();
 			}
 			parameterOriginalUrl = url.split("\\?")[1]; 
 			if(parameterOriginalUrl!=null){
-				parameterOriginalUrl.trim();
+				parameterOriginalUrl = parameterOriginalUrl.trim();
 			}
 		}
 		

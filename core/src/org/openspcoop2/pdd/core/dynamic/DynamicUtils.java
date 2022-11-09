@@ -49,7 +49,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.utils.DumpAttachment;
 import org.openspcoop2.message.utils.DumpMessaggio;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
@@ -1123,7 +1123,7 @@ public class DynamicUtils {
 				xsltSource = new StreamSource(new ByteArrayInputStream(template));
 			}
 			Source xmlSource = new DOMSource(element);
-			Transformer trans = XMLUtils.DEFAULT.getTransformerFactory().newTransformer(xsltSource);
+			Transformer trans = MessageXMLUtils.DEFAULT.getTransformerFactory().newTransformer(xsltSource);
 			trans.transform(xmlSource, new StreamResult(out));
 			out.flush();
 		}catch(Exception e) {

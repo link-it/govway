@@ -59,7 +59,7 @@ import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.message.utils.MessageUtilities;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.TransportRequestContext;
@@ -369,14 +369,14 @@ public class SoapUtils {
 		return getNotEmptyChildNodes(messageFactory, e, true);
 	}
 	public static List<Node> getNotEmptyChildNodes(OpenSPCoop2MessageFactory messageFactory, Node e, boolean consideraTextNotEmptyAsNode){
-		return XMLUtils.getInstance(messageFactory).getNotEmptyChildNodes(e, consideraTextNotEmptyAsNode);
+		return MessageXMLUtils.getInstance(messageFactory).getNotEmptyChildNodes(e, consideraTextNotEmptyAsNode);
 	}
 	
 	public static Node getFirstNotEmptyChildNode(OpenSPCoop2MessageFactory messageFactory, Node e){
 		return getFirstNotEmptyChildNode(messageFactory, e, true);
 	}
 	public static Node getFirstNotEmptyChildNode(OpenSPCoop2MessageFactory messageFactory, Node e, boolean consideraTextNotEmptyAsNode){
-		return XMLUtils.getInstance(messageFactory).getFirstNotEmptyChildNode(e, consideraTextNotEmptyAsNode);
+		return MessageXMLUtils.getInstance(messageFactory).getFirstNotEmptyChildNode(e, consideraTextNotEmptyAsNode);
 	}
 	
 	public static List<SOAPElement> getNotEmptyChildSOAPElement(SOAPElement e){
@@ -497,14 +497,14 @@ public class SoapUtils {
 	// NODE UTILS
 	
 	public static boolean matchLocalName(OpenSPCoop2MessageFactory messageFactory, Node nodo,String nodeName,String prefix,String namespace){
-		return XMLUtils.getInstance(messageFactory).matchLocalName(nodo, nodeName, prefix, namespace);
+		return MessageXMLUtils.getInstance(messageFactory).matchLocalName(nodo, nodeName, prefix, namespace);
 	} 
 	
 	public static Node getAttributeNode(OpenSPCoop2MessageFactory messageFactory, Node node,String attributeName){
-		return XMLUtils.getInstance(messageFactory).getAttributeNode(node, attributeName);
+		return MessageXMLUtils.getInstance(messageFactory).getAttributeNode(node, attributeName);
 	}
 	public static Node getQualifiedAttributeNode(OpenSPCoop2MessageFactory messageFactory, Node node,String attributeName,String namespace){
-		return XMLUtils.getInstance(messageFactory).getQualifiedAttributeNode(node, attributeName, namespace);
+		return MessageXMLUtils.getInstance(messageFactory).getQualifiedAttributeNode(node, attributeName, namespace);
 	}
 	
 	
@@ -949,7 +949,9 @@ public class SoapUtils {
 			try{
 				if(byteMessaggio!=null)
 					byteMessaggio.close();
-			}catch(Exception eis){}
+			}catch(Exception eis){
+				// close
+			}
 			throw new MessageException("Creazione MsgSOAPFault non riuscito: "+e.getMessage(),e);
 		}
 	}

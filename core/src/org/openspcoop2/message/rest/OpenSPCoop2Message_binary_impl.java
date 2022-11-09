@@ -60,7 +60,9 @@ public class OpenSPCoop2Message_binary_impl extends AbstractBaseOpenSPCoop2RestM
 		}finally {
 			try {
 				this._getInputStream().close();
-			}catch(Exception eClose) {}
+			}catch(Exception eClose) {
+				// close
+			}
 		}
 	}
 	@Override

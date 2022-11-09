@@ -549,7 +549,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			String namespace = null;
 			Throwable eMalformato = null;
 			try {
-				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance(this.messageFactory);
+				org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.getInstance(this.messageFactory);
 				Document docXML = xmlUtils.newDocument(xmlDoc);
 				Element elemXML = docXML.getDocumentElement();
 				namespace = elemXML.getNamespaceURI();
@@ -784,7 +784,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			String namespace = null;
 			Throwable eMalformato = null;
 			try {
-				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance(this.messageFactory);
+				org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.getInstance(this.messageFactory);
 				Document docXML = xmlUtils.newDocument(xmlDoc);
 				Element elemXML = docXML.getDocumentElement();
 				namespace = elemXML.getNamespaceURI();
@@ -1008,7 +1008,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			String namespace = null;
 			Throwable eMalformato = null;
 			try {
-				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance(this.messageFactory);
+				org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.getInstance(this.messageFactory);
 				Document docXML = xmlUtils.newDocument(xmlDoc);
 				Element elemXML = docXML.getDocumentElement();
 				namespace = elemXML.getNamespaceURI();

@@ -273,9 +273,9 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			if(totaleMessaggi>0){
 
 				// Messaggi in Consegna
-				if( (search.getStato()==null) || ("".equals(search.getStato())) || (StatoMessaggio.CONSEGNA.equals(search.getStato())) ){
+				if( (search.getStato()==null) || ("".equals(search.getStato().getValue())) || (StatoMessaggio.CONSEGNA.equals(search.getStato())) ){
 					sqlQueryObject = this.newSQLQueryObjectStatoRichiestePendenti(search);
-					if((search.getStato()==null) || ("".equals(search.getStato()))){
+					if((search.getStato()==null) || ("".equals(search.getStato().getValue()))){
 						sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+".PROPRIETARIO='"+ConsegnaContenutiApplicativi.ID_MODULO+"'");
 					}
 					pstmt = con.prepareStatement(sqlQueryObject.createSQLQuery());
@@ -312,9 +312,9 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 				}
 
 				// Messaggi in Spedizione
-				if( (search.getStato()==null) || ("".equals(search.getStato())) || (StatoMessaggio.SPEDIZIONE.equals(search.getStato())) ){
+				if( (search.getStato()==null) || ("".equals(search.getStato().getValue())) || (StatoMessaggio.SPEDIZIONE.equals(search.getStato())) ){
 					sqlQueryObject = this.newSQLQueryObjectStatoRichiestePendenti(search);
-					if( (search.getStato()==null) || ("".equals(search.getStato())) ){
+					if( (search.getStato()==null) || ("".equals(search.getStato().getValue())) ){
 						sqlQueryObject.addWhereCondition(false,GestoreMessaggi.MESSAGGI+".PROPRIETARIO='InoltroBuste'",
 								GestoreMessaggi.MESSAGGI+".PROPRIETARIO='InoltroRisposte'");
 					}
@@ -352,9 +352,9 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 				}
 
 				// Messaggi ne in Spedizione, ne in Consegna (PROCESSAMENTO) 
-				if( (search.getStato()==null) || ("".equals(search.getStato())) || (StatoMessaggio.PROCESSAMENTO.equals(search.getStato())) ){
+				if( (search.getStato()==null) || ("".equals(search.getStato().getValue())) || (StatoMessaggio.PROCESSAMENTO.equals(search.getStato())) ){
 					sqlQueryObject = this.newSQLQueryObjectStatoRichiestePendenti(search);
-					if( (search.getStato()==null) || ("".equals(search.getStato())) ){
+					if( (search.getStato()==null) || ("".equals(search.getStato().getValue())) ){
 						sqlQueryObject.addWhereCondition(true, GestoreMessaggi.MESSAGGI+".PROPRIETARIO<>'InoltroBuste'",
 								GestoreMessaggi.MESSAGGI+".PROPRIETARIO<>'InoltroRisposte'",
 								GestoreMessaggi.MESSAGGI+".PROPRIETARIO<>'"+ConsegnaContenutiApplicativi.ID_MODULO+"'");
@@ -427,15 +427,21 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			try{
 				if(rs!=null)
 					rs.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				if(pstmt!=null)
 					pstmt.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				if(this.datasource!=null && con!=null)
 					con.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 
@@ -480,15 +486,21 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			try{
 				if(rs!=null)
 					rs.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				if(pstmt!=null)
 					pstmt.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				if(this.datasource!=null && con!=null)
 					con.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 
@@ -573,15 +585,21 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			try{
 				if(rs!=null)
 					rs.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				if(pstmt!=null)
 					pstmt.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				if(this.datasource!=null && con!=null)
 					con.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 
@@ -697,7 +715,9 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 					servizio.setNome(rs.getString("SERVIZIO"));
 					try {
 						servizio.setVersione(Integer.valueOf(rs.getString("VERSIONE_SERVIZIO")));
-					}catch(Exception e) {}
+					}catch(Exception e) {
+						// ignore
+					}
 					bustaInfo.setServizio(servizio);
 					// Azione
 					bustaInfo.setAzione(rs.getString("AZIONE"));
@@ -807,15 +827,21 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			try{
 				if(rs!=null)
 					rs.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				if(pstmt!=null)
 					pstmt.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				if(this.datasource!=null && con!=null)
 					con.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 
@@ -910,11 +936,15 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			try{
 				if(pstmt!=null)
 					pstmt.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				if(this.datasource!=null && con!=null)
 					con.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 	
@@ -995,11 +1025,15 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			try{
 				if(pstmt!=null)
 					pstmt.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				if(this.datasource!=null && con!=null)
 					con.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 
@@ -1128,15 +1162,21 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			try{
 				if(rs!=null)
 					rs.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				if(pstmt!=null)
 					pstmt.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				if(this.datasource!=null && con!=null)
 					con.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 
@@ -1211,15 +1251,21 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			try{
 				if(rs!=null)
 					rs.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				if(pstmt!=null)
 					pstmt.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				if(this.datasource!=null && con!=null)
 					con.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 		
 	}
@@ -1245,7 +1291,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		if( (search.getMessagePattern()!=null) && ("".equals(search.getMessagePattern())==false) ){
 			sqlQueryObject.addFromTable(GestoreMessaggi.DEFINIZIONE_MESSAGGI);
 		}
-		if( (search.getBusta()!=null) && ("".equals(search.getBusta())==false) ){
+		if( (search.getBusta()!=null) ){
 			sqlQueryObject.addFromTable(Costanti.REPOSITORY);
 			if(search.getBusta().isAttesaRiscontro()){
 				sqlQueryObject.addFromTable(Costanti.RISCONTRI_DA_RICEVERE);
@@ -1347,13 +1393,13 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		}
 
 		// Proprietario non deve essere GestoreMessaggi, a meno che il filtro non richieda proprio questo
-		if( (search.getStato()==null) || ("".equals(search.getStato())) || ((StatoMessaggio.CANCELLATO.equals(search.getStato())==false)) )
+		if( (search.getStato()==null) || ("".equals(search.getStato().getValue())) || ((StatoMessaggio.CANCELLATO.equals(search.getStato())==false)) )
 			sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+".PROPRIETARIO<>'"+TimerGestoreMessaggi.ID_MODULO+"'");
 
 		// Filtri:
 
 		// a) StatoMessaggio
-		if( (search.getStato()!=null) && ("".equals(search.getStato())==false) ){
+		if( (search.getStato()!=null) && ("".equals(search.getStato().getValue())==false) ){
 			if(StatoMessaggio.CONSEGNA.equals(search.getStato())){
 				sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+".PROPRIETARIO='"+ConsegnaContenutiApplicativi.ID_MODULO+"'");
 			}else if(StatoMessaggio.SPEDIZIONE.equals(search.getStato())){

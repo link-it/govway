@@ -76,11 +76,7 @@ public enum TipoLock implements Serializable {
 	{
 		return this.tipo;
 	}
-	
-	public boolean equals(TipoLock tipo){
-		return this.tipo.equals(tipo.getTipo());
-	}
-	
+		
 	public static TipoLock _getLockGestioneRepositoryMessaggi() {
 		return TipoLock.GESTIONE_REPOSITORY_MESSAGGI;
 	}

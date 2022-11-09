@@ -31,7 +31,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.rest.MultipartContent;
 import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_soap_impl;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
@@ -150,7 +150,7 @@ public class MessageUtils {
 												RegularExpressionEngine.isMatch(contentType, ".*\\+xml")) {
 											InputStream is = bodyPart.getInputStream();
 											byte [] xmlBytes = Utilities.getAsByteArray(is);
-											return XMLUtils.getInstance(msg.getFactory()).newElement(xmlBytes);
+											return MessageXMLUtils.getInstance(msg.getFactory()).newElement(xmlBytes);
 										}
 									}
 								}catch(Throwable t) {}

@@ -297,7 +297,9 @@ public class TimerGestorePuliziaMessaggiAnomaliLib{
 					GestoreMessaggi.releaseLock(
 							this.semaphore, connectionDB, this.timerLock,
 							this.msgDiag, causaMessaggiDaRipulire);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 			}
 				
 

@@ -60,7 +60,7 @@ import org.w3c.dom.Node;
 public class RegistroOpenSPCoopUtilities {
 
 	private Logger logger = null;
-	private org.openspcoop2.message.xml.XMLUtils xmlUtils = null;
+	private org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = null;
 	private XSDUtils xsdUtils = null;
 	private WSDLUtilities wsdlUtilities = null;
 	private OpenSPCoop2MessageFactory messageFactory;
@@ -76,7 +76,7 @@ public class RegistroOpenSPCoopUtilities {
 			this.logger = LoggerWrapperFactory.getLogger(RegistroOpenSPCoopUtilities.class);
 		
 		this.messageFactory = messageFactory;
-		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance(this.messageFactory);
+		this.xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.getInstance(this.messageFactory);
 		this.xsdUtils = new XSDUtils(this.xmlUtils);
 		this.wsdlUtilities = WSDLUtilities.getInstance(this.xmlUtils);
 	}
@@ -158,12 +158,16 @@ public class RegistroOpenSPCoopUtilities {
 					String namespaceImport = null;
 					try{
 						namespaceImport = this.xsdUtils.getImportNamespace(n);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					//System.out.println("TargetNamespace schema xsd che contiene l'import: "+targetNamespaceXSD);
 					String location = null;
 					try{
 						location = this.xsdUtils.getImportSchemaLocation(n);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					//System.out.println("Import WSDL ["+namespaceImport+"] ["+location+"]");
 					if(location!=null){
 						//System.out.println("IMPORT XSD INTO WSDL!");
@@ -224,7 +228,9 @@ public class RegistroOpenSPCoopUtilities {
 					String location = null;
 					try{
 						location = this.xsdUtils.getIncludeSchemaLocation(n);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					//System.out.println("Include WSDL ["+location+"]");
 					if(location!=null){
 						//System.out.println("IMPORT XSD INTO WSDL!");
@@ -432,7 +438,9 @@ public class RegistroOpenSPCoopUtilities {
 				String targetNamespace = null;
 				try{
 					targetNamespace = this.xsdUtils.getTargetNamespace(wsdlDefinitorio);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				if(targetNamespace!=null){
 					//System.out.println("TARGET["+targetNamespace+"] FILE["+file+"]");
 					targetNamespacesXSD.put(targetNamespace,file);
@@ -460,11 +468,15 @@ public class RegistroOpenSPCoopUtilities {
 					String targetNamespace = null;
 					try{
 						targetNamespace = this.xsdUtils.getTargetNamespace(doc.getByteContenuto()); // verifico che sia un xsd
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					if(targetNamespace==null){
 						try{
 							targetNamespace = this.wsdlUtilities.getTargetNamespace(doc.getByteContenuto()); // verifico che sia un wsdl
-						}catch(Exception e){}
+						}catch(Exception e){
+							// ignore
+						}
 					}
 					//System.out.println("TARGET NAMESPACE["+targetNamespace+"]");
 					if(targetNamespace!=null){
@@ -492,11 +504,15 @@ public class RegistroOpenSPCoopUtilities {
 					String targetNamespace = null;
 					try{
 						targetNamespace = this.xsdUtils.getTargetNamespace(doc.getByteContenuto()); // verifico che sia un xsd
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					if(targetNamespace==null){
 						try{
 							targetNamespace = this.wsdlUtilities.getTargetNamespace(doc.getByteContenuto()); // verifico che sia un wsdl
-						}catch(Exception e){}
+						}catch(Exception e){
+							// ignore
+						}
 					}
 					if(targetNamespace!=null){
 						//System.out.println("TARGET["+targetNamespace+"] FILE["+file+"]");
@@ -811,10 +827,12 @@ public class RegistroOpenSPCoopUtilities {
 				String location = null;
 				try{
 					location = this.xsdUtils.getImportSchemaLocation(n);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				//System.out.println("Import XSD ["+this.wsdlUtilities.getAttributeValue(n,"namespace")+"] ["+location+"]");
 				//System.out.println("IMPORT ["+location+"]");
-				if(location.startsWith(CostantiRegistroServizi.ALLEGATI_DIR)){
+				if(location!=null && location.startsWith(CostantiRegistroServizi.ALLEGATI_DIR)){
 					for(int j=0; j<parteComuneNormalizzata.sizeAllegatoList(); j++){
 						Documento allegato = parteComuneNormalizzata.getAllegato(j);
 						String file = CostantiRegistroServizi.ALLEGATI_DIR+File.separatorChar+allegato.getFile();
@@ -828,7 +846,7 @@ public class RegistroOpenSPCoopUtilities {
 						}
 					}
 				}
-				else if(location.startsWith(CostantiRegistroServizi.SPECIFICA_SEMIFORMALE_DIR)){
+				else if(location!=null && location.startsWith(CostantiRegistroServizi.SPECIFICA_SEMIFORMALE_DIR)){
 					for(int j=0; j<parteComuneNormalizzata.sizeSpecificaSemiformaleList(); j++){
 						Documento specificaSemiformale = parteComuneNormalizzata.getSpecificaSemiformale(j);
 						String file = CostantiRegistroServizi.SPECIFICA_SEMIFORMALE_DIR+File.separatorChar+specificaSemiformale.getFile();
@@ -856,10 +874,12 @@ public class RegistroOpenSPCoopUtilities {
 				String location = null;
 				try{
 					location = this.xsdUtils.getIncludeSchemaLocation(n);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				//System.out.println("Include XSD ["+this.wsdlUtilities.getAttributeValue(n,"namespace")+"] ["+location+"]");
 				//System.out.println("INCLUDE ["+location+"]");
-				if(location.startsWith(CostantiRegistroServizi.ALLEGATI_DIR)){
+				if(location!=null && location.startsWith(CostantiRegistroServizi.ALLEGATI_DIR)){
 					for(int j=0; j<parteComuneNormalizzata.sizeAllegatoList(); j++){
 						Documento allegato = parteComuneNormalizzata.getAllegato(j);
 						String file = CostantiRegistroServizi.ALLEGATI_DIR+File.separatorChar+allegato.getFile();
@@ -873,7 +893,7 @@ public class RegistroOpenSPCoopUtilities {
 						}
 					}
 				}
-				else if(location.startsWith(CostantiRegistroServizi.SPECIFICA_SEMIFORMALE_DIR)){
+				else if(location!=null && location.startsWith(CostantiRegistroServizi.SPECIFICA_SEMIFORMALE_DIR)){
 					for(int j=0; j<parteComuneNormalizzata.sizeSpecificaSemiformaleList(); j++){
 						Documento specificaSemiformale = parteComuneNormalizzata.getSpecificaSemiformale(j);
 						String file = CostantiRegistroServizi.SPECIFICA_SEMIFORMALE_DIR+File.separatorChar+specificaSemiformale.getFile();
@@ -941,12 +961,16 @@ public class RegistroOpenSPCoopUtilities {
 				String namespaceImport = null;
 				try{
 					namespaceImport = this.xsdUtils.getImportNamespace(n);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				//System.out.println("TargetNamespace schema xsd che contiene l'import: "+targetNamespaceXSD);
 				String location = null;
 				try{
 					location = this.xsdUtils.getImportSchemaLocation(n);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				//System.out.println("Import WSDL ["+namespaceImport+"] ["+location+"]");
 				if(namespaceImport!=null){
 					
@@ -976,7 +1000,9 @@ public class RegistroOpenSPCoopUtilities {
 					String location = null;
 					try{
 						location = this.xsdUtils.getIncludeSchemaLocation(n);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					//System.out.println("Include TYPES ["+this.wsdlUtilities.getAttributeValue(n,"namespace")+"] ["+location+"]");
 					if(location!=null){
 						
@@ -1019,12 +1045,16 @@ public class RegistroOpenSPCoopUtilities {
 				String namespaceImport = null;
 				try{
 					namespaceImport = this.wsdlUtilities.getImportNamespace(n);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				//System.out.println("TargetNamespace schema xsd che contiene l'import: "+targetNamespaceXSD);
 				String location = null;
 				try{
 					location = this.wsdlUtilities.getImportLocation(n);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				//System.out.println("Import NORMALE ["+namespaceImport+"] ["+location+"]");
 				if(namespaceImport!=null){
 					
@@ -1118,12 +1148,16 @@ public class RegistroOpenSPCoopUtilities {
 				String namespaceImport = null;
 				try{
 					namespaceImport = this.xsdUtils.getImportNamespace(n);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				//System.out.println("TargetNamespace schema xsd che contiene l'import: "+targetNamespaceXSD);
 				String location = null;
 				try{
 					location = this.xsdUtils.getImportSchemaLocation(n);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				//System.out.println("Import ["+namespaceImport+"] ["+location+"]");
 				if(namespaceImport!=null && location!=null){
 					// Lo schema location non è presente ad esempio quando si costruisce un unico file wsdl+xsd, 
@@ -1176,7 +1210,9 @@ public class RegistroOpenSPCoopUtilities {
 				String location = null;
 				try{
 					location = this.xsdUtils.getIncludeSchemaLocation(n);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				//System.out.println("Include ["+location+"]");
 				if(location!=null){
 					

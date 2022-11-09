@@ -45,7 +45,7 @@ import org.openspcoop2.message.soap.reference.Reference;
 import org.openspcoop2.message.soap.wsaddressing.Costanti;
 import org.openspcoop2.message.soap.wsaddressing.WSAddressingHeader;
 import org.openspcoop2.message.soap.wsaddressing.WSAddressingUtilities;
-import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
+import org.openspcoop2.message.xml.MessageDynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
@@ -592,7 +592,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 					String digestNamespace = "http://www.w3.org/2000/09/xmldsig#";
 					String digestReferencePattern = "//{"+digestNamespace+"}:Reference";
 					OpenSPCoop2MessageFactory messageFactory = msg!=null ? msg.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
-					DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContext(securityHeader);
+					DynamicNamespaceContext dnc = MessageDynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContext(securityHeader);
 					XPathExpressionEngine xpathEngine = new XPathExpressionEngine(messageFactory);
 					
 					Object res = null;
@@ -764,7 +764,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		 */
 		if(corniceSicurezza) {
 			
-			DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance(msg.getFactory()).getNamespaceContext(securityHeader);
+			DynamicNamespaceContext dnc = MessageDynamicNamespaceContextFactory.getInstance(msg.getFactory()).getNamespaceContext(securityHeader);
 			XPathExpressionEngine engine = new XPathExpressionEngine(msg.getFactory());
 			
 			String xpathSaml2_CodiceEnte = new StringBuilder().append("//{").append(org.openspcoop2.message.constants.Costanti.SAML_20_NAMESPACE).

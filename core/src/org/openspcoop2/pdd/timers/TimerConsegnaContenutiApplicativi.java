@@ -164,7 +164,9 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 					GestoreMessaggi.releaseLock(
 							this.semaphore, connectionDB, this.timerLock,
 							this.msgDiag, causaMessaggiINBOXDaRiconsegnare);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 			}
 			
 			this.logDebug("Rilascio effettuato di eventuali messaggi con lock appesi da riconsegnare verso il modulo ConsegnaContenutiApplicativi");
@@ -432,7 +434,9 @@ public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableIn
 			GestoreMessaggi.releaseLock(
 					this.semaphore, connectionDB, this.timerLock,
 					this.msgDiag, causale);
-		}catch(Exception e){}
+		}catch(Exception e){
+			// ignore
+		}
 	}
 	
 	private void logDebug(String msg) {

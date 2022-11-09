@@ -149,7 +149,9 @@ public class TemplateCore {
 			try{
 				if(fout!=null)
 					fout.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 	}
@@ -164,7 +166,9 @@ public class TemplateCore {
 			try{
 				if(zipFile!=null)
 					zipFile.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	public void updateTemplates(ZipFile zip) throws ProtocolException{
@@ -250,7 +254,9 @@ public class TemplateCore {
 							if(inputStream!=null){
 								inputStream.close();
 							}
-						}catch(Exception eClose){}
+						}catch(Exception eClose){
+							// close
+						}
 					}
 				}
 			}

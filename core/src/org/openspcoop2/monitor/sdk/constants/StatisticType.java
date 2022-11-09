@@ -50,9 +50,6 @@ public enum StatisticType{
 	public String toString(){
 		return this.name();
 	}
-	public boolean equals(StatisticType esito){
-		return this.toString().equals(esito.toString());
-	}
 
 }
 

@@ -225,7 +225,7 @@ public class FilterSearch extends Filtro {
 			bf.append(this.getSoglia());
 			bf.append(")");
 		}
-		if(this.getStato()!=null && !"".equals(this.getStato())){
+		if(this.getStato()!=null && !"".equals(this.getStato().getValue())){
 			if(bf.length()>0){
 				bf.append(" ");
 			}

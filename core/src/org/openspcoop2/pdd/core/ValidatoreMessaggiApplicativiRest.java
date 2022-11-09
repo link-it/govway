@@ -49,7 +49,7 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.rest.RestUtilities;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -421,7 +421,7 @@ public class ValidatoreMessaggiApplicativiRest {
 		IApiValidator apiValidator = null;
 		try {
 			apiValidator = ApiFactory.newApiValidator(format);
-			validatorConfig.setXmlUtils(XMLUtils.getInstance(this.message.getFactory()));
+			validatorConfig.setXmlUtils(MessageXMLUtils.getInstance(this.message.getFactory()));
 			validatorConfig.setVerbose(this.op2Properties.isValidazioneContenutiApplicativi_debug());
 			validatorConfig.setPolicyAdditionalProperties(this.op2Properties.getValidazioneContenutiApplicativi_json_policyAdditionalProperties());
 			apiValidator.init(this.logger, api, validatorConfig);

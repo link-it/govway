@@ -33,7 +33,7 @@ import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.json.YAMLUtils;
@@ -78,7 +78,7 @@ public class AccordoServizioWrapperUtilities {
 			this.logger = LoggerWrapperFactory.getLogger(AccordoServizioWrapperUtilities.class);
 		this.accordoServizioWrapper = accordoServizio;
 		this.messageFactory = messageFactory;
-		this.xmlUtils = XMLUtils.getInstance(this.messageFactory);
+		this.xmlUtils = MessageXMLUtils.getInstance(this.messageFactory);
 		this.xsdUtils = new XSDUtils(this.xmlUtils);
 		this.jsonUtils = JSONUtils.getInstance();
 		this.yamlUtils = YAMLUtils.getInstance();

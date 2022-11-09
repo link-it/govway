@@ -53,7 +53,7 @@ public class FSRecoveryFileUtils {
 			String substring = fileName.substring(0, fileName.indexOf(".error"));
 			
 			String[] split = substring.split("_");
-			if(split.length < 0) {
+			if(split==null || split.length <= 0) {
 				throw new Exception("Impossibile ricavare il nuovo nome file dal nome file ["+fileName+"]");
 			}
 			StringBuilder sb  = new StringBuilder();
@@ -77,7 +77,7 @@ public class FSRecoveryFileUtils {
 			String substring = fileName.substring(0, fileName.indexOf(".error"));
 			
 			String[] split = substring.split("_");
-			if(split.length < 0) {
+			if(split==null || split.length <= 0) {
 				throw new Exception("Impossibile ricavare il numero di tentativi dal nome file ["+fileName+"]");
 			}
 			return Integer.parseInt(split[split.length -1].trim());
@@ -96,12 +96,20 @@ public class FSRecoveryFileUtils {
 			return renameToDLQ(directoryDLQ, file, baos.toString(), log);
 		} finally {
 			if(pw != null) {
-				try {pw.flush();} catch(Exception ex){}
-				try {pw.close();} catch(Exception ex){}
+				try {pw.flush();} catch(Exception ex){
+					// close
+				}
+				try {pw.close();} catch(Exception ex){
+					// close
+				}
 			}
 			if(baos != null){
-				try {baos.flush();} catch(Exception ex){}
-				try {baos.close();} catch(Exception ex){}
+				try {baos.flush();} catch(Exception ex){
+					// close
+				}
+				try {baos.close();} catch(Exception ex){
+					// close
+				}
 			}
 		}
 		
@@ -132,8 +140,12 @@ public class FSRecoveryFileUtils {
 			fos.close();
 		} finally {
 			if(fos != null) {
-				try {fos.flush();} catch(Exception e){}
-				try {fos.close();} catch(Exception e){}
+				try {fos.flush();} catch(Exception e){
+					// close
+				}
+				try {fos.close();} catch(Exception e){
+					// close
+				}
 			}
 		}
 		

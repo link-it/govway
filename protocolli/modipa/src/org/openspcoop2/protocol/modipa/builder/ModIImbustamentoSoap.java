@@ -40,7 +40,7 @@ import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.soap.wsaddressing.WSAddressingHeader;
 import org.openspcoop2.message.soap.wsaddressing.WSAddressingUtilities;
 import org.openspcoop2.message.soap.wsaddressing.WSAddressingValue;
-import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
+import org.openspcoop2.message.xml.MessageDynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
@@ -538,7 +538,7 @@ public class ModIImbustamentoSoap {
 		
 		SOAPHeaderElement securityHeader = messageSecurityContext.getSecurityHeader(msg, modIProperties.getSoapSecurityTokenActor());
 		
-		DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContext(securityHeader);
+		DynamicNamespaceContext dnc = MessageDynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContext(securityHeader);
 		String wsuNamespace = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
 		XPathExpressionEngine xpathEngine = new XPathExpressionEngine(messageFactory);
 		

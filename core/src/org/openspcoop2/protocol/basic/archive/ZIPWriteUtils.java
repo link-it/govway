@@ -154,7 +154,9 @@ public class ZIPWriteUtils {
 			try{
 				if(fout!=null)
 					fout.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -170,7 +172,9 @@ public class ZIPWriteUtils {
 			try{
 				if(fout!=null)
 					fout.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -214,8 +218,9 @@ public class ZIPWriteUtils {
 				bytes = (byte[]) method.invoke(this.jaxbAllarmeSerializer, object);
 				break;
 			}
-			
-			zipOut.write(bytes);
+			if(bytes!=null) {
+				zipOut.write(bytes);
+			}
 		}catch(Exception e){
 			String xml = null;
 			try{
@@ -826,7 +831,9 @@ public class ZIPWriteUtils {
 			try{
 				if(zipOut!=null)
 					zipOut.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	

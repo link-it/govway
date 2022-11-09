@@ -111,7 +111,7 @@ public class UrlParameters extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method getUrlParameterList
-   * @return List<StringParameter>
+   * @return List&lt;StringParameter&gt;
   */
   @Deprecated
   public List<StringParameter> getUrlParameter() {
@@ -120,7 +120,7 @@ public class UrlParameters extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method setUrlParameterList
-   * @param urlParameter List<StringParameter>
+   * @param urlParameter List&lt;StringParameter&gt;
   */
   @Deprecated
   public void setUrlParameter(List<StringParameter> urlParameter) {

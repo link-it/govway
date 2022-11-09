@@ -214,6 +214,7 @@ import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStreamFactory;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.json.YamlSnakeLimits;
+import org.openspcoop2.utils.random.RandomUtilities;
 import org.openspcoop2.utils.resources.FileSystemMkdirConfig;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
@@ -247,6 +248,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 	/** Indicazione se sta avvendendo un contextDestroyed */
 	public static boolean contextDestroyed = false;
+	public static synchronized void setContextDestroyed(boolean value) {
+		contextDestroyed = value;
+	}
 
 	/** Context della Servlet */
 	ServletContext servletContext;
@@ -333,7 +337,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 
-		OpenSPCoop2Startup.contextDestroyed = false;
+		OpenSPCoop2Startup.setContextDestroyed(false);
 		
 		this.startDate = System.currentTimeMillis();
 		
@@ -431,7 +435,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						loggerP = (Properties)o[4];
 						localConfig = (Properties)o[5];
 						cacheP = (Properties)o[7];
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}else{
 					Loader.initialize();
 				}
@@ -723,7 +729,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			if(o!=null){
 				try{
 					PddProperties.updateLocalImplementation((Properties)o[3]);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 			}
 			try{
 				OpenSPCoop2Properties.updatePddPropertiesReader(PddProperties.getInstance());
@@ -749,7 +757,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			if(o!=null){
 				try{
 					MsgDiagnosticiProperties.updateLocalImplementation((Properties)o[6]);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 			}
 			MsgDiagnosticiProperties msgDiagProperties = MsgDiagnosticiProperties.getInstance();
 			if(msgDiagProperties.initializeMsgDiagnosticiPersonalizzati() == false){
@@ -921,7 +931,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						OpenSPCoop2Startup.log.info("Inizializzazione '"+tipo+"' corrispondente alla classe '"+classe+"' ... ");
 					
 						// XML
-						org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance(factory);
+						org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.getInstance(factory);
 						// XML - XERCES
 						xmlUtils.initDocumentBuilderFactory();
 						xmlUtils.initDatatypeFactory();
@@ -2200,7 +2210,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 									GestoreMessaggi.releaseLock(
 											semaphore, connectionDB, timerLock,
 											msgDiag, causa);
-								}catch(Exception e){}
+								}catch(Exception e){
+									// ignore
+								}
 							}
 							
 						}finally{
@@ -3048,8 +3060,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}catch(Exception e){
 							this.logError("Search EJB gestore riscontri non trovato: "+e.getMessage(),e);
 							try {
-								Utilities.sleep((new java.util.Random()).nextInt(propertiesReader.getTimerEJBDeployCheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
-							}catch(Exception eRandom){}
+								Utilities.sleep((RandomUtilities.getRandom()).nextInt(propertiesReader.getTimerEJBDeployCheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
+							}catch(Exception eRandom){
+								// ignore
+							}
 							continue;
 						}
 					}else{
@@ -3066,8 +3080,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}catch(Exception e){
 							this.logError("Search EJB gestore messaggi non trovato: "+e.getMessage(),e);
 							try{
-								Utilities.sleep((new java.util.Random()).nextInt(propertiesReader.getTimerEJBDeployCheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
-							}catch(Exception eRandom){}
+								Utilities.sleep((RandomUtilities.getRandom()).nextInt(propertiesReader.getTimerEJBDeployCheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
+							}catch(Exception eRandom){
+								// ignore
+							}
 							continue;
 						}
 					}else{
@@ -3084,8 +3100,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}catch(Exception e){
 							this.logError("Search EJB pulizia messaggi anomali non trovato: "+e.getMessage(),e);
 							try{
-								Utilities.sleep((new java.util.Random()).nextInt(propertiesReader.getTimerEJBDeployCheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
-							}catch(Exception eRandom){}
+								Utilities.sleep((RandomUtilities.getRandom()).nextInt(propertiesReader.getTimerEJBDeployCheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
+							}catch(Exception eRandom){
+								// ignore
+							}
 							continue;
 						}
 					}else{
@@ -3103,8 +3121,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}catch(Exception e){
 							this.logError("Search EJB gestore repository non trovato: "+e.getMessage(),e);
 							try{
-								Utilities.sleep((new java.util.Random()).nextInt(propertiesReader.getTimerEJBDeployCheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
-							}catch(Exception eRandom){}
+								Utilities.sleep((RandomUtilities.getRandom()).nextInt(propertiesReader.getTimerEJBDeployCheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
+							}catch(Exception eRandom){
+								// ignore
+							}
 							continue;
 						}
 					}else{
@@ -3633,6 +3653,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	
 	public static void startTimerClusterDinamicoThread() throws Exception {
 		if(OpenSPCoop2Startup.threadClusterDinamico == null) {
+			initTimerClusterDinamicoThread();
+		}
+	}
+	private static synchronized void initTimerClusterDinamicoThread() throws Exception {
+		if(OpenSPCoop2Startup.threadClusterDinamico == null) {
 			Logger forceLogEventi = OpenSPCoop2Logger.getLoggerOpenSPCoopEventi(true);
 			OpenSPCoop2Startup.threadClusterDinamico = new TimerClusterDinamicoThread(OpenSPCoop2Logger.getLoggerOpenSPCoopTimers());
 			OpenSPCoop2Startup.threadClusterDinamico.start();
@@ -3645,6 +3670,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		return OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache!=null;
 	}
 	public static void startTimerClusteredRateLimitingLocalCache(GestorePolicyAttiveInMemory gestore) throws Exception {
+		if(OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache == null) {
+			initTimerClusteredRateLimitingLocalCache(gestore);
+		}
+	}
+	private static synchronized void initTimerClusteredRateLimitingLocalCache(GestorePolicyAttiveInMemory gestore) throws Exception {
 		if(OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache == null) {
 			OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
 			Logger logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(true);//properties.isControlloTrafficoDebug());
@@ -3665,89 +3695,99 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
 
-		OpenSPCoop2Startup.contextDestroyed = true;
+		OpenSPCoop2Startup.setContextDestroyed(true);
 		
 		OpenSPCoop2Properties properties = null;
 		try {
 			properties = OpenSPCoop2Properties.getInstance();
-		}catch(Throwable e){}
+		}catch(Throwable e){
+			// ignore
+		}
 		
 		// ID Cluster
 		try{
 			if(OpenSPCoop2Startup.threadClusterDinamico!=null){
 				OpenSPCoop2Startup.threadClusterDinamico.setStop(true);
 			}
-		}catch(Throwable e){}
+		}catch(Throwable e){
+			// ignore
+		}
 		try{
 			boolean rateLimitingGestioneCluster = false;
-			if(properties.isControlloTrafficoEnabled()) {
+			if(properties!=null && properties.isControlloTrafficoEnabled()) {
 				rateLimitingGestioneCluster = GestorePolicyAttive.isAttivo(PolicyGroupByActiveThreadsType.LOCAL_DIVIDED_BY_NODES);
 			}
-			if(properties.isClusterDinamico() || rateLimitingGestioneCluster) {	
+			if( (properties!=null && properties.isClusterDinamico()) || rateLimitingGestioneCluster) {	
 				DynamicClusterManager.getInstance().unregister(OpenSPCoop2Startup.log);
 			}
-		}catch(Throwable e){}
+		}catch(Throwable e){
+			// ignore
+		}
 		
 		
 		// Eventi
 		try{
-			String clusterID = properties.getClusterId(false);
-			boolean debugEventi = properties.isEventiDebug();
-			Logger logEventi = OpenSPCoop2Logger.getLoggerOpenSPCoopEventi(debugEventi);
-			Evento eventoShutdown = null;
-			try{
-				if(OpenSPCoop2Startup.this.gestoreEventi!=null){
-					if(properties.isEventiRegistrazioneStatoPorta()){
-						eventoShutdown = new Evento();
-						eventoShutdown.setTipo(TipoEvento.STATO_GATEWAY.getValue());
-						eventoShutdown.setCodice(CodiceEventoStatoGateway.STOP.getValue());
-						eventoShutdown.setSeverita(SeveritaConverter.toIntValue(TipoSeverita.INFO));
-						eventoShutdown.setClusterId(clusterID);
-						OpenSPCoop2Startup.this.gestoreEventi.log(eventoShutdown,true);
-					}
-				}
-			}catch(Exception e){
-				// L'errore puo' avvenire poiche' lo shutdown puo' anche disattivare il datasource
-				logEventi.debug("Errore durante la segnalazione di shutdown ('Emissione Evento'): "+e.getMessage(),e);
-				if(eventoShutdown!=null){
-					try{
-				    	if(eventoShutdown.getOraRegistrazione()==null){
-				    		eventoShutdown.setOraRegistrazione(DateManager.getDate());
-				    	}
-				    	ByteArrayOutputStream bout = new ByteArrayOutputStream();
-				    	eventoShutdown.writeTo(bout, WriteToSerializerType.XML_JAXB);
-				    	bout.flush();
-				    	bout.close();
-						FileSystemSerializer.getInstance().registraEvento(bout.toByteArray(), eventoShutdown.getOraRegistrazione());
-					}catch(Exception eSerializer){
-						logEventi.error("Errore durante la registrazione su file system dell'evento: "+eSerializer.getMessage(),eSerializer);
-					}
-				}
-			}
-	
-			if(properties.isEventiTimerEnabled()){
-				try{	
-					if(debugEventi)
-						logEventi.debug("Recupero thread per gli Eventi ...");
-					if(OpenSPCoop2Startup.this.threadEventi!=null){
-						OpenSPCoop2Startup.this.threadEventi.setStop(true);
-						if(debugEventi)
-							logEventi.debug("Richiesto stop al thread per gli Eventi");
-					}else{
-						throw new Exception("Thread per gli Eventi non trovato");
+			if(properties!=null) {
+				String clusterID = properties.getClusterId(false);
+				boolean debugEventi = properties.isEventiDebug();
+				Logger logEventi = OpenSPCoop2Logger.getLoggerOpenSPCoopEventi(debugEventi);
+				Evento eventoShutdown = null;
+				try{
+					if(OpenSPCoop2Startup.this.gestoreEventi!=null){
+						if(properties.isEventiRegistrazioneStatoPorta()){
+							eventoShutdown = new Evento();
+							eventoShutdown.setTipo(TipoEvento.STATO_GATEWAY.getValue());
+							eventoShutdown.setCodice(CodiceEventoStatoGateway.STOP.getValue());
+							eventoShutdown.setSeverita(SeveritaConverter.toIntValue(TipoSeverita.INFO));
+							eventoShutdown.setClusterId(clusterID);
+							OpenSPCoop2Startup.this.gestoreEventi.log(eventoShutdown,true);
+						}
 					}
 				}catch(Exception e){
-					if(logEventi!=null){
+					// L'errore puo' avvenire poiche' lo shutdown puo' anche disattivare il datasource
+					logEventi.debug("Errore durante la segnalazione di shutdown ('Emissione Evento'): "+e.getMessage(),e);
+					if(eventoShutdown!=null){
+						try{
+					    	if(eventoShutdown.getOraRegistrazione()==null){
+					    		eventoShutdown.setOraRegistrazione(DateManager.getDate());
+					    	}
+					    	ByteArrayOutputStream bout = new ByteArrayOutputStream();
+					    	eventoShutdown.writeTo(bout, WriteToSerializerType.XML_JAXB);
+					    	bout.flush();
+					    	bout.close();
+							FileSystemSerializer.getInstance().registraEvento(bout.toByteArray(), eventoShutdown.getOraRegistrazione());
+						}catch(Exception eSerializer){
+							logEventi.error("Errore durante la registrazione su file system dell'evento: "+eSerializer.getMessage(),eSerializer);
+						}
+					}
+				}
+	
+				if(properties.isEventiTimerEnabled()){
+					try{	
 						if(debugEventi)
-							logEventi.error("Errore durante la gestione dell'exit (ThreadEventi): "+e.getMessage(),e);
+							logEventi.debug("Recupero thread per gli Eventi ...");
+						if(OpenSPCoop2Startup.this.threadEventi!=null){
+							OpenSPCoop2Startup.this.threadEventi.setStop(true);
+							if(debugEventi)
+								logEventi.debug("Richiesto stop al thread per gli Eventi");
+						}else{
+							throw new Exception("Thread per gli Eventi non trovato");
+						}
+					}catch(Exception e){
+						if(logEventi!=null){
+							if(debugEventi)
+								logEventi.error("Errore durante la gestione dell'exit (ThreadEventi): "+e.getMessage(),e);
+						}
 					}
 				}
 			}
-		}catch(Throwable e){}
+		}catch(Throwable e){
+			// ignore
+		}
 		
 		// Recovery FileSystem
 		try {
-			if(properties.isFileSystemRecoveryTimerEnabled()){
+			if(properties!=null && properties.isFileSystemRecoveryTimerEnabled()){
 				boolean debugRecoveryFileSystem = properties.isFileSystemRecoveryDebug();
 				Logger logRecoveryFileSystem = OpenSPCoop2Logger.getLoggerOpenSPCoopFileSystemRecovery(debugRecoveryFileSystem);
 				if(debugRecoveryFileSystem)
@@ -3760,11 +3800,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					throw new Exception("Thread per il recovery da file system non trovato");
 				}	
 			}
-		}catch(Throwable e){}
+		}catch(Throwable e){
+			// ignore
+		}
 		
 		// GestoreTransazioniStateful
 		try {
-			if(properties.isTransazioniStatefulEnabled()){
+			if(properties!=null && properties.isTransazioniStatefulEnabled()){
 				boolean debugTransazioniStateful = properties.isTransazioniStatefulDebug();
 				Logger logTransazioniStateful = OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniStateful(debugTransazioniStateful);
 				if(debugTransazioniStateful)
@@ -3777,11 +3819,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					throw new Exception("Thread per la gestione delle transazioni stateful non trovato");
 				}	
 			}
-		}catch(Throwable e){}
+		}catch(Throwable e){
+			// ignore
+		}
 
 		// Statistiche
 		try{
-			if(properties.isStatisticheGenerazioneEnabled()){
+			if(properties!=null && properties.isStatisticheGenerazioneEnabled()){
 				boolean debugStatistiche = properties.isStatisticheGenerazioneDebug();
 				
 				Logger logStatisticheOrarie = OpenSPCoop2Logger.getLoggerOpenSPCoopStatistiche(TipoIntervalloStatistico.STATISTICHE_ORARIE, debugStatistiche);
@@ -3837,7 +3881,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}	
 				
 			}
-		}catch (Throwable e) {}
+		}catch (Throwable e) {
+			// ignore
+		}
 		
 		// ExitHandler
 		try{
@@ -3846,10 +3892,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			context.setLogConsole(OpenSPCoop2Startup.log);
 			context.setLogCore(OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
 			GestoreHandlers.exit(context);
-		}catch(Throwable e){}
+		}catch(Throwable e){
+			// ignore
+		}
 		
 		// Gestione Stato ControlloTraffico
-		if(properties.isControlloTrafficoEnabled()){
+		if(properties!=null && properties.isControlloTrafficoEnabled()){
 			OutputStream out = null;
 			Logger logControlloTraffico = null;
 			List<PolicyGroupByActiveThreadsType> tipiGestorePolicyRateLimiting = null;
@@ -3904,12 +3952,16 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 							if(out!=null){
 								out.flush();
 							}
-						}catch(Exception eClose){}
+						}catch(Exception eClose){
+							// ignore
+						}
 						try{
 							if(out!=null){
 								out.close();
 							}
-						}catch(Exception eClose){}
+						}catch(Exception eClose){
+							// ignore
+						}
 					}
 				}
 			}
@@ -3924,33 +3976,47 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			try {
 				if(this.timerRiscontri!=null)
 					this.timerRiscontri.stop();
-			} catch (Throwable e) {}
+			} catch (Throwable e) {
+				// ignore
+			}
 			try {
 				if(this.timerEliminazioneMsg!=null)
 					this.timerEliminazioneMsg.stop();
-			} catch (Throwable e) {}
+			} catch (Throwable e) {
+				// ignore
+			}
 			try {
 				if(this.timerPuliziaMsgAnomali!=null)
 					this.timerPuliziaMsgAnomali.stop();
-			} catch (Throwable e) {}
+			} catch (Throwable e) {
+				// ignore
+			}
 			try {
 				if(this.timerRepositoryBuste!=null)
 					this.timerRepositoryBuste.stop();
-			} catch (Throwable e) {}
+			} catch (Throwable e) {
+				// ignore
+			}
 		}else{
 			try{
 				if(this.threadEliminazioneMsg!=null) {
 					this.threadEliminazioneMsg.setStop(true);
 				}
-			}catch (Throwable e) {}
+			}catch (Throwable e) {
+				// ignore
+			}
 			try{
 				if(this.threadPuliziaMsgAnomali!=null)
 					this.threadPuliziaMsgAnomali.setStop(true);
-			}catch (Throwable e) {}
+			}catch (Throwable e) {
+				// ignore
+			}
 			try{
 				if(this.threadRepositoryBuste!=null)
 					this.threadRepositoryBuste.setStop(true);
-			}catch (Throwable e) {}
+			}catch (Throwable e) {
+				// ignore
+			}
 		}
 		try{
 			if(this.threadConsegnaContenutiApplicativiMap!=null && !this.threadConsegnaContenutiApplicativiMap.isEmpty()) {
@@ -3959,19 +4025,25 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					timer.setStop(true);
 				}
 			}
-		}catch (Throwable e) {}
+		}catch (Throwable e) {
+			// ignore
+		}
 
 		// fermo timer Monitoraggio Risorse
 		try{
 			if(this.timerMonitoraggioRisorse!=null)
 				this.timerMonitoraggioRisorse.setStop(true);
-		}catch (Throwable e) {}
+		}catch (Throwable e) {
+			// ignore
+		}
 
 		// fermo timer Threshold
 		try{
 			if(this.timerThreshold!=null)
 				this.timerThreshold.setStop(true);
-		}catch (Throwable e) {}
+		}catch (Throwable e) {
+			// ignore
+		}
 
 		// Rilascio risorse JMX
 		if(this.gestoreRisorseJMX!=null){
@@ -3982,31 +4054,45 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		try{
 			if(this.threadEventi!=null)
 				this.threadEventi.waitShutdown();
-		}catch (Throwable e) {}
+		}catch (Throwable e) {
+			// ignore
+		}
 		try{
 			if(this.threadFileSystemRecovery!=null)
 				this.threadFileSystemRecovery.waitShutdown();
-		}catch (Throwable e) {}
+		}catch (Throwable e) {
+			// ignore
+		}
 		try{
 			if(this.threadRepositoryStateful!=null)
 				this.threadRepositoryStateful.waitShutdown();
-		}catch (Throwable e) {}
+		}catch (Throwable e) {
+			// ignore
+		}
 		try{
 			if(this.threadGenerazioneStatisticheOrarie!=null)
 				this.threadGenerazioneStatisticheOrarie.waitShutdown();
-		}catch (Throwable e) {}
+		}catch (Throwable e) {
+			// ignore
+		}
 		try{
 			if(this.threadGenerazioneStatisticheGiornaliere!=null)
 				this.threadGenerazioneStatisticheGiornaliere.waitShutdown();
-		}catch (Throwable e) {}
+		}catch (Throwable e) {
+			// ignore
+		}
 		try{
 			if(this.threadGenerazioneStatisticheSettimanali!=null)
 				this.threadGenerazioneStatisticheSettimanali.waitShutdown();
-		}catch (Throwable e) {}
+		}catch (Throwable e) {
+			// ignore
+		}
 		try{
 			if(this.threadGenerazioneStatisticheMensili!=null)
 				this.threadGenerazioneStatisticheMensili.waitShutdown();
-		}catch (Throwable e) {}
+		}catch (Throwable e) {
+			// ignore
+		}
 		if(this.serverJ2EE){ // TODO ATTESA ATTIVA CHE SI FERMINO PER J2EE
 			Utilities.sleep(5000); // aspetto che i timer terminano la loro gestione.
 		}
@@ -4015,17 +4101,23 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				if(this.threadEliminazioneMsg!=null) {
 					this.threadEliminazioneMsg.waitShutdown();
 				}
-			}catch (Throwable e) {}
+			}catch (Throwable e) {
+				// ignore
+			}
 			try{
 				if(this.threadPuliziaMsgAnomali!=null) {
 					this.threadPuliziaMsgAnomali.waitShutdown();
 				}
-			}catch (Throwable e) {}
+			}catch (Throwable e) {
+				// ignore
+			}
 			try{
 				if(this.threadRepositoryBuste!=null) {
 					this.threadRepositoryBuste.waitShutdown();
 				}
-			}catch (Throwable e) {}
+			}catch (Throwable e) {
+				// ignore
+			}
 		}
 		try{
 			if(this.threadConsegnaContenutiApplicativiMap!=null && !this.threadConsegnaContenutiApplicativiMap.isEmpty()) {
@@ -4034,25 +4126,35 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					timer.waitShutdown();
 				}
 			}
-		}catch (Throwable e) {}
+		}catch (Throwable e) {
+			// ignore
+		}
 		try{
 			if(this.timerMonitoraggioRisorse!=null) {
 				this.timerMonitoraggioRisorse.waitShutdown();
 			}
-		}catch (Throwable e) {}
+		}catch (Throwable e) {
+			// ignore
+		}
 		try{
 			if(this.timerThreshold!=null) {
 				this.timerThreshold.waitShutdown();
 			}
-		}catch (Throwable e) {}
+		}catch (Throwable e) {
+			// ignore
+		}
 		try{
 			if(OpenSPCoop2Startup.threadClusterDinamico!=null)
 				OpenSPCoop2Startup.threadClusterDinamico.waitShutdown();
-		}catch (Throwable e) {}
+		}catch (Throwable e) {
+			// ignore
+		}
 		try{
 			if(OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache!=null)
 				OpenSPCoop2Startup.timerClusteredRateLimitingLocalCache.waitShutdown();
-		}catch (Throwable e) {}
+		}catch (Throwable e) {
+			// ignore
+		}
 		
 		// Rilascio lock (da fare dopo che i timer sono stati fermati)
 		// L'errore puo' avvenire poiche' lo shutdown puo' anche disattivare il datasource
@@ -4065,7 +4167,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				OpenSPCoop2Startup.this.universallyUniqueIdentifierProducer.setStop(true);
 				OpenSPCoop2Startup.this.universallyUniqueIdentifierProducer.waitShutdown();
 			}
-		}catch(Throwable e){}
+		}catch(Throwable e){
+			// ignore
+		}
 		
 		// DataManger
 		DateManager.close();
@@ -4075,15 +4179,19 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			if(jminixStandaloneConsole!=null){
 				jminixStandaloneConsole.shutdown();
 			}
-		}catch (Throwable e) {}
+		}catch (Throwable e) {
+			// ignore
+		}
 
 		// *** Repository plugins ***
 		try{
 			CorePluginLoader.close(OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
-		}catch(Throwable e){}
+		}catch(Throwable e){
+			// ignore
+		}
 		
 		// *** Hazelcast ***
-		if(properties.isControlloTrafficoEnabled()){
+		if(properties!=null && properties.isControlloTrafficoEnabled()){
 			HazelcastManager.close();
 		}
 		

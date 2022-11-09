@@ -47,7 +47,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
-import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServiziApplicativi;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServiziApplicativi;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestFruitore;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
@@ -241,7 +241,7 @@ public class IdentificazioneApplicativoMittenteUtils {
 			if(StatoFunzionalita.ABILITATO.equals(configurazionePdDManager.getConfigurazioneMultitenant().getStato()) &&
 					!PortaApplicativaSoggettiFruitori.SOGGETTI_ESTERNI.equals(configurazionePdDManager.getConfigurazioneMultitenant().getErogazioneSceltaSoggettiFruitori())) {
 				
-				FiltroRicercaServiziApplicativi filtro = createFilter(subject, issuer);
+				ProtocolFiltroRicercaServiziApplicativi filtro = createFilter(subject, issuer);
 								
 				List<IDServizioApplicativo> list = null;
 				try {
@@ -504,8 +504,8 @@ public class IdentificazioneApplicativoMittenteUtils {
 	
 	
 	
-	public static FiltroRicercaServiziApplicativi createFilter(String subject, String issuer) {
-		FiltroRicercaServiziApplicativi filtro = new FiltroRicercaServiziApplicativi();
+	public static ProtocolFiltroRicercaServiziApplicativi createFilter(String subject, String issuer) {
+		ProtocolFiltroRicercaServiziApplicativi filtro = new ProtocolFiltroRicercaServiziApplicativi();
 		
 		filtro.setTipoSoggetto(CostantiLabel.MODIPA_PROTOCOL_NAME);
 		

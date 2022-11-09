@@ -101,7 +101,9 @@ public class AlarmManager {
 			Allarme allarme = null;
 			try{
 				allarme = allarmeDAO.find(expr);
-			}catch(NotFoundException notFound){}
+			}catch(NotFoundException notFound){
+				// ignore
+			}
 				
 			if (allarme != null) {
 				alarm = (AlarmImpl) getAlarm(allarme,log,daoFactory);
@@ -197,7 +199,7 @@ public class AlarmManager {
 
 		} catch (Exception e) {
 			log.error(
-					"AlarmManager.getAlarm(" + allarme.getNome()
+					"AlarmManager.getAlarm(" + (allarme!=null ? allarme.getNome() : "Alarm undefined")
 							+ ") ha rilevato un errore: " + e.getMessage(), e);
 			throw new AlarmException(e.getMessage(),e);
 		}
@@ -653,7 +655,10 @@ public class AlarmManager {
 			}
 			
 			// Gestione invocazione script, mail e notifiche a plugin
-			boolean statusWarningError = AlarmStateValues.WARNING.equals(nuovoStatoAllarme) || AlarmStateValues.ERROR.equals(nuovoStatoAllarme);
+			boolean statusWarningError = false;
+			if(nuovoStatoAllarme!=null) {
+				statusWarningError = AlarmStateValues.WARNING.equals(nuovoStatoAllarme.getStatus()) || AlarmStateValues.ERROR.equals(nuovoStatoAllarme.getStatus());
+			}
 			if(!statusChanged && (!statusWarningError || !checkAcknowledState)){
 				alarmLogger.debug("Cambio di stato non rilevato (old:"+oldStatus+" new:"+nuovoStatoAllarme+")");
 				return;

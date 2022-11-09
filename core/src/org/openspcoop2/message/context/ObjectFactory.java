@@ -52,17 +52,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link MessageContext }
+     * Create an instance of {@link ForcedResponse }
      */
-    public MessageContext createMessageContext() {
-        return new MessageContext();
-    }
-
-    /**
-     * Create an instance of {@link TransportRequestContext }
-     */
-    public TransportRequestContext createTransportRequestContext() {
-        return new TransportRequestContext();
+    public ForcedResponse createForcedResponse() {
+        return new ForcedResponse();
     }
 
     /**
@@ -73,38 +66,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link StringParameter }
-     */
-    public StringParameter createStringParameter() {
-        return new StringParameter();
-    }
-
-    /**
-     * Create an instance of {@link SerializedParameter }
-     */
-    public SerializedParameter createSerializedParameter() {
-        return new SerializedParameter();
-    }
-
-    /**
      * Create an instance of {@link ContentLength }
      */
     public ContentLength createContentLength() {
         return new ContentLength();
-    }
-
-    /**
-     * Create an instance of {@link SerializedContext }
-     */
-    public SerializedContext createSerializedContext() {
-        return new SerializedContext();
-    }
-
-    /**
-     * Create an instance of {@link HeaderParameters }
-     */
-    public HeaderParameters createHeaderParameters() {
-        return new HeaderParameters();
     }
 
     /**
@@ -115,17 +80,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link UrlParameters }
+     * Create an instance of {@link MessageContext }
      */
-    public UrlParameters createUrlParameters() {
-        return new UrlParameters();
-    }
-
-    /**
-     * Create an instance of {@link Soap }
-     */
-    public Soap createSoap() {
-        return new Soap();
+    public MessageContext createMessageContext() {
+        return new MessageContext();
     }
 
     /**
@@ -143,10 +101,52 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ForcedResponse }
+     * Create an instance of {@link Soap }
      */
-    public ForcedResponse createForcedResponse() {
-        return new ForcedResponse();
+    public Soap createSoap() {
+        return new Soap();
+    }
+
+    /**
+     * Create an instance of {@link StringParameter }
+     */
+    public StringParameter createStringParameter() {
+        return new StringParameter();
+    }
+
+    /**
+     * Create an instance of {@link SerializedContext }
+     */
+    public SerializedContext createSerializedContext() {
+        return new SerializedContext();
+    }
+
+    /**
+     * Create an instance of {@link HeaderParameters }
+     */
+    public HeaderParameters createHeaderParameters() {
+        return new HeaderParameters();
+    }
+
+    /**
+     * Create an instance of {@link SerializedParameter }
+     */
+    public SerializedParameter createSerializedParameter() {
+        return new SerializedParameter();
+    }
+
+    /**
+     * Create an instance of {@link TransportRequestContext }
+     */
+    public TransportRequestContext createTransportRequestContext() {
+        return new TransportRequestContext();
+    }
+
+    /**
+     * Create an instance of {@link UrlParameters }
+     */
+    public UrlParameters createUrlParameters() {
+        return new UrlParameters();
     }
 
 

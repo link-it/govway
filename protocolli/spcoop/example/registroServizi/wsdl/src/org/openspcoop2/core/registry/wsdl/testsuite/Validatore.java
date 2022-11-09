@@ -45,7 +45,7 @@ import org.apache.cxf.tools.common.toolspec.ToolSpec;
 import org.apache.cxf.tools.validator.WSDLValidator;
 import org.apache.cxf.tools.wsdlto.WSDLToJava;
 import org.openspcoop2.core.registry.wsdl.SplitWSDL;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 
@@ -202,7 +202,7 @@ public class Validatore {
 			listaFileAttesiComplessivi.add(listaFilesAttesiFruitore[k]);
 		}
 				
-		XMLUtils xmlUtils = XMLUtils.DEFAULT;
+		MessageXMLUtils xmlUtils = MessageXMLUtils.DEFAULT;
 		
 		// WSDL Concettuale
 		System.out.println("\tWSDL Concettuale ...");
@@ -235,7 +235,7 @@ public class Validatore {
 	}
 	public static void validaOutputErogatore(String base, String[] portTypes,String[] operations,String [] listaFilesAttesi,String [] listaFilesAttesiBinding) throws Exception { 
 
-		XMLUtils xmlUtils = XMLUtils.DEFAULT;
+		MessageXMLUtils xmlUtils = MessageXMLUtils.DEFAULT;
 		
 		// WSDL Concettuale
 		System.out.println("\tWSDL Concettuale ...");
@@ -258,7 +258,7 @@ public class Validatore {
 	}
 	public static void validaOutputFruitore(String base, String[] portTypes,String[] operations,String [] listaFilesAttesi,String [] listaFilesAttesiBinding) throws Exception { 
 
-		XMLUtils xmlUtils = XMLUtils.DEFAULT;
+		MessageXMLUtils xmlUtils = MessageXMLUtils.DEFAULT;
 		
 		// WSDL Concettuale
 		System.out.println("\tWSDL Concettuale ...");

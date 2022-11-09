@@ -180,11 +180,15 @@ public class OperationFinder {
 								// non so che tipo di message type possiedo
 								try{
 									azione = SoapUtils.getSoapAction(transportContext, MessageType.SOAP_11, transportContext.getContentType());
-								}catch(Exception e){}
+								}catch(Exception e){
+									// ignore
+								}
 								if(azione==null){
 									try{
 										azione = SoapUtils.getSoapAction(transportContext, MessageType.SOAP_12, transportContext.getContentType());
-									}catch(Exception e){}	
+									}catch(Exception e){
+										// ignore
+									}	
 								}
 							}
 							String azioneNonRipulita = azione;
@@ -403,7 +407,7 @@ public class OperationFinder {
 						if(opPath!=null && opPath.length()>1 && opPath.endsWith("/")) {
 							opPath = opPath.substring(0,opPath.length()-1);
 						}
-						if(!rPath.equals(opPath)){
+						if(rPath!=null && !rPath.equals(opPath)){
 							continue;
 						}
 					}

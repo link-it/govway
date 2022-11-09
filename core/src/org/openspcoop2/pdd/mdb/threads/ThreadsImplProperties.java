@@ -85,7 +85,9 @@ public class ThreadsImplProperties {
 			try{
 				if(properties!=null)
 					properties.close();
-			}catch(Exception er){}
+			}catch(Exception er){
+				// close
+			}
 			throw new Exception("ThreadsProperties initialize error: "+e.getMessage(),e);
 		}	
 		this.reader = new PropertiesReader(propertiesReader,true);

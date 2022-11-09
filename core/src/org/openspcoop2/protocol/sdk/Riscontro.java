@@ -40,7 +40,7 @@ import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
  * @version $Rev$, $Date$
  */
 
-public class Riscontro implements java.io.Serializable {
+public class Riscontro implements java.io.Serializable, Cloneable {
 
 	/**
 	 * serialVersionUID

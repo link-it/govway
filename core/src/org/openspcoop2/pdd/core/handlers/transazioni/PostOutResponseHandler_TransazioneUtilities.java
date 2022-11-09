@@ -50,7 +50,7 @@ import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -543,7 +543,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 									// Pero' non veniva stampato correttamente il SOAPFault. Mi appoggio allora a SoapUtils.
 									//byte [] content = org.openspcoop2.message.soap.TunnelSoapUtils.sbustamentoMessaggio(context.getMessaggio());
 									byte [] content = bout.toByteArray();
-									fault = DumpUtility.toString(XMLUtils.getInstance(soapMsg.getFactory()).newDocument(content), log, context.getMessaggio());
+									fault = DumpUtility.toString(MessageXMLUtils.getInstance(soapMsg.getFactory()).newDocument(content), log, context.getMessaggio());
 									//System.out.println("IMPOSTATO FAULT IN TRANSACTION ["+fault+"]");
 								}
 								else{
@@ -572,7 +572,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 										// Pero' non veniva stampato correttamente il SOAPFault. Mi appoggio allora a SoapUtils.
 										//byte [] content = org.openspcoop2.message.soap.TunnelSoapUtils.sbustamentoMessaggio(context.getMessaggio());
 										byte [] content = bout.toByteArray();
-										fault = DumpUtility.toString(XMLUtils.getInstance(restMsg.getFactory()).newDocument(content), log, context.getMessaggio());
+										fault = DumpUtility.toString(MessageXMLUtils.getInstance(restMsg.getFactory()).newDocument(content), log, context.getMessaggio());
 										//System.out.println("IMPOSTATO FAULT IN TRANSACTION ["+fault+"]");
 									}
 									else{

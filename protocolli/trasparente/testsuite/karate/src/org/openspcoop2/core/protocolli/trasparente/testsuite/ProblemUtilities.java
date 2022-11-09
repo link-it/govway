@@ -23,7 +23,7 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite;
 
 import static org.junit.Assert.assertTrue;
 
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.utils.rest.problem.ProblemConstants;
 import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
 import org.openspcoop2.utils.rest.problem.XmlDeserializer;
@@ -88,7 +88,7 @@ public class ProblemUtilities {
 		try{
 
 			assertTrue(problemNode!=null);
-			xml = XMLUtils.DEFAULT.toString(problemNode);
+			xml = MessageXMLUtils.DEFAULT.toString(problemNode);
 			log.debug("Namespace Problem ("+problemNode.getNamespaceURI()+"): "+xml);
 			assertTrue(ProblemConstants.XML_PROBLEM_DETAILS_RFC_7807_NAMESPACE.equals(problemNode.getNamespaceURI()));
 			

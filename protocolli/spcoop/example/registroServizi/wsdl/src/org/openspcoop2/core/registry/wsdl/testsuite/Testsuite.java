@@ -31,7 +31,7 @@ import org.openspcoop2.core.registry.wsdl.SchemaXSDAccordoServizio;
 import org.openspcoop2.core.registry.wsdl.SplitWSDL;
 import org.openspcoop2.core.registry.wsdl.StandardWSDLOutputMode;
 import org.openspcoop2.core.registry.wsdl.TipoSchemaXSDAccordoServizio;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 import org.openspcoop2.utils.wsdl.WSDLUtilities;
@@ -836,7 +836,7 @@ public class Testsuite {
 			throw new Exception("Creazione directory fallita: "+outputDirTest.getAbsolutePath());
 		}
 		
-		XMLUtils xmlUtils = XMLUtils.DEFAULT;
+		MessageXMLUtils xmlUtils = MessageXMLUtils.DEFAULT;
 		WSDLUtilities wsdlUtilities = WSDLUtilities.getInstance(xmlUtils);
 		
 		
@@ -1658,7 +1658,7 @@ public class Testsuite {
 		
 		
 		
-		XMLUtils xmlUtils = XMLUtils.DEFAULT;
+		MessageXMLUtils xmlUtils = MessageXMLUtils.DEFAULT;
 		WSDLUtilities wsdlUtilities = WSDLUtilities.getInstance(xmlUtils);
 		
 		
@@ -2282,7 +2282,7 @@ public class Testsuite {
 		}
 		
 			
-		XMLUtils xmlUtils = XMLUtils.DEFAULT;
+		MessageXMLUtils xmlUtils = MessageXMLUtils.DEFAULT;
 		
 		
 		// TEST A.

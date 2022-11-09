@@ -176,7 +176,7 @@ public class TimerGestoreRepositoryBusteLib {
 							this.propertiesReader.isForceIndex(),this.propertiesReader.isRepositoryBusteFiltraBusteScaduteRispettoOraRegistrazione(),
 							this.orderByQuery, now);
 					int gestiti = 0;
-					if(idMsgINBOX.size()>0){
+					if(idMsgINBOX!=null && idMsgINBOX.size()>0){
 						if(this.logQuery)
 							this.logTimer.info("Trovate "+idMsgINBOX.size()+" buste da eliminare nel repository (INBOX) ...");
 						trovatiMessaggi = true;
@@ -224,7 +224,9 @@ public class TimerGestoreRepositoryBusteLib {
 						GestoreMessaggi.releaseLock(
 								this.semaphore, connectionDB, this.timerLock,
 								this.msgDiag, causaMessaggiINBOX);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 
 				//	Eliminazione Messaggi from OUTBOX
@@ -241,7 +243,7 @@ public class TimerGestoreRepositoryBusteLib {
 							this.propertiesReader.isForceIndex(),this.propertiesReader.isRepositoryBusteFiltraBusteScaduteRispettoOraRegistrazione(),
 							this.orderByQuery,now);
 					int gestiti = 0;
-					if(idMsgOUTBOX.size()>0){
+					if(idMsgOUTBOX!=null && idMsgOUTBOX.size()>0){
 						if(this.logQuery)
 							this.logTimer.info("Trovate "+idMsgOUTBOX.size()+" buste da eliminare nel repository (OUTBOX) ...");
 						trovatiMessaggi = true;
@@ -289,7 +291,9 @@ public class TimerGestoreRepositoryBusteLib {
 						GestoreMessaggi.releaseLock(
 								this.semaphore, connectionDB, this.timerLock,
 								this.msgDiag, causaMessaggiOUTBOX);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 
 

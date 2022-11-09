@@ -64,7 +64,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -1125,7 +1125,7 @@ public class DocumentoExporter extends HttpServlet {
 			AccordoServizioWrapperUtilities wsdlWrapperUtilities = new AccordoServizioWrapperUtilities(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log);
 			wsdlWrapperUtilities.setAccordoServizio(new AccordoServizioWrapper());
 			wsdlWrapperUtilities.getAccordoServizioWrapper().setAccordoServizio((AccordoServizioParteComune)asConAllegati.clone());
-			WSDLUtilities wsdlUtilities = new WSDLUtilities(XMLUtils.DEFAULT);
+			WSDLUtilities wsdlUtilities = new WSDLUtilities(MessageXMLUtils.DEFAULT);
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			javax.wsdl.Definition wsdl = null;
 			if(erogatore){

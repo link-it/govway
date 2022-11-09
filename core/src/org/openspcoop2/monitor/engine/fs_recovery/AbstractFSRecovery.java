@@ -65,7 +65,7 @@ public abstract class AbstractFSRecovery {
 			// 		 in modo da evitare di processare i file che sono creati nello stesso momento in cui gira la procedura
 			File[] filesToProcess = this.directory.listFiles(new LastModifiedFileFilter(this.minutiAttesaProcessingFile));
 			
-			if(filesToProcess.length > 0) {
+			if(filesToProcess!=null && filesToProcess.length > 0) {
 				this.log.info("Processamento di ["+filesToProcess.length+"] file");
 				
 				int countProcessatiCorrettamente = 0;

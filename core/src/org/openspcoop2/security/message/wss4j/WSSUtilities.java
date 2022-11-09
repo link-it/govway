@@ -37,7 +37,7 @@ import org.apache.cxf.message.Attachment;
 import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
 import org.apache.wss4j.dom.handler.WSHandlerResult;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.security.message.utils.AttachmentProcessingPart;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.dch.InputStreamDataSource;
@@ -235,7 +235,7 @@ public class WSSUtilities {
 					if(testXml){
 						try{
 							if(n==null){
-								n = XMLUtils.getInstance(message.getFactory()).newElement(bufferArray);
+								n = MessageXMLUtils.getInstance(message.getFactory()).newElement(bufferArray);
 							}
 						}catch(Exception e){
 							// no xml

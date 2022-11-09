@@ -30,7 +30,7 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.utils.MessageUtilities;
-import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.w3c.dom.Document;
@@ -74,14 +74,14 @@ public class Client {
 		OpenSPCoop2MessageFactory.initDefaultMessageFactory();
 		OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		
-		Document d = XMLUtils.getInstance(messageFactory).newDocument("<prova xmlns=\"www.openspcoop.org\"><esempio>Esempio di Utilizzo</esempio></prova>".getBytes());
+		Document d = MessageXMLUtils.getInstance(messageFactory).newDocument("<prova xmlns=\"www.openspcoop.org\"><esempio>Esempio di Utilizzo</esempio></prova>".getBytes());
 		Element contenuto1 = d.createElementNS("www.openspcoop.org", "contenuto1");
 		contenuto1.setTextContent(Base64Utilities.encodeAsString("<esempioXml xmlns=\"www.openspcoop.org/example1\">PROVA</esempioXml>".getBytes()));
 		d.getFirstChild().appendChild(contenuto1);
 		Element contenuto2 = d.createElementNS("www.openspcoop.org", "contenuto2");
 		contenuto2.setTextContent(Base64Utilities.encodeAsString("<esempioXml2 xmlns=\"www.openspcoop.org/example2\"><nodoInterno>PROVA</nodoInterno></esempioXml2>".getBytes()));
 		d.getLastChild().appendChild(contenuto2);
-		byte[]xmlOriginale = XMLUtils.getInstance(messageFactory).toByteArray(d,true);
+		byte[]xmlOriginale = MessageXMLUtils.getInstance(messageFactory).toByteArray(d,true);
 		
 		
 		String soap11Prefix = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n\t<soapenv:Body>\n";

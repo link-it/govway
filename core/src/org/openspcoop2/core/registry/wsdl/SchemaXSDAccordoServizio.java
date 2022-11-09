@@ -57,14 +57,14 @@ public class SchemaXSDAccordoServizio extends SchemaXSD {
 		this(xsd, fileName, new File(tipo.getDirectory()+File.separatorChar+fileName), tipo);
 	}
 	public SchemaXSDAccordoServizio(byte[] xsd,String fileName,File fileSource,TipoSchemaXSDAccordoServizio tipo) throws IOException,SAXException,ParserConfigurationException, XMLException{
-		super(xsd,fileName,fileSource,org.openspcoop2.message.xml.XMLUtils.DEFAULT);
+		super(xsd,fileName,fileSource,org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT);
 		this.tipoSchema = tipo;
 	}
 	public SchemaXSDAccordoServizio(Element xsd,String fileName,TipoSchemaXSDAccordoServizio tipo) throws IOException,SAXException,ParserConfigurationException{
 		this(xsd, fileName, new File(tipo.getDirectory()+File.separatorChar+fileName), tipo);
 	}
 	public SchemaXSDAccordoServizio(Element xsd,String fileName,File fileSource,TipoSchemaXSDAccordoServizio tipo) throws IOException,SAXException,ParserConfigurationException{
-		super(xsd,fileName,fileSource,org.openspcoop2.message.xml.XMLUtils.DEFAULT);
+		super(xsd,fileName,fileSource,org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT);
 		this.tipoSchema = tipo;
 	}
 	
@@ -136,7 +136,7 @@ public class SchemaXSDAccordoServizio extends SchemaXSD {
 		if(prettyPrint){
 			PrettyPrintXMLUtils.prettyPrintWithTrAX(this.getXml(), out);
 		}else{
-			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
+			org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;
 			xmlUtils.writeTo(this.getXml(), out);
 		}
 	}

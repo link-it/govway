@@ -252,7 +252,7 @@ public class XMLUtils  {
 
 	public static boolean isConceptualBehavior(byte [] doc){
 		try{
-			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;		
+			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;		
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			//System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");
@@ -499,7 +499,7 @@ public class XMLUtils  {
 	
 	public static boolean isMessageBehavior(byte [] doc){
 		try{
-			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;		
+			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;		
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			//System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");

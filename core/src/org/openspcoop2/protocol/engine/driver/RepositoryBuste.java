@@ -1470,7 +1470,7 @@ public class RepositoryBuste  {
 				tipoOraRec = busta.getTipoOraRegistrazione();
 			}
 			pstmtBusta.setTimestamp(index++,oraRec);
-			pstmtBusta.setString(index++,tipoOraRec.getEngineValue());
+			pstmtBusta.setString(index++,tipoOraRec!=null ? tipoOraRec.getEngineValue() : null);
 			pstmtBusta.setString(index++,busta.getRiferimentoMessaggio());
 			pstmtBusta.setTimestamp(index++,scadenzaT);
 			pstmtBusta.setTimestamp(index++,dataRegistrazione);
@@ -1774,7 +1774,9 @@ public class RepositoryBuste  {
 			try{
 				if(pstmt != null)
 					pstmt.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			this.log.error(errorMsg,e);
 			throw new ProtocolException(errorMsg,e);
 		}
@@ -1836,7 +1838,9 @@ public class RepositoryBuste  {
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new ProtocolException(errorMsg,e);
 			}
@@ -1880,7 +1884,9 @@ public class RepositoryBuste  {
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new ProtocolException(errorMsg,e);
 			}
@@ -1926,7 +1932,9 @@ public class RepositoryBuste  {
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new ProtocolException(errorMsg,e);
 			}
@@ -2660,11 +2668,15 @@ public class RepositoryBuste  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new ProtocolException(errorMsg,e);
 			}
@@ -2779,11 +2791,15 @@ public class RepositoryBuste  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new ProtocolException(errorMsg,e);
 			}
@@ -2835,11 +2851,15 @@ public class RepositoryBuste  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new ProtocolException(errorMsg,e);
 			}
@@ -2912,11 +2932,15 @@ public class RepositoryBuste  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new ProtocolException(errorMsg,e);
 			}
@@ -2970,11 +2994,15 @@ public class RepositoryBuste  {
 			try{
 				if(rs != null)
 					rs.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			try{
 				if(pstmt != null)
 					pstmt.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			this.log.error(errorMsg,e);
 			throw new ProtocolException(errorMsg,e);
 		}
@@ -3312,11 +3340,15 @@ public class RepositoryBuste  {
 			try{
 				if(rs != null)
 					rs.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			try{
 				if(pstmt != null)
 					pstmt.close();
-			} catch(Exception er) {	}
+			} catch(Exception er) {
+				// close
+			}
 		}
 	}
 	
@@ -3367,11 +3399,15 @@ public class RepositoryBuste  {
 			try{
 				if(rs != null)
 					rs.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			try{
 				if(pstmt != null)
 					pstmt.close();
-			} catch(Exception er) {	}
+			} catch(Exception er) {
+				// close
+			}
 		}
 	}
 	
@@ -3518,11 +3554,15 @@ public class RepositoryBuste  {
 			try{
 				if(rs != null)
 					rs.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			try{
 				if(pstmt != null)
 					pstmt.close();
-			} catch(Exception er) {	}
+			} catch(Exception er) {
+				// close
+			}
 		}
 	}
 	
@@ -3751,7 +3791,9 @@ public class RepositoryBuste  {
 			try{
 				if(pstmt != null)
 					pstmt.close();
-			} catch(Exception er) {	}
+			} catch(Exception er) {	
+				// close
+			}
 		}
 	}
 	
@@ -3833,7 +3875,9 @@ public class RepositoryBuste  {
 			try{
 				if(pstmt != null)
 					pstmt.close();
-			} catch(Exception er) {	}
+			} catch(Exception er) {	
+				// close
+			}
 		}
 	}
 	

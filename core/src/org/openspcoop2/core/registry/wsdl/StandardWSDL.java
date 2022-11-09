@@ -87,7 +87,7 @@ public class StandardWSDL {
 	private List<SchemaXSDAccordoServizio> schemiWsdlUnificato = new ArrayList<SchemaXSDAccordoServizio>();
 	
 	/* ------- ALTRO ---------- */
-	private org.openspcoop2.message.xml.XMLUtils xmlUtils = null;
+	private org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = null;
 	private XSDUtils xsdUtils = null;
 	private WSDLUtilities wsdlUtilities = null;
 	
@@ -96,7 +96,7 @@ public class StandardWSDL {
 	
 	public StandardWSDL (String implementativoErogatorePath, String implementativoFruitorePath, StandardWSDLOutputMode outputMode) throws WSDLException, StandardWSDLException, IOException, ParserConfigurationException, SAXException, XMLException{
 		
-		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
+		this.xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;
 		this.xsdUtils = new XSDUtils(this.xmlUtils);
 		this.wsdlUtilities = WSDLUtilities.getInstance(this.xmlUtils);
 		
@@ -134,7 +134,7 @@ public class StandardWSDL {
 			List<SchemaXSDAccordoServizio> schemiFruitore, byte[] logicoFruitore, byte[] implementativoFruitore,
 			StandardWSDLOutputMode outputMode) throws WSDLException, StandardWSDLException, IOException, ParserConfigurationException, SAXException, org.openspcoop2.utils.wsdl.WSDLException, XMLException{
 		
-		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
+		this.xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;
 		this.xsdUtils = new XSDUtils(this.xmlUtils);
 		this.wsdlUtilities = WSDLUtilities.getInstance(this.xmlUtils);
 		
@@ -565,8 +565,10 @@ public class StandardWSDL {
 						String location = null;
 						try{
 							location = this.xsdUtils.getIncludeSchemaLocation(n);
-						}catch(Exception e){}
-						if(xsd.getSource().getAbsolutePath().endsWith(location)){
+						}catch(Exception e){
+							// ignore
+						}
+						if(xsd.getSource()!=null && xsd.getSource().getAbsolutePath()!=null && xsd.getSource().getAbsolutePath().endsWith(location)){
 							
 							if(this.outputMode.equals(StandardWSDLOutputMode.INGLOBA_SOLO_SCHEMI_INCLUSI_NOME_AUTOGENERATO_IN_WSDL)){
 								File locationF = new File(location);
@@ -624,8 +626,10 @@ public class StandardWSDL {
 						String location = null;
 						try{
 							location = this.xsdUtils.getImportSchemaLocation(n);
-						}catch(Exception e){}
-						if(xsd.getSource().getAbsolutePath().endsWith(location)){
+						}catch(Exception e){
+							// ignore
+						}
+						if(xsd.getSource()!=null && xsd.getSource().getAbsolutePath()!=null && xsd.getSource().getAbsolutePath().endsWith(location)){
 							schemaImportatoDalWsdl = true;
 							break;
 						}
@@ -704,11 +708,15 @@ public class StandardWSDL {
 					String namespaceImport = null;
 					try{
 						namespaceImport = this.xsdUtils.getImportNamespace(n);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					String location = null;
 					try{
 						location = this.xsdUtils.getImportSchemaLocation(n);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					//System.out.println("Import ["+namespaceImport+"] ["+location+"]");
 					String targetNamespacePadre =  null;
 					Object o = n.getUserData("TargetNamespaceSchema"); 
@@ -738,7 +746,9 @@ public class StandardWSDL {
 					String location = null;
 					try{
 						location = this.xsdUtils.getIncludeSchemaLocation(n);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					//System.out.println("Include ["+location+"]");
 					String targetNamespacePadre =  null;
 					Object o = n.getUserData("TargetNamespaceSchema"); 
@@ -764,27 +774,31 @@ public class StandardWSDL {
 					String location = null;
 					try{
 						location = this.xsdUtils.getIncludeSchemaLocation(n);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					//System.out.println("Include ["+location+"]");
-					File locationF = new File(location);
-					
-					// check nome autogenerato
-					if(   !(   SplitWSDL.DEFINITORIO_FILENAME.equals(locationF.getName()) ||
-							  (locationF.getName().startsWith("InterfacciaDefinitoria_") && locationF.getName().endsWith(".xsd")) 
-						   )
-						){
+					if(location!=null) {
+						File locationF = new File(location);
 						
-						String targetNamespacePadre =  null;
-						Object o = n.getUserData("TargetNamespaceSchema"); 
-						if(o!=null){
-							targetNamespacePadre = (String)o;
+						// check nome autogenerato
+						if(   !(   SplitWSDL.DEFINITORIO_FILENAME.equals(locationF.getName()) ||
+								  (locationF.getName().startsWith("InterfacciaDefinitoria_") && locationF.getName().endsWith(".xsd")) 
+							   )
+							){
+							
+							String targetNamespacePadre =  null;
+							Object o = n.getUserData("TargetNamespaceSchema"); 
+							if(o!=null){
+								targetNamespacePadre = (String)o;
+							}
+												
+							String includeSchema = "<xsd:schema targetNamespace=\""+targetNamespacePadre+"\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n"+
+								"\t<xsd:include schemaLocation=\""+location+"\"/>\n"+
+								"</xsd:schema>\n";
+							schemiDaInglobareInWsdl.add(includeSchema.getBytes());
+							
 						}
-											
-						String includeSchema = "<xsd:schema targetNamespace=\""+targetNamespacePadre+"\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n"+
-							"\t<xsd:include schemaLocation=\""+location+"\"/>\n"+
-							"</xsd:schema>\n";
-						schemiDaInglobareInWsdl.add(includeSchema.getBytes());
-						
 					}
 				}
 				
@@ -824,43 +838,49 @@ public class StandardWSDL {
 		if(include){
 			try{
 				location = this.xsdUtils.getIncludeSchemaLocation(nodo);
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 		}
 		else{
 			try{
 				location = this.xsdUtils.getImportSchemaLocation(nodo);
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 		}
-		File locationF = new File(location);
-		String nome = locationF.getName();
-		if(locationF.getParentFile()==null){
-			throw new StandardWSDLException("Trovato include di uno schema che non indica la directory "+CostantiRegistroServizi.ALLEGATI_DIR+" o "+CostantiRegistroServizi.SPECIFICA_SEMIFORMALE_DIR);
-		}
-		String padre = locationF.getParentFile().getName();
+		if(location!=null) {
+			File locationF = new File(location);
+			String nome = locationF.getName();
+			if(locationF.getParentFile()==null){
+				throw new StandardWSDLException("Trovato include di uno schema che non indica la directory "+CostantiRegistroServizi.ALLEGATI_DIR+" o "+CostantiRegistroServizi.SPECIFICA_SEMIFORMALE_DIR);
+			}
+			String padre = locationF.getParentFile().getName();
 		
-		// cerco lo schema incluso 
-		for(int j=0; j<schemiCompleti.size();j++){
-			SchemaXSDAccordoServizio tmp = schemiCompleti.get(j);
-			if(tmp.getFilename().equals(nome) && tmp.getTipoSchema().getDirectory().equals(padre)){
-				// trovato schema
-				
-				SchemaXSDAccordoServizio schemaXSD = schemiCompleti.get(j);
-				if(include){
-					schemiCompleti.remove(j);
+			// cerco lo schema incluso 
+			for(int j=0; j<schemiCompleti.size();j++){
+				SchemaXSDAccordoServizio tmp = schemiCompleti.get(j);
+				if(tmp.getFilename().equals(nome) && tmp.getTipoSchema().getDirectory().equals(padre)){
+					// trovato schema
 					
-					Object o = nodo.getUserData("TargetNamespaceSchema"); 
-					if(o!=null){
-						targetNamespace = (String)o;
+					SchemaXSDAccordoServizio schemaXSD = schemiCompleti.get(j);
+					if(include){
+						schemiCompleti.remove(j);
+						
+						Object o = nodo.getUserData("TargetNamespaceSchema"); 
+						if(o!=null){
+							targetNamespace = (String)o;
+						}
+						namespacesInclusioni.add(targetNamespace);
+						schemiInclusi.add(schemaXSD);				
 					}
-					namespacesInclusioni.add(targetNamespace);
-					schemiInclusi.add(schemaXSD);				
+					
+					buildListaSchemiInclusi_inputByteArray(this.xsdUtils.readIncludes(targetNamespace,schemaXSD.getXml()),
+							schemiInclusi,namespacesInclusioni,schemiCompleti,targetNamespace);
+					
+					break;
+	
 				}
-				
-				buildListaSchemiInclusi_inputByteArray(this.xsdUtils.readIncludes(targetNamespace,schemaXSD.getXml()),
-						schemiInclusi,namespacesInclusioni,schemiCompleti,targetNamespace);
-				
-				break;
-
 			}
 		}
 		
@@ -1004,7 +1024,9 @@ public class StandardWSDL {
 				String location = null;
 				try{
 					location = this.xsdUtils.getIncludeSchemaLocation(n);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				if(location!=null){
 					File fLocation = null;
 					if(this.pathLogico!=null){
@@ -1036,7 +1058,9 @@ public class StandardWSDL {
 				String location = null;
 				try{
 					location = this.xsdUtils.getImportSchemaLocation(n);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				if(location!=null){
 					File fLocation = null;
 					if(this.pathLogico!=null){
@@ -1113,6 +1137,19 @@ public class StandardWSDL {
 			List<Node> includesTypesPresentiWsdl,
 			List<Node> importsTypesPresentiWsdl) throws WSDLException,IOException,SAXException,ParserConfigurationException, XMLException{
 		
+		if(wsdl==null) {
+			throw new XMLException("Param wsdl is null");
+		}
+		if(importsPresentiWsdl==null) {
+			throw new XMLException("Param importsPresentiWsdl is null");
+		}
+		if(includesTypesPresentiWsdl==null) {
+			throw new XMLException("Param includesTypesPresentiWsdl is null");
+		}
+		if(importsTypesPresentiWsdl==null) {
+			throw new XMLException("Param importsTypesPresentiWsdl is null");
+		}
+		
 		// riaggiungo wsdl import
 		//System.out.println("RIAGGIUNGO WSDL IMPORT ("+importsPresentiWsdl.size()+")");
 		for(int i=0; i<importsPresentiWsdl.size(); i++){
@@ -1120,11 +1157,15 @@ public class StandardWSDL {
 			String namespaceImport = null;
 			try{
 				namespaceImport = this.wsdlUtilities.getImportNamespace(wsdlImport);
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			String location = null;
 			try{
 				location = this.wsdlUtilities.getImportLocation(wsdlImport);
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			Import importWsdl = new ImportImpl();
 			importWsdl.setLocationURI(location);
 			importWsdl.setNamespaceURI(namespaceImport);
@@ -1142,7 +1183,9 @@ public class StandardWSDL {
 			String location = null;
 			try{
 				location = this.xsdUtils.getIncludeSchemaLocation(xsdIncludes);
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			String targetNamespacePadre = (String) xsdIncludes.getUserData("TargetNamespaceSchema"); 
 			String includeSchema = "<xsd:schema targetNamespace=\""+targetNamespacePadre+"\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n"+
 				"\t<xsd:include schemaLocation=\""+location+"\"/>\n"+
@@ -1158,12 +1201,16 @@ public class StandardWSDL {
 			String namespaceImport = null;
 			try{
 				namespaceImport = this.xsdUtils.getImportNamespace(xsdImport);
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			//System.out.println("TargetNamespace schema xsd che contiene l'import: "+targetNamespaceXSD);
 			String location = null;
 			try{
 				location = this.xsdUtils.getImportSchemaLocation(xsdImport);
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			String targetNamespacePadre = null;
 			Object o = xsdImport.getUserData("TargetNamespaceSchema"); 
 			if(o!=null){

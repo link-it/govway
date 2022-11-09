@@ -79,7 +79,7 @@ public class ContentTypeUtilities {
 	public static String buildContentType(String baseType,Map<String, String> parameters) throws UtilsException{
 		try{
 			ContentType cType = new ContentType(baseType);
-			if(parameters.size()>0){
+			if(parameters!=null && parameters.size()>0){
 				Iterator<String> itP = parameters.keySet().iterator();
 				while (itP.hasNext()) {
 					String parameterName = (String) itP.next();

@@ -133,6 +133,10 @@ public class RicezioneContenutiApplicativiServiceUtils {
 			ServiceIdentificationReader serviceIdentificationReader,
 			MsgDiagnostico msgDiag, PdDContext pddContextNullable) throws ConnectorException{
 		
+		if(requestInfo==null) {
+			throw new ConnectorException("Param requestInfo is null");
+		}
+		
 		URLProtocolContext protocolContext = requestInfo.getProtocolContext();
 		IProtocolFactory<?> pf = requestInfo.getProtocolFactory();
 		ServiceBindingConfiguration bindingConfig = requestInfo.getBindingConfig();
@@ -247,7 +251,9 @@ public class RicezioneContenutiApplicativiServiceUtils {
 					protocolServiceBinding = pf.createProtocolConfiguration().getProtocolServiceBinding(integrationServiceBinding, protocolContext);
 					requestInfo.setProtocolServiceBinding(protocolServiceBinding);
 					
-					generatoreErrore.updateServiceBinding(integrationServiceBinding);
+					if(generatoreErrore!=null) {
+						generatoreErrore.updateServiceBinding(integrationServiceBinding);
+					}
 				}catch(RegistryNotFound notFound){
 					logCore.debug("Lettura ServiceBinding fallita (notFound): "+notFound.getMessage(),notFound);
 					msgDiag.addKeywordErroreProcessamento(notFound);
@@ -547,7 +553,9 @@ public class RicezioneContenutiApplicativiServiceUtils {
 							if(pddContextNullable!=null) {
 								pddContextNullable.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
 							}
-						}catch(Throwable t) {}
+						}catch(Throwable t) {
+							// ignore
+						}
 						return cdiError;
 					}
 					return null;
@@ -563,7 +571,9 @@ public class RicezioneContenutiApplicativiServiceUtils {
 							protocolContext, protocolContext.getContentType());
 					requestInfo.setProtocolRequestMessageType(requestMessageTypeProtocol);
 					
-					generatoreErrore.updateRequestMessageType(requestMessageTypeIntegration);
+					if(generatoreErrore!=null) {
+						generatoreErrore.updateRequestMessageType(requestMessageTypeIntegration);
+					}
 				}catch(Exception error){
 					logCore.error("Identificazione MessageType fallita: "+error.getMessage(),error);
 					msgDiag.addKeywordErroreProcessamento(error);

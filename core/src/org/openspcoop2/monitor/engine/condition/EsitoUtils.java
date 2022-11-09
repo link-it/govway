@@ -167,7 +167,7 @@ public class EsitoUtils {
 	}
 	
 	public void setExpressionContesto(IExpression expr,IField fieldContesto,String contesto) throws ExpressionNotImplementedException, ExpressionException{
-		if(EsitoUtils.ALL_VALUE_AS_STRING != contesto){
+		if(!EsitoUtils.ALL_VALUE_AS_STRING.equals(contesto)){
 			expr.and().equals(fieldContesto, contesto);
 		}
 	}

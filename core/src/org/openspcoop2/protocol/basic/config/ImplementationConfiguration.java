@@ -40,7 +40,7 @@ import org.openspcoop2.protocol.manifest.IntegrationConfiguration;
 import org.openspcoop2.protocol.manifest.IntegrationConfigurationResourceIdentificationMode;
 import org.openspcoop2.protocol.manifest.constants.ResourceIdentificationType;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.config.Implementation;
+import org.openspcoop2.protocol.sdk.config.ProtocolImplementation;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 
@@ -64,9 +64,9 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 		super(integrationConfiguration);
 	}
 
-	public Implementation createDefaultImplementation(IDServizio idServizio) throws ProtocolException {
+	public ProtocolImplementation createDefaultImplementation(IDServizio idServizio) throws ProtocolException {
 		
-		Implementation implementation = new Implementation();
+		ProtocolImplementation implementation = new ProtocolImplementation();
 		
 		PortaApplicativa portaApplicativa = new PortaApplicativa();
 		portaApplicativa.setNome(this.getNome(idServizio, null, null, null, 
@@ -177,14 +177,14 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 		return list;
 	}
 	
-	public Implementation createImplementation(IConfigIntegrationReader configIntegrationReader, IDServizio idServizio,
+	public ProtocolImplementation createImplementation(IConfigIntegrationReader configIntegrationReader, IDServizio idServizio,
 			PortaApplicativa portaApplicativaDefault, 
 			String ruleName, String description, String ... azione ) throws ProtocolException {
 		return createImplementation(configIntegrationReader, idServizio, 
 				portaApplicativaDefault, null, 
 				ruleName, description, azione);
 	}
-	public Implementation createImplementation(IConfigIntegrationReader configIntegrationReader, IDServizio idServizio,
+	public ProtocolImplementation createImplementation(IConfigIntegrationReader configIntegrationReader, IDServizio idServizio,
 			PortaApplicativa portaApplicativaDefault, PortaApplicativa portaApplicativaDaClonare,
 			String ruleName, String description, String ... azione ) throws ProtocolException {
 		
@@ -203,7 +203,7 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 			descrizioneNuovaPortaApplicativa = null;
 		}
 		
-		Implementation implementation = new Implementation();
+		ProtocolImplementation implementation = new ProtocolImplementation();
 		
 		PortaApplicativa portaApplicativa = null;
 		
@@ -224,7 +224,9 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 			List<AttivazionePolicy> listAP = null;
 			try {
 				listAP = configIntegrationReader.getRateLimitingPolicy(idPA);
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// ignore
+			}
 			List<String> idPolicyCreate = new ArrayList<String>();
 			if(listAP!=null && !listAP.isEmpty()) {
 				for (AttivazionePolicy attivazionePolicy : listAP) {
@@ -249,7 +251,9 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 							}
 							implementation.getRateLimitingPolicies().add(apCloned);
 							
-						}catch(Exception e) {}
+						}catch(Exception e) {
+							// ignore
+						}
 					}
 				}
 			}
@@ -258,7 +262,9 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 			List<Allarme> listAllarmi = null;
 			try {
 				listAllarmi = configIntegrationReader.getAllarmi(idPA);
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// ignore
+			}
 			List<String> idAllarmiCreate = new ArrayList<String>();
 			if(listAllarmi!=null && !listAllarmi.isEmpty()) {
 				for (Allarme allarme : listAllarmi) {
@@ -283,7 +289,9 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 							}
 							implementation.getAllarmi().add(allarmeCloned);
 							
-						}catch(Exception e) {}
+						}catch(Exception e) {
+							// ignore
+						}
 					}
 				}
 			}

@@ -18,23 +18,20 @@
  *
  */
 
+package org.openspcoop2.protocol.sdk.registry;
 
-package org.openspcoop2.core.registry.wsdl;
 /**
+ *  FiltroRicercaPorteDelegate
  *
- *
- * @author Andrea Poli (apoli@link.it)
+ * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public enum StandardWSDLOutputMode {
+public class ProtocolFiltroRicercaPorteDelegate extends org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate {
 
-	MANTIENI_IMPORT_INCLUDE_ORIGINALI,
-	INGLOBA_SCHEMI_IN_WSDL,
-	INGLOBA_SOLO_SCHEMI_INCLUSI_IN_WSDL,
-	INGLOBA_SOLO_SCHEMI_IMPORTATI_IN_WSDL,
-	INGLOBA_SOLO_SCHEMI_INCLUSI_NOME_AUTOGENERATO_IN_WSDL;
-	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 }
-
-

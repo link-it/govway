@@ -144,10 +144,14 @@ public class TransactionManager {
 		}finally{
 			try{
 				driverTracciamento.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			try{
 				driverDiagnostici.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 
 		return transactionInfo;
@@ -353,15 +357,17 @@ public class TransactionManager {
 		}
 
 		// aggiungo i nuovi attach presenti nel parametro passato al metodo e non presenti su database
-		for (int i = 0; i < cids.size(); i++) {
-			Attachment attach = attachResource.getAttachmentByContentId(cids.get(i));
-			DumpAllegato c = new DumpAllegato();
-			c.setAllegato(attach.getContentAsByte());
-			c.setContentId(attach.getContentID());
-			c.setContentType(attach.getContentType());
-			c.setDumpTimestamp(DateManager.getDate());
-			dumpMessaggio.addAllegato(c);
-			update = true;
+		if(cids!=null) {
+			for (int i = 0; i < cids.size(); i++) {
+				Attachment attach = attachResource.getAttachmentByContentId(cids.get(i));
+				DumpAllegato c = new DumpAllegato();
+				c.setAllegato(attach.getContentAsByte());
+				c.setContentId(attach.getContentID());
+				c.setContentType(attach.getContentType());
+				c.setDumpTimestamp(DateManager.getDate());
+				dumpMessaggio.addAllegato(c);
+				update = true;
+			}
 		}
 		
 		

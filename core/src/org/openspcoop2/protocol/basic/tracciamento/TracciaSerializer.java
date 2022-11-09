@@ -68,7 +68,7 @@ public class TracciaSerializer extends BasicComponentFactory implements org.open
 
 	public TracciaSerializer(IProtocolFactory<?> factory) throws ProtocolException {
 		super(factory);
-		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
+		this.xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;
 	}
 
 
@@ -84,14 +84,16 @@ public class TracciaSerializer extends BasicComponentFactory implements org.open
 			org.openspcoop2.core.tracciamento.Traccia tracciaBase = tracciaObject.getTraccia();
 			
 			// xml
-			if(tracciaBase.getBustaRaw()==null){
-				if(tracciaObject.getBustaAsByteArray()!=null)
-					tracciaBase.setBustaRaw(new String(tracciaObject.getBustaAsByteArray()));
-				else if(tracciaObject.getBustaAsRawContent()!=null){			
-					try{
-						tracciaBase.setBustaRaw(tracciaObject.getBustaAsRawContent().toString(TipoSerializzazione.DEFAULT));
-					}catch(Exception e){
-						throw new Exception("Serializzazione RawContent non riuscita: "+e.getMessage(),e);
+			if(tracciaBase!=null){
+				if(tracciaBase.getBustaRaw()==null){
+					if(tracciaObject.getBustaAsByteArray()!=null)
+						tracciaBase.setBustaRaw(new String(tracciaObject.getBustaAsByteArray()));
+					else if(tracciaObject.getBustaAsRawContent()!=null){			
+						try{
+							tracciaBase.setBustaRaw(tracciaObject.getBustaAsRawContent().toString(TipoSerializzazione.DEFAULT));
+						}catch(Exception e){
+							throw new Exception("Serializzazione RawContent non riuscita: "+e.getMessage(),e);
+						}
 					}
 				}
 			}
