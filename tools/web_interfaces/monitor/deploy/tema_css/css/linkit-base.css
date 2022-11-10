@@ -196,6 +196,10 @@ textarea.inputTextAreaLong {
         color: ${input.color};
 }
 
+textarea.inputTextWidthAuto{
+	width: auto;
+}
+
 ul {
 	line-height: normal;
 }
@@ -654,3 +658,110 @@ span.iconLinkie{
 	color: #C2C2C9 !important;
 }
 
+.height-8 {
+	height: 8px;
+}
+
+.height-350 {
+	height: 350px;
+}
+
+.display-block {
+	display: block;
+}
+
+.display-none {
+	display: none;
+}
+
+.overflow-auto {
+	overflow: auto;
+}
+
+.overflow-y-scroll {
+	overflow-y: scroll;
+}
+
+.font-style-italic {
+	font-style: italic;
+}
+
+.font-weight-bold {
+	font-weight: bold;
+}
+
+.float-left {
+	float : left;
+}
+
+.text-align-left {
+	text-align : left;
+}
+
+.text-align-center {
+	text-align : center;
+}
+
+.text-align-right {
+	text-align : right;
+}
+
+.text-decoration-none {
+	text-decoration : none;
+}
+
+.vertical-align-bottom {
+	vertical-align: bottom;
+}
+
+.vertical-align-super {
+	vertical-align: super;
+}
+
+.padding-0 {
+	padding: 0px;
+}
+
+.padding-top-12 {
+	padding-top: 12px;
+}
+
+.padding-left-0 {
+	padding-left: 0px;
+}
+
+.padding-right-0 {
+	padding-right: 0px;
+}
+
+.line-height-06 {
+	line-height: 0.6;
+}
+
+.margin-left-0 {
+	margin-left: 0px;
+}
+
+.margin-left-12 {
+	margin-left: 12px;
+}
+
+.margin-left-24 {
+	margin-left: 24px;
+}
+
+.margin-left-170 {
+	margin-left: 170px;
+}
+
+.margin-top-0 {
+	margin-top: 0px;
+}
+
+.cursor-default {
+	cursor: default;
+}
+
+.list-style-type-disc {
+	list-style-type:disc;
+}

@@ -1109,6 +1109,10 @@ public class PddMonitorProperties {
 		return Integer.valueOf(this.appProperties.getProperty("console.csrf.token.validita", true, true));
 	}
 	
+	public String getCspHeaderValue() throws Exception {
+		return this.appProperties.getProperty("console.csp.header.value", true, true);
+	}
+	
 	// allarmi
 	
 	public boolean isAllarmiEnabled() throws Exception{

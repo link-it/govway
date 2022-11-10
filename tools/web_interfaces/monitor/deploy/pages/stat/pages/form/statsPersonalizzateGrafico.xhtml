@@ -34,7 +34,7 @@
 		<a4j:loadScript src="/scripts/ChartMap.js" rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}" />
 		<a4j:loadScript src="/scripts/SvgRaster.js" rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}" />
 		<a4j:outputPanel id="scriptSVGPanel" rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}">
-   			<script type="text/javascript">
+   			<script type="text/javascript" nonce="#{_csp_random_nonce}">
    			//<![CDATA[
    				var nomeFileImageExport = '#{statistichePersonalizzateBean.exportFilenamePng}';
    				
@@ -52,7 +52,7 @@
 			</script>
 		</a4j:outputPanel>	
 		<a4j:outputPanel id="scriptsNoSVGPanel" rendered="#{not statistichePersonalizzateSearchForm.useGraficiSVG}">
-			<script type="text/javascript">
+			<script type="text/javascript" nonce="#{_csp_random_nonce}">
 				//<![CDATA[
 					function updateChart(data){
 						var c = getChartFromId(chartId);
@@ -97,7 +97,7 @@
 							</rich:column>
 						</link:dataTable>
 					</h:form>
-					<rich:panel id="formCmdPanelPieTbl" styleClass="noborder" bodyClass="nopadding" style="float: left;">	
+					<rich:panel id="formCmdPanelPieTbl" styleClass="noborder float-left" bodyClass="nopadding">	
 						<a4j:form id="cmdPanelPieTbl">
 							<input type="hidden" id="_csrfFormCmdPanelPieTbl" name="_csrf" value="#{loginBean.csrf}"/>
 							<a4j:commandLink value="#{statistichePersonalizzateBean.prevBtnLabel}" reRender="tabPnl">
@@ -113,7 +113,7 @@
 							</a4j:commandLink>
 						</a4j:form>
 					</rich:panel>
-					<rich:panel id="exportCmdPanelTbl" styleClass="noborder" bodyClass="nopadding" style="text-align: right;"  >
+					<rich:panel id="exportCmdPanelTbl" styleClass="noborder text-align-right" bodyClass="nopadding" >
 						<h:form id="formExportCmdPanelTbl" rendered="#{statistichePersonalizzateDM.visualizzaComandiExport}">
 							<input type="hidden" id="_csrfFormExportCmdPanelTbl" name="_csrf" value="#{loginBean.csrf}"/>
 								<h:commandLink id="exportCsvLink" target="_blank" action="#{statistichePersonalizzateBean.esportaCsv}" title="Esporta i risultati in formato CSV">
@@ -131,7 +131,7 @@
 					</rich:panel>
 					
 					<a4j:outputPanel id="timeoutCtr" layout="block" styleClass="" rendered="#{statistichePersonalizzateDM.timeoutEvent}">
-						<script type="text/javascript">
+						<script type="text/javascript" nonce="#{_csp_random_nonce}">
 							//<![CDATA[
 							   jQuery(document).ready(controllaEventoTimeout);
 					
@@ -146,7 +146,7 @@
 				</rich:panel>
 			</c:if>
 			<c:if test="#{(statistichePersonalizzateSearchForm._value_tipoReport == 'andamentoTemporale') and (not empty statistichePersonalizzateSearchForm.statisticaSelezionata)}">
-				<script type="text/javascript">
+				<script type="text/javascript" nonce="#{_csp_random_nonce}">
 					//<![CDATA[
 			   				jQuery(document).ready(function() {
 			   					setSlider(chartWidth);
@@ -164,7 +164,7 @@
 					<a4j:outputPanel id="scriptLineChartPanel" rendered="#{true}">
 						<c:if test="#{statistichePersonalizzateSearchForm.useGraficiSVG}">
 							<a4j:outputPanel id="svgChartPanel" rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}">
-								<script type="text/javascript">
+								<script type="text/javascript" nonce="#{_csp_random_nonce}">
 									//<![CDATA[
 					   				var chartId = 'statistichePersonalizzateId';
 					   				var chartDivId = 'statistichePersonalizzateDiv';
@@ -181,7 +181,7 @@
 						</c:if>
 						<c:if test="#{not statistichePersonalizzateSearchForm.useGraficiSVG}">
 							<a4j:outputPanel id="flashChartPanel" rendered="#{not statistichePersonalizzateSearchForm.useGraficiSVG}">
-								<script type="text/javascript">
+								<script type="text/javascript" nonce="#{_csp_random_nonce}">
 									//<![CDATA[
 									var chartId = 'statistichePersonalizzateId';
 					   				var chartDivId = 'statistichePersonalizzateDiv';
@@ -203,7 +203,7 @@
 			           	</ui:include>
 					</a4j:outputPanel>
 					<div id="panelComandi">  
-						<h:panelGrid columns="3" id="gridComandiLine" style="width:100%;" columnClasses="comandi-grafici-align-default,comandi-grafici-align-center,comandi-grafici-align-right">
+						<h:panelGrid columns="3" id="gridComandiLine" styleClass="width-cento" columnClasses="comandi-grafici-align-default,comandi-grafici-align-center,comandi-grafici-align-right">
 							<rich:panel id="formCmdPanel" styleClass="noborder" bodyClass="nopadding">				 
 								<a4j:form id="cmdPanel">
 									<input type="hidden" id="_csrfFormCmdPanel" name="_csrf" value="#{loginBean.csrf}"/>
@@ -226,7 +226,7 @@
 									<a4j:form rendered="#{statistichePersonalizzateBean.visualizzaComandiExport}" id="formSlider">
 										<input type="hidden" id="_csrfFormSlider" name="_csrf" value="#{loginBean.csrf}"/>
 										<a4j:outputPanel rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}">
-											<style>
+											<style type="text/css" nonce="#{_csp_random_nonce}">
 												div.form-container div.rich-combobox {
 													    margin-left: 0px;
 												}
@@ -248,7 +248,7 @@
 												<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 											</a4j:outputPanel>
 											<h:panelGrid columns="2">
-												<h:outputLabel value="Larghezza Grafico" styleClass="labelSliderGrafici" style="width: 160px !important;"/>
+												<h:outputLabel value="Larghezza Grafico" styleClass="labelSliderGrafici width-160-important"/>
 												<rich:inputNumberSlider id="sliderLarghezzaGrafico" value="#{statistichePersonalizzateBean.larghezzaGrafico}" onchange="updateChart2(this)"
 													showInput="false" enableManualInput="false" minValue="#{statistichePersonalizzateBean.minLarghezzaGrafico}" maxValue="#{statistichePersonalizzateBean.maxLarghezzaGrafico}" showBoundaryValues="false" >
 												</rich:inputNumberSlider>
@@ -288,7 +288,7 @@
 					<a4j:outputPanel id="scriptPieChartPanel" rendered="#{true}">
 						<c:if test="#{statistichePersonalizzateSearchForm.useGraficiSVG}">
 							<a4j:outputPanel id="svgPieChartPanel" rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}">
-								<script type="text/javascript">
+								<script type="text/javascript" nonce="#{_csp_random_nonce}">
 								//<![CDATA[
 					   				var chartId = 'statistichePersonalizzatePieId';
 					   				var chartDivId = 'statistichePersonalizzatePieDiv';
@@ -304,7 +304,7 @@
 						</c:if>
 						<c:if test="#{not statistichePersonalizzateSearchForm.useGraficiSVG}">
 							<a4j:outputPanel id="flashPieChartPanel" rendered="#{not statistichePersonalizzateSearchForm.useGraficiSVG}">
-								<script type="text/javascript">
+								<script type="text/javascript" nonce="#{_csp_random_nonce}">
 									//<![CDATA[
 									var chartId = 'statistichePersonalizzatePieId';
 					   				var chartDivId = 'statistichePersonalizzatePieDiv';
@@ -326,8 +326,8 @@
 			               	<ui:param name="id" value="modale_pie_chart" />
 			           	</ui:include>
 					</a4j:outputPanel>
-					<div id="panelComandiPie" style="padding-top: 12px;">
-						<h:panelGrid columns="3" id="gridComandiPie" style="width:100%;" columnClasses="comandi-grafici-align-default,comandi-grafici-align-center,comandi-grafici-align-right">  
+					<div id="panelComandiPie" class="padding-top-12">
+						<h:panelGrid columns="3" id="gridComandiPie" styleClass="width-cento" columnClasses="comandi-grafici-align-default,comandi-grafici-align-center,comandi-grafici-align-right">  
 						<rich:panel id="formCmdPanelPie" styleClass="noborder" bodyClass="nopadding">	
 							<a4j:form id="cmdPanelPie">
 								<input type="hidden" id="_csrfFormPanelPie" name="_csrf" value="#{loginBean.csrf}"/>
@@ -386,7 +386,7 @@
 			</c:if>
 			
 			<c:if test="#{(statistichePersonalizzateSearchForm._value_tipoReport == 'bar_chart') and (not empty statistichePersonalizzateSearchForm.statisticaSelezionata)}">
-				<script type="text/javascript">
+				<script type="text/javascript" nonce="#{_csp_random_nonce}">
 					//<![CDATA[
 			   				jQuery(document).ready(function() {
 			   					setSlider(chartWidth);
@@ -404,7 +404,7 @@
 					<a4j:outputPanel id="scriptBarChartPanel" rendered="#{true}">
 						<c:if test="#{statistichePersonalizzateSearchForm.useGraficiSVG}">
 							<a4j:outputPanel id="svgBarChartPanel" rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}">
-								<script type="text/javascript">
+								<script type="text/javascript" nonce="#{_csp_random_nonce}">
 									//<![CDATA[
 					   				var chartId = 'statistichePersonalizzateBarId';
 					   				var chartDivId = 'statistichePersonalizzateBarDiv';
@@ -420,7 +420,7 @@
 						</c:if>
 						<c:if test="#{not statistichePersonalizzateSearchForm.useGraficiSVG}">
 							<a4j:outputPanel id="flashBarChartPanel" rendered="#{not statistichePersonalizzateSearchForm.useGraficiSVG}">
-								<script type="text/javascript">
+								<script type="text/javascript" nonce="#{_csp_random_nonce}">
 									//<![CDATA[
 									var chartId = 'statistichePersonalizzateBarId';
 					   				var chartDivId = 'statistichePersonalizzateBarDiv';
@@ -443,7 +443,7 @@
 			           	</ui:include>
 					</a4j:outputPanel>
 					<div id="panelComandiBars">  
-						<h:panelGrid columns="3" id="gridComandiBars" style="width:100%;" columnClasses="comandi-grafici-align-default,comandi-grafici-align-center,comandi-grafici-align-right">
+						<h:panelGrid columns="3" id="gridComandiBars" styleClass="width-cento" columnClasses="comandi-grafici-align-default,comandi-grafici-align-center,comandi-grafici-align-right">
 							<rich:panel id="formCmdPanelBars" styleClass="noborder" bodyClass="nopadding">
 								<a4j:form id="cmdBarsPanel">
 									<input type="hidden" id="_csrfFormCmdBarsPanel" name="_csrf" value="#{loginBean.csrf}"/>
@@ -466,7 +466,7 @@
 									<a4j:form rendered="#{statistichePersonalizzateBean.visualizzaComandiExport}" id="formSliderBars">
 										<input type="hidden" id="_csrfFormSliderBars" name="_csrf" value="#{loginBean.csrf}"/>
 										<a4j:outputPanel rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}">
-											<style>
+											<style type="text/css" nonce="#{_csp_random_nonce}">
 												div.form-container div.rich-combobox {
 													    margin-left: 0px;
 												}
@@ -498,7 +498,7 @@
 												<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 											</a4j:outputPanel>
 											<h:panelGrid columns="2">
-												<h:outputLabel value="Larghezza Grafico" styleClass="labelSliderGrafici" style="width: 160px !important;"/>
+												<h:outputLabel value="Larghezza Grafico" styleClass="labelSliderGrafici width-160-important"/>
 												<rich:inputNumberSlider id="sliderLarghezzaGrafico" value="#{statistichePersonalizzateBean.larghezzaGrafico}" onchange="updateChart2(this)"
 													showInput="false" enableManualInput="false" minValue="#{statistichePersonalizzateBean.minLarghezzaGrafico}" maxValue="#{statistichePersonalizzateBean.maxLarghezzaGrafico}" showBoundaryValues="false" >
 												</rich:inputNumberSlider>

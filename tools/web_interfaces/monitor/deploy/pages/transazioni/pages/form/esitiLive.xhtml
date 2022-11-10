@@ -8,7 +8,7 @@
 	xmlns:link="http://www.link.it"
 	template="/templates/defaultTemplate.xhtml">
 	<ui:define name="body">
-		<style>
+		<style type="text/css" nonce="#{_csp_random_nonce}">
 			#crumbs {display: none;	}					
 		</style>
 		<a4j:loadScript src="/FusionCharts/FusionCharts.js" rendered="#{not summaryBean.useGraficiSVG}" />
@@ -29,7 +29,7 @@
 					<input type="hidden" id="_csrfFormPoll" name="_csrf" value="#{loginBean.csrf}"/>	
 					<h:inputHidden value="true" id="usaSVG"/> 			
 					<a4j:jsFunction id="pollFn" name="poll" limitToList="true" data="#{summaryBean.dataLive}" oncomplete="updateChart(data)"/> 
-					<script type="text/javascript">
+					<script type="text/javascript" nonce="#{_csp_random_nonce}">
 						var cdifp = #{summaryBean.intervalloRefresh};
 						var t;
 						var cdt;
@@ -79,7 +79,7 @@
 				</h:form>
 				<div id='summaryDivLive'></div>
 				<a4j:outputPanel id="svgChartPanel" rendered="#{summaryBean.useGraficiSVG}" >
-					<script type="text/javascript"> 
+					<script type="text/javascript" nonce="#{_csp_random_nonce}"> 
 						var chartDivId = 'summaryDivLive';
 						var chartWidth = jQuery('#summaryCtLive_body').width();
 						var chartHeight = 650;
@@ -94,7 +94,7 @@
 					</script>
 				</a4j:outputPanel>
 				<a4j:outputPanel id="flashChartPanel" rendered="#{not summaryBean.useGraficiSVG}">
-					<script type="text/javascript">
+					<script type="text/javascript" nonce="#{_csp_random_nonce}">
 						var chartDivId = 'summaryDivLive';
 						var chartWidth =  '';
 						chartWidth += jQuery('#summaryCtLive_body').width();

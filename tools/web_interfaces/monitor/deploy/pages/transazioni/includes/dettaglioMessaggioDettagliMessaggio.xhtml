@@ -163,7 +163,7 @@
 				</h:form>
 			</h:panelGroup>
 			
-			<h:outputLabel value="Duplicato" id="bustaDupR-iconLabel" styleClass="outputFieldLabel icon-busta-duplicata" style="font-weight:bold;" 
+			<h:outputLabel value="Duplicato" id="bustaDupR-iconLabel" styleClass="outputFieldLabel icon-busta-duplicata font-weight-bold" 
 							rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta==-1 and not empty dettagliBean.transazioneOriginaleRichiesta}"/>
 			<h:form id="formDuplicaRich" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta==-1 and not empty dettagliBean.transazioneOriginaleRichiesta}">
 				<input type="hidden" id="_csrfFormDuplicaRich" name="_csrf" value="#{loginBean.csrf}"/>
@@ -179,12 +179,12 @@
 				</a4j:commandLink>
 			</h:form>
 			
-			<h:outputLabel value="Duplicati" id="bustaDupReq-iconLabel" styleClass="outputFieldLabel icon-busta-duplicata" style="font-weight:bold;" 
+			<h:outputLabel value="Duplicati" id="bustaDupReq-iconLabel" styleClass="outputFieldLabel icon-busta-duplicata font-weight-bold"  
 							rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}"/>
 			<h:panelGroup id="panelGroupDuplicatiReq" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}">
 				<h:form id="formDuplicatiReq">	
 					<input type="hidden" id="_csrfFormDuplicatiReq" name="_csrf" value="#{loginBean.csrf}"/>									
-					<h:outputLink id="hideDups-iconLink" styleClass="icon-details" value="#" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}" style="display: none;">
+					<h:outputLink id="hideDups-iconLink" styleClass="icon-details display-none" value="#" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}">
                    		<h:outputText id="outNascondiDuplicati" value="Nascondi" />
                    		<rich:effect id="blindUpHideDups" for="hideDups-iconLink" event="onclick" type="BlindUp" targetId="duplicatiDiv" params="duration:0.8"/>
                    		<rich:effect id="fadeHideDups" for="hideDups-iconLink" event="onclick" type="Fade" targetId="hideDups-iconLink" params="delay:0.0,duration:0.0"/>
@@ -204,7 +204,7 @@
 
 		<!-- Originale, visualizza duplicati: Tabella -->
 		<rich:spacer id="spacerDuplicatiDivReq" height="5px" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}"/>
-		<h:panelGroup id="duplicatiDiv" layout="block" style="display: none;" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}" switchType="client">
+		<h:panelGroup id="duplicatiDiv" layout="block" styleClass="display-none" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}" switchType="client">
 			<a4j:form id="formDupsReq">
 				<input type="hidden" id="_csrfFormDupsReq" name="_csrf" value="#{loginBean.csrf}"/>
 				<link:dataTable id="dupsReqDt" 
@@ -424,7 +424,7 @@
 				</h:form>
 			</h:panelGroup>
 			
-			<h:outputLabel value="Duplicato" id="bustaDupResp-iconLabel" styleClass="outputFieldLabel icon-busta-duplicata" style="font-weight:bold;" 
+			<h:outputLabel value="Duplicato" id="bustaDupResp-iconLabel" styleClass="outputFieldLabel icon-busta-duplicata font-weight-bold" 
 							rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta==-1 and not empty dettagliBean.transazioneOriginaleRisposta}"/>
 			<h:form id="formDuplicaRisp" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta==-1 and not empty dettagliBean.transazioneOriginaleRisposta}">
 				<input type="hidden" id="_csrfFormDuplicaRes" name="_csrf" value="#{loginBean.csrf}"/>
@@ -440,12 +440,12 @@
 				</a4j:commandLink>
 			</h:form>
 			
-			<h:outputLabel value="Duplicati" id="bustaDupRes-iconLabel" styleClass="outputFieldLabel icon-busta-duplicata" style="font-weight:bold;" 
+			<h:outputLabel value="Duplicati" id="bustaDupRes-iconLabel" styleClass="outputFieldLabel icon-busta-duplicata font-weight-bold" 
 							rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}"/>
 			<h:panelGroup id="panelGroupDuplicatiRes" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}">
 				<h:form id="formDuplicatiRes">	
 				<input type="hidden" id="_csrfFormDuplicatiRes" name="_csrf" value="#{loginBean.csrf}"/>									
-					<h:outputLink id="hideDupsResp-iconLink" styleClass="icon-details" value="#" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}" style="display: none;">
+					<h:outputLink id="hideDupsResp-iconLink" styleClass="icon-details display-none" value="#" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}">
                    		<h:outputText id="outNascondiDuplicati" value="Nascondi" />
                    		<rich:effect id="blindUpHideDups" for="hideDupsResp-iconLink" event="onclick" type="BlindUp" targetId="duplicatiDivResp" params="duration:0.8"/>
                    		<rich:effect id="fadeHideDups" for="hideDupsResp-iconLink" event="onclick" type="Fade" targetId="hideDupsResp-iconLink" params="delay:0.0,duration:0.0"/>
@@ -464,7 +464,7 @@
 		</h:panelGrid>
 
 		<rich:spacer id="spacerDuplicatiDivRes" height="5px" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}"/>
-		<h:panelGroup id="duplicatiDivResp" layout="block" style="display: none;" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}" switchType="client">
+		<h:panelGroup id="duplicatiDivResp" layout="block" styleClass="display-none" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}" switchType="client">
 			<a4j:form id="formDupsRes">
 				<input type="hidden" id="_csrfFormDupsRes" name="_csrf" value="#{loginBean.csrf}"/>
 				<link:dataTable id="dupsResDt" 
@@ -501,7 +501,7 @@
        	</a4j:jsFunction>
    	</a4j:outputPanel>
     
-    <rich:modalPanel id="esportaModalPnl" showWhenRendered="false" width="600" style="overflow:auto;" autosized="true">
+    <rich:modalPanel id="esportaModalPnl" showWhenRendered="false" width="600" styleClass="overflow-auto" autosized="true">
 		<f:facet name="header">
 			<h:outputText id="esportaModalPnlHeaderText" value="Esporta" />
 		</f:facet>
@@ -537,7 +537,7 @@
 		<h:form id="formExportReport" prependId="false">
 			<input type="hidden" id="_csrfFormExportReport" name="_csrf" value="#{loginBean.csrf}"/>
 			<a4j:outputPanel layout="block" id="panelFormExportContainer" ajaxRendered="false">
-				<style> .rich-shuttle-source-items { margin-left :0px;	}	</style>
+				<style type="text/css" nonce="#{_csp_random_nonce}"> .rich-shuttle-source-items { margin-left :0px;	}	</style>
 				<div class="form-container noborder"> 
 					<link:fieldset legend="Modalità" collapsible="false">
 						<link:prop label="Estrai Contenuti Multipart">

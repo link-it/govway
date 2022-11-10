@@ -63,7 +63,7 @@
 			<h:outputText styleClass="outputFieldLabel" value="Connettore"
 					rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.locationConnettore}"/>
 			<h:outputText id="outUrlInvocazione" value="#{dettagliTransazioneApplicativoServerBean.dettaglio.locationConnettore}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.locationConnettore and not dettagliTransazioneApplicativoServerBean.visualizzaTextAreaLocationConnettore}"/>
-			<h:inputTextarea id="outUrlInvocazioneTextArea" value="#{dettagliTransazioneApplicativoServerBean.dettaglio.locationConnettore}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong" style="width:auto;"
+			<h:inputTextarea id="outUrlInvocazioneTextArea" value="#{dettagliTransazioneApplicativoServerBean.dettaglio.locationConnettore}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong width-auto"
 					rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.locationConnettore and dettagliTransazioneApplicativoServerBean.visualizzaTextAreaLocationConnettore}" />
 		
 			<h:outputLabel styleClass="outputFieldLabel" value="Codice Risposta" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.codiceRisposta and dettagliTransazioneApplicativoServerBean.dettaglio.codiceRisposta>0}" />
@@ -179,7 +179,7 @@
 			<h:outputText styleClass="outputFieldLabel" value="Errore"
 					rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaUltimoErrore}"/>
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.ultimoErrore}" rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaUltimoErrore and not dettagliTransazioneApplicativoServerBean.visualizzaTextAreaUltimoErrore}"/>
-			<h:inputTextarea  value="#{dettagliTransazioneApplicativoServerBean.dettaglio.ultimoErrore}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong" style="width:auto;"
+			<h:inputTextarea  value="#{dettagliTransazioneApplicativoServerBean.dettaglio.ultimoErrore}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong width-auto"
 				rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaUltimoErrore and dettagliTransazioneApplicativoServerBean.visualizzaTextAreaUltimoErrore}" />
 					
 			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Fault" 
@@ -280,7 +280,7 @@
        	</a4j:jsFunction>
    	</a4j:outputPanel>
     
-    <rich:modalPanel id="esportaModalPnl" showWhenRendered="false" width="600" style="overflow:auto;" autosized="true">
+    <rich:modalPanel id="esportaModalPnl" showWhenRendered="false" width="600" styleClass="overflow-auto" autosized="true">
 		<f:facet name="header">
 			<h:outputText id="esportaModalPnlHeaderText" value="Esporta" />
 		</f:facet>
@@ -316,7 +316,7 @@
 		<h:form id="formExportReport" prependId="false">
 			<input type="hidden" id="_csrfFormExportReport" name="_csrf" value="#{loginBean.csrf}"/>
 			<a4j:outputPanel layout="block" id="panelFormExportContainer" ajaxRendered="false">
-				<style> .rich-shuttle-source-items { margin-left :0px;	}	</style>
+				<style type="text/css" nonce="#{_csp_random_nonce}"> .rich-shuttle-source-items { margin-left :0px;	}	</style>
 				<div class="form-container noborder"> 
 					<link:fieldset legend="Modalità" collapsible="false">
 						<link:prop label="Estrai Contenuti Multipart">

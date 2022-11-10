@@ -10,7 +10,7 @@
 	<f:loadBundle var="msg" basename="messages" />
 	
 		<ui:define name="body">
-			<style>
+			<style type="text/css" nonce="#{_csp_random_nonce}">
 				#crumbs {display: none;	}		
 				}
 			</style>
@@ -159,7 +159,7 @@
 								</a4j:outputPanel>
 							</c:if>
 							<a4j:outputPanel layout="block" styleClass="buttonrow"  rendered="#{true}" id="buttonFormPwdPanel">
-								<a4j:commandButton id="salvaProfiloBtn" styleClass="icon-save" action="#{utentiBean.salvaProfilo}" value="Salva" reRender="panelDettaglioUtente" style="margin-left: 24px;"/>
+								<a4j:commandButton id="salvaProfiloBtn" styleClass="icon-save margin-left-24" action="#{utentiBean.salvaProfilo}" value="Salva" reRender="panelDettaglioUtente"/>
 							</a4j:outputPanel>
 						</a4j:outputPanel>
 					</h:form>

@@ -52,8 +52,8 @@
 						<f:facet name="header">
 							<h:outputText id="outAbilitato" value="Abilitato" />
 						</f:facet>
-						<h:outputText value="Si" readonly="true" style="width: 412px" rendered="#{item.enabled==1}" id="outAbilitato2"/>
-						<h:outputText value="No" readonly="true" style="width: 412px" rendered="#{item.enabled==0}" id="outAbilitato3"/>
+						<h:outputText value="Si" readonly="true" styleClass="width-412" rendered="#{item.enabled==1}" id="outAbilitato2"/>
+						<h:outputText value="No" readonly="true" styleClass="width-412" rendered="#{item.enabled==0}" id="outAbilitato3"/>
 					</rich:column>
 
 					<rich:column id="colStato">
@@ -68,22 +68,22 @@
 						<f:facet name="header">
 							<h:outputText id="outAcknowledged" value="Acknowledged" />
 						</f:facet>
-						<h:outputText value="Si" readonly="true" style="width: 412px" rendered="#{item.acknowledged==1}" id="outAcknowledged2"/>
-						<h:outputText value="No" readonly="true" style="width: 412px" rendered="#{item.acknowledged==0}" id="outAcknowledged3"/>
+						<h:outputText value="Si" readonly="true" styleClass="width-412" rendered="#{item.acknowledged==1}" id="outAcknowledged2"/>
+						<h:outputText value="No" readonly="true" styleClass="width-412" rendered="#{item.acknowledged==0}" id="outAcknowledged3"/>
 					</rich:column>
 					
 					<rich:column id="colUtente">
 						<f:facet name="header">
 							<h:outputText id="outUtente" value="Utente" />
 						</f:facet>
-						<h:outputText value="#{item.utente}" readonly="true" style="width: 412px" id="outUtente2"/>
+						<h:outputText value="#{item.utente}" readonly="true" styleClass="width-412" id="outUtente2"/>
 					</rich:column>
 					
 					<rich:column  align="center" width="60px">
 						<f:facet name="header">
 							<h:outputText value="Dettaglio" id="outDettaglio" />
 						</f:facet>
-						<h:panelGroup layout="block" style="width: 60px;">
+						<h:panelGroup layout="block" styleClass="width-60">
 							<a4j:htmlCommandLink id="dettaglio-iconLink" value="" action="#{allarmiHistoryBean.dettaglioStatoAllarme}">
 								<i class="material-icons md-18" id="iconaDettaglioOpen">&#xE8B6;</i>
 								<rich:toolTip id="dettaglioToolLink" for="dettaglio-iconLink" mode="client" value="Visualizza Dettaglio" />

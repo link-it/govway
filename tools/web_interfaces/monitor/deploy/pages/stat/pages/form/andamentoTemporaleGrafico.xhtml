@@ -34,7 +34,7 @@
 		<a4j:loadScript src="/scripts/ChartMap.js" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}" />
 		<a4j:loadScript src="/scripts/SvgRaster.js" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}" />
 		<a4j:outputPanel id="scriptSVGPanel" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}">
-   			<script type="text/javascript">
+   			<script type="text/javascript" nonce="#{_csp_random_nonce}">
    			//<![CDATA[
    				var nomeFileImageExport = '#{andamentoTemporaleBean.exportFilenamePng}';
    				
@@ -53,7 +53,7 @@
 			</script>
 		</a4j:outputPanel>	
 		<a4j:outputPanel id="scriptsNoSVGPanel" rendered="#{not andamentoTemporaleSearchForm.useGraficiSVG}">
-			<script type="text/javascript">
+			<script type="text/javascript" nonce="#{_csp_random_nonce}">
 				//<![CDATA[
 					function updateChart(data){
 						var c = getChartFromId(chartId);
@@ -175,7 +175,7 @@
 							
 						</link:dataTable>
 					</h:form>
-					<rich:panel id="formCmdPanelTbl" styleClass="noborder" bodyClass="nopadding" style="float: left;">
+					<rich:panel id="formCmdPanelTbl" styleClass="noborder float-left" bodyClass="nopadding">
 						<a4j:form id="cmdPanelTbl">
 							<input type="hidden" id="_csrfFormCmdPanelTbl" name="_csrf" value="#{loginBean.csrf}"/>
 							<a4j:commandLink value="#{andamentoTemporaleBean.prevBtnLabel}" reRender="mainPnlAT">
@@ -191,7 +191,7 @@
 							</a4j:commandLink>
 						</a4j:form>
 					</rich:panel>
-					<rich:panel id="exportCmdPanelTbl" styleClass="noborder" bodyClass="nopadding" style="text-align: right;"  >
+					<rich:panel id="exportCmdPanelTbl" styleClass="noborder text-align-right" bodyClass="nopadding">
 						<h:form id="formExportCmdPanelTbl" rendered="#{andamentoTemporaleDM.visualizzaComandiExport}" >
 							<input type="hidden" id="_csrfFormExportCmdPanelTbl" name="_csrf" value="#{loginBean.csrf}"/>
 								<h:commandLink id="exportCsvLink" target="_blank" action="#{andamentoTemporaleBean.esportaCsv}" title="Esporta i risultati in formato CSV">
@@ -210,7 +210,7 @@
 				</rich:panel>
 				
 				<a4j:outputPanel id="timeoutCtr" layout="block" styleClass="" rendered="#{andamentoTemporaleDM.timeoutEvent}">
-					<script type="text/javascript">
+					<script type="text/javascript" nonce="#{_csp_random_nonce}">
 						//<![CDATA[
 						   jQuery(document).ready(controllaEventoTimeout);
 				
@@ -225,7 +225,7 @@
 			</c:if>
 			
 			<c:if test="#{andamentoTemporaleSearchForm._value_tipoReport == 'line_chart'}">
-				<script type="text/javascript">
+				<script type="text/javascript" nonce="#{_csp_random_nonce}">
 					//<![CDATA[
 			   				jQuery(document).ready(function() {
 			   					setSlider(chartWidth);
@@ -244,7 +244,7 @@
 					<a4j:outputPanel id="scriptLineChartPanel" rendered="#{true}">
 						<c:if test="#{andamentoTemporaleSearchForm.useGraficiSVG}">
 							<a4j:outputPanel id="svgChartPanel" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}">
-								<script type="text/javascript">
+								<script type="text/javascript" nonce="#{_csp_random_nonce}">
 					   				var chartId = 'andamentoTemporaleId';
 					   				var chartDivId = 'andamentoTemporaleDiv';
 					   				var chartWidth = jQuery('#chartPanel_body').width() -40;
@@ -258,7 +258,7 @@
 						</c:if>
 						<c:if test="#{not andamentoTemporaleSearchForm.useGraficiSVG}">
 							<a4j:outputPanel id="flashChartPanel" rendered="#{not andamentoTemporaleSearchForm.useGraficiSVG}">
-								<script type="text/javascript">
+								<script type="text/javascript" nonce="#{_csp_random_nonce}">
 									var chartId = 'andamentoTemporaleId';
 					   				var chartDivId = 'andamentoTemporaleDiv';
 					   				var chartWidth = '' + jQuery('#chartPanel_body').width();
@@ -279,7 +279,7 @@
 			           	</ui:include>
 					</a4j:outputPanel>
 					<div id="panelComandi">  
-						<h:panelGrid columns="3" id="gridComandi" style="width:100%;" columnClasses="comandi-grafici-align-default,comandi-grafici-align-center,comandi-grafici-align-right">
+						<h:panelGrid columns="3" id="gridComandi" styleClass="width-cento" columnClasses="comandi-grafici-align-default,comandi-grafici-align-center,comandi-grafici-align-right">
 							<rich:panel id="formCmdPanel" styleClass="noborder" bodyClass="nopadding">
 								<a4j:form id="cmdPanel">
 									<input type="hidden" id="_csrfCmdPanel" name="_csrf" value="#{loginBean.csrf}"/>
@@ -302,7 +302,7 @@
 									<a4j:form rendered="#{andamentoTemporaleBean.visualizzaComandiExport}" id="formSlider">
 										<input type="hidden" id="_csrfFormSlider" name="_csrf" value="#{loginBean.csrf}"/>
 										<a4j:outputPanel rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}">
-											<style>
+											<style type="text/css" nonce="#{_csp_random_nonce}">
 												div.form-container div.rich-combobox {
 													    margin-left: 0px;
 												}
@@ -335,7 +335,7 @@
 												<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 											</a4j:outputPanel>
 											<h:panelGrid columns="2">
-												<h:outputLabel value="Larghezza Grafico" styleClass="labelSliderGrafici" style="width: 160px !important;"/>
+												<h:outputLabel value="Larghezza Grafico" styleClass="labelSliderGrafici width-160-important"/>
 												<rich:inputNumberSlider id="sliderLarghezzaGrafico" value="#{andamentoTemporaleBean.larghezzaGrafico}" onchange="updateChart2(this)"
 													showInput="false" enableManualInput="false" minValue="#{andamentoTemporaleBean.minLarghezzaGrafico}" maxValue="#{andamentoTemporaleBean.maxLarghezzaGrafico}" showBoundaryValues="false" >
 												</rich:inputNumberSlider>
@@ -369,7 +369,7 @@
 				</rich:panel>
 			</c:if>
 			<c:if test="#{andamentoTemporaleSearchForm._value_tipoReport == 'bar_chart'}">
-				<script type="text/javascript">
+				<script type="text/javascript" nonce="#{_csp_random_nonce}">
 					//<![CDATA[
 			   				jQuery(document).ready(function() {
 			   					setSlider(chartWidth);
@@ -388,7 +388,7 @@
 					<a4j:outputPanel id="scriptBarChartPanel" rendered="#{true}">
 						<c:if test="#{andamentoTemporaleSearchForm.useGraficiSVG}">
 							<a4j:outputPanel id="svgBarChartPanel" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}">
-					   			<script type="text/javascript">
+					   			<script type="text/javascript" nonce="#{_csp_random_nonce}">
 					   			//<![CDATA[
 					   				var chartId = 'andamentoTemporaleBarsId';
 					   				var chartDivId = 'andamentoTemporaleBarsDiv';
@@ -404,7 +404,7 @@
 				   		</c:if>
 				   		<c:if test="#{not andamentoTemporaleSearchForm.useGraficiSVG}">
 							<a4j:outputPanel id="flashBarChartPanel" rendered="#{not andamentoTemporaleSearchForm.useGraficiSVG}">
-								<script type="text/javascript">
+								<script type="text/javascript" nonce="#{_csp_random_nonce}">
 								//<![CDATA[
 									var chartId = 'andamentoTemporaleBarsId';
 					   				var chartDivId = 'andamentoTemporaleBarsDiv';
@@ -428,7 +428,7 @@
 					</a4j:outputPanel>
 					<rich:spacer height="5px"/>
 					<div id="panelComandi">  
-						<h:panelGrid columns="3" id="gridComandiBars" style="width:100%;" columnClasses="comandi-grafici-align-default,comandi-grafici-align-center,comandi-grafici-align-right">
+						<h:panelGrid columns="3" id="gridComandiBars" styleClass="width-cento" columnClasses="comandi-grafici-align-default,comandi-grafici-align-center,comandi-grafici-align-right">
 							<rich:panel id="formCmdPanelBars" styleClass="noborder" bodyClass="nopadding" >
 								<a4j:form id="cmdPanelBars">
 									<input type="hidden" id="_csrfFormCmdPanelBars" name="_csrf" value="#{loginBean.csrf}"/>
@@ -451,7 +451,7 @@
 									<a4j:form rendered="#{andamentoTemporaleBean.visualizzaComandiExport}" id="formSliderBars">
 										<input type="hidden" id="_csrfFormSliderBars" name="_csrf" value="#{loginBean.csrf}"/>
 										<a4j:outputPanel rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}">
-											<style>
+											<style type="text/css" nonce="#{_csp_random_nonce}">
 												div.form-container div.rich-combobox {
 													    margin-left: 0px;
 												}
@@ -484,7 +484,7 @@
 												<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 											</a4j:outputPanel>
 											<h:panelGrid columns="2">
-												<h:outputLabel value="Larghezza Grafico" styleClass="labelSliderGrafici" style="width: 160px !important;"/>
+												<h:outputLabel value="Larghezza Grafico" styleClass="labelSliderGrafici width-160-important"/>
 												<rich:inputNumberSlider id="sliderLarghezzaGraficoBars" value="#{andamentoTemporaleBean.larghezzaGrafico}" onchange="updateChart2(this)"
 													showInput="false" enableManualInput="false" minValue="#{andamentoTemporaleBean.minLarghezzaGrafico}" maxValue="#{andamentoTemporaleBean.maxLarghezzaGrafico}" showBoundaryValues="false" >
 												</rich:inputNumberSlider>

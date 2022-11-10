@@ -11,7 +11,7 @@
     <f:loadBundle var="msg" basename="messages" />
 
 	<ui:define name="body">
-		<style>
+		<style type="text/css" nonce="#{_csp_random_nonce}">
 			#crumbs {display: none;	}		
 		</style>
 		<a4j:outputPanel id="panelPaginaRicerca" layout="block">
@@ -276,7 +276,7 @@
 							<f:facet name="header">
 								<h:outputText value="Stato" id="outStato"/>
 							</f:facet>
-							<h:panelGroup layout="block" style="width: 40px;">
+							<h:panelGroup layout="block" styleClass="width-40">
 								<a4j:outputPanel rendered="#{item.enabled==0}" id="alarmDisabledPnl" styleClass="icona-allarme-disabilitato">
 									<i class="material-icons md-18" id="iconaSearchOpen">lens</i>
 									<rich:toolTip for="alarmDisabledPnl" mode="client" value="Disabilitato"/>
@@ -356,7 +356,7 @@
 							<f:facet name="header">
 								<h:outputText value="Modalità" id="outModalita" />
 							</f:facet>
-							<h:panelGroup layout="block" style="width: 30px;">
+							<h:panelGroup layout="block" styleClass="width-30">
 								<a4j:outputPanel rendered="#{true}" id="alarmModalitaPnl">
 									<i class="material-icons md-18" id="iconaModalitaOpen">#{item.modalitaAttiva ? 'alarm' : 'alarm_off'}</i>
 									<rich:toolTip for="alarmModalitaPnl" mode="client" value="#{item.modalitaAttiva ? 'Attiva' : 'Passiva'}"/>
@@ -393,7 +393,7 @@
 							<f:facet name="header">
 								<h:outputText value="Dettaglio" id="outDettaglio" />
 							</f:facet>
-							<h:panelGroup layout="block" style="width: 60px;">
+							<h:panelGroup layout="block" styleClass="width-60">
 								<a4j:htmlCommandLink id="dettaglio-iconLink" styleClass="#{(item.existsAlmostOneManuallyUpdateState or item.existsAlmostOneManuallyAckCriteria) ? 'edit-link' : ''}" value="" action="#{allarmiBean.dettaglioAllarme}">
 									<i class="material-icons md-18" id="iconaDettaglioOpen">&#xE8B6;</i>
 									<rich:toolTip id="dettaglioToolLink" for="dettaglio-iconLink" mode="client" value="Visualizza Dettaglio" />

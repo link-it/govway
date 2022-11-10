@@ -12,7 +12,7 @@
 		</ul>
 	</ui:define>
 	<ui:define name="body">
-		<style>
+		<style type="text/css" nonce="#{_csp_random_nonce}">
 			#crumbs {display: none;}
 		</style>
 		<rich:panel id="panelDettaglioInformazioni">
@@ -43,7 +43,7 @@
 								</div>
 							</link:prop>
 							<link:prop label="#{msg['about.prodotto.licenza']}" rendered="true">
-								<h:inputTextarea id="outLicenzaProdotto" value="#{applicationBean.licenza}" cols="60" rows="#{applicationBean.licenzaRows}" styleClass="inputLinkLong" readonly="true" style="width: auto;"/>	
+								<h:inputTextarea id="outLicenzaProdotto" value="#{applicationBean.licenza}" cols="60" rows="#{applicationBean.licenzaRows}" styleClass="inputLinkLong inputTextWidthAuto" readonly="true"/>	
 							</link:prop>
 						
 						</link:fieldset>

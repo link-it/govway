@@ -90,7 +90,7 @@
 		<a4j:loadScript src="/scripts/shBrushJson.js" />
 		<a4j:loadStyle src="resource:///css/shCore.css" />
 		<a4j:loadStyle src="resource:///css/shThemeDefault.css" />
-		<script type="text/javascript">
+		<script type="text/javascript" nonce="#{_csp_random_nonce}">
 		//<![CDATA[
 			if(#{dettagliDumpMultipart.visualizzaMessaggio}){
 			   var xmlPnl = jQuery("#xmlPnl"); 
@@ -129,7 +129,7 @@
 			<link:fieldset legend="Messaggio" rendered="#{not empty dettagliDumpMultipart.dumpMessaggio and (not empty dettagliDumpMultipart.dumpMessaggio.body or (dettagliDumpMultipart.dumpMessaggioLength>0) )}" collapsible="false" closed="false">
 				<h:form id="formMessaggioDump">
 					<input type="hidden" id="_csrfFormMessaggiDump" name="_csrf" value="#{loginBean.csrf}"/>
-					<a4j:outputPanel layout="block" style="height: 350px; overflow-y: scroll;" id="xmlPnl2" rendered="#{dettagliDumpMultipart.visualizzaMessaggio}">
+					<a4j:outputPanel layout="block" styleClass="height-350 overflow-y-scroll" id="xmlPnl2" rendered="#{dettagliDumpMultipart.visualizzaMessaggio}">
 						<pre class="brush: #{dettagliDumpMultipart.brush}; toolbar: false;">#{dettagliDumpMultipart.prettyEnvelop}</pre>
 					</a4j:outputPanel>
 					<a4j:outputPanel layout="block" styleClass="buttonrow" rendered="#{not dettagliDumpMultipart.visualizzaMessaggio}">

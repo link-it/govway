@@ -22,7 +22,7 @@
 					reRenderIds="#{reRenderIds}"
 					useCount="#{useCount}"
 					>
-				<rich:column id="colEsitoImg" sortable="false" label="Esito (Immagine)" width="40px" style="text-align: center;">
+				<rich:column id="colEsitoImg" sortable="false" label="Esito (Immagine)" width="40px" styleClass="text-align-center">
 					<f:facet name="header">
 						<h:graphicImage value="/images/tema_link/circle_light_grey.png" />
 					</f:facet>
@@ -43,7 +43,7 @@
 					</h:graphicImage>
 					<h:graphicImage id="outEsitoImgOther" value="/images/tema_link/ko_red.png" rendered="#{!item.esitoOk and !item.esitoFaultApplicativo and !item.esitoKo}"/>
 				</rich:column>
-				<rich:column id="colRuoloTransazioneImg" sortable="false" label="Ruolo Transazione (Immagine)" width="42px" style="text-align: center;">
+				<rich:column id="colRuoloTransazioneImg" sortable="false" label="Ruolo Transazione (Immagine)" width="42px" styleClass="text-align-center">
 					<f:facet name="header">
 						<i class="material-icons md-24">swap_horiz</i>
 					</f:facet>

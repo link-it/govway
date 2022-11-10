@@ -8,7 +8,7 @@
    xmlns:ui="http://java.sun.com/jsf/facelets"
    xmlns:link="http://www.link.it">
 <a4j:loadScript src="resource://jquery.js"/>
-<script type="text/javascript">
+<script type="text/javascript" nonce="#{_csp_random_nonce}">
 //<![CDATA[
 	function showConfirm(name){
 		var n = jQuery("input:checkbox:checked").length;
@@ -19,6 +19,9 @@
 	}
 //]]>
 </script>
+<style type="text/css" nonce="#{_csp_random_nonce}">
+	.font-size-large { font-size: large; }
+</style>
 
 <a4j:commandButton value="#{label}" onclick="showConfirm('#{confirmId}confirmation')" />
  
@@ -31,7 +34,7 @@
    <h:panelGrid>
       <h:panelGrid columns="2">
          <h:graphicImage value="/images/warn.png" />
-	 	<h:outputText value="#{confirmMsg}" style="FONT-SIZE: large;" />
+	 	<h:outputText value="#{confirmMsg}" styleClass="font-size-large" />
       </h:panelGrid>
       <h:panelGroup>
          <rich:spacer height="20px" />

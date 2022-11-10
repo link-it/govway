@@ -49,7 +49,7 @@
 			
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelDettaglioErrore" value="#{dettagliBean.dettaglio.labelDettaglioErrore}" rendered="#{not empty dettagliBean.dettaglio.dettaglioErrore}"/>
 			<h:outputText id="outDettaglioErrore" value="#{dettagliBean.dettaglio.dettaglioErrore}" rendered="#{not empty dettagliBean.dettaglio.dettaglioErrore and not dettagliBean.dettaglio.visualizzaTextAreaDettaglioErrore}" />
-			<h:inputTextarea id="outDettaglioErroreTextArea" value="#{dettagliBean.dettaglio.dettaglioErrore}" readonly="true"  cols="60" rows="5" styleClass="inputLinkLong" style="width:auto;"
+			<h:inputTextarea id="outDettaglioErroreTextArea" value="#{dettagliBean.dettaglio.dettaglioErrore}" readonly="true"  cols="60" rows="5" styleClass="inputLinkLong width-auto"
 				rendered="#{not empty dettagliBean.dettaglio.dettaglioErrore and dettagliBean.dettaglio.visualizzaTextAreaDettaglioErrore}" />
 			
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelEsitoContesto" value="Contesto" rendered="#{dettagliBean.dettaglio.showContesto and not empty dettagliBean.dettaglio.esitoContesto}"/>
@@ -64,7 +64,7 @@
 			
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelRichiedente" value="Richiedente" />
 			<h:outputText id="outRichiedente" value="#{dettagliBean.dettaglio.richiedente}" rendered="#{not empty dettagliBean.dettaglio.richiedente and not dettagliBean.dettaglio.visualizzaTextAreaRichiedente}"/>
-			<h:inputTextarea id="outRichiedenteTextArea" value="#{dettagliBean.dettaglio.richiedente}" readonly="true"  cols="60" rows="5" styleClass="inputLinkLong" style="width:auto;"
+			<h:inputTextarea id="outRichiedenteTextArea" value="#{dettagliBean.dettaglio.richiedente}" readonly="true"  cols="60" rows="5" styleClass="inputLinkLong width-auto"
 				rendered="#{not empty dettagliBean.dettaglio.richiedente and dettagliBean.dettaglio.visualizzaTextAreaRichiedente}" />
 			<h:graphicImage id="outRichiedenteAnonimo" value="/images/tema_link/anonymous.png" rendered="#{empty dettagliBean.dettaglio.richiedente}">
 				<rich:toolTip for="outRichiedenteAnonimo">
@@ -135,7 +135,7 @@
 					
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelConnettore" value="Connettore" rendered="#{not dettagliBean.dettaglio.consegnaMultipla and not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.locationConnettore}"/>
 			<h:outputText id="outConnettore" value="#{dettagliBean.dettaglio.locationConnettore}" rendered="#{not dettagliBean.dettaglio.consegnaMultipla and not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.locationConnettore and not dettagliBean.visualizzaTextAreaConnettore}"/>
-			<h:inputTextarea id="outConnettoreTextArea" value="#{dettagliBean.dettaglio.locationConnettore}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong" style="width:auto;"
+			<h:inputTextarea id="outConnettoreTextArea" value="#{dettagliBean.dettaglio.locationConnettore}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong width-auto"
 				rendered="#{not dettagliBean.dettaglio.consegnaMultipla and not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.locationConnettore and dettagliBean.visualizzaTextAreaConnettore}" />
 
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelCodiceRispostaIngresso" value="Codice Risposta" 

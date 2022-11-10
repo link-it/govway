@@ -34,9 +34,9 @@
 			
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelFrequenza" value="Frequenza" rendered="#{not empty allarmiBean.allarme._value_tipoAllarme and (allarmiBean.allarme._value_tipoAllarme=='ATTIVO' or allarmiBean.allarme._value_tipoAllarme=='ATTIVO_PASSIVO')}"/>
 			<h:panelGrid columns="3" id="outPnlFrequenza" rendered="#{not empty allarmiBean.allarme._value_tipoAllarme and (allarmiBean.allarme._value_tipoAllarme=='ATTIVO' or allarmiBean.allarme._value_tipoAllarme=='ATTIVO_PASSIVO')}">
-				<h:outputText id="periodo" value="#{allarmiBean.allarme.periodo}" style="margin-left: 0px;"/>
+				<h:outputText id="periodo" value="#{allarmiBean.allarme.periodo}" styleClass="margin-left-0"/>
 				<rich:spacer width="1"/>
-				<h:outputText id="tipoPeriodoCombo" value="#{allarmiBean.tipoPeriodo}" style="width: 152px; margin-left: 0px;"/>
+				<h:outputText id="tipoPeriodoCombo" value="#{allarmiBean.tipoPeriodo}" styleClass="margin-left-0 width-152"/>
 			</h:panelGrid>
 						
 		</h:panelGrid>

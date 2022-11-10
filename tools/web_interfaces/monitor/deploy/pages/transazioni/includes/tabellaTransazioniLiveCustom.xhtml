@@ -8,15 +8,15 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 	<f:loadBundle var="msg" basename="messages" />
 	
-	<style>
+	<style type="text/css" nonce="#{_csp_random_nonce}">
 		#dtTblLive td.rich-table-cell { border-bottom-width: 8px; padding: 0px; }
 		#dtTblLive thead.rich-table-thead { display: none;}
 	</style>
 	
 	
 
-	<a4j:outputPanel layout="block" style="width: 100%; height: 8px;" >
-		<script type="text/javascript">
+	<a4j:outputPanel layout="block" styleClass="width-cento height-8" >
+		<script type="text/javascript" nonce="#{_csp_random_nonce}">
 		//<![CDATA[
 			visualizzaMessaggioNoData('dtTblLive', 'dtTblLive');
 			
@@ -39,7 +39,7 @@
 		</script>
 	</a4j:outputPanel>
 	
-	<a4j:outputPanel id="dtTblLive_nodata" layout="block" style="display: none;" styleClass="tableNoData">
+	<a4j:outputPanel id="dtTblLive_nodata" layout="block" styleClass="tableNoData display-none">
 		<a4j:outputPanel layout="block" styleClass="buttonrow">
 			<h:outputText value="Trovati 0 Risultati" styleClass="tableNoData" />
 		</a4j:outputPanel>
@@ -49,7 +49,7 @@
 			<f:facet name="header">
 				<h:outputText id="outCustomContent1" value="Transazione" />
 			</f:facet>
-			<script type="text/javascript">
+			<script type="text/javascript" nonce="#{_csp_random_nonce}">
 				//<![CDATA[
 				   jQuery(document).ready(nascondiChk);
 				   
@@ -195,7 +195,7 @@
 									<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss"
 										timeZone="#{applicationBean.timeZone}" />
 								</h:outputText>
-								<rich:toolTip for="sottotitoloSx" style="text-align: right;">
+								<rich:toolTip for="sottotitoloSx" styleClass="text-align-right">
 									<h:outputText value="Accettazione Richiesta: " rendered="#{mBean.visualizzaDataAccettazione}" />
 									<h:outputText value="#{item.dataAccettazioneRichiesta}" rendered="#{mBean.visualizzaDataAccettazione}">
 										<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />

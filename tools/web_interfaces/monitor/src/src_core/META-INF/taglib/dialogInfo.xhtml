@@ -52,7 +52,7 @@
 			<a4j:outputPanel id="#{id}_ModalBody" styleClass="contenutoModal" layout="block"></a4j:outputPanel>
 		</a4j:outputPanel>
 		<c:if test="#{not resizeable}">
-			<style>
+			<style type="text/css" nonce="#{_csp_random_nonce}">
 				##{id}_ModalContentDiv {
 					height: auto !important;
 				}
@@ -73,7 +73,7 @@
 			</style>
 		</c:if>
 		<c:if test="#{resizeable}">
-			<style>
+			<style type="text/css" nonce="#{_csp_random_nonce}">
 				##{id}_ModalBodyExt {
 					overflow: auto;
 				}

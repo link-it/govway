@@ -8,12 +8,12 @@
 	template="/templates/defaultTemplate.xhtml">
 	<ui:param value="About" name="title" />
 	<ui:define name="body">
-		<style>
+		<style type="text/css" nonce="#{_csp_random_nonce}">
 			#crumbs {display: none;	}					
 		</style>
 		<a4j:keepAlive beanName="statusBean" />
 		<a4j:outputPanel id="panelStatus1" layout="block">
-			<script type="text/javascript">
+			<script type="text/javascript" nonce="#{_csp_random_nonce}">
 			//<![CDATA[
 			  	 jQuery(document).ready(aggiungiMargine);
 			
@@ -59,15 +59,15 @@
 								columnClasses="labelAllineataDx,valueAllineataSx">
 								<h:outputLabel styleClass="outputFieldLabel" value="Stato:" />
 								<h:panelGroup columns="3">
-									<h:graphicImage value="/images/tema_link/status_green.png" rendered="#{statoPdd._value_stato == 'ok'}" style="vertical-align: super;" />
+									<h:graphicImage value="/images/tema_link/status_green.png" rendered="#{statoPdd._value_stato == 'ok'}" styleClass="vertical-align-super" />
 									<rich:spacer width="3"  rendered="#{statoPdd._value_stato == 'ok'}" />
-									<h:outputText value="OK" rendered="#{statoPdd._value_stato == 'ok'}" style="text-decoration: none; vertical-align: bottom;"/>
-									<h:graphicImage value="/images/tema_link/status_yellow.png" rendered="#{statoPdd._value_stato == 'warning'}" style="vertical-align: super;"/>
+									<h:outputText value="OK" rendered="#{statoPdd._value_stato == 'ok'}" styleClass="text-decoration-none vertical-align-bottom" />
+									<h:graphicImage value="/images/tema_link/status_yellow.png" rendered="#{statoPdd._value_stato == 'warning'}" styleClass="vertical-align-super" />
 									<rich:spacer width="3"  rendered="#{statoPdd._value_stato == 'warning'}" />
-									<h:outputText value="WARN" rendered="#{statoPdd._value_stato == 'warning'}" style="text-decoration: none; FONT-WEIGHT: bold; vertical-align: bottom;" />										
-									<h:graphicImage value="/images/tema_link/status_red.png" rendered="#{statoPdd._value_stato == 'error'}" style="vertical-align: super;"/>
+									<h:outputText value="WARN" rendered="#{statoPdd._value_stato == 'warning'}" styleClass="text-decoration-none vertical-align-bottom font-weight-bold" />										
+									<h:graphicImage value="/images/tema_link/status_red.png" rendered="#{statoPdd._value_stato == 'error'}" styleClass="vertical-align-super"/>
 									<rich:spacer width="3"  rendered="#{statoPdd._value_stato == 'error'}" />
-									<h:outputText value="ERROR" rendered="#{statoPdd._value_stato == 'error'}" style="text-decoration: none; FONT-WEIGHT: bold; vertical-align: bottom;" />
+									<h:outputText value="ERROR" rendered="#{statoPdd._value_stato == 'error'}" styleClass="text-decoration-none vertical-align-bottom font-weight-bold" />
 								</h:panelGroup>
 	
 								<rich:spacer width="3" height="10" rendered="#{!empty statoPdd.descrizione}"/>
@@ -88,7 +88,7 @@
 				<h:form prependId="false" id="formAggiornaStato">
 					<input type="hidden" id="_csrfFormAggiornaStato" name="_csrf" value="#{loginBean.csrf}"/>
 					<a4j:outputPanel id="formPnl" ajaxRendered="false" layout="block" styleClass="form-container">
-						<a4j:outputPanel styleClass="buttonrow" layout="block" id="btnDiv" style="margin-top:0px;">
+						<a4j:outputPanel styleClass="buttonrow margin-top-0" layout="block" id="btnDiv">
 							<a4j:commandButton id="aggiornaStatoButton" value="Aggiorna Stato"
 								styleClass="icon-refresh"
 								reRender="panelStatus1,cdLabel_stPdd,statusPdd"

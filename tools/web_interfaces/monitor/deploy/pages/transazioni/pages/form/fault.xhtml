@@ -57,7 +57,7 @@
 		<a4j:loadStyle src="resource:///css/shCore.css" />
 		<a4j:loadStyle src="resource:///css/shThemeDefault.css" />
 		<a4j:outputPanel id="panelXmlFaultIntegrazione" rendered="#{not empty dettagliBean.dettaglio.faultIntegrazione and dettagliBean.showFaultIntegrazione==true}">	
-			<script type="text/javascript">
+			<script type="text/javascript" nonce="#{_csp_random_nonce}">
 			//<![CDATA[
 				if(#{dettagliBean.dettaglio.visualizzaFaultIntegrazione}){
 				   var xmlPnl = jQuery("#xmlPnlFaultIntegrazione"); 
@@ -79,7 +79,7 @@
 				<f:facet name="header">
 					<h:outputText id="outXmlFaultIntegrazione" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Fault Uscita' : 'Fault Ingresso'}"/>
 				</f:facet>
-				<a4j:outputPanel layout="block" style="height: 350px; overflow-y: scroll;" id="xmlPnlFaultIntegrazione2" rendered="#{dettagliBean.dettaglio.visualizzaFaultIntegrazione}">
+				<a4j:outputPanel layout="block" styleClass="height-350 overflow-y-scroll" id="xmlPnlFaultIntegrazione2" rendered="#{dettagliBean.dettaglio.visualizzaFaultIntegrazione}">
 					<pre class="brush: #{dettagliBean.dettaglio.brushFaultIntegrazione}; toolbar: false;">#{dettagliBean.dettaglio.faultIntegrazionePretty}</pre>
 				</a4j:outputPanel>
 				<a4j:outputPanel layout="block" styleClass="buttonrow" rendered="#{not dettagliBean.dettaglio.visualizzaFaultIntegrazione}">
@@ -89,7 +89,7 @@
 		</a4j:outputPanel>
 
         <a4j:outputPanel id="panelXmlFaultCooperazione" rendered="#{not empty dettagliBean.dettaglio.faultCooperazione and dettagliBean.showFaultCooperazione==true}">
-             <script type="text/javascript">
+             <script type="text/javascript" nonce="#{_csp_random_nonce}">
            //<![CDATA[
         	   if(#{dettagliBean.dettaglio.visualizzaFaultCooperazione}){
 				   var xmlPnl = jQuery("#xmlPnlFaultCooperazione"); 
@@ -111,7 +111,7 @@
                         <f:facet name="header">
                                 <h:outputText id="outXmlFaultCooperazione" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Fault Ingresso' : 'Fault Uscita'}"/>
                         </f:facet>
-           				<a4j:outputPanel layout="block" style="height: 350px; overflow-y: scroll;" id="xmlPnlFaultCooperazione2" rendered="#{dettagliBean.dettaglio.visualizzaFaultCooperazione}">
+           				<a4j:outputPanel layout="block" styleClass="height-350 overflow-y-scroll" id="xmlPnlFaultCooperazione2" rendered="#{dettagliBean.dettaglio.visualizzaFaultCooperazione}">
 							<pre class="brush: #{dettagliBean.dettaglio.brushFaultCooperazione}; toolbar: false;">#{dettagliBean.dettaglio.faultCooperazionePretty}</pre>
 						</a4j:outputPanel>
 						<a4j:outputPanel layout="block" styleClass="buttonrow" rendered="#{not dettagliBean.dettaglio.visualizzaFaultCooperazione}">

@@ -30,7 +30,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 	</ui:define>	
 	<ui:define name="body">
 		<a4j:outputPanel id="panelPaginaTransazioniCssCtr" rendered="#{searchFormTransazioni.periodo eq 'Live'}">	
-			<style>
+			<style type="text/css" nonce="#{_csp_random_nonce}">
 				#crumbs {display: none;	}					
 			</style>
 		</a4j:outputPanel>
@@ -180,7 +180,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 			
 			<a4j:outputPanel id="listaTransazioniCtr" ajaxRendered="false" rendered="#{not(searchFormTransazioni.periodo eq 'Live')}">
 				<c:if test="#{searchFormTransazioni.visualizzaStoricoCustomEnabled == false}">
-					<script type="text/javascript">
+					<script type="text/javascript" nonce="#{_csp_random_nonce}">
 					//<![CDATA[
 					   jQuery(document).ready(nascondiChk);
 					   
@@ -207,7 +207,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 				</c:if>
 				
 				<c:if test="#{searchFormTransazioni.visualizzaStoricoCustomEnabled == true}">
-					<script type="text/javascript">
+					<script type="text/javascript" nonce="#{_csp_random_nonce}">
 					//<![CDATA[
 					   jQuery(document).ready(nascondiChk);
 					   
@@ -326,7 +326,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 					</c:if>
 				</a4j:form>
 				
-				<rich:modalPanel id="exportCsvModalPnl" showWhenRendered="false" width="800" style="overflow:auto;" autosized="true">
+				<rich:modalPanel id="exportCsvModalPnl" showWhenRendered="false" width="800" styleClass="overflow-auto" autosized="true">
 					<f:facet name="header">
 						<h:outputText id="exportCsvModalPnlHeaderText" value="Export Transazioni" />
 					</f:facet>
@@ -360,18 +360,18 @@ xmlns="http://www.w3.org/1999/xhtml"
 					<h:form id="formExportReport" prependId="false">
 						<a4j:outputPanel layout="block" id="panelFormExportCsvContainer" ajaxRendered="false">
 							<input type="hidden" id="_csrfFormExportReport" name="_csrf" value="#{loginBean.csrf}"/>
-							<style> .rich-shuttle-source-items { margin-left :0px;	}	</style>
+							<style type="text/css" nonce="#{_csp_random_nonce}"> .rich-shuttle-source-items { margin-left :0px;	}	</style>
 							<div class="form-container noborder"> 
 								<link:fieldset legend="Configura Export" collapsible="false">
 									<link:prop label="Tipologia di Documento" required="true">
-										<h:selectOneMenu id="selectTipoExport" rendered="true" value="#{transazioniBean.tipoExport}" style="width: 412px;" styleClass="inputLink">
+										<h:selectOneMenu id="selectTipoExport" rendered="true" value="#{transazioniBean.tipoExport}" styleClass="inputLink width-412">
 											<f:selectItems value="#{transazioniBean.exportDisponibili}" />
 											<a4j:support event="onchange" reRender="panelFormExportCsvContainer" actionListener="#{transazioniBean.tipoExportSelected}" limitToList="true"/>
 										</h:selectOneMenu>
 									</link:prop>
 									<a4j:outputPanel id="selezioneColonneEsportateCtr" diplay="block" rendered="#{transazioniBean.showSelezioneTipoColonne}">
 										<link:prop label="#{msg['transazioni.export.tipoColonneEsportate']}" required="true">
-											<h:selectOneMenu rendered="true" value="#{transazioniBean.colonneEsportate}" style="width: 412px;" id="selectTipoColonne" styleClass="inputLink">
+											<h:selectOneMenu rendered="true" value="#{transazioniBean.colonneEsportate}" id="selectTipoColonne" styleClass="inputLink width-412">
 												<f:selectItems value="#{transazioniBean.tipiColonneEsportate}" />
 												<a4j:support event="onchange" reRender="panelFormExportCsvContainer" actionListener="#{transazioniBean.tipoColonneSelected}" limitToList="true"/>
 											</h:selectOneMenu>
@@ -568,7 +568,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 				</rich:modalPanel>
 				
 				<a4j:outputPanel id="timeoutCtr" layout="block" styleClass="" rendered="#{transazioniDM.timeoutEvent and searchFormTransazioni.modalitaRicercaStorico != 'idMessaggio' and searchFormTransazioni.modalitaRicercaStorico != 'idTransazione' and searchFormTransazioni.modalitaRicercaStorico != 'idApplicativoBase'}">
-					<script type="text/javascript">
+					<script type="text/javascript" nonce="#{_csp_random_nonce}">
 						//<![CDATA[
 						   jQuery(document).ready(controllaEventoTimeout);
 				
@@ -581,7 +581,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 					</script>
 				</a4j:outputPanel>
 				<a4j:outputPanel id="timeoutIdentificativiCtr" layout="block" styleClass="" rendered="#{transazioniDM.timeoutEvent and (searchFormTransazioni.modalitaRicercaStorico eq 'idMessaggio' or searchFormTransazioni.modalitaRicercaStorico eq 'idTransazione' or searchFormTransazioni.modalitaRicercaStorico eq 'idApplicativoBase')}">
-					<script type="text/javascript">
+					<script type="text/javascript" nonce="#{_csp_random_nonce}">
 						//<![CDATA[
 						   jQuery(document).ready(controllaEventoTimeout);
 				
@@ -595,7 +595,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 				</a4j:outputPanel>
 								
 				<a4j:outputPanel id="profiloDifferenteCtr" layout="block" styleClass="" rendered="#{transazioniDM.profiloDifferenteEvent}">
-					<script type="text/javascript">
+					<script type="text/javascript" nonce="#{_csp_random_nonce}">
 						//<![CDATA[
 						   jQuery(document).ready(controllaEventoProfiloDifferente);
 				
@@ -609,7 +609,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 				</a4j:outputPanel>
 								
 				<a4j:outputPanel id="soggettoDifferenteCtr" layout="block" styleClass="" rendered="#{transazioniDM.soggettoDifferenteEvent}">
-					<script type="text/javascript">
+					<script type="text/javascript" nonce="#{_csp_random_nonce}">
 						//<![CDATA[
 						   jQuery(document).ready(controllaEventoSoggettoDifferente);
 				
@@ -640,7 +640,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 						<input type="hidden" id="_csrfFormRes" name="_csrf" value="#{loginBean.csrf}"/>	
 						<a4j:jsFunction id="pollFn" name="poll" reRender="sessioneAttivaHidden,panelTransazioniCtr,dtTblLive,timeoutCtrLive" oncomplete="startCounter();" status="mainStatus"/> 
 						<h:inputHidden id="s_dat" value="#{liveBean.serverDate}" />
-						<script type="text/javascript">
+						<script type="text/javascript" nonce="#{_csp_random_nonce}">
 						 	function completa(evt){
 						 		restartSessioneLive(true);	
 						 	}
@@ -738,12 +738,17 @@ xmlns="http://www.w3.org/1999/xhtml"
 						   	<h:outputText value="Attenzione" />
 						   </f:facet>
 						   <div class="form-container noborder">
+						   	  <style type="text/css" nonce="#{_csp_random_nonce}">
+									.p-modal-riga1{ margin: 0px 0px 0px 16px; }
+									.p-modal-riga2{	margin: 4px 0px 0px 16px; }
+									.pnl-fnt-wght-bld-txt-align-l{ font-weight: bold; text-align: left; }
+								</style>
 							  <div class="buttonrowmodal">
 							      <h:panelGrid columns="2">
 							        <h:graphicImage value="/images/tema_link/alert_orange.png" />
-							        <a4j:outputPanel style="font-weight: bold;text-align: left;">
-							        	<p style="margin: 0px 0px 0px 16px;">Il server non ha risposto in tempo.</p>
-							        	<p style="margin: 4px 0px 0px 16px;">Prova a modificare i criteri di ricerca.</p>
+							        <a4j:outputPanel styleClass="pnl-fnt-wght-bld-txt-align-l">
+							        	<p class="p-modal-riga1">Il server non ha risposto in tempo.</p>
+							        	<p class="p-modal-riga2">Prova a modificare i criteri di ricerca.</p>
 							        </a4j:outputPanel>
 							      </h:panelGrid>
 							  </div>
@@ -755,7 +760,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 						   </div>
 						</rich:modalPanel>
 						
-						<script type="text/javascript">
+						<script type="text/javascript" nonce="#{_csp_random_nonce}">
 							//<![CDATA[
 							   jQuery(document).ready(controllaEventoTimeout);
 						

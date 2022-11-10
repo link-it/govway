@@ -9,6 +9,11 @@
 	<f:loadBundle var="msg" basename="messages" /> 
 	
 	<a4j:outputPanel id="timeoutCtr" layout="block" styleClass="" rendered="#{mBean.timeoutEvent}">
+		<style type="text/css" nonce="#{_csp_random_nonce}">
+			.p-modal-riga1{ margin: 0px 0px 0px 16px; }
+			.p-modal-riga2{	margin: 4px 0px 0px 16px; }
+			.pnl-fnt-wght-bld-txt-align-l{ font-weight: bold; text-align: left; }
+		</style>
 		 <rich:modalPanel id="#{id}_timeoutModal" width="420" height="200">
 		   <f:facet name="header">
 		   	<h:outputText value="Attenzione" />
@@ -17,9 +22,9 @@
 			  <div class="buttonrowmodal">
 			      <h:panelGrid columns="2">
 			        <h:graphicImage value="/images/tema_link/alert_orange.png" />
-			        <a4j:outputPanel style="font-weight: bold;text-align: left;">
-			        	<p style="margin: 0px 0px 0px 16px;">Il server non ha risposto in tempo.</p>
-			        	<p style="margin: 4px 0px 0px 16px;">Prova a restringere l'intervallo temporale di ricerca.</p>
+			        <a4j:outputPanel styleClass="pnl-fnt-wght-bld-txt-align-l">
+			        	<p class="p-modal-riga1">Il server non ha risposto in tempo.</p>
+			        	<p class="p-modal-riga2">Prova a restringere l'intervallo temporale di ricerca.</p>
 			        </a4j:outputPanel>
 			      </h:panelGrid>
 			  </div>
@@ -31,7 +36,7 @@
 		   </div>
 		</rich:modalPanel>
 		
-		<script type="text/javascript">
+		<script type="text/javascript" nonce="#{_csp_random_nonce}">
 			//<![CDATA[
 				Richfaces.showModalPanel('#{id}_timeoutModal');
 				

@@ -24,7 +24,7 @@
 		</c:if>	
 		
 		<a4j:outputPanel id="#{id}" layout="block">
-		<script type="text/javascript">
+		<script type="text/javascript" nonce="#{_csp_random_nonce}">
 			 jQuery(document).ready(function() {
 				checkBrowser();
 				visualizzaTastoRimuovi('#{id}','#{id}_deleteBtn');
@@ -47,7 +47,7 @@
 				 				
 					<rich:column align="center" width="50px" id="ckbClmn" rendered="#{showSelectAll and not empty mBean}">
 	                    <f:facet name="header">
-	                      <h:panelGroup style="width:50px;" layout="block">
+	                      <h:panelGroup styleClass="pnl-width-50px" layout="block">
 	                        <h:selectBooleanCheckbox id="#{id}_checkAll" title="Seleziona Tutti" onclick="checkAllCheckboxesInTable( '#{id}', this.checked );">
 	                        	
 	                        </h:selectBooleanCheckbox>
@@ -87,7 +87,7 @@
 				  <div class="buttonrowmodal">
 			      	<h:panelGrid columns="2">
 			        	 <h:graphicImage value="/images/tema_link/alert_orange.png" />
-				 		<h:outputText value="Eliminare elementi selezionati?" style="font-weight: bold;" />
+				 		<h:outputText value="Eliminare elementi selezionati?" styleClass="output-text-font-weight-bold" />
 			      	</h:panelGrid>
 				</div>
 		        	<div class="errorsSpacer"/>

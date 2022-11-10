@@ -238,7 +238,7 @@
 				<c:if test="#{not sf_showServizi}">
 					<a4j:outputPanel layout="block" id="distribuzionePerApiPnl" rendered="#{true}">
 						<link:prop label="#{msg['commons.search.differenziaApiImpl.label']}">
-							<h:selectOneRadio id="distribuzionePerApi" value="#{sf_bean.distribuzionePerImplementazioneApi}" styleClass="controlset" style="margin-left: 170px">
+							<h:selectOneRadio id="distribuzionePerApi" value="#{sf_bean.distribuzionePerImplementazioneApi}" styleClass="controlset margin-left-170">
 								<f:selectItem itemValue="true" itemLabel="Si"/>
 								<f:selectItem itemValue="false" itemLabel="No"/>
 							</h:selectOneRadio>
@@ -272,7 +272,7 @@
 					</rich:comboBox>
 				</link:prop>
 				<link:prop label="Dettaglio Esito" rendered="#{(sf_bean.andamentoTemporalePerEsiti == false) and sf_bean.showDettaglioPersonalizzato}">
-					<h:selectManyListbox id="esitoDettaglioManyListbox" value="#{sf_bean.esitoDettaglioPersonalizzato}" style="width:416px;" size="5">
+					<h:selectManyListbox id="esitoDettaglioManyListbox" value="#{sf_bean.esitoDettaglioPersonalizzato}" styleClass="width-416" size="5">
 						<f:selectItems value="#{sf_bean.esitiDettagliPersonalizzati}"/>
 					</h:selectManyListbox>
 				</link:prop>
@@ -288,7 +288,7 @@
 				
 				<a4j:outputPanel layout="block" id="escludiRichiesteScartatePnl" rendered="#{sf_bean.showRichiesteScartate}">
 					<link:prop label="#{msg['commons.search.escludiRichiesteScartate.label']}">
-						<h:selectOneRadio id="escludiRichiesteScartate" value="#{sf_bean.escludiRichiesteScartate}" styleClass="controlset" style="margin-left: 170px">
+						<h:selectOneRadio id="escludiRichiesteScartate" value="#{sf_bean.escludiRichiesteScartate}" styleClass="controlset margin-left-170">
 							<f:selectItem itemValue="true" itemLabel="Si"/>
 							<f:selectItem itemValue="false" itemLabel="No"/>
 							<a4j:support status="mainStatus" event="onchange" reRender="searchPnl" limitToList="true"/>
