@@ -1,0 +1,25 @@
+truncate table credenziale_mittente;
+
+truncate table transazioni CASCADE;
+truncate table msgdiag_correlazione CASCADE;
+truncate table msgdiagnostici CASCADE;
+truncate table tracce CASCADE;
+-- truncate table  msg_servizi_applicativi CASCADE;
+truncate table messaggi CASCADE;
+truncate table definizione_messaggi CASCADE;
+truncate table lista_trasmissioni CASCADE;
+truncate table lista_eccezioni CASCADE;
+truncate table lista_riscontri CASCADE;
+-- truncate table repository_egov CASCADE;
+truncate table dump_header_allegato CASCADE;
+truncate table dump_allegati CASCADE;
+truncate table dump_contenuti CASCADE;
+truncate table dump_header_trasporto CASCADE;
+truncate table DUMP_MULTIPART_HEADER CASCADE;
+truncate table dump_messaggi CASCADE;
+delete from dump_messaggi CASCADE;
+-- truncate table repository_egov;
+truncate table repository_buste CASCADE;
+-- truncate notifiche_eventi cascade;
+truncate table asincrono;
+truncate table riscontri_da_ricevere;

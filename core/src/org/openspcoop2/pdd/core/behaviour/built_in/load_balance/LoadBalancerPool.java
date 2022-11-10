@@ -64,7 +64,7 @@ public class LoadBalancerPool implements Serializable{
 	@Override
 	public String toString() {
 		//synchronized (this.semaphore) {
-		this.lock.acquireThrowRuntime("toString");
+		this.getLock().acquireThrowRuntime("toString");
 		try {
 			StringBuilder bf = new StringBuilder();
 			bf.append("Connectors: ").append(this.connectorMap.size());
@@ -89,13 +89,24 @@ public class LoadBalancerPool implements Serializable{
 			}
 			return bf.toString();
 		}finally {
-			this.lock.release("toString");
+			this.getLock().release("toString");
 		}
 	}
 	
 	
 	//protected Boolean semaphore = true;
-	private final org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("LoadBalancerPool");
+	private transient org.openspcoop2.utils.Semaphore _lock = null;
+	private synchronized void initLock() {
+		if(this._lock==null) {
+			this._lock = new org.openspcoop2.utils.Semaphore("LoadBalancerPool"); 
+		}
+	}
+	public org.openspcoop2.utils.Semaphore getLock(){
+		if(this._lock==null) {
+			initLock();
+		}
+		return this._lock;
+	}
 	protected Map<String, Integer> connectorMap = new HashMap<>();
 	protected Map<String, Integer> connectorMap_activeConnections = new HashMap<>();
 	protected Map<String, Date> connectorMap_errorDate = new HashMap<>();
@@ -110,16 +121,16 @@ public class LoadBalancerPool implements Serializable{
 		
 		if(!isPassiveHealthCheck()) {
 			//synchronized (this.semaphore) {
-			this.lock.acquireThrowRuntime("getNextPosition(active)");
+			this.getLock().acquireThrowRuntime("getNextPosition(active)");
 			try {
 				return _getNextPosition(checkByWeight);
 			}finally {
-				this.lock.release("getNextPosition(active)");
+				this.getLock().release("getNextPosition(active)");
 			}
 		}
 		else {
 			//synchronized (this.semaphore) {
-			this.lock.acquireThrowRuntime("getNextPosition(passive)");
+			this.getLock().acquireThrowRuntime("getNextPosition(passive)");
 			try {
 				int pos = _getNextPosition(checkByWeight);
 				
@@ -152,7 +163,7 @@ public class LoadBalancerPool implements Serializable{
 				
 				throw new BehaviourException("Nessun connettore selezionabile (passive health check)");
 			}finally {
-				this.lock.release("getNextPosition(passive)");
+				this.getLock().release("getNextPosition(passive)");
 			}
 		}
 		
@@ -200,7 +211,7 @@ public class LoadBalancerPool implements Serializable{
 
 	public String getNextConnectorLeastConnections() {
 		//synchronized (this.semaphore) {
-		this.lock.acquireThrowRuntime("getNextConnectorLeastConnections");
+		this.getLock().acquireThrowRuntime("getNextConnectorLeastConnections");
 		try {
 			
 			Set<String> setKeys = passiveHealthCheck(this.connectorMap.keySet(), false);
@@ -242,7 +253,7 @@ public class LoadBalancerPool implements Serializable{
 			return listMin.get(0);
 			
 		}finally{
-			this.lock.release("getNextConnectorLeastConnections");
+			this.getLock().release("getNextConnectorLeastConnections");
 		}
 	}
 	
@@ -268,7 +279,7 @@ public class LoadBalancerPool implements Serializable{
 	}
 	public void addConnector(String name, int weight) throws BehaviourException {
 		//synchronized (this.semaphore) {
-		this.lock.acquireThrowRuntime("addConnector");
+		this.getLock().acquireThrowRuntime("addConnector");
 		try {
 			if(this.connectorMap.containsKey(name)) {
 				throw new BehaviourException("Already exists connector '"+name+"'");
@@ -276,7 +287,7 @@ public class LoadBalancerPool implements Serializable{
 			this.connectorMap.put(name, weight);
 			this.totalWeight = this.totalWeight+weight;
 		}finally{
-			this.lock.release("addConnector");
+			this.getLock().release("addConnector");
 		}
 		
 	}
@@ -284,7 +295,7 @@ public class LoadBalancerPool implements Serializable{
 	
 	public void registerConnectionError(String name) throws BehaviourException {
 		//synchronized (this.semaphore) {
-		this.lock.acquireThrowRuntime("registerConnectionError");
+		this.getLock().acquireThrowRuntime("registerConnectionError");
 		try {
 			if(this.connectorMap_errorDate.containsKey(name)==false) {
 				// non aggiorniamo eventualmente la data, teniamo la prima
@@ -295,13 +306,13 @@ public class LoadBalancerPool implements Serializable{
 				debug("Registrazione non effettuata dell'errore di connessione per connettore ["+name+"]: gia' presente una entry");
 			}
 		}finally {
-			this.lock.release("registerConnectionError");
+			this.getLock().release("registerConnectionError");
 		}
 	}
 
 	public void addActiveConnection(String name) throws BehaviourException {
 		//synchronized (this.semaphore) {
-		this.lock.acquireThrowRuntime("addActiveConnection");
+		this.getLock().acquireThrowRuntime("addActiveConnection");
 		try {
 			int activeConnections = 0;
 			if(this.connectorMap_activeConnections.containsKey(name)) {
@@ -311,12 +322,12 @@ public class LoadBalancerPool implements Serializable{
 			this.connectorMap_activeConnections.put(name, activeConnections);
 			debug("Registrazione connessione attiva per connettore ["+name+"] (active:"+activeConnections+")");
 		}finally {
-			this.lock.release("addActiveConnection");
+			this.getLock().release("addActiveConnection");
 		}
 	}
 	public void removeActiveConnection(String name) throws BehaviourException {
 		//synchronized (this.semaphore) {
-		this.lock.acquireThrowRuntime("removeActiveConnection");
+		this.getLock().acquireThrowRuntime("removeActiveConnection");
 		try {
 			int activeConnections = 0;
 			if(this.connectorMap_activeConnections.containsKey(name)) {
@@ -328,7 +339,7 @@ public class LoadBalancerPool implements Serializable{
 			}
 			debug("Rimozione connessione attiva per connettore ["+name+"] (active:"+activeConnections+")");
 		}finally {
-			this.lock.release("removeActiveConnection");
+			this.getLock().release("removeActiveConnection");
 		}
 	}
 	
@@ -376,11 +387,11 @@ public class LoadBalancerPool implements Serializable{
 			debug("(PassiveHealthCheck) lista di errori di connessione scaduti: "+listRimuoviDate);
 			if(syncErase) {
 				//synchronized (this.semaphore) { // un altro thread potrebbe già averlo modificato
-				this.lock.acquireThrowRuntime("passiveHealthCheck(date)");
+				this.getLock().acquireThrowRuntime("passiveHealthCheck(date)");
 				try {
 					cleanErrorDate(listRimuoviDate, now);
 				}finally {
-					this.lock.release("passiveHealthCheck(date)");
+					this.getLock().release("passiveHealthCheck(date)");
 				}
 			}
 			else {
@@ -394,11 +405,11 @@ public class LoadBalancerPool implements Serializable{
 			debug("(PassiveHealthCheck) !!FULL!! tutti i connettori del pool risultano sospesi per errori di connessione: "+this.connectorMap_errorDate.keySet());
 			Date dateCleaner = DateManager.getDate();
 			//synchronized (this.semaphore) { // un altro thread potrebbe già averlo modificato
-			this.lock.acquireThrowRuntime("passiveHealthCheck(cleanAllErrorDate)");
+			this.getLock().acquireThrowRuntime("passiveHealthCheck(cleanAllErrorDate)");
 			try {
 				cleanAllErrorDate(dateCleaner);
 			}finally {
-				this.lock.release("passiveHealthCheck(cleanAllErrorDate)");
+				this.getLock().release("passiveHealthCheck(cleanAllErrorDate)");
 			}
 			return set;
 		}

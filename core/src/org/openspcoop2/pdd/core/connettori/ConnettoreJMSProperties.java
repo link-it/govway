@@ -79,7 +79,9 @@ public class ConnettoreJMSProperties {
 		    try{
 			if(properties!=null)
 			    properties.close();
-		    }catch(Exception er){}
+		    }catch(Exception er){
+				// close
+			}
 		    throw new Exception("ConnettoreJMSProperties initialize error: "+e.getMessage());
 		}
 
@@ -134,43 +136,43 @@ public class ConnettoreJMSProperties {
 	public Map<String,IDServizio> getIDServizi_Pubblicazione() {	
 		Map<String,IDServizio> servizi= new HashMap<String,IDServizio>();
 	    try{ 
-		// Raccolta servizi
-		java.util.List<String> idServizi = new java.util.ArrayList<String>();	
-		java.util.Enumeration<?> en = this.reader.propertyNames();
-		for (; en.hasMoreElements() ;) {
-		    String property = (String) en.nextElement();
-		    if(property.startsWith("org.openspcoop.pubblicazione.")){
-			String key = (property.substring("org.openspcoop.pubblicazione.".length()));
-			int indexOf = key.indexOf(".");
-			key = key.substring(0,indexOf);
-			if(key != null)
-			    key = key.trim();
-			if(idServizi.contains(key)==false)
-			    idServizi.add(key);
-		    }
-		}
-		
-		for(int i=0; i<idServizi.size(); i++){
-		    //log.info("Raccolta variabili per servizio ["+idServizi.get(i)+"]");
+			// Raccolta servizi
+			java.util.List<String> idServizi = new java.util.ArrayList<String>();	
+			java.util.Enumeration<?> en = this.reader.propertyNames();
+			for (; en.hasMoreElements() ;) {
+			    String property = (String) en.nextElement();
+			    if(property.startsWith("org.openspcoop.pubblicazione.")){
+				String key = (property.substring("org.openspcoop.pubblicazione.".length()));
+				int indexOf = key.indexOf(".");
+				key = key.substring(0,indexOf);
+				if(key != null)
+				    key = key.trim();
+				if(idServizi.contains(key)==false)
+				    idServizi.add(key);
+			    }
+			}
 			
-		    IDSoggetto idSoggetto = new IDSoggetto();
-		    idSoggetto.setTipo((String)this.reader.get("org.openspcoop.pubblicazione."+idServizi.get(i)+".tipoSoggettoErogatore"));
-		    idSoggetto.setNome((String)this.reader.get("org.openspcoop.pubblicazione."+idServizi.get(i)+".soggettoErogatore"));
+			for(int i=0; i<idServizi.size(); i++){
+			    //log.info("Raccolta variabili per servizio ["+idServizi.get(i)+"]");
+				
+			    IDSoggetto idSoggetto = new IDSoggetto();
+			    idSoggetto.setTipo((String)this.reader.get("org.openspcoop.pubblicazione."+idServizi.get(i)+".tipoSoggettoErogatore"));
+			    idSoggetto.setNome((String)this.reader.get("org.openspcoop.pubblicazione."+idServizi.get(i)+".soggettoErogatore"));
+				
+			    String tipoServizio = (String)this.reader.get("org.openspcoop.pubblicazione."+idServizi.get(i)+".tipoServizio");
+			    String nomeServizio = (String)this.reader.get("org.openspcoop.pubblicazione."+idServizi.get(i)+".servizio");
+			    Integer versioneServizio = Integer.parseInt(((String)this.reader.get("org.openspcoop.pubblicazione."+idServizi.get(i)+".versioneServizio")));
+			    IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoServizio, nomeServizio, idSoggetto, versioneServizio);
+			    
+			    //log.info("Servizio ["+IDServizioFactory.getInstance().getUriFromIDServizio(idServizio)+"]");
+			    servizi.put(idServizi.get(i),idServizio);
+			}
 			
-		    String tipoServizio = (String)this.reader.get("org.openspcoop.pubblicazione."+idServizi.get(i)+".tipoServizio");
-		    String nomeServizio = (String)this.reader.get("org.openspcoop.pubblicazione."+idServizi.get(i)+".servizio");
-		    Integer versioneServizio = Integer.parseInt(((String)this.reader.get("org.openspcoop.pubblicazione."+idServizi.get(i)+".versioneServizio")));
-		    IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoServizio, nomeServizio, idSoggetto, versioneServizio);
-		    
-		    //log.info("Servizio ["+IDServizioFactory.getInstance().getUriFromIDServizio(idServizio)+"]");
-		    servizi.put(idServizi.get(i),idServizio);
-		}
+			return servizi;
 		
-		return servizi;
-		
-	    }catch(java.lang.Exception e) {
-		ConnettoreJMSProperties.log.error("Riscontrato errore durante la lettura dei servizi pubblicatori : 'org.openspcoop.pubblicazione.*'");
-		return null;
+	    }catch(Throwable e) {
+	    	ConnettoreJMSProperties.log.error("Riscontrato errore durante la lettura dei servizi pubblicatori : 'org.openspcoop.pubblicazione.*'");
+	    	return null;
 	    }  
 	}
 	

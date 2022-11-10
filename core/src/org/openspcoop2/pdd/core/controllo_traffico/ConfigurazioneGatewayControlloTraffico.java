@@ -29,7 +29,7 @@ import java.io.Serializable;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConfigurazioneControlloTraffico extends org.openspcoop2.core.controllo_traffico.beans.ConfigurazioneControlloTraffico implements Serializable , Cloneable {
+public class ConfigurazioneGatewayControlloTraffico extends org.openspcoop2.core.controllo_traffico.beans.ConfigurazioneControlloTraffico implements Serializable , Cloneable {
 
 	/**
 	 * 

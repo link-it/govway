@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.pdd.core.behaviour.built_in.load_balance.health_check;
 
+import java.io.Serializable;
+
 /**
  * HealthCheckConfigurazione
  *
@@ -26,8 +28,10 @@ package org.openspcoop2.pdd.core.behaviour.built_in.load_balance.health_check;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class HealthCheckConfigurazione {
+public class HealthCheckConfigurazione implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private boolean passiveCheckEnabled = false;
 	private Integer passiveHealthCheck_excludeForSeconds = null; 
 

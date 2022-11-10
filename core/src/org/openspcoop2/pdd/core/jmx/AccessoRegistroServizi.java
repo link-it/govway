@@ -276,6 +276,9 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 					param1 = null;
 				}
 			}
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+CHECK_CONNETTORE_BY_ID+"] parametro richiesto non fornito"));
+			}
 			return this.checkConnettoreById(param1);
 		}
 		
@@ -306,6 +309,9 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 				if(param1<0){
 					param1 = null;
 				}
+			}
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+GET_CERTIFICATI_CONNETTORE_BY_ID+"] parametro richiesto non fornito"));
 			}
 			return this.getCertificatiConnettoreById(param1);
 		}
@@ -346,6 +352,9 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 				soglia = Integer.valueOf(params[1].toString());
 			}
 			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_CONNETTORE_HTTPS_BY_ID+"] parametro richiesto non fornito"));
+			}
 			return this.checkCertificatiConnettoreHttpsById(param1, soglia);
 		}
 		
@@ -374,6 +383,9 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 				soglia = Integer.valueOf(params[1].toString());
 			}
 			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_SOGGETTO_BY_ID+"] parametro richiesto non fornito"));
+			}
 			return this.checkCertificatoSoggettoById(param1, soglia);
 		}
 		if(actionName.equals(CHECK_CERTIFICATO_SOGGETTO_BY_NOME)){
@@ -393,6 +405,9 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 				soglia = Integer.valueOf(params[1].toString());
 			}
 			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_SOGGETTO_BY_NOME+"] parametro richiesto non fornito"));
+			}
 			return this.checkCertificatoSoggettoByNome(param1, soglia);
 		}
 		
@@ -421,6 +436,9 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 				soglia = Integer.valueOf(params[1].toString());
 			}
 			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_MODI_EROGAZIONE_BY_ID+"] parametro richiesto non fornito"));
+			}
 			return this.checkCertificatiModIErogazioneById(param1, soglia);
 		}
 		
@@ -449,6 +467,9 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 				soglia = Integer.valueOf(params[1].toString());
 			}
 			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_MODI_FRUIZIONE_BY_ID+"] parametro richiesto non fornito"));
+			}
 			return this.checkCertificatiModIFruizioneById(param1, soglia);
 		}
 		

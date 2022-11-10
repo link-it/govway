@@ -417,13 +417,17 @@ public class GeneratoreMessaggiErrore {
 			tipoErrore = TipoErrore.FAULT; // in rest il codice http viene auto-gestito correttamente
 		}
 		
+		if(he==null) {
+			throw new ProtocolException("HandlerException is null");
+		}
+		
 		switch (tipoErrore) {
 		case HTTP_429:
 			if(includiDescrizioneErrore) {
 				he.setResponseContentType(HttpConstants.CONTENT_TYPE_HTML);
 				
 				String tipo = CostantiControlloTraffico.HTML_429_TOO_MANY_REQUESTS_ERROR;
-				if(he!=null && he.getIntegrationFunctionError()!=null) {
+				if(he.getIntegrationFunctionError()!=null) {
 					switch (he.getIntegrationFunctionError()) {
 					case LIMIT_EXCEEDED:
 					case LIMIT_EXCEEDED_CONDITIONAL_CONGESTION:
@@ -444,7 +448,7 @@ public class GeneratoreMessaggiErrore {
 				ErroriProperties erroriProperties = ErroriProperties.getInstance(log);
 				boolean genericDetails = true;
 				IntegrationFunctionError functionError = IntegrationFunctionError.TOO_MANY_REQUESTS;
-				if(he!=null && he.getIntegrationFunctionError()!=null) {
+				if(he.getIntegrationFunctionError()!=null) {
 					functionError = he.getIntegrationFunctionError();
 				}
 				if(!genericDetails && erroriProperties.isForceGenericDetails(functionError)) {

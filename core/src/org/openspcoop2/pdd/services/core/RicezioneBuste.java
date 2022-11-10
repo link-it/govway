@@ -206,6 +206,7 @@ import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
@@ -3531,7 +3532,14 @@ public class RicezioneBuste {
 									descrizioneErrore = erroreCooperazione.getDescrizione(protocolFactory);
 								else
 									descrizioneErrore = erroreIntegrazione.getDescrizione(protocolFactory);
-								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, descrizioneErrore);
+								if(descrizioneErrore!=null && descrizioneErrore.startsWith(CostantiProtocollo.PREFISSO_AUTENTICAZIONE_FALLITA) &&
+										descrizioneErrore.length()>CostantiProtocollo.PREFISSO_AUTENTICAZIONE_FALLITA.length()) {
+									String dettaglioErroreInterno = descrizioneErrore.substring(CostantiProtocollo.PREFISSO_AUTENTICAZIONE_FALLITA.length());
+									CostantiPdD.addKeywordAutenticazioneFallita(msgDiag, dettaglioErroreInterno, pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTENTICAZIONE_FALLITA);
+								}
+								else {
+									msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, descrizioneErrore);
+								}
 							}catch(Exception e){
 								logCore.error("getDescrizione Error:"+e.getMessage(),e);
 							}
@@ -4608,13 +4616,9 @@ public class RicezioneBuste {
 					protocolFactory.getCachedRegistryReader(registroServiziReader, requestInfo));
 		} catch (Exception e) {
 			// Emetto log, non ancora emesso
-			if(validatore.getBusta()!=null && 
-					(validatore.getBusta().getMittente()!=null || validatore.getBusta().getTipoMittente()!=null)){
-				msgDiag.logPersonalizzato("ricezioneMessaggio");
-			}
-			else{
-				msgDiag.logPersonalizzato("ricezioneMessaggio.mittenteAnonimo");
-			}
+			boolean mittenteEsistente = validatore.getBusta()!=null && 
+					(validatore.getBusta().getMittente()!=null || validatore.getBusta().getTipoMittente()!=null); 
+			msgDiag.emitRicezioneMessaggioModuloBuste(msgDiag, pddContext, !mittenteEsistente);
 			
 			msgDiag.addKeywordErroreProcessamento(e,"Aggiornamento messaggio fallito");
 			msgDiag.logErroreGenerico(e,"ProtocolManager.updateOpenSPCoop2Message");
@@ -4734,13 +4738,9 @@ public class RicezioneBuste {
 				}catch(Exception e){
 
 					// Emetto log, non ancora emesso
-					if(validatore.getBusta()!=null && 
-							(validatore.getBusta().getMittente()!=null || validatore.getBusta().getTipoMittente()!=null)){
-						msgDiag.logPersonalizzato("ricezioneMessaggio");
-					}
-					else{
-						msgDiag.logPersonalizzato("ricezioneMessaggio.mittenteAnonimo");
-					}
+					boolean mittenteEsistente = validatore.getBusta()!=null && 
+							(validatore.getBusta().getMittente()!=null || validatore.getBusta().getTipoMittente()!=null); 
+					msgDiag.emitRicezioneMessaggioModuloBuste(msgDiag, pddContext, !mittenteEsistente);
 					
 					msgDiag.logErroreGenerico(e,"checkPresenzaRichiestaRicevutaAsincronaAncoraInGestione");
 					logCore.error("Controllo presenza richieste/ricevuteRichieste ancora in gestione " +
@@ -5334,13 +5334,9 @@ public class RicezioneBuste {
 			}catch(Exception e){
 
 				// Emetto log, non ancora emesso
-				if(validatore.getBusta()!=null && 
-						(validatore.getBusta().getMittente()!=null || validatore.getBusta().getTipoMittente()!=null)){
-					msgDiag.logPersonalizzato("ricezioneMessaggio");
-				}
-				else{
-					msgDiag.logPersonalizzato("ricezioneMessaggio.mittenteAnonimo");
-				}
+				boolean mittenteEsistente = validatore.getBusta()!=null && 
+						(validatore.getBusta().getMittente()!=null || validatore.getBusta().getTipoMittente()!=null); 
+				msgDiag.emitRicezioneMessaggioModuloBuste(msgDiag, pddContext, !mittenteEsistente);
 			
 				msgDiag.logErroreGenerico(e,"RaccoltaFlowParameter_MTOM_Security");
 				
@@ -5498,13 +5494,9 @@ public class RicezioneBuste {
 			if(presenzaRichiestaProtocollo == false){
 
 				// Emetto log, non ancora emesso
-				if(validatore.getBusta()!=null && 
-						(validatore.getBusta().getMittente()!=null || validatore.getBusta().getTipoMittente()!=null)){
-					msgDiag.logPersonalizzato("ricezioneMessaggio");
-				}
-				else{
-					msgDiag.logPersonalizzato("ricezioneMessaggio.mittenteAnonimo");
-				}
+				boolean mittenteEsistente = validatore.getBusta()!=null && 
+						(validatore.getBusta().getMittente()!=null || validatore.getBusta().getTipoMittente()!=null); 
+				msgDiag.emitRicezioneMessaggioModuloBuste(msgDiag, pddContext, !mittenteEsistente);
 				
 				try{
 					msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, validatore.getErrore().getDescrizione(protocolFactory));
@@ -5911,12 +5903,7 @@ public class RicezioneBuste {
 			}
 			
 		}else{
-			if(mittenteAnonimo){
-				msgDiag.logPersonalizzato("ricezioneMessaggio.mittenteAnonimo");
-			}
-			else{
-				msgDiag.logPersonalizzato("ricezioneMessaggio");
-			}
+			msgDiag.emitRicezioneMessaggioModuloBuste(msgDiag, pddContext, mittenteAnonimo);
 		}
 
 

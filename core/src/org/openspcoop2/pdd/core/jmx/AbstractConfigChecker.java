@@ -623,6 +623,9 @@ public abstract class AbstractConfigChecker {
 									addCertificateDetails, separator, newLine,
 									this.getInternalLogger());
 						}
+						else {
+							throw new Exception("Incorrect invocation: (useApi:"+useApi+" applicativo:"+applicativo+" soggetto:"+soggetto+")");
+						}
 						stato = statoCheck.toString(newLine);
 					}catch(Throwable e){
 						stato = JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();

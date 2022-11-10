@@ -261,7 +261,9 @@ public class ConnettoreHTTP_urlHttps_keystoreRepository {
 				if(fin!=null){
 					fin.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		Map<String, String> pMap = new HashMap<String, String>();
 		Enumeration<?> enP = p.keys();

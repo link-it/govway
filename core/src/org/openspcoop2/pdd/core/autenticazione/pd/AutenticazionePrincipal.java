@@ -37,6 +37,7 @@ import org.openspcoop2.pdd.core.autenticazione.PrincipalUtilities;
 import org.openspcoop2.pdd.core.autenticazione.WWWAuthenticateConfig;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.utils.BooleanNullable;
@@ -179,7 +180,7 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
     		if(this.logError) {
     			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazionePrincipal non riuscita",e);
     		}
-    		esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaPrincipal("credenziali non fornite",principal));
+    		esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaPrincipal(CostantiProtocollo.CREDENZIALI_NON_FORNITE,principal));
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			if(wwwAuthenticateConfig!=null) {
@@ -188,7 +189,7 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 			return esito;
     	}
     	if( principal==null || "".equals(principal) ){
-			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaPrincipal("credenziali non fornite",principal));
+			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaPrincipal(CostantiProtocollo.CREDENZIALI_NON_FORNITE,principal));
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			if(wwwAuthenticateConfig!=null) {
@@ -225,7 +226,7 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 		
 		if(idServizioApplicativo == null){
 			// L'identificazione in principal non e' obbligatoria
-			//esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaSsl("credenziali fornite non corrette",principal));
+			//esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaPrincipal(CostantiProtocollo.CREDENZIALI_FORNITE_NON_CORRETTE,principal));
 			esito.setClientIdentified(false);
 			return esito;
 		}

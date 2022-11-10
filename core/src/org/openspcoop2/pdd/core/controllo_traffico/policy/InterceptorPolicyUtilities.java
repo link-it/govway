@@ -436,7 +436,7 @@ public class InterceptorPolicyUtilities {
 				}
 			}
 			
-			if(filtro.getRuoloPorta()!=null && !"".equals(filtro.getRuoloPorta()) && 
+			if(filtro.getRuoloPorta()!=null && !"".equals(filtro.getRuoloPorta().getValue()) && 
 					!RuoloPolicy.ENTRAMBI.equals(filtro.getRuoloPorta())){
 				
 				if(RuoloPolicy.DELEGATA.equals(filtro.getRuoloPorta())){

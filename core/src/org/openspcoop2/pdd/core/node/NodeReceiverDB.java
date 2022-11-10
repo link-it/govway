@@ -255,7 +255,9 @@ public class NodeReceiverDB extends AbstractCore implements INodeReceiver{
 								repositoryBuste.getProfiloCollaborazioneValueFromInBox(idRisposta));
 						try{
 							((RicezioneContenutiApplicativiMessage)objReturn).setPddContext(gestoreMessaggioRisposta.getPdDContext());
-						}catch(Exception e){}
+						}catch(Exception e){
+							// ignore
+						}
 						msgDiag.highDebug("Lettura risposta per RicezioneContenutiApplicativi effettuata");
 					}
 					else if(idModulo.startsWith(RicezioneBuste.ID_MODULO)){
@@ -269,7 +271,9 @@ public class NodeReceiverDB extends AbstractCore implements INodeReceiver{
 						}
 						try{
 							((RicezioneBusteMessage)objReturn).setPddContext(gestoreMessaggioRisposta.getPdDContext());
-						}catch(Exception e){}
+						}catch(Exception e){
+							// ignore
+						}
 						msgDiag.highDebug("Lettura risposta per RicezioneBuste effettuata");
 					}
 					

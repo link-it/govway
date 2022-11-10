@@ -209,7 +209,7 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 				this.logger.debug("Creazione connessione...");	
 			OpenSPCoop2MessageFactory messageFactory = Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo, MessageRole.NONE);
 			SOAPConnectionFactory soapConnFactory = messageFactory.getSOAPConnectionFactory();
-			SOAPConnection connection = soapConnFactory.createConnection();
+			this.connection = soapConnFactory.createConnection();
 							    
 			
 			try{
@@ -377,14 +377,14 @@ public class ConnettoreSAAJ extends ConnettoreBaseWithResponse {
 					this.logger.debug("Send...");
 				
 				this.responseMsg = messageFactory.
-						createMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE,connection.call( this.soapRequestMessage, this.location));
+						createMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE,this.connection.call( this.soapRequestMessage, this.location));
 				
 				this.dataAccettazioneRisposta = DateManager.getDate();
 				
 			}catch(javax.xml.soap.SOAPException sendError){
 				this.eccezioneProcessamento = sendError;
 				String errorMsg = this.readExceptionMessageFromException(sendError);
-				connection.close();
+				this.connection.close();
 				this.errore = "Errore avvenuto durante la consegna SOAP (lettura risposta): " + errorMsg;
 				return false;
 			}

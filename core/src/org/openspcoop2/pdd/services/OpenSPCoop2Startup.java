@@ -116,7 +116,7 @@ import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.GestoreLoadBalancerCaching;
 import org.openspcoop2.pdd.core.cache.GestoreCacheCleaner;
-import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
+import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneGatewayControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.GestoreControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.INotify;
 import org.openspcoop2.pdd.core.controllo_traffico.NotificatoreEventi;
@@ -135,7 +135,7 @@ import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.InitContext;
 import org.openspcoop2.pdd.core.jmx.AccessoRegistroServizi;
 import org.openspcoop2.pdd.core.jmx.ConfigurazioneSistema;
-import org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX;
+import org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay;
 import org.openspcoop2.pdd.core.jmx.InformazioniStatoPorta;
 import org.openspcoop2.pdd.core.jmx.InformazioniStatoPortaCache;
 import org.openspcoop2.pdd.core.jmx.StatoServiziJMXResource;
@@ -287,8 +287,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	public static Map<String, TimerConsegnaContenutiApplicativiThread> threadConsegnaContenutiApplicativiRefMap;
 	
 	/** Gestore risorse JMX */
-	private GestoreRisorseJMX gestoreRisorseJMX = null;
-	public static GestoreRisorseJMX gestoreRisorseJMX_staticInstance = null;
+	private GestoreRisorseJMXGovWay gestoreRisorseJMX = null;
+	public static GestoreRisorseJMXGovWay gestoreRisorseJMX_staticInstance = null;
 	
 	/** Gestore eventi */
 	private GestoreEventi gestoreEventi = null;
@@ -1901,10 +1901,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			try{
 				if(propertiesReader.isRisorseJMXAbilitate()){
 					if(propertiesReader.getJNDIName_MBeanServer()!=null){
-						OpenSPCoop2Startup.this.gestoreRisorseJMX = new GestoreRisorseJMX(propertiesReader.getJNDIName_MBeanServer(),
+						OpenSPCoop2Startup.this.gestoreRisorseJMX = new GestoreRisorseJMXGovWay(propertiesReader.getJNDIName_MBeanServer(),
 								propertiesReader.getJNDIContext_MBeanServer());
 					}else{
-						OpenSPCoop2Startup.this.gestoreRisorseJMX = new GestoreRisorseJMX();
+						OpenSPCoop2Startup.this.gestoreRisorseJMX = new GestoreRisorseJMXGovWay();
 					}
 					OpenSPCoop2Startup.gestoreRisorseJMX_staticInstance = OpenSPCoop2Startup.this.gestoreRisorseJMX;
 				}
@@ -2549,7 +2549,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}
 					
 				// Gestore dei Dati Statistici
-				org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico confControlloTraffico = null;
+				org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneGatewayControlloTraffico confControlloTraffico = null;
 				try{
 					confControlloTraffico = propertiesReader.getConfigurazioneControlloTraffico();
 
@@ -3542,7 +3542,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			try{
 				if(propertiesReader.isControlloTrafficoEnabled() && propertiesReader.isAllarmiEnabled()) {
 					
-					ConfigurazioneControlloTraffico config = propertiesReader.getConfigurazioneControlloTraffico();
+					ConfigurazioneGatewayControlloTraffico config = propertiesReader.getConfigurazioneControlloTraffico();
 					if(config.isNotifierEnabled()) {
 					
 						INotify notifier = config.getNotifier();

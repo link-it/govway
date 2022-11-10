@@ -77,6 +77,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	
 	// dati di attuazione manuale di un reset dei contatori
 	private Long manuallyResetPolicyTimeMillis = null;
+
 	private final static MapKey<String> START_PROCESS_REQUEST_TIME_MS = Map.newMapKey("START_PROCESS_REQUEST_TIME_MS");
 	
 	// dati iniziali
@@ -287,7 +288,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	
 	@Override
 	public Object clone() {
-		return _clone(false, super.clone()); // se servissse avere una immagine con i dati remoti, usare la clone con il boolean.
+		return _clone(false, super.clone()); // se servisse avere una immagine con i dati remoti, usare la clone con il boolean.
 	}
 	public DatiCollezionati clone(boolean readRemoteInfo) {
 		return _clone(readRemoteInfo, super.clone()); 
@@ -299,7 +300,15 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 			gestorePolicyConfigDate = new Date(this.gestorePolicyConfigDate.getTime());
 		}
 		
-		DatiCollezionati dati = new DatiCollezionati(updatePolicyDate, gestorePolicyConfigDate);
+		DatiCollezionati dati = null;
+		if(o!=null && o instanceof DatiCollezionati) {
+			dati = (DatiCollezionati) o;
+			dati.updatePolicyDate = updatePolicyDate;
+			dati.gestorePolicyConfigDate = gestorePolicyConfigDate;
+		}
+		else {
+			dati = new DatiCollezionati(updatePolicyDate, gestorePolicyConfigDate);
+		}
 		
 		return setValuesIn(dati, readRemoteInfo);
 	}
@@ -1532,6 +1541,11 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	public Date getGestorePolicyConfigDate() {
 		return this.gestorePolicyConfigDate;
 	}
+	
+	@Deprecated
+	public Long getManuallyResetPolicyTimeMillis() {
+		return this.manuallyResetPolicyTimeMillis;
+	}
 
 	public Date getPolicyDate() {
 		return this.policyDate;
@@ -1547,6 +1561,18 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	}
 	protected Long getPolicyCounter(boolean readRemoteInfo) {
 		return this.policyCounter;
+	}
+	@Deprecated
+	public Long getPolicyDenyRequestCounter() {
+		return this.policyDenyRequestCounter;
+	}
+	@Deprecated
+	public Long getPolicyDegradoPrestazionaleRequestCounter() {
+		return this.policyDegradoPrestazionaleRequestCounter;
+	}
+	@Deprecated
+	public Long getPolicyDegradoPrestazionaleCounter() {
+		return this.policyDegradoPrestazionaleCounter;
 	}
 	public Double getPolicyAvgValue(){
 		return getPolicyAvgValue(false);

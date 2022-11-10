@@ -26,7 +26,6 @@ package org.openspcoop2.pdd.core.connettori;
 import java.io.ByteArrayInputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Random;
 
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.Costanti;
@@ -54,6 +53,7 @@ import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.random.RandomUtilities;
 
 
 
@@ -171,8 +171,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 					if(min!=null){
 						minSleep = Integer.parseInt((String)min);
 					}
-					Random r = new Random();
-					int sleep = minSleep + r.nextInt(maxSleep-minSleep);
+					int sleep = minSleep + RandomUtilities.getRandom().nextInt(maxSleep-minSleep);
 					if(sleep>1000){
 						int count = sleep/1000;
 						int resto = sleep%1000;
@@ -390,11 +389,15 @@ public class ConnettoreStresstest extends ConnettoreBase {
 						// Rollback quanto effettuato (se l'errore e' avvenuto sul commit, o prima nell'execute delle PreparedStatement)
 						try{
 							connectionDB.rollback();
-						}catch(Exception er){}
+						}catch(Exception er){
+							// ignore
+						}
 						// Ripristino connessione
 						try{
 							connectionDB.setAutoCommit(true);
-						}catch(Exception er){}
+						}catch(Exception er){
+							// ignore
+						}
 						state.closePreparedStatement(); // Chiude le PreparedStatement aperte(e non eseguite) per il save del Msg
 					}
 					protocolHeader.append("<eGov_IT:ProfiloCollaborazione>"+traduttore.toString(bustaRichiesta.getProfiloDiCollaborazione())+"</eGov_IT:ProfiloCollaborazione>");

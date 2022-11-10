@@ -58,7 +58,18 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	private java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> mapActiveThreads = new HashMap<IDUnivocoGroupByPolicy, DatiCollezionati>();
 	
 	//private final Boolean semaphore = Boolean.valueOf(false);
-	private final org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("PolicyGroupByActiveThreads");
+	private transient org.openspcoop2.utils.Semaphore _lock = null;
+	private synchronized void initLock() {
+		if(this._lock==null) {
+			this._lock = new org.openspcoop2.utils.Semaphore("PolicyGroupByActiveThreads"); 
+		}
+	}
+	public org.openspcoop2.utils.Semaphore getLock(){
+		if(this._lock==null) {
+			initLock();
+		}
+		return this._lock;
+	}
 	
 	private ActivePolicy activePolicy;
 	private PolicyGroupByActiveThreadsType tipoGestore;
@@ -86,20 +97,20 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	@Override
 	public void initMap(java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
 		//synchronized (this.semaphore) {
-		this.lock.acquireThrowRuntime("initMap");
+		this.getLock().acquireThrowRuntime("initMap");
 		try {
 			if(map!=null && map.size()>0){
 				this.mapActiveThreads.putAll(map);
 			}
 		}finally {
-			this.lock.release("initMap");
+			this.getLock().release("initMap");
 		}
 	}
 	
 	@Override
 	public void resetCounters(){
 		//synchronized (this.semaphore) {
-		this.lock.acquireThrowRuntime("resetCounters");
+		this.getLock().acquireThrowRuntime("resetCounters");
 		try {
 			if(this.mapActiveThreads.size()>0){
 				Iterator<DatiCollezionati> datiCollezionati = this.mapActiveThreads.values().iterator();
@@ -109,7 +120,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 				}
 			}
 		}finally {
-			this.lock.release("resetCounters");
+			this.getLock().release("resetCounters");
 		}
 	}
 	
@@ -124,7 +135,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 		DatiCollezionati datiCollezionatiReaded = null;
 		//System.out.println("<"+idTransazione+">registerStartRequest ...");
 		//synchronized (this.semaphore) {
-		this.lock.acquireThrowRuntime("registerStartRequest", idTransazione);
+		this.getLock().acquireThrowRuntime("registerStartRequest", idTransazione);
 		try {
 			//System.out.println("<"+idTransazione+">registerStartRequest entrato");
 			
@@ -151,7 +162,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 		
 			//System.out.println("<"+idTransazione+">registerStartRequest esco");
 		}finally {
-			this.lock.release("registerStartRequest", idTransazione);
+			this.getLock().release("registerStartRequest", idTransazione);
 		}
 		
 		
@@ -169,7 +180,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 		DatiCollezionati datiCollezionatiReaded = null;
 		//System.out.println("<"+idTransazione+">updateDatiStartRequestApplicabile ...");
 		//synchronized (this.semaphore) {
-		this.lock.acquireThrowRuntime("updateDatiStartRequestApplicabile", idTransazione);
+		this.getLock().acquireThrowRuntime("updateDatiStartRequestApplicabile", idTransazione);
 		try {
 			//System.out.println("<"+idTransazione+">updateDatiStartRequestApplicabile entrato");
 			
@@ -194,7 +205,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 			
 			//System.out.println("<"+idTransazione+">updateDatiStartRequestApplicabile esco");
 		}finally {
-			this.lock.release("updateDatiStartRequestApplicabile", idTransazione);
+			this.getLock().release("updateDatiStartRequestApplicabile", idTransazione);
 		}
 		
 		// Tutti i restanti controlli sono effettuati usando il valore di datiCollezionatiReaded, che e' gia' stato modificato
@@ -210,7 +221,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 			MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata) throws PolicyException,PolicyNotFoundException{
 		//System.out.println("<"+idTransazione+">registerStopRequest ...");
 		//synchronized (this.semaphore) {
-		this.lock.acquireThrowRuntime("registerStopRequest", idTransazione);
+		this.getLock().acquireThrowRuntime("registerStopRequest", idTransazione);
 		try {
 			//System.out.println("<"+idTransazione+">registerStopRequest entro");
 			
@@ -245,7 +256,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 			
 			//System.out.println("<"+idTransazione+">registerStopRequest esco");
 		}finally {
-			this.lock.release("registerStopRequest", idTransazione);
+			this.getLock().release("registerStopRequest", idTransazione);
 		}	
 	}
 
@@ -258,7 +269,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	public long getActiveThreads(IDUnivocoGroupByPolicy filtro){
 		
 		//synchronized (this.semaphore) {
-		this.lock.acquireThrowRuntime("getActiveThreads");
+		this.getLock().acquireThrowRuntime("getActiveThreads");
 		try {
 			
 			long counter = 0l;
@@ -279,14 +290,14 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 			
 			return counter;
 		}finally {
-			this.lock.release("getActiveThreads");
+			this.getLock().release("getActiveThreads");
 		}
 	}
 	
 	@Override
 	public String printInfos(Logger log, String separatorGroups) throws UtilsException{
 		//synchronized (this.semaphore) {
-		this.lock.acquireThrowRuntime("printInfos");
+		this.getLock().acquireThrowRuntime("printInfos");
 		try {
 			StringBuilder bf = new StringBuilder();
 			if(this.mapActiveThreads!=null && !this.mapActiveThreads.isEmpty()) {
@@ -311,7 +322,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 				return bf.toString()+separatorGroups;
 			}
 		}finally {
-			this.lock.release("printInfos");
+			this.getLock().release("printInfos");
 		}
 	}
 }

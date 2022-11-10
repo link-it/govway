@@ -82,8 +82,11 @@ public enum TipoAutenticazioneGestoreCredenziali implements Serializable {
 	public String toString(){
 		return this.valore;
 	}
-	public boolean equals(TipoAutenticazioneGestoreCredenziali esito){
-		return this.toString().equals(esito.toString());
+	public boolean equals(String esito){
+		if(esito==null) {
+			return false;
+		}
+		return this.toString().equals(esito);
 	}
 
 }

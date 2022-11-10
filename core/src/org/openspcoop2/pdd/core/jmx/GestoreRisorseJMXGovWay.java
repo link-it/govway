@@ -35,41 +35,41 @@ import org.openspcoop2.utils.jmx.RisorseJMXException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class GestoreRisorseJMX extends org.openspcoop2.utils.jmx.GestoreRisorseJMX {
+public class GestoreRisorseJMXGovWay extends org.openspcoop2.utils.jmx.GestoreRisorseJMX {
 
-	public GestoreRisorseJMX() throws RisorseJMXException {
+	public GestoreRisorseJMXGovWay() throws RisorseJMXException {
 		super();
 	}
 
 
-	public GestoreRisorseJMX(Logger logger) throws RisorseJMXException {
+	public GestoreRisorseJMXGovWay(Logger logger) throws RisorseJMXException {
 		super(logger);
 	}
 
 
-	public GestoreRisorseJMX(String jndiNameMBeanServer,
+	public GestoreRisorseJMXGovWay(String jndiNameMBeanServer,
 			Properties jndiContext, Logger logger, Logger loggerConsole)
 			throws RisorseJMXException {
 		super(jndiNameMBeanServer, jndiContext, logger, loggerConsole);
 	}
-	public GestoreRisorseJMX(String jndiNameMBeanServer,
+	public GestoreRisorseJMXGovWay(String jndiNameMBeanServer,
 			Properties jndiContext, Logger logger) throws RisorseJMXException {
 		super(jndiNameMBeanServer, jndiContext, logger);
 	}
-	public GestoreRisorseJMX(String jndiNameMBeanServer, Properties jndiContext)
+	public GestoreRisorseJMXGovWay(String jndiNameMBeanServer, Properties jndiContext)
 			throws RisorseJMXException {
 		super(jndiNameMBeanServer, jndiContext);
 	}
 	
 	
-	public GestoreRisorseJMX(String tipoApplicationServer, String factory, String serverUrl, String username,  String password) throws RisorseJMXException{
+	public GestoreRisorseJMXGovWay(String tipoApplicationServer, String factory, String serverUrl, String username,  String password) throws RisorseJMXException{
 		super(tipoApplicationServer,factory,serverUrl,username,password);
 	}
-	public GestoreRisorseJMX(String tipoApplicationServer, String factory, String serverUrl, String username,  String password,
+	public GestoreRisorseJMXGovWay(String tipoApplicationServer, String factory, String serverUrl, String username,  String password,
 			Logger logger) throws RisorseJMXException{
 		super(tipoApplicationServer,factory,serverUrl,username,password,logger);
 	}
-	public GestoreRisorseJMX(String tipoApplicationServer, String factory, String serverUrl, String username,  String password,
+	public GestoreRisorseJMXGovWay(String tipoApplicationServer, String factory, String serverUrl, String username,  String password,
 			Logger logger,Logger loggerConsole) throws RisorseJMXException{
 		super(tipoApplicationServer,factory,serverUrl,username,password,logger,loggerConsole);
 	}

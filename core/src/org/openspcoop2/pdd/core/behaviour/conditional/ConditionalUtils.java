@@ -229,7 +229,10 @@ public class ConditionalUtils  {
 					
 				case CONTENT_BASED:
 					AbstractXPathExpressionEngine xPathEngine = null;
-					if(messageContent!=null && messageContent.isXml()) {
+					if(messageContent==null) {
+						throw new Exception("messaggio non presente");
+					}
+					if(messageContent.isXml()) {
 						pattern = " (xPath: "+patternSelettore+")";
 						msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
 						xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(message.getFactory());

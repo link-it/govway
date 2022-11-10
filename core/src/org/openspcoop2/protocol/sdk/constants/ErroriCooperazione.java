@@ -118,10 +118,10 @@ public enum ErroriCooperazione {
 	MESSAGE_SECURITY("E' occorso un errore durante la gestione della Sicurezza sul Messaggio",
 			null),
 			
-	AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE("Autenticazione fallita, credenziali non fornite",
+	AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE(CostantiProtocollo.PREFISSO_AUTENTICAZIONE_FALLITA+CostantiProtocollo.CREDENZIALI_NON_FORNITE,
 			CodiceErroreCooperazione.MITTENTE_NON_VALORIZZATO),
 	
-	AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE("Autenticazione fallita, credenziali fornite non corrette",
+	AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE(CostantiProtocollo.PREFISSO_AUTENTICAZIONE_FALLITA+CostantiProtocollo.CREDENZIALI_FORNITE_NON_CORRETTE,
 			CodiceErroreCooperazione.MITTENTE_SCONOSCIUTO),
 	
 	AUTORIZZAZIONE_FALLITA("Il Mittente non è autorizzato a fruire del servizio richiesto",
@@ -251,7 +251,7 @@ public enum ErroriCooperazione {
 	
 	public ErroreCooperazione getErroreCredenzialiForniteNonCorrette(String errore) {
 		if(this.equals(AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE)){
-			return newErroreCooperazione("Autenticazione fallita, credenziali fornite non corrette: "+errore, CodiceErroreCooperazione.MITTENTE_SCONOSCIUTO);
+			return newErroreCooperazione(CostantiProtocollo.PREFISSO_AUTENTICAZIONE_FALLITA+CostantiProtocollo.CREDENZIALI_FORNITE_NON_CORRETTE+": "+errore, CodiceErroreCooperazione.MITTENTE_SCONOSCIUTO);
 		}else{
 			throw new RuntimeException("Il metodo può essere utilizzato solo con il messaggio "+AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.name());
 		}

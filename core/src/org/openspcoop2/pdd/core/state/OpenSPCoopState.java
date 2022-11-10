@@ -324,8 +324,12 @@ public abstract class OpenSPCoopState implements IOpenSPCoopState {
 						this.dbManager_consegneMessageBox.releaseResource(this.identitaPdD,this.idModulo,this.resourceDB);
 					}
 				}
-				this.richiestaStato.updateConnection(null);
-				this.rispostaStato.updateConnection(null);
+				if(this.richiestaStato!=null) {
+					this.richiestaStato.updateConnection(null);
+				}
+				if(this.rispostaStato!=null) {
+					this.rispostaStato.updateConnection(null);
+				}
 			}catch (Exception e) {	
 				this.logger.error("Rilasciate risorse con errore: "+e.getMessage(),e);
 				OpenSPCoop2Logger.getLoggerOpenSPCoopConsole().error("Rilasciate risorse con errore: "+e.getMessage());

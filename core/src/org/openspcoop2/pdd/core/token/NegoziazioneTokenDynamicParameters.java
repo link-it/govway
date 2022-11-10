@@ -386,6 +386,10 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 	}
 	
 	@Override
+	public String toStringRepresentation() {
+		return this.toString();
+	}
+	@Override
 	public String toString() {
 		return toString("\n", false);
 	}

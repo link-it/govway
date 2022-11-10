@@ -100,7 +100,7 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 	public final static String GET_STATO_RISORSE_DI_SISTEMA = "getStatoRisorseSistema";
 	public final static String GET_STATO_RISORSE_DI_SISTEMA_METHOD2 = "listStatoRisorseSistema"; // per farlo comparire in jmx-console
 	public final static String GET_STATO_CACHES = "getStatoCache";
-	public final static String GET_STATO_CACHES_METHOD2 = "getStatoCache"; // per farlo comparire in jmx-console
+	public final static String GET_STATO_CACHES_METHOD2 = "listStatoCache"; // per farlo comparire in jmx-console
 	public final static String CONNESSIONI_ALLOCATE_DB_MANAGER = "getUsedDBConnections";
 	public final static String CONNESSIONI_ALLOCATE_DB_MANAGER_METHOD2 = "listUsedDBConnections"; // per farlo comparire in jmx-console
 	public final static String CONNESSIONI_ALLOCATE_QUEUE_MANAGER = "getUsedQueueConnections";

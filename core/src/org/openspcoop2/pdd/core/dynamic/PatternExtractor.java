@@ -357,7 +357,9 @@ public class PatternExtractor {
 		String operazione = "Remove ("+opPattern+""+opName+")";
 		
 		try {
-			this.messageContent.setUpdatable();
+			if(this.messageContent!=null) {
+				this.messageContent.setUpdatable();
+			}
 			
 			if(this.element!=null) {
 				AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(this.messageFactory);
@@ -560,7 +562,9 @@ public class PatternExtractor {
 		String operazione = "Replace value (pattern: "+pattern+""+opName+")";
 		
 		try {
-			this.messageContent.setUpdatable();
+			if(this.messageContent!=null) {
+				this.messageContent.setUpdatable();
+			}
 			
 			if(this.element!=null) {
 				AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(this.messageFactory);

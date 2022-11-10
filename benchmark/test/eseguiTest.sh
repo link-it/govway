@@ -64,24 +64,51 @@ elencoTest="$elencoTestTrasparenteRest $elencoTestTrasparenteSoap $elencoTestMod
 function build_jmx_command() {
 	echo "${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -Jdebug=${debug} -JnodoRunProtocol=${nodoRunProtocol} -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JforwardedIP=${forwardedIP} -JconnectionTimeout=${connectionTimeout} -JreadTimeout=${readTimeout} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=${threadNumber} -Jduration=${duration} -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JcontentType=\"${contentType}\" -JtipoTest=${tipoTest} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloMessaggi=${profiloMessaggi} -JprofiloSicurezza=${profiloSicurezza} -JdirResult=${outputDir} -j ${logDir}/jmeter.log -Jiterazione=$it -JtestName=${testConfigurator}"
 }
+function build_jmx_command_single_test() {
+        # uso 10 thread e duro 5 secondi per essere sicuro che con e senza cache non vi siano differenze
+	echo "${binJMeter}/jmeter -n -t ${jmeterTestFile} -l ${resultDir}/OUTPUT.txt -Jdebug=${debug} -JnodoRunProtocol=${nodoRunProtocol} -JnodoRunIP=${nodoRunIP} -JnodoRunPort=${nodoRunPort} -JclientIP=${clientIP} -JforwardedIP=${forwardedIP} -JconnectionTimeout=${connectionTimeout} -JreadTimeout=${readTimeout} -JtestFileDir=${testFileDir} -JlogDir=${logDir} -Jthreads=10 -Jduration=5 -JthreadsRampUp=${threadsRampUp}  -Jdimensione=${dimensione} -Jprofilo=${profilo} -Jazione=${azione} -JcontentType=\"${contentType}\" -JtipoTest=${tipoTest} -Jsoggetto=${soggetto}  -JsleepMin=${sleepMin} -JsleepMax=${sleepMax} -JproxyHost=${proxyHost} -JproxyPort=${proxyPort} -Jprotocollo=${protocollo} -JprofiloMessaggi=${profiloMessaggi} -JprofiloSicurezza=${profiloSicurezza} -JdirResult=${outputDir} -j ${logDir}/jmeter.log -Jiterazione=$it -JtestName=${testConfigurator}"
+}
 
 function clean_db() {
 	echo ""
-	echo -e "====================="
+	echo -e "==============================================================="
 	echo -e "LANCIO SCRIPT DI PULIZIA DB: $scriptDatabaseCleaner"
-	echo -e "====================="
+	echo -e "==============================================================="
 	echo -e ""
 	if $scriptDatabaseCleaner; then
 		echo -e ""
-		echo -e "====================="
+		echo -e "==============================================================="
 		echo -e "Script $scriptDatabaseCleaner eseguito con successo"
-		echo -e "====================="
+		echo -e "==============================================================="
 		echo -e ""
 	else
 		echo -e ""
-		echo -e "====================="
+		echo -e "==============================================================="
 		echo -e "ERRORE nell'esecuzione dello script $scriptDatabaseCleaner"
-		echo -e "====================="
+		echo -e "==============================================================="
+		echo -e ""
+		exit 1
+	fi
+
+}
+
+function verifyLogOptimization() {
+	echo ""
+	echo -e "===================================================================================="
+	echo -e "LANCIO SCRIPT VERIFICA OTTIMIZZAZIONE LOG: $scriptVerifyLogOptimization"
+	echo -e "===================================================================================="
+	echo -e ""
+	if $scriptVerifyLogOptimization; then
+		echo -e ""
+		echo -e "==============================================================="
+		echo -e "Script $scriptVerifyLogOptimization eseguito con successo"
+		echo -e "==============================================================="
+		echo -e ""
+	else
+		echo -e ""
+		echo -e "==============================================================="
+		echo -e "ERRORE nell'esecuzione dello script $scriptVerifyLogOptimization"
+		echo -e "==============================================================="
 		echo -e ""
 		exit 1
 	fi
@@ -110,6 +137,21 @@ function run_jmx_test() {
 					echo "------- delay min:${sleepMin} max:${sleepMax}"
 					echo "--------- test (protocollo:${protocollo} profiloSicurezza:${profiloSicurezza} tipoTest:$tipoTest dimensione:$dimensione threads:$threadNumber azione:$azione sleepMin:$sleepMin sleepMax:$sleepMax) ..."
 					echo ""
+
+					if [[ ! -z $scriptVerifyLogOptimization ]]; then
+						command_single_test=$(build_jmx_command_single_test)
+
+						echo ""
+						echo -e "============================"
+						echo -e "Verifica Ottimizzazione Log"
+						echo -e "============================"
+						echo ""
+						echo "+ $command_single_test"
+						eval $command_single_test
+						rm ${resultDir}/OUTPUT.txt
+
+						verifyLogOptimization
+					fi
 
 					it=1
 					command=$(build_jmx_command)

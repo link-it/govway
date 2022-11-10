@@ -25,8 +25,8 @@ import java.util.List;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.TipoBehaviour;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -249,7 +249,7 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 					responseTo.setResponseTo(true);
 					behaviour.setResponseTo(responseTo);
 					OpenSPCoop2MessageFactory factory = msg!=null ? msg.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
-					OpenSPCoop2Message replyTo = factory.createEmptyMessage(msg.getMessageType(),MessageRole.RESPONSE);
+					OpenSPCoop2Message replyTo = factory.createEmptyMessage(msg!=null ? msg.getMessageType() : org.openspcoop2.message.constants.MessageType.BINARY,MessageRole.RESPONSE);
 					behaviour.getResponseTo().setMessage(replyTo);
 				}
 			}

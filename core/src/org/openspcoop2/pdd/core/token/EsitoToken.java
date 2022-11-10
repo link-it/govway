@@ -120,7 +120,9 @@ public abstract class EsitoToken implements java.io.Serializable {
 					ps.close();
 					bout.flush();
 					bout.close();
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 			bf.append("stackTraceEccezioneProcessamento: \n"+bout.toString());
 		}

@@ -237,6 +237,11 @@ public class GestoreAutorizzazione {
 		if(GestoreAutorizzazione.cacheAutorizzazione!=null)
 			throw new AutorizzazioneException("Cache gia' abilitata");
 		else{
+			_abilitaCache();
+		}
+	}
+	private static synchronized void _abilitaCache() throws AutorizzazioneException{
+		if(GestoreAutorizzazione.cacheAutorizzazione==null) {
 			try{
 				GestoreAutorizzazione.cacheAutorizzazione = new Cache(CacheType.JCS, GestoreAutorizzazione.AUTORIZZAZIONE_CACHE_NAME); // lascio JCS come default abilitato via jmx
 				GestoreAutorizzazione.cacheAutorizzazione.build();
@@ -285,6 +290,11 @@ public class GestoreAutorizzazione {
 		if(GestoreAutorizzazione.cacheAutorizzazione==null)
 			throw new AutorizzazioneException("Cache gia' disabilitata");
 		else{
+			_disabilitaCache();
+		}
+	}
+	private static synchronized void _disabilitaCache() throws AutorizzazioneException{
+		if(GestoreAutorizzazione.cacheAutorizzazione!=null) {
 			try{
 				GestoreAutorizzazione.cacheAutorizzazione.clear();
 				GestoreAutorizzazione.cacheAutorizzazione = null;
@@ -1273,7 +1283,7 @@ public class GestoreAutorizzazione {
     		}
     		boolean autorizzato = true;
     		String errorMessage = null;
-    		if(informazioniTokenNormalizzate.getScopes()==null || informazioniTokenNormalizzate.getScopes().size()<=0) {
+    		if(informazioniTokenNormalizzate==null || informazioniTokenNormalizzate.getScopes()==null || informazioniTokenNormalizzate.getScopes().size()<=0) {
     			errorMessage = "Token without scopes";
     			autorizzato = false;
     		}
@@ -1371,7 +1381,7 @@ public class GestoreAutorizzazione {
 	    			informazioniTokenNormalizzate = (InformazioniToken) oInformazioniTokenNormalizzate;
 	    		}
 	    	
-	    		if(informazioniTokenNormalizzate.getClaims()==null || informazioniTokenNormalizzate.getClaims().size()<=0) {
+	    		if(informazioniTokenNormalizzate==null || informazioniTokenNormalizzate.getClaims()==null || informazioniTokenNormalizzate.getClaims().size()<=0) {
 	    			autorizzato = false;
 	    			errorMessage = "Token without claims";
 	    		}
@@ -1425,7 +1435,9 @@ public class GestoreAutorizzazione {
 							
 							if(attributeAuthorityName!=null && attributeName!=null) {
 								if(informazioniTokenNormalizzate.getAa()!=null && 
-										informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities()!=null && informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities() &&
+										informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities()!=null &&
+										informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities().getValue()!=null &&
+										informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities().getValue() &&
 										informazioniTokenNormalizzate.getAa().getAttributes()!=null && 
 										informazioniTokenNormalizzate.getAa().getAttributes().containsKey(attributeAuthorityName)) {
 									Object o = informazioniTokenNormalizzate.getAa().getAttributes().get(attributeAuthorityName);
@@ -1441,7 +1453,11 @@ public class GestoreAutorizzazione {
 							}
 							else if(attributeName!=null) {
 								if(informazioniTokenNormalizzate.getAa()!=null && 
-										(informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities()==null || !informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities()) &&
+										(
+												informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities()==null || 
+												informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities().getValue()==null || 
+												!informazioniTokenNormalizzate.getAa().isMultipleAttributeAuthorities().getValue()
+										) &&
 										informazioniTokenNormalizzate.getAa().getAttributes()!=null && 
 										informazioniTokenNormalizzate.getAa().getAttributes().containsKey(attributeName)) {
 									findAttribute = true;

@@ -120,7 +120,7 @@ public class WWWAuthenticateGenerator {
 	}
 	
 	public static String buildCustomHeaderValue(String auth, String realm, WWWAuthenticateErrorCode errorCode, String error_description) {
-		return buildCustomHeaderValue(auth, realm, errorCode.name(), error_description);
+		return buildCustomHeaderValue(auth, realm, errorCode!=null ? errorCode.name() : null, error_description);
 	}
 	public static String buildCustomHeaderValue(String auth, String realm, String errorCode, String error_description) {
 		

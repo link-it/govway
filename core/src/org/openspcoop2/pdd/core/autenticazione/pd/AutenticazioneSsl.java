@@ -37,6 +37,7 @@ import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.keystore.GestoreKeystoreCaching;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
@@ -89,7 +90,7 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
     	
 		// Controllo credenziali fornite
     	if( subject==null || "".equals(subject) ){
-			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaSsl("credenziali non fornite",subject));
+			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND, ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaSsl(CostantiProtocollo.CREDENZIALI_NON_FORNITE,subject));
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			if(wwwAuthenticateConfig!=null) {
@@ -155,7 +156,7 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 	    			certificate.checkValid();
 	    		}catch(Exception e) {
 	    			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS, 
-	    					ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaSsl("credenziali fornite non corrette: "+e.getMessage(),subject));
+	    					ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaSsl(CostantiProtocollo.CREDENZIALI_FORNITE_NON_CORRETTE+": "+e.getMessage(),subject));
 	    			esito.setClientAuthenticated(false);
 	    			esito.setClientIdentified(false);
 	    			if(wwwAuthenticateConfig!=null) {
@@ -179,7 +180,7 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 					}
 	    		}catch(Exception e) {
 	    			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHENTICATION_INVALID_CREDENTIALS, 
-	    					ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaSsl("credenziali fornite non corrette: "+e.getMessage(),subject));
+	    					ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaSsl(CostantiProtocollo.CREDENZIALI_FORNITE_NON_CORRETTE+": "+e.getMessage(),subject));
 	    			esito.setClientAuthenticated(false);
 	    			esito.setClientIdentified(false);
 	    			if(wwwAuthenticateConfig!=null) {
@@ -237,7 +238,7 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 		
 		if(idServizioApplicativo == null){
 			// L'identificazione in ssl non e' obbligatoria
-			//esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaSsl("credenziali fornite non corrette",subject));
+			//esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaSsl(CostantiProtocollo.CREDENZIALI_FORNITE_NON_CORRETTE,subject));
 			esito.setClientIdentified(false);
 		}
 		else {

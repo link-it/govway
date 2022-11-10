@@ -53,6 +53,10 @@ public class PolicyFiltroApplicativoUtilities {
 	public static String getValore(Logger log,String tipo, String nome, InRequestProtocolContext context, 
 			DatiTransazione datiTransazione, boolean forFilter) throws Exception{
 		
+		if(context==null) {
+			throw new Exception("InRequestProtocolContext is null");
+		}
+		
 		OpenSPCoop2Message message = context.getMessaggio();
 		
 		URLProtocolContext urlProtocolContext = context.getConnettore().getUrlProtocolContext();
@@ -132,11 +136,15 @@ public class PolicyFiltroApplicativoUtilities {
 				// non so che tipo di message type possiedo
 				try{
 					soapAction = SoapUtils.getSoapAction(urlProtocolContext, MessageType.SOAP_11, urlProtocolContext.getContentType());
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 				if(soapAction==null){
 					try{
 						soapAction = SoapUtils.getSoapAction(urlProtocolContext, MessageType.SOAP_12, urlProtocolContext.getContentType());
-					}catch(Exception e){}	
+					}catch(Exception e){
+						// ignore
+					}	
 				}
 			}
 			if(soapAction!=null) {

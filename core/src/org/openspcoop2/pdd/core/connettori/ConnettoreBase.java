@@ -247,7 +247,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		if(connectorPropertiesRequired){
 			if(this.properties == null)
 				this.errore = "Proprieta' del connettore non definite";
-			if(this.properties.size() == 0)
+			else if(this.properties.size() == 0)
 				this.errore = "Proprieta' del connettore non definite";
 		}
 		

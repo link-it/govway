@@ -582,26 +582,36 @@ public class ConnettoreJMS extends ConnettoreBase {
 			try{
 				// Rilascio Risorse
 				sender.close();
-			}catch(Exception ec){}
+			}catch(Exception ec){
+				// close
+			}
 			try{
 				if(qs!=null)
 					qs.close();	
-			}catch(Exception ec){}
+			}catch(Exception ec){
+				// close
+			}
 			try{
 				if(qc!=null)
 					qc.close();
 
-			}catch(Exception ec){}
+			}catch(Exception ec){
+				// close
+			}
 			return false;
 		}finally{
 			try{
 				if(ctxJMS!=null)
 					ctxJMS.close();
-			}catch(Exception close){}
+			}catch(Exception close){
+				// close
+			}
 			try{
 				if(ctxLocalPool!=null)
 					ctxLocalPool.close();
-			}catch(Exception close){}
+			}catch(Exception close){
+				// close
+			}
 		}
 
 	}

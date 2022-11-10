@@ -220,9 +220,7 @@ public class GestoreAutenticazione {
 		}
 	}
 	private static synchronized void _abilitaCache() throws AutenticazioneException{
-		if(GestoreAutenticazione.cacheAutenticazione!=null)
-			throw new AutenticazioneException("Cache gia' abilitata");
-		else{
+		if(GestoreAutenticazione.cacheAutenticazione==null) {
 			try{
 				GestoreAutenticazione.cacheAutenticazione = new Cache(CacheType.JCS, GestoreAutenticazione.AUTENTICAZIONE_CACHE_NAME); // lascio JCS come default abilitato via jmx
 				GestoreAutenticazione.cacheAutenticazione.build();
@@ -275,9 +273,7 @@ public class GestoreAutenticazione {
 		}
 	}
 	private static synchronized void _disabilitaCache() throws AutenticazioneException{
-		if(GestoreAutenticazione.cacheAutenticazione==null)
-			throw new AutenticazioneException("Cache gia' disabilitata");
-		else{
+		if(GestoreAutenticazione.cacheAutenticazione!=null) {
 			try{
 				GestoreAutenticazione.cacheAutenticazione.clear();
 				GestoreAutenticazione.cacheAutenticazione = null;

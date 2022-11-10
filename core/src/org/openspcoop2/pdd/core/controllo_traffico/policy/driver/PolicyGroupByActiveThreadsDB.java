@@ -85,6 +85,19 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 	private static final String CT_MAP_COLUMN_KEY = "map_key";
 	private static final String CT_MAP_COLUMN_UPDATE_TIME = "map_update_time";
 	private static final String CT_MAP_COLUMN_VALUE = "map_value";
+
+	private static java.util.Random _rnd = null;
+	private static synchronized void initRandom() {
+		if(_rnd==null) {
+			_rnd = new java.util.Random();
+		}
+	}
+	public static java.util.Random getRandom() {
+		if(_rnd==null) {
+			initRandom();
+		}
+		return _rnd;
+	}
 	
 	private boolean mapExists = false;
 	
@@ -95,11 +108,11 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 	private IState state;
 	private IDSoggetto dominio;
 	private String idTransazione;
-	private OpenSPCoop2Properties op2Properties; 
+	private transient OpenSPCoop2Properties _op2Properties; 
 	private String tipoDatabase;
 	private IJDBCAdapter jdbcAdapter;
-	private JavaSerializer javaSerializer = null;
-	private JavaDeserializer javaDeserializer = null;
+	private transient JavaSerializer _javaSerializer = null;
+	private transient JavaDeserializer _javaDeserializer = null;
 	private Logger log;
 	private Logger logSql;
 	private boolean debug;
@@ -120,24 +133,61 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 		this.state = state;
 		this.dominio = dominio;
 		this.idTransazione = idTransazione;
-		this.op2Properties = OpenSPCoop2Properties.getInstance();
-		this.tipoDatabase = this.op2Properties.getDatabaseType();
+		this._op2Properties = OpenSPCoop2Properties.getInstance();
+		this.tipoDatabase = this._op2Properties.getDatabaseType();
 		try {
 			this.jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(this.tipoDatabase);
 		}catch(Exception e){
 			throw new PolicyException("[createJDBCAdapter] "+e.getMessage(),e);
 		}
-		this.javaSerializer = new JavaSerializer();
-		this.javaDeserializer = new JavaDeserializer();
-		this.debug = this.op2Properties.isControlloTrafficoDebug();
+		this._javaSerializer = new JavaSerializer();
+		this._javaDeserializer = new JavaDeserializer();
+		this.debug = this._op2Properties.isControlloTrafficoDebug();
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(this.debug);
 		this.logSql = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTrafficoSql(this.debug);
 		
-		this.transactionMode = this.op2Properties.isControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction();
-		this.attesaAttivaJDBC = this.op2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva();
-		this.checkIntervalloJDBC = this.op2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval();
+		this.transactionMode = this._op2Properties.isControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction();
+		this.attesaAttivaJDBC = this._op2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva();
+		this.checkIntervalloJDBC = this._op2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval();
 				
 	}
+	
+	private synchronized void initJavaSerializer() {
+		if(this._javaSerializer==null) {
+			this._javaSerializer = new JavaSerializer();
+		}
+	}
+	public JavaSerializer getJavaSerializer(){
+		if(this._javaSerializer==null) {
+			initJavaSerializer();
+		}
+		return this._javaSerializer;
+	}
+	
+	private synchronized void initJavaDeserializer() {
+		if(this._javaDeserializer==null) {
+			this._javaDeserializer = new JavaDeserializer();
+		}
+	}
+	public JavaDeserializer getJavaDeserializer(){
+		if(this._javaDeserializer==null) {
+			initJavaDeserializer();
+		}
+		return this._javaDeserializer;
+	}
+	
+	private synchronized void initOpenSPCoop2Properties() {
+		if(this._op2Properties==null) {
+			this._op2Properties = OpenSPCoop2Properties.getInstance();
+		}
+	}
+	public OpenSPCoop2Properties getOpenSPCoop2Properties(){
+		if(this._op2Properties==null) {
+			initOpenSPCoop2Properties();
+		}
+		return this._op2Properties;
+	}
+	
 	
 	
 	@Override
@@ -429,7 +479,9 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 			if(r!=null) {
 				try {
 					dbManager.releaseResource(dominio, modulo, r);
-				}catch(Throwable eClose) {}
+				}catch(Throwable eClose) {
+					// ignore
+				}
 			}
 			throw new PolicyException(e.getMessage(),e);
 		}
@@ -455,7 +507,19 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 		}
 	}
 	
-	private final org.openspcoop2.utils.Semaphore lock_checkMap = new org.openspcoop2.utils.Semaphore("PolicyGroupByActiveThreadsDB_checkMap");
+	private transient org.openspcoop2.utils.Semaphore _lock_checkMap = null;
+	private synchronized void initLockCheckMap() {
+		if(this._lock_checkMap==null) {
+			this._lock_checkMap = new org.openspcoop2.utils.Semaphore("PolicyGroupByActiveThreadsDB_checkMap"); 
+		}
+	}
+	public org.openspcoop2.utils.Semaphore getLockCheckMap(){
+		if(this._lock_checkMap==null) {
+			initLockCheckMap();
+		}
+		return this._lock_checkMap;
+	}
+	
 	private void checkMap(Connection con) throws PolicyException {
 		if(!this.mapExists) {
 			_checkMap(con);
@@ -463,7 +527,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 	}
 	private void _checkMap(Connection con) throws PolicyException {
 		
-		this.lock_checkMap.acquireThrowRuntime("checkMap");
+		this.getLockCheckMap().acquireThrowRuntime("checkMap");
 		try {
 
 			if(!this.mapExists) {
@@ -587,7 +651,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 										
 										java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> mapActiveThreads = new HashMap<IDUnivocoGroupByPolicy, DatiCollezionati>();
 										ByteArrayOutputStream bout = new ByteArrayOutputStream();
-										this.javaSerializer.writeObject(mapActiveThreads, bout);
+										this.getJavaSerializer().writeObject(mapActiveThreads, bout);
 										bout.flush();
 										bout.close();
 										
@@ -641,23 +705,31 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 									try{
 										if( rs != null )
 											rs.close();
-									} catch(Exception er) {}
+									} catch(Exception er) {
+										// close
+									}
 									try{
 										if( pstmt != null )
 											pstmt.close();
-									} catch(Exception er) {}
+									} catch(Exception er) {
+										// close
+									}
 									try{
 										con.rollback();
-									} catch(Exception er) {}
+									} catch(Exception er) {
+										// ignore
+									}
 								}
 
 								if(transactionInsertFinished == false){
 									// Per aiutare ad evitare conflitti
 									try{
-										int sleep = (new java.util.Random()).nextInt(this.checkIntervalloJDBC);
+										int sleep = (getRandom()).nextInt(this.checkIntervalloJDBC);
 										//System.out.println("Sleep: "+sleep);
 										Utilities.sleep(sleep); // random
-									}catch(Exception eRandom){}
+									}catch(Exception eRandom){
+										// ignore
+									}
 								}
 								
 								iteration++;
@@ -701,7 +773,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 			}
 			
 		}finally {
-			this.lock_checkMap.release("checkMap");
+			this.getLockCheckMap().release("checkMap");
 		}
 	}
 	
@@ -908,7 +980,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 						Timestamp tCheck = rs.getTimestamp(CT_MAP_COLUMN_UPDATE_TIME);
 						if(this.uniqueIdMap_updateTime.equals(tCheck)) {
 							try(InputStream is = this.jdbcAdapter.getBinaryStream(rs, CT_MAP_COLUMN_VALUE);){
-								mapActiveThreads = (java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati>) this.javaDeserializer.readObject(is, java.util.Map.class);
+								mapActiveThreads = (java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati>) this.getJavaDeserializer().readObject(is, java.util.Map.class);
 							}
 						}
 						else {
@@ -1129,7 +1201,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 					if(updateMap) {
 					
 						ByteArrayOutputStream bout = new ByteArrayOutputStream();
-						this.javaSerializer.writeObject(mapActiveThreads, bout);
+						this.getJavaSerializer().writeObject(mapActiveThreads, bout);
 						bout.flush();
 						bout.close();
 						
@@ -1227,15 +1299,21 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 					try{
 						if( rs != null )
 							rs.close();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// close
+					}
 					try{
 						if( pstmt != null )
 							pstmt.close();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// close
+					}
 					if(this.transactionMode) {
 						try{
 							con.rollback();
-						} catch(Exception er) {}
+						} catch(Exception er) {
+							// ignore
+						}
 					}
 					else {
 						throw new PolicyException("Operazione non riuscita: "+e.getMessage(),e);
@@ -1246,10 +1324,12 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 					if(this.transactionMode) {
 						// Per aiutare ad evitare conflitti
 						try{
-							int sleep = (new java.util.Random()).nextInt(this.checkIntervalloJDBC);
+							int sleep = (getRandom()).nextInt(this.checkIntervalloJDBC);
 							//System.out.println("Sleep: "+sleep);
 							Utilities.sleep(sleep); // random
-						}catch(Exception eRandom){}
+						}catch(Exception eRandom){
+							// ignore
+						}
 					}
 					else {
 						throw new PolicyException("Operazione non riuscita");

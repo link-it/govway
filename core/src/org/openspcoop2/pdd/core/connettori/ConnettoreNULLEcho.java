@@ -476,11 +476,15 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 							// Rollback quanto effettuato (se l'errore e' avvenuto sul commit, o prima nell'execute delle PreparedStatement)
 							try{
 								connectionDB.rollback();
-							}catch(Exception er){}
+							}catch(Exception er){
+								// ignore
+							}
 							// Ripristino connessione
 							try{
 								connectionDB.setAutoCommit(true);
-							}catch(Exception er){}
+							}catch(Exception er){
+								// ignore
+							}
 							state.closePreparedStatement(); // Chiude le PreparedStatement aperte(e non eseguite) per il save del Msg
 						}
 					

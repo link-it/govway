@@ -148,7 +148,9 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		for (int i=0; i<attributesNames.length; i++){
 			try{
 				list.add(new Attribute(attributesNames[i],getAttribute(attributesNames[i])));
-			}catch(JMException ex){}
+			}catch(JMException ex){
+				// ignore
+			}
 		}
 		return list;
 	}
@@ -187,7 +189,9 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				Attribute attribute = (Attribute) it.next();
 				setAttribute(attribute);
 				ret.add(attribute);
-			}catch(JMException ex){}
+			}catch(JMException ex){
+				// ignore
+			}
 		}
 
 		return ret;
@@ -1231,11 +1235,15 @@ class VersioneBaseDatiChecker implements Callable<String>{
 				try{
 					if(rs!=null)
 						rs.close();
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 				try{
 					if(pstmt!=null)
 						pstmt.close();
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 				
 				sql = "select * from "+CostantiDB.DB_INFO +" order by id DESC";
 				pstmt = c.prepareStatement(sql);
@@ -1265,15 +1273,21 @@ class VersioneBaseDatiChecker implements Callable<String>{
 			try{
 				if(rs!=null)
 					rs.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			try{
 				if(pstmt!=null)
 					pstmt.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			try{
 				if(dbManager!=null)
 					dbManager.releaseResource(dominio, modulo, resource);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 	}
@@ -1294,6 +1308,9 @@ class InformazioniDatabaseChecker implements Callable<String>{
 		}
 		DBManager dbManager = DBManager.getInstance();
 		Resource resource = null;
+		if(this.openspcoopProperties==null) {
+			throw new Exception("Inizializzazione OpenSPCoop2Properties non effettuata");
+		}
 		IDSoggetto dominio = this.openspcoopProperties.getIdentitaPortaDefaultWithoutProtocol();
 		String modulo = this.getClass().getName();
 		StringBuilder bf = new StringBuilder();
@@ -1321,7 +1338,9 @@ class InformazioniDatabaseChecker implements Callable<String>{
 			try{
 				if(dbManager!=null)
 					dbManager.releaseResource(dominio, modulo, resource);
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	

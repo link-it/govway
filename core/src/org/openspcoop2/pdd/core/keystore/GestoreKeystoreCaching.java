@@ -107,6 +107,15 @@ public class GestoreKeystoreCaching {
 			if(cache!=null)
 				throw new Exception("Cache gia' abilitata");
 			else{
+				_abilitaCache();
+			}
+		}catch(Exception e){
+			throw new Exception("Abilitazione cache per i dati contenenti i keystore non riuscita: "+e.getMessage(),e);
+		}
+	}
+	private static synchronized void _abilitaCache() throws Exception{
+		try{
+			if(cache==null) {
 				cache = new Cache(CacheType.JCS, KEYSTORE_CACHE_NAME); // lascio JCS come default abilitato via jmx
 				cache.build();
 			}
@@ -134,6 +143,15 @@ public class GestoreKeystoreCaching {
 			if(cache==null)
 				throw new Exception("Cache gia' disabilitata");
 			else{
+				_disabilitaCache();
+			}
+		}catch(Exception e){
+			throw new Exception("Disabilitazione cache per i dati contenenti i keystore non riuscita: "+e.getMessage(),e);
+		}
+	}	
+	private static synchronized void _disabilitaCache() throws Exception{
+		try{
+			if(cache!=null) {
 				cache.clear();
 				cache = null;
 			}

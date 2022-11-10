@@ -83,6 +83,10 @@ public class BehaviourLoader {
 			throw new CoreException(e.getMessage(),e);
 		}
 		
+		if(behaviourImpl==null) {
+			throw new CoreException("Init Behaviour '"+behaviour.getNome()+"' failed");
+		}
+		
 		if(msgDiag!=null) {
 			msgDiag.addKeyword(CostantiPdD.KEY_TIPO_BEHAVIOUR, tipoDiagBehaviour);
 		}

@@ -61,7 +61,7 @@ public class DimensioneMessaggiConfigurationUtils {
 			IProtocolFactory<?> protocolFactory) throws Exception {
 		
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
-		ConfigurazioneControlloTraffico configurazioneControlloTraffico =  op2Properties.getConfigurazioneControlloTraffico();
+		ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico =  op2Properties.getConfigurazioneControlloTraffico();
 		ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance();
 		
 		SoglieDimensioneMessaggi soglie = null;

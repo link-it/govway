@@ -251,7 +251,9 @@ public class XACMLPolicyUtilities {
 		if(informazioniAttributiNormalizzati!=null) {
 			attributeNames = informazioniAttributiNormalizzati.getAttributesNames();
 			attributes = informazioniAttributiNormalizzati.getAttributes();
-			multipleAA = informazioniAttributiNormalizzati.isMultipleAttributeAuthorities()!=null && informazioniAttributiNormalizzati.isMultipleAttributeAuthorities();
+			multipleAA = informazioniAttributiNormalizzati.isMultipleAttributeAuthorities()!=null && 
+					informazioniAttributiNormalizzati.isMultipleAttributeAuthorities().getValue()!=null && 
+					informazioniAttributiNormalizzati.isMultipleAttributeAuthorities().getValue();
 		}
 
 		Map<String, String> apiImplConfig = readConfig(pddContext, org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE);

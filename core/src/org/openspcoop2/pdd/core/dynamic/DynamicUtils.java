@@ -228,7 +228,7 @@ public class DynamicUtils {
 		
 		RequestInfo requestInfo = null;
 		
-		if(dynamicInfo!=null && dynamicInfo.getPddContext()!=null && dynamicInfo.getPddContext()!=null) {
+		if(dynamicInfo!=null && dynamicInfo.getPddContext()!=null) {
 			if(dynamicMap.containsKey(Costanti.MAP_CTX_OBJECT)==false) {
 				dynamicMap.put(Costanti.MAP_CTX_OBJECT, dynamicInfo.getPddContext());
 			}

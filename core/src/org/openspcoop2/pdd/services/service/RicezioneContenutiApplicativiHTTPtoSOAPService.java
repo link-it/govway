@@ -132,7 +132,9 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 	
 	public RicezioneContenutiApplicativiHTTPtoSOAPService(RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore){
 		this.generatoreErrore = generatoreErrore;
-		RicezioneContenutiApplicativiHTTPtoSOAPService.forceXmlResponse(this.generatoreErrore);
+		if(this.generatoreErrore!=null) {
+			RicezioneContenutiApplicativiHTTPtoSOAPService.forceXmlResponse(this.generatoreErrore);
+		}
 	}
 	
 	public void process(ConnectorInMessage req, ConnectorOutMessage res, Date dataAccettazioneRichiesta) throws ConnectorException {

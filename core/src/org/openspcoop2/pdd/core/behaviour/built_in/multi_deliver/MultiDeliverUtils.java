@@ -92,6 +92,9 @@ public class MultiDeliverUtils  {
 
 	public static void save(PortaApplicativa pa, ConfigurazioneMultiDeliver configurazione, boolean differenziazioneConsegnaDaNotifiche) throws BehaviourException {
 		
+		if(pa==null) {
+			throw new BehaviourException("Param pa is null");
+		}
 		if(pa.getBehaviour()==null) {
 			throw new BehaviourException("Configurazione behaviour non abilitata");
 		}

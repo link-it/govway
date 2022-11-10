@@ -73,7 +73,7 @@ import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.DBStatisticheManager;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.Resource;
-import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
+import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneGatewayControlloTraffico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
@@ -95,7 +95,7 @@ import org.slf4j.Logger;
 public class DatiStatisticiDAOManager  {
 
 	private static DatiStatisticiDAOManager staticInstance = null;
-	public static synchronized void initialize(ConfigurazioneControlloTraffico configurazioneControlloTraffico) throws Exception{
+	public static synchronized void initialize(ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico) throws Exception{
 		if(staticInstance==null){
 			staticInstance = new DatiStatisticiDAOManager(configurazioneControlloTraffico);
 		}
@@ -107,7 +107,7 @@ public class DatiStatisticiDAOManager  {
 		return staticInstance;
 	}
 	
-	private ConfigurazioneControlloTraffico configurazioneControlloTraffico;
+	private ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico;
 	
 	/** Indicazione se deve essere effettuato il log delle query */
 	private boolean debug = false;	
@@ -125,7 +125,7 @@ public class DatiStatisticiDAOManager  {
 	
 	private Logger log;
 	
-	private DatiStatisticiDAOManager(ConfigurazioneControlloTraffico configurazioneControlloTraffico) throws Exception{
+	private DatiStatisticiDAOManager(ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico) throws Exception{
 		try{
 			
     		this.configurazioneControlloTraffico = configurazioneControlloTraffico;
@@ -251,6 +251,12 @@ public class DatiStatisticiDAOManager  {
 					}
 					break;
 				}
+			}
+			if(model==null) {
+				throw new Exception("Model unknown");
+			}
+			if(dao==null) {
+				throw new Exception("DAO unknown");
 			}
 			
 			IExpression expression = this.createWhereExpressionNumeroRichieste(dao, model, tipoRisorsa, leftInterval, rightInterval, 
@@ -408,6 +414,13 @@ public class DatiStatisticiDAOManager  {
 					}
 					break;
 				}
+			}
+			
+			if(model==null) {
+				throw new Exception("Model unknown");
+			}
+			if(dao==null) {
+				throw new Exception("DAO unknown");
 			}
 			
 			IExpression expression = this.createWhereExpressionBanda(dao, model, tipoRisorsa, leftInterval, rightInterval, 
@@ -584,6 +597,13 @@ public class DatiStatisticiDAOManager  {
 					}
 					break;
 				}
+			}
+			
+			if(model==null) {
+				throw new Exception("Model unknown");
+			}
+			if(dao==null) {
+				throw new Exception("DAO unknown");
 			}
 			
 			IExpression expression = this.createWhereExpressionLatenza(dao, model, tipoRisorsa, leftInterval, rightInterval, 
@@ -810,7 +830,7 @@ public class DatiStatisticiDAOManager  {
 		if(tipoPdD==null) {
 			// se è stato applicato un filtro, devo prelevare solo le informazioni statistiche che hanno un match non il filtro
 			if(filtro!=null && filtro.isEnabled()){
-				if(filtro.getRuoloPorta()!=null && !"".equals(filtro.getRuoloPorta()) && 
+				if(filtro.getRuoloPorta()!=null && !"".equals(filtro.getRuoloPorta().getValue()) && 
 						!RuoloPolicy.ENTRAMBI.equals(filtro.getRuoloPorta())){				
 					if(RuoloPolicy.DELEGATA.equals(filtro.getRuoloPorta())){
 						tipoPdD = TipoPdD.DELEGATA;

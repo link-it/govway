@@ -67,7 +67,7 @@ public class InvokerNodiRuntime {
 				return remoteUrl;
 			}
 			else{
-				org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX gestoreJMX = null;
+				org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay gestoreJMX = null;
 				
 				if(this.configurazioneNodiRuntime.getResourceUrl(alias)!=null && !"".equals(this.configurazioneNodiRuntime.getResourceUrl(alias))
 						&& !"locale".equals(this.configurazioneNodiRuntime.getResourceUrl(alias))
@@ -82,13 +82,13 @@ public class InvokerNodiRuntime {
 					if(as==null){
 						throw new Exception("Configurazione errata (pdd:"+alias+") per l'accesso alla url ["+remoteUrl+"] via jmx. Non e' stato indicato il tipo di application server");
 					}
-					gestoreJMX = new org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX(as, factory, remoteUrl, 
+					gestoreJMX = new org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay(as, factory, remoteUrl, 
 							this.configurazioneNodiRuntime.getUsername(alias), 
 							this.configurazioneNodiRuntime.getPassword(alias), this.log);
 				}
 				else{
 					//System.out.println("=================== LOCALE =======================");
-					gestoreJMX = new org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX(this.log);
+					gestoreJMX = new org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay(this.log);
 					
 				}
 				
@@ -203,7 +203,7 @@ public class InvokerNodiRuntime {
 		Object gestore = this.getGestoreRisorseJMX(alias);
 		
 		try {
-			if(gestore instanceof org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX){
+			if(gestore instanceof org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay){
 				
 				Object [] params = null;
 				String [] signatures = null;
@@ -215,7 +215,7 @@ public class InvokerNodiRuntime {
 					}
 				}
 				
-				String tmp = (String) ((org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX)gestore).invoke(this.configurazioneNodiRuntime.getDominio(alias), 
+				String tmp = (String) ((org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay)gestore).invoke(this.configurazioneNodiRuntime.getDominio(alias), 
 						type, nomeRisorsa, nomeMetodo, params, signatures);
 				if(tmp.startsWith(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA)){
 					throw new Exception(tmp); 
@@ -326,8 +326,8 @@ public class InvokerNodiRuntime {
 		Object gestore = this.getGestoreRisorseJMX(alias);
 		
 		try {
-			if(gestore instanceof org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX){
-				Object t = ((org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX)gestore).getAttribute(this.configurazioneNodiRuntime.getDominio(alias), type, nomeRisorsa, nomeAttributo);
+			if(gestore instanceof org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay){
+				Object t = ((org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay)gestore).getAttribute(this.configurazioneNodiRuntime.getDominio(alias), type, nomeRisorsa, nomeAttributo);
 				if(t instanceof String){
 					String tmp = (String) t; 
 					if(tmp.startsWith(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA)){
@@ -378,8 +378,8 @@ public class InvokerNodiRuntime {
 		Object gestore = this.getGestoreRisorseJMX(alias);
 		
 		try {
-			if(gestore instanceof org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX){
-				((org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX)gestore).setAttribute(this.configurazioneNodiRuntime.getDominio(alias), type, nomeRisorsa, nomeAttributo, value);
+			if(gestore instanceof org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay){
+				((org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay)gestore).setAttribute(this.configurazioneNodiRuntime.getDominio(alias), type, nomeRisorsa, nomeAttributo, value);
 			}
 			else if(gestore instanceof String){
 				String url = (String) gestore;

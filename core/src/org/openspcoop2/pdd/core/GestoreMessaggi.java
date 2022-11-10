@@ -264,9 +264,7 @@ public class GestoreMessaggi  {
 		}
 	}
 	private static synchronized void _abilitaCache() throws GestoreMessaggiException{
-		if(GestoreMessaggi.cacheMappingGestoreMessaggi!=null)
-			throw new GestoreMessaggiException("Cache gia' abilitata");
-		else{
+		if(GestoreMessaggi.cacheMappingGestoreMessaggi==null) {
 			try{
 				GestoreMessaggi.cacheMappingGestoreMessaggi = new Cache(CacheType.JCS, GestoreMessaggi.GESTORE_MESSAGGI_CACHE_NAME); // lascio JCS come default abilitato via jmx
 				GestoreMessaggi.cacheMappingGestoreMessaggi.build();
@@ -299,9 +297,7 @@ public class GestoreMessaggi  {
 		}
 	}
 	private static synchronized void _disabilitaCache() throws GestoreMessaggiException{
-		if(GestoreMessaggi.cacheMappingGestoreMessaggi==null)
-			throw new GestoreMessaggiException("Cache gia' disabilitata");
-		else{
+		if(GestoreMessaggi.cacheMappingGestoreMessaggi!=null) {
 			try{
 				GestoreMessaggi.cacheMappingGestoreMessaggi.clear();
 				GestoreMessaggi.cacheMappingGestoreMessaggi = null;

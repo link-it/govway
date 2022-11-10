@@ -61,7 +61,7 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autenticazione.WWWAuthenticateConfig;
 import org.openspcoop2.pdd.core.autorizzazione.container.IAutorizzazioneSecurityContainer;
 import org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazionePortaApplicativa;
-import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
+import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneGatewayControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.INotify;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.TipoGestorePolicy;
 import org.openspcoop2.pdd.core.credenziali.IGestoreCredenziali;
@@ -25993,11 +25993,11 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isControlloTrafficoRealtimeIncrementaSoloPolicyApplicabile;
 	}
 	
-	private static ConfigurazioneControlloTraffico controlloTrafficoConfigurazione = null;
+	private static ConfigurazioneGatewayControlloTraffico controlloTrafficoConfigurazione = null;
 	public void initConfigurazioneControlloTraffico(Loader loaderOpenSPCoop, List<String> protocolli) throws Exception{
 		if(controlloTrafficoConfigurazione==null){
 			
-			controlloTrafficoConfigurazione = new ConfigurazioneControlloTraffico();
+			controlloTrafficoConfigurazione = new ConfigurazioneGatewayControlloTraffico();
 						
 			AccessoConfigurazionePdD config = this.getAccessoConfigurazionePdD();
 			controlloTrafficoConfigurazione.setTipoDatabaseConfig(config.getTipoDatabase());
@@ -26033,7 +26033,7 @@ public class OpenSPCoop2Properties {
 			controlloTrafficoConfigurazione.setElaborazioneRealtime_incrementaSoloPolicyApplicabile(this.isControlloTrafficoRealtimeIncrementaSoloPolicyApplicabile());
 		}
 	}
-	public ConfigurazioneControlloTraffico getConfigurazioneControlloTraffico(){
+	public ConfigurazioneGatewayControlloTraffico getConfigurazioneControlloTraffico(){
 		return OpenSPCoop2Properties.controlloTrafficoConfigurazione;
 	}
 	

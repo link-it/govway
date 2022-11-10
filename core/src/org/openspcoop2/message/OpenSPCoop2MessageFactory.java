@@ -1099,6 +1099,10 @@ public abstract class OpenSPCoop2MessageFactory {
 			errore = faultBuilderConfig.getDetails();
 		}
 		
+		if(messageType==null) {
+			messageType = MessageType.BINARY;
+		}
+		
 		try{
 			String fault = null;
 			String contentType = MessageUtilities.getDefaultContentType(messageType);

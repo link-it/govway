@@ -175,7 +175,7 @@ public class TimerUtils {
 		
     	boolean ok = true;
     	
-    	if(propertiesReader.isTimerLockByDatabase() && propertiesReader.getDatabaseType()!=null) {
+    	if(propertiesReader!=null && propertiesReader.isTimerLockByDatabase() && propertiesReader.getDatabaseType()!=null) {
 			
 			// RILASCIO LOCK SUL RUNTIME
 			

@@ -55,8 +55,19 @@ public class PolicyGroupByActiveThreadsDistributedCounters implements Serializab
 
 	private static final long serialVersionUID = 1L;
 
-	private final org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("PolicyGroupByActiveThreadsDistributedCounters"); // usato solo in creazione e quando si accede a tutta la mappa
-		
+	private transient org.openspcoop2.utils.Semaphore _lock = null; // usato solo in creazione e quando si accede a tutta la mappa
+	private synchronized void initLock() {
+		if(this._lock==null) {
+			this._lock = new org.openspcoop2.utils.Semaphore("PolicyGroupByActiveThreadsDistributedCounters"); 
+		}
+	}
+	public org.openspcoop2.utils.Semaphore getLock(){
+		if(this._lock==null) {
+			initLock();
+		}
+		return this._lock;
+	}	
+	
 	private final java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> mapActiveThreads = new HashMap<IDUnivocoGroupByPolicy, DatiCollezionati>();
 	
 	private String uniqueIdMap_idActivePolicy;
@@ -91,7 +102,7 @@ public class PolicyGroupByActiveThreadsDistributedCounters implements Serializab
 
 	@Override
 	public void initMap(java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
-		this.lock.acquireThrowRuntime("initMap");
+		this.getLock().acquireThrowRuntime("initMap");
 		try {
 			if(map!=null && !map.isEmpty()) {
 				for (IDUnivocoGroupByPolicy datiGroupBy : map.keySet()) {
@@ -103,7 +114,7 @@ public class PolicyGroupByActiveThreadsDistributedCounters implements Serializab
 			}
 		}
 		finally {
-			this.lock.release("initMap");
+			this.getLock().release("initMap");
 		}
 	}
 
@@ -111,7 +122,7 @@ public class PolicyGroupByActiveThreadsDistributedCounters implements Serializab
 	@Override
 	public void resetCounters(){
 
-		this.lock.acquireThrowRuntime("resetCounters");
+		this.getLock().acquireThrowRuntime("resetCounters");
 		try {
 			if(this.mapActiveThreads.size()>0){
 				Iterator<DatiCollezionati> datiCollezionati = this.mapActiveThreads.values().iterator();
@@ -122,14 +133,14 @@ public class PolicyGroupByActiveThreadsDistributedCounters implements Serializab
 			}
 		}
 		finally {
-			this.lock.release("resetCounters");
+			this.getLock().release("resetCounters");
 		}
 	}
 	
 	
 	@Override
 	public void remove() throws UtilsException {
-		this.lock.acquireThrowRuntime("remove");
+		this.getLock().acquireThrowRuntime("remove");
 
 		try {
 			List<IDUnivocoGroupByPolicy> deleteList = new ArrayList<IDUnivocoGroupByPolicy>();
@@ -148,13 +159,13 @@ public class PolicyGroupByActiveThreadsDistributedCounters implements Serializab
 			}
 			
 		} 	finally {
-			this.lock.release("remove");
+			this.getLock().release("remove");
 		}
 	}
 
 
 	private DatiCollezionati initStartRequest(Logger log, String idTransazione, IDUnivocoGroupByPolicyMapId datiGroupByMapId, Map<Object> ctx) throws PolicyException{
-		this.lock.acquireThrowRuntime("initStartRequest");
+		this.getLock().acquireThrowRuntime("initStartRequest");
 		DatiCollezionati datiCollezionati = null;
 		try {
 			datiCollezionati = this.mapActiveThreads.get(datiGroupByMapId);
@@ -180,7 +191,7 @@ public class PolicyGroupByActiveThreadsDistributedCounters implements Serializab
 			return datiCollezionati;
 		}
 		finally {
-			this.lock.release("initStartRequest");
+			this.getLock().release("initStartRequest");
 		}
 	}
 	@Override
@@ -262,7 +273,7 @@ public class PolicyGroupByActiveThreadsDistributedCounters implements Serializab
 	@Override
 	public long getActiveThreads(IDUnivocoGroupByPolicy filtro){
 
-		this.lock.acquireThrowRuntime("getActiveThreads");
+		this.getLock().acquireThrowRuntime("getActiveThreads");
 		try {
 			long counter = 0l;
 
@@ -283,7 +294,7 @@ public class PolicyGroupByActiveThreadsDistributedCounters implements Serializab
 			return counter;
 		}
 		finally {
-			this.lock.release("getActiveThreads");
+			this.getLock().release("getActiveThreads");
 		}
 
 	}
@@ -292,7 +303,7 @@ public class PolicyGroupByActiveThreadsDistributedCounters implements Serializab
 	@Override
 	public String printInfos(Logger log, String separatorGroups) throws UtilsException{
 
-		this.lock.acquireThrowRuntime("printInfos");
+		this.getLock().acquireThrowRuntime("printInfos");
 		try {
 			StringBuilder bf = new StringBuilder();
 			if(this.mapActiveThreads!=null && !this.mapActiveThreads.isEmpty()) {
@@ -318,7 +329,7 @@ public class PolicyGroupByActiveThreadsDistributedCounters implements Serializab
 			}
 		}
 		finally {
-			this.lock.release("printInfos");
+			this.getLock().release("printInfos");
 		}
 
 	}

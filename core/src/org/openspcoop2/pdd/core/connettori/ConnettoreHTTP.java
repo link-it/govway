@@ -702,9 +702,11 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 				while(itHttpResponse.hasNext()){
 					String keyHttpResponse = itHttpResponse.next();
 					List<String> valueHttpResponse = mapHeaderHttpResponse.get(keyHttpResponse);
-					for(int i=0;i<valueHttpResponse.size();i++){
-						if(this.debug)
-							this.logger.debug("HTTP risposta ["+keyHttpResponse+"] ["+valueHttpResponse.get(i)+"]...");
+					if(valueHttpResponse!=null) {
+						for(int i=0;i<valueHttpResponse.size();i++){
+							if(this.debug)
+								this.logger.debug("HTTP risposta ["+keyHttpResponse+"] ["+valueHttpResponse.get(i)+"]...");
+						}
 					}
 					if(keyHttpResponse==null){ // Check per evitare la coppia che ha come chiave null e come valore HTTP OK 200
 						keyHttpResponse=HttpConstants.RETURN_CODE;

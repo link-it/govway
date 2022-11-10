@@ -53,7 +53,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.controllo_traffico.CategoriaEventoControlloTraffico;
-import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
+import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneGatewayControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.DatiTempiRisposta;
 import org.openspcoop2.pdd.core.controllo_traffico.GeneratoreMessaggiErrore;
 import org.openspcoop2.pdd.core.controllo_traffico.NotificatoreEventi;
@@ -270,7 +270,7 @@ public class PolicyVerifier {
 			String descrizioneStatoAllarmeRilevato = null;
 			if(isApplicabile && risultatoVerificaPolicy.isApplicabilitaStatoAllarme()){
 				
-				if(((ConfigurazioneControlloTraffico)activePolicy.getConfigurazioneControlloTraffico()).isNotifierEnabled()==false){
+				if(((ConfigurazioneGatewayControlloTraffico)activePolicy.getConfigurazioneControlloTraffico()).isNotifierEnabled()==false){
 					throw new Exception("Modulo Allarmi non abilitato. La Policy deve essere applicata condizionalmente allo stato di un allarme");
 				}
 				

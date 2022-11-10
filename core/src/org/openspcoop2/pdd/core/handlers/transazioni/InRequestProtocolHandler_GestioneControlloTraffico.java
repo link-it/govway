@@ -49,7 +49,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
-import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
+import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneGatewayControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.ConnettoreUtilities;
 import org.openspcoop2.pdd.core.controllo_traffico.CostantiControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.DatiTempiRisposta;
@@ -116,7 +116,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 		TipoErrore tipoErrore = TipoErrore.FAULT;
 		boolean includiDescrizioneErrore = true;
 		
-		ConfigurazioneControlloTraffico configurazioneControlloTraffico = null;
+		ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico = null;
 		
 		Logger log = null;
 		
@@ -137,6 +137,10 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 			
 			// Logger
 			log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(op2Properties.isControlloTrafficoDebug());
+			
+			if(context==null) {
+				throw new Exception("InRequestProtocolContext is null");
+			}
 			
 			// Leggo i dati del servizio
 			datiTransazione = InterceptorPolicyUtilities.readDatiTransazione(context);

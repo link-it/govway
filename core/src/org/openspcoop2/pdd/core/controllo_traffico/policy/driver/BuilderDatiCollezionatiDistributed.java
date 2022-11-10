@@ -20,6 +20,7 @@
 
 package org.openspcoop2.pdd.core.controllo_traffico.policy.driver;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -52,10 +53,12 @@ import com.hazelcast.core.HazelcastInstance;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class BuilderDatiCollezionatiDistributed {
+public class BuilderDatiCollezionatiDistributed implements Serializable {
 	
 	// - c config: configuration date
 	// - i intervallo: intervallo di validità del contatore
+	
+	private static final long serialVersionUID = 1L;
 	
 	public final static String DISTRUBUITED_UPDATE_POLICY_DATE = "-updatePolicyDate-c-";
 	public final static String DISTRUBUITED_POLICY_DATE = "-policyDate-c";
@@ -75,8 +78,45 @@ public class BuilderDatiCollezionatiDistributed {
 	
 	
 	public final PolicyGroupByActiveThreadsType tipoPolicy;
-	private final HazelcastInstance hazelcast;
-	private final RedissonClient  redisson;
+	
+	private transient HazelcastInstance _hazelcast = null;
+	private synchronized void initHazelcast() throws PolicyException {
+		if(this._hazelcast==null) {
+			this._hazelcast = HazelcastManager.getInstance(this.tipoPolicy);
+		}
+	}
+	public HazelcastInstance getHazelcast() throws RuntimeException{
+		if(this._hazelcast==null) {
+			try {
+				initHazelcast();
+			}catch(Exception e) {
+				throw new RuntimeException(e.getMessage(),e);
+			}
+		}
+		return this._hazelcast;
+	}
+	
+	private transient RedissonClient _redisson = null;
+	private synchronized void initRedisson() throws PolicyException {
+		if(this._redisson==null) {
+			boolean throwInitializingException = true;
+			try {
+				this._redisson = RedissonManager.getRedissonClient(throwInitializingException);
+			}catch(Exception e) {
+				throw new PolicyException(e.getMessage(),e);
+			}
+		}
+	}
+	public RedissonClient getRedisson() throws RuntimeException{
+		if(this._redisson==null) {
+			try {
+				initRedisson();
+			}catch(Exception e) {
+				throw new RuntimeException(e.getMessage(),e);
+			}
+		}
+		return this._redisson;
+	}
 	
 	
 	private static final java.util.Map<PolicyGroupByActiveThreadsType, BuilderDatiCollezionatiDistributed> builderCache = new HashMap<>();
@@ -97,16 +137,16 @@ public class BuilderDatiCollezionatiDistributed {
 		this.tipoPolicy = tipoPolicy;
 		
 		if (tipoPolicy.isHazelcast() ) {
-			this.hazelcast = HazelcastManager.getInstance(this.tipoPolicy);
-			this.redisson  = null;
+			this._hazelcast = HazelcastManager.getInstance(this.tipoPolicy);
+			this._redisson  = null;
 		} else {
 			boolean throwInitializingException = true;
 			try {
-				this.redisson = RedissonManager.getRedissonClient(throwInitializingException);
+				this._redisson = RedissonManager.getRedissonClient(throwInitializingException);
 			}catch(Exception e) {
 				throw new PolicyException(e.getMessage(),e);
 			}
-			this.hazelcast = null;
+			this._hazelcast = null;
 		}
 	}
 	
@@ -118,19 +158,19 @@ public class BuilderDatiCollezionatiDistributed {
 		
 		switch (this.tipoPolicy) {
 		case HAZELCAST_ATOMIC_LONG:
-			ret = new DatiCollezionatiDistributedAtomicLong(log, dati, this.hazelcast, id, activePolicy);
+			ret = new DatiCollezionatiDistributedAtomicLong(log, dati, this.getHazelcast(), id, activePolicy);
 			break;
 		case HAZELCAST_ATOMIC_LONG_ASYNC:
-			ret = new DatiCollezionatiDistributedAtomicLongAsync(log, dati, this.hazelcast, id, activePolicy);
+			ret = new DatiCollezionatiDistributedAtomicLongAsync(log, dati, this.getHazelcast(), id, activePolicy);
 			break;
 		case HAZELCAST_PNCOUNTER:
-			ret = new DatiCollezionatiDistributedPNCounter(log, dati, this.hazelcast, id, activePolicy);
+			ret = new DatiCollezionatiDistributedPNCounter(log, dati, this.getHazelcast(), id, activePolicy);
 			break;
 		case REDISSON_ATOMIC_LONG:
-			ret = new DatiCollezionatiDistributedRedisAtomicLong(log, dati,  this.redisson, id, activePolicy);
+			ret = new DatiCollezionatiDistributedRedisAtomicLong(log, dati,  this.getRedisson(), id, activePolicy);
 			break;
 		case REDISSON_LONGADDER:
-			ret = new DatiCollezionatiDistributedLongAdder(log, dati, this.redisson, id, activePolicy);
+			ret = new DatiCollezionatiDistributedLongAdder(log, dati, this.getRedisson(), id, activePolicy);
 			break;
 		default:
 			throw new RuntimeException("Tipo Policy" + this.tipoPolicy + " Sconosciuto per il builder. Sono controllati nel costruttore, non dovrebbe mai accadere!");
@@ -149,19 +189,19 @@ public class BuilderDatiCollezionatiDistributed {
 				
 		switch (this.tipoPolicy) {
 		case HAZELCAST_ATOMIC_LONG:
-			ret = new DatiCollezionatiDistributedAtomicLong(log, updatePolicyDate, gestorePolicyConfigDate, this.hazelcast, id, activePolicy);
+			ret = new DatiCollezionatiDistributedAtomicLong(log, updatePolicyDate, gestorePolicyConfigDate, this.getHazelcast(), id, activePolicy);
 			break;
 		case HAZELCAST_ATOMIC_LONG_ASYNC:
-			ret = new DatiCollezionatiDistributedAtomicLongAsync(log, updatePolicyDate, gestorePolicyConfigDate, this.hazelcast, id, activePolicy);
+			ret = new DatiCollezionatiDistributedAtomicLongAsync(log, updatePolicyDate, gestorePolicyConfigDate, this.getHazelcast(), id, activePolicy);
 			break;
 		case HAZELCAST_PNCOUNTER:
-			ret = new DatiCollezionatiDistributedPNCounter(log, updatePolicyDate, gestorePolicyConfigDate, this.hazelcast, id, activePolicy);
+			ret = new DatiCollezionatiDistributedPNCounter(log, updatePolicyDate, gestorePolicyConfigDate, this.getHazelcast(), id, activePolicy);
 			break;
 		case REDISSON_ATOMIC_LONG:
-			ret = new DatiCollezionatiDistributedRedisAtomicLong(log, updatePolicyDate, gestorePolicyConfigDate, this.redisson, id, activePolicy);
+			ret = new DatiCollezionatiDistributedRedisAtomicLong(log, updatePolicyDate, gestorePolicyConfigDate, this.getRedisson(), id, activePolicy);
 			break;
 		case REDISSON_LONGADDER:
-			ret = new DatiCollezionatiDistributedLongAdder(log, updatePolicyDate, gestorePolicyConfigDate, this.redisson, id, activePolicy);
+			ret = new DatiCollezionatiDistributedLongAdder(log, updatePolicyDate, gestorePolicyConfigDate, this.getRedisson(), id, activePolicy);
 			break;
 		default:
 			throw new RuntimeException("Tipo Policy" + this.tipoPolicy + " Sconosciuto per il builder. Sono controllati nel costruttore, non dovrebbe mai accadere!");

@@ -57,6 +57,7 @@ public abstract class AbstractDynamicParameters {
 	
 	@Override
 	public String toString() {
-		return null;
+		return toStringRepresentation();
 	}
+	public abstract String toStringRepresentation();
 }

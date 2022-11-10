@@ -86,6 +86,11 @@ public class CostantiProtocollo {
     /** Tipo di identificativo: dynamic */
     public final static String IDENTIFICATIVO_SERIALE_DYNAMIC = "dynamic";
         
+    public static final String PREFISSO_AUTENTICAZIONE_FALLITA = "Autenticazione fallita, ";
+    /** Messaggio di credenziali non fornite */
+    public static final String CREDENZIALI_NON_FORNITE = "credenziali non fornite";
+    public static final String CREDENZIALI_FORNITE_NON_CORRETTE =  "credenziali fornite non corrette";
+    
     
 	// Costanti Key per i Messaggi di Errore Integrazione
     

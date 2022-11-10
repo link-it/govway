@@ -60,19 +60,30 @@ public class ZipTemplate implements Serializable {
 	private Template templateFreeMarker;
 	private Template templateVelocity;
 	
-	private org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("ZipTemplate");
+	private transient org.openspcoop2.utils.Semaphore _lock = null;
+	private synchronized void initLock() {
+		if(this._lock==null) {
+			this._lock = new org.openspcoop2.utils.Semaphore("ZipTemplate"); 
+		}
+	}
+	public org.openspcoop2.utils.Semaphore getLock(){
+		if(this._lock==null) {
+			initLock();
+		}
+		return this._lock;
+	}
 	
 	private void initTemplateFreeMarker() throws DynamicException{
 		if(this.templateFreeMarker==null) {
 			try {
-				this.lock.acquire("initTemplateFreeMarker");
+				this.getLock().acquire("initTemplateFreeMarker");
 			}catch(Throwable t) {
 				throw new DynamicException(t.getMessage(),t);
 			}
 			try {
 				this.templateFreeMarker = buildTemplate(Costanti.ZIP_INDEX_ENTRY_FREEMARKER);
 			}finally {
-				this.lock.release("initTemplateFreeMarker");
+				this.getLock().release("initTemplateFreeMarker");
 			}
 		}
 	}
@@ -86,14 +97,14 @@ public class ZipTemplate implements Serializable {
 	private void initTemplateVelocity() throws DynamicException{
 		if(this.templateVelocity==null) {
 			try {
-				this.lock.acquire("initTemplateVelocity");
+				this.getLock().acquire("initTemplateVelocity");
 			}catch(Throwable t) {
 				throw new DynamicException(t.getMessage(),t);
 			}
 			try {
 				this.templateVelocity = buildTemplate(Costanti.ZIP_INDEX_ENTRY_VELOCITY);
 			}finally {
-				this.lock.release("initTemplateVelocity");
+				this.getLock().release("initTemplateVelocity");
 			}
 		}
 	}

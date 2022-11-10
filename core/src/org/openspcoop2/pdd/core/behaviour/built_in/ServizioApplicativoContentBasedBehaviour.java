@@ -75,6 +75,10 @@ public class ServizioApplicativoContentBasedBehaviour extends AbstractCore imple
 			forwardTo = new BehaviourForwardTo();
 			behaviour.getForwardTo().add(forwardTo);
 			
+			if(busta==null) {
+				throw new BehaviourException("Param busta is null");
+			}
+			
 			BehaviourForwardToFilter filter = new BehaviourForwardToFilter();
 			IDServizioApplicativo id = new IDServizioApplicativo();
 			id.setIdSoggettoProprietario(new IDSoggetto(busta.getTipoDestinatario(),busta.getDestinatario()));

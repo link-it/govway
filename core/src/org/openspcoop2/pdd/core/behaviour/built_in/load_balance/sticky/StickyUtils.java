@@ -42,7 +42,6 @@ import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourPropertiesUtils;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
-import org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.dynamic.MessageContent;
@@ -122,7 +121,7 @@ public class StickyUtils  {
 						messageContent = new MessageContent(message.castAsRestJson(), bufferMessage_readOnly, pddContext);
 					}
 					else{
-						if(TipoSelettore.CONTENT_BASED.equals(tipoSelettore) 
+						if(StickyTipoSelettore.CONTENT_BASED.equals(tipoSelettore) 
 								// Nei template potrei utilizzare gli header o altre informazioni che non entrano nel merito del contenuto //|| tipoSelettore.isTemplate()
 								) {
 							throw new Exception("Selettore '"+tipoSelettore.getValue()+"' non supportato per il message-type '"+message.getMessageType()+"'");
@@ -204,7 +203,10 @@ public class StickyUtils  {
 				
 			case CONTENT_BASED:
 				AbstractXPathExpressionEngine xPathEngine = null;
-				if(messageContent!=null && messageContent.isXml()) {
+				if(messageContent==null) {
+					throw new Exception("messaggio non presente");
+				}
+				if(messageContent.isXml()) {
 					pattern = " (xPath: "+patternSelettore+")";
 					msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
 					xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(message.getFactory());

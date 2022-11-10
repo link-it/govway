@@ -65,7 +65,7 @@ public class NodeSenderDB extends AbstractCore implements INodeSender{
 
 	private static boolean isInitialized = false;
 
-	private synchronized void init() throws NodeException{
+	private static synchronized void initStaticResources() throws NodeException{
 		if (!NodeSenderDB.isInitialized) {
 			try{
 
@@ -92,6 +92,12 @@ public class NodeSenderDB extends AbstractCore implements INodeSender{
 				return;
 			}
 			NodeSenderDB.isInitialized=true;
+		}
+	}
+	
+	private void init() throws NodeException{
+		if (!NodeSenderDB.isInitialized) {
+			initStaticResources();	
 		}
 	}
 

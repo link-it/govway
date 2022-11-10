@@ -22,7 +22,6 @@ package org.openspcoop2.pdd.core.behaviour.built_in.load_balance;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 import org.openspcoop2.pdd.core.PdDContext;
@@ -37,6 +36,19 @@ import org.openspcoop2.pdd.core.behaviour.BehaviourException;
  */
 public class LoadBalancer {
 
+	private static java.util.Random _rnd = null;
+	private static synchronized void initRandomInstance() {
+		if(_rnd==null) {
+			_rnd = new java.util.Random();
+		}
+	}
+	public static java.util.Random getRandomInstance() {
+		if(_rnd==null) {
+			initRandomInstance();
+		}
+		return _rnd;
+	}
+	
 	private PdDContext pddContext;
 	private LoadBalancerPool pool;
 	private LoadBalancerType type;
@@ -89,13 +101,13 @@ public class LoadBalancer {
 		}
 		List<String> serverList = new ArrayList<>();
 		serverList.addAll(servers);
-		int randomIndex = new Random().nextInt(serverList.size());
+		int randomIndex = getRandomInstance().nextInt(serverList.size());
 		String target = serverList.get(randomIndex);
 		return target;
 	}
 	private String getWeightRandom() throws BehaviourException {
 		List<String> serverList = this.pool.getWeightList(true);
-		Integer index = new Random().nextInt(serverList.size());
+		Integer index = getRandomInstance().nextInt(serverList.size());
 		String target = serverList.get(index);
 		return target;
 	}
@@ -132,7 +144,11 @@ public class LoadBalancer {
 		List<String> serverList = new ArrayList<>();
 		serverList.addAll(servers);
 		String remoteId = clientIp;
-		int absoluteHashCode = java.lang.Math.abs(remoteId.hashCode());
+		int hashCodeCalcolato = remoteId.hashCode();
+		if(hashCodeCalcolato == Integer.MIN_VALUE) {
+			hashCodeCalcolato = Integer.MIN_VALUE+1; // altrimenti viene negativo l'abs
+		}
+		int absoluteHashCode = java.lang.Math.abs(hashCodeCalcolato);
 		Integer index = absoluteHashCode % serverList.size();
 		String target = serverList.get(index);
 		

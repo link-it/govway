@@ -727,7 +727,7 @@ public class NotificatoreEventi {
 		
 		if(properties.isControlloTrafficoEnabled()) {
 			
-			ConfigurazioneControlloTraffico config = properties.getConfigurazioneControlloTraffico();
+			ConfigurazioneGatewayControlloTraffico config = properties.getConfigurazioneControlloTraffico();
 			if(config.isNotifierEnabled()) {
 				
 				INotify notifier = config.getNotifier();
@@ -780,12 +780,16 @@ public class NotificatoreEventi {
 				if(out!=null) {
 					out.flush();
 				}
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// ignore
+			}
 			try {
 				if(out!=null) {
 					out.close();
 				}
-			}catch(Exception e) {}
+			}catch(Exception e) {
+				// close
+			}
 		}
 	}
 	
@@ -951,7 +955,9 @@ public class NotificatoreEventi {
 			try{
 				if(zipOut!=null)
 					zipOut.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 
 	}
@@ -1135,7 +1141,9 @@ public class NotificatoreEventi {
 							if(inputStream!=null){
 								inputStream.close();
 							}
-						}catch(Exception eClose){}
+						}catch(Exception eClose){
+							// close
+						}
 					}
 				}
 				
@@ -1148,15 +1156,21 @@ public class NotificatoreEventi {
 			try{
 				if(zipFile!=null)
 					zipFile.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			try{
 				if(f!=null)
 					f.delete();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			try{
 				if(in!=null)
 					in.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 		
 	}

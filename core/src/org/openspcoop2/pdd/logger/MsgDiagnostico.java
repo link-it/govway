@@ -917,6 +917,27 @@ public class MsgDiagnostico {
 		}
 	}
 	
+    public void emitRicezioneMessaggioModuloBuste(MsgDiagnostico msgDiag, PdDContext pddContext, boolean mittenteAnonimo) {
+		if(mittenteAnonimo) {
+			msgDiag.logPersonalizzato("ricezioneMessaggio.mittenteAnonimo");
+		}
+		else {
+			// verifico che l'identita sia stata definita nel contesto del diagnostico non come 'Anonimo'
+			if(this.keywordLogPersonalizzati!=null) {
+				String v = this.keywordLogPersonalizzati.get(CostantiPdD.KEY_MITTENTE_BUSTA_RICHIESTA);
+				if(v==null || "".equals(v) || CostantiPdD.SOGGETTO_ANONIMO.equals(v)) {
+					mittenteAnonimo = true;
+				}
+			}
+			if(mittenteAnonimo) {
+				msgDiag.logPersonalizzato("ricezioneMessaggio.mittenteAnonimo");
+			}
+			else {
+				msgDiag.logPersonalizzato("ricezioneMessaggio");
+			}
+		}
+   }
+	
 	/**
 	 * Il Metodo si occupa di creare un messaggio di livello 'Personalizzato'. 
 	 *

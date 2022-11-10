@@ -28,7 +28,12 @@ logDir=${BENCHMARK_HOME}/log
 resultDir=${BENCHMARK_HOME}/results
 
 # Script per pulire il database di govway prima dell'esecuzione dei test
+# Esempi in tools/pulizia
 scriptDatabaseCleaner=
+
+# Script per verificare l'ottimizzazione dei diagnostici e delle tracce
+# Esempi in tools/verifyLogOptimization
+scriptVerifyLogOptimization=
 
 # Metterlo a true per far produrre a jmeter i log delle richieste in errore
 debug=false

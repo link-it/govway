@@ -123,7 +123,9 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 		for (int i=0; i<attributesNames.length; i++){
 			try{
 				list.add(new Attribute(attributesNames[i],_getAttribute(attributesNames[i],false)));
-			}catch(JMException ex){}
+			}catch(JMException ex){
+				// ignore
+			}
 		}
 		return list;
 	}
@@ -188,7 +190,9 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 				Attribute attribute = (Attribute) it.next();
 				setAttribute(attribute);
 				ret.add(attribute);
-			}catch(JMException ex){}
+			}catch(JMException ex){
+				// ignore
+			}
 		}
 		
 		return ret;
@@ -494,7 +498,9 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 		}catch(Exception e){
 			try{
 				this.log.error("Configurazione non disponibile: "+e.getMessage(),e);
-			}catch(Exception eLog){}
+			}catch(Exception eLog){
+				// ignore
+			}
 			throw new MBeanException(e, "Configurazione non disponibile: "+e.getMessage());
 		}
 	}

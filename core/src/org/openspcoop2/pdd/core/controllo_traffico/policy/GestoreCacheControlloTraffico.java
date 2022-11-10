@@ -34,7 +34,7 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoLatenza;
 import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoStatistico;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
-import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
+import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneGatewayControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.INotify;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -102,6 +102,15 @@ public class GestoreCacheControlloTraffico {
 			if(cache!=null)
 				throw new Exception("Cache gia' abilitata");
 			else{
+				_abilitaCache();
+			}
+		}catch(Exception e){
+			throw new Exception("Abilitazione cache per i dati sul controllo del traffico non riuscita: "+e.getMessage(),e);
+		}
+	}
+	private static synchronized void _abilitaCache() throws Exception{
+		try{
+			if(cache==null) {
 				cache = new Cache(CacheType.JCS, CONTROLLO_TRAFFICO_CACHE_NAME); // lascio JCS come default abilitato via jmx
 				cache.build();
 			}
@@ -129,13 +138,22 @@ public class GestoreCacheControlloTraffico {
 			if(cache==null)
 				throw new Exception("Cache gia' disabilitata");
 			else{
+				_disabilitaCache();
+			}
+		}catch(Exception e){
+			throw new Exception("Disabilitazione cache per i dati sul controllo del traffico non riuscita: "+e.getMessage(),e);
+		}
+	}
+	private static synchronized void _disabilitaCache() throws Exception{
+		try{
+			if(cache!=null){
 				cache.clear();
 				cache = null;
 			}
 		}catch(Exception e){
 			throw new Exception("Disabilitazione cache per i dati sul controllo del traffico non riuscita: "+e.getMessage(),e);
 		}
-	}	
+	}
 	public static String listKeysCache(String separator) throws Exception{
 		try{
 			if(cache!=null){
@@ -280,7 +298,7 @@ public class GestoreCacheControlloTraffico {
 	
 	
 	private static GestoreCacheControlloTraffico staticInstance = null;
-	public static synchronized void initialize(ConfigurazioneControlloTraffico configurazioneControlloTraffico) throws Exception{
+	public static synchronized void initialize(ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico) throws Exception{
 		if(staticInstance==null){
 			staticInstance = new GestoreCacheControlloTraffico(configurazioneControlloTraffico);
 		}
@@ -296,9 +314,9 @@ public class GestoreCacheControlloTraffico {
 	private INotify datiNotifierReader = null;
 	private Logger log;
 	private boolean debug;
-	private ConfigurazioneControlloTraffico configurazioneControlloTraffico;
+	private ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico;
 	
-	public GestoreCacheControlloTraffico(ConfigurazioneControlloTraffico configurazioneControlloTraffico) throws Exception{
+	public GestoreCacheControlloTraffico(ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico) throws Exception{
 		this.datiStatisticiReader = DatiStatisticiDAOManager.getInstance();
 		if(configurazioneControlloTraffico.isNotifierEnabled()){
 			this.datiNotifierReader = configurazioneControlloTraffico.getNotifier();

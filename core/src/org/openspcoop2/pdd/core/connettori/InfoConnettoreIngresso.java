@@ -21,6 +21,8 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
+import java.io.Serializable;
+
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 
@@ -32,9 +34,10 @@ import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class InfoConnettoreIngresso  {
+public class InfoConnettoreIngresso implements Serializable {
 
-    /** FromLocation */
+    private static final long serialVersionUID = 1L;
+	/** FromLocation */
     private String fromLocation;
     /** Credenziali */
 	private Credenziali credenziali ;

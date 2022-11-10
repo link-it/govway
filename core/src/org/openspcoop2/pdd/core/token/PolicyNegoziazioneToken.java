@@ -31,7 +31,6 @@ import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.pdd.core.dynamic.DynamicException;
 import org.openspcoop2.pdd.core.token.parser.BasicNegoziazioneTokenParser;
 import org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser;
-import org.openspcoop2.pdd.core.token.parser.TipologiaClaims;
 import org.openspcoop2.pdd.core.token.parser.TipologiaClaimsNegoziazione;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 
@@ -53,7 +52,7 @@ public class PolicyNegoziazioneToken extends AbstractPolicyToken implements Seri
 	public INegoziazioneTokenParser getNegoziazioneTokenParser() throws Exception {
 		INegoziazioneTokenParser parser = null;
 		TipologiaClaimsNegoziazione tipologiaClaims = TipologiaClaimsNegoziazione.valueOf(this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_TYPE));
-		if(TipologiaClaims.CUSTOM.equals(tipologiaClaims)) {
+		if(TipologiaClaimsNegoziazione.CUSTOM.equals(tipologiaClaims)) {
 			String className = this.defaultProperties.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_PARSER_CLASS_NAME);
 			parser = (INegoziazioneTokenParser) ClassLoaderUtilities.newInstance(className);
 		}

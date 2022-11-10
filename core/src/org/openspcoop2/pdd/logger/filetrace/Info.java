@@ -1726,7 +1726,11 @@ public class Info {
 		String v = null;
 		if(attributeName!=null &&
 				this.informazioniAttributi!=null && 
-				(this.informazioniAttributi.isMultipleAttributeAuthorities()==null || !this.informazioniAttributi.isMultipleAttributeAuthorities()) &&
+				(
+						this.informazioniAttributi.isMultipleAttributeAuthorities()==null || 
+						this.informazioniAttributi.isMultipleAttributeAuthorities().getValue()==null || 
+						!this.informazioniAttributi.isMultipleAttributeAuthorities().getValue()
+				) &&
 				this.informazioniAttributi.getAttributes()!=null && 
 				this.informazioniAttributi.getAttributes().containsKey(attributeName)) {
 			Object valueAttributeObject = this.informazioniAttributi.getAttributes().get(attributeName);
@@ -1745,7 +1749,9 @@ public class Info {
 		String v = null;
 		if(attributeAuthorityName!=null && attributeName!=null) {
 			if(this.informazioniAttributi!=null && 
-					this.informazioniAttributi.isMultipleAttributeAuthorities()!=null && this.informazioniAttributi.isMultipleAttributeAuthorities() &&
+					this.informazioniAttributi.isMultipleAttributeAuthorities()!=null && 
+					this.informazioniAttributi.isMultipleAttributeAuthorities().getValue()!=null && 
+					this.informazioniAttributi.isMultipleAttributeAuthorities().getValue() &&
 					this.informazioniAttributi.getAttributes()!=null && 
 					this.informazioniAttributi.getAttributes().containsKey(attributeAuthorityName)) {
 				Object o = this.informazioniAttributi.getAttributes().get(attributeAuthorityName);

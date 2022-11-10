@@ -600,7 +600,9 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 								if(cis!=null){
 									cis.close();
 								}
-							}catch(Exception eClose){}
+							}catch(Exception eClose){
+								// close
+							}
 						}
 					}
 					

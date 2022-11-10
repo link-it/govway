@@ -60,7 +60,10 @@ public class DynamicInfo {
 			this.busta = connettoreMsg.getBusta();
 		}
 		
-		TransportRequestContext trasportRequestContext = connettoreMsg.getTransportRequestContext(); 
+		TransportRequestContext trasportRequestContext = null;
+		if(connettoreMsg!=null) {
+			trasportRequestContext = connettoreMsg.getTransportRequestContext();
+		}
 
 		if(trasportRequestContext!=null) {
 			this.trasporto = trasportRequestContext.getHeaders();

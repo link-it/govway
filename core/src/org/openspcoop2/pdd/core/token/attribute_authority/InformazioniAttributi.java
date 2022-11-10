@@ -31,6 +31,7 @@ import java.util.Map;
 
 import org.openspcoop2.pdd.core.token.TipoInformazioni;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.json.JSONUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -290,11 +291,11 @@ public class InformazioniAttributi extends org.openspcoop2.utils.beans.BaseBean 
 		this.valid = valid;
 	}
 	
-	public Boolean isMultipleAttributeAuthorities() {
-		if(this.multipleAttributeAuthorities) {
-			return this.multipleAttributeAuthorities;
+	public BooleanNullable isMultipleAttributeAuthorities() {
+		if(this.multipleAttributeAuthorities!=null) {
+			return this.multipleAttributeAuthorities.booleanValue() ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
 		}
-		return null;
+		return BooleanNullable.NULL();
 	}
 	public List<String> getAttributeAuthorities() {
 		if(this.attributeAuthorities!=null && !this.attributeAuthorities.isEmpty()) {

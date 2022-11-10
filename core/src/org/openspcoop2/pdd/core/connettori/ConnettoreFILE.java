@@ -521,7 +521,9 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 							if(fin!=null){
 								fin.close();
 							}
-						}catch(Exception eClose){}
+						}catch(Exception eClose){
+							// close
+						}
 					}
 				}
 		
@@ -545,7 +547,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				if(this.isSoap){
 					this.imbustamentoConAttachment = false;
 					if(this.propertiesTrasportoRisposta!=null && this.propertiesTrasportoRisposta.size()>0){
-						if("true".equals(this.propertiesTrasportoRisposta.get(this.openspcoopProperties.getTunnelSOAPKeyWord_headerTrasporto()))){
+						if("true".equals(TransportUtils.getObjectAsString(this.propertiesTrasportoRisposta, this.openspcoopProperties.getTunnelSOAPKeyWord_headerTrasporto()))){
 							this.imbustamentoConAttachment = true;
 						}
 						this.mimeTypeAttachment = TransportUtils.getFirstValue(this.propertiesTrasportoRisposta, this.openspcoopProperties.getTunnelSOAPKeyWordMimeType_headerTrasporto());
@@ -938,30 +940,32 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
     		permission = p.substring(indexOf+1, p.length());
     	}
     	
-    	for (int i = 0; i < permission.length(); i++) {
-			char c = permission.charAt(i);
-			if(c == 'r' || c == 'R') {
-				config.setReadable(add);
-				if(owner!=null) {
-					config.setReadable_ownerOnly(owner);
+    	if(permission!=null) {
+	    	for (int i = 0; i < permission.length(); i++) {
+				char c = permission.charAt(i);
+				if(c == 'r' || c == 'R') {
+					config.setReadable(add);
+					if(owner!=null) {
+						config.setReadable_ownerOnly(owner);
+					}
+				}
+				else if(c == 'w' || c == 'W') {
+					config.setWritable(add);
+					if(owner!=null) {
+						config.setWritable_ownerOnly(owner);
+					}
+				}
+				else if(c == 'x' || c == 'X') {
+					config.setExecutable(add);
+					if(owner!=null) {
+						config.setExecutable_ownerOnly(owner);
+					}
+				}
+				else {
+					throw new ConnettoreException(errorMsg);
 				}
 			}
-			else if(c == 'w' || c == 'W') {
-				config.setWritable(add);
-				if(owner!=null) {
-					config.setWritable_ownerOnly(owner);
-				}
-			}
-			else if(c == 'x' || c == 'X') {
-				config.setExecutable(add);
-				if(owner!=null) {
-					config.setExecutable_ownerOnly(owner);
-				}
-			}
-			else {
-				throw new ConnettoreException(errorMsg);
-			}
-		}
+    	}
     	
     }
     

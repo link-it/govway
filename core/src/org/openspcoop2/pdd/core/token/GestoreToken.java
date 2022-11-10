@@ -309,6 +309,11 @@ public class GestoreToken {
 		if(GestoreToken.cacheToken!=null)
 			throw new TokenException("Cache gia' abilitata");
 		else{
+			_abilitaCache();
+		}
+	}
+	private static synchronized void _abilitaCache() throws TokenException{
+		if(GestoreToken.cacheToken==null) {
 			try{
 				GestoreToken.cacheToken = new Cache(CacheType.JCS, GestoreToken.TOKEN_CACHE_NAME); // lascio JCS come default abilitato via jmx
 				GestoreToken.cacheToken.build();
@@ -357,6 +362,11 @@ public class GestoreToken {
 		if(GestoreToken.cacheToken==null)
 			throw new TokenException("Cache gia' disabilitata");
 		else{
+			_disabilitaCache();
+		}
+	}
+	private static synchronized void _disabilitaCache() throws TokenException{
+		if(GestoreToken.cacheToken!=null) {
 			try{
 				GestoreToken.cacheToken.clear();
 				GestoreToken.cacheToken = null;
@@ -3570,9 +3580,11 @@ public class GestoreToken {
 				Enumeration<Object> keys = convertTextToProperties.keys();
 				while (keys.hasMoreElements()) {
 					String nome = (String) keys.nextElement();
-					String valore = convertTextToProperties.getProperty(nome);
-					if(nome!=null && !"".equals(nome) && valore!=null) {
-						TransportUtils.setParameter(pContent, nome, valore);
+					if(nome!=null && !"".equals(nome)) {
+						String valore = convertTextToProperties.getProperty(nome);
+						if(valore!=null) {
+							TransportUtils.setParameter(pContent, nome, valore);
+						}
 					}
 				}
 			}
@@ -3771,22 +3783,24 @@ public class GestoreToken {
 					Enumeration<Object> keys = convertTextToProperties.keys();
 					while (keys.hasMoreElements()) {
 						String nome = (String) keys.nextElement();
-						String valore = convertTextToProperties.getProperty(nome);
-						if(nome!=null && !"".equals(nome) && valore!=null) {
-							if(sessionInfoPayload ==null) {
-								sessionInfoPayload = jsonUtils.newObjectNode();
-							}
-							
-							if(valore.trim().startsWith("[") && valore.trim().endsWith("]")) {
-								JsonNode node = jsonUtils.getAsNode(valore);
-								sessionInfoPayload.set(nome, node);
-							}
-							else if(valore.trim().startsWith("{") && valore.trim().endsWith("}")) {
-								JsonNode node = jsonUtils.getAsNode(valore);
-								sessionInfoPayload.set(nome, node);
-							}
-							else {
-								sessionInfoPayload.put(nome, valore);
+						if(nome!=null && !"".equals(nome)) {
+							String valore = convertTextToProperties.getProperty(nome);
+							if(valore!=null) {
+								if(sessionInfoPayload ==null) {
+									sessionInfoPayload = jsonUtils.newObjectNode();
+								}
+								
+								if(valore.trim().startsWith("[") && valore.trim().endsWith("]")) {
+									JsonNode node = jsonUtils.getAsNode(valore);
+									sessionInfoPayload.set(nome, node);
+								}
+								else if(valore.trim().startsWith("{") && valore.trim().endsWith("}")) {
+									JsonNode node = jsonUtils.getAsNode(valore);
+									sessionInfoPayload.set(nome, node);
+								}
+								else {
+									sessionInfoPayload.put(nome, valore);
+								}
 							}
 						}
 					}
@@ -3805,18 +3819,20 @@ public class GestoreToken {
 				Enumeration<Object> keys = convertTextToProperties.keys();
 				while (keys.hasMoreElements()) {
 					String nome = (String) keys.nextElement();
-					String valore = convertTextToProperties.getProperty(nome);
-					if(nome!=null && !"".equals(nome) && valore!=null) {
-						if(valore.trim().startsWith("[") && valore.trim().endsWith("]")) {
-							JsonNode node = jsonUtils.getAsNode(valore);
-							jwtPayload.set(nome, node);
-						}
-						else if(valore.trim().startsWith("{") && valore.trim().endsWith("}")) {
-							JsonNode node = jsonUtils.getAsNode(valore);
-							jwtPayload.set(nome, node);
-						}
-						else {
-							jwtPayload.put(nome, valore);
+					if(nome!=null && !"".equals(nome)) {
+						String valore = convertTextToProperties.getProperty(nome);
+						if(valore!=null) {
+							if(valore.trim().startsWith("[") && valore.trim().endsWith("]")) {
+								JsonNode node = jsonUtils.getAsNode(valore);
+								jwtPayload.set(nome, node);
+							}
+							else if(valore.trim().startsWith("{") && valore.trim().endsWith("}")) {
+								JsonNode node = jsonUtils.getAsNode(valore);
+								jwtPayload.set(nome, node);
+							}
+							else {
+								jwtPayload.put(nome, valore);
+							}
 						}
 					}
 				}
@@ -4556,18 +4572,20 @@ public class GestoreToken {
 				Enumeration<Object> keys = convertTextToProperties.keys();
 				while (keys.hasMoreElements()) {
 					String nome = (String) keys.nextElement();
-					String valore = convertTextToProperties.getProperty(nome);
-					if(nome!=null && !"".equals(nome) && valore!=null) {
-						if(valore.trim().startsWith("[") && valore.trim().endsWith("]")) {
-							JsonNode node = jsonUtils.getAsNode(valore);
-							jwtPayload.set(nome, node);
-						}
-						else if(valore.trim().startsWith("{") && valore.trim().endsWith("}")) {
-							JsonNode node = jsonUtils.getAsNode(valore);
-							jwtPayload.set(nome, node);
-						}
-						else {
-							jwtPayload.put(nome, valore);
+					if(nome!=null && !"".equals(nome)) {
+						String valore = convertTextToProperties.getProperty(nome);
+						if(valore!=null) {
+							if(valore.trim().startsWith("[") && valore.trim().endsWith("]")) {
+								JsonNode node = jsonUtils.getAsNode(valore);
+								jwtPayload.set(nome, node);
+							}
+							else if(valore.trim().startsWith("{") && valore.trim().endsWith("}")) {
+								JsonNode node = jsonUtils.getAsNode(valore);
+								jwtPayload.set(nome, node);
+							}
+							else {
+								jwtPayload.put(nome, valore);
+							}
 						}
 					}
 				}

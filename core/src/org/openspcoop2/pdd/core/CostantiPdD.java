@@ -157,7 +157,7 @@ public class CostantiPdD {
     public final static String SOGGETTO_ANONIMO = "Anonimo";
     /** Variabile che indica un servizio applicativo anonimo */
     public final static String SERVIZIO_APPLICATIVO_ANONIMO = "Anonimo";
-        	    
+            	    
     /** Costante che indica l'header di integrazione per WS*/
     public final static String HEADER_INTEGRAZIONE = "HEADER_INTEGRAZIONE";
     /** Costante che indica la gestione dell'errore per WS*/
@@ -825,6 +825,12 @@ public class CostantiPdD {
 			msgDiag.addKeyword(CostantiPdD.KEY_INFO_IN_CACHE, "");
 		}
     	pddContext.addObject(ID_FUNCTION, isEsitoPresenteInCache);
+    }
+    
+    public final static MapKey<String> KEY_INFO_IN_CACHE_FUNZIONE_AUTENTICAZIONE_FALLITA = Map.newMapKey("RESULT_AUTHN_FALLITA");
+    public final static void addKeywordAutenticazioneFallita(MsgDiagnostico msgDiag, String motivo, PdDContext pddContext, MapKey<String> ID_FUNCTION) {
+    	msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, motivo);
+    	pddContext.addObject(ID_FUNCTION, motivo);
     }
    
     /** Costante che identifica una keyword per indicare il content-type del messaggio */
