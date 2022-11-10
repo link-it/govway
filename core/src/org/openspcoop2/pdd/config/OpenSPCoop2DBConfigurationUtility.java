@@ -566,12 +566,12 @@ public class OpenSPCoop2DBConfigurationUtility {
 						List<IDServizio> others = driverRegistroServizi.getAllIdServizi(filtroAltriServizi);
 						if(others!=null && others.size()>0){
 							existsAltriServizi = true;
-						}
-						for (int i = 0; i < others.size(); i++) {
-							if(bfAltriServizi.length()>0){
-								bfAltriServizi.append(",");
+							for (int i = 0; i < others.size(); i++) {
+								if(bfAltriServizi.length()>0){
+									bfAltriServizi.append(",");
+								}
+								bfAltriServizi.append(others.get(i).toString());
 							}
-							bfAltriServizi.append(others.get(i).toString());
 						}
 					}catch(DriverRegistroServiziNotFound notFound){}
 					if(!existsAltriServizi){

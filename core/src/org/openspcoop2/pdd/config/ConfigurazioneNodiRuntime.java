@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.PropertiesReader;
 
@@ -510,15 +511,15 @@ public class ConfigurazioneNodiRuntime {
 		}
 	}
 	@SuppressWarnings("unused")
-	private Boolean readBooleanProperty(boolean required,String property) throws UtilsException{
+	private BooleanNullable readBooleanProperty(boolean required,String property) throws UtilsException{
 		String tmp = this.readProperty(required, property);
 		if(tmp==null && !required) {
-			return null; // se e' required viene sollevata una eccezione dal metodo readProperty
+			return BooleanNullable.NULL(); // se e' required viene sollevata una eccezione dal metodo readProperty
 		}
 		if("true".equalsIgnoreCase(tmp)==false && "false".equalsIgnoreCase(tmp)==false){
 			throw new UtilsException("Property ["+this.prefix+property+"] with uncorrect value ["+tmp+"] (true/value expected)");
 		}
-		return Boolean.parseBoolean(tmp);
+		return Boolean.parseBoolean(tmp) ? BooleanNullable.TRUE() : BooleanNullable.FALSE();
 	}
 	@SuppressWarnings("unused")
 	private Integer readIntegerProperty(boolean required,String property) throws UtilsException{

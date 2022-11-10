@@ -199,7 +199,9 @@ public class GeneralInstanceProperties {
 					}finally{
 						try{
 							is.close();
-						}catch(Exception eClose){}
+						}catch(Exception eClose){
+							// close
+						}
 					}
 				}
 			}
@@ -224,8 +226,9 @@ public class GeneralInstanceProperties {
 			Method methodProperties = null;
 			try{
 				methodProperties = loader.getClass().getMethod("getClassProperties");
-			}catch(Exception e){
-			}catch(Throwable e){}
+			}catch(Throwable e){
+				// ingore
+			}
 			if(methodProperties!=null){
 				Object result = methodProperties.invoke(loader);
 				if(result!=null && (result instanceof String) ){
@@ -563,8 +566,9 @@ public class GeneralInstanceProperties {
 					Object c = null;
 					try{
 						c = method.invoke(this.getClass().getClassLoader(), nome);
-					}catch(Exception e){}
-					catch(Throwable e){}
+					}catch(Throwable e){
+						// ignore
+					}
 					if(c!=null){
 						if(((Class<?>)find).isAssignableFrom(((Class<?>)c))){
 							Constructor<?> constructor = ((Class<?>)c).getConstructor(java.lang.ClassLoader.class);
@@ -573,7 +577,9 @@ public class GeneralInstanceProperties {
 							break;
 						}
 					}
-				}catch(Exception e){}
+				}catch(Exception e){
+					// ignore
+				}
 			}
 			if(loader!=null){
 				log.debug("Loader find (loadClass)");
@@ -602,15 +608,17 @@ public class GeneralInstanceProperties {
 					byte[] entryBytes = null;
 					try{
 						entryBytes = JarUtilities.getEntry(file, entry.getName());
-					}catch(Exception e){}
-					catch(Throwable e){}
+					}catch(Throwable e){
+						// ignore
+					}
 					try{
 						ResourceFinder finder = new ResourceFinder(this.getClass().getClassLoader());
 						Object c = null;
 						try{
 							c = finder.loadResource(nome, entryBytes);
-						}catch(Exception e){}
-						catch(Throwable e){}
+						}catch(Throwable e){
+							// ignore
+						}
 						if(c!=null){
 							Method method = this.getClass().getClassLoader().getClass().getMethod("loadClass", String.class);
 							Object find = method.invoke(this.getClass().getClassLoader(), ClassLoader.class.getName());
@@ -621,7 +629,9 @@ public class GeneralInstanceProperties {
 								break;
 							}
 						}
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 				if(loader!=null){
 					log.debug("Loader find (ResourceFinder)");
@@ -651,8 +661,9 @@ public class GeneralInstanceProperties {
 					byte[] entryBytes = null;
 					try{
 						entryBytes = JarUtilities.getEntry(file, entry.getName());
-					}catch(Exception e){}
-					catch(Throwable e){}
+					}catch(Throwable e){
+						// ignore
+					}
 					
 					if(entryBytes!=null){
 						File tmp = null;
@@ -667,13 +678,16 @@ public class GeneralInstanceProperties {
 									}
 								}
 							}
-						}catch(Exception e){}
-						catch(Throwable e){}
+						}catch(Throwable e){
+							// ignore
+						}
 						finally{
 							try{
 								FileSystemUtilities.deleteDir(tmp);
 								tmp.deleteOnExit();
-							}catch(Exception e){}
+							}catch(Exception e){
+								// ignore
+							}
 						}
 					}			
 				}
@@ -690,13 +704,16 @@ public class GeneralInstanceProperties {
 					if(o!=null){
 						return o;
 					}
-				}catch(Exception e){}
-				catch(Throwable e){}
+				}catch(Throwable e){
+					// ignore
+				}
 				finally{
 					try{
 						FileSystemUtilities.deleteDir(tmp);
 						tmp.deleteOnExit();
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 				}
 			}
 			
@@ -812,6 +829,10 @@ public class GeneralInstanceProperties {
 		
 	private Object[] readDir(File file,Logger log)
 	{
+		if(file==null) {
+			log.debug("File is null");
+			return null;
+		}
 		
 		if (!file.exists ()) {
 			log.debug("File (DIR) ["+file.getAbsolutePath()+"] not exist");
@@ -835,86 +856,94 @@ public class GeneralInstanceProperties {
 			// Chiamate ricorsive
 			for (int i = 0; i < childs.length; i++) {
 				
-				if(childs[i].isDirectory()){
-					
-					// Check if is war/ear
-					if(childs[i].listFiles()!=null && childs[i].listFiles().length>0){
+				if(childs[i]!=null) {
+					if(childs[i].isDirectory()){
 						
-						File [] childsInterni = childs[i].listFiles();
-						File WEB_LIB = null;
-						File WEB_CLASSES = null;
-						File EAR = null;
-						
-						if("WEB-INF".equals(childs[i].getName())){
-							for (int k = 0; k < childsInterni.length; k++) {
-								if("lib".equals(childsInterni[k].getName())){
-									WEB_LIB = childsInterni[k];
-								}
-								if("classes".equals(childsInterni[k].getName())){
-									WEB_CLASSES = childsInterni[k];
-								}
-							}
-						}
-						else if("META-INF".equals(childs[i].getName())){
-							for (int k = 0; k < childsInterni.length; k++) {
-								if("application.xml".equals(childsInterni[k].getName())){
-									EAR = childs[i];
+						// Check if is war/ear
+						File [] f = childs[i].listFiles();
+						if(f!=null && f.length>0){
+							
+							File [] childsInterni = childs[i].listFiles();
+							File WEB_LIB = null;
+							File WEB_CLASSES = null;
+							File EAR = null;
+							
+							if("WEB-INF".equals(childs[i].getName())){
+								for (int k = 0; k < childsInterni.length; k++) {
+									if("lib".equals(childsInterni[k].getName())){
+										WEB_LIB = childsInterni[k];
+									}
+									if("classes".equals(childsInterni[k].getName())){
+										WEB_CLASSES = childsInterni[k];
+									}
 								}
 							}
+							else if("META-INF".equals(childs[i].getName())){
+								for (int k = 0; k < childsInterni.length; k++) {
+									if("application.xml".equals(childsInterni[k].getName())){
+										EAR = childs[i];
+									}
+								}
+							}
+							
+							if(WEB_LIB!=null || WEB_CLASSES!=null || EAR!=null){
+								// dir
+								if(WEB_LIB!=null){
+									Object[] o = null;
+									try{
+										o = readDir(WEB_LIB,log);
+									}catch(Throwable e){
+										// ignore
+									}
+									if(o!=null)
+										return o;	
+								}
+								
+								if(WEB_CLASSES!=null){
+									Object[] o = null;
+									try{
+										o = readDir(WEB_CLASSES,log);
+									}catch(Throwable e){
+										// ignore
+									}
+									if(o!=null)
+										return o;	
+								}
+								
+								if(WEB_LIB!=null || WEB_CLASSES!=null){
+									Object[] o = null;
+									try{
+										o = readDir(childs[i],log);
+									}catch(Throwable e){
+										// ignore
+									}
+									if(o!=null)
+										return o;	
+								}
+								
+								if(EAR!=null){
+									Object[] o = null;
+									try{
+										o = readDir(EAR,log);
+									}catch(Throwable e){
+										// ignore
+									}
+									if(o!=null)
+										return o;	
+								}
+							}
+							
+							// Provo ad utilizzare direttamente la directory
+							Object[] o = null;
+							try{
+								o = readDir(childs[i],log);
+							}catch(Throwable e){
+								// ignore
+							}
+							if(o!=null)
+								return o;	
+							
 						}
-						
-						if(WEB_LIB!=null || WEB_CLASSES!=null || EAR!=null){
-							// dir
-							if(WEB_LIB!=null){
-								Object[] o = null;
-								try{
-									o = readDir(WEB_LIB,log);
-								}catch(Exception e){}
-								catch(Throwable e){}
-								if(o!=null)
-									return o;	
-							}
-							
-							if(WEB_CLASSES!=null){
-								Object[] o = null;
-								try{
-									o = readDir(WEB_CLASSES,log);
-								}catch(Exception e){}
-								catch(Throwable e){}
-								if(o!=null)
-									return o;	
-							}
-							
-							if(WEB_LIB!=null || WEB_CLASSES!=null){
-								Object[] o = null;
-								try{
-									o = readDir(childs[i],log);
-								}catch(Exception e){}
-								catch(Throwable e){}
-								if(o!=null)
-									return o;	
-							}
-							
-							if(EAR!=null){
-								Object[] o = null;
-								try{
-									o = readDir(EAR,log);
-								}catch(Exception e){}
-								catch(Throwable e){}
-								if(o!=null)
-									return o;	
-							}
-						}
-						
-						// Provo ad utilizzare direttamente la directory
-						Object[] o = null;
-						try{
-							o = readDir(childs[i],log);
-						}catch(Exception e){}
-						catch(Throwable e){}
-						if(o!=null)
-							return o;	
-						
 					}
 				}
 			}
@@ -925,27 +954,34 @@ public class GeneralInstanceProperties {
 			// Inizializzo List
 			for (int i = 0; i < childs.length; i++) {
 				
-				if(childs[i].isDirectory()){
-					
-					// Check if is war/ear
-					if(childs[i].listFiles()!=null && childs[i].listFiles().length>0){
-			
-						// Utilizzo i files
-						File [] childsEntries = file.listFiles();
-						try{
-							if(childsEntries!=null){
-								for (int j = 0; j < childsEntries.length; j++) {
-									buildEntryNames(childsEntries[j], null, entries,entriesBytes);
+				if(childs[i]!=null) {
+					if(childs[i].isDirectory()){
+						
+						// Check if is war/ear
+						File [] f = childs[i].listFiles();
+						if(f!=null && f.length>0){
+				
+							// Utilizzo i files
+							File [] childsEntries = file.listFiles();
+							try{
+								if(childsEntries!=null){
+									for (int j = 0; j < childsEntries.length; j++) {
+										buildEntryNames(childsEntries[j], null, entries,entriesBytes);
+									}
 								}
+							}catch(Exception e){
+								// ignore
 							}
-						}catch(Exception e){}
+						}
 					}
-				}
-				else{
-					try{
-						entries.add(childs[i].getName());
-						entriesBytes.add(FileSystemUtilities.readBytesFromFile(childs[i]));
-					}catch(Exception e){}
+					else{
+						try{
+							entries.add(childs[i].getName());
+							entriesBytes.add(FileSystemUtilities.readBytesFromFile(childs[i]));
+						}catch(Exception e){
+							// ignore
+						}
+					}
 				}
 			}
 			
@@ -969,16 +1005,18 @@ public class GeneralInstanceProperties {
 					Object c = null;
 					try{
 						c = method.invoke(this.getClass().getClassLoader(), nome);
-					}catch(Exception e){}
-					catch(Throwable e){}
+					}catch(Throwable e){
+						// ignore
+					}
 					if(((Class<?>)find).isAssignableFrom(((Class<?>)c))){
 						Constructor<?> constructor = ((Class<?>)c).getConstructor(java.lang.ClassLoader.class);
 						loader = (java.lang.ClassLoader) constructor.newInstance(this.getClass().getClassLoader());
 						parentDirLoader = nome.split("\\.")[0].trim()+".";
 						break;
 					}
-				}catch(Exception e){}
-				catch(Throwable e){}	
+				}catch(Throwable e){
+					// ignore
+				}
 			}
 			if(loader!=null){
 				log.debug("Loader DIR find (loadClass)");
@@ -1007,8 +1045,9 @@ public class GeneralInstanceProperties {
 						try{
 							ResourceFinder finder = new ResourceFinder(this.getClass().getClassLoader());
 							c = finder.loadResource(nome, entriesBytes.get(k));
-						}catch(Exception e){}
-						catch(Throwable e){}
+						}catch(Throwable e){
+							// ignore
+						}
 						if(c!=null){
 							if(((Class<?>)find).isAssignableFrom(((Class<?>)c))){
 								Constructor<?> constructor = ((Class<?>)c).getConstructor(java.lang.ClassLoader.class,java.util.List.class,java.util.List.class,String.class, File.class);
@@ -1017,8 +1056,9 @@ public class GeneralInstanceProperties {
 								break;
 							}
 						}
-					}catch(Exception e){}
-					catch(Throwable e){}
+					}catch(Throwable e){
+						// ignore
+					}
 				}
 				if(loader!=null){
 					log.debug("Loader DIR find (ResourceFinder)");
@@ -1044,13 +1084,16 @@ public class GeneralInstanceProperties {
 									}
 								}
 							}
-						}catch(Exception e){}
-						catch(Throwable e){}
+						}catch(Throwable e){
+							// ignore
+						}
 						finally{
 							try{
 								FileSystemUtilities.deleteDir(tmp);
 								tmp.deleteOnExit();
-							}catch(Exception e){}
+							}catch(Exception e){
+								// ignore
+							}
 						}
 					}		
 

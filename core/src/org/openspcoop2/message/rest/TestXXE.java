@@ -38,7 +38,10 @@ public class TestXXE {
 
 
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String [] args) throws Exception{
+		test();
+	}
+	public static void test() throws Exception{
 		
 		// Default è true
 		// AbstractXMLUtils.DISABLE_DTDs=false;

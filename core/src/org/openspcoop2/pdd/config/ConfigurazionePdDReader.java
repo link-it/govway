@@ -1859,7 +1859,7 @@ public class ConfigurazionePdDReader {
 
 	protected PortaDelegata getPortaDelegata_SafeMethod(Connection connectionPdD,IDPortaDelegata idPD)throws DriverConfigurazioneException{
 		try{
-			if(idPD.getNome()!=null)
+			if(idPD!=null && idPD.getNome()!=null)
 				return this.getPortaDelegata(connectionPdD,idPD);
 			else
 				return null;
@@ -4975,6 +4975,9 @@ public class ConfigurazionePdDReader {
 			boolean addCertificateDetails, String separator, String newLine,
 			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		
+		if(sa==null) {
+			throw new DriverConfigurazioneException("Applicativo non fornito");
+		}
 		if(sa.getInvocazionePorta()==null || sa.getInvocazionePorta().sizeCredenzialiList()<=0) {
 			throw new DriverConfigurazioneException("Nessuna credenziale risulta associata all'applicativo");
 		}
@@ -7477,7 +7480,7 @@ public class ConfigurazionePdDReader {
 
 					ConfigurazionePdDReader.validazioneContenutiApplicativi = val;
 				}
-			}catch(Exception e){
+			}catch(Throwable e){
 				ConfigurazionePdDReader.validazioneContenutiApplicativi = valDefault;
 			}
 		}
@@ -7943,7 +7946,7 @@ public class ConfigurazionePdDReader {
 		}
 
 		String canale = null;
-		if(config.getGestioneCanali()!=null && StatoFunzionalita.ABILITATO.equals(config.getGestioneCanali().getStato()) && config.getGestioneCanali().sizeCanaleList()>0) {
+		if(config!=null && config.getGestioneCanali()!=null && StatoFunzionalita.ABILITATO.equals(config.getGestioneCanali().getStato()) && config.getGestioneCanali().sizeCanaleList()>0) {
 			if(RuoloContesto.PORTA_APPLICATIVA.equals(ruolo)) {
 				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				idPA.setNome(interfaceName);
@@ -8169,7 +8172,9 @@ public class ConfigurazionePdDReader {
 				//				}catch(Exception e){
 				//					this.log.error("getExtendedInfoConfigurazione",e);
 				//				}
-				ConfigurazionePdDReader.getExtendedInfoConfigurazione = configurazione.getExtendedInfoList();
+				if(configurazione!=null) {
+					ConfigurazionePdDReader.getExtendedInfoConfigurazione = configurazione.getExtendedInfoList();
+				}
 
 			}catch(Exception e){
 				this.log.error("Errore durante la lettura delle informazioni extra della configurazione: "+e.getMessage(),e);
@@ -8221,7 +8226,10 @@ public class ConfigurazionePdDReader {
 			//			}catch(Exception e){
 			//				this.log.error("getExtendedInfoConfigurazione",e);
 			//			}
-			return configurazione.getExtendedInfoList();
+			if(configurazione!=null) {
+				return configurazione.getExtendedInfoList();
+			}
+			return null;
 
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni extra della configurazione (via cache): "+e.getMessage(),e);

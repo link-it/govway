@@ -23,7 +23,6 @@ package org.openspcoop2.pdd.core;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 import javax.xml.transform.dom.DOMSource;
 
@@ -56,6 +55,7 @@ import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.mdb.Imbustamento;
 import org.openspcoop2.pdd.mdb.SbustamentoRisposte;
+import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.pdd.services.error.AbstractErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
@@ -1252,7 +1252,7 @@ public class LocalForwardEngine {
 					retryAfterSeconds!=null && retryAfterSeconds>0) {
 					int seconds = retryAfterSeconds;
 					if(retryAfterBackOffSeconds!=null && retryAfterBackOffSeconds>0) {
-						seconds = seconds + new Random().nextInt(retryAfterBackOffSeconds);
+						seconds = seconds + ServicesUtils.getRandom().nextInt(retryAfterBackOffSeconds);
 					}
 					responseMessageError.forceTransportHeader(HttpConstants.RETRY_AFTER, seconds+"");
 				}

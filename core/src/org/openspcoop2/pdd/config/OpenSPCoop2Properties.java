@@ -228,7 +228,9 @@ public class OpenSPCoop2Properties {
 		    try{
 		    	if(properties!=null)
 		    		properties.close();
-		    }catch(Exception er){}
+		    }catch(Exception er){
+		    	// close
+		    }
 		}
 		this.reader = new OpenSPCoop2InstanceProperties(propertiesReader, this.log, localProperties);
 
@@ -3541,12 +3543,16 @@ public class OpenSPCoop2Properties {
 			if(version!=null && !StringUtils.isEmpty(version)) {
 				versione = version;
 			}
-		}catch(Exception e) {}
+		}catch(Exception e) {
+			// ignore
+		}
 		
 		String buildVersion = null;
 		try {
 			buildVersion = VersionUtilities.readBuildVersion();
-		}catch(Exception e) {}
+		}catch(Exception e) {
+			// ignore
+		}
 		if(buildVersion!=null) {
 			versione = versione + " (build "+buildVersion+")";
 		}
@@ -3803,7 +3809,9 @@ public class OpenSPCoop2Properties {
 								}finally {
 									try {
 										is.close();
-									}catch(Exception eClose) {}
+									}catch(Exception eClose) {
+										// close
+									}
 								}
 							}
 						}	
@@ -8546,14 +8554,21 @@ public class OpenSPCoop2Properties {
 	
 	private static Map<String, Integer> getTipoAutorizzazione_lock_permits = null;
 	public Integer getAutorizzazione_lock_permits(String tipoAutorizzazione) { 
-
+		if(OpenSPCoop2Properties.getTipoAutorizzazione_lock_permits==null){
+			initAutorizzazione_lock_permits(this.reader, this.log,
+					tipoAutorizzazione);
+		}
+		return OpenSPCoop2Properties.getTipoAutorizzazione_lock_permits.get(tipoAutorizzazione);
+	}
+	private static synchronized void initAutorizzazione_lock_permits(OpenSPCoop2InstanceProperties reader, Logger log,
+			String tipoAutorizzazione) { 
 		String pName = "org.openspcoop2.pdd.core.autorizzazione.lock.permits.";
 		if(OpenSPCoop2Properties.getTipoAutorizzazione_lock_permits==null){
 			
 			getTipoAutorizzazione_lock_permits = new HashMap<String, Integer>();
 			
 			try{  
-				Properties p = this.reader.readProperties_convertEnvProperties(pName);
+				Properties p = reader.readProperties_convertEnvProperties(pName);
 				if(p!=null && !p.isEmpty()) {
 					for (Object oKey : p.keySet()) {
 						if(oKey!=null) {
@@ -8571,12 +8586,11 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				log.error("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 		}
 
-		return OpenSPCoop2Properties.getTipoAutorizzazione_lock_permits.get(tipoAutorizzazione);
 	}
 	
 	/**
@@ -28768,7 +28782,9 @@ public class OpenSPCoop2Properties {
 						if(is!=null) {
 							is.close();
 						}
-					}catch(Exception eClose) {}
+					}catch(Exception eClose) {
+						// close
+					}
 				}
 			}
 			

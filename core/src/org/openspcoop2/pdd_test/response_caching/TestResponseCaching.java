@@ -39,7 +39,7 @@ public class TestResponseCaching {
 	public void testResponseCaching() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.pdd.core.response_caching.Test.main(null);
+		org.openspcoop2.pdd.core.response_caching.Test.test();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 		
 	}

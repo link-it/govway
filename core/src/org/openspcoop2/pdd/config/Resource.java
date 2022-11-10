@@ -61,6 +61,9 @@ public class Resource {
 
 	
 	public static String generaIdentificatoreUnivoco(IDSoggetto identificativoPorta,String moduloFunzionale) throws UniqueIdentifierException{
+		if(identificativoPorta==null) {
+			throw new UniqueIdentifierException("Identificativo porta is null");
+		}
 		return identificativoPorta.getCodicePorta()+"_"+moduloFunzionale+"_"+
 				UUIDUtilsGenerator.newUUID();
 				// Inefficente: UniqueIDGenerator.getUniqueID();

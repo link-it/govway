@@ -295,7 +295,10 @@ public class TestReader {
 		"</xsd:skcotSyub>]]>\n"+
 		"</soapenv:Header>";
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String [] args) throws Exception{
+		test();
+	}
+	public static void test() throws Exception{
 		
 		
 		boolean expectedFullBuffer = false; // si esce prima.

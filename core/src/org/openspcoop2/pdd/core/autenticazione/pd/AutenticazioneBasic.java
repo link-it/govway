@@ -37,6 +37,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.crypt.CryptConfig;
 
 /**
@@ -62,8 +63,9 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		super.initParametri(parametri);
 
 		ParametriAutenticazioneBasic authBasic = new ParametriAutenticazioneBasic(this.parametri);
-		if(authBasic.getCleanHeaderAuthorization()!=null) {
-			this.cleanHeaderAuthorization = authBasic.getCleanHeaderAuthorization();
+		BooleanNullable cleanNullable = authBasic.getCleanHeaderAuthorization();
+		if(cleanNullable!=null && cleanNullable.getValue()!=null) {
+			this.cleanHeaderAuthorization = cleanNullable.getValue();
 		}
 		
 	}
@@ -72,6 +74,10 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
     public EsitoAutenticazionePortaDelegata process(DatiInvocazionePortaDelegata datiInvocazione) throws AutenticazioneException{
 
     	EsitoAutenticazionePortaDelegata esito = new EsitoAutenticazionePortaDelegata();
+    	
+    	if(datiInvocazione==null) {
+    		throw new AutenticazioneException("Param datiInvocazione is null");
+    	}
     	
     	Credenziali credenziali = datiInvocazione.getInfoConnettoreIngresso().getCredenziali();
 		

@@ -40,6 +40,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.utils.BooleanNullable;
 
 /**
  * Classe che implementa una autenticazione principal.
@@ -115,9 +116,11 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 				break;
 			}
 			
-			if(authPrincipal.getCleanPrincipal()!=null) {
-				this.cleanPrincipal = authPrincipal.getCleanPrincipal();
+			BooleanNullable cleanNullable = authPrincipal.getCleanPrincipal();
+			if(cleanNullable!=null && cleanNullable.getValue()!=null) {
+				this.cleanPrincipal = cleanNullable.getValue();
 			}
+
 		}
 	}
 	
@@ -152,6 +155,10 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
     public EsitoAutenticazionePortaApplicativa process(DatiInvocazionePortaApplicativa datiInvocazione) throws AutenticazioneException{
 
     	EsitoAutenticazionePortaApplicativa esito = new EsitoAutenticazionePortaApplicativa();
+    	
+    	if(datiInvocazione==null) {
+    		throw new AutenticazioneException("Param datiInvocazione is null");
+    	}
     	
     	OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
     	WWWAuthenticateConfig wwwAuthenticateConfig = op2Properties.getRealmAutenticazionePrincipalWWWAuthenticateConfig(this.tipoAutenticazionePrincipal);

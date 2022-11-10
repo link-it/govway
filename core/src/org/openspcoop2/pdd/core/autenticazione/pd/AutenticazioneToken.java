@@ -100,6 +100,10 @@ public class AutenticazioneToken extends AbstractAutenticazioneBase {
 
     	EsitoAutenticazionePortaDelegata esito = new EsitoAutenticazionePortaDelegata();
     	
+    	if(datiInvocazione==null) {
+    		throw new AutenticazioneException("Param datiInvocazione is null");
+    	}
+    	
     	readDati(datiInvocazione);
 		
 		if(this.clientId==null || this.tokenPolicy==null) {

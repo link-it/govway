@@ -41,7 +41,10 @@ import org.slf4j.Logger;
  */
 public class TestBasicNegoziazioneTokenParser {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String [] args) throws Exception{
+		test();
+	}
+	public static void test() throws Exception{
 		
 		Logger log = LoggerWrapperFactory.getLogger(TestBasicNegoziazioneTokenParser.class);
 		String idTransazione = "66aa1676-1f9e-34e2-7777-0cfca111a9999";

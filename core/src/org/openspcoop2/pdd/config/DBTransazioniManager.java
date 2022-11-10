@@ -235,10 +235,14 @@ public class DBTransazioniManager implements IMonitoraggioRisorsa {
 				try{
 					if(stmtTest!=null)
 						stmtTest.close();
-				}catch(Exception e){}
+				}catch(Exception e){
+					// close
+				}
 				try{
 					this.releaseResource(idSoggettAlive, "CheckIsAlive", resource);
-				}catch(Exception e){}
+				}catch(Exception e){
+					// close
+				}
 			}
 		}
 	}

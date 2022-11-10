@@ -456,7 +456,9 @@ public class ConfigurazionePdD  {
 			AccessoConfigurazione accessoDatiConfigurazione = null;
 			try{
 				accessoDatiConfigurazione = this.driverConfigurazionePdD.getAccessoConfigurazione();
-			}catch(DriverConfigurazioneNotFound notFound){}
+			}catch(DriverConfigurazioneNotFound notFound){
+				// ignore
+			}
 			if(accessoDatiConfigurazione!=null && accessoDatiConfigurazione.getCache()!=null){
 				if(forceDisableCache==false){
 					initCacheConfigurazione(cacheType, accessoDatiConfigurazione.getCache(),alogConsole, 
@@ -690,7 +692,9 @@ public class ConfigurazionePdD  {
 		try{
 			idSoggetti = this.driverConfigurazionePdD.getAllIdSoggetti(filtroRicercaSoggetti);
 		}
-		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(DriverConfigurazioneException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 		msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), recuperati "+(idSoggetti!=null ? idSoggetti.size() : 0)+" soggetti";
@@ -713,7 +717,9 @@ public class ConfigurazionePdD  {
 					this.cache.remove(_getKey_getSoggettoByID(idSoggetto));
 					this.getSoggetto(connectionPdD, idSoggetto);
 				}
-				catch(DriverConfigurazioneNotFound notFound){}
+				catch(DriverConfigurazioneNotFound notFound){
+					// ignore
+				}
 				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 				
 			}
@@ -737,7 +743,9 @@ public class ConfigurazionePdD  {
 		try{
 			idPDs = this.driverConfigurazionePdD.getAllIdPorteDelegate(filtroPorteDelegate);
 		}
-		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(DriverConfigurazioneException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 		msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), recuperate "+(idPDs!=null ? idPDs.size() : 0)+" porte delegate";
@@ -766,21 +774,27 @@ public class ConfigurazionePdD  {
 					this.cache.remove(_getKey_getIDPortaDelegata(idPortaDelegata.getNome()));
 					this.getIDPortaDelegata(connectionPdD, idPortaDelegata.getNome());
 				}
-				catch(DriverConfigurazioneNotFound notFound){}
+				catch(DriverConfigurazioneNotFound notFound){
+					// ignore
+				}
 				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 				
 				try{
 					this.cache.remove(_getKey_getPortaDelegata(idPortaDelegata));
 					this.getPortaDelegata(connectionPdD, idPortaDelegata);
 				}
-				catch(DriverConfigurazioneNotFound notFound){}
+				catch(DriverConfigurazioneNotFound notFound){
+					// ignore
+				}
 				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 				
 				PortaDelegata pd = null;
 				try{
 					pd = this.driverConfigurazionePdD.getPortaDelegata(idPortaDelegata);
 				}
-				catch(DriverConfigurazioneNotFound notFound){}
+				catch(DriverConfigurazioneNotFound notFound){
+					// ignore
+				}
 				catch(DriverConfigurazioneException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 				
 				if(pd!=null){
@@ -794,7 +808,9 @@ public class ConfigurazionePdD  {
 						this.cache.remove(_getKey_getServizioApplicativo(idSA_anonimo));
 						this.getServizioApplicativo(connectionPdD, idSA_anonimo);
 					}
-					catch(DriverConfigurazioneNotFound notFound){}
+					catch(DriverConfigurazioneNotFound notFound){
+						// ignore
+					}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
 					if(pd.sizeServizioApplicativoList()>0){
@@ -808,14 +824,18 @@ public class ConfigurazionePdD  {
 								this.cache.remove(_getKey_getServizioApplicativo(idSA));
 								this.getServizioApplicativo(connectionPdD, idSA);
 							}
-							catch(DriverConfigurazioneNotFound notFound){}
+							catch(DriverConfigurazioneNotFound notFound){
+								// ignore
+							}
 							catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 							
 							ServizioApplicativo sa = null;
 							try{
 								sa = this.driverConfigurazionePdD.getServizioApplicativo(idSA);
 							}
-							catch(DriverConfigurazioneNotFound notFound){}
+							catch(DriverConfigurazioneNotFound notFound){
+								// ignore
+							}
 							catch(DriverConfigurazioneException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 									
 							if(sa!=null){
@@ -826,7 +846,9 @@ public class ConfigurazionePdD  {
 												this.cache.remove(_getKey_getServizioApplicativoByCredenzialiBasic(credenziale.getUser(), credenziale.getPassword()));
 												this.getServizioApplicativoByCredenzialiBasic(connectionPdD, credenziale.getUser(), credenziale.getPassword(), configApplicativi);
 											}
-											catch(DriverConfigurazioneNotFound notFound){}
+											catch(DriverConfigurazioneNotFound notFound){
+												// ignore
+											}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
 										}
 										else if(CredenzialeTipo.APIKEY.equals(credenziale.getTipo())){
@@ -834,7 +856,9 @@ public class ConfigurazionePdD  {
 												this.cache.remove(_getKey_getServizioApplicativoByCredenzialiApiKey(credenziale.getUser(), credenziale.getPassword(), credenziale.isCertificateStrictVerification()));
 												this.getServizioApplicativoByCredenzialiApiKey(connectionPdD, credenziale.getUser(), credenziale.getPassword(), credenziale.isCertificateStrictVerification(), configApplicativi);
 											}
-											catch(DriverConfigurazioneNotFound notFound){}
+											catch(DriverConfigurazioneNotFound notFound){
+												// ignore
+											}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
 										}
 										else if(CredenzialeTipo.SSL.equals(credenziale.getTipo())){
@@ -843,7 +867,9 @@ public class ConfigurazionePdD  {
 													this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(credenziale.getSubject(), credenziale.getIssuer()));
 													this.getServizioApplicativoByCredenzialiSsl(connectionPdD, credenziale.getSubject(), credenziale.getIssuer());
 												}
-												catch(DriverConfigurazioneNotFound notFound){}
+												catch(DriverConfigurazioneNotFound notFound){
+													// ignore
+												}
 												catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}	
 											}
 											if(credenziale.getCertificate()!=null) {
@@ -852,7 +878,9 @@ public class ConfigurazionePdD  {
 													this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(certificato, credenziale.isCertificateStrictVerification()));
 													this.getServizioApplicativoByCredenzialiSsl(connectionPdD, certificato, credenziale.isCertificateStrictVerification());
 												}
-												catch(DriverConfigurazioneNotFound notFound){}
+												catch(DriverConfigurazioneNotFound notFound){
+													// ignore
+												}
 												catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}	
 											}			
 										}
@@ -861,7 +889,9 @@ public class ConfigurazionePdD  {
 												this.cache.remove(_getKey_getServizioApplicativoByCredenzialiPrincipal(credenziale.getUser()));
 												this.getServizioApplicativoByCredenzialiPrincipal(connectionPdD, credenziale.getUser());
 											}
-											catch(DriverConfigurazioneNotFound notFound){}
+											catch(DriverConfigurazioneNotFound notFound){
+												// ignore
+											}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
 										}
 										else if(CredenzialeTipo.TOKEN.equals(credenziale.getTipo())){
@@ -869,7 +899,9 @@ public class ConfigurazionePdD  {
 												this.cache.remove(_getKey_getServizioApplicativoByCredenzialiToken(credenziale.getTokenPolicy(), credenziale.getUser()));
 												this.getServizioApplicativoByCredenzialiToken(connectionPdD, credenziale.getTokenPolicy(), credenziale.getUser());
 											}
-											catch(DriverConfigurazioneNotFound notFound){}
+											catch(DriverConfigurazioneNotFound notFound){
+												// ignore
+											}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
 										}
 									}
@@ -916,21 +948,27 @@ public class ConfigurazionePdD  {
 			this.cache.remove(_getKey_getRouter());
 			this.getRouter(connectionPdD);
 		}
-		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 		try{
 			this.cache.remove(_getKey_getSoggettiVirtuali());
 			this.getSoggettiVirtuali(connectionPdD);
 		}
-		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 		try{
 			this.cache.remove(_getKey_getServizi_SoggettiVirtuali());
 			this.getServizi_SoggettiVirtuali(connectionPdD);
 		}
-		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 		msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), lettura di router/soggettiVirtuali completata";
@@ -955,7 +993,9 @@ public class ConfigurazionePdD  {
 		try{
 			idPAs = this.driverConfigurazionePdD.getAllIdPorteApplicative(filtroPorteApplicative);
 		}
-		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(DriverConfigurazioneException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 		msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), recuperate "+(idPAs!=null ? idPAs.size() : 0)+" porte applicative";
@@ -984,55 +1024,60 @@ public class ConfigurazionePdD  {
 					this.cache.remove(_getKey_getIDPortaApplicativa(idPA.getNome()));
 					this.getIDPortaApplicativa(connectionPdD, idPA.getNome());
 				}
-				catch(DriverConfigurazioneNotFound notFound){}
+				catch(DriverConfigurazioneNotFound notFound){
+					// ignore
+				}
 				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 				
 				try{
 					this.cache.remove(_getKey_getPortaApplicativa(idPA));
 					this.getPortaApplicativa(connectionPdD, idPA);
 				}
-				catch(DriverConfigurazioneNotFound notFound){}
+				catch(DriverConfigurazioneNotFound notFound){
+					// ignore
+				}
 				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 				
 				PortaApplicativa pa  = null;
 				try{
 					pa  = this.driverConfigurazionePdD.getPortaApplicativa(idPA);
 				}
-				catch(DriverConfigurazioneNotFound notFound){}
+				catch(DriverConfigurazioneNotFound notFound){
+					// ignore
+				}
 				catch(DriverConfigurazioneException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 				
 				if(pa!=null){
 					
-					if(pa!=null){
-						
-						IDSoggetto idSoggettoProprietario = new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario());
-												
-						if(pa.sizeServizioApplicativoList()>0){
-							for (PortaApplicativaServizioApplicativo saPA : pa.getServizioApplicativoList()) {
-								try{
-									IDServizioApplicativo idSA = new IDServizioApplicativo();
-									idSA.setIdSoggettoProprietario(idSoggettoProprietario);
-									idSA.setNome(saPA.getNome());
-									this.cache.remove(_getKey_getServizioApplicativo(idSA));
-									this.getServizioApplicativo(connectionPdD, idSA);
-								}
-								catch(DriverConfigurazioneNotFound notFound){}
-								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+					IDSoggetto idSoggettoProprietario = new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario());
+											
+					if(pa.sizeServizioApplicativoList()>0){
+						for (PortaApplicativaServizioApplicativo saPA : pa.getServizioApplicativoList()) {
+							try{
+								IDServizioApplicativo idSA = new IDServizioApplicativo();
+								idSA.setIdSoggettoProprietario(idSoggettoProprietario);
+								idSA.setNome(saPA.getNome());
+								this.cache.remove(_getKey_getServizioApplicativo(idSA));
+								this.getServizioApplicativo(connectionPdD, idSA);
 							}
+							catch(DriverConfigurazioneNotFound notFound){
+								// ignore
+							}
+							catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 						}
-						
-						try{
-							IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(), pa.getServizio().getNome(),
-									idSoggettoProprietario,
-									pa.getServizio().getVersione());
-							
-							this.cache.remove(_getKey_MappingErogazionePortaApplicativaList(idServizio, true));
-							this.getMappingErogazionePortaApplicativaList(idServizio, connectionPdD);
-						}
-						catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
-						
-						this.prefillElencoPolicyAttive(alogConsole, connectionPdD, true, TipoPdD.APPLICATIVA, pa.getNome());		
 					}
+					
+					try{
+						IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(), pa.getServizio().getNome(),
+								idSoggettoProprietario,
+								pa.getServizio().getVersione());
+						
+						this.cache.remove(_getKey_MappingErogazionePortaApplicativaList(idServizio, true));
+						this.getMappingErogazionePortaApplicativaList(idServizio, connectionPdD);
+					}
+					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+					
+					this.prefillElencoPolicyAttive(alogConsole, connectionPdD, true, TipoPdD.APPLICATIVA, pa.getNome());		
 					
 				}
 				
@@ -1072,7 +1117,9 @@ public class ConfigurazionePdD  {
 		try{
 			idSAs = this.driverConfigurazionePdD.getAllIdServiziApplicativi(filtroServiziApplicativi);
 		}
-		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(DriverConfigurazioneException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 		msg = "[Prefill] Inizializzazione cache (ConfigurazionePdD), recuperati "+(idSAs!=null ? idSAs.size() : 0)+" servizi applicativi";
@@ -1094,7 +1141,9 @@ public class ConfigurazionePdD  {
 				try{
 					sa = this.driverConfigurazionePdD.getServizioApplicativo(idSA);
 				}
-				catch(DriverConfigurazioneNotFound notFound){}
+				catch(DriverConfigurazioneNotFound notFound){
+					// ignore
+				}
 				catch(DriverConfigurazioneException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 						
 				if(sa!=null){
@@ -1105,7 +1154,9 @@ public class ConfigurazionePdD  {
 									this.cache.remove(_getKey_getServizioApplicativoByCredenzialiBasic(credenziale.getUser(), credenziale.getPassword()));
 									this.getServizioApplicativoByCredenzialiBasic(connectionPdD, credenziale.getUser(), credenziale.getPassword(), configApplicativi);
 								}
-								catch(DriverConfigurazioneNotFound notFound){}
+								catch(DriverConfigurazioneNotFound notFound){
+									// ignore
+								}
 								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
 							}
 							else if(CredenzialeTipo.APIKEY.equals(credenziale.getTipo())){
@@ -1113,7 +1164,9 @@ public class ConfigurazionePdD  {
 									this.cache.remove(_getKey_getServizioApplicativoByCredenzialiApiKey(credenziale.getUser(), credenziale.getPassword(), credenziale.isCertificateStrictVerification()));
 									this.getServizioApplicativoByCredenzialiApiKey(connectionPdD, credenziale.getUser(), credenziale.getPassword(), credenziale.isCertificateStrictVerification(), configApplicativi);
 								}
-								catch(DriverConfigurazioneNotFound notFound){}
+								catch(DriverConfigurazioneNotFound notFound){
+									// ignore
+								}
 								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
 							}
 							else if(CredenzialeTipo.SSL.equals(credenziale.getTipo())){
@@ -1122,7 +1175,9 @@ public class ConfigurazionePdD  {
 										this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(credenziale.getSubject(), credenziale.getIssuer()));
 										this.getServizioApplicativoByCredenzialiSsl(connectionPdD, credenziale.getSubject(), credenziale.getIssuer());
 									}
-									catch(DriverConfigurazioneNotFound notFound){}
+									catch(DriverConfigurazioneNotFound notFound){
+										// ignore
+									}
 									catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}	
 								}
 								if(credenziale.getCertificate()!=null) {
@@ -1131,7 +1186,9 @@ public class ConfigurazionePdD  {
 										this.cache.remove(_getKey_getServizioApplicativoByCredenzialiSsl(certificato, credenziale.isCertificateStrictVerification()));
 										this.getServizioApplicativoByCredenzialiSsl(connectionPdD, certificato, credenziale.isCertificateStrictVerification());
 									}
-									catch(DriverConfigurazioneNotFound notFound){}
+									catch(DriverConfigurazioneNotFound notFound){
+										// ignore
+									}
 									catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}	
 								}
 							}
@@ -1140,7 +1197,9 @@ public class ConfigurazionePdD  {
 									this.cache.remove(_getKey_getServizioApplicativoByCredenzialiPrincipal(credenziale.getUser()));
 									this.getServizioApplicativoByCredenzialiPrincipal(connectionPdD, credenziale.getUser());
 								}
-								catch(DriverConfigurazioneNotFound notFound){}
+								catch(DriverConfigurazioneNotFound notFound){
+									// ignore
+								}
 								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
 							}
 							else if(CredenzialeTipo.TOKEN.equals(credenziale.getTipo())){
@@ -1148,7 +1207,9 @@ public class ConfigurazionePdD  {
 									this.cache.remove(_getKey_getServizioApplicativoByCredenzialiToken(credenziale.getTokenPolicy(), credenziale.getUser()));
 									this.getServizioApplicativoByCredenzialiToken(connectionPdD, credenziale.getTokenPolicy(), credenziale.getUser());
 								}
-								catch(DriverConfigurazioneNotFound notFound){}
+								catch(DriverConfigurazioneNotFound notFound){
+									// ignore
+								}
 								catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}				
 							}
 						}
@@ -1177,7 +1238,9 @@ public class ConfigurazionePdD  {
 				this.cache.remove(getKey_getConnettoriConsegnaNotifichePrioritarie(coda));
 				this.getConnettoriConsegnaNotifichePrioritarie(connectionPdD, coda);
 			}
-			catch(DriverConfigurazioneNotFound notFound){}
+			catch(DriverConfigurazioneNotFound notFound){
+				// ignore
+			}
 			catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		}
 		
@@ -1185,83 +1248,107 @@ public class ConfigurazionePdD  {
 			this.cache.remove(_getKey_getRoutingTable());
 			this.getRoutingTable(connectionPdD);
 		}
-		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 		try{
 			this.cache.remove(_getKey_getAccessoRegistro());
 			this.getAccessoRegistro(connectionPdD);
 		}
-		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 		try{
 			this.cache.remove(_getKey_getAccessoConfigurazione());
 			this.getAccessoConfigurazione(connectionPdD);
 		}
-		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 		try{
 			this.cache.remove(_getKey_getAccessoDatiAutorizzazione());
 			this.getAccessoDatiAutorizzazione(connectionPdD);
 		}
-		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 		try{
 			this.cache.remove(_getKey_getAccessoDatiAutenticazione());
 			this.getAccessoDatiAutenticazione(connectionPdD);
 		}
-		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 		try{
 			this.cache.remove(_getKey_getAccessoDatiGestioneToken());
 			this.getAccessoDatiGestioneToken(connectionPdD);
 		}
-		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 		try{
 			this.cache.remove(_getKey_getAccessoDatiKeystore());
 			this.getAccessoDatiKeystore(connectionPdD);
 		}
-		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 		try{
 			this.cache.remove(_getKey_getAccessoDatiRichieste());
 			this.getAccessoDatiRichieste(connectionPdD);
 		}
-		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 		try{
 			this.cache.remove(_getKey_getGestioneErrore(false));
 			this.getGestioneErroreComponenteIntegrazione(connectionPdD);
 		}
-		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 		try{
 			this.cache.remove(_getKey_getGestioneErrore(true));
 			this.getGestioneErroreComponenteCooperazione(connectionPdD);
 		}
-		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 
 		try{
 			this.cache.remove(_getKey_getConfigurazioneGenerale());
 			this.getConfigurazioneGenerale(connectionPdD);
 		}
-		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 		List<GenericProperties> listGenericProperties = null;
 		try{
 			listGenericProperties = this.driverConfigurazionePdD.getGenericProperties();
-		}catch(DriverConfigurazioneNotFound notFound){}
+		}catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		if(listGenericProperties!=null && listGenericProperties.size()>0) {
 			for (GenericProperties genericProperties : listGenericProperties) {
@@ -1270,14 +1357,18 @@ public class ConfigurazionePdD  {
 					this.cache.remove(_getKey_getGenericProperties(genericProperties.getTipologia()));
 					this.getGenericProperties(connectionPdD, genericProperties.getTipologia());
 				}
-				catch(DriverConfigurazioneNotFound notFound){}
+				catch(DriverConfigurazioneNotFound notFound){
+					// ignore
+				}
 				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}	
 				
 				try{
 					this.cache.remove(_getKey_getGenericProperties(genericProperties.getTipologia(), genericProperties.getNome()));
 					this.getGenericProperties(connectionPdD, genericProperties.getTipologia(), genericProperties.getNome());
 				}
-				catch(DriverConfigurazioneNotFound notFound){}
+				catch(DriverConfigurazioneNotFound notFound){
+					// ignore
+				}
 				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}	
 			}
 		}
@@ -1286,7 +1377,9 @@ public class ConfigurazionePdD  {
 			this.cache.remove(_getKey_getConfigurazioneWithOnlyExtendedInfo());
 			this.getConfigurazioneWithOnlyExtendedInfo(connectionPdD);
 		}
-		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 
@@ -1310,7 +1403,9 @@ public class ConfigurazionePdD  {
 				this.cache.remove(_getKey_ConfigurazioneControlloTraffico());
 				this.getConfigurazioneControlloTraffico(connectionPdD);
 			}
-			catch(DriverConfigurazioneNotFound notFound){}
+			catch(DriverConfigurazioneNotFound notFound){
+				// ignore
+			}
 			catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 			
 			msg = "[Prefill] Inizializzazione cache (ControlloTraffico), lettura della configurazione completata";
@@ -1331,7 +1426,9 @@ public class ConfigurazionePdD  {
 				this.cache.remove(_getKey_getConfigurazionePolicyRateLimitingGlobali());
 				this.getConfigurazionePolicyRateLimitingGlobali(connectionPdD);
 			}
-			catch(DriverConfigurazioneNotFound notFound){}
+			catch(DriverConfigurazioneNotFound notFound){
+				// ignore
+			}
 			catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 			
 			msg = "[Prefill] Inizializzazione cache (ControlloTraffico), lettura della configurazione delle policy globali di rate limiting completata";
@@ -1354,7 +1451,9 @@ public class ConfigurazionePdD  {
 				this.cache.remove(_getKey_ElencoIdPolicy());
 				elencoPolicyConfigurate = this.getElencoIdPolicy(connectionPdD, true);
 			}
-			catch(DriverConfigurazioneNotFound notFound){}
+			catch(DriverConfigurazioneNotFound notFound){
+				// ignore
+			}
 			catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 			
 			if(elencoPolicyConfigurate!=null && elencoPolicyConfigurate.sizeIdPolicyList()>0) {
@@ -1371,7 +1470,9 @@ public class ConfigurazionePdD  {
 						this.cache.remove(_getKey_ConfigurazionePolicy(idPolicy.getNome()));
 						this.getConfigurazionePolicy(connectionPdD, true, idPolicy.getNome());
 					}
-					catch(DriverConfigurazioneNotFound notFound){}
+					catch(DriverConfigurazioneNotFound notFound){
+						// ignore
+					}
 					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 					
 				}
@@ -1446,13 +1547,17 @@ public class ConfigurazionePdD  {
 												this.cache.remove(_getKey_PluginClassNameByFilter(idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvFruizione));
 												this.getPluginClassNameByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvFruizione);
 											}
-											catch(DriverConfigurazioneNotFound notFound){}
+											catch(DriverConfigurazioneNotFound notFound){
+												// ignore
+											}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 											try{
 												this.cache.remove(_getKey_PluginTipoByFilter(idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvFruizione));
 												this.getPluginTipoByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvFruizione);
 											}
-											catch(DriverConfigurazioneNotFound notFound){}
+											catch(DriverConfigurazioneNotFound notFound){
+												// ignore
+											}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 
 											NameValue nvErogazione = new NameValue(PluginCostanti.FILTRO_RUOLO_NOME, PluginCostanti.FILTRO_RUOLO_VALORE_EROGAZIONE);
@@ -1460,13 +1565,17 @@ public class ConfigurazionePdD  {
 												this.cache.remove(_getKey_PluginClassNameByFilter(idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvErogazione));
 												this.getPluginClassNameByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvErogazione);
 											}
-											catch(DriverConfigurazioneNotFound notFound){}
+											catch(DriverConfigurazioneNotFound notFound){
+												// ignore
+											}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 											try{
 												this.cache.remove(_getKey_PluginTipoByFilter(idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvErogazione));
 												this.getPluginTipoByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvErogazione);
 											}
-											catch(DriverConfigurazioneNotFound notFound){}
+											catch(DriverConfigurazioneNotFound notFound){
+												// ignore
+											}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 										}
 										else if(TipoPlugin.MESSAGE_HANDLER.equals(tipoPlugin)){
@@ -1479,13 +1588,17 @@ public class ConfigurazionePdD  {
 													this.cache.remove(_getKey_PluginClassNameByFilter(idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvRuolo,nv));
 													this.getPluginClassNameByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvRuolo,nv);
 												}
-												catch(DriverConfigurazioneNotFound notFound){}
+												catch(DriverConfigurazioneNotFound notFound){
+													// ignore
+												}
 												catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 												try{
 													this.cache.remove(_getKey_PluginTipoByFilter(idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvRuolo,nv));
 													this.getPluginTipoByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvRuolo,nv);
 												}
-												catch(DriverConfigurazioneNotFound notFound){}
+												catch(DriverConfigurazioneNotFound notFound){
+													// ignore
+												}
 												catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 											}
 											filtri = PluginCostanti.FILTRO_FASE_MESSAGE_HANDLER_VALORI_RISPOSTA;
@@ -1496,13 +1609,17 @@ public class ConfigurazionePdD  {
 													this.cache.remove(_getKey_PluginClassNameByFilter(idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvRuolo,nv));
 													this.getPluginClassNameByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvRuolo,nv);
 												}
-												catch(DriverConfigurazioneNotFound notFound){}
+												catch(DriverConfigurazioneNotFound notFound){
+													// ignore
+												}
 												catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 												try{
 													this.cache.remove(_getKey_PluginTipoByFilter(idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvRuolo,nv));
 													this.getPluginTipoByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvRuolo,nv);
 												}
-												catch(DriverConfigurazioneNotFound notFound){}
+												catch(DriverConfigurazioneNotFound notFound){
+													// ignore
+												}
 												catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 											}
 											
@@ -1516,13 +1633,17 @@ public class ConfigurazionePdD  {
 													this.cache.remove(_getKey_PluginClassNameByFilter(idPlugin.getTipoPlugin(),idPlugin.getTipo(),nv));
 													this.getPluginClassNameByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getTipo(),nv);
 												}
-												catch(DriverConfigurazioneNotFound notFound){}
+												catch(DriverConfigurazioneNotFound notFound){
+													// ignore
+												}
 												catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 												try{
 													this.cache.remove(_getKey_PluginTipoByFilter(idPlugin.getTipoPlugin(),idPlugin.getClassName(),nv));
 													this.getPluginTipoByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getClassName(),nv);
 												}
-												catch(DriverConfigurazioneNotFound notFound){}
+												catch(DriverConfigurazioneNotFound notFound){
+													// ignore
+												}
 												catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 											}
 
@@ -1534,13 +1655,17 @@ public class ConfigurazionePdD  {
 												this.cache.remove(_getKey_PluginClassNameByFilter(idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvFruizione));
 												this.getPluginClassNameByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvFruizione);
 											}
-											catch(DriverConfigurazioneNotFound notFound){}
+											catch(DriverConfigurazioneNotFound notFound){
+												// ignore
+											}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 											try{
 												this.cache.remove(_getKey_PluginTipoByFilter(idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvFruizione));
 												this.getPluginTipoByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvFruizione);
 											}
-											catch(DriverConfigurazioneNotFound notFound){}
+											catch(DriverConfigurazioneNotFound notFound){
+												// ignore
+											}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 
 											NameValue nvErogazione = new NameValue(PluginCostanti.FILTRO_APPLICABILITA_NOME, PluginCostanti.FILTRO_APPLICABILITA_VALORE_EROGAZIONE);
@@ -1548,13 +1673,17 @@ public class ConfigurazionePdD  {
 												this.cache.remove(_getKey_PluginClassNameByFilter(idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvErogazione));
 												this.getPluginClassNameByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvErogazione);
 											}
-											catch(DriverConfigurazioneNotFound notFound){}
+											catch(DriverConfigurazioneNotFound notFound){
+												// ignore
+											}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 											try{
 												this.cache.remove(_getKey_PluginTipoByFilter(idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvErogazione));
 												this.getPluginTipoByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvErogazione);
 											}
-											catch(DriverConfigurazioneNotFound notFound){}
+											catch(DriverConfigurazioneNotFound notFound){
+												// ignore
+											}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 											
 											NameValue nvConfigurazione = new NameValue(PluginCostanti.FILTRO_APPLICABILITA_NOME, PluginCostanti.FILTRO_APPLICABILITA_VALORE_CONFIGURAZIONE);
@@ -1562,13 +1691,17 @@ public class ConfigurazionePdD  {
 												this.cache.remove(_getKey_PluginClassNameByFilter(idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvConfigurazione));
 												this.getPluginClassNameByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getTipo(),nvConfigurazione);
 											}
-											catch(DriverConfigurazioneNotFound notFound){}
+											catch(DriverConfigurazioneNotFound notFound){
+												// ignore
+											}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 											try{
 												this.cache.remove(_getKey_PluginTipoByFilter(idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvConfigurazione));
 												this.getPluginTipoByFilter(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getClassName(),nvConfigurazione);
 											}
-											catch(DriverConfigurazioneNotFound notFound){}
+											catch(DriverConfigurazioneNotFound notFound){
+												// ignore
+											}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 										}
 										else {
@@ -1576,14 +1709,18 @@ public class ConfigurazionePdD  {
 												this.cache.remove(_getKey_PluginClassName(idPlugin.getTipoPlugin(),idPlugin.getTipo()));
 												this.getPluginClassName(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getTipo());
 											}
-											catch(DriverConfigurazioneNotFound notFound){}
+											catch(DriverConfigurazioneNotFound notFound){
+												// ignore
+											}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 											
 											try{
 												this.cache.remove(_getKey_PluginTipo(idPlugin.getTipoPlugin(),idPlugin.getClassName()));
 												this.getPluginTipo(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getClassName());
 											}
-											catch(DriverConfigurazioneNotFound notFound){}
+											catch(DriverConfigurazioneNotFound notFound){
+												// ignore
+											}
 											catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 										}
 									}
@@ -1592,13 +1729,17 @@ public class ConfigurazionePdD  {
 											this.cache.remove(_getKey_PluginClassName(idPlugin.getTipoPlugin(),idPlugin.getTipo()));
 											this.getPluginClassName(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getTipo());
 										}
-										catch(DriverConfigurazioneNotFound notFound){}
+										catch(DriverConfigurazioneNotFound notFound){
+											// ignore
+										}
 										catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 										try{
 											this.cache.remove(_getKey_PluginTipo(idPlugin.getTipoPlugin(),idPlugin.getClassName()));
 											this.getPluginTipo(connectionPdD, idPlugin.getTipoPlugin(),idPlugin.getClassName());
 										}
-										catch(DriverConfigurazioneNotFound notFound){}
+										catch(DriverConfigurazioneNotFound notFound){
+											// ignore
+										}
 										catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 									}
 								}
@@ -1649,7 +1790,9 @@ public class ConfigurazionePdD  {
 				mapPolicyAttive = this.getElencoIdPolicyAttiveGlobali(connectionPdD, true);
 			}
 		}
-		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 		if(mapPolicyAttive!=null && !mapPolicyAttive.isEmpty()) {
@@ -1674,7 +1817,9 @@ public class ConfigurazionePdD  {
 							this.cache.remove(_getKey_AttivazionePolicy(id));
 							this.getAttivazionePolicy(connectionPdD, true, id);
 						}
-						catch(DriverConfigurazioneNotFound notFound){}
+						catch(DriverConfigurazioneNotFound notFound){
+							// ignore
+						}
 						catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 						
 					}
@@ -1701,7 +1846,9 @@ public class ConfigurazionePdD  {
 				mapPolicyAttive_dimensioneMessaggio = this.getElencoIdPolicyAttiveGlobali_dimensioneMessaggio(connectionPdD, true);
 			}
 		}
-		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 		if(mapPolicyAttive_dimensioneMessaggio!=null && !mapPolicyAttive_dimensioneMessaggio.isEmpty()) {
@@ -1726,7 +1873,9 @@ public class ConfigurazionePdD  {
 							this.cache.remove(_getKey_AttivazionePolicy(id));
 							this.getAttivazionePolicy(connectionPdD, true, id);
 						}
-						catch(DriverConfigurazioneNotFound notFound){}
+						catch(DriverConfigurazioneNotFound notFound){
+							// ignore
+						}
 						catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 						
 					}
@@ -1766,7 +1915,9 @@ public class ConfigurazionePdD  {
 		try{
 			listSoggetti = registroServiziReader.getAllIdSoggetti_noCache(filtroSoggetti,null);
 		}
-		catch(DriverRegistroServiziNotFound notFound){}
+		catch(DriverRegistroServiziNotFound notFound){
+			// ignore
+		}
 		catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 		org.openspcoop2.core.registry.driver.FiltroRicercaServizi filtroServizi = new org.openspcoop2.core.registry.driver.FiltroRicercaServizi();
@@ -1774,7 +1925,9 @@ public class ConfigurazionePdD  {
 		try{
 			listIdServizi = registroServiziReader.getAllIdServizi_noCache(filtroServizi,null);
 		}
-		catch(DriverRegistroServiziNotFound notFound){}
+		catch(DriverRegistroServiziNotFound notFound){
+			// ignore
+		}
 		catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 		List<IDSoggetto> soggettiVirtuali = null;
@@ -1782,7 +1935,9 @@ public class ConfigurazionePdD  {
 			this.cache.remove(_getKey_getSoggettiVirtuali());
 			soggettiVirtuali = this.getSoggettiVirtuali(null);
 		}
-		catch(DriverConfigurazioneNotFound notFound){}
+		catch(DriverConfigurazioneNotFound notFound){
+			// ignore
+		}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 		
 		if(listIdServizi!=null && listIdServizi.size()>0){
@@ -1805,21 +1960,27 @@ public class ConfigurazionePdD  {
 					this.cache.remove(_getKey_getPorteApplicative(idServizio,false));
 					this.getPorteApplicative(null, idServizio, false);
 				}
-				catch(DriverConfigurazioneNotFound notFound){}
+				catch(DriverConfigurazioneNotFound notFound){
+					// ignore
+				}
 				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 				
 				try{
 					this.cache.remove(_getKey_getPorteApplicative(idServizio,true));
 					this.getPorteApplicative(null, idServizio, true);
 				}
-				catch(DriverConfigurazioneNotFound notFound){}
+				catch(DriverConfigurazioneNotFound notFound){
+					// ignore
+				}
 				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 				
 				try{
 					this.cache.remove(_getKey_getPorteApplicative_SoggettiVirtuali(idServizio));
 					this.getPorteApplicative_SoggettiVirtuali(null, idServizio, null, false);
 				}
-				catch(DriverConfigurazioneNotFound notFound){}
+				catch(DriverConfigurazioneNotFound notFound){
+					// ignore
+				}
 				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 				
 				if(soggettiVirtuali!=null && soggettiVirtuali.size()>0) {
@@ -1836,14 +1997,18 @@ public class ConfigurazionePdD  {
 							this.cache.remove(_getKey_getPorteApplicativeVirtuali(idSoggetto, idServizio,false));
 							this.getPorteApplicativeVirtuali(null, idSoggetto, idServizio, false);
 						}
-						catch(DriverConfigurazioneNotFound notFound){}
+						catch(DriverConfigurazioneNotFound notFound){
+							// ignore
+						}
 						catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 						
 						try{
 							this.cache.remove(_getKey_getPorteApplicativeVirtuali(idSoggetto, idServizio,true));
 							this.getPorteApplicativeVirtuali(null, idSoggetto, idServizio, true);
 						}
-						catch(DriverConfigurazioneNotFound notFound){}
+						catch(DriverConfigurazioneNotFound notFound){
+							// ignore
+						}
 						catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
 						
 					}
@@ -1897,7 +2062,12 @@ public class ConfigurazionePdD  {
 						classArgoments[i].getPackage().getName()!=null &&
 						classArgoments[i].getPackage().getName().equals("org.openspcoop2.protocol.sdk.registry")) {
 					try {
-						classArgoments[i] = Class.forName("org.openspcoop2.core.config.driver."+classArgoments[i].getSimpleName());
+						if(classArgoments[i].getSimpleName().startsWith("ProtocolFiltro")) {
+							classArgoments[i] = Class.forName("org.openspcoop2.core.config.driver."+classArgoments[i].getSimpleName().replace("ProtocolFiltro", "Filtro"));
+						}
+						else {
+							classArgoments[i] = Class.forName("org.openspcoop2.core.config.driver."+classArgoments[i].getSimpleName());
+						}
 					}catch(Exception e) {
 						throw new DriverConfigurazioneException(e.getMessage(),e);
 					}
@@ -2015,9 +2185,16 @@ public class ConfigurazionePdD  {
 			values = new Object[instances.length];
 			for (int i = 0; i < instances.length; i++) {
 				classArgoments[i] = instances[i].getClass();
-				if(classArgoments[i].getPackage().getName().equals("org.openspcoop2.protocol.sdk.registry")) {
+				if(classArgoments[i].getPackage()!=null &&
+						classArgoments[i].getPackage().getName()!=null &&
+						classArgoments[i].getPackage().getName().equals("org.openspcoop2.protocol.sdk.registry")) {
 					try {
-						classArgoments[i] = Class.forName("org.openspcoop2.core.config.driver."+classArgoments[i].getSimpleName());
+						if(classArgoments[i].getSimpleName().startsWith("ProtocolFiltro")) {
+							classArgoments[i] = Class.forName("org.openspcoop2.core.config.driver."+classArgoments[i].getSimpleName().replace("ProtocolFiltro", "Filtro"));
+						}
+						else {
+							classArgoments[i] = Class.forName("org.openspcoop2.core.config.driver."+classArgoments[i].getSimpleName());
+						}
 					}catch(Exception e) {
 						throw new DriverConfigurazioneException(e.getMessage(),e);
 					}
@@ -2628,7 +2805,7 @@ public class ConfigurazionePdD  {
 		}
 		
 		Template template = _getTemplate(connectionPdD,idPD, nomeMetodo, templateSource, identificativo, templateBytes, key);
-		if(useRequestInfo) {
+		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addTemplate(key, template, 
 					requestInfo!=null ? requestInfo.getIdTransazione() : null);
 		}
@@ -2728,7 +2905,7 @@ public class ConfigurazionePdD  {
 		}
 		
 		Template template = _getTemplate(connectionPdD, idPD, nomeMetodo, templateSource, file, key);
-		if(useRequestInfo) {
+		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addTemplate(key, template, 
 					requestInfo!=null ? requestInfo.getIdTransazione() : null);
 		}
@@ -3461,7 +3638,7 @@ public class ConfigurazionePdD  {
 		}
 	
 		Template template = _getTemplate(connectionPdD, idPA, nomeMetodo, templateSource, identificativo, templateBytes, key);
-		if(useRequestInfo) {
+		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addTemplate(key, template, 
 					requestInfo!=null ? requestInfo.getIdTransazione() : null);
 		}
@@ -3560,7 +3737,7 @@ public class ConfigurazionePdD  {
 		}
 		
 		Template template = _getTemplate(connectionPdD, idPA, nomeMetodo, templateSource, file, key);
-		if(useRequestInfo) {
+		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addTemplate(key, template, 
 					requestInfo!=null ? requestInfo.getIdTransazione() : null);
 		}
@@ -4849,7 +5026,7 @@ public class ConfigurazionePdD  {
 		}
 			
 		Template template = _getTemplate(connectionPdD, nomeMetodo, templateSource, identificativo, templateBytes, key);
-		if(useRequestInfo) {
+		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addTemplate(key, template, 
 					requestInfo!=null ? requestInfo.getIdTransazione() : null);
 		}
@@ -4942,7 +5119,7 @@ public class ConfigurazionePdD  {
 		}
 				
 		Template template = _getTemplate(connectionPdD, nomeMetodo, templateSource, file, key);
-		if(useRequestInfo) {
+		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addTemplate(key, template, 
 					requestInfo!=null ? requestInfo.getIdTransazione() : null);
 		}

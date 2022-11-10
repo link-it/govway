@@ -171,6 +171,9 @@ public class Test {
 			"</openspcoop2>";
 	
 	public static void main(String [] args) throws Exception{
+		test();
+	}
+	public static void test() throws Exception{
 		
 		File fTmpConfig = File.createTempFile("configTest", ".xml"); 
 		File fTmpOp2Properties = File.createTempFile("govway", ".properties"); 

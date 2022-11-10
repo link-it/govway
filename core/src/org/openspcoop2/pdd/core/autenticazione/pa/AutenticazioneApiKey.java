@@ -38,6 +38,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.crypt.CryptConfig;
 
 /**
@@ -79,36 +80,45 @@ public class AutenticazioneApiKey extends AbstractAutenticazioneBase {
 		
 		ParametriAutenticazioneApiKey authApiKey = new ParametriAutenticazioneApiKey(this.parametri);
 		
-		if(authApiKey.getHeader()!=null) {
-			this.header = authApiKey.getHeader();
-		}
-		if(authApiKey.getCookie()!=null) {
-			this.cookie = authApiKey.getCookie();
-		}
-		if(authApiKey.getQueryParameter()!=null) {
-			this.queryParameter = authApiKey.getQueryParameter();
+		BooleanNullable bNullable = authApiKey.getHeader();
+		if(bNullable!=null && bNullable.getValue()!=null) {
+			this.header = bNullable.getValue();
 		}
 		
+		bNullable = authApiKey.getCookie();
+		if(bNullable!=null && bNullable.getValue()!=null) {
+			this.cookie = bNullable.getValue();
+		}
+		
+		bNullable = authApiKey.getQueryParameter();
+		if(bNullable!=null && bNullable.getValue()!=null) {
+			this.queryParameter = bNullable.getValue();
+		}
+				
 		this.nomeHeaderApiKey = authApiKey.getNomeHeaderApiKey();
 		this.nomeCookieApiKey = authApiKey.getNomeCookieApiKey();
 		this.nomeQueryParameterApiKey = authApiKey.getNomeQueryParameterApiKey();
 		
-		if(authApiKey.getAppId()!=null) {
-			this.appId = authApiKey.getAppId();
+		bNullable = authApiKey.getAppId();
+		if(bNullable!=null && bNullable.getValue()!=null) {
+			this.appId = bNullable.getValue();
 		}
-		
+				
 		if(this.appId) {
 			this.nomeHeaderAppId = authApiKey.getNomeHeaderAppId();
 			this.nomeCookieAppId = authApiKey.getNomeCookieAppId();
 			this.nomeQueryParameterAppId = authApiKey.getNomeQueryParameterAppId();
 		}
 		
-		if(authApiKey.getCleanApiKey()!=null) {
-			this.cleanApiKey = authApiKey.getCleanApiKey();
+		bNullable = authApiKey.getCleanApiKey();
+		if(bNullable!=null && bNullable.getValue()!=null) {
+			this.cleanApiKey = bNullable.getValue();
 		}
+		
 		if(this.appId) {
-			if(authApiKey.getCleanAppId()!=null) {
-				this.cleanAppId = authApiKey.getCleanAppId();
+			bNullable = authApiKey.getCleanAppId();
+			if(bNullable!=null && bNullable.getValue()!=null) {
+				this.cleanAppId = bNullable.getValue();
 			}
 		}
 				

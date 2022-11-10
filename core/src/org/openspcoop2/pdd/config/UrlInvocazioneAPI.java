@@ -436,7 +436,7 @@ public class UrlInvocazioneAPI implements Serializable {
 			String contextWithoutBinding = null;
 			String contextWithRestBinding = null;
 			String contextWithSoapBinding = null;
-			if(protocolFactory.getManifest().getWeb().getEmptyContext()!=null) {
+			if(protocolFactory!=null && protocolFactory.getManifest().getWeb().getEmptyContext()!=null) {
 				WebEmptyContext ctx = protocolFactory.getManifest().getWeb().getEmptyContext();
 				if(ctx.getBinding()==null) {
 					if(contextWithoutBinding==null) {
@@ -454,7 +454,7 @@ public class UrlInvocazioneAPI implements Serializable {
 					}
 				}
 			}
-			if(protocolFactory.getManifest().getWeb().sizeContextList()>0) {
+			if(protocolFactory!=null && protocolFactory.getManifest().getWeb().sizeContextList()>0) {
 				for (Context ctx : protocolFactory.getManifest().getWeb().getContextList()) {
 					if(ctx.getBinding()==null) {
 						if(contextWithoutBinding==null) {
@@ -540,8 +540,10 @@ public class UrlInvocazioneAPI implements Serializable {
 				contestoEsterno = contestoEsterno + "/" +interfaceNameNormalizzata;
 			}
 			
-			while(contestoEsterno.contains("//")) {
-				contestoEsterno = contestoEsterno.replace("//", "/");
+			if(contestoEsterno!=null) {
+				while(contestoEsterno.contains("//")) {
+					contestoEsterno = contestoEsterno.replace("//", "/");
+				}
 			}
 						
 			if(contestoEsterno!=null) {

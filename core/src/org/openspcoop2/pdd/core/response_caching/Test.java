@@ -58,7 +58,10 @@ public class Test {
 	private static final String SOAP_ENVELOPE_RISPOSTA_END = 
 		"<soapenv:Body><prova>test</prova></soapenv:Body></soapenv:Envelope>";
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String [] args) throws Exception{
+		test();
+	}
+	public static void test() throws Exception{
 				
 		Logger log = LoggerWrapperFactory.getLogger(Test.class);
 		

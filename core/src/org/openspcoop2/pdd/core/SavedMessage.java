@@ -111,7 +111,7 @@ public class SavedMessage implements java.io.Serializable {
 	private IOpenSPCoopState openspcoopstate;
 
 	/** OpenSPCoopProperties */
-	private OpenSPCoop2Properties openspcoopProperties = OpenSPCoop2Properties.getInstance();
+	private transient OpenSPCoop2Properties openspcoopProperties = OpenSPCoop2Properties.getInstance();
 
 
 
@@ -407,19 +407,19 @@ public class SavedMessage implements java.io.Serializable {
 				try{
 					if( pstmt != null )
 						pstmt.close();
-				} catch(Exception err) {}
+				} catch(Exception err) {
+					// close
+				}
 				String errorMsg = "SOAP_MESSAGE, save : "+this.box+"/"+this.idMessaggio+": "+e.getMessage();		
 				this.log.error(errorMsg,e);
 				throw new UtilsException(errorMsg,e);
 			}
-		}else if (portaDiTipoStateless){
+		}else { // if (portaDiTipoStateless){
 
 			if (isRichiesta) ((OpenSPCoopStateless)this.openspcoopstate).setRichiestaMsg(msg);
 			else ((OpenSPCoopStateless)this.openspcoopstate).setRispostaMsg(msg);
 
 
-		}else{
-			throw new UtilsException("Metodo invocato con OpenSPCoopState non valido");
 		}
 
 	}     
@@ -449,7 +449,9 @@ public class SavedMessage implements java.io.Serializable {
 			try{
 				if( fos != null )
 					fos.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			throw new UtilsException("Utilities.saveMessage error "+e.getMessage(),e);
 		}
 	}
@@ -479,7 +481,9 @@ public class SavedMessage implements java.io.Serializable {
 			try{
 				if( fos != null )
 					fos.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			throw new UtilsException("Utilities.saveMessage error "+e.getMessage(),e);
 		}
 	}
@@ -589,7 +593,9 @@ public class SavedMessage implements java.io.Serializable {
 			try{
 				if( pstmt != null )
 					pstmt.close();
-			} catch(Exception err) {}
+			} catch(Exception err) {
+				// close
+			}
 			String errorMsg = "SOAP_MESSAGE, update response : "+this.box+"/"+this.idMessaggio+": "+e.getMessage();		
 			this.log.error(errorMsg,e);
 			throw new UtilsException(errorMsg,e);
@@ -764,31 +770,36 @@ public class SavedMessage implements java.io.Serializable {
 				try{
 					if( rs != null )
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if( pstmt != null )
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if( isBytes != null )
 						isBytes.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if( isContext != null )
 						isContext.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				String errorMsg = "SOAP_MESSAGE, read: "+this.box+"/"+this.idMessaggio+": "+e.getMessage();		
 				this.log.error(errorMsg,e);
 				throw new UtilsException(errorMsg,e);
 			}
 
 			return msg;
-		}else if ( portaDiTipoStateless ){
+		}else { // if ( portaDiTipoStateless ){
 			if (isRichiesta) return	((OpenSPCoopStateless)this.openspcoopstate).getRichiestaMsg();
 			else return	((OpenSPCoopStateless)this.openspcoopstate).getRispostaMsg();
-		}else{
-			throw new UtilsException("Metodo invocato con IState non valido");
-
 		}
 	}
 
@@ -868,7 +879,9 @@ public class SavedMessage implements java.io.Serializable {
 				try{
 					if( pstmt != null )
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				String errorMsg = "SOAP_MESSAGE, delete: "+this.box+"/"+this.idMessaggio+": "+e.getMessage();		
 				this.log.error(errorMsg,e);
 				throw new UtilsException(errorMsg,e);

@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.core.autenticazione;
 
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
+import org.openspcoop2.utils.BooleanNullable;
 
 /**
  * ParametriAutenticazionePrincipal
@@ -84,18 +85,18 @@ public class ParametriAutenticazionePrincipal extends ParametriAutenticazione im
 		return valore;
 	}
 	
-	public Boolean getCleanPrincipal() {
+	public BooleanNullable getCleanPrincipal() {
 		String valore = this.get(CLEAN_PRINCIPAL);
 		if(valore==null || "".equals(valore)) {
-			return null;
+			return BooleanNullable.NULL();
 		}
 		if(CLEAN_PRINCIPAL_FALSE.equalsIgnoreCase(valore)) {
-			return false;
+			return BooleanNullable.FALSE();
 		}
 		else if(CLEAN_PRINCIPAL_TRUE.equalsIgnoreCase(valore)) {
-			return true;
+			return BooleanNullable.TRUE();
 		}
-		return null;
+		return BooleanNullable.NULL();
 	}
 	
 	public TipoCredenzialeMittente getTokenClaim() {

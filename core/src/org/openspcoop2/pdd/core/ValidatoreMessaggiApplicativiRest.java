@@ -538,6 +538,9 @@ public class ValidatoreMessaggiApplicativiRest {
 				default:
 					break;
 				}
+				if(httpRequest==null) {
+					throw new Exception("HttpRequest undefined");
+				}
 				httpRequest.setContentType(this.message.getContentType());
 				httpRequest.setHeaders(this.message.getTransportRequestContext().getHeaders());
 				httpRequest.setParameters(this.message.getTransportRequestContext().getParameters());
@@ -622,6 +625,9 @@ public class ValidatoreMessaggiApplicativiRest {
 					break;
 				default:
 					break;
+				}
+				if(httpResponse==null) {
+					throw new Exception("httpResponse undefined");
 				}
 				httpResponse.setContentType(this.message.getContentType());
 				httpResponse.setHeaders(this.message.getTransportResponseContext().getHeaders());

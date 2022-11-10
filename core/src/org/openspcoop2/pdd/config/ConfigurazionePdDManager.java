@@ -745,7 +745,7 @@ public class ConfigurazionePdDManager {
 			}
 		}
 		PolicyGestioneToken policy = this.configurazionePdDReader.getPolicyGestioneToken(this.getConnection(), pd);
-		if(useRequestInfo) {
+		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addPolicyValidazioneToken(nome, policy, 
 					requestInfo!=null ? requestInfo.getIdTransazione() : null);
 		}
@@ -1110,7 +1110,7 @@ public class ConfigurazionePdDManager {
 			}
 		}
 		PolicyGestioneToken policy = this.configurazionePdDReader.getPolicyGestioneToken(this.getConnection(), pa);
-		if(useRequestInfo) {
+		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addPolicyValidazioneToken(nome, policy, 
 					requestInfo!=null ? requestInfo.getIdTransazione() : null);
 		}
@@ -1822,7 +1822,7 @@ public class ConfigurazionePdDManager {
 			}
 		}
 		PolicyNegoziazioneToken policy = this.configurazionePdDReader.getPolicyNegoziazioneToken(this.getConnection(), forceNoCache, policyName);
-		if(useRequestInfo) {
+		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addPolicyNegoziazioneToken(policyName, policy, 
 					requestInfo!=null ? requestInfo.getIdTransazione() : null);
 		}
@@ -1838,7 +1838,7 @@ public class ConfigurazionePdDManager {
 			}
 		}
 		PolicyAttributeAuthority policy = this.configurazionePdDReader.getPolicyAttributeAuthority(this.getConnection(), forceNoCache, policyName);
-		if(useRequestInfo) {
+		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addAttributeAuthority(policyName, policy, 
 					requestInfo!=null ? requestInfo.getIdTransazione() : null);
 		}
@@ -2173,7 +2173,7 @@ public class ConfigurazionePdDManager {
 			}
 		}
 		ForwardProxy fp = this.configurazionePdDReader.getForwardProxyConfigFruizione(dominio, idServizio, policy, requestInfo);
-		if(useRequestInfo) {
+		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addForwardProxy(key, fp, 
 					requestInfo!=null ? requestInfo.getIdTransazione() : null);
 		}
@@ -2190,7 +2190,7 @@ public class ConfigurazionePdDManager {
 			}
 		}
 		ForwardProxy fp = this.configurazionePdDReader.getForwardProxyConfigErogazione(dominio, idServizio, policy, requestInfo);
-		if(useRequestInfo) {
+		if(useRequestInfo && requestInfo!=null) {
 			requestInfo.getRequestConfig().addForwardProxy(key, fp, 
 					requestInfo!=null ? requestInfo.getIdTransazione() : null);
 		}

@@ -246,6 +246,12 @@ public class GestoreCorrelazioneApplicativa {
 			throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
 		}
 
+		if(message==null) {
+			this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
+					getErrore416_CorrelazioneApplicativaRichiesta("messaggio non presente");
+			throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
+		}
+		
 		Element element = null;
 		String elementJson = null;
 		try{
@@ -732,6 +738,12 @@ public class GestoreCorrelazioneApplicativa {
 		if(correlazioneApplicativa==null){
 			this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
 					getErrore434_CorrelazioneApplicativaRisposta("dati per l'identificazione dell'id di correlazione non presenti");
+			throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
+		}
+		
+		if(message==null) {
+			this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
+					getErrore434_CorrelazioneApplicativaRisposta("messaggio non presente");
 			throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
 		}
 
@@ -1304,11 +1316,15 @@ public class GestoreCorrelazioneApplicativa {
 			try{
 				if(rs != null)
 					rs.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			try{
 				if(pstmtMsgScaduti != null)
 					pstmtMsgScaduti.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			this.log.error(errorMsg);
 			throw new GestoreMessaggiException(errorMsg,e);
 		}	
@@ -1402,11 +1418,15 @@ public class GestoreCorrelazioneApplicativa {
 			try{
 				if(rs != null)
 					rs.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			try{
 				if(pstmtMsgScaduti != null)
 					pstmtMsgScaduti.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			this.log.error(errorMsg);
 			throw new GestoreMessaggiException(errorMsg,e);
 		}	
@@ -1448,11 +1468,15 @@ public class GestoreCorrelazioneApplicativa {
 			try{
 				if(rs != null)
 					rs.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			try{
 				if(pstmtReadMSG != null)
 					pstmtReadMSG.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			this.log.error(errorMsg);
 			throw new GestoreMessaggiException(errorMsg,e);
 		}	
@@ -1484,7 +1508,9 @@ public class GestoreCorrelazioneApplicativa {
 			try{
 				if(pstmtDeleteMSG != null)
 					pstmtDeleteMSG.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			this.log.error(errorMsg);
 			throw new GestoreMessaggiException(errorMsg,e);
 		}	
@@ -1543,7 +1569,7 @@ public class GestoreCorrelazioneApplicativa {
 				return id.substring(0, this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_blocca_truncate_response);
 			}
 		}
-		else if(!blocca) {
+		else {
 			if(request) {
 				return id.substring(0, this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_request);
 			}
@@ -1551,7 +1577,6 @@ public class GestoreCorrelazioneApplicativa {
 				return id.substring(0, this.maxLengthExceededCorrelazioneApplicativa_identificazioneFallita_accetta_truncate_response);
 			}
 		}
-		return null;
 	}
 }
 

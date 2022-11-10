@@ -193,11 +193,15 @@ public class JMSSender {
 			try{
 				if(sender!=null)
 					sender.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 			if(resource!=null){
 				try{
 					this.qmanager.releaseResource(this.codicePorta,this.idModulo,resource);
-				}catch(Exception eClose){}	
+				}catch(Exception eClose){
+					// close
+				}	
 			}
 			this.log.error("Riscontrato errore durante la creazione/spedizione dell'oggetto :"+e.getMessage(),e);
 			this.errore = "Riscontrato errore durante la creazione/spedizione dell'oggetto :"+e.getMessage();

@@ -203,6 +203,11 @@ public class GestoreRichieste {
 		if(GestoreRichieste.cacheKeys==null)
 			throw new CoreException("Cache già disabilitata");
 		else{
+			_disabilitaCache();
+		}
+	}
+	private static synchronized void _disabilitaCache() throws CoreException{
+		if(GestoreRichieste.cacheKeys!=null) {
 			try{
 				GestoreRichieste.cache_api.clear();
 				GestoreRichieste.cache_api = null;

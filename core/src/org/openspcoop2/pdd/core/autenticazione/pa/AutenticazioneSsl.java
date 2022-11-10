@@ -67,6 +67,10 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 
     	EsitoAutenticazionePortaApplicativa esito = new EsitoAutenticazionePortaApplicativa();
     	
+    	if(datiInvocazione==null) {
+    		throw new AutenticazioneException("Param datiInvocazione is null");
+    	}
+    	
     	OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
     	WWWAuthenticateConfig wwwAuthenticateConfig = op2Properties.getRealmAutenticazioneHttpsWWWAuthenticateConfig();
     	

@@ -45,7 +45,10 @@ import org.w3c.dom.Element;
  */
 public class Client {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String [] args) throws Exception{
+		test();
+	}
+	public static void test() throws Exception{
 		
 		// TEST 1
 		System.out.println("============ SOAP 11 ============");

@@ -175,6 +175,20 @@ public class GestoreAutenticazione {
 	private static Logger logger = null;
 	private static Logger logConsole = OpenSPCoop2Logger.getLoggerOpenSPCoopConsole();
 
+	
+	private static java.util.Random _rnd = null;
+	private static synchronized void initRandom() {
+		if(_rnd==null) {
+			_rnd = new java.util.Random();
+		}
+	}
+	public static java.util.Random getRandom() {
+		if(_rnd==null) {
+			initRandom();
+		}
+		return _rnd;
+	}
+	
 
 	/* --------------- Cache --------------------*/
 	public static void resetCache() throws AutenticazioneException{
@@ -199,6 +213,13 @@ public class GestoreAutenticazione {
 		}
 	}
 	public static void abilitaCache() throws AutenticazioneException{
+		if(GestoreAutenticazione.cacheAutenticazione!=null)
+			throw new AutenticazioneException("Cache gia' abilitata");
+		else{
+			_abilitaCache();
+		}
+	}
+	private static synchronized void _abilitaCache() throws AutenticazioneException{
 		if(GestoreAutenticazione.cacheAutenticazione!=null)
 			throw new AutenticazioneException("Cache gia' abilitata");
 		else{
@@ -247,6 +268,13 @@ public class GestoreAutenticazione {
 		}
 	}
 	public static void disabilitaCache() throws AutenticazioneException{
+		if(GestoreAutenticazione.cacheAutenticazione==null)
+			throw new AutenticazioneException("Cache gia' disabilitata");
+		else{
+			_disabilitaCache();
+		}
+	}
+	private static synchronized void _disabilitaCache() throws AutenticazioneException{
 		if(GestoreAutenticazione.cacheAutenticazione==null)
 			throw new AutenticazioneException("Cache gia' disabilitata");
 		else{
@@ -1383,7 +1411,9 @@ public class GestoreAutenticazione {
 				try{
 					if(r!=null)
 						dbManager.releaseResource(dominio, modulo, r);
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 		}
     }
@@ -1512,8 +1542,10 @@ public class GestoreAutenticazione {
     		
 			// Per aiutare ad evitare conflitti
 			try{
-				Utilities.sleep((new java.util.Random()).nextInt(gestioneSerializableDB_CheckInterval)); // random da 0ms a checkIntervalms
-			}catch(Exception eRandom){}
+				Utilities.sleep((getRandom()).nextInt(gestioneSerializableDB_CheckInterval)); // random da 0ms a checkIntervalms
+			}catch(Exception eRandom){
+				// ignore
+			}
 		}
     	
 		if(lastT!=null) {

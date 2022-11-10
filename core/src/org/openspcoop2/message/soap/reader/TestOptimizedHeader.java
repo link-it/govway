@@ -68,6 +68,12 @@ public class TestOptimizedHeader {
 	private static int MAX_EXC = 0; // problema risolto. Non dovrebbero accadere
 	
 	public static void main(String[] args) throws Exception {
+		test(args);
+	}
+	public static void test() throws Exception {
+		test(null);
+	}
+	public static void test(String[] args) throws Exception {
 	
 		Integer testDimensioneKb = null;
 		

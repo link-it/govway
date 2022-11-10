@@ -22,6 +22,8 @@
 
 package org.openspcoop2.pdd.core.autenticazione;
 
+import org.openspcoop2.utils.BooleanNullable;
+
 /**
  * ParametriAutenticazioneBasic
  *
@@ -45,17 +47,17 @@ public class ParametriAutenticazioneBasic extends ParametriAutenticazione implem
 		super(parametri);
 	}
 	
-	public Boolean getCleanHeaderAuthorization() {
+	public BooleanNullable getCleanHeaderAuthorization() {
 		String valore = this.get(CLEAN_HEADER_AUTHORIZATION);
 		if(valore==null || "".equals(valore)) {
-			return null;
+			return BooleanNullable.NULL();
 		}
 		if(CLEAN_HEADER_AUTHORIZATION_FALSE.equalsIgnoreCase(valore)) {
-			return false;
+			return BooleanNullable.FALSE();
 		}
 		else if(CLEAN_HEADER_AUTHORIZATION_TRUE.equalsIgnoreCase(valore)) {
-			return true;
+			return BooleanNullable.TRUE();
 		}
-		return null;
+		return BooleanNullable.NULL();
 	}
 }

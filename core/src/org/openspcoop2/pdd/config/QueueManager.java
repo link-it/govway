@@ -233,7 +233,7 @@ public class QueueManager implements java.io.Serializable,IMonitoraggioRisorsa{
 	/** ConnectionFactory dove attingere connessioni */
 	private ConnectionFactory qcf = null;
 	/** MsgDiagnostico */
-	private MsgDiagnostico msgDiag = null;
+	private transient MsgDiagnostico msgDiag = null;
 	
 	/**
 	 * Costruttore
@@ -396,7 +396,9 @@ public class QueueManager implements java.io.Serializable,IMonitoraggioRisorsa{
 		}finally{
 			try{
 				this.releaseResource(idSoggettAlive, "CheckIsAlive" ,resource);
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 }

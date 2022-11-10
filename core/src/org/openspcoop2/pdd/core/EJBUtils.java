@@ -29,7 +29,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import javax.xml.soap.SOAPBody;
 
@@ -94,6 +93,7 @@ import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativiMessage;
 import org.openspcoop2.pdd.mdb.EsitoLib;
 import org.openspcoop2.pdd.mdb.InoltroRisposte;
 import org.openspcoop2.pdd.mdb.InoltroRisposteMessage;
+import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.pdd.services.core.RicezioneBusteMessage;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativiMessage;
 import org.openspcoop2.pdd.services.error.AbstractErrorGenerator;
@@ -749,6 +749,10 @@ public class EJBUtils {
 		GestoreMessaggi msgResponse = null;
 		GestoreMessaggi msgSbloccoRicezioneContenutiApplicativi = null; // Evenutuale sblocco se presente ricezioneContenutiApplicativi per profili oneway/sincroni
 
+		if(richiestaDelegata==null) {
+			throw new EJBUtilsException("Param richiestaDelegata is null");
+		}
+		
 		// Aggiungo costante servizio applicativo
 		this.msgDiag.addKeyword(CostantiPdD.KEY_SA_EROGATORE, richiestaDelegata.getServizioApplicativo());
 		
@@ -1024,6 +1028,10 @@ public class EJBUtils {
 		String nomePorta = null;
 		if(richiestaDelegata!=null && richiestaDelegata.getIdPortaDelegata()!=null)
 			nomePorta = richiestaDelegata.getIdPortaDelegata().getNome();
+		
+		if(richiestaDelegata==null) {
+			throw new EJBUtilsException("Param richiestaDelegata is null");
+		}
 		
 		// Aggiungo costante servizio applicativo
 		this.msgDiag.addKeyword(CostantiPdD.KEY_SA_EROGATORE, richiestaDelegata.getServizioApplicativo());
@@ -1358,10 +1366,16 @@ public class EJBUtils {
 
 		try{
 
-			this.msgDiag.addKeyword(CostantiPdD.KEY_SA_EROGATORE, richiestaDelegata.getServizioApplicativo());
+			if(richiestaDelegata!=null) {
+				this.msgDiag.addKeyword(CostantiPdD.KEY_SA_EROGATORE, richiestaDelegata.getServizioApplicativo());
+			}
+			
+			if(richiestaDelegata==null) {
+				throw new EJBUtilsException("Param richiestaDelegata is null");
+			}
 			
 			String nomePorta = null;
-			if(richiestaDelegata!=null && richiestaDelegata.getIdPortaDelegata()!=null)
+			if(richiestaDelegata.getIdPortaDelegata()!=null)
 				nomePorta = richiestaDelegata.getIdPortaDelegata().getNome();
 			
 			//	Aggiorno dati di consegna
@@ -1686,6 +1700,9 @@ public class EJBUtils {
 			
 			
 			/* ----- Check Tipo ----- */
+			if(richiestaApplicativa==null) {
+				throw new Exception("Tipo di consegna sconosciuta (RichiestaApplicativa non definita)");
+			}
 			if( (Costanti.SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO.equals(richiestaApplicativa.getScenario()) == false) &&
 					(Costanti.SCENARIO_SINCRONO_INVOCAZIONE_SERVIZIO.equals(richiestaApplicativa.getScenario()) == false) && 
 					(Costanti.SCENARIO_ASINCRONO_SIMMETRICO_INVOCAZIONE_SERVIZIO.equals(richiestaApplicativa.getScenario()) == false) &&
@@ -2619,6 +2636,10 @@ public class EJBUtils {
 			Throwable eProcessamento, ParseException parseException,
 			OpenSPCoop2Message errorMessageParam)throws EJBUtilsException,ProtocolException{ 
 
+		if(this.pddContext==null) {
+			throw new EJBUtilsException("PddContext undefined");
+		}
+		
 		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 
 		//Costruisco busta Errore 
@@ -2680,7 +2701,7 @@ public class EJBUtils {
 				retryAfterSeconds!=null && retryAfterSeconds>0) {
 				int seconds = retryAfterSeconds;
 				if(retryAfterBackOffSeconds!=null && retryAfterBackOffSeconds>0) {
-					seconds = seconds + new Random().nextInt(retryAfterBackOffSeconds);
+					seconds = seconds + ServicesUtils.getRandom().nextInt(retryAfterBackOffSeconds);
 				}
 				errorMsg.forceTransportHeader(HttpConstants.RETRY_AFTER, seconds+"");
 			}

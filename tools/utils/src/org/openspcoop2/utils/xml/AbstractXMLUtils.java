@@ -1353,6 +1353,9 @@ public abstract class AbstractXMLUtils {
 		return getNotEmptyChildNodes(e, true);
 	}
 	public List<Node> getNotEmptyChildNodes(Node e, boolean consideraTextNotEmptyAsNode){
+		if(e==null) {
+			throw new RuntimeException("Param node is null");
+		}
 		NodeList nl = e.getChildNodes();
 		List<Node> vec = new ArrayList<Node>();
 		if(nl!=null){
@@ -1380,6 +1383,9 @@ public abstract class AbstractXMLUtils {
 		return getFirstNotEmptyChildNode(e, true);
 	}
 	public Node getFirstNotEmptyChildNode(Node e, boolean consideraTextNotEmptyAsNode){
+		if(e==null) {
+			throw new RuntimeException("Param node is null");
+		}
 		NodeList nl = e.getChildNodes();
 		if(nl!=null){
 			for(int index = 0 ; index<nl.getLength(); index++){

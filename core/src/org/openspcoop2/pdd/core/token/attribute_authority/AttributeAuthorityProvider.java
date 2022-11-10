@@ -153,9 +153,7 @@ public class AttributeAuthorityProvider implements IProvider {
 			
 			String location = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION);
 			if(location!=null && !"".equals(location)) {
-				if(location!=null && !"".equals(location)) {
-					InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Client - File (KeyStore per l'autenticazione client)");
-				}
+				InputValidationUtils.validateTextAreaInput(location, "Https - Autenticazione Client - File (KeyStore per l'autenticazione client)");
 			}
 			
 			String algo = p.getProperty(CostantiConnettori.CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITHM);

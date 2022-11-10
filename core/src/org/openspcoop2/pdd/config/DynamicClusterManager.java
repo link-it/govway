@@ -31,6 +31,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
@@ -143,8 +144,10 @@ public class DynamicClusterManager {
 				if(updateEffettuato == false){
 					// Per aiutare ad evitare conflitti
 					try{
-						Utilities.sleep((new java.util.Random()).nextInt(gestioneSerializableDB_CheckInterval)); // random da 0ms a checkIntervalms
-					}catch(Exception eRandom){}
+						Utilities.sleep((ServicesUtils.getRandom()).nextInt(gestioneSerializableDB_CheckInterval)); // random da 0ms a checkIntervalms
+					}catch(Exception eRandom){
+						// ignore
+					}
 				}
 			}
 						
@@ -172,7 +175,9 @@ public class DynamicClusterManager {
 				if(con!=null) {
 					this.driverConfigurazioneDB.releaseConnection(con);
 				}
-			}catch(Throwable eClose) {}
+			}catch(Throwable eClose) {
+				// close
+			}
 		}
 	}
 	
@@ -256,15 +261,21 @@ public class DynamicClusterManager {
 				if(rs!=null) {
 					rs.close(); rs = null;
 				}
-			}catch(Throwable eClose) {}
+			}catch(Throwable eClose) {
+				// close
+			}
 			try {
 				if(pstmt!=null) {
 					pstmt.close(); pstmt = null;
 				}
-			}catch(Throwable eClose) {}
+			}catch(Throwable eClose) {
+				// close
+			}
 			try{
 				con.rollback();
-			} catch(Throwable er) {}
+			} catch(Throwable er) {
+				// ignore
+			}
 			throw e;
 		}
 		finally {
@@ -272,12 +283,16 @@ public class DynamicClusterManager {
 				if(rs!=null) {
 					rs.close();
 				}
-			}catch(Throwable eClose) {}
+			}catch(Throwable eClose) {
+				// close
+			}
 			try {
 				if(pstmt!=null) {
 					pstmt.close();
 				}
-			}catch(Throwable eClose) {}
+			}catch(Throwable eClose) {
+				// close
+			}
 		}
 	}
 	private int _getNextIdNumerico(Connection con) throws Exception {
@@ -356,12 +371,16 @@ public class DynamicClusterManager {
 				if(rs!=null) {
 					rs.close();
 				}
-			}catch(Throwable eClose) {}
+			}catch(Throwable eClose) {
+				// close
+			}
 			try {
 				if(pstmt!=null) {
 					pstmt.close();
 				}
-			}catch(Throwable eClose) {}
+			}catch(Throwable eClose) {
+				// close
+			}
 		}
 	}
 	
@@ -390,10 +409,12 @@ public class DynamicClusterManager {
 		catch(Exception e) {
 			
 			try {
-				if(!con.getAutoCommit()) {
+				if(con!=null && !con.getAutoCommit()) {
 					con.rollback();
 				}
-			}catch(Throwable eClose) {}
+			}catch(Throwable eClose) {
+				// close
+			}
 			
 			throw new CoreException("[DynamicClusterManager.unregister] failed: "+e.getMessage(), e);
 		}
@@ -402,12 +423,16 @@ public class DynamicClusterManager {
 				if(pstmt!=null) {
 					pstmt.close();
 				}
-			}catch(Throwable eClose) {}
+			}catch(Throwable eClose) {
+				// close
+			}
 			try {
 				if(con!=null) {
 					this.driverConfigurazioneDB.releaseConnection(con);
 				}
-			}catch(Throwable eClose) {}
+			}catch(Throwable eClose) {
+				// close
+			}
 		}
 	}
 	
@@ -440,10 +465,12 @@ public class DynamicClusterManager {
 		catch(Exception e) {
 			
 			try {
-				if(!con.getAutoCommit()) {
+				if(con!=null && !con.getAutoCommit()) {
 					con.rollback();
 				}
-			}catch(Throwable eClose) {}
+			}catch(Throwable eClose) {
+				// close
+			}
 			
 			throw new CoreException("[DynamicClusterManager.refresh] failed: "+e.getMessage(), e);
 		}
@@ -452,12 +479,16 @@ public class DynamicClusterManager {
 				if(pstmt!=null) {
 					pstmt.close();
 				}
-			}catch(Throwable eClose) {}
+			}catch(Throwable eClose) {
+				// close
+			}
 			try {
 				if(con!=null) {
 					this.driverConfigurazioneDB.releaseConnection(con);
 				}
-			}catch(Throwable eClose) {}
+			}catch(Throwable eClose) {
+				// close
+			}
 		}
 	}
 	
@@ -488,7 +519,9 @@ public class DynamicClusterManager {
 				if(con!=null) {
 					this.driverConfigurazioneDB.releaseConnection(con);
 				}
-			}catch(Throwable eClose) {}
+			}catch(Throwable eClose) {
+				// close
+			}
 		}
 	}
 	
@@ -536,12 +569,16 @@ public class DynamicClusterManager {
 				if(rs!=null) {
 					rs.close();
 				}
-			}catch(Throwable eClose) {}
+			}catch(Throwable eClose) {
+				// close
+			}
 			try {
 				if(pstmt!=null) {
 					pstmt.close();
 				}
-			}catch(Throwable eClose) {}
+			}catch(Throwable eClose) {
+				// close
+			}
 		}
 	}
 	

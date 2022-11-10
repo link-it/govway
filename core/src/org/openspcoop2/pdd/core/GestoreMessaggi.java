@@ -183,6 +183,21 @@ public class GestoreMessaggi  {
 	/** Tipo di consegna verso un servizio applicativo: solo tramite IntegrationManager*/
 	public static final String CONSEGNA_TRAMITE_INTEGRATION_MANAGER  = "IntegrationManager";
 
+	
+	private static java.util.Random _rnd = null;
+	private static synchronized void initRandom() {
+		if(_rnd==null) {
+			_rnd = new java.util.Random();
+		}
+	}
+	public static java.util.Random getRandom() {
+		if(_rnd==null) {
+			initRandom();
+		}
+		return _rnd;
+	}
+	
+	
 
 	/** MessaggioDiagnostico */
 	private MsgDiagnostico msgDiag;
@@ -245,6 +260,13 @@ public class GestoreMessaggi  {
 		if(GestoreMessaggi.cacheMappingGestoreMessaggi!=null)
 			throw new GestoreMessaggiException("Cache gia' abilitata");
 		else{
+			_abilitaCache();
+		}
+	}
+	private static synchronized void _abilitaCache() throws GestoreMessaggiException{
+		if(GestoreMessaggi.cacheMappingGestoreMessaggi!=null)
+			throw new GestoreMessaggiException("Cache gia' abilitata");
+		else{
 			try{
 				GestoreMessaggi.cacheMappingGestoreMessaggi = new Cache(CacheType.JCS, GestoreMessaggi.GESTORE_MESSAGGI_CACHE_NAME); // lascio JCS come default abilitato via jmx
 				GestoreMessaggi.cacheMappingGestoreMessaggi.build();
@@ -270,6 +292,13 @@ public class GestoreMessaggi  {
 		}
 	}
 	public static void disabilitaCache() throws GestoreMessaggiException{
+		if(GestoreMessaggi.cacheMappingGestoreMessaggi==null)
+			throw new GestoreMessaggiException("Cache gia' disabilitata");
+		else{
+			_disabilitaCache();
+		}
+	}
+	private static synchronized void _disabilitaCache() throws GestoreMessaggiException{
 		if(GestoreMessaggi.cacheMappingGestoreMessaggi==null)
 			throw new GestoreMessaggiException("Cache gia' disabilitata");
 		else{
@@ -1455,7 +1484,9 @@ public class GestoreMessaggi  {
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}
@@ -1568,7 +1599,9 @@ public class GestoreMessaggi  {
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}
@@ -1628,7 +1661,9 @@ public class GestoreMessaggi  {
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}
@@ -1712,7 +1747,9 @@ public class GestoreMessaggi  {
 					try{
 						if(pstmt != null)
 							pstmt.close();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// close
+					}
 					this.log.error(errorMsg,e);
 					throw new GestoreMessaggiException(errorMsg,e);
 				}
@@ -1755,7 +1792,9 @@ public class GestoreMessaggi  {
 			try{
 				if(pstmt != null)
 					pstmt.close();
-			} catch(Exception er) { }
+			} catch(Exception er) { 
+				// close
+			}
 			this.log.error(errorMsg,e);
 			throw new GestoreMessaggiException(errorMsg,e);
 		}
@@ -1781,7 +1820,9 @@ public class GestoreMessaggi  {
 			try{
 				if(pstmt != null)
 					pstmt.close();
-			} catch(Exception er) { }
+			} catch(Exception er) { 
+				// close
+			}
 			this.log.error(errorMsg,e);
 			throw new GestoreMessaggiException(errorMsg,e);
 		}
@@ -1928,7 +1969,9 @@ public class GestoreMessaggi  {
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}
@@ -1988,7 +2031,9 @@ public class GestoreMessaggi  {
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}
@@ -2124,11 +2169,15 @@ public class GestoreMessaggi  {
 					try{
 						if(rs != null)
 							rs.close();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// close
+					}
 					try{
 						if(pstmt != null)
 							pstmt.close();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// close
+					}
 				}
 				return value;
 
@@ -2188,21 +2237,29 @@ public class GestoreMessaggi  {
 						try{
 							if(rs != null)
 								rs.close();
-						} catch(Exception er) {}
+						} catch(Exception er) {
+							// close
+						}
 						try{
 							if(pstmt != null)
 								pstmt.close();
-						} catch(Exception er) {}
+						} catch(Exception er) {
+							// close
+						}
 						try{
 							connectionDB.rollback();
-						} catch(Exception er) {}
+						} catch(Exception er) {
+							// ignore
+						}
 					}
 
 					if(getProprietarioOK == false){
 						// Per aiutare ad evitare conflitti
 						try{
-							Utilities.sleep((new java.util.Random()).nextInt(checkInterval)); // random da 0ms a checkIntervalms
-						}catch(Exception eRandom){}
+							Utilities.sleep((getRandom()).nextInt(checkInterval)); // random da 0ms a checkIntervalms
+						}catch(Exception eRandom){
+							// ignore
+						}
 					}
 				}
 				// Ripristino Transazione
@@ -2278,11 +2335,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}	
@@ -2406,7 +2467,9 @@ public class GestoreMessaggi  {
 		if(searchForRiferimentoMsg){
 			try{
 				idBustaSearch = mapRiferimentoIntoIDBusta();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			//System.out.println("Cerco riferimento di id["+this.idBusta+"]: "+idBustaSearch);
 			if(idBustaSearch==null){
 				return false;
@@ -2463,11 +2526,15 @@ public class GestoreMessaggi  {
 			try{
 				if(rs != null)
 					rs.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			try{
 				if(pstmt != null)
 					pstmt.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			this.log.error(errorMsg,e);
 			return false;
 		}
@@ -2674,11 +2741,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}	
@@ -2727,11 +2798,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmtRead != null)
 						pstmtRead.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}
@@ -2782,11 +2857,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmtRead != null)
 						pstmtRead.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}
@@ -2841,11 +2920,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmtRead != null)
 						pstmtRead.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}
@@ -2917,11 +3000,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmtRead != null)
 						pstmtRead.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}
@@ -3007,11 +3094,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}	
@@ -3057,11 +3148,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}	
@@ -3111,11 +3206,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmtRead != null)
 						pstmtRead.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				if(!e.getMessage().equals("ID di CorrelazioneApplicativa non registrata"))
 					this.log.error(errorMsg,e);
 				else
@@ -3169,11 +3268,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmtRead != null)
 						pstmtRead.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				if(!e.getMessage().equals("ID di CorrelazioneApplicativaRisposta non registrata")){
 					this.log.error(errorMsg,e);
 					throw new GestoreMessaggiException(errorMsg,e);
@@ -3275,11 +3378,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmtRead != null)
 						pstmtRead.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				if(!e.getMessage().equals("Messaggio non trovato"))
 					this.log.error(errorMsg,e);
 				else
@@ -3443,11 +3550,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}	
@@ -3529,11 +3640,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}	
@@ -3606,11 +3721,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}					
@@ -3681,11 +3800,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}		
@@ -3756,11 +3879,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}		
@@ -3841,11 +3968,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				return false;
 			}
@@ -4119,11 +4250,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmt != null)
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}
@@ -4448,20 +4583,26 @@ public class GestoreMessaggi  {
 					try{
 						if( pstmtDeleteSIL != null  )
 							pstmtDeleteSIL.close();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// close
+					}
 					try{
 						connectionDB.rollback();
 						stateful.updateConnection(connectionDB);
 						if(this.isRichiesta) this.openspcoopstate.setStatoRichiesta(stateful);
 						else this.openspcoopstate.setStatoRisposta(stateful);
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// ignore
+					}
 				}
 
 				if(deleteDestinatarioOK == false){
 					// Per aiutare ad evitare conflitti
 					try{
-						Utilities.sleep((new java.util.Random()).nextInt(checkInterval)); // random da 0ms a checkIntervalms
-					}catch(Exception eRandom){}
+						Utilities.sleep((getRandom()).nextInt(checkInterval)); // random da 0ms a checkIntervalms
+					}catch(Exception eRandom){
+						// ignore
+					}
 				}
 			}
 
@@ -4548,28 +4689,38 @@ public class GestoreMessaggi  {
 					try{
 						if( pstmtUpdateMsg != null )
 							pstmtUpdateMsg.close();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// close
+					}
 					try{
 						if( rs != null )
 							rs.close();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// close
+					}
 					try{
 						if( pstmt != null )
 							pstmt.close();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// close
+					}
 					try{
 						connectionDB.rollback();
 						stateful.updateConnection(connectionDB);
 						if(this.isRichiesta) this.openspcoopstate.setStatoRichiesta(stateful);
 						else this.openspcoopstate.setStatoRisposta(stateful);
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// ignore
+					}
 				}
 
 				if(deleteRiferimentoMsgOK == false){
 					// Per aiutare ad evitare conflitti
 					try{
-						Utilities.sleep((new java.util.Random()).nextInt(checkInterval)); // random da 0ms a checkIntervalms
-					}catch(Exception eRandom){}
+						Utilities.sleep((getRandom()).nextInt(checkInterval)); // random da 0ms a checkIntervalms
+					}catch(Exception eRandom){
+						// ignore
+					}
 				}
 
 				if(eliminazioneRifCompleta){
@@ -4656,7 +4807,9 @@ public class GestoreMessaggi  {
 				try{
 					if( pstmtDeleteSIL != null  )
 						pstmtDeleteSIL.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				String msgError = "ERROR ELIMINAZIONE DESTINATARIO MESSAGGIO: "+e.getMessage();
 				this.log.error(msgError,e);
 				throw new GestoreMessaggiException(msgError,e);
@@ -4775,15 +4928,21 @@ public class GestoreMessaggi  {
 				try{
 					if( pstmtUpdateMsg != null )
 						pstmtUpdateMsg.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if( rs != null )
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if( pstmt != null )
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				String msgError = "ERROR ELIMINAZIONE DESTINATARIO MESSAGGIO, STEP 2: "+e.getMessage();
 				this.log.error(msgError,e);
 				throw new GestoreMessaggiException(msgError,e);
@@ -4907,7 +5066,9 @@ public class GestoreMessaggi  {
 			try{
 				if(pstmt != null)
 					pstmt.close();
-			} catch(Exception er) { }
+			} catch(Exception er) { 
+				// close
+			}
 		}
 	}
 	
@@ -5144,11 +5305,15 @@ public class GestoreMessaggi  {
 					try{
 						if(rs != null)
 							rs.close();
-					} catch(Exception er) {}
+					} catch(Exception er) {
+						// close
+					}
 					try{
 						if(pstmt != null)
 							pstmt.close();
-					} catch(Exception er) { }
+					} catch(Exception er) {
+						// close
+					}
 					loggerSql.error(errorMsg,e);
 					// Vado avanza senza data minima throw new GestoreMessaggiException(errorMsg,e);
 				}
@@ -5452,11 +5617,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmtMsgDaSpedire != null)
 						pstmtMsgDaSpedire.close();
-				} catch(Exception er) { }
+				} catch(Exception er) {
+					// close
+				}
 				loggerSql.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}
@@ -5626,11 +5795,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmtMsg != null)
 						pstmtMsg.close();
-				} catch(Exception er) { }
+				} catch(Exception er) {
+					// close
+				}
 				log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}
@@ -5676,7 +5849,9 @@ public class GestoreMessaggi  {
 				try{
 					if( pstmt != null  )
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				String msgError = "ERROR updateMessaggioPresaInCosegna: "+e.getMessage();
 				loggerSql.error(msgError,e);
 				throw new GestoreMessaggiException(msgError,e);
@@ -5718,7 +5893,9 @@ public class GestoreMessaggi  {
 				try{
 					if( pstmt != null  )
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				String msgError = "ERROR releaseMessaggioPresaInCosegna: "+e.getMessage();
 				loggerSql.error(msgError,e);
 				throw new GestoreMessaggiException(msgError,e);
@@ -5766,7 +5943,9 @@ public class GestoreMessaggi  {
 				try{
 					if( pstmt != null  )
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				String msgError = "ERROR releaseMessaggioPresaInCosegna: "+e.getMessage();
 				loggerSql.error(msgError,e);
 				throw new GestoreMessaggiException(msgError,e);
@@ -5805,7 +5984,9 @@ public class GestoreMessaggi  {
 				try{
 					if( pstmt != null  )
 						pstmt.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				String msgError = "ERROR releaseMessaggioPresaInCosegna: "+e.getMessage();
 				log.error(msgError,e);
 				throw new GestoreMessaggiException(msgError,e);
@@ -5870,11 +6051,15 @@ public class GestoreMessaggi  {
 			try{
 				if(rs != null)
 					rs.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			try{
 				if(pstmt != null)
 					pstmt.close();
-			} catch(Exception er) {	}
+			} catch(Exception er) {
+				// close
+			}
 		}
 	}
 	
@@ -6013,11 +6198,15 @@ public class GestoreMessaggi  {
 			try{
 				if(rs != null)
 					rs.close();
-			} catch(Exception er) {}
+			} catch(Exception er) {
+				// close
+			}
 			try{
 				if(pstmt != null)
 					pstmt.close();
-			} catch(Exception er) {	}
+			} catch(Exception er) {
+				// close
+			}
 		}
 	}
 	
@@ -6439,7 +6628,9 @@ public class GestoreMessaggi  {
 			try{
 				if(pstmt != null)
 					pstmt.close();
-			} catch(Exception er) {	}
+			} catch(Exception er) {	
+				// close
+			}
 		}
 	}
 	
@@ -6528,7 +6719,9 @@ public class GestoreMessaggi  {
 			try{
 				if(pstmt != null)
 					pstmt.close();
-			} catch(Exception er) {	}
+			} catch(Exception er) {	
+				// close
+			}
 		}
 	}
 	
@@ -6671,11 +6864,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmtMsgEliminati != null)
 						pstmtMsgEliminati.close();
-				} catch(Exception er) {	}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}
@@ -6815,11 +7012,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmtMsgScaduti != null)
 						pstmtMsgScaduti.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}
@@ -6868,11 +7069,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmtExistsAnotherServiziApplicativi != null)
 						pstmtExistsAnotherServiziApplicativi.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}	
@@ -6990,11 +7195,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmtMsgScaduti != null)
 						pstmtMsgScaduti.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}	//else if (this.openspcoopstate instanceof OpenSPCoopStateless){
@@ -7097,11 +7306,15 @@ public class GestoreMessaggi  {
 				try{
 					if(rs != null)
 						rs.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmtMsgScaduti != null)
 						pstmtMsgScaduti.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}	
@@ -7669,7 +7882,9 @@ public class GestoreMessaggi  {
 			try{
 				GestoreMessaggi.releaseLock(semaphoreDB, connectionDB, timerLock,
 						this.msgDiag, causa);
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 		}
 	}
 	/**
@@ -7792,11 +8007,15 @@ public class GestoreMessaggi  {
 				try{
 					if(pstmtDeleteMSG != null)
 						pstmtDeleteMSG.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				try{
 					if(pstmtDeleteSIL != null)
 						pstmtDeleteSIL.close();
-				} catch(Exception er) {}
+				} catch(Exception er) {
+					// close
+				}
 				this.log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}	

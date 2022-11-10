@@ -196,7 +196,9 @@ public class PreLoadingConfig  {
 							if(isZip!=null) {
 								isZip.close();
 							}
-						}catch(Exception e) {}
+						}catch(Exception e) {
+							// close
+						}
 					}
 				}
 			}
@@ -287,7 +289,9 @@ public class PreLoadingConfig  {
 								boolean exists = false;
 								try {
 									exists = driverConfigurazione.getGenericProperties(genericProperties.getTipologia(), genericProperties.getNome()) != null;
-								}catch(DriverConfigurazioneNotFound notFound) {}
+								}catch(DriverConfigurazioneNotFound notFound) {
+									// ignore
+								}
 								if(!exists) {
 									driverConfigurazione.createGenericProperties(genericProperties);
 		

@@ -67,8 +67,12 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
     	OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
     	WWWAuthenticateConfig wwwAuthenticateConfig = op2Properties.getRealmAutenticazioneHttpsWWWAuthenticateConfig();
     	
+    	if(datiInvocazione==null) {
+    		throw new AutenticazioneException("Param datiInvocazione is null");
+    	}
+    	
     	IDSoggetto soggettoFruitore = null;
-    	if(datiInvocazione!=null && datiInvocazione.getPd()!=null) {
+    	if(datiInvocazione.getPd()!=null) {
     		soggettoFruitore = new IDSoggetto(datiInvocazione.getPd().getTipoSoggettoProprietario(), datiInvocazione.getPd().getNomeSoggettoProprietario());
     	}
     	    	

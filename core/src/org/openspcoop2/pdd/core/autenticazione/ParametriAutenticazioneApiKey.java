@@ -22,6 +22,8 @@
 
 package org.openspcoop2.pdd.core.autenticazione;
 
+import org.openspcoop2.utils.BooleanNullable;
+
 /**
  * ParametriAutenticazioneApiKey
  *
@@ -89,13 +91,13 @@ public class ParametriAutenticazioneApiKey extends ParametriAutenticazione imple
 		super(parametri);
 	}
 	
-	public Boolean getHeader() {
+	public BooleanNullable getHeader() {
 		return _get(HEADER);
 	}
-	public Boolean getCookie() {
+	public BooleanNullable getCookie() {
 		return _get(COOKIE);
 	}
-	public Boolean getQueryParameter() {
+	public BooleanNullable getQueryParameter() {
 		return _get(QUERY_PARAMETER);
 	}
 	
@@ -109,7 +111,7 @@ public class ParametriAutenticazioneApiKey extends ParametriAutenticazione imple
 		return _getNome(DEFAULT_QUERY_PARAMETER_API_KEY, NOME_QUERY_PARAMETER_API_KEY);
 	}
 	
-	public Boolean getAppId() {
+	public BooleanNullable getAppId() {
 		return _get(APP_ID);
 	}
 	
@@ -123,31 +125,31 @@ public class ParametriAutenticazioneApiKey extends ParametriAutenticazione imple
 		return _getNome(DEFAULT_QUERY_PARAMETER_APP_ID, NOME_QUERY_PARAMETER_APP_ID);
 	}
 	
-	public Boolean getCleanApiKey() {
+	public BooleanNullable getCleanApiKey() {
 		return _get(CLEAN_API_KEY);
 	}
-	public Boolean getCleanAppId() {
+	public BooleanNullable getCleanAppId() {
 		return _get(CLEAN_APP_ID);
 	}
 	
-	private Boolean _get(String name) {
+	private BooleanNullable _get(String name) {
 		String valore = this.get(name);
 		if(valore==null || "".equals(valore)) {
-			return null;
+			return BooleanNullable.NULL();
 		}
 		if(FALSE.equalsIgnoreCase(valore)) {
-			return false;
+			return BooleanNullable.FALSE();
 		}
 		else if(TRUE.equalsIgnoreCase(valore)) {
-			return true;
+			return BooleanNullable.TRUE();
 		}
-		return null;
+		return BooleanNullable.NULL();
 	}
 	
 	private String _getNome(String defaultName, String nome) {
 		
-		Boolean useOAS3Names = _get(USE_OAS3_NAMES);
-		if(useOAS3Names!=null && useOAS3Names) {
+		BooleanNullable useOAS3NamesNullable = _get(USE_OAS3_NAMES);
+		if(useOAS3NamesNullable!=null && useOAS3NamesNullable.getValue()!=null && useOAS3NamesNullable.getValue()) {
 			return defaultName;
 		}
 		

@@ -39,7 +39,7 @@ public class TestXXE {
 	public void testXXE_xmlUtils() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"'.testXXE_xmlUtils ...");
-		org.openspcoop2.message.xml.TestXXE.main(null);
+		org.openspcoop2.message.xml.TestXXE.test();
 		TestLogger.info("Run test '"+ID_TEST+"'.testXXE_xmlUtils ok");
 		
 	}
@@ -48,7 +48,7 @@ public class TestXXE {
 	public void testXXE_soap() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"'.testXXE_soap ...");
-		org.openspcoop2.message.soap.TestXXE.main(null);
+		org.openspcoop2.message.soap.TestXXE.test();
 		TestLogger.info("Run test '"+ID_TEST+"'.testXXE_soap ok");
 		
 	}
@@ -57,7 +57,7 @@ public class TestXXE {
 	public void testXXE_rest() throws Exception{
 		
 		TestLogger.info("Run test '"+ID_TEST+"'.testXXE_rest ...");
-		org.openspcoop2.message.rest.TestXXE.main(null);
+		org.openspcoop2.message.rest.TestXXE.test();
 		TestLogger.info("Run test '"+ID_TEST+"'.testXXE_rest ok");
 		
 	}

@@ -230,6 +230,10 @@ public class ConfigurazionePdD_controlloTraffico extends AbstractConfigurazioneP
 					}
 					catch(DriverConfigurazioneNotFound e) {
 						this.log.error("Configurazione Policy '"+idActivePolicy.getIdPolicy()+"' non esistente ? ",e);
+						throw new NotFoundException("Configurazione Policy '"+idActivePolicy.getIdPolicy()+"' non esistente", e);	
+					}
+					if(confPolicy==null) {
+						throw new NotFoundException("Configurazione Policy '"+idActivePolicy.getIdPolicy()+"' non esistente");	
 					}
 					
 					ElencoIdPolicyAttive elencoIdPolicy = null;

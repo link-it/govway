@@ -127,7 +127,9 @@ public class ClassNameProperties {
 		    try{
 		    	if(properties!=null)
 		    		properties.close();
-		    }catch(Exception er){}
+		    }catch(Exception er){
+		    	// close
+		    }
 		}
 
 		this.reader = new ClassNameInstanceProperties(propertiesReader, this.log);
