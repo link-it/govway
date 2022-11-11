@@ -1444,7 +1444,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		if(Costanti.SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO.equals(scenarioCooperazione)){
 			
 			if(bustaRichiesta!=null) {
-				bustaIndicazioneConsegnaInOrdine = bustaRichiesta.clone();
+				bustaIndicazioneConsegnaInOrdine = bustaRichiesta.newInstance();
 			}
 			else {
 				bustaIndicazioneConsegnaInOrdine = new Busta(protocolFactory.getProtocol());

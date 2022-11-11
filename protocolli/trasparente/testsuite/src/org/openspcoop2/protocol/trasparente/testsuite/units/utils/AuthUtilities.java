@@ -36,6 +36,7 @@ import org.openspcoop2.pdd.services.connector.RicezioneBusteConnector;
 import org.openspcoop2.pdd.services.connector.RicezioneContenutiApplicativiConnector;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
@@ -756,6 +757,11 @@ public class AuthUtilities {
 		DatabaseMsgDiagnosticiComponent dataMsg = null;
 		if(erroreAttesoDiagnostico!=null) {
 			try{
+				if(erroreAttesoDiagnostico.startsWith(CostantiProtocollo.PREFISSO_AUTENTICAZIONE_FALLITA) &&
+						erroreAttesoDiagnostico.length()>CostantiProtocollo.PREFISSO_AUTENTICAZIONE_FALLITA.length()) {
+					erroreAttesoDiagnostico = erroreAttesoDiagnostico.substring(CostantiProtocollo.PREFISSO_AUTENTICAZIONE_FALLITA.length());
+				}
+								
 				if(portaDelegata)
 					dataMsg = DatabaseProperties.getDatabaseComponentDiagnosticaFruitore();
 				else

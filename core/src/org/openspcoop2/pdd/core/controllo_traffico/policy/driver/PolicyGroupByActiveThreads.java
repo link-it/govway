@@ -158,7 +158,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 			//System.out.println("<"+idTransazione+">registerStartRequest in datiCollezionati ok: "+datiCollezionati.getActiveRequestCounter());
 									
 			// mi salvo fuori dal synchronized l'attuale stato
-			datiCollezionatiReaded = (DatiCollezionati) datiCollezionati.clone(); 
+			datiCollezionatiReaded = (DatiCollezionati) datiCollezionati.newInstance(); 
 		
 			//System.out.println("<"+idTransazione+">registerStartRequest esco");
 		}finally {
@@ -200,7 +200,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 									
 			// mi salvo fuori dal synchronized l'attuale stato
 			if(updated) {
-				datiCollezionatiReaded = (DatiCollezionati) datiCollezionati.clone();
+				datiCollezionatiReaded = (DatiCollezionati) datiCollezionati.newInstance();
 			}
 			
 			//System.out.println("<"+idTransazione+">updateDatiStartRequestApplicabile esco");

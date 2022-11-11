@@ -83,7 +83,7 @@ public class DaoBuilder {
 	
 	private static void setCodeInEccezione(String codErrore,  org.openspcoop2.core.eccezione.details.Eccezione eccezione,
 			IntegrationErrorReturnConfiguration returnConfig, IntegrationFunctionError functionError, ErroriProperties erroriProperties) throws ProtocolException {
-		if(Costanti.TRANSACTION_ERROR_STATUS_ABILITATO){
+		if(Costanti.isTRANSACTION_ERROR_STATUS_ABILITATO()){
 			eccezione.setCode(codErrore);
 		}
 		else {
@@ -98,7 +98,7 @@ public class DaoBuilder {
 		if(!genericDetails && erroriProperties.isForceGenericDetails(functionError)) {
 			genericDetails = true;
 		}
-		if (Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS) {
+		if (Costanti.isTRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS()) {
 			genericDetails = false;
 		}
 		
@@ -118,7 +118,7 @@ public class DaoBuilder {
 			if(!genericDetails && erroriProperties.isForceGenericDetails(functionError)) {
 				genericDetails = true;
 			}
-			if (Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS) {
+			if (Costanti.isTRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS()) {
 				genericDetails = false;
 			}
 			

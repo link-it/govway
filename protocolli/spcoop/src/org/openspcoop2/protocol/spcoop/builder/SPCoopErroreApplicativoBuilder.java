@@ -215,7 +215,7 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 			if(!genericDetails && erroriProperties.isForceGenericDetails(functionError)) {
 				genericDetails = true;
 			}
-			if (Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS) {
+			if (Costanti.isTRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS()) {
 				genericDetails = false;
 			}
 			
@@ -253,7 +253,7 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 			else{
 				EccezioneProcessamento eccezioneProcessamento = new EccezioneProcessamento();
 				
-				if(Costanti.TRANSACTION_ERROR_STATUS_ABILITATO) {
+				if(Costanti.isTRANSACTION_ERROR_STATUS_ABILITATO()) {
 					eccezioneProcessamento.setCodiceEccezione(codiceEccezione);
 				}
 				else {

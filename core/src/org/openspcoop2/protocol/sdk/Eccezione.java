@@ -46,7 +46,7 @@ import org.openspcoop2.protocol.sdk.constants.SubCodiceErrore;
  * @version $Rev$, $Date$
  */
 
-public class Eccezione implements java.io.Serializable, Cloneable{
+public class Eccezione implements java.io.Serializable{
 
 	/**
 	 * serialVersionUID
@@ -482,8 +482,7 @@ public class Eccezione implements java.io.Serializable, Cloneable{
 		return bf.toString();
 	}
 
-	@Override
-	public Eccezione clone(){
+	public Eccezione newInstance(){
 		Eccezione clone = new Eccezione();
 		
 		// id
@@ -492,7 +491,7 @@ public class Eccezione implements java.io.Serializable, Cloneable{
 		clone.setCodiceEccezione(this.getCodiceEccezione());
 		clone.setCodiceEccezioneValue(this.eccezione.getCodice()!=null && this.eccezione.getCodice().getBase()!=null ? 
 				new String(this.eccezione.getCodice().getBase()) : null );
-		clone.setSubCodiceEccezione(this.getSubCodiceEccezione()!=null ? this.getSubCodiceEccezione().clone() : null);
+		clone.setSubCodiceEccezione(this.getSubCodiceEccezione()!=null ? this.getSubCodiceEccezione().newInstance() : null);
 		
 		clone.setDescrizione(this.eccezione.getDescrizione()!=null ? new String(this.eccezione.getDescrizione()) : null);
 		

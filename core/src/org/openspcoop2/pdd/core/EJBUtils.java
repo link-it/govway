@@ -1915,7 +1915,7 @@ public class EJBUtils {
 						//  Utilizzo le utility di Memorizzazione Stateless
 						Busta bustaNewMessaggio = behaviourForwardTo.getBusta();
 						if(bustaNewMessaggio==null){
-							bustaNewMessaggio = busta.clone();
+							bustaNewMessaggio = busta.newInstance();
 							bustaNewMessaggio.setID(CostantiPdD.PREFIX_MESSAGGIO_CONNETTORE_MULTIPLO+i+CostantiPdD.SEPARATOR_MESSAGGIO_CONNETTORE_MULTIPLO+busta.getID());
 						}
 						bustaNewMessaggio.setRiferimentoMessaggio(busta.getID()); // per il timer

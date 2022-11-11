@@ -207,7 +207,7 @@ public class PolicyGroupByActiveThreadsDistributedReplicatedMap implements IPoli
 				}
 			}
 		}
-		DatiCollezionati datiCollezionatiPerPolicyVerifier = (DatiCollezionati) datiCollezionati.clone(); // i valori utilizzati dal policy verifier verranno impostati con il valore impostato nell'operazione chiamata
+		DatiCollezionati datiCollezionatiPerPolicyVerifier = (DatiCollezionati) datiCollezionati.newInstance(); // i valori utilizzati dal policy verifier verranno impostati con il valore impostato nell'operazione chiamata
 		if(newDati) {
 			datiCollezionatiPerPolicyVerifier.initDatiIniziali(this.activePolicy);
 			datiCollezionatiPerPolicyVerifier.checkDate(log, this.activePolicy); // inizializza le date se ci sono
@@ -231,7 +231,7 @@ public class PolicyGroupByActiveThreadsDistributedReplicatedMap implements IPoli
 		if(datiCollezionati == null) {
 			throw new PolicyNotFoundException("Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+datiGroupBy.toString()+"]");
 		} else {
-			DatiCollezionati datiCollezionatiPerPolicyVerifier = (DatiCollezionati) datiCollezionati.clone(); // i valori utilizzati dal policy verifier verranno impostati con il valore impostato nell'operazione chiamata
+			DatiCollezionati datiCollezionatiPerPolicyVerifier = (DatiCollezionati) datiCollezionati.newInstance(); // i valori utilizzati dal policy verifier verranno impostati con il valore impostato nell'operazione chiamata
 			
 			boolean updated = datiCollezionati.updateDatiStartRequestApplicabile(log, this.activePolicy, ctx, datiCollezionatiPerPolicyVerifier);	
 			if(updated) {

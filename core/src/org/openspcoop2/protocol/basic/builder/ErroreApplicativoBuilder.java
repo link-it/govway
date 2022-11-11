@@ -522,7 +522,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 			if(!genericDetails && erroriProperties.isForceGenericDetails(functionError)) {
 				genericDetails = true;
 			}
-			if (Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS) {
+			if (Costanti.isTRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS()) {
 				genericDetails = false;
 			}
 			
@@ -604,7 +604,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 			}
 			
 			// govway-status
-			if(Costanti.TRANSACTION_ERROR_STATUS_ABILITATO && rfc7807.isGovwayStatus()) {
+			if(Costanti.isTRANSACTION_ERROR_STATUS_ABILITATO() && rfc7807.isGovwayStatus()) {
 				if(codeDetailsErrorWrapper.getCode()!=null && codeDetailsErrorWrapper.getPrefixCode()!=null) {
 					problemRFC7807.getCustom().put(org.openspcoop2.protocol.basic.Costanti.getPROBLEM_RFC7807_GOVWAY_CODE(), 
 							codeDetailsErrorWrapper.getPrefixCode()+codeDetailsErrorWrapper.getCode());
@@ -612,7 +612,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 			}
 			
 			// instance
-			if(Costanti.TRANSACTION_ERROR_INSTANCE_ID_ABILITATO && rfc7807.isInstance()) {
+			if(Costanti.isTRANSACTION_ERROR_INSTANCE_ID_ABILITATO() && rfc7807.isInstance()) {
 				problemRFC7807.setInstance(nomePorta);
 			}
 			
@@ -718,7 +718,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 				if(!genericDetails && erroriProperties.isForceGenericDetails(functionError)) {
 					genericDetails = true;
 				}
-				if (Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS) {
+				if (Costanti.isTRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS()) {
 					genericDetails = false;
 				}
 			}
@@ -800,7 +800,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 			// eccezioni
 			Eccezione eccezione = new Eccezione();
 			CodiceEccezione codice = new CodiceEccezione();
-			if(ignoreIntegrationFunctionErroreDirective || Costanti.TRANSACTION_ERROR_STATUS_ABILITATO) {
+			if(ignoreIntegrationFunctionErroreDirective || Costanti.isTRANSACTION_ERROR_STATUS_ABILITATO()) {
 				codice.setBase(codiceEccezione);
 				codice.setType(codiceEccezioneOpenSPCoop);
 				if(subCodiceEccezioneOpenSPCoop!=null)
@@ -1020,7 +1020,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 						// fault code
 						codeDetailsErrorWrapper.setPrefixCode(eccezioneName.getPrefix());
 						codeDetailsErrorWrapper.setCode(eccezioneName.getLocalPart());
-						if(Costanti.TRANSACTION_ERROR_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE) {
+						if(Costanti.isTRANSACTION_ERROR_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE()) {
 							soapMessageError.setFaultCode(fault, code, eccezioneName);
 						}
 						else {
@@ -1061,7 +1061,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 							if(!genericDetails && erroriProperties.isForceGenericDetails(functionError)) {
 								genericDetails = true;
 							}
-							if (Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS) {
+							if (Costanti.isTRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS()) {
 								genericDetails = false;
 							}
 							if(codeDetailsErrorWrapper.getDetails()!=null && !genericDetails) {
@@ -1086,7 +1086,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 						
 						// DettaglioEccezione
 						DettaglioEccezione dettaglioEccezione = null;
-						if(Costanti.TRANSACTION_ERROR_SOAP_FAULT_ADD_FAULT_DETAILS_WITH_PROBLEM_RFC7807 || !useProblemRFC7807) {
+						if(Costanti.isTRANSACTION_ERROR_SOAP_FAULT_ADD_FAULT_DETAILS_WITH_PROBLEM_RFC7807() || !useProblemRFC7807) {
 							if(eccezioneIntegrazione!=null){
 								dettaglioEccezione = eccezioneIntegrazione.getDettaglioEccezionePdD();
 							}else{
@@ -1148,7 +1148,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 					}
 					if(codeDetailsErrorWrapper.getCode()!=null) {
 						msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY_CODE, codeDetailsErrorWrapper.getCode() );
-						if(Costanti.TRANSACTION_ERROR_STATUS_ABILITATO) {
+						if(Costanti.isTRANSACTION_ERROR_STATUS_ABILITATO()) {
 							String code = codeDetailsErrorWrapper.getCode();
 							if(codeDetailsErrorWrapper.getPrefixCode()!=null) {
 								if(codeDetailsErrorWrapper.getPrefixCode().endsWith(":")) {

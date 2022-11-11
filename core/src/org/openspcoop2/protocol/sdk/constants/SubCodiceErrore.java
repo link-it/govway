@@ -20,6 +20,7 @@
 
 package org.openspcoop2.protocol.sdk.constants;
 
+import java.io.Serializable;
 
 /**
  * SubCodiceErrore
@@ -28,8 +29,10 @@ package org.openspcoop2.protocol.sdk.constants;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SubCodiceErrore implements Cloneable {
+public class SubCodiceErrore implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private Integer subCodice = null;
 	
 	public Integer getSubCodice() {
@@ -42,8 +45,7 @@ public class SubCodiceErrore implements Cloneable {
 		}
 	}
 	
-	@Override
-	public SubCodiceErrore clone(){
+	public SubCodiceErrore newInstance(){
 		SubCodiceErrore sub = new SubCodiceErrore();
 		sub.setSubCodice(this.subCodice!=null ? Integer.valueOf(this.subCodice.intValue()) : null);
 		return sub;

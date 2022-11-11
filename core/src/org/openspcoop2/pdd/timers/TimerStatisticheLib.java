@@ -60,12 +60,38 @@ import org.slf4j.Logger;
  */
 public class TimerStatisticheLib {
 
-	public static TimerState STATE_STATISTICHE_ORARIE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
-	public static TimerState STATE_STATISTICHE_GIORNALIERE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
-	public static TimerState STATE_STATISTICHE_SETTIMANALI = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
-	public static TimerState STATE_STATISTICHE_MENSILI = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
-	
-	
+	private static TimerState STATE_STATISTICHE_ORARIE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	public static TimerState getSTATE_STATISTICHE_ORARIE() {
+		return STATE_STATISTICHE_ORARIE;
+	}
+	public static void setSTATE_STATISTICHE_ORARIE(TimerState sTATE_STATISTICHE_ORARIE) {
+		STATE_STATISTICHE_ORARIE = sTATE_STATISTICHE_ORARIE;
+	}
+
+	private static TimerState STATE_STATISTICHE_GIORNALIERE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	public static TimerState getSTATE_STATISTICHE_GIORNALIERE() {
+		return STATE_STATISTICHE_GIORNALIERE;
+	}
+	public static void setSTATE_STATISTICHE_GIORNALIERE(TimerState sTATE_STATISTICHE_GIORNALIERE) {
+		STATE_STATISTICHE_GIORNALIERE = sTATE_STATISTICHE_GIORNALIERE;
+	}
+
+	private static TimerState STATE_STATISTICHE_SETTIMANALI = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	public static TimerState getSTATE_STATISTICHE_SETTIMANALI() {
+		return STATE_STATISTICHE_SETTIMANALI;
+	}
+	public static void setSTATE_STATISTICHE_SETTIMANALI(TimerState sTATE_STATISTICHE_SETTIMANALI) {
+		STATE_STATISTICHE_SETTIMANALI = sTATE_STATISTICHE_SETTIMANALI;
+	}
+
+	private static TimerState STATE_STATISTICHE_MENSILI = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	public static TimerState getSTATE_STATISTICHE_MENSILI() {
+		return STATE_STATISTICHE_MENSILI;
+	}
+	public static void setSTATE_STATISTICHE_MENSILI(TimerState sTATE_STATISTICHE_MENSILI) {
+		STATE_STATISTICHE_MENSILI = sTATE_STATISTICHE_MENSILI;
+	}
+
 	/** Logger utilizzato per debug. */
 	private Logger logCore = null;
 	private Logger logSql = null;

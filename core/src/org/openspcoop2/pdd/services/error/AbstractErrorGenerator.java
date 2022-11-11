@@ -265,7 +265,7 @@ public abstract class AbstractErrorGenerator {
 			if(!genericDetails && erroriProperties.isForceGenericDetails(integrationFunctionError)) {
 				genericDetails = true;
 			}
-			if (org.openspcoop2.protocol.basic.Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS) {
+			if (org.openspcoop2.protocol.basic.Costanti.isTRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS()) {
 				genericDetails = false;
 			}
 			if(errore!=null && !"null".equals(errore) && !genericDetails) {

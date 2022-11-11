@@ -78,7 +78,7 @@ public class PolicyGroupByActiveThreadsDistributedNearCache extends AbstractPoli
 				}
 			}
 		}
-		DatiCollezionati datiCollezionatiPerPolicyVerifier = (DatiCollezionati) datiCollezionati.clone(); // i valori utilizzati dal policy verifier verranno impostati con il valore impostato nell'operazione chiamata
+		DatiCollezionati datiCollezionatiPerPolicyVerifier = (DatiCollezionati) datiCollezionati.newInstance(); // i valori utilizzati dal policy verifier verranno impostati con il valore impostato nell'operazione chiamata
 		if(newDati) {
 			datiCollezionatiPerPolicyVerifier.initDatiIniziali(this.activePolicy);
 			datiCollezionatiPerPolicyVerifier.checkDate(log, this.activePolicy); // inizializza le date se ci sono
@@ -111,7 +111,7 @@ public class PolicyGroupByActiveThreadsDistributedNearCache extends AbstractPoli
 			datiCollezionati.registerStartRequest(log, this.activePolicy, null);
 			return datiCollezionati;
 		} else {
-			DatiCollezionati datiCollezionatiPerPolicyVerifier = (DatiCollezionati) datiCollezionati.clone(); // i valori utilizzati dal policy verifier verranno impostati con il valore impostato nell'operazione chiamata
+			DatiCollezionati datiCollezionatiPerPolicyVerifier = (DatiCollezionati) datiCollezionati.newInstance(); // i valori utilizzati dal policy verifier verranno impostati con il valore impostato nell'operazione chiamata
 			
 			boolean update = datiCollezionati.updateDatiStartRequestApplicabile(log, this.activePolicy, ctx, datiCollezionatiPerPolicyVerifier);
 			if(update) {

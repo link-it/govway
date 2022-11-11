@@ -67,7 +67,14 @@ import org.openspcoop2.utils.threads.RunnableLogger;
 
 public class TimerConsegnaContenutiApplicativi implements IGestoreCodaRunnableInstance  {
 
-	public static TimerState STATE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	private static TimerState STATE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+
+	public static TimerState getSTATE() {
+		return STATE;
+	}
+	public static void setSTATE(TimerState sTATE) {
+		STATE = sTATE;
+	}
 
 	private MsgDiagnostico msgDiag = null;
 	private RunnableLogger log;

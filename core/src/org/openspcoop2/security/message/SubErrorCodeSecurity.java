@@ -31,6 +31,8 @@ import org.openspcoop2.protocol.sdk.constants.SubCodiceErrore;
  */
 public class SubErrorCodeSecurity extends SubCodiceErrore {
 
+	private static final long serialVersionUID = 1L;
+	
 	private String tipo;
 	private String namespace;
 	private String name;

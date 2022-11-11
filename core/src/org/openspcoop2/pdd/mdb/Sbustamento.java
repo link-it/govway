@@ -653,7 +653,7 @@ public class Sbustamento extends GenericLib{
 						if( configurazionePdDManager.getTipoValidazione(implementazionePdDMittente).equals(CostantiConfigurazione.STATO_CON_WARNING_ABILITATO) == true) {
 
 							// bustaOriginale per gestione errore
-							Busta bustaNonValida = bustaRichiesta.clone();
+							Busta bustaNonValida = bustaRichiesta.newInstance();
 
 							// Spedisco un Errore ad un mittente conosciuto...
 							ejbUtils.setRollbackRichiestaInCasoErrore(false); // viene effettuato da gestioneErrore

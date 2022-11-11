@@ -25,6 +25,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
+import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 
 /**
 * DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest
@@ -85,7 +86,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				"Basic realm=\"GovWay\", error=\"invalid_request\", error_description=\"Invalid credentials\"",
 				Utilities.CREDENZIALI_NON_CORRETTE,
 				"Ottenute credenziali di accesso ( BasicUsername 'ApplicativoSoggettoInternoTestFruitore1Errate' ) fornite da WebServerErogazioniDefault",
-				"Autenticazione fallita, credenziali fornite non corrette"
+				CostantiProtocollo.CREDENZIALI_FORNITE_NON_CORRETTE
 				);
 	}
 	@Test
@@ -100,7 +101,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				null,
 				"Basic realm=\"GovWay\", error=\"invalid_request\", error_description=\"The request is missing a required http-basic credentials\"",
 				Utilities.CREDENZIALI_NON_FORNITE,
-				"Autenticazione fallita, credenziali non fornite"
+				CostantiProtocollo.CREDENZIALI_NON_FORNITE
 				);
 	}
 	
@@ -136,7 +137,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				"Basic realm=\"GovWay\", error=\"invalid_request\", error_description=\"Invalid credentials\"",
 				Utilities.CREDENZIALI_NON_CORRETTE,
 				"Ottenute credenziali di accesso ( BasicUsername 'ApplicativoSoggettoInternoTestFruitore1Errate' ) fornite da WebServerFruizioniDefault",
-				"Autenticazione fallita, credenziali fornite non corrette"
+				CostantiProtocollo.CREDENZIALI_FORNITE_NON_CORRETTE
 				);
 	}
 	@Test
@@ -151,7 +152,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				null,
 				"Basic realm=\"GovWay\", error=\"invalid_request\", error_description=\"The request is missing a required http-basic credentials\"",
 				Utilities.CREDENZIALI_NON_FORNITE,
-				"Autenticazione fallita, credenziali non fornite"
+				CostantiProtocollo.CREDENZIALI_NON_FORNITE
 				);
 	}
 	
@@ -250,7 +251,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				null,
 				"mTLS realm=\"GovWay\", error=\"invalid_request\", error_description=\"The request is missing a required client certificate\"",
 				Utilities.CREDENZIALI_NON_FORNITE,
-				"Autenticazione fallita, credenziali non fornite"
+				CostantiProtocollo.CREDENZIALI_NON_FORNITE
 				);
 	}
 	
@@ -370,7 +371,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				null,
 				"mTLS realm=\"GovWay\", error=\"invalid_request\", error_description=\"The request is missing a required client certificate\"",
 				Utilities.CREDENZIALI_NON_FORNITE,
-				"Autenticazione fallita, credenziali non fornite"
+				CostantiProtocollo.CREDENZIALI_NON_FORNITE
 				);
 	}
 	
@@ -420,7 +421,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				null,
 				"PrincipalAuth realm=\"GovWay\", error=\"invalid_request\", error_description=\"The request is missing a required principal credentials\"",
 				Utilities.CREDENZIALI_NON_FORNITE,
-				"Autenticazione fallita, credenziali non fornite"
+				CostantiProtocollo.CREDENZIALI_NON_FORNITE
 				);
 	}
 	
@@ -469,7 +470,7 @@ public class DefaultNessunaAutenticazioneCanaleNessunHeaderObbligatorioTest exte
 				null,
 				"PrincipalAuth realm=\"GovWay\", error=\"invalid_request\", error_description=\"The request is missing a required principal credentials\"",
 				Utilities.CREDENZIALI_NON_FORNITE,
-				"Autenticazione fallita, credenziali non fornite"
+				CostantiProtocollo.CREDENZIALI_NON_FORNITE
 				);
 	}
 	

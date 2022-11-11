@@ -36,6 +36,7 @@ import org.apache.axis.Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
@@ -158,7 +159,8 @@ public class HTTPS extends GestioneViaJmx {
 	private static final String HOST_VERIFY = "No subject alternative names present";
 	private static final String HOST_VERIFY_2 = "HTTPS hostname wrong:  should be <127.0.0.1>";
 	
-	private static final String CREDENZIALI_NON_FORNITE = "Autenticazione fallita, credenziali non fornite";
+	private static final String CREDENZIALI_NON_FORNITE_DIAGNOSTICO = CostantiProtocollo.CREDENZIALI_NON_FORNITE;
+	private static final String CREDENZIALI_NON_FORNITE_ECCEZIONE = CostantiProtocollo.PREFISSO_AUTENTICAZIONE_FALLITA+CostantiProtocollo.CREDENZIALI_NON_FORNITE;
 	//private static final String CREDENZIALI_NON_CORRETTE = "Autenticazione del servizio applicativo non riuscita ( SSL Subject: CN=@SIL@, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it ) : Credenziali fornite non corrette: subject[CN=@SIL@, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it]";
 	@SuppressWarnings("unused")
 	private static final String CREDENZIALI_NON_CORRETTE = "Autenticazione fallita, credenziali fornite non corrette";
@@ -1086,7 +1088,7 @@ public class HTTPS extends GestioneViaJmx {
 				}else{
 					
 					String codiceEccezione = Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA);
-					String msg2 =  CREDENZIALI_NON_FORNITE;
+					String msg2 =  CREDENZIALI_NON_FORNITE_ECCEZIONE;
 					
 					if(genericCode) {
 						IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.AUTHENTICATION_CREDENTIALS_NOT_FOUND;
@@ -1126,7 +1128,7 @@ public class HTTPS extends GestioneViaJmx {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore(CREDENZIALI_NON_FORNITE);
+		err.setMsgErrore(CREDENZIALI_NON_FORNITE_DIAGNOSTICO);
 		this.erroriAttesiOpenSPCoopCore.add(err);
 		
 		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
@@ -3692,7 +3694,7 @@ public class HTTPS extends GestioneViaJmx {
 			// Check msgDiag
 			if(dataMsg!=null){
 				
-				String msgErrore = "Autenticazione fallita, credenziali non fornite"; 
+				String msgErrore = CREDENZIALI_NON_FORNITE_DIAGNOSTICO; 
 				Reporter.log("Controllo Messaggio (id:"+id+") msg["+msgErrore+"]");
 				Assert.assertTrue( 
 						dataMsg.isTracedMessaggioWithLike(id, msgErrore)
@@ -3757,7 +3759,7 @@ public class HTTPS extends GestioneViaJmx {
 				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
 				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg1));
 				
-				msg1 = "Autenticazione fallita, credenziali non fornite";
+				msg1 = CREDENZIALI_NON_FORNITE_DIAGNOSTICO;
 				Reporter.log("Controllo messaggio (id:"+id+") msg["+msg1+"]");
 				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(id, msg1));
 				

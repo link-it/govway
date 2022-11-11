@@ -7618,7 +7618,7 @@ public class RicezioneBuste {
 		
 		
 		/* FIX bug riferimentoMessaggio errato, contiene un id generato nel flusso di risposta (e poi non usato in seguito a errori) invece di quello della richiesta */
-		bustaRichiesta = bustaRichiesta.clone(); // Per evitare che mi venga modificato da ImbustamentoRisposte (TODO: Non ho capito il motivo)
+		bustaRichiesta = bustaRichiesta.newInstance(); // Per evitare che mi venga modificato da ImbustamentoRisposte (TODO: Non ho capito il motivo)
 		
 		
 		

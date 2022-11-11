@@ -196,7 +196,7 @@ public class PolicyGroupByActiveThreadsDistributedCountersWithLock implements Se
 			// incremento il numero di thread
 			datiCollezionati.registerStartRequest(log, this.activePolicy, ctx);
 
-			return (DatiCollezionati) datiCollezionati.clone();
+			return (DatiCollezionati) datiCollezionati.newInstance();
 		}
 		finally {
 			this.getLock().release("registerStartRequest");
@@ -222,7 +222,7 @@ public class PolicyGroupByActiveThreadsDistributedCountersWithLock implements Se
 
 			// mi salvo fuori dal synchronized l'attuale stato
 			if(updated) {
-				return (DatiCollezionati) datiCollezionati.clone();
+				return (DatiCollezionati) datiCollezionati.newInstance();
 			}
 
 		}

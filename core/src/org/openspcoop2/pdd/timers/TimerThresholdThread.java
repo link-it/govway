@@ -47,8 +47,15 @@ import org.slf4j.Logger;
  */
 public class TimerThresholdThread extends BaseThread{
 
-	public static TimerState STATE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	private static TimerState STATE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
 	
+	public static TimerState getSTATE() {
+		return STATE;
+	}
+	public static void setSTATE(TimerState sTATE) {
+		STATE = sTATE;
+	}
+
 	/** Indicazione di uno spazio delle risorse di sistema corretto */
 	public static boolean freeSpace = true;
 	

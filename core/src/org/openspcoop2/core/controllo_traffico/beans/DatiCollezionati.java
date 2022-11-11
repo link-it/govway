@@ -47,7 +47,7 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+public class DatiCollezionati implements Serializable {
 
 	/**
 	 * 
@@ -286,29 +286,20 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		}
 	}
 	
-	@Override
-	public Object clone() {
-		return _clone(false, super.clone()); // se servisse avere una immagine con i dati remoti, usare la clone con il boolean.
+	public DatiCollezionati newInstance() {
+		return _newInstance(false); // se servisse avere una immagine con i dati remoti, usare la clone con il boolean.
 	}
-	public DatiCollezionati clone(boolean readRemoteInfo) {
-		return _clone(readRemoteInfo, super.clone()); 
+	public DatiCollezionati newInstance(boolean readRemoteInfo) {
+		return _newInstance(readRemoteInfo); 
 	}
-	private DatiCollezionati _clone(boolean readRemoteInfo, Object o) {
+	private DatiCollezionati _newInstance(boolean readRemoteInfo) {
 		Date updatePolicyDate = new Date(this.updatePolicyDate.getTime());
 		Date gestorePolicyConfigDate = null;
 		if(this.gestorePolicyConfigDate!=null) {
 			gestorePolicyConfigDate = new Date(this.gestorePolicyConfigDate.getTime());
 		}
 		
-		DatiCollezionati dati = null;
-		if(o!=null && o instanceof DatiCollezionati) {
-			dati = (DatiCollezionati) o;
-			dati.updatePolicyDate = updatePolicyDate;
-			dati.gestorePolicyConfigDate = gestorePolicyConfigDate;
-		}
-		else {
-			dati = new DatiCollezionati(updatePolicyDate, gestorePolicyConfigDate);
-		}
+		DatiCollezionati dati = new DatiCollezionati(updatePolicyDate, gestorePolicyConfigDate);
 		
 		return setValuesIn(dati, readRemoteInfo);
 	}

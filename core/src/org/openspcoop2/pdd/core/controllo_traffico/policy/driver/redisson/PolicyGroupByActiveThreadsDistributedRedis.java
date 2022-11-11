@@ -122,7 +122,7 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 		datiCollezionati.registerStartRequest(log, this.activePolicy, ctx);
 		
 		// mi salvo l'attuale stato
-		DatiCollezionati datiCollezionatiReaded = (DatiCollezionati) datiCollezionati.clone(); 
+		DatiCollezionati datiCollezionatiReaded = (DatiCollezionati) datiCollezionati.newInstance(); 
 		
 		map.fastPut(datiGroupBy, datiCollezionati);
 		
@@ -152,7 +152,7 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 		datiCollezionati.updateDatiStartRequestApplicabile(log, this.activePolicy, ctx);
 		
 		// mi salvo l'attuale stato
-		DatiCollezionati datiCollezionatiReaded = (DatiCollezionati) datiCollezionati.clone(); 
+		DatiCollezionati datiCollezionatiReaded = (DatiCollezionati) datiCollezionati.newInstance(); 
 		
 		map.fastPut(datiGroupBy, datiCollezionati);
 		

@@ -253,10 +253,10 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			return this.log4jDumpAbilitato;
 		
 		if(attributeName.equals(ConfigurazionePdD.ERRORI_STATUS_CODE_ABILITATO))
-			return Costanti.TRANSACTION_ERROR_STATUS_ABILITATO;
+			return Costanti.isTRANSACTION_ERROR_STATUS_ABILITATO();
 		
 		if(attributeName.equals(ConfigurazionePdD.ERRORI_INSTANCE_ID_ABILITATO))
-			return Costanti.TRANSACTION_ERROR_INSTANCE_ID_ABILITATO;
+			return Costanti.isTRANSACTION_ERROR_INSTANCE_ID_ABILITATO();
 		
 		if(attributeName.equals(ConfigurazionePdD.ERRORI_FORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_BAD_REQUEST))
 			return ErroriProperties.isFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_BAD_REQUEST();
@@ -271,73 +271,73 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			return ErroriProperties.isFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_ERROR();
 		
 		if(attributeName.equals(ConfigurazionePdD.ERRORI_FORCE_SPECIFIC_DETAILS))
-			return Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS;
+			return Costanti.isTRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS();
 
 		if(attributeName.equals(ConfigurazionePdD.ERRORI_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE))
-			return Costanti.TRANSACTION_ERROR_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE;
+			return Costanti.isTRANSACTION_ERROR_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE();
 		
 		if(attributeName.equals(ConfigurazionePdD.ERRORI_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE))
-			return Costanti.TRANSACTION_ERROR_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE;
+			return Costanti.isTRANSACTION_ERROR_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE();
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_CONSEGNA_CONTENUTI_APPLICATIVI))
-			return TimerConsegnaContenutiApplicativi.STATE.name();
+			return TimerConsegnaContenutiApplicativi.getSTATE().name();
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_EVENTI))
-			return TimerEventiThread.STATE.name();
+			return TimerEventiThread.getSTATE().name();
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_FILE_SYSTEM_RECOVERY))
-			return TimerFileSystemRecoveryThread.STATE.name();
+			return TimerFileSystemRecoveryThread.getSTATE().name();
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_BUSTE_ONEWAY_NON_RISCONTRATE))
-			return TimerGestoreBusteNonRiscontrateLib.STATE_ONEWAY.name();
+			return TimerGestoreBusteNonRiscontrateLib.getSTATE_ONEWAY().name();
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_BUSTE_ASINCRONE_NON_RISCONTRATE))
-			return TimerGestoreBusteNonRiscontrateLib.STATE_ASINCRONI.name();
+			return TimerGestoreBusteNonRiscontrateLib.getSTATE_ASINCRONI().name();
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_ELIMINATI))
-			return TimerGestoreMessaggiLib.STATE_MESSAGGI_ELIMINATI.name();
+			return TimerGestoreMessaggiLib.getSTATE_MESSAGGI_ELIMINATI().name();
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_SCADUTI))
-			return TimerGestoreMessaggiLib.STATE_MESSAGGI_SCADUTI.name();
+			return TimerGestoreMessaggiLib.getSTATE_MESSAGGI_SCADUTI().name();
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_NON_GESTITI))
-			return TimerGestoreMessaggiLib.STATE_MESSAGGI_NON_GESTITI.name();
+			return TimerGestoreMessaggiLib.getSTATE_MESSAGGI_NON_GESTITI().name();
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_PULIZIA_CORRELAZIONE_APPLICATIVA))
-			return TimerGestoreMessaggiLib.STATE_CORRELAZIONE_APPLICATIVA.name();
+			return TimerGestoreMessaggiLib.getSTATE_CORRELAZIONE_APPLICATIVA().name();
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_VERIFICA_CONNESSIONI_ATTIVE))
-			return TimerGestoreMessaggiLib.STATE_VERIFICA_CONNESSIONI_ATTIVE.name();
+			return TimerGestoreMessaggiLib.getSTATE_VERIFICA_CONNESSIONI_ATTIVE().name();
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_PULIZIA_MESSAGGI_ANOMALI))
-			return TimerGestorePuliziaMessaggiAnomaliLib.STATE.name();
+			return TimerGestorePuliziaMessaggiAnomaliLib.getSTATE().name();
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_REPOSITORY_BUSTE))
-			return TimerGestoreRepositoryBusteLib.STATE.name();
+			return TimerGestoreRepositoryBusteLib.getSTATE().name();
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_MONITORAGGIO_RISORSE_THREAD))
-			return TimerMonitoraggioRisorseThread.STATE.name();
+			return TimerMonitoraggioRisorseThread.getSTATE().name();
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_REPOSITORY_STATEFUL_THREAD))
-			return TimerRepositoryStatefulThread.STATE.name();
+			return TimerRepositoryStatefulThread.getSTATE().name();
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_STATISTICHE_ORARIE))
-			return TimerStatisticheLib.STATE_STATISTICHE_ORARIE.name();
+			return TimerStatisticheLib.getSTATE_STATISTICHE_ORARIE().name();
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_STATISTICHE_GIORNALIERE))
-			return TimerStatisticheLib.STATE_STATISTICHE_GIORNALIERE.name();
+			return TimerStatisticheLib.getSTATE_STATISTICHE_GIORNALIERE().name();
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_STATISTICHE_SETTIMANALI))
-			return TimerStatisticheLib.STATE_STATISTICHE_SETTIMANALI.name();
+			return TimerStatisticheLib.getSTATE_STATISTICHE_SETTIMANALI().name();
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_STATISTICHE_MENSILI))
-			return TimerStatisticheLib.STATE_STATISTICHE_MENSILI.name();
+			return TimerStatisticheLib.getSTATE_STATISTICHE_MENSILI().name();
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_THRESHOLD_THREAD))
-			return TimerThresholdThread.STATE.name();
+			return TimerThresholdThread.getSTATE().name();
 		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_CLUSTER_DINAMICO))
-			return TimerClusterDinamicoThread.STATE.name();
+			return TimerClusterDinamicoThread.getSTATE().name();
 				
 		throw new AttributeNotFoundException("Attributo "+attributeName+" non trovato");
 	}
@@ -353,7 +353,9 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		for (int i=0; i<attributesNames.length; i++){
 			try{
 				list.add(new Attribute(attributesNames[i],getAttribute(attributesNames[i])));
-			}catch(JMException ex){}
+			}catch(JMException ex){
+				// ignore
+			}
 		}
 		return list;
 	}
@@ -405,10 +407,10 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				this.tracciamentoAppender = (String[]) attribute.getValue();
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.ERRORI_STATUS_CODE_ABILITATO))
-				Costanti.TRANSACTION_ERROR_STATUS_ABILITATO = (Boolean) attribute.getValue();
+				Costanti.setTRANSACTION_ERROR_STATUS_ABILITATO( (Boolean) attribute.getValue() );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.ERRORI_INSTANCE_ID_ABILITATO))
-				Costanti.TRANSACTION_ERROR_INSTANCE_ID_ABILITATO = (Boolean) attribute.getValue();
+				Costanti.setTRANSACTION_ERROR_INSTANCE_ID_ABILITATO( (Boolean) attribute.getValue() );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.ERRORI_FORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_BAD_REQUEST))
 				this.setFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_BAD_REQUEST( (Boolean) attribute.getValue() );
@@ -423,73 +425,73 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				this.setFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_ERROR( (Boolean) attribute.getValue() );
 
 			else if(attribute.getName().equals(ConfigurazionePdD.ERRORI_FORCE_SPECIFIC_DETAILS))
-				Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS = (Boolean) attribute.getValue();
+				Costanti.setTRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS( (Boolean) attribute.getValue() );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.ERRORI_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE))
-				Costanti.TRANSACTION_ERROR_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE = (Boolean) attribute.getValue();
+				Costanti.setTRANSACTION_ERROR_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE( (Boolean) attribute.getValue() );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.ERRORI_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE))
-				Costanti.TRANSACTION_ERROR_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE = (Boolean) attribute.getValue();
+				Costanti.setTRANSACTION_ERROR_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE( (Boolean) attribute.getValue() );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_CONSEGNA_CONTENUTI_APPLICATIVI))
-				TimerConsegnaContenutiApplicativi.STATE = getTimerState(attribute.getValue());
+				TimerConsegnaContenutiApplicativi.setSTATE( getTimerState(attribute.getValue()) );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_EVENTI))
-				TimerEventiThread.STATE = getTimerState(attribute.getValue());
+				TimerEventiThread.setSTATE( getTimerState(attribute.getValue()) );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_FILE_SYSTEM_RECOVERY))
-				TimerFileSystemRecoveryThread.STATE = getTimerState(attribute.getValue());
+				TimerFileSystemRecoveryThread.setSTATE( getTimerState(attribute.getValue()) );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_BUSTE_ONEWAY_NON_RISCONTRATE))
-				TimerGestoreBusteNonRiscontrateLib.STATE_ONEWAY = getTimerState(attribute.getValue());
+				TimerGestoreBusteNonRiscontrateLib.setSTATE_ONEWAY( getTimerState(attribute.getValue()) );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_BUSTE_ASINCRONE_NON_RISCONTRATE))
-				TimerGestoreBusteNonRiscontrateLib.STATE_ASINCRONI = getTimerState(attribute.getValue());
+				TimerGestoreBusteNonRiscontrateLib.setSTATE_ASINCRONI( getTimerState(attribute.getValue()) );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_ELIMINATI))
-				TimerGestoreMessaggiLib.STATE_MESSAGGI_ELIMINATI = getTimerState(attribute.getValue());
+				TimerGestoreMessaggiLib.setSTATE_MESSAGGI_ELIMINATI( getTimerState(attribute.getValue()) );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_SCADUTI))
-				TimerGestoreMessaggiLib.STATE_MESSAGGI_SCADUTI = getTimerState(attribute.getValue());
+				TimerGestoreMessaggiLib.setSTATE_MESSAGGI_SCADUTI( getTimerState(attribute.getValue()) );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_NON_GESTITI))
-				TimerGestoreMessaggiLib.STATE_MESSAGGI_NON_GESTITI = getTimerState(attribute.getValue());
+				TimerGestoreMessaggiLib.setSTATE_MESSAGGI_NON_GESTITI( getTimerState(attribute.getValue()) );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_PULIZIA_CORRELAZIONE_APPLICATIVA))
-				TimerGestoreMessaggiLib.STATE_CORRELAZIONE_APPLICATIVA = getTimerState(attribute.getValue());
+				TimerGestoreMessaggiLib.setSTATE_CORRELAZIONE_APPLICATIVA( getTimerState(attribute.getValue()) );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_MESSAGGI_VERIFICA_CONNESSIONI_ATTIVE))
-				TimerGestoreMessaggiLib.STATE_VERIFICA_CONNESSIONI_ATTIVE = getTimerState(attribute.getValue());
+				TimerGestoreMessaggiLib.setSTATE_VERIFICA_CONNESSIONI_ATTIVE( getTimerState(attribute.getValue()) );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_PULIZIA_MESSAGGI_ANOMALI))
-				TimerGestorePuliziaMessaggiAnomaliLib.STATE = getTimerState(attribute.getValue());
+				TimerGestorePuliziaMessaggiAnomaliLib.setSTATE( getTimerState(attribute.getValue()) );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_REPOSITORY_BUSTE))
-				TimerGestoreRepositoryBusteLib.STATE = getTimerState(attribute.getValue());
+				TimerGestoreRepositoryBusteLib.setSTATE( getTimerState(attribute.getValue()) );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_MONITORAGGIO_RISORSE_THREAD))
-				TimerMonitoraggioRisorseThread.STATE = getTimerState(attribute.getValue());
+				TimerMonitoraggioRisorseThread.setSTATE( getTimerState(attribute.getValue()) );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_REPOSITORY_STATEFUL_THREAD))
-				TimerRepositoryStatefulThread.STATE = getTimerState(attribute.getValue());
+				TimerRepositoryStatefulThread.setSTATE( getTimerState(attribute.getValue()) );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_STATISTICHE_ORARIE))
-				TimerStatisticheLib.STATE_STATISTICHE_ORARIE = getTimerState(attribute.getValue());
+				TimerStatisticheLib.setSTATE_STATISTICHE_ORARIE( getTimerState(attribute.getValue()) );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_STATISTICHE_GIORNALIERE))
-				TimerStatisticheLib.STATE_STATISTICHE_GIORNALIERE = getTimerState(attribute.getValue());
+				TimerStatisticheLib.setSTATE_STATISTICHE_GIORNALIERE( getTimerState(attribute.getValue()) );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_STATISTICHE_SETTIMANALI))
-				TimerStatisticheLib.STATE_STATISTICHE_SETTIMANALI = getTimerState(attribute.getValue());
+				TimerStatisticheLib.setSTATE_STATISTICHE_SETTIMANALI( getTimerState(attribute.getValue()) );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_STATISTICHE_MENSILI))
-				TimerStatisticheLib.STATE_STATISTICHE_MENSILI = getTimerState(attribute.getValue());
+				TimerStatisticheLib.setSTATE_STATISTICHE_MENSILI( getTimerState(attribute.getValue()) );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_THRESHOLD_THREAD))
-				TimerThresholdThread.STATE = getTimerState(attribute.getValue());
+				TimerThresholdThread.setSTATE( getTimerState(attribute.getValue()) );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_CLUSTER_DINAMICO))
-				TimerClusterDinamicoThread.STATE = getTimerState(attribute.getValue());
+				TimerClusterDinamicoThread.setSTATE( getTimerState(attribute.getValue()) );
 			
 			else
 				throw new AttributeNotFoundException("Attributo "+attribute.getName()+" non trovato");
@@ -527,7 +529,9 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				Attribute attribute = (Attribute) it.next();
 				setAttribute(attribute);
 				ret.add(attribute);
-			}catch(JMException ex){}
+			}catch(JMException ex){
+				// ignore
+			}
 		}
 		
 		return ret;
@@ -639,6 +643,10 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 					param1 = null;
 				}
 			}
+			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+CHECK_CONNETTORE_BY_ID+"] parametro richiesto non fornito"));
+			}
 			return this.checkConnettoreById(param1);
 		}
 		
@@ -710,6 +718,10 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				if(param1<0){
 					param1 = null;
 				}
+			}
+			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+GET_CERTIFICATI_CONNETTORE_BY_ID+"] parametro richiesto non fornito"));
 			}
 			return this.getCertificatiConnettoreById(param1);
 		}
@@ -794,6 +806,9 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				soglia = Integer.valueOf(params[1].toString());
 			}
 			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATI_CONNETTORE_HTTPS_BY_ID+"] parametro richiesto non fornito"));
+			}
 			return this.checkCertificatiConnettoreHttpsById(param1, soglia);
 		}
 		
@@ -822,6 +837,9 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				soglia = Integer.valueOf(params[1].toString());
 			}
 			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_ID+"] parametro richiesto non fornito"));
+			}
 			return this.checkCertificatoApplicativoById(param1, soglia);
 		}
 		if(actionName.equals(CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_NOME)){
@@ -841,6 +859,9 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				soglia = Integer.valueOf(params[1].toString());
 			}
 			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_SERVIZIO_APPLICATIVO_BY_NOME+"] parametro richiesto non fornito"));
+			}
 			return this.checkCertificatoApplicativoByNome(param1, soglia);
 		}
 		
@@ -869,6 +890,9 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				soglia = Integer.valueOf(params[1].toString());
 			}
 			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_ID+"] parametro richiesto non fornito"));
+			}
 			return this.checkCertificatoModiApplicativoById(param1, soglia);
 		}
 		if(actionName.equals(CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_NOME)){
@@ -888,6 +912,9 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				soglia = Integer.valueOf(params[1].toString());
 			}
 			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+CHECK_CERTIFICATO_MODI_SERVIZIO_APPLICATIVO_BY_NOME+"] parametro richiesto non fornito"));
+			}
 			return this.checkCertificatoModiApplicativoByNome(param1, soglia);
 		}
 		
@@ -1252,6 +1279,10 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 					param1 = null;
 				}
 			}
+			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_ACCORDO_COOPERAZIONE+"] parametro richiesto non fornito"));
+			}
 			return this.ripulisciRiferimentiCacheAccordoCooperazione(param1);
 		}
 		
@@ -1270,6 +1301,10 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				if(param1<0){
 					param1 = null;
 				}
+			}
+			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_API+"] parametro richiesto non fornito"));
 			}
 			return this.ripulisciRiferimentiCacheApi(param1);
 		}
@@ -1290,6 +1325,10 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 					param1 = null;
 				}
 			}
+			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_EROGAZIONE+"] parametro richiesto non fornito"));
+			}
 			return this.ripulisciRiferimentiCacheErogazione(param1);
 		}
 		
@@ -1308,6 +1347,10 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				if(param1<0){
 					param1 = null;
 				}
+			}
+			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_FRUIZIONE+"] parametro richiesto non fornito"));
 			}
 			return this.ripulisciRiferimentiCacheFruizione(param1);
 		}
@@ -1328,6 +1371,10 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 					param1 = null;
 				}
 			}
+			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_SOGGETTO+"] parametro richiesto non fornito"));
+			}
 			return this.ripulisciRiferimentiCacheSoggetto(param1);
 		}
 		
@@ -1346,6 +1393,10 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				if(param1<0){
 					param1 = null;
 				}
+			}
+			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_APPLICATIVO+"] parametro richiesto non fornito"));
 			}
 			return this.ripulisciRiferimentiCacheApplicativo(param1);
 		}
@@ -1366,6 +1417,10 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 					param1 = null;
 				}
 			}
+			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_RUOLO+"] parametro richiesto non fornito"));
+			}
 			return this.ripulisciRiferimentiCacheRuolo(param1);
 		}
 		
@@ -1384,6 +1439,10 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				if(param1<0){
 					param1 = null;
 				}
+			}
+			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_SCOPE+"] parametro richiesto non fornito"));
 			}
 			return this.ripulisciRiferimentiCacheScope(param1);
 		}
@@ -1404,6 +1463,10 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 					param1 = null;
 				}
 			}
+			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_TOKEN_POLICY_VALIDAZIONE+"] parametro richiesto non fornito"));
+			}
 			return this.ripulisciRiferimentiCacheTokenPolicyValidazione(param1);
 		}
 		
@@ -1423,6 +1486,10 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 					param1 = null;
 				}
 			}
+			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_TOKEN_POLICY_NEGOZIAZIONE+"] parametro richiesto non fornito"));
+			}
 			return this.ripulisciRiferimentiCacheTokenPolicyNegoziazione(param1);
 		}
 		
@@ -1441,6 +1508,10 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				if(param1<0){
 					param1 = null;
 				}
+			}
+			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+RIPULISCI_RIFERIMENTI_CACHE_ATTRIBUTE_AUTHORITY+"] parametro richiesto non fornito"));
 			}
 			return this.ripulisciRiferimentiCacheAttributeAuthority(param1);
 		}
@@ -3042,7 +3113,9 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				try{
 					if(dbManager!=null)
 						dbManager.releaseResource(dominio, modulo, resource);
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 			
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;

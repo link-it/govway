@@ -114,8 +114,8 @@ public class AttributeAuthorityDynamicParameters extends AbstractDynamicParamete
 	}
 	
 	@Override
-	public String toStringRepresentation() {
-		return this.toString();
+	protected String toStringRepresentation() {
+		return null; // viene ridefinito il metodo toString
 	}
 	@Override
 	public String toString() {

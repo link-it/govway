@@ -64,7 +64,7 @@ public class UpdateDatiRequestProcessor implements EntryProcessor<IDUnivocoGroup
 			DatiCollezionati datiCollezionatiReaded = null;
 			boolean updated = entry.getValue().updateDatiStartRequestApplicabile(log, this.activePolicy, this.ctx);
 			if(updated) {
-				datiCollezionatiReaded = (DatiCollezionati) entry.getValue().clone();
+				datiCollezionatiReaded = (DatiCollezionati) entry.getValue().newInstance();
 				entry.setValue(entry.getValue());
 			}
 			

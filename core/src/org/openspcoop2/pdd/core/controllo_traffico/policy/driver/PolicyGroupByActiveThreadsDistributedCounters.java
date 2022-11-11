@@ -202,7 +202,7 @@ public class PolicyGroupByActiveThreadsDistributedCounters implements Serializab
 		if (datiCollezionati == null){				
 			datiCollezionati = initStartRequest(log, idTransazione, datiGroupByMapId, ctx);
 		}
-		DatiCollezionati datiCollezionatiPerPolicyVerifier = (DatiCollezionati) datiCollezionati.clone(); // i valori utilizzati dal policy verifier verranno impostati con il valore remoto corretto
+		DatiCollezionati datiCollezionatiPerPolicyVerifier = (DatiCollezionati) datiCollezionati.newInstance(); // i valori utilizzati dal policy verifier verranno impostati con il valore remoto corretto
 		// l'oggetto datiCollezionati, anche se appena creato, è già stato inizializzato dentro il costruttore di DatiCollezionatiXXX
 		
 		// incremento il numero di thread
@@ -221,7 +221,7 @@ public class PolicyGroupByActiveThreadsDistributedCounters implements Serializab
 		if(datiCollezionati == null) {
 			throw new PolicyNotFoundException("Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+datiGroupByMapId.toString()+"]");
 		}
-		DatiCollezionati datiCollezionatiPerPolicyVerifier = (DatiCollezionati) datiCollezionati.clone(); // i valori utilizzati dal policy verifier verranno impostati con il valore remoto corretto
+		DatiCollezionati datiCollezionatiPerPolicyVerifier = (DatiCollezionati) datiCollezionati.newInstance(); // i valori utilizzati dal policy verifier verranno impostati con il valore remoto corretto
 		
 		// incremento il numero dei contatori
 		boolean updated = datiCollezionati.updateDatiStartRequestApplicabile(log, this.activePolicy, ctx, datiCollezionatiPerPolicyVerifier);

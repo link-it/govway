@@ -68,11 +68,45 @@ import org.slf4j.Logger;
 
 public class TimerGestoreMessaggiLib  {
 
-	public static TimerState STATE_MESSAGGI_ELIMINATI = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
-	public static TimerState STATE_MESSAGGI_SCADUTI = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
-	public static TimerState STATE_MESSAGGI_NON_GESTITI = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
-	public static TimerState STATE_CORRELAZIONE_APPLICATIVA = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
-	public static TimerState STATE_VERIFICA_CONNESSIONI_ATTIVE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	private static TimerState STATE_MESSAGGI_ELIMINATI = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	public static TimerState getSTATE_MESSAGGI_ELIMINATI() {
+		return STATE_MESSAGGI_ELIMINATI;
+	}
+	public static void setSTATE_MESSAGGI_ELIMINATI(TimerState sTATE_MESSAGGI_ELIMINATI) {
+		STATE_MESSAGGI_ELIMINATI = sTATE_MESSAGGI_ELIMINATI;
+	}
+
+	private static TimerState STATE_MESSAGGI_SCADUTI = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	public static TimerState getSTATE_MESSAGGI_SCADUTI() {
+		return STATE_MESSAGGI_SCADUTI;
+	}
+	public static void setSTATE_MESSAGGI_SCADUTI(TimerState sTATE_MESSAGGI_SCADUTI) {
+		STATE_MESSAGGI_SCADUTI = sTATE_MESSAGGI_SCADUTI;
+	}
+
+	private static TimerState STATE_MESSAGGI_NON_GESTITI = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	public static TimerState getSTATE_MESSAGGI_NON_GESTITI() {
+		return STATE_MESSAGGI_NON_GESTITI;
+	}
+	public static void setSTATE_MESSAGGI_NON_GESTITI(TimerState sTATE_MESSAGGI_NON_GESTITI) {
+		STATE_MESSAGGI_NON_GESTITI = sTATE_MESSAGGI_NON_GESTITI;
+	}
+
+	private static TimerState STATE_CORRELAZIONE_APPLICATIVA = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	public static TimerState getSTATE_CORRELAZIONE_APPLICATIVA() {
+		return STATE_CORRELAZIONE_APPLICATIVA;
+	}
+	public static void setSTATE_CORRELAZIONE_APPLICATIVA(TimerState sTATE_CORRELAZIONE_APPLICATIVA) {
+		STATE_CORRELAZIONE_APPLICATIVA = sTATE_CORRELAZIONE_APPLICATIVA;
+	}
+
+	private static TimerState STATE_VERIFICA_CONNESSIONI_ATTIVE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	public static TimerState getSTATE_VERIFICA_CONNESSIONI_ATTIVE() {
+		return STATE_VERIFICA_CONNESSIONI_ATTIVE;
+	}
+	public static void setSTATE_VERIFICA_CONNESSIONI_ATTIVE(TimerState sTATE_VERIFICA_CONNESSIONI_ATTIVE) {
+		STATE_VERIFICA_CONNESSIONI_ATTIVE = sTATE_VERIFICA_CONNESSIONI_ATTIVE;
+	}
 
 	private MsgDiagnostico msgDiag = null;
 	private Logger logTimer = null;

@@ -713,7 +713,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 						if(!genericDetails && erroriProperties.isForceGenericDetails(functionError)) {
 							genericDetails = true;
 						}
-						if (Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS) {
+						if (Costanti.isTRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS()) {
 							genericDetails = false;
 						}
 						if(codeDetailsErrorWrapper.getDetails()!=null && !genericDetails) {
@@ -724,7 +724,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 							SoapUtils.setFaultString(fault, errorMsg);
 						}
 						
-						if(Costanti.TRANSACTION_ERROR_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE) {
+						if(Costanti.isTRANSACTION_ERROR_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE()) {
 							msg.castAsSoap().setFaultCode(fault, code, eccezioneName);
 						}
 						else {
@@ -751,7 +751,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 							msg.castAsSoap().setFaultCode(fault, code, eccezioneNameGovway);
 						}
 						
-						if(Costanti.TRANSACTION_ERROR_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE) {
+						if(Costanti.isTRANSACTION_ERROR_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE()) {
 							msg.forceTransportHeader(Costanti.getHTTP_HEADER_GOVWAY_ERROR_CODE(), returnConfig.getGovwayReturnCode()+"");
 						}
 						
@@ -812,7 +812,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 					}
 					if(codeDetailsErrorWrapper.getCode()!=null) {
 						msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY_CODE, codeDetailsErrorWrapper.getCode() );
-						if(Costanti.TRANSACTION_ERROR_STATUS_ABILITATO) {
+						if(Costanti.isTRANSACTION_ERROR_STATUS_ABILITATO()) {
 							String code = codeDetailsErrorWrapper.getCode();
 							if(codeDetailsErrorWrapper.getPrefixCode()!=null) {
 								if(codeDetailsErrorWrapper.getPrefixCode().endsWith(":")) {
@@ -914,7 +914,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 				if(!genericDetails && erroriProperties.isForceGenericDetails(functionError)) {
 					genericDetails = true;
 				}
-				if (Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS) {
+				if (Costanti.isTRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS()) {
 					genericDetails = false;
 				}
 				
@@ -951,7 +951,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			}
 			
 			// govway-status
-			if(Costanti.TRANSACTION_ERROR_STATUS_ABILITATO && rfc7807.isGovwayStatus()) {
+			if(Costanti.isTRANSACTION_ERROR_STATUS_ABILITATO() && rfc7807.isGovwayStatus()) {
 				if(codeDetailsErrorWrapper.getCode()!=null && codeDetailsErrorWrapper.getPrefixCode()!=null) {
 					problemRFC7807.getCustom().put(org.openspcoop2.protocol.basic.Costanti.getPROBLEM_RFC7807_GOVWAY_CODE(), 
 							codeDetailsErrorWrapper.getPrefixCode()+codeDetailsErrorWrapper.getCode());
@@ -959,7 +959,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			}
 			
 			// instance
-			if(Costanti.TRANSACTION_ERROR_INSTANCE_ID_ABILITATO && rfc7807.isInstance()) {
+			if(Costanti.isTRANSACTION_ERROR_INSTANCE_ID_ABILITATO() && rfc7807.isInstance()) {
 				problemRFC7807.setInstance(nomePorta);
 			}
 			
@@ -1104,7 +1104,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			
 			Busta bustaRichiesta = null;
 			if(busta!=null) {
-				bustaRichiesta = busta.clone();
+				bustaRichiesta = busta.newInstance();
 			}
 			
 			// Lista trasmissioni della richiesta
@@ -1316,7 +1316,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 
 			Busta bustaRichiesta = null;
 			if(busta!=null) {
-				bustaRichiesta = busta.clone();
+				bustaRichiesta = busta.newInstance();
 			}
 			
 			// Lista trasmissioni della richiesta

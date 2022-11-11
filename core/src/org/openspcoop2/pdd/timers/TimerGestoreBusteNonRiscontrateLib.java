@@ -90,9 +90,22 @@ import org.openspcoop2.utils.semaphore.SemaphoreMapping;
 
 public class TimerGestoreBusteNonRiscontrateLib {
 
-	public static TimerState STATE_ONEWAY = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
-	public static TimerState STATE_ASINCRONI = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
-	
+	private static TimerState STATE_ONEWAY = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	public static TimerState getSTATE_ONEWAY() {
+		return STATE_ONEWAY;
+	}
+	public static void setSTATE_ONEWAY(TimerState sTATE_ONEWAY) {
+		STATE_ONEWAY = sTATE_ONEWAY;
+	}
+
+	private static TimerState STATE_ASINCRONI = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	public static TimerState getSTATE_ASINCRONI() {
+		return STATE_ASINCRONI;
+	}
+	public static void setSTATE_ASINCRONI(TimerState sTATE_ASINCRONI) {
+		STATE_ASINCRONI = sTATE_ASINCRONI;
+	}
+
 	private MsgDiagnostico msgDiag = null;
 	private Logger logTimer = null;
 	private OpenSPCoop2Properties propertiesReader = null;

@@ -254,7 +254,7 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 						forwardTo.setConfig(config);
 					}
 					
-					Busta bustaNewMessaggio = busta.clone();
+					Busta bustaNewMessaggio = busta.newInstance();
 					int posizione = (j+1);
 					bustaNewMessaggio.setID("Fattura"+posizione+"_"+busta.getID());
 					bustaNewMessaggio.addProperty(SDICostanti.SDI_BUSTA_EXT_POSIZIONE_FATTURA_PA, posizione+"");

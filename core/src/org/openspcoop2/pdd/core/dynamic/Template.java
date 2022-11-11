@@ -22,6 +22,8 @@ package org.openspcoop2.pdd.core.dynamic;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+
 /**
  * Template
  *
@@ -59,6 +61,59 @@ public class Template implements Serializable {
 		return this.templateIncludes;
 	}
 	
+	private boolean correctClassBackwardCompatibility = false;
+	private synchronized void _correctClassBackwardCompatibility() {
+		if(!this.correctClassBackwardCompatibility) {
+			Map<String, String> map = null;
+			OpenSPCoop2Properties op2 = OpenSPCoop2Properties.getInstance();
+			if(op2!=null) {
+				map = op2.getTrasformazioni_backwardCompatibility();
+			}
+			if(map!=null && !map.isEmpty()) {
+				if(this.template!=null) {
+					boolean modify = false;
+					String s = new String(this.template);
+					for (String key : map.keySet()) {
+						if(s.contains(key)) {
+							String newValue = map.get(key);
+							s = s.replaceAll(key, newValue);
+							modify = true;
+						}
+					}
+					if(modify) {
+						this.template = s.getBytes();
+					}
+				}
+				if(this.templateIncludes!=null && !this.templateIncludes.isEmpty()) {
+					for (String idTemplate : this.templateIncludes.keySet()) {
+						byte[]template = this.templateIncludes.get(idTemplate);
+						if(template!=null) {
+							boolean modify = false;
+							String s = new String(template);
+							for (String key : map.keySet()) {
+								if(s.contains(key)) {
+									String newValue = map.get(key);
+									s = s.replaceAll(key, newValue);
+									modify = true;
+								}
+							}
+							if(modify) {
+								template = s.getBytes();
+								this.templateIncludes.put(idTemplate, template); // update
+							}
+						}
+					}
+				}
+			}
+			this.correctClassBackwardCompatibility=true;
+		}
+	}
+	private void correctClassBackwardCompatibility() {
+		if(!this.correctClassBackwardCompatibility) {
+			this._correctClassBackwardCompatibility();
+		}
+	}
+	
 	private transient freemarker.template.Template templateFreeMarker;
 	private transient org.apache.velocity.Template templateVelocity;
 	private ZipTemplate templateZip;
@@ -84,6 +139,7 @@ public class Template implements Serializable {
 				throw new DynamicException(t.getMessage(),t);
 			}
 			try {
+				this.correctClassBackwardCompatibility();
 				this.templateFreeMarker = DynamicUtils.buildFreeMarkerTemplate(this);
 			}finally {
 				this.getLock().release("initTemplateFreeMarker");
@@ -105,6 +161,7 @@ public class Template implements Serializable {
 				throw new DynamicException(t.getMessage(),t);
 			}
 			try {
+				this.correctClassBackwardCompatibility();
 				this.templateVelocity = DynamicUtils.buildVelocityTemplate(this);
 			}finally {
 				this.getLock().release("initTemplateVelocity");

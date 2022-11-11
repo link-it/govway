@@ -29,6 +29,7 @@ import java.util.List;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.utils.resources.Charset;
@@ -958,8 +959,12 @@ public class CostantiTestSuite {
 	public static final String JOSE_DETACH_REQUEST_URL = "govwayTestSuiteDetachSign";
 	
 	
-    public static final String MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE = "Autenticazione fallita, credenziali non fornite";
-    public static final String MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_CORRETTE = "Autenticazione fallita, credenziali fornite non corrette";
+    public static final String MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE = 
+    		CostantiProtocollo.PREFISSO_AUTENTICAZIONE_FALLITA+
+    		CostantiProtocollo.CREDENZIALI_NON_FORNITE;
+    public static final String MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_CORRETTE = 
+    		CostantiProtocollo.PREFISSO_AUTENTICAZIONE_FALLITA+
+    		CostantiProtocollo.CREDENZIALI_FORNITE_NON_CORRETTE;
     
     private static final String SUFFIX_MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_NON_AUTORIZZATO = " non risulta autorizzato a fruire del servizio richiesto";
     public static final String MESSAGGIO_AUTORIZZAZIONE_FALLITA_SA_TEMPLATE = "NOMESERVIZIOAPPLICATIVO";

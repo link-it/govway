@@ -209,11 +209,47 @@ public class LoadBalancerPool implements Serializable{
 	}
 	
 
+	private transient org.openspcoop2.utils.Semaphore _lockLeastConnectionsIndex = null;
+	private synchronized void initLockLeastConnectionsIndex() {
+		if(this._lockLeastConnectionsIndex==null) {
+			this._lockLeastConnectionsIndex = new org.openspcoop2.utils.Semaphore("LoadBalancerPoolLeastConnections"); 
+		}
+	}
+	public org.openspcoop2.utils.Semaphore getLockLeastConnectionsIndex(){
+		if(this._lockLeastConnectionsIndex==null) {
+			initLockLeastConnectionsIndex();
+		}
+		return this._lockLeastConnectionsIndex;
+	}
+	private int leastConnectionsIndex = 0;
+	private String getNextLeastConnectionsConnector(int min, List<String> listMin) {
+		if(listMin==null || listMin.isEmpty()) {
+			return null;
+		}
+		// Nel caso vi siano più connettori che sono con lo stesso numero di connessioni, viene effettuato un roundrobin 
+		// Serve a evitare che se arrivano richieste simultanee prima della registrazione della nuova connessione (che avviene dopo non in maniera transazione)
+		// viene scelto il solito connettore
+		this.getLockLeastConnectionsIndex().acquireThrowRuntime("getNextLeastConnectionsIndex");
+		try {
+			int c = 0;
+			if(this.leastConnectionsIndex<listMin.size()) {
+				c = this.leastConnectionsIndex;
+			}
+			this.leastConnectionsIndex++;
+			
+			debug("getNextConnectorLeastConnections minActiveConnections["+min+"] (ConnettoreSelezionato:"+c+"): "+listMin);
+
+			return listMin.get(c);
+		}finally{
+			this.getLockLeastConnectionsIndex().release("getNextLeastConnectionsIndex");
+		}
+	}
+	
 	public String getNextConnectorLeastConnections() {
 		//synchronized (this.semaphore) {
 		this.getLock().acquireThrowRuntime("getNextConnectorLeastConnections");
 		try {
-			
+			debug("getNextConnectorLeastConnections situazione iniziale ("+this.connectorMap_activeConnections+")");
 			Set<String> setKeys = passiveHealthCheck(this.connectorMap.keySet(), false);
 			
 			List<String> listMin = new ArrayList<String>();
@@ -248,9 +284,7 @@ public class LoadBalancerPool implements Serializable{
 				
 			}
 			
-			debug("getNextConnectorLeastConnections min["+min+"]: "+listMin);
-			
-			return listMin.get(0);
+			return getNextLeastConnectionsConnector(min, listMin);
 			
 		}finally{
 			this.getLock().release("getNextConnectorLeastConnections");
@@ -467,7 +501,7 @@ public class LoadBalancerPool implements Serializable{
 	
 	private void debug(String msg) {
 		if(this.debug) {
-			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().debug(msg);
+			OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori().debug(msg);
 		}
 	}
 }

@@ -56,8 +56,15 @@ import org.slf4j.Logger;
 
 public class TimerGestoreRepositoryBusteLib {
 
-	public static TimerState STATE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	private static TimerState STATE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
 	
+	public static TimerState getSTATE() {
+		return STATE;
+	}
+	public static void setSTATE(TimerState sTATE) {
+		STATE = sTATE;
+	}
+
 	private MsgDiagnostico msgDiag = null;
 	private Logger logTimer = null;
 	private OpenSPCoop2Properties propertiesReader = null;

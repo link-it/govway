@@ -56,7 +56,7 @@ import org.openspcoop2.utils.date.DateManager;
  * @version $Rev$, $Date$
  */
 
-public class Busta implements java.io.Serializable, Cloneable { 
+public class Busta implements java.io.Serializable { 
 
 	private static final long serialVersionUID = 1L;
 
@@ -1251,7 +1251,7 @@ public class Busta implements java.io.Serializable, Cloneable {
 		if(this.listaEccezioni!=null){
 			List<Eccezione> eccs = new ArrayList<Eccezione>();
 			for(int i=0; i<this.sizeListaEccezioni(); i++){
-				eccs.add(this.getEccezione(i).clone());
+				eccs.add(this.getEccezione(i).newInstance());
 			}
 			return eccs;
 		}else{
@@ -1518,8 +1518,7 @@ public class Busta implements java.io.Serializable, Cloneable {
 	 * @return una busta
 	 * 
 	 */
-	@Override 
-	public Busta clone(){
+	public Busta newInstance(){
 		
 		// Non uso il base clone per far si che venga usato il costruttore new String()
 		
@@ -1618,17 +1617,17 @@ public class Busta implements java.io.Serializable, Cloneable {
 
 		// ListaEccezioni
 		for(int i=0; i<this.sizeListaEccezioni(); i++){
-			clone.addEccezione(this.getEccezione(i).clone());
+			clone.addEccezione(this.getEccezione(i).newInstance());
 		}
 		
 		// ListaRiscontri
 		for(int i=0; i<this.sizeListaRiscontri(); i++){
-			clone.addRiscontro(this.getRiscontro(i).clone());
+			clone.addRiscontro(this.getRiscontro(i).newInstance());
 		}
 		
 		// ListaTrasmissioni
 		for(int i=0; i<this.sizeListaTrasmissioni(); i++){
-			clone.addTrasmissione(this.getTrasmissione(i).clone());
+			clone.addTrasmissione(this.getTrasmissione(i).newInstance());
 		}
 
 

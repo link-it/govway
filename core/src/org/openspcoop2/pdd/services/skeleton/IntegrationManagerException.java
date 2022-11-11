@@ -118,7 +118,7 @@ public class IntegrationManagerException extends Exception implements java.io.Se
     
 	
 	private void _setCode(String codErrore, IntegrationFunctionError functionError, ErroriProperties erroriProperties) throws ProtocolException {
-		if(Costanti.TRANSACTION_ERROR_STATUS_ABILITATO){
+		if(Costanti.isTRANSACTION_ERROR_STATUS_ABILITATO()){
 			this.codiceEccezione = codErrore;
 		}
 		else {
@@ -132,7 +132,7 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 			if(erroriProperties.isForceGenericDetails(functionError)) {
 				genericDetails = true;
 			}
-			if (Costanti.TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS) {
+			if (Costanti.isTRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS()) {
 				genericDetails = false;
 			}
 			
@@ -163,7 +163,7 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 			govwayPrefixInternalErrorCode = (String) govwayPrefixCodeInContextProperty;
 			govwayInternalErrorCode = (String) govwayCodeInContextProperty;
 		
-			if(Costanti.TRANSACTION_ERROR_STATUS_ABILITATO){
+			if(Costanti.isTRANSACTION_ERROR_STATUS_ABILITATO()){
 				this.codiceEccezione = govwayInternalErrorCode;
 			}
 			else {

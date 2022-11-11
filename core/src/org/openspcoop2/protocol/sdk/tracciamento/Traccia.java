@@ -53,7 +53,7 @@ import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
  * @version $Rev$, $Date$
  */
 
-public class Traccia implements java.io.Serializable, Cloneable {
+public class Traccia implements java.io.Serializable {
 
 	/**
 	 * serialVersionUID
@@ -303,7 +303,7 @@ public class Traccia implements java.io.Serializable, Cloneable {
         return this.busta;
     }
     public void setBusta(Busta value) {
-        this.busta = value!=null ? value.clone() : null;
+        this.busta = value!=null ? value.newInstance() : null;
         if(value!=null)
         	this.traccia.setBusta(value.getBusta());
         else
@@ -515,8 +515,7 @@ public class Traccia implements java.io.Serializable, Cloneable {
 	
 	
 	
-	@Override
-	public Traccia clone(){
+	public Traccia newInstance(){
 		
 		// Non uso il base clone per far si che venga usato il costruttore new String()
 		
@@ -536,7 +535,7 @@ public class Traccia implements java.io.Serializable, Cloneable {
 		clone.setTipoMessaggio(this.getTipoMessaggio());
 		
 		// busta
-		clone.setBusta(this.getBusta()!=null ? this.getBusta().clone() : null);
+		clone.setBusta(this.getBusta()!=null ? this.getBusta().newInstance() : null);
 		ByteArrayOutputStream bout = null;
 		if(this.getBustaAsByteArray()!=null){
 			bout = new ByteArrayOutputStream();

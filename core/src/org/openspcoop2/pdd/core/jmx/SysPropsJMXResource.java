@@ -178,6 +178,9 @@ public class SysPropsJMXResource extends NotificationBroadcasterSupport implemen
 				param1 = (String)params[0];
 			}
 			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+SysPropsJMXResource.GET_SYSTEM_PROPERTY_VALUE+"] parametro richiesto non fornito"));
+			}
 			return this.getSystemPropertyValue(param1);
 		}
 		
@@ -191,6 +194,9 @@ public class SysPropsJMXResource extends NotificationBroadcasterSupport implemen
 				param1 = (String)params[0];
 			}
 			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+SysPropsJMXResource.REMOVE_SYSTEM_PROPERTY+"] parametro richiesto non fornito"));
+			}
 			return this.removeSystemProperty(param1);
 		}
 		
@@ -209,6 +215,9 @@ public class SysPropsJMXResource extends NotificationBroadcasterSupport implemen
 				param2 = (String)params[1];
 			}
 			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+SysPropsJMXResource.UPDATE_SYSTEM_PROPERTY+"] parametro richiesto non fornito"));
+			}
 			return this.updateSystemProperty(param1,param2);
 		}
 		
@@ -227,6 +236,9 @@ public class SysPropsJMXResource extends NotificationBroadcasterSupport implemen
 				param2 = (String)params[1];
 			}
 			
+			if(param1==null) {
+				throw new MBeanException(new Exception("["+SysPropsJMXResource.INSERT_SYSTEM_PROPERTY+"] parametro richiesto non fornito"));
+			}
 			return this.insertSystemProperty(param1,param2);
 		}
 		

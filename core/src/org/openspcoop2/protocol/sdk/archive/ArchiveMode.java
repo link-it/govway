@@ -27,7 +27,7 @@ package org.openspcoop2.protocol.sdk.archive;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ArchiveMode implements Cloneable {
+public class ArchiveMode {
 
 	public ArchiveMode(String name){
 		this.name = name;
@@ -71,17 +71,8 @@ public class ArchiveMode implements Cloneable {
 		return this.name;
 	}
 	
-	@Override
-	public Object clone(){
-		
-		ArchiveMode archiveMode = null;
-		try {
-			archiveMode = (ArchiveMode) super.clone();
-			archiveMode.name = this.name;
-		}catch(Throwable t) {
-			archiveMode = new ArchiveMode(this.name);
-		}
-		
+	public ArchiveMode newInstance(){
+		ArchiveMode archiveMode = new ArchiveMode(this.name);
 		return archiveMode;
 	}
 }

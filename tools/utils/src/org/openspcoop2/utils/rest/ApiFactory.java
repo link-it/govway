@@ -36,6 +36,9 @@ public class ApiFactory {
 	
 
 	public static IApiReader newApiReader(ApiFormats format) throws ProcessingException{
+		if(format==null) {
+			throw new ProcessingException("ApiFormat undefined");
+		}
 		Loader loader = new Loader();
 		try{
 			switch (format) {
@@ -54,6 +57,9 @@ public class ApiFactory {
 	}
 	
 	public static IApiValidator newApiValidator(ApiFormats format) throws ProcessingException{
+		if(format==null) {
+			throw new ProcessingException("ApiFormat undefined");
+		}
 		Loader loader = new Loader();
 		try{
 			switch (format) {

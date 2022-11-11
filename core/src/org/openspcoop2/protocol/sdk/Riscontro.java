@@ -40,7 +40,7 @@ import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
  * @version $Rev$, $Date$
  */
 
-public class Riscontro implements java.io.Serializable, Cloneable {
+public class Riscontro implements java.io.Serializable {
 
 	/**
 	 * serialVersionUID
@@ -231,8 +231,7 @@ public class Riscontro implements java.io.Serializable, Cloneable {
 
 
 
-	@Override
-	public Riscontro clone(){
+	public Riscontro newInstance(){
 
 		Riscontro clone = new Riscontro();
 

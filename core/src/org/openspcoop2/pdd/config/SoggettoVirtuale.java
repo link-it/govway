@@ -111,7 +111,7 @@ public class SoggettoVirtuale implements Serializable  {
 					IBehaviour behaviourImpl = BehaviourLoader.newInstance(sa.getPortaApplicativa().getBehaviour(), null,
 							pddContext, protocolFactory, state);
 					
-					Busta bustaConSoggettiReali = busta.clone();
+					Busta bustaConSoggettiReali = busta.newInstance();
 					// Inverto mitt-dest
 					// il mittente e' il SoggettoVirtuale
 					bustaConSoggettiReali.setMittente(busta.getDestinatario()); 

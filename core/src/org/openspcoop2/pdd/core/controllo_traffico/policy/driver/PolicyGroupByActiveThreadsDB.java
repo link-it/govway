@@ -1044,7 +1044,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 							updateMap = true;
 							
 							// mi salvo fuori dal synchronized l'attuale stato
-							updateResult.datiCollezionatiReaded = (DatiCollezionati) datiCollezionati.clone(); 
+							updateResult.datiCollezionatiReaded = (DatiCollezionati) datiCollezionati.newInstance(); 
 							
 						}catch(Exception e) {
 							policyException = new PolicyException(e.getMessage(),e);
@@ -1074,7 +1074,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 									updateMap = true;
 									
 									// mi salvo fuori dal synchronized l'attuale stato
-									updateResult.datiCollezionatiReaded = (DatiCollezionati) datiCollezionati.clone();
+									updateResult.datiCollezionatiReaded = (DatiCollezionati) datiCollezionati.newInstance();
 								}
 							}
 						}

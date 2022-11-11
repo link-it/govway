@@ -59,5 +59,5 @@ public abstract class AbstractDynamicParameters {
 	public String toString() {
 		return toStringRepresentation();
 	}
-	public abstract String toStringRepresentation();
+	protected abstract String toStringRepresentation();
 }
