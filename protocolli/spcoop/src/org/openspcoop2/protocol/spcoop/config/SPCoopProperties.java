@@ -204,6 +204,11 @@ public class SPCoopProperties {
 			/* **** PACKAGE CNIPA **** */
 			
 			this.isGestionePackageSICA();
+			
+			
+			/* **** Prefisso 'SOAP_ENV' **** */
+			
+			this.isAddPrefixSOAPENV();
 
 			
 			/* **** Static instance config **** */
@@ -1203,6 +1208,34 @@ public class SPCoopProperties {
     	}
     	
     	return SPCoopProperties.isGestionePackageSICA;
+	}
+    
+    
+    
+    /* **** Prefisso 'SOAP_ENV' **** */
+    
+    private static Boolean isAddPrefixSOAPENV= null;
+    public Boolean isAddPrefixSOAPENV(){
+    	if(SPCoopProperties.isAddPrefixSOAPENV==null){
+	    	String pName = "org.openspcoop2.protocol.spcoop.addPrefixSOAP_ENV";
+    		try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+				
+				if (value != null){
+					value = value.trim();
+					SPCoopProperties.isAddPrefixSOAPENV = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					SPCoopProperties.isAddPrefixSOAPENV = false;
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
+				SPCoopProperties.isAddPrefixSOAPENV = false;
+			}
+    	}
+    	
+    	return SPCoopProperties.isAddPrefixSOAPENV;
 	}
     
     

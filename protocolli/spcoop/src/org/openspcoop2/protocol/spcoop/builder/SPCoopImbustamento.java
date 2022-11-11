@@ -335,7 +335,9 @@ public class SPCoopImbustamento {
 			
 			eGovHeader.setActor(SPCoopCostanti.ACTOR_EGOV);
 			eGovHeader.setMustUnderstand(true);
-			eGovHeader.addNamespaceDeclaration("SOAP_ENV","http://schemas.xmlsoap.org/soap/envelope/");
+			if(this.spcoopProperties.isAddPrefixSOAPENV()) {
+				eGovHeader.addNamespaceDeclaration("SOAP_ENV","http://schemas.xmlsoap.org/soap/envelope/");
+			}
 
 			// Costruzione IntestazioneMessaggio
 			SOAPElement eGovIntestazioneMsg = eGovHeader.addChildElement("IntestazioneMessaggio",SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
