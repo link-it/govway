@@ -1,7 +1,13 @@
 2022-11-11  Andrea Poli <apoli@link.it>
 
+	* [ProtocolloSPCoop]
+	Risolto Bug OP-1485
+	Eliminata dichiarazione del prefisso 'SOAP_ENV' aggiunto erroneamente nell'header eGov generato e inutilizzato.
+
+2022-11-11  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole]
-	Risolto Bug  OP-1483
+	Risolto Bug OP-1483
 	La segnalazione 'Visualizza Riferimenti' di un applicativo non funzionava se l'applicativo possedeva dei ruoli compatibili con le erogazioni dove veniva utilizzato.
 
 2022-11-07  Andrea Poli <apoli@link.it>
