@@ -2388,17 +2388,23 @@ public class DBOggettiInUsoUtils  {
 				
 				if(!listRuoliSoggetti.isEmpty()) {
 				
-					isInUso = _checkSoggetto_ruoloInUsoInPorteApplicative(con, tipoDB, normalizeObjectIds,
+					boolean isInUsoRuoli = _checkSoggetto_ruoloInUsoInPorteApplicative(con, tipoDB, normalizeObjectIds,
 							CostantiDB.PORTE_APPLICATIVE_RUOLI,
 							listRuoliSoggetti,
 							ruoliPA_mapping_list, ruoliPA_list,
 							ruoliPA_mapping_list, ruoliPA_list);
+					if(isInUsoRuoli) {
+						isInUso = true;
+					}
 
-					isInUso = _checkSoggetto_ruoloInUsoInPorteApplicative(con, tipoDB, normalizeObjectIds,
+					boolean isInUsoRuoliToken = _checkSoggetto_ruoloInUsoInPorteApplicative(con, tipoDB, normalizeObjectIds,
 							CostantiDB.PORTE_APPLICATIVE_TOKEN_RUOLI,
 							listRuoliSoggetti,
 							ruoliTokenPA_mapping_list, ruoliTokenPA_list,
 							ruoliTokenPA_mapping_modi_list, ruoliTokenPA_modi_list);
+					if(isInUsoRuoliToken) {
+						isInUso = true;
+					}
 					
 				}
 			}
@@ -7002,18 +7008,23 @@ public class DBOggettiInUsoUtils  {
 							listRuoliSA,
 							ruoliTokenPD_mapping_list, ruoliTokenPD_list);
 									
-			
-					isInUso = _checkServizioApplicativo_ruoloInUsoInPorteApplicative(con, tipoDB, normalizeObjectIds,
+					boolean isInUsoRuoli = _checkServizioApplicativo_ruoloInUsoInPorteApplicative(con, tipoDB, normalizeObjectIds,
 							CostantiDB.PORTE_APPLICATIVE_RUOLI,
 							listRuoliSA,
 							ruoliPA_mapping_list, ruoliPA_list,
 							ruoliPA_mapping_list, ruoliPA_list);
+					if(isInUsoRuoli) {
+						isInUso = true;
+					}
 					
-					isInUso = _checkServizioApplicativo_ruoloInUsoInPorteApplicative(con, tipoDB, normalizeObjectIds,
+					boolean isInUsoRuoliToken = _checkServizioApplicativo_ruoloInUsoInPorteApplicative(con, tipoDB, normalizeObjectIds,
 							CostantiDB.PORTE_APPLICATIVE_TOKEN_RUOLI,
 							listRuoliSA,
 							ruoliTokenPA_mapping_list, ruoliTokenPA_list,
 							ruoliTokenPA_mapping_modi_list, ruoliTokenPA_modi_list);
+					if(isInUsoRuoliToken) {
+						isInUso = true;
+					}
 				}
 			}
 			
