@@ -83,7 +83,7 @@ public abstract class AbstractFSRecovery {
 						if(this.debug)
 							this.log.info("Inserimento del file ["+file.getName()+"] completato con successo");
 						countProcessatiCorrettamente++;
-					} catch(Exception e) {
+					} catch(Throwable e) {
 	
 						if(this.debug)
 							this.log.warn("Errore durante l'inserimento del file ["+file.getName()+"] rinomino il file:"+e.getMessage(), e);

@@ -84,7 +84,7 @@ public class FSRecoveryFileUtils {
 		}
 	}
 	
-	public static String renameToDLQ(File directoryDLQ, File file, Exception e, Logger log) throws Exception {
+	public static String renameToDLQ(File directoryDLQ, File file, Throwable e, Logger log) throws Exception {
 		ByteArrayOutputStream baos = null;
 		PrintWriter pw = null;
 		try{
