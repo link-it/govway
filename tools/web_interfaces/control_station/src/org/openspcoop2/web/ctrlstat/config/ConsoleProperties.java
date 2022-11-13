@@ -487,6 +487,16 @@ public class ConsoleProperties {
 	public boolean isApplicativiCredenzialiBasicCheckUniqueUsePassword() throws UtilsException{
 		return this.readBooleanProperty(true, "applicativi.credenzialiBasic.checkUnique.usePassword");
 	}
+	
+	public boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials() throws UtilsException{
+		return this.readBooleanProperty(true, "soggettiApplicativi.credenzialiBasic.permitSameCredentials");
+	}
+	public boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentials() throws UtilsException{
+		return this.readBooleanProperty(true, "soggettiApplicativi.credenzialiSsl.permitSameCredentials");
+	}
+	public boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials() throws UtilsException{
+		return this.readBooleanProperty(true, "soggettiApplicativi.credenzialiPrincipal.permitSameCredentials");
+	}
 
 	public boolean isConnettoriAllTypesEnabled() throws UtilsException{
 		return this.readBooleanProperty(true, "connettori.allTypes.enabled");

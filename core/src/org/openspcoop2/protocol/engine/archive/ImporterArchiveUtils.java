@@ -205,7 +205,10 @@ public class ImporterArchiveUtils {
 	public ArchiveEsitoImport importArchive(Archive archive, String userLogin,
 			boolean utilizzoAzioniDiretteInAccordoAbilitato,
 			boolean isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto,
-			boolean isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto) throws Exception,ImportInformationMissingException{
+			boolean isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto,
+			boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials,
+			boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentials,
+			boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials) throws Exception,ImportInformationMissingException{
 		try{
 			
 			ArchiveEsitoImport esito = new ArchiveEsitoImport();
@@ -347,7 +350,10 @@ public class ImporterArchiveUtils {
 				ArchiveSoggetto archiveSoggetto = archive.getSoggetti().get(i);
 				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveSoggetto);
 				try{
-					this.importSoggetto(archiveSoggetto, detail);
+					this.importSoggetto(archiveSoggetto, detail,
+							isSoggettiApplicativiCredenzialiBasicPermitSameCredentials,
+							isSoggettiApplicativiCredenzialiSslPermitSameCredentials,
+							isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials);
 				}catch(Exception e){
 					detail.setState(ArchiveStatoImport.ERROR);
 					detail.setException(e);
@@ -362,7 +368,10 @@ public class ImporterArchiveUtils {
 				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveServizioApplicativo);
 				try{
 					archiveServizioApplicativo.update();
-					this.importServizioApplicativo(archiveServizioApplicativo, detail);
+					this.importServizioApplicativo(archiveServizioApplicativo, detail,
+							isSoggettiApplicativiCredenzialiBasicPermitSameCredentials,
+							isSoggettiApplicativiCredenzialiSslPermitSameCredentials,
+							isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials);
 				}catch(Exception e){
 					detail.setState(ArchiveStatoImport.ERROR);
 					detail.setException(e);
@@ -1135,7 +1144,10 @@ public class ImporterArchiveUtils {
 	
 	
 	
-	public void importSoggetto(ArchiveSoggetto archiveSoggetto,ArchiveEsitoImportDetail detail){
+	public void importSoggetto(ArchiveSoggetto archiveSoggetto,ArchiveEsitoImportDetail detail,
+			boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials,
+			boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentials,
+			boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials){
 		
 		IDSoggetto idSoggetto = archiveSoggetto.getIdSoggetto();
 		IProtocolFactory<?> protocolFactory = null;
@@ -1197,11 +1209,15 @@ public class ImporterArchiveUtils {
 						org.openspcoop2.core.registry.constants.CredenzialeTipo tipo = credenziali.getTipo();
 						if(tipo!=null) {
 							Soggetto soggettoFound = null;
+							ServizioApplicativo saFound = null;
 							String c = null;
 							switch (tipo) {
 							case BASIC:
 								soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiBasic(credenziali.getUser());
 								c = credenziali.getUser();
+								if(!isSoggettiApplicativiCredenzialiBasicPermitSameCredentials) {
+									saFound = this.importerEngine.getServizioApplicativoCredenzialiBasic(credenziali.getUser());
+								}
 								break;
 							case APIKEY:
 								soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiApiKey(credenziali.getUser(), credenziali.isAppId());
@@ -1211,15 +1227,24 @@ public class ImporterArchiveUtils {
 								if(credenziali.getCertificate()!=null && credenziali.getCertificate().length>0) {
 									soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiSsl(credenziali.getCertificate(), credenziali.isCertificateStrictVerification());
 									c = "X.509";
+									if(!isSoggettiApplicativiCredenzialiSslPermitSameCredentials) {
+										saFound = this.importerEngine.getServizioApplicativoCredenzialiSsl(credenziali.getCertificate(), credenziali.isCertificateStrictVerification());
+									}
 								}
 								else {
 									soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiSsl(credenziali.getSubject(), credenziali.getIssuer());
 									c = credenziali.getSubject();
+									if(!isSoggettiApplicativiCredenzialiSslPermitSameCredentials) {
+										saFound = this.importerEngine.getServizioApplicativoCredenzialiSsl(credenziali.getSubject(), credenziali.getIssuer());
+									}
 								}
 								break;
 							case PRINCIPAL:
 								soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiPrincipal(credenziali.getUser());
 								c = credenziali.getUser();
+								if(!isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials) {
+									saFound = this.importerEngine.getServizioApplicativoCredenzialiPrincipal(credenziali.getUser());
+								}
 								break;
 							}
 							if(soggettoFound!=null) {
@@ -1228,6 +1253,10 @@ public class ImporterArchiveUtils {
 								if(!equalsForUpdate) {
 									throw new Exception("Le credenziali '"+tipo+"' ("+c+") risultano già associate al soggetto '"+idSoggettoFound+"'");
 								}
+							}
+							if(saFound!=null) {
+								IDSoggetto idSoggettoSaFound =  new IDSoggetto(saFound.getTipoSoggettoProprietario(), saFound.getNomeSoggettoProprietario());
+								throw new Exception("Le credenziali '"+tipo+"' ("+c+") risultano già associate all'applicativo '"+saFound.getNome()+"' appartenente al soggetto '"+idSoggettoSaFound+"'");
 							}
 						}
 					}
@@ -1398,7 +1427,10 @@ public class ImporterArchiveUtils {
 	
 	
 	public void importServizioApplicativo(ArchiveServizioApplicativo archiveServizioApplicativo,
-			ArchiveEsitoImportDetail detail){
+			ArchiveEsitoImportDetail detail,
+			boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials,
+			boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentials,
+			boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials){
 		
 		IDServizioApplicativo idServizioApplicativo = archiveServizioApplicativo.getIdServizioApplicativo();
 		IDSoggetto idSoggettoProprietario = archiveServizioApplicativo.getIdSoggettoProprietario();
@@ -1440,11 +1472,15 @@ public class ImporterArchiveUtils {
 					org.openspcoop2.core.config.constants.CredenzialeTipo tipo = credenziali.getTipo();
 					if(tipo!=null) {
 						ServizioApplicativo saFound = null;
+						Soggetto soggettoFound = null;
 						String c = null;
 						switch (tipo) {
 						case BASIC:
 							saFound = this.importerEngine.getServizioApplicativoCredenzialiBasic(credenziali.getUser());
 							c = credenziali.getUser();
+							if(!isSoggettiApplicativiCredenzialiBasicPermitSameCredentials) {
+								soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiBasic(credenziali.getUser());
+							}
 							break;
 						case APIKEY:
 							saFound = this.importerEngine.getServizioApplicativoCredenzialiApiKey(credenziali.getUser(), credenziali.isAppId());
@@ -1454,15 +1490,24 @@ public class ImporterArchiveUtils {
 							if(credenziali.getCertificate()!=null && credenziali.getCertificate().length>0) {
 								saFound = this.importerEngine.getServizioApplicativoCredenzialiSsl(credenziali.getCertificate(), credenziali.isCertificateStrictVerification());
 								c = "X.509";
+								if(!isSoggettiApplicativiCredenzialiSslPermitSameCredentials) {
+									soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiSsl(credenziali.getCertificate(), credenziali.isCertificateStrictVerification());
+								}
 							}
 							else {
 								saFound = this.importerEngine.getServizioApplicativoCredenzialiSsl(credenziali.getSubject(), credenziali.getIssuer());
 								c = credenziali.getSubject();
+								if(!isSoggettiApplicativiCredenzialiSslPermitSameCredentials) {
+									soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiSsl(credenziali.getSubject(), credenziali.getIssuer());
+								}
 							}
 							break;
 						case PRINCIPAL:
 							saFound = this.importerEngine.getServizioApplicativoCredenzialiPrincipal(credenziali.getUser());
 							c = credenziali.getUser();
+							if(!isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials) {
+								soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiPrincipal(credenziali.getUser());
+							}
 							break;
 						case TOKEN:
 							saFound = this.importerEngine.getServizioApplicativoCredenzialiToken(credenziali.getTokenPolicy(), credenziali.getUser());
@@ -1475,6 +1520,10 @@ public class ImporterArchiveUtils {
 							if(!equalsForUpdate) {
 								throw new Exception("Le credenziali '"+tipo+"' ("+c+") risultano già associate all'applicativo '"+saFound.getNome()+"' appartenente al soggetto '"+idSoggettoProprietarioFound+"'");
 							}
+						}
+						if(soggettoFound!=null) {
+							IDSoggetto idSoggettoFound =  new IDSoggetto(soggettoFound.getTipo(), soggettoFound.getNome());
+							throw new Exception("Le credenziali '"+tipo+"' ("+c+") risultano già associate al soggetto '"+idSoggettoFound+"'");
 						}
 					}
 				}

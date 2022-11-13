@@ -193,6 +193,16 @@ public class ServerProperties  {
 		return Boolean.parseBoolean(this.readProperty(true, "updateInterfacciaApi.deleteIfNotFound"));
 	}
 	
+	public boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials() throws UtilsException {
+		return Boolean.parseBoolean(this.readProperty(true, "soggettiApplicativi.credenzialiBasic.permitSameCredentials"));
+	}
+	public boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentials() throws UtilsException {
+		return Boolean.parseBoolean(this.readProperty(true, "soggettiApplicativi.credenzialiSsl.permitSameCredentials"));
+	}
+	public boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials() throws UtilsException {
+		return Boolean.parseBoolean(this.readProperty(true, "soggettiApplicativi.credenzialiPrincipal.permitSameCredentials"));
+	}
+	
 	public Properties getApiYamlSnakeLimits() throws UtilsException{
 
 		String pName = "api.yaml.snakeLimits";

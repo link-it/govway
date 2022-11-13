@@ -1,3 +1,9 @@
+2022-11-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, ApiRsConfigurazione]
+	Aggiunta funzionalità OP-1487
+	L'associazione di credenziali di tipo basic/ssl/principal ai soggetti e agli applicativi viene adesso effettuata controllando l'univocità su entrambi.
+
 2022-11-11  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloSPCoop]

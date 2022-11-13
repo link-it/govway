@@ -226,7 +226,10 @@ public class ArchiviCore extends ControlStationCore {
 			ArchiveEsitoImport esito = importerArchiveUtils.importArchive(archive, userLogin, 
 					this.isShowAccordiColonnaAzioni(),
 					this.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto(), 
-					this.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto());
+					this.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto(),
+					this.isSoggettiApplicativiCredenzialiBasicPermitSameCredentials(),
+					this.isSoggettiApplicativiCredenzialiSslPermitSameCredentials(),
+					this.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials());
 			
 			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
 			IArchive archiveEngine = pf.createArchive();

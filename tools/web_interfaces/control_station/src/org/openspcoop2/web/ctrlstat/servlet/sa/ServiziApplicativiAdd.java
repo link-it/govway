@@ -269,7 +269,7 @@ public final class ServiziApplicativiAdd extends Action {
 			String tokenClientIdSA = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
 			
 			boolean tokenWithHttpsEnabledByConfigSA = false;
-			if(tipoauthSA!=null && !StringUtils.isEmpty(tokenPolicySA)) {
+			if(tipoauthSA!=null && !StringUtils.isEmpty(tipoauthSA)) {
 				boolean tokenByPDND = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND.equals(tipoauthSA) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_PDND.equals(tipoauthSA);
 				tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND.equals(tipoauthSA) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_OAUTH.equals(tipoauthSA);
 				if(tokenWithHttpsEnabledByConfigSA) {

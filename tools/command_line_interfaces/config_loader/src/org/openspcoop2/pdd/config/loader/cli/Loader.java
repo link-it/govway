@@ -124,6 +124,9 @@ public class Loader {
 			boolean importConfig = loaderProperties.isConfigurazioneGenerale_enable();
 			boolean isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto = loaderProperties.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto();
 			boolean isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto = loaderProperties.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto();
+			boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials = loaderProperties.isSoggettiApplicativiCredenzialiBasicPermitSameCredentials();
+			boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentials = loaderProperties.isSoggettiApplicativiCredenzialiSslPermitSameCredentials();
+			boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials = loaderProperties.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials();
 			CryptConfig utenzeCryptConfig = new CryptConfig(loaderProperties.getUtenze_password());
 			CryptConfig applicativiCryptConfig = new CryptConfig(loaderProperties.getApplicativi_password());
 			int applicativi_api_key_passwordGenerated_length=loaderProperties.getApplicativi_apiKey_passwordGenerated_length();
@@ -367,7 +370,10 @@ public class Loader {
 				ArchiveEsitoImport esitoImport = importerArchiveUtils.importArchive(archive, userLogin, 
 						isShowAccordiColonnaAzioni,
 						isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto, 
-						isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto);
+						isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto,
+						isSoggettiApplicativiCredenzialiBasicPermitSameCredentials,
+						isSoggettiApplicativiCredenzialiSslPermitSameCredentials,
+						isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials);
 				
 				esito = archiveEngine.toString(esitoImport, mode);
 				

@@ -90,6 +90,9 @@ public class Importer {
 		boolean isShowAccordiColonnaAzioni = true;
 		boolean isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto = false;
 		boolean isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto = false;
+		boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials = false;
+		boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentials = false;
+		boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials = false;
 		
 		// Inizializzazione ProtocolFactoryManager
 		ConfigurazionePdD configPdD = new ConfigurazionePdD();
@@ -137,7 +140,10 @@ public class Importer {
 		ArchiveEsitoImport result = importerArchiveUtils.importArchive(archive, userLogin, 
 				isShowAccordiColonnaAzioni,
 				isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto, 
-				isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto);
+				isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto,
+				isSoggettiApplicativiCredenzialiBasicPermitSameCredentials,
+				isSoggettiApplicativiCredenzialiSslPermitSameCredentials,
+				isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials);
 		String resultAsString = archiveEngine.toString(result, archiveMode);
 		log.info(resultAsString);
 		

@@ -974,11 +974,51 @@ public class ControlStationCore {
 	/** Credenziali Basic */
 	private boolean isSoggettiCredenzialiBasicCheckUniqueUsePassword;
 	private boolean isApplicativiCredenzialiBasicCheckUniqueUsePassword;
+	private static Boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials_apiMode;
+	public static void setIsSoggettiApplicativiCredenzialiBasicPermitSameCredentials_apiMode(
+			Boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials_apiMode) {
+		ControlStationCore.isSoggettiApplicativiCredenzialiBasicPermitSameCredentials_apiMode = isSoggettiApplicativiCredenzialiBasicPermitSameCredentials_apiMode;
+	}
+	private boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials;
 	public boolean isSoggettiCredenzialiBasicCheckUniqueUsePassword() {
 		return this.isSoggettiCredenzialiBasicCheckUniqueUsePassword;
 	}
 	public boolean isApplicativiCredenzialiBasicCheckUniqueUsePassword() {
 		return this.isApplicativiCredenzialiBasicCheckUniqueUsePassword;
+	}
+	public boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials() {
+		if(ControlStationCore.isAPIMode() && isSoggettiApplicativiCredenzialiBasicPermitSameCredentials_apiMode!=null) {
+			return isSoggettiApplicativiCredenzialiBasicPermitSameCredentials_apiMode;
+		}
+		return this.isSoggettiApplicativiCredenzialiBasicPermitSameCredentials;
+	}
+	
+	/** Credenziali Ssl */
+	private static Boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentials_apiMode;
+	public static void setIsSoggettiApplicativiCredenzialiSslPermitSameCredentials_apiMode(
+			Boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentials_apiMode) {
+		ControlStationCore.isSoggettiApplicativiCredenzialiSslPermitSameCredentials_apiMode = isSoggettiApplicativiCredenzialiSslPermitSameCredentials_apiMode;
+	}
+	private boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentials;
+	public boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentials() {
+		if(ControlStationCore.isAPIMode() && isSoggettiApplicativiCredenzialiSslPermitSameCredentials_apiMode!=null) {
+			return isSoggettiApplicativiCredenzialiSslPermitSameCredentials_apiMode;
+		}
+		return this.isSoggettiApplicativiCredenzialiSslPermitSameCredentials;
+	}
+	
+	/** Credenziali Principal */
+	private static Boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials_apiMode;
+	public static void setIsSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials_apiMode(
+			Boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials_apiMode) {
+		ControlStationCore.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials_apiMode = isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials_apiMode;
+	}
+	private boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials;
+	public boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials() {
+		if(ControlStationCore.isAPIMode() && isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials_apiMode!=null) {
+			return isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials_apiMode;
+		}
+		return this.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials;
 	}
 	
 	/** Connettori */
@@ -2433,6 +2473,13 @@ public class ControlStationCore {
 		/** Credenziali Basic */
 		this.isSoggettiCredenzialiBasicCheckUniqueUsePassword = core.isSoggettiCredenzialiBasicCheckUniqueUsePassword;
 		this.isApplicativiCredenzialiBasicCheckUniqueUsePassword = core.isApplicativiCredenzialiBasicCheckUniqueUsePassword;
+		this.isSoggettiApplicativiCredenzialiBasicPermitSameCredentials = core.isSoggettiApplicativiCredenzialiBasicPermitSameCredentials;
+		
+		/** Credenziali Ssl */
+		this.isSoggettiApplicativiCredenzialiSslPermitSameCredentials = core.isSoggettiApplicativiCredenzialiSslPermitSameCredentials;
+		
+		/** Credenziali Principal */
+		this.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials = core.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials;
 
 		/** Connettori */
 		this.isConnettoriAllTypesEnabled = core.isConnettoriAllTypesEnabled;
@@ -2868,6 +2915,9 @@ public class ControlStationCore {
 			this.messageEngines = consoleProperties.getMessageEngines();
 			this.isSoggettiCredenzialiBasicCheckUniqueUsePassword = consoleProperties.isSoggettiCredenzialiBasicCheckUniqueUsePassword();
 			this.isApplicativiCredenzialiBasicCheckUniqueUsePassword = consoleProperties.isApplicativiCredenzialiBasicCheckUniqueUsePassword();
+			this.isSoggettiApplicativiCredenzialiBasicPermitSameCredentials = consoleProperties.isSoggettiApplicativiCredenzialiBasicPermitSameCredentials();
+			this.isSoggettiApplicativiCredenzialiSslPermitSameCredentials = consoleProperties.isSoggettiApplicativiCredenzialiSslPermitSameCredentials();
+			this.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials = consoleProperties.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials();
 			this.isConnettoriAllTypesEnabled = consoleProperties.isConnettoriAllTypesEnabled();
 			this.isConnettoriMultipliEnabled = consoleProperties.isConnettoriMultipliEnabled();
 			this.isConnettoriMultipliConsegnaCondizionaleStessFiltroPermesso = consoleProperties.isConnettoriMultipliConsegnaCondizionaleStessFiltroPermesso();

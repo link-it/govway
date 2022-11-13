@@ -184,6 +184,10 @@ public class Startup implements ServletContextListener {
 					YamlSnakeLimits.initialize(Startup.log, yamlSnakeLimits);
 				}
 				
+				ControlStationCore.setIsSoggettiApplicativiCredenzialiBasicPermitSameCredentials_apiMode(serverProperties.isSoggettiApplicativiCredenzialiBasicPermitSameCredentials());
+				ControlStationCore.setIsSoggettiApplicativiCredenzialiSslPermitSameCredentials_apiMode(serverProperties.isSoggettiApplicativiCredenzialiSslPermitSameCredentials());
+				ControlStationCore.setIsSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials_apiMode(serverProperties.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials());
+				
 			} catch (Exception e) {
 				throw new RuntimeException(e.getMessage(),e);
 			}

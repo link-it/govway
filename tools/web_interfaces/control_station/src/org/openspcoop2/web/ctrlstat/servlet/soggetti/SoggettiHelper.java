@@ -30,11 +30,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -984,6 +987,28 @@ public class SoggettiHelper extends ConnettoriHelper {
 					return false;
 				}
 				
+				if(!this.soggettiCore.isSoggettiApplicativiCredenzialiBasicPermitSameCredentials()) {
+					// Verifico applicativi
+					
+					// recupera lista servizi applicativi con stesse credenziali
+					boolean checkPasswordSA = this.saCore.isApplicativiCredenzialiBasicCheckUniqueUsePassword(); // la password non viene utilizzata per riconoscere se l'username e' già utilizzato.
+					List<ServizioApplicativo> saList = this.saCore.servizioApplicativoWithCredenzialiBasicList(utente, password, checkPasswordSA);
+					
+					for (int i = 0; i < saList.size(); ) {
+						ServizioApplicativo sa = saList.get(i);
+
+						// Messaggio di errore
+						String labelSoggettoGiaEsistente = this.getLabelNomeSoggetto(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+						if(sa.getTipo()!=null && StringUtils.isNotEmpty(sa.getTipo())) {
+							this.pd.setMessage("L'applicativo "+sa.getNome()+" (soggetto: "+labelSoggettoGiaEsistente+") possiede già l'utente (http-basic) indicato");
+						}
+						else {
+							this.pd.setMessage("L'erogazione "+sa.getNome()+" possiede già l'utente (http-basic) indicato per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
+						}
+						return false; // ne basta uno
+					}
+				}
+				
 			} 
 			else if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_APIKEY)) {
 				// Univocita garantita dal meccanismo di generazione delle chiavi
@@ -1025,6 +1050,9 @@ public class SoggettiHelper extends ConnettoriHelper {
 				String details = "";
 				Soggetto soggettoAutenticato = null;
 				String tipoSsl = null;
+				Certificate cSelezionato = null;
+				boolean strictVerifier = false;
+				
 				if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE)) { 
 			
 					// recupero soggetto con stesse credenziali
@@ -1035,7 +1063,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 					
 					BinaryParameter tipoCredenzialiSSLFileCertificato = this.getBinaryParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO);
 					String tipoCredenzialiSSLVerificaTuttiICampi = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
-					boolean strictVerifier = ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi);
+					strictVerifier = ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi);
 					String tipoCredenzialiSSLTipoArchivioS = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO);
 					String tipoCredenzialiSSLFileCertificatoPassword = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
 					String tipoCredenzialiSSLAliasCertificato = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO);
@@ -1048,7 +1076,6 @@ public class SoggettiHelper extends ConnettoriHelper {
 					} else {
 						tipoCredenzialiSSLTipoArchivio = org.openspcoop2.utils.certificate.ArchiveType.valueOf(tipoCredenzialiSSLTipoArchivioS);
 					}
-					Certificate cSelezionato = null;
 					byte [] archivio = tipoCredenzialiSSLFileCertificato.getValue();
 					if(TipoOperazione.CHANGE.equals(tipoOp) && archivio==null) {
 						archivio = soggettoOld.getCredenziali(0).getCertificate();
@@ -1085,6 +1112,56 @@ public class SoggettiHelper extends ConnettoriHelper {
 					this.pd.setMessage("Il soggetto "+labelSoggettoAutenticato+" possiede già le credenziali ssl ("+tipoSsl+") indicate."+details);
 					return false;
 				}
+				
+				if(!this.soggettiCore.isSoggettiApplicativiCredenzialiSslPermitSameCredentials()) {
+					// Verifico applicativi
+					
+					details = "";
+					List<ServizioApplicativo> saList = null;
+					tipoSsl = null;
+					
+					if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE)) { 
+						saList = this.saCore.servizioApplicativoWithCredenzialiSslList(subject,issuer);
+						tipoSsl = "subject/issuer";
+					}
+					else {
+						
+						saList = this.saCore.servizioApplicativoWithCredenzialiSslList(cSelezionato.getCertificate(), strictVerifier);
+						if(!strictVerifier && saList!=null && saList.size()>0) {
+							List<ServizioApplicativo> saListCheck = this.saCore.servizioApplicativoWithCredenzialiSslList(cSelezionato.getCertificate(), true);
+							if(saListCheck==null || saListCheck.isEmpty() ) {
+								details=ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_DETAILS;
+							}
+						}
+						tipoSsl = "certificato";
+						
+					}
+					
+					if(saList!=null) {
+						for (int i = 0; i < saList.size(); i++) {
+							ServizioApplicativo sa = saList.get(i);
+				
+							boolean tokenWithHttpsEnabledByConfigSA = false;
+							if(sa.getInvocazionePorta()!=null && sa.getInvocazionePorta().sizeCredenzialiList()>0) {
+								Credenziali c = sa.getInvocazionePorta().getCredenziali(0);
+								if(c!=null && c.getTokenPolicy()!=null && StringUtils.isNotEmpty(c.getTokenPolicy())) {
+									// se entro in questa servlet sono sicuramente con credenziale ssl, se esiste anche token policy abbiamo la combo
+									tokenWithHttpsEnabledByConfigSA = true;
+								}
+							}
+							
+							if(!tokenWithHttpsEnabledByConfigSA) {  // se e' abilitato il token non deve essere controllata l'univocita' del certificato
+							
+								// Raccolgo informazioni soggetto
+								// Messaggio di errore
+								String labelSoggettoApplicativo = this.getLabelNomeSoggetto(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+								this.pd.setMessage("L'applicativo "+sa.getNome()+" (soggetto: "+labelSoggettoApplicativo+") possiede già le credenziali ssl ("+tipoSsl+") indicate."+details);
+								return false; 
+								
+							}
+						}
+					}
+				}
 			}
 			else if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL)) {
 				// recupero soggetto con stesse credenziali
@@ -1101,6 +1178,21 @@ public class SoggettiHelper extends ConnettoriHelper {
 					String labelSoggettoAutenticato = this.getLabelNomeSoggetto(new IDSoggetto(soggettoAutenticato.getTipo(), soggettoAutenticato.getNome()));
 					this.pd.setMessage("Il soggetto "+labelSoggettoAutenticato+" possiede già il principal indicato");
 					return false;
+				}
+				
+				if(!this.soggettiCore.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials()) {
+					// Verifico applicativi
+					
+					List<ServizioApplicativo> saList = this.saCore.servizioApplicativoWithCredenzialiPrincipalList(principal);
+
+					for (int i = 0; i < saList.size(); ) {
+						ServizioApplicativo sa = saList.get(i);
+
+						// Messaggio di errore
+						String labelSoggettoApplicativo = this.getLabelNomeSoggetto(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+						this.pd.setMessage("L'applicativo "+sa.getNome()+" (soggetto: "+labelSoggettoApplicativo+") possiede già il principal indicato");
+						return false; // ne basta uno
+					}
 				}
 			} 
 			
@@ -2268,6 +2360,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			Soggetto soggettoAutenticato = null;
 			String tipoSsl = null;
 			Certificate cSelezionato = null;
+			boolean strictVerifier = false;
 			List<org.openspcoop2.core.registry.Soggetto> soggettiAutenticati = null;
 			if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE)) { 
 		
@@ -2279,7 +2372,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				
 				BinaryParameter tipoCredenzialiSSLFileCertificato = this.getBinaryParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO);
 				String tipoCredenzialiSSLVerificaTuttiICampi = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_VERIFICA_TUTTI_CAMPI);
-				boolean strictVerifier = ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi);
+				strictVerifier = ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLVerificaTuttiICampi);
 				String tipoCredenzialiSSLTipoArchivioS = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO);
 				String tipoCredenzialiSSLFileCertificatoPassword = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
 				String tipoCredenzialiSSLAliasCertificato = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO);
@@ -2329,6 +2422,58 @@ public class SoggettiHelper extends ConnettoriHelper {
 				return false;
 			}
 			
+			
+			if(!this.soggettiCore.isSoggettiApplicativiCredenzialiSslPermitSameCredentials()) {
+				// Verifico applicativi
+			
+				details = "";
+				List<ServizioApplicativo> saList = null;
+				tipoSsl = null;
+				if(tipoCredenzialiSSLSorgente.equals(ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE)) {
+					saList = this.saCore.servizioApplicativoWithCredenzialiSslList(subject,issuer);
+					tipoSsl = "subject/issuer";
+				}
+				else {
+					
+					saList = this.saCore.servizioApplicativoWithCredenzialiSslList(cSelezionato.getCertificate(), strictVerifier);
+					if(!strictVerifier && saList!=null && saList.size()>0) {
+						List<ServizioApplicativo> saListCheck = this.saCore.servizioApplicativoWithCredenzialiSslList(cSelezionato.getCertificate(), true);
+						if(saListCheck==null || saListCheck.isEmpty() ) {
+							details=ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_DETAILS;
+						}
+					}
+					tipoSsl = "certificato";
+					
+				}
+				
+				if(saList!=null) {
+					for (int i = 0; i < saList.size(); i++) {
+						ServizioApplicativo sa = saList.get(i);
+		
+						boolean tokenWithHttpsEnabledByConfigSA = false;
+						if(sa.getInvocazionePorta()!=null && sa.getInvocazionePorta().sizeCredenzialiList()>0) {
+							Credenziali c = sa.getInvocazionePorta().getCredenziali(0);
+							if(c!=null && c.getTokenPolicy()!=null && StringUtils.isNotEmpty(c.getTokenPolicy())) {
+								// se entro in questa servlet sono sicuramente con credenziale ssl, se esiste anche token policy abbiamo la combo
+								tokenWithHttpsEnabledByConfigSA = true;
+							}
+						}
+						
+						if(!tokenWithHttpsEnabledByConfigSA) {  // se e' abilitato il token non deve essere controllata l'univocita' del certificato
+							// Raccolgo informazioni soggetto
+							// Messaggio di errore
+							String labelSoggetto = this.getLabelNomeSoggetto(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+							this.pd.setMessage("L'applicativo "+sa.getNome()+" (soggetto: "+labelSoggetto+") possiede già le credenziali ssl ("+tipoSsl+") indicate."+details);
+							return false;	
+						}
+						
+					}
+				}
+			}
+			
+			
+			
+			// Verifico che non sia già associato al soggetto
 			
 			String actionConfirm = this.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 			boolean promuoviInCorso = false;

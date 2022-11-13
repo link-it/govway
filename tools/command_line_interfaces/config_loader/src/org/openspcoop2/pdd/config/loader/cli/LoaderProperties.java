@@ -64,6 +64,10 @@ public class LoaderProperties {
 	private boolean isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto;
 	private boolean isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto;
 	
+	private boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials;
+	private boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentials;
+	private boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials;
+
 	private String utente = null;
 		
 	private String utenze_password = null;
@@ -103,6 +107,10 @@ public class LoaderProperties {
 		
 		this.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto = this.getBooleanProperty(props, "accordi.implementazioneUnicaPerSoggetto", true);
 		this.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto = this.getBooleanProperty(props, "accordi.portType.implementazioneUnicaPerSoggetto", true);
+		
+		this.isSoggettiApplicativiCredenzialiBasicPermitSameCredentials = this.getBooleanProperty(props, "soggettiApplicativi.credenzialiBasic.permitSameCredentials", true);
+		this.isSoggettiApplicativiCredenzialiSslPermitSameCredentials = this.getBooleanProperty(props, "soggettiApplicativi.credenzialiSsl.permitSameCredentials", true);
+		this.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials = this.getBooleanProperty(props, "soggettiApplicativi.credenzialiPrincipal.permitSameCredentials", true);
 		
 		this.utenze_password = this.getProperty(props, "utenze.password", true);
 
@@ -187,6 +195,16 @@ public class LoaderProperties {
 	}
 	public boolean isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto() {
 		return this.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto;
+	}
+	
+	public boolean isSoggettiApplicativiCredenzialiBasicPermitSameCredentials() {
+		return this.isSoggettiApplicativiCredenzialiBasicPermitSameCredentials;
+	}
+	public boolean isSoggettiApplicativiCredenzialiSslPermitSameCredentials() {
+		return this.isSoggettiApplicativiCredenzialiSslPermitSameCredentials;
+	}
+	public boolean isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials() {
+		return this.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials;
 	}
 	
 	public String getUtente() {

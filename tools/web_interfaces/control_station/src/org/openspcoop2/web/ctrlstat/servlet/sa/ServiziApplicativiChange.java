@@ -282,7 +282,7 @@ public final class ServiziApplicativiChange extends Action {
 			boolean tokenWithHttpsEnabledByConfigSA = false;
 			boolean tokenByPDND = false;
 			boolean tokenModiPDNDOauth = false;
-			if(tipoauthSA!=null && !StringUtils.isEmpty(tokenPolicySA)) {
+			if(tipoauthSA!=null && !StringUtils.isEmpty(tipoauthSA)) {
 				tokenByPDND = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND.equals(tipoauthSA) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_TOKEN_PDND.equals(tipoauthSA);
 				tokenWithHttpsEnabledByConfigSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_PDND.equals(tipoauthSA) || ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL_E_TOKEN_OAUTH.equals(tipoauthSA);
 				if(tokenWithHttpsEnabledByConfigSA) {
