@@ -52,7 +52,7 @@
 		<a4j:loadStyle src="resource:///css/shCore.css" />
 		<a4j:loadStyle src="resource:///css/shThemeDefault.css" />
 		<a4j:outputPanel id="panelJsonTokenInfo" rendered="#{not empty dettagliBean.dettaglio.tokenInfo}">	
-			<script type="text/javascript">
+			<script type="text/javascript" nonce="#{_csp_random_nonce}">
 			//<![CDATA[
 				if(#{dettagliBean.visualizzaTokenInfo}){
 				   var xmlPnl = jQuery("#jsonPnl"); 
@@ -74,9 +74,10 @@
 				<f:facet name="header">
 					<h:outputText id="outXmlFaultIntegrazione" value="#{dettagliBean.attributeInfo ? msg['commons.attributi.label'] : msg['commons.tokenInfo.label']}"/>
 				</f:facet>
-				<a4j:outputPanel layout="block" style="margin: 0px 0px 16px 0px; padding: 0px 0px 24px 0px;">	
+				<a4j:outputPanel layout="block" styleClass="tokenInfoFormPnl">	
 					<h:form id="formTokenInfo">
-						<a4j:outputPanel layout="block" style="height: 350px; overflow-y: scroll;" id="jsonPnl2" rendered="#{dettagliBean.visualizzaTokenInfo}">
+						<input type="hidden" id="_csrfFormTokenInfo" name="_csrf" value="#{loginBean.csrf}"/>
+						<a4j:outputPanel layout="block" styleClass="height-350 overflow-y-scroll" id="jsonPnl2" rendered="#{dettagliBean.visualizzaTokenInfo}">
 							<pre class="brush: json; toolbar: false;">#{dettagliBean.prettyTokenInfo}</pre>
 						</a4j:outputPanel>
 						<a4j:outputPanel layout="block" styleClass="buttonrow" rendered="#{not empty dettagliBean.dettaglio.tokenInfo}">

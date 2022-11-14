@@ -94,9 +94,9 @@ if(params == null) params="";
 
 GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
 PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
-
+String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 %>
-<script type="text/javascript">
+<script type="text/javascript" nonce="<%= randomNonce %>">
 var destElement;
 console.log("Windows HASH:");
 console.log(window.location.hash);
@@ -119,7 +119,7 @@ if(browsername != null){
 		// fix ie10
 		%>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<script type="text/javascript">
+		<script type="text/javascript" nonce="<%= randomNonce %>">
 			window.location.hash="no-back-button";
 			window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
 			window.onhashchange=function(){window.location.hash="no-back-button";}
@@ -128,7 +128,7 @@ if(browsername != null){
 	
 	} else if(browsername.equalsIgnoreCase("Firefox")){ // Firefox
 			%>
-			<script type="text/javascript">
+			<script type="text/javascript" nonce="<%= randomNonce %>">
 				window.location.hash="no-back-button";
 				window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
 				window.onhashchange=function(){window.location.hash="no-back-button";}
@@ -136,14 +136,14 @@ if(browsername != null){
 			<%
 	} else if(browsername.equalsIgnoreCase("Chrome")){ // Chrome
 		%>
-		<script type="text/javascript">
+		<script type="text/javascript" nonce="<%= randomNonce %>">
 	  	  window.history.forward();
 	   	 function noBack() { window.history.forward(); }
 		</script>
 		<%
 	} else{
 		%>
-		<script type="text/javascript">
+		<script type="text/javascript" nonce="<%= randomNonce %>">
 			window.location.hash="no-back-button";
 			window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
 			window.onhashchange=function(){window.location.hash="no-back-button";}
@@ -154,7 +154,7 @@ if(browsername != null){
 %>
 
 <% if(debug){ %>
-<script>
+<script type="text/javascript" nonce="<%= randomNonce %>">
 var browserName = '<%=browsername%>';
 var browserVersione = '<%=browserversion %>';
 </script>
@@ -162,7 +162,7 @@ var browserVersione = '<%=browserversion %>';
 
 
 
-<script>
+<script type="text/javascript" nonce="<%= randomNonce %>">
 
 function addTabIdParam(href, addPrevTabParam){
 	
@@ -184,7 +184,24 @@ function addTabIdParam(href, addPrevTabParam){
 	    }
 	}
     return href;
-    
+}
+
+function addParamToURL(href, paramKey, paramValue){
+	
+	if(paramValue != ''){
+		var param = (paramKey + "="+paramValue);
+		
+		if((href != '#' && href.indexOf('#tabs-') == -1)){
+	        if (href.charAt(href.length - 1) === '?') //Very unlikely
+	            href = href + param;
+	        else if (href.indexOf('?') > 0)
+	        	href = href + '&' + param;
+	        else
+	        	href = href + '?' + param;
+	        
+	    }
+	}
+    return href;
 }
 
 <%  
@@ -203,7 +220,14 @@ if(tabValue != ''){
 console.log('IDTab: ['+tabValue+']');
 </script>
 
+<script type="text/javascript" nonce="<%= randomNonce %>">
+<%String csrfTokenFromSession = ServletUtils.leggiTokenCSRF(request, session);
+if(csrfTokenFromSession == null)
+	csrfTokenFromSession = "";%>
 
+var csrfTokenKey = '<%=Costanti.PARAMETRO_CSRF_TOKEN%>';
+var csrfToken = '<%=csrfTokenFromSession %>';
+</script>
 
 
 

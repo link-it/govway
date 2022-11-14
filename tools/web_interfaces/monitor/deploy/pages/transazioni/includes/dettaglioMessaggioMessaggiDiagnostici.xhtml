@@ -10,6 +10,7 @@
     
     <a4j:outputPanel layout="block" id="informazioniMessaggiDiagnostici">
 			<h:form id="formDiag">
+				<input type="hidden" id="_csrfFormDiag" name="_csrf" value="#{loginBean.csrf}"/>
 				<link:dataTable 
 					value="#{diagnosticiDM}" 
 					id="diagnosticiTable"

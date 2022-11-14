@@ -10,7 +10,7 @@
 
 	<a4j:outputPanel id="gridCtr" layout="block" styleClass="panelLista" rendered="#{value.executeQuery}">
 	
-	<style>
+	<style type="text/css" nonce="#{_csp_random_nonce}">
 		#msgDt_tbl td.rich-table-cell { border-bottom-width: 8px; padding: 0px; }
 		#msgDt_tbl thead.rich-table-thead { display: none;}
 	</style>
@@ -138,7 +138,7 @@
 											<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss"
 												timeZone="#{applicationBean.timeZone}" />
 										</h:outputText>
-										<rich:toolTip for="sottotitoloSx" style="text-align: right;">
+										<rich:toolTip for="sottotitoloSx" styleClass="text-align-right">
 											<h:outputText value="Accettazione Richiesta: " rendered="#{mBean.visualizzaDataAccettazione}" />
 											<h:outputText value="#{item.dataAccettazioneRichiesta}" rendered="#{mBean.visualizzaDataAccettazione}">
 												<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />

@@ -52,17 +52,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Binary }
-     */
-    public Binary createBinary() {
-        return new Binary();
-    }
-
-    /**
      * Create an instance of {@link Operation }
      */
     public Operation createOperation() {
         return new Operation();
+    }
+
+    /**
+     * Create an instance of {@link Binary }
+     */
+    public Binary createBinary() {
+        return new Binary();
     }
 
 

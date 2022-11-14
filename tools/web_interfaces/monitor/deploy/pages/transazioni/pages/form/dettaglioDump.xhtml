@@ -53,7 +53,7 @@
 		<a4j:loadScript src="/scripts/shBrushJson.js" />
 		<a4j:loadStyle src="resource:///css/shCore.css" />
 		<a4j:loadStyle src="resource:///css/shThemeDefault.css" />
-		<script type="text/javascript">
+		<script type="text/javascript" nonce="#{_csp_random_nonce}">
 		//<![CDATA[
 			if(#{dettagliDump.visualizzaMessaggio}){
 			   var xmlPnl = jQuery("#xmlPnl"); 
@@ -91,7 +91,8 @@
 			
 			<link:fieldset legend="Messaggio" rendered="#{not empty dettagliDump.dumpMessaggio and (not empty dettagliDump.dumpMessaggio.body or (not empty dettagliDump.dumpMessaggio.contentLength and dettagliDump.dumpMessaggio.contentLength>0) )}" collapsible="false" closed="false">
 				<h:form id="formMessaggioDump">
-					<a4j:outputPanel layout="block" style="height: 350px; overflow-y: scroll;" id="xmlPnl2" rendered="#{dettagliDump.visualizzaMessaggio}">
+					<input type="hidden" id="_csrfFormMessaggioDump" name="_csrf" value="#{loginBean.csrf}"/>
+					<a4j:outputPanel layout="block" styleClass="height-350 overflow-y-scroll" id="xmlPnl2" rendered="#{dettagliDump.visualizzaMessaggio}">
 						<pre class="brush: #{dettagliDump.brush}; toolbar: false;">#{dettagliDump.prettyEnvelop}</pre>
 					</a4j:outputPanel>
 					<a4j:outputPanel layout="block" styleClass="buttonrow" rendered="#{not dettagliDump.visualizzaMessaggio}">
@@ -126,6 +127,7 @@
 			
 			<link:fieldset legend="Allegati" rendered="#{not empty dettagliDump.allegati}" collapsible="false" closed="false">
 				<h:form id="formDettagliDump">
+					<input type="hidden" id="_csrfFormDettagliDump" name="_csrf" value="#{loginBean.csrf}"/>
 						<rich:dataTable 
 							value="#{dettagliDump.allegati}"
 							var="allegato"
@@ -217,7 +219,7 @@
 	       	</a4j:jsFunction>
 	   	</a4j:outputPanel>
 		
-		<rich:modalPanel id="esportaModalPnl" showWhenRendered="false" width="600" style="overflow:auto;" autosized="true">
+		<rich:modalPanel id="esportaModalPnl" showWhenRendered="false" width="600" styleClass="overflow-auto" autosized="true">
 		<f:facet name="header">
 			<h:outputText id="esportaModalPnlHeaderText" value="Esporta" />
 		</f:facet>
@@ -251,8 +253,9 @@
 		</p>
 		</a4j:outputPanel>
 		<h:form id="formExportReport" prependId="false">
+			<input type="hidden" id="_csrfFormExportReport" name="_csrf" value="#{loginBean.csrf}"/>
 			<a4j:outputPanel layout="block" id="panelFormExportContainer" ajaxRendered="false">
-				<style> .rich-shuttle-source-items { margin-left :0px;	}	</style>
+				<style type="text/css" nonce="#{_csp_random_nonce}"> .rich-shuttle-source-items { margin-left :0px;	}	</style>
 				<div class="form-container noborder"> 
 					<link:fieldset legend="Modalità" collapsible="false">
 						<link:prop label="Estrai Contenuti Multipart">

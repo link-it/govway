@@ -1,3 +1,10 @@
+2022-11-14  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor, GovWayConsole]
+	Aggiunta funzionalità OP-1457
+	Aggiunta protezione agli attacchi CSRF per entrambe le console.
+	Gestito http header "Content Security Policy (CSP)" per la console di gestione 'govwayConsole'.
+
 2022-11-14  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole, ApiRsConfigurazione]

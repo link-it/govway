@@ -10,6 +10,7 @@
     
     <a4j:outputPanel layout="block" id="informazioniContenutiConsegna">
 		<h:form id="formDump">
+			<input type="hidden" id="_csrfFormDump" name="_csrf" value="#{loginBean.csrf}"/>
 			<link:dataTable value="#{dumpSADM}" id="dumpTable" headerText="Lista Contenuti" showSelectAll="false" enableDelete="false">
 				<rich:column id="colData">
 					<f:facet name="header">

@@ -19,7 +19,7 @@
 <%@page import="java.util.*, org.openspcoop2.web.lib.mvc.*" session="true"%>
 
 
-<div id="ajax_status_div" style="display: none;">
+<div id="ajax_status_div">
 	<span class="rich-mpnl-mask-div mainStatusStartStyle"></span>
 	<span class="mainStatusStartStyleInner">
 		<img src="images/tema_link/ajax_status.gif">

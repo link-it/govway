@@ -415,7 +415,9 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 					protocolFactory = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory();
 				}
 			}
-			this.protocollo = protocolFactory.getProtocol();
+			if(protocolFactory!=null) {
+				this.protocollo = protocolFactory.getProtocol();
+			}
 			
 			this.riconoscimento = null;
 			this.autenticazione = null;
@@ -457,8 +459,8 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			List<String> canali = Utility.getCanali();
 			this.listCanali = new ArrayList<String>();
 			this.listCanali.add("--");
-			this.listCanali.addAll(canali);
 			if(canali!=null && !canali.isEmpty()) {
+				this.listCanali.addAll(canali);
 				this.mapCanaleToNodi = new HashMap<String, List<String>>();
 				for (String canale : canali) {
 					List<String> nodi = Utility.getNodi(canale);
@@ -803,7 +805,9 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			try {
 				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(this.api);
 				return NamingUtils.getLabelAccordoServizioParteComune(idAccordo);
-			}catch(Throwable t) {}
+			}catch(Throwable t) {
+				// ignore
+			}
 			return this.api;
 		}
 		return null;
@@ -1105,7 +1109,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 						boolean found = false;
 						if(escludiEsitiRichiesteMalformate!=null) {
 							for (Integer code : escludiEsitiRichiesteMalformate) {
-								if(code == this.esitoDettaglio){
+								if(code!=null && this.esitoDettaglio!=null && (code.intValue() == this.esitoDettaglio.intValue())){
 									found = true;
 									break;
 								}
@@ -1120,7 +1124,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 					boolean found = false;
 					if(codes!=null) {
 						for (Integer code : codes) {
-							if(code == this.esitoDettaglio){
+							if(code!=null && this.esitoDettaglio!=null && (code.intValue() == this.esitoDettaglio.intValue())){
 								found = true;
 								break;
 							}
@@ -1142,7 +1146,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 						boolean found = false;
 						if(escludiEsitiRichiesteMalformate!=null) {
 							for (Integer code : escludiEsitiRichiesteMalformate) {
-								if(code == this.esitoDettaglio){
+								if(code!=null && this.esitoDettaglio!=null && (code.intValue() == this.esitoDettaglio.intValue())){
 									found = true;
 									break;
 								}
@@ -2066,11 +2070,12 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 					}
 				
 				// controllo Servizio
-				String nomeServizio = null, tipoServizio = null;
+				//String nomeServizio = null; 
+				String tipoServizio = null;
 				if(StringUtils.isNotEmpty(this.getNomeServizio())){
-					nomeServizio = this.getNomeServizio().split(" \\(")[0];
-					tipoServizio = Utility.parseTipoSoggetto(nomeServizio);
-					nomeServizio = Utility.parseNomeSoggetto(nomeServizio);
+					String tipoNomeSoggetto = this.getNomeServizio().split(" \\(")[0];
+					tipoServizio = Utility.parseTipoSoggetto(tipoNomeSoggetto);
+					//nomeServizio = Utility.parseNomeSoggetto(tipoNomeSoggetto);
 				}
 
 				if(tipoServizio != null)
@@ -2227,7 +2232,9 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		boolean protocolloSupportaApplicativoinErogazione = false;
 		try{
 			protocolloSupportaApplicativoinErogazione = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolloSelezionato).createProtocolConfiguration().isSupportoAutenticazioneApplicativiErogazioni();
-		}catch(Exception e) {}
+		}catch(Exception e) {
+			// ignore
+		}
 		boolean searchModeByApplicativo = !TipologiaRicerca.ingresso.equals(this.getTipologiaRicercaEnum()) || protocolloSupportaApplicativoinErogazione; 
 		
 		// comunque sia per soggetto e applicativo DEVE essere selezionata una tipooogia di ricerca

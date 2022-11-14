@@ -74,6 +74,13 @@ div.errorsSpacer {
 }
 
 /* Messaggi */
+
+#errorsPlaceHolder,
+#infoPlaceHolder {
+	width: 50%;
+}
+
+
 div.errors,
 div.messages-errors,
 div.messages-errors-sintetico {
@@ -512,4 +519,51 @@ input[type="submit"]:hover, input[type="button"]:hover, .buttonrow a:hover, .but
 	 color: ${body.color};
 }
 
+.tokenInfoFormPnl {
+	margin: 0px 0px 16px 0px; 
+	padding: 0px 0px 24px 0px;
+}
 
+.width-auto {
+	width: auto;
+}
+
+.width-cento {
+	width: 100%;
+}
+
+.width-cinquanta {
+	width: 50%;
+}
+
+.width-30 {
+	width: 30px;
+}
+
+.width-40 {
+	width: 40px;
+}
+
+.width-60 {
+	width: 60px;
+}
+
+.width-152 {
+	width: 152px;
+}
+
+.width-160-important {
+	width: 160px !important;
+}
+
+.width-260 {
+	width: 260px;
+}
+
+.width-412 {
+	width: 412px;
+}
+
+.width-416 {
+	width: 416px;
+}

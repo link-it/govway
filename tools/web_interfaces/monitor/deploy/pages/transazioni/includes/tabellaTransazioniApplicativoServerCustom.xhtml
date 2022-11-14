@@ -8,12 +8,12 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 	<f:loadBundle var="msg" basename="messages" />
 	
-	<style>
+	<style type="text/css" nonce="#{_csp_random_nonce}">
 		#dtConsegne td.rich-table-cell { border-bottom-width: 12px; padding: 0px; }
 		#dtConsegne thead.rich-table-thead { display: none;}
 	</style>
 	
-	<script type="text/javascript">
+	<script type="text/javascript" nonce="#{_csp_random_nonce}">
 		//<![CDATA[
 		   jQuery(document).ready(nascondiChk);
 		   
@@ -160,7 +160,7 @@
 									<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss"
 										timeZone="#{applicationBean.timeZone}" />
 								</h:outputText>
-								<rich:toolTip for="sottotitoloSx" style="text-align: right;">
+								<rich:toolTip for="sottotitoloSx" styleClass="text-align-right">
 									<h:outputText value="Accettazione Richiesta: " rendered="#{mBean.visualizzaDataAccettazione}" />
 									<h:outputText value="#{item.dataAccettazioneRichiesta}" rendered="#{mBean.visualizzaDataAccettazione}">
 										<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />

@@ -32,6 +32,7 @@ String messageType = pd.getMessageType();
 String [][] bottoni = pd.getBottoni();
 String messageTitle = pd.getMessageTitle();
 String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
+String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 // messaggio in cima alla pagina solo se non e' un messaggio di conferma o una copykey
 if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 %>
@@ -40,7 +41,7 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
   			<%=message%>
  		</div>
 	</div>
-	<script>
+	<script type="text/javascript" nonce="<%= randomNonce %>">
 	 $(document).ready(function(){
 		 	if($( "#confermaModal" ).length > 0){
 		 		$( "#confermaModal" ).dialog({
@@ -65,7 +66,7 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 		 	}
 	 });
 	</script>
-	<SCRIPT>
+	<SCRIPT type="text/javascript" nonce="<%= randomNonce %>">
 		var nomeServlet_Custom_Ok = '';
 		var nomeServlet_Custom_No = '';
 		
@@ -89,7 +90,7 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 		    
 	</SCRIPT>
 	<jsp:include page="/jsp/confermaCustom.jsp" flush="true" />
-	<SCRIPT type="text/javascript">
+	<SCRIPT type="text/javascript" nonce="<%= randomNonce %>">
 		var params;
 		
 		function EseguiOp() {
@@ -113,11 +114,25 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 			  	addHidden(document.form, prevTabSessionKey , tabValue);
 			  }
 				
+			  addHidden(document.form, '<%=Costanti.PARAMETRO_AZIONE %>' , 'conferma');
+			  
+			  //aggiungo parametro csfr
+			  if(csrfToken != ''){
+			  	addHidden(document.form, csrfTokenKey , csrfToken);
+			  }
+				
 				document.form.submit();
 			} else {
 				var destinazione = '<%=request.getContextPath()%>/'+nomeServlet_Custom_Ok +params;
 				//addTabID
 				destinazione = addTabIdParam(destinazione,true);
+				
+				destinazione = addParamToURL(destinazione, '<%=Costanti.PARAMETRO_AZIONE %>' , 'conferma');
+				//aggiungo parametro csfr
+				if(csrfToken != ''){
+				  destinazione = addParamToURL(destinazione, csrfTokenKey , csrfToken);
+				}
+				
 				document.location = destinazione;
 			}
 		};
@@ -143,11 +158,25 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 				  	addHidden(document.form, prevTabSessionKey , tabValue);
 				  }
 				
+				  addHidden(document.form, '<%=Costanti.PARAMETRO_AZIONE %>' , 'annulla');
+				  
+				  //aggiungo parametro csfr
+				  if(csrfToken != ''){
+				  	addHidden(document.form, csrfTokenKey , csrfToken);
+				  }
+				
 				document.form.submit();
 			} else {
 				var destinazione = '<%=request.getContextPath()%>/'+nomeServlet_Custom_No +params;
 				//addTabID
 				destinazione = addTabIdParam(destinazione,true);
+				
+				destinazione = addParamToURL(destinazione, '<%=Costanti.PARAMETRO_AZIONE %>' , 'annulla');
+				//aggiungo parametro csfr
+				if(csrfToken != ''){
+				  destinazione = addParamToURL(destinazione, csrfTokenKey , csrfToken);
+				}
+				
 				document.location = destinazione;
 			}
 		};
@@ -299,7 +328,7 @@ if (!message.equals("") && messageType.equals(MessageType.DIALOG.toString())) {
 			</div>
 		<% } %>	
 	</div>
-	<script>
+	<script type="text/javascript" nonce="<%= randomNonce %>">
 	 $(document).ready(function(){
 		 	if($( "#finestraDialogModal" ).length > 0){
 		 		$( "#finestraDialogModal" ).dialog({

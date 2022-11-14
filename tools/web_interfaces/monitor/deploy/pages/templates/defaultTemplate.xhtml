@@ -5,7 +5,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
-	markupType="xhtml-transitional" contentType="text/html" sidebarPosition="left"
+	markupType="html5" contentType="text/html" sidebarPosition="left"
 	theme="simple" sidebarWidth="275">
 	<f:loadBundle var="msg" basename="messages" />
 	<a4j:loadScript src="resource://jquery.js"/>
@@ -13,57 +13,57 @@
 	<ui:debug hotkey="X"/>
 	<f:facet name="pageHeader">
 		<title>#{loginBean.title}</title>
-		<link href="#{facesContext.externalContext.request.contextPath}/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+		<link href="#{facesContext.externalContext.request.contextPath}/images/favicon.ico" rel="shortcut icon" type="image/x-icon" nonce="#{_csp_random_nonce}" />
 		<meta http-equiv="Content-Type" content="text/xml; charset=utf-8"/>
 		<!--[if !(IE)]><!-->
 		<link
 			href="#{facesContext.externalContext.request.contextPath}/css/roboto/roboto-fontface.css"
-			rel="stylesheet" type="text/css" />
+			rel="stylesheet" type="text/css" nonce="#{_csp_random_nonce}" />
 		<!--<![endif]-->
 		<!--[if gt IE 8]>
      	<link
 			href="#{facesContext.externalContext.request.contextPath}/css/roboto/roboto-fontface.css"
-			rel="stylesheet" type="text/css" />
+			rel="stylesheet" type="text/css" nonce="#{_csp_random_nonce}" />
     	<![endif]-->
 		<!--[if lte IE 8]>
      	<link
 			href="#{facesContext.externalContext.request.contextPath}/css/roboto/roboto-fontface-iefix.css"
-			rel="stylesheet" type="text/css" />
+			rel="stylesheet" type="text/css" nonce="#{_csp_random_nonce}" />
     	<![endif]-->
 		<link
 			href="#{facesContext.externalContext.request.contextPath}/css/materialIcons/material-icons-fontface.css"
-			rel="stylesheet" type="text/css" />
+			rel="stylesheet" type="text/css" nonce="#{_csp_random_nonce}" />
 		<link
 			href="#{facesContext.externalContext.request.contextPath}/css/linkit-base.css"
-			rel="stylesheet" type="text/css" />
+			rel="stylesheet" type="text/css" nonce="#{_csp_random_nonce}" />
 		<link
 			href="#{facesContext.externalContext.request.contextPath}/css/linkit-jsf.css"
-			rel="stylesheet" type="text/css" />
+			rel="stylesheet" type="text/css" nonce="#{_csp_random_nonce}" />
 		<link
 			href="#{facesContext.externalContext.request.contextPath}/css/linkit-crumbs.css"
-			rel="stylesheet" type="text/css" />
+			rel="stylesheet" type="text/css" nonce="#{_csp_random_nonce}" />
 		<link
 			href="#{facesContext.externalContext.request.contextPath}/css/linkit-form.css"
-			rel="stylesheet" type="text/css" />
+			rel="stylesheet" type="text/css" nonce="#{_csp_random_nonce}" />
 		<link
 			href="#{facesContext.externalContext.request.contextPath}/css/mimetype.css"
-			rel="stylesheet" type="text/css" />
+			rel="stylesheet" type="text/css" nonce="#{_csp_random_nonce}" />
 		<link
 			href="#{facesContext.externalContext.request.contextPath}/css/linkit-icons.css"
-			rel="stylesheet" type="text/css" />
+			rel="stylesheet" type="text/css" nonce="#{_csp_random_nonce}" />
 		<link
 			href="#{facesContext.externalContext.request.contextPath}/css/materialIcons.css"
-			rel="stylesheet" type="text/css" />
+			rel="stylesheet" type="text/css" nonce="#{_csp_random_nonce}" />
 		<link
 			href="#{facesContext.externalContext.request.contextPath}/css/c3.min.css"
-			rel="stylesheet" type="text/css" />
+			rel="stylesheet" type="text/css" nonce="#{_csp_random_nonce}" />
 		<link
 			href="#{facesContext.externalContext.request.contextPath}/css/ChartMap.css"
-			rel="stylesheet" type="text/css" />
+			rel="stylesheet" type="text/css" nonce="#{_csp_random_nonce}" />
 		<link
 			href="#{facesContext.externalContext.request.contextPath}/css/bootstrap-tagsinput.css"
-			rel="stylesheet" type="text/css" />
-		<script type="text/javascript">
+			rel="stylesheet" type="text/css" nonce="#{_csp_random_nonce}" />
+		<script type="text/javascript" nonce="#{_csp_random_nonce}">
 	       A4J.AJAX.onExpired = function(loc, expiredMsg){
 				return loc;
 	    	}
@@ -86,7 +86,7 @@
 						query="hover(function(){jQuery(this).addClass('active')},function(){jQuery(this).removeClass('active')})" />
 		<rich:jQuery name="checkBrowser" timing="onJScall" selector="a[id*='iconLink']" query="addClass((jQuery.browser.msie &amp;&amp; jQuery.browser.version=='6.0') ? 'iconLinkie' : '')" />
 		
-		<script type="text/javascript">
+		<script type="text/javascript" nonce="#{_csp_random_nonce}">
 			 jQuery(document).ready(function() {
 				if(jQuery.browser.msie){
 					if(jQuery.browser.version=="6.0")
@@ -133,6 +133,7 @@
 				<rich:layout id="mainct">
 					<rich:layoutPanel id="navbar" position="top">
 						<a4j:form prependId="false">
+							<input type="hidden" id="_csrfNavbar" name="_csrf" value="#{loginBean.csrf}"/>
 							<div id="breadcrumb-ct">
 								<div id="crumbs"><ui:insert name="navbar"></ui:insert></div>
 							</div>
@@ -143,7 +144,7 @@
 					</rich:layoutPanel>
 
 					<rich:layoutPanel id="body" position="center" >
-						<a4j:outputPanel id="errorsPlaceHolder" ajaxRendered="true" layout="block" style="width: 50%;">
+						<a4j:outputPanel id="errorsPlaceHolder" ajaxRendered="true" layout="block">
 							<h:panelGroup layout="block" styleClass="#{facesContext.maximumSeverity.ordinal>=2 ? 'messages-errors' : 'messages-info'}" rendered="#{not empty facesContext.maximumSeverity}">
 								<a4j:outputPanel layout="block" styleClass="messages-title">
 				  					<h:outputText value="&#160;&#160;" id="infoTitleIcon" styleClass="#{facesContext.maximumSeverity.ordinal>=2 ? 'messages-errors-title-icon' : 'messages-info-title-icon'}"/>
@@ -155,7 +156,7 @@
 								</rich:messages>
 							</h:panelGroup>
 						</a4j:outputPanel>
-						<a4j:outputPanel id="infoPlaceHolder" ajaxRendered="#{not empty sessionScope.acclim}" layout="block" style="width: 50%;">
+						<a4j:outputPanel id="infoPlaceHolder" ajaxRendered="#{not empty sessionScope.acclim}" layout="block">
 							<h:panelGroup layout="block" styleClass="messages-errors" rendered="#{not empty sessionScope.acclim}">
 								<a4j:outputPanel layout="block" styleClass="messages-title">
 				  					<h:outputText value="&#160;&#160;" id="infoTitleIcon2" styleClass="messages-errors-title-icon"/>

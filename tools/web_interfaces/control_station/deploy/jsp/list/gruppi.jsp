@@ -39,7 +39,7 @@ else
   iddati = "notdefined";
 GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
 PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
-
+String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 
 Vector<?> v = pd.getDati();
 
@@ -96,13 +96,20 @@ for (int j = 0; j < riga.size(); j++) {
 
 	 	String statusTooltip = de.getStatusToolTips() != null && de.getStatusToolTips().length>0 ? de.getStatusToolTips()[0] : "";		
 		String statusTooltipTitleAttribute = statusTooltip != null && !statusTooltip.equals("") ? " title=\"" + statusTooltip + "\"" : "";
-			 	 
+		String cssClassStato = de.getWidth() != null ? " tdText-stato_"+numeroEntryS : "";  	 
 	%>
-	<td class="tdText" style="<%= de.getWidth() %>">
+	<td class="tdText<%=cssClassStato %>">
 		<div id="stato_<%=numeroEntryS %>">
  			<span class="statoApiIcon" id="iconApi_<%=numeroEntryS %>">
 				<img src="images/tema_link/<%= image %>" <%= statusTooltipTitleAttribute %>/>
 			</span>
+			<% if(de.getWidth() != null){ %>
+				<style type="text/css" nonce="<%= randomNonce %>">
+					.tdText-stato_<%=numeroEntryS %> {
+						<%= de.getWidth() %>
+					}
+				</style>
+			<% }%>
 		</div>
 	</td>
 <% } %>
@@ -115,7 +122,7 @@ for (int j = 0; j < riga.size(); j++) {
 				String visualizzaAjaxStatus = deTitolo.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 				%><input id="<%= deTitoloName  %>" type="hidden" name="<%= deTitoloName  %>" value="<%= deTitolo.getUrl()  %>"/>
 				
-					<script type="text/javascript">
+					<script type="text/javascript" nonce="<%= randomNonce %>">
 					   $('[id=entry_<%=numeroEntryS %>]')
 					   .click(function() {
 						   		<%= visualizzaAjaxStatus %>
@@ -201,7 +208,7 @@ for (int j = 0; j < riga.size(); j++) {
 					}
 	                %>
    					
-				<script type="text/javascript">
+				<script type="text/javascript" nonce="<%= randomNonce %>">
 					if($("#<%=idSpanMenu %>").length>0){
 						// create context menu
 			            var contextMenu_<%=numeroEntry %> = $('#<%=idSpanMenu %>').contextMenu();

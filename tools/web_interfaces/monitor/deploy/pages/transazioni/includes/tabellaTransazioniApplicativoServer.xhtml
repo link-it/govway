@@ -8,10 +8,10 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 	<f:loadBundle var="msg" basename="messages" />
 
-	<style>
+	<style type="text/css" nonce="#{_csp_random_nonce}">
 	</style>
 	
-	<script type="text/javascript">
+	<script type="text/javascript" nonce="#{_csp_random_nonce}">
 		//<![CDATA[
 		   jQuery(document).ready(nascondiChk);
 		   
@@ -37,7 +37,7 @@
 					showSelectAll="true" enableDelete="false" selectionMapTarget="#{selectionMapTarget}"
 					mBean="#{mBean}">
 			
-			<rich:column id="colEsito" style="text-align: center;">
+			<rich:column id="colEsito" styleClass="text-align-center">
 				<f:facet name="header">
 					<h:outputText id="colEsito1" value="Esito" />
 				</f:facet>
@@ -81,7 +81,7 @@
 					<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss"
 						timeZone="#{applicationBean.timeZone}" />
 				</h:outputText>
-				<rich:toolTip for="outData2" style="text-align: right;">
+				<rich:toolTip for="outData2" styleClass="text-align-right">
 					<h:outputText value="Accettazione Richiesta: " rendered="#{mBean.visualizzaDataAccettazione}" />
 					<h:outputText value="#{item.dataAccettazioneRichiesta}" rendered="#{mBean.visualizzaDataAccettazione}">
 						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="#{applicationBean.timeZone}" />

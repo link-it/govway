@@ -118,7 +118,9 @@ public class AuditLog4JAppender implements IAuditAppender {
 						if(is!=null){
 							is.close();
 						}
-					}catch(Exception eClose){}
+					}catch(Exception eClose){
+						// close
+					}
 				}
 			}
 			

@@ -557,7 +557,12 @@ public class PageData implements Serializable {
 	}
 	
 	
-	public void impostaAperturaSubtitle(String name, Boolean visualizzaSottosezioneAperta, String postbackElementName) {
+	public void impostaAperturaSubtitle(String name, Boolean visualizzaSottosezioneAperta, String postbackElementName) throws Exception {
+		
+		if(name==null) {
+			throw new Exception("Param name is null");
+		}
+		
 		if(this.filterNames != null) {
 			int idxSubtitle = -1;
 			for (int i = 0; i < this.filterNames.size(); i++) {
@@ -596,7 +601,9 @@ public class PageData implements Serializable {
 				}
 			}
 			
-			this.updateSubtitleFilter(name, visualizzaSottosezioneAperta);
+			if(visualizzaSottosezioneAperta!=null) {
+				this.updateSubtitleFilter(name, visualizzaSottosezioneAperta);
+			}
 		}
 	}
 	

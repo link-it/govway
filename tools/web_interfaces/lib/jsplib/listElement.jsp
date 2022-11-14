@@ -48,6 +48,7 @@ else {
 
 GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
 PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
+String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 
 Vector<?> v = pd.getDati();
 int n = v.size();
@@ -72,16 +73,16 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 <link rel="stylesheet" href="css/ui.dialog.css" type="text/css">
 <link rel="stylesheet" href="css/ui.resizable.css" type="text/css">
 <link rel="stylesheet" href="css/bootstrap-tagsinput.css" type="text/css">
-<script type="text/javascript" src="js/webapps.js"></script>
+<script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
 
 
-<SCRIPT>
+<SCRIPT type="text/javascript" nonce="<%= randomNonce %>">
 var nomeServletAdd_Custom = '<%= nomeServletAdd %>';
 var nomeServletDel_Custom = '<%= nomeServletDel %>';
 var nomeServletList_Custom = '<%= nomeServletList %>';
 </SCRIPT>
 <jsp:include page="/jsp/listElementCustom.jsp" flush="true" />
-<SCRIPT type="text/javascript">
+<SCRIPT type="text/javascript" nonce="<%= randomNonce %>">
 var iddati = '<%= iddati %>';
 var params = '<%= params %>';
 var nomeServletAdd = nomeServletAdd_Custom;
@@ -161,6 +162,14 @@ function RemoveEntries(tipo) {
 	    
 	 	// addTabID
 		destinazione = addTabIdParam(destinazione,true);
+	 	
+		destinazione = addParamToURL(destinazione, '<%=Costanti.PARAMETRO_AZIONE %>' , 'removeEntries');
+		
+		//aggiungo parametro csfr
+		if(csrfToken != ''){
+		  destinazione = addParamToURL(destinazione, csrfTokenKey , csrfToken);
+		}
+	 	
 		document.location = destinazione;
     } else {
     	
@@ -170,9 +179,9 @@ function RemoveEntries(tipo) {
     	
     	addHidden(deleteForm, 'obj' , elemToRemove);
     	addHidden(deleteForm, 'iddati' , iddati);
-	if(tipo) {
-		addHidden(deleteForm, 'obj_t' , tipo);
-	}
+		if(tipo) {
+			addHidden(deleteForm, 'obj_t' , tipo);
+		}
     	
     	// formatParams
     	  
@@ -202,6 +211,14 @@ function RemoveEntries(tipo) {
    	  	addHidden(deleteForm, tabSessionKey , tabValue);
    	 	addHidden(deleteForm, prevTabSessionKey , tabValue);
    	  }
+   	  
+   	  addHidden(deleteForm, '<%=Costanti.PARAMETRO_AZIONE %>' , 'removeEntries');
+   	  
+   	  //aggiungo parametro csfr
+	  if(csrfToken != ''){
+	  	addHidden(deleteForm, csrfTokenKey , csrfToken);
+	  }
+   	  
    	  // form submit
    	  deleteForm.submit();
     }
@@ -581,13 +598,13 @@ if (
 </SCRIPT>
 
 <!-- JQuery lib-->
-<script type="text/javascript" src="js/jquery-latest.js"></script>
+<script type="text/javascript" src="js/jquery-latest.js" nonce="<%= randomNonce %>"></script>
 <!--Funzioni di utilita -->
-<script type="text/javascript" src="js/ui.core.js"></script>
-<script type="text/javascript" src="js/ui.dialog.js"></script>
-<script type="text/javascript" src="js/ui.resizable.js"></script>
-<script type="text/javascript" src="js/ui.draggable.js"></script>
-<script type="text/javascript">
+<script type="text/javascript" src="js/ui.core.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/ui.dialog.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/ui.resizable.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/ui.draggable.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" nonce="<%= randomNonce %>">
 function togglePanelListaRicerca(panelListaRicercaOpen){
 	if(panelListaRicercaOpen) {
     	$("#searchForm").removeClass('searchFormOff');
@@ -669,14 +686,19 @@ function mostraDataElementInfoModal(title,body){
 		});
 	 });
 </script>
-<script type="text/javascript" src="js/utils.js"></script>
-<script type="text/javascript" src="js/jquery-on.js"></script>
-<script type="text/javascript" src="js/jquery.searchabledropdown-1.0.8.min.js"></script>
-<script type="text/javascript" src="js/jquery.context-menu.min.js"></script>
+<script type="text/javascript" src="js/utils.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/jquery-on.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/jquery.searchabledropdown-1.0.8.min.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/jquery.context-menu.min.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/menuUtente.jsp" flush="true" />
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+<script type="text/javascript" nonce="<%= randomNonce %>">
+$(document).ready(function(){
+	focusText(document.form);
+});
+</script>
 </head>
-<body marginwidth=0 marginheight=0 onLoad="focusText(document.form);">
+<body marginwidth=0 marginheight=0>
 	<table class="bodyWrapper">
 		<tbody>
 			<jsp:include page="/jsplib/templateHeader.jsp" flush="true" />

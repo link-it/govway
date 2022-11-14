@@ -8,7 +8,7 @@
 	xmlns:link="http://www.link.it"
 	template="/templates/defaultTemplate.xhtml">
 	<ui:define name="body">
-		<style>
+		<style type="text/css" nonce="#{_csp_random_nonce}">
 			#crumbs {display: none;	}					
 		</style>
 		<a4j:loadScript src="/FusionCharts/FusionCharts.js" rendered="#{not summaryBean.useGraficiSVG}" />
@@ -25,10 +25,11 @@
 			</f:facet>
 			
 			<a4j:region id="regionPoll"  >
-				<a4j:form id="formPoll" prependId="false">	
+				<a4j:form id="formPoll" prependId="false">
+					<input type="hidden" id="_csrfFormPoll" name="_csrf" value="#{loginBean.csrf}"/>	
 					<h:inputHidden value="true" id="usaSVG"/> 			
 					<a4j:jsFunction id="pollFn" name="poll" limitToList="true" data="#{summaryBean.dataLive}" oncomplete="updateChart(data)"/> 
-					<script type="text/javascript">
+					<script type="text/javascript" nonce="#{_csp_random_nonce}">
 						var cdifp = #{summaryBean.intervalloRefresh};
 						var t;
 						var cdt;
@@ -73,11 +74,12 @@
 			</a4j:region>
 			<a4j:outputPanel id="chart">
 				<h:form id="formTransazioni">
+					<input type="hidden" id="_csrfFormJSTransazioni" name="_csrf" value="#{loginBean.csrf}"/>
 					<a4j:jsFunction id="functTransazioni" action="transazioni" name="showTransazioni"/>
 				</h:form>
 				<div id='summaryDivLive'></div>
 				<a4j:outputPanel id="svgChartPanel" rendered="#{summaryBean.useGraficiSVG}" >
-					<script type="text/javascript"> 
+					<script type="text/javascript" nonce="#{_csp_random_nonce}"> 
 						var chartDivId = 'summaryDivLive';
 						var chartWidth = jQuery('#summaryCtLive_body').width();
 						var chartHeight = 650;
@@ -92,7 +94,7 @@
 					</script>
 				</a4j:outputPanel>
 				<a4j:outputPanel id="flashChartPanel" rendered="#{not summaryBean.useGraficiSVG}">
-					<script type="text/javascript">
+					<script type="text/javascript" nonce="#{_csp_random_nonce}">
 						var chartDivId = 'summaryDivLive';
 						var chartWidth =  '';
 						chartWidth += jQuery('#summaryCtLive_body').width();

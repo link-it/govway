@@ -52,7 +52,6 @@ public class AuditDBAppender implements IAuditAppender {
 	/** DataSource dove attingere connessioni */
     private DataSource ds = null;
     private String dsName = null;
-    private String datasource = null;
     private String tipoDatabase = null; //tipoDatabase
     
     private String nomeAppender = null;
@@ -104,7 +103,7 @@ public class AuditDBAppender implements IAuditAppender {
 		
 			con = this.ds.getConnection();
 			if(con == null)
-				throw new Exception("Connessione non fornita dal datasource ["+this.datasource+"]");
+				throw new Exception("Connessione non fornita dal datasource ["+this.dsName+"]");
 			
 			DriverAuditDBAppender driverDBAppender = new DriverAuditDBAppender(con,this.tipoDatabase);
 			driverDBAppender.createOperation(operation);
@@ -116,14 +115,20 @@ public class AuditDBAppender implements IAuditAppender {
 			try{
 				if(rs!=null)
 					rs.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				if(stmt!=null)
 					stmt.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				con.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 	
@@ -137,7 +142,7 @@ public class AuditDBAppender implements IAuditAppender {
 		
 			con = this.ds.getConnection();
 			if(con == null)
-				throw new Exception("Connessione non fornita dal datasource ["+this.datasource+"]");
+				throw new Exception("Connessione non fornita dal datasource ["+this.dsName+"]");
 			
 			DriverAuditDBAppender driverDBAppender = new DriverAuditDBAppender(con,this.tipoDatabase);
 			Operation operation = driverDBAppender.getOperation((Long)idOperation);
@@ -156,14 +161,20 @@ public class AuditDBAppender implements IAuditAppender {
 			try{
 				if(rs!=null)
 					rs.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				if(stmt!=null)
 					stmt.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				con.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 	
@@ -177,7 +188,7 @@ public class AuditDBAppender implements IAuditAppender {
 		
 			con = this.ds.getConnection();
 			if(con == null)
-				throw new Exception("Connessione non fornita dal datasource ["+this.datasource+"]");
+				throw new Exception("Connessione non fornita dal datasource ["+this.dsName+"]");
 			
 			DriverAuditDBAppender driverDBAppender = new DriverAuditDBAppender(con,this.tipoDatabase);
 			Operation operation = driverDBAppender.getOperation((Long)idOperation);
@@ -197,14 +208,20 @@ public class AuditDBAppender implements IAuditAppender {
 			try{
 				if(rs!=null)
 					rs.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				if(stmt!=null)
 					stmt.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				con.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 	

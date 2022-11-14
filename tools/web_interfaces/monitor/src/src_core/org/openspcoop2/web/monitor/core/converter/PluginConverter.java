@@ -57,12 +57,16 @@ public class PluginConverter implements Converter {
 				}
 			}
 			
-			selectItems = (List<SelectItem>)  fSelectItems.getValue();
+			if(fSelectItems!=null) {
+				selectItems = (List<SelectItem>)  fSelectItems.getValue();
+			}
 		}
 		
-		for (SelectItem selectItem : selectItems) {
-			if(selectItem.getLabel().equalsIgnoreCase(value)) {
-				return selectItem.getValue();
+		if(selectItems!=null) {
+			for (SelectItem selectItem : selectItems) {
+				if(selectItem.getLabel().equalsIgnoreCase(value)) {
+					return selectItem.getValue();
+				}
 			}
 		}
 		return null;

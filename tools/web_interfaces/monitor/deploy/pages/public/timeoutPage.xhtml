@@ -6,7 +6,7 @@
       xmlns:rich="http://richfaces.org/rich"
       xmlns:a4j="http://richfaces.org/a4j">
 		<ui:define name="body">
-			<style>
+			<style type="text/css" nonce="#{_csp_random_nonce}">
 				.rich-page-body {
     					margin-left: 0px;
 					}
@@ -16,6 +16,7 @@
 			<a4j:outputPanel id="panelForm" layout="block" styleClass="panelLista">
 				<div class="form-container">	
 					<h:form>			
+						<input type="hidden" id="_csrfTimeoutPage" name="_csrf" value="#{loginBean.csrf}"/>
 						<h:outputText value="La tua sessione è scaduta, effettua nuovamente il " escape="true"/>
 						<h:commandLink action="login" value="Login" />
 						<h:outputText value=" " />

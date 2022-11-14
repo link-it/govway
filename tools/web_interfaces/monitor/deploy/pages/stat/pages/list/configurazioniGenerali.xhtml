@@ -11,7 +11,7 @@
     <f:loadBundle var="msg" basename="messages" />
 
 	<ui:define name="body">
-		<style>
+		<style type="text/css" nonce="#{_csp_random_nonce}">
 			#crumbs {display: none;	}					
 		</style>
 		<a4j:outputPanel id="panelPaginaRicerca" layout="block">
@@ -19,6 +19,7 @@
 				label="#{msg['configurazioniGenerali.nomeSezione']}" opened="true">
 				<f:facet name="openMarker">
 					<a4j:outputPanel id="openMarkerPnl" stuleClass="icon-search-box">
+						<input type="hidden" id="_csrfFormTogglePanel" name="_csrf" value="#{loginBean.csrf}"/>
 						<i class="material-icons md-24" id="iconaSearchOpen">&#xE8B6;</i>
 						<rich:toolTip for="openMarkerPnl" value="#{msg['commons.search.filtroRicerca.visualizza.tooltip']}" />
 					</a4j:outputPanel>
@@ -37,7 +38,7 @@
 							<h:outputText id="idTemporale" value="#{msg['configurazioniGenerali.search.sezioneFiltroDatiServizio.label']}" styleClass="subtitle"/>
 						</div>
 						<a4j:outputPanel id="searchPnl" ajaxRendered="false" layout="block">
-						
+							<input type="hidden" id="_csrfFormRicercaConfigurazioni" name="_csrf" value="#{loginBean.csrf}"/>
 							<link:prop label="Tipologia">
 								<rich:comboBox id="tipologiaTransazioniCombo" value="#{configurazioniGeneraliSearchForm._value_tipologiaTransazioni}" 
 										defaultLabel="Seleziona Tipologia Transazioni" converter="selectItemConverter"
@@ -103,18 +104,19 @@
 			<a4j:outputPanel id="statusPnl" layout="block" styleClass="panelLista" >
 				<a4j:outputPanel id="outPanelInformazioniGenerali" ajaxRendered="false"  layout="block">
 					<h:form>
-						<h:panelGrid columns="#{applicationBean.amministratore ? 2 : 1}" columnClasses="align-top,align-top" styleClass="borderSpacingTable" style="width: 100%;">
+						<input type="hidden" id="_csrfFormInformazioniGenerali" name="_csrf" value="#{loginBean.csrf}"/>
+						<h:panelGrid columns="#{applicationBean.amministratore ? 2 : 1}" columnClasses="align-top,align-top" styleClass="borderSpacingTable width-cento">
 							<a4j:outputPanel id="outPanelInformazioniGenerali4" ajaxRendered="false"  layout="block" styleClass="form-container">
 								<link:simpleDataTable value="#{configurazioniGeneraliBean.listaConfigurazioniServizi}" id="tableCS" enableDelete="false" showSelectAll="false">
 									<f:facet name="header">
 		                        		<rich:columnGroup>
-			                            	<rich:column colspan="2" style="text-align: left;"> 
+			                            	<rich:column colspan="2" styleClass="text-align-left"> 
 		    	                            	<h:outputText value="#{configurazioniGeneraliBean.labelInformazioniServizi}" />
 		        	                    	</rich:column>
 		            	               	</rich:columnGroup>
 		       	                	</f:facet>
 									
-									<rich:column style="width: 260px;">
+									<rich:column styleClass="width-260">
 										<h:outputText value="#{item.label}"/>
 									</rich:column>
 									<rich:column>
@@ -127,13 +129,13 @@
 								<link:simpleDataTable value="#{configurazioniGeneraliBean.listaConfigurazioniGenerali}" id="tableCG" enableDelete="false" showSelectAll="false">
 									<f:facet name="header">
 		                        		<rich:columnGroup>
-			                            	<rich:column colspan="2" style="text-align: left;">
+			                            	<rich:column colspan="2" styleClass="text-align-left">
 		    	                            	<h:outputText value="#{configurazioniGeneraliBean.labelInformazioniGenerali}" />
 		        	                    	</rich:column>
 		            	               	</rich:columnGroup>
 		       	                	</f:facet>
 									
-									<rich:column style="width: 260px;">
+									<rich:column styleClass="width-260">
 										<h:outputText value="#{item.label}"/>
 									</rich:column>
 									<rich:column>
@@ -149,7 +151,7 @@
 			<div class="spacer"></div>
 			
 			<a4j:outputPanel id="configurazioniTbl" layout="block" styleClass="panelLista" rendered="#{configurazioniDM.executeQuery}" >
-				<script type="text/javascript">
+				<script type="text/javascript" nonce="#{_csp_random_nonce}">
 				//<![CDATA[
 				   jQuery(document).ready(nascondiComandi);
 				   
@@ -168,6 +170,7 @@
 				 //]]>	
 				</script>
 				<h:form>
+					<input type="hidden" id="_csrfFormTabellaConfigurazioni" name="_csrf" value="#{loginBean.csrf}"/>
 					<link:dataTable value="#{configurazioniDM}" id="tableConfigurazioni"
 						mBean="#{configurazioniGeneraliBean}" showSelectAll="true" mostraComandiFooter="true"
 						selectionMapTarget="#{configurazioniGeneraliBean.selectedIds[item]}"

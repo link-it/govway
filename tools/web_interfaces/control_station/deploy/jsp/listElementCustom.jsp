@@ -33,10 +33,11 @@ if (nomeServlet == "monitor") {
 	nomeServletDel = nomeServlet+".do";
 	nomeServletList = nomeServlet+".do";
 }
-	  
+	
+String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE); 
 %>
 
-<SCRIPT type="text/javascript">
+<SCRIPT type="text/javascript" nonce="<%= randomNonce %>">
 nomeServletAdd_Custom = '<%= nomeServletAdd %>';
 nomeServletDel_Custom = '<%= nomeServletDel %>';
 nomeServletList_Custom = '<%= nomeServletList %>';

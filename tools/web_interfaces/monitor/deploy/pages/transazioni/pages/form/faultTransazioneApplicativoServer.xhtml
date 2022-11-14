@@ -73,7 +73,7 @@
 		<a4j:loadStyle src="resource:///css/shCore.css" />
 		<a4j:loadStyle src="resource:///css/shThemeDefault.css" />
 		<a4j:outputPanel id="panelXmlFault" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.fault and dettagliTransazioneApplicativoServerBean.showFault==true}">	
-			<script type="text/javascript">
+			<script type="text/javascript" nonce="#{_csp_random_nonce}">
 			//<![CDATA[
 				if(#{dettagliTransazioneApplicativoServerBean.dettaglio.visualizzaFault}){
 				   var xmlPnl = jQuery("#xmlPnlFault"); 
@@ -95,14 +95,14 @@
 				<f:facet name="header">
 					<h:outputText id="outXmlFault" value="Fault"/>
 				</f:facet>
-				<a4j:outputPanel layout="block" style="height: 350px; overflow-y: scroll;" id="xmlPnlFault2" rendered="#{dettagliTransazioneApplicativoServerBean.dettaglio.visualizzaFault}">
+				<a4j:outputPanel layout="block" styleClass="height-350 overflow-y-scroll" id="xmlPnlFault2" rendered="#{dettagliTransazioneApplicativoServerBean.dettaglio.visualizzaFault}">
 					<pre class="brush: #{dettagliTransazioneApplicativoServerBean.dettaglio.brushFault}; toolbar: false;">#{dettagliTransazioneApplicativoServerBean.dettaglio.faultPretty}</pre>
 				</a4j:outputPanel>
 			</rich:panel>
 		</a4j:outputPanel>
 		
 		<a4j:outputPanel id="panelXmlFaultUltimoErrore" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.faultUltimoErrore and dettagliTransazioneApplicativoServerBean.showFaultUltimoErrore ==true}">	
-			<script type="text/javascript">
+			<script type="text/javascript" nonce="#{_csp_random_nonce}">
 			//<![CDATA[
 				if(#{dettagliTransazioneApplicativoServerBean.dettaglio.visualizzaFaultUltimoErrore}){
 				   var xmlPnl = jQuery("#xmlPnlFault"); 
@@ -124,7 +124,7 @@
 				<f:facet name="header">
 					<h:outputText id="outXmlFaultUltimoErrore" value="Fault Ultimo Errore"/>
 				</f:facet>
-				<a4j:outputPanel layout="block" style="height: 350px; overflow-y: scroll;" id="xmlPnlFaultUltimoErrore2" rendered="#{dettagliTransazioneApplicativoServerBean.dettaglio.visualizzaFaultUltimoErrore}">
+				<a4j:outputPanel layout="block" styleClass="height-350 overflow-y-scroll" id="xmlPnlFaultUltimoErrore2" rendered="#{dettagliTransazioneApplicativoServerBean.dettaglio.visualizzaFaultUltimoErrore}">
 					<pre class="brush: #{dettagliTransazioneApplicativoServerBean.dettaglio.brushFaultUltimoErrore}; toolbar: false;">#{dettagliTransazioneApplicativoServerBean.dettaglio.faultPrettyUltimoErrore}</pre>
 				</a4j:outputPanel>
 			</rich:panel>

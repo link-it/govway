@@ -791,10 +791,11 @@ public class DataElement implements Serializable {
 	
 	@Deprecated
 	public void setStatusValues(String[] v) {
-		if(v == null || v.length <= 0)
+		if(v == null || v.length <= 0) {
 			this.statusValues = null;
-		
-		this.statusValues = Arrays.asList(v);
+		}else {
+			this.statusValues = Arrays.asList(v);
+		}
 	}
 	
 	private void addStatusValue(String v) {
@@ -846,10 +847,12 @@ public class DataElement implements Serializable {
 	}
 	@Deprecated
 	public void setStatusToolTips(String[] v) {
-		if(v == null || v.length <= 0)
+		if(v == null || v.length <= 0) {
 			this.statusToolTips = null;
-		
-		this.statusToolTips = Arrays.asList(v);
+		}
+		else {
+			this.statusToolTips = Arrays.asList(v);
+		}
 	}
 	
 
@@ -889,10 +892,12 @@ public class DataElement implements Serializable {
 	}
 	@Deprecated
 	public void setStatusTypes(String[] v) {
-		if(v == null || v.length <= 0)
+		if(v == null || v.length <= 0) {
 			this.statusTypes = null;
-		
-		this.statusTypes = Arrays.asList(v);
+		}
+		else {
+			this.statusTypes = Arrays.asList(v);
+		}
 	}
 
 	public void addStatus(String value, CheckboxStatusType type) {

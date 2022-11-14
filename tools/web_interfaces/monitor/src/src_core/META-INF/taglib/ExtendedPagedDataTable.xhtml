@@ -44,13 +44,13 @@
 		<c:if test="#{empty rowClasses}">
 			<c:set var="rowClasses" value="even,odd"/>
 		</c:if>
-		<a4j:outputPanel id="#{id}_nodata" layout="block" style="display: none;" styleClass="tableNoData">
+		<a4j:outputPanel id="#{id}_nodata" layout="block" styleClass="tableNoData pnl-display-none">
 			<a4j:outputPanel layout="block" styleClass="buttonrow">
 				<h:outputText value="Trovati 0 Risultati" styleClass="tableNoData" />
 			</a4j:outputPanel>
 		</a4j:outputPanel>
 		<a4j:outputPanel id="#{id}" layout="block">
-			<script type="text/javascript">
+			<script type="text/javascript" nonce="#{_csp_random_nonce}">
 				 jQuery(document).ready(function() {
 					checkBrowser();
 					visualizzaTastoRimuovi('#{id}','#{id}_deleteBtn');
@@ -127,6 +127,9 @@
 			</rich:datascroller>
 		</c:if>
 		<c:if test="#{useCount == false}">
+			<style type="text/css" nonce="#{_csp_random_nonce}">
+				.#{id}-ds-top-table { text-align:#{topScrollerAlign}; }
+			</style>
 			<a4j:outputPanel layout="block" id="#{id}_ds_top">
 				<div class="rich-datascr" align="center" id="#{id}_ds_top_div">
 					
@@ -148,9 +151,9 @@
 				
 				<rich:column width="42px" rendered="#{showSelectAll and not empty mBean}" id="ckbClmn" label="CheckAll" sortable="false">
 	                    <f:facet name="header">
-	                      <h:panelGroup style="" layout="block" id="chkClmnPg">
+	                      <h:panelGroup layout="block" id="chkClmnPg">
 	                        <h:selectBooleanCheckbox id="#{id}_checkAll" title="Seleziona Tutti" onclick="checkAllCheckboxesInTable( '#{id}', this.checked , #{showSelectAll}, #{value.rowCount} , #{rowsToDisplay} , #{useCount});" />
-	                        <h:selectBooleanCheckbox id="#{id}_selectedAllChbx" value="#{mBean.selectedAll}" style="display:none"/>
+	                        <h:selectBooleanCheckbox id="#{id}_selectedAllChbx" value="#{mBean.selectedAll}" styleClass="table-display-none"/>
 	                      </h:panelGroup>
 	                    </f:facet>
 	                    <h:selectBooleanCheckbox id="#{id}_column_ckb" value="#{selectionMapTarget}" disabled="false" onclick="singleCheckboxListener( '#{id}', this.checked , #{showSelectAll} ,#{value.rowCount} , #{rowsToDisplay} , #{useCount});"/>
@@ -163,21 +166,21 @@
 			      		<a4j:outputPanel layout="block" rendered="#{mostraComandiFooter}" styleClass="selectionInfoCtr" id="#{id}_panelComandiFooter">
 				      		<div class="selectionInfoItems">
 									<c:if test="#{useCount == true}">
-										<h:outputText style="display:none" id="#{id}_selectedInfoLbl" value="" styleClass="selectionInfoItem"/>
-										<h:outputText style="display:none" id="#{id}_selectedInfoPipe1"  value="|" styleClass="selectionInfoItem"/>
-										<h:outputLink style="display:none" id="#{id}_selectAllLink" styleClass="selectionInfoItem" value="Seleziona tutti gli elementi" onclick="selectAllListener('#{id}',true,#{value.rowCount} , #{useCount}); return false;"/>
-				      					<h:outputLink style="display:none" id="#{id}_undoSelectAllLink" styleClass="selectionInfoItem" value="Annulla selezione" onclick="selectAllListener('#{id}',false,#{value.rowCount} , #{useCount}); return false;"/>
+										<h:outputText id="#{id}_selectedInfoLbl" value="" styleClass="selectionInfoItem output-text-display-none"/>
+										<h:outputText id="#{id}_selectedInfoPipe1"  value="|" styleClass="selectionInfoItem output-text-display-none"/>
+										<h:outputLink id="#{id}_selectAllLink" styleClass="selectionInfoItem output-text-display-none" value="Seleziona tutti gli elementi" onclick="selectAllListener('#{id}',true,#{value.rowCount} , #{useCount}); return false;"/>
+				      					<h:outputLink id="#{id}_undoSelectAllLink" styleClass="selectionInfoItem output-text-display-none" value="Annulla selezione" onclick="selectAllListener('#{id}',false,#{value.rowCount} , #{useCount}); return false;"/>
 				      				</c:if>
 				      				<c:if test="#{useCount == false}">
-				      					<h:outputText style="display:none" id="#{id}_selectedInfoLbl" value="" styleClass="selectionInfoItem"/>
-				      					<h:outputText style="display:none" id="#{id}_selectedInfoPipe1"  value="|" styleClass="selectionInfoItem"/>
-				      					<h:outputLink style="display:none" id="#{id}_selectAllTableItemsLink" styleClass="selectionInfoItem" value="#" 				
+				      					<h:outputText id="#{id}_selectedInfoLbl" value="" styleClass="selectionInfoItem output-text-display-none"/>
+				      					<h:outputText id="#{id}_selectedInfoPipe1"  value="|" styleClass="selectionInfoItem output-text-display-none"/>
+				      					<h:outputLink id="#{id}_selectAllTableItemsLink" styleClass="selectionInfoItem output-text-display-none" value="#" 				
 				      						onclick="checkVisualizzaSelezionePrimiElementi(); checkAllCheckboxesInTable( '#{id}', true , #{showSelectAll}, #{value.rowCount} , #{rowsToDisplay} , #{useCount}); return false;">Seleziona tutti gli elementi visualizzati</h:outputLink>
-				      					<h:outputText style="display:none" id="#{id}_selectedInfoPipe2"  value="|" styleClass="selectionInfoItem"/>
-				      					<h:outputLink style="display:none" id="#{id}_selectAllLink" styleClass="selectionInfoItem" value="#" 
+				      					<h:outputText id="#{id}_selectedInfoPipe2"  value="|" styleClass="selectionInfoItem output-text-display-none"/>
+				      					<h:outputLink id="#{id}_selectAllLink" styleClass="selectionInfoItem output-text-display-none" value="#" 
 				      						onclick="selectAllListener('#{id}',true,#{value.rowCount} , #{useCount}, '#{value.selezionatiPrimiElementiLabel}'); return false;">#{value.numeroMassimoRisultatiLabel}</h:outputLink>
-				      					<h:outputText style="display:none" id="#{id}_selectedInfoPipe3"  value="|" styleClass="selectionInfoItem"/>
-				      					<h:outputLink style="display:none" id="#{id}_undoSelectAllLink" styleClass="selectionInfoItem" value="#" 
+				      					<h:outputText id="#{id}_selectedInfoPipe3"  value="|" styleClass="selectionInfoItem output-text-display-none"/>
+				      					<h:outputLink id="#{id}_undoSelectAllLink" styleClass="selectionInfoItem output-text-display-none" value="#" 
 				      						onclick="checkVisualizzaSelezionePrimiElementi(); selectAllListener('#{id}',false,#{value.rowCount} , #{useCount}); return false;">Annulla selezione</h:outputLink>
 				      				</c:if>
 				      		</div>
@@ -186,7 +189,7 @@
 				  </f:facet>
 			</rich:extendedDataTable>
 			<c:if test="#{useCount == true}">
-				<script type="text/javascript">	
+				<script type="text/javascript" nonce="#{_csp_random_nonce}">	
 					function checkVisualizzaSelezionePrimiElementi(){
 						//donothing
 					}
@@ -248,7 +251,7 @@
 	        		<h:inputHidden id="#{id}_checkVisualizzaSelezionePrimiElementi" value="#{value.visualizzaSelezionePrimiElementi}" />
 	        	</a4j:outputPanel>
 				<a4j:outputPanel layout="block" id="#{id}_ds_down">
-					<script type="text/javascript">			
+					<script type="text/javascript" nonce="#{_csp_random_nonce}">			
 					 jQuery(document).ready(function() {
 							var dsTopId = '#'+'#{id}_ds_top_table';
 							var dsTopDivId = '#'+'#{id}_ds_top_div';
@@ -257,7 +260,7 @@
 							dsTopDiv.append(dsTop);
 						 });
 					</script>
-					<table id="#{id}_ds_top_table" style="text-align:#{topScrollerAlign};" border="0" cellpadding="0" cellspacing="1" class="rich-dtascroller-table">
+					<table id="#{id}_ds_top_table" border="0" cellpadding="0" cellspacing="1" class="rich-dtascroller-table #{id}-ds-top-table">
                         <tbody>
                             <tr>
 								<td class="#{value.firstEnabled ? '' : 'rich-datascr-button-dsbld'} rich-datascr-button" id="#{id}_ds_top_first_group">
@@ -311,7 +314,11 @@
 						</tbody>
 					</table>
 					<div class="rich-datascr ds_down" align="center">
-						<table id="#{id}_ds_down_table" style="text-align:#{topScrollerAlign};" border="0" cellpadding="0" cellspacing="1" class="rich-dtascroller-table">
+						<style type="text/css" nonce="#{_csp_random_nonce}">
+							.#{id}_ds_down_table { text-align:#{topScrollerAlign}; }
+							.line-height-28 { line-height: 28px;}
+						</style>
+						<table id="#{id}_ds_down_table" border="0" cellpadding="0" cellspacing="1" class="rich-dtascroller-table #{id}_ds_down_table">
 	                        <tbody>
 	                            <tr>
 									<td class="#{value.firstEnabled ? '' : 'rich-datascr-button-dsbld'} rich-datascr-button" id="#{id}_ds_down_first_group">
@@ -337,7 +344,7 @@
 										</a4j:commandLink>
 									</td>
 									<td>
-										<h:panelGrid columns="3">
+										<h:panelGrid columns="3" styleClass="line-height-28">
 											<rich:spacer width="10px"/>
 											<h:panelGroup id="tableDsDownText">
 												<h:outputText value="Pagina #{value.currentPage}"/>
@@ -390,8 +397,8 @@
 			   <div class="form-container noborder">
 				  <div class="buttonrowmodal">
 			      	<h:panelGrid columns="2">
-			        	 <h:graphicImage value="/images/tema_link/alert_orange.png" />
-				 		<h:outputText value="Eliminare elementi selezionati?" style="font-weight: bold;" />
+			        	<h:graphicImage value="/images/tema_link/alert_orange.png" />
+				 		<h:outputText value="Eliminare elementi selezionati?" styleClass="output-text-font-weight-bold" />
 			      	</h:panelGrid>
 				</div>
 		        	<div class="errorsSpacer"/>
@@ -412,7 +419,7 @@
 				  <div class="buttonrowmodal">
 				      <h:panelGrid columns="2">
 				         <h:graphicImage value="/images/tema_link/alert_orange.png" />
-					 	<h:outputText value="E' necessario selezionare almeno 1 elemento." style="font-weight: bold;" />
+					 	<h:outputText value="E' necessario selezionare almeno 1 elemento." styleClass="output-text-font-weight-bold" />
 				      </h:panelGrid>
 				  </div>
 		        <div class="errorsSpacer"/>
@@ -431,9 +438,9 @@
 				  <div class="buttonrowmodal">
 				      <h:panelGrid columns="2">
 				        <h:graphicImage value="/images/tema_link/alert_orange.png" />
-				        <a4j:outputPanel style="font-weight: bold;text-align: left;">
-				        	<p style="margin: 0px 0px 0px 16px;">Il server non ha risposto in tempo.</p>
-				        	<p style="margin: 4px 0px 0px 16px;">Prova a restringere l'intervallo temporale di ricerca.</p>
+				        <a4j:outputPanel styleClass="pnl-fnt-wght-bld-txt-align-l">
+				        	<p class="p-modal-riga1">Il server non ha risposto in tempo.</p>
+				        	<p class="p-modal-riga2">Prova a restringere l'intervallo temporale di ricerca.</p>
 				        </a4j:outputPanel>
 				      </h:panelGrid>
 				  </div>
@@ -453,9 +460,9 @@
 				  <div class="buttonrowmodal">
 				      <h:panelGrid columns="2">
 				        <h:graphicImage value="/images/tema_link/alert_orange.png" />
-				        <a4j:outputPanel style="font-weight: bold;text-align: left;">
-				        	<p style="margin: 0px 0px 0px 16px;">Il server non ha risposto in tempo.</p>
-				        	<p style="margin: 4px 0px 0px 16px;">Prova ad effettuare una nuova ricerca.</p>
+				        <a4j:outputPanel styleClass="pnl-fnt-wght-bld-txt-align-l">
+				        	<p class="p-modal-riga1">Il server non ha risposto in tempo.</p>
+				        	<p class="p-modal-riga2">Prova ad effettuare una nuova ricerca.</p>
 				        </a4j:outputPanel>
 				      </h:panelGrid>
 				  </div>
@@ -475,9 +482,9 @@
 				  <div class="buttonrowmodal">
 				      <h:panelGrid columns="2">
 				        <h:graphicImage value="/images/tema_link/alert_orange.png" />
-				        <a4j:outputPanel style="font-weight: bold;text-align: left;">
-				        	<p style="margin: 0px 0px 0px 16px;">Profilo di Interoperabilità differente.</p>
-				        	<p style="margin: 4px 0px 0px 16px;">La transazione identificata appartiene ad un profilo di interoperabilità differente da quello selezionato.</p>
+				        <a4j:outputPanel styleClass="pnl-fnt-wght-bld-txt-align-l">
+				        	<p class="p-modal-riga1">Profilo di Interoperabilità differente.</p>
+				        	<p class="p-modal-riga2">La transazione identificata appartiene ad un profilo di interoperabilità differente da quello selezionato.</p>
 				        </a4j:outputPanel>
 				      </h:panelGrid>
 				  </div>
@@ -497,9 +504,9 @@
 				  <div class="buttonrowmodal">
 				      <h:panelGrid columns="2">
 				        <h:graphicImage value="/images/tema_link/alert_orange.png" />
-				        <a4j:outputPanel style="font-weight: bold;text-align: left;">
-				        	<p style="margin: 0px 0px 0px 16px;">Dominio del Soggetto differente.</p>
-				        	<p style="margin: 4px 0px 0px 16px;">La transazione identificata appartiene ad un soggetto differente da quello selezionato.</p>
+				        <a4j:outputPanel styleClass="pnl-fnt-wght-bld-txt-align-l">
+				        	<p class="p-modal-riga1">Dominio del Soggetto differente.</p>
+				        	<p class="p-modal-riga2">La transazione identificata appartiene ad un soggetto differente da quello selezionato.</p>
 				        </a4j:outputPanel>
 				      </h:panelGrid>
 				  </div>

@@ -63,7 +63,7 @@
 			<h:outputText styleClass="outputFieldLabel" value="Connettore"
 					rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.locationConnettore}"/>
 			<h:outputText id="outUrlInvocazione" value="#{dettagliTransazioneApplicativoServerBean.dettaglio.locationConnettore}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.locationConnettore and not dettagliTransazioneApplicativoServerBean.visualizzaTextAreaLocationConnettore}"/>
-			<h:inputTextarea id="outUrlInvocazioneTextArea" value="#{dettagliTransazioneApplicativoServerBean.dettaglio.locationConnettore}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong" style="width:auto;"
+			<h:inputTextarea id="outUrlInvocazioneTextArea" value="#{dettagliTransazioneApplicativoServerBean.dettaglio.locationConnettore}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong width-auto"
 					rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.locationConnettore and dettagliTransazioneApplicativoServerBean.visualizzaTextAreaLocationConnettore}" />
 		
 			<h:outputLabel styleClass="outputFieldLabel" value="Codice Risposta" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.codiceRisposta and dettagliTransazioneApplicativoServerBean.dettaglio.codiceRisposta>0}" />
@@ -85,6 +85,7 @@
 			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Contenuti" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpUltimaConsegnaRichiestaUscita or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoUltimaConsegnaRichiestaUscita}"/>
 			<h:panelGroup rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpUltimaConsegnaRichiestaUscita or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoUltimaConsegnaRichiestaUscita}">
 				<h:form id="formDumpMessaggiReqUscita">
+					<input type="hidden" id="_csrfFormDumpMessaggiReqUscita" name="_csrf" value="#{loginBean.csrf}"/>
 					<a4j:htmlCommandLink id="dumpMessaggiUscita-iconLink" styleClass="icon-details" value="Visualizza" action="dettaglioDump"
    						rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpUltimaConsegnaRichiestaUscita or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoUltimaConsegnaRichiestaUscita}">
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
@@ -115,6 +116,7 @@
 			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Dati Uscita" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRichiestaUscita or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRichiestaUscita}"/>
 			<h:panelGroup rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRichiestaUscita or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRichiestaUscita}">
 				<h:form id="formDumpBinarioReqUscita">
+					<input type="hidden" id="_csrfFormDumpBinarioReqUscita" name="_csrf" value="#{loginBean.csrf}"/>
 					<a4j:htmlCommandLink id="dumpBinarioUscita-iconLink" styleClass="icon-details" value="Visualizza" action="dettaglioDump"
    						 rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRichiestaUscita or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRichiestaUscita}">
    						<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
@@ -177,13 +179,14 @@
 			<h:outputText styleClass="outputFieldLabel" value="Errore"
 					rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaUltimoErrore}"/>
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.ultimoErrore}" rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaUltimoErrore and not dettagliTransazioneApplicativoServerBean.visualizzaTextAreaUltimoErrore}"/>
-			<h:inputTextarea  value="#{dettagliTransazioneApplicativoServerBean.dettaglio.ultimoErrore}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong" style="width:auto;"
+			<h:inputTextarea  value="#{dettagliTransazioneApplicativoServerBean.dettaglio.ultimoErrore}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong width-auto"
 				rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaUltimoErrore and dettagliTransazioneApplicativoServerBean.visualizzaTextAreaUltimoErrore}" />
 					
 			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Fault" 
 				rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.fault}"/>
 			<h:panelGroup rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.fault}"> 
 				<h:form id="formFault">
+					<input type="hidden" id="_csrfFormFault" name="_csrf" value="#{loginBean.csrf}"/>
                   	<a4j:htmlCommandLink id="faultIntegrazione-iconLink" styleClass="icon-details" value="Visualizza" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.fault}" action="fault">
                        	<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliTransazioneApplicativoServerBean.protocollo}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliTransazioneApplicativoServerBean.idTransazione}"/>
@@ -203,6 +206,7 @@
 			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Contenuti" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpUltimaConsegnaRispostaIngresso or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoUltimaConsegnaRispostaIngresso}"/>
 			<h:panelGroup rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpUltimaConsegnaRispostaIngresso or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoUltimaConsegnaRispostaIngresso}">
 				<h:form id="formDumpMessaggiResIngresso">
+					<input type="hidden" id="_csrfFormDumpMessaggiResIngresso" name="_csrf" value="#{loginBean.csrf}"/>
 					<a4j:htmlCommandLink id="dumpMessaggiResIngresso-iconLink" styleClass="icon-details" value="Visualizza" action="dettaglioDump"
    						 rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpUltimaConsegnaRispostaIngresso or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoUltimaConsegnaRispostaIngresso}">
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
@@ -234,6 +238,7 @@
 			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Dati Ingresso" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRispostaIngresso or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso}"/>
 			<h:panelGroup rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRispostaIngresso or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso}">
 				<h:form id="formDumpBinarioResIngresso">
+					<input type="hidden" id="_csrfFormDumpBinarioResIngresso" name="_csrf" value="#{loginBean.csrf}"/>
 					<a4j:htmlCommandLink id="dumpBinarioResIngresso-iconLink" styleClass="icon-details" value="Visualizza" action="dettaglioDump"
   						 rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRispostaIngresso or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso}">
   						<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
@@ -275,7 +280,7 @@
        	</a4j:jsFunction>
    	</a4j:outputPanel>
     
-    <rich:modalPanel id="esportaModalPnl" showWhenRendered="false" width="600" style="overflow:auto;" autosized="true">
+    <rich:modalPanel id="esportaModalPnl" showWhenRendered="false" width="600" styleClass="overflow-auto" autosized="true">
 		<f:facet name="header">
 			<h:outputText id="esportaModalPnlHeaderText" value="Esporta" />
 		</f:facet>
@@ -309,8 +314,9 @@
 		</p>
 		</a4j:outputPanel>
 		<h:form id="formExportReport" prependId="false">
+			<input type="hidden" id="_csrfFormExportReport" name="_csrf" value="#{loginBean.csrf}"/>
 			<a4j:outputPanel layout="block" id="panelFormExportContainer" ajaxRendered="false">
-				<style> .rich-shuttle-source-items { margin-left :0px;	}	</style>
+				<style type="text/css" nonce="#{_csp_random_nonce}"> .rich-shuttle-source-items { margin-left :0px;	}	</style>
 				<div class="form-container noborder"> 
 					<link:fieldset legend="Modalità" collapsible="false">
 						<link:prop label="Estrai Contenuti Multipart">

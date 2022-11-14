@@ -10,7 +10,7 @@
       	<ui:param value="Benvenuto. Inserisci le credenziali di accesso." name="title" />
 
 		<ui:define name="navbar">
-		  <div id="errorsPlaceHolder" style="width: 50%;margin-top: 20px;">
+		  <div id="errorsPlaceHolder" class="error-place-holder">
 		    <div class="messages-errors">
 		      <div class="messages-title">
 			<span id="infoTitleIcon" class="messages-errors-title-icon">&#160;&#160;</span>
@@ -21,13 +21,14 @@
 		</ui:define>
 
 		<ui:define name="body">
-			<style>
+			<style type="text/css" nonce="#{_csp_random_nonce}">
 				.rich-page-body {
     					margin-left: 0px;
 					}
 				#pCampiObbligatori {display: none;	}	
 				#crumbs {height: 100%;	}
-				#submitBtn { margin-left: 20px; }				
+				#submitBtn { margin-left: 20px; }			
+				.error-place-holder { width: 50%;margin-top: 20px; }	
 			</style>
 
 			<form id="formLogin" action="j_security_check" method="post">

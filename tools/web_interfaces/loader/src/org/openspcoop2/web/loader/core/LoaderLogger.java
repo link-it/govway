@@ -66,7 +66,9 @@ public class LoaderLogger {
 					if(fin!=null){
 						fin.close();
 					}
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 		}
 

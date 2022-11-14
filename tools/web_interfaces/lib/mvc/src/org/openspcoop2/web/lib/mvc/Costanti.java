@@ -166,7 +166,18 @@ public class Costanti {
 	
 	/** COOKIES **/
 	
-	public static final String COOKIE_NAME_JSESSIONID = "JSESSIONID";
+	public static final String COOKIE_NAME_JSESSIONID = "JSESSIONID_GW_CONSOLE";
+	public static final String COOKIE_ATTRIBUTE_SAME_SITE_NAME = "SameSite";
+	public static final String COOKIE_ATTRIBUTE_SAME_SITE_VALUE_LAX = "Lax";
+	public static final String COOKIE_ATTRIBUTE_SAME_SITE_VALUE_STRICT = "Strict";
+	public static final String COOKIE_ATTRIBUTE_SAME_SITE_VALUE_NONE = "None";
+	public static final String COOKIE_SECURE_ATTRIBUTE_NAME="Secure";
+	
+	/** CSFR **/
+	
+	public static final String SESSION_ATTRIBUTE_CSRF_TOKEN =  SESSION_ATTRIBUTE_TAB_KEY_PREFIX + "csrf";
+	public static final String PARAMETRO_CSRF_TOKEN = "_csrf";
+	public static final String MESSAGGIO_ERRORE_CSRF_TOKEN_NON_VALIDO = "Controllo validit&agrave; CSRF non superato, l'operazione non verr&agrave; eseguita."; 
 
 	
 	/** GESTIONE LOGIN PRINCIPAL **/
@@ -216,6 +227,7 @@ public class Costanti {
 	public final static String PARAMETRO_IS_POSTBACK = "isPostback";
 	public final static String PARAMETRO_AGGIORNA_RICERCA = "aggiornaRicerca";
 	public final static String PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE = "rmElFromCache";
+	public final static String PARAMETRO_AZIONE = "azione";
 	
 	public final static String LABEL_MONITOR_BUTTON_OK = "Ok";
 	public final static String LABEL_MONITOR_BUTTON_CONFERMA = "Conferma";
@@ -356,4 +368,6 @@ public class Costanti {
 	
 	public final static String SA_TIPO_DEFAULT_VALUE = "clientORserver";	
 	
+	/* CSP */
+	public static final String REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE = "_csp_random_nonce";
 }

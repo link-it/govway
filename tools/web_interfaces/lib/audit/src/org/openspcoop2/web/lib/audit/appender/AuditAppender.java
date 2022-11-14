@@ -60,7 +60,12 @@ public class AuditAppender {
 	private static IDBuilder idBuilder;
 	private static HashMap<String,IAuditAppender> appenders = new HashMap<String,IAuditAppender>();
 	
-	public synchronized void initializeAudit(Configurazione configurazioneAuditing,
+	public void initializeAudit(Configurazione configurazioneAuditing,
+			IDBuilder idBuilder) throws AuditException{
+		_initializeAudit(configurazioneAuditing, idBuilder);
+	}
+	
+	private static synchronized void _initializeAudit(Configurazione configurazioneAuditing,
 			IDBuilder idBuilder) throws AuditException{
 		
 		try{
@@ -427,7 +432,7 @@ public class AuditAppender {
 				
 				if(filtro.getTipoOperazione()!=null){
 					// Se e' definito un tipo di operazione nel filtro controllo che corrisponda
-					if(filtro.getTipoOperazione().toString().equals(operation.getTipologia())==false){
+					if(filtro.getTipoOperazione().equals(operation.getTipologia())==false){
 						continue;
 					}
 				}
@@ -441,7 +446,7 @@ public class AuditAppender {
 				
 				if(filtro.getStatoOperazione()!=null){
 					// Se e' definito uno stato dell'operazione nel filtro controllo che corrisponda
-					if(filtro.getStatoOperazione().toString().equals(operation.getStato())==false){
+					if(filtro.getStatoOperazione().equals(operation.getStato())==false){
 						continue;
 					}
 				}

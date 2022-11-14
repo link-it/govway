@@ -40,7 +40,7 @@ else
   iddati = "notdefined";
 GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
 PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
-
+String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 
 Vector<?> v = pd.getDati();
 
@@ -77,7 +77,7 @@ visualizzaMetadati = vectorRiepilogo.size() > 1;
 				String visualizzaAjaxStatus = deTitolo.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 				%><input id="<%= deTitoloName  %>" type="hidden" name="<%= deTitoloName  %>" value="<%= deTitolo.getUrl()  %>"/>
 				
-					<script type="text/javascript">
+					<script type="text/javascript" nonce="<%= randomNonce %>">
 					   $('[id=entry_<%=numeroEntryS %>]')
 					   .click(function() {
 						   		<%= visualizzaAjaxStatus %>
@@ -154,7 +154,7 @@ visualizzaMetadati = vectorRiepilogo.size() > 1;
 					}
 	                %>
    					
-				<script type="text/javascript">
+				<script type="text/javascript" nonce="<%= randomNonce %>">
 					if($("#<%=idSpanMenu %>").length>0){
 						// create context menu
 			            var contextMenu_<%=numeroEntry %> = $('#<%=idSpanMenu %>').contextMenu();

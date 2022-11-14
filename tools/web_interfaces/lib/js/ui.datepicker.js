@@ -224,7 +224,7 @@ $.extend(Datepicker.prototype, {
 		var inst = this._dialogInst; // internal instance
 		if (!inst) {
 			inst = this._dialogInst = new DatepickerInstance({}, false);
-			this._dialogInput = $('<input type="text" size="1" style="position: absolute; top: -100px;"/>');
+			this._dialogInput = $('<input type="text" size="1" class="dialogInputFix"/>');
 			this._dialogInput.keydown(this._doKeyDown);
 			$('body').append(this._dialogInput);
 			this._dialogInput[0]._calId = inst._id;
@@ -443,6 +443,97 @@ $.extend(Datepicker.prototype, {
 		if (inst._input && inst._input[0].type != 'hidden') {
 			inst._input[0].focus();
 		}
+		
+		// MODIFICHE CSP
+		$('td[_td_select_data]').each(function() {
+			$(this).click(function() {
+				let attrVal = $(this).attr('_td_select_data');
+				let params = attrVal.split(',');
+				jQuery.datepicker._selectDay(params[0] , params[1] , params[2] , this);
+			});
+			
+			$(this).mouseover(function() {
+				$(this).addClass('datepicker_daysCellOver');
+			});
+			
+			$(this).mouseout(function() {
+				$(this).removeClass('datepicker_daysCellOver');
+			});
+		});	
+		
+		$('a[_changeFirstDay]').each(function() {
+			$(this).click(function() {
+				let attrVal = $(this).attr('_changeFirstDay');
+				jQuery.datepicker._changeFirstDay(attrVal, this);
+			});
+		});	
+		
+		$('a[_can_adjust_month_plus]').each(function() {
+			$(this).click(function() {
+				let attrVal = $(this).attr('_can_adjust_month_plus');
+				let params = attrVal.split(',');
+				let offset = parseInt(params[1]);
+				jQuery.datepicker._adjustDate(params[0] , offset , params[2]);
+			});
+		});	
+		
+		$('a[_can_adjust_month_minus]').each(function() {
+			$(this).click(function() {
+				let attrVal = $(this).attr('_can_adjust_month_minus');
+				let params = attrVal.split(',');
+				let offset = parseInt(params[1]);
+				jQuery.datepicker._adjustDate(params[0] , -offset , params[2]);
+			});
+		});	
+			
+		$('a[_clear_date]').each(function() {
+			$(this).click(function() {
+				let attrVal = $(this).attr('_clear_date');
+				jQuery.datepicker._clearDate(attrVal);
+			});
+		});	
+			
+		$('a[_hide_date_picker]').each(function() {
+			$(this).click(function() {
+				jQuery.datepicker.hideDatepicker();
+			});
+		});	
+
+		$('a[_go_to_today]').each(function() {
+			$(this).click(function() {
+				let attrVal = $(this).attr('_go_to_today');
+				jQuery.datepicker._gotoToday(attrVal);
+			});
+		});
+
+		$('select[_new_month]').each(function() {
+			$(this).change(function() {
+				let attrVal = $(this).attr('_new_month');
+				let params = attrVal.split(',');
+				jQuery.datepicker._selectMonthYear(params[0], this, params[1]);
+			});
+			
+			$(this).click(function() {
+				let attrVal = $(this).attr('_new_month');
+				let params = attrVal.split(',');
+				jQuery.datepicker._clickMonthYear(params[0]);
+			});
+		});
+
+		$('select[_new_year]').each(function() {
+			$(this).change(function() {
+				let attrVal = $(this).attr('_new_year');
+				let params = attrVal.split(',');
+				jQuery.datepicker._selectMonthYear(params[0], this, params[1]);
+			});
+			
+			$(this).click(function() {
+				let attrVal = $(this).attr('_new_year');
+				let params = attrVal.split(',');
+				jQuery.datepicker._clickMonthYear(params[0]);
+			});
+		});
+
 	},
 
 	/* Tidy up after displaying the date picker. */
@@ -1102,9 +1193,9 @@ $.extend(DatepickerInstance.prototype, {
 		today = new Date(today.getFullYear(), today.getMonth(), today.getDate()); // clear time
 		// build the date picker HTML
 		var controls = '<div class="datepicker_control">' +
-			'<div class="datepicker_clear"><a onclick="jQuery.datepicker._clearDate(' + this._id + ');">' +
+			'<div class="datepicker_clear"><a _clear_date="' + this._id + '">' +
 			this._get('clearText') + '</a></div>' +
-			'<div class="datepicker_close"><a onclick="jQuery.datepicker.hideDatepicker();">' +
+			'<div class="datepicker_close"><a _hide_date_picker="' + this._id + '">' +
 			this._get('closeText') + '</a></div></div>';
 		var prompt = this._get('prompt');
 		var closeAtTop = this._get('closeAtTop');
@@ -1117,14 +1208,13 @@ $.extend(DatepickerInstance.prototype, {
 		var html = (prompt ? '<div class="datepicker_prompt">' + prompt + '</div>' : '') +
 			(closeAtTop && !this._inline ? controls : '') +
 			'<div class="datepicker_links"><div class="datepicker_prev">' +
-			(this._canAdjustMonth(-1) ? '<a onclick="jQuery.datepicker._adjustDate(' + this._id +
-			', -' + stepMonths + ', \'M\');">' + this._get('prevText') + '</a>' :
+			(this._canAdjustMonth(-1) ? '<a _can_adjust_month_minus="' + this._id + ',' + stepMonths + ',M">' 
+			+ this._get('prevText') + '</a>' :
 			(hideIfNoPrevNext ? '' : '<label>' + this._get('prevText') + '</label>')) + '</div>' +
-			(this._isInRange(today) ? '<div class="datepicker_current"><a ' +
-			'onclick="jQuery.datepicker._gotoToday(' + this._id + ');">' + this._get('currentText') + '</a></div>' : '') +
+			(this._isInRange(today) ? '<div class="datepicker_current"><a _go_to_today="' + this._id + '">' + this._get('currentText') + '</a></div>' : '') +
 			'<div class="datepicker_next">' +
-			(this._canAdjustMonth(+1) ? '<a onclick="jQuery.datepicker._adjustDate(' + this._id +
-			', +' + stepMonths + ', \'M\');">' + this._get('nextText') + '</a>' :
+			(this._canAdjustMonth(+1) ? '<a _can_adjust_month_plus="' + this._id + ',' + stepMonths + ',M">' 
+			+ this._get('nextText') + '</a>' :
 			(hideIfNoPrevNext ? '' : '<label>' + this._get('nextText') + '</label>')) + '</div></div>';
 		var minDate = this._getMinDate();
 		var maxDate = this._get('maxDate');
@@ -1147,8 +1237,7 @@ $.extend(DatepickerInstance.prototype, {
 			for (var dow = 0; dow < 7; dow++) { // days of the week
 				var day = (dow + firstDay) % 7;
 				html += '<td>' + (!changeFirstDay ? '<span' :
-					'<a onclick="jQuery.datepicker._changeFirstDay(' + this._id +
-					', this);"') + ' title="' + dayNames[day] + '">' +
+					'<a ') + ' title="' + dayNames[day] + '" _changeFirstDay="' + this._id + '">' +
 					dayNamesMin[day] + (changeFirstDay ? '</a>' : '</span>') + '</td>';
 			}
 			html += '</tr></thead><tbody>';
@@ -1179,9 +1268,9 @@ $.extend(DatepickerInstance.prototype, {
 						(printDate.getTime() >= currentDate.getTime() && printDate.getTime() <= endDate.getTime() ?  // in current range
 						' datepicker_currentDay' : // highlight selected day
 						(printDate.getTime() == today.getTime() ? ' datepicker_today' : ''))) + '"' + // highlight today (if different)
-						(unselectable ? '' : ' onmouseover="jQuery(this).addClass(\'datepicker_daysCellOver\');"' +
-						' onmouseout="jQuery(this).removeClass(\'datepicker_daysCellOver\');"' +
-						' onclick="jQuery.datepicker._selectDay(' + this._id + ',' + drawMonth + ',' + drawYear + ', this);"') + '>' + // actions
+						// actions spostate come script per risolvere i problemi CSP
+						(unselectable ? '' : ' _td_select_data="' + this._id + ',' + drawMonth + ',' + drawYear + '"')
+						+ '>' + 
 						(otherMonth ? (showOtherMonths ? printDate.getDate() : '&nbsp;') : // display for other months
 						(unselectable ? printDate.getDate() : '<a>' + printDate.getDate() + '</a>')) + '</td>'; // display for this month
 					printDate.setDate(printDate.getDate() + 1);
@@ -1197,7 +1286,7 @@ $.extend(DatepickerInstance.prototype, {
 		}
 		}
 		html += (!closeAtTop && !this._inline ? controls : '') +
-			'<div style="clear: both;"></div>' + (!$.browser.msie ? '' :
+			'<div class="commandDivFix"></div>' + (!$.browser.msie ? '' :
 			'<!--[if lte IE 6.5]><iframe src="javascript:false;" class="datepicker_cover"></iframe><![endif]-->');
 		return html;
 	},
@@ -1215,8 +1304,7 @@ $.extend(DatepickerInstance.prototype, {
 			var inMinYear = (minDate && minDate.getFullYear() == drawYear);
 			var inMaxYear = (maxDate && maxDate.getFullYear() == drawYear);
 			html += '<select class="datepicker_newMonth" ' +
-				'onchange="jQuery.datepicker._selectMonthYear(' + this._id + ', this, \'M\');" ' +
-				'onclick="jQuery.datepicker._clickMonthYear(' + this._id + ');">';
+				'_new_month="' + this._id + ',M" >';
 			for (var month = 0; month < 12; month++) {
 				if ((!inMinYear || month >= minDate.getMonth()) &&
 						(!inMaxYear || month <= maxDate.getMonth())) {
@@ -1251,8 +1339,7 @@ $.extend(DatepickerInstance.prototype, {
 			year = (minDate ? Math.max(year, minDate.getFullYear()) : year);
 			endYear = (maxDate ? Math.min(endYear, maxDate.getFullYear()) : endYear);
 			html += '<select class="datepicker_newYear" ' +
-				'onchange="jQuery.datepicker._selectMonthYear(' + this._id + ', this, \'Y\');" ' +
-				'onclick="jQuery.datepicker._clickMonthYear(' + this._id + ');">';
+				'_new_year="' + this._id + ',Y" >';
 			for (; year <= endYear; year++) {
 				html += '<option value="' + year + '"' +
 					(year == drawYear ? ' selected="selected"' : '') +

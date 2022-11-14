@@ -9,7 +9,7 @@
 	
 	<h:panelGroup layout="block" id="headerContentParent">
 		<h:panelGroup layout="block" id="headerLogo" styleClass="stileLogo" rendered="#{not empty loginBean.logoHeaderImage}">
-			<table style="width:100%;">
+			<table class="tablePageHeaderLogo">
 				<tbody>
 					<tr class="stileLogo"> 
 						<td colspan="2" align="left">
@@ -28,14 +28,15 @@
 	      		<h:form prependId="false" >
 	      			<a4j:outputPanel layout="block" ajaxRendered="false" id="headerPaginaLivePanel">
 		      			<h:inputHidden value="true" id="ps_usaSVG"/> 
-		           		<table style="width:100%;">
+		           		<table class="tablePageHeader">
 		            		<tbody>
 			            		<tr>
 			            			<c:if test="#{applicationBean.amministratore or applicationBean.operatore}">
 				            			<td class="tdTitoloStatusPdd">
 											<a4j:outputPanel layout="block" rendered="#{statusBean.enable}" id="statusPdd" styleClass="">
+												<input type="hidden" id="_csrfHeader" name="_csrf" value="#{loginBean.csrf}"/>
 												<a href="#{facesContext.externalContext.request.contextPath}/commons/pages/statoPdd.jsf?usaSVG=true" class="titleStatusIconLinkRight">
-													<h:graphicImage value="#{statusBean.iconaStato}" width="16" height="16" id="iconaStatusPdd" style="vertical-align: bottom;" >
+													<h:graphicImage value="#{statusBean.iconaStato}" width="16" height="16" id="iconaStatusPdd" styleClass="vertical-align-bottom" >
 														<rich:toolTip id="toolIconaStatusPdd" for="iconaStatusPdd" mode="client" value="#{statusBean.tooltipIconaStato}" direction="bottom-left"/>
 													</h:graphicImage>
 												</a>
@@ -44,12 +45,12 @@
 													ajaxSingle="true"	rendered="#{statusBean.enable}" limitToList="true">
 						                			<f:setPropertyActionListener value="true" target="#{statusBean.aggiornamentoAutomatico}" /> 
 						                		</a4j:jsFunction>
-						                		<script type="text/javascript">
+						                		<script type="text/javascript" nonce="#{_csp_random_nonce}">
 													var cdifp_stPdd = #{statusBean.intervalloRefresh};
 												</script>
 											</a4j:outputPanel>
 											<a4j:outputPanel layout="block" rendered="#{statusBean.enable}" id="statusPddScript" styleClass="">
-												<script type="text/javascript">
+												<script type="text/javascript" nonce="#{_csp_random_nonce}">
 													var t_stPdd;
 													var cdt_stPdd;
 													var timer_is_on_stPdd=0;
@@ -59,7 +60,7 @@
 													{
 														cd_stPdd=cdifp_stPdd;
 														//console.log(cd_stPdd);
-														t_stPdd=setTimeout("pollStatoPdd()",cd_stPdd*1000);
+														t_stPdd=setTimeout(pollStatoPdd,cd_stPdd*1000);
 													}
 												
 													function stopCounterStatoPdd(){
@@ -87,6 +88,9 @@
 				                		<a href="#{facesContext.externalContext.request.contextPath}/commons/pages/welcome.jsf?usaSVG=true" class="titleStatusIconLinkLeft">
 											<h:outputText value="#{loginBean.title}" id="licenseOutputText"  styleClass="appTitle"/>
 										</a>
+										<c:if test="#{!(applicationBean.amministratore or applicationBean.operatore)}">
+				            				<input type="hidden" id="_csrfHeader" name="_csrf" value="#{loginBean.csrf}"/>
+				            			</c:if>
 					                </td>
 					                <td align="right" class="titleRight">
 					                	<c:if test="#{applicationBean.user}">
@@ -133,14 +137,14 @@
 											            </c:if>
 											            <c:if test="#{not loginBean.visualizzaMenuSoggetto}">
 											            	<c:if test="#{not loginBean.visualizzaLinkSelezioneSoggetto}">
-													            <a4j:outputPanel layout="block" id="menuSoggetto" styleClass="ddmenu-label" style="cursor: default;">
+													            <a4j:outputPanel layout="block" id="menuSoggetto" styleClass="ddmenu-label cursor-default">
 													            	<a4j:outputPanel layout="block" styleClass="rich-label-text-decor">
 													            		<h:outputText value="#{not empty loginBean.labelSoggettoNormalized ? loginBean.labelSoggettoNormalized : loginBean.labelSoggetto}" styleClass="soggetto"/>
 													            	</a4j:outputPanel>
 													            </a4j:outputPanel>
 												            </c:if>
 												            <c:if test="#{loginBean.visualizzaLinkSelezioneSoggetto}">
-													            <a4j:outputPanel layout="block" id="menuSoggetto" styleClass="ddmenu-label" style="cursor: default;">
+													            <a4j:outputPanel layout="block" id="menuSoggetto" styleClass="ddmenu-label cursor-default">
 													            	<a4j:outputPanel layout="block" styleClass="rich-label-text-decor">
 													            		<a4j:htmlCommandLink action="soggettoOperativoPddMonitor" >
 													            			<h:outputText value="#{not empty loginBean.labelSoggettoNormalized ? loginBean.labelSoggettoNormalized : loginBean.labelSoggetto}" styleClass="soggetto"/>
@@ -168,7 +172,7 @@
 												            </rich:dropDownMenu>
 											            </c:if>
 											            <c:if test="#{not loginBean.visualizzaMenuModalita}">
-												            <a4j:outputPanel layout="block" id="menuModalita" styleClass="ddmenu-label" style="cursor: default;">
+												            <a4j:outputPanel layout="block" id="menuModalita" styleClass="ddmenu-label cursor-default">
 												            	<a4j:outputPanel layout="block" styleClass="rich-label-text-decor">
 												            		<h:outputText value="#{loginBean.labelModalita}" styleClass="modalita"/>
 												            	</a4j:outputPanel>
@@ -188,7 +192,7 @@
 									                	<c:if test="#{!loginBean.showExtendedInfo}">
 											                	<rich:menuItem submitMode="server" value="Informazioni" action="about" />
 											                </c:if>
-										                <rich:menuItem submitMode="server" value="Profilo utente" action="editUser" >
+										                <rich:menuItem submitMode="server" value="Profilo utente" action="editUser" actionListener="#{loginBean.nuovoTokenCsrfListener}" >
 										                	<f:setPropertyActionListener value="#{loginBean.loggedUser.username}" target="#{utentiBean.id}"></f:setPropertyActionListener>
 										                </rich:menuItem>
 										                <rich:menuItem submitMode="server" value="Logout" action="#{loginBean.logout}" actionListener="#{loginBean.logoutListener}"  rendered="#{loginBean.showLogout == 'true'}"/>

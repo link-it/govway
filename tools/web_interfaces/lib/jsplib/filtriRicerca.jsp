@@ -39,6 +39,7 @@ else
   iddati = "notdefined";
 GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
 PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
+String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 
 Vector<GeneralLink> titlelist = pd.getTitleList();
 String titoloSezione = Costanti.LABEL_TITOLO_SEZIONE_DEFAULT;
@@ -103,12 +104,20 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 									  		String deVisualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 											
 									  		String deIconName = de.getIcon(); 
+									  		String id = "pnlRicercaHeader_link_" + idxLink;
 									  		%>
-					    					<a class="titoloSezioneAzioneLink <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>" type="button" onClick="<%= deVisualizzaAjaxStatus %>return true;">
+					    					<a id="<%=id %>" class="titoloSezioneAzioneLink <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>" type="button">
 					    						<span class="icon-box">
 													<i class="material-icons md-24"><%= deIconName %></i>
 												</span>
 					    					</a>
+					    					<script type="text/javascript" nonce="<%= randomNonce %>">
+										      	 $(document).ready(function(){
+														$('#<%=id %>').click(function() {
+															<%= deVisualizzaAjaxStatus %>return true;
+														});
+													});
+											</script>
 										<% 
 										}
 									%>
@@ -210,11 +219,11 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 					        				<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
 					        				<span class="subtitleGroup">
 					        					<span class="subtitleAnchor">
-					        						<i class="material-icons md-16" id="<%= filterName  %>__icon" style="" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%></i>
+					        						<i class="material-icons md-16" id="<%= filterName  %>__icon" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%></i>
 					        					</span>
 					        					<a id="<%= filterName  %>__anchor" name="<%=rowName %>" class="subtitleAnchor" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%=deLabel %></a>
 					        				</span>
-					        				<script type="text/javascript">
+					        				<script type="text/javascript" nonce="<%= randomNonce %>">
 					        					$(document).ready(function() {
               									<%
               										boolean sub = filtro.isVisualizzaSezioneAperta();
@@ -331,7 +340,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 			                            				String [] values = filtro.getValues();
 			            							  	String [] labels = filtro.getLabels();
 			            							  	String selezionato = filtro.getSelected();
-			            								String selEvtOnChange = !filtro.getOnChange().equals("") ? (" onChange=\""+ Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS +"Change(document.form,'"+filterName+"',true)\" " ) : " ";
+			            								String selEvtOnChange = !filtro.getOnChange().equals("") ? ( Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS +"Change(document.form,'"+filterName+"',true);") : " ";
 			            								
 			            								%>
 			    										
@@ -354,6 +363,15 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 													      		}
 													      		%>
 												      		<input type="hidden" id="<%= filterId  %>_hidden_chk" value="<%= abilitaSearch  %>"/>
+												      		<% if(!filtro.getOnChange().equals("")){ %>
+												      		<script type="text/javascript" nonce="<%= randomNonce %>">
+																$(document).ready(function(){
+																	$('#<%= filterId  %>').change(function() {
+																		<%=selEvtOnChange%>
+																	});
+																});
+															</script>
+															<% } %>
 														</div>
 														
 														<%	
@@ -365,7 +383,6 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 	                                            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
 	                                            				<%
 	                                            				String visualizzaAjaxStatus = filtro.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
-						    									String chkEvtOnClick = !filtro.getOnClick().equals("") ? (" onClick=\"" + visualizzaAjaxStatus + filtro.getOnClick() + "\" ") :" ";
 						    									String chkVal = filtro.getSelected().equals("yes") ? " checked='true' " : " ";
 						    									String disVal = pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton") ? "disabled=\"disabled\"" : "";
 						    									String controlSetClass = deInfo != null ? "controlset-cb-info" : "controlset";
@@ -375,10 +392,20 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 						    											controlSetClass = "controlset-cb-note-affiancate";
 						    										}
 						    									}
+						    									String id = "checkbox_filtri_" + iPD;
 						    									%>	<table class="<%=controlSetClass %>">
 				    													<tr> 
 				    														<td>
-						   														<input type="checkbox" name="<%= filterName  %>" value="yes" <%=chkVal %> <%=chkEvtOnClick %> <%=disVal %> >
+						   														<input id="<%=id %>" type="checkbox" name="<%= filterName  %>" value="yes" <%=chkVal %> <%=disVal %> >
+						   														<% if(!filtro.getOnClick().equals("")){ %>
+						   															<script type="text/javascript" nonce="<%= randomNonce %>">
+																				      	 $(document).ready(function(){
+																								$('#<%=id %>').click(function() {
+																									visualizzaAjaxStatus + filtro.getOnClick();
+																								});
+																							});
+																					</script>
+						   														<% } %>	
 						   													</td>
 						   													<% if(!filtro.getLabelRight().equals("")){ %>
 						   													<td>
@@ -484,8 +511,18 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 							<tr>
 								<td class="buttonrow">
 									<div class="buttonrowricerca">
-										<input type="button" onClick="<%=visualizzaAjaxStatusFiltra %>Search(document.form)" value='<%=pd.getLabelBottoneFiltra() %>' />
-										<input type="button" onClick="<%=visualizzaAjaxStatusRipulisci %>Reset(document.form);" value='<%=pd.getLabelBottoneRipulsci() %>' />
+										<input id="eseguiRicercaBtn" type="button" value='<%=pd.getLabelBottoneFiltra() %>' />
+										<input id="resetRicercaBtn" type="button" value='<%=pd.getLabelBottoneRipulsci() %>' />
+										<script type="text/javascript" nonce="<%= randomNonce %>">
+											$(document).ready(function(){
+												$('#eseguiRicercaBtn').click(function() {
+													<%=visualizzaAjaxStatusFiltra %>Search(document.form);
+												});
+												$('#resetRicercaBtn').click(function() {
+													<%=visualizzaAjaxStatusRipulisci %>Reset(document.form);
+												});
+											});
+										</script>
 									</div>								
 								
 								</td>

@@ -815,7 +815,7 @@ function now() {
 		id = "script" + now();
 
 	div.style.display = "none";
-	div.innerHTML = "   <link/><table></table><a href='/a' style='color:red;float:left;opacity:.55;'>a</a><input type='checkbox'/>";
+	div.innerHTML = "   <link/><table></table><a href='/a' class='color-red-float-left-opacity-055'>a</a><input type='checkbox'/>";
 
 	var all = div.getElementsByTagName("*"),
 		a = div.getElementsByTagName("a")[0];
@@ -5785,7 +5785,7 @@ if ( "getBoundingClientRect" in document.documentElement ) {
 jQuery.offset = {
 	initialize: function() {
 		var body = document.body, container = document.createElement("div"), innerDiv, checkDiv, table, td, bodyMarginTop = parseFloat( jQuery.curCSS(body, "marginTop", true) ) || 0,
-			html = "<div style='position:absolute;top:0;left:0;margin:0;border:5px solid #000;padding:0;width:1px;height:1px;'><div></div></div><table style='position:absolute;top:0;left:0;margin:0;border:5px solid #000;padding:0;width:1px;height:1px;' cellpadding='0' cellspacing='0'><tr><td></td></tr></table>";
+			html = "<div class='div-jquery-offset-initialize'><div></div></div><table class='table-jquery-offset-initialize' cellpadding='0' cellspacing='0'><tr><td></td></tr></table>";
 
 		jQuery.extend( container.style, { position: "absolute", top: 0, left: 0, margin: 0, border: 0, width: "1px", height: "1px", visibility: "hidden" } );
 

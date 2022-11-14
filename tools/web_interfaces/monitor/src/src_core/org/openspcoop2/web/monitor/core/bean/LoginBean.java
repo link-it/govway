@@ -48,6 +48,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.IVersionInfo;
+import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.lib.users.dao.Stato;
@@ -58,6 +59,7 @@ import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.dao.DBLoginDAO;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
+import org.openspcoop2.web.monitor.core.filters.CsrfFilter;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
@@ -96,13 +98,13 @@ public class LoginBean extends AbstractLoginBean {
 	private Boolean visualizzaMenuModalita = null;
 	private Boolean visualizzaSezioneModalita = null;
 	private List<MenuModalitaItem> vociMenuModalita = null;
-	private Boolean vociMenuModalita_semaphore = true;
+	private Semaphore vociMenuModalita_semaphore = new Semaphore("LoginBean.vociMenuModalita");
 	
 	private String soggettoPddMonitor = null;
 	private Boolean visualizzaMenuSoggetto = null;
 	private Boolean visualizzaSezioneSoggetto = null;
 	private List<MenuModalitaItem> vociMenuSoggetto = null;
-	private Boolean vociMenuSoggetto_semaphore = true;
+	private Semaphore vociMenuSoggetto_semaphore = new Semaphore("LoginBean.vociMenuSoggetto");
 	private Boolean visualizzaLinkSelezioneSoggetto = null;
 	
 	private Configurazione configurazioneGenerale = null;
@@ -199,6 +201,7 @@ public class LoginBean extends AbstractLoginBean {
 							if(this.passwordVerifier.isPasswordExpire(user.getLastUpdatePassword(), bfMotivazioneErrore)) {
 								MessageUtils.addErrorMsg(bfMotivazioneErrore.toString());
 								this.userToUpdate = this.getUsername();
+								this.nuovoTokenCsrfListener(null); // genero un token csrf per l'operazione
 								return "utentePasswordChange";
 							}
 						}
@@ -538,7 +541,8 @@ public class LoginBean extends AbstractLoginBean {
 
 	public List<MenuModalitaItem> getVociMenuModalita() {
 		
-		synchronized (this.vociMenuModalita_semaphore) {
+		this.vociMenuModalita_semaphore.acquireThrowRuntime("getVociMenuModalita");
+		try {
 			
 			this.vociMenuModalita = new ArrayList<MenuModalitaItem>();
 			try {
@@ -582,6 +586,8 @@ public class LoginBean extends AbstractLoginBean {
 			}
 		
 			return this.vociMenuModalita;
+		}finally {
+			this.vociMenuModalita_semaphore.release("getVociMenuModalita");
 		}
 	}
 	
@@ -922,7 +928,8 @@ public class LoginBean extends AbstractLoginBean {
 
 	public List<MenuModalitaItem> getVociMenuSoggetto() {
 		
-		synchronized (this.vociMenuSoggetto_semaphore) {
+		this.vociMenuSoggetto_semaphore.acquireThrowRuntime("getVociMenuSoggetto"); 
+		try{
 		
 			this.vociMenuSoggetto = new ArrayList<MenuModalitaItem>();
 			try {
@@ -1024,12 +1031,15 @@ public class LoginBean extends AbstractLoginBean {
 			
 			return this.vociMenuSoggetto;
 			
+		}finally {
+			this.vociMenuSoggetto_semaphore.release("getVociMenuSoggetto"); 
 		}
 	}
 	
 	public int getWidthVociMenuSoggetto() {
 		
-		synchronized (this.vociMenuSoggetto_semaphore) {
+		this.vociMenuSoggetto_semaphore.acquireThrowRuntime("getWidthVociMenuSoggetto"); 
+		try{
 		
 			if(this.vociMenuSoggetto.isEmpty())
 				return 0;
@@ -1043,6 +1053,8 @@ public class LoginBean extends AbstractLoginBean {
 			
 			return 44 + max;
 			
+		}finally {
+			this.vociMenuSoggetto_semaphore.release("getWidthVociMenuSoggetto"); 
 		}
 	}
 
@@ -1169,4 +1181,23 @@ public class LoginBean extends AbstractLoginBean {
 	public void resetUserToUpdate() {
 		this.userToUpdate = null;
 	}
+	
+	public String getCsrf() {
+		FacesContext fc = FacesContext.getCurrentInstance();
+		ExternalContext extCtx = fc.getExternalContext();
+		HttpSession session = (HttpSession)extCtx.getSession(false);
+		String tokenCSRF = CsrfFilter.leggiTokenCSRF(session);
+		this.log.debug("Letto Token CSRF: ["+tokenCSRF+"]"); 
+		return tokenCSRF;
+	}
+	
+	public void nuovoTokenCsrfListener(ActionEvent ae) {
+		FacesContext fc = FacesContext.getCurrentInstance();
+		ExternalContext extCtx = fc.getExternalContext();
+		HttpSession session = (HttpSession)extCtx.getSession(false);
+		String nuovoTokenCSRF = CsrfFilter.generaESalvaTokenCSRF(session);
+		this.log.debug("Generato Nuovo Token CSRF: ["+nuovoTokenCSRF+"]");
+	}
+
+	public void setCsrf(String csrf) {}
 }

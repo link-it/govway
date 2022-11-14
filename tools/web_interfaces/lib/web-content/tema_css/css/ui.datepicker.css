@@ -199,3 +199,15 @@ img.datepicker_trigger {
     width: 200px; /*must have*/
     height: 200px; /*must have*/
 }
+
+/* ___________ CSP FIX ________ */
+
+.dialogInputFix {
+	position: absolute; 
+	top: -100px;
+}
+
+.commandDivFix {
+	clear: both;
+}
+

@@ -86,7 +86,9 @@ public class QueueProperties {
 		    try{
 				if(properties!=null)
 				    properties.close();
-		    }catch(Exception er){}
+		    }catch(Exception er){
+		    	// close
+		    }
 		}
 
 		this.reader = new QueueInstanceProperties(propertiesReader, this.log, confDir);

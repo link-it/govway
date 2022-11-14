@@ -33,7 +33,7 @@
 		<a4j:loadScript src="/scripts/ChartMap.js" rendered="#{distribuzioneSoggettoSearchForm.useGraficiSVG}" />
 		<a4j:loadScript src="/scripts/SvgRaster.js" rendered="#{distribuzioneSoggettoSearchForm.useGraficiSVG}" />
 		<a4j:outputPanel id="scriptSVGPanel" rendered="#{distribuzioneSoggettoSearchForm.useGraficiSVG}">
-   			<script type="text/javascript">
+   			<script type="text/javascript" nonce="#{_csp_random_nonce}">
    			//<![CDATA[
    				var nomeFileImageExport = '#{distribuzionePerSoggettoBean.exportFilenamePng}';
    				
@@ -50,7 +50,7 @@
 			</script>
 		</a4j:outputPanel>	
 		<a4j:outputPanel id="scriptsNoSVGPanel" rendered="#{not distribuzioneSoggettoSearchForm.useGraficiSVG}">
-			<script type="text/javascript">
+			<script type="text/javascript" nonce="#{_csp_random_nonce}">
 				//<![CDATA[
 					function updateChart(data){
 						var c = getChartFromId(chartId);
@@ -73,6 +73,7 @@
 			<c:if test="#{distribuzioneSoggettoSearchForm._value_tipoReport == 'tabella'}">
 				<rich:panel rendered="#{distribuzioneSoggettoSearchForm._value_tipoReport == 'tabella'}" styleClass="noborder">
 					<h:form>
+						<input type="hidden" id="_csrfFormTabellaReportTabella" name="_csrf" value="#{loginBean.csrf}"/>
 							<link:dataTable 
 								value="#{distribuzionePerSoggettoDM}"
 								id="table"
@@ -96,8 +97,9 @@
 								</rich:column>
 							</link:dataTable>
 					</h:form>
-					<rich:panel id="formCmdPanelBarsTbl" styleClass="noborder" bodyClass="nopadding" style="float: left;">
+					<rich:panel id="formCmdPanelBarsTbl" styleClass="noborder float-left" bodyClass="nopadding">
 						<a4j:form id="cmdBarsPanelTbl">
+							<input type="hidden" id="_csrfFormCmdBarsPanelTbl" name="_csrf" value="#{loginBean.csrf}"/>
 							<a4j:commandLink value="#{distribuzionePerSoggettoBean.prevBtnLabel}" reRender="mainPnlDS">
 								<a4j:actionparam name="dir" value="prev" assignTo="#{distribuzionePerSoggettoBean.dir}" actionListener="#{distribuzionePerSoggettoBean.updateChartDateOffset}"/>
 							</a4j:commandLink>
@@ -111,8 +113,9 @@
 							</a4j:commandLink>
 						</a4j:form>
 					</rich:panel>
-					<rich:panel id="exportCmdPanelTbl" styleClass="noborder" bodyClass="nopadding" style="text-align: right;"   >
+					<rich:panel id="exportCmdPanelTbl" styleClass="noborder text-align-left" bodyClass="nopadding">
 						<h:form id="formExportCmdPanelTbl" rendered="#{distribuzionePerSoggettoDM.visualizzaComandiExport}">
+							<input type="hidden" id="_csrfFormExportCmdPanelTbl" name="_csrf" value="#{loginBean.csrf}"/>
 								<h:commandLink id="exportCsvLink" target="_blank" action="#{distribuzionePerSoggettoBean.esportaCsv}" title="Esporta i risultati in formato CSV">
 									<h:outputText value="CSV" />
 								</h:commandLink>
@@ -128,7 +131,7 @@
 					</rich:panel>
 					
 					<a4j:outputPanel id="timeoutCtr" layout="block" styleClass="" rendered="#{distribuzionePerSoggettoDM.timeoutEvent}">
-						<script type="text/javascript">
+						<script type="text/javascript" nonce="#{_csp_random_nonce}">
 							//<![CDATA[
 							   jQuery(document).ready(controllaEventoTimeout);
 					
@@ -148,7 +151,7 @@
 					<a4j:outputPanel id="scriptPieChartPanel" rendered="#{true}">
 						<c:if test="#{distribuzioneSoggettoSearchForm.useGraficiSVG}">
 							<a4j:outputPanel id="svgChartPanel" rendered="#{distribuzioneSoggettoSearchForm.useGraficiSVG}">
-								<script type="text/javascript">
+								<script type="text/javascript" nonce="#{_csp_random_nonce}">
 								//<![CDATA[
 				   				var chartId = 'distribuzioneSoggettoId';
 				   				var chartDivId = 'distribuzioneSoggettoDiv';
@@ -164,7 +167,7 @@
 						</c:if>
 						<c:if test="#{not distribuzioneSoggettoSearchForm.useGraficiSVG}">
 							<a4j:outputPanel id="flashChartPanel" rendered="#{not distribuzioneSoggettoSearchForm.useGraficiSVG}">
-								<script type="text/javascript">
+								<script type="text/javascript" nonce="#{_csp_random_nonce}">
 								//<![CDATA[
 								var chartId = 'distribuzioneSoggettoId';
 				   				var chartDivId = 'distribuzioneSoggettoDiv';
@@ -186,10 +189,11 @@
 			               	<ui:param name="id" value="modale_pie_chart" />
 			           	</ui:include>
 					</a4j:outputPanel>
-					<div id="panelComandi" style="padding-top: 12px;"> 
-						<h:panelGrid columns="3" id="gridComandi" style="width:100%;" columnClasses="comandi-grafici-align-default,comandi-grafici-align-center,comandi-grafici-align-right"> 
+					<div id="panelComandi" class="padding-top-12"> 
+						<h:panelGrid columns="3" id="gridComandi" styleClass="width-cento" columnClasses="comandi-grafici-align-default,comandi-grafici-align-center,comandi-grafici-align-right"> 
 						<rich:panel id="formCmdPanel" styleClass="noborder" bodyClass="nopadding">
 							<a4j:form id="cmdPanel">
+								<input type="hidden" id="_csrfFormCmdPanel" name="_csrf" value="#{loginBean.csrf}"/>
 								<h:inputHidden value="true" id="usaSVG"/>
 								<a4j:commandLink value="#{distribuzionePerSoggettoBean.prevBtnLabel}" reRender="scriptPieChartPanel,gridComandi">
 									<a4j:actionparam name="dir" value="prev" assignTo="#{distribuzionePerSoggettoBean.dir}" actionListener="#{distribuzionePerSoggettoBean.updateChartDateOffset}"/>
@@ -207,6 +211,7 @@
 						<rich:panel id="formSliderPanel" styleClass="noborder" bodyClass="nopadding">
 								<div class="form-container noborder">
 									<a4j:form rendered="#{distribuzionePerSoggettoBean.visualizzaComandiExport}" id="formSlider">
+										<input type="hidden" id="_csrfFormSliderPanel" name="_csrf" value="#{loginBean.csrf}"/>
 										<h:inputHidden value="true" id="usaSVG"/>
 										<h:panelGrid columns="2">
 											<h:outputLabel value="Numero Risultati" styleClass="labelSpinnerGraficiSolo" />
@@ -220,6 +225,7 @@
 							</rich:panel>
 						<rich:panel id="exportCmdPanel" styleClass="noborder" bodyClass="nopadding">
 							<h:form id="formExportCmdPanel" rendered="#{distribuzionePerSoggettoBean.visualizzaComandiExport}" >
+								<input type="hidden" id="_csrfFormExportCmdPanel" name="_csrf" value="#{loginBean.csrf}"/>
 								<h:commandLink id="exportCsvLink" target="_blank" action="#{distribuzionePerSoggettoBean.esportaCsv}" title="Esporta i risultati in formato CSV">
 									<h:outputText value="CSV" />
 								</h:commandLink>
@@ -242,7 +248,7 @@
 				</rich:panel>
 			</c:if>
 			<c:if test="#{distribuzioneSoggettoSearchForm._value_tipoReport == 'bar_chart'}">
-				<script type="text/javascript">
+				<script type="text/javascript" nonce="#{_csp_random_nonce}">
 					//<![CDATA[
 			   				jQuery(document).ready(function() {
 			   					setSlider(chartWidth);
@@ -250,6 +256,7 @@
 						 //]]>	
 				</script>
 				  <a4j:form >
+				  	<input type="hidden" id="_csrfFormSetSlider" name="_csrf" value="#{loginBean.csrf}"/>
 		        	<a4j:jsFunction name="setSlider" reRender="gridComandiBars">
 		            	<a4j:actionparam name="param1" assignTo="#{distribuzionePerSoggettoBean.initLarghezzaGrafico}"  /> 
 		        	</a4j:jsFunction>
@@ -259,7 +266,7 @@
 					<a4j:outputPanel id="scriptBarChartPanel" rendered="#{true}">
 						<c:if test="#{distribuzioneSoggettoSearchForm.useGraficiSVG}">
 							<a4j:outputPanel id="svgBarChartPanel" rendered="#{distribuzioneSoggettoSearchForm.useGraficiSVG}">	
-								<script type="text/javascript">
+								<script type="text/javascript" nonce="#{_csp_random_nonce}">
 								//<![CDATA[
 				   				var chartId = 'distribuzioneSoggettoBarsId';
 				   				var chartDivId = 'distribuzioneSoggettoBarsDiv';
@@ -275,7 +282,7 @@
 						</c:if>
 						<c:if test="#{not distribuzioneSoggettoSearchForm.useGraficiSVG}">
 							<a4j:outputPanel id="flashBarChartPanel" rendered="#{not distribuzioneSoggettoSearchForm.useGraficiSVG}">
-								<script type="text/javascript">
+								<script type="text/javascript" nonce="#{_csp_random_nonce}">
 								//<![CDATA[
 								var chartId = 'distribuzioneSoggettoBarsId';
 				   				var chartDivId = 'distribuzioneSoggettoBarsDiv';
@@ -298,9 +305,10 @@
 			           	</ui:include>				
 					</a4j:outputPanel>
 					<div id="panelComandiBars">  
-						<h:panelGrid columns="3" id="gridComandiBars" style="width:100%;" columnClasses="comandi-grafici-align-default,comandi-grafici-align-center,comandi-grafici-align-right">
+						<h:panelGrid columns="3" id="gridComandiBars" styleClass="width-cento" columnClasses="comandi-grafici-align-default,comandi-grafici-align-center,comandi-grafici-align-right">
 							<rich:panel id="formCmdPanelBars" styleClass="noborder" bodyClass="nopadding">
 								<a4j:form id="cmdBarsPanel">
+									<input type="hidden" id="_csrfFormCmdBarsPanel" name="_csrf" value="#{loginBean.csrf}"/>
 									<h:inputHidden value="true" id="usaSVG"/>
 									<a4j:commandLink value="#{distribuzionePerSoggettoBean.prevBtnLabel}" reRender="scriptBarChartPanel,gridComandiBars">
 										<a4j:actionparam name="dir" value="prev" assignTo="#{distribuzionePerSoggettoBean.dir}" actionListener="#{distribuzionePerSoggettoBean.updateChartDateOffset}"/>
@@ -318,8 +326,9 @@
 							<rich:panel id="formSliderPanelBars" styleClass="noborder" bodyClass="nopadding">
 								<div class="form-container noborder">
 									<a4j:form rendered="#{distribuzionePerSoggettoBean.visualizzaComandiExport}" id="formSliderBars">
+										<input type="hidden" id="_csrfFormSliderPanelBars" name="_csrf" value="#{loginBean.csrf}"/>
 										<a4j:outputPanel rendered="#{distribuzioneSoggettoSearchForm.useGraficiSVG}">
-											<style>
+											<style type="text/css" nonce="#{_csp_random_nonce}">
 												div.form-container div.rich-combobox {
 													    margin-left: 0px;
 												}
@@ -351,7 +360,7 @@
 												<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 											</a4j:outputPanel>
 											<h:panelGrid columns="2">
-												<h:outputLabel value="Larghezza Grafico" styleClass="labelSliderGrafici" style="width: 160px !important;"/>
+												<h:outputLabel value="Larghezza Grafico" styleClass="labelSliderGrafici width-160-important"/>
 												<rich:inputNumberSlider id="sliderLarghezzaGrafico" value="#{distribuzionePerSoggettoBean.larghezzaGrafico}" onchange="updateChart2(this)"
 													showInput="false" enableManualInput="false" minValue="#{distribuzionePerSoggettoBean.minLarghezzaGrafico}" maxValue="#{distribuzionePerSoggettoBean.maxLarghezzaGrafico}" showBoundaryValues="false" >
 												</rich:inputNumberSlider>
@@ -362,6 +371,7 @@
 							</rich:panel>
 							<rich:panel id="exportCmdPanelBars" styleClass="noborder" bodyClass="nopadding">
 								<h:form id="formExportCmdPanelBars" rendered="#{distribuzionePerSoggettoBean.visualizzaComandiExport}" >
+									<input type="hidden" id="_csrfFormExportCmdPanelBars" name="_csrf" value="#{loginBean.csrf}"/>
 									<h:commandLink id="bars_exportCsvLink" target="_blank" action="#{distribuzionePerSoggettoBean.esportaCsv}" title="Esporta i risultati in formato CSV">
 										<h:outputText value="CSV" />
 									</h:commandLink>

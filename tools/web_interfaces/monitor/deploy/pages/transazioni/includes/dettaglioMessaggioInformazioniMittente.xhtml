@@ -25,7 +25,7 @@
 			
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTrasportoMittente" value="ID Autenticato" rendered="#{not empty dettagliBean.dettaglio.trasportoMittente}" />
 			<h:outputText id="outTrasportoMittente" value="#{dettagliBean.dettaglio.trasportoMittenteLabel}" rendered="#{not empty dettagliBean.dettaglio.trasportoMittente and not dettagliBean.visualizzaTextAreaTrasportoMittente}" />
-			<h:inputTextarea id="outTrasportoMittenteTextArea" value="#{dettagliBean.dettaglio.trasportoMittenteLabel}" readonly="true"  cols="60" rows="3" styleClass="inputLinkLong" style="width:auto;"
+			<h:inputTextarea id="outTrasportoMittenteTextArea" value="#{dettagliBean.dettaglio.trasportoMittenteLabel}" readonly="true"  cols="60" rows="3" styleClass="inputLinkLong width-auto"
 				rendered="#{not empty dettagliBean.dettaglio.trasportoMittente and dettagliBean.visualizzaTextAreaTrasportoMittente}" />
 			
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTipoRichiesta" value="Metodo HTTP" rendered="#{not empty dettagliBean.dettaglio.tipoRichiesta}" />
@@ -33,7 +33,7 @@
 			
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelUrlInvocazione" value="URL Invocazione" rendered="#{not empty dettagliBean.dettaglio.urlInvocazione}"/>
 			<h:outputText id="outUrlInvocazione" value="#{dettagliBean.dettaglio.urlInvocazione}" rendered="#{not empty dettagliBean.dettaglio.urlInvocazione and not dettagliBean.visualizzaTextAreaUrlInvocazione}"/>
-			<h:inputTextarea id="outUrlInvocazioneTextArea" value="#{dettagliBean.dettaglio.urlInvocazione}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong" style="width:auto;"
+			<h:inputTextarea id="outUrlInvocazioneTextArea" value="#{dettagliBean.dettaglio.urlInvocazione}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong width-auto"
 				rendered="#{not empty dettagliBean.dettaglio.urlInvocazione and dettagliBean.visualizzaTextAreaUrlInvocazione}" />
 			
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelIndirizzoClient" value="Client IP" rendered="#{not empty dettagliBean.dettaglio.socketClientAddress}" />
@@ -47,7 +47,7 @@
 			
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelCredenziali" value="Credenziali" rendered="#{not empty dettagliBean.textCredenziali}"/>
 			<h:outputText id="outCredenziali" value="#{dettagliBean.textCredenziali}" rendered="#{not empty dettagliBean.textCredenziali and not dettagliBean.visualizzaTextAreaCredenziali}" />
-			<h:inputTextarea id="outCredenzialiTextArea" value="#{dettagliBean.textCredenziali}" readonly="true"  cols="60" rows="3" styleClass="inputLinkLong" style="width:auto;"
+			<h:inputTextarea id="outCredenzialiTextArea" value="#{dettagliBean.textCredenziali}" readonly="true"  cols="60" rows="3" styleClass="inputLinkLong width-auto"
 				rendered="#{not empty dettagliBean.textCredenziali and dettagliBean.visualizzaTextAreaCredenziali}" />
 			
 			
@@ -87,6 +87,7 @@
 				rendered="#{not empty dettagliBean.dettaglio.tokenInfo and dettagliBean.attributeInfo}"/>
 			<h:panelGroup id="panelGroupTokenInfo" rendered="#{not empty dettagliBean.dettaglio.tokenInfo}">
 				<h:form id="formTokenInfo">
+					<input type="hidden" id="_csrfFormTokeInfo" name="_csrf" value="#{loginBean.csrf}"/>
                           <a4j:htmlCommandLink id="tokenInfo-iconLink"
                                                            styleClass="icon-details"
                                                            value="Visualizza"

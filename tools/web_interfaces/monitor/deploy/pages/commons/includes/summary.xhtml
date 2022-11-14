@@ -22,9 +22,10 @@
 					<h:outputText value="Monitoraggio Transazioni" />
 				</f:facet>
 				
-				<a4j:outputPanel layout="block" styleClass="form-container noborder" style="padding-left:0px;">
+				<a4j:outputPanel layout="block" styleClass="form-container noborder padding-left-0">
 					<a4j:region id="summaryFormRegion" renderRegionOnly="true">
 						<a4j:form>
+							<input type="hidden" id="_csrfSummaryForm" name="_csrf" value="#{loginBean.csrf}"/>
 							<h:inputHidden value="true" id="usaSVG"/> 
 							<a4j:outputPanel id="periodoPnl" ajaxRendered="false" layout="block">
 								<link:prop label="Periodo" labelId="labelPeriodoCombo">
@@ -109,7 +110,7 @@
 				<rich:spacer height="20px"/>
 				<div id='summaryDiv'></div>
 				<a4j:outputPanel id="svgChartPanel" rendered="#{summaryBean.useGraficiSVG}">
-					<script type="text/javascript">
+					<script type="text/javascript" nonce="#{_csp_random_nonce}">
 						var chartId = 'summaryDiv';
 						var chartWidth = jQuery('#summaryCt_body').width() -50;
 						var chartHeight = 650;
@@ -125,7 +126,7 @@
 					</script>
 				</a4j:outputPanel>
 				<a4j:outputPanel id="flashChartPanel" rendered="#{not summaryBean.useGraficiSVG}">
-					<script type="text/javascript">
+					<script type="text/javascript" nonce="#{_csp_random_nonce}">
 						var chartId = 'summaryDiv';
 						var chartWidth =  '';
 						chartWidth += jQuery('#summaryCt_body').width() -12;

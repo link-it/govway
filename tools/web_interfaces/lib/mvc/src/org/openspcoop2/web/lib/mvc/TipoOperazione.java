@@ -41,11 +41,11 @@ public enum TipoOperazione {
 		return this.value;
 	}
 	
-	public boolean equals(TipoOperazione t){
+	public boolean equals(String t){
 		if(t==null){
 			return false;
 		}
-		return t.toString().equals(this.toString());
+		return t.equals(this.toString());
 	}
 
 }

@@ -130,48 +130,68 @@ public class Utility {
 	// }
 
 
-
+	private static synchronized void initFrequenzaInvioDiagnostici() {
+		if (Utility.frequenzaInvioDiagnostici == null) {
+			Utility.frequenzaInvioDiagnostici = Utility
+					.loadAndOrderProps(Utility.REPORTISTICA_DIAGNOSTICI_FREQ_INVIO);
+		}
+	}
 	public static ArrayList<String> getFrequenzaInvioDiagnostici() {
-		if (Utility.frequenzaInvioDiagnostici != null)
-			return Utility.frequenzaInvioDiagnostici;
-		Utility.frequenzaInvioDiagnostici = Utility
-				.loadAndOrderProps(Utility.REPORTISTICA_DIAGNOSTICI_FREQ_INVIO);
-
+		if (Utility.frequenzaInvioDiagnostici == null) {
+			initFrequenzaInvioDiagnostici();
+		}
 		return Utility.frequenzaInvioDiagnostici;
 	}
 
+	private static synchronized void initFrequenzaInvioTracce() {
+		if (Utility.frequenzaInvioTracce == null) {
+			Utility.frequenzaInvioTracce = Utility
+					.loadAndOrderProps(Utility.REPORTISTICA_TRACCE_FREQ_INVIO);
+		}
+	}
 	public static ArrayList<String> getFrequenzaInvioTracce() {
-		if (Utility.frequenzaInvioTracce != null)
-			return Utility.frequenzaInvioTracce;
-		Utility.frequenzaInvioTracce = Utility
-				.loadAndOrderProps(Utility.REPORTISTICA_TRACCE_FREQ_INVIO);
+		if (Utility.frequenzaInvioTracce == null) {
+			initFrequenzaInvioTracce();
+		}
 		return Utility.frequenzaInvioTracce;
 	}
 
+	private static synchronized void initIntervalloInteresseDiagnostici() {
+		if (Utility.intervalloInteresseDiagnostici == null) {
+			Utility.intervalloInteresseDiagnostici = Utility
+					.loadAndOrderProps(Utility.REPORTISTICA_DIAGNOSTICI_INTERVALLO_INTERESSE);
+		}
+	}
 	public static ArrayList<String> getIntervalloInteresseDiagnostici() {
-
-		if (Utility.intervalloInteresseDiagnostici != null)
-			return Utility.intervalloInteresseDiagnostici;
-		Utility.intervalloInteresseDiagnostici = Utility
-				.loadAndOrderProps(Utility.REPORTISTICA_DIAGNOSTICI_INTERVALLO_INTERESSE);
-
+		if (Utility.intervalloInteresseDiagnostici == null) {
+			initIntervalloInteresseDiagnostici();
+		}
 		return Utility.intervalloInteresseDiagnostici;
 	}
 
+	private static synchronized void initIntervalloInteresseTracce() {
+		if (Utility.intervalloInteresseTracce == null) {
+			Utility.intervalloInteresseTracce = Utility
+					.loadAndOrderProps(Utility.REPORTISTICA_TRACCE_INTERVALLO_INTERESSE);
+		}
+	}
 	public static ArrayList<String> getIntervalloInteresseTracce() {
-		if (Utility.intervalloInteresseTracce != null)
-			return Utility.intervalloInteresseTracce;
-		Utility.intervalloInteresseTracce = Utility
-				.loadAndOrderProps(Utility.REPORTISTICA_TRACCE_INTERVALLO_INTERESSE);
-
+		if (Utility.intervalloInteresseTracce == null) {
+			initIntervalloInteresseTracce();
+		}
 		return Utility.intervalloInteresseTracce;
 	}
 
+	private static synchronized void initStatoSistemaStorico() {
+		if (Utility.statoSistemaStorico == null) {
+			Utility.statoSistemaStorico = Utility
+					.loadAndOrderProps(Utility.STATUS_INTERVALLO_STORICO);
+		}
+	}
 	public static ArrayList<String> getStatoSistemaStorico() {
-		if (Utility.statoSistemaStorico != null)
-			return Utility.statoSistemaStorico;
-		Utility.statoSistemaStorico = Utility
-				.loadAndOrderProps(Utility.STATUS_INTERVALLO_STORICO);
+		if (Utility.statoSistemaStorico == null) {
+			initStatoSistemaStorico();
+		}
 		return Utility.statoSistemaStorico;
 	}
 

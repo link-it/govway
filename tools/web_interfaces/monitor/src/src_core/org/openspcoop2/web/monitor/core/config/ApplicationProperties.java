@@ -96,7 +96,9 @@ public class ApplicationProperties {
 			try{
 				if(properties!=null)
 					properties.close();
-			}catch(Exception er){}
+			}catch(Exception er){
+				// close
+			}
 			throw e;
 		}	
 	

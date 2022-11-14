@@ -46,7 +46,7 @@
 	
 	<ui:define name="body">
 		<a4j:loadScript src="resource://jquery.js"/>
-		<script type="text/javascript">
+		<script type="text/javascript" nonce="#{_csp_random_nonce}">
 			 jQuery(document).ready(function() {
 				checkBrowser();
 			 });
@@ -61,7 +61,10 @@
 			<rich:tabPanel switchType="ajax" selectedTab="#{dettagliTransazioneApplicativoServerBean.selectedTab}">
 				<rich:tab name="infoGenerali">
 					<f:facet name="label">
-						<h:outputText id="outTitleTabInfoGen" value="Informazioni Generali" />
+						<a4j:outputPanel id="outTitleTabInfoGenPnl" styleClass="">
+							<input type="hidden" id="_csrfFormTabPanel" name="_csrf" value="#{loginBean.csrf}"/>
+							<h:outputText id="outTitleTabInfoGen" value="Informazioni Generali" />
+						</a4j:outputPanel>
 				    </f:facet>
 				    <ui:include src="/transazioni/includes/dettaglioTransazioneApplicativoServerInformazioniGenerali.xhtml" >
 				    </ui:include>

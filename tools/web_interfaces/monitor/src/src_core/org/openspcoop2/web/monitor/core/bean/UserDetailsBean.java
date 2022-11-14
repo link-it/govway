@@ -215,6 +215,13 @@ public class UserDetailsBean implements Serializable {
 			this.authority = r;
 		}
 
+		@Override 
+		public String toString(){
+			StringBuilder bf = new StringBuilder();
+			bf.append(this.authority);
+			return bf.toString();
+		}
+		
 		@Override
 		public boolean equals(Object o) {
 			if (o instanceof RuoloBean) {
@@ -222,6 +229,11 @@ public class UserDetailsBean implements Serializable {
 						(((RuoloBean) o).getAuthority()));
 			}
 			return false;
+		}
+		
+		@Override
+		public int hashCode(){
+			return this.toString().hashCode();
 		}
 
 		public String getAuthority() {

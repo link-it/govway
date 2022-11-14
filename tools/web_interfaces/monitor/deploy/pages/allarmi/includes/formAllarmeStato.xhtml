@@ -10,7 +10,7 @@
     
     <a4j:outputPanel layout="block" id="statoAllarmePnl">
     
-    	<style>
+    	<style type="text/css" nonce="#{_csp_random_nonce}">
 			#legendPanel_body  { padding: 0px !important; }
 		</style>
 		<rich:panel id="legendPanel" rendered="#{(allarmiBean.allarme.id != -1 and ((allarmiBean.mailAckMode==1 and allarmiBean.allarme.mail.invia==1) or (allarmiBean.scriptAckMode==1 and allarmiBean.allarme.script.invoca==1)))}">
@@ -21,13 +21,13 @@
 		
 		<div class="form-container noborder nopadding">
 			<a4j:form prependId="false">
-			
+				<input type="hidden" id="_csrfFormStatoAllarme" name="_csrf" value="#{loginBean.csrf}"/>
 				<link:fieldset legend="Stato" rendered="#{allarmiBean.editMode}" collapsible="false" closed="false">
 				
 					<link:prop label="Stato Attuale">
 						<a4j:outputPanel layout="block" styleClass="divNoEdit">
 							<h:outputText value="#{allarmiBean.labelStato}" rendered="#{(allarmiBean.allarme.enabled == 1)}"/>
-							<h:outputText value="Disabilitato" readonly="true" style="width: 416px" rendered="#{allarmiBean.allarme.enabled == 0}"/>
+							<h:outputText value="Disabilitato" readonly="true" styleClass="width-416" rendered="#{allarmiBean.allarme.enabled == 0}"/>
 						</a4j:outputPanel>
 					</link:prop>
 										

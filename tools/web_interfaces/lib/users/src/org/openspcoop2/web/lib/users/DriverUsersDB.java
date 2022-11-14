@@ -323,7 +323,9 @@ public class DriverUsersDB {
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -595,7 +597,9 @@ public class DriverUsersDB {
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -701,7 +705,9 @@ public class DriverUsersDB {
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 
@@ -754,7 +760,9 @@ public class DriverUsersDB {
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 
@@ -807,7 +815,9 @@ public class DriverUsersDB {
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -876,7 +886,9 @@ public class DriverUsersDB {
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 
@@ -975,7 +987,9 @@ public class DriverUsersDB {
 				if(this.connection==null) {
 					connectionDB.close();
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 
@@ -1072,7 +1086,9 @@ public class DriverUsersDB {
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1133,7 +1149,9 @@ public class DriverUsersDB {
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 
@@ -1586,7 +1604,9 @@ public class DriverUsersDB {
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1775,7 +1795,9 @@ public class DriverUsersDB {
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1848,7 +1870,9 @@ public class DriverUsersDB {
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1900,7 +1924,9 @@ public class DriverUsersDB {
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1952,7 +1978,9 @@ public class DriverUsersDB {
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -1988,7 +2016,9 @@ public class DriverUsersDB {
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -2055,7 +2085,9 @@ public class DriverUsersDB {
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -2175,7 +2207,9 @@ public class DriverUsersDB {
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -2268,7 +2302,9 @@ public class DriverUsersDB {
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -2387,7 +2423,9 @@ public class DriverUsersDB {
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -2507,7 +2545,9 @@ public class DriverUsersDB {
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 	
@@ -2620,7 +2660,9 @@ public class DriverUsersDB {
 			try{
 				if(this.connection==null)
 					connectionDB.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 	}
 }

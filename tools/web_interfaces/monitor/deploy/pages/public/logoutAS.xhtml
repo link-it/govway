@@ -7,7 +7,7 @@
       xmlns:a4j="http://richfaces.org/a4j">
 <f:loadBundle var="msg" basename="messages" />
 		<ui:define name="body">
-			<style>
+			<style type="text/css" nonce="#{_csp_random_nonce}">
 				.rich-page-body {
     					margin-left: 0px;
 					}
@@ -16,6 +16,7 @@
 		<a4j:outputPanel id="panelForm" layout="block" styleClass="panelLista">
 			<div class="form-container">	
 				<h:form>
+					<input type="hidden" id="_csrfLogoutAS" name="_csrf" value="#{loginBean.csrf}"/>
 					<h:outputText value="Logout effettuato correttamente. " />
 					<h:outputLink  value="#{facesContext.externalContext.request.contextPath}/index.jsp">
 						<h:outputText value="Home" />

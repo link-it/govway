@@ -120,7 +120,10 @@ public class ApplicationBean implements Serializable {
 	private Locale locale;
 
 	private static Map<String, Boolean> funzionalitaStaticInstance = null;
-	private synchronized void initializeFunzionalita(PddMonitorProperties govwayMonitorProperties) throws Exception{
+	private void initializeFunzionalita(PddMonitorProperties govwayMonitorProperties) throws Exception{
+		_initializeFunzionalita(govwayMonitorProperties);
+	}
+	private static synchronized void _initializeFunzionalita(PddMonitorProperties govwayMonitorProperties) throws Exception{
 		if(ApplicationBean.funzionalitaStaticInstance==null){
 			ApplicationBean.funzionalitaStaticInstance = new HashMap<String, Boolean>();
 			
@@ -928,7 +931,9 @@ public class ApplicationBean implements Serializable {
 		return false;
 	}
 
-	public void setConfiguratore(boolean configuratore) {}
+	public void setConfiguratore(boolean configuratore) {
+		// nop
+	}
 
 	public boolean isOperatore() {
 		checkRoles();
@@ -945,7 +950,9 @@ public class ApplicationBean implements Serializable {
 		return false;
 	}
 
-	public void setOperatore(boolean operatore) {}
+	public void setOperatore(boolean operatore) {
+		// nop
+	}
 	
 	public boolean isGraficiSvgEnabled(){
 		return this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_GRAFICI_SVG);
@@ -979,12 +986,16 @@ public class ApplicationBean implements Serializable {
 			if(version!=null && !StringUtils.isEmpty(version)) {
 				pVersion = version;
 			}
-		}catch(Exception e) {}
+		}catch(Exception e) {
+			// ignore
+		}
 
 		String buildVersion = null;
 		try {
 			buildVersion = VersionUtilities.readBuildVersion();
-		}catch(Exception e) {}
+		}catch(Exception e) {
+			// ignore
+		}
 		if(buildVersion!=null) {
 			pVersion = pVersion + " (build "+buildVersion+")";
 		}

@@ -34,7 +34,7 @@
 			<h:outputText styleClass="outputFieldLabel" value="Connettore"
 					rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.locationUltimoErrore}"/>
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.locationUltimoErrore}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.locationUltimoErrore and not dettagliTransazioneApplicativoServerBean.visualizzaTextAreaLocationUltimoErrore}"/>
-			<h:inputTextarea value="#{dettagliTransazioneApplicativoServerBean.dettaglio.locationUltimoErrore}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong" style="width:auto;"
+			<h:inputTextarea value="#{dettagliTransazioneApplicativoServerBean.dettaglio.locationUltimoErrore}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong width-auto"
 					rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.locationUltimoErrore and dettagliTransazioneApplicativoServerBean.visualizzaTextAreaLocationUltimoErrore}" />
 			
 			<h:outputLabel styleClass="outputFieldLabel" value="Codice Risposta" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.codiceRispostaUltimoErrore and dettagliTransazioneApplicativoServerBean.dettaglio.codiceRispostaUltimoErrore>0}" />
@@ -43,13 +43,14 @@
 			<h:outputText styleClass="outputFieldLabel" value="Errore"
 					rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.ultimoErrore}"/>
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.ultimoErrore}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.ultimoErrore and not dettagliTransazioneApplicativoServerBean.visualizzaTextAreaUltimoErrore}"/>
-			<h:inputTextarea  value="#{dettagliTransazioneApplicativoServerBean.dettaglio.ultimoErrore}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong" style="width:auto;"
+			<h:inputTextarea  value="#{dettagliTransazioneApplicativoServerBean.dettaglio.ultimoErrore}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong width-auto"
 				rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.ultimoErrore and dettagliTransazioneApplicativoServerBean.visualizzaTextAreaUltimoErrore}" />
 				
 			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Fault" 
 				rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.faultUltimoErrore}"/>
 			<h:panelGroup rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.faultUltimoErrore}"> 
 				<h:form id="formFaultUE">
+					<input type="hidden" id="_csrfFormFaultUE" name="_csrf" value="#{loginBean.csrf}"/>
                   	<a4j:htmlCommandLink id="faultIntegrazioneUE-iconLink" styleClass="icon-details" value="Visualizza" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.faultUltimoErrore}" action="fault">
                        	<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliTransazioneApplicativoServerBean.protocollo}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliTransazioneApplicativoServerBean.idTransazione}"/>

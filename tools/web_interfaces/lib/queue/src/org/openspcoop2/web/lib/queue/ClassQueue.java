@@ -122,7 +122,9 @@ public class ClassQueue {
 			} catch(java.lang.Exception e) {
 				throw new ClassQueueException("Errore durante la costruzione della ClassQueue (Operation)",e);
 			} 
-		}catch(Exception e){}
+		}catch(Exception e){
+			// ignore
+		}
 
 	}
 
@@ -238,11 +240,15 @@ public class ClassQueue {
 			try{
 				if(rs!=null)
 					rs.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 			try{
 				if(stmt!=null)
 					stmt.close();
-			}catch(Exception e){}
+			}catch(Exception e){
+				// close
+			}
 		}
 	}
 	/**

@@ -107,7 +107,9 @@ public class SelectItemConverter implements Converter {
 						int v2 = -1;
 						try{
 							v2 = Integer.parseInt((String)value2);
-						}catch(Exception e){}
+						}catch(Exception e){
+							// ignore
+						}
 						int v1 = ((Integer)value).intValue();
 						if(v2 == v1) {
 							return selectItem.getLabel();
@@ -130,7 +132,9 @@ public class SelectItemConverter implements Converter {
 					long v2 = -1;
 					try{
 						v2 = Long.parseLong((String)value2);
-					}catch(Exception e){}
+					}catch(Exception e){
+						// ignore
+					}
 					long v1 = ((Long)value).longValue();
 					if(v2 == v1) {
 						return selectItem.getLabel();

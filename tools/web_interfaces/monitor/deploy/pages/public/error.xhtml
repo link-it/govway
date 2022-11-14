@@ -9,7 +9,7 @@
 	<a4j:loadScript src="resource://jquery.js" />
 	<ui:define name="body">
 		<c:if test="#{!loginBean.loggedIn}">
-			<style>
+			<style type="text/css" nonce="#{_csp_random_nonce}">
 				.rich-page-body {
     					margin-left: 0px;
 					}
@@ -20,6 +20,7 @@
 		<a4j:outputPanel id="errorPagePlaceHolder" layout="block" styleClass="panelLista">
 			<div class="form-container">	
 				<h:form rendered="#{not empty param['principalShowForm'] or not empty param['msg_errore']}">
+					<input type="hidden" id="_csrfErrorPage" name="_csrf" value="#{loginBean.csrf}"/>
 					<h:outputText value="Si sono verificati degli errori, torna alla " />
 					<h:outputLink  value="#{facesContext.externalContext.request.contextPath}/pages/welcome.jsf">
 						<h:outputText value="Home" />

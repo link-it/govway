@@ -44,13 +44,14 @@ GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData
 // 	gd.setUrl(ap1 + request.getContextPath() + ap2);
 //   }
 
+String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 %>
 <html>
 <head>
 <meta charset="UTF-8">
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 <title><%= gd.getTitle() %></title>
-<script type="text/javascript">
+<script type="text/javascript" nonce="<%= randomNonce %>">
 
 var ok = true;
 function white(str){
@@ -71,17 +72,21 @@ function CheckDati() {
     return false;
   } else { document.form.submit(); }
 };
-
 </script>
 <link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
-<script type="text/javascript" src="js/webapps.js"></script>
+<script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
 <!-- JQuery lib-->
-<script type="text/javascript" src="js/jquery-latest.js"></script>
+<script type="text/javascript" src="js/jquery-latest.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" nonce="<%= randomNonce %>">
+$(document).ready(function(){
+	focusText(document.form);
+});
+</script>
 <jsp:include page="/jsplib/menuUtente.jsp" flush="true" />
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" /> 
 </head>
-<body marginwidth=0 marginheight=0 onLoad="focusText(document.form);">
+<body marginwidth=0 marginheight=0>
 	<table class="bodyWrapper">
 		<tbody>
 			<jsp:include page="/jsplib/templateHeader.jsp" flush="true" />

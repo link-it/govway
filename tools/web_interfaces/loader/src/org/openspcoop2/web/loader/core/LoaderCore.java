@@ -121,12 +121,16 @@ public class LoaderCore{
 			if(version!=null && !StringUtils.isEmpty(version)) {
 				pVersion = version;
 			}
-		}catch(Exception e) {}
+		}catch(Exception e) {
+			// ignore
+		}
 		
 		String buildVersion = null;
 		try {
 			buildVersion = VersionUtilities.readBuildVersion();
-		}catch(Exception e) {}
+		}catch(Exception e) {
+			// ignore
+		}
 		if(buildVersion!=null) {
 			pVersion = pVersion + " (build "+buildVersion+")";
 		}
@@ -378,7 +382,9 @@ public class LoaderCore{
 						finally {
 							try{
 								con.close();
-							}catch(Exception eClose){}
+							}catch(Exception eClose){
+								// close
+							}
 						}
 					}
 					ServletUtils.setObjectIntoSession(request, session, true, VERSION_INFO_READ);
@@ -423,7 +429,9 @@ public class LoaderCore{
 		} finally {
 			try{
 				con.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 
 	}
@@ -448,7 +456,9 @@ public class LoaderCore{
 		} finally {
 			try{
 				con.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 
 	}
@@ -473,7 +483,9 @@ public class LoaderCore{
 		} finally {
 			try{
 				con.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 
 	}
@@ -498,7 +510,9 @@ public class LoaderCore{
 		} finally {
 			try{
 				con.close();
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// close
+			}
 		}
 
 	}
@@ -542,13 +556,19 @@ public class LoaderCore{
 		} finally {
 			try{
 				risultato.close();
-			}catch(Throwable eClose){}
+			}catch(Throwable eClose){
+				// close
+			}
 			try{
 				stmt.close();
-			}catch(Throwable eClose){}
+			}catch(Throwable eClose){
+				// close
+			}
 			try{
 				con.close();
-			}catch(Throwable eClose){}
+			}catch(Throwable eClose){
+				// close
+			}
 		}
 	}
 	

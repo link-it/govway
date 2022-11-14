@@ -12,13 +12,13 @@
 		</ul>
 	</ui:define>
 	<ui:define name="body">
-		<style>
+		<style type="text/css" nonce="#{_csp_random_nonce}">
 			#crumbs {display: none;}
 		</style>
-		<table style="width:100%;">
+		<table class="width-cento">
 			<tbody>
 				<tr>
-					<td style="width: 50%;">
+					<td class="width-cinquanta">
 						<div class="messages-info">
 				  			<div class="messages-title">
 				  				<h:outputText value="&#160;&#160;" id="modalitaInfoTitleIcon" styleClass="messages-info-title-icon"/>
@@ -30,7 +30,7 @@
 									<ul>
 									<c:forEach items="#{loginBean.listaInformazioniProtocollo}" var="protocollo">
 										<br/>
-										<li style="list-style-type:disc; margin-left:12px;">
+										<li class="margin-left-12 list-style-type-disc">
 											<p >
 												<i>
 													<a href="#{protocollo.webSiteProtocollo}" target="_blank">#{protocollo.labelProtocollo}</a>
@@ -44,7 +44,7 @@
 							</div>
 						</div>
 					</td>
-			  		<td style="width: 50%;">
+			  		<td class="width-cinquanta">
 			  			<h:outputText value="&#160;&#160;"/>
 			  		</td>
 				</tr>

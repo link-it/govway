@@ -7,3 +7,31 @@
 .selectionInfoItem{
 	margin-right: 5px;
 }
+.table-display-none{
+	display: none;
+}
+.pnl-display-none{
+	display: none;
+}
+.output-text-display-none{
+	display: none;
+}
+.checkbox-display-none{
+	display: none;
+}
+.output-text-font-weight-bold{
+	font-weight: bold;
+}
+.pnl-fnt-wght-bld-txt-align-l{
+	font-weight: bold;
+	text-align: left;
+}
+.p-modal-riga1{
+	margin: 0px 0px 0px 16px;
+}
+.p-modal-riga2{
+	margin: 4px 0px 0px 16px;
+}
+.pnl-width-50px{
+	width:50px;
+}

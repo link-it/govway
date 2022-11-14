@@ -99,10 +99,14 @@ public class LoaderStartup implements ServletContextListener {
 					if(is!=null){
 						is.close();
 					}
-				}catch(Exception eClose){}
+				}catch(Exception eClose){
+					// close
+				}
 			}
 
-		}catch(Exception e){}
+		}catch(Exception e){
+			// ignore
+		}
 		
 		try{
 			LoaderLogger.initialize(LoaderStartup.log, confDir, null, appendActualConfiguration);

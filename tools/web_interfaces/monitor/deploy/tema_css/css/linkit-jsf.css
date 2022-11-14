@@ -90,6 +90,11 @@
 	font-weight: bold;
 }
 
+.tablePageHeader,
+.tablePageHeaderLogo  {
+	width:100%;
+}
+
 /* Status */
 
 .mainStatusStartStyle{

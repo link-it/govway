@@ -59,7 +59,7 @@ public enum InterfaceType {
 	}
 		
 	public boolean equalsOr(InterfaceType ... check) {
-		if(check==null || check.length<0) {
+		if(check==null || check.length<=0) {
 			return false;
 		}
 		for (int i = 0; i < check.length; i++) {
@@ -70,13 +70,6 @@ public enum InterfaceType {
 		return false;
 	}
 	
-	public boolean equals(InterfaceType object){
-		if(object==null)
-			return false;
-		if(object.name()==null)
-			return false;
-		return object.name().equals(this.name());	
-	}
 	public boolean equals(String object){
 		if(object==null)
 			return false;

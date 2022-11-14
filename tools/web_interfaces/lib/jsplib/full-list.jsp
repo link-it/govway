@@ -40,12 +40,24 @@ else
   iddati = "notdefined";
 GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData.class, gdString);
 PageData pd = ServletUtils.getObjectFromSession(request, session, PageData.class, pdString);
+String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
+
+String csrfTokenFromSession = ServletUtils.leggiTokenCSRF(request, session);
+if(csrfTokenFromSession == null)
+	csrfTokenFromSession = "";
 %>
 
 <td valign="top" class="td2PageBody">
 <form name='form' method='post' onSubmit='return false;' id="form">
 
+		<%
+		if(!csrfTokenFromSession.equals("")){
+			%>
+			<input type="hidden" name="<%=Costanti.PARAMETRO_CSRF_TOKEN%>" id="<%=Costanti.PARAMETRO_CSRF_TOKEN%>"  value="<%= csrfTokenFromSession %>"/>
+			<%			
+		}
+		%>
 <%
 Map<String,String> hidden = pd.getHidden();
 if (hidden!=null && !hidden.isEmpty()) {
@@ -105,7 +117,14 @@ if (hidden!=null && !hidden.isEmpty()) {
 													//Bottone Previous
 													if (pd.getIndex() != 0) {
 														%>							
-														<img id="ds_prev_top" src="images/tema_link/go_prev.png" onclick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>PrevPage(document.form.limit.options[document.form.limit.selectedIndex].value)" title="Precedente"  class="dsImg" />
+														<img id="ds_prev_top" src="images/tema_link/go_prev.png" title="Precedente"  class="dsImg" />
+														<script type="text/javascript" nonce="<%= randomNonce %>">
+															$(document).ready(function(){
+																$('#ds_prev_top').click(function() {
+																	<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>PrevPage(document.form.limit.options[document.form.limit.selectedIndex].value);
+																});
+															});
+														</script>
 														<%
 													} else{
 														%>
@@ -126,7 +145,14 @@ if (hidden!=null && !hidden.isEmpty()) {
 													  if (pd.getIndex()+pd.getPageSize() < pd.getNumEntries()) {
 														  nextTopDisabled = false;
 													   			%>
-													   			<img id="ds_next_top" src="images/tema_link/go_next.png" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>NextPage()" title="Successiva" class="dsImg"/>
+													   			<img id="ds_next_top" src="images/tema_link/go_next.png" title="Successiva" class="dsImg"/>
+													   			<script type="text/javascript" nonce="<%= randomNonce %>">
+																	$(document).ready(function(){
+																		$('#ds_next_top').click(function() {
+																			<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>NextPage();
+																		});
+																	});
+																</script>
 													   			<%
 													  }
 													}
@@ -152,9 +178,16 @@ if (hidden!=null && !hidden.isEmpty()) {
 							<%
 							if (v.size()> 0 && pd.getSelect()) {
 							  %>
-							  <td style="width:30px;">
+							  <td class="tableHeaderChkAll">
 							  	<div align="center">
-							  		<input id="chkAll" type="checkbox" name="chkAll" onclick="checkAll();"/> 
+							  		<input id="chkAll" type="checkbox" name="chkAll"/>
+							  		<script type="text/javascript" nonce="<%= randomNonce %>">
+										$(document).ready(function(){
+											$('#chkAll').click(function() {
+												checkAll();
+											});
+										});
+									</script> 
 							  	</div>
 							  </td>
 							  <%
@@ -210,18 +243,24 @@ if (hidden!=null && !hidden.isEmpty()) {
 							    String deName = !de.getName().equals("") ? de.getName() : "de_name_"+j;
 							    String classLink = "";
 							    String classSpan = de.getLabelStyleClass();
-							    String tdStyle = " "; 
-							    if (!de.getStyle().equals("")) {
-							    	tdStyle = " style=\""+ de.getStyle() +"\"";
-						  		}
-							    
+							    String cssClassTdStyle = !de.getStyle().equals("") ? "tdStyle-"+i+"-"+j : ""; 
 							    // se e' un elemento visualizzabile inserisco una cella
 							    if (!de.getType().equals("hidden")) {
-							      %><td class="tdText" <%=tdStyle %>><%
+							      %><td class="tdText <%=cssClassTdStyle %>">
+							      	<% if(!de.getStyle().equals("")){ %>
+										<style type="text/css" nonce="<%= randomNonce %>">
+											.<%=cssClassTdStyle %> {
+												<%= de.getStyle() %>
+											}
+										</style>
+									<% }%>
+							      
+							      <%
 							    }
 					
 								if (de.getType().equals("text")) {
 									String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+									String id = "tabella-text-link_" + i;
 						    		// tipo link
 					      			if (!de.getUrl().equals("")) {
 							    		//tooltip
@@ -268,14 +307,29 @@ if (hidden!=null && !hidden.isEmpty()) {
 								  			}
 								  			%><span class="<%= classSpan %>" ><%= de.getValue() %></span>
 								  				
-								  				<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>" type="button" onClick="<%= visualizzaAjaxStatus %>return true;">
+								  				<a id="<%=id %>" class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>" type="button">
 			                						<span class="icon-box">
 														<i class="material-icons md-18"><%= deIconName %></i>
 													</span>
 			                					</a>
+			                					<script type="text/javascript" nonce="<%= randomNonce %>">
+											      $(document).ready(function(){
+														$('#<%=id %>').click(function() {
+															<%= visualizzaAjaxStatus %>return true;
+														});
+													});
+											  </script>
 								  			<%
 								  		} else { // visualizzazione normale
-								  			%><a class="<%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>" onClick="<%= visualizzaAjaxStatus %>return true;"><%= res %></a><%
+								  			%><a id="<%=id %>" class="<%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>"><%= res %></a>
+								  			<script type="text/javascript" nonce="<%= randomNonce %>">
+											      $(document).ready(function(){
+														$('#<%=id %>').click(function() {
+															<%= visualizzaAjaxStatus %>return true;
+														});
+													});
+											  </script>
+											<%
 								  		}
 							      	} else {
 										//no url
@@ -286,8 +340,16 @@ if (hidden!=null && !hidden.isEmpty()) {
 								  				tip=de.getToolTip();
 								  				deTip = " title=\"" + tip + "\"";
 								  			}
-										  //onclick
-										  %><span class="<%= classSpan %>" <%= deTip %> onClick="<%= visualizzaAjaxStatus %><%= de.getOnClick() %>; return false;"><%= de.getValue() %></span><%
+										  //getOnClick
+										  %><span id="<%=id %>" class="<%= classSpan %>" <%= deTip %>><%= de.getValue() %></span>
+										  	<script type="text/javascript" nonce="<%= randomNonce %>">
+											      $(document).ready(function(){
+														$('#<%=id %>').click(function() {
+															<%= visualizzaAjaxStatus %><%= de.getOnClick() %>; return false;
+														});
+													});
+											  </script>
+											<%
 										} else {
 											String tip = "";
 											String deTip = " ";
@@ -327,21 +389,36 @@ if (hidden!=null && !hidden.isEmpty()) {
 											  		
 											  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 											  		
+											  		String id = "tabella-image-link_" + i;
 											  		if(!deUrl.equals("")){ // Url definita
 				                					%>
-					                					<a class="image-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" onClick="<%= visualizzaAjaxStatus %>return true;" type="button">
+					                					<a id="<%=id %>" class="image-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button">
 					                						<span class="icon-box">
 																<i class="material-icons md-18"><%= deIconName %></i>
 															</span>
 					                					</a>
+					                					<script type="text/javascript" nonce="<%= randomNonce %>">
+														      $(document).ready(function(){
+																	$('#<%=id %>').click(function() {
+																		<%= visualizzaAjaxStatus %>return true;
+																	});
+																});
+														  </script>
 					                				<%
 											  		} else if (!deOnClick.equals("")){ // Se e' definito 'OnClick' 
 											  			%>
-					                					<a class="image-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="" onClick="<%= visualizzaAjaxStatus %><%= deOnClick %>; return false;" type="button">
+					                					<a id="<%=id %>" class="image-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="" type="button">
 					                						<span class="icon-box">
 																<i class="material-icons md-18"><%= deIconName %></i>
 															</span>
 					                					</a>
+					                					<script type="text/javascript" nonce="<%= randomNonce %>">
+														      $(document).ready(function(){
+																	$('#<%=id %>').click(function() {
+																		<%= visualizzaAjaxStatus %><%= deOnClick %>; return false;
+																	});
+																});
+														  </script>
 					                				<%
 											  		} else { // Solo immagine
 											  			%>
@@ -395,6 +472,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 									  				String tooltip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : ""; 
 									  				 
 									  				String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+									  				String id = "tabella-checkbox-link_" + i;
 									  				// tipo link
 										      		if (!de.getUrl().equals("")) { 
 									      				de.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
@@ -403,14 +481,21 @@ if (hidden!=null && !hidden.isEmpty()) {
 												  		if (!de.getTarget().equals("")) {
 												  			deTarget = " target=\""+ de.getTarget() +"\"";
 												  		} 
-												  		%><div style="text-align: center;">
-												  			<a class="<%= classLink %>" <%=deTarget %> href="<%= de.getUrl() %>" onClick="<%= visualizzaAjaxStatus %>return true;">
+												  		%><div class="text-align-center">
+												  			<a id="<%=id %>" class="<%= classLink %>" <%=deTarget %> href="<%= de.getUrl() %>">
 												  				<img src="images/tema_link/<%= image %>" <%= tooltip %>/>
 															</a>
+															<script type="text/javascript" nonce="<%= randomNonce %>">
+															      $(document).ready(function(){
+																		$('#<%=id %>').click(function() {
+																			<%= visualizzaAjaxStatus %>return true;
+																		});
+																	});
+															  </script>
 														</div><%
 										      			
 										      		}else {
-									  				 	%><div style="text-align: center;"><img src="images/tema_link/<%= image %>" <%= tooltip %>/>&nbsp;</div><%
+									  				 	%><div class="text-align-center"><img src="images/tema_link/<%= image %>" <%= tooltip %>/>&nbsp;</div><%
 										      		}
 									  			 } else {
 									  				 if (de.getType().equals("button")) {
@@ -430,7 +515,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 																	<i class="material-icons md-18" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 																</span>
 									       					</div>
-															<script type="text/javascript">
+															<script type="text/javascript" nonce="<%= randomNonce %>">
 															// info
 													    	if($("#<%=idSpanInfo %>").length>0){
 													    		$("#<%=idSpanInfo %>").click(function(e){
@@ -471,7 +556,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 															<jsp:include page="/jsplib/info-uso-modal.jsp" flush="true">
 																<jsp:param name="idFinestraModale" value="<%=identificativoFinestraModale %>"/>
 															</jsp:include>
-															<script type="text/javascript">
+															<script type="text/javascript" nonce="<%= randomNonce %>">
 															// info
 													    	if($("#<%=idSpanUso %>").length>0){
 													    		$("#<%=idSpanUso %>").click(function(e){
@@ -543,7 +628,14 @@ if (hidden!=null && !hidden.isEmpty()) {
 										//Bottone Previous
 										if (pd.getIndex() != 0) {
 											%>							
-											<img id="ds_prev_bottom" src="images/tema_link/go_prev.png" onclick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>PrevPage(document.form.limit.options[document.form.limit.selectedIndex].value)" title="Precedente"  class="dsImg" />
+											<img id="ds_prev_bottom" src="images/tema_link/go_prev.png" title="Precedente"  class="dsImg" />
+											<script type="text/javascript" nonce="<%= randomNonce %>">
+												$(document).ready(function(){
+													$('#ds_prev_bottom').click(function() {
+														<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>PrevPage(document.form.limit.options[document.form.limit.selectedIndex].value);
+													});
+												});
+											</script>
 											<%
 										} else{
 											%>
@@ -554,7 +646,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 										//Scelta numero di entries da visualizzare
 										if ((pd.getNumEntries() > 20) || (pd.getIndex() != 0)) {
 										  %></td>
-											<td><select name="limit" onChange="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>CambiaVisualizzazione(document.form.limit.options[selectedIndex].value)"><%
+											<td><select id="ds_limit_bottom" name="limit"><%
 										  switch (pd.getPageSize()) {
 										    case 20 :
 											%>
@@ -615,7 +707,15 @@ if (hidden!=null && !hidden.isEmpty()) {
 										    	<%
 										    	break;
 										  }
-										  %></select></td>
+										  %></select>
+										  	<script type="text/javascript" nonce="<%= randomNonce %>">
+													$(document).ready(function(){
+														$('#ds_limit_bottom').change(function() {
+															<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>CambiaVisualizzazione(document.form.limit.options[selectedIndex].value);
+														});
+													});
+												</script>
+										  </td>
 											<td><%
 										} else {
 											%></td>
@@ -628,7 +728,14 @@ if (hidden!=null && !hidden.isEmpty()) {
 										  if (pd.getIndex()+pd.getPageSize() < pd.getNumEntries()) {
 											  nextBottomDisabled = false;
 										   			%>
-										   			<img id="ds_next_bottom" src="images/tema_link/go_next.png" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>NextPage()" title="Successiva" class="dsImg"/>
+										   			<img id="ds_next_bottom" src="images/tema_link/go_next.png" title="Successiva" class="dsImg"/>
+										   			<script type="text/javascript" nonce="<%= randomNonce %>">
+														$(document).ready(function(){
+															$('#ds_next_bottom').click(function() {
+																<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>NextPage();
+															});
+														});
+													</script>
 										   			<%
 										  }
 										}
@@ -664,10 +771,18 @@ if (hidden!=null && !hidden.isEmpty()) {
 									  		AreaBottoni area = (AreaBottoni) areaBottoni.elementAt(i);
 									  		Vector<?> bottoni = area.getBottoni();
 									 		for (int b = 0; b < bottoni.size(); b++) {
+									 			String id = "areaBottonBtn_" + i + "_" + b;
 									   			DataElement bottone = (DataElement) bottoni.elementAt(b);
 									   			String visualizzaAjaxStatus = bottone.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 									   			%>
-									   			<input type="button" onClick="<%= visualizzaAjaxStatus %><%= bottone.getOnClick() %>" value='<%= bottone.getValue() %>'/>
+									   			<input id="<%=id %>" type="button" value='<%= bottone.getValue() %>'/>
+									   			<script type="text/javascript" nonce="<%= randomNonce %>">
+											      	 $(document).ready(function(){
+															$('#<%=id %>').click(function() {
+																<%= visualizzaAjaxStatus %><%= bottone.getOnClick() %>;
+															});
+														});
+												</script>
 									   			<%
 									 		}
 										}
@@ -680,7 +795,15 @@ if (hidden!=null && !hidden.isEmpty()) {
 									
 									//Bottone di Add
 									if (pd.getAddButton()) {
-									  %><input type="button" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>AddEntry()" value='Aggiungi' /><%
+									  %><input id="aggiungiBtn" type="button" value='Aggiungi' />
+									  	<script type="text/javascript" nonce="<%= randomNonce %>">
+									      	 $(document).ready(function(){
+									      		$('#aggiungiBtn').click(function() {
+														<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>AddEntry();
+													});
+												});
+										</script>
+									  <%
 									}
 									
 									%>
@@ -693,7 +816,14 @@ if (hidden!=null && !hidden.isEmpty()) {
 						<tr>
 							<td colspan=<%= labelLength + 1 %> class="buttonrow">
 								<div class="buttonrowlista">
-									<input type="button" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>AddEntry()" value='Aggiungi' />
+									<input id="aggiungiBtn" type="button" value='Aggiungi' />
+									<script type="text/javascript" nonce="<%= randomNonce %>">
+								      	 $(document).ready(function(){
+								      		$('#aggiungiBtn').click(function() {
+													<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>AddEntry();
+												});
+											});
+									</script>
 								</div>
 							</td>
 						</tr>

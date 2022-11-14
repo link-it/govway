@@ -9,7 +9,7 @@
       	<ui:param value="false" name="insertSideBar" />
       	<ui:param value="Benvenuto. Inserisci le credenziali di accesso." name="title" />
 		<ui:define name="body">
-			<style>
+			<style type="text/css" nonce="#{_csp_random_nonce}">
 				.rich-page-body {
     					margin-left: 0px;
 					}
@@ -20,6 +20,7 @@
 			
 			<form id="formLogin" action="j_security_check" method="post">
 				<link:fieldset legend="Login" rendered="#{true}" collapsible="false" closed="false">
+					<input type="hidden" id="_csrfLoginAS" name="_csrf" value="#{loginBean.csrf}"/>
 					<link:prop label="Username">
 						<h:inputText label="Username" id="j_username" value="#{loginBean.username}" required="true" styleClass="inputLink"/>
 					</link:prop>
