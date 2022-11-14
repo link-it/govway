@@ -185,7 +185,7 @@ public class EncryptPartialMessageProcessor implements Processor {
 		EncryptionRequest encReq = msgSecCtx.getEncryptionRequest();
 
 		try {
-			SecurityConfig secConfigOpenSPCoop = (SecurityConfig)secConfig;
+			SoapBoxSecurityConfig secConfigOpenSPCoop = (SoapBoxSecurityConfig)secConfig;
 
 			Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 			cipher = CryptoSupport.getInstance().getCipherInstance(encReq.getEncryptionAlgoURI());
@@ -249,7 +249,7 @@ public class EncryptPartialMessageProcessor implements Processor {
 		encryptedKeyElem.appendChild(encryptionMethodElem);
 
 		// create and attach the keyinfo element
-		SecurityConfig securityConfigOpenSPCoop = (SecurityConfig) secConfig;
+		SoapBoxSecurityConfig securityConfigOpenSPCoop = (SoapBoxSecurityConfig) secConfig;
 		if(securityConfigOpenSPCoop.isSymmetricSharedKey()){
 			encryptedKeyElem.appendChild(SymmetricCryptoUtils.createKeyInfoElement(doc, encReq, msgSecCtx, secConfig));
 		}else{

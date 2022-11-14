@@ -43,6 +43,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
+import java.security.cert.CertPath;
 import java.security.cert.CertPathValidator;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
@@ -73,7 +74,7 @@ import org.openspcoop2.utils.date.DateManager;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SecurityConfig extends org.adroitlogic.soapbox.SecurityConfig {
+public class SoapBoxSecurityConfig extends org.adroitlogic.soapbox.SecurityConfig {
 
     
 	private boolean symmetricSharedKey = false;
@@ -87,13 +88,13 @@ public class SecurityConfig extends org.adroitlogic.soapbox.SecurityConfig {
 	
 	private KeyStore identityStore = null;
 	
-	public SecurityConfig(org.openspcoop2.utils.certificate.KeyStore identityStore, org.openspcoop2.utils.certificate.KeyStore trustStore, Map<String, String> keyPasswords,
+	public SoapBoxSecurityConfig(org.openspcoop2.utils.certificate.KeyStore identityStore, org.openspcoop2.utils.certificate.KeyStore trustStore, Map<String, String> keyPasswords,
 			org.openspcoop2.utils.Map<Object> ctx)
 	        throws KeyStoreException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, CertificateException {
 		this(identityStore, trustStore, keyPasswords, null,
 				ctx);
 	}
-    public SecurityConfig(org.openspcoop2.utils.certificate.KeyStore identityStore, org.openspcoop2.utils.certificate.KeyStore trustStore, Map<String, String> keyPasswords,String crlPath,
+    public SoapBoxSecurityConfig(org.openspcoop2.utils.certificate.KeyStore identityStore, org.openspcoop2.utils.certificate.KeyStore trustStore, Map<String, String> keyPasswords,String crlPath,
     		org.openspcoop2.utils.Map<Object> ctx)
         throws KeyStoreException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, CertificateException {
     	this(identityStore!=null? identityStore.getKeystore() : null, 
@@ -101,18 +102,22 @@ public class SecurityConfig extends org.adroitlogic.soapbox.SecurityConfig {
 						keyPasswords, crlPath,
 						ctx);
     }
-	public SecurityConfig(KeyStore identityStore, KeyStore trustStore, Map<String, String> keyPasswords,
+	public SoapBoxSecurityConfig(KeyStore identityStore, KeyStore trustStore, Map<String, String> keyPasswords,
 			org.openspcoop2.utils.Map<Object> ctx)
 	        throws KeyStoreException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, CertificateException {
 		this(identityStore, trustStore, keyPasswords, null,
 				ctx);
 	}
-    public SecurityConfig(KeyStore identityStore, KeyStore trustStore, Map<String, String> keyPasswords,String crlPath,
+    public SoapBoxSecurityConfig(KeyStore identityStore, KeyStore trustStore, Map<String, String> keyPasswords,String crlPath,
     		org.openspcoop2.utils.Map<Object> ctx)
         throws KeyStoreException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, CertificateException {
 
     	super(identityStore, trustStore, keyPasswords);
 
+    	if(trustStore==null) {
+    		throw new KeyStoreException("TrustStore param is null");
+    	}
+    	
     	this.identityStore = identityStore;
     	
         // create the parameters for the validator
@@ -168,6 +173,10 @@ public class SecurityConfig extends org.adroitlogic.soapbox.SecurityConfig {
     
    public void validateX509Certificate(X509Certificate[] certs) throws SecurityException {
 
+   		if(certs==null || certs.length==0) {
+   			throw new SecurityException("Certificates undefined");
+   		}
+	   
         Boolean validity = this.validCerts.get(certs);
         if (validity == null) {
             synchronized (this) {
@@ -185,7 +194,11 @@ public class SecurityConfig extends org.adroitlogic.soapbox.SecurityConfig {
             	
                 try {
                 	//System.out.println("Validate...");
-                	this.certPathValidator.validate(this.certFactory.generateCertPath(Arrays.asList(certs)), this.validatorParams);
+                	CertPath certPath = this.certFactory.generateCertPath(Arrays.asList(certs));
+                	if(certPath==null) {
+                		throw new Exception("CertPath unavailable");
+                	}
+                	this.certPathValidator.validate(certPath, this.validatorParams);
                     this.validCerts.put(certs, Boolean.TRUE);
                     //System.out.println("Validate OK");
                 } catch (CertificateNotYetValidException e) {

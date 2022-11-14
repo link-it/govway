@@ -154,7 +154,7 @@ public class GPLCheck {
 								f.getAbsolutePath().endsWith("core/src/org/openspcoop2/security/message/soapbox/ProcessTimestampedMessage.java") ||
 								f.getAbsolutePath().endsWith("core/src/org/openspcoop2/security/message/soapbox/ProcessPartialEncryptedMessage.java") ||
 								f.getAbsolutePath().endsWith("core/src/org/openspcoop2/security/message/soapbox/ProcessSignedMessage.java") ||
-								f.getAbsolutePath().endsWith("core/src/org/openspcoop2/security/message/soapbox/SecurityConfig.java") ||
+								f.getAbsolutePath().endsWith("core/src/org/openspcoop2/security/message/soapbox/SoapBoxSecurityConfig.java") ||
 								f.getAbsolutePath().endsWith("core/src/org/openspcoop2/security/message/soapbox/TimestampMessageProcessor.java") ||
 								f.getAbsolutePath().endsWith("core/src/org/openspcoop2/security/message/soapbox/EncryptPartialMessageProcessor.java") ||
 								f.getAbsolutePath().endsWith("core/src/org/openspcoop2/security/message/soapbox/SignPartialMessageProcessor.java")

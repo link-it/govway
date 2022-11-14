@@ -377,7 +377,7 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 
 			// **************** Inizializzo Secure Context for encryption **************************
 			
-			org.openspcoop2.security.message.soapbox.SecurityConfig securityConfig_encryption = null;
+			org.openspcoop2.security.message.soapbox.SoapBoxSecurityConfig securityConfig_encryption = null;
 			if(encrypt){
 				updateSecurityContextForEncryption(msgSecCtx, messageSecurityContext.getOutgoingProperties(), aliasEncryptUser);
 				
@@ -387,7 +387,7 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 				if(encryptionTrustStoreKS==null){
 					encryptionTrustStoreKS = encryptionKS;
 				}
-				securityConfig_encryption = new org.openspcoop2.security.message.soapbox.SecurityConfig(encryptionKS, encryptionTrustStoreKS, passwordMap_encryption,ctx);
+				securityConfig_encryption = new org.openspcoop2.security.message.soapbox.SoapBoxSecurityConfig(encryptionKS, encryptionTrustStoreKS, passwordMap_encryption,ctx);
 				securityConfig_encryption.setSymmetricSharedKey(encryptionSymmetric);
 			}
 
@@ -401,7 +401,7 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 
 
 			// **************** Inizializzo Secure Context for signature **************************
-			org.openspcoop2.security.message.soapbox.SecurityConfig securityConfig_signature = null;
+			org.openspcoop2.security.message.soapbox.SoapBoxSecurityConfig securityConfig_signature = null;
 			if(signature){
 				
 				updateSecurityContextForSignature(msgSecCtx, messageSecurityContext.getOutgoingProperties(), aliasSignatureUser);
@@ -412,7 +412,7 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 				if(signatureTrustStoreKS==null){
 					signatureTrustStoreKS = signatureKS;
 				}
-				securityConfig_signature = new org.openspcoop2.security.message.soapbox.SecurityConfig(signatureKS, signatureTrustStoreKS, passwordMap_signature,ctx);
+				securityConfig_signature = new org.openspcoop2.security.message.soapbox.SoapBoxSecurityConfig(signatureKS, signatureTrustStoreKS, passwordMap_signature,ctx);
 			}				
 			
 

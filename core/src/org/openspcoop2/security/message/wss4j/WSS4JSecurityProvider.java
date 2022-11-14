@@ -42,7 +42,7 @@ import org.openspcoop2.security.message.xml.XMLCostanti;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SecurityProvider extends org.openspcoop2.security.message.xml.SecurityProvider  {
+public class WSS4JSecurityProvider extends org.openspcoop2.security.message.xml.SecurityProvider  {
 
 	@Override
 	public void validate(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {

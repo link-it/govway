@@ -265,7 +265,7 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 			
 			
 			// **************** Inizializzo Secure Context for encryption **************************
-			org.openspcoop2.security.message.soapbox.SecurityConfig securityConfig_decryption = null;
+			org.openspcoop2.security.message.soapbox.SoapBoxSecurityConfig securityConfig_decryption = null;
 			if(decrypt){			
 				msgSecCtx.getEncryptionRequest().setCertAlias(aliasDecryptUser);
 				
@@ -274,7 +274,7 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 				if(decryptionTrustStoreKS==null){
 					decryptionTrustStoreKS = decryptionKS;
 				}
-				securityConfig_decryption = new org.openspcoop2.security.message.soapbox.SecurityConfig(decryptionKS, decryptionTrustStoreKS, passwordMap_decryption,ctx);
+				securityConfig_decryption = new org.openspcoop2.security.message.soapbox.SoapBoxSecurityConfig(decryptionKS, decryptionTrustStoreKS, passwordMap_decryption,ctx);
 				securityConfig_decryption.setSymmetricSharedKey(decryptionSymmetric);
 			}
 			
@@ -287,14 +287,14 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 			
 			
 			// **************** Inizializzo Secure Context for signature **************************
-			org.openspcoop2.security.message.soapbox.SecurityConfig securityConfig_signature = null;
+			org.openspcoop2.security.message.soapbox.SoapBoxSecurityConfig securityConfig_signature = null;
 			if(signature){			
 				Map<String, String> passwordMap_signature = new HashMap<String, String>();
 				passwordMap_signature.put(aliasSignatureUser, aliasSignaturePassword);
 				if(signatureTrustStoreKS==null){
 					signatureTrustStoreKS = signatureKS;
 				}
-				securityConfig_signature = new org.openspcoop2.security.message.soapbox.SecurityConfig(signatureKS, signatureTrustStoreKS, passwordMap_signature,crlPath,ctx);
+				securityConfig_signature = new org.openspcoop2.security.message.soapbox.SoapBoxSecurityConfig(signatureKS, signatureTrustStoreKS, passwordMap_signature,crlPath,ctx);
 			}	
 			
 			

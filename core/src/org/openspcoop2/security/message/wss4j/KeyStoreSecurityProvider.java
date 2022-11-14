@@ -28,7 +28,7 @@ package org.openspcoop2.security.message.wss4j;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class KeyStoreSecurityProvider extends SecurityProvider {
+public class KeyStoreSecurityProvider extends WSS4JSecurityProvider {
 
 	public KeyStoreSecurityProvider() {
 		super();

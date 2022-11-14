@@ -172,7 +172,7 @@ public class ProcessSignedMessage implements Processor {
             }
 
             try {
-                ((SecurityConfig)secConfig).validateX509Certificate(certs);
+                ((SoapBoxSecurityConfig)secConfig).validateX509Certificate(certs);
             } catch (Exception e) {
                 throw new SecurityFailureException("Certificate used for signature with DN : " +
                     certs[0].getSubjectDN().toString() + " or its issuer/s is/are not valid", e);

@@ -139,7 +139,7 @@ public class ProcessPartialEncryptedMessage implements Processor {
         Cipher cipher = null;
         byte[] decryptedEphemeralKey = null;
         try {
-        	 SecurityConfig secContextOpenSPCoop = (SecurityConfig)secConfig;
+        	 SoapBoxSecurityConfig secContextOpenSPCoop = (SoapBoxSecurityConfig)secConfig;
         	
             // 1. Find the encryption method
         	String algorithm = CryptoUtil.getFirstChild(
